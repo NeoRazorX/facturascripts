@@ -180,4 +180,26 @@
 
     });
 
+    /**
+     * Widget for the displaying links
+     *
+     * Options:
+     *  - data
+     */
+    var LinkIndicator = PhpDebugBar.DebugBar.Indicator.extend({
+
+        tagName: 'a',
+
+        render: function() {
+            LinkIndicator.__super__.render.apply(this);
+            this.bindAttr('href', function(href) {
+                this.$el.attr('href', href);
+            });
+        }
+
+    });
+
+    // Like:
+    // phpdebugbar.addIndicator('Documentación', new LinkIndicator({ href: 'https://www.facturascripts.com/documentacion', title: 'Documentación' }));
+
 })(PhpDebugBar.$);

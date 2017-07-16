@@ -119,7 +119,7 @@ trait Model
             self::$tableName = $tableName;
         }
 
-        if ($tableName !== '' && !in_array($tableName, self::$checkedTables, false) && $this->checkTable($tableName)) {
+        if ($tableName !== '' && $this->checkTable($tableName) && !in_array($tableName, self::$checkedTables, false)) {
             $this->miniLog->debug('Table ' . $tableName . ' checked.');
             self::$checkedTables[] = $tableName;
             $this->cache->set('fs_checked_tables', self::$checkedTables);

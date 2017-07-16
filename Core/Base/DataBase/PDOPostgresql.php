@@ -19,13 +19,13 @@
 
 namespace FacturaScripts\Core\Base\DataBase;
 
-//use DebugBar\DataCollector\PDO\TraceablePDOStatement;
 use PDO;
 use PDOException;
 use PDOStatement;
 
 /**
  * Clase para conectar a PostgreSQL utilizando pdo_pgsql.
+ * Puede considerarse en estado beta, falta probarlo a fondo.
  *
  * Basado en: http://culttt.com/2012/10/01/roll-your-own-pdo-php-class/
  *
@@ -65,37 +65,91 @@ class PDOPostgresql implements DatabaseEngine
     }
 
     /**
+     * Se intenta realizar la conexión a la base de datos PostgreSQL,
+     * si se ha realizado se devuelve true, sino false.
+     * En el caso que sea false, $errors contiene el error
+     *
+     * @param $errors
+     * @param $dbData
+     *
+     * @return bool
+     */
+    public static function testConnect(&$errors, $dbData)
+    {
+        $done = false;
+
+        if (!extension_loaded('pdo')) {
+            $errors[] = 'No tienes instalada la extensión de PHP para PDO.';
+            return null;
+        }
+        if (!extension_loaded('pdo_pgsql')) {
+            $errors[] = 'No tienes instalada la extensión de PHP para PDO PostgreSQL.';
+            return null;
+        }
+
+        $dsnHost = 'pgsql:host=' . $dbData['host'] . ';port=' . $dbData['port'];
+        $dsnDb = $dsnHost . ';dbname=' . $dbData['name'];
+        $options = [
+            PDO::ATTR_EMULATE_PREPARES => 1,
+            //            PDO::ATTR_PERSISTENT => true,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        ];
+
+        // Creamos una nueva instancia PDO
+        $connection = null;
+        try {
+            $connection = new PDO($dsnHost, $dbData['user'], $dbData['pass'], $options);
+        } catch (PDOException $e) {
+            if( $e->getMessage() !== '00000') {
+                $errors[] = $e->getMessage();
+            }
+        }
+
+        if ($connection !== null && $connection->errorCode() === '00000') {
+            // Comprobamos que la BD exista, de lo contrario la creamos
+            $connection2 = null;
+            try {
+                $connection2 = new PDO($dsnDb, $dbData['user'], $dbData['pass'], $options);
+            } catch (PDOException $e) {
+                if( $e->getMessage() !== '00000') {
+                    $errors[] = $e->getMessage();
+                }
+            }
+
+            if ($connection2 !== null && $connection2->errorCode() === '00000') {
+                $done = true;
+            } else {
+                $sqlCrearBD = 'CREATE DATABASE ' . $dbData['name'] . ';';
+                if (!$connection->exec($sqlCrearBD)) {
+                    $done = true;
+                } else {
+                    $array = $connection->errorInfo();
+                    $error = '';
+                    $separator = '';
+                    foreach ($array as $k => $err) {
+                        if( $err !== '00000') {
+                            $error .= $separator . $err;
+                            if ($k = 0) {
+                                $separator = ' ';
+                            }
+                        }
+                    }
+                    if ($error !== '') {
+                        $errors[] = $error;
+                    }
+                }
+            }
+        }
+
+        return $done;
+    }
+
+    /**
      * Destructor de la clase
      */
     public function __destruct()
     {
         $this->rollbackTransactions();
-    }
-
-    /**
-     * Deshace todas las transacciones activas
-     */
-    private function rollbackTransactions()
-    {
-        foreach ($this->transactions as $link) {
-            $this->rollback($link);
-        }
-    }
-
-    /**
-     * Borra de la lista la transaccion indicada
-     * @param PDO $link
-     */
-    private function unsetTransaction($link)
-    {
-        $count = 0;
-        foreach ($this->transactions as $trans) {
-            if ($trans === $link) {
-                array_splice($this->transactions, $count, 1);
-                break;
-            }
-            $count++;
-        }
     }
 
     /**
@@ -121,7 +175,7 @@ class PDOPostgresql implements DatabaseEngine
         $dsn = 'pgsql:host=' . FS_DB_HOST . ';port=' . FS_DB_PORT . ';dbname=' . FS_DB_NAME;
         $options = [
             PDO::ATTR_EMULATE_PREPARES => 1,
-//            PDO::ATTR_PERSISTENT => true,
+            //            PDO::ATTR_PERSISTENT => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ];
 
@@ -143,21 +197,6 @@ class PDOPostgresql implements DatabaseEngine
         }
 
         return $this->dbh;
-    }
-
-    /**
-     * Se intenta realizar la conexión a la base de datos PostgreSQL,
-     * si se ha realizado se devuelve true, sino false.
-     * En el caso que sea false, $errors contiene el error
-     *
-     * @param $errors
-     * @param $dbData
-     *
-     * @return bool
-     */
-    public static function testConnect(&$errors, $dbData) {
-        // TODO
-        return true;
     }
 
     /**
@@ -674,7 +713,7 @@ class PDOPostgresql implements DatabaseEngine
      */
     public function sqlIndexes($tableName)
     {
-        return "SELECT indexname as Key_name FROM pg_indexes WHERE tablename = '" . $tableName . "';";
+        return "SELECT indexname AS Key_name FROM pg_indexes WHERE tablename = '" . $tableName . "';";
     }
 
     /**
@@ -817,7 +856,7 @@ class PDOPostgresql implements DatabaseEngine
      */
     public function sqlSequenceExists($seqName)
     {
-        return "SELECT * FROM pg_class where relname = '" . $seqName . "';";
+        return "SELECT * FROM pg_class WHERE relname = '" . $seqName . "';";
     }
 
     /**
@@ -827,5 +866,32 @@ class PDOPostgresql implements DatabaseEngine
     public function getType()
     {
         return 'pdo_pgsql';
+    }
+
+    /**
+     * Deshace todas las transacciones activas
+     */
+    private function rollbackTransactions()
+    {
+        foreach ($this->transactions as $link) {
+            $this->rollback($link);
+        }
+    }
+
+    /**
+     * Borra de la lista la transaccion indicada
+     *
+     * @param PDO $link
+     */
+    private function unsetTransaction($link)
+    {
+        $count = 0;
+        foreach ($this->transactions as $trans) {
+            if ($trans === $link) {
+                array_splice($this->transactions, $count, 1);
+                break;
+            }
+            $count++;
+        }
     }
 }

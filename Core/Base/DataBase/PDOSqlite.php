@@ -19,13 +19,14 @@
 
 namespace FacturaScripts\Core\Base\DataBase;
 
-//use DebugBar\DataCollector\PDO\TraceablePDOStatement;
 use PDO;
 use PDOException;
 use PDOStatement;
 
 /**
- * Clase para conectar a SQLite utilizando pdo_pgsql.
+ * Clase para conectar a SQLite utilizando pdo_sqlite.
+ * Puede considerarse en estado alpha, falta completar el fixPostgresql y derivados
+ * y probarlo a fondo.
  *
  * Basado en: http://culttt.com/2012/10/01/roll-your-own-pdo-php-class/
  *
@@ -118,7 +119,6 @@ class PDOSqlite implements DatabaseEngine
             return null;
         }
 
-        //$dsn = 'sqlite:' . $fileName . ';dbname=' . FS_DB_NAME;
         $dsn = 'sqlite:facturascripts.db';
         $options = [
             PDO::ATTR_EMULATE_PREPARES => 1,
@@ -157,8 +157,37 @@ class PDOSqlite implements DatabaseEngine
      * @return bool
      */
     public static function testConnect(&$errors, $dbData) {
-        // TODO
-        return true;
+        $done = false;
+
+        if (!extension_loaded('pdo')) {
+            $errors[] = 'No tienes instalada la extensión de PHP para PDO.';
+            return null;
+        }
+        if (!extension_loaded('pdo_sqlite')) {
+            $errors[] = 'No tienes instalada la extensión de PHP para PDO SQLite.';
+            return null;
+        }
+
+        $dsnHost = 'sqlite:facturascripts.db';
+        $options = [
+            PDO::ATTR_EMULATE_PREPARES => 1,
+            //            PDO::ATTR_PERSISTENT => true,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        ];
+
+        // Creamos una nueva instancia PDO
+        try {
+            $connection = new PDO($dsnHost, $dbData['user'], $dbData['pass'], $options);
+            if ($connection) {
+                $done = true;
+            }
+        } catch (PDOException $e) {
+            if( $e->getMessage() !== '00000') {
+                $errors[] = $e->getMessage();
+            }
+        }
+
+        return $done;
     }
 
     /**
@@ -538,8 +567,10 @@ class PDOSqlite implements DatabaseEngine
 
     /**
      * Compara los tipos de datos de una columna numerica.
+     *
      * @param string $dbType
      * @param string $xmlType
+     *
      * @return bool
      */
     private function compareDataTypeNumeric($dbType, $xmlType)
@@ -583,8 +614,10 @@ class PDOSqlite implements DatabaseEngine
 
     /**
      * Compara los tipos de datos de una columna alfanumerica.
+     *
      * @param string $dbType
      * @param string $xmlType
+     *
      * @return bool
      */
     private function compareDataTypeChar($dbType, $xmlType)
@@ -675,7 +708,7 @@ class PDOSqlite implements DatabaseEngine
      */
     public function dateStyle()
     {
-        return 'Y-m-d';
+        return 'd-m-Y';
     }
 
     /**
@@ -751,9 +784,7 @@ class PDOSqlite implements DatabaseEngine
     public function sqlColumns($tableName)
     {
         // TODO: Comprobar que sea realmente así
-        $sql = 'DESCRIBE ' . $tableName;
-
-        return $sql;
+        return 'DESCRIBE ' . $tableName;
     }
 
     /**

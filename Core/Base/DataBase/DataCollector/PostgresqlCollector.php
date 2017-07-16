@@ -17,18 +17,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base\DataBase;
+namespace FacturaScripts\Core\Base\DataBase\DataCollector;
+
+use DebugBar\DataCollector\AssetProvider;
+use DebugBar\DataCollector\DataCollector;
+use DebugBar\DataCollector\Renderable;
 
 /**
  * Clase para tracear a PostgreSQL.
+ * Por ahora básicamente lee las SQL del miniLog, lo ideal sería utilizarlo conjuntamente
+ * con TraceablePostgresql y obtener todos los detalles, como con PDO.
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ *
+ * Info relaticionada, WP ya utiliza esto con mysqli, así que nos sirve de ejemplo:
  * @source https://github.com/maximebf/php-debugbar/issues/326
  * @source https://github.com/snowair/phalcon-debugbar/blob/master/src/Phalcon/Db/Profiler.php
  * @source https://github.com/WordPress/WordPress/blob/4.8-branch/wp-includes/wp-db.php
  * @source https://github.com/maximebf/php-debugbar/issues/213
  */
-class TraceablePostgresql
+class PostgresqlCollector extends DataCollector implements Renderable, AssetProvider
 {
     /**
      * @var
@@ -38,7 +46,7 @@ class TraceablePostgresql
     /**
      * TraceableMysql constructor.
      *
-     * @param $queries
+     * @param array $queries
      */
     public function __construct($queries)
     {
@@ -55,18 +63,20 @@ class TraceablePostgresql
         $queries = [];
         $totalExecTime = 0;
         foreach ($this->queries as $q) {
-            $query = explode('----', $q);
             $queries[] = [
-                'sql' => $query[0],
-                'duration' => $query[1],
-                'duration_str' => $this->formatDuration($query[1])
+                'sql' => $q['message'],
+                'duration' => 0,
+                'duration_str' => 0
             ];
-            $totalExecTime += $query[1];
+            $totalExecTime += 0;
         }
         return [
             'nb_statements' => count($queries),
+            //'nb_failed_statements' => 0,
             'accumulated_duration' => $totalExecTime,
-            'accumulated_duration_str' => $this->formatDuration($totalExecTime),
+            //'accumulated_duration_str' => 0,
+            //'memory_usage' => 0,
+            //'peak_memory_usage' => 0,
             'statements' => $queries
         ];
     }
@@ -78,7 +88,7 @@ class TraceablePostgresql
      */
     public function getName()
     {
-        return 'pgsql_queries';
+        return 'pgsql';
     }
 
     /**
@@ -91,13 +101,14 @@ class TraceablePostgresql
     {
         return [
             'database' => [
-                'icon' => 'arrow-right',
+                'icon' => 'phpdebugbar-fa-database',
+                "tooltip" => "Using PostgreSQL",
                 'widget' => 'PhpDebugBar.Widgets.SQLQueriesWidget',
-                'map' => 'queries',
+                'map' => 'pgsql',
                 'default' => '[]'
             ],
             'database:badge' => [
-                'map' => 'queries.nb_statements',
+                'map' => 'pgsql.nb_statements',
                 'default' => 0
             ]
         ];
@@ -111,8 +122,8 @@ class TraceablePostgresql
     public function getAssets()
     {
         return [
-            'css' => 'widgets/sqlqueries/widget.css',
-            'js' => 'widgets/sqlqueries/widget.js'
+            'css' => 'assets/css/phpdebugbar.custom-widget.css',
+            'js' => 'assets/js/phpdebugbar.custom-widget.js'
         ];
     }
 
@@ -151,9 +162,7 @@ class TraceablePostgresql
     {
 
         $result = call_user_func_array([$this->queries, $method], $args);
-        print_r($result);
-
+//        print_r($result);
         return $result;
     }
-
 }

@@ -504,6 +504,15 @@ class DataBase
     }
 
     /**
+     * Devuelve el engine la base de datos
+     * @return DatabaseEngine|null
+     */
+    public function getEngine()
+    {
+        return self::$engine;
+    }
+
+    /**
      * Devuelve el enlace con la base de datos
      * @return mysql|resource|PDO|null
      */
@@ -519,5 +528,15 @@ class DataBase
     public function getType()
     {
         return self::$engine->getType();
+    }
+
+    /**
+     * Devuelve true si es de tipo PDO, sino false
+     *
+     * @return bool
+     */
+    public function isPDO()
+    {
+        return 0 === strpos($this->getType(), 'pdo');
     }
 }

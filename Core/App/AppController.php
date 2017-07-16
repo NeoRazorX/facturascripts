@@ -23,12 +23,16 @@ use DebugBar\Bridge\Twig\TraceableTwigEnvironment;
 use DebugBar\Bridge\Twig\TwigCollector;
 use DebugBar\DataCollector\PDO\PDOCollector;
 use DebugBar\DataCollector\PDO\TraceablePDO;
+use DebugBar\DebugBarException;
 use DebugBar\StandardDebugBar;
 use Exception;
 use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Base\DataBase\DataCollector\MysqlCollector;
+use FacturaScripts\Core\Base\DataBase\DataCollector\PostgresqlCollector;
+use FacturaScripts\Core\Base\DataBase\Mysql;
+use FacturaScripts\Core\Base\DataBase\Postgresql;
 use FacturaScripts\Core\Model\User;
 use InvalidArgumentException;
-use mysqli;
 use PDO;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -72,6 +76,16 @@ class AppController extends App
     {
         parent::__construct($folder);
         $this->debugBar = new StandardDebugBar();
+        /**
+         * TODO: Probado y funciona, yo lo activaría cuando tengamos el tmp funcionando
+         * aunque como opción de guardar logs, ya que permite llegar a localizar ciertos
+         * problemas muy concretos, o incluso adjuntarlo como reporte en la comunidad.
+         */
+        // $logDir = 'log';
+        // if (!@mkdir($logDir, 0775, true) && !is_dir($logDir)) {
+        //
+        // }
+        // $this->debugBar->setStorage(new FileStorage($logDir));
     }
 
     /**
@@ -87,7 +101,6 @@ class AppController extends App
      */
     public function run()
     {
-        $this->loadDataBaseTrace();
         if (!$this->dataBase->connected()) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->renderHtml('Error/DbError.html');
@@ -106,7 +119,9 @@ class AppController extends App
 
     /**
      * Carga y procesa el controlador $pageName.
+     *
      * @param string $pageName nombre del controlador
+     *
      * @throws InvalidArgumentException
      * @throws Twig_Error_Loader
      * @throws Twig_Error_Runtime
@@ -114,9 +129,14 @@ class AppController extends App
      * @throws UnexpectedValueException
      * @throws \RuntimeException
      * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @throws \DebugBar\DebugBarException
      */
     private function loadController($pageName)
     {
+        /* Si es PDO, debemos empezar a capturar consultas antes de que se realice la primera */
+        if ($this->dataBase->isPDO()) {
+            $this->loadDataBaseTrace();
+        }
         $controllerName = "FacturaScripts\\Dinamic\\Controller\\{$pageName}";
         $template = 'Error/ControllerNotFound.html';
         $httpStatus = Response::HTTP_NOT_FOUND;
@@ -147,6 +167,10 @@ class AppController extends App
             }
         }
 
+        /* Si no es PDO, debemos capturar las consultas cuando ya se han realizado */
+        if (!$this->dataBase->isPDO()) {
+            $this->loadDataBaseTrace($this->miniLog->read(['sql']));
+        }
         $this->response->setStatusCode($httpStatus);
         if ($template) {
             $this->renderHtml($template);
@@ -156,12 +180,15 @@ class AppController extends App
     /**
      * Crea el HTML con la plantilla seleccionada. Aunque los datos no se volcarán
      * hasta ejecutar render()
+     *
      * @param string $template archivo html a utilizar
+     *
      * @throws InvalidArgumentException
      * @throws UnexpectedValueException
      * @throws Twig_Error_Loader
      * @throws Twig_Error_Runtime
      * @throws Twig_Error_Syntax
+     * @throws \DebugBar\DebugBarException
      */
     private function renderHtml($template)
     {
@@ -276,16 +303,25 @@ class AppController extends App
 
     /**
      * Carga la trazabilidad de las consultas SQL
+     * @param array $queries
+     * @throws DebugBarException
      */
-    private function loadDataBaseTrace() {
+    private function loadDataBaseTrace(array $queries = [])
+    {
         if (0 === strpos($this->dataBase->getType(), 'mysql')) {
-            if ($this->dataBase->getLink() instanceof mysqli) {
-                //                $pdo = new TraceableMysql($this->dataBase->getLink());
-                //                $this->debugBar->addCollector(new PDOCollector($pdo));
+            if ($this->dataBase->getEngine() instanceof Mysql) {
+                // TODO: Lo correcto sería implementarlo en Traceable+Collector para tener todos los detalles
+                // $mysql = new TraceableMysql($this->dataBase->getEngine());
+                // $this->debugBar->addCollector(new MysqlCollector($mysql));
+                $this->debugBar->addCollector(new MysqlCollector($queries));
             }
-        } elseif (0 === strpos($this->dataBase->getType(), 'pgsql')) {
-            //                $pdo = new TraceablePostgresql($this->dataBase->getLink());
-            //                $this->debugBar->addCollector(new PDOCollector($pdo));
+        } elseif (0 === strpos($this->dataBase->getType(), 'postgresql')) {
+            if ($this->dataBase->getEngine() instanceof Postgresql) {
+                // TODO: Lo correcto sería implementarlo en Traceable+Collector para tener todos los detalles
+                // $pgsql = new TraceablePostgresql($queries);
+                // $this->debugBar->addCollector(new PostgresqlCollector($pgsql));
+                $this->debugBar->addCollector(new PostgresqlCollector($queries));
+            }
         } elseif (0 === strpos($this->dataBase->getType(), 'pdo')) {
             if ($this->dataBase->getLink() instanceof PDO) {
                 $pdo = new TraceablePDO($this->dataBase->getLink());

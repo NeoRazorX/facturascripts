@@ -25,6 +25,7 @@ use PDOStatement;
 
 /**
  * Clase para conectar a MySQL utilizando pdo_mysql.
+ * Puede considerarse en estado beta, falta probarlo a fondo.
  *
  * Basado en: http://culttt.com/2012/10/01/roll-your-own-pdo-php-class/
  *
@@ -64,37 +65,92 @@ class PDOMysql implements DatabaseEngine
     }
 
     /**
+     * Se intenta realizar la conexión a la base de datos MySQL,
+     * si se ha realizado se devuelve true, sino false.
+     * En el caso que sea false, $errors contiene el error
+     *
+     * @param $errors
+     * @param $dbData
+     *
+     * @return bool
+     */
+    public static function testConnect(&$errors, $dbData)
+    {
+        $done = false;
+
+        if (!extension_loaded('pdo')) {
+            $errors[] = 'No tienes instalada la extensión de PHP para PDO.';
+            return null;
+        }
+        if (!extension_loaded('pdo_mysql')) {
+            $errors[] = 'No tienes instalada la extensión de PHP para PDO MySQL.';
+            return null;
+        }
+
+        $dsnHost = 'mysql:host=' . $dbData['host'] . ';port=' . $dbData['port'];
+        $dsnDb = $dsnHost . ';dbname=' . $dbData['name'];
+        $options = [
+            PDO::ATTR_EMULATE_PREPARES => 1,
+            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+            //            PDO::ATTR_PERSISTENT => true,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        ];
+
+        // Creamos una nueva instancia PDO
+        $connection = null;
+        try {
+            $connection = new PDO($dsnHost, $dbData['user'], $dbData['pass'], $options);
+        } catch (PDOException $e) {
+            if( $e->getMessage() !== '00000') {
+                $errors[] = $e->getMessage();
+            }
+        }
+
+        if ($connection !== null && $connection->errorCode() === '00000') {
+            // Comprobamos que la BD exista, de lo contrario la creamos
+            $connection2 = null;
+            try {
+                $connection2 = new PDO($dsnDb, $dbData['user'], $dbData['pass'], $options);
+            } catch (PDOException $e) {
+                if( $e->getMessage() !== '00000') {
+                    $errors[] = $e->getMessage();
+                }
+            }
+
+            if ($connection2 !== null && $connection2->errorCode() === '00000') {
+                $done = true;
+            } else {
+                $sqlCrearBD = 'CREATE DATABASE ' . $dbData['name'] . ';';
+                if ($connection->exec($sqlCrearBD)) {
+                    $done = true;
+                } else {
+                    $array = $connection->errorInfo();
+                    $error = '';
+                    $separator = '';
+                    foreach ($array as $k => $err) {
+                        if( $err !== '00000') {
+                            $error .= $separator . $err;
+                            if ($k = 0) {
+                                $separator = ' ';
+                            }
+                        }
+                    }
+                    if ($error !== '') {
+                        $errors[] = $error;
+                    }
+                }
+            }
+        }
+
+        return $done;
+    }
+
+    /**
      * Destructor de la clase
      */
     public function __destruct()
     {
         $this->rollbackTransactions();
-    }
-
-    /**
-     * Deshace todas las transacciones activas
-     */
-    private function rollbackTransactions()
-    {
-        foreach ($this->transactions as $link) {
-            $this->rollback($link);
-        }
-    }
-
-    /**
-     * Borra de la lista la transaccion indicada
-     * @param PDO $link
-     */
-    private function unsetTransaction($link)
-    {
-        $count = 0;
-        foreach ($this->transactions as $trans) {
-            if ($trans === $link) {
-                array_splice($this->transactions, $count, 1);
-                break;
-            }
-            $count++;
-        }
     }
 
     /**
@@ -121,7 +177,7 @@ class PDOMysql implements DatabaseEngine
         $options = [
             PDO::ATTR_EMULATE_PREPARES => 1,
             PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
-//            PDO::ATTR_PERSISTENT => true,
+            //            PDO::ATTR_PERSISTENT => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ];
 
@@ -140,21 +196,6 @@ class PDOMysql implements DatabaseEngine
         }
 
         return $this->dbh;
-    }
-
-    /**
-     * Se intenta realizar la conexión a la base de datos MySQL,
-     * si se ha realizado se devuelve true, sino false.
-     * En el caso que sea false, $errors contiene el error
-     *
-     * @param $errors
-     * @param $dbData
-     *
-     * @return bool
-     */
-    public static function testConnect(&$errors, $dbData) {
-        // TODO
-        return true;
     }
 
     /**
@@ -302,20 +343,6 @@ class PDOMysql implements DatabaseEngine
     }
 
     /**
-     * Elimina código problemático de postgresql.
-     *
-     * @param string $sql
-     *
-     * @return string
-     */
-    private function fixPostgresql($sql)
-    {
-        $search = ['::character varying', 'without time zone', 'now()', 'CURRENT_TIMESTAMP', 'CURRENT_DATE'];
-        $replace = ['', '', "'00:00'", "'" . date('Y-m-d') . " 00:00:00'", date("'Y-m-d'")];
-        return str_replace($search, $replace, $sql);
-    }
-
-    /**
      * Genera el SQL para establecer las restricciones proporcionadas.
      *
      * @param array $xmlCons
@@ -330,55 +357,6 @@ class PDOMysql implements DatabaseEngine
         }
 
         return $this->fixPostgresql($sql);
-    }
-
-    /**
-     * TODO
-     *
-     * @param array $colData
-     *
-     * @return string
-     */
-    private function getConstraints($colData)
-    {
-        $notNull = ($colData['nulo'] === 'NO');
-        $result = ' NULL';
-        if ($notNull) {
-            $result = ' NOT' . $result;
-        }
-
-        $defaultNull = ($colData['defecto'] === null);
-        if ($defaultNull && !$notNull) {
-            $result .= ' DEFAULT NULL';
-        } else {
-            if ($colData['defecto'] !== '') {
-                $result .= ' DEFAULT ' . $colData['defecto'];
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Genera el SQL con el tipo de campo y las constraints DEFAULT y NULL
-     *
-     * @param array $colData
-     *
-     * @return string
-     */
-    private function getTypeAndConstraints($colData)
-    {
-        $type = stripos('integer,serial', $colData['tipo']) === false ? strtolower($colData['tipo']) : FS_DB_INTEGER;
-        switch (true) {
-            case ($type === 'serial'):
-            case (stripos($colData['defecto'], 'nextval(') !== false):
-                $contraints = ' NOT NULL AUTO_INCREMENT';
-                break;
-            default:
-                $contraints = $this->getConstraints($colData);
-                break;
-        }
-        return ' ' . $type . $contraints;
     }
 
     /**
@@ -520,37 +498,6 @@ class PDOMysql implements DatabaseEngine
     {
         $this->stmt = $this->dbh->prepare($sql);
         return $this->stmt->execute();
-    }
-
-    /**
-     * Compara los tipos de datos de una columna numerica.
-     *
-     * @param string $dbType
-     * @param string $xmlType
-     *
-     * @return bool
-     */
-    private function compareDataTypeNumeric($dbType, $xmlType)
-    {
-        return (0 === strpos($dbType, 'int(') && $xmlType === 'INTEGER') ||
-            (0 === strpos($dbType, 'double') && $xmlType === 'double precision');
-    }
-
-    /**
-     * Compara los tipos de datos de una columna alfanumerica.
-     *
-     * @param string $dbType
-     * @param string $xmlType
-     *
-     * @return bool
-     */
-    private function compareDataTypeChar($dbType, $xmlType)
-    {
-        $result = 0 === strpos($xmlType, 'character varying(');
-        if ($result) {
-            $result = (0 === strpos($dbType, 'varchar(')) || (0 === strpos($dbType, 'char('));
-        }
-        return $result;
     }
 
     /**
@@ -910,5 +857,126 @@ class PDOMysql implements DatabaseEngine
     public function getType()
     {
         return 'pdo_mysql';
+    }
+
+    /**
+     * Deshace todas las transacciones activas
+     */
+    private function rollbackTransactions()
+    {
+        foreach ($this->transactions as $link) {
+            $this->rollback($link);
+        }
+    }
+
+    /**
+     * Borra de la lista la transaccion indicada
+     *
+     * @param PDO $link
+     */
+    private function unsetTransaction($link)
+    {
+        $count = 0;
+        foreach ($this->transactions as $trans) {
+            if ($trans === $link) {
+                array_splice($this->transactions, $count, 1);
+                break;
+            }
+            $count++;
+        }
+    }
+
+    /**
+     * Elimina código problemático de postgresql.
+     *
+     * @param string $sql
+     *
+     * @return string
+     */
+    private function fixPostgresql($sql)
+    {
+        $search = ['::character varying', 'without time zone', 'now()', 'CURRENT_TIMESTAMP', 'CURRENT_DATE'];
+        $replace = ['', '', "'00:00'", "'" . date('Y-m-d') . " 00:00:00'", date("'Y-m-d'")];
+        return str_replace($search, $replace, $sql);
+    }
+
+    /**
+     * TODO
+     *
+     * @param array $colData
+     *
+     * @return string
+     */
+    private function getConstraints($colData)
+    {
+        $notNull = ($colData['nulo'] === 'NO');
+        $result = ' NULL';
+        if ($notNull) {
+            $result = ' NOT' . $result;
+        }
+
+        $defaultNull = ($colData['defecto'] === null);
+        if ($defaultNull && !$notNull) {
+            $result .= ' DEFAULT NULL';
+        } else {
+            if ($colData['defecto'] !== '') {
+                $result .= ' DEFAULT ' . $colData['defecto'];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Genera el SQL con el tipo de campo y las constraints DEFAULT y NULL
+     *
+     * @param array $colData
+     *
+     * @return string
+     */
+    private function getTypeAndConstraints($colData)
+    {
+        $type = stripos('integer,serial', $colData['tipo']) === false ? strtolower($colData['tipo']) : FS_DB_INTEGER;
+        switch (true) {
+            case ($type === 'serial'):
+            case (stripos($colData['defecto'], 'nextval(') !== false):
+                $contraints = ' NOT NULL AUTO_INCREMENT';
+                break;
+            default:
+                $contraints = $this->getConstraints($colData);
+                break;
+        }
+        return ' ' . $type . $contraints;
+    }
+
+    /**
+     * Compara los tipos de datos de una columna numerica.
+     *
+     * @param string $dbType
+     * @param string $xmlType
+     *
+     * @return bool
+     */
+    private function compareDataTypeNumeric($dbType, $xmlType)
+    {
+        return (0 === strpos($dbType, 'int(') && $xmlType === 'INTEGER') ||
+            (0 === strpos($dbType, 'double') && $xmlType === 'double precision');
+    }
+
+    /**
+     * Compara los tipos de datos de una columna alfanumerica.
+     *
+     * @param string $dbType
+     * @param string $xmlType
+     *
+     * @return bool
+     */
+    private function compareDataTypeChar($dbType, $xmlType)
+    {
+        $result = 0 === strpos($xmlType, 'character varying(');
+        if ($result) {
+            $result = (0 === strpos($dbType, 'varchar(')) || (0 === strpos($dbType, 'char('));
+        }
+        return $result;
     }
 }
