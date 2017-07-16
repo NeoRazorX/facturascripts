@@ -243,4 +243,10 @@ interface DatabaseEngine
      * @param string $seqName
      */
     public function sqlSequenceExists($seqName);
+
+    /**
+     * Devuelve el tipo de conexión que utiliza
+     * @return string
+     */
+    public function getType();
 }

@@ -121,7 +121,7 @@ class PDOPostgresql implements DatabaseEngine
         $dsn = 'pgsql:host=' . FS_DB_HOST . ';port=' . FS_DB_PORT . ';dbname=' . FS_DB_NAME;
         $options = [
             PDO::ATTR_EMULATE_PREPARES => 1,
-            PDO::ATTR_PERSISTENT => true,
+//            PDO::ATTR_PERSISTENT => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ];
 
@@ -818,5 +818,14 @@ class PDOPostgresql implements DatabaseEngine
     public function sqlSequenceExists($seqName)
     {
         return "SELECT * FROM pg_class where relname = '" . $seqName . "';";
+    }
+
+    /**
+     * Devuelve el tipo de conexión que utiliza
+     * @return string
+     */
+    public function getType()
+    {
+        return 'pdo_pgsql';
     }
 }

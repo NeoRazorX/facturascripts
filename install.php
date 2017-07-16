@@ -167,9 +167,9 @@ function createFolders()
     if (is_dir('Plugins') && is_dir('Dinamic') && is_dir('Cache')) {
         return true;
     }
-    if ((!file_exists('Plugins') && !@mkdir('Plugins', 0775, true) && !is_dir('Plugins')) ||
-        (!file_exists('Dinamic') && !@mkdir('Dinamic', 0775, true) && !is_dir('Dinamic')) ||
-        (!file_exists('Cache') && !@mkdir('Cache', 0775, true) && !is_dir('Cache'))) {
+    if ((!@mkdir('Plugins', 0775, true) && !is_dir('Plugins')) ||
+        (!@mkdir('Dinamic', 0775, true) && !is_dir('Dinamic')) ||
+        (!@mkdir('Cache', 0775, true) && !is_dir('Cache'))) {
         return true;
     }
 

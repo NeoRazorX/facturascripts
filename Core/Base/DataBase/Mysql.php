@@ -711,4 +711,13 @@ class Mysql implements DatabaseEngine
     {
         return '';
     }
+
+    /**
+     * Devuelve el tipo de conexión que utiliza
+     * @return string
+     */
+    public function getType()
+    {
+        return 'mysql';
+    }
 }

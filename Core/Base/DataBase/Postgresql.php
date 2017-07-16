@@ -572,4 +572,13 @@ class Postgresql implements DatabaseEngine
     {
         return "SELECT * FROM pg_class where relname = '" . $seqName . "';";
     }
+
+    /**
+     * Devuelve el tipo de conexión que utiliza
+     * @return string
+     */
+    public function getType()
+    {
+        return 'postgresql';
+    }
 }

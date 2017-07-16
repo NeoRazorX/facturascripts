@@ -26,6 +26,7 @@ use FacturaScripts\Core\Base\DataBase\PDOSqlite;
 use FacturaScripts\Core\Base\DataBase\Postgresql;
 use FacturaScripts\Core\Base\DataBase\PDOMysql;
 use FacturaScripts\Core\Base\DataBase\PDOPostgresql;
+use PDO;
 
 define('FS_FOREIGN_KEYS', '1');
 define('FS_DB_INTEGER', 'INTEGER');
@@ -205,7 +206,7 @@ class DataBase
     }
 
     /**
-     * Devuelve TRUE si se está conestado a la base de datos.
+     * Devuelve TRUE si se está conectado a la base de datos.
      * @return bool
      */
     public function connected()
@@ -500,5 +501,23 @@ class DataBase
     public function sql2int($colName)
     {
         return self::$engine->sql2int($colName);
+    }
+
+    /**
+     * Devuelve el enlace con la base de datos
+     * @return mysql|resource|PDO|null
+     */
+    public function getLink()
+    {
+        return self::$link;
+    }
+
+    /**
+     * Devuelve el tipo de conexión que utiliza
+     * @return string
+     */
+    public function getType()
+    {
+        return self::$engine->getType();
     }
 }

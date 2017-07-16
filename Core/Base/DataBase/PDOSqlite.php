@@ -122,7 +122,7 @@ class PDOSqlite implements DatabaseEngine
         $dsn = 'sqlite:facturascripts.db';
         $options = [
             PDO::ATTR_EMULATE_PREPARES => 1,
-            PDO::ATTR_PERSISTENT => true,
+//            PDO::ATTR_PERSISTENT => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ];
 
@@ -945,5 +945,14 @@ class PDOSqlite implements DatabaseEngine
     public function sqlSequenceExists($seqName)
     {
         return '';
+    }
+
+    /**
+     * Devuelve el tipo de conexión que utiliza
+     * @return string
+     */
+    public function getType()
+    {
+        return 'pdo_sqlite';
     }
 }

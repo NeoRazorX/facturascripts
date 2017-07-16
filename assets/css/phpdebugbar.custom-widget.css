@@ -1,0 +1,21 @@
+/**
+ * Estilo personalizado para tener en la pestaña Database de
+ * PHP Debug Bar las líneas enumeradas
+ */
+div.phpdebugbar div.phpdebugbar-body div.phpdebugbar-panel div.phpdebugbar-widgets-sqlqueries ol.phpdebugbar-widgets-list {
+    padding: 0 0 0 40px;
+}
+ol.phpdebugbar-widgets-list {
+    list-style: decimal !important;
+    font-family: monospace;
+}
+ol.phpdebugbar-widgets-list li.phpdebugbar-widgets-list-item {
+    padding: 3px 0px;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    /*overflow: hidden;*/
+}
+ol.phpdebugbar-widgets-list li.phpdebugbar-widgets-list-item:hover {
+    background: #fafafa;
+}
+

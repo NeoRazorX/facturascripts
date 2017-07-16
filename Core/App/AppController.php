@@ -19,11 +19,17 @@
 
 namespace FacturaScripts\Core\App;
 
+use DebugBar\Bridge\Twig\TraceableTwigEnvironment;
+use DebugBar\Bridge\Twig\TwigCollector;
+use DebugBar\DataCollector\PDO\PDOCollector;
+use DebugBar\DataCollector\PDO\TraceablePDO;
 use DebugBar\StandardDebugBar;
 use Exception;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Model\User;
 use InvalidArgumentException;
+use mysqli;
+use PDO;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
@@ -77,9 +83,11 @@ class AppController extends App
      * @throws UnexpectedValueException
      * @throws \RuntimeException
      * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
+     * @throws \DebugBar\DebugBarException
      */
     public function run()
     {
+        $this->loadDataBaseTrace();
         if (!$this->dataBase->connected()) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->renderHtml('Error/DbError.html');
@@ -159,6 +167,8 @@ class AppController extends App
     {
         /// cargamos el motor de plantillas
         $twigLoader = new Twig_Loader_Filesystem($this->folder . '/Core/View');
+        $env = new TraceableTwigEnvironment(new Twig_Environment($twigLoader));
+        $this->debugBar->addCollector(new TwigCollector($env));
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
             if (file_exists($this->folder . '/Plugins/' . $pluginName . '/View')) {
                 $twigLoader->prependPath($this->folder . '/Plugins/' . $pluginName . '/View');
@@ -262,5 +272,25 @@ class AppController extends App
         $this->response->headers->clearCookie('fsNick');
         $this->response->headers->clearCookie('fsLogkey');
         $this->miniLog->debug('Logout OK.');
+    }
+
+    /**
+     * Carga la trazabilidad de las consultas SQL
+     */
+    private function loadDataBaseTrace() {
+        if (0 === strpos($this->dataBase->getType(), 'mysql')) {
+            if ($this->dataBase->getLink() instanceof mysqli) {
+                //                $pdo = new TraceableMysql($this->dataBase->getLink());
+                //                $this->debugBar->addCollector(new PDOCollector($pdo));
+            }
+        } elseif (0 === strpos($this->dataBase->getType(), 'pgsql')) {
+            //                $pdo = new TraceablePostgresql($this->dataBase->getLink());
+            //                $this->debugBar->addCollector(new PDOCollector($pdo));
+        } elseif (0 === strpos($this->dataBase->getType(), 'pdo')) {
+            if ($this->dataBase->getLink() instanceof PDO) {
+                $pdo = new TraceablePDO($this->dataBase->getLink());
+                $this->debugBar->addCollector(new PDOCollector($pdo));
+            }
+        }
     }
 }

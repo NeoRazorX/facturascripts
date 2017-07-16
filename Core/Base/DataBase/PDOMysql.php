@@ -121,7 +121,7 @@ class PDOMysql implements DatabaseEngine
         $options = [
             PDO::ATTR_EMULATE_PREPARES => 1,
             PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
-            PDO::ATTR_PERSISTENT => true,
+//            PDO::ATTR_PERSISTENT => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ];
 
@@ -901,5 +901,14 @@ class PDOMysql implements DatabaseEngine
     public function sqlSequenceExists($seqName)
     {
         return '';
+    }
+
+    /**
+     * Devuelve el tipo de conexión que utiliza
+     * @return string
+     */
+    public function getType()
+    {
+        return 'pdo_mysql';
     }
 }
