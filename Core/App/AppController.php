@@ -309,11 +309,11 @@ class AppController extends App
     private function loadDataBaseTrace(array $queries = [])
     {
         // TODO: Debería implementarse en Traceable+Collector para tener todos los detalles
-        switch ($this->dataBase->getType()) {
-            case 'mysql':
+        switch (true) {
+            case $this->dataBase->getEngine() instanceof Mysql:
                 $this->debugBar->addCollector(new MysqlCollector($queries));
                 break;
-            case 'postgresql':
+            case $this->dataBase->getEngine() instanceof Postgresql:
                 $this->debugBar->addCollector(new PostgresqlCollector($queries));
                 break;
             default:
