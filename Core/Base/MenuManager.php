@@ -106,14 +106,14 @@ class MenuManager {
         
         $pageModel = new Model\Page();
         $where = [
-           'showonmenu' => TRUE           
+            'showonmenu' => TRUE           
         ];
         
         $order = [
-           'lower(menu)' => 'ASC',
-           'lower(submenu)' => 'ASC',
-           'orden' => 'ASC',
-           'title' => 'ASC'
+            'lower(menu)' => 'ASC',
+            'lower(submenu)' => 'ASC',
+            'orden' => 'ASC',
+            'title' => 'ASC'
         ];
         
         $pages = $pageModel->all($where, $order);
@@ -161,11 +161,11 @@ class MenuManager {
      */
     public function printMenu() {
         foreach (self::$menu as $key => $value) {
-            print $value->title ." (" . $value->url . ")<br />";
+            print $value->title . " (" . $value->url . ")<br />";
             foreach ($value->menu as $key2 => $value2) {
-                print "--->" . $value2->title ." (" . $value2->url . ")<br />";
+                print "--->" . $value2->title . " (" . $value2->url . ")<br />";
                 foreach ($value2->menu as $key3 => $value3) {
-                    print "-------->" . $value3->title ." (" . $value3->url . ")<br />";
+                    print "-------->" . $value3->title . " (" . $value3->url . ")<br />";
                 }
             }
         }        

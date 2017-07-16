@@ -251,7 +251,7 @@ trait Model
     
     /**
      * Devuelve el modelo cuya columna primaria corresponda al valor $cod
-     * @param $cod
+     * @param string $cod
      * @return mixed|bool
      */
     public function get($cod)
