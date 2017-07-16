@@ -122,7 +122,7 @@ class PDOPostgresql implements DatabaseEngine
                     foreach ($array as $k => $err) {
                         if ($err !== '00000') {
                             $error .= $separator . $err;
-                            if ($k = 0) {
+                            if ($k == 0) {
                                 $separator = ' ';
                             }
                         }
