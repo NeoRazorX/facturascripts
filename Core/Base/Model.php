@@ -220,15 +220,43 @@ trait Model
     }
 
     /**
+     * Lee el registro cuya columna primaria corresponda al valor $cod
+     * @param string $cod
+     * @return array
+     */
+    private function getRecord($cod) {
+        $sql = 'SELECT * FROM ' . $this->tableName() 
+            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($cod) . ';';        
+        return $this->dataBase->select($sql);
+    }
+    
+    /**
+     * Rellena la clase con los valores del registro
+     * cuya columna primaria corresponda al valor $cod, o vacio si no existe.
+     * Devuelve True si existe el registro y False en caso contrario.
+     * @param string $cod
+     * @return boolean
+     */
+    public function loadFromCode($cod)
+    {
+        $data = $this->getRecord($cod);
+        if ($data) {
+            $this->loadFromData($data[0]);
+            return true;
+        }
+        
+        $this->clear();
+        return false;
+    }
+    
+    /**
      * Devuelve el modelo cuya columna primaria corresponda al valor $cod
      * @param $cod
      * @return mixed|bool
      */
     public function get($cod)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($cod) . ';';
-        $data = $this->dataBase->select($sql);
+        $data = $this->getRecord($cod);
         if ($data) {
             $class = $this->modelName();
             return new $class($data[0]);
@@ -383,14 +411,14 @@ trait Model
         foreach ($fields as $key => $value) {
             $sql .= $coma . $key . ' = ' . $this->var2str($value);
             if ($coma === ' WHERE ') {
-                $coma = ', ';
+                $coma = ' AND ';
             }
         }
 
         $coma2 = ' ORDER BY ';
         foreach ($order as $key => $value) {
-            $sql .= $coma2 . $key . ' ' . $this->var2str($value);
-            if ($coma2 === ' WHERE ') {
+            $sql .= $coma2 . $key . ' ' . $value;
+            if ($coma2 === ' ORDER BY ') {
                 $coma2 = ', ';
             }
         }
