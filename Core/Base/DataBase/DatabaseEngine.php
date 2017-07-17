@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  carlos@facturascripts.com
@@ -17,9 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
-
 
 /**
  * Interface para cada uno de los motores de base de datos compatibles
@@ -29,6 +26,18 @@ namespace FacturaScripts\Core\Base\DataBase;
  */
 interface DatabaseEngine
 {
+    /**
+     * Devuelve el enlace a la clase de Utilidades del engine
+     * @return DataBaseUtils
+     */
+    public function getUtils();    
+
+    /**
+     * Devuelve el enlace a la clase de SQL del engine
+     * @return DatabaseSQL
+     */
+    public function getSQL();    
+    
     /**
      * Convierte los datos leidos del sqlColumns a estructura de trabajo
      * @param array $colData

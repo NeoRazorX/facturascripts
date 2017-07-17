@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
@@ -34,30 +33,30 @@ class Postgresql implements DatabaseEngine
      * El enlace con las utilidades comunes entre motores de base de datos.
      * @var DataBaseUtils
      */
-    public $utils;
+    private $utils;
 
     /**
      * Enlace al conjunto de sentencias SQL de la base de datos conectada
      * @var DatabaseSQL; 
      */
-    public $utilsSQL;
+    private $utilsSQL;
 
     /**
      * Ultimo mensaje de error
      * @var string 
      */
     private $lastErrorMsg;
-    
+
     /**
      * Contructor e inicializador de la clase
      */
     public function __construct()
     {
         $this->utils = new DataBaseUtils($this);
-        $this->utilsSQL = new PostgresqlSQL($this);
+        $this->utilsSQL = new PostgresqlSQL();
         $this->lastErrorMsg = '';
     }
-    
+
     /**
      * Devuelve el motor de base de datos y la versión.
      * @param resource $link
@@ -202,7 +201,7 @@ class Postgresql implements DatabaseEngine
                 pg_free_result($aux);
             }
         } catch (Exception $e) {
-            $this->lastErrorMsg = $e;
+            $this->lastErrorMsg = $e->getMessage();
             $result = [];
         }
 
@@ -217,7 +216,7 @@ class Postgresql implements DatabaseEngine
      */
     public function select($link, $sql)
     {
-        return $this->runSql($link, $sql);
+        return (array) $this->runSql($link, $sql);
     }
 
     /**
@@ -318,5 +317,23 @@ class Postgresql implements DatabaseEngine
     public function checkTableAux($link, $tableName, &$error)
     {
         return true;
+    }
+
+    /**
+     * Devuelve el enlace a la clase de Utilidades del engine
+     * @return DataBaseUtils
+     */
+    public function getUtils()
+    {
+        return $this->utils;
+    }
+    
+    /**
+     * Devuelve el enlace a la clase de SQL del engine
+     * @return DatabaseSQL
+     */
+    public function getSQL()
+    {
+        return $this->utilsSQL;
     }
 }

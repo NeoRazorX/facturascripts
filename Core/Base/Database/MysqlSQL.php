@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  carlos@facturascripts.com
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
@@ -29,6 +27,7 @@ namespace FacturaScripts\Core\Base\DataBase;
  */
 class MysqlSQL implements DatabaseSQL
 {
+
     /**
      * Genera el SQL con el tipo de campo y las constraints DEFAULT y NULL
      * @param array $colData
@@ -49,7 +48,7 @@ class MysqlSQL implements DatabaseSQL
         }
         return ' ' . $type . $contraints;
     }
-    
+
     /**
      * 
      * @param array $colData
@@ -86,7 +85,7 @@ class MysqlSQL implements DatabaseSQL
         $replace = ['', '', "'00:00'", "'" . date('Y-m-d') . " 00:00:00'", date("'Y-m-d'")];
         return str_replace($search, $replace, $sql);
     }
-    
+
     /**
      * Devuelve el SQL necesario para convertir la columna a entero.
      * @param string $colName
@@ -96,7 +95,7 @@ class MysqlSQL implements DatabaseSQL
     {
         return 'CAST(' . $colName . ' as UNSIGNED)';
     }
-    
+
     /**
      * Devuleve el SQL para averiguar
      * el último ID asignado al hacer un INSERT
@@ -177,7 +176,7 @@ class MysqlSQL implements DatabaseSQL
 
         return $this->fixPostgresql($sql);
     }
-    
+
     /**
      * Devuelve el SQL para averiguar
      * la lista de indices de una tabla.

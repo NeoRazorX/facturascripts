@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  carlos@facturascripts.com
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
@@ -29,6 +27,7 @@ namespace FacturaScripts\Core\Base\DataBase;
  */
 class PostgresqlSQL implements DatabaseSQL
 {
+
     /**
      * Devuelve el SQL necesario para convertir
      * la columna a entero.
@@ -39,7 +38,7 @@ class PostgresqlSQL implements DatabaseSQL
     {
         return 'CAST(' . $colName . ' as INTEGER)';
     }
-    
+
     /**
      * Devuleve el SQL para averiguar
      * el último ID asignado al hacer un INSERT
@@ -123,7 +122,7 @@ class PostgresqlSQL implements DatabaseSQL
      * Genera el SQL para establecer las restricciones proporcionadas.
      * @param array $xmlCons
      * @return string
-     */    
+     */
     public function sqlTableConstraints($xmlCons)
     {
         $sql = '';

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 use FacturaScripts\Core\Base\DataBase\MysqlSQL;
@@ -38,14 +36,14 @@ class Mysql implements DatabaseEngine
      * El enlace con las utilidades comunes entre motores de base de datos.
      * @var DataBaseUtils
      */
-    public $utils;
+    private $utils;
 
     /**
      * Enlace al conjunto de sentencias SQL de la base de datos conectada
      * @var DatabaseSQL; 
      */
-    public $utilsSQL;
-    
+    private $utilsSQL;
+
     /**
      * Relacion de Transacciones abiertas.
      * @var array
@@ -57,14 +55,14 @@ class Mysql implements DatabaseEngine
      * @var string 
      */
     private $lastErrorMsg;
-    
+
     /**
      * Contructor e inicializador de la clase
      */
     public function __construct()
     {
         $this->utils = new DataBaseUtils($this);
-        $this->utilsSQL = new MysqlSQL($this);
+        $this->utilsSQL = new MysqlSQL();
         $this->transactions = [];
         $this->lastErrorMsg = '';
     }
@@ -236,7 +234,7 @@ class Mysql implements DatabaseEngine
                 $aux->free();
             }
         } catch (Exception $e) {
-            $this->lastErrorMsg = $e;
+            $this->lastErrorMsg = $e->getMessage();
             $result = [];
         }
 
@@ -260,7 +258,7 @@ class Mysql implements DatabaseEngine
             }
             $result = (!$link->errno);
         } catch (Exception $e) {
-            $this->lastErrorMsg = $e;
+            $this->lastErrorMsg = $e->getMessage();
             $result = false;
         }
 
@@ -414,5 +412,23 @@ class Mysql implements DatabaseEngine
         unset($result['null'], $result['field']);
 
         return $result;
+    }
+
+    /**
+     * Devuelve el enlace a la clase de Utilidades del engine
+     * @return DataBaseUtils
+     */
+    public function getUtils()
+    {
+        return $this->utils;
+    }
+    
+    /**
+     * Devuelve el enlace a la clase de SQL del engine
+     * @return DatabaseSQL
+     */
+    public function getSQL()
+    {
+        return $this->utilsSQL;
     }
 }

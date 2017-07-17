@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  carlos@facturascripts.com
@@ -17,9 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
-
 
 /**
  * Interface para gestionar las sentencias SQL necesarias 
@@ -28,14 +25,16 @@ namespace FacturaScripts\Core\Base\DataBase;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-interface DatabaseSQL {
+interface DatabaseSQL
+{
+
     /**
      * Sentencia necesaria para convertir la columna a entero.
      * @param string $colName
      * @return string
      */
     public function sql2int($colName);
-    
+
     /**
      * Sentencia SQL para obtener el último valor de una secuencia o ID
      */
@@ -64,7 +63,7 @@ interface DatabaseSQL {
      * @param array $xmlCons
      */
     public function sqlTableConstraints($xmlCons);
-    
+
     /**
      * Sentencia SQL para obtener los indices de una tabla
      * @param string $tableName
