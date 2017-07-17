@@ -16,13 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
 use FacturaScripts\Core\Base\Utils;
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Esta clase almacena los principales datos de la empresa.
@@ -226,9 +223,6 @@ class Empresa
      * Empresa constructor.
      *
      * @param array $data
-     *
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     public function __construct(array $data = [])
     {
@@ -298,7 +292,6 @@ class Empresa
     /**
      * Comprueba los datos de la empresa, devuelve TRUE si es correcto
      * @return bool
-     * @throws TranslationInvalidArgumentException
      */
     public function test()
     {

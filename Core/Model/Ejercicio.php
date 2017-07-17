@@ -16,12 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Ejercicio contable. Es el periodo en el que se agrupan asientos, facturas, albaranes...
@@ -97,8 +94,6 @@ class Ejercicio
     /**
      * Ejercicio constructor.
      * @param array $data
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     public function __construct(array $data = [])
     {
@@ -205,7 +200,6 @@ class Ejercicio
      * @param string $fecha
      * @param bool $showError
      * @return string
-     * @throws TranslationInvalidArgumentException
      */
     public function getBestFecha($fecha, $showError = false)
     {
@@ -235,8 +229,6 @@ class Ejercicio
      * @param bool $soloAbierto
      * @param bool $crear
      * @return bool|ejercicio
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     public function getByFecha($fecha, $soloAbierto = true, $crear = true)
     {
@@ -269,7 +261,6 @@ class Ejercicio
     /**
      * Comprueba los datos del ejercicio, devuelve TRUE si son correctos
      * @return bool
-     * @throws TranslationInvalidArgumentException
      */
     public function test()
     {

@@ -16,10 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
-
-use RuntimeException;
 
 /**
  * Gestor de plugins de FacturaScripts.
@@ -43,6 +40,18 @@ class PluginManager
     private static $folder;
 
     /**
+     * Traductor del sistema.
+     * @var Translator
+     */
+    private static $i18n;
+
+    /**
+     * Gestiona el log de toda la aplicación.
+     * @var MiniLog
+     */
+    private static $minilog;
+
+    /**
      * PluginManager constructor.
      * @param string $folder
      */
@@ -50,6 +59,8 @@ class PluginManager
     {
         if (self::$folder === null) {
             self::$folder = $folder;
+            self::$i18n = new Translator($folder);
+            self::$minilog = new MiniLog();
 
             self::$enabledPlugins = [];
             if (file_exists(self::$folder . '/plugin.list')) {
@@ -113,7 +124,6 @@ class PluginManager
      * usar controladores y modelos de plugins con el autoloader, pero siguiendo
      * el sistema de prioridades de FacturaScripts.
      * @param bool $clean
-     * @throws RuntimeException
      */
     public function deploy($clean = true)
     {
@@ -125,7 +135,7 @@ class PluginManager
                 $dir = self::$folder . '/Dinamic/' . $folder;
                 if (!file_exists($dir)) {
                     if (!@mkdir($dir, 0775, true) && !is_dir($dir)) {
-                        throw new RuntimeException(sprintf('Unable to create the %s directory', $dir));
+                        self::$minilog->critical(self::$i18n->trans('cant-create-folder', [$dir]));
                     }
                 } else {
                     $this->cleanDinamic(self::$folder . '/Dinamic/');

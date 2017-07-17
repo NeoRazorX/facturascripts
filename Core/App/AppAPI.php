@@ -16,12 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\App;
-
-use InvalidArgumentException;
-use Symfony\Component\HttpFoundation\Response;
-use UnexpectedValueException;
 
 /**
  * Description of App
@@ -33,8 +28,6 @@ class AppAPI extends App
 
     /**
      * Ejecuta la API.
-     * @throws InvalidArgumentException
-     * @throws UnexpectedValueException
      */
     public function run()
     {
@@ -47,6 +40,7 @@ class AppAPI extends App
             $this->response->setContent('IP-BANNED');
         } else {
             /// implementar
+            $this->response->setContent('TODO');
         }
     }
 }
