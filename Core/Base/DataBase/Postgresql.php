@@ -212,11 +212,11 @@ class Postgresql implements DatabaseEngine
      * Ejecuta una sentencia SQL de tipo select
      * @param resource $link
      * @param string $sql
-     * @return array
+     * @return resource
      */
     public function select($link, $sql)
     {
-        return (array) $this->runSql($link, $sql);
+        return $this->runSql($link, $sql);
     }
 
     /**
