@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Base\DataBase;
 
-use FacturaScripts\Core\Base\DataBase\MysqlSQL;
-use FacturaScripts\Core\Base\DataBase\DataBaseUtils;
 use Exception;
 use mysqli;
 

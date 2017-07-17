@@ -252,7 +252,7 @@ trait Model
     public function get($cod)
     {
         $data = $this->getRecord($cod);
-        if ($data) {
+        if (!empty($data)) {
             $class = $this->modelName();
             return new $class($data[0]);
         }

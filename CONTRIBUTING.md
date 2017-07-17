@@ -3,7 +3,7 @@
 Este proyecto es software libre y todos los desarrolladores son bienvenidos.
 Puedes consultar la lista de tareas a realizar, la documentación y el chat
 para programadores en nuestra página web:
-https://www.facturascripts.com/tareas
+https://www.facturascripts.com/foro/quieres-colaborar-en-el-desarrollo-de-facturascripts-964.html
 
 # Cómo contribuir
 
@@ -19,38 +19,9 @@ Este documento trata acerca de las Issues (Problemas) y los Pull Request (Petici
 
 ## Issues (Problemas)
 
-En primer lugar, es necesario comprobar si tu código está actualizado: 
-* Todavía está soportada tu versión?
-* Estás utilizando la última versión?
-
-Las Issues de GitHub son para los **problemas**, lo opuesto a preguntar como 
-utilizar FacturaScripts. Si no estás seguro de si se trata de un bug, o 
-simplemente quieres preguntarlo, puedes hacerlo desde [La comunidad de FacturaScripts](https://www.facturascripts.com/feedback).
-
-Entonces, si realmente se trata de un fallo, puedes reportarlo a través de Github 
-siguiendo estos puntos y prestando atención con ellos:
-
-* Comprueba que el fallo no haya sido reportado ya!
-* El título debe resumir el problema con claridad.
-* Una descripción de como reproducir el problema. Intentando hacer frases 
-concretas e indicando punto a punto el proceso. Pegar un mensaje de error 
-no suele ser suficiente.
-* Si el problema es una página de error, puedes adjuntarnos el registro que genera 
-FacturaScripts mediante la PHPDebugBar. **No te limítes a hacer una captura de pantalla**, 
-los buscadores indexan texto pero no imágenes, y eso no ayudará a otros a encontrar 
-el mismo problema.
-* Las capturas de pantalla pueden considerarse datos adicionales, pero de por si, 
-no son suficientes y por eso se requiere una descripción. Es muy recomendable 
-proporcionar capturas de pantalla cuando se reportan fallos relacionados con la 
-interfaz de usuario.
-* Si necesitas introducir código, asegurate que sabes como conseguir coloración 
-sintáctica, en particular con [los bloques de código cercado](https://help.github.com/articles/creating-and-highlighting-code-blocks/).
-Si crees que el código es demasiado largo, puedes utilizar servicios externos como
-https://pastebin.com/ o https://gist.github.com/ . Y si esto no fuera suficiente, 
-también puedes crear un repositorio para mostrar el fallo.
-
-> _NOTA:_ No dudes en proporcionar tanta información como sea posible: 
-> Sistema operativo, versión de PHP, extensiones de PHP, plugins de FacturaScripts...
+Cualquier duda, pregunta o error que encuentres en este prototipo lo puedes comentar
+en el chat:
+https://facturascripts.slack.com
 
 
 ## Pull Requests (Peticiones para incorporar cambios)
@@ -63,19 +34,11 @@ Pero por favor, lee lo siguiente antes:
 
 #### Estilo de código
 
-Cada proyecto sigue los estándares [PSR-1](http://www.php-fig.org/psr/psr-1/), [PSR-2](http://www.php-fig.org/psr/psr-2/)
-y [Symfony Coding Standards](http://symfony.com/doc/current/contributing/code/standards.html) para el estilo de código,
-[PSR-4](http://www.php-fig.org/psr/psr-4/) para el autoloading.
+Este proyecto sigue los estándares [PSR-1](http://www.php-fig.org/psr/psr-1/) y
+[PSR-2](http://www.php-fig.org/psr/psr-2/) para el estilo de código.
 
-Por favor, [instala PHP Coding Standard Fixer](http://cs.sensiolabs.org/#installation) y 
-ejecutalo con este comando antes de commitear tus modificaciones:
-
-```bash
-php-cs-fixer fix --verbose
-```
-
-O puedes utilizar los plugins existentes para los diferentes IDEs, que lo hacen en tiempo real:
-* [NetBeans](http://plugins.netbeans.org/plugin/49042/php-cs-fixer)
+Puedes utilizar los plugins existentes para los diferentes IDEs, que lo hacen en tiempo real:
+* [NetBeans](https://github.com/allebb/netbeans-psr-formatting)
 * [Atom](https://atom.io/packages/php-cs-fixer)
 * [PHPStorm](https://www.jetbrains.com/help/phpstorm/code-sniffer.html)
 
@@ -85,7 +48,8 @@ La documentación es algo que nos resulta imprescindible a todos para entender m
 realizado por otros, o incluso para entender que hicimos nosotros mismos hace algún tiempo. 
 Entonces, porqué no documentar tus aportes para que los demás también lo tengan más sencillo?
 
-En nuestro caso particular puede revisarse por ejemplo cualquier clase en [la base del núcleo de FacturaScripts](https://github.com/NeoRazorX/facturascripts/tree/master/Core/Base) 
+En nuestro caso particular puede revisarse por ejemplo cualquier clase en
+[la base del núcleo de FacturaScripts](https://github.com/NeoRazorX/facturascripts/tree/master/Core/Base) 
 para comprobar que prácticamente todo, por no decir todo, está comentado. De modo que cualquiera 
 puede documentarse rápidamente y saber que y como debe utilizarlo.
 
