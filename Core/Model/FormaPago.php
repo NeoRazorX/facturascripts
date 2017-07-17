@@ -19,8 +19,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Forma de pago de una factura, albarán, pedido o presupuesto.

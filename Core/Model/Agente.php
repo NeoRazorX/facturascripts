@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * El agente/empleado es el que se asocia a un albarán, factura o caja.

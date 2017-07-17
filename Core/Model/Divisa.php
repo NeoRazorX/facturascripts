@@ -19,8 +19,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Una divisa (moneda) con su símbolo y su tasa de conversión respecto al euro.

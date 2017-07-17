@@ -41,7 +41,7 @@ class MenuItem
 
     /**
      * Lista de opciones de menú para el item
-     * @var array
+     * @var MenuItem[]
      */
     public $menu;
 
@@ -55,5 +55,37 @@ class MenuItem
         $this->title = $title;
         $this->url = $url;
         $this->menu = [];
+    }
+
+    public function getHTML($level = 0)
+    {
+        if (empty($this->menu)) {
+            return '<li><a href="' . $this->url . '">' . $this->title . '</a></li>';
+        }
+
+        if ($level === 0) {
+            $html = '<li>';
+        } else {
+            $html = '<li class="dropdown-submenu">';
+        }
+
+        if ($level === 0) {
+            $html .= '<a href="' . $this->url . '" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'
+                . $this->title . ' <span class="caret"></span>'
+                . '</a>'
+                . '<ul class="dropdown-menu multi-level">';
+        } else {
+            $html .= '<a href="' . $this->url . '" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'
+                . $this->title . '</a>'
+                . '<ul class="dropdown-menu">';
+        }
+
+        foreach ($this->menu as $menuItem) {
+            $html .= $menuItem->getHTML($level + 1);
+        }
+
+        $html .= '</ul></li>';
+
+        return $html;
     }
 }

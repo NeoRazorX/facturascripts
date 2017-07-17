@@ -20,8 +20,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Define la relación entre un usuario y un rol.

@@ -19,8 +19,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Define que un usuario tiene acceso a una página concreta
@@ -69,7 +67,7 @@ class PageRule
      */
     public function __construct(array $data = [])
     {
-        $this->init(__CLASS__, 'fs_access', 'id');
+        $this->init(__CLASS__, 'fs_page_rules', 'id');
         if (!empty($data)) {
             $this->loadFromData($data);
         } else {

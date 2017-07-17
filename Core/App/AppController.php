@@ -105,7 +105,7 @@ class AppController extends App
                 $this->controller = new $controllerName(
                     $this->cache, $this->i18n, $this->miniLog, $this->response, $user, $pageName
                 );
-                if ($user === false) {
+                if ($user === null) {
                     $this->controller->publicCore();
                 } else {
                     $this->menuManager->selectPage($this->controller->getPageData());

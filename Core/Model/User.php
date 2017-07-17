@@ -20,8 +20,6 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
 use FacturaScripts\Core\Base\Utils;
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Usuario de FacturaScripts.
