@@ -79,10 +79,9 @@ class Page
     public function __construct(array $data = [])
     {
         $this->init(__CLASS__, 'fs_pages', 'name');
+        $this->clear();
         if (!empty($data)) {
             $this->loadFromData($data);
-        } else {
-            $this->clear();
         }
     }
 

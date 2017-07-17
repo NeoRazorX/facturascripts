@@ -191,10 +191,10 @@ class DataBase
      */
     public function getConstraints($tableName, $extended = false)
     {
+        $sql = self::$engine->sqlConstraints($tableName);
+
         if ($extended) {
             $sql = self::$engine->sqlConstraintsExtended($tableName);
-        } else {
-            $sql = self::$engine->sqlConstraints($tableName);
         }
 
         $data = $this->select($sql);

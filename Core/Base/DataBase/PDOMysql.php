@@ -902,10 +902,10 @@ class PDOMysql implements DatabaseEngine
         $defaultNull = ($colData['defecto'] === null);
         if ($defaultNull && !$notNull) {
             $result .= ' DEFAULT NULL';
-        } else {
-            if ($colData['defecto'] !== '') {
-                $result .= ' DEFAULT ' . $colData['defecto'];
-            }
+        }
+
+        if ($colData['defecto'] !== '') {
+            $result .= ' DEFAULT ' . $colData['defecto'];
         }
 
         return $result;

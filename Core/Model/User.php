@@ -111,10 +111,9 @@ class User
     public function __construct(array $data = [])
     {
         $this->init(__CLASS__, 'fs_users', 'nick');
+        $this->clear();
         if (!empty($data)) {
             $this->loadFromData($data);
-        } else {
-            $this->clear();
         }
     }
 

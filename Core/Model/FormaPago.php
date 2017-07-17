@@ -85,10 +85,9 @@ class FormaPago
     public function __construct(array $data = [])
     {
         $this->init(__CLASS__, 'formaspago', 'codpago');
+        $this->clear();
         if (!empty($data)) {
             $this->loadFromData($data);
-        } else {
-            $this->clear();
         }
     }
 

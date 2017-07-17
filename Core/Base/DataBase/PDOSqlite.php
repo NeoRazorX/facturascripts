@@ -862,15 +862,15 @@ class PDOSqlite implements DatabaseEngine
         $defaultNull = ($colData['defecto'] === null);
         if ($defaultNull && !$notNull) {
             $result .= ' DEFAULT NULL';
-        } else {
-            if ($colData['defecto'] !== '') {
-                if ($colData['defecto'] !== 'true' && $colData['defecto'] !== 'false') {
-                    $result .= ' DEFAULT ' . $colData['defecto'];
-                } elseif ($colData['defecto'] !== 'true') {
-                    $result .= ' DEFAULT 1';
-                } elseif ($colData['defecto'] !== 'false') {
-                    $result .= ' DEFAULT 0';
-                }
+        }
+
+        if ($colData['defecto'] !== '') {
+            if ($colData['defecto'] !== 'true' && $colData['defecto'] !== 'false') {
+                $result .= ' DEFAULT ' . $colData['defecto'];
+            } elseif ($colData['defecto'] !== 'true') {
+                $result .= ' DEFAULT 1';
+            } elseif ($colData['defecto'] !== 'false') {
+                $result .= ' DEFAULT 0';
             }
         }
 

@@ -90,15 +90,15 @@ class IPFilter
 
     /**
      * Devuelve true si los intentos de acceso desde una IP sobrepasa el límite MAX_ATTEMPTS
-     * @param $ip
+     * @param $checkIp
      * @return bool
      */
-    public function isBanned($ip)
+    public function isBanned($checkIp)
     {
         $banned = false;
 
         foreach ($this->ipList as $line) {
-            if ($line['ip'] === $ip && $line['count'] > self::MAX_ATTEMPTS) {
+            if ($line['ip'] === $checkIp && $line['count'] > self::MAX_ATTEMPTS) {
                 $banned = true;
                 break;
             }
@@ -109,13 +109,13 @@ class IPFilter
 
     /**
      * Cuenta las veces que un usuario intenta acceder desde una dirección IP
-     * @param $ip
+     * @param $checkIp
      */
-    public function setAttempt($ip)
+    public function setAttempt($checkIp)
     {
         $found = false;
         foreach ($this->ipList as $key => $line) {
-            if ($line['ip'] === $ip) {
+            if ($line['ip'] === $checkIp) {
                 $this->ipList[$key]['count'] ++;
                 $this->ipList[$key]['expire'] = time() + self::BAN_SECONDS;
                 $found = true;
@@ -125,7 +125,7 @@ class IPFilter
 
         if (!$found) {
             $this->ipList[] = [
-                'ip' => $ip,
+                'ip' => $checkIp,
                 'count' => 1,
                 'expire' => time() + self::BAN_SECONDS
             ];
