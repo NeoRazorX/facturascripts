@@ -16,10 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 use Symfony\Component\Translation\Loader\JsonFileLoader;
 use Symfony\Component\Translation\Translator as symfonyTranslator;
 
@@ -53,7 +51,6 @@ class Translator
      * Translator constructor.
      * @param string $folder
      * @param string $lang
-     * @throws TranslationInvalidArgumentException
      */
     public function __construct($folder = '', $lang = 'es_ES')
     {
@@ -72,7 +69,6 @@ class Translator
      * @param string $txt
      * @param array $parameters
      * @return string
-     * @throws TranslationInvalidArgumentException
      */
     public function trans($txt, array $parameters = [])
     {
@@ -83,7 +79,6 @@ class Translator
      * Carga los archivos de traducción siguiendo el sistema de prioridades
      * de FacturaScripts. En esta caso hay que proporcionar al traductor las rutas
      * en orden inverso.
-     * @throws TranslationInvalidArgumentException
      */
     private function locateFiles()
     {

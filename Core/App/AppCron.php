@@ -16,10 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\App;
-
-use UnexpectedValueException;
 
 /**
  * Description of App
@@ -31,13 +28,13 @@ class AppCron extends App
 
     /**
      * Ejecuta el cron.
-     * @throws UnexpectedValueException
      */
     public function run()
     {
         $this->response->headers->set('Content-Type', 'text/plain');
         if ($this->dataBase->connected()) {
             /// implementar
+            $this->response->setContent('TODO');
         } else {
             $this->response->setContent('DB-ERROR');
         }

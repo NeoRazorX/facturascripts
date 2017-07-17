@@ -16,15 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base;
-use InvalidArgumentException;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Description of App
@@ -91,9 +87,6 @@ abstract class App
     /**
      * Inicializa la app.
      * @param string $folder Carpeta de trabajo de FacturaScripts
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     public function __construct($folder = '')
     {

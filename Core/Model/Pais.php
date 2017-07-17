@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
@@ -56,8 +55,6 @@ class Pais
     /**
      * Pais constructor.
      * @param array $data
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     public function __construct(array $data = [])
     {
@@ -345,8 +342,6 @@ class Pais
      * Devuelve el pais con codido = $cod
      * @param string $cod
      * @return pais|bool
-     * @throws TranslationInvalidArgumentException
-     * @throws RuntimeException
      */
     public function getByIso($cod)
     {
@@ -362,7 +357,6 @@ class Pais
     /**
      * Comprueba los datos del pais, devuelve TRUE si son correctos
      * @return bool
-     * @throws TranslationInvalidArgumentException
      */
     public function test()
     {

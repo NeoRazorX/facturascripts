@@ -16,15 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Model as Models;
-use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Translation\Exception\InvalidArgumentException;
 
 /**
  * Clase de la que deben heredar todos los controladores de FacturaScripts.
@@ -110,9 +107,6 @@ class Controller
      * @param Response $response
      * @param Models\User $user
      * @param string $className
-     *
-     * @throws RuntimeException
-     * @throws InvalidArgumentException
      */
     public function __construct(&$cache, &$i18n, &$miniLog, &$response, $user, $className)
     {

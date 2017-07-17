@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
@@ -17,10 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Model;
+use FacturaScripts\Core\Model as Models;
 
 /**
  * Gestiona el uso del menú de Facturascripts
@@ -28,47 +26,68 @@ use FacturaScripts\Core\Model;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class MenuManager {
+class MenuManager
+{
+
     /**
-     * Contiene la estructura del menú para el usuario
+     * Contiene la estructura del menú para el usuario.
      * @var array 
      */
     private static $menu;
-    
+
     /**
-     * Usuario para quien se ha creado el menú
-     * @var string
+     *
+     * @var Models\Page
+     */
+    private static $pageModel;
+
+    /**
+     * Usuario para quien se ha creado el menú.
+     * @var Models\User
      */
     private static $user;
-    
-    /**
-     * Prepara y carga el menú para el usuario
-     * @param string $user
-     */
-    public function __construct($user) {
-        if (!isset(self::$menu) || (self::$user !== $user)) {
-            self::$menu = $this->loadMenu($user);
-            self::$user = $user;
-        }        
+
+    public function setUser($user)
+    {
+        self::$user = $user;
+
+        if (self::$pageModel === null) {
+            self::$pageModel = new Models\Page();
+        }
+
+        if ($user !== false) {
+            self::$menu = $this->loadUserMenu();
+        }
     }
- 
-    /**
-     * Carga la estructura de menú para el usuario indicado
-     * @param string $user
-     * @return array
-     */
-    private function loadMenu($user) {
+
+    public function selectPage($pageData)
+    {
+        $pageModel = self::$pageModel->get($pageData['name']);
+        if ($pageData === false) {
+            $pageData['order'] = 100;
+            $pageModel = new Models\Page($pageData);
+            $pageModel->save();
+        }
+
+        if (!empty(self::$menu)) {
+            
+        }
+    }
+
+    private function loadUserMenu()
+    {
         $result = [];
         $menuValue = '';
         $submenuValue = NULL;
         $menuItem = NULL;
-        
+
         /// Cargamos la lista de paginas para el usuario
-        $pages = $this->loadPages($user);
+        $pages = $this->loadPages();
         foreach ($pages as $page) {
             if ($page->menu == '') {
                 continue;
             }
+            
             /// Control de ruptura de menu
             if ($menuValue !== $page->menu) {
                 $menuValue = $page->menu;
@@ -89,43 +108,39 @@ class MenuManager {
 
             $menuItem[$page->name] = new MenuItem($page->title, $page->url());
         }
-        
+
         return $result;
     }
-    
+
     /**
      * Carga la lista de páginas para el usuario
      * @param string $user
      * @return array
-     */    
-    private function loadPages($user) {
+     */
+    private function loadPages()
+    {
         $result = [];
-
-        $userModel = new Model\User();
-        $userModel->loadFromCode($user);
         
-        $pageModel = new Model\Page();
         $where = [
-            'showonmenu' => TRUE           
+            'showonmenu' => TRUE
         ];
-        
+
         $order = [
             'lower(menu)' => 'ASC',
             'lower(submenu)' => 'ASC',
             'orden' => 'ASC',
             'title' => 'ASC'
         ];
-        
-        $pages = $pageModel->all($where, $order);
+
+        $pages = self::$pageModel->all($where, $order);
         switch (TRUE) {
-            case FS_DEMO:
-            case $userModel->admin:
+            case self::$user->admin:
                 $result = $pages;
                 break;
 
             default:
-                $pageRuleModel = new Model\PageRule();
-                $pageRule_list = $pageRuleModel->all(['nick' => $user]);                
+                $pageRuleModel = new Models\PageRule();
+                $pageRule_list = $pageRuleModel->all(['nick' => self::$user]);
                 foreach ($pages as $page) {
                     foreach ($pageRule_list as $pageRule) {
                         if ($page->name == $pageRule->pagename) {
@@ -137,29 +152,26 @@ class MenuManager {
                 }
                 break;
         }
-        
+
         return $result;
     }
-    
+
     /**
      * Devuelve el menú del usuario, el conjunto de páginas a las que tiene acceso.
      * @param string $user
      * @param boolean $reload
      * @return array
      */
-    public function getMenu($user, $reload = FALSE) {
-        if ($reload || !isset(self::$menu) || (self::$user !== $user)) {
-            self::$menu = $this->loadMenu($user);
-            self::$user = $user;
-        }
-        
+    public function getMenu()
+    {
         return self::$menu;
     }
-    
+
     /**
      * Solo para pruebas. Imprime la estructura de menú
      */
-    public function printMenu() {
+    public function printMenu()
+    {
         foreach (self::$menu as $key => $value) {
             print $value->title . " (" . $value->url . ")<br />";
             foreach ($value->menu as $key2 => $value2) {
@@ -168,6 +180,6 @@ class MenuManager {
                     print "-------->" . $value3->title . " (" . $value3->url . ")<br />";
                 }
             }
-        }        
+        }
     }
 }

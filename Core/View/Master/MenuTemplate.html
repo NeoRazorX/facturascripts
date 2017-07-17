@@ -9,10 +9,12 @@
         {% block css %}
         <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="node_modules/smartmenus/dist/css/sm-core-css.css" />
         {% endblock %}
         {% block javascript %}
         <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
         <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="node_modules/smartmenus/dist/jquery.smartmenus.min.js"></script>
         {% endblock %}
         {{ debugBarRender.renderHead()|raw }}
     </head>
@@ -32,20 +34,22 @@
                 </div>
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
-                        <li><a href="#">Link</a></li>
+                    {% for menuItem in menuManager.getMenu() %}
+                        {% if menuItem.menu|length > 0 %}
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                            <a href="{{ menuItem.url }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                {{ menuItem.title }} <span class="caret"></span>
+                            </a>
                             <ul class="dropdown-menu">
-                                <li><a href="#">Action</a></li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something else here</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#">Separated link</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#">One more separated link</a></li>
+                                {% for menuItem2 in menuItem.menu %}
+                                <li><a href="{{ menuItem2.url }}">{{ menuItem2.title }}</a></li>
+                                {% endfor %}
                             </ul>
                         </li>
+                        {% else %}
+                        <li><a href="{{ menuItem.url }}">{{ menuItem.title }}</a></li>
+                        {% endif %}
+                    {% endfor %}
                     </ul>
                     <form class="navbar-form navbar-right">
                         <div class="form-group">

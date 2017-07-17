@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
@@ -102,8 +101,6 @@ class Almacen
     /**
      * Almacen constructor.
      * @param array $data
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     public function __construct(array $data = [])
     {
@@ -150,7 +147,6 @@ class Almacen
     /**
      * Comprueba los datos del almacén, devuelve TRUE si son correctos
      * @return bool
-     * @throws TranslationInvalidArgumentException
      */
     public function test()
     {

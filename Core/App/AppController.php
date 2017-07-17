@@ -16,24 +16,16 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\App;
 
 use DebugBar\StandardDebugBar;
-use Exception;
 use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Base\MenuManager;
 use FacturaScripts\Core\Model\User;
-use InvalidArgumentException;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 use Twig_Environment;
-use Twig_Error_Loader;
-use Twig_Error_Runtime;
-use Twig_Error_Syntax;
 use Twig_Loader_Filesystem;
-use UnexpectedValueException;
 
 /**
  * Description of App
@@ -54,29 +46,22 @@ class AppController extends App
      * @var StandardDebugBar
      */
     private $debugBar;
+    
+    private $menuManager;
 
     /**
      * AppController constructor.
      * @param string $folder
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     public function __construct($folder = '')
     {
         parent::__construct($folder);
         $this->debugBar = new StandardDebugBar();
+        $this->menuManager = new MenuManager();
     }
 
     /**
      * Selecciona y ejecuta el controlador pertinente.
-     * @throws InvalidArgumentException
-     * @throws Twig_Error_Loader
-     * @throws Twig_Error_Runtime
-     * @throws Twig_Error_Syntax
-     * @throws UnexpectedValueException
-     * @throws \RuntimeException
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
      */
     public function run()
     {
@@ -99,13 +84,6 @@ class AppController extends App
     /**
      * Carga y procesa el controlador $pageName.
      * @param string $pageName nombre del controlador
-     * @throws InvalidArgumentException
-     * @throws Twig_Error_Loader
-     * @throws Twig_Error_Runtime
-     * @throws Twig_Error_Syntax
-     * @throws UnexpectedValueException
-     * @throws \RuntimeException
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
      */
     private function loadController($pageName)
     {
@@ -121,15 +99,17 @@ class AppController extends App
         if (class_exists($controllerName)) {
             $this->miniLog->debug('Loading controller: ' . $controllerName);
             $user = $this->userAuth();
-
+            $this->menuManager->setUser($user);
+            
             try {
                 $this->controller = new $controllerName(
                     $this->cache, $this->i18n, $this->miniLog, $this->response, $user, $pageName
                 );
-                if ($user) {
-                    $this->controller->privateCore();
-                } else {
+                if ($user === false) {
                     $this->controller->publicCore();
+                } else {
+                    $this->menuManager->selectPage($this->controller->getPageData());
+                    $this->controller->privateCore();
                 }
                 $template = $this->controller->getTemplate();
                 $httpStatus = Response::HTTP_OK;
@@ -149,11 +129,6 @@ class AppController extends App
      * Crea el HTML con la plantilla seleccionada. Aunque los datos no se volcarán
      * hasta ejecutar render()
      * @param string $template archivo html a utilizar
-     * @throws InvalidArgumentException
-     * @throws UnexpectedValueException
-     * @throws Twig_Error_Loader
-     * @throws Twig_Error_Runtime
-     * @throws Twig_Error_Syntax
      */
     private function renderHtml($template)
     {
@@ -174,6 +149,7 @@ class AppController extends App
             'fsc' => $this->controller,
             'i18n' => $this->i18n,
             'log' => $this->miniLog->read(),
+            'menuManager' => $this->menuManager,
             'sql' => $this->miniLog->read(['sql']),
         );
 
@@ -203,9 +179,6 @@ class AppController extends App
     /**
      * TODO
      * @return User|null
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
-     * @throws \RuntimeException
-     * @throws \InvalidArgumentException
      */
     private function userAuth()
     {

@@ -16,13 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Description of admin_home
@@ -82,8 +79,6 @@ class AdminHome extends Base\Controller
      * @param $response
      * @param Model\User $user
      * @param string $className
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     public function __construct(&$cache, &$i18n, &$miniLog, &$response, $user, $className)
     {
