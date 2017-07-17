@@ -13,3 +13,5 @@ composer.lock
 config.php
 generateDoc.sh
 plugin.list
+*.cache
+*.lock

@@ -169,21 +169,5 @@ class MenuManager
     public function getMenu()
     {
         return self::$menu;
-    }
-
-    /**
-     * Solo para pruebas. Imprime la estructura de menú
-     */
-    public function printMenu()
-    {
-        foreach (self::$menu as $key => $value) {
-            print $value->title . " (" . $value->url . ")<br />";
-            foreach ($value->menu as $key2 => $value2) {
-                print "--->" . $value2->title . " (" . $value2->url . ")<br />";
-                foreach ($value2->menu as $key3 => $value3) {
-                    print "-------->" . $value3->title . " (" . $value3->url . ")<br />";
-                }
-            }
-        }
-    }
+    }    
 }

@@ -47,8 +47,8 @@ class MenuItem
 
     /**
      * Contruye y rellena los valores principales del Item
-     * @param type $title
-     * @param type $url
+     * @param string $title
+     * @param string $url
      */
     public function __construct($title, $url)
     {
