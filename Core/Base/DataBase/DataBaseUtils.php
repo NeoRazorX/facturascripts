@@ -74,15 +74,15 @@ class DataBaseUtils
      */
     public function compareDataTypes($dbType, $xmlType)
     {
-        $db = strtolower($dbType);
+        $db0 = strtolower($dbType);
         $xml = strtolower($xmlType);
 
         $result = (
             (FS_CHECK_DB_TYPES !== '1') ||
-            self::$engine->compareDataTypes($db, $xml) ||
+            self::$engine->compareDataTypes($db0, $xml) ||
             ($xml === 'serial') ||
             (
-            strpos($db, 'time') === 0 &&
+            strpos($db0, 'time') === 0 &&
             strpos($xml, 'time') === 0
             )
             );
