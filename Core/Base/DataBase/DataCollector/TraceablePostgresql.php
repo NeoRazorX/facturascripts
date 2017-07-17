@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Base\DataBase\DataCollector;
 
+use FacturaScripts\Core\Base\DataBase\Postgresql;
+
 /**
  * Clase para tracear a PostgreSQL.
  * De momento no se utiliza, lo ideal sería utilizarlo conjuntamente
@@ -35,7 +37,7 @@ namespace FacturaScripts\Core\Base\DataBase\DataCollector;
 class TraceablePostgresql
 {
     /**
-     * @var Postgresql
+     * @var resource
      */
     protected $link;
     /**

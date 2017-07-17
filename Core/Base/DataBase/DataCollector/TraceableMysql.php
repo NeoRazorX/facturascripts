@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Base\DataBase\DataCollector;
 
+use FacturaScripts\Core\Base\DataBase\Mysql;
 use mysqli;
 
 /**
@@ -39,7 +40,7 @@ class TraceableMysql extends Mysql
     /**
      * @var Mysql
      */
-    protected $db;
+    protected $link;
     /**
      * @var array
      */
@@ -48,61 +49,61 @@ class TraceableMysql extends Mysql
     /**
      * TraceableMysql constructor.
      *
-     * @param Mysql $db
+     * @param Mysql $link
      */
-    public function __construct(Mysql $db)
+    public function __construct(Mysql $link)
     {
         parent::__construct();
-        $this->db = $db;
+        $this->link = $link;
     }
 
     /**
      * Initiates a transaction
      *
-     * @param mysqli $db
+     * @param mysqli $link
      *
      * @return bool
      */
-    public function beginTransaction($db)
+    public function beginTransaction($link)
     {
-        return $this->db->beginTransaction($db);
+        return $this->link->beginTransaction($link);
     }
 
     /**
      * Commits a transaction
      *
-     * @param mysqli $db
+     * @param mysqli $link
      *
      * @return bool
      */
-    public function commit($db)
+    public function commit($link)
     {
-        return $this->db->commit($db);
+        return $this->link->commit($link);
     }
 
     /**
      * Execute an SQL statement and return the number of affected rows
      *
-     * @param mysqli $db
+     * @param mysqli $link
      * @param string $sql
      *
      * @return bool
      */
-    public function exec($db, $sql)
+    public function exec($link, $sql)
     {
-        return $this->db->exec($db, $sql);
+        return $this->link->exec($link, $sql);
     }
 
     /**
      * Checks if inside a transaction
      *
-     * @param mysqli $db
+     * @param mysqli $link
      *
      * @return bool
      */
-    public function inTransaction($db)
+    public function inTransaction($link)
     {
-        return $this->db->inTransaction($db);
+        return $this->link->inTransaction($link);
     }
 
     /**
@@ -112,32 +113,32 @@ class TraceableMysql extends Mysql
      */
     public function sqlLastValue()
     {
-        return $this->db->sqlLastValue();
+        return $this->link->sqlLastValue();
     }
 
     /**
      * Quotes a string for use in a query.
      *
-     * @param mysqli $db
+     * @param mysqli $link
      * @param string $str
      *
      * @return string
      */
-    public function escapeString($db, $str)
+    public function escapeString($link, $str)
     {
-        return $this->db->escapeString($db, $str);
+        return $this->link->escapeString($link, $str);
     }
 
     /**
      * Rolls back a transaction
      *
-     * @param mysqli $db
+     * @param mysqli $link
      *
      * @return bool
      */
-    public function rollback($db)
+    public function rollback($link)
     {
-        return $this->db->rollback($db);
+        return $this->link->rollback($link);
     }
 
     /**
@@ -149,7 +150,7 @@ class TraceableMysql extends Mysql
      */
     public function __get($name)
     {
-        return $this->db->$name;
+        return $this->link->$name;
     }
 
     /**
@@ -160,7 +161,7 @@ class TraceableMysql extends Mysql
      */
     public function __set($name, $value)
     {
-        $this->db->$name = $value;
+        $this->link->$name = $value;
     }
 
     /**
@@ -172,7 +173,7 @@ class TraceableMysql extends Mysql
      */
     public function __isset($name)
     {
-        if (isset($this->db->$name)) {
+        if (isset($this->link->$name)) {
             return true;
         }
         return false;
@@ -186,6 +187,6 @@ class TraceableMysql extends Mysql
      */
     public function __call($name, $args)
     {
-        return call_user_func_array([$this->db, $name], $args);
+        return call_user_func_array([$this->link, $name], $args);
     }
 }
