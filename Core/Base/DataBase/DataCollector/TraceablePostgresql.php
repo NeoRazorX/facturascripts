@@ -37,7 +37,7 @@ use FacturaScripts\Core\Base\DataBase\Postgresql;
 class TraceablePostgresql
 {
     /**
-     * @var resource
+     * @var Postgresql
      */
     protected $link;
     /**
