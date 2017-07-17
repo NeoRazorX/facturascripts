@@ -77,8 +77,6 @@ class PDOSqlite implements DatabaseEngine
      */
     public static function testConnect(&$errors, $dbData)
     {
-        $done = false;
-
         $dsnHost = 'sqlite:facturascripts.db';
         $options = [
             PDO::ATTR_EMULATE_PREPARES => 1,
@@ -90,16 +88,14 @@ class PDOSqlite implements DatabaseEngine
         try {
             $connection = new PDO($dsnHost, $dbData['user'], $dbData['pass'], $options);
             if ($connection !== null && $connection->errorCode() === '00000') {
-                $done = true;
                 $errors = [];
+                return true;
             }
         } catch (PDOException $e) {
-            if ($e->getMessage() !== '00000') {
-                $errors[] = $e->getMessage();
-            }
+            $errors[] = $e->getMessage();
         }
 
-        return $done;
+        return false;
     }
 
     /**

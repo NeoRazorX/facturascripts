@@ -93,25 +93,24 @@ class Postgresql implements DatabaseEngine
      */
     public static function testConnect(&$errors, $dbData)
     {
-        $done = false;
-
-        $connection = pg_connect('host=' . $dbData['host'] . ' port=' . $dbData['port'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass']);
+        $dsnHost = 'host=' . $dbData['host'] . ' port=' . $dbData['port'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass'];
+        $dsnDb = 'host=' . $dbData['host'] . ' port=' . $dbData['port'] . ' dbname=' . $dbData['name'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass'];
+        $connection = pg_connect($dsnHost);
         if ($connection) {
             // Comprobamos que la BD exista, de lo contrario la creamos
-            $connection2 = pg_connect('host=' . $dbData['host'] . ' port=' . $dbData['port'] . ' dbname=' . $dbData['name'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass']);
+            $connection2 = pg_connect($dsnDb);
             if ($connection2) {
-                $done = true;
-            } else {
-                $sqlCrearBD = 'CREATE DATABASE "' . $dbData['name'] . '";';
-                if (pg_query($connection, $sqlCrearBD)) {
-                    $done = true;
-                } else {
-                    $errors[] = (string) pg_last_error($connection);
-                }
+                return true;
+            }
+
+            $sqlCrearBD = 'CREATE DATABASE "' . $dbData['name'] . '";';
+            if (pg_query($connection, $sqlCrearBD)) {
+                return true;
             }
         }
+        $errors[] = (string) pg_last_error($connection);
 
-        return $done;
+        return false;
     }
 
     /**

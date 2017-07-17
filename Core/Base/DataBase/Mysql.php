@@ -130,8 +130,6 @@ class Mysql implements DatabaseEngine
      */
     public static function testConnect(&$errors, $dbData)
     {
-        $done = false;
-
         if (filter_input(INPUT_POST, 'mysql_socket') !== '') {
             ini_set('mysqli.default_socket', filter_input(INPUT_POST, 'mysql_socket'));
         }
@@ -140,22 +138,22 @@ class Mysql implements DatabaseEngine
         $connection = new mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', (int) $dbData['port']);
         if ($connection->connect_error) {
             $errors[] = (string) $connection->connect_error;
-        } else {
-            // Comprobamos que la BD exista, de lo contrario la creamos
-            $dbSelected = mysqli_select_db($connection, $dbData['name']);
-            if ($dbSelected) {
-                $done = true;
-            } else {
-                $sqlCrearBD = 'CREATE DATABASE `' . $dbData['name'] . '`;';
-                if ($connection->query($sqlCrearBD)) {
-                    $done = true;
-                } else {
-                    $errors[] = (string) $connection->connect_error;
-                }
-            }
         }
 
-        return $done;
+        // Comprobamos que la BD exista, de lo contrario la creamos
+        $dbSelected = mysqli_select_db($connection, $dbData['name']);
+        if ($dbSelected) {
+            return true;
+        }
+
+        $sqlCrearBD = 'CREATE DATABASE `' . $dbData['name'] . '`;';
+        if ($connection->query($sqlCrearBD)) {
+            return true;
+        }
+
+        $errors[] = (string) $connection->connect_error;
+
+        return false;
     }
 
     /**

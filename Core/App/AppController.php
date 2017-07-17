@@ -30,6 +30,9 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\DataBase\DataCollector\MysqlCollector;
 use FacturaScripts\Core\Base\DataBase\DataCollector\PostgresqlCollector;
 use FacturaScripts\Core\Base\DataBase\Mysql;
+use FacturaScripts\Core\Base\DataBase\PDOMysql;
+use FacturaScripts\Core\Base\DataBase\PDOPostgresql;
+use FacturaScripts\Core\Base\DataBase\PDOSqlite;
 use FacturaScripts\Core\Base\DataBase\Postgresql;
 use FacturaScripts\Core\Model\User;
 use InvalidArgumentException;
@@ -308,7 +311,6 @@ class AppController extends App
      */
     private function loadDataBaseTrace(array $queries = [])
     {
-        // TODO: Debería implementarse en Traceable+Collector para tener todos los detalles
         switch (true) {
             case $this->dataBase->getEngine() instanceof Mysql:
                 $this->debugBar->addCollector(new MysqlCollector($queries));
@@ -316,7 +318,9 @@ class AppController extends App
             case $this->dataBase->getEngine() instanceof Postgresql:
                 $this->debugBar->addCollector(new PostgresqlCollector($queries));
                 break;
-            case $this->dataBase->getEngine() instanceof PDO:
+            case $this->dataBase->getEngine() instanceof PDOMysql:
+            case $this->dataBase->getEngine() instanceof PDOPostgresql:
+            case $this->dataBase->getEngine() instanceof PDOSqlite:
                 $pdo = new TraceablePDO($this->dataBase->getLink());
                 $this->debugBar->addCollector(new PDOCollector($pdo));
                 break;

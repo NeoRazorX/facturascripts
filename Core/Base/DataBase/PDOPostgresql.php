@@ -76,8 +76,6 @@ class PDOPostgresql implements DatabaseEngine
      */
     public static function testConnect(&$errors, $dbData)
     {
-        $done = false;
-
         $dsnHost = 'pgsql:host=' . $dbData['host'] . ';port=' . $dbData['port'];
         $dsnDb = $dsnHost . ';dbname=' . $dbData['name'];
         $options = [
@@ -91,9 +89,7 @@ class PDOPostgresql implements DatabaseEngine
         try {
             $connection = new PDO($dsnHost, $dbData['user'], $dbData['pass'], $options);
         } catch (PDOException $e) {
-            if ($e->getMessage() !== '00000') {
-                $errors[] = $e->getMessage();
-            }
+            $errors[] = $e->getMessage();
         }
 
         if ($connection !== null && $connection->errorCode() === '00000') {
@@ -102,39 +98,35 @@ class PDOPostgresql implements DatabaseEngine
             try {
                 $connection2 = new PDO($dsnDb, $dbData['user'], $dbData['pass'], $options);
             } catch (PDOException $e) {
-                if ($e->getMessage() !== '00000') {
-                    $errors[] = $e->getMessage();
-                }
+                $errors[] = $e->getMessage();
             }
 
             if ($connection2 !== null && $connection2->errorCode() === '00000') {
-                $done = true;
                 $errors = [];
-            } else {
-                $sqlCrearBD = 'CREATE DATABASE ' . $dbData['name'] . ';';
-                if (is_int($connection->exec($sqlCrearBD))) {
-                    $done = true;
-                    $errors = [];
-                } else {
-                    $array = $connection->errorInfo();
-                    $error = '';
-                    $separator = '';
-                    foreach ($array as $k => $err) {
-                        if ($err !== '00000') {
-                            $error .= $separator . $err;
-                            if ($k == 0) {
-                                $separator = ' ';
-                            }
-                        }
-                    }
-                    if ($error !== '') {
-                        $errors[] = $error;
-                    }
+                return true;
+            }
+
+            $sqlCrearBD = 'CREATE DATABASE ' . $dbData['name'] . ';';
+            if (is_int($connection->exec($sqlCrearBD))) {
+                $errors = [];
+                return true;
+            }
+
+            $array = $connection->errorInfo();
+            $error = '';
+            $separator = '';
+            foreach ($array as $k => $err) {
+                if ($err !== '00000') {
+                    $error .= $separator . $err;
+                    $separator = ' ';
                 }
+            }
+            if ($error !== '') {
+                $errors[] = $error;
             }
         }
 
-        return $done;
+        return false;
     }
 
     /**

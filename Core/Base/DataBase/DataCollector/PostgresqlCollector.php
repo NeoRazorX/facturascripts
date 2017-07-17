@@ -126,43 +126,4 @@ class PostgresqlCollector extends DataCollector implements Renderable, AssetProv
             'js' => 'assets/js/phpdebugbar.custom-widget.js'
         ];
     }
-
-    /**
-     * TODO
-     *
-     * @param $statement
-     *
-     * @return mixed
-     */
-    public function query($statement)
-    {
-        return $this->profileCall('query', $statement, func_get_args());
-    }
-
-    /**
-     * TODO
-     *
-     * @param $stmt
-     */
-    public function addExecutedStatement($stmt)
-    {
-        $this->queries = $stmt;
-    }
-
-    /**
-     * TODO
-     *
-     * @param $method
-     * @param $sql
-     * @param array $args
-     *
-     * @return mixed
-     */
-    protected function profileCall($method, $sql, array $args)
-    {
-
-        $result = call_user_func_array([$this->queries, $method], $args);
-//        print_r($result);
-        return $result;
-    }
 }
