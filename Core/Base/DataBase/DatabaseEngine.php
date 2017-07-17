@@ -57,6 +57,18 @@ interface DatabaseEngine
     public function connect(&$error);
 
     /**
+     * Se intenta realizar la conexión a la base de datos PostgreSQL,
+     * si se ha realizado se devuelve true, sino false.
+     * En el caso que sea false, $errors contiene el error
+     *
+     * @param $errors
+     * @param $dbData
+     *
+     * @return bool
+     */
+    public static function testConnect(&$errors, $dbData);
+
+    /**
      * Cierra la conexión con la base de datos
      * @param mysqli|resource|PDO $link
      */

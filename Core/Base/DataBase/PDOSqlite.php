@@ -417,7 +417,6 @@ class PDOSqlite implements DatabaseEngine
      */
     public function inTransaction($link)
     {
-        //return $this->dbh->inTransaction();
         return in_array($link, $this->transactions, false);
     }
 
@@ -435,7 +434,7 @@ class PDOSqlite implements DatabaseEngine
         $result = [];
         $this->query($sql);
         $aux = $this->resultSet();
-        if ($aux) {
+        if (!empty($aux)) {
             foreach ($aux as $row) {
                 $result[] = $row;
             }
@@ -954,7 +953,7 @@ class PDOSqlite implements DatabaseEngine
             default:
                 $types = [];
         }
-        return in_array($dbType, $types);
+        return in_array($dbType, $types,false);
     }
 
     /**
@@ -983,6 +982,6 @@ class PDOSqlite implements DatabaseEngine
             default:
                 $types = [];
         }
-        return in_array($dbType, $types);
+        return in_array($dbType, $types, false);
     }
 }

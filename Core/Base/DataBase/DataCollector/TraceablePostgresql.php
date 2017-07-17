@@ -35,7 +35,7 @@ namespace FacturaScripts\Core\Base\DataBase\DataCollector;
 class TraceablePostgresql
 {
     /**
-     * @var resource
+     * @var Postgresql
      */
     protected $link;
     /**

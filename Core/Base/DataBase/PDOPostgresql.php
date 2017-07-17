@@ -460,7 +460,6 @@ class PDOPostgresql implements DatabaseEngine
      */
     public function inTransaction($link)
     {
-        //return $this->dbh->inTransaction();
         return in_array($link, $this->transactions, false);
     }
 
@@ -478,7 +477,7 @@ class PDOPostgresql implements DatabaseEngine
         $result = [];
         $this->query($sql);
         $aux = $this->resultSet();
-        if ($aux) {
+        if (!empty($aux)) {
             foreach ($aux as $row) {
                 $result[] = $row;
             }

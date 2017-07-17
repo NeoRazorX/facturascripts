@@ -451,7 +451,6 @@ class PDOMysql implements DatabaseEngine
      */
     public function inTransaction($link)
     {
-        //return $this->dbh->inTransaction();
         return in_array($link, $this->transactions, false);
     }
 
@@ -469,7 +468,7 @@ class PDOMysql implements DatabaseEngine
         $result = [];
         $this->query($sql);
         $aux = $this->resultSet();
-        if ($aux) {
+        if (!empty($aux)) {
             foreach ($aux as $row) {
                 $result[] = $row;
             }
@@ -533,7 +532,7 @@ class PDOMysql implements DatabaseEngine
         $tables = [];
         $this->query('SHOW TABLES;');
         $aux = $this->resultSet();
-        if ($aux) {
+        if (!empty($aux)) {
             foreach ($aux as $a) {
                 $key = 'Tables_in_' . FS_DB_NAME;
                 if (isset($a[$key])) {
@@ -613,7 +612,7 @@ class PDOMysql implements DatabaseEngine
         $result = true;
         /// ¿La tabla no usa InnoDB?
         $data = $this->select($link, 'SHOW TABLE STATUS FROM `' . FS_DB_NAME . "` LIKE '" . $tableName . "';");
-        if ($data && $data[0]['Engine'] !== 'InnoDB') {
+        if (!empty($data) && $data[0]['Engine'] !== 'InnoDB') {
             $result = $this->dbh->exec('ALTER TABLE ' . $tableName . ' ENGINE=InnoDB;');
             if ($result) {
                 $error = 'Imposible convertir la tabla ' . $tableName . ' a InnoDB.'

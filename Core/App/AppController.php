@@ -316,7 +316,7 @@ class AppController extends App
             case $this->dataBase->getEngine() instanceof Postgresql:
                 $this->debugBar->addCollector(new PostgresqlCollector($queries));
                 break;
-            default:
+            case $this->dataBase->getEngine() instanceof PDO:
                 $pdo = new TraceablePDO($this->dataBase->getLink());
                 $this->debugBar->addCollector(new PDOCollector($pdo));
                 break;
