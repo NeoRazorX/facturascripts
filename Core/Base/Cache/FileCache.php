@@ -16,10 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\Cache;
 
-use RuntimeException;
+use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Base\Translator;
 
 /**
  * Simple file cache
@@ -39,11 +39,12 @@ class FileCache
      * @var array
      */
     private static $config;
+    private $i18n;
+    private $minilog;
 
     /**
      * FileCache constructor.
      * @param string $folder
-     * @throws RuntimeException
      */
     public function __construct($folder = '')
     {
@@ -52,11 +53,12 @@ class FileCache
             'expires' => 180,
         );
 
+        $this->i18n = new Translator($folder);
+        $this->minilog = new MiniLog();
+
         $dir = self::$config['cache_path'];
-        if (!file_exists($dir)) {
-            if (!@mkdir($dir, 0775, true) && !is_dir($dir)) {
-                throw new RuntimeException(sprintf('Unable to create the %s directory', $dir));
-            }
+        if (!file_exists($dir) && !@mkdir($dir, 0775, true) && !is_dir($dir)) {
+            $this->minilog->critical($this->i18n->trans('cant-create-folder', [$dir]));
         }
     }
 

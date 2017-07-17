@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,27 +16,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\App;
+namespace FacturaScripts\Core\Controller;
+
+use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Model;
 
 /**
- * Description of App
+ * Description of AdminUsers
  *
- * @author Carlos García Gómez
+ * @author carlos
  */
-class AppCron extends App
+class AdminUsers extends Base\Controller
 {
-
-    /**
-     * Ejecuta el cron.
-     */
-    public function run()
-    {
-        $this->response->headers->set('Content-Type', 'text/plain');
-        if ($this->dataBase->connected()) {
-            /// implementar
-            $this->response->setContent('TODO');
-        } else {
-            $this->response->setContent('DB-ERROR');
-        }
-    }
+    //put your code here
 }

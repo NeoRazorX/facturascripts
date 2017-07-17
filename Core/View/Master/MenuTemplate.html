@@ -9,6 +9,7 @@
         {% block css %}
         <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="Core/View/CSS/custom.css" />
         {% endblock %}
         {% block javascript %}
         <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
@@ -32,22 +33,11 @@
                 </div>
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
-                        <li><a href="#">Link</a></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Action</a></li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something else here</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#">Separated link</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#">One more separated link</a></li>
-                            </ul>
-                        </li>
+                    {% for menuItem in menuManager.getMenu() %}
+                        {{ menuItem.getHTML()|raw }}
+                    {% endfor %}
                     </ul>
-                    <form class="navbar-form navbar-right">
+                    <form action="index.php?page=MegaSearch" method="post" class="navbar-form navbar-right">
                         <div class="form-group">
                             <div class="input-group">
                                 <input type="text" name="query" class="form-control"/>

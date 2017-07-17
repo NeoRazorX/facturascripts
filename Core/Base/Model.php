@@ -16,11 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
-
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * La clase de la que heredan todos los modelos, conecta a la base de datos,
@@ -97,8 +93,6 @@ trait Model
      * @param string $modelName
      * @param string $tableName nombre de la tabla de la base de datos.
      * @param string $primaryColumn
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     private function init($modelName = '', $tableName = '', $primaryColumn = '')
     {
@@ -224,12 +218,13 @@ trait Model
      * @param string $cod
      * @return array
      */
-    private function getRecord($cod) {
-        $sql = 'SELECT * FROM ' . $this->tableName() 
-            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($cod) . ';';        
+    private function getRecord($cod)
+    {
+        $sql = 'SELECT * FROM ' . $this->tableName()
+            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($cod) . ';';
         return $this->dataBase->select($sql);
     }
-    
+
     /**
      * Rellena la clase con los valores del registro
      * cuya columna primaria corresponda al valor $cod, o vacio si no existe.
@@ -244,11 +239,11 @@ trait Model
             $this->loadFromData($data[0]);
             return true;
         }
-        
+
         $this->clear();
         return false;
     }
-    
+
     /**
      * Devuelve el modelo cuya columna primaria corresponda al valor $cod
      * @param string $cod
