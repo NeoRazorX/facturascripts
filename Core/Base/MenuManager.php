@@ -118,7 +118,6 @@ class MenuManager
 
     /**
      * Carga la lista de páginas para el usuario
-     * @param string $user
      * @return array
      */
     private function loadPages()
@@ -162,8 +161,6 @@ class MenuManager
 
     /**
      * Devuelve el menú del usuario, el conjunto de páginas a las que tiene acceso.
-     * @param string $user
-     * @param boolean $reload
      * @return array
      */
     public function getMenu()
