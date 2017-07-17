@@ -25,8 +25,7 @@ use DebugBar\DataCollector\Renderable;
 
 /**
  * Clase para tracear a PostgreSQL.
- * Por ahora básicamente lee las SQL del miniLog, lo ideal sería utilizarlo conjuntamente
- * con TraceablePostgresql y obtener todos los detalles, como con PDO.
+ * Por ahora básicamente lee las SQL del miniLog, lo ideal sería utilizarlo como con PDO.
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  *
@@ -44,7 +43,7 @@ class PostgresqlCollector extends DataCollector implements Renderable, AssetProv
     protected $queries;
 
     /**
-     * TraceableMysql constructor.
+     * PostgresqlCollector constructor.
      *
      * @param array $queries
      */

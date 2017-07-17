@@ -25,8 +25,7 @@ use DebugBar\DataCollector\Renderable;
 
 /**
  * Clase para tracear a MySQL.
- * Por ahora básicamente lee las SQL del miniLog, lo ideal sería utilizarlo conjuntamente
- * con TraceableMysql y obtener todos los detalles, como con PDO.
+ * Por ahora básicamente lee las SQL del miniLog, lo ideal sería utilizarlo como con PDO.
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  *
@@ -44,7 +43,7 @@ class MysqlCollector extends DataCollector implements Renderable, AssetProvider
     protected $queries;
 
     /**
-     * TraceableMysql constructor.
+     * MysqlCollector constructor.
      *
      * @param array $queries
      */
