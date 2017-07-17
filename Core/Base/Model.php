@@ -240,7 +240,7 @@ trait Model
     public function loadFromCode($cod)
     {
         $data = $this->getRecord($cod);
-        if ($data) {
+        if (!empty($data)) {
             $this->loadFromData($data[0]);
             return true;
         }
