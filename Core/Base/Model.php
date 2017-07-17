@@ -564,10 +564,9 @@ trait Model
                             $columns[$key]['nulo'] = 'NO';
                         }
 
+                        $columns[$key]['defecto'] = (string) $col->defecto;
                         if ($col->defecto === '') {
                             $columns[$key]['defecto'] = null;
-                        } else {
-                            $columns[$key]['defecto'] = (string) $col->defecto;
                         }
 
                         $key++;

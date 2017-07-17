@@ -116,7 +116,7 @@ class PDOMysql implements DatabaseEngine
             $array = $connection->errorInfo();
             $error = '';
             $separator = '';
-            foreach ($array as $k => $err) {
+            foreach ($array as $err) {
                 if ($err !== '00000') {
                     $error .= $separator . $err;
                     $separator = ' ';
