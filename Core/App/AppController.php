@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\App;
 
 use DebugBar\StandardDebugBar;
+use Exception;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\MenuManager;
 use FacturaScripts\Core\Model\User;

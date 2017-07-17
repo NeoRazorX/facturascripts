@@ -95,27 +95,11 @@ class Page
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
-     * @return string
-     */
-    protected function install()
-    {
-        return 'INSERT INTO ' . $this->tableName() . ' (name,title,menu,submenu,showonmenu)'
-            . " VALUES ('AdminHome','Panel de control','admin',NULL,TRUE);";
-    }
-
-    /**
      * TODO
      * @return string
      */
     public function url()
     {
-        if ($this->name === null) {
-            return 'index.php?page=AdminHome';
-        }
-
         return 'index.php?page=' . $this->name;
     }
 

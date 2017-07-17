@@ -63,14 +63,18 @@ class MenuManager
     public function selectPage($pageData)
     {
         $pageModel = self::$pageModel->get($pageData['name']);
-        if ($pageData === false) {
+        if ($pageModel === false) {
             $pageData['order'] = 100;
             $pageModel = new Models\Page($pageData);
             $pageModel->save();
         }
 
         if (!empty(self::$menu)) {
-            
+            /**
+             * TODO: navegar por el menú y marcar como activa la página seleccionada:
+             * $pageData['name']
+             * @return \FacturaScripts\Core\Base\MenuItem
+             */
         }
     }
 
