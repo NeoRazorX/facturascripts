@@ -22,6 +22,7 @@ use DebugBar\StandardDebugBar;
 use Exception;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\MenuManager;
+use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,7 +48,7 @@ class AppController extends App
      * @var StandardDebugBar
      */
     private $debugBar;
-    
+
     /**
      * Para gestionar el menú del usuario
      * @var MenuManager 
@@ -92,20 +93,16 @@ class AppController extends App
      */
     private function loadController($pageName)
     {
-        $controllerName = "FacturaScripts\\Dinamic\\Controller\\{$pageName}";
+        $controllerName = $this->getControllerFullName($pageName);
         $template = 'Error/ControllerNotFound.html';
         $httpStatus = Response::HTTP_NOT_FOUND;
-
-        if (!class_exists($controllerName)) {
-            $controllerName = "FacturaScripts\\Core\\Controller\\{$pageName}";
-        }
 
         /// Si hemos encontrado el controlador, lo cargamos
         if (class_exists($controllerName)) {
             $this->miniLog->debug('Loading controller: ' . $controllerName);
             $user = $this->userAuth();
             $this->menuManager->setUser($user);
-            
+
             try {
                 $this->controller = new $controllerName($this->cache, $this->i18n, $this->miniLog, $pageName);
                 if ($user === null) {
@@ -126,6 +123,17 @@ class AppController extends App
         if ($template) {
             $this->renderHtml($template);
         }
+    }
+
+    private function getControllerFullName($pageName)
+    {
+        $controllerName = "FacturaScripts\\Dinamic\\Controller\\{$pageName}";
+        if (!class_exists($controllerName)) {
+            $controllerName = "FacturaScripts\\Core\\Controller\\{$pageName}";
+            $this->deployPlugins();
+        }
+
+        return $controllerName;
     }
 
     /**
@@ -239,5 +247,11 @@ class AppController extends App
         $this->response->headers->clearCookie('fsNick');
         $this->response->headers->clearCookie('fsLogkey');
         $this->miniLog->debug('Logout OK.');
+    }
+
+    private function deployPlugins()
+    {
+        $pluginManager = new PluginManager($this->folder);
+        $pluginManager->deploy();
     }
 }

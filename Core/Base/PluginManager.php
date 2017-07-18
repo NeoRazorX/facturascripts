@@ -183,11 +183,15 @@ class PluginManager
         self::$deployedControllers = TRUE;
         $cache = new Cache(self::$folder);
         $menuManager = new MenuManager();
+        $menuManager->init();
 
         foreach (scandir(self::$folder . '/Dinamic/Controller', SCANDIR_SORT_ASCENDING) as $fileName) {
             if ($fileName != '.' && $fileName != '..' && substr($fileName, -3) == 'php') {
                 $controllerName = substr($fileName, 0, -4);
                 $controllerNamespace = "FacturaScripts\\Dinamic\\Controller\\" . $controllerName;
+
+                /// forzamos la carga del archivo porque en este punto el autoloader no lo encontrará
+                require self::$folder . '/Dinamic/Controller/' . $controllerName . '.php';
 
                 try {
                     $controller = new $controllerNamespace($cache, self::$i18n, self::$minilog, $controllerName);
