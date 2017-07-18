@@ -51,7 +51,6 @@ class PluginManager
     /**
      * PluginManager constructor.
      * @param string $folder
-     * @param $minilog
      */
     public function __construct($folder = '')
     {
@@ -183,7 +182,8 @@ class PluginManager
      *
      * @param $filename
      */
-    private function unlink($filename) {
+    private function unlink($filename)
+    {
         if (file_exists($filename) && !@unlink($filename)) {
             $correctPerms = $perms = substr(sprintf('%o', fileperms($filename)), -4);
             $correctPerms[1] = ($perms[1] < 6) ? '6' : $correctPerms[1];
