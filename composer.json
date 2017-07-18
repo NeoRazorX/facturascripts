@@ -1,6 +1,6 @@
 {
     "name": "facturascripts/facturascripts",
-    "description": "ERP open source. Easy and powerful.",
+    "description": "ERP open source. Build on PHP. Easy and powerful.",
     "homepage": "https://www.facturascripts.com",
     "license": "LGPL-3.0",
     "authors": [
@@ -10,12 +10,13 @@
         }
     ],
     "require": {
-        "php": ">=5.5.9",
+        "php": ">=5.6",
         "symfony/http-foundation": "v3.3.*",
         "symfony/translation": "v3.3.*",
         "twig/twig": "v1.*",
         "maximebf/debugbar": "1.*",
-        "symfony/event-dispatcher": "v3.3.*"
+        "symfony/event-dispatcher": "v3.3.*",
+        "phpunit/phpunit": "5.7.*"
     },
     "autoload": {
         "psr-4": {
