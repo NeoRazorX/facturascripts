@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : fs_page_rules.xml
+    Created on : 2 de febrero de 2012, 18:41
+    Author     : Carlos García Gómez
+    Description:
+        Estructura de la tabla fs_page_rules.
+-->
+<tabla>
+    <columna>
+        <nombre>id</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('fs_page_rules_id_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>nick</nombre>
+        <tipo>character varying(50)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>pagename</nombre>
+        <tipo>character varying(30)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>allowdelete</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+        <defecto>true</defecto>
+    </columna>
+    <columna>
+        <nombre>allowupdate</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+        <defecto>true</defecto>
+    </columna>
+    <restriccion>
+        <nombre>fs_page_rules_pkey</nombre>
+        <consulta>PRIMARY KEY (id)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fs_page_rules_user</nombre>
+        <consulta>FOREIGN KEY (nick) REFERENCES fs_users (nick) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fs_page_rules_page</nombre>
+        <consulta>FOREIGN KEY (pagename) REFERENCES fs_pages (name) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>unique_fs_page_rules</nombre>
+        <consulta>UNIQUE (nick,pagename)</consulta>
+    </restriccion>
+</tabla>

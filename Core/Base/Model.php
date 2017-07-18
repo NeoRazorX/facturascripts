@@ -16,11 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
-
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * La clase de la que heredan todos los modelos, conecta a la base de datos,
@@ -30,6 +26,18 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  */
 trait Model
 {
+
+    /**
+     * Proporciona acceso directo a la base de datos.
+     * @var DataBase
+     */
+    protected $dataBase;
+
+    /**
+     * Permite conectar e interactuar con el sistema de caché.
+     * @var Cache
+     */
+    protected $cache;
 
     /**
      * Clase que se utiliza para definir algunos valores por defecto:
@@ -43,6 +51,18 @@ trait Model
      * @var array
      */
     protected static $fields;
+
+    /**
+     * Traductor multi-idioma.
+     * @var Translator
+     */
+    protected $i18n;
+
+    /**
+     * Gestiona el log de todos los controladores, modelos y base de datos.
+     * @var MiniLog
+     */
+    protected $miniLog;
 
     /**
      * Nombre del modelo. De la clase que inicia este trait.
@@ -73,15 +93,17 @@ trait Model
      * @param string $modelName
      * @param string $tableName nombre de la tabla de la base de datos.
      * @param string $primaryColumn
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     private function init($modelName = '', $tableName = '', $primaryColumn = '')
     {
+        $this->cache = new Cache();
+        $this->dataBase = new DataBase();
         $this->defaultItems = new DefaultItems();
+        $this->i18n = new Translator();
+        $this->miniLog = new MiniLog();
 
         if (self::$checkedTables === null) {
-            self::$checkedTables = self::$cache->get('fs_checked_tables');
+            self::$checkedTables = $this->cache->get('fs_checked_tables');
             if (self::$checkedTables === null) {
                 self::$checkedTables = [];
             }
@@ -92,13 +114,13 @@ trait Model
         }
 
         if ($tableName !== '' && !in_array($tableName, self::$checkedTables, false) && $this->checkTable($tableName)) {
-            self::$miniLog->debug('Table ' . $tableName . ' checked.');
+            $this->miniLog->debug('Table ' . $tableName . ' checked.');
             self::$checkedTables[] = $tableName;
-            self::$cache->set('fs_checked_tables', self::$checkedTables);
+            $this->cache->set('fs_checked_tables', self::$checkedTables);
         }
 
         if (self::$fields === null) {
-            self::$fields = (self::$dataBase->tableExists($tableName) ? self::$dataBase->getColumns($tableName) : []);
+            self::$fields = ($this->dataBase->tableExists($tableName) ? $this->dataBase->getColumns($tableName) : []);
         }
     }
 
@@ -192,16 +214,45 @@ trait Model
     }
 
     /**
+     * Lee el registro cuya columna primaria corresponda al valor $cod
+     * @param string $cod
+     * @return array
+     */
+    private function getRecord($cod)
+    {
+        $sql = 'SELECT * FROM ' . $this->tableName()
+            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($cod) . ';';
+        return $this->dataBase->select($sql);
+    }
+
+    /**
+     * Rellena la clase con los valores del registro
+     * cuya columna primaria corresponda al valor $cod, o vacio si no existe.
+     * Devuelve True si existe el registro y False en caso contrario.
+     * @param string $cod
+     * @return boolean
+     */
+    public function loadFromCode($cod)
+    {
+        $data = $this->getRecord($cod);
+        if (!empty($data)) {
+            $this->loadFromData($data[0]);
+            return true;
+        }
+
+        $this->clear();
+        return false;
+    }
+
+    /**
      * Devuelve el modelo cuya columna primaria corresponda al valor $cod
-     * @param $cod
+     * @param string $cod
      * @return mixed|bool
      */
     public function get($cod)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($cod) . ';';
-        $data = self::$dataBase->select($sql);
-        if ($data) {
+        $data = $this->getRecord($cod);
+        if (!empty($data)) {
             $class = $this->modelName();
             return new $class($data[0]);
         }
@@ -226,7 +277,7 @@ trait Model
             }
         }
 
-        $data = self::$dataBase->selectLimit($sql, 1);
+        $data = $this->dataBase->selectLimit($sql, 1);
         if ($data) {
             $class = $this->modelName();
             return new $class($data[0]);
@@ -247,7 +298,7 @@ trait Model
 
         $sql = 'SELECT 1 FROM ' . $this->tableName()
             . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
-        return (bool) self::$dataBase->select($sql);
+        return (bool) $this->dataBase->select($sql);
     }
 
     /**
@@ -296,7 +347,7 @@ trait Model
         }
 
         $sql .= ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
-        return self::$dataBase->exec($sql);
+        return $this->dataBase->exec($sql);
     }
 
     /**
@@ -316,9 +367,9 @@ trait Model
 
         $sql = 'INSERT INTO ' . $this->tableName()
             . ' (' . implode(',', $insertFields) . ') VALUES (' . implode(',', $insertValues) . ');';
-        if (self::$dataBase->exec($sql)) {
+        if ($this->dataBase->exec($sql)) {
             if ($this->{$this->primaryColumn()} === null) {
-                $this->{$this->primaryColumn()} = self::$dataBase->lastval();
+                $this->{$this->primaryColumn()} = $this->dataBase->lastval();
             }
 
             return true;
@@ -335,7 +386,7 @@ trait Model
     {
         $sql = 'DELETE FROM ' . $this->tableName()
             . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
-        return self::$dataBase->exec($sql);
+        return $this->dataBase->exec($sql);
     }
 
     /**
@@ -355,19 +406,19 @@ trait Model
         foreach ($fields as $key => $value) {
             $sql .= $coma . $key . ' = ' . $this->var2str($value);
             if ($coma === ' WHERE ') {
-                $coma = ', ';
+                $coma = ' AND ';
             }
         }
 
         $coma2 = ' ORDER BY ';
         foreach ($order as $key => $value) {
-            $sql .= $coma2 . $key . ' ' . $this->var2str($value);
-            if ($coma2 === ' WHERE ') {
+            $sql .= $coma2 . $key . ' ' . $value;
+            if ($coma2 === ' ORDER BY ') {
                 $coma2 = ', ';
             }
         }
 
-        $data = self::$dataBase->selectLimit($sql, $limit, $offset);
+        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if ($data) {
             $class = $this->modelName();
             foreach ($data as $d) {
@@ -385,7 +436,7 @@ trait Model
      */
     protected function escapeString($str)
     {
-        return self::$dataBase->escapeString($str);
+        return $this->dataBase->escapeString($str);
     }
 
     /**
@@ -408,14 +459,14 @@ trait Model
         }
 
         if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4})$/i", $val)) {
-            return "'" . date(self::$dataBase->dateStyle(), strtotime($val)) . "'"; /// es una fecha
+            return "'" . date($this->dataBase->dateStyle(), strtotime($val)) . "'"; /// es una fecha
         }
 
         if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4}) ([\d]{1,2}):([\d]{1,2}):([\d]{1,2})$/i", $val)) {
-            return "'" . date(self::$dataBase->dateStyle() . ' H:i:s', strtotime($val)) . "'"; /// es una fecha+hora
+            return "'" . date($this->dataBase->dateStyle() . ' H:i:s', strtotime($val)) . "'"; /// es una fecha+hora
         }
 
-        return "'" . self::$dataBase->escapeString($val) . "'";
+        return "'" . $this->dataBase->escapeString($val) . "'";
     }
 
     /**
@@ -464,43 +515,43 @@ trait Model
         $xmlCons = [];
 
         if ($this->getXmlTable($tableName, $xmlCols, $xmlCons)) {
-            if (self::$dataBase->tableExists($tableName)) {
-                if (!self::$dataBase->checkTableAux($tableName)) {
-                    self::$miniLog->critical('Error al convertir la tabla a InnoDB.');
+            if ($this->dataBase->tableExists($tableName)) {
+                if (!$this->dataBase->checkTableAux($tableName)) {
+                    $this->miniLog->critical('Error al convertir la tabla a InnoDB.');
                 }
 
                 /**
                  * Si hay que hacer cambios en las restricciones, eliminamos todas las restricciones,
                  * luego añadiremos las correctas. Lo hacemos así porque evita problemas en MySQL.
                  */
-                $dbCons = self::$dataBase->getConstraints($tableName);
-                $sql2 = self::$dataBase->compareConstraints($tableName, $xmlCons, $dbCons, true);
+                $dbCons = $this->dataBase->getConstraints($tableName);
+                $sql2 = $this->dataBase->compareConstraints($tableName, $xmlCons, $dbCons, true);
                 if ($sql2 !== '') {
-                    if (!self::$dataBase->exec($sql2)) {
-                        self::$miniLog->critical('Error al comprobar la tabla ' . $tableName);
+                    if (!$this->dataBase->exec($sql2)) {
+                        $this->miniLog->critical('Error al comprobar la tabla ' . $tableName);
                     }
 
                     /// leemos de nuevo las restricciones
-                    $dbCons = self::$dataBase->getConstraints($tableName);
+                    $dbCons = $this->dataBase->getConstraints($tableName);
                 }
 
                 /// comparamos las columnas
-                $dbCols = self::$dataBase->getColumns($tableName);
-                $sql .= self::$dataBase->compareColumns($tableName, $xmlCols, $dbCols);
+                $dbCols = $this->dataBase->getColumns($tableName);
+                $sql .= $this->dataBase->compareColumns($tableName, $xmlCols, $dbCols);
 
                 /// comparamos las restricciones
-                $sql .= self::$dataBase->compareConstraints($tableName, $xmlCons, $dbCons);
+                $sql .= $this->dataBase->compareConstraints($tableName, $xmlCons, $dbCons);
             } else {
                 /// generamos el sql para crear la tabla
-                $sql .= self::$dataBase->generateTable($tableName, $xmlCols, $xmlCons);
+                $sql .= $this->dataBase->generateTable($tableName, $xmlCols, $xmlCons);
                 $sql .= $this->install();
             }
-            if ($sql !== '' && !self::$dataBase->exec($sql)) {
-                self::$miniLog->critical('Error al comprobar la tabla ' . $tableName);
+            if ($sql !== '' && !$this->dataBase->exec($sql)) {
+                $this->miniLog->critical('Error al comprobar la tabla ' . $tableName);
                 $done = false;
             }
         } else {
-            self::$miniLog->critical('Error con el xml.');
+            $this->miniLog->critical('Error con el xml.');
             $done = false;
         }
 
@@ -558,10 +609,10 @@ trait Model
                     }
                 }
             } else {
-                self::$miniLog->critical('Error al leer el archivo ' . $filename);
+                $this->miniLog->critical('Error al leer el archivo ' . $filename);
             }
         } else {
-            self::$miniLog->critical('Archivo ' . $filename . ' no encontrado.');
+            $this->miniLog->critical('Archivo ' . $filename . ' no encontrado.');
         }
 
         return $return;

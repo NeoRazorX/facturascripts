@@ -16,23 +16,31 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base;
-use InvalidArgumentException;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Description of App
  *
  * @author Carlos García Gómez
  */
-abstract class App extends Globals
+abstract class App
 {
+
+    /**
+     * Gestor de acceso a cache.
+     * @var Base\Cache
+     */
+    protected $cache;
+
+    /**
+     * Gestor de acceso a la base de datos.
+     * @var Base\DataBase
+     */
+    protected $dataBase;
 
     /**
      * Carpeta de trabajo de FacturaScripts.
@@ -40,6 +48,11 @@ abstract class App extends Globals
      */
     protected $folder;
 
+    /**
+     * Motor de traducción.
+     * @var Base\Translator
+     */
+    protected $i18n;
 
     /**
      * Filtro de IPs.
@@ -47,6 +60,11 @@ abstract class App extends Globals
      */
     protected $ipFilter;
 
+    /**
+     * Gestor del log de la app.
+     * @var Base\MiniLog
+     */
+    protected $miniLog;
 
     /**
      * Gestor de plugins.
@@ -69,16 +87,15 @@ abstract class App extends Globals
     /**
      * Inicializa la app.
      * @param string $folder Carpeta de trabajo de FacturaScripts
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     public function __construct($folder = '')
     {
-        parent::__construct($folder);
-        
+        $this->cache = new Base\Cache($folder);
+        $this->dataBase = new Base\DataBase();
         $this->folder = $folder;
+        $this->i18n = new Base\Translator($folder, FS_LANG);
         $this->ipFilter = new Base\IPFilter($folder);
+        $this->miniLog = new Base\MiniLog();
         $this->pluginManager = new Base\PluginManager($folder);
         $this->request = Request::createFromGlobals();
         $this->response = new Response();
@@ -90,7 +107,7 @@ abstract class App extends Globals
      */
     public function connect()
     {
-        return self::$dataBase->connect();
+        return $this->dataBase->connect();
     }
 
     /**
@@ -98,7 +115,7 @@ abstract class App extends Globals
      */
     public function close()
     {
-        self::$dataBase->close();
+        $this->dataBase->close();
     }
 
     /**

@@ -16,20 +16,16 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\Globals;
 use FacturaScripts\Core\Base\Model;
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Forma de pago de una factura, albarán, pedido o presupuesto.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class FormaPago extends Globals
+class FormaPago
 {
 
     use Model;
@@ -80,8 +76,6 @@ class FormaPago extends Globals
     /**
      * FormaPago constructor.
      * @param array $data
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     public function __construct(array $data = [])
     {
@@ -142,7 +136,6 @@ class FormaPago extends Globals
     /**
      * Comprueba la validez de los datos de la forma de pago.
      * @return bool
-     * @throws TranslationInvalidArgumentException
      */
     public function test()
     {
@@ -152,7 +145,7 @@ class FormaPago extends Globals
         $fecha1 = date('d-m-Y');
         $fecha2 = date('d-m-Y', strtotime($this->vencimiento));
         if (strtotime($fecha1) > strtotime($fecha2)) {
-            self::$miniLog->alert(self::$i18n->trans('expiration-invalid'));
+            $this->miniLog->alert($this->i18n->trans('expiration-invalid'));
             return false;
         }
 

@@ -16,20 +16,16 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\Globals;
 use FacturaScripts\Core\Base\Model;
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Un país, por ejemplo España.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Pais extends Globals
+class Pais
 {
 
     use Model;
@@ -57,8 +53,6 @@ class Pais extends Globals
     /**
      * Pais constructor.
      * @param array $data
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     public function __construct(array $data = [])
     {
@@ -346,13 +340,11 @@ class Pais extends Globals
      * Devuelve el pais con codido = $cod
      * @param string $cod
      * @return pais|bool
-     * @throws TranslationInvalidArgumentException
-     * @throws RuntimeException
      */
     public function getByIso($cod)
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codiso = ' . $this->var2str($cod) . ';';
-        $data = self::$dataBase->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return new Pais($data[0]);
         }
@@ -363,7 +355,6 @@ class Pais extends Globals
     /**
      * Comprueba los datos del pais, devuelve TRUE si son correctos
      * @return bool
-     * @throws TranslationInvalidArgumentException
      */
     public function test()
     {
@@ -373,9 +364,9 @@ class Pais extends Globals
         $this->nombre = static::noHtml($this->nombre);
 
         if (!preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {
-            self::$miniLog->alert(self::$i18n->trans('country-cod-invalid', [$this->codpais]));
+            $this->miniLog->alert($this->i18n->trans('country-cod-invalid', [$this->codpais]));
         } elseif (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
-            self::$miniLog->alert(self::$i18n->trans('country-name-invalid'));
+            $this->miniLog->alert($this->i18n->trans('country-name-invalid'));
         } else {
             $status = true;
         }

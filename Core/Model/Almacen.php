@@ -16,20 +16,16 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\Globals;
 use FacturaScripts\Core\Base\Model;
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * El almacén donde están físicamente los artículos.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Almacen extends Globals
+class Almacen
 {
 
     use Model;
@@ -103,8 +99,6 @@ class Almacen extends Globals
     /**
      * Almacen constructor.
      * @param array $data
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     public function __construct(array $data = [])
     {
@@ -151,7 +145,6 @@ class Almacen extends Globals
     /**
      * Comprueba los datos del almacén, devuelve TRUE si son correctos
      * @return bool
-     * @throws TranslationInvalidArgumentException
      */
     public function test()
     {
@@ -168,9 +161,9 @@ class Almacen extends Globals
         $this->contacto = static::noHtml($this->contacto);
 
         if (!preg_match('/^[A-Z0-9]{1,4}$/i', $this->codalmacen)) {
-            self::$miniLog->alert(self::$i18n->trans('store-cod-invalid'));
+            $this->miniLog->alert($this->i18n->trans('store-cod-invalid'));
         } elseif (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
-            self::$miniLog->alert(self::$i18n->trans('store-name-invalid'));
+            $this->miniLog->alert($this->i18n->trans('store-name-invalid'));
         } else {
             $status = true;
         }

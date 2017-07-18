@@ -16,21 +16,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\Globals;
 use FacturaScripts\Core\Base\Model;
 use FacturaScripts\Core\Base\Utils;
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Esta clase almacena los principales datos de la empresa.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Empresa extends Globals
+class Empresa
 {
 
     use Model;
@@ -227,9 +223,6 @@ class Empresa extends Globals
      * Empresa constructor.
      *
      * @param array $data
-     *
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     public function __construct(array $data = [])
     {
@@ -299,7 +292,6 @@ class Empresa extends Globals
     /**
      * Comprueba los datos de la empresa, devuelve TRUE si es correcto
      * @return bool
-     * @throws TranslationInvalidArgumentException
      */
     public function test()
     {
@@ -323,9 +315,9 @@ class Empresa extends Globals
         $this->web = static::noHtml($this->web);
 
         if (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
-            self::$miniLog->alert(self::$i18n->trans('company-name-invalid'));
+            $this->miniLog->alert($this->i18n->trans('company-name-invalid'));
         } elseif (strlen($this->nombre) < strlen($this->nombrecorto)) {
-            self::$miniLog->alert(self::$i18n->trans('company-short-name-smaller-name'));
+            $this->miniLog->alert($this->i18n->trans('company-short-name-smaller-name'));
         } else {
             $status = true;
         }

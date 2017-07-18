@@ -16,24 +16,26 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Model as Models;
-use FacturaScripts\Core\App\Globals;
-use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Translation\Exception\InvalidArgumentException;
 
 /**
  * Clase de la que deben heredar todos los controladores de FacturaScripts.
  *
  * @author Carlos García Gómez
  */
-class Controller extends Globals
+class Controller
 {
+
+    /**
+     * Gestor de acceso a cache.
+     * @var Cache
+     */
+    protected $cache;
 
     /**
      * Nombre de la clase del controlador (aunque se herede de esta clase, el nombre
@@ -53,6 +55,18 @@ class Controller extends Globals
      * @var Models\Empresa|false
      */
     public $empresa;
+
+    /**
+     * Motor de traducción.
+     * @var Translator
+     */
+    protected $i18n;
+
+    /**
+     * Gestor de log de la app.
+     * @var MiniLog
+     */
+    protected $miniLog;
 
     /**
      * Request sobre la que podemos hacer consultas.
@@ -80,35 +94,32 @@ class Controller extends Globals
 
     /**
      * Usuario que ha iniciado sesión.
-     * @var Models\User
+     * @var Models\User|null
      */
     public $user;
 
     /**
      * Inicia todos los objetos y propiedades.
      *
-     * @param Response $response
-     * @param Models\User $user
+     * @param Cache $cache
+     * @param Translator $i18n
+     * @param MiniLog $miniLog
      * @param string $className
-     *
-     * @throws RuntimeException
-     * @throws InvalidArgumentException
      */
-    public function __construct(&$response, $user, $className)
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
-        parent::__construct();
-        
+        $this->cache = $cache;
         $this->className = $className;
         $this->dispatcher = new EventDispatcher();
 
         $empresa = new Models\Empresa();
         $this->empresa = $empresa->getDefault();
 
+        $this->i18n = $i18n;
+        $this->miniLog = $miniLog;
         $this->request = Request::createFromGlobals();
-        $this->response = $response;
         $this->template = $this->className . '.html';
         $this->title = $this->className;
-        $this->user = $user;
     }
 
     /**
@@ -152,18 +163,24 @@ class Controller extends Globals
 
     /**
      * Ejecuta la lógica pública del controlador.
+     * @param Response $response
      */
-    public function publicCore()
+    public function publicCore(&$response)
     {
+        $this->response = $response;
         $this->template = 'Login/Login.html';
         $this->dispatcher->dispatch('pre-publicCore');
     }
 
     /**
      * Ejecuta la lógica privada del controlador.
+     * @param Response $response
+     * @param Models\User|null $user
      */
-    public function privateCore()
+    public function privateCore(&$response, $user)
     {
+        $this->response = $response;
+        $this->user = $user;
         $this->dispatcher->dispatch('pre-privateCore');
     }
 }

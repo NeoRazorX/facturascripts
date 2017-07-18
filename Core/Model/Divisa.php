@@ -16,20 +16,16 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\Globals;
 use FacturaScripts\Core\Base\Model;
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Una divisa (moneda) con su símbolo y su tasa de conversión respecto al euro.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Divisa extends Globals
+class Divisa
 {
 
     use Model;
@@ -73,8 +69,6 @@ class Divisa extends Globals
     /**
      * Divisa constructor.
      * @param array $data
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     public function __construct(array $data = [])
     {
@@ -141,7 +135,6 @@ class Divisa extends Globals
     /**
      * Comprueba los datos de la divisa, devuelve TRUE si son correctos
      * @return bool
-     * @throws TranslationInvalidArgumentException
      */
     public function test()
     {
@@ -150,15 +143,15 @@ class Divisa extends Globals
         $this->simbolo = static::noHtml($this->simbolo);
 
         if (!preg_match('/^[A-Z0-9]{1,3}$/i', $this->coddivisa)) {
-            self::$miniLog->alert(self::$i18n->trans('bage-cod-invalid'));
+            $this->miniLog->alert($this->i18n->trans('bage-cod-invalid'));
         } elseif ($this->codiso !== null && !preg_match('/^[A-Z0-9]{1,3}$/i', $this->codiso)) {
-            self::$miniLog->alert(self::$i18n->trans('iso-cod-invalid'));
+            $this->miniLog->alert($this->i18n->trans('iso-cod-invalid'));
         } elseif ($this->tasaconv === 0) {
-            self::$miniLog->alert(self::$i18n->trans('conversion-rate-not-0'));
+            $this->miniLog->alert($this->i18n->trans('conversion-rate-not-0'));
         } elseif ($this->tasaconvcompra === 0) {
-            self::$miniLog->alert(self::$i18n->trans('conversion-rate-pruchases-not-0'));
+            $this->miniLog->alert($this->i18n->trans('conversion-rate-pruchases-not-0'));
         } else {
-            self::$cache->delete('m_divisa_all');
+            $this->cache->delete('m_divisa_all');
             $status = true;
         }
 

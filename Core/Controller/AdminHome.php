@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,13 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Description of admin_home
@@ -76,19 +73,14 @@ class AdminHome extends Base\Controller
 
     /**
      * AdminHome constructor.
-     * @param $response
-     * @param Model\User $user
+     * @param Base\Cache $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog $miniLog
      * @param string $className
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
-    public function __construct(&$response, $user, $className)
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
-        parent::__construct($response, $user, $className);
-
-        /// por ahora desplegamos siempre el contenido de Dinamic, para las pruebas
-        $pluginManager = new Base\PluginManager();
-        $pluginManager->deploy();
+        parent::__construct($cache, $i18n, $miniLog, $className);
 
         $this->agente = new Model\Agente();
         $this->almacen = new Model\Almacen();
@@ -98,20 +90,14 @@ class AdminHome extends Base\Controller
         $this->pais = new Model\Pais();
         $this->serie = new Model\Serie();
     }
-
-    /**
-     * TODO
-     */
-    public function publicCore()
+    
+    public function getPageData()
     {
-        parent::publicCore();
+        $pageData = parent::getPageData();
+        $pageData['menu'] = 'admin';
+        $pageData['title'] = 'Panel de control';
+        
+        return $pageData;
     }
 
-    /**
-     * TODO
-     */
-    public function privateCore()
-    {
-        parent::privateCore();
-    }
 }

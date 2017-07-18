@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : fs_roles_users.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla fs_roles_users.
+-->
+<tabla>
+    <columna>
+        <nombre>id</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('fs_roles_users_id_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>codrol</nombre>
+        <tipo>character varying(20)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nick</nombre>
+        <tipo>character varying(50)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <restriccion>
+        <nombre>fs_roles_users_pkey</nombre>
+        <consulta>PRIMARY KEY (id)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fs_roles_users_roles</nombre>
+        <consulta>FOREIGN KEY (codrol) REFERENCES fs_roles (codrol) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fs_roles_users_user</nombre>
+        <consulta>FOREIGN KEY (nick) REFERENCES fs_users (nick) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>unique_fs_roles_users</nombre>
+        <consulta>UNIQUE (codrol,nick)</consulta>
+    </restriccion>
+</tabla>

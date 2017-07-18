@@ -16,13 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\Globals;
 use FacturaScripts\Core\Base\Model;
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Una serie de facturación o contabilidad, para tener distinta numeración
@@ -30,7 +26,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Serie extends Globals
+class Serie
 {
 
     use Model;
@@ -74,8 +70,6 @@ class Serie extends Globals
     /**
      * Serie constructor.
      * @param array $data
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     public function __construct(array $data = [])
     {
@@ -135,7 +129,6 @@ class Serie extends Globals
     /**
      * Comprueba los datos de la serie, devuelve TRUE si son correctos
      * @return bool
-     * @throws TranslationInvalidArgumentException
      */
     public function test()
     {
@@ -149,9 +142,9 @@ class Serie extends Globals
         }
 
         if (!preg_match("/^[A-Z0-9]{1,4}$/i", $this->codserie)) {
-            self::$miniLog->alert(self::$i18n->trans('serie-cod-invalid'));
+            $this->miniLog->alert($this->i18n->trans('serie-cod-invalid'));
         } elseif (!(strlen($this->descripcion) > 1) && !(strlen($this->descripcion) < 100)) {
-            self::$miniLog->alert(self::$i18n->trans('serie-desc-invalid'));
+            $this->miniLog->alert($this->i18n->trans('serie-desc-invalid'));
         } else {
             $status = true;
         }

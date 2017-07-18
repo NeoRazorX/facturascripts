@@ -16,21 +16,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\Globals;
 use FacturaScripts\Core\Base\Model;
 use FacturaScripts\Core\Base\Utils;
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Usuario de FacturaScripts.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class User extends Globals
+class User
 {
 
     use Model {
@@ -105,9 +101,6 @@ class User extends Globals
      * User constructor.
      *
      * @param array $data
-     *
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     public function __construct(array $data = [])
     {
@@ -139,15 +132,13 @@ class User extends Globals
     /**
      * Inserta valores por defecto a la tabla, en el proceso de creación de la misma.
      * @return string
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     protected function install()
     {
         /// hay una clave ajena a fs_pages, así que cargamos el modelo necesario
         new Page();
 
-        self::$miniLog->info(self::$i18n->trans('created-default-admin-account'));
+        $this->miniLog->info($this->i18n->trans('created-default-admin-account'));
         return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled) VALUES ('admin','"
             . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE);";
     }
@@ -222,14 +213,13 @@ class User extends Globals
      * Devuelve true si no hay errores en los valores de las propiedades del modelo.
      * Se ejecuta dentro del método save.
      * @return bool
-     * @throws TranslationInvalidArgumentException
      */
     public function test()
     {
         $this->nick = trim($this->nick);
 
         if (!preg_match("/^[A-Z0-9_\+\.\-]{3,50}$/i", $this->nick)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-user-nick', [$this->nick]));
+            $this->miniLog->alert($this->i18n->trans('invalid-user-nick', [$this->nick]));
             return false;
         }
 

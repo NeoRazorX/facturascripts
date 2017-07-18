@@ -16,11 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\Cache\FileCache;
-use RuntimeException;
 
 /**
  * Class Cache
@@ -39,8 +37,6 @@ class Cache
      * Constructor por defecto.
      *
      * @param string $folder carpeta de trabajo
-     *
-     * @throws RuntimeException
      */
     public function __construct($folder = '')
     {

@@ -16,13 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\Globals;
 use FacturaScripts\Core\Base\Model;
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * El agente/empleado es el que se asocia a un albarán, factura o caja.
@@ -31,7 +27,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Agente extends Globals
+class Agente
 {
 
     use Model;
@@ -141,8 +137,6 @@ class Agente extends Globals
     /**
      * Agente constructor.
      * @param array $data
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     public function __construct(array $data = [])
     {
@@ -203,8 +197,8 @@ class Agente extends Globals
      */
     public function newCodigo()
     {
-        $sql = 'SELECT MAX(' . self::$dataBase->sql2int('codagente') . ') as cod FROM ' . $this->tableName() . ';';
-        $cod = self::$dataBase->select($sql);
+        $sql = 'SELECT MAX(' . $this->dataBase->sql2int('codagente') . ') as cod FROM ' . $this->tableName() . ';';
+        $cod = $this->dataBase->select($sql);
         if (!empty($cod)) {
             return 1 + (int) $cod[0]['cod'];
         }
@@ -228,7 +222,6 @@ class Agente extends Globals
     /**
      * Comprueba los datos del empleado/agente, devuelve TRUE si son correctos
      * @return bool
-     * @throws TranslationInvalidArgumentException
      */
     public function test()
     {
@@ -246,7 +239,7 @@ class Agente extends Globals
         $this->telefono = static::noHtml($this->telefono);
 
         if (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 50)) {
-            self::$miniLog->alert(self::$i18n->trans('agent-name-between-1-50'));
+            $this->miniLog->alert($this->i18n->trans('agent-name-between-1-50'));
             return false;
         }
 

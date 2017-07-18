@@ -17,13 +17,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\Globals;
 use FacturaScripts\Core\Base\Model;
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Define un paquete de permisos para asignar rápidamente a usuarios.
@@ -31,7 +27,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException as Translat
  * @author Joe Nilson            <joenilson at gmail.com>
  * @author Carlos García Gómez   <neorazorx at gmail.com>
  */
-class Rol extends Globals
+class Rol
 {
 
     use Model;
@@ -51,8 +47,6 @@ class Rol extends Globals
     /**
      * Rol constructor.
      * @param array $data
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     public function __construct(array $data = [])
     {

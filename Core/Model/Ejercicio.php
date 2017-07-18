@@ -16,20 +16,16 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\Globals;
 use FacturaScripts\Core\Base\Model;
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Ejercicio contable. Es el periodo en el que se agrupan asientos, facturas, albaranes...
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Ejercicio extends Globals
+class Ejercicio
 {
 
     use Model;
@@ -98,8 +94,6 @@ class Ejercicio extends Globals
     /**
      * Ejercicio constructor.
      * @param array $data
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     public function __construct(array $data = [])
     {
@@ -166,12 +160,12 @@ class Ejercicio extends Globals
     public function newCodigo($cod = '0001')
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($cod) . ';';
-        if (!self::$dataBase->select($sql)) {
+        if (!$this->dataBase->select($sql)) {
             return $cod;
         }
 
-        $sql = 'SELECT MAX(' . self::$dataBase->sql2int('codejercicio') . ') as cod FROM ' . $this->tableName() . ';';
-        $cod = self::$dataBase->select($sql);
+        $sql = 'SELECT MAX(' . $this->dataBase->sql2int('codejercicio') . ') as cod FROM ' . $this->tableName() . ';';
+        $cod = $this->dataBase->select($sql);
         if (!empty($cod)) {
             return sprintf('%04s', 1 + (int) $cod[0]['cod']);
         }
@@ -206,7 +200,6 @@ class Ejercicio extends Globals
      * @param string $fecha
      * @param bool $showError
      * @return string
-     * @throws TranslationInvalidArgumentException
      */
     public function getBestFecha($fecha, $showError = false)
     {
@@ -218,13 +211,13 @@ class Ejercicio extends Globals
 
         if ($fecha2 > strtotime($this->fechainicio)) {
             if ($showError) {
-                self::$miniLog->alert(self::$i18n->trans('date-out-of-rage-selected-better'));
+                $this->miniLog->alert($this->i18n->trans('date-out-of-rage-selected-better'));
             }
             return $this->fechafin;
         }
 
         if ($showError) {
-            self::$miniLog->alert(self::$i18n->trans('date-out-of-rage-selected-better'));
+            $this->miniLog->alert($this->i18n->trans('date-out-of-rage-selected-better'));
         }
         return $this->fechainicio;
     }
@@ -236,15 +229,13 @@ class Ejercicio extends Globals
      * @param bool $soloAbierto
      * @param bool $crear
      * @return bool|ejercicio
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     public function getByFecha($fecha, $soloAbierto = true, $crear = true)
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fechainicio <= '
             . $this->var2str($fecha) . ' AND fechafin >= ' . $this->var2str($fecha) . ';';
 
-        $data = self::$dataBase->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             $eje = new Ejercicio($data[0]);
             if ($eje->abierto() || !$soloAbierto) {
@@ -258,7 +249,7 @@ class Ejercicio extends Globals
             $eje->fechafin = date('31-12-Y', strtotime($fecha));
 
             if (strtotime($fecha) < 1) {
-                self::$miniLog->alert(self::$i18n->trans('date-invalid-date', [$fecha]));
+                $this->miniLog->alert($this->i18n->trans('date-invalid-date', [$fecha]));
             } elseif ($eje->save()) {
                 return $eje;
             }
@@ -270,7 +261,6 @@ class Ejercicio extends Globals
     /**
      * Comprueba los datos del ejercicio, devuelve TRUE si son correctos
      * @return bool
-     * @throws TranslationInvalidArgumentException
      */
     public function test()
     {
@@ -280,14 +270,14 @@ class Ejercicio extends Globals
         $this->nombre = static::noHtml($this->nombre);
 
         if (!preg_match('/^[A-Z0-9_]{1,4}$/i', $this->codejercicio)) {
-            self::$miniLog->alert(self::$i18n->trans('fiscal-year-code-invalid'));
+            $this->miniLog->alert($this->i18n->trans('fiscal-year-code-invalid'));
         } elseif (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
-            self::$miniLog->alert(self::$i18n->trans('fiscal-year-name-invalid'));
+            $this->miniLog->alert($this->i18n->trans('fiscal-year-name-invalid'));
         } elseif (strtotime($this->fechainicio) > strtotime($this->fechafin)) {
             $params = [$this->fechainicio, $this->fechafin];
-            self::$miniLog->alert(self::$i18n->trans('start-date-later-end-date', $params));
+            $this->miniLog->alert($this->i18n->trans('start-date-later-end-date', $params));
         } elseif (strtotime($this->fechainicio) < 1) {
-            self::$miniLog->alert(self::$i18n->trans('date-invalid'));
+            $this->miniLog->alert($this->i18n->trans('date-invalid'));
         } else {
             $status = true;
         }
