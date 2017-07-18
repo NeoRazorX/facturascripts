@@ -72,6 +72,12 @@ class AdminHome extends Base\Controller
     public $serie;
 
     /**
+     * TODO
+     * @var Model\Serie
+     */
+    public $agenciastrans;
+
+    /**
      * AdminHome constructor.
      * @param Base\Cache $cache
      * @param Base\Translator $i18n
@@ -89,6 +95,7 @@ class AdminHome extends Base\Controller
         $this->formaPago = new Model\FormaPago();
         $this->pais = new Model\Pais();
         $this->serie = new Model\Serie();
+        $this->agenciastrans = new Model\AgenciasTrans();
     }
     
     public function getPageData()

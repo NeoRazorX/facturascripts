@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : agenciastrans.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla agenciastrans.
+-->
+<tabla>
+    <columna>
+        <nombre>codtrans</nombre>
+        <tipo>character varying(8)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nombre</nombre>
+        <tipo>character varying(50)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>telefono</nombre>
+        <tipo>character varying(20)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>web</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>activo</nombre>
+        <tipo>boolean</tipo>
+        <default>true</default>
+        <nulo>NO</nulo>
+    </columna>
+    <restriccion>
+        <nombre>agenciastrans_pkey</nombre>
+        <consulta>PRIMARY KEY (codtrans)</consulta>
+    </restriccion>
+</tabla>
