@@ -104,11 +104,9 @@ class Controller
      * @param Cache $cache
      * @param Translator $i18n
      * @param MiniLog $miniLog
-     * @param Response $response
-     * @param Models\User $user
      * @param string $className
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, &$response, $user, $className)
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         $this->cache = $cache;
         $this->className = $className;
@@ -120,10 +118,8 @@ class Controller
         $this->i18n = $i18n;
         $this->miniLog = $miniLog;
         $this->request = Request::createFromGlobals();
-        $this->response = $response;
         $this->template = $this->className . '.html';
         $this->title = $this->className;
-        $this->user = $user;
     }
 
     /**
@@ -167,18 +163,24 @@ class Controller
 
     /**
      * Ejecuta la lógica pública del controlador.
+     * @param Response $response
      */
-    public function publicCore()
+    public function publicCore(&$response)
     {
+        $this->response = $response;
         $this->template = 'Login/Login.html';
         $this->dispatcher->dispatch('pre-publicCore');
     }
 
     /**
      * Ejecuta la lógica privada del controlador.
+     * @param Response $response
+     * @param Models/User $user
      */
-    public function privateCore()
+    public function privateCore(&$response, $user)
     {
+        $this->response = $response;
+        $this->user = $user;
         $this->dispatcher->dispatch('pre-privateCore');
     }
 }

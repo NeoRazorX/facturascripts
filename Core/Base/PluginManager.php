@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Base;
 
+use Exception;
+
 /**
  * Gestor de plugins de FacturaScripts.
  *
@@ -26,6 +28,12 @@ namespace FacturaScripts\Core\Base;
  */
 class PluginManager
 {
+
+    /**
+     * Previene de bucles infinitos desplegando controladores.
+     * @var type 
+     */
+    private static $deployedControllers;
 
     /**
      * Lista de plugins activos.
@@ -52,30 +60,48 @@ class PluginManager
     private static $minilog;
 
     /**
+     * Ruta del archivo plugin.list
+     * @var string
+     */
+    private static $pluginListFile;
+
+    /**
      * PluginManager constructor.
      * @param string $folder
      */
     public function __construct($folder = '')
     {
         if (self::$folder === null) {
+            self::$deployedControllers = false;
             self::$folder = $folder;
             self::$i18n = new Translator($folder);
             self::$minilog = new MiniLog();
+            self::$pluginListFile = self::$folder . '/plugin.list';
 
-            self::$enabledPlugins = [];
-            if (file_exists(self::$folder . '/plugin.list')) {
-                $list = explode(',', file_get_contents(self::$folder . '/plugin.list'));
-                if (!empty($list)) {
-                    foreach ($list as $pName) {
-                        self::$enabledPlugins[] = $pName;
-                    }
-                }
-            }
+            self::$enabledPlugins = $this->loadFromFile();
         }
     }
 
     /**
-     * Devuelve la carpeta
+     * Devuelve un array con la lista de plugins del archivo plugin.list
+     * @return array
+     */
+    private function loadFromFile()
+    {
+        if (file_exists(self::$pluginListFile)) {
+            return explode(',', file_get_contents(self::$pluginListFile));
+        }
+
+        return [];
+    }
+
+    private function save()
+    {
+        file_put_contents(self::$pluginListFile, implode(',', self::$enabledPlugins));
+    }
+
+    /**
+     * Devuelve la carpeta de trabajo de FacturaScripts.
      * @return string
      */
     public function folder()
@@ -100,7 +126,7 @@ class PluginManager
     {
         if (file_exists(self::$folder . '/plugins/' . $pluginName)) {
             self::$enabledPlugins[] = $pluginName;
-            file_put_contents(self::$folder . '/plugin.list', implode(',', self::$enabledPlugins));
+            $this->save();
         }
     }
 
@@ -113,7 +139,7 @@ class PluginManager
         foreach (self::$enabledPlugins as $i => $value) {
             if ($value === $pluginName) {
                 unset(self::$enabledPlugins[$i]);
-                file_put_contents(self::$folder . '/plugin.list', implode(',', self::$enabledPlugins));
+                $this->save();
                 break;
             }
         }
@@ -128,23 +154,13 @@ class PluginManager
     public function deploy($clean = true)
     {
         $folders = ['Controller', 'Model', 'Table'];
-        if ($clean) {
-            // Limpiamos Dinamic
-            foreach ($folders as $folder) {
-                /// ¿Existe la carpeta?
-                $dir = self::$folder . '/Dinamic/' . $folder;
-                if (!file_exists($dir)) {
-                    if (!@mkdir($dir, 0775, true) && !is_dir($dir)) {
-                        self::$minilog->critical(self::$i18n->trans('cant-create-folder', [$dir]));
-                    }
-                } else {
-                    $this->cleanDinamic(self::$folder . '/Dinamic/');
-                }
-            }
-        }
-
-        // Creamos los nuevos Dinamic
         foreach ($folders as $folder) {
+            if ($clean) {
+                $this->cleanFolder(self::$folder . '/Dinamic/' . $folder);
+            }
+
+            $this->createFolder(self::$folder . '/Dinamic/' . $folder);
+
             /// examinamos los plugins
             foreach (self::$enabledPlugins as $pluginName) {
                 if (file_exists(self::$folder . '/Plugins/' . $pluginName . '/' . $folder)) {
@@ -155,25 +171,68 @@ class PluginManager
             /// examinamos el core
             $this->linkFiles($folder);
         }
+
+        if (self::$deployedControllers === FALSE) {
+            /// por último iniciamos los controlador para completar el menú
+            $this->deployControllers();
+        }
+    }
+
+    private function deployControllers()
+    {
+        self::$deployedControllers = TRUE;
+        $cache = new Cache(self::$folder);
+        $menuManager = new MenuManager();
+
+        foreach (scandir(self::$folder . '/Dinamic/Controller', SCANDIR_SORT_ASCENDING) as $fileName) {
+            if ($fileName != '.' && $fileName != '..' && substr($fileName, -3) == 'php') {
+                $controllerName = substr($fileName, 0, -4);
+                $controllerNamespace = "FacturaScripts\\Dinamic\\Controller\\" . $controllerName;
+
+                try {
+                    $controller = new $controllerNamespace($cache, self::$i18n, self::$minilog, $controllerName);
+                    $menuManager->selectPage($controller->getPageData());
+                } catch (Exception $exc) {
+                    $this->debugBar['exceptions']->addException($exc);
+                }
+            }
+        }
     }
 
     /**
-     * Eliminamos cada archivo de la carpeta Dinamic,
-     * si es una carpeta, se llamará así misma
-     * @param string $folder Carpeta a eliminar sus archivos
+     * Elimina la carpeta $folder y sus archivos.
+     * @param string $folder
+     * @return boolean
      */
-    private function cleanDinamic($folder)
+    private function cleanFolder($folder)
     {
-        // Añadimos los archivos que no son '.' ni '..'
-        $items = array_diff(scandir($folder, SCANDIR_SORT_ASCENDING), ['.', '..']);
-        // Ahora recorremos solo archivos o carpetas
-        foreach ($items as $item) {
-            if (is_dir($folder . '/' . $item)) {
-                $this->cleanDinamic($folder . $item . '/');
-            } else {
-                unlink($folder . $item);
+        $done = true;
+
+        if (file_exists($folder)) {
+            /// Comprobamos los archivos que no son '.' ni '..'
+            $items = array_diff(scandir($folder, SCANDIR_SORT_ASCENDING), ['.', '..']);
+
+            /// Ahora recorremos y eliminamos lo que encontramos
+            foreach ($items as $item) {
+                if (is_dir($folder . '/' . $item)) {
+                    $done = $this->cleanDinamic($folder . '/' . $item . '/');
+                } else {
+                    $done = unlink($folder . '/' . $item);
+                }
             }
         }
+
+        return $done;
+    }
+
+    private function createFolder($folder)
+    {
+        if (!file_exists($folder) && !@mkdir($folder, 0775, true)) {
+            self::$minilog->critical(self::$i18n->trans('cant-create-folder', [$folder]));
+            return false;
+        }
+
+        return true;
     }
 
     /**

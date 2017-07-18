@@ -103,14 +103,12 @@ class AppController extends App
             $this->menuManager->setUser($user);
             
             try {
-                $this->controller = new $controllerName(
-                    $this->cache, $this->i18n, $this->miniLog, $this->response, $user, $pageName
-                );
+                $this->controller = new $controllerName($this->cache, $this->i18n, $this->miniLog, $pageName);
                 if ($user === null) {
-                    $this->controller->publicCore();
+                    $this->controller->publicCore($this->response);
                 } else {
                     $this->menuManager->selectPage($this->controller->getPageData());
-                    $this->controller->privateCore();
+                    $this->controller->privateCore($this->response, $user);
                 }
                 $template = $this->controller->getTemplate();
                 $httpStatus = Response::HTTP_OK;
@@ -152,6 +150,7 @@ class AppController extends App
             'log' => $this->miniLog->read(),
             'menuManager' => $this->menuManager,
             'sql' => $this->miniLog->read(['sql']),
+            'template' => $template
         );
 
         if (FS_DEBUG) {
