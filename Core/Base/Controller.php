@@ -94,7 +94,7 @@ class Controller
 
     /**
      * Usuario que ha iniciado sesión.
-     * @var Models\User
+     * @var Models\User|null
      */
     public $user;
 
@@ -175,7 +175,7 @@ class Controller
     /**
      * Ejecuta la lógica privada del controlador.
      * @param Response $response
-     * @param Models/User $user
+     * @param Models\User|null $user
      */
     public function privateCore(&$response, $user)
     {

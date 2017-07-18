@@ -63,7 +63,7 @@ class MenuManager
 
     /**
      * Asigna el usuario para cargar su menú.
-     * @param Model\User $user
+     * @param Models\User|null $user
      */
     public function setUser($user)
     {
