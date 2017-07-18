@@ -48,6 +48,10 @@ class AppController extends App
      */
     private $debugBar;
     
+    /**
+     * Para gestionar el menú del usuario
+     * @var MenuManager 
+     */
     private $menuManager;
 
     /**
