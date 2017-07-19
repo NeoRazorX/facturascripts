@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
@@ -34,15 +33,15 @@ class DataBaseUtils
      * Enlace al motor de base de datos seleccionado en la configuración
      * @var DatabaseEngine
      */
-    private static $engine;
-
+    private $engine;
+    
     /**
      * Construye y prepara la clase para su uso
      * @param DatabaseEngine $engine
      */
     public function __construct($engine)
     {
-        self::$engine = $engine;
+        $this->engine = &$engine;
     }
 
     /**
@@ -74,15 +73,15 @@ class DataBaseUtils
      */
     public function compareDataTypes($dbType, $xmlType)
     {
-        $db = strtolower($dbType);
+        $db0 = strtolower($dbType);
         $xml = strtolower($xmlType);
 
         $result = (
             (FS_CHECK_DB_TYPES !== '1') ||
-            self::$engine->compareDataTypes($db, $xml) ||
+            $this->engine->compareDataTypes($db0, $xml) ||
             ($xml === 'serial') ||
             (
-            strpos($db, 'time') === 0 &&
+            strpos($db0, 'time') === 0 &&
             strpos($xml, 'time') === 0
             )
             );
@@ -111,20 +110,20 @@ class DataBaseUtils
 
             $column = $this->searchInArray($dbCols, 'name', $xml_col['nombre']);
             if (empty($column)) {
-                $result .= self::$engine->sqlAlterAddColumn($tableName, $xml_col);
+                $result .= $this->engine->getSQL()->sqlAlterAddColumn($tableName, $xml_col);
                 continue;
             }
 
             if (!$this->compareDataTypes($column['type'], $xml_col['tipo'])) {
-                $result .= self::$engine->sqlAlterModifyColumn($tableName, $xml_col);
+                $result .= $this->engine->getSQL()->sqlAlterModifyColumn($tableName, $xml_col);
             }
 
             if ($column['default'] === null && $xml_col['defecto'] !== '') {
-                $result .= self::$engine->sqlAlterConstraintDefault($tableName, $xml_col);
+                $result .= $this->engine->getSQL()->sqlAlterConstraintDefault($tableName, $xml_col);
             }
 
             if ($column['is_nullable'] !== $xml_col['nulo']) {
-                $result .= self::$engine->sqlAlterConstraintNull($tableName, $xml_col);
+                $result .= $this->engine->getSQL()->sqlAlterConstraintNull($tableName, $xml_col);
             }
         }
 
@@ -147,7 +146,7 @@ class DataBaseUtils
             if (strpos('PRIMARY;UNIQUE', $db_con['name']) === false) {
                 $column = $this->searchInArray($xmlCons, 'nombre', $db_con['name']);
                 if (empty($column)) {
-                    $result .= self::$engine->sqlDropConstraint($tableName, $db_con);
+                    $result .= $this->engine->getSQL()->sqlDropConstraint($tableName, $db_con);
                 }
             }
         }
@@ -160,7 +159,7 @@ class DataBaseUtils
 
                 $column = $this->searchInArray($dbCons, 'name', $xml_con['nombre']);
                 if (empty($column)) {
-                    $result .= self::$engine->sqlAddConstraint($tableName, $xml_con['nombre'], $xml_con['consulta']);
+                    $result .= $this->engine->getSQL()->sqlAddConstraint($tableName, $xml_con['nombre'], $xml_con['consulta']);
                 }
             }
         }
@@ -177,6 +176,6 @@ class DataBaseUtils
      */
     public function generateTable($tableName, $xmlCols, $xmlCons)
     {
-        return self::$engine->sqlCreateTable($tableName, $xmlCols, $xmlCons);
+        return $this->engine->getSQL()->sqlCreateTable($tableName, $xmlCols, $xmlCons);
     }
 }

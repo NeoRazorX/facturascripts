@@ -16,37 +16,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\App;
 
-use DebugBar\Bridge\Twig\TraceableTwigEnvironment;
-use DebugBar\Bridge\Twig\TwigCollector;
-use DebugBar\DataCollector\PDO\PDOCollector;
-use DebugBar\DataCollector\PDO\TraceablePDO;
-use DebugBar\DebugBarException;
+use DebugBar\Bridge\Twig;
+use DebugBar\DataCollector\PDO as PDODataCollector;
 use DebugBar\StandardDebugBar;
 use Exception;
 use FacturaScripts\Core\Base\Controller;
-use FacturaScripts\Core\Base\DataBase\DataCollector\MysqlCollector;
-use FacturaScripts\Core\Base\DataBase\DataCollector\PostgresqlCollector;
-use FacturaScripts\Core\Base\DataBase\Mysql;
-use FacturaScripts\Core\Base\DataBase\PDOMysql;
-use FacturaScripts\Core\Base\DataBase\PDOPostgresql;
-use FacturaScripts\Core\Base\DataBase\PDOSqlite;
-use FacturaScripts\Core\Base\DataBase\Postgresql;
+use FacturaScripts\Core\Base\MenuManager;
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\User;
-use InvalidArgumentException;
 use PDO;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 use Twig_Environment;
-use Twig_Error_Loader;
-use Twig_Error_Runtime;
-use Twig_Error_Syntax;
 use Twig_Loader_Filesystem;
-use UnexpectedValueException;
 
 /**
  * Description of App
@@ -69,11 +53,14 @@ class AppController extends App
     private $debugBar;
 
     /**
+     * Para gestionar el menú del usuario
+     * @var MenuManager
+     */
+    private $menuManager;
+
+    /**
      * AppController constructor.
      * @param string $folder
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     public function __construct($folder = '')
     {
@@ -89,18 +76,11 @@ class AppController extends App
         //
         // }
         // $this->debugBar->setStorage(new FileStorage($logDir));
+        $this->menuManager = new MenuManager();
     }
 
     /**
      * Selecciona y ejecuta el controlador pertinente.
-     * @throws InvalidArgumentException
-     * @throws Twig_Error_Loader
-     * @throws Twig_Error_Runtime
-     * @throws Twig_Error_Syntax
-     * @throws UnexpectedValueException
-     * @throws \RuntimeException
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
-     * @throws \DebugBar\DebugBarException
      */
     public function run()
     {
@@ -122,17 +102,7 @@ class AppController extends App
 
     /**
      * Carga y procesa el controlador $pageName.
-     *
      * @param string $pageName nombre del controlador
-     *
-     * @throws InvalidArgumentException
-     * @throws Twig_Error_Loader
-     * @throws Twig_Error_Runtime
-     * @throws Twig_Error_Syntax
-     * @throws UnexpectedValueException
-     * @throws \RuntimeException
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
-     * @throws \DebugBar\DebugBarException
      */
     private function loadController($pageName)
     {
@@ -152,15 +122,17 @@ class AppController extends App
         if (class_exists($controllerName)) {
             $this->miniLog->debug('Loading controller: ' . $controllerName);
             $user = $this->userAuth();
-
+            $this->menuManager->setUser($user);
+            
             try {
                 $this->controller = new $controllerName(
                     $this->cache, $this->i18n, $this->miniLog, $this->response, $user, $pageName
                 );
-                if ($user) {
-                    $this->controller->privateCore();
-                } else {
+                if ($user === null) {
                     $this->controller->publicCore();
+                } else {
+                    $this->menuManager->selectPage($this->controller->getPageData());
+                    $this->controller->privateCore();
                 }
                 $template = $this->controller->getTemplate();
                 $httpStatus = Response::HTTP_OK;
@@ -183,22 +155,14 @@ class AppController extends App
     /**
      * Crea el HTML con la plantilla seleccionada. Aunque los datos no se volcarán
      * hasta ejecutar render()
-     *
      * @param string $template archivo html a utilizar
-     *
-     * @throws InvalidArgumentException
-     * @throws UnexpectedValueException
-     * @throws Twig_Error_Loader
-     * @throws Twig_Error_Runtime
-     * @throws Twig_Error_Syntax
-     * @throws \DebugBar\DebugBarException
      */
     private function renderHtml($template)
     {
         /// cargamos el motor de plantillas
         $twigLoader = new Twig_Loader_Filesystem($this->folder . '/Core/View');
-        $env = new TraceableTwigEnvironment(new Twig_Environment($twigLoader));
-        $this->debugBar->addCollector(new TwigCollector($env));
+        $env = new Twig\TraceableTwigEnvironment(new Twig_Environment($twigLoader));
+        $this->debugBar->addCollector(new Twig\TwigCollector($env));
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
             if (file_exists($this->folder . '/Plugins/' . $pluginName . '/View')) {
                 $twigLoader->prependPath($this->folder . '/Plugins/' . $pluginName . '/View');
@@ -214,6 +178,7 @@ class AppController extends App
             'fsc' => $this->controller,
             'i18n' => $this->i18n,
             'log' => $this->miniLog->read(),
+            'menuManager' => $this->menuManager,
             'sql' => $this->miniLog->read(['sql']),
         );
 
@@ -243,9 +208,6 @@ class AppController extends App
     /**
      * TODO
      * @return User|null
-     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
-     * @throws \RuntimeException
-     * @throws \InvalidArgumentException
      */
     private function userAuth()
     {
@@ -307,23 +269,22 @@ class AppController extends App
     /**
      * Carga la trazabilidad de las consultas SQL
      * @param array $queries
-     * @throws DebugBarException
      */
     private function loadDataBaseTrace(array $queries = [])
     {
         switch (true) {
-            case $this->dataBase->getEngine() instanceof Mysql:
-                $this->debugBar->addCollector(new MysqlCollector($queries));
+            case $this->dataBase->getEngine() instanceof Database\Mysql:
+                $this->debugBar->addCollector(new Database\DataCollector\MysqlCollector($queries));
                 break;
-            case $this->dataBase->getEngine() instanceof Postgresql:
-                $this->debugBar->addCollector(new PostgresqlCollector($queries));
+            case $this->dataBase->getEngine() instanceof Database\Postgresql:
+                $this->debugBar->addCollector(new Database\DataCollector\PostgresqlCollector($queries));
                 break;
-            case $this->dataBase->getEngine() instanceof PDOMysql:
-            case $this->dataBase->getEngine() instanceof PDOPostgresql:
-            case $this->dataBase->getEngine() instanceof PDOSqlite:
+            case $this->dataBase->getEngine() instanceof Database\PDOMysql:
+            case $this->dataBase->getEngine() instanceof Database\PDOPostgresql:
+            case $this->dataBase->getEngine() instanceof Database\PDOSqlite:
                 if ($this->dataBase->getLink() instanceof PDO) {
-                    $pdo = new TraceablePDO($this->dataBase->getLink());
-                    $this->debugBar->addCollector(new PDOCollector($pdo));
+                    $pdo = new PDODataCollector\TraceablePDO($this->dataBase->getLink());
+                    $this->debugBar->addCollector(new PDODataCollector\PDOCollector($pdo));
                 }
                 break;
         }

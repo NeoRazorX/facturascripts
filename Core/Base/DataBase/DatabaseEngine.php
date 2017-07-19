@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 use mysqli;
@@ -30,13 +29,18 @@ use PDO;
  */
 interface DatabaseEngine
 {
+    /**
+     * Devuelve el enlace a la clase de Utilidades del engine
+     * @return DataBaseUtils
+     */
+    public function getUtils();    
 
     /**
-     * Genera el SQL para establecer las restricciones proporcionadas.
-     * @param array $xmlCons
+     * Devuelve el enlace a la clase de SQL del engine
+     * @return DatabaseSQL
      */
-    public function generateTableConstraints($xmlCons);
-
+    public function getSQL();    
+    
     /**
      * Convierte los datos leidos del sqlColumns a estructura de trabajo
      * @param array $colData
@@ -148,12 +152,6 @@ interface DatabaseEngine
     public function dateStyle();
 
     /**
-     * Indica el SQL a usar para convertir la columna en Integer
-     * @param string $colName
-     */
-    public function sql2int($colName);
-
-    /**
      * Comprueba la existencia de una secuencia
      * @param mysqli|resource|PDO $link
      * @param string $tableName
@@ -169,92 +167,6 @@ interface DatabaseEngine
      * @param string $error
      */
     public function checkTableAux($link, $tableName, &$error);
-
-    /**
-     * Sentencia SQL para obtener el último valor de una secuencia o ID
-     */
-    public function sqlLastValue();
-
-    /**
-     * Sentencia SQL para obtener las columnas de una tabla
-     * @param string $tableName
-     */
-    public function sqlColumns($tableName);
-
-    /**
-     * Sentencia SQL para obtener las constraints de una tabla
-     * @param string $tableName
-     */
-    public function sqlConstraints($tableName);
-
-    /**
-     * Sentencia SQL para obtener las constraints (extendidas) de una tabla
-     * @param string $tableName
-     */
-    public function sqlConstraintsExtended($tableName);
-
-    /**
-     * Sentencia SQL para obtener los indices de una tabla
-     * @param string $tableName
-     */
-    public function sqlIndexes($tableName);
-
-    /**
-     * Sentencia SQL para crear una tabla
-     * @param string $tableName
-     * @param array $columns
-     * @param array $constraints
-     */
-    public function sqlCreateTable($tableName, $columns, $constraints);
-
-    /**
-     * Sentencia SQL para añadir una columna a una tabla
-     * @param string $tableName
-     * @param array $colData
-     */
-    public function sqlAlterAddColumn($tableName, $colData);
-
-    /**
-     * Sentencia SQL para modificar la definición de una columna de una tabla
-     * @param string $tableName
-     * @param array $colData
-     */
-    public function sqlAlterModifyColumn($tableName, $colData);
-
-    /**
-     * Sentencia SQL para modificar valor por defecto de una columna de una tabla
-     * @param string $tableName
-     * @param array $colData
-     */
-    public function sqlAlterConstraintDefault($tableName, $colData);
-
-    /**
-     * Sentencia SQL para modificar un constraint null de una columna de una tabla
-     * @param string $tableName
-     * @param array $colData
-     */
-    public function sqlAlterConstraintNull($tableName, $colData);
-
-    /**
-     * Sentencia SQL para eliminar una constraint de una tabla
-     * @param string $tableName
-     * @param array $colData
-     */
-    public function sqlDropConstraint($tableName, $colData);
-
-    /**
-     * Sentencia SQL para añadir una constraint de una tabla
-     * @param string $tableName
-     * @param string $constraintName
-     * @param string $sql
-     */
-    public function sqlAddConstraint($tableName, $constraintName, $sql);
-
-    /**
-     * Sentencia para crear una secuencia
-     * @param string $seqName
-     */
-    public function sqlSequenceExists($seqName);
 
     /**
      * Devuelve el tipo de conexión que utiliza

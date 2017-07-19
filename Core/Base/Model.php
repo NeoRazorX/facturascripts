@@ -16,11 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
-
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * La clase de la que heredan todos los modelos, conecta a la base de datos,
@@ -97,8 +93,6 @@ trait Model
      * @param string $modelName
      * @param string $tableName nombre de la tabla de la base de datos.
      * @param string $primaryColumn
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     private function init($modelName = '', $tableName = '', $primaryColumn = '')
     {
@@ -220,16 +214,45 @@ trait Model
     }
 
     /**
+     * Lee el registro cuya columna primaria corresponda al valor $cod
+     * @param string $cod
+     * @return array
+     */
+    private function getRecord($cod)
+    {
+        $sql = 'SELECT * FROM ' . $this->tableName()
+            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($cod) . ';';
+        return $this->dataBase->select($sql);
+    }
+
+    /**
+     * Rellena la clase con los valores del registro
+     * cuya columna primaria corresponda al valor $cod, o vacio si no existe.
+     * Devuelve True si existe el registro y False en caso contrario.
+     * @param string $cod
+     * @return boolean
+     */
+    public function loadFromCode($cod)
+    {
+        $data = $this->getRecord($cod);
+        if (!empty($data)) {
+            $this->loadFromData($data[0]);
+            return true;
+        }
+
+        $this->clear();
+        return false;
+    }
+
+    /**
      * Devuelve el modelo cuya columna primaria corresponda al valor $cod
-     * @param $cod
+     * @param string $cod
      * @return mixed|bool
      */
     public function get($cod)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($cod) . ';';
-        $data = $this->dataBase->select($sql);
-        if ($data) {
+        $data = $this->getRecord($cod);
+        if (!empty($data)) {
             $class = $this->modelName();
             return new $class($data[0]);
         }
@@ -383,14 +406,14 @@ trait Model
         foreach ($fields as $key => $value) {
             $sql .= $coma . $key . ' = ' . $this->var2str($value);
             if ($coma === ' WHERE ') {
-                $coma = ', ';
+                $coma = ' AND ';
             }
         }
 
         $coma2 = ' ORDER BY ';
         foreach ($order as $key => $value) {
-            $sql .= $coma2 . $key . ' ' . $this->var2str($value);
-            if ($coma2 === ' WHERE ') {
+            $sql .= $coma2 . $key . ' ' . $value;
+            if ($coma2 === ' ORDER BY ') {
                 $coma2 = ', ';
             }
         }

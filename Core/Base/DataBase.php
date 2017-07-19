@@ -16,11 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DatabaseEngine;
-use FacturaScripts\Core\Base\DataBase\DataBaseUtils;
 use FacturaScripts\Core\Base\DataBase\Mysql;
 use FacturaScripts\Core\Base\DataBase\PDOSqlite;
 use FacturaScripts\Core\Base\DataBase\Postgresql;
@@ -52,13 +50,7 @@ class DataBase
      * @var DatabaseEngine
      */
     private static $engine;
-
-    /**
-     * El enlace con las utilidades de base de datos.
-     * @var DataBaseUtils
-     */
-    private static $utils;
-
+    
     /**
      * Gestiona el log de todos los controladores, modelos y base de datos.
      * @var MiniLog
@@ -95,10 +87,6 @@ class DataBase
             self::$tables = [];
 
             self::$engine = $this->engine(strtolower(FS_DB_TYPE));
-
-            if (self::$engine !== null) {
-                self::$utils = new DataBaseUtils(self::$engine);
-            }
         }
     }
 
@@ -174,7 +162,7 @@ class DataBase
     public function getColumns($tableName)
     {
         $result = [];
-        $aux = $this->select(self::$engine->sqlColumns($tableName));
+        $aux = $this->select(self::$engine->getSQL()->sqlColumns($tableName));
         if (is_array($aux) && !empty($aux)) {
             foreach ($aux as $data) {
                 $result[] = self::$engine->columnFromData($data);
@@ -191,10 +179,10 @@ class DataBase
      */
     public function getConstraints($tableName, $extended = false)
     {
-        $sql = self::$engine->sqlConstraints($tableName);
+        $sql = self::$engine->getSQL()->sqlConstraints($tableName);
 
         if ($extended) {
-            $sql = self::$engine->sqlConstraintsExtended($tableName);
+            $sql = self::$engine->getSQL()->sqlConstraintsExtended($tableName);
         }
 
         $data = $this->select($sql);
@@ -209,7 +197,7 @@ class DataBase
     public function getIndexes($tableName)
     {
         $result = [];
-        $data = $this->select(self::$engine->sqlIndexes($tableName));
+        $data = $this->select(self::$engine->getSQL()->sqlIndexes($tableName));
         if (is_array($data) && !empty($data)) {
             foreach ($data as $row) {
                 $result[] = ['name' => $row['Key_name']];
@@ -399,7 +387,7 @@ class DataBase
      */
     public function lastval()
     {
-        $aux = $this->select(self::$engine->sqlLastValue());
+        $aux = $this->select(self::$engine->getSQL()->sqlLastValue());
         return $aux ? $aux[0]['num'] : false;
     }
 
@@ -455,7 +443,7 @@ class DataBase
      */
     public function generateTable($tableName, $xmlCols, $xmlCons)
     {
-        return self::$utils->generateTable($tableName, $xmlCols, $xmlCons);
+        return self::$engine->getUtils()->generateTable($tableName, $xmlCols, $xmlCons);
     }
 
     /**
@@ -468,7 +456,7 @@ class DataBase
      */
     public function compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly = false)
     {
-        return self::$utils->compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly);
+        return self::$engine->getUtils()->compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly);
     }
 
     /**
@@ -480,7 +468,7 @@ class DataBase
      */
     public function compareColumns($tableName, $xmlCols, $dbCols)
     {
-        return self::$utils->compareColumns($tableName, $xmlCols, $dbCols);
+        return self::$engine->getUtils()->compareColumns($tableName, $xmlCols, $dbCols);
     }
 
     /**
@@ -513,7 +501,7 @@ class DataBase
      */
     public function sql2int($colName)
     {
-        return self::$engine->sql2int($colName);
+        return self::$engine->getSQL()->sql2int($colName);
     }
 
     /**

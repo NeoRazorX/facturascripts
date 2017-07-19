@@ -36,6 +36,16 @@ use PDOStatement;
 class PDOPostgresql implements DatabaseEngine
 {
     /**
+     * El enlace con las utilidades comunes entre motores de base de datos.
+     * @var DataBaseUtils
+     */
+    private $utils;
+    /**
+     * Enlace al conjunto de sentencias SQL de la base de datos conectada
+     * @var DatabaseSQL;
+     */
+    private $utilsSQL;
+    /**
      * Database Handler
      * @var PDO
      */
@@ -55,13 +65,21 @@ class PDOPostgresql implements DatabaseEngine
      * @var array
      */
     private $transactions;
+    /**
+     * Ultimo mensaje de error
+     * @var string
+     */
+    private $lastErrorMsg;
 
     /**
      * Contructor e inicializador de la clase
      */
     public function __construct()
     {
+        $this->utils = new DataBaseUtils($this);
+        $this->utilsSQL = new PDOPostgresql();
         $this->transactions = [];
+        $this->lastErrorMsg = '';
     }
 
     /**
@@ -170,6 +188,7 @@ class PDOPostgresql implements DatabaseEngine
         } catch (PDOException $e) {
             $this->error = $e->getMessage();
             $error = $this->error;
+            $this->lastErrorMsg = $error;
             return null;
         }
 
@@ -273,16 +292,6 @@ class PDOPostgresql implements DatabaseEngine
     }
 
     /**
-     * Returns the ID of the last inserted row or sequence value
-     *
-     * @return string representing the row ID of the last row that was inserted into the database.
-     */
-    public function lastInsertId()
-    {
-        return $this->dbh->lastInsertId();
-    }
-
-    /**
      * Initiates a transaction
      *
      * @param PDO $link
@@ -326,31 +335,6 @@ class PDOPostgresql implements DatabaseEngine
     public function debugDumpParams()
     {
         return $this->stmt->debugDumpParams();
-    }
-
-    /**
-     * Genera el SQL para establecer las restricciones proporcionadas.
-     *
-     * @param array $xmlCons
-     *
-     * @return string
-     */
-    public function generateTableConstraints($xmlCons)
-    {
-        $sql = '';
-        foreach ($xmlCons as $res) {
-            $value = strtolower($res['consulta']);
-            if (false !== strpos($value, 'primary key')) {
-                $sql .= ', ' . $res['consulta'];
-                continue;
-            }
-
-            if (FS_FOREIGN_KEYS === '1' || 0 !== strpos($res['consulta'], 'FOREIGN KEY')) {
-                $sql .= ', CONSTRAINT ' . $res['nombre'] . ' ' . $res['consulta'];
-            }
-        }
-
-        return $sql;
     }
 
     /**
@@ -406,7 +390,7 @@ class PDOPostgresql implements DatabaseEngine
      */
     public function errorMessage($link)
     {
-        return $this->error;
+        return ($this->error !== '') ? $this->error : $this->lastErrorMsg;
     }
 
     /**
@@ -555,18 +539,6 @@ class PDOPostgresql implements DatabaseEngine
     }
 
     /**
-     * Indica el SQL a usar para convertir la columna en Integer
-     *
-     * @param string $colName
-     *
-     * @return string
-     */
-    public function sql2int($colName)
-    {
-        return 'CAST(' . $colName . ' as INTEGER)';
-    }
-
-    /**
      * Comprueba la existencia de una secuencia
      * A partir del campo default de una tabla
      * comprueba si se refiere a una secuencia, y si es así
@@ -584,7 +556,7 @@ class PDOPostgresql implements DatabaseEngine
     {
         $aux = explode("'", $default);
         if (count($aux) === 3) {
-            $data = $this->dbh->query($this->sqlSequenceExists($aux[1]));
+            $data = $this->dbh->query($this->utilsSQL->sqlSequenceExists($aux[1]));
             if ($data) {             /// ¿Existe esa secuencia?
                 $data = $this->dbh->query('SELECT MAX(' . $colname . ')+1 as num FROM ' . $tableName . ';');
                 $this->dbh->exec('CREATE SEQUENCE ' . $aux[1] . ' START ' . $data[0]['num'] . ';');
@@ -608,239 +580,21 @@ class PDOPostgresql implements DatabaseEngine
     }
 
     /**
-     * Sentencia SQL para obtener el último valor de una secuencia o ID
-     *
-     * @return string
+     * Devuelve el enlace a la clase de Utilidades del engine
+     * @return DataBaseUtils
      */
-    public function sqlLastValue()
+    public function getUtils()
     {
-        return $this->lastInsertId();
+        return $this->utils;
     }
 
     /**
-     * Sentencia SQL para obtener las columnas de una tabla
-     *
-     * @param string $tableName
-     *
-     * @return string
+     * Devuelve el enlace a la clase de SQL del engine
+     * @return DatabaseSQL
      */
-    public function sqlColumns($tableName)
+    public function getSQL()
     {
-        $sql = 'SELECT column_name as name, data_type as type,'
-            . 'character_maximum_length, column_default as default,'
-            . 'is_nullable'
-            . ' FROM information_schema.columns'
-            . " WHERE table_catalog = '" . FS_DB_NAME . "'"
-            . " AND table_name = '" . $tableName . "'"
-            . ' ORDER BY 1 ASC;';
-
-        return $sql;
-    }
-
-    /**
-     * Sentencia SQL para obtener las constraints de una tabla
-     *
-     * @param string $tableName
-     *
-     * @return string
-     */
-    public function sqlConstraints($tableName)
-    {
-        $sql = 'SELECT tc.constraint_type as type, tc.constraint_name as name'
-            . ' FROM information_schema.table_constraints AS tc'
-            . " WHERE tc.table_name = '" . $tableName . "'"
-            . " AND tc.constraint_type IN ('PRIMARY KEY','FOREIGN KEY','UNIQUE')"
-            . ' ORDER BY 1 DESC, 2 ASC;';
-        return $sql;
-    }
-
-    /**
-     * Sentencia SQL para obtener las constraints (extendidas) de una tabla
-     *
-     * @param string $tableName
-     *
-     * @return string
-     */
-    public function sqlConstraintsExtended($tableName)
-    {
-        $sql = 'SELECT tc.constraint_type as type, tc.constraint_name as name,'
-            . 'kcu.column_name,'
-            . 'ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name,'
-            . 'rc.update_rule AS on_update, rc.delete_rule AS on_delete'
-            . ' FROM information_schema.table_constraints AS tc'
-            . ' LEFT JOIN information_schema.key_column_usage AS kcu'
-            . ' ON kcu.constraint_schema = tc.constraint_schema'
-            . ' AND kcu.constraint_catalog = tc.constraint_catalog'
-            . ' AND kcu.constraint_name = tc.constraint_name'
-            . ' LEFT JOIN information_schema.constraint_column_usage AS ccu'
-            . ' ON ccu.constraint_schema = tc.constraint_schema'
-            . ' AND ccu.constraint_catalog = tc.constraint_catalog'
-            . ' AND ccu.constraint_name = tc.constraint_name'
-            . ' AND ccu.column_name = kcu.column_name'
-            . ' LEFT JOIN information_schema.referential_constraints rc'
-            . ' ON rc.constraint_schema = tc.constraint_schema'
-            . ' AND rc.constraint_catalog = tc.constraint_catalog'
-            . ' AND rc.constraint_name = tc.constraint_name'
-            . " WHERE tc.table_name = '" . $tableName . "'"
-            . " AND tc.constraint_type IN ('PRIMARY KEY','FOREIGN KEY','UNIQUE')"
-            . ' ORDER BY 1 DESC, 2 ASC;';
-
-        return $sql;
-    }
-
-    /**
-     * Sentencia SQL para obtener los indices de una tabla
-     *
-     * @param string $tableName
-     *
-     * @return string
-     */
-    public function sqlIndexes($tableName)
-    {
-        return "SELECT indexname AS Key_name FROM pg_indexes WHERE tablename = '" . $tableName . "';";
-    }
-
-    /**
-     * Sentencia SQL para crear una tabla
-     *
-     * @param string $tableName
-     * @param array $columns
-     * @param array $constraints
-     *
-     * @return string
-     */
-    public function sqlCreateTable($tableName, $columns, $constraints)
-    {
-        $serials = ['serial', 'bigserial'];
-        $fields = '';
-        foreach ($columns as $col) {
-            $fields .= ', ' . $col['nombre'] . ' ' . $col['tipo'];
-
-            if ($col['nulo'] === 'NO') {
-                $fields .= ' NOT NULL';
-            }
-
-            if (in_array($col['tipo'], $serials, false)) {
-                continue;
-            }
-
-            if ($col['defecto'] !== '') {
-                $fields .= ' DEFAULT ' . $col['defecto'];
-            }
-        }
-
-        $sql = 'CREATE TABLE ' . $tableName . ' (' . substr($fields, 2)
-            . $this->generateTableConstraints($constraints) . ');';
-        return $sql;
-    }
-
-    /**
-     * Sentencia SQL para añadir una columna a una tabla
-     *
-     * @param string $tableName
-     * @param array $colData
-     *
-     * @return string
-     */
-    public function sqlAlterAddColumn($tableName, $colData)
-    {
-        $sql = 'ALTER TABLE ' . $tableName
-            . ' ADD COLUMN ' . $colData['nombre'] . ' ' . $colData['tipo'];
-
-        if ($colData['defecto'] !== '') {
-            $sql .= ' DEFAULT ' . $colData['defecto'];
-        }
-
-        if ($colData['nulo'] === 'NO') {
-            $sql .= ' NOT NULL';
-        }
-
-        return $sql . ';';
-    }
-
-    /**
-     * Sentencia SQL para modificar la definición de una columna de una tabla
-     *
-     * @param string $tableName
-     * @param array $colData
-     *
-     * @return string
-     */
-    public function sqlAlterModifyColumn($tableName, $colData)
-    {
-        $sql = 'ALTER TABLE ' . $tableName
-            . ' ALTER COLUMN ' . $colData['nombre'] . ' TYPE ' . $colData['tipo'];
-        return $sql . ';';
-    }
-
-    /**
-     * Sentencia SQL para modificar valor por defecto de una columna de una tabla
-     *
-     * @param string $tableName
-     * @param array $colData
-     *
-     * @return string
-     */
-    public function sqlAlterConstraintDefault($tableName, $colData)
-    {
-        $action = ($colData['defecto'] !== '') ? ' SET DEFAULT ' . $colData['defecto'] : ' DROP DEFAULT';
-
-        return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['nombre'] . $action . ';';
-    }
-
-    /**
-     * Sentencia SQL para modificar un constraint null de una columna de una tabla
-     *
-     * @param string $tableName
-     * @param array $colData
-     *
-     * @return string
-     */
-    public function sqlAlterConstraintNull($tableName, $colData)
-    {
-        $action = ($colData['nulo'] === 'YES') ? ' DROP ' : ' SET ';
-        return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['nombre'] . $action . 'NOT NULL;';
-    }
-
-    /**
-     * Sentencia SQL para eliminar una constraint de una tabla
-     *
-     * @param string $tableName
-     * @param array $colData
-     *
-     * @return string
-     */
-    public function sqlDropConstraint($tableName, $colData)
-    {
-        return 'ALTER TABLE ' . $tableName . ' DROP CONSTRAINT ' . $colData['name'] . ';';
-    }
-
-    /**
-     * Sentencia SQL para añadir una constraint de una tabla
-     *
-     * @param string $tableName
-     * @param string $constraintName
-     * @param string $sql
-     *
-     * @return string
-     */
-    public function sqlAddConstraint($tableName, $constraintName, $sql)
-    {
-        return 'ALTER TABLE ' . $tableName
-            . ' ADD CONSTRAINT ' . $constraintName . ' '
-            . $sql . ';';
-    }
-
-    /**
-     * Sentencia para crear una secuencia
-     *
-     * @param string $seqName
-     *
-     * @return string
-     */
-    public function sqlSequenceExists($seqName)
-    {
-        return "SELECT * FROM pg_class WHERE relname = '" . $seqName . "';";
+        return $this->utilsSQL;
     }
 
     /**

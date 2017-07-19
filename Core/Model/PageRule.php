@@ -16,12 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
-use RuntimeException;
-use Symfony\Component\Translation\Exception\InvalidArgumentException as TranslationInvalidArgumentException;
 
 /**
  * Define que un usuario tiene acceso a una página concreta
@@ -59,20 +56,18 @@ class PageRule
     public $allowdelete;
 
     /**
-     * TODO
-     * @var
+     * Otorga permisos al usuario a actualizar elementos en la página.
+     * @var bool
      */
     public $allowupdate;
 
     /**
      * PageRule constructor.
      * @param array $data
-     * @throws RuntimeException
-     * @throws TranslationInvalidArgumentException
      */
     public function __construct(array $data = [])
     {
-        $this->init(__CLASS__, 'fs_access', 'id');
+        $this->init(__CLASS__, 'fs_page_rules', 'id');
         $this->clear();
         if (!empty($data)) {
             $this->loadFromData($data);
