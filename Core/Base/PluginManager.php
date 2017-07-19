@@ -30,6 +30,12 @@ class PluginManager
 {
 
     /**
+     * Previene de bucles infinitos desplegando controladores.
+     * @var boolean 
+     */
+    private static $deployedControllers;
+
+    /**
      * Lista de plugins activos.
      * @var array
      */
@@ -52,6 +58,12 @@ class PluginManager
      * @var MiniLog
      */
     private static $minilog;
+
+    /**
+     * Ruta del archivo plugin.list
+     * @var string
+     */
+    private static $pluginListFile;
 
     /**
      * PluginManager constructor.
@@ -79,6 +91,7 @@ class PluginManager
         if (file_exists(self::$pluginListFile)) {
             return explode(',', file_get_contents(self::$pluginListFile));
         }
+
         return [];
     }
 
@@ -91,7 +104,7 @@ class PluginManager
     }
 
     /**
-     * Devuelve la carpeta
+     * Devuelve la carpeta de trabajo de FacturaScripts.
      * @return string
      */
     public function folder()
@@ -148,7 +161,9 @@ class PluginManager
             if ($clean) {
                 $this->cleanFolder(self::$folder . '/Dinamic/' . $folder);
             }
+
             $this->createFolder(self::$folder . '/Dinamic/' . $folder);
+
             /// examinamos los plugins
             foreach (self::$enabledPlugins as $pluginName) {
                 if (file_exists(self::$folder . '/Plugins/' . $pluginName . '/' . $folder)) {
@@ -158,6 +173,7 @@ class PluginManager
             /// examinamos el core
             $this->linkFiles($folder);
         }
+
         if (self::$deployedControllers === FALSE) {
             /// por último iniciamos los controlador para completar el menú
             $this->deployControllers();
@@ -211,6 +227,7 @@ class PluginManager
                 }
             }
         }
+
         return $done;
     }
 
@@ -225,6 +242,7 @@ class PluginManager
             self::$minilog->critical(self::$i18n->trans('cant-create-folder', [$folder]));
             return false;
         }
+
         return true;
     }
 

@@ -72,17 +72,21 @@ class AdminHome extends Base\Controller
     public $serie;
 
     /**
+     * TODO
+     * @var Model\Serie
+     */
+    public $agenciastrans;
+
+    /**
      * AdminHome constructor.
      * @param Base\Cache $cache
      * @param Base\Translator $i18n
      * @param Base\MiniLog $miniLog
-     * @param $response
-     * @param Model\User $user
      * @param string $className
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, &$response, $user, $className)
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
-        parent::__construct($cache, $i18n, $miniLog, $response, $user, $className);
+        parent::__construct($cache, $i18n, $miniLog, $className);
 
         /// por ahora desplegamos siempre el contenido de Dinamic, para las pruebas
         $pluginManager = new Base\PluginManager('');
@@ -95,21 +99,16 @@ class AdminHome extends Base\Controller
         $this->formaPago = new Model\FormaPago();
         $this->pais = new Model\Pais();
         $this->serie = new Model\Serie();
+        $this->agenciastrans = new Model\AgenciasTrans();
+    }
+    
+    public function getPageData()
+    {
+        $pageData = parent::getPageData();
+        $pageData['menu'] = 'admin';
+        $pageData['title'] = 'Panel de control';
+        
+        return $pageData;
     }
 
-    /**
-     * TODO
-     */
-    public function publicCore()
-    {
-        parent::publicCore();
-    }
-
-    /**
-     * TODO
-     */
-    public function privateCore()
-    {
-        parent::privateCore();
-    }
 }

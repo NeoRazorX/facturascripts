@@ -25,6 +25,7 @@ use Exception;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\MenuManager;
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Model\User;
 use PDO;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -97,7 +98,12 @@ class AppController extends App
             /// Obtenemos el nombre del controlador a cargar
             $pageName = $this->request->query->get('page', 'AdminHome');
             $this->loadController($pageName);
+            
+            /// todo OK, para los test
+            return true;
         }
+        
+        return false;
     }
 
     /**
@@ -110,29 +116,24 @@ class AppController extends App
         if ($this->dataBase->isPDO()) {
             $this->loadDataBaseTrace();
         }
-        $controllerName = "FacturaScripts\\Dinamic\\Controller\\{$pageName}";
+
+        $controllerName = $this->getControllerFullName($pageName);
         $template = 'Error/ControllerNotFound.html';
         $httpStatus = Response::HTTP_NOT_FOUND;
-
-        if (!class_exists($controllerName)) {
-            $controllerName = "FacturaScripts\\Core\\Controller\\{$pageName}";
-        }
 
         /// Si hemos encontrado el controlador, lo cargamos
         if (class_exists($controllerName)) {
             $this->miniLog->debug('Loading controller: ' . $controllerName);
             $user = $this->userAuth();
             $this->menuManager->setUser($user);
-            
+
             try {
-                $this->controller = new $controllerName(
-                    $this->cache, $this->i18n, $this->miniLog, $this->response, $user, $pageName
-                );
+                $this->controller = new $controllerName($this->cache, $this->i18n, $this->miniLog, $pageName);
                 if ($user === null) {
-                    $this->controller->publicCore();
+                    $this->controller->publicCore($this->response);
                 } else {
                     $this->menuManager->selectPage($this->controller->getPageData());
-                    $this->controller->privateCore();
+                    $this->controller->privateCore($this->response, $user);
                 }
                 $template = $this->controller->getTemplate();
                 $httpStatus = Response::HTTP_OK;
@@ -146,10 +147,27 @@ class AppController extends App
         if (!$this->dataBase->isPDO()) {
             $this->loadDataBaseTrace($this->miniLog->read(['sql']));
         }
+
         $this->response->setStatusCode($httpStatus);
         if ($template) {
             $this->renderHtml($template);
         }
+    }
+
+    /**
+     * TODO
+     * @param $pageName
+     * @return string
+     */
+    private function getControllerFullName($pageName)
+    {
+        $controllerName = "FacturaScripts\\Dinamic\\Controller\\{$pageName}";
+        if (!class_exists($controllerName)) {
+            $controllerName = "FacturaScripts\\Core\\Controller\\{$pageName}";
+            $this->deployPlugins();
+        }
+
+        return $controllerName;
     }
 
     /**
@@ -180,6 +198,7 @@ class AppController extends App
             'log' => $this->miniLog->read(),
             'menuManager' => $this->menuManager,
             'sql' => $this->miniLog->read(['sql']),
+            'template' => $template
         );
 
         if (FS_DEBUG) {
@@ -264,6 +283,15 @@ class AppController extends App
         $this->response->headers->clearCookie('fsNick');
         $this->response->headers->clearCookie('fsLogkey');
         $this->miniLog->debug('Logout OK.');
+    }
+
+    /**
+     * TODO
+     */
+    private function deployPlugins()
+    {
+        $pluginManager = new PluginManager($this->folder);
+        $pluginManager->deploy();
     }
 
     /**
