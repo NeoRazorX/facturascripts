@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : gruposclientes.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla gruposclientes.
+-->
+<tabla>
+    <columna>
+        <nombre>codgrupo</nombre>
+        <tipo>character varying(6)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nombre</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codtarifa</nombre>
+        <tipo>character varying(6)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <restriccion>
+        <nombre>gruposclientes_pkey</nombre>
+        <consulta>PRIMARY KEY (codgrupo)</consulta>
+    </restriccion>
+</tabla>

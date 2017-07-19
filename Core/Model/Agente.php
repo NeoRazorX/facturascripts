@@ -140,7 +140,7 @@ class Agente
      */
     public function __construct(array $data = [])
     {
-        $this->init(__CLASS__, 'agentes', 'codagente');
+        $this->init(__CLASS__, 'agente', 'codagente');
         if (!empty($data)) {
             $this->loadFromData($data);
         } else {

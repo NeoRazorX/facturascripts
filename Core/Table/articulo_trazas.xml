@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : articulo_trazas
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla articulo_trazas
+-->
+<tabla>
+    <columna>
+        <nombre>id</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('articulo_trazas_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>referencia</nombre>
+        <tipo>character varying(18)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>numserie</nombre>
+        <tipo>character varying(50)</tipo>
+    </columna>
+    <columna>
+        <nombre>lote</nombre>
+        <tipo>character varying(50)</tipo>
+    </columna>
+    <columna>
+        <nombre>fecha_entrada</nombre>
+        <tipo>date</tipo>
+    </columna>
+    <columna>
+        <nombre>fecha_salida</nombre>
+        <tipo>date</tipo>
+    </columna>
+    <columna>
+        <nombre>idlalbventa</nombre>
+        <tipo>integer</tipo>
+    </columna>
+    <columna>
+        <nombre>idlfacventa</nombre>
+        <tipo>integer</tipo>
+    </columna>
+    <columna>
+        <nombre>idlalbcompra</nombre>
+        <tipo>integer</tipo>
+    </columna>
+    <columna>
+        <nombre>idlfaccompra</nombre>
+        <tipo>integer</tipo>
+    </columna>
+    <restriccion>
+        <nombre>articulo_trazas_pkey</nombre>
+        <consulta>PRIMARY KEY (id)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>ca_articulo_trazas_articulos</nombre>
+        <consulta>FOREIGN KEY (referencia)
+            REFERENCES articulos (referencia)
+            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>ca_articulo_trazas_linalbcli</nombre>
+        <consulta>FOREIGN KEY (idlalbventa)
+            REFERENCES lineasalbaranescli (idlinea)
+            ON DELETE SET NULL ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>ca_articulo_trazas_linfaccli</nombre>
+        <consulta>FOREIGN KEY (idlfacventa)
+            REFERENCES lineasfacturascli (idlinea)
+            ON DELETE SET NULL ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>ca_articulo_trazas_linalbprov</nombre>
+        <consulta>FOREIGN KEY (idlalbcompra)
+            REFERENCES lineasalbaranesprov (idlinea)
+            ON DELETE SET NULL ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>ca_articulo_trazas_linfacprov</nombre>
+        <consulta>FOREIGN KEY (idlfaccompra)
+            REFERENCES lineasfacturasprov (idlinea)
+            ON DELETE SET NULL ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>uniq_codigo_articulo_trazas</nombre>
+        <consulta>UNIQUE (numserie)</consulta>
+    </restriccion>
+</tabla>

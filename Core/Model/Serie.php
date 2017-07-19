@@ -73,7 +73,7 @@ class Serie
      */
     public function __construct(array $data = [])
     {
-        $this->init(__CLASS__, 'series', 'codserie');
+        $this->init(__CLASS__, 'serie', 'codserie');
         if (!empty($data)) {
             $this->loadFromData($data);
         } else {

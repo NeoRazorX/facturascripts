@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : cliente_propiedades.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla cliente_propiedades.
+-->
+<tabla>
+    <columna>
+        <nombre>name</nombre>
+        <tipo>character varying(50)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codcliente</nombre>
+        <tipo>character varying(6)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>text</nombre>
+        <tipo>text</tipo>
+    </columna>
+    <restriccion>
+        <nombre>cliente_propiedades_pkey</nombre>
+        <consulta>PRIMARY KEY (name,codcliente)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>ca_cliente_propiedades_clientes</nombre>
+        <consulta>FOREIGN KEY (codcliente)
+            REFERENCES clientes (codcliente)
+            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+</tabla>
