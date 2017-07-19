@@ -84,7 +84,12 @@ class AppController extends App
             /// Obtenemos el nombre del controlador a cargar
             $pageName = $this->request->query->get('page', 'AdminHome');
             $this->loadController($pageName);
+            
+            /// todo OK, para los test
+            return true;
         }
+        
+        return false;
     }
 
     /**

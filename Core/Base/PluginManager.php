@@ -190,8 +190,10 @@ class PluginManager
                 $controllerName = substr($fileName, 0, -4);
                 $controllerNamespace = "FacturaScripts\\Dinamic\\Controller\\" . $controllerName;
 
-                /// forzamos la carga del archivo porque en este punto el autoloader no lo encontrará
-                require self::$folder . '/Dinamic/Controller/' . $controllerName . '.php';
+                if (!class_exists($controllerNamespace)) {
+                    /// forzamos la carga del archivo porque en este punto el autoloader no lo encontrará
+                    require self::$folder . '/Dinamic/Controller/' . $controllerName . '.php';
+                }
 
                 try {
                     $controller = new $controllerNamespace($cache, self::$i18n, self::$minilog, $controllerName);
