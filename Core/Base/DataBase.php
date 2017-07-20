@@ -20,11 +20,10 @@ namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DatabaseEngine;
 use FacturaScripts\Core\Base\DataBase\Mysql;
-use FacturaScripts\Core\Base\DataBase\PDOSqlite;
+use FacturaScripts\Core\Base\DataBase\PDO;
 use FacturaScripts\Core\Base\DataBase\Postgresql;
-use FacturaScripts\Core\Base\DataBase\PDOMysql;
-use FacturaScripts\Core\Base\DataBase\PDOPostgresql;
-use PDO;
+
+//use PDO;
 
 define('FS_FOREIGN_KEYS', '1');
 define('FS_DB_INTEGER', 'INTEGER');
@@ -95,7 +94,7 @@ class DataBase
      *
      * @param $type
      *
-     * @return Mysql|PDOMysql|PDOPostgresql|PDOSqlite|Postgresql|null
+     * @return Mysql|PDO|Postgresql|null
      */
     private function engine($type)
     {
@@ -107,13 +106,10 @@ class DataBase
                 $engine = new Postgresql();
                 break;
             case 'pdo_mysql':
-                $engine = new PDOMysql();
-                break;
             case 'pdo_pgsql':
-                $engine = new PDOPostgresql();
-                break;
             case 'pdo_sqlite':
-                $engine = new PDOSqlite();
+                $pdo = new PDO($type);
+                $engine = $pdo->getEngine();
                 break;
             default:
                 $engine = null;
@@ -533,7 +529,6 @@ class DataBase
 
     /**
      * Devuelve true si es de tipo PDO, sino false
-     *
      * @return bool
      */
     public function isPDO()

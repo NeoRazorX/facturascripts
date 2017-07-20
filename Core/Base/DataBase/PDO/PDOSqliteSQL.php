@@ -17,7 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base\DataBase;
+namespace FacturaScripts\Core\Base\DataBase\PDO;
+
+use FacturaScripts\Core\Base\DataBase;
 
 /**
  * Clase que recopila las sentencias SQL necesarias
@@ -27,20 +29,25 @@ namespace FacturaScripts\Core\Base\DataBase;
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class PDOMysqlSQL implements DatabaseSQL
+class PDOSqliteSQL implements DataBase\DatabaseSQL
 {
 
     /**
      * Genera el SQL con el tipo de campo y las constraints DEFAULT y NULL
+     * https://sqlite.org/datatype3.html
      * @param array $colData
      * @return string
      */
     private function getTypeAndConstraints($colData)
     {
-        $type = stripos('integer,serial', $colData['tipo']) === false ? strtolower($colData['tipo']) : FS_DB_INTEGER;
+        $type = stripos('boolean,integer,serial',
+            $colData['tipo']) === false ? strtolower($colData['tipo']) : FS_DB_INTEGER;
         switch (true) {
             case ($type === 'serial'):
             case (stripos($colData['defecto'], 'nextval(') !== false):
+                $contraints = ' NOT NULL AUTO_INCREMENT';
+                break;
+            case (stripos($colData['defecto'], 'boolean') !== false):
                 $contraints = ' NOT NULL AUTO_INCREMENT';
                 break;
             default:
@@ -69,7 +76,13 @@ class PDOMysqlSQL implements DatabaseSQL
         }
 
         if ($colData['defecto'] !== '') {
-            $result .= ' DEFAULT ' . $colData['defecto'];
+            if ($colData['defecto'] !== 'true' && $colData['defecto'] !== 'false') {
+                $result .= ' DEFAULT ' . $colData['defecto'];
+            } elseif ($colData['defecto'] !== 'true') {
+                $result .= ' DEFAULT 1';
+            } elseif ($colData['defecto'] !== 'false') {
+                $result .= ' DEFAULT 0';
+            }
         }
 
         return $result;
@@ -94,7 +107,7 @@ class PDOMysqlSQL implements DatabaseSQL
      */
     public function sql2int($colName)
     {
-        return 'CAST(' . $colName . ' as UNSIGNED)';
+        return 'CAST(' . $colName . ' as INTEGER)';
     }
 
     /**
@@ -105,6 +118,7 @@ class PDOMysqlSQL implements DatabaseSQL
      */
     public function sqlLastValue()
     {
+        // TODO: Comprobar que sea realmente así
         return 'SELECT LAST_INSERT_ID() as num;';
     }
 
@@ -116,21 +130,23 @@ class PDOMysqlSQL implements DatabaseSQL
      */
     public function sqlColumns($tableName)
     {
-        return 'SHOW COLUMNS FROM `' . $tableName . '`;';
+        // TODO: Comprobar que sea realmente así
+        return 'DESCRIBE ' . $tableName;
     }
 
     /**
-     * Devuelve el SQL para averiguar
-     * la lista de restricciones de una tabla.
+     * Sentencia SQL para obtener las constraints de una tabla
      * @param string $tableName
      * @return string
      */
     public function sqlConstraints($tableName)
     {
-        $sql = 'SELECT CONSTRAINT_NAME as name, CONSTRAINT_TYPE as type'
-            . ' FROM information_schema.table_constraints '
-            . ' WHERE table_schema = schema()'
-            . " AND table_name = '" . $tableName . "';";
+        // TODO: Este no es su equivalente
+        $sql = 'SELECT tc.constraint_type as type, tc.constraint_name as name'
+            . ' FROM information_schema.table_constraints AS tc'
+            . " WHERE tc.table_name = '" . $tableName . "'"
+            . " AND tc.constraint_type IN ('PRIMARY KEY','FOREIGN KEY','UNIQUE')"
+            . ' ORDER BY 1 DESC, 2 ASC;';
         return $sql;
     }
 
@@ -142,24 +158,29 @@ class PDOMysqlSQL implements DatabaseSQL
      */
     public function sqlConstraintsExtended($tableName)
     {
-        $sql = 'SELECT t1.constraint_name as name,'
-            . ' t1.constraint_type as type,'
-            . ' t2.column_name,'
-            . ' t2.referenced_table_name AS foreign_table_name,'
-            . ' t2.referenced_column_name AS foreign_column_name,'
-            . ' t3.update_rule AS on_update,'
-            . ' t3.delete_rule AS on_delete'
-            . ' FROM information_schema.table_constraints t1'
-            . ' LEFT JOIN information_schema.key_column_usage t2'
-            . ' ON t1.table_schema = t2.table_schema'
-            . ' AND t1.table_name = t2.table_name'
-            . ' AND t1.constraint_name = t2.constraint_name'
-            . ' LEFT JOIN information_schema.referential_constraints t3'
-            . ' ON t3.constraint_schema = t1.table_schema'
-            . ' AND t3.constraint_name = t1.constraint_name'
-            . ' WHERE t1.table_schema = SCHEMA()'
-            . " AND t1.table_name = '" . $tableName . "'"
-            . ' ORDER BY type DESC, name ASC;';
+        // TODO: Este no es su equivalente
+        $sql = 'SELECT tc.constraint_type as type, tc.constraint_name as name,'
+            . 'kcu.column_name,'
+            . 'ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name,'
+            . 'rc.update_rule AS on_update, rc.delete_rule AS on_delete'
+            . ' FROM information_schema.table_constraints AS tc'
+            . ' LEFT JOIN information_schema.key_column_usage AS kcu'
+            . ' ON kcu.constraint_schema = tc.constraint_schema'
+            . ' AND kcu.constraint_catalog = tc.constraint_catalog'
+            . ' AND kcu.constraint_name = tc.constraint_name'
+            . ' LEFT JOIN information_schema.constraint_column_usage AS ccu'
+            . ' ON ccu.constraint_schema = tc.constraint_schema'
+            . ' AND ccu.constraint_catalog = tc.constraint_catalog'
+            . ' AND ccu.constraint_name = tc.constraint_name'
+            . ' AND ccu.column_name = kcu.column_name'
+            . ' LEFT JOIN information_schema.referential_constraints rc'
+            . ' ON rc.constraint_schema = tc.constraint_schema'
+            . ' AND rc.constraint_catalog = tc.constraint_catalog'
+            . ' AND rc.constraint_name = tc.constraint_name'
+            . " WHERE tc.table_name = '" . $tableName . "'"
+            . " AND tc.constraint_type IN ('PRIMARY KEY','FOREIGN KEY','UNIQUE')"
+            . ' ORDER BY 1 DESC, 2 ASC;';
+
         return $sql;
     }
 
@@ -186,11 +207,12 @@ class PDOMysqlSQL implements DatabaseSQL
      */
     public function sqlIndexes($tableName)
     {
+        // TODO: Comprobar que sea realmente así
         return 'SHOW INDEXES FROM ' . $tableName . ';';
     }
 
     /**
-     * Devuelve la sentencia SQL necesaria para crear una tabla con la estructura proporcionada.
+     * Sentencia SQL para crear una tabla
      * @param string $tableName
      * @param array $columns
      * @param array $constraints
@@ -204,9 +226,9 @@ class PDOMysqlSQL implements DatabaseSQL
         }
 
         $sql = $this->fixPostgresql(substr($fields, 2));
-        return 'CREATE TABLE ' . $tableName . ' (' . $sql
-            . $this->sqlTableConstraints($constraints) . ') '
-            . 'ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;';
+        $result = 'CREATE TABLE ' . $tableName . ' (' . $sql
+            . $this->sqlTableConstraints($constraints) . ');';
+        return $result;
     }
 
     /**
@@ -224,7 +246,7 @@ class PDOMysqlSQL implements DatabaseSQL
     }
 
     /**
-     * Sentencia SQL para modificar una columna de una tabla
+     * Sentencia SQL para modificar la definición de una columna de una tabla
      * @param string $tableName
      * @param array $colData
      * @return string
@@ -239,18 +261,16 @@ class PDOMysqlSQL implements DatabaseSQL
     }
 
     /**
-     * Sentencia SQL para modificar una constraint de una tabla
+     * Sentencia SQL para modificar valor por defecto de una columna de una tabla
      * @param string $tableName
      * @param array $colData
      * @return string
      */
     public function sqlAlterConstraintDefault($tableName, $colData)
     {
-        $result = '';
-        if ($colData['tipo'] !== 'serial') {
-            $result = $this->sqlAlterModifyColumn($tableName, $colData);
-        }
-        return $result;
+        $action = ($colData['defecto'] !== '') ? ' SET DEFAULT ' . $colData['defecto'] : ' DROP DEFAULT';
+
+        return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['nombre'] . $action . ';';
     }
 
     /**
@@ -261,7 +281,8 @@ class PDOMysqlSQL implements DatabaseSQL
      */
     public function sqlAlterConstraintNull($tableName, $colData)
     {
-        return $this->sqlAlterModifyColumn($tableName, $colData);
+        $action = ($colData['nulo'] === 'YES') ? ' DROP ' : ' SET ';
+        return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['nombre'] . $action . 'NOT NULL;';
     }
 
     /**
@@ -272,20 +293,7 @@ class PDOMysqlSQL implements DatabaseSQL
      */
     public function sqlDropConstraint($tableName, $colData)
     {
-        $start = 'ALTER TABLE ' . $tableName . ' DROP';
-        switch ($colData['type']) {
-            case 'FOREIGN KEY':
-                $sql = $start . ' FOREIGN KEY ' . $colData['name'] . ';';
-                break;
-
-            case 'UNIQUE':
-                $sql = $start . ' INDEX ' . $colData['name'] . ';';
-                break;
-
-            default:
-                $sql = '';
-        }
-        return $sql;
+        return 'ALTER TABLE ' . $tableName . ' DROP CONSTRAINT ' . $colData['name'] . ';';
     }
 
     /**

@@ -307,13 +307,11 @@ class AppController extends App
             case $this->dataBase->getEngine() instanceof Database\Postgresql:
                 $this->debugBar->addCollector(new Database\DataCollector\PostgresqlCollector($queries));
                 break;
-            case $this->dataBase->getEngine() instanceof Database\PDOMysql:
-            case $this->dataBase->getEngine() instanceof Database\PDOPostgresql:
-            case $this->dataBase->getEngine() instanceof Database\PDOSqlite:
-                if ($this->dataBase->getLink() instanceof PDO) {
-                    $pdo = new PDODataCollector\TraceablePDO($this->dataBase->getLink());
-                    $this->debugBar->addCollector(new PDODataCollector\PDOCollector($pdo));
-                }
+            case $this->dataBase->getEngine() instanceof Database\PDO\PDOMysql:
+            case $this->dataBase->getEngine() instanceof Database\PDO\PDOPostgresql:
+            case $this->dataBase->getEngine() instanceof Database\PDO\PDOSqlite:
+                $pdo = new PDODataCollector\TraceablePDO($this->dataBase->getLink());
+                $this->debugBar->addCollector(new PDODataCollector\PDOCollector($pdo));
                 break;
         }
     }

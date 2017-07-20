@@ -17,8 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base\DataBase;
+namespace FacturaScripts\Core\Base\DataBase\PDO;
 
+use FacturaScripts\Core\Base\DataBase;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -31,17 +32,17 @@ use PDOStatement;
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class PDOMysql implements DatabaseEngine
+class PDOMysql implements DataBase\DatabaseEngine
 {
     /**
      * El enlace con las utilidades comunes entre motores de base de datos.
-     * @var DataBaseUtils
+     * @var DataBase\DataBaseUtils
      */
     private $utils;
 
     /**
      * Enlace al conjunto de sentencias SQL de la base de datos conectada
-     * @var DatabaseSQL;
+     * @var DataBase\DatabaseSQL;
      */
     private $utilsSQL;
 
@@ -80,7 +81,7 @@ class PDOMysql implements DatabaseEngine
      */
     public function __construct()
     {
-        $this->utils = new DataBaseUtils($this);
+        $this->utils = new DataBase\DataBaseUtils($this);
         $this->utilsSQL = new PDOMysqlSQL();
         $this->transactions = [];
         $this->lastErrorMsg = '';
@@ -503,7 +504,7 @@ class PDOMysql implements DatabaseEngine
 
     /**
      * Devuelve el enlace a la clase de Utilidades del engine
-     * @return DataBaseUtils
+     * @return DataBase\DataBaseUtils
      */
     public function getUtils()
     {
@@ -512,7 +513,7 @@ class PDOMysql implements DatabaseEngine
 
     /**
      * Devuelve el enlace a la clase de SQL del engine
-     * @return DatabaseSQL
+     * @return DataBase\DatabaseSQL
      */
     public function getSQL()
     {

@@ -17,31 +17,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base\DataBase;
+namespace FacturaScripts\Core\Base\DataBase\PDO;
 
+use FacturaScripts\Core\Base\DataBase;
 use PDO;
 use PDOException;
 use PDOStatement;
 
 /**
- * Clase para conectar a PostgreSQL utilizando pdo_pgsql.
- * Puede considerarse en estado beta, falta probarlo a fondo.
+ * Clase para conectar a SQLite utilizando pdo_sqlite.
+ * Puede considerarse en estado alpha, falta completar el fixPostgresql y derivados
+ * y probarlo a fondo.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class PDOPostgresql implements DatabaseEngine
+class PDOSqlite implements DataBase\DatabaseEngine
 {
     /**
      * El enlace con las utilidades comunes entre motores de base de datos.
-     * @var DataBaseUtils
+     * @var DataBase\DataBaseUtils
      */
     private $utils;
 
     /**
      * Enlace al conjunto de sentencias SQL de la base de datos conectada
-     * @var DatabaseSQL;
+     * @var DataBase\DatabaseSQL;
      */
     private $utilsSQL;
 
@@ -80,8 +82,8 @@ class PDOPostgresql implements DatabaseEngine
      */
     public function __construct()
     {
-        $this->utils = new DataBaseUtils($this);
-        $this->utilsSQL = new PDOPostgresqlSQL();
+        $this->utils = new DataBase\DataBaseUtils($this);
+        $this->utilsSQL = new PDOSqliteSQL();
         $this->transactions = [];
         $this->lastErrorMsg = '';
     }
@@ -95,29 +97,39 @@ class PDOPostgresql implements DatabaseEngine
     }
 
     /**
+     * Deshace todas las transacciones activas
+     */
+    private function rollbackTransactions()
+    {
+        foreach ($this->transactions as $link) {
+            $this->rollback($link);
+        }
+    }
+
+    /**
+     * Borra de la lista la transaccion indicada
+     * @param PDO $link
+     */
+    private function unsetTransaction($link)
+    {
+        $count = 0;
+        foreach ($this->transactions as $trans) {
+            if ($trans === $link) {
+                array_splice($this->transactions, $count, 1);
+                break;
+            }
+            $count++;
+        }
+    }
+
+    /**
      * Devuelve el motor de base de datos y la versión.
      * @param PDO $link
      * @return string
      */
     public function version($link)
     {
-        return 'POSTGRESQL ' . $this->dbh->getAttribute(PDO::ATTR_SERVER_VERSION);
-    }
-
-    /**
-     * Convierte los datos leidos del sqlColumns a estructura de trabajo
-     * @param array $colData
-     * @return array
-     */
-    public function columnFromData($colData)
-    {
-        $colData['extra'] = null;
-
-        if ($colData['character_maximum_length'] !== null) {
-            $colData['type'] .= '(' . $colData['character_maximum_length'] . ')';
-        }
-
-        return $colData;
+        return 'SQLITE ' . $this->dbh->getAttribute(PDO::ATTR_SERVER_VERSION);
     }
 
     /**
@@ -132,13 +144,13 @@ class PDOPostgresql implements DatabaseEngine
             $error = $this->error;
             return null;
         }
-        if (!extension_loaded('pdo_pgsql')) {
-            $this->error = 'No tienes instalada la extensión de PHP para PDO PostgreSQL.';
+        if (!extension_loaded('pdo_sqlite')) {
+            $this->error = 'No tienes instalada la extensión de PHP para PDO SQLite.';
             $error = $this->error;
             return null;
         }
 
-        $dsn = 'pgsql:host=' . FS_DB_HOST . ';port=' . FS_DB_PORT . ';dbname=' . FS_DB_NAME;
+        $dsn = 'sqlite:facturascripts.db';
         $options = [
             PDO::ATTR_EMULATE_PREPARES => 1,
             //            PDO::ATTR_PERSISTENT => true,
@@ -155,19 +167,19 @@ class PDOPostgresql implements DatabaseEngine
             return null;
         }
 
-        // Force PostgreSQL to use the UTF-8 character set by default.
-        $this->dbh->exec("SET NAMES 'UTF8'");
+        // Force SQLite to use the UTF-8 character set by default.
+        //$this->dbh->exec('PRAGMA encoding "UTF-8";');
 
         /// Desactivamos las claves ajenas
         if (FS_FOREIGN_KEYS !== '1') {
-            $this->dbh->exec('SET foreign_key_checks = 0;');
+            $this->dbh->exec('PRAGMA foreign_keys = 0;');
         }
 
         return $this->dbh;
     }
 
     /**
-     * Se intenta realizar la conexión a la base de datos PostgreSQL,
+     * Se intenta realizar la conexión a la base de datos SQLite,
      * si se ha realizado se devuelve true, sino false.
      * En el caso que sea false, $errors contiene el error
      * @param $errors
@@ -176,8 +188,7 @@ class PDOPostgresql implements DatabaseEngine
      */
     public static function testConnect(&$errors, $dbData)
     {
-        $dsnHost = 'pgsql:host=' . $dbData['host'] . ';port=' . $dbData['port'];
-        $dsnDb = $dsnHost . ';dbname=' . $dbData['name'];
+        $dsnHost = 'sqlite:facturascripts.db';
         $options = [
             PDO::ATTR_EMULATE_PREPARES => 1,
             //            PDO::ATTR_PERSISTENT => true,
@@ -185,45 +196,14 @@ class PDOPostgresql implements DatabaseEngine
         ];
 
         // Creamos una nueva instancia PDO
-        $connection = null;
         try {
             $connection = new PDO($dsnHost, $dbData['user'], $dbData['pass'], $options);
+            if ($connection !== null && $connection->errorCode() === '00000') {
+                $errors = [];
+                return true;
+            }
         } catch (PDOException $e) {
             $errors[] = $e->getMessage();
-        }
-
-        if ($connection !== null && $connection->errorCode() === '00000') {
-            // Comprobamos que la BD exista, de lo contrario la creamos
-            $connection2 = null;
-            try {
-                $connection2 = new PDO($dsnDb, $dbData['user'], $dbData['pass'], $options);
-            } catch (PDOException $e) {
-                $errors[] = $e->getMessage();
-            }
-
-            if ($connection2 !== null && $connection2->errorCode() === '00000') {
-                $errors = [];
-                return true;
-            }
-
-            $sqlCrearBD = 'CREATE DATABASE ' . $dbData['name'] . ';';
-            if (is_int($connection->exec($sqlCrearBD))) {
-                $errors = [];
-                return true;
-            }
-
-            $array = $connection->errorInfo();
-            $error = '';
-            $separator = '';
-            foreach ($array as $err) {
-                if ($err !== '00000') {
-                    $error .= $separator . $err;
-                    $separator = ' ';
-                }
-            }
-            if ($error !== '') {
-                $errors[] = $error;
-            }
         }
 
         return false;
@@ -237,7 +217,7 @@ class PDOPostgresql implements DatabaseEngine
     public function close($link)
     {
         if ($this->dbh) {
-            $this->dbh->rollBack();
+            $this->rollbackTransactions();
             $this->dbh = null;
             return $this->stmt->closeCursor();
         }
@@ -354,7 +334,7 @@ class PDOPostgresql implements DatabaseEngine
     }
 
     /**
-     * Devuelve el estilo de fecha del motor de base de datos.
+     * Indica el formato de fecha que utiliza la BD
      * @return string
      */
     public function dateStyle()
@@ -368,9 +348,97 @@ class PDOPostgresql implements DatabaseEngine
      * @param string $xmlType
      * @return bool
      */
+    private function compareDataTypeNumeric($dbType, $xmlType)
+    {
+        switch (strtolower($xmlType)) {
+            case 'integer':
+                $types = [
+                    'INT',
+                    'INTEGER',
+                    'TINYINT',
+                    'SMALLINT',
+                    'MEDIUMINT',
+                    'BIGINT',
+                    'UNSIGNED BIG INT',
+                    'INT2',
+                    'INT8'
+                ];
+                break;
+            case 'double precision':
+                $types = [
+                    'REAL',
+                    'DOUBLE',
+                    'DOUBLE PRECISION',
+                    'FLOAT',
+                    'NUMERIC',
+                    'DECIMAL'
+                ];
+                break;
+            case 'timestamp':
+            case 'date':
+            case 'datetime':
+                $types = [
+                    'DATE',
+                    'DATETIME'
+                ];
+                break;
+            default:
+                $types = [];
+        }
+        return in_array($dbType, $types, false);
+    }
+
+    /**
+     * Compara los tipos de datos de una columna alfanumerica.
+     * @param string $dbType
+     * @param string $xmlType
+     * @return bool
+     */
+    private function compareDataTypeChar($dbType, $xmlType)
+    {
+        switch (strtolower($xmlType)) {
+            case 'character varying(':
+                $types = [
+                    'CHARACTER(',
+                    'VARCHAR(',
+                    'VARYING CHARACTER(',
+                    'NCHAR(',
+                    'NATIVE CHARACTER(',
+                    'NVARCHAR(',
+                    'TEXT',
+                    'CLOB'
+                ];
+                break;
+            default:
+                $types = [];
+        }
+        return in_array($dbType, $types, false);
+    }
+
+    /**
+     * Compara los tipos de datos de una columna. Devuelve TRUE si son iguales.
+     * @param string $dbType
+     * @param string $xmlType
+     * @return bool
+     */
     public function compareDataTypes($dbType, $xmlType)
     {
-        return ($dbType === $xmlType);
+        $result = (
+            ($dbType === $xmlType) ||
+            ($dbType === 'INTEGER(1)' && $xmlType === 'boolean') ||
+            (substr($dbType, 8, -1) === substr($xmlType, 18, -1)) ||
+            (substr($dbType, 5, -1) === substr($xmlType, 18, -1))
+        );
+
+        if (!$result) {
+            $result = $this->compareDataTypeNumeric($dbType, $xmlType);
+        }
+
+        if (!$result) {
+            $result = $this->compareDataTypeChar($dbType, $xmlType);
+        }
+
+        return $result;
     }
 
     /**
@@ -381,15 +449,12 @@ class PDOPostgresql implements DatabaseEngine
     public function listTables($link)
     {
         $tables = [];
-        $sql = 'SELECT tablename'
-            . ' FROM pg_catalog.pg_tables'
-            . " WHERE schemaname NOT IN ('pg_catalog','information_schema')"
-            . ' ORDER BY tablename ASC;';
+        $sql = 'SELECT name FROM sqlite_master;';
 
         $aux = $this->select($link, $sql);
         if (!empty($aux)) {
             foreach ($aux as $a) {
-                $tables[] = $a['tablename'];
+                $tables[] = $a['name'];
             }
         }
         return $tables;
@@ -420,7 +485,7 @@ class PDOPostgresql implements DatabaseEngine
     }
 
     /**
-     * Realiza comprobaciones extra a la tabla.
+     * Comprobación adicional a la existencia de una tabla
      * @param PDO $link
      * @param string $tableName
      * @param string $error
@@ -428,12 +493,29 @@ class PDOPostgresql implements DatabaseEngine
      */
     public function checkTableAux($link, $tableName, &$error)
     {
+        // TODO: Implement checkTableAux() method.
         return true;
     }
 
     /**
+     * Convierte los datos leidos del sqlColumns a estructura de trabajo
+     * @param array $colData
+     * @return array
+     */
+    public function columnFromData($colData)
+    {
+        $colData['extra'] = null;
+
+        if ($colData['character_maximum_length'] !== null) {
+            $colData['type'] .= '(' . $colData['character_maximum_length'] . ')';
+        }
+
+        return $colData;
+    }
+
+    /**
      * Devuelve el enlace a la clase de Utilidades del engine
-     * @return DataBaseUtils
+     * @return DataBase\DataBaseUtils
      */
     public function getUtils()
     {
@@ -442,7 +524,7 @@ class PDOPostgresql implements DatabaseEngine
 
     /**
      * Devuelve el enlace a la clase de SQL del engine
-     * @return DatabaseSQL
+     * @return DataBase\DatabaseSQL
      */
     public function getSQL()
     {
@@ -455,7 +537,7 @@ class PDOPostgresql implements DatabaseEngine
      */
     public function getType()
     {
-        return 'pdo_pgsql';
+        return 'pdo_sqlite';
     }
 
     /**
@@ -547,31 +629,5 @@ class PDOPostgresql implements DatabaseEngine
     public function debugDumpParams()
     {
         return $this->stmt->debugDumpParams();
-    }
-
-    /**
-     * Deshace todas las transacciones activas
-     */
-    private function rollbackTransactions()
-    {
-        foreach ($this->transactions as $link) {
-            $this->rollback($link);
-        }
-    }
-
-    /**
-     * Borra de la lista la transaccion indicada
-     * @param PDO $link
-     */
-    private function unsetTransaction($link)
-    {
-        $count = 0;
-        foreach ($this->transactions as $trans) {
-            if ($trans === $link) {
-                array_splice($this->transactions, $count, 1);
-                break;
-            }
-            $count++;
-        }
     }
 }

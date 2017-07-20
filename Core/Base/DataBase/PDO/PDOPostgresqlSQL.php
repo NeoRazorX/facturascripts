@@ -17,7 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base\DataBase;
+namespace FacturaScripts\Core\Base\DataBase\PDO;
+
+use FacturaScripts\Core\Base\DataBase;
 
 /**
  * Clase que recopila las sentencias SQL necesarias
@@ -27,80 +29,14 @@ namespace FacturaScripts\Core\Base\DataBase;
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class PDOSqliteSQL implements DatabaseSQL
+class PDOPostgresqlSQL implements DataBase\DatabaseSQL
 {
 
     /**
-     * Genera el SQL con el tipo de campo y las constraints DEFAULT y NULL
-     * https://sqlite.org/datatype3.html
-     * @param array $colData
-     * @return string
-     */
-    private function getTypeAndConstraints($colData)
-    {
-        $type = stripos('boolean,integer,serial',
-            $colData['tipo']) === false ? strtolower($colData['tipo']) : FS_DB_INTEGER;
-        switch (true) {
-            case ($type === 'serial'):
-            case (stripos($colData['defecto'], 'nextval(') !== false):
-                $contraints = ' NOT NULL AUTO_INCREMENT';
-                break;
-            case (stripos($colData['defecto'], 'boolean') !== false):
-                $contraints = ' NOT NULL AUTO_INCREMENT';
-                break;
-            default:
-                $contraints = $this->getConstraints($colData);
-                break;
-        }
-        return ' ' . $type . $contraints;
-    }
-
-    /**
-     * TODO
-     * @param array $colData
-     * @return string
-     */
-    private function getConstraints($colData)
-    {
-        $notNull = ($colData['nulo'] === 'NO');
-        $result = ' NULL';
-        if ($notNull) {
-            $result = ' NOT' . $result;
-        }
-
-        $defaultNull = ($colData['defecto'] === null);
-        if ($defaultNull && !$notNull) {
-            $result .= ' DEFAULT NULL';
-        }
-
-        if ($colData['defecto'] !== '') {
-            if ($colData['defecto'] !== 'true' && $colData['defecto'] !== 'false') {
-                $result .= ' DEFAULT ' . $colData['defecto'];
-            } elseif ($colData['defecto'] !== 'true') {
-                $result .= ' DEFAULT 1';
-            } elseif ($colData['defecto'] !== 'false') {
-                $result .= ' DEFAULT 0';
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Elimina código problemático de postgresql.
-     * @param string $sql
-     * @return string
-     */
-    private function fixPostgresql($sql)
-    {
-        $search = ['::character varying', 'without time zone', 'now()', 'CURRENT_TIMESTAMP', 'CURRENT_DATE'];
-        $replace = ['', '', "'00:00'", "'" . date('Y-m-d') . " 00:00:00'", date("'Y-m-d'")];
-        return str_replace($search, $replace, $sql);
-    }
-
-    /**
-     * Devuelve el SQL necesario para convertir la columna a entero.
+     * Sentencia necesaria para convertir la columna a entero.
+     *
      * @param string $colName
+     *
      * @return string
      */
     public function sql2int($colName)
@@ -116,30 +52,38 @@ class PDOSqliteSQL implements DatabaseSQL
      */
     public function sqlLastValue()
     {
-        // TODO: Comprobar que sea realmente así
-        return 'SELECT LAST_INSERT_ID() as num;';
+        return 'SELECT lastval() as num;';
     }
 
     /**
-     * Devuelve el SQL para averiguar
-     * la lista de las columnas de una tabla.
+     * Sentencia SQL para obtener las columnas de una tabla
+     *
      * @param string $tableName
+     *
      * @return string
      */
     public function sqlColumns($tableName)
     {
-        // TODO: Comprobar que sea realmente así
-        return 'DESCRIBE ' . $tableName;
+        $sql = 'SELECT column_name as name, data_type as type,'
+            . 'character_maximum_length, column_default as default,'
+            . 'is_nullable'
+            . ' FROM information_schema.columns'
+            . " WHERE table_catalog = '" . FS_DB_NAME . "'"
+            . " AND table_name = '" . $tableName . "'"
+            . ' ORDER BY 1 ASC;';
+
+        return $sql;
     }
 
     /**
      * Sentencia SQL para obtener las constraints de una tabla
+     *
      * @param string $tableName
+     *
      * @return string
      */
     public function sqlConstraints($tableName)
     {
-        // TODO: Este no es su equivalente
         $sql = 'SELECT tc.constraint_type as type, tc.constraint_name as name'
             . ' FROM information_schema.table_constraints AS tc'
             . " WHERE tc.table_name = '" . $tableName . "'"
@@ -149,14 +93,14 @@ class PDOSqliteSQL implements DatabaseSQL
     }
 
     /**
-     * Devuelve el SQL para averiguar
-     * la lista de restricciones avanzadas de una tabla.
+     * Sentencia SQL para obtener las constraints (extendidas) de una tabla
+     *
      * @param string $tableName
+     *
      * @return string
      */
     public function sqlConstraintsExtended($tableName)
     {
-        // TODO: Este no es su equivalente
         $sql = 'SELECT tc.constraint_type as type, tc.constraint_name as name,'
             . 'kcu.column_name,'
             . 'ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name,'
@@ -184,97 +128,135 @@ class PDOSqliteSQL implements DatabaseSQL
 
     /**
      * Genera el SQL para establecer las restricciones proporcionadas.
+     *
      * @param array $xmlCons
+     *
      * @return string
      */
     public function sqlTableConstraints($xmlCons)
     {
         $sql = '';
+
         foreach ($xmlCons as $res) {
-            $sql .= ', CONSTRAINT ' . $res['nombre'] . ' ' . $res['consulta'];
+            $value = strtolower($res['consulta']);
+            if (false !== strpos($value, 'primary key')) {
+                $sql .= ', ' . $res['consulta'];
+                continue;
+            }
+
+            if (FS_FOREIGN_KEYS === '1' || 0 !== strpos($res['consulta'], 'FOREIGN KEY')) {
+                $sql .= ', CONSTRAINT ' . $res['nombre'] . ' ' . $res['consulta'];
+            }
         }
-
-        return $this->fixPostgresql($sql);
-    }
-
-    /**
-     * Devuelve el SQL para averiguar
-     * la lista de indices de una tabla.
-     * @param string $tableName
-     * @return string
-     */
-    public function sqlIndexes($tableName)
-    {
-        // TODO: Comprobar que sea realmente así
-        return 'SHOW INDEXES FROM ' . $tableName . ';';
-    }
-
-    /**
-     * Sentencia SQL para crear una tabla
-     * @param string $tableName
-     * @param array $columns
-     * @param array $constraints
-     * @return string
-     */
-    public function sqlCreateTable($tableName, $columns, $constraints)
-    {
-        $fields = '';
-        foreach ($columns as $col) {
-            $fields .= ', `' . $col['nombre'] . '` ' . $this->getTypeAndConstraints($col);
-        }
-
-        $sql = $this->fixPostgresql(substr($fields, 2));
-        $result = 'CREATE TABLE ' . $tableName . ' (' . $sql
-            . $this->sqlTableConstraints($constraints) . ');';
-        return $result;
-    }
-
-    /**
-     * Sentencia SQL para añadir una columna a una tabla
-     * @param string $tableName
-     * @param array $colData
-     * @return string
-     */
-    public function sqlAlterAddColumn($tableName, $colData)
-    {
-        $sql = 'ALTER TABLE ' . $tableName . ' ADD `' . $colData['nombre'] . '` '
-            . $this->getTypeAndConstraints($colData) . ';';
 
         return $sql;
     }
 
     /**
-     * Sentencia SQL para modificar la definición de una columna de una tabla
+     * Sentencia SQL para obtener los indices de una tabla
+     *
+     * @param string $tableName
+     *
+     * @return string
+     */
+    public function sqlIndexes($tableName)
+    {
+        return "SELECT indexname AS Key_name FROM pg_indexes WHERE tablename = '" . $tableName . "';";
+    }
+
+    /**
+     * Sentencia SQL para crear una tabla
+     *
+     * @param string $tableName
+     * @param array $columns
+     * @param array $constraints
+     *
+     * @return string
+     */
+    public function sqlCreateTable($tableName, $columns, $constraints)
+    {
+        $serials = ['serial', 'bigserial'];
+        $fields = '';
+        foreach ($columns as $col) {
+            $fields .= ', ' . $col['nombre'] . ' ' . $col['tipo'];
+
+            if ($col['nulo'] === 'NO') {
+                $fields .= ' NOT NULL';
+            }
+
+            if (in_array($col['tipo'], $serials, false)) {
+                continue;
+            }
+
+            if ($col['defecto'] !== '') {
+                $fields .= ' DEFAULT ' . $col['defecto'];
+            }
+        }
+
+        $sql = 'CREATE TABLE ' . $tableName . ' (' . substr($fields, 2)
+            . $this->sqlTableConstraints($constraints) . ');';
+        return $sql;
+    }
+
+    /**
+     * Sentencia SQL para añadir una columna a una tabla
+     *
      * @param string $tableName
      * @param array $colData
+     *
+     * @return string
+     */
+    public function sqlAlterAddColumn($tableName, $colData)
+    {
+        $sql = 'ALTER TABLE ' . $tableName
+            . ' ADD COLUMN ' . $colData['nombre'] . ' ' . $colData['tipo'];
+
+        if ($colData['defecto'] !== '') {
+            $sql .= ' DEFAULT ' . $colData['defecto'];
+        }
+
+        if ($colData['nulo'] === 'NO') {
+            $sql .= ' NOT NULL';
+        }
+
+        return $sql . ';';
+    }
+
+    /**
+     * Sentencia SQL para modificar la definición de una columna de una tabla
+     *
+     * @param string $tableName
+     * @param array $colData
+     *
      * @return string
      */
     public function sqlAlterModifyColumn($tableName, $colData)
     {
         $sql = 'ALTER TABLE ' . $tableName
-            . ' MODIFY `' . $colData['nombre'] . '` '
-            . $this->getTypeAndConstraints($colData) . ';';
-
-        return $this->fixPostgresql($sql);
+            . ' ALTER COLUMN ' . $colData['nombre'] . ' TYPE ' . $colData['tipo'];
+        return $sql . ';';
     }
 
     /**
      * Sentencia SQL para modificar valor por defecto de una columna de una tabla
+     *
      * @param string $tableName
      * @param array $colData
+     *
      * @return string
      */
     public function sqlAlterConstraintDefault($tableName, $colData)
     {
         $action = ($colData['defecto'] !== '') ? ' SET DEFAULT ' . $colData['defecto'] : ' DROP DEFAULT';
-
         return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['nombre'] . $action . ';';
     }
 
     /**
-     * Sentencia SQL para modificar una constraint NULL de un campo de una tabla
+     * Sentencia SQL para modificar un constraint null de una columna de una tabla
+     *
      * @param string $tableName
      * @param array $colData
+     *
      * @return string
      */
     public function sqlAlterConstraintNull($tableName, $colData)
@@ -285,8 +267,10 @@ class PDOSqliteSQL implements DatabaseSQL
 
     /**
      * Sentencia SQL para eliminar una constraint de una tabla
+     *
      * @param string $tableName
      * @param array $colData
+     *
      * @return string
      */
     public function sqlDropConstraint($tableName, $colData)
@@ -295,26 +279,30 @@ class PDOSqliteSQL implements DatabaseSQL
     }
 
     /**
-     * Sentencia SQL para añadir una constraint a una tabla
+     * Sentencia SQL para añadir una constraint de una tabla
+     *
      * @param string $tableName
      * @param string $constraintName
      * @param string $sql
+     *
      * @return string
      */
     public function sqlAddConstraint($tableName, $constraintName, $sql)
     {
         return 'ALTER TABLE ' . $tableName
             . ' ADD CONSTRAINT ' . $constraintName . ' '
-            . $this->fixPostgresql($sql) . ';';
+            . $sql . ';';
     }
 
     /**
-     * Sentencia SQL para comprobar una secuencia
+     * Sentencia para crear una secuencia
+     *
      * @param string $seqName
+     *
      * @return string
      */
     public function sqlSequenceExists($seqName)
     {
-        return $seqName;
+        return "SELECT '" . $seqName . "' FROM pg_class where relname = '" . $seqName . "';";
     }
 }

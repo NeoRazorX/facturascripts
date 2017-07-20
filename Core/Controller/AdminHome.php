@@ -99,7 +99,7 @@ class AdminHome extends Base\Controller
         $this->formaPago = new Model\FormaPago();
         $this->pais = new Model\Pais();
         $this->serie = new Model\Serie();
-        $this->agenciastrans = new Model\AgenciasTrans();
+        //$this->agenciastrans = new Model\AgenciasTrans();
     }
     
     public function getPageData()
