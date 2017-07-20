@@ -95,6 +95,9 @@ class PluginManager
         return [];
     }
 
+    /**
+     * Guarda el array de plugins al archivo plugin.list
+     */
     private function save()
     {
         file_put_contents(self::$pluginListFile, implode(',', self::$enabledPlugins));
@@ -167,7 +170,6 @@ class PluginManager
                     $this->linkFiles($folder, 'Plugins', $pluginName);
                 }
             }
-
             /// examinamos el core
             $this->linkFiles($folder);
         }
@@ -178,23 +180,23 @@ class PluginManager
         }
     }
 
+    /**
+     * TODO
+     */
     private function deployControllers()
     {
         self::$deployedControllers = TRUE;
         $cache = new Cache(self::$folder);
         $menuManager = new MenuManager();
         $menuManager->init();
-
         foreach (scandir(self::$folder . '/Dinamic/Controller', SCANDIR_SORT_ASCENDING) as $fileName) {
-            if ($fileName != '.' && $fileName != '..' && substr($fileName, -3) == 'php') {
+            if ($fileName !== '.' && $fileName !== '..' && substr($fileName, -3) === 'php') {
                 $controllerName = substr($fileName, 0, -4);
                 $controllerNamespace = "FacturaScripts\\Dinamic\\Controller\\" . $controllerName;
-
                 if (!class_exists($controllerNamespace)) {
                     /// forzamos la carga del archivo porque en este punto el autoloader no lo encontrará
                     require self::$folder . '/Dinamic/Controller/' . $controllerName . '.php';
                 }
-
                 try {
                     $controller = new $controllerNamespace($cache, self::$i18n, self::$minilog, $controllerName);
                     $menuManager->selectPage($controller->getPageData());
@@ -213,15 +215,13 @@ class PluginManager
     private function cleanFolder($folder)
     {
         $done = true;
-
         if (file_exists($folder)) {
             /// Comprobamos los archivos que no son '.' ni '..'
             $items = array_diff(scandir($folder, SCANDIR_SORT_ASCENDING), ['.', '..']);
-
             /// Ahora recorremos y eliminamos lo que encontramos
             foreach ($items as $item) {
                 if (is_dir($folder . '/' . $item)) {
-                    $done = $this->cleanDinamic($folder . '/' . $item . '/');
+                    $done = $this->cleanFolder($folder . '/' . $item . '/');
                 } else {
                     $done = unlink($folder . '/' . $item);
                 }
@@ -231,6 +231,11 @@ class PluginManager
         return $done;
     }
 
+    /**
+     * TODO
+     * @param $folder
+     * @return bool
+     */
     private function createFolder($folder)
     {
         if (!file_exists($folder) && !@mkdir($folder, 0775, true)) {

@@ -18,12 +18,16 @@
  */
 namespace FacturaScripts\Core\App;
 
+use DebugBar\Bridge\Twig;
+use DebugBar\DataCollector\PDO as PDODataCollector;
 use DebugBar\StandardDebugBar;
 use Exception;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\MenuManager;
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Model\User;
+use PDO;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 use Twig_Environment;
@@ -51,7 +55,7 @@ class AppController extends App
 
     /**
      * Para gestionar el menú del usuario
-     * @var MenuManager 
+     * @var MenuManager
      */
     private $menuManager;
 
@@ -63,6 +67,16 @@ class AppController extends App
     {
         parent::__construct($folder);
         $this->debugBar = new StandardDebugBar();
+        /**
+         * TODO: Probado y funciona, yo lo activaría cuando tengamos el tmp funcionando
+         * aunque como opción de guardar logs, ya que permite llegar a localizar ciertos
+         * problemas muy concretos, o incluso adjuntarlo como reporte en la comunidad.
+         */
+        // $logDir = 'log';
+        // if (!@mkdir($logDir, 0775, true) && !is_dir($logDir)) {
+        //
+        // }
+        // $this->debugBar->setStorage(new FileStorage($logDir));
         $this->menuManager = new MenuManager();
     }
 
@@ -98,6 +112,11 @@ class AppController extends App
      */
     private function loadController($pageName)
     {
+        /* Si es PDO, debemos empezar a capturar consultas antes de que se realice la primera */
+        if ($this->dataBase->isPDO()) {
+            $this->loadDataBaseTrace();
+        }
+
         $controllerName = $this->getControllerFullName($pageName);
         $template = 'Error/ControllerNotFound.html';
         $httpStatus = Response::HTTP_NOT_FOUND;
@@ -124,12 +143,22 @@ class AppController extends App
             }
         }
 
+        /* Si no es PDO, debemos capturar las consultas cuando ya se han realizado */
+        if (!$this->dataBase->isPDO()) {
+            $this->loadDataBaseTrace($this->miniLog->read(['sql']));
+        }
+
         $this->response->setStatusCode($httpStatus);
         if ($template) {
             $this->renderHtml($template);
         }
     }
 
+    /**
+     * TODO
+     * @param $pageName
+     * @return string
+     */
     private function getControllerFullName($pageName)
     {
         $controllerName = "FacturaScripts\\Dinamic\\Controller\\{$pageName}";
@@ -150,6 +179,8 @@ class AppController extends App
     {
         /// cargamos el motor de plantillas
         $twigLoader = new Twig_Loader_Filesystem($this->folder . '/Core/View');
+        $env = new Twig\TraceableTwigEnvironment(new Twig_Environment($twigLoader));
+        $this->debugBar->addCollector(new Twig\TwigCollector($env));
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
             if (file_exists($this->folder . '/Plugins/' . $pluginName . '/View')) {
                 $twigLoader->prependPath($this->folder . '/Plugins/' . $pluginName . '/View');
@@ -254,9 +285,36 @@ class AppController extends App
         $this->miniLog->debug('Logout OK.');
     }
 
+    /**
+     * TODO
+     */
     private function deployPlugins()
     {
         $pluginManager = new PluginManager($this->folder);
         $pluginManager->deploy();
+    }
+
+    /**
+     * Carga la trazabilidad de las consultas SQL
+     * @param array $queries
+     */
+    private function loadDataBaseTrace(array $queries = [])
+    {
+        switch (true) {
+            case $this->dataBase->getEngine() instanceof Database\Mysql:
+                $this->debugBar->addCollector(new Database\DataCollector\MysqlCollector($queries));
+                break;
+            case $this->dataBase->getEngine() instanceof Database\Postgresql:
+                $this->debugBar->addCollector(new Database\DataCollector\PostgresqlCollector($queries));
+                break;
+            case $this->dataBase->getEngine() instanceof Database\PDOMysql:
+            case $this->dataBase->getEngine() instanceof Database\PDOPostgresql:
+            case $this->dataBase->getEngine() instanceof Database\PDOSqlite:
+                if ($this->dataBase->getLink() instanceof PDO) {
+                    $pdo = new PDODataCollector\TraceablePDO($this->dataBase->getLink());
+                    $this->debugBar->addCollector(new PDODataCollector\PDOCollector($pdo));
+                }
+                break;
+        }
     }
 }

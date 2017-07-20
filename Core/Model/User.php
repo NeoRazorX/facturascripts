@@ -105,10 +105,9 @@ class User
     public function __construct(array $data = [])
     {
         $this->init(__CLASS__, 'fs_users', 'nick');
+        $this->clear();
         if (!empty($data)) {
             $this->loadFromData($data);
-        } else {
-            $this->clear();
         }
     }
 
@@ -139,8 +138,8 @@ class User
         new Page();
 
         $this->miniLog->info($this->i18n->trans('created-default-admin-account'));
-        return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled) VALUES ('admin','"
-            . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE);";
+        return 'INSERT INTO ' . $this->tableName() . ' (nick,password,admin,enabled)'
+            . " VALUES ('admin','" . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE);";
     }
 
     /**

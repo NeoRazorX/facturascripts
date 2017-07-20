@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
@@ -28,7 +29,6 @@ use Exception;
  */
 class Postgresql implements DatabaseEngine
 {
-
     /**
      * El enlace con las utilidades comunes entre motores de base de datos.
      * @var DataBaseUtils
@@ -43,7 +43,7 @@ class Postgresql implements DatabaseEngine
 
     /**
      * Ultimo mensaje de error
-     * @var string 
+     * @var string
      */
     private $lastErrorMsg;
 
@@ -106,6 +106,36 @@ class Postgresql implements DatabaseEngine
         $this->exec($result, 'SET DATESTYLE TO ISO, DMY;'); /// establecemos el formato de fecha para la conexión
 
         return $result;
+    }
+
+    /**
+     * Se intenta realizar la conexión a la base de datos PostgreSQL,
+     * si se ha realizado se devuelve true, sino false.
+     * En el caso que sea false, $errors contiene el error
+     * @param $errors
+     * @param $dbData
+     * @return bool
+     */
+    public static function testConnect(&$errors, $dbData)
+    {
+        $dsnHost = 'host=' . $dbData['host'] . ' port=' . $dbData['port'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass'];
+        $dsnDb = 'host=' . $dbData['host'] . ' port=' . $dbData['port'] . ' dbname=' . $dbData['name'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass'];
+        $connection = pg_connect($dsnHost);
+        if ($connection) {
+            // Comprobamos que la BD exista, de lo contrario la creamos
+            $connection2 = pg_connect($dsnDb);
+            if ($connection2) {
+                return true;
+            }
+
+            $sqlCrearBD = 'CREATE DATABASE "' . $dbData['name'] . '";';
+            if (pg_query($connection, $sqlCrearBD)) {
+                return true;
+            }
+        }
+        $errors[] = (string) pg_last_error($connection);
+
+        return false;
     }
 
     /**
@@ -327,7 +357,7 @@ class Postgresql implements DatabaseEngine
     {
         return $this->utils;
     }
-    
+
     /**
      * Devuelve el enlace a la clase de SQL del engine
      * @return DatabaseSQL
@@ -335,5 +365,14 @@ class Postgresql implements DatabaseEngine
     public function getSQL()
     {
         return $this->utilsSQL;
+    }
+
+    /**
+     * Devuelve el tipo de conexión que utiliza
+     * @return string
+     */
+    public function getType()
+    {
+        return 'postgresql';
     }
 }

@@ -73,10 +73,9 @@ class Divisa
     public function __construct(array $data = [])
     {
         $this->init(__CLASS__, 'divisas', 'coddivisa');
+        $this->clear();
         if (!empty($data)) {
             $this->loadFromData($data);
-        } else {
-            $this->clear();
         }
     }
 

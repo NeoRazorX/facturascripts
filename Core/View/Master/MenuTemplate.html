@@ -16,6 +16,8 @@
         <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
         {% endblock %}
         {{ debugBarRender.renderHead()|raw }}
+        <link rel="stylesheet" href="assets/css/phpdebugbar.custom-widget.css" />
+        <script type="text/javascript" src="assets/js/phpdebugbar.custom-widget.js"></script>
     </head>
     <body>
         <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -84,6 +86,7 @@
         </div>
         {% endif %}
         {% block body %}{% endblock %}
+        {#
         {% if sql|length > 0 %}
         <div class="alert alert-warning">
             <h3>SQL:</h3>
@@ -94,6 +97,7 @@
             </ol>
         </div>
         {% endif %}
+        #}
         {{ debugBarRender.render()|raw }}
     </body>
 </html>

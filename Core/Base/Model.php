@@ -570,7 +570,7 @@ trait Model
         $return = false;
 
         /// necesitamos el plugin manager para obtener la carpeta de trabajo de FacturaScripts
-        $pluginManager = new PluginManager();
+        $pluginManager = new PluginManager('');
 
         $filename = $pluginManager->folder() . '/Dinamic/Table/' . $tableName . '.xml';
         if (file_exists($filename)) {
@@ -587,10 +587,9 @@ trait Model
                             $columns[$key]['nulo'] = 'NO';
                         }
 
+                        $columns[$key]['defecto'] = (string) $col->defecto;
                         if ($col->defecto === '') {
                             $columns[$key]['defecto'] = null;
-                        } else {
-                            $columns[$key]['defecto'] = (string) $col->defecto;
                         }
 
                         $key++;

@@ -35,6 +35,7 @@ if (!file_exists(__DIR__ . '/vendor')) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\Translator;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -107,7 +108,7 @@ function dbConnect(&$errors, &$i18n)
     switch (filter_input(INPUT_POST, 'db_type')) {
         case 'mysql':
             if (class_exists('mysqli')) {
-                $done = testMysql($errors, $dbData);
+                $done = DataBase\Mysql::testConnect($errors, $dbData);
             } else {
                 $errors[] = $i18n->trans('mysqli-not-found');
             }
@@ -115,88 +116,38 @@ function dbConnect(&$errors, &$i18n)
 
         case 'postgresql':
             if (function_exists('pg_connect')) {
-                $done = testPostgreSql($errors, $dbData);
+                $done = DataBase\Postgresql::testConnect($errors, $dbData);
             } else {
                 $errors[] = $i18n->trans('postgresql-not-found');
+            }
+            break;
+
+        case 'pdo_mysql':
+            if (class_exists('PDO',false) && extension_loaded('pdo_mysql')) {
+                $done = DataBase\PDOMysql::testConnect($errors, $dbData);
+            } else {
+                $errors[] = $i18n->trans('pdo-mysql-not-found');
+            }
+            break;
+
+        case 'pdo_pgsql':
+            if (class_exists('PDO',false) && extension_loaded('pdo_pgsql')) {
+                $done = DataBase\PDOPostgresql::testConnect($errors, $dbData);
+            } else {
+                $errors[] = $i18n->trans('pdo-pgsql-not-found');
+            }
+            break;
+        case 'pdo_sqlite':
+            if (class_exists('PDO',false) && extension_loaded('pdo_sqlite')) {
+                $done = DataBase\PDOSqlite::testConnect($errors, $dbData);
+            } else {
+                $errors[] = $i18n->trans('pdo-sqlite-not-found');
             }
             break;
     }
 
     if (!$done) {
         $errors[] = $i18n->trans('cant-connect-db');
-    }
-
-    return $done;
-}
-
-/**
- * Se intenta realizar la conexión a la base de datos MySQL,
- * si se ha realizado se devuelve true, sino false.
- * En el caso que sea false, $errors contiene el error
- *
- * @param $errors
- * @param $dbData
- *
- * @return bool
- */
-function testMysql(&$errors, $dbData)
-{
-    $done = false;
-
-    if (filter_input(INPUT_POST, 'mysql_socket') !== '') {
-        ini_set('mysqli.default_socket', filter_input(INPUT_POST, 'mysql_socket'));
-    }
-
-    // Omitimos el valor del nombre de la BD porque lo comprobaremos más tarde
-    $connection = new mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', (int) $dbData['port']);
-    if ($connection->connect_error) {
-        $errors[] = (string) $connection->connect_error;
-    } else {
-        // Comprobamos que la BD exista, de lo contrario la creamos
-        $dbSelected = mysqli_select_db($connection, $dbData['name']);
-        if ($dbSelected) {
-            $done = true;
-        } else {
-            $sqlCrearBD = 'CREATE DATABASE `' . $dbData['name'] . '`;';
-            if ($connection->query($sqlCrearBD)) {
-                $done = true;
-            } else {
-                $errors[] = (string) $connection->connect_error;
-            }
-        }
-    }
-
-    return $done;
-}
-
-/**
- * Se intenta realizar la conexión a la base de datos PostgreSQL,
- * si se ha realizado se devuelve true, sino false.
- * En el caso que sea false, $errors contiene el error
- *
- * @param $errors
- * @param $dbData
- *
- * @return bool
- */
-function testPostgreSql(&$errors, $dbData)
-{
-    $done = false;
-
-    $connection = pg_connect('host=' . $dbData['host'] . ' port=' . $dbData['port'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass']);
-    if ($connection) {
-        // Comprobamos que la BD exista, de lo contrario la creamos
-        $connection2 = pg_connect('host=' . $dbData['host'] . ' port=' . $dbData['port'] . ' dbname=' . $dbData['name'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass']);
-        if ($connection2) {
-            $done = true;
-        } else {
-            $sqlCrearBD = 'CREATE DATABASE "' . $dbData['name'] . '";';
-            if (pg_query($connection, $sqlCrearBD)) {
-                $done = true;
-            } else {
-                $errors[] = (string) pg_last_error($connection);
-            }
-        }
     }
 
     return $done;
@@ -214,7 +165,9 @@ function createFolders()
     if (is_dir('Plugins') && is_dir('Dinamic') && is_dir('Cache')) {
         return true;
     }
-    if (mkdir('Plugins') && mkdir('Dinamic') && mkdir('Cache')) {
+    if (!(!@mkdir('Plugins', 0775, true) && !is_dir('Plugins')) ||
+        !(!@mkdir('Dinamic', 0775, true) && !is_dir('Dinamic')) ||
+        !(!@mkdir('Cache', 0775, true) && !is_dir('Cache'))) {
         return true;
     }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,22 +16,27 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
- * Clase que recopila las sentencias SQL necesarias 
+ * Clase que recopila las sentencias SQL necesarias
  * por el motor de base de datos
+ *
+ * Basado en: http://culttt.com/2012/10/01/roll-your-own-pdo-php-class/
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class PostgresqlSQL implements DatabaseSQL
+class PDOPostgresqlSQL implements DatabaseSQL
 {
 
     /**
-     * Devuelve el SQL necesario para convertir
-     * la columna a entero.
+     * Sentencia necesaria para convertir la columna a entero.
+     *
      * @param string $colName
+     *
      * @return string
      */
     public function sql2int($colName)
@@ -51,9 +56,10 @@ class PostgresqlSQL implements DatabaseSQL
     }
 
     /**
-     * Devuelve el SQL para averiguar
-     * la lista de las columnas de una tabla.
+     * Sentencia SQL para obtener las columnas de una tabla
+     *
      * @param string $tableName
+     *
      * @return string
      */
     public function sqlColumns($tableName)
@@ -70,9 +76,10 @@ class PostgresqlSQL implements DatabaseSQL
     }
 
     /**
-     * Devuelve el SQL para averiguar
-     * la lista de restricciones de una tabla.
+     * Sentencia SQL para obtener las constraints de una tabla
+     *
      * @param string $tableName
+     *
      * @return string
      */
     public function sqlConstraints($tableName)
@@ -86,9 +93,10 @@ class PostgresqlSQL implements DatabaseSQL
     }
 
     /**
-     * Devuelve el SQL para averiguar
-     * la lista de restricciones avanzadas de una tabla.
+     * Sentencia SQL para obtener las constraints (extendidas) de una tabla
+     *
      * @param string $tableName
+     *
      * @return string
      */
     public function sqlConstraintsExtended($tableName)
@@ -120,7 +128,9 @@ class PostgresqlSQL implements DatabaseSQL
 
     /**
      * Genera el SQL para establecer las restricciones proporcionadas.
+     *
      * @param array $xmlCons
+     *
      * @return string
      */
     public function sqlTableConstraints($xmlCons)
@@ -143,21 +153,24 @@ class PostgresqlSQL implements DatabaseSQL
     }
 
     /**
-     * Devuelve el SQL para averiguar
-     * la lista de indices de una tabla.
+     * Sentencia SQL para obtener los indices de una tabla
+     *
      * @param string $tableName
+     *
      * @return string
      */
     public function sqlIndexes($tableName)
     {
-        return "SELECT indexname as Key_name FROM pg_indexes WHERE tablename = '" . $tableName . "';";
+        return "SELECT indexname AS Key_name FROM pg_indexes WHERE tablename = '" . $tableName . "';";
     }
 
     /**
-     * Devuelve la sentencia SQL necesaria para crear una tabla con la estructura proporcionada.
+     * Sentencia SQL para crear una tabla
+     *
      * @param string $tableName
      * @param array $columns
      * @param array $constraints
+     *
      * @return string
      */
     public function sqlCreateTable($tableName, $columns, $constraints)
@@ -187,8 +200,10 @@ class PostgresqlSQL implements DatabaseSQL
 
     /**
      * Sentencia SQL para añadir una columna a una tabla
+     *
      * @param string $tableName
      * @param array $colData
+     *
      * @return string
      */
     public function sqlAlterAddColumn($tableName, $colData)
@@ -208,9 +223,11 @@ class PostgresqlSQL implements DatabaseSQL
     }
 
     /**
-     * Sentencia SQL para modificar una columna a una tabla
+     * Sentencia SQL para modificar la definición de una columna de una tabla
+     *
      * @param string $tableName
      * @param array $colData
+     *
      * @return string
      */
     public function sqlAlterModifyColumn($tableName, $colData)
@@ -221,22 +238,25 @@ class PostgresqlSQL implements DatabaseSQL
     }
 
     /**
-     * Sentencia SQL para modificar un valor por defecto de un campo de una tabla
+     * Sentencia SQL para modificar valor por defecto de una columna de una tabla
+     *
      * @param string $tableName
      * @param array $colData
+     *
      * @return string
      */
     public function sqlAlterConstraintDefault($tableName, $colData)
     {
         $action = ($colData['defecto'] !== '') ? ' SET DEFAULT ' . $colData['defecto'] : ' DROP DEFAULT';
-
         return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['nombre'] . $action . ';';
     }
 
     /**
-     * Sentencia SQL para modificar una constraint null de un campo de una tabla
+     * Sentencia SQL para modificar un constraint null de una columna de una tabla
+     *
      * @param string $tableName
      * @param array $colData
+     *
      * @return string
      */
     public function sqlAlterConstraintNull($tableName, $colData)
@@ -246,9 +266,11 @@ class PostgresqlSQL implements DatabaseSQL
     }
 
     /**
-     * Sentencia SQL para eliminar una constraint a una tabla
+     * Sentencia SQL para eliminar una constraint de una tabla
+     *
      * @param string $tableName
      * @param array $colData
+     *
      * @return string
      */
     public function sqlDropConstraint($tableName, $colData)
@@ -257,20 +279,26 @@ class PostgresqlSQL implements DatabaseSQL
     }
 
     /**
-     * Sentencia SQL para añadir una constraint a una tabla
+     * Sentencia SQL para añadir una constraint de una tabla
+     *
      * @param string $tableName
      * @param string $constraintName
      * @param string $sql
+     *
      * @return string
      */
     public function sqlAddConstraint($tableName, $constraintName, $sql)
     {
-        return 'ALTER TABLE ' . $tableName . ' ADD CONSTRAINT ' . $constraintName . ' ' . $sql . ';';
+        return 'ALTER TABLE ' . $tableName
+            . ' ADD CONSTRAINT ' . $constraintName . ' '
+            . $sql . ';';
     }
 
     /**
-     * Sentencia SQL para comprobar una secuencia
+     * Sentencia para crear una secuencia
+     *
      * @param string $seqName
+     *
      * @return string
      */
     public function sqlSequenceExists($seqName)

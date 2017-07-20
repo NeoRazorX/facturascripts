@@ -89,7 +89,7 @@ class AdminHome extends Base\Controller
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         /// por ahora desplegamos siempre el contenido de Dinamic, para las pruebas
-        $pluginManager = new Base\PluginManager();
+        $pluginManager = new Base\PluginManager('');
         $pluginManager->deploy();
 
         $this->agente = new Model\Agente();

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,8 +25,9 @@ namespace FacturaScripts\Core\Base\DataBase;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class MysqlSQL implements DatabaseSQL
+class PDOMysqlSQL implements DatabaseSQL
 {
 
     /**
@@ -36,10 +37,10 @@ class MysqlSQL implements DatabaseSQL
      */
     private function getTypeAndConstraints($colData)
     {
-        $type = stripos('integer,serial', $colData['tipo']) === FALSE ? strtolower($colData['tipo']) : FS_DB_INTEGER;
-        switch (TRUE) {
-            case ($type == 'serial'):
-            case (stripos($colData['defecto'], 'nextval(') !== FALSE):
+        $type = stripos('integer,serial', $colData['tipo']) === false ? strtolower($colData['tipo']) : FS_DB_INTEGER;
+        switch (true) {
+            case ($type === 'serial'):
+            case (stripos($colData['defecto'], 'nextval(') !== false):
                 $contraints = ' NOT NULL AUTO_INCREMENT';
                 break;
             default:
@@ -65,10 +66,10 @@ class MysqlSQL implements DatabaseSQL
         $defaultNull = ($colData['defecto'] === null);
         if ($defaultNull && !$notNull) {
             $result .= ' DEFAULT NULL';
-        } else {
-            if ($colData['defecto'] !== '') {
-                $result .= ' DEFAULT ' . $colData['defecto'];
-            }
+        }
+
+        if ($colData['defecto'] !== '') {
+            $result .= ' DEFAULT ' . $colData['defecto'];
         }
 
         return $result;
@@ -246,7 +247,7 @@ class MysqlSQL implements DatabaseSQL
     public function sqlAlterConstraintDefault($tableName, $colData)
     {
         $result = '';
-        if ($colData['tipo'] != 'serial') {
+        if ($colData['tipo'] !== 'serial') {
             $result = $this->sqlAlterModifyColumn($tableName, $colData);
         }
         return $result;

@@ -20,7 +20,11 @@ namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DatabaseEngine;
 use FacturaScripts\Core\Base\DataBase\Mysql;
+use FacturaScripts\Core\Base\DataBase\PDOSqlite;
 use FacturaScripts\Core\Base\DataBase\Postgresql;
+use FacturaScripts\Core\Base\DataBase\PDOMysql;
+use FacturaScripts\Core\Base\DataBase\PDOPostgresql;
+use PDO;
 
 define('FS_FOREIGN_KEYS', '1');
 define('FS_DB_INTEGER', 'INTEGER');
@@ -82,21 +86,41 @@ class DataBase
             self::$totalTransactions = 0;
             self::$tables = [];
 
-            switch (strtolower(FS_DB_TYPE)) {
-                case 'mysql':
-                    self::$engine = new Mysql();
-                    break;
-
-                case 'postgresql':
-                    self::$engine = new Postgresql();
-                    break;
-
-                default:
-                    self::$engine = null;
-                    self::$miniLog->critical('No se reconoce el tipo de conexión. Debe ser MySQL o PostgreSQL');
-                    break;
-            }
+            self::$engine = $this->engine(strtolower(FS_DB_TYPE));
         }
+    }
+
+    /**
+     * Devuelve el engine a utilizar
+     *
+     * @param $type
+     *
+     * @return Mysql|PDOMysql|PDOPostgresql|PDOSqlite|Postgresql|null
+     */
+    private function engine($type)
+    {
+        switch ($type) {
+            case 'mysql':
+                $engine = new Mysql();
+                break;
+            case 'postgresql':
+                $engine = new Postgresql();
+                break;
+            case 'pdo_mysql':
+                $engine = new PDOMysql();
+                break;
+            case 'pdo_pgsql':
+                $engine = new PDOPostgresql();
+                break;
+            case 'pdo_sqlite':
+                $engine = new PDOSqlite();
+                break;
+            default:
+                $engine = null;
+                self::$miniLog->critical('No se reconoce el tipo de conexión. Debe ser MySQL o PostgreSQL');
+                break;
+        }
+        return $engine;
     }
 
     /**
@@ -155,10 +179,10 @@ class DataBase
      */
     public function getConstraints($tableName, $extended = false)
     {
+        $sql = self::$engine->getSQL()->sqlConstraints($tableName);
+
         if ($extended) {
             $sql = self::$engine->getSQL()->sqlConstraintsExtended($tableName);
-        } else {
-            $sql = self::$engine->getSQL()->sqlConstraints($tableName);
         }
 
         $data = $this->select($sql);
@@ -183,7 +207,7 @@ class DataBase
     }
 
     /**
-     * Devuelve TRUE si se está conestado a la base de datos.
+     * Devuelve TRUE si se está conectado a la base de datos.
      * @return bool
      */
     public function connected()
@@ -391,7 +415,6 @@ class DataBase
         if (empty($list)) {
             $list = $this->getTables();
         }
-
         return in_array($tableName, $list, false);
     }
 
@@ -479,5 +502,42 @@ class DataBase
     public function sql2int($colName)
     {
         return self::$engine->getSQL()->sql2int($colName);
+    }
+
+    /**
+     * Devuelve el engine la base de datos
+     * @return DatabaseEngine|null
+     */
+    public function getEngine()
+    {
+        return self::$engine;
+    }
+
+    /**
+     * Devuelve el enlace con la base de datos
+     * @return mysql|resource|PDO|null
+     */
+    public function getLink()
+    {
+        return self::$link;
+    }
+
+    /**
+     * Devuelve el tipo de conexión que utiliza
+     * @return string
+     */
+    public function getType()
+    {
+        return self::$engine->getType();
+    }
+
+    /**
+     * Devuelve true si es de tipo PDO, sino false
+     *
+     * @return bool
+     */
+    public function isPDO()
+    {
+        return 0 === strpos($this->getType(), 'pdo');
     }
 }

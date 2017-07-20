@@ -227,6 +227,7 @@ class Empresa
     public function __construct(array $data = [])
     {
         $this->init(__CLASS__, 'empresa', 'id');
+        $this->clear();
         if (!empty($data)) {
             $this->loadFromData($data);
 
@@ -247,8 +248,6 @@ class Empresa
                 $this->xid = static::randomString(30);
                 $this->save();
             }
-        } else {
-            $this->clear();
         }
     }
 

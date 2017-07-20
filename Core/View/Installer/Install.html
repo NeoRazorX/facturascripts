@@ -16,10 +16,10 @@
                     $('#db_type option:selected').each(function() {
                         str = $(this).val();
                     });
-                    if (str === 'mysql') {
+                    if (str === 'mysql' || str === 'pdo_mysql') {
                         $('#db_port').val(3306);
                         $('#db_user').val('root');
-                    } else if (str === 'postgresql') {
+                    } else if (str === 'postgresql' || str === 'pdo_pgsql') {
                         $('#db_port').val(5432);
                         $('#db_user').val('postgres');
                     }
@@ -98,6 +98,9 @@
                                     <select id="db_type" name="db_type" class="form-control">
                                         <option value="mysql">MySQL</option>
                                         <option value="postgresql">PostgreSQL</option>
+                                        <option value="pdo_mysql">PDO MySQL (Beta)</option>
+                                        <option value="pdo_pgsql">PDO PostgreSQL (Beta)</option>
+                                        <option value="pdo_sqlite">PDO SQLite (Alpha)</option>
                                     </select>
                                 </div>
                             </div>

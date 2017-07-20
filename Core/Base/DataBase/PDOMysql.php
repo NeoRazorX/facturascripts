@@ -19,18 +19,20 @@
 
 namespace FacturaScripts\Core\Base\DataBase;
 
-use Exception;
-use mysqli;
+use PDO;
+use PDOException;
+use PDOStatement;
 
 /**
- * Clase para conectar a MySQL.
+ * Clase para conectar a MySQL utilizando pdo_mysql.
+ * Puede considerarse en estado beta, falta probarlo a fondo.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class Mysql implements DatabaseEngine
+class PDOMysql implements DatabaseEngine
 {
-
     /**
      * El enlace con las utilidades comunes entre motores de base de datos.
      * @var DataBaseUtils
@@ -42,6 +44,24 @@ class Mysql implements DatabaseEngine
      * @var DatabaseSQL;
      */
     private $utilsSQL;
+
+    /**
+     * Database Handler
+     * @var PDO
+     */
+    private $dbh;
+
+    /**
+     * Errores devueltos
+     * @var string
+     */
+    private $error;
+
+    /**
+     * Contiene la declaración
+     * @var PDOStatement
+     */
+    private $stmt;
 
     /**
      * Relacion de Transacciones abiertas.
@@ -61,7 +81,7 @@ class Mysql implements DatabaseEngine
     public function __construct()
     {
         $this->utils = new DataBaseUtils($this);
-        $this->utilsSQL = new MysqlSQL();
+        $this->utilsSQL = new PDOMysqlSQL();
         $this->transactions = [];
         $this->lastErrorMsg = '';
     }
@@ -86,7 +106,7 @@ class Mysql implements DatabaseEngine
 
     /**
      * Borra de la lista la transaccion indicada
-     * @param mysqli $link
+     * @param PDO $link
      */
     private function unsetTransaction($link)
     {
@@ -102,42 +122,56 @@ class Mysql implements DatabaseEngine
 
     /**
      * Devuelve el motor de base de datos y la versión.
-     * @param mysqli $link
+     * @param PDO $link
      * @return string
      */
     public function version($link)
     {
-        return 'MYSQL ' . $link->server_version;
+        return 'MYSQL ' . $this->dbh->getAttribute(PDO::ATTR_SERVER_VERSION);
     }
 
     /**
      * Conecta a la base de datos.
      * @param string $error
-     * @return null|mysqli
+     * @return null|PDO
      */
     public function connect(&$error)
     {
-        if (!class_exists('mysqli')) {
-            $error = 'No tienes instalada la extensión de PHP para MySQL.';
+        if (!extension_loaded('pdo')) {
+            $this->error = 'No tienes instalada la extensión de PHP para PDO.';
+            $error = $this->error;
+            return null;
+        }
+        if (!extension_loaded('pdo_mysql')) {
+            $this->error = 'No tienes instalada la extensión de PHP para PDO MySQL.';
+            $error = $this->error;
             return null;
         }
 
-        $result = new \mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, (int) FS_DB_PORT);
-        if ($result->connect_errno) {
-            $error = $result->connect_error;
+        $dsn = 'mysql:host=' . FS_DB_HOST . ';port=' . FS_DB_PORT . ';dbname=' . FS_DB_NAME;
+        $options = [
+            PDO::ATTR_EMULATE_PREPARES => 1,
+            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+            //            PDO::ATTR_PERSISTENT => true,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        ];
+
+        // Creamos una nueva instancia PDO
+        try {
+            $this->dbh = new PDO($dsn, FS_DB_USER, FS_DB_PASS, $options);
+        } catch (PDOException $e) {
+            $this->error = $e->getMessage();
+            $error = $this->error;
             $this->lastErrorMsg = $error;
             return null;
         }
 
-        $result->set_charset('utf8');
-        $result->autocommit(false);
-
-        /// desactivamos las claves ajenas
+        /// Desactivamos las claves ajenas
         if (FS_FOREIGN_KEYS !== '1') {
-            $this->exec($result, 'SET foreign_key_checks = 0;');
+            $this->dbh->exec('SET foreign_key_checks = 0;');
         }
 
-        return $result;
+        return $this->dbh;
     }
 
     /**
@@ -150,61 +184,93 @@ class Mysql implements DatabaseEngine
      */
     public static function testConnect(&$errors, $dbData)
     {
-        if (filter_input(INPUT_POST, 'mysql_socket') !== '') {
-            ini_set('mysqli.default_socket', filter_input(INPUT_POST, 'mysql_socket'));
+        $dsnHost = 'mysql:host=' . $dbData['host'] . ';port=' . $dbData['port'];
+        $dsnDb = $dsnHost . ';dbname=' . $dbData['name'];
+        $options = [
+            PDO::ATTR_EMULATE_PREPARES => 1,
+            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+            //            PDO::ATTR_PERSISTENT => true,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        ];
+
+        // Creamos una nueva instancia PDO
+        $connection = null;
+        try {
+            $connection = new PDO($dsnHost, $dbData['user'], $dbData['pass'], $options);
+        } catch (PDOException $e) {
+            $errors[] = $e->getMessage();
         }
 
-        // Omitimos el valor del nombre de la BD porque lo comprobaremos más tarde
-        $connection = new mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', (int) $dbData['port']);
-        if ($connection->connect_error) {
-            $errors[] = (string) $connection->connect_error;
-        }
+        if ($connection !== null && $connection->errorCode() === '00000') {
+            // Comprobamos que la BD exista, de lo contrario la creamos
+            $connection2 = null;
+            try {
+                $connection2 = new PDO($dsnDb, $dbData['user'], $dbData['pass'], $options);
+            } catch (PDOException $e) {
+                $errors[] = $e->getMessage();
+            }
 
-        // Comprobamos que la BD exista, de lo contrario la creamos
-        $dbSelected = mysqli_select_db($connection, $dbData['name']);
-        if ($dbSelected) {
-            return true;
-        }
+            if ($connection2 !== null && $connection2->errorCode() === '00000') {
+                $errors = [];
+                return true;
+            }
 
-        $sqlCrearBD = 'CREATE DATABASE `' . $dbData['name'] . '`;';
-        if ($connection->query($sqlCrearBD)) {
-            return true;
-        }
+            $sqlCrearBD = 'CREATE DATABASE ' . $dbData['name'] . ';';
+            if (is_int($connection->exec($sqlCrearBD))) {
+                $errors = [];
+                return true;
+            }
 
-        $errors[] = (string) $connection->connect_error;
+            $array = $connection->errorInfo();
+            $error = '';
+            $separator = '';
+            foreach ($array as $err) {
+                if ($err !== '00000') {
+                    $error .= $separator . $err;
+                    $separator = ' ';
+                }
+            }
+            if ($error !== '') {
+                $errors[] = $error;
+            }
+        }
 
         return false;
     }
 
     /**
      * Desconecta de la base de datos.
-     * @param mysqli $link
+     * @param PDO $link
      * @return bool
      */
     public function close($link)
     {
-        $this->rollbackTransactions();
-        return $link->close();
+        if ($this->dbh) {
+            $this->rollbackTransactions();
+            $this->dbh = null;
+            return $this->stmt->closeCursor();
+        }
+        return false;
     }
 
     /**
      * Devuelve el error de la ultima sentencia ejecutada
-     * @param mysqli $link
+     * @param PDO $link
      * @return string
      */
     public function errorMessage($link)
     {
-        return ($link->error !== '') ? $link->error : $this->lastErrorMsg;
+        return ($this->error !== '') ? $this->error : $this->lastErrorMsg;
     }
 
     /**
      * Inicia una transacción SQL.
-     * @param mysqli $link
+     * @param PDO $link
      * @return bool
      */
     public function beginTransaction($link)
     {
-        $result = $this->exec($link, 'START TRANSACTION;');
+        $result = $this->dbh->beginTransaction();
         if ($result) {
             $this->transactions[] = $link;
         }
@@ -213,12 +279,12 @@ class Mysql implements DatabaseEngine
 
     /**
      * Guarda los cambios de una transacción SQL.
-     * @param mysqli $link
+     * @param PDO $link
      * @return bool
      */
     public function commit($link)
     {
-        $result = $this->exec($link, 'COMMIT;');
+        $result = $this->dbh->commit();
         if ($result && in_array($link, $this->transactions, false)) {
             $this->unsetTransaction($link);
         }
@@ -228,12 +294,12 @@ class Mysql implements DatabaseEngine
     /**
      * Deshace las operaciones realizadas sobre la conexión
      * desde el beginTransaction
-     * @param mysqli $link
+     * @param PDO $link
      * @return bool
      */
     public function rollback($link)
     {
-        $result = $this->exec($link, 'ROLLBACK;');
+        $result = $this->dbh->rollBack();
         if (in_array($link, $this->transactions, false)) {
             $this->unsetTransaction($link);
         }
@@ -242,7 +308,7 @@ class Mysql implements DatabaseEngine
 
     /**
      * Indica si la conexión está en transacción
-     * @param mysqli $link
+     * @param PDO $link
      * @return bool
      */
     public function inTransaction($link)
@@ -253,76 +319,60 @@ class Mysql implements DatabaseEngine
     /**
      * Ejecuta una sentencia SQL de tipo select, y devuelve un array con los resultados,
      * o array vacío en caso de fallo.
-     * @param mysqli $link
+     * @param PDO $link
      * @param string $sql
      * @return array
      */
     public function select($link, $sql)
     {
         $result = [];
-        try {
-            $aux = $link->query($sql);
-            if ($aux) {
-                $result = [];
-                while ($row = $aux->fetch_array(MYSQLI_ASSOC)) {
-                    $result[] = $row;
-                }
-                $aux->free();
+        $this->query($sql);
+        $aux = $this->resultSet();
+        if (!empty($aux)) {
+            foreach ($aux as $row) {
+                $result[] = $row;
             }
-        } catch (Exception $e) {
-            $this->lastErrorMsg = $e->getMessage();
-            $result = [];
         }
-
+        unset($aux);
         return $result;
     }
 
     /**
      * Ejecuta sentencias SQL sobre la base de datos
-     * (inserts, updates o deletes)
-     * @param mysqli $link
+     * (inserts, updates o deletes).
+     * @param PDO $link
      * @param string $sql
      * @return bool
      */
     public function exec($link, $sql)
     {
-        try {
-            if ($link->multi_query($sql)) {
-                do {
-                    $more = ($link->more_results() && $link->next_result());
-                } while ($more);
-            }
-            $result = (!$link->errno);
-        } catch (Exception $e) {
-            $this->lastErrorMsg = $e->getMessage();
-            $result = false;
-        }
-
-        return $result;
+        $this->stmt = $this->dbh->prepare($sql);
+        return $this->stmt->execute();
     }
 
     /**
      * Escapa las comillas de la cadena de texto.
-     * @param mysqli $link
+     * @param PDO $link
      * @param string $str
      * @return string
      */
     public function escapeString($link, $str)
     {
-        return $link->escape_string($str);
+        //return $this->dbh->quote($str);
+        return $str;
     }
 
     /**
-     * Devuelve el estilo de fecha del motor de base de datos.
+     * Indica el formato de fecha que utiliza la BD
      * @return string
      */
     public function dateStyle()
     {
-        return 'Y-m-d';
+        return 'd-m-Y';
     }
 
     /**
-     * Compara los tipos de datos de una columna numerica.
+     * Compara los tipos de datos de una columna numerica. Devuelve TRUE si son iguales.
      * @param string $dbType
      * @param string $xmlType
      * @return bool
@@ -376,13 +426,14 @@ class Mysql implements DatabaseEngine
 
     /**
      * Devuelve un array con los nombres de las tablas de la base de datos.
-     * @param mysqli $link
+     * @param PDO $link
      * @return array
      */
     public function listTables($link)
     {
         $tables = [];
-        $aux = $this->select($link, 'SHOW TABLES;');
+        $this->query('SHOW TABLES;');
+        $aux = $this->resultSet();
         if (!empty($aux)) {
             foreach ($aux as $a) {
                 $key = 'Tables_in_' . FS_DB_NAME;
@@ -399,7 +450,7 @@ class Mysql implements DatabaseEngine
      * comprueba si se refiere a una secuencia, y si es así
      * comprueba la existencia de la secuencia. Si no la encuentra
      * la crea.
-     * @param mysqli $link
+     * @param PDO $link
      * @param string $tableName
      * @param string $default
      * @param string $colname
@@ -411,8 +462,8 @@ class Mysql implements DatabaseEngine
     }
 
     /**
-     * Realiza comprobaciones extra a la tabla.
-     * @param mysqli $link
+     * Comprobación adicional a la existencia de una tabla
+     * @param PDO $link
      * @param string $tableName
      * @param string $error
      * @return bool
@@ -424,7 +475,7 @@ class Mysql implements DatabaseEngine
         /// ¿La tabla no usa InnoDB?
         $data = $this->select($link, 'SHOW TABLE STATUS FROM `' . FS_DB_NAME . "` LIKE '" . $tableName . "';");
         if (!empty($data) && $data[0]['Engine'] !== 'InnoDB') {
-            $result = $this->exec($link, 'ALTER TABLE ' . $tableName . ' ENGINE=InnoDB;');
+            $result = $this->dbh->exec('ALTER TABLE ' . $tableName . ' ENGINE=InnoDB;');
             if ($result) {
                 $error = 'Imposible convertir la tabla ' . $tableName . ' a InnoDB.'
                     . ' Imprescindible para FacturaScripts.';
@@ -474,6 +525,97 @@ class Mysql implements DatabaseEngine
      */
     public function getType()
     {
-        return 'mysql';
+        return 'pdo_mysql';
+    }
+
+    /**
+     * Prepares a statement for execution and returns a statement object
+     * @param string $queryString <p>This must be a valid SQL statement for the target database server.</p>
+     */
+    public function query($queryString)
+    {
+        $this->stmt = $this->dbh->prepare($queryString);
+    }
+
+    /**
+     * Binds a value to a parameter
+     * @param mixed $param <p>Parameter identifier. For a prepared statement using named
+     * placeholders, this will be a parameter name of the form
+     * :name. For a prepared statement using
+     * question mark placeholders, this will be the 1-indexed position of
+     * the parameter.</p>
+     * @param mixed $value <p>The value to bind to the parameter.</p>
+     * @param int $type [optional] <p>Explicit data type for the parameter using the PDO::PARAM_*
+     * constants.
+     */
+    public function bind($param, $value, $type = PDO::PARAM_STR)
+    {
+        if ($type === null) {
+            switch (true) {
+                case is_int($value):
+                    $type = PDO::PARAM_INT;
+                    break;
+                case is_bool($value):
+                    $type = PDO::PARAM_BOOL;
+                    break;
+                case ($value === null):
+                    $type = PDO::PARAM_NULL;
+                    break;
+                default:
+                    $type = PDO::PARAM_STR;
+            }
+        }
+        $this->stmt->bindValue($param, $value, $type);
+    }
+
+    /**
+     * Executes a prepared statement
+     * @return bool <b>TRUE</b> on success or <b>FALSE</b> on failure.
+     */
+    public function execute()
+    {
+        return $this->stmt->execute();
+    }
+
+    /**
+     * Returns an array containing all of the result set rows
+     * @return array <b>PDOStatement::fetchAll</b> returns an array containing
+     * all of the remaining rows in the result set. The array represents each
+     * row as either an array of column values or an object with properties
+     * corresponding to each column name.
+     */
+    public function resultSet()
+    {
+        $this->execute();
+        return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Fetches the next row from a result set
+     * @return mixed The return value of this function on success depends on the fetch type. In
+     * all cases, <b>FALSE</b> is returned on failure.
+     */
+    public function single()
+    {
+        $this->execute();
+        return $this->stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Returns the number of rows affected by the last SQL statement
+     * @return int the number of rows.
+     */
+    public function rowCount()
+    {
+        return $this->stmt->rowCount();
+    }
+
+    /**
+     * Dump an SQL prepared command
+     * @return bool No value is returned.
+     */
+    public function debugDumpParams()
+    {
+        return $this->stmt->debugDumpParams();
     }
 }

@@ -56,8 +56,8 @@ class PageRule
     public $allowdelete;
 
     /**
-     * TODO
-     * @var
+     * Otorga permisos al usuario a actualizar elementos en la página.
+     * @var bool
      */
     public $allowupdate;
 
@@ -68,10 +68,9 @@ class PageRule
     public function __construct(array $data = [])
     {
         $this->init(__CLASS__, 'fs_page_rules', 'id');
+        $this->clear();
         if (!empty($data)) {
             $this->loadFromData($data);
-        } else {
-            $this->clear();
         }
     }
 }
