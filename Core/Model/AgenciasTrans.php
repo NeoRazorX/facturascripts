@@ -25,22 +25,22 @@ use FacturaScripts\Core\Base\Model;
 
 /**
  * Agencia de transporte de mercancías.
- * 
+ *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class AgenciasTrans
 {
-	use Model;
+    use Model;
 
     /**
      * Clave primaria. Varchar(8).
-     * @var type 
+     * @var string
      */
     public $codtrans;
 
     /**
      * Nombre de la agencia.
-     * @var type 
+     * @var string
      */
     public $nombre;
     public $telefono;
@@ -48,30 +48,43 @@ class AgenciasTrans
 
     /**
      * TRUE => activo.
-     * @var type
+     * @var bool
      */
     public $activo;
 
-    public function __construct(array $data = []) 
-	{
+    /**
+     * AgenciasTrans constructor.
+     *
+     * @param array $data
+     */
+    public function __construct(array $data = [])
+    {
         $this->init(__CLASS__, 'agenciastrans', 'codtrans');
         if (!empty($data)) {
             $this->loadFromData($data);
         } else {
-			$this->clear();
+            $this->clear();
         }
     }
-	
-	public function clear()
-	{
-		$this->codtrans = NULL;
-		$this->nombre = NULL;
-		$this->telefono = NULL;
-		$this->web = NULL;
-		$this->activo = TRUE;
-	}
 
-    public function install() {
+    /**
+     * TODO
+     */
+    public function clear()
+    {
+        $this->codtrans = NULL;
+        $this->nombre = NULL;
+        $this->telefono = NULL;
+        $this->web = NULL;
+        $this->activo = TRUE;
+    }
+
+    /**
+     * TODO
+     * @return string
+     */
+    public function install()
+    {
         return 'INSERT INTO ' . $this->tableName() . ' (codtrans, nombre, activo) VALUES '.
             "('ASM', 'ASM', 1),".
             "('TYPSA', 'TYPSA', 1),".
@@ -80,54 +93,62 @@ class AgenciasTrans
 
     /**
      * Devuelve la url donde ver/modificar estos datos
-     * @return type
+     * @return string
      */
-    public function url() {
-        return "index.php?page=admin_transportes&cod=" . $this->codtrans;
+    public function url()
+    {
+        return 'index.php?page=admin_transportes&cod=' . $this->codtrans;
     }
 
     /**
      * Devuelve la agencia de transporte con codtrans = $cod
-     * @param type $cod
-     * @return \FacturaScripts\model\agencia_transporte|boolean
+     * @param string $cod
+     * @return AgenciasTrans|boolean
      */
-    public function get($cod) {
-        $data = self::$dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE codtrans = " . $this->var2str($cod) . ";");
+    public function get($cod)
+    {
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codtrans = ' . $this->var2str($cod) . ';';
+        $data = self::$dataBase->select($sql);
         if ($data) {
-            return new \agencia_transporte($data[0]);
-        } else
-            return FALSE;
+            return new AgenciasTrans($data[0]);
+        }
+
+        return FALSE;
     }
 
     /**
      * Devuelve TRUE si la agencia existe (en la base de datos)
-     * @return boolean
+     * @return array|bool
      */
-    public function exists() {
-        if (is_null($this->codtrans)) {
+    public function exists()
+    {
+        if ($this->codtrans === null) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE codtrans = " . $this->var2str($this->codtrans) . ";");
+        }
+
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codtrans = ' . $this->var2str($this->codtrans) . ';';
+        return self::$dataBase->select($sql);
     }
 
     /**
      * Guarda los datos en la base de datos
-     * @return type
+     * @return bool
      */
-    public function save() {
+    public function save()
+    {
         if ($this->exists()) {
-            $sql = "UPDATE " . $this->tableName() . " SET  nombre = " . $this->var2str($this->nombre)
-                    . ", telefono = " . $this->var2str($this->telefono)
-                    . ", web = " . $this->var2str($this->web)
-                    . ", activo = " . $this->var2str($this->activo)
-                    . "  WHERE codtrans = " . $this->var2str($this->codtrans) . ";";
+            $sql = 'UPDATE ' . $this->tableName() . ' SET  nombre = ' . $this->var2str($this->nombre)
+                    . ', telefono = ' . $this->var2str($this->telefono)
+                    . ', web = ' . $this->var2str($this->web)
+                    . ', activo = ' . $this->var2str($this->activo)
+                    . '  WHERE codtrans = ' . $this->var2str($this->codtrans) . ';';
         } else {
-            $sql = "INSERT INTO " . $this->tableName() . " (codtrans,nombre,telefono,web,activo)"
-                    . " VALUES (" . $this->var2str($this->codtrans)
-                    . "," . $this->var2str($this->nombre)
-                    . "," . $this->var2str($this->telefono)
-                    . "," . $this->var2str($this->web)
-                    . "," . $this->var2str($this->activo) . ");";
+            $sql = 'INSERT INTO ' . $this->tableName() . ' (codtrans,nombre,telefono,web,activo)'
+                    . ' VALUES (' . $this->var2str($this->codtrans)
+                    . ',' . $this->var2str($this->nombre)
+                    . ',' . $this->var2str($this->telefono)
+                    . ',' . $this->var2str($this->web)
+                    . ',' . $this->var2str($this->activo) . ');';
         }
 
         return self::$dataBase->exec($sql);
@@ -135,28 +156,30 @@ class AgenciasTrans
 
     /**
      * Elimina la agencia de transportes (de la base de datos)
-     * @return type
+     * @return bool
      */
-    public function delete() {
-        return self::$dataBase->exec("DELETE FROM " . $this->tableName() . " WHERE codtrans = " . $this->var2str($this->codtrans) . ";");
+    public function delete()
+    {
+        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE codtrans = ' . $this->var2str($this->codtrans) . ';';
+        return self::$dataBase->exec($sql);
     }
 
     
     /**
      * Devuelve un array con todas las agencias de transporte
-     * @return \FacturaScripts\model\agencia_transporte
-    public function all() {
+     * @return array
+     */
+    public function all()
+    {
         $listaa = array();
 
-        $data = self::$dataBase->select("SELECT * FROM " . $this->tableName() . " ORDER BY nombre ASC;");
+        $data = self::$dataBase->select('SELECT * FROM ' . $this->tableName() . ' ORDER BY nombre ASC;');
         if ($data) {
             foreach ($data as $d) {
-                $listaa[] = new \agencia_transporte($d);
+                $listaa[] = new AgenciasTrans($d);
             }
         }
 
         return $listaa;
     }
-     */
-
 }

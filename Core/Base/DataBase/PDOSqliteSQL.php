@@ -29,28 +29,78 @@ namespace FacturaScripts\Core\Base\DataBase;
  */
 class PDOSqliteSQL implements DatabaseSQL
 {
+
     /**
-     * Genera el SQL para establecer las restricciones proporcionadas.
-     *
-     * @param array $xmlCons
-     *
+     * Genera el SQL con el tipo de campo y las constraints DEFAULT y NULL
+     * https://sqlite.org/datatype3.html
+     * @param array $colData
      * @return string
      */
-    public function generateTableConstraints($xmlCons)
+    private function getTypeAndConstraints($colData)
     {
-        $sql = '';
-        foreach ($xmlCons as $res) {
-            $sql .= ', CONSTRAINT ' . $res['nombre'] . ' ' . $res['consulta'];
+        $type = stripos('boolean,integer,serial',
+            $colData['tipo']) === false ? strtolower($colData['tipo']) : FS_DB_INTEGER;
+        switch (true) {
+            case ($type === 'serial'):
+            case (stripos($colData['defecto'], 'nextval(') !== false):
+                $contraints = ' NOT NULL AUTO_INCREMENT';
+                break;
+            case (stripos($colData['defecto'], 'boolean') !== false):
+                $contraints = ' NOT NULL AUTO_INCREMENT';
+                break;
+            default:
+                $contraints = $this->getConstraints($colData);
+                break;
         }
-
-        return $this->fixPostgresql($sql);
+        return ' ' . $type . $contraints;
     }
 
     /**
-     * Sentencia necesaria para convertir la columna a entero.
-     *
+     * TODO
+     * @param array $colData
+     * @return string
+     */
+    private function getConstraints($colData)
+    {
+        $notNull = ($colData['nulo'] === 'NO');
+        $result = ' NULL';
+        if ($notNull) {
+            $result = ' NOT' . $result;
+        }
+
+        $defaultNull = ($colData['defecto'] === null);
+        if ($defaultNull && !$notNull) {
+            $result .= ' DEFAULT NULL';
+        }
+
+        if ($colData['defecto'] !== '') {
+            if ($colData['defecto'] !== 'true' && $colData['defecto'] !== 'false') {
+                $result .= ' DEFAULT ' . $colData['defecto'];
+            } elseif ($colData['defecto'] !== 'true') {
+                $result .= ' DEFAULT 1';
+            } elseif ($colData['defecto'] !== 'false') {
+                $result .= ' DEFAULT 0';
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Elimina código problemático de postgresql.
+     * @param string $sql
+     * @return string
+     */
+    private function fixPostgresql($sql)
+    {
+        $search = ['::character varying', 'without time zone', 'now()', 'CURRENT_TIMESTAMP', 'CURRENT_DATE'];
+        $replace = ['', '', "'00:00'", "'" . date('Y-m-d') . " 00:00:00'", date("'Y-m-d'")];
+        return str_replace($search, $replace, $sql);
+    }
+
+    /**
+     * Devuelve el SQL necesario para convertir la columna a entero.
      * @param string $colName
-     *
      * @return string
      */
     public function sql2int($colName)
@@ -67,14 +117,13 @@ class PDOSqliteSQL implements DatabaseSQL
     public function sqlLastValue()
     {
         // TODO: Comprobar que sea realmente así
-        return $this->lastInsertId();
+        return 'SELECT LAST_INSERT_ID() as num;';
     }
 
     /**
-     * Sentencia SQL para obtener las columnas de una tabla
-     *
+     * Devuelve el SQL para averiguar
+     * la lista de las columnas de una tabla.
      * @param string $tableName
-     *
      * @return string
      */
     public function sqlColumns($tableName)
@@ -85,9 +134,7 @@ class PDOSqliteSQL implements DatabaseSQL
 
     /**
      * Sentencia SQL para obtener las constraints de una tabla
-     *
      * @param string $tableName
-     *
      * @return string
      */
     public function sqlConstraints($tableName)
@@ -102,10 +149,9 @@ class PDOSqliteSQL implements DatabaseSQL
     }
 
     /**
-     * Sentencia SQL para obtener las constraints (extendidas) de una tabla
-     *
+     * Devuelve el SQL para averiguar
+     * la lista de restricciones avanzadas de una tabla.
      * @param string $tableName
-     *
      * @return string
      */
     public function sqlConstraintsExtended($tableName)
@@ -138,9 +184,7 @@ class PDOSqliteSQL implements DatabaseSQL
 
     /**
      * Genera el SQL para establecer las restricciones proporcionadas.
-     *
      * @param array $xmlCons
-     *
      * @return string
      */
     public function sqlTableConstraints($xmlCons)
@@ -154,10 +198,9 @@ class PDOSqliteSQL implements DatabaseSQL
     }
 
     /**
-     * Sentencia SQL para obtener los indices de una tabla
-     *
+     * Devuelve el SQL para averiguar
+     * la lista de indices de una tabla.
      * @param string $tableName
-     *
      * @return string
      */
     public function sqlIndexes($tableName)
@@ -168,11 +211,9 @@ class PDOSqliteSQL implements DatabaseSQL
 
     /**
      * Sentencia SQL para crear una tabla
-     *
      * @param string $tableName
      * @param array $columns
      * @param array $constraints
-     *
      * @return string
      */
     public function sqlCreateTable($tableName, $columns, $constraints)
@@ -184,16 +225,14 @@ class PDOSqliteSQL implements DatabaseSQL
 
         $sql = $this->fixPostgresql(substr($fields, 2));
         $result = 'CREATE TABLE ' . $tableName . ' (' . $sql
-            . $this->generateTableConstraints($constraints) . ');';
+            . $this->sqlTableConstraints($constraints) . ');';
         return $result;
     }
 
     /**
      * Sentencia SQL para añadir una columna a una tabla
-     *
      * @param string $tableName
      * @param array $colData
-     *
      * @return string
      */
     public function sqlAlterAddColumn($tableName, $colData)
@@ -206,10 +245,8 @@ class PDOSqliteSQL implements DatabaseSQL
 
     /**
      * Sentencia SQL para modificar la definición de una columna de una tabla
-     *
      * @param string $tableName
      * @param array $colData
-     *
      * @return string
      */
     public function sqlAlterModifyColumn($tableName, $colData)
@@ -223,10 +260,8 @@ class PDOSqliteSQL implements DatabaseSQL
 
     /**
      * Sentencia SQL para modificar valor por defecto de una columna de una tabla
-     *
      * @param string $tableName
      * @param array $colData
-     *
      * @return string
      */
     public function sqlAlterConstraintDefault($tableName, $colData)
@@ -237,11 +272,9 @@ class PDOSqliteSQL implements DatabaseSQL
     }
 
     /**
-     * Sentencia SQL para modificar un constraint null de una columna de una tabla
-     *
+     * Sentencia SQL para modificar una constraint NULL de un campo de una tabla
      * @param string $tableName
      * @param array $colData
-     *
      * @return string
      */
     public function sqlAlterConstraintNull($tableName, $colData)
@@ -252,10 +285,8 @@ class PDOSqliteSQL implements DatabaseSQL
 
     /**
      * Sentencia SQL para eliminar una constraint de una tabla
-     *
      * @param string $tableName
      * @param array $colData
-     *
      * @return string
      */
     public function sqlDropConstraint($tableName, $colData)
@@ -264,12 +295,10 @@ class PDOSqliteSQL implements DatabaseSQL
     }
 
     /**
-     * Sentencia SQL para añadir una constraint de una tabla
-     *
+     * Sentencia SQL para añadir una constraint a una tabla
      * @param string $tableName
      * @param string $constraintName
      * @param string $sql
-     *
      * @return string
      */
     public function sqlAddConstraint($tableName, $constraintName, $sql)
@@ -280,88 +309,12 @@ class PDOSqliteSQL implements DatabaseSQL
     }
 
     /**
-     * Sentencia para crear una secuencia
-     *
+     * Sentencia SQL para comprobar una secuencia
      * @param string $seqName
-     *
      * @return string
      */
     public function sqlSequenceExists($seqName)
     {
-        return '';
-    }
-
-    /**
-     * TODO
-     *
-     * @param array $colData
-     *
-     * @return string
-     */
-    private function getConstraints($colData)
-    {
-        $notNull = ($colData['nulo'] === 'NO');
-        $result = ' NULL';
-        if ($notNull) {
-            $result = ' NOT' . $result;
-        }
-
-        $defaultNull = ($colData['defecto'] === null);
-        if ($defaultNull && !$notNull) {
-            $result .= ' DEFAULT NULL';
-        }
-
-        if ($colData['defecto'] !== '') {
-            if ($colData['defecto'] !== 'true' && $colData['defecto'] !== 'false') {
-                $result .= ' DEFAULT ' . $colData['defecto'];
-            } elseif ($colData['defecto'] !== 'true') {
-                $result .= ' DEFAULT 1';
-            } elseif ($colData['defecto'] !== 'false') {
-                $result .= ' DEFAULT 0';
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Genera el SQL con el tipo de campo y las constraints DEFAULT y NULL
-     * https://sqlite.org/datatype3.html
-     *
-     * @param array $colData
-     *
-     * @return string
-     */
-    private function getTypeAndConstraints($colData)
-    {
-        $type = stripos('boolean,integer,serial',
-            $colData['tipo']) === false ? strtolower($colData['tipo']) : FS_DB_INTEGER;
-        switch (true) {
-            case ($type === 'serial'):
-            case (stripos($colData['defecto'], 'nextval(') !== false):
-                $contraints = ' NOT NULL AUTO_INCREMENT';
-                break;
-            case (stripos($colData['defecto'], 'boolean') !== false):
-                $contraints = ' NOT NULL AUTO_INCREMENT';
-                break;
-            default:
-                $contraints = $this->getConstraints($colData);
-                break;
-        }
-        return ' ' . $type . $contraints;
-    }
-
-    /**
-     * Elimina código problemático de postgresql.
-     *
-     * @param string $sql
-     *
-     * @return string
-     */
-    private function fixPostgresql($sql)
-    {
-        $search = ['::character varying', 'without time zone', 'now()', 'CURRENT_TIMESTAMP', 'CURRENT_DATE'];
-        $replace = ['', '', "'00:00'", "'" . date('Y-m-d') . " 00:00:00'", date("'Y-m-d'")];
-        return str_replace($search, $replace, $sql);
+        return $seqName;
     }
 }
