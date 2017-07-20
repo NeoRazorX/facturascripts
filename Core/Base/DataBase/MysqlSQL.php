@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
- * Clase que recopila las sentencias SQL necesarias 
+ * Clase que recopila las sentencias SQL necesarias
  * por el motor de base de datos
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
@@ -41,7 +42,6 @@ class MysqlSQL implements DatabaseSQL
             case (stripos($colData['defecto'], 'nextval(') !== FALSE):
                 $contraints = ' NOT NULL AUTO_INCREMENT';
                 break;
-
             default:
                 $contraints = $this->getConstraints($colData);
                 break;
@@ -50,7 +50,7 @@ class MysqlSQL implements DatabaseSQL
     }
 
     /**
-     * 
+     * TODO
      * @param array $colData
      * @return string
      */

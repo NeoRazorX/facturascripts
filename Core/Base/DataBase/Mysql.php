@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
@@ -38,7 +39,7 @@ class Mysql implements DatabaseEngine
 
     /**
      * Enlace al conjunto de sentencias SQL de la base de datos conectada
-     * @var DatabaseSQL; 
+     * @var DatabaseSQL;
      */
     private $utilsSQL;
 
@@ -50,7 +51,7 @@ class Mysql implements DatabaseEngine
 
     /**
      * Ultimo mensaje de error
-     * @var string 
+     * @var string
      */
     private $lastErrorMsg;
 
@@ -143,10 +144,8 @@ class Mysql implements DatabaseEngine
      * Se intenta realizar la conexión a la base de datos MySQL,
      * si se ha realizado se devuelve true, sino false.
      * En el caso que sea false, $errors contiene el error
-     *
      * @param $errors
      * @param $dbData
-     *
      * @return bool
      */
     public static function testConnect(&$errors, $dbData)
@@ -195,7 +194,7 @@ class Mysql implements DatabaseEngine
      */
     public function errorMessage($link)
     {
-        return ($link->error != '') ? $link->error : $this->lastErrorMsg;
+        return ($link->error !== '') ? $link->error : $this->lastErrorMsg;
     }
 
     /**
@@ -227,7 +226,8 @@ class Mysql implements DatabaseEngine
     }
 
     /**
-     * TODO
+     * Deshace las operaciones realizadas sobre la conexión
+     * desde el beginTransaction
      * @param mysqli $link
      * @return bool
      */
@@ -361,7 +361,7 @@ class Mysql implements DatabaseEngine
             ($dbType === 'tinyint(1)' && $xmlType === 'boolean') ||
             (substr($dbType, 8, -1) === substr($xmlType, 18, -1)) ||
             (substr($dbType, 5, -1) === substr($xmlType, 18, -1))
-            );
+        );
 
         if (!$result) {
             $result = $this->compareDataTypeNumeric($dbType, $xmlType);
@@ -458,7 +458,7 @@ class Mysql implements DatabaseEngine
     {
         return $this->utils;
     }
-    
+
     /**
      * Devuelve el enlace a la clase de SQL del engine
      * @return DatabaseSQL

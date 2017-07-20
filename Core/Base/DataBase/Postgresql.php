@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
@@ -28,7 +29,6 @@ use Exception;
  */
 class Postgresql implements DatabaseEngine
 {
-
     /**
      * El enlace con las utilidades comunes entre motores de base de datos.
      * @var DataBaseUtils
@@ -43,7 +43,7 @@ class Postgresql implements DatabaseEngine
 
     /**
      * Ultimo mensaje de error
-     * @var string 
+     * @var string
      */
     private $lastErrorMsg;
 
@@ -112,10 +112,8 @@ class Postgresql implements DatabaseEngine
      * Se intenta realizar la conexión a la base de datos PostgreSQL,
      * si se ha realizado se devuelve true, sino false.
      * En el caso que sea false, $errors contiene el error
-     *
      * @param $errors
      * @param $dbData
-     *
      * @return bool
      */
     public static function testConnect(&$errors, $dbData)
@@ -359,7 +357,7 @@ class Postgresql implements DatabaseEngine
     {
         return $this->utils;
     }
-    
+
     /**
      * Devuelve el enlace a la clase de SQL del engine
      * @return DatabaseSQL

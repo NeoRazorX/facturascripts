@@ -27,8 +27,6 @@ use PDOStatement;
  * Clase para conectar a PostgreSQL utilizando pdo_pgsql.
  * Puede considerarse en estado beta, falta probarlo a fondo.
  *
- * Basado en: http://culttt.com/2012/10/01/roll-your-own-pdo-php-class/
- *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
@@ -40,31 +38,37 @@ class PDOPostgresql implements DatabaseEngine
      * @var DataBaseUtils
      */
     private $utils;
+
     /**
      * Enlace al conjunto de sentencias SQL de la base de datos conectada
      * @var DatabaseSQL;
      */
     private $utilsSQL;
+
     /**
      * Database Handler
      * @var PDO
      */
     private $dbh;
+
     /**
      * Errores devueltos
      * @var string
      */
     private $error;
+
     /**
      * Contiene la declaración
      * @var PDOStatement|PDOException
      */
     private $stmt;
+
     /**
      * Relacion de Transacciones abiertas.
      * @var array
      */
     private $transactions;
+
     /**
      * Ultimo mensaje de error
      * @var string
@@ -83,13 +87,91 @@ class PDOPostgresql implements DatabaseEngine
     }
 
     /**
+     * Destructor de la clase
+     */
+    public function __destruct()
+    {
+        $this->rollbackTransactions();
+    }
+
+    /**
+     * Devuelve el motor de base de datos y la versión.
+     * @param PDO $link
+     * @return string
+     */
+    public function version($link)
+    {
+        return 'POSTGRESQL ' . $this->dbh->getAttribute(PDO::ATTR_SERVER_VERSION);
+    }
+
+    /**
+     * Convierte los datos leidos del sqlColumns a estructura de trabajo
+     * @param array $colData
+     * @return array
+     */
+    public function columnFromData($colData)
+    {
+        $colData['extra'] = null;
+
+        if ($colData['character_maximum_length'] !== null) {
+            $colData['type'] .= '(' . $colData['character_maximum_length'] . ')';
+        }
+
+        return $colData;
+    }
+
+    /**
+     * Conecta a la base de datos.
+     * @param string $error
+     * @return null|PDO
+     */
+    public function connect(&$error)
+    {
+        if (!extension_loaded('pdo')) {
+            $this->error = 'No tienes instalada la extensión de PHP para PDO.';
+            $error = $this->error;
+            return null;
+        }
+        if (!extension_loaded('pdo_pgsql')) {
+            $this->error = 'No tienes instalada la extensión de PHP para PDO PostgreSQL.';
+            $error = $this->error;
+            return null;
+        }
+
+        $dsn = 'pgsql:host=' . FS_DB_HOST . ';port=' . FS_DB_PORT . ';dbname=' . FS_DB_NAME;
+        $options = [
+            PDO::ATTR_EMULATE_PREPARES => 1,
+            //            PDO::ATTR_PERSISTENT => true,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        ];
+
+        // Creamos una nueva instancia PDO
+        try {
+            $this->dbh = new PDO($dsn, FS_DB_USER, FS_DB_PASS, $options);
+        } catch (PDOException $e) {
+            $this->error = $e->getMessage();
+            $error = $this->error;
+            $this->lastErrorMsg = $error;
+            return null;
+        }
+
+        // Force PostgreSQL to use the UTF-8 character set by default.
+        $this->dbh->exec("SET NAMES 'UTF8'");
+
+        /// Desactivamos las claves ajenas
+        if (FS_FOREIGN_KEYS !== '1') {
+            $this->dbh->exec('SET foreign_key_checks = 0;');
+        }
+
+        return $this->dbh;
+    }
+
+    /**
      * Se intenta realizar la conexión a la base de datos PostgreSQL,
      * si se ha realizado se devuelve true, sino false.
      * En el caso que sea false, $errors contiene el error
-     *
      * @param $errors
      * @param $dbData
-     *
      * @return bool
      */
     public static function testConnect(&$errors, $dbData)
@@ -148,155 +230,34 @@ class PDOPostgresql implements DatabaseEngine
     }
 
     /**
-     * Destructor de la clase
-     */
-    public function __destruct()
-    {
-        $this->rollbackTransactions();
-    }
-
-    /**
-     * Conecta a la base de datos.
-     *
-     * @param string $error
-     *
-     * @return null|PDO
-     */
-    public function connect(&$error)
-    {
-        if (!extension_loaded('pdo')) {
-            $this->error = 'No tienes instalada la extensión de PHP para PDO.';
-            $error = $this->error;
-            return null;
-        }
-        if (!extension_loaded('pdo_pgsql')) {
-            $this->error = 'No tienes instalada la extensión de PHP para PDO PostgreSQL.';
-            $error = $this->error;
-            return null;
-        }
-
-        $dsn = 'pgsql:host=' . FS_DB_HOST . ';port=' . FS_DB_PORT . ';dbname=' . FS_DB_NAME;
-        $options = [
-            PDO::ATTR_EMULATE_PREPARES => 1,
-            //            PDO::ATTR_PERSISTENT => true,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-        ];
-
-        // Creamos una nueva instancia PDO
-        try {
-            $this->dbh = new PDO($dsn, FS_DB_USER, FS_DB_PASS, $options);
-        } catch (PDOException $e) {
-            $this->error = $e->getMessage();
-            $error = $this->error;
-            $this->lastErrorMsg = $error;
-            return null;
-        }
-
-        // Force PostgreSQL to use the UTF-8 character set by default.
-        $this->dbh->exec("SET NAMES 'UTF8'");
-
-        /// Desactivamos las claves ajenas
-        if (FS_FOREIGN_KEYS !== '1') {
-            $this->dbh->exec('SET foreign_key_checks = 0;');
-        }
-
-        return $this->dbh;
-    }
-
-    /**
-     * Prepares a statement for execution and returns a statement object
-     *
-     * @param string $queryString <p>This must be a valid SQL statement for the target database server.</p>
-     */
-    public function query($queryString)
-    {
-        $this->stmt = $this->dbh->prepare($queryString);
-    }
-
-    /**
-     * Binds a value to a parameter
-     *
-     * @param mixed $param <p>Parameter identifier. For a prepared statement using named
-     * placeholders, this will be a parameter name of the form
-     * :name. For a prepared statement using
-     * question mark placeholders, this will be the 1-indexed position of
-     * the parameter.</p>
-     * @param mixed $value <p>The value to bind to the parameter.</p>
-     * @param int $type [optional] <p>Explicit data type for the parameter using the PDO::PARAM_*
-     * constants.
-     */
-    public function bind($param, $value, $type = PDO::PARAM_STR)
-    {
-        if ($type === null) {
-            switch (true) {
-                case is_int($value):
-                    $type = PDO::PARAM_INT;
-                    break;
-                case is_bool($value):
-                    $type = PDO::PARAM_BOOL;
-                    break;
-                case ($value === null):
-                    $type = PDO::PARAM_NULL;
-                    break;
-                default:
-                    $type = PDO::PARAM_STR;
-            }
-        }
-        $this->stmt->bindValue($param, $value, $type);
-    }
-
-    /**
-     * Executes a prepared statement
-     *
-     * @return bool <b>TRUE</b> on success or <b>FALSE</b> on failure.
-     */
-    public function execute()
-    {
-        return $this->stmt->execute();
-    }
-
-    /**
-     * Returns an array containing all of the result set rows
-     *
-     * @return array <b>PDOStatement::fetchAll</b> returns an array containing
-     * all of the remaining rows in the result set. The array represents each
-     * row as either an array of column values or an object with properties
-     * corresponding to each column name.
-     */
-    public function resultSet()
-    {
-        $this->execute();
-        return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Fetches the next row from a result set
-     *
-     * @return mixed The return value of this function on success depends on the fetch type. In
-     * all cases, <b>FALSE</b> is returned on failure.
-     */
-    public function single()
-    {
-        $this->execute();
-        return $this->stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Returns the number of rows affected by the last SQL statement
-     *
-     * @return int the number of rows.
-     */
-    public function rowCount()
-    {
-        return $this->stmt->rowCount();
-    }
-
-    /**
-     * Initiates a transaction
-     *
+     * Desconecta de la base de datos.
      * @param PDO $link
-     *
-     * @return bool <b>TRUE</b> on success or <b>FALSE</b> on failure.
+     * @return bool
+     */
+    public function close($link)
+    {
+        if ($this->dbh) {
+            $this->dbh->rollBack();
+            $this->dbh = null;
+            return $this->stmt->closeCursor();
+        }
+        return false;
+    }
+
+    /**
+     * Devuelve el error de la ultima sentencia ejecutada
+     * @param PDO $link
+     * @return string
+     */
+    public function errorMessage($link)
+    {
+        return ($this->error !== '') ? $this->error : $this->lastErrorMsg;
+    }
+
+    /**
+     * Inicia una transacción SQL.
+     * @param PDO $link
+     * @return bool
      */
     public function beginTransaction($link)
     {
@@ -308,102 +269,13 @@ class PDOPostgresql implements DatabaseEngine
     }
 
     /**
-     * Commits a transaction
-     *
-     * @return bool <b>TRUE</b> on success or <b>FALSE</b> on failure.
-     */
-    public function endTransaction()
-    {
-        return $this->dbh->commit();
-    }
-
-    /**
-     * Rolls back a transaction
-     *
-     * @return bool <b>TRUE</b> on success or <b>FALSE</b> on failure.
-     */
-    public function cancelTransaction()
-    {
-        return $this->dbh->rollBack();
-    }
-
-    /**
-     * Dump an SQL prepared command
-     *
-     * @return bool No value is returned.
-     */
-    public function debugDumpParams()
-    {
-        return $this->stmt->debugDumpParams();
-    }
-
-    /**
-     * Convierte los datos leidos del sqlColumns a estructura de trabajo
-     *
-     * @param array $colData
-     *
-     * @return array
-     */
-    public function columnFromData($colData)
-    {
-        $colData['extra'] = null;
-
-        if ($colData['character_maximum_length'] !== null) {
-            $colData['type'] .= '(' . $colData['character_maximum_length'] . ')';
-        }
-
-        return $colData;
-    }
-
-    /**
-     * Información sobre el motor de base de datos
-     *
+     * Guarda los cambios de una transacción SQL.
      * @param PDO $link
-     *
-     * @return string
-     */
-    public function version($link)
-    {
-        return 'MYSQL ' . $this->dbh->getAttribute(PDO::ATTR_SERVER_VERSION);
-    }
-
-    /**
-     * Cierra la conexión con la base de datos
-     *
-     * @param PDO $link
-     */
-    public function close($link)
-    {
-        if ($this->dbh) {
-            $this->cancelTransaction();
-            $this->stmt->closeCursor();
-            $this->dbh = null;
-        }
-    }
-
-    /**
-     * Último mensaje de error generado un operación con la BD
-     *
-     * @param PDO $link
-     *
-     * @return string
-     */
-    public function errorMessage($link)
-    {
-        return ($this->error !== '') ? $this->error : $this->lastErrorMsg;
-    }
-
-    /**
-     * Confirma las operaciones realizadas sobre la conexión
-     * desde el beginTransaction
-     *
-     * @param PDO $link
-     *
      * @return bool
      */
     public function commit($link)
     {
-        $result = $this->endTransaction();
+        $result = $this->dbh->commit();
         if ($result && in_array($link, $this->transactions, false)) {
             $this->unsetTransaction($link);
         }
@@ -413,14 +285,12 @@ class PDOPostgresql implements DatabaseEngine
     /**
      * Deshace las operaciones realizadas sobre la conexión
      * desde el beginTransaction
-     *
      * @param PDO $link
-     *
      * @return bool
      */
     public function rollback($link)
     {
-        $result = $this->cancelTransaction();
+        $result = $this->dbh->rollBack();
         if (in_array($link, $this->transactions, false)) {
             $this->unsetTransaction($link);
         }
@@ -428,10 +298,8 @@ class PDOPostgresql implements DatabaseEngine
     }
 
     /**
-     * Indica si la conexión tiene una transacción abierta
-     *
+     * Indica si la conexión está en transacción
      * @param PDO $link
-     *
      * @return bool
      */
     public function inTransaction($link)
@@ -442,10 +310,8 @@ class PDOPostgresql implements DatabaseEngine
     /**
      * Ejecuta una sentencia SQL de tipo select, y devuelve un array con los resultados,
      * o array vacío en caso de fallo.
-     *
      * @param PDO $link
      * @param string $sql
-     *
      * @return array
      */
     public function select($link, $sql)
@@ -463,12 +329,10 @@ class PDOPostgresql implements DatabaseEngine
     }
 
     /**
-     * Ejecuta una sentencia DDL sobre la conexión.
-     * Si no hay transacción abierta crea una y la finaliza
-     *
+     * Ejecuta sentencias SQL sobre la base de datos
+     * (inserts, updates o deletes).
      * @param PDO $link
      * @param string $sql
-     *
      * @return bool
      */
     public function exec($link, $sql)
@@ -478,11 +342,30 @@ class PDOPostgresql implements DatabaseEngine
     }
 
     /**
-     * Compara las columnas indicadas en los arrays
-     *
+     * Escapa las comillas de la cadena de texto.
+     * @param PDO $link
+     * @param string $str
+     * @return string
+     */
+    public function escapeString($link, $str)
+    {
+        //return $this->dbh->quote($str);
+        return $str;
+    }
+
+    /**
+     * Devuelve el estilo de fecha del motor de base de datos.
+     * @return string
+     */
+    public function dateStyle()
+    {
+        return 'd-m-Y';
+    }
+
+    /**
+     * Compara los tipos de datos de una columna numerica. Devuelve TRUE si son iguales.
      * @param string $dbType
      * @param string $xmlType
-     *
      * @return bool
      */
     public function compareDataTypes($dbType, $xmlType)
@@ -492,9 +375,7 @@ class PDOPostgresql implements DatabaseEngine
 
     /**
      * Devuelve un array con los nombres de las tablas de la base de datos.
-     *
      * @param PDO $link
-     *
      * @return array
      */
     public function listTables($link)
@@ -515,41 +396,14 @@ class PDOPostgresql implements DatabaseEngine
     }
 
     /**
-     * Escapa la cadena indicada
-     *
-     * @param PDO $link
-     * @param string $str
-     *
-     * @return string
-     */
-    public function escapeString($link, $str)
-    {
-        //return $this->dbh->quote($str);
-        return $str;
-    }
-
-    /**
-     * Indica el formato de fecha que utiliza la BD
-     *
-     * @return string
-     */
-    public function dateStyle()
-    {
-        return 'Y-m-d';
-    }
-
-    /**
-     * Comprueba la existencia de una secuencia
      * A partir del campo default de una tabla
      * comprueba si se refiere a una secuencia, y si es así
      * comprueba la existencia de la secuencia. Si no la encuentra
      * la crea.
-     *
      * @param PDO $link
      * @param string $tableName
      * @param string $default
      * @param string $colname
-     *
      * @return bool
      */
     public function checkSequence($link, $tableName, $default, $colname)
@@ -566,12 +420,10 @@ class PDOPostgresql implements DatabaseEngine
     }
 
     /**
-     * Comprobación adicional a la existencia de una tabla
-     *
+     * Realiza comprobaciones extra a la tabla.
      * @param PDO $link
      * @param string $tableName
      * @param string $error
-     *
      * @return bool
      */
     public function checkTableAux($link, $tableName, &$error)
@@ -607,6 +459,97 @@ class PDOPostgresql implements DatabaseEngine
     }
 
     /**
+     * Prepares a statement for execution and returns a statement object
+     * @param string $queryString <p>This must be a valid SQL statement for the target database server.</p>
+     */
+    public function query($queryString)
+    {
+        $this->stmt = $this->dbh->prepare($queryString);
+    }
+
+    /**
+     * Binds a value to a parameter
+     * @param mixed $param <p>Parameter identifier. For a prepared statement using named
+     * placeholders, this will be a parameter name of the form
+     * :name. For a prepared statement using
+     * question mark placeholders, this will be the 1-indexed position of
+     * the parameter.</p>
+     * @param mixed $value <p>The value to bind to the parameter.</p>
+     * @param int $type [optional] <p>Explicit data type for the parameter using the PDO::PARAM_*
+     * constants.
+     */
+    public function bind($param, $value, $type = PDO::PARAM_STR)
+    {
+        if ($type === null) {
+            switch (true) {
+                case is_int($value):
+                    $type = PDO::PARAM_INT;
+                    break;
+                case is_bool($value):
+                    $type = PDO::PARAM_BOOL;
+                    break;
+                case ($value === null):
+                    $type = PDO::PARAM_NULL;
+                    break;
+                default:
+                    $type = PDO::PARAM_STR;
+            }
+        }
+        $this->stmt->bindValue($param, $value, $type);
+    }
+
+    /**
+     * Executes a prepared statement
+     * @return bool <b>TRUE</b> on success or <b>FALSE</b> on failure.
+     */
+    public function execute()
+    {
+        return $this->stmt->execute();
+    }
+
+    /**
+     * Returns an array containing all of the result set rows
+     * @return array <b>PDOStatement::fetchAll</b> returns an array containing
+     * all of the remaining rows in the result set. The array represents each
+     * row as either an array of column values or an object with properties
+     * corresponding to each column name.
+     */
+    public function resultSet()
+    {
+        $this->execute();
+        return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Fetches the next row from a result set
+     * @return mixed The return value of this function on success depends on the fetch type. In
+     * all cases, <b>FALSE</b> is returned on failure.
+     */
+    public function single()
+    {
+        $this->execute();
+        return $this->stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Returns the number of rows affected by the last SQL statement
+     * @return int the number of rows.
+     */
+    public function rowCount()
+    {
+        return $this->stmt->rowCount();
+    }
+
+    /**
+     * Dump an SQL prepared command
+     * @return bool No value is returned.
+     */
+    public function debugDumpParams()
+    {
+        return $this->stmt->debugDumpParams();
+    }
+
+    /**
      * Deshace todas las transacciones activas
      */
     private function rollbackTransactions()
@@ -618,7 +561,6 @@ class PDOPostgresql implements DatabaseEngine
 
     /**
      * Borra de la lista la transaccion indicada
-     *
      * @param PDO $link
      */
     private function unsetTransaction($link)
