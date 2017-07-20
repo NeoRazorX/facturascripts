@@ -60,7 +60,7 @@ class PDOSqlite implements DatabaseEngine
 
     /**
      * Contiene la declaración
-     * @var PDOStatement|PDOException
+     * @var PDOStatement
      */
     private $stmt;
 
