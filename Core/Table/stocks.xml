@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : stocks.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla stocks.
+-->
+<tabla>
+    <columna>
+        <nombre>referencia</nombre>
+        <tipo>character varying(18)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>disponible</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>stockmin</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>reservada</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>horaultreg</nombre>
+        <tipo>time without time zone</tipo>
+        <nulo>YES</nulo>
+        <defecto>CURRENT_TIMESTAMP</defecto>
+    </columna>
+    <columna>
+        <nombre>nombre</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>pterecibir</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>fechaultreg</nombre>
+        <tipo>date</tipo>
+        <nulo>YES</nulo>
+        <defecto>CURRENT_DATE</defecto>
+    </columna>
+    <columna>
+        <nombre>codalmacen</nombre>
+        <tipo>character varying(4)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>cantidadultreg</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>idstock</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('stocks_idstock_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>cantidad</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>stockmax</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>ubicacion</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <restriccion>
+        <nombre>ca_stocks_articulos2</nombre>
+        <consulta>FOREIGN KEY (referencia)
+            REFERENCES articulos (referencia)
+            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>ca_stocks_almacenes3</nombre>
+        <consulta>FOREIGN KEY (codalmacen)
+            REFERENCES almacenes (codalmacen)
+            ON DELETE CASCADE ON UPDATE CASCADE </consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>uniq_stocks_almacen_referencia</nombre>
+        <consulta>UNIQUE (codalmacen, referencia)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>stocks_pkey</nombre>
+        <consulta>PRIMARY KEY (idstock)</consulta>
+    </restriccion>
+</tabla>

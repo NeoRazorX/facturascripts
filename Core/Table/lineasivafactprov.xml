@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : lineasivafactprov.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla lineasivafactprov.
+-->
+<tabla>
+    <columna>
+        <nombre>codimpuesto</nombre>
+        <tipo>character varying(10)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idfactura</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>idlinea</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('lineasivafactprov_idlinea_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>iva</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>neto</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>recargo</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>totaliva</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>totallinea</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>totalrecargo</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <restriccion>
+        <nombre>ca_lineaiva_facturasprov2</nombre>
+        <consulta>FOREIGN KEY (idfactura)
+            REFERENCES facturasprov (idfactura)
+            ON DELETE CASCADE ON UPDATE CASCADE </consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>lineasivafactprov_pkey</nombre>
+        <consulta>PRIMARY KEY (idlinea)</consulta>
+    </restriccion>
+</tabla>

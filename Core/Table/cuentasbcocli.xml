@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : cuentasbcocli.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla cuentasbcocli.
+-->
+<tabla>
+    <columna>
+        <nombre>descripcion</nombre>
+        <tipo>character varying(100)</tipo>
+    </columna>
+    <columna>
+        <nombre>swift</nombre>
+        <tipo>character varying(11)</tipo>
+    </columna>
+    <columna>
+        <nombre>ctaentidad</nombre>
+        <tipo>character varying(4)</tipo>
+    </columna>
+    <columna>
+        <nombre>iban</nombre>
+        <tipo>character varying(34)</tipo>
+    </columna>
+    <columna>
+        <nombre>agencia</nombre>
+        <tipo>character varying(4)</tipo>
+    </columna>
+    <columna>
+        <nombre>entidad</nombre>
+        <tipo>character varying(4)</tipo>
+    </columna>
+    <columna>
+        <nombre>codcliente</nombre>
+        <tipo>character varying(6)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>ctaagencia</nombre>
+        <tipo>character varying(4)</tipo>
+    </columna>
+    <columna>
+        <nombre>codcuenta</nombre>
+        <tipo>character varying(6)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>cuenta</nombre>
+        <tipo>character varying(10)</tipo>
+    </columna>
+    <columna>
+        <nombre>principal</nombre>
+        <tipo>boolean</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>fmandato</nombre>
+        <tipo>date</tipo>
+    </columna>
+    <restriccion>
+        <nombre>cuentasbcocli_pkey</nombre>
+        <consulta>PRIMARY KEY (codcuenta)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>ca_cuentasbcocli_clientes</nombre>
+        <consulta>FOREIGN KEY (codcliente)
+            REFERENCES clientes (codcliente)
+            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+</tabla>

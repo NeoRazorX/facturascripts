@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : co_codbalances08.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla co_codbalances08.
+-->
+<tabla>
+    <columna>
+        <nombre>descripcion4ba</nombre>
+        <tipo>character varying(255)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>descripcion4</nombre>
+        <tipo>character varying(255)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>nivel4</nombre>
+        <tipo>character varying(5)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>descripcion3</nombre>
+        <tipo>character varying(255)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>orden3</nombre>
+        <tipo>character varying(5)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>nivel3</nombre>
+        <tipo>character varying(5)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>descripcion2</nombre>
+        <tipo>character varying(255)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>nivel2</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>descripcion1</nombre>
+        <tipo>character varying(255)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>nivel1</nombre>
+        <tipo>character varying(5)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>naturaleza</nombre>
+        <tipo>character varying(15)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codbalance</nombre>
+        <tipo>character varying(15)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <restriccion>
+        <nombre>co_codbalances08_pkey</nombre>
+        <consulta>PRIMARY KEY (codbalance)</consulta>
+    </restriccion>
+</tabla>

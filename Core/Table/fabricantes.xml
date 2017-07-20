@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : fabricantes.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+       Estructura de la tabla fabricantes.
+-->
+<tabla>
+    <columna>
+        <nombre>nombre</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codfabricante</nombre>
+        <tipo>character varying(8)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <restriccion>
+        <nombre>fabricantes_pkey</nombre>
+        <consulta>PRIMARY KEY (codfabricante)</consulta>
+    </restriccion>
+</tabla>
