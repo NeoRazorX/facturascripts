@@ -381,29 +381,34 @@ class AdminHome extends Base\Controller
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->agenciaTransporte = new Model\AgenciaTransporte();
+        /// por ahora desplegamos siempre el contenido de Dinamic, para las pruebas
+        $pluginManager = new Base\PluginManager();
+        $pluginManager->deploy();
+
         $this->agente = new Model\Agente();
-        // $this->albaranCliente = new Model\AlbaranCliente();
-        // $this->albaranProveedor = new Model\AlbaranProveedor();
+        $this->albaranCliente = new Model\AlbaranCliente();
+        $this->albaranProveedor = new Model\AlbaranProveedor();
         $this->almacen = new Model\Almacen();
-        // $this->articulo = new Model\Articulo();
-        // $this->articuloCombinacion = new Model\ArticuloCombinacion();
-        // $this->articuloPropiedad = new Model\ArticuloPropiedad();
-        // $this->articuloProveedor = new Model\ArticuloProveedor();
-        // $this->articuloTraza = new Model\ArticuloTraza();
-        // $this->asiento = new Model\Asiento();
+        $this->articulo = new Model\Articulo();
+        $this->articuloCombinacion = new Model\ArticuloCombinacion();
+        $this->articuloPropiedad = new Model\ArticuloPropiedad();
+        $this->articuloProveedor = new Model\ArticuloProveedor();
+        $this->articuloTraza = new Model\ArticuloTraza();
+        $this->asiento = new Model\Asiento();
         // $this->asientoFactura = new Model\AsientoFactura();
-        // $this->atributo = new Model\Atributo();
-        // $this->atributoValor = new Model\AtributoValor();
-        // $this->balance = new Model\Balance();
-        // $this->caja = new Model\Caja();
-        // $this->cliente = new Model\Cliente();
-        // $this->clientePropiedad = new Model\ClientePropiedad();
-        // $this->conceptoPartida = new Model\ConceptoPartida();
-        // $this->cuenta = new Model\Cuenta();
-        // $this->cuentaBancoCliente = new Model\CuentaBancoCliente();
-        // $this->cuentaBancoProveedor = new Model\CuentaBancoProveedor();
-        // $this->cuentaEspecial = new Model\CuentaEspecial();
+        $this->atributo = new Model\Atributo();
+        $this->atributoValor = new Model\AtributoValor();
+        $this->balance = new Model\Balance();
+        $this->balanceCuenta = new Model\BalanceCuenta();
+        $this->balanceCuentaA = new Model\BalanceCuentaA();
+        $this->caja = new Model\Caja();
+        $this->cliente = new Model\Cliente();
+        $this->clientePropiedad = new Model\ClientePropiedad();
+        $this->conceptoPartida = new Model\ConceptoPartida();
+        $this->cuenta = new Model\Cuenta();
+        $this->cuentaBancoCliente = new Model\CuentaBancoCliente();
+        $this->cuentaBancoProveedor = new Model\CuentaBancoProveedor();
+        $this->cuentaEspecial = new Model\CuentaEspecial();
         // $this->direccionCliente = new Model\DireccionCliente();
         // $this->direccionProveedor = new Model\DireccionProveedor();
         $this->divisa = new Model\Divisa();
