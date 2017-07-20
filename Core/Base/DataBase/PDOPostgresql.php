@@ -81,7 +81,7 @@ class PDOPostgresql implements DatabaseEngine
     public function __construct()
     {
         $this->utils = new DataBaseUtils($this);
-        $this->utilsSQL = new PDOPostgresql();
+        $this->utilsSQL = new PDOPostgresqlSQL();
         $this->transactions = [];
         $this->lastErrorMsg = '';
     }

@@ -81,7 +81,7 @@ class PDOMysql implements DatabaseEngine
     public function __construct()
     {
         $this->utils = new DataBaseUtils($this);
-        $this->utilsSQL = new PDOMysql();
+        $this->utilsSQL = new PDOMysqlSQL();
         $this->transactions = [];
         $this->lastErrorMsg = '';
     }

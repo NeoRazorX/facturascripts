@@ -78,7 +78,7 @@ class PDOSqlite implements DatabaseEngine
     public function __construct()
     {
         $this->utils = new DataBaseUtils($this);
-        $this->utilsSQL = new PDOSqlite();
+        $this->utilsSQL = new PDOSqliteSQL();
         $this->transactions = [];
         $this->lastErrorMsg = '';
     }
