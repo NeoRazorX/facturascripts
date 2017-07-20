@@ -71,11 +71,7 @@ class PostgresqlCollector extends DataCollector implements Renderable, AssetProv
         }
         return [
             'nb_statements' => count($queries),
-            //'nb_failed_statements' => 0,
             'accumulated_duration' => $totalExecTime,
-            //'accumulated_duration_str' => 0,
-            //'memory_usage' => 0,
-            //'peak_memory_usage' => 0,
             'statements' => $queries
         ];
     }
