@@ -123,7 +123,7 @@ class Serie
      */
     public function isDefault()
     {
-        return ( $this->codserie === $this->defaultItems->codSerie() );
+        return ($this->codserie === $this->defaultItems->codSerie());
     }
 
     /**

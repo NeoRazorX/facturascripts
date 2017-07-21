@@ -408,7 +408,7 @@ class ListController extends Controller
 
         // Add -pagination / offset / +pagination
         for ($record = $recordMin; $record < $recordMax; $record += self::FS_ITEM_LIMIT) {
-            if (($record >= $recordMin AND $record <= $this->offset) OR ( $record <= $recordMax AND $record >= $this->offset)) {
+            if (($record >= $recordMin AND $record <= $this->offset) OR ($record <= $recordMax AND $record >= $this->offset)) {
                 $page = ($record / self::FS_ITEM_LIMIT) + 1;
                 $result[$index] = $this->addPaginationItem($url, $page, $record, FALSE, ($record == $this->offset));
                 $index++;
