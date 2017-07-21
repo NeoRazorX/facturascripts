@@ -279,7 +279,7 @@ class PluginManager
     /**
      * Enlaza las classes de forma dinamica
      * @param $fileName
-     * @param $folder
+     * @param string $folder
      * @param string $namespace
      */
     private function linkClassFile($fileName, $folder, $namespace = "\FacturaScripts\Core\\")
@@ -301,7 +301,7 @@ class PluginManager
     /**
      * Enlaza los XML de forma dinamica
      * @param $fileName
-     * @param $folder
+     * @param string $folder
      * @param string $filePath
      */
     private function linkXmlFile($fileName, $folder, $filePath)
