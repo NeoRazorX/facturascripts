@@ -390,34 +390,69 @@ trait Model
     }
 
     /**
+     * Convierte un array de filtros where en string
+     * @param array $fields
+     * @return string
+     */
+    private function getWhere(array $fields)
+    {
+        $result = '';
+        $coma = ' WHERE ';
+        foreach ($fields as $key => $value) {
+            $val = strval($value);
+            $operator = ($val[0] == '%') ? ' LIKE ' : ' = ';
+            $result .= $coma . $key . $operator . $this->var2str($value);
+            if ($coma === ' WHERE ') {
+                $coma = ' AND ';
+            }
+        }
+        
+        return $result;
+    }
+
+    /**
+     * Convierte un array de filtros order by en string
+     * @param array $order
+     * @return string
+     */
+    private function getOrderBy(array $order)
+    {
+        $result = '';
+        $coma = ' ORDER BY ';
+        foreach ($order as $key => $value) {
+            $result .= $coma . $key . ' ' . $value;
+            if ($coma === ' ORDER BY ') {
+                $coma = ', ';
+            }
+        }
+        return $result;
+    }
+    
+    /**
+     * Devuelve el número de registros en el modelo que cumplen la condición
+     * @param array $where filtros a aplicar a los registros del modelo. (Array de DatabaseWhere)
+     * @return int
+     */
+    public function count(array $where = [])
+    {
+        $sql = 'SELECT COUNT(1) AS total FROM ' . $this->tableName() . DataBase\DatabaseWhere::getSQLWhere($where);
+        $data = $this->dataBase->select($sql);
+        return $data[0]['total'];
+    }
+    
+    /**
      * Devuelve todos los modelos que se correspondan con los filtros seleccionados.
-     * @param array $fields filtros a aplicar a los campos. Por ejemplo ['codserie' => 'A']
+     * @param array $where filtros a aplicar a los registros del modelo. (Array de DatabaseWhere)
      * @param array $order campos a utilizar en la ordenación. Por ejemplo ['codigo' => 'ASC']
      * @param integer $offset
      * @param integer $limit
      * @return array
      */
-    public function all(array $fields = [], array $order = [], $offset = 0, $limit = 50)
+    public function all(array $where = [], array $order = [], $offset = 0, $limit = 50)
     {
         $modelList = [];
-        $sql = 'SELECT * FROM ' . $this->tableName();
-        $coma = ' WHERE ';
-
-        foreach ($fields as $key => $value) {
-            $sql .= $coma . $key . ' = ' . $this->var2str($value);
-            if ($coma === ' WHERE ') {
-                $coma = ' AND ';
-            }
-        }
-
-        $coma2 = ' ORDER BY ';
-        foreach ($order as $key => $value) {
-            $sql .= $coma2 . $key . ' ' . $value;
-            if ($coma2 === ' ORDER BY ') {
-                $coma2 = ', ';
-            }
-        }
-
+        $sqlWhere = DataBase\DatabaseWhere::getSQLWhere($where);
+        $sql = 'SELECT * FROM ' . $this->tableName() . $sqlWhere . $this->getOrderBy($order);
         $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if ($data) {
             $class = $this->modelName();
