@@ -129,7 +129,7 @@ class Divisa
      */
     public function isDefault()
     {
-        return ( $this->coddivisa === $this->defaultItems->codDivisa() );
+        return ($this->coddivisa === $this->defaultItems->codDivisa());
     }
 
     /**

@@ -333,7 +333,7 @@ class Pais
      */
     public function isDefault()
     {
-        return ( $this->codpais === $this->defaultItems->codPais() );
+        return ($this->codpais === $this->defaultItems->codPais());
     }
 
     /**
