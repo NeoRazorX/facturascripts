@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : cajas.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla cajas_terminales.
+-->
+<tabla>
+    <columna>
+        <nombre>id</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('cajas_terminales_id_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>codalmacen</nombre>
+        <tipo>character varying(4)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>codserie</nombre>
+        <tipo>character varying(2)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codcliente</nombre>
+        <tipo>character varying(6)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>tickets</nombre>
+        <tipo>text</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>anchopapel</nombre>
+        <tipo>integer</tipo>
+    </columna>
+    <columna>
+        <nombre>comandocorte</nombre>
+        <tipo>character varying(50)</tipo>
+    </columna>
+    <columna>
+        <nombre>comandoapertura</nombre>
+        <tipo>character varying(50)</tipo>
+    </columna>
+    <columna>
+        <nombre>num_tickets</nombre>
+        <tipo>integer</tipo>
+    </columna>
+    <columna>
+        <nombre>sin_comandos</nombre>
+        <tipo>boolean</tipo>
+        <defecto>false</defecto>
+    </columna>
+    <restriccion>
+        <nombre>cajas_terminales_pkey</nombre>
+        <consulta>PRIMARY KEY (id)</consulta>
+    </restriccion>
+</tabla>

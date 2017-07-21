@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : co_subcuentas.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla co_subcuentas.
+-->
+<tabla>
+    <columna>
+        <nombre>codcuenta</nombre>
+        <tipo>character varying(6)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>coddivisa</nombre>
+        <tipo>character varying(3)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codejercicio</nombre>
+        <tipo>character varying(4)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codimpuesto</nombre>
+        <tipo>character varying(10)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>codsubcuenta</nombre>
+        <tipo>character varying(15)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>debe</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>descripcion</nombre>
+        <tipo>character varying(255)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>haber</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>idcuenta</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idsubcuenta</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('co_subcuentas_idsubcuenta_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>iva</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>recargo</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>saldo</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <restriccion>
+        <nombre>co_subcuentas_pkey</nombre>
+        <consulta>PRIMARY KEY (idsubcuenta)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>uniq_codsubcuenta</nombre>
+        <consulta>UNIQUE (codsubcuenta,codejercicio)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>ca_co_subcuentas_ejercicios</nombre>
+        <consulta>FOREIGN KEY (codejercicio)
+            REFERENCES ejercicios (codejercicio)
+            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>ca_co_subcuentas_cuentas2</nombre>
+        <consulta>FOREIGN KEY (idcuenta)
+            REFERENCES co_cuentas (idcuenta)
+            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+</tabla>

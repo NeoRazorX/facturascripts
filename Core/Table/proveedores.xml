@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : proveedores.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla proveedores.
+-->
+<tabla>
+    <columna>
+        <nombre>cifnif</nombre>
+        <tipo>character varying(30)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codcontacto</nombre>
+        <tipo>character varying(6)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>codcuentadom</nombre>
+        <tipo>character varying(6)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>codcuentapago</nombre>
+        <tipo>character varying(6)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>coddivisa</nombre>
+        <tipo>character varying(3)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>codpago</nombre>
+        <tipo>character varying(10)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>codproveedor</nombre>
+        <tipo>character varying(6)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codserie</nombre>
+        <tipo>character varying(2)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>codsubcuenta</nombre>
+        <tipo>character varying(15)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>contacto</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>email</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>fax</nombre>
+        <tipo>character varying(30)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idsubcuenta</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>ivaportes</nombre>
+        <tipo>double precision</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>nombre</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>razonsocial</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>observaciones</nombre>
+        <tipo>text</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>recfinanciero</nombre>
+        <tipo>character varying(20)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>regimeniva</nombre>
+        <tipo>character varying(20)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>telefono1</nombre>
+        <tipo>character varying(30)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>telefono2</nombre>
+        <tipo>character varying(30)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>tipoidfiscal</nombre>
+        <tipo>character varying(25)</tipo>
+        <nulo>NO</nulo>
+        <defecto>'NIF'::character varying</defecto>
+    </columna>
+    <columna>
+        <nombre>web</nombre>
+        <tipo>character varying(250)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>acreedor</nombre>
+        <tipo>boolean</tipo>
+        <defecto>false</defecto>
+    </columna>
+    <columna>
+        <nombre>personafisica</nombre>
+        <tipo>boolean</tipo>
+        <defecto>true</defecto>
+    </columna>   
+    <columna>
+        <nombre>debaja</nombre>
+        <tipo>boolean</tipo>
+        <nulo>YES</nulo>
+        <defecto>false</defecto>
+    </columna>
+    <columna>
+        <nombre>fechabaja</nombre>
+        <tipo>date</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>codcliente</nombre>
+        <tipo>character varying(6)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <restriccion>
+        <nombre>proveedores_pkey</nombre>
+        <consulta>PRIMARY KEY (codproveedor)</consulta>
+    </restriccion>
+</tabla>

@@ -47,17 +47,28 @@ class MenuManager
      */
     private static $user;
 
-    public function setUser($user)
+    /**
+     * Llamar solamente cuando se ha conectado a la base de datos.
+     */
+    public function init()
     {
-        self::$user = $user;
-
         if (self::$pageModel === null) {
             self::$pageModel = new Models\Page();
         }
 
-        if ($user !== null) {
+        if (self::$user !== null) {
             self::$menu = $this->loadUserMenu();
         }
+    }
+
+    /**
+     * Asigna el usuario para cargar su menú.
+     * @param Models\User|null $user
+     */
+    public function setUser($user)
+    {
+        self::$user = $user;
+        $this->init();
     }
 
     public function selectPage($pageData)
@@ -67,8 +78,14 @@ class MenuManager
             $pageData['order'] = 100;
             $pageModel = new Models\Page($pageData);
             $pageModel->save();
+        } elseif($pageModel->menu != $pageData['menu'] || $pageModel->title != $pageData['title']) {
+            $pageModel->menu = $pageData['menu'];
+            $pageModel->submenu = $pageData['submenu'];
+            $pageModel->showonmenu = $pageData['showonmenu'];
+            $pageModel->title = $pageData['title'];
+            $pageModel->save();
         }
-
+        
         if (!empty(self::$menu)) {
             /**
              * TODO: navegar por el menú y marcar como activa la página seleccionada:
@@ -91,7 +108,7 @@ class MenuManager
             if ($page->menu == '') {
                 continue;
             }
-            
+
             /// Control de ruptura de menu
             if ($menuValue !== $page->menu) {
                 $menuValue = $page->menu;
@@ -164,5 +181,5 @@ class MenuManager
     public function getMenu()
     {
         return self::$menu;
-    }    
+    }
 }

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : secuenciasejercicios.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla secuenciasejercicios.
+-->
+<tabla>
+    <columna>
+        <nombre>codejercicio</nombre>
+        <tipo>character varying(4)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codserie</nombre>
+        <tipo>character varying(2)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>id</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('secuenciasejercicios_id_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>nalbarancli</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nalbaranprov</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nfacturacli</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nfacturaprov</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>npedidocli</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>npedidoprov</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>npresupuestocli</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <restriccion>
+        <nombre>secuenciasejercicios_pkey</nombre>
+        <consulta>PRIMARY KEY (id)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>ca_secuenciasejercicios_ejercicios</nombre>
+        <consulta>FOREIGN KEY (codejercicio)
+            REFERENCES ejercicios (codejercicio)
+            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+</tabla>

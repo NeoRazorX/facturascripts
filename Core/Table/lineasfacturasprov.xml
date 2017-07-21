@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : lineasfacturasprov.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla lineasfacturasprov.
+-->
+<tabla>
+    <columna>
+        <nombre>cantidad</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codimpuesto</nombre>
+        <tipo>character varying(10)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>codsubcuenta</nombre>
+        <tipo>character varying(15)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>descripcion</nombre>
+        <tipo>text</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>dtolineal</nombre>
+        <tipo>double precision</tipo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>dtopor</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>idalbaran</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idfactura</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>idlinea</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('lineasfacturasprov_idlinea_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>idlineaalbaran</nombre>
+        <tipo>integer</tipo>
+    </columna>
+    <columna>
+        <nombre>idsubcuenta</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>irpf</nombre>
+        <tipo>double precision</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>iva</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>pvpsindto</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>pvptotal</nombre>
+        <tipo>double precision</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>pvpunitario</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>recargo</nombre>
+        <tipo>double precision</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>referencia</nombre>
+        <tipo>character varying(18)</tipo>
+    </columna>
+    <columna>
+        <nombre>codcombinacion</nombre>
+        <tipo>character varying(18)</tipo>
+    </columna>
+    <restriccion>
+        <nombre>ca_linea_facturasprov2</nombre>
+        <consulta>FOREIGN KEY (idfactura)
+            REFERENCES facturasprov (idfactura)
+            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>lineasfacturasprov_pkey</nombre>
+        <consulta>PRIMARY KEY (idlinea)</consulta>
+    </restriccion>
+</tabla>

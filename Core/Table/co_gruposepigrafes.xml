@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : co_gruposepigrafes.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla co_gruposepigrafes.
+-->
+<tabla>
+    <columna>
+        <nombre>codejercicio</nombre>
+        <tipo>character varying(4)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codgrupo</nombre>
+        <tipo>character varying(6)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>descripcion</nombre>
+        <tipo>character varying(255)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idgrupo</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('co_gruposepigrafes_idgrupo_seq'::regclass)</defecto>
+    </columna>
+    <restriccion>
+        <nombre>co_gruposepigrafes_pkey</nombre>
+        <consulta>PRIMARY KEY (idgrupo)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>ca_co_gruposepigrafes_ejercicios</nombre>
+        <consulta>FOREIGN KEY (codejercicio)
+            REFERENCES ejercicios (codejercicio)
+            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+</tabla>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : dirclientes.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla dirclientes.
+-->
+<tabla>
+    <columna>
+        <nombre>codcliente</nombre>
+        <tipo>character varying(6)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codpais</nombre>
+        <tipo>character varying(20)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>apartado</nombre>
+        <tipo>character varying(10)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idprovincia</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>provincia</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>ciudad</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>codpostal</nombre>
+        <tipo>character varying(10)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>direccion</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>domenvio</nombre>
+        <tipo>boolean</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>domfacturacion</nombre>
+        <tipo>boolean</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>descripcion</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>id</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('dirclientes_id_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>fecha</nombre>
+        <tipo>date</tipo>
+    </columna>
+    <restriccion>
+        <nombre>dirclientes_pkey</nombre>
+        <consulta>PRIMARY KEY (id)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>ca_dirclientes_clientes</nombre>
+        <consulta>FOREIGN KEY (codcliente)
+            REFERENCES clientes (codcliente)
+            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+</tabla>

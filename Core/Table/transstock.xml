@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : transstock.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla transstock.
+-->
+<tabla>
+    <columna>
+        <nombre>usuario</nombre>
+        <tipo>character varying(12)</tipo>
+    </columna>
+    <columna>
+        <nombre>codalmadestino</nombre>
+        <tipo>character varying(4)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codalmaorigen</nombre>
+        <tipo>character varying(4)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>fecha</nombre>
+        <tipo>date</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>hora</nombre>
+        <tipo>time without time zone</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>idtrans</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('transstock_idtrans_seq'::regclass)</defecto>
+    </columna>
+    <restriccion>
+        <nombre>transstock_pkey</nombre>
+        <consulta>PRIMARY KEY (idtrans)</consulta>
+    </restriccion>
+</tabla>

@@ -35,7 +35,6 @@ if (!file_exists(__DIR__ . '/vendor')) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\Translator;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -254,15 +253,6 @@ function saveInstall()
 }
 
 /**
- * Prepara todos los plugins
- */
-function deployPlugins()
-{
-    $pluginManager = new PluginManager(__DIR__);
-    $pluginManager->deploy();
-}
-
-/**
  * Renderiza la vista y devuelve la respuesta
  *
  * @param $templateVars
@@ -297,7 +287,6 @@ function installerMain()
 
     if (empty($errors) && filter_input(INPUT_POST, 'db_type')) {
         if (dbConnect($errors, $i18n) && createFolders() && saveInstall()) {
-            deployPlugins();
             header('Location: index.php');
             return 0;
         }

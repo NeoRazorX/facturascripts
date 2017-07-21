@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : co_conceptospar.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla co_conceptospar.
+-->
+<tabla>
+    <columna>
+        <nombre>concepto</nombre>
+        <tipo>character varying(255)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idconceptopar</nombre>
+        <tipo>character varying(4)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <restriccion>
+        <nombre>co_conceptospar_pkey</nombre>
+        <consulta>PRIMARY KEY (idconceptopar)</consulta>
+    </restriccion>
+</tabla>

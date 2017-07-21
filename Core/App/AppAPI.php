@@ -39,8 +39,12 @@ class AppAPI extends App
             $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
             $this->response->setContent('IP-BANNED');
         } else {
-            /// implementar
-            $this->response->setContent('TODO');
+            /// implementar aquí
+            
+            /// todo OK, para los tests
+            return true;
         }
+        
+        return false;
     }
 }

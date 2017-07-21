@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : familias.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla familias.
+-->
+<tabla>
+    <columna>
+        <nombre>descripcion</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codfamilia</nombre>
+        <tipo>character varying(8)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>madre</nombre>
+        <tipo>character varying(8)</tipo>
+    </columna>
+    <restriccion>
+        <nombre>familias_pkey</nombre>
+        <consulta>PRIMARY KEY (codfamilia)</consulta>
+    </restriccion>
+</tabla>

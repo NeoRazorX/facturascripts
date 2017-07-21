@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : lineasregstocks.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla lineasregstocks.
+-->
+<tabla>
+    <columna>
+        <nombre>cantidadfin</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>cantidadini</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>codalmacendest</nombre>
+        <tipo>character varying(4)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>fecha</nombre>
+        <tipo>date</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>hora</nombre>
+        <tipo>time without time zone</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>id</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('lineasregstocks_id_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>idstock</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>motivo</nombre>
+        <tipo>text</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>nick</nombre>
+        <tipo>character varying(12)</tipo>
+    </columna>
+    <restriccion>
+        <nombre>lineasregstocks_pkey</nombre>
+        <consulta>PRIMARY KEY (id)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>ca_lineasregstocks_stocks</nombre>
+        <consulta>FOREIGN KEY (idstock)
+            REFERENCES stocks (idstock)
+            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+</tabla>

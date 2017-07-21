@@ -1,7 +1,7 @@
 {
   "name": "facturascripts",
   "version": "1.0.0",
-  "description": "ERP open source. Easy and powerful.",
+  "description": "ERP open source. Built on PHP. Easy and powerful.",
   "main": "index.php",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
