@@ -21,7 +21,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
-use FacturaScripts\Core\Base\DefaultItems;
 
 /**
  * Albarán de cliente o albarán de venta. Representa la entrega a un cliente
@@ -221,7 +220,7 @@ class AlbaranCliente
     public $numdocs;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'albaranescli', 'idalbaran');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -292,8 +291,9 @@ class AlbaranCliente
     public function show_hora($s = TRUE) {
         if ($s) {
             return Date('H:i:s', strtotime($this->hora));
-        } else
-            return Date('H:i', strtotime($this->hora));
+        } else {
+                    return Date('H:i', strtotime($this->hora));
+        }
     }
 
     public function observaciones_resume() {
@@ -301,36 +301,41 @@ class AlbaranCliente
             return '-';
         } else if (strlen($this->observaciones) < 60) {
             return $this->observaciones;
-        } else
-            return substr($this->observaciones, 0, 50) . '...';
+        } else {
+                    return substr($this->observaciones, 0, 50) . '...';
+        }
     }
 
     public function url() {
         if (is_null($this->idalbaran)) {
             return 'index.php?page=ventas_albaranes';
-        } else
-            return 'index.php?page=ventas_albaran&id=' . $this->idalbaran;
+        } else {
+                    return 'index.php?page=ventas_albaran&id=' . $this->idalbaran;
+        }
     }
 
     public function factura_url() {
         if (is_null($this->idfactura)) {
             return '#';
-        } else
-            return 'index.php?page=ventas_factura&id=' . $this->idfactura;
+        } else {
+                    return 'index.php?page=ventas_factura&id=' . $this->idfactura;
+        }
     }
 
     public function agente_url() {
         if (is_null($this->codagente)) {
             return "index.php?page=admin_agentes";
-        } else
-            return "index.php?page=admin_agente&cod=" . $this->codagente;
+        } else {
+                    return "index.php?page=admin_agente&cod=" . $this->codagente;
+        }
     }
 
     public function cliente_url() {
         if (is_null($this->codcliente)) {
             return "index.php?page=ventas_clientes";
-        } else
-            return "index.php?page=ventas_cliente&cod=" . $this->codcliente;
+        } else {
+                    return "index.php?page=ventas_cliente&cod=" . $this->codcliente;
+        }
     }
 
     /**
@@ -351,23 +356,26 @@ class AlbaranCliente
         $albaran = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idalbaran = " . $this->var2str($id) . ";");
         if ($albaran) {
             return new \albaran_cliente($albaran[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function get_by_codigo($cod) {
         $albaran = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE upper(codigo) = " . strtoupper($this->var2str($cod)) . ";");
         if ($albaran) {
             return new \albaran_cliente($albaran[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function exists() {
         if (is_null($this->idalbaran)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idalbaran = " . $this->var2str($this->idalbaran) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idalbaran = " . $this->var2str($this->idalbaran) . ";");
+        }
     }
 
     /**
@@ -633,11 +641,13 @@ class AlbaranCliente
                 if (self::$dataBase->exec($sql)) {
                     $this->idalbaran = self::$dataBase->lastval();
                     return TRUE;
-                } else
-                    return FALSE;
+                } else {
+                                    return FALSE;
+                }
             }
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function delete() {
@@ -656,13 +666,14 @@ class AlbaranCliente
 
             $this->new_message(ucfirst(FS_ALBARAN) . " de venta " . $this->codigo . " eliminado correctamente.");
             return TRUE;
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     /**
      * Devuelve un array con los últimos albaranes
-     * @param type $offset
+     * @param integer $offset
      * @param type $order
      * @return \albaran_cliente
      */
@@ -682,7 +693,7 @@ class AlbaranCliente
 
     /**
      * Devuelve un array con los albaranes pendientes.
-     * @param type $offset
+     * @param integer $offset
      * @param type $order
      * @return \albaran_cliente
      */
@@ -703,7 +714,7 @@ class AlbaranCliente
     /**
      * Devuelve un array con los albaranes del cliente.
      * @param type $codcliente
-     * @param type $offset
+     * @param integer $offset
      * @return \albaran_cliente
      */
     public function all_from_cliente($codcliente, $offset = 0) {
@@ -724,7 +735,7 @@ class AlbaranCliente
     /**
      * Devuelve un array con los albaranes del agente/empleado
      * @param type $codagente
-     * @param type $offset
+     * @param integer $offset
      * @return \albaran_cliente
      */
     public function all_from_agente($codagente, $offset = 0) {
@@ -786,7 +797,7 @@ class AlbaranCliente
     /**
      * Devuelve un array con todos los albaranes que coinciden con $query
      * @param type $query
-     * @param type $offset
+     * @param integer $offset
      * @return \albaran_cliente
      */
     public function search($query, $offset = 0) {

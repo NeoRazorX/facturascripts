@@ -61,7 +61,7 @@ class RegularizacionStock
     public $nick;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'agenciastrans', 'codtrans');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -93,15 +93,17 @@ class RegularizacionStock
         $data = self::$dataBase->select("SELECT * FROM lineasregstocks WHERE id = " . $this->var2str($id) . ";");
         if ($data) {
             return new \regularizacion_stock($data[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function exists() {
         if (is_null($this->id)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM lineasregstocks WHERE id = " . $this->var2str($this->id) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM lineasregstocks WHERE id = " . $this->var2str($this->id) . ";");
+        }
     }
 
     public function save() {
@@ -132,8 +134,9 @@ class RegularizacionStock
             if (self::$dataBase->exec($sql)) {
                 $this->id = self::$dataBase->lastval();
                 return TRUE;
-            } else
-                return FALSE;
+            } else {
+                            return FALSE;
+            }
         }
     }
 
@@ -147,8 +150,8 @@ class RegularizacionStock
      * @param type $codalmacen
      * @param type $desde
      * @param type $hasta
-     * @param type $limit
-     * @param type $offset
+     * @param integer $limit
+     * @param integer $offset
      * @return \regularizacion_stock
      */
     public function all_from_articulo($ref, $codalmacen = '', $desde = '', $hasta = '', $limit = 1000, $offset = 0) {

@@ -130,6 +130,11 @@ class AppController extends App
         }
     }
 
+    /**
+     * @param string $pageName
+     *
+     * @return string
+     */
     private function getControllerFullName($pageName)
     {
         $controllerName = "FacturaScripts\\Dinamic\\Controller\\{$pageName}";

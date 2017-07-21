@@ -78,7 +78,7 @@ class MenuManager
             $pageData['order'] = 100;
             $pageModel = new Models\Page($pageData);
             $pageModel->save();
-        } elseif($pageModel->menu != $pageData['menu'] || $pageModel->title != $pageData['title']) {
+        } elseif ($pageModel->menu != $pageData['menu'] || $pageModel->title != $pageData['title']) {
             $pageModel->menu = $pageData['menu'];
             $pageModel->submenu = $pageData['submenu'];
             $pageModel->showonmenu = $pageData['showonmenu'];

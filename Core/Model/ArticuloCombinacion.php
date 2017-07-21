@@ -111,12 +111,12 @@ class ArticuloCombinacion
     public $stockfis;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'articulo_combinaciones', 'id');
         if (!empty($data)) {
             $this->loadFromData($data);
         } else {
-			$this->clear();
+            $this->clear();
         }
     }
     
@@ -179,8 +179,9 @@ class ArticuloCombinacion
         $cod = self::$dataBase->select("SELECT MAX(" . self::$dataBase->sql_to_int('codigo') . ") as cod FROM " . $this->table_name . ";");
         if ($cod) {
             return 1 + intval($cod[0]['cod']);
-        } else
-            return 1;
+        } else {
+                    return 1;
+        }
     }
 
     /**
@@ -243,7 +244,7 @@ class ArticuloCombinacion
 
     /**
      * Elimina la combinación de artículo
-     * @return type
+     * @return boolean
      */
     public function delete() {
         return self::$dataBase->exec("DELETE FROM articulo_combinaciones WHERE id = " . $this->var2str($this->id) . ";");
@@ -252,7 +253,7 @@ class ArticuloCombinacion
     /**
      * Elimina todas las combinaciones del artículo con referencia = $ref
      * @param type $ref
-     * @return type
+     * @return boolean
      */
     public function delete_from_ref($ref) {
         return self::$dataBase->exec("DELETE FROM articulo_combinaciones WHERE referencia = " . $this->var2str($ref) . ";");

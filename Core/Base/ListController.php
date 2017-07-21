@@ -260,6 +260,10 @@ class ListController extends Controller
         $this->addFilter('checkbox', $key, $options);
     }
 
+    /**
+     * @param string $key
+     * @param string $label
+     */
     protected function addFilterDatePicker($key, $label, $field = '')
     {
         $options = ['label' => $label, 'field' => $field];
@@ -292,8 +296,6 @@ class ListController extends Controller
      * @param Cache $cache
      * @param Translator $i18n
      * @param MiniLog $miniLog
-     * @param Response $response
-     * @param Models\User $user
      * @param string $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)

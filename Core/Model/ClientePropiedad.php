@@ -37,7 +37,7 @@ class ClientePropiedad
     public $text;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'cliente_propiedades', 'name');
         if (!empty($data)) {
             $this->loadFromData($data);

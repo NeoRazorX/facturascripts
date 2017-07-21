@@ -81,7 +81,7 @@ class Partida
     public $sum_haber;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'co_partidas', 'idpartida');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -129,8 +129,9 @@ class Partida
     public function url() {
         if (is_null($this->idasiento)) {
             return 'index.php?page=contabilidad_asientos';
-        } else
-            return 'index.php?page=contabilidad_asiento&id=' . $this->idasiento;
+        } else {
+                    return 'index.php?page=contabilidad_asiento&id=' . $this->idasiento;
+        }
     }
 
     public function get_subcuenta() {
@@ -142,8 +143,9 @@ class Partida
         $subc = $this->get_subcuenta();
         if ($subc) {
             return $subc->url();
-        } else
-            return '#';
+        } else {
+                    return '#';
+        }
     }
 
     public function get_contrapartida() {
@@ -159,23 +161,26 @@ class Partida
         $subc = $this->get_contrapartida();
         if ($subc) {
             return $subc->url();
-        } else
-            return '#';
+        } else {
+                    return '#';
+        }
     }
 
     public function get($id) {
         $partida = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idpartida = " . $id . ";");
         if ($partida) {
             return new \partida($partida[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function exists() {
         if (is_null($this->idpartida)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idpartida = " . $this->var2str($this->idpartida) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idpartida = " . $this->var2str($this->idpartida) . ";");
+        }
     }
 
     public function save() {
@@ -214,10 +219,10 @@ class Partida
                     $subc->save(); /// guardamos la subcuenta para actualizar su saldo
                 }
                 return TRUE;
-            } else
-                return FALSE;
-        }
-        else {
+            } else {
+                            return FALSE;
+            }
+        } else {
             $sql = "INSERT INTO " . $this->table_name . " (idasiento,idsubcuenta,codsubcuenta,idconcepto,
             concepto,idcontrapartida,codcontrapartida,punteada,tasaconv,coddivisa,haberme,debeme,recargo,iva,
             baseimponible,factura,codserie,tipodocumento,documento,cifnif,debe,haber) VALUES
@@ -252,8 +257,9 @@ class Partida
                     $subc->save(); /// guardamos la subcuenta para actualizar su saldo
                 }
                 return TRUE;
-            } else
-                return FALSE;
+            } else {
+                            return FALSE;
+            }
         }
     }
 
@@ -265,8 +271,9 @@ class Partida
             }
 
             return TRUE;
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function all_from_subcuenta($id, $offset = 0) {
@@ -366,8 +373,9 @@ class Partida
         $data = self::$dataBase->select_limit($sql, $limit, $offset);
         if ($data) {
             return $data;
-        } else
-            return array();
+        } else {
+                    return array();
+        }
     }
 
     public function count_from_subcuenta($id) {
@@ -378,8 +386,9 @@ class Partida
         $ordenadas = self::$dataBase->select($sql);
         if ($ordenadas) {
             return count($ordenadas);
-        } else
-            return 0;
+        } else {
+                    return 0;
+        }
     }
 
     public function totales_from_subcuenta($id) {

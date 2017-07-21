@@ -231,6 +231,9 @@ class PluginManager
         return $done;
     }
 
+    /**
+     * @param string $folder
+     */
     private function createFolder($folder)
     {
         if (!file_exists($folder) && !@mkdir($folder, 0775, true)) {
@@ -243,7 +246,7 @@ class PluginManager
 
     /**
      * Enlazamos los archivos
-     * @param $folder
+     * @param string $folder
      * @param string $place
      * @param string $pluginName
      */
@@ -299,7 +302,7 @@ class PluginManager
      * Enlaza los XML de forma dinamica
      * @param $fileName
      * @param $folder
-     * @param $filePath
+     * @param string $filePath
      */
     private function linkXmlFile($fileName, $folder, $filePath)
     {

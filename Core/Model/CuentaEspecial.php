@@ -41,7 +41,7 @@ class CuentaEspecial
     public $descripcion;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'co_cuentasesp', 'idcuentaesp');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -92,15 +92,17 @@ class CuentaEspecial
         $cuentae = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idcuentaesp = " . $this->var2str($id) . ";");
         if ($cuentae) {
             return new \cuenta_especial($cuentae[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function exists() {
         if (is_null($this->idcuentaesp)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idcuentaesp = " . $this->var2str($this->idcuentaesp) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idcuentaesp = " . $this->var2str($this->idcuentaesp) . ";");
+        }
     }
 
     public function save() {

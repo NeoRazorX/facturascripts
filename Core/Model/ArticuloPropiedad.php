@@ -38,7 +38,7 @@ class ArticuloPropiedad
     public $text;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'articulo_propiedades', 'name');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -156,8 +156,9 @@ class ArticuloPropiedad
         $data = $this->db->select($sql);
         if ($data) {
             return $data[0]['text'];
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     /**
@@ -172,8 +173,9 @@ class ArticuloPropiedad
         $data = $this->db->select($sql);
         if ($data) {
             return $data[0]['referencia'];
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     /**
