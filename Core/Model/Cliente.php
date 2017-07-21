@@ -151,12 +151,12 @@ class Cliente
     private static $regimenes_iva;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'clientes', 'codcliente');
         if (!empty($data)) {
             $this->loadFromData($data);
         } else {
-			$this->clear();
+            $this->clear();
         }
     }
     
@@ -212,20 +212,22 @@ class Cliente
             return '-';
         } else if (strlen($this->observaciones) < 60) {
             return $this->observaciones;
-        } else
-            return substr($this->observaciones, 0, 50) . '...';
+        } else {
+                    return substr($this->observaciones, 0, 50) . '...';
+        }
     }
 
     public function url() {
         if (is_null($this->codcliente)) {
             return "index.php?page=ventas_clientes";
-        } else
-            return "index.php?page=ventas_cliente&cod=" . $this->codcliente;
+        } else {
+                    return "index.php?page=ventas_cliente&cod=" . $this->codcliente;
+        }
     }
 
     /**
      * @deprecated since version 50
-     * @return type
+     * @return boolean
      */
     public function is_default() {
         return FALSE;
@@ -273,8 +275,9 @@ class Cliente
         $cli = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codcliente = " . $this->var2str($cod) . ";");
         if ($cli) {
             return new \cliente($cli[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     /**
@@ -297,8 +300,9 @@ class Cliente
         $data = self::$dataBase->select($sql);
         if ($data) {
             return new \cliente($data[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     /**
@@ -313,8 +317,9 @@ class Cliente
         $data = self::$dataBase->select($sql);
         if ($data) {
             return new \cliente($data[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     /**
@@ -338,8 +343,9 @@ class Cliente
             $s2 = $s->get_subcuenta();
             if ($s2) {
                 $subclist[] = $s2;
-            } else
-                $s->delete();
+            } else {
+                            $s->delete();
+            }
         }
 
         return $subclist;
@@ -386,10 +392,10 @@ class Cliente
                     $sccli->idsubcuenta = $subc0->idsubcuenta;
                     if ($sccli->save()) {
                         $subcuenta = $subc0;
-                    } else
-                        $this->new_error_msg('Imposible asociar la subcuenta para el cliente ' . $this->codcliente);
-                }
-                else {
+                    } else {
+                                            $this->new_error_msg('Imposible asociar la subcuenta para el cliente ' . $this->codcliente);
+                    }
+                } else {
                     $this->new_error_msg('Imposible crear la subcuenta para el cliente ' . $this->codcliente);
                 }
             } else {
@@ -412,8 +418,9 @@ class Cliente
     public function exists() {
         if (is_null($this->codcliente)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codcliente = " . $this->var2str($this->codcliente) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codcliente = " . $this->var2str($this->codcliente) . ";");
+        }
     }
 
     /**
@@ -424,8 +431,9 @@ class Cliente
         $cod = self::$dataBase->select("SELECT MAX(" . self::$dataBase->sql_to_int('codcliente') . ") as cod FROM " . $this->table_name . ";");
         if ($cod) {
             return sprintf('%06s', (1 + intval($cod[0]['cod'])));
-        } else
-            return '000001';
+        } else {
+                    return '000001';
+        }
     }
 
     public function test() {
@@ -468,8 +476,9 @@ class Cliente
             $this->new_error_msg("Nombre de cliente no válido: " . $this->nombre);
         } else if (strlen($this->razonsocial) < 1 OR strlen($this->razonsocial) > 100) {
             $this->new_error_msg("Razón social del cliente no válida: " . $this->razonsocial);
-        } else
-            $status = TRUE;
+        } else {
+                    $status = TRUE;
+        }
 
         return $status;
     }
@@ -534,8 +543,9 @@ class Cliente
             }
 
             return self::$dataBase->exec($sql);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function delete() {

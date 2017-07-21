@@ -49,7 +49,7 @@ class Balance
     public $naturaleza;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'co_codbalances08', 'codbalance');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -81,16 +81,18 @@ class Balance
     public function url() {
         if (is_null($this->codbalance)) {
             return 'index.php?page=editar_balances';
-        } else
-            return 'index.php?page=editar_balances&cod=' . $this->codbalance;
+        } else {
+                    return 'index.php?page=editar_balances&cod=' . $this->codbalance;
+        }
     }
 
     public function get($cod) {
         $balance = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codbalance = " . $this->var2str($cod) . ";");
         if ($balance) {
             return new \balance($balance[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function exists() {
@@ -205,15 +207,17 @@ class BalanceCuenta
         $bc = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($id) . ";");
         if ($bc) {
             return new \balance_cuenta($bc[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function exists() {
         if (is_null($this->id)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($this->id) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($this->id) . ";");
+        }
     }
 
     public function save() {
@@ -233,8 +237,9 @@ class BalanceCuenta
             if (self::$dataBase->exec($sql)) {
                 $this->id = self::$dataBase->lastval();
                 return TRUE;
-            } else
-                return FALSE;
+            } else {
+                            return FALSE;
+            }
         }
     }
 
@@ -289,12 +294,12 @@ class BalanceCuentaA
     public $desccuenta;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'co_cuentascbba', 'id');
         if (!empty($data)) {
             $this->loadFromData($data);
         } else {
-			$this->clear();
+            $this->clear();
         }
     }
 
@@ -322,10 +327,10 @@ class BalanceCuentaA
             if (isset($ejercicio->idasientocierre)) {
                 $extra = " AND idasiento NOT IN (" . $this->var2str($ejercicio->idasientocierre)
                         . "," . $this->var2str($ejercicio->idasientopyg) . ')';
-            } else
-                $extra = " AND idasiento != " . $this->var2str($ejercicio->idasientopyg);
-        }
-        else if (isset($ejercicio->idasientocierre)) {
+            } else {
+                            $extra = " AND idasiento != " . $this->var2str($ejercicio->idasientopyg);
+            }
+        } else if (isset($ejercicio->idasientocierre)) {
             $extra = " AND idasiento != " . $this->var2str($ejercicio->idasientocierre);
         }
 
@@ -348,23 +353,26 @@ class BalanceCuentaA
 
         if ($data) {
             return floatval($data[0]['haber']) - floatval($data[0]['debe']);
-        } else
-            return 0;
+        } else {
+                    return 0;
+        }
     }
 
     public function get($id) {
         $bca = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($id) . ";");
         if ($bca) {
             return new \balance_cuenta_a($bca[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function exists() {
         if (is_null($this->id)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($this->id) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($this->id) . ";");
+        }
     }
 
     public function save() {
@@ -384,8 +392,9 @@ class BalanceCuentaA
             if (self::$dataBase->exec($sql)) {
                 $this->id = self::$dataBase->lastval();
                 return TRUE;
-            } else
-                return FALSE;
+            } else {
+                            return FALSE;
+            }
         }
     }
 

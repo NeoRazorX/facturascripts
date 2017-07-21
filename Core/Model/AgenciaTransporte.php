@@ -30,7 +30,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class AgenciaTransporte
 {
-	use Model;
+    use Model;
 
     /**
      * Clave primaria. Varchar(8).
@@ -63,12 +63,12 @@ class AgenciaTransporte
     public $activo;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'agenciastrans', 'codtrans');
         if (!empty($data)) {
             $this->loadFromData($data);
         } else {
-			$this->clear();
+            $this->clear();
         }
     }
 	
@@ -89,9 +89,9 @@ class AgenciaTransporte
      * @return string
      */
     public function install() {
-        return 'INSERT INTO ' . $this->tableName() . ' (codtrans, nombre, web, activo) VALUES '.
-            "('ASM', 'ASM', 'http://es.asmred.com/', 1),".
-            "('TIPSA', 'TIPSA', 'http://www.tip-sa.com/', 1),".
+        return 'INSERT INTO ' . $this->tableName() . ' (codtrans, nombre, web, activo) VALUES ' .
+            "('ASM', 'ASM', 'http://es.asmred.com/', 1)," .
+            "('TIPSA', 'TIPSA', 'http://www.tip-sa.com/', 1)," .
             "('SEUR', 'SEUR', 'http://www.seur.com', 1);";
     }
 
@@ -112,8 +112,9 @@ class AgenciaTransporte
         $data = self::$dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE codtrans = " . $this->var2str($cod) . ";");
         if ($data) {
             return new \agencia_transporte($data[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
 }

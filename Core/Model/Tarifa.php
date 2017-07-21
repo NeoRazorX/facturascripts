@@ -74,7 +74,7 @@ class Tarifa
     public $maxpvp;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'tarifas', 'codtarifa');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -136,7 +136,7 @@ class Tarifa
 
     /**
      * Devuelve un texto explicativo de lo que hace la tarifa
-     * @return type
+     * @return string
      */
     public function diff() {
         $texto = '';
@@ -218,23 +218,26 @@ class Tarifa
         $tarifa = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codtarifa = " . $this->var2str($cod) . ";");
         if ($tarifa) {
             return new \tarifa($tarifa[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function get_new_codigo() {
         $cod = self::$dataBase->select("SELECT MAX(" . self::$dataBase->sql_to_int('codtarifa') . ") as cod FROM " . $this->table_name . ";");
         if ($cod) {
             return sprintf('%06s', (1 + intval($cod[0]['cod'])));
-        } else
-            return '000001';
+        } else {
+                    return '000001';
+        }
     }
 
     public function exists() {
         if (is_null($this->codtarifa)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codtarifa = " . $this->var2str($this->codtarifa) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codtarifa = " . $this->var2str($this->codtarifa) . ";");
+        }
     }
 
     public function test() {
@@ -247,8 +250,9 @@ class Tarifa
             $this->new_error_msg("Código de tarifa no válido. Debe tener entre 1 y 6 caracteres.");
         } else if (strlen($this->nombre) < 1 OR strlen($this->nombre) > 50) {
             $this->new_error_msg("Nombre de tarifa no válido. Debe tener entre 1 y 50 caracteres.");
-        } else
-            $status = TRUE;
+        } else {
+                    $status = TRUE;
+        }
 
         return $status;
     }
@@ -275,8 +279,9 @@ class Tarifa
             }
 
             return self::$dataBase->exec($sql);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function delete() {

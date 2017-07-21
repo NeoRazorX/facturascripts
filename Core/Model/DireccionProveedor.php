@@ -64,7 +64,7 @@ class DireccionProveedor
     public $fecha;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'dirproveedores', 'id');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -95,15 +95,17 @@ class DireccionProveedor
         $data = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($id) . ";");
         if ($data) {
             return new \direccion_proveedor($data[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function exists() {
         if (is_null($this->id)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($this->id) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($this->id) . ";");
+        }
     }
 
     public function save() {
@@ -154,8 +156,9 @@ class DireccionProveedor
             if (self::$dataBase->exec($sql)) {
                 $this->id = self::$dataBase->lastval();
                 return TRUE;
-            } else
-                return FALSE;
+            } else {
+                            return FALSE;
+            }
         }
     }
 
