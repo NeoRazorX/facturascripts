@@ -16,4 +16,4 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 /// cambiar por la ruta a tu archivo config
-require_once '/var/www/html/facturascripts/config.php';
+require_once 'C:/MAMP/htdocs/facturascripts/config.php';
