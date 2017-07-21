@@ -1,5 +1,19 @@
 {% extends "Master/MenuTemplate.html" %}
 
+{% block javascript %}
+{{ parent() }}
+<script type="text/javascript">
+    $(document).ready(function() {      
+        $("#b_new_record").click(function(event) {
+            event.preventDefault();
+        });
+
+        document.f_custom_search.query.focus();        
+   });
+</script>
+{% endblock %}
+
+
 {% block body %}
 <!-- Page Header -->
 <div class="container-fluid">
@@ -29,8 +43,8 @@
                     <span class="glyphicon glyphicon-wrench" aria-hidden="true" title="Opciones de configuración"></span>
                     <span class="hidden-xs">&nbsp; Opciones</span>
                 </a>
-
-                <a href="#" id="b_print" class="btn btn-sm btn-default">
+                
+                <a id="b_print" class="btn btn-sm btn-default" onclick="window.print();">
                     <span class="glyphicon glyphicon-print" aria-hidden="true" title="Imprimir lista de registros"></span>
                     <span class="hidden-xs">&nbsp; Imprimir</span>
                 </a>
@@ -45,7 +59,7 @@
         </div>
         <div class="col-sm-5 col-xs-6 text-right">
             <h2 style="margin-top: 0px;">
-                <i class="fa {{ fsc.icon }} hidden-xs" aria-hidden="true"></i> {{ fsc.title }}
+                <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ fsc.title }}
             </h2>
         </div>
     </div>

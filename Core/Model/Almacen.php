@@ -19,16 +19,19 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
+use FacturaScripts\Core\Base\ContactInformation;
 
 /**
  * El almacén donde están físicamente los artículos.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class Almacen
 {
 
     use Model;
+    use ContactInformation;
 
     /**
      * Clave primaria. Varchar (4).
@@ -43,52 +46,10 @@ class Almacen
     public $nombre;
 
     /**
-     * Código que representa al páis donde está ubicado el almacen.
-     * @var string
-     */
-    public $codpais;
-
-    /**
-     * Nombre de la provincia donde está ubicado el almacen.
-     * @var string
-     */
-    public $provincia;
-
-    /**
-     * Nombre de la población donde está ubicado el almacen.
-     * @var string
-     */
-    public $poblacion;
-
-    /**
-     * Código postal donde está ubicado el almacen.
-     * @var string
-     */
-    public $codpostal;
-
-    /**
-     * Dirección donde está ubicado el almacen.
-     * @var string
-     */
-    public $direccion;
-
-    /**
      * Persona de contacto del almacen.
      * @var string
      */
     public $contacto;
-
-    /**
-     * Número de fax del almacen.
-     * @var string
-     */
-    public $fax;
-
-    /**
-     * Número de teléfono del almacen.
-     * @var string
-     */
-    public $telefono;
 
     /**
      * Todavía sin uso.
@@ -103,10 +64,10 @@ class Almacen
     public function __construct(array $data = [])
     {
         $this->init(__CLASS__, 'almacenes', 'codalmacen');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
+        if (empty($data)) {
             $this->clear();
+        } else {
+            $this->loadFromData($data);
         }
     }
 
@@ -126,11 +87,12 @@ class Almacen
      */
     public function url()
     {
-        if ($this->codalmacen === null) {
-            return 'index.php?page=admin_almacenes';
+        $result = 'index.php?page=Almacen';
+        if ($this->codalmacen != NULL) {
+            $result .= '_card&cod=' . $this->codalmacen;
         }
 
-        return 'index.php?page=admin_almacenes#' . $this->codalmacen;
+        return $result;
     }
 
     /**

@@ -33,13 +33,6 @@ class ListController extends Controller
     const ICONO_ASC = 'glyphicon-sort-by-attributes';
     const ICONO_DESC = 'glyphicon-sort-by-attributes-alt';
     const FS_ITEM_LIMIT = 50;
-
-    /**
-     * Definición bootstrap del icono a usar junto al título
-     * Ejemplo: "fa-address-card"
-     * @var string 
-     */
-    public $icon;
     
     /**
      * Cursor con los datos a mostrar
@@ -408,7 +401,7 @@ class ListController extends Controller
 
         // Add -pagination / offset / +pagination
         for ($record = $recordMin; $record < $recordMax; $record += self::FS_ITEM_LIMIT) {
-            if (($record >= $recordMin AND $record <= $this->offset) OR ( $record <= $recordMax AND $record >= $this->offset)) {
+            if (($record >= $recordMin AND $record <= $this->offset) OR ($record <= $recordMax AND $record >= $this->offset)) {
                 $page = ($record / self::FS_ITEM_LIMIT) + 1;
                 $result[$index] = $this->addPaginationItem($url, $page, $record, FALSE, ($record == $this->offset));
                 $index++;

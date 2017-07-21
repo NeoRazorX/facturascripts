@@ -1,6 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
+ * Copyright (C) 2015       Pablo Peralta
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,36 +23,30 @@ use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador de ejemplo para la implantación de ListController
- * como controlador y vista genérica para los modelos
+ * Controlador para la lista de agencias de transportes
  *
+ * @author Pablo Peralta
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class Ejemplo extends Base\ListController
+class AgenciaTransporte extends Base\ListController
 {
-
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->icon = "fa-address-card";
-
         $this->fields = [
-            ['label' => 'Codigo', 'field' => 'codcliente', 'display' => 'left'],
+            ['label' => 'Codigo', 'field' => 'codtrans', 'display' => 'left'],
             ['label' => 'Nombre', 'field' => 'nombre', 'display' => 'left'],
-            ['label' => 'Razón Social', 'field' => 'razonsocial', 'display' => 'left'],
-            ['label' => 'id. Fiscal', 'field' => 'cifnif', 'display' => 'left'],
-            ['label' => 'Teléfono', 'field' => 'telefono1', 'display' => 'left'],
-            ['label' => 'Mail', 'field' => 'email', 'display' => 'left']
+            ['label' => 'Teléfono', 'field' => 'telefono', 'display' => 'left'],
+            ['label' => 'Web', 'field' => 'web', 'display' => 'left'],
+            ['label' => 'Activo', 'field' => 'activo', 'display' => 'left']
         ];
 
-        $this->addOrderBy('codcliente');
+        $this->addOrderBy('codtrans', 'Código');
         $this->addOrderBy('nombre');
 
-        $this->addFilterSelect('codgrupo', 'gruposclientes');
-        $this->addFilterCheckbox('debaja', 'De baja', '', TRUE);
-        $this->addFilterDatePicker('fechabaja', 'Fec. Baja');
+        $this->addFilterCheckbox('activo', 'Activo', '', TRUE);
     }
 
     public function publicCore(&$response)
@@ -66,8 +61,7 @@ class Ejemplo extends Base\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        // $modelAux = new Model\GrupoClientes(); //solo para asegurar que existe la tabla
-        $model = new Model\Cliente(); // CAMBIAR POR EL MODELO A PROBAR
+        $model = new Model\AgenciaTransporte();
         $this->count = $model->count($where);
         if ($this->count > 0) {
             $this->cursor = $model->all($where, $order);
@@ -79,9 +73,17 @@ class Ejemplo extends Base\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "nombre|razonsocial|cifnif|codcliente";
+            $fields = "nombre|codtrans";
             $result[] = new Base\DataBase\DatabaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
+    }
+
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['icon'] = 'fa-truck';
+        $pagedata['menu'] = 'admin';
+        return $pagedata;
     }
 }

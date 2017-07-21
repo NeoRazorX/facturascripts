@@ -33,7 +33,7 @@ interface DatabaseSQL
      * @param string $colName
      * @return string
      */
-    public function sql2int($colName);
+    public function sql2Int($colName);
 
     /**
      * Sentencia SQL para obtener el último valor de una secuencia o ID

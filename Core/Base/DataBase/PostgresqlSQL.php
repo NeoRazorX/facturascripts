@@ -34,7 +34,7 @@ class PostgresqlSQL implements DatabaseSQL
      * @param string $colName
      * @return string
      */
-    public function sql2int($colName)
+    public function sql2Int($colName)
     {
         return 'CAST(' . $colName . ' as INTEGER)';
     }

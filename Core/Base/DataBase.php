@@ -476,8 +476,8 @@ class DataBase
      * @param string $colName
      * @return string
      */
-    public function sql2int($colName)
+    public function sql2Int($colName)
     {
-        return self::$engine->getSQL()->sql2int($colName);
+        return self::$engine->getSQL()->sql2Int($colName);
     }
 }
