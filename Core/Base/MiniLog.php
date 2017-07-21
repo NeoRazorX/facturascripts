@@ -193,6 +193,6 @@ class MiniLog
     
     public function clear()
     {
-        self::$dataLog[] = [];
+        self::$dataLog = [];
     }
 }

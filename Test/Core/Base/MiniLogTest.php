@@ -34,7 +34,11 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase {
      */
     public function testEmergency() {
         // Remove the following lines when you implement this test.
-        $this->object->emergency('emergencia');
+        $this->object->clear();
+        $this->object->emergency('emergency');
+
+        $message[] = ['time' => time(), 'level' => 'emergency', 'message' => 'emergency', 'context' => array()];
+        $this->assertEquals($message, $this->object->read());
     }
 
     /**
@@ -43,7 +47,12 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase {
      */
     public function testAlert() {
         // Remove the following lines when you implement this test.
-        $this->object->alert('alerta');
+        
+        $this->object->clear();
+        $this->object->alert('alert');
+
+        $message[] = ['time' => time(), 'level' => 'alert', 'message' => 'alert', 'context' => array()];
+        $this->assertEquals($message, $this->object->read());
     }
 
     /**
@@ -52,7 +61,12 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase {
      */
     public function testCritical() {
         // Remove the following lines when you implement this test.
+
+        $this->object->clear();
         $this->object->critical('critical');
+        
+        $message[] = ['time' => time(), 'level' => 'critical', 'message' => 'critical', 'context' => array()];
+        $this->assertEquals($message, $this->object->read());
     }
 
     /**
@@ -61,7 +75,12 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase {
      */
     public function testError() {
         // Remove the following lines when you implement this test.
+        
+        $this->object->clear();
         $this->object->error('error');
+
+        $message[] = ['time' => time(), 'level' => 'error', 'message' => 'error', 'context' => array()];
+        $this->assertEquals($message, $this->object->read());
     }
 
     /**
@@ -70,7 +89,12 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase {
      */
     public function testWarning() {
         // Remove the following lines when you implement this test.
+        
+        $this->object->clear();
         $this->object->warning('warning');
+
+        $message[] = ['time' => time(), 'level' => 'warning', 'message' => 'warning', 'context' => array()];
+        $this->assertEquals($message, $this->object->read());
     }
 
     /**
@@ -79,7 +103,12 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase {
      */
     public function testNotice() {
         // Remove the following lines when you implement this test.
+        
+        $this->object->clear();
         $this->object->notice('notice');
+
+        $message[] = ['time' => time(), 'level' => 'notice', 'message' => 'notice', 'context' => array()];
+        $this->assertEquals($message, $this->object->read());
     }
 
     /**
@@ -88,7 +117,12 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase {
      */
     public function testInfo() {
         // Remove the following lines when you implement this test.
+        
+        $this->object->clear();
         $this->object->info('info');
+
+        $message[] = ['time' => time(), 'level' => 'info', 'message' => 'info', 'context' => array()];
+        $this->assertEquals($message, $this->object->read());
     }
 
     /**
@@ -97,7 +131,12 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase {
      */
     public function testDebug() {
         // Remove the following lines when you implement this test.
-        $this->object->debug('emdebug');
+        $level = ['debug'];
+        $this->object->clear();
+        $this->object->debug('debug');
+
+        $message[] = ['time' => time(), 'level' => 'debug', 'message' => 'debug', 'context' => array()];
+        $this->assertEquals($message, $this->object->read($level));
     }
 
     /**
@@ -106,7 +145,12 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase {
      */
     public function testSql() {
         // Remove the following lines when you implement this test.
-        
+        $level = ['sql'];
+        $this->object->clear();
+        $this->object->sql('sql');
+
+        $message[] = ['time' => time(), 'level' => 'sql', 'message' => 'sql', 'context' => array()];
+        $this->assertEquals($message, $this->object->read($level));
     }
 
     /**
@@ -115,7 +159,6 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase {
      */
     public function testLog() {
         // Remove the following lines when you implement this test.
-        
     }
 
     /**
@@ -124,9 +167,6 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase {
      */
     public function testRead() {
         // Remove the following lines when you implement this test.
-        // si se descomenta la linea inferior, se comprueba que el clear limpia el arrary y da error
-        //$this->object->clear();
-        $this->assertNotEmpty($this->object->read());
     }
 
 }
