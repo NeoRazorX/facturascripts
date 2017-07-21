@@ -41,7 +41,7 @@ class Controller
      * Proporciona acceso directo a la base de datos.
      * @var DataBase
      */
-    protected $dataBase;
+    protected $database;
     
     /**
      * Nombre de la clase del controlador (aunque se herede de esta clase, el nombre
@@ -117,7 +117,7 @@ class Controller
         $this->cache = $cache;
         $this->className = $className;
         $this->dispatcher = new EventDispatcher();
-        $this->dataBase = new DataBase();
+        $this->database = new DataBase();
 
         $empresa = new Models\Empresa();
         $this->empresa = $empresa->getDefault();

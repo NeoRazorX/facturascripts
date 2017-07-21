@@ -22,53 +22,52 @@ use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
 
 /**
- * Description of Paises
+ * Controlador de ejemplo para la implantación de ListController
+ * como controlador y vista genérica para los modelos
  *
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class Pais extends Base\ListController
+class Ejemplo extends Base\ListController
 {
 
-    public function __construct(&$cache, &$i18n, &$miniLog, &$response, $user, $className)
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
-        parent::__construct($cache, $i18n, $miniLog, $response, $user, $className);
+        parent::__construct($cache, $i18n, $miniLog, $className);
 
         $this->icon = "fa-address-card";
-        $this->title = "Países";
 
         $this->fields = [
-            ['label' => 'Cod. País', 'field' => 'codpais', 'display' => 'left'],
-            ['label' => 'Bultos', 'field' => 'nombre', 'display' => 'left'],
-            ['label' => 'Cod. Iso', 'field' => 'codiso', 'display' => 'center'],
-            ['label' => 'Validar Prov', 'field' => 'validarprov', 'display' => 'center'],
-            ['label' => 'Bandera', 'field' => 'bandera', 'display' => 'none']
+            ['label' => 'Codigo', 'field' => 'codcliente', 'display' => 'left'],
+            ['label' => 'Nombre', 'field' => 'nombre', 'display' => 'left'],
+            ['label' => 'Razón Social', 'field' => 'razonsocial', 'display' => 'left'],
+            ['label' => 'id. Fiscal', 'field' => 'cifnif', 'display' => 'left'],
+            ['label' => 'Teléfono', 'field' => 'telefono1', 'display' => 'left'],
+            ['label' => 'Mail', 'field' => 'email', 'display' => 'left']
         ];
 
-        $this->addOrderBy('codpais');
+        $this->addOrderBy('codcliente');
         $this->addOrderBy('nombre');
 
-        $this->addFilterCheckbox('validarprov', 'Validar Provincia', 'validarprov');
+        $this->addFilterSelect('codgrupo', 'gruposclientes');
+        $this->addFilterCheckbox('debaja', 'De baja', '', TRUE);
+        $this->addFilterDatePicker('fechabaja', 'Fec. Baja');
     }
 
-    /**
-     * TODO
-     */
-    public function publicCore()
+    public function publicCore(&$response)
     {
-        parent::publicCore();
+        parent::publicCore($response);
     }
 
-    /**
-     * TODO
-     */
-    public function privateCore()
+    public function privateCore(&$response, $user)
     {
-        parent::privateCore();
+        parent::privateCore($response, $user);
 
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Pais();
+        $modelAux = new Model\GrupoClientes();   //solo para asegurar que existe la tabla
+        $model = new Model\Cliente();                            // CAMBIAR POR EL MODELO A PROBAR
         $this->count = $model->count($where);
         if ($this->count > 0) {
             $this->cursor = $model->all($where, $order);
@@ -80,7 +79,7 @@ class Pais extends Base\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "nombre|codpais|codiso";
+            $fields = "nombre|razonsocial|cifnif|codcliente";
             $result[] = new Base\DataBase\DatabaseWhere($fields, $this->query, "LIKE");
         }
         return $result;

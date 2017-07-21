@@ -33,7 +33,7 @@ class ListController extends Controller
     const ICONO_ASC = 'glyphicon-sort-by-attributes';
     const ICONO_DESC = 'glyphicon-sort-by-attributes-alt';
     const FS_ITEM_LIMIT = 50;
-    
+
     /**
      * Cursor con los datos a mostrar
      * @var array
@@ -67,7 +67,7 @@ class ListController extends Controller
      * @var string
      */
     public $query;
-    
+
     /**
      * Lista de filtros disponibles y su parametrización
      * @var array
@@ -124,7 +124,7 @@ class ListController extends Controller
         if (!$result) {
             $result = (filter_input(INPUT_GET, $field)) ? filter_input(INPUT_GET, $field) : FALSE;
         }
-        
+
         return $result;
     }
 
@@ -142,7 +142,7 @@ class ListController extends Controller
                         if ($value['value'] != "") {
                             $field = $value['options']['field'];
                             $value = $value['value'];
-                            $result[] = new DataBase\DatabaseWhere($field, $value); 
+                            $result[] = new DataBase\DatabaseWhere($field, $value);
                         }
                         break;
                     }
@@ -151,7 +151,7 @@ class ListController extends Controller
                         if ($value['value']) {
                             $field = $value['options']['field'];
                             $value = !$value['options']['inverse'];
-                            $result[] = new DataBase\DatabaseWhere($field, $value); 
+                            $result[] = new DataBase\DatabaseWhere($field, $value);
                         }
 
                         break;
@@ -229,7 +229,7 @@ class ListController extends Controller
         if (empty($options['field'])) {
             $options['field'] = $key;
         }
-        
+
         $this->filters[$key] = ['type' => $type, 'value' => $this->getParamValue($key), 'options' => $options];
     }
 
@@ -252,7 +252,7 @@ class ListController extends Controller
      * @param string  $key     (Filter identifier)
      * @param string  $label   (Human reader description)
      * @param string  $field   (Field of the table to apply filter)
-     * @param boolean $inverse (If you need to invert the selected value) 
+     * @param boolean $inverse (If you need to invert the selected value)
      */
     protected function addFilterCheckbox($key, $label, $field = '', $inverse = FALSE)
     {
@@ -262,24 +262,24 @@ class ListController extends Controller
 
     protected function addFilterDatePicker($key, $label, $field = '')
     {
-      $options = ['label' => $label, 'field' => $field];
-      $this->addFilter('datepicker', $key, $options);
+        $options = ['label' => $label, 'field' => $field];
+        $this->addFilter('datepicker', $key, $options);
     }
-    
+
     /**
      * Ejecuta la lógica pública del controlador.
      */
-    public function publicCore()
+    public function publicCore(&$response)
     {
-        parent::publiCore();
+        parent::publicCore($response);
     }
 
     /**
      * Ejecuta la lógica privada del controlador.
      */
-    public function privateCore()
+    public function privateCore(&$response, $user)
     {
-        parent::privateCore();
+        parent::privateCore($response, $user);
 
         // Establecemos el orderby seleccionado
         $orderKey = $this->getParamValue("order");
@@ -296,9 +296,9 @@ class ListController extends Controller
      * @param Models\User $user
      * @param string $className
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, &$response, $user, $className)
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
-        parent::__construct($cache, $i18n, $miniLog, $response, $user, $className);
+        parent::__construct($cache, $i18n, $miniLog, $className);
 
         $this->setTemplate("ListController");
 
@@ -361,14 +361,14 @@ class ListController extends Controller
     /**
      * Calcula el navegador entre páginas.
      * Permite saltar a:
-     *      primera, 
+     *      primera,
      *      mitad anterior,
      *      pageMargin x páginas anteriores
      *      página actual
      *      pageMargin x páginas posteriores
      *      mitad posterior
      *      última
-     * 
+     *
      * @return array
      *      url    => link a la página
      *      icon   => icono específico de bootstrap en vez de núm. página
@@ -415,7 +415,7 @@ class ListController extends Controller
             }
         }
 
-        // Add middle right page, if offset is lesser than pageMargin   
+        // Add middle right page, if offset is lesser than pageMargin
         $recordMiddleRight = $this->offset + (($this->count - $this->offset) / 2);
         if ($recordMiddleRight > $recordMax) {
             $page = floor($recordMiddleRight / self::FS_ITEM_LIMIT);
