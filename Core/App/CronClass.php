@@ -37,10 +37,18 @@ abstract class CronClass
 
     public function __construct($folder = '')
     {
-        if (!isset(self::$cache)) self::$cache = new Base\Cache($folder);
-        if (!isset(self::$dataBase)) self::$dataBase = new Base\DataBase();
-        if (!isset(self::$i18n)) self::$i18n = new Base\Translator($folder, FS_LANG);
-        if (!isset(self::$miniLog)) self::$miniLog = new Base\MiniLog();
+        if (!isset(self::$cache)) {
+            self::$cache = new Base\Cache($folder);
+        }
+        if (!isset(self::$dataBase)) {
+            self::$dataBase = new Base\DataBase();
+        }
+        if (!isset(self::$i18n)) {
+            self::$i18n = new Base\Translator($folder, FS_LANG);
+        }
+        if (!isset(self::$miniLog)) {
+            self::$miniLog = new Base\MiniLog();
+        }
     }
 	
     abstract public function run();
