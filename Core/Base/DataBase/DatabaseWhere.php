@@ -33,7 +33,7 @@ class DatabaseWhere
 
     /**
      * Enlace con la base de datos activa
-     * @var Database
+     * @var DataBase
      */
     private $database;
 
@@ -71,6 +71,17 @@ class DatabaseWhere
     }
 
     /**
+     * Formatea el valor fecha al formato de la base de datos
+     * @param boolean $addTime
+     * @return string
+     */
+    private function format2Date($addTime = FALSE)
+    {
+        $time = $addTime ? ' H:i:s' : '';
+        return "'" . date($this->database->dateStyle() . $time, strtotime($this->value)) . "'";    
+    }
+    
+    /**
      * Devuelve el valor del filtro formateado según el tipo
      * @return string
      */
@@ -93,12 +104,12 @@ class DatabaseWhere
             
             /// DATE
             case (preg_match(self::MATCH_DATE, $this->value) > 0):
-                $result = "'" . date($this->dataBase->dateStyle(), strtotime($this->value)) . "'";
+                $result = $this->format2Date();
                 break;
 
             /// DATETIME
             case (preg_match(self::MATCH_DATETIME, $this->value) > 0):
-                $result = "'" . date($this->dataBase->dateStyle() . ' H:i:s', strtotime($this->value)) . "'";
+                $result = $this->format2Date(TRUE);
                 break;
 
             default:

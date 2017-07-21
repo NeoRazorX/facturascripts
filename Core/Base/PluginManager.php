@@ -278,7 +278,7 @@ class PluginManager
 
     /**
      * Enlaza las classes de forma dinamica
-     * @param $fileName
+     * @param string $fileName
      * @param string $folder
      * @param string $namespace
      */
@@ -300,7 +300,7 @@ class PluginManager
 
     /**
      * Enlaza los XML de forma dinamica
-     * @param $fileName
+     * @param string $fileName
      * @param string $folder
      * @param string $filePath
      */

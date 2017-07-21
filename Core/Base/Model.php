@@ -390,27 +390,6 @@ trait Model
     }
 
     /**
-     * Convierte un array de filtros where en string
-     * @param array $fields
-     * @return string
-     */
-    private function getWhere(array $fields)
-    {
-        $result = '';
-        $coma = ' WHERE ';
-        foreach ($fields as $key => $value) {
-            $val = strval($value);
-            $operator = ($val[0] == '%') ? ' LIKE ' : ' = ';
-            $result .= $coma . $key . $operator . $this->var2str($value);
-            if ($coma === ' WHERE ') {
-                $coma = ' AND ';
-            }
-        }
-        
-        return $result;
-    }
-
-    /**
      * Convierte un array de filtros order by en string
      * @param array $order
      * @return string

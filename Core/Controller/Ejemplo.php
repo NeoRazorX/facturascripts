@@ -66,7 +66,7 @@ class Ejemplo extends Base\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $modelAux = new Model\GrupoClientes(); //solo para asegurar que existe la tabla
+        // $modelAux = new Model\GrupoClientes(); //solo para asegurar que existe la tabla
         $model = new Model\Cliente(); // CAMBIAR POR EL MODELO A PROBAR
         $this->count = $model->count($where);
         if ($this->count > 0) {

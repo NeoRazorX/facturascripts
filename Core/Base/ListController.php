@@ -35,6 +35,13 @@ class ListController extends Controller
     const FS_ITEM_LIMIT = 50;
 
     /**
+     * Definición bootstrap del icono a usar junto al título
+     * Ejemplo: "fa-address-card"
+     * @var string 
+     */
+    public $icon;
+    
+    /**
      * Cursor con los datos a mostrar
      * @var array
      */
@@ -137,29 +144,20 @@ class ListController extends Controller
         $result = [];
 
         foreach (array_values($this->filters) as $value) {
-            switch ($value['type']) {
-                case 'select': {
-                        if ($value['value'] != "") {
+            if ($value['value']) {
+                switch ($value['type']) {
+                    case 'datepicker':
+                    case 'select':
                             $field = $value['options']['field'];
-                            $value = $value['value'];
-                            $result[] = new DataBase\DatabaseWhere($field, $value);
-                        }
-                        break;
-                    }
+                            $result[] = new DataBase\DatabaseWhere($field, $value['value']);
+                            break;
 
-                case 'checkbox': {
-                        if ($value['value']) {
+                    case 'checkbox':
                             $field = $value['options']['field'];
-                            $value = !$value['options']['inverse'];
+                            $value = $value['options']['inverse'] ? !$value['value'] : $value['value'];
                             $result[] = new DataBase\DatabaseWhere($field, $value);
-                        }
-
-                        break;
-                    }
-
-                default: {
-                        break;
-                    }
+                            break;
+                }
             }
         }
 
@@ -410,7 +408,7 @@ class ListController extends Controller
 
         // Add -pagination / offset / +pagination
         for ($record = $recordMin; $record < $recordMax; $record += self::FS_ITEM_LIMIT) {
-            if (($record >= $recordMin AND $record <= $this->offset) OR ($record <= $recordMax AND $record >= $this->offset)) {
+            if (($record >= $recordMin AND $record <= $this->offset) OR ( $record <= $recordMax AND $record >= $this->offset)) {
                 $page = ($record / self::FS_ITEM_LIMIT) + 1;
                 $result[$index] = $this->addPaginationItem($url, $page, $record, FALSE, ($record == $this->offset));
                 $index++;

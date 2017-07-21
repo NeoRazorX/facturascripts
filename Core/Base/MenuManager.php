@@ -141,6 +141,7 @@ class MenuManager
     {
         $result = [];
         
+        $where = [];
         $where[] = new DataBase\DatabaseWhere('showonmenu', TRUE);
 
         $order = [
