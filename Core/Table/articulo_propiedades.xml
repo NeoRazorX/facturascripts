@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : articulo_propiedades.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla articulo_propiedades.
+-->
+<tabla>
+    <columna>
+        <nombre>name</nombre>
+        <tipo>character varying(50)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>referencia</nombre>
+        <tipo>character varying(18)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>text</nombre>
+        <tipo>text</tipo>
+    </columna>
+    <restriccion>
+        <nombre>articulo_propiedades_pkey</nombre>
+        <consulta>PRIMARY KEY (name,referencia)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>ca_articulo_propiedades_articulos</nombre>
+        <consulta>FOREIGN KEY (referencia)
+            REFERENCES articulos (referencia)
+            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+</tabla>

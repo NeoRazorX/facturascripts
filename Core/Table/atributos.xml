@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : atributos.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla atributos.
+-->
+<tabla>
+    <columna>
+        <nombre>codatributo</nombre>
+        <tipo>character varying(20)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nombre</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <restriccion>
+        <nombre>atributos_pkey</nombre>
+        <consulta>PRIMARY KEY (codatributo)</consulta>
+    </restriccion>
+</tabla>

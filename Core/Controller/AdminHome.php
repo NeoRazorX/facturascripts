@@ -28,7 +28,6 @@ use FacturaScripts\Core\Model;
  */
 class AdminHome extends Base\Controller
 {
-
     /**
      * TODO
      * @var Model\Agente
@@ -73,9 +72,9 @@ class AdminHome extends Base\Controller
 
     /**
      * TODO
-     * @var Model\Serie
+     * @var Model\AgenciasTrans
      */
-    public $agenciastrans;
+    public $agenciaTrans;
 
     /**
      * AdminHome constructor.
@@ -99,7 +98,7 @@ class AdminHome extends Base\Controller
         $this->formaPago = new Model\FormaPago();
         $this->pais = new Model\Pais();
         $this->serie = new Model\Serie();
-        $this->agenciastrans = new Model\AgenciasTrans();
+        $this->agenciaTrans = new Model\AgenciaTransporte();
     }
     
     public function getPageData()
