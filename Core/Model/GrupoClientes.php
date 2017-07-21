@@ -50,7 +50,7 @@ class GrupoClientes
     public $codtarifa;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'gruposclientes', 'codgrupo');
         if (!empty($data)) {
             $this->loadFromData($data);

@@ -40,7 +40,7 @@ class ConceptoPartida
     public $concepto;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'co_conceptospar', 'idconceptopar');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -63,8 +63,9 @@ class ConceptoPartida
         $data = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idconceptopar = " . $this->var2str($id) . ";");
         if ($data) {
             return new \concepto_partida($data[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function exists() {

@@ -60,7 +60,7 @@ class CuentaBancoCliente
     public $fmandato;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'cuentasbcocli', 'codcliente');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -86,7 +86,7 @@ class CuentaBancoCliente
     /**
      * Devuelve el IBAN con o sin espacios.
      * @param type $espacios
-     * @return type
+     * @return string
      */
     public function iban($espacios = FALSE) {
         if ($espacios) {
@@ -113,8 +113,9 @@ class CuentaBancoCliente
         $data = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codcuenta = " . $this->var2str($cod) . ";");
         if ($data) {
             return new \cuenta_banco_cliente($data[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     private function get_new_codigo() {
@@ -122,8 +123,9 @@ class CuentaBancoCliente
         $cod = self::$dataBase->select($sql);
         if ($cod) {
             return 1 + intval($cod[0]['cod']);
-        } else
-            return 1;
+        } else {
+                    return 1;
+        }
     }
 
     public function exists() {

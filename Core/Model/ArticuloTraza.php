@@ -86,7 +86,7 @@ class ArticuloTraza
     public $fecha_salida;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'articulo_trazas', 'id');
         if (!empty($data)) {
             $this->loadFromData($data);

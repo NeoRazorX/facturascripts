@@ -38,6 +38,12 @@ class Controller
     protected $cache;
 
     /**
+     * Proporciona acceso directo a la base de datos.
+     * @var DataBase
+     */
+    protected $database;
+    
+    /**
      * Nombre de la clase del controlador (aunque se herede de esta clase, el nombre
      * de la clase final lo tendremos aquí).
      * @var string __CLASS__
@@ -111,6 +117,7 @@ class Controller
         $this->cache = $cache;
         $this->className = $className;
         $this->dispatcher = new EventDispatcher();
+        $this->database = new DataBase();
 
         $empresa = new Models\Empresa();
         $this->empresa = $empresa->getDefault();
@@ -137,7 +144,7 @@ class Controller
      */
     public function setTemplate($template)
     {
-        $this->template = $template;
+        $this->template = $template . '.html';
     }
 
     public function getPageData()
@@ -148,7 +155,8 @@ class Controller
             'icon' => '<i class="fa fa-circle-o" aria-hidden="true"></i>',
             'menu' => 'new',
             'submenu' => NULL,
-            'showonmenu' => TRUE
+            'showonmenu' => TRUE,
+            'isDefault' => FALSE
         ];
     }
 

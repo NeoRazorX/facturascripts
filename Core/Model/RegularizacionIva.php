@@ -49,7 +49,7 @@ class RegularizacionIva
     public $periodo;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'co_regiva', 'idregiva');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -76,30 +76,34 @@ class RegularizacionIva
     public function url() {
         if (is_null($this->idregiva)) {
             return 'index.php?page=contabilidad_regusiva';
-        } else
-            return 'index.php?page=contabilidad_regusiva&id=' . $this->idregiva;
+        } else {
+                    return 'index.php?page=contabilidad_regusiva&id=' . $this->idregiva;
+        }
     }
 
     public function asiento_url() {
         if (is_null($this->idasiento)) {
             return 'index.php?page=contabilidad_asientos';
-        } else
-            return 'index.php?page=contabilidad_asiento&id=' . $this->idasiento;
+        } else {
+                    return 'index.php?page=contabilidad_asiento&id=' . $this->idasiento;
+        }
     }
 
     public function ejercicio_url() {
         if (is_null($this->codejercicio)) {
             return 'index.php?page=contabilidad_ejercicios';
-        } else
-            return 'index.php?page=contabilidad_ejercicio&cod=' . $this->codejercicio;
+        } else {
+                    return 'index.php?page=contabilidad_ejercicio&cod=' . $this->codejercicio;
+        }
     }
 
     public function get_partidas() {
         if (isset($this->idasiento)) {
             $partida = new \partida();
             return $partida->all_from_asiento($this->idasiento);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     /**
@@ -118,16 +122,18 @@ class RegularizacionIva
         $data = self::$dataBase->select($sql);
         if ($data) {
             return new \regularizacion_iva($data[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function get($id) {
         $data = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idregiva = " . $this->var2str($id) . ";");
         if ($data) {
             return new \regularizacion_iva($data[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function exists() {
@@ -166,8 +172,9 @@ class RegularizacionIva
             if (self::$dataBase->exec($sql)) {
                 $this->idregiva = self::$dataBase->lastval();
                 return TRUE;
-            } else
-                return FALSE;
+            } else {
+                            return FALSE;
+            }
         }
     }
 

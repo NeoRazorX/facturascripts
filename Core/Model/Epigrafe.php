@@ -42,7 +42,7 @@ class GrupoEpigrafes
     public $descripcion;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'co_gruposepigrafes', 'idgrupo');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -66,8 +66,9 @@ class GrupoEpigrafes
     public function url() {
         if (is_null($this->idgrupo)) {
             return 'index.php?page=contabilidad_epigrafes';
-        } else
-            return 'index.php?page=contabilidad_epigrafes&grupo=' . $this->idgrupo;
+        } else {
+                    return 'index.php?page=contabilidad_epigrafes&grupo=' . $this->idgrupo;
+        }
     }
 
     public function get_epigrafes() {
@@ -79,8 +80,9 @@ class GrupoEpigrafes
         $grupo = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idgrupo = " . $this->var2str($id) . ";");
         if ($grupo) {
             return new \grupo_epigrafes($grupo[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function get_by_codigo($cod, $codejercicio) {
@@ -90,8 +92,9 @@ class GrupoEpigrafes
         $grupo = self::$dataBase->select($sql);
         if ($grupo) {
             return new \grupo_epigrafes($grupo[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function exists() {
@@ -131,11 +134,13 @@ class GrupoEpigrafes
                 if (self::$dataBase->exec($sql)) {
                     $this->idgrupo = self::$dataBase->lastval();
                     return TRUE;
-                } else
-                    return FALSE;
+                } else {
+                                    return FALSE;
+                }
             }
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function delete() {
@@ -190,7 +195,7 @@ class Epigrafe
     private static $grupos;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'co_epigrafes', 'idepigrafe');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -219,8 +224,9 @@ class Epigrafe
     public function url() {
         if (is_null($this->idepigrafe)) {
             return 'index.php?page=contabilidad_epigrafes';
-        } else
-            return 'index.php?page=contabilidad_epigrafes&epi=' . $this->idepigrafe;
+        } else {
+                    return 'index.php?page=contabilidad_epigrafes&epi=' . $this->idepigrafe;
+        }
     }
 
     /**
@@ -264,8 +270,9 @@ class Epigrafe
         $data = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idepigrafe = " . $this->var2str($id) . ";");
         if ($data) {
             return new \epigrafe($data[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function get_by_codigo($cod, $codejercicio) {
@@ -275,15 +282,17 @@ class Epigrafe
         $data = self::$dataBase->select($sql);
         if ($data) {
             return new \epigrafe($data[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function exists() {
         if (is_null($this->idepigrafe)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idepigrafe = " . $this->var2str($this->idepigrafe) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idepigrafe = " . $this->var2str($this->idepigrafe) . ";");
+        }
     }
 
     public function test() {
@@ -319,11 +328,13 @@ class Epigrafe
                 if (self::$dataBase->exec($sql)) {
                     $this->idepigrafe = self::$dataBase->lastval();
                     return TRUE;
-                } else
-                    return FALSE;
+                } else {
+                                    return FALSE;
+                }
             }
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function delete() {

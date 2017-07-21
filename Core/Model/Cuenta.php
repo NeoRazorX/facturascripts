@@ -51,7 +51,7 @@ class Cuenta
     public $idcuentaesp;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'co_cuentas', 'idcuenta');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -81,8 +81,9 @@ class Cuenta
     public function url() {
         if (is_null($this->idcuenta)) {
             return 'index.php?page=contabilidad_cuentas';
-        } else
-            return 'index.php?page=contabilidad_cuenta&id=' . $this->idcuenta;
+        } else {
+                    return 'index.php?page=contabilidad_cuenta&id=' . $this->idcuenta;
+        }
     }
 
     public function get_subcuentas() {
@@ -99,8 +100,9 @@ class Cuenta
         $cuenta = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idcuenta = " . $this->var2str($id) . ";");
         if ($cuenta) {
             return new \cuenta($cuenta[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function get_by_codigo($cod, $codejercicio) {
@@ -110,8 +112,9 @@ class Cuenta
         $data = self::$dataBase->select($sql);
         if ($data) {
             return new \cuenta($data[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     /**
@@ -127,15 +130,17 @@ class Cuenta
         $data = self::$dataBase->select($sql);
         if ($data) {
             return new \cuenta($data[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function exists() {
         if (is_null($this->idcuenta)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idcuenta = " . $this->var2str($this->idcuenta) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idcuenta = " . $this->var2str($this->idcuenta) . ";");
+        }
     }
 
     public function test() {
@@ -174,11 +179,13 @@ class Cuenta
                 if (self::$dataBase->exec($sql)) {
                     $this->idcuenta = self::$dataBase->lastval();
                     return TRUE;
-                } else
-                    return FALSE;
+                } else {
+                                    return FALSE;
+                }
             }
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function delete() {
@@ -294,8 +301,9 @@ class Cuenta
 
                 return $subc0;
             }
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
 }

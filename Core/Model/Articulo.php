@@ -192,7 +192,7 @@ class Articulo
     private static $column_list;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'articulos', 'referencia');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -273,8 +273,9 @@ class Articulo
     public function preciocoste() {
         if ($this->secompra AND FS_COST_IS_AVERAGE) {
             return $this->costemedio;
-        } else
-            return $this->preciocoste;
+        } else {
+                    return $this->preciocoste;
+        }
     }
 
     public function preciocoste_iva() {
@@ -288,8 +289,9 @@ class Articulo
     public function url() {
         if (is_null($this->referencia)) {
             return "index.php?page=ventas_articulos";
-        } else
-            return "index.php?page=ventas_articulo&ref=" . urlencode($this->referencia);
+        } else {
+                    return "index.php?page=ventas_articulo&ref=" . urlencode($this->referencia);
+        }
     }
 
     /**
@@ -340,8 +342,9 @@ class Articulo
         $art = self::$dataBase->select("SELECT " . self::$column_list . " FROM " . $this->table_name . " WHERE referencia = " . $this->var2str($ref) . ";");
         if ($art) {
             return new \articulo($art[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     /**
@@ -451,7 +454,7 @@ class Articulo
     /**
      * Devuelve las últimas líneas de albaranes de clientes con este artículo.
      * @deprecated since version 106
-     * @param type $offset
+     * @param integer $offset
      * @param type $limit
      * @return linea_albaran_cliente
      */
@@ -463,7 +466,7 @@ class Articulo
     /**
      * Devuelve las últimas líneas de albaranes de proveedores con este artículo.
      * @deprecated since version 106
-     * @param type $offset
+     * @param integer $offset
      * @param type $limit
      * @return linea_albaran_proveedor
      */
@@ -474,7 +477,7 @@ class Articulo
 
     /**
      * Devuelve la media del precio de compra del artículo en los últimos albaranes o facturas.
-     * @return type
+     * @return integer
      */
     public function get_costemedio() {
         $coste = 0;
@@ -535,26 +538,28 @@ class Articulo
 
         if ($stock > 0) {
             return $coste / $stock;
-        } else
-            return $coste;
+        } else {
+                    return $coste;
+        }
     }
 
     /**
      * Devuelve la url relativa de la imagen del artículo.
-     * @return boolean
+     * @return string|false
      */
     public function imagen_url() {
         if (file_exists(FS_MYDOCS . 'images/articulos/' . $this->image_ref() . '-1.png')) {
             return 'images/articulos/' . $this->image_ref() . '-1.png';
         } else if (file_exists(FS_MYDOCS . 'images/articulos/' . $this->image_ref() . '-1.jpg')) {
             return 'images/articulos/' . $this->image_ref() . '-1.jpg';
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     /**
      * Asigna una imagen a un artículo.
-     * @param type $img
+     * @param boolean $img
      * @param type $png
      */
     public function set_imagen($img, $png = TRUE) {
@@ -607,7 +612,7 @@ class Articulo
         $ref = trim($ref);
         if (is_null($ref) OR strlen($ref) < 1 OR strlen($ref) > 18) {
             $this->new_error_msg("¡Referencia de artículo no válida! Debe tener entre 1 y 18 caracteres.");
-        } else if ($ref != $this->referencia AND ! is_null($this->referencia)) {
+        } else if ($ref != $this->referencia AND !is_null($this->referencia)) {
             $sql = "UPDATE " . $this->table_name . " SET referencia = " . $this->var2str($ref)
                     . " WHERE referencia = " . $this->var2str($this->referencia) . ";";
             if (self::$dataBase->exec($sql)) {
@@ -647,8 +652,9 @@ class Articulo
                 if ($imp0) {
                     $this->iva = floatval($imp0->iva);
                     self::$impuestos[] = $imp0;
-                } else
-                    $this->iva = 0;
+                } else {
+                                    $this->iva = 0;
+                }
             }
         }
     }
@@ -657,7 +663,7 @@ class Articulo
      * Modifica el stock del artículo en un almacén concreto.
      * Ya se encarga de ejecutar save() si es necesario.
      * @param type $codalmacen
-     * @param type $cantidad
+     * @param integer $cantidad
      * @return boolean
      */
     public function set_stock($codalmacen, $cantidad = 1) {
@@ -701,8 +707,9 @@ class Articulo
                         $this->new_error_msg("¡Error al actualizar el stock del artículo!");
                     }
                 }
-            } else
-                $this->new_error_msg("Error al guardar el stock");
+            } else {
+                            $this->new_error_msg("Error al guardar el stock");
+            }
         }
 
         return $result;
@@ -712,7 +719,7 @@ class Articulo
      * Suma la cantidad especificada al stock del artículo en el almacén especificado.
      * Ya se encarga de ejecutar save() si es necesario.
      * @param type $codalmacen
-     * @param type $cantidad
+     * @param integer $cantidad
      * @param type $recalcula_coste
      * @param type $codcombinacion
      * @return boolean
@@ -840,8 +847,9 @@ class Articulo
         } else if (isset($this->equivalencia) AND strlen($this->equivalencia) > 25) {
             $this->new_error_msg("Código de equivalencia del artículos no válido: " . $this->equivalencia .
                     ". Debe tener entre 1 y 25 caracteres.");
-        } else
-            $status = TRUE;
+        } else {
+                    $status = TRUE;
+        }
 
         return $status;
     }
@@ -923,10 +931,12 @@ class Articulo
             if (self::$dataBase->exec($sql)) {
                 $this->exists = TRUE;
                 return TRUE;
-            } else
-                return FALSE;
-        } else
-            return FALSE;
+            } else {
+                            return FALSE;
+            }
+        } else {
+                    return FALSE;
+        }
     }
 
     /**
@@ -943,8 +953,9 @@ class Articulo
 
             $this->exists = FALSE;
             return TRUE;
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     /**
@@ -966,7 +977,7 @@ class Articulo
                 if ($value['tag'] == $tag) {
                     $encontrado = TRUE;
                     if (time() + 5400 > $value['expires'] + 300) {
-                        self::$search_tags[$i]['count'] ++;
+                        self::$search_tags[$i]['count']++;
                         self::$search_tags[$i]['expires'] = time() + (self::$search_tags[$i]['count'] * 5400);
                         $actualizar = TRUE;
                     }
@@ -1016,7 +1027,7 @@ class Articulo
     /**
      * Devuelve un array con los artículos encontrados en base a la búsqueda.
      * @param type $query
-     * @param type $offset
+     * @param integer $offset
      * @param type $codfamilia
      * @param type $con_stock
      * @param type $codfabricante
@@ -1027,7 +1038,7 @@ class Articulo
         $artilist = array();
         $query = $this->no_html(mb_strtolower($query, 'UTF8'));
 
-        if ($query != '' AND $offset == 0 AND $codfamilia == '' AND $codfabricante == '' AND ! $con_stock AND ! $bloqueados) {
+        if ($query != '' AND $offset == 0 AND $codfamilia == '' AND $codfabricante == '' AND !$con_stock AND !$bloqueados) {
             /// intentamos obtener los datos de memcache
             if ($this->new_search_tag($query)) {
                 $artilist = $this->cache->get_array('articulos_search_' . $query);
@@ -1120,7 +1131,7 @@ class Articulo
     /**
      * Devuelve un array con los artículos que tengan $cod como código de barras.
      * @param type $cod
-     * @param type $offset
+     * @param integer $offset
      * @param type $limit
      * @return \articulo
      */
@@ -1163,7 +1174,7 @@ class Articulo
 
     /**
      * Devuelve el listado de artículos públicos, desde $offset hasta $offset+$limit
-     * @param type $offset
+     * @param integer $offset
      * @param type $limit
      * @return \articulo
      */
@@ -1185,7 +1196,7 @@ class Articulo
     /**
      * Devuelve los artículos de una familia.
      * @param type $cod
-     * @param type $offset
+     * @param integer $offset
      * @param type $limit
      * @return \articulo
      */
@@ -1207,7 +1218,7 @@ class Articulo
     /**
      * Devuelve los artículos de un fabricante.
      * @param type $cod
-     * @param type $offset
+     * @param integer $offset
      * @param type $limit
      * @return \articulo
      */

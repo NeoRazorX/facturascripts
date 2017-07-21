@@ -124,7 +124,7 @@ class LineaFacturaProveedor
     private static $albaranes;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'lineasfacturasprov', 'idlinea');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -259,8 +259,9 @@ class LineaFacturaProveedor
     public function albaran_url() {
         if (is_null($this->idalbaran)) {
             return 'index.php?page=compras_albaranes';
-        } else
-            return 'index.php?page=compras_albaran&id=' . $this->idalbaran;
+        } else {
+                    return 'index.php?page=compras_albaran&id=' . $this->idalbaran;
+        }
     }
 
     public function albaran_numero() {
@@ -273,8 +274,9 @@ class LineaFacturaProveedor
     public function articulo_url() {
         if (is_null($this->referencia) OR $this->referencia == '') {
             return "index.php?page=ventas_articulos";
-        } else
-            return "index.php?page=ventas_articulo&ref=" . urlencode($this->referencia);
+        } else {
+                    return "index.php?page=ventas_articulo&ref=" . urlencode($this->referencia);
+        }
     }
 
     /**
@@ -294,8 +296,9 @@ class LineaFacturaProveedor
     public function exists() {
         if (is_null($this->idlinea)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idlinea = " . $this->var2str($this->idlinea) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idlinea = " . $this->var2str($this->idlinea) . ";");
+        }
     }
 
     public function test() {
@@ -311,8 +314,9 @@ class LineaFacturaProveedor
             $this->new_error_msg("Error en el valor de pvpsindto de la línea " . $this->referencia
                     . " de la factura. Valor correcto: " . $totalsindto);
             return FALSE;
-        } else
-            return TRUE;
+        } else {
+                    return TRUE;
+        }
     }
 
     public function save() {
@@ -359,11 +363,13 @@ class LineaFacturaProveedor
                 if (self::$dataBase->exec($sql)) {
                     $this->idlinea = self::$dataBase->lastval();
                     return TRUE;
-                } else
-                    return FALSE;
+                } else {
+                                    return FALSE;
+                }
             }
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function delete() {

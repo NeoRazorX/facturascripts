@@ -193,7 +193,7 @@ class FacturaProveedor
     public $numdocs;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'facturasprov', ''); // No sé cual es la clave principal
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -250,8 +250,9 @@ class FacturaProveedor
             return '-';
         } else if (strlen($this->observaciones) < 60) {
             return $this->observaciones;
-        } else
-            return substr($this->observaciones, 0, 50) . '...';
+        } else {
+                    return substr($this->observaciones, 0, 50) . '...';
+        }
     }
 
     /**
@@ -318,36 +319,41 @@ class FacturaProveedor
     public function url() {
         if (is_null($this->idfactura)) {
             return 'index.php?page=compras_facturas';
-        } else
-            return 'index.php?page=compras_factura&id=' . $this->idfactura;
+        } else {
+                    return 'index.php?page=compras_factura&id=' . $this->idfactura;
+        }
     }
 
     public function asiento_url() {
         if (is_null($this->idasiento)) {
             return 'index.php?page=contabilidad_asientos';
-        } else
-            return 'index.php?page=contabilidad_asiento&id=' . $this->idasiento;
+        } else {
+                    return 'index.php?page=contabilidad_asiento&id=' . $this->idasiento;
+        }
     }
 
     public function asiento_pago_url() {
         if (is_null($this->idasientop)) {
             return 'index.php?page=contabilidad_asientos';
-        } else
-            return 'index.php?page=contabilidad_asiento&id=' . $this->idasientop;
+        } else {
+                    return 'index.php?page=contabilidad_asiento&id=' . $this->idasientop;
+        }
     }
 
     public function agente_url() {
         if (is_null($this->codagente)) {
             return "index.php?page=admin_agentes";
-        } else
-            return "index.php?page=admin_agente&cod=" . $this->codagente;
+        } else {
+                    return "index.php?page=admin_agente&cod=" . $this->codagente;
+        }
     }
 
     public function proveedor_url() {
         if (is_null($this->codproveedor)) {
             return "index.php?page=compras_proveedores";
-        } else
-            return "index.php?page=compras_proveedor&cod=" . $this->codproveedor;
+        } else {
+                    return "index.php?page=compras_proveedor&cod=" . $this->codproveedor;
+        }
     }
 
     /**
@@ -442,8 +448,9 @@ class FacturaProveedor
                             } else if ($diferencia < 0) {
                                 $lineasi[$i]->neto -= .01;
                                 $diferencia++;
-                            } else
-                                break;
+                            } else {
+                                                            break;
+                            }
                         }
                     }
 
@@ -470,8 +477,9 @@ class FacturaProveedor
                             } else if ($diferencia < 0) {
                                 $lineasi[$i]->totaliva -= .01;
                                 $diferencia++;
-                            } else
-                                break;
+                            } else {
+                                                            break;
+                            }
                         }
                     }
 
@@ -521,23 +529,26 @@ class FacturaProveedor
         $fact = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idfactura = " . $this->var2str($id) . ";");
         if ($fact) {
             return new \factura_proveedor($fact[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function get_by_codigo($cod) {
         $fact = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codigo = " . $this->var2str($cod) . ";");
         if ($fact) {
             return new \factura_proveedor($fact[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function exists() {
         if (is_null($this->idfactura)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idfactura = " . $this->var2str($this->idfactura) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idfactura = " . $this->var2str($this->idfactura) . ";");
+        }
     }
 
     /**
@@ -684,7 +695,7 @@ class FacturaProveedor
                 if ($asiento->tipodocumento != 'Factura de proveedor' OR $asiento->documento != $this->codigo) {
                     $this->new_error_msg("Esta factura apunta a un <a href='" . $this->asiento_url() . "'>asiento incorrecto</a>.");
                     $status = FALSE;
-                } else if ($this->coddivisa == $this->defaultItems->coddivisa() AND ( abs($asiento->importe) - abs($this->total + $this->totalirpf) >= .02)) {
+                } else if ($this->coddivisa == $this->defaultItems->coddivisa() AND (abs($asiento->importe) - abs($this->total + $this->totalirpf) >= .02)) {
                     $this->new_error_msg("El importe del asiento es distinto al de la factura.");
                     $status = FALSE;
                 } else {
@@ -808,11 +819,13 @@ class FacturaProveedor
                 if (self::$dataBase->exec($sql)) {
                     $this->idfactura = self::$dataBase->lastval();
                     return TRUE;
-                } else
-                    return FALSE;
+                } else {
+                                    return FALSE;
+                }
             }
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     /**
@@ -869,13 +882,14 @@ class FacturaProveedor
 
             $this->new_message(ucfirst(FS_FACTURA) . " de compra " . $this->codigo . " eliminada correctamente.");
             return TRUE;
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     /**
      * Devuelve un array con las últimas facturas
-     * @param type $offset
+     * @param integer $offset
      * @param type $limit
      * @param type $order
      * @return \factura_proveedor
@@ -896,7 +910,7 @@ class FacturaProveedor
 
     /**
      * Devuelve un array con las facturas sin pagar.
-     * @param type $offset
+     * @param integer $offset
      * @param type $limit
      * @param type $order
      * @return \factura_proveedor
@@ -918,7 +932,7 @@ class FacturaProveedor
     /**
      * Devuelve un array con las facturas del agente/empleado
      * @param type $codagente
-     * @param type $offset
+     * @param integer $offset
      * @return \factura_proveedor
      */
     public function all_from_agente($codagente, $offset = 0) {
@@ -940,7 +954,7 @@ class FacturaProveedor
     /**
      * Devuelve un array con las facturas del proveedor
      * @param type $codproveedor
-     * @param type $offset
+     * @param integer $offset
      * @return \factura_proveedor
      */
     public function all_from_proveedor($codproveedor, $offset = 0) {
@@ -1011,7 +1025,7 @@ class FacturaProveedor
     /**
      * Devuelve un array con las facturas coincidentes con $query
      * @param type $query
-     * @param type $offset
+     * @param integer $offset
      * @return \factura_proveedor
      */
     public function search($query, $offset = 0) {

@@ -84,7 +84,7 @@ class caja
     private static $agentes;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'cajas', 'id');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -123,8 +123,9 @@ class caja
     public function show_fecha_fin() {
         if (is_null($this->fecha_fin)) {
             return '-';
-        } else
-            return $this->fecha_fin;
+        } else {
+                    return $this->fecha_fin;
+        }
     }
 
     public function diferencia() {
@@ -134,8 +135,9 @@ class caja
     public function exists() {
         if (is_null($this->id)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($this->id) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($this->id) . ";");
+        }
     }
 
     public function get($id) {
@@ -143,10 +145,12 @@ class caja
             $caja = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($id) . ";");
             if ($caja) {
                 return new \caja($caja[0]);
-            } else
-                return FALSE;
-        } else
-            return FALSE;
+            } else {
+                            return FALSE;
+            }
+        } else {
+                    return FALSE;
+        }
     }
 
     public function save() {
@@ -176,8 +180,9 @@ class caja
             if (self::$dataBase->exec($sql)) {
                 $this->id = self::$dataBase->lastval();
                 return TRUE;
-            } else
-                return FALSE;
+            } else {
+                            return FALSE;
+            }
         }
     }
 

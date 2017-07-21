@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of facturacion_base
  * Copyright (C) 2015         Pablo Peralta
@@ -14,23 +13,26 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
+use FacturaScripts\Core\Base\ContactInformation;
 
 /**
  * Agencia de transporte de mercancías.
- * 
+ *
  * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class AgenciaTransporte
 {
-	use Model;
+
+    use Model;
+    use ContactInformation;
 
     /**
      * Clave primaria. Varchar(8).
@@ -45,53 +47,30 @@ class AgenciaTransporte
     public $nombre;
 
     /**
-     * Teléfono de la agencia.
-     * @var string
-     */
-    public $telefono;
-
-    /**
-     * Página web de la empresa de transporte
-     * @var string
-     */
-    public $web;
-
-    /**
      * TRUE => activo.
      * @var boolean
      */
     public $activo;
 
-    public function __construct(array $data = []) 
-	{
-        $this->init(__CLASS__, 'agenciastrans', 'codtrans');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-			$this->clear();
-        }
-    }
-	
-    /**
-     * Limpia los registros del registro en curso
-     */
-    public function clear()
+    public function __construct(array $data = [])
     {
-        $this->codtrans = NULL;
-        $this->nombre = NULL;
-        $this->telefono = NULL;
-        $this->web = NULL;
-        $this->activo = TRUE;
+        $this->init(__CLASS__, 'agenciastrans', 'codtrans');
+        if (empty($data)) {
+            $this->clear();
+        } else {
+            $this->loadFromData($data);
+        }
     }
 
     /**
      * Devuelve el comando SQL que crea los datos iniciales tras la instalación
      * @return string
      */
-    public function install() {
-        return 'INSERT INTO ' . $this->tableName() . ' (codtrans, nombre, web, activo) VALUES '.
-            "('ASM', 'ASM', 'http://es.asmred.com/', 1),".
-            "('TIPSA', 'TIPSA', 'http://www.tip-sa.com/', 1),".
+    public function install()
+    {
+        return 'INSERT INTO ' . $this->tableName() . ' (codtrans, nombre, web, activo) VALUES ' .
+            "('ASM', 'ASM', 'http://es.asmred.com/', 1)," .
+            "('TIPSA', 'TIPSA', 'http://www.tip-sa.com/', 1)," .
             "('SEUR', 'SEUR', 'http://www.seur.com', 1);";
     }
 
@@ -99,21 +78,13 @@ class AgenciaTransporte
      * Devuelve la url donde ver/modificar estos datos
      * @return string
      */
-    public function url() {
-        return "index.php?page=admin_transportes&cod=" . $this->codtrans;
-    }
+    public function url()
+    {
+        $result = 'index.php?page=AgenciaTransporte';
+        if ($this->codtrans != NULL) {
+            $result .= '_card&cod=' . $this->codtrans;
+        }
 
-    /**
-     * Devuelve la agencia de transporte con codtrans = $cod
-     * @param string $cod
-     * @return \FacturaScripts\model\agencia_transporte|boolean
-     */
-    public function get($cod) {
-        $data = self::$dataBase->select("SELECT * FROM " . $this->tableName() . " WHERE codtrans = " . $this->var2str($cod) . ";");
-        if ($data) {
-            return new \agencia_transporte($data[0]);
-        } else
-            return FALSE;
+        return $result;
     }
-
 }

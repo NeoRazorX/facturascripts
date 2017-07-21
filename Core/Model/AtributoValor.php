@@ -45,7 +45,7 @@ class AtributoValor
     public $valor;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'atributos_valores', 'id');
         if (!empty($data)) {
             $this->loadFromData($data);

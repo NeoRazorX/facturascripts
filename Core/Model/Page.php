@@ -109,7 +109,7 @@ class Page
      */
     public function isDefault()
     {
-        return ( $this->name === $this->defaultItems->defaultPage() );
+        return ($this->name === $this->defaultItems->defaultPage());
     }
 
     /**
@@ -118,6 +118,6 @@ class Page
      */
     public function showing()
     {
-        return ( $this->name === $this->defaultItems->showingPage() );
+        return ($this->name === $this->defaultItems->showingPage());
     }
 }
