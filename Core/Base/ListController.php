@@ -226,6 +226,10 @@ class ListController extends Controller
      */
     private function addFilter($type, $key, $options)
     {
+        if (empty($options['field'])) {
+            $options['field'] = $key;
+        }
+        
         $this->filters[$key] = ['type' => $type, 'value' => $this->getParamValue($key), 'options' => $options];
     }
 
@@ -234,15 +238,11 @@ class ListController extends Controller
      * Añade un filtro de tipo selección en tabla
      * @param string $key      (Filter identifier)
      * @param string $table    (Table name)
-     * @param string $field    (Field of the table with the data to show)
      * @param string $where    (Where condition for table)
+     * @param string $field    (Field of the table with the data to show)
      */
-    protected function addFilterSelect($key, $table, $field = '', $where = '')
+    protected function addFilterSelect($key, $table, $where = '', $field = '')
     {
-        if (empty($field)) {
-            $field = $key;
-        }
-
         $options = ['field' => $field, 'table' => $table, 'where' => $where];
         $this->addFilter('select', $key, $options);
     }
@@ -256,14 +256,16 @@ class ListController extends Controller
      */
     protected function addFilterCheckbox($key, $label, $field = '', $inverse = FALSE)
     {
-        if (empty($field)) {
-            $field = $key;
-        }
-
         $options = ['label' => $label, 'field' => $field, 'inverse' => $inverse];
         $this->addFilter('checkbox', $key, $options);
     }
 
+    protected function addFilterDatePicker($key, $label, $field = '')
+    {
+      $options = ['label' => $label, 'field' => $field];
+      $this->addFilter('datepicker', $key, $options);
+    }
+    
     /**
      * Ejecuta la lógica pública del controlador.
      */

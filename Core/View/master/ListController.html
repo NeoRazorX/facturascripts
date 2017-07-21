@@ -124,6 +124,13 @@
                             </div>
                         </div>
                         {% endif %}
+                        
+                        {% if filter['type'] == 'datepicker' %}
+                        <div class="col-sm-2">
+                            <input type="text" name="{{ key1 }}" value="{{ filter['value'] }}" class="form-control datepicker"
+                                   placeholder="{{ filter['options']['label'] }}" autocomplete="off" onchange="this.form.submit()"/>                            
+                        </div>
+                        {% endif %}                        
                         {% endfor %}
 
                         <!-- Order by selector -->
