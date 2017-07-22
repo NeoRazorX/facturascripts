@@ -176,7 +176,7 @@ class AlbaranProveedor
     public $numdocs;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'albaranesprov', 'idalbaran');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -230,36 +230,41 @@ class AlbaranProveedor
             return '-';
         } else if (strlen($this->observaciones) < 60) {
             return $this->observaciones;
-        } else
-            return substr($this->observaciones, 0, 50) . '...';
+        } else {
+                    return substr($this->observaciones, 0, 50) . '...';
+        }
     }
 
     public function url() {
         if (is_null($this->idalbaran)) {
             return 'index.php?page=compras_albaranes';
-        } else
-            return 'index.php?page=compras_albaran&id=' . $this->idalbaran;
+        } else {
+                    return 'index.php?page=compras_albaran&id=' . $this->idalbaran;
+        }
     }
 
     public function factura_url() {
         if (is_null($this->idfactura)) {
             return '#';
-        } else
-            return 'index.php?page=compras_factura&id=' . $this->idfactura;
+        } else {
+                    return 'index.php?page=compras_factura&id=' . $this->idfactura;
+        }
     }
 
     public function agente_url() {
         if (is_null($this->codagente)) {
             return "index.php?page=admin_agentes";
-        } else
-            return "index.php?page=admin_agente&cod=" . $this->codagente;
+        } else {
+                    return "index.php?page=admin_agente&cod=" . $this->codagente;
+        }
     }
 
     public function proveedor_url() {
         if (is_null($this->codproveedor)) {
             return "index.php?page=compras_proveedores";
-        } else
-            return "index.php?page=compras_proveedor&cod=" . $this->codproveedor;
+        } else {
+                    return "index.php?page=compras_proveedor&cod=" . $this->codproveedor;
+        }
     }
 
     public function get_lineas() {
@@ -276,15 +281,17 @@ class AlbaranProveedor
         $albaran = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idalbaran = " . $this->var2str($id) . ";");
         if ($albaran) {
             return new \albaran_proveedor($albaran[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function exists() {
         if (is_null($this->idalbaran)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idalbaran = " . $this->var2str($this->idalbaran) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idalbaran = " . $this->var2str($this->idalbaran) . ";");
+        }
     }
 
     /**
@@ -501,11 +508,13 @@ class AlbaranProveedor
                 if (self::$dataBase->exec($sql)) {
                     $this->idalbaran = self::$dataBase->lastval();
                     return TRUE;
-                } else
-                    return FALSE;
+                } else {
+                                    return FALSE;
+                }
             }
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     /**
@@ -528,13 +537,14 @@ class AlbaranProveedor
 
             $this->new_message(ucfirst(FS_ALBARAN) . " de compra " . $this->codigo . " eliminado correctamente.");
             return TRUE;
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     /**
      * Devuelve un array con los últimos albaranes
-     * @param type $offset
+     * @param integer $offset
      * @param type $order
      * @return \albaran_proveedor
      */
@@ -554,7 +564,7 @@ class AlbaranProveedor
 
     /**
      * Devuelve un array con los albaranes pendientes
-     * @param type $offset
+     * @param integer $offset
      * @param type $order
      * @return \albaran_proveedor
      */
@@ -575,7 +585,7 @@ class AlbaranProveedor
     /**
      * Devuelve un array con los albaranes del proveedor
      * @param type $codproveedor
-     * @param type $offset
+     * @param integer $offset
      * @return \albaran_proveedor
      */
     public function all_from_proveedor($codproveedor, $offset = 0) {
@@ -596,7 +606,7 @@ class AlbaranProveedor
     /**
      * Devuelve un array con los albaranes del agente/empleado
      * @param type $codagente
-     * @param type $offset
+     * @param integer $offset
      * @return \albaran_proveedor
      */
     public function all_from_agente($codagente, $offset = 0) {
@@ -659,7 +669,7 @@ class AlbaranProveedor
     /**
      * Devuelve un array con los albaranes que coinciden con $query
      * @param type $query
-     * @param type $offset
+     * @param integer $offset
      * @return \albaran_proveedor
      */
     public function search($query, $offset = 0) {

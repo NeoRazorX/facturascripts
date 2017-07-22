@@ -46,7 +46,7 @@ class Familia
     public $nivel;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'familias', 'codfamilia');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -70,8 +70,9 @@ class Familia
     public function url() {
         if (is_null($this->codfamilia)) {
             return "index.php?page=ventas_familias";
-        } else
-            return "index.php?page=ventas_familia&cod=" . urlencode($this->codfamilia);
+        } else {
+                    return "index.php?page=ventas_familia&cod=" . urlencode($this->codfamilia);
+        }
     }
 
     public function descripcion($len = 12) {
@@ -84,7 +85,7 @@ class Familia
 
     /**
      * @deprecated since version 50
-     * @return type
+     * @return boolean
      */
     public function is_default() {
         return FALSE;
@@ -94,8 +95,9 @@ class Familia
         $f = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codfamilia = " . $this->var2str($cod) . ";");
         if ($f) {
             return new \familia($f[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function get_articulos($offset = 0, $limit = FS_ITEM_LIMIT) {
@@ -106,8 +108,9 @@ class Familia
     public function exists() {
         if (is_null($this->codfamilia)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codfamilia = " . $this->var2str($this->codfamilia) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codfamilia = " . $this->var2str($this->codfamilia) . ";");
+        }
     }
 
     /**
@@ -124,8 +127,9 @@ class Familia
             $this->new_error_msg("Código de familia no válido. Deben ser entre 1 y 8 caracteres.");
         } else if (strlen($this->descripcion) < 1 OR strlen($this->descripcion) > 100) {
             $this->new_error_msg("Descripción de familia no válida.");
-        } else
-            $status = TRUE;
+        } else {
+                    $status = TRUE;
+        }
 
         return $status;
     }
@@ -150,13 +154,14 @@ class Familia
             }
 
             return self::$dataBase->exec($sql);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     /**
      * Elimina la familia de la base de datos
-     * @return type
+     * @return boolean
      */
     public function delete() {
         $this->clean_cache();
@@ -205,7 +210,7 @@ class Familia
      * Completa los datos de la lista de familias con el nivel
      * @param type $familias
      * @param type $madre
-     * @param type $nivel
+     * @param string $nivel
      * @return type
      */
     private function aux_all(&$familias, $madre, $nivel) {

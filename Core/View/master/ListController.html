@@ -1,0 +1,245 @@
+{% extends "Master/MenuTemplate.html" %}
+
+{% block javascript %}
+{{ parent() }}
+<script type="text/javascript">
+    $(document).ready(function() {      
+        $("#b_new_record").click(function(event) {
+            event.preventDefault();
+        });
+
+        document.f_custom_search.query.focus();        
+   });
+</script>
+{% endblock %}
+
+
+{% block body %}
+<!-- Page Header -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-7 col-xs-6">
+            <div class="btn-group hidden-xs">
+                <a class="btn btn-sm btn-default" href="{{ fsc.url() }}" title="Recargar la página">
+                    <span class="glyphicon glyphicon-refresh"></span>
+                </a>
+                {% if fsc.getPageData()['isDefault'] %}
+                <a class="btn btn-sm btn-default active" href="{{ fsc.url() }}&amp;default_page=FALSE" title="Marcada como página de inicio (pulsa de nuevo para desmarcar)">
+                    <i class="fa fa-bookmark" aria-hidden="true"></i>
+                </a>
+                {% else %}
+                <a class="btn btn-sm btn-default" href="{{ fsc.url() }}&amp;default_page=TRUE" title="marcar como página de inicio">
+                    <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                </a>
+                {% endif %}
+            </div>
+            <div class="btn-group">
+                <a href="#" id="b_new_record" class="btn btn-sm btn-success">
+                    <span class="glyphicon glyphicon-plus"></span>
+                    <span class="hidden-xs">&nbsp;Nuevo</span>
+                </a>
+
+                <a href="#" id="b_options" class="btn btn-sm btn-default">
+                    <span class="glyphicon glyphicon-wrench" aria-hidden="true" title="Opciones de configuración"></span>
+                    <span class="hidden-xs">&nbsp; Opciones</span>
+                </a>
+                
+                <a id="b_print" class="btn btn-sm btn-default" onclick="window.print();">
+                    <span class="glyphicon glyphicon-print" aria-hidden="true" title="Imprimir lista de registros"></span>
+                    <span class="hidden-xs">&nbsp; Imprimir</span>
+                </a>
+                {#    TODO: Aplicar extensiones
+                {% for value in fsc.extensions %}
+                {% if value.type == 'button' %}
+                <a href="index.php?page={{ value.from }}{{ value.params }}" class="btn btn-sm btn-default">{{ value.text }}</a>
+                {% endif %}
+                {% endfor %}
+                #}
+            </div>
+        </div>
+        <div class="col-sm-5 col-xs-6 text-right">
+            <h2 style="margin-top: 0px;">
+                <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ fsc.title }}
+            </h2>
+        </div>
+    </div>
+</div>
+
+<!-- Main Data -->
+<div id="tab_options" role="tabpanel">
+    <!-- Tabs declaration -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+            <a href="#search" aria-controls="search" role="tab" data-toggle="tab">
+                <span class="glyphicon glyphicon-search"></span>
+                <span class="hidden-xs">&nbsp; Buscar</span>
+                <span class="badge">{{ fsc.count }}</span>
+            </a>
+        </li>
+        {#    TODO: Aplicar extensiones
+        {% for value in fsc.extensions %}
+        {% if value.type == 'tab' %}
+        <li role="presentation">
+            <a href="#ext_{{ value.name }}" aria-controls="ext_{{ value.name }}" role="tab" data-toggle="tab">{{ value.text }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+        #}
+    </ul>
+
+    <!-- Main Tab -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="search">
+            <!-- Filters Row -->
+            <form name="f_custom_search" action="{{ fsc.url() }}" method="post" class="form">
+                <div class="container-fluid" style="margin-top: 15px; margin-bottom: 10px;">
+                    <div class="row">
+                        <!-- Main filter -->
+                        <div class="col-sm-2">
+                            <div class="input-group">
+                                <input class="form-control" type="text" name="query" value="{{ fsc.query }}" autocomplete="off" placeholder="Buscar">
+                                <span class="input-group-btn hidden-sm">
+                                    <button class="btn btn-primary" type="submit">
+                                        <span class="glyphicon glyphicon-search"></span>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Aditionals filters -->
+                        {% for key1, filter in fsc.filters %}
+                        {% if filter['type'] == 'select' %}
+                        <div class="col-sm-2">
+                            <select name="{{ key1 }}" class="form-control" onchange="this.form.submit()">
+                                <option value="">Cualquier {{ key1 }}</option>
+                                <option value="">------</option>
+                                {% for key2, value in fsc.optionlist(filter['options']['field'], filter['options']['table'], filter['options']['where']) %}
+                                {% if key2 == value['value'] %}
+                                <option value="{{ key2 }}" selected="">{{ value }}</option>
+                                {% else %}
+                                <option value="{{ key2 }}">{{ value }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% endif %}
+
+                        {% if filter['type'] == 'checkbox' %}
+                        <div class="col-sm-1">
+                            <div class="checkbox-inline">
+                                <label>
+                                    {% if filter['value'] %}
+                                    <input type="checkbox" name="{{ key1 }}" value="TRUE" checked="" onchange="this.form.submit()"/>
+                                    {% else %}
+                                    <input type="checkbox" name="{{ key1 }}" value="TRUE" onchange="this.form.submit()"/>
+                                    {% endif %}
+                                    {{ filter['options']['label'] }}
+                                </label>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if filter['type'] == 'datepicker' %}
+                        <div class="col-sm-2">
+                            <input type="text" name="{{ key1 }}" value="{{ filter['value'] }}" class="form-control datepicker"
+                                   placeholder="{{ filter['options']['label'] }}" autocomplete="off" onchange="this.form.submit()"/>                            
+                        </div>
+                        {% endif %}                        
+                        {% endfor %}
+
+                        <!-- Order by selector -->
+                        <div class="col-sm-2 pull-right">
+                            <div class="btn-group pull-right">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuOrder" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    <span class="glyphicon {{ fsc.orderby[fsc.selectedOrderBy]['icon'] }}" aria-hidden="true"></span>
+                                    &nbsp;
+                                    {{ fsc.orderby[fsc.selectedOrderBy]['label'] }}
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuOrder">
+                                    {% for key, orderby in fsc.orderby %}
+                                    <li>
+                                        <a href="{{ fsc.url() }}&order={{ key }}">
+                                            <span class="glyphicon {{ orderby['icon'] }}" aria-hidden="true"></span>&nbsp; {{ orderby['label'] }} &nbsp;
+                                            {% if fsc.selectedOrderBy == key %}
+                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                                            {% endif %}
+                                        </a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Data Row -->
+            <div class="table-responsive">
+                <!-- Data Table -->
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            {% for field in fsc.fields %}
+                            {% if field['display'] != 'none' %}
+                            <th class="text-{{ field['display'] }}">{{ field['label'] }}</th>
+                            {% endif %}
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    {% for data in fsc.cursor %}
+                    <tr>
+                        {% for field in fsc.fields %}
+                        {% if field['display'] != 'none' %}
+                        <td class="text-{{ field['display'] }}">{{ attribute(data, field['field']) }}</td>
+                        {% endif %}
+                        {% endfor %}
+                    </tr>
+                    {% else %}
+                    <tr class="warning">
+                        <td colspan="6">No hay registros con esas condiciones. Pulse el botón <b>Nuevo</b> para dar de alta.</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+            <!-- Footer Navigation -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12 text-center">
+                        <ul class="pagination">
+                            {% for item in fsc.pagination() %}
+                            {% if item['active'] %}
+                            <li class="active">
+                                {% else %}
+                            <li>
+                                {% endif %}
+                                <a href="{{ item['url'] }}">
+                                    {% if item['icon'] %}
+                                    <span class="glyphicon {{ item['icon'] }}" aria-hidden="true" />
+                                    {% else %}
+                                    <span>{{ item['page'] }}</span>
+                                    {% endif %}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aditionals Tabs -->
+        {#  TODO: Aplicar extensiones
+        {% for extension in fsc.extensions %}
+        {% if extension.type == 'tab' %}
+        <div role="tabpanel" class="tab-pane" id="ext_{{ extension.name }}">
+            <iframe src="index.php?page={{ extension.from }}{{ extension.params }}"
+                    width="100%" height="2000" frameborder="0"></iframe>
+        </div>
+        {% endif %}
+        {% endfor %}
+        #}
+    </div>
+</div>
+{% endblock %}

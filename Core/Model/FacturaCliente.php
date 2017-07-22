@@ -239,7 +239,7 @@ class FacturaCliente
     public $numdocs;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'facturascli', 'idfactura');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -317,15 +317,16 @@ class FacturaCliente
             return '-';
         } else if (strlen($this->observaciones) < 60) {
             return $this->observaciones;
-        } else
-            return substr($this->observaciones, 0, 50) . '...';
+        } else {
+                    return substr($this->observaciones, 0, 50) . '...';
+        }
     }
 
     public function vencida() {
         if ($this->pagada) {
             return FALSE;
         } else {
-            return ( strtotime($this->vencimiento) < strtotime(Date('d-m-Y')) );
+            return (strtotime($this->vencimiento) < strtotime(Date('d-m-Y')));
         }
     }
 
@@ -411,36 +412,41 @@ class FacturaCliente
     public function url() {
         if (is_null($this->idfactura)) {
             return 'index.php?page=ventas_facturas';
-        } else
-            return 'index.php?page=ventas_factura&id=' . $this->idfactura;
+        } else {
+                    return 'index.php?page=ventas_factura&id=' . $this->idfactura;
+        }
     }
 
     public function asiento_url() {
         if (is_null($this->idasiento)) {
             return 'index.php?page=contabilidad_asientos';
-        } else
-            return 'index.php?page=contabilidad_asiento&id=' . $this->idasiento;
+        } else {
+                    return 'index.php?page=contabilidad_asiento&id=' . $this->idasiento;
+        }
     }
 
     public function asiento_pago_url() {
         if (is_null($this->idasientop)) {
             return 'index.php?page=contabilidad_asientos';
-        } else
-            return 'index.php?page=contabilidad_asiento&id=' . $this->idasientop;
+        } else {
+                    return 'index.php?page=contabilidad_asiento&id=' . $this->idasientop;
+        }
     }
 
     public function agente_url() {
         if (is_null($this->codagente)) {
             return "index.php?page=admin_agentes";
-        } else
-            return "index.php?page=admin_agente&cod=" . $this->codagente;
+        } else {
+                    return "index.php?page=admin_agente&cod=" . $this->codagente;
+        }
     }
 
     public function cliente_url() {
         if (is_null($this->codcliente)) {
             return "index.php?page=ventas_clientes";
-        } else
-            return "index.php?page=ventas_cliente&cod=" . $this->codcliente;
+        } else {
+                    return "index.php?page=ventas_cliente&cod=" . $this->codcliente;
+        }
     }
 
     public function get_asiento() {
@@ -545,8 +551,9 @@ class FacturaCliente
                             } else if ($diferencia < 0) {
                                 $lineasi[$i]->neto -= .01;
                                 $diferencia++;
-                            } else
-                                break;
+                            } else {
+                                                            break;
+                            }
                         }
                     }
 
@@ -573,8 +580,9 @@ class FacturaCliente
                             } else if ($diferencia < 0) {
                                 $lineasi[$i]->totaliva -= .01;
                                 $diferencia++;
-                            } else
-                                break;
+                            } else {
+                                                            break;
+                            }
                         }
                     }
 
@@ -614,18 +622,23 @@ class FacturaCliente
         $fact = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idfactura = " . $this->var2str($id) . ";");
         if ($fact) {
             return new \factura_cliente($fact[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function get_by_codigo($cod) {
         $fact = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codigo = " . $this->var2str($cod) . ";");
         if ($fact) {
             return new \factura_cliente($fact[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
+    /**
+     * @param integer $num
+     */
     public function get_by_num_serie($num, $serie, $eje) {
         $sql = "SELECT * FROM " . $this->table_name . " WHERE numero = " . $this->var2str($num)
                 . " AND codserie = " . $this->var2str($serie)
@@ -634,15 +647,17 @@ class FacturaCliente
         $fact = self::$dataBase->select($sql);
         if ($fact) {
             return new \factura_cliente($fact[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function exists() {
         if (is_null($this->idfactura)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idfactura = " . $this->var2str($this->idfactura) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idfactura = " . $this->var2str($this->idfactura) . ";");
+        }
     }
 
     /**
@@ -832,7 +847,7 @@ class FacturaCliente
                 if ($asiento->tipodocumento != 'Factura de cliente' OR $asiento->documento != $this->codigo) {
                     $this->new_error_msg("Esta factura apunta a un <a href='" . $this->asiento_url() . "'>asiento incorrecto</a>.");
                     $status = FALSE;
-                } else if ($this->coddivisa == $this->defaultItems->coddivisa() AND ( abs($asiento->importe) - abs($this->total + $this->totalirpf) >= .02)) {
+                } else if ($this->coddivisa == $this->defaultItems->coddivisa() AND (abs($asiento->importe) - abs($this->total + $this->totalirpf) >= .02)) {
                     $this->new_error_msg("El importe del asiento es distinto al de la factura.");
                     $status = FALSE;
                 } else {
@@ -1003,11 +1018,13 @@ class FacturaCliente
                 if (self::$dataBase->exec($sql)) {
                     $this->idfactura = self::$dataBase->lastval();
                     return TRUE;
-                } else
-                    return FALSE;
+                } else {
+                                    return FALSE;
+                }
             }
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function delete() {
@@ -1062,8 +1079,9 @@ class FacturaCliente
 
             $this->new_message(ucfirst(FS_FACTURA) . " de venta " . $this->codigo . " eliminada correctamente.");
             return TRUE;
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     private function clean_cache() {
@@ -1073,7 +1091,7 @@ class FacturaCliente
     /**
      * Devuelve un array con las últimas facturas (con el orden por defecto).
      * Si alteras el orden puedes obtener lo que desees.
-     * @param type $offset
+     * @param integer $offset
      * @param type $limit
      * @param type $order
      * @return \factura_cliente
@@ -1093,7 +1111,7 @@ class FacturaCliente
 
     /**
      * Devuelve un array con las facturas sin pagar
-     * @param type $offset
+     * @param integer $offset
      * @param type $limit
      * @param type $order
      * @return \factura_cliente
@@ -1115,7 +1133,7 @@ class FacturaCliente
     /**
      * Devuelve un array con las facturas del agente/empleado
      * @param type $codagente
-     * @param type $offset
+     * @param integer $offset
      * @return \factura_cliente
      */
     public function all_from_agente($codagente, $offset = 0) {
@@ -1137,7 +1155,7 @@ class FacturaCliente
     /**
      * Devuelve un array con las facturas del cliente $codcliente
      * @param type $codcliente
-     * @param type $offset
+     * @param integer $offset
      * @return \factura_cliente
      */
     public function all_from_cliente($codcliente, $offset = 0) {
@@ -1209,7 +1227,7 @@ class FacturaCliente
     /**
      * Devuelve un array con las facturas que coinciden con $query
      * @param type $query
-     * @param type $offset
+     * @param integer $offset
      * @return \factura_cliente
      */
     public function search($query, $offset = 0) {

@@ -121,7 +121,7 @@ class LineaAlbaranProveedor
     private static $albaranes;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'lineasalbaranesprov', 'idlinea');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -190,8 +190,9 @@ class LineaAlbaranProveedor
     public function total_iva2() {
         if ($this->cantidad == 0) {
             return 0;
-        } else
-            return $this->pvptotal * (100 + $this->iva) / 100 / $this->cantidad;
+        } else {
+                    return $this->pvptotal * (100 + $this->iva) / 100 / $this->cantidad;
+        }
     }
 
     public function descripcion() {
@@ -232,8 +233,9 @@ class LineaAlbaranProveedor
     public function articulo_url() {
         if (is_null($this->referencia) OR $this->referencia == '') {
             return "index.php?page=ventas_articulos";
-        } else
-            return "index.php?page=ventas_articulo&ref=" . urlencode($this->referencia);
+        } else {
+                    return "index.php?page=ventas_articulo&ref=" . urlencode($this->referencia);
+        }
     }
 
     /**
@@ -253,8 +255,9 @@ class LineaAlbaranProveedor
     public function exists() {
         if (is_null($this->idlinea)) {
             return false;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idlinea = " . $this->var2str($this->idlinea) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idlinea = " . $this->var2str($this->idlinea) . ";");
+        }
     }
 
     public function test() {
@@ -270,8 +273,9 @@ class LineaAlbaranProveedor
             $this->new_error_msg("Error en el valor de pvpsindto de la línea " . $this->referencia
                     . " del " . FS_ALBARAN . ". Valor correcto: " . $totalsindto);
             return FALSE;
-        } else
-            return TRUE;
+        } else {
+                    return TRUE;
+        }
     }
 
     public function save() {
@@ -319,11 +323,13 @@ class LineaAlbaranProveedor
                 if (self::$dataBase->exec($sql)) {
                     $this->idlinea = self::$dataBase->lastval();
                     return TRUE;
-                } else
-                    return FALSE;
+                } else {
+                                    return FALSE;
+                }
             }
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function delete() {
@@ -416,8 +422,9 @@ class LineaAlbaranProveedor
         $lineas = self::$dataBase->select("SELECT COUNT(DISTINCT referencia) as total FROM " . $this->table_name . ";");
         if ($lineas) {
             return intval($lineas[0]['total']);
-        } else
-            return 0;
+        } else {
+                    return 0;
+        }
     }
 
 }

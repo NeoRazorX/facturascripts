@@ -39,12 +39,12 @@ class Atributo
     public $nombre;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'atributos', 'codatributo');
         if (!empty($data)) {
             $this->loadFromData($data);
         } else {
-			$this->clear();
+            $this->clear();
         }
     }
     

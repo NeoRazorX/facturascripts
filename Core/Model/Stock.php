@@ -49,7 +49,7 @@ class Stock
     public $ubicacion;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'stocks', 'idstock');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -98,7 +98,7 @@ class Stock
     public function set_cantidad($c = 0) {
         $this->cantidad = floatval($c);
 
-        if ($this->cantidad < 0 AND ! FS_STOCK_NEGATIVO) {
+        if ($this->cantidad < 0 AND !FS_STOCK_NEGATIVO) {
             $this->cantidad = 0;
         }
 
@@ -109,7 +109,7 @@ class Stock
         /// convertimos a flot por si acaso nos ha llegado un string
         $this->cantidad += floatval($c);
 
-        if ($this->cantidad < 0 AND ! FS_STOCK_NEGATIVO) {
+        if ($this->cantidad < 0 AND !FS_STOCK_NEGATIVO) {
             $this->cantidad = 0;
         }
 
@@ -120,8 +120,9 @@ class Stock
         $data = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idstock = " . $this->var2str($id) . ";");
         if ($data) {
             return new \stock($data[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function get_by_referencia($ref, $codalmacen = FALSE) {
@@ -134,15 +135,17 @@ class Stock
         $data = self::$dataBase->select($sql);
         if ($data) {
             return new \stock($data[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function exists() {
         if (is_null($this->idstock)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idstock = " . $this->var2str($this->idstock) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idstock = " . $this->var2str($this->idstock) . ";");
+        }
     }
 
     public function save() {
@@ -183,8 +186,9 @@ class Stock
             if (self::$dataBase->exec($sql)) {
                 $this->idstock = self::$dataBase->lastval();
                 return TRUE;
-            } else
-                return FALSE;
+            } else {
+                            return FALSE;
+            }
         }
     }
 

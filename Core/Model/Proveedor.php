@@ -128,7 +128,7 @@ class Proveedor
     private static $regimenes_iva;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'proveedores', 'codproveedor');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -213,20 +213,22 @@ class Proveedor
             return '-';
         } else if (strlen($this->observaciones) < 60) {
             return $this->observaciones;
-        } else
-            return substr($this->observaciones, 0, 50) . '...';
+        } else {
+                    return substr($this->observaciones, 0, 50) . '...';
+        }
     }
 
     public function url() {
         if (is_null($this->codproveedor)) {
             return "index.php?page=compras_proveedores";
-        } else
-            return "index.php?page=compras_proveedor&cod=" . $this->codproveedor;
+        } else {
+                    return "index.php?page=compras_proveedor&cod=" . $this->codproveedor;
+        }
     }
 
     /**
      * @deprecated since version 50
-     * @return type
+     * @return boolean
      */
     public function is_default() {
         return FALSE;
@@ -241,8 +243,9 @@ class Proveedor
         $prov = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codproveedor = " . $this->var2str($cod) . ";");
         if ($prov) {
             return new \proveedor($prov[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     /**
@@ -266,8 +269,9 @@ class Proveedor
         $data = self::$dataBase->select($sql);
         if ($data) {
             return new \proveedor($data[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     /**
@@ -282,8 +286,9 @@ class Proveedor
         $data = self::$dataBase->select($sql);
         if ($data) {
             return new \proveedor($data[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     /**
@@ -294,8 +299,9 @@ class Proveedor
         $cod = self::$dataBase->select("SELECT MAX(" . self::$dataBase->sql_to_int('codproveedor') . ") as cod FROM " . $this->table_name . ";");
         if ($cod) {
             return sprintf('%06s', (1 + intval($cod[0]['cod'])));
-        } else
-            return '000001';
+        } else {
+                    return '000001';
+        }
     }
 
     /**
@@ -309,8 +315,9 @@ class Proveedor
             $s2 = $s->get_subcuenta();
             if ($s2) {
                 $sublist[] = $s2;
-            } else
-                $s->delete();
+            } else {
+                            $s->delete();
+            }
         }
 
         return $sublist;
@@ -345,8 +352,9 @@ class Proveedor
                 if (!$cpro) {
                     $cpro = $cuenta->get_cuentaesp('PROVEE', $codeje);
                 }
-            } else
-                $cpro = $cuenta->get_cuentaesp('PROVEE', $codeje);
+            } else {
+                            $cpro = $cuenta->get_cuentaesp('PROVEE', $codeje);
+            }
 
             if ($cpro) {
                 $continuar = FALSE;
@@ -367,10 +375,10 @@ class Proveedor
                     $scpro->idsubcuenta = $subc0->idsubcuenta;
                     if ($scpro->save()) {
                         $subcuenta = $subc0;
-                    } else
-                        $this->new_error_msg('Imposible asociar la subcuenta para el proveedor ' . $this->codproveedor);
-                }
-                else {
+                    } else {
+                                            $this->new_error_msg('Imposible asociar la subcuenta para el proveedor ' . $this->codproveedor);
+                    }
+                } else {
                     $this->new_error_msg('Imposible crear la subcuenta para el proveedor ' . $this->codproveedor);
                 }
             } else {
@@ -402,8 +410,9 @@ class Proveedor
     public function exists() {
         if (is_null($this->codproveedor)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codproveedor = " . $this->var2str($this->codproveedor) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codproveedor = " . $this->var2str($this->codproveedor) . ";");
+        }
     }
 
     public function test() {
@@ -426,8 +435,9 @@ class Proveedor
             $this->new_error_msg("Nombre de proveedor no válido.");
         } else if (strlen($this->razonsocial) < 1 OR strlen($this->razonsocial) > 100) {
             $this->new_error_msg("Razón social del proveedor no válida.");
-        } else
-            $status = TRUE;
+        } else {
+                    $status = TRUE;
+        }
 
         return $status;
     }
@@ -484,8 +494,9 @@ class Proveedor
             }
 
             return self::$dataBase->exec($sql);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function delete() {

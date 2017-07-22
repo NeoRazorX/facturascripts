@@ -28,7 +28,7 @@ class LineaTransferenciaStock
     private $hora;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'lineastransstock', 'idlinea');
         if (!empty($data)) {
             $this->loadFromData($data);

@@ -54,7 +54,7 @@ class Impuesto
     public $recargo;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'impuestos', 'codimpuesto');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -82,16 +82,17 @@ class Impuesto
     public function url() {
         if (is_null($this->codimpuesto)) {
             return 'index.php?page=contabilidad_impuestos';
-        } else
-            return 'index.php?page=contabilidad_impuestos#' . $this->codimpuesto;
+        } else {
+                    return 'index.php?page=contabilidad_impuestos#' . $this->codimpuesto;
+        }
     }
 
     /**
      * Devuelve TRUE si el impuesto es el predeterminado del usuario
-     * @return type
+     * @return boolean
      */
     public function is_default() {
-        return ( $this->codimpuesto == $this->defaultItems->codimpuesto() );
+        return ($this->codimpuesto == $this->defaultItems->codimpuesto());
     }
 
     /**
@@ -103,16 +104,18 @@ class Impuesto
         $impuesto = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codimpuesto = " . $this->var2str($cod) . ";");
         if ($impuesto) {
             return new \impuesto($impuesto[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function get_by_iva($iva) {
         $impuesto = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE iva = " . $this->var2str(floatval($iva)) . ";");
         if ($impuesto) {
             return new \impuesto($impuesto[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function exists() {
@@ -134,8 +137,9 @@ class Impuesto
             $this->new_error_msg("Código del impuesto no válido. Debe tener entre 1 y 10 caracteres.");
         } else if (strlen($this->descripcion) < 1 OR strlen($this->descripcion) > 50) {
             $this->new_error_msg("Descripción del impuesto no válida.");
-        } else
-            $status = TRUE;
+        } else {
+                    $status = TRUE;
+        }
 
         return $status;
     }
@@ -162,8 +166,9 @@ class Impuesto
             }
 
             return self::$dataBase->exec($sql);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function delete() {

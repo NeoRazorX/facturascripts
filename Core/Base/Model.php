@@ -31,7 +31,7 @@ trait Model
      * Proporciona acceso directo a la base de datos.
      * @var DataBase
      */
-    protected $dataBase;
+    protected $database;
 
     /**
      * Permite conectar e interactuar con el sistema de caché.
@@ -97,7 +97,7 @@ trait Model
     private function init($modelName = '', $tableName = '', $primaryColumn = '')
     {
         $this->cache = new Cache();
-        $this->dataBase = new DataBase();
+        $this->database = new DataBase();
         $this->defaultItems = new DefaultItems();
         $this->i18n = new Translator();
         $this->miniLog = new MiniLog();
@@ -120,7 +120,7 @@ trait Model
         }
 
         if (self::$fields === null) {
-            self::$fields = ($this->dataBase->tableExists($tableName) ? $this->dataBase->getColumns($tableName) : []);
+            self::$fields = ($this->database->tableExists($tableName) ? $this->database->getColumns($tableName) : []);
         }
     }
 
@@ -222,7 +222,7 @@ trait Model
     {
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($cod) . ';';
-        return $this->dataBase->select($sql);
+        return $this->database->select($sql);
     }
 
     /**
@@ -277,7 +277,7 @@ trait Model
             }
         }
 
-        $data = $this->dataBase->selectLimit($sql, 1);
+        $data = $this->database->selectLimit($sql, 1);
         if ($data) {
             $class = $this->modelName();
             return new $class($data[0]);
@@ -298,7 +298,7 @@ trait Model
 
         $sql = 'SELECT 1 FROM ' . $this->tableName()
             . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
-        return (bool) $this->dataBase->select($sql);
+        return (bool) $this->database->select($sql);
     }
 
     /**
@@ -347,7 +347,7 @@ trait Model
         }
 
         $sql .= ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
-        return $this->dataBase->exec($sql);
+        return $this->database->exec($sql);
     }
 
     /**
@@ -367,9 +367,9 @@ trait Model
 
         $sql = 'INSERT INTO ' . $this->tableName()
             . ' (' . implode(',', $insertFields) . ') VALUES (' . implode(',', $insertValues) . ');';
-        if ($this->dataBase->exec($sql)) {
+        if ($this->database->exec($sql)) {
             if ($this->{$this->primaryColumn()} === null) {
-                $this->{$this->primaryColumn()} = $this->dataBase->lastval();
+                $this->{$this->primaryColumn()} = $this->database->lastval();
             }
 
             return true;
@@ -386,39 +386,53 @@ trait Model
     {
         $sql = 'DELETE FROM ' . $this->tableName()
             . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
-        return $this->dataBase->exec($sql);
+        return $this->database->exec($sql);
     }
 
     /**
+     * Convierte un array de filtros order by en string
+     * @param array $order
+     * @return string
+     */
+    private function getOrderBy(array $order)
+    {
+        $result = '';
+        $coma = ' ORDER BY ';
+        foreach ($order as $key => $value) {
+            $result .= $coma . $key . ' ' . $value;
+            if ($coma === ' ORDER BY ') {
+                $coma = ', ';
+            }
+        }
+        return $result;
+    }
+    
+    /**
+     * Devuelve el número de registros en el modelo que cumplen la condición
+     * @param array $where filtros a aplicar a los registros del modelo. (Array de DatabaseWhere)
+     * @return int
+     */
+    public function count(array $where = [])
+    {
+        $sql = 'SELECT COUNT(1) AS total FROM ' . $this->tableName() . DataBase\DatabaseWhere::getSQLWhere($where);
+        $data = $this->database->select($sql);
+        return $data[0]['total'];
+    }
+    
+    /**
      * Devuelve todos los modelos que se correspondan con los filtros seleccionados.
-     * @param array $fields filtros a aplicar a los campos. Por ejemplo ['codserie' => 'A']
+     * @param array $where filtros a aplicar a los registros del modelo. (Array de DatabaseWhere)
      * @param array $order campos a utilizar en la ordenación. Por ejemplo ['codigo' => 'ASC']
      * @param integer $offset
      * @param integer $limit
      * @return array
      */
-    public function all(array $fields = [], array $order = [], $offset = 0, $limit = 50)
+    public function all(array $where = [], array $order = [], $offset = 0, $limit = 50)
     {
         $modelList = [];
-        $sql = 'SELECT * FROM ' . $this->tableName();
-        $coma = ' WHERE ';
-
-        foreach ($fields as $key => $value) {
-            $sql .= $coma . $key . ' = ' . $this->var2str($value);
-            if ($coma === ' WHERE ') {
-                $coma = ' AND ';
-            }
-        }
-
-        $coma2 = ' ORDER BY ';
-        foreach ($order as $key => $value) {
-            $sql .= $coma2 . $key . ' ' . $value;
-            if ($coma2 === ' ORDER BY ') {
-                $coma2 = ', ';
-            }
-        }
-
-        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
+        $sqlWhere = DataBase\DatabaseWhere::getSQLWhere($where);
+        $sql = 'SELECT * FROM ' . $this->tableName() . $sqlWhere . $this->getOrderBy($order);
+        $data = $this->database->selectLimit($sql, $limit, $offset);
         if ($data) {
             $class = $this->modelName();
             foreach ($data as $d) {
@@ -436,7 +450,7 @@ trait Model
      */
     protected function escapeString($str)
     {
-        return $this->dataBase->escapeString($str);
+        return $this->database->escapeString($str);
     }
 
     /**
@@ -459,14 +473,14 @@ trait Model
         }
 
         if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4})$/i", $val)) {
-            return "'" . date($this->dataBase->dateStyle(), strtotime($val)) . "'"; /// es una fecha
+            return "'" . date($this->database->dateStyle(), strtotime($val)) . "'"; /// es una fecha
         }
 
         if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4}) ([\d]{1,2}):([\d]{1,2}):([\d]{1,2})$/i", $val)) {
-            return "'" . date($this->dataBase->dateStyle() . ' H:i:s', strtotime($val)) . "'"; /// es una fecha+hora
+            return "'" . date($this->database->dateStyle() . ' H:i:s', strtotime($val)) . "'"; /// es una fecha+hora
         }
 
-        return "'" . $this->dataBase->escapeString($val) . "'";
+        return "'" . $this->database->escapeString($val) . "'";
     }
 
     /**
@@ -515,8 +529,8 @@ trait Model
         $xmlCons = [];
 
         if ($this->getXmlTable($tableName, $xmlCols, $xmlCons)) {
-            if ($this->dataBase->tableExists($tableName)) {
-                if (!$this->dataBase->checkTableAux($tableName)) {
+            if ($this->database->tableExists($tableName)) {
+                if (!$this->database->checkTableAux($tableName)) {
                     $this->miniLog->critical('Error al convertir la tabla a InnoDB.');
                 }
 
@@ -524,29 +538,29 @@ trait Model
                  * Si hay que hacer cambios en las restricciones, eliminamos todas las restricciones,
                  * luego añadiremos las correctas. Lo hacemos así porque evita problemas en MySQL.
                  */
-                $dbCons = $this->dataBase->getConstraints($tableName);
-                $sql2 = $this->dataBase->compareConstraints($tableName, $xmlCons, $dbCons, true);
+                $dbCons = $this->database->getConstraints($tableName);
+                $sql2 = $this->database->compareConstraints($tableName, $xmlCons, $dbCons, true);
                 if ($sql2 !== '') {
-                    if (!$this->dataBase->exec($sql2)) {
+                    if (!$this->database->exec($sql2)) {
                         $this->miniLog->critical('Error al comprobar la tabla ' . $tableName);
                     }
 
                     /// leemos de nuevo las restricciones
-                    $dbCons = $this->dataBase->getConstraints($tableName);
+                    $dbCons = $this->database->getConstraints($tableName);
                 }
 
                 /// comparamos las columnas
-                $dbCols = $this->dataBase->getColumns($tableName);
-                $sql .= $this->dataBase->compareColumns($tableName, $xmlCols, $dbCols);
+                $dbCols = $this->database->getColumns($tableName);
+                $sql .= $this->database->compareColumns($tableName, $xmlCols, $dbCols);
 
                 /// comparamos las restricciones
-                $sql .= $this->dataBase->compareConstraints($tableName, $xmlCons, $dbCons);
+                $sql .= $this->database->compareConstraints($tableName, $xmlCons, $dbCons);
             } else {
                 /// generamos el sql para crear la tabla
-                $sql .= $this->dataBase->generateTable($tableName, $xmlCols, $xmlCons);
+                $sql .= $this->database->generateTable($tableName, $xmlCols, $xmlCons);
                 $sql .= $this->install();
             }
-            if ($sql !== '' && !$this->dataBase->exec($sql)) {
+            if ($sql !== '' && !$this->database->exec($sql)) {
                 $this->miniLog->critical('Error al comprobar la tabla ' . $tableName);
                 $done = false;
             }
@@ -616,5 +630,21 @@ trait Model
         }
 
         return $return;
+    }
+    
+    /**
+     * Devuelve el siguiente código para la primary key del modelo
+     * @return int
+     */
+    public function newCode()
+    {
+        $field = $this->database->sql2Int($this->primaryColumn());
+        $sql = 'SELECT MAX(' . $field . ') as cod FROM ' . $this->tableName() . ';';
+        $cod = $this->database->select($sql);
+        if (empty($cod)) {
+            return 1;
+        }
+
+        return 1 + (int) $cod[0]['cod'];
     }
 }

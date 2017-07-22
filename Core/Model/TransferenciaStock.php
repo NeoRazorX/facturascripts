@@ -27,12 +27,12 @@ class TransferenciaStock
     public $usuario;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'transstock', 'idtrans');
         if (!empty($data)) {
             $this->loadFromData($data);
         } else {
-			$this->clear();
+            $this->clear();
         }
     }
 	

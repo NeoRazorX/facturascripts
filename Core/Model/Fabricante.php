@@ -40,7 +40,7 @@ class Fabricante
     public $nombre;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'fabricantes', 'codfabricante');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -63,8 +63,9 @@ class Fabricante
     public function url() {
         if (is_null($this->codfabricante)) {
             return "index.php?page=ventas_fabricantes";
-        } else
-            return "index.php?page=ventas_fabricante&cod=" . urlencode($this->codfabricante);
+        } else {
+                    return "index.php?page=ventas_fabricante&cod=" . urlencode($this->codfabricante);
+        }
     }
 
     public function nombre($len = 12) {
@@ -79,8 +80,9 @@ class Fabricante
         $f = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codfabricante = " . $this->var2str($cod) . ";");
         if ($f) {
             return new \fabricante($f[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function get_articulos($offset = 0, $limit = FS_ITEM_LIMIT) {
@@ -91,8 +93,9 @@ class Fabricante
     public function exists() {
         if (is_null($this->codfabricante)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codfabricante = " . $this->var2str($this->codfabricante) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codfabricante = " . $this->var2str($this->codfabricante) . ";");
+        }
     }
 
     public function test() {
@@ -105,8 +108,9 @@ class Fabricante
             $this->new_error_msg("Código de fabricante no válido. Deben ser entre 1 y 8 caracteres.");
         } else if (strlen($this->nombre) < 1 OR strlen($this->nombre) > 100) {
             $this->new_error_msg("Descripción de fabricante no válida.");
-        } else
-            $status = TRUE;
+        } else {
+                    $status = TRUE;
+        }
 
         return $status;
     }
@@ -125,8 +129,9 @@ class Fabricante
             }
 
             return self::$dataBase->exec($sql);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function delete() {

@@ -55,12 +55,12 @@ class Subcuenta
     public $iva;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'co_subcuentas', 'idsubcuenta');
         if (!empty($data)) {
             $this->loadFromData($data);
         } else {
-			$this->clear();
+            $this->clear();
         }
     }
 	
@@ -116,7 +116,7 @@ class Subcuenta
 
     /**
      * Devuelve la descripción en base64.
-     * @return type
+     * @return string
      */
     public function get_descripcion_64() {
         return base64_encode($this->descripcion);
@@ -128,17 +128,20 @@ class Subcuenta
             $div0 = $divisa->get($this->coddivisa);
             if ($div0) {
                 return $div0->tasaconv;
-            } else
-                return 1;
-        } else
-            return 1;
+            } else {
+                            return 1;
+            }
+        } else {
+                    return 1;
+        }
     }
 
     public function url() {
         if (is_null($this->idsubcuenta)) {
             return 'index.php?page=contabilidad_cuentas';
-        } else
-            return 'index.php?page=contabilidad_subcuenta&id=' . $this->idsubcuenta;
+        } else {
+                    return 'index.php?page=contabilidad_subcuenta&id=' . $this->idsubcuenta;
+        }
     }
 
     public function get_cuenta() {
@@ -175,8 +178,9 @@ class Subcuenta
         $subc = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idsubcuenta = " . $this->var2str($id) . ";");
         if ($subc) {
             return new \subcuenta($subc[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function get_by_codigo($cod, $codejercicio, $crear = FALSE) {
@@ -210,10 +214,10 @@ class Subcuenta
                     $new_sc->recargo = $old_sc->recargo;
                     if ($new_sc->save()) {
                         return $new_sc;
-                    } else
-                        return FALSE;
-                }
-                else {
+                    } else {
+                                            return FALSE;
+                    }
+                } else {
                     $this->new_error_msg('No se ha encontrado la cuenta equivalente a ' . $old_sc->codcuenta . ' en el ejercicio ' . $codejercicio
                             . ' <a href="index.php?page=contabilidad_ejercicio&cod=' . $codejercicio . '">¿Has importado el plan contable?</a>');
                     return FALSE;
@@ -222,8 +226,9 @@ class Subcuenta
                 $this->new_error_msg('No se ha encontrado ninguna subcuenta equivalente a ' . $cod . ' para copiar.');
                 return FALSE;
             }
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     /**
@@ -241,8 +246,9 @@ class Subcuenta
         $data = self::$dataBase->select($sql);
         if ($data) {
             return new \subcuenta($data[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function tiene_saldo() {
@@ -328,11 +334,13 @@ class Subcuenta
                 if (self::$dataBase->exec($sql)) {
                     $this->idsubcuenta = self::$dataBase->lastval();
                     return TRUE;
-                } else
-                    return FALSE;
+                } else {
+                                    return FALSE;
+                }
             }
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function delete() {

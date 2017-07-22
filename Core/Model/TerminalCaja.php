@@ -93,7 +93,7 @@ class TerminalCaja
     public $sin_comandos;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'cajas_terminales', 'id');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -123,14 +123,21 @@ class TerminalCaja
     public function disponible() {
         if (self::$dataBase->select("SELECT * FROM cajas WHERE f_fin IS NULL AND fs_id = " . $this->var2str($this->id) . ";")) {
             return FALSE;
-        } else
-            return TRUE;
+        } else {
+                    return TRUE;
+        }
     }
 
+    /**
+     * @param string $linea
+     */
     public function add_linea($linea) {
         $this->tickets .= $linea;
     }
 
+    /**
+     * @param string $linea
+     */
     public function add_linea_big($linea) {
         if ($this->sin_comandos) {
             $this->tickets .= $linea;
@@ -225,15 +232,17 @@ class TerminalCaja
         $data = self::$dataBase->select("SELECT * FROM cajas_terminales WHERE id = " . $this->var2str($id) . ";");
         if ($data) {
             return new \terminal_caja($data[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function exists() {
         if (is_null($this->id)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM cajas_terminales WHERE id = " . $this->var2str($this->id) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM cajas_terminales WHERE id = " . $this->var2str($this->id) . ";");
+        }
     }
 
     public function save() {
@@ -266,8 +275,9 @@ class TerminalCaja
             if (self::$dataBase->exec($sql)) {
                 $this->id = self::$dataBase->lastval();
                 return TRUE;
-            } else
-                return FALSE;
+            } else {
+                            return FALSE;
+            }
         }
     }
 
@@ -317,8 +327,9 @@ class TerminalCaja
 
         if ($empresa->lema != '') {
             $this->add_linea($this->center_text($this->sanitize($empresa->lema)) . "\n\n");
-        } else
-            $this->add_linea("\n");
+        } else {
+                    $this->add_linea("\n");
+        }
 
         $this->add_linea(
                 $this->center_text($this->sanitize($empresa->direccion) . " - " . $this->sanitize($empresa->ciudad)) . "\n"
@@ -406,8 +417,9 @@ class TerminalCaja
 
         if ($empresa->lema != '') {
             $this->add_linea($this->center_text($this->sanitize($empresa->lema)) . "\n\n");
-        } else
-            $this->add_linea("\n");
+        } else {
+                    $this->add_linea("\n");
+        }
 
         $this->add_linea(
                 $this->center_text($this->sanitize($empresa->direccion) . " - " . $this->sanitize($empresa->ciudad)) . "\n"

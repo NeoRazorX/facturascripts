@@ -52,7 +52,7 @@ class SubcuentaCliente
     public $codejercicio;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'co_subcuentascli', 'id');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -86,23 +86,26 @@ class SubcuentaCliente
         $data = self::$dataBase->select($sql);
         if ($data) {
             return new \subcuenta_cliente($data[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function get2($id) {
         $data = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($id) . ";");
         if ($data) {
             return new \subcuenta_cliente($data[0]);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function exists() {
         if (is_null($this->id)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($this->id) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($this->id) . ";");
+        }
     }
 
     public function save() {

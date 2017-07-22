@@ -87,7 +87,7 @@ class LineaIvaFacturaCliente
     public $neto;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'lineasivafactcli', 'idlinea');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -116,8 +116,9 @@ class LineaIvaFacturaCliente
     public function exists() {
         if (is_null($this->idfactura)) {
             return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idlinea = " . $this->var2str($this->idlinea) . ";");
+        } else {
+                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idlinea = " . $this->var2str($this->idlinea) . ";");
+        }
     }
 
     public function test() {
@@ -193,8 +194,9 @@ class LineaIvaFacturaCliente
             if (self::$dataBase->exec($sql)) {
                 $this->idlinea = self::$dataBase->lastval();
                 return TRUE;
-            } else
-                return FALSE;
+            } else {
+                            return FALSE;
+            }
         }
     }
 

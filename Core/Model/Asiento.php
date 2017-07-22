@@ -54,7 +54,7 @@ class Asiento
     private $coddivisa;
 
     public function __construct(array $data = []) 
-	{
+    {
         $this->init(__CLASS__, 'co_asientos', 'idasiento');
         if (!empty($data)) {
             $this->loadFromData($data);
@@ -84,8 +84,9 @@ class Asiento
     public function url() {
         if (is_null($this->idasiento)) {
             return 'index.php?page=contabilidad_asientos';
-        } else
-            return 'index.php?page=contabilidad_asiento&id=' . $this->idasiento;
+        } else {
+                    return 'index.php?page=contabilidad_asiento&id=' . $this->idasiento;
+        }
     }
 
     public function get_factura() {
@@ -95,16 +96,18 @@ class Asiento
         } else if ($this->tipodocumento == 'Factura de proveedor') {
             $fac = new \factura_proveedor();
             return $fac->get_by_codigo($this->documento);
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function factura_url() {
         $fac = $this->get_factura();
         if ($fac) {
             return $fac->url();
-        } else
-            return '#';
+        } else {
+                    return '#';
+        }
     }
 
     public function ejercicio_url() {
@@ -112,8 +115,9 @@ class Asiento
         $eje0 = $ejercicio->get($this->codejercicio);
         if ($eje0) {
             return $eje0->url();
-        } else
-            return '#';
+        } else {
+                    return '#';
+        }
     }
 
     /**
@@ -147,10 +151,12 @@ class Asiento
             $asiento = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idasiento = " . $this->var2str($id) . ";");
             if ($asiento) {
                 return new \asiento($asiento[0]);
-            } else
-                return FALSE;
-        } else
-            return FALSE;
+            } else {
+                            return FALSE;
+            }
+        } else {
+                    return FALSE;
+        }
     }
 
     public function get_partidas() {
@@ -197,8 +203,9 @@ class Asiento
         if (strlen($this->concepto) > 255) {
             $this->new_error_msg("Concepto del asiento demasiado largo.");
             return FALSE;
-        } else
-            return TRUE;
+        } else {
+                    return TRUE;
+        }
     }
 
     public function full_test($duplicados = TRUE) {
@@ -353,8 +360,9 @@ class Asiento
 
         if ($status) {
             return $this->full_test();
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function save() {
@@ -391,11 +399,13 @@ class Asiento
                 if (self::$dataBase->exec($sql)) {
                     $this->idasiento = self::$dataBase->lastval();
                     return TRUE;
-                } else
-                    return FALSE;
+                } else {
+                                    return FALSE;
+                }
             }
-        } else
-            return FALSE;
+        } else {
+                    return FALSE;
+        }
     }
 
     public function delete() {
