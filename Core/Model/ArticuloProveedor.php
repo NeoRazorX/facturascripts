@@ -244,13 +244,12 @@ class ArticuloProveedor
      */
     public function getBy($ref, $codproveedor, $refprov = '')
     {
+        $sql = 'SELECT * FROM articulosprov WHERE referencia = ' . $this->var2str($ref)
+            . ' AND codproveedor = ' . $this->var2str($codproveedor) . ';';
         if ($refprov !== '') {
             $sql = 'SELECT * FROM articulosprov WHERE codproveedor = ' . $this->var2str($codproveedor)
                 . ' AND (refproveedor = ' . $this->var2str($refprov)
                 . ' OR referencia = ' . $this->var2str($ref) . ');';
-        } else {
-            $sql = 'SELECT * FROM articulosprov WHERE referencia = ' . $this->var2str($ref)
-                . ' AND codproveedor = ' . $this->var2str($codproveedor) . ';';
         }
 
         $data = $this->database->select($sql);

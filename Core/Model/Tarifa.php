@@ -163,12 +163,11 @@ class Tarifa
         $x = $this->x();
         $y = $this->y();
 
+        $texto = 'Precio de coste ';
         if ($this->aplicar_a === 'pvp') {
             $texto = 'Precio de venta ';
             $x = 0 - $x;
             $y = 0 - $y;
-        } else {
-            $texto = 'Precio de coste ';
         }
 
         if ($x !== 0) {
@@ -205,6 +204,7 @@ class Tarifa
             $articulo->dtopor = 0;
 
             $pvp = $articulo->pvp;
+            $articulo->pvp = $articulo->preciocoste() * (100 + $this->x()) / 100 + $this->y();
             if ($this->aplicar_a === 'pvp') {
                 if ($this->y() === 0 && $this->x() >= 0) {
                     /// si y === 0 y x >= 0, usamos x como descuento
@@ -212,8 +212,6 @@ class Tarifa
                 } else {
                     $articulo->pvp = $articulo->pvp * (100 - $this->x()) / 100 - $this->y();
                 }
-            } else {
-                $articulo->pvp = $articulo->preciocoste() * (100 + $this->x()) / 100 + $this->y();
             }
 
             $articulo->tarifa_diff = $this->diff();

@@ -78,11 +78,10 @@ class BalanceCuentaA
     {
         $extra = '';
         if ($ejercicio->idasientopyg !== null) {
+            $extra = ' AND idasiento != ' . $this->var2str($ejercicio->idasientopyg);
             if ($ejercicio->idasientocierre !== null) {
                 $extra = ' AND idasiento NOT IN (' . $this->var2str($ejercicio->idasientocierre)
                     . ', ' . $this->var2str($ejercicio->idasientopyg) . ')';
-            } else {
-                $extra = ' AND idasiento != ' . $this->var2str($ejercicio->idasientopyg);
             }
         } elseif ($ejercicio->idasientocierre !== null) {
             $extra = ' AND idasiento != ' . $this->var2str($ejercicio->idasientocierre);

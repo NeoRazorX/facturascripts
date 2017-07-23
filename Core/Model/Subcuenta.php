@@ -447,12 +447,11 @@ class Subcuenta
         $sublist = [];
 
         if ($random && $limit) {
+            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = '
+                . $this->var2str($codejercicio) . ' ORDER BY random()';
             if (strtolower(FS_DB_TYPE) === 'mysql') {
                 $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = '
                     . $this->var2str($codejercicio) . ' ORDER BY RAND()';
-            } else {
-                $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = '
-                    . $this->var2str($codejercicio) . ' ORDER BY random()';
             }
             $subcuentas = $this->database->selectLimit($sql, $limit);
         } else {

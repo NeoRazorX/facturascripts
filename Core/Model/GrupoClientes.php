@@ -93,12 +93,11 @@ class GrupoClientes
      */
     public function getNewCodigo()
     {
+        $sql = 'SELECT codgrupo FROM ' . $this->tableName() . " WHERE codgrupo REGEXP '^\d+$'"
+            . ' ORDER BY CAST(`codgrupo` AS DECIMAL) DESC';
         if (strtolower(FS_DB_TYPE) === 'postgresql') {
             $sql = 'SELECT codgrupo FROM ' . $this->tableName() . " WHERE codgrupo ~ '^\d+$'"
                 . ' ORDER BY codgrupo::INTEGER DESC';
-        } else {
-            $sql = 'SELECT codgrupo FROM ' . $this->tableName() . " WHERE codgrupo REGEXP '^\d+$'"
-                . ' ORDER BY CAST(`codgrupo` AS DECIMAL) DESC';
         }
 
         $data = $this->database->selectLimit($sql, 1);

@@ -86,14 +86,13 @@ class Atributo
      */
     public function getByNombre($nombre, $minusculas = false)
     {
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE nombre = ' . $this->var2str($nombre) . ';';
         if ($minusculas) {
             $sql = 'SELECT * FROM ' . $this->tableName()
                 . ' WHERE lower(nombre) = ' . $this->var2str(mb_strtolower($nombre, 'UTF8') . ';');
-            $data = $this->database->select($sql);
-        } else {
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE nombre = ' . $this->var2str($nombre) . ';';
-            $data = $this->database->select($sql);
         }
+
+        $data = $this->database->select($sql);
 
         if (!empty($data)) {
             return new Atributo($data[0]);

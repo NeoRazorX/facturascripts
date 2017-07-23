@@ -344,12 +344,11 @@ class Articulo
      */
     public function getNewReferencia()
     {
+        $sql = 'SELECT referencia FROM ' . $this->tableName() . " WHERE referencia REGEXP '^\d+$'"
+            . ' ORDER BY ABS(referencia) DESC';
         if (strtolower(FS_DB_TYPE) === 'postgresql') {
             $sql = 'SELECT referencia FROM ' . $this->tableName() . " WHERE referencia ~ '^\d+$'"
                 . ' ORDER BY referencia::BIGINT DESC';
-        } else {
-            $sql = 'SELECT referencia FROM ' . $this->tableName() . " WHERE referencia REGEXP '^\d+$'"
-                . ' ORDER BY ABS(referencia) DESC';
         }
 
         $ref = 1;
@@ -700,11 +699,10 @@ class Articulo
             if (!$encontrado) {
                 $imp = new Impuesto();
                 $imp0 = $imp->get($this->codimpuesto);
+                $this->iva = 0;
                 if ($imp0) {
                     $this->iva = (float)$imp0->iva;
                     self::$impuestos[] = $imp0;
-                } else {
-                    $this->iva = 0;
                 }
             }
         }

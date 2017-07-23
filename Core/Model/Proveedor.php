@@ -368,6 +368,7 @@ class Proveedor
             $continuar = true;
             $cuenta = new Cuenta();
 
+            $cpro = $cuenta->getCuentaesp('PROVEE', $codeje);
             if ($this->acreedor) {
                 $cpro = $cuenta->getCuentaesp('ACREED', $codeje);
                 if (!$cpro) {
@@ -376,8 +377,6 @@ class Proveedor
                 if (!$cpro) {
                     $cpro = $cuenta->getCuentaesp('PROVEE', $codeje);
                 }
-            } else {
-                $cpro = $cuenta->getCuentaesp('PROVEE', $codeje);
             }
 
             if ($cpro) {
