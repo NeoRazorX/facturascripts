@@ -74,7 +74,7 @@ class ArticuloPropiedad
 
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref) . ';';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $vlist[$d['name']] = $d['text'];
             }
@@ -122,7 +122,7 @@ class ArticuloPropiedad
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref)
             . ' AND name = ' . $this->var2str($name) . ';';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             return $data[0]['text'];
         }
         return false;
@@ -141,7 +141,7 @@ class ArticuloPropiedad
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE text = ' . $this->var2str($text)
             . ' AND name = ' . $this->var2str($name) . ';';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             return $data[0]['referencia'];
         }
         return false;

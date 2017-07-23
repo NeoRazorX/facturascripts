@@ -166,7 +166,7 @@ class DireccionProveedor
             . ' ORDER BY id DESC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $dirlist[] = new DireccionProveedor($d);
             }

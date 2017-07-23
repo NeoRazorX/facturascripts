@@ -136,7 +136,7 @@ class GrupoEpigrafes
             . ' ORDER BY codgrupo ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $ep) {
                 $epilist[] = new GrupoEpigrafes($ep);
             }

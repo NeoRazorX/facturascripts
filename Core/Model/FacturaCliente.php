@@ -456,7 +456,7 @@ class FacturaCliente
                 . ' AND codejercicio = ' . $this->var2str($this->codejercicio) . ';';
 
             $data = $this->database->select($sql);
-            if ($data) {
+            if (!empty($data)) {
                 if (strtotime($data[0]['fecha']) > strtotime($fecha)) {
                     $fecha_old = $fecha;
                     $fecha = date('d-m-Y', strtotime($data[0]['fecha']));
@@ -474,7 +474,7 @@ class FacturaCliente
                 . ' AND fecha = ' . $this->var2str($fecha) . ';';
 
             $data = $this->database->select($sql);
-            if ($data) {
+            if (!empty($data)) {
                 if (strtotime($data[0]['hora']) > strtotime($hora) || $cambio) {
                     $hora = date('H:i:s', strtotime($data[0]['hora']));
                     $cambio = true;
@@ -755,7 +755,7 @@ class FacturaCliente
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE idfacturarect = ' . $this->var2str($this->idfactura) . ';';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $devoluciones[] = new FacturaCliente($d);
             }
@@ -775,7 +775,7 @@ class FacturaCliente
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codigo = ' . $this->var2str($cod) . ';';
         $fact = $this->database->select($sql);
-        if ($fact) {
+        if (!empty($fact)) {
             return new FacturaCliente($fact[0]);
         }
         return false;
@@ -797,7 +797,7 @@ class FacturaCliente
             . ' AND codejercicio = ' . $this->var2str($eje) . ';';
 
         $fact = $this->database->select($sql);
-        if ($fact) {
+        if (!empty($fact)) {
             return new FacturaCliente($fact[0]);
         }
         return false;
@@ -829,7 +829,7 @@ class FacturaCliente
         $sql .= ' ORDER BY numero ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 if ((int)$d['numero'] < $num) {
                     /**
@@ -1047,7 +1047,7 @@ class FacturaCliente
                 . ' AND observaciones = ' . $this->var2str($this->observaciones)
                 . ' AND idfactura != ' . $this->var2str($this->idfactura) . ';';
             $data = $this->database->select($sql);
-            if ($data) {
+            if (!empty($data)) {
                 foreach ($data as $fac) {
                     /// comprobamos las líneas
                     $sql = 'SELECT referencia FROM lineasfacturascli WHERE
@@ -1055,7 +1055,7 @@ class FacturaCliente
                   AND referencia NOT IN (SELECT referencia FROM lineasfacturascli
                   WHERE idfactura = ' . $this->var2str($fac['idfactura']) . ');';
                     $aux = $this->database->select($sql);
-                    if (!$aux) {
+                    if (empty($aux)) {
                         $this->miniLog->alert("Esta factura es un posible duplicado de
                      <a href='index.php?page=VentasFactura&id=" . $fac['idfactura'] . "'>esta otra</a>.
                      Si no lo es, para evitar este mensaje, simplemente modifica las observaciones.");
@@ -1146,7 +1146,7 @@ class FacturaCliente
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE pagada = FALSE ORDER BY ' . $order;
 
         $data = $this->database->selectLimit($sql, $limit, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaCliente($f);
             }
@@ -1171,7 +1171,7 @@ class FacturaCliente
             ' ORDER BY fecha DESC, codigo DESC';
 
         $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaCliente($f);
             }
@@ -1196,7 +1196,7 @@ class FacturaCliente
             ' ORDER BY fecha DESC, codigo DESC';
 
         $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaCliente($f);
             }
@@ -1250,7 +1250,7 @@ class FacturaCliente
         $sql .= ' ORDER BY fecha ASC, codigo ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaCliente($f);
             }
@@ -1283,7 +1283,7 @@ class FacturaCliente
         $consulta .= ' ORDER BY fecha DESC, codigo DESC';
 
         $data = $this->database->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaCliente($f);
             }
@@ -1317,7 +1317,7 @@ class FacturaCliente
         $sql .= ' ORDER BY fecha DESC, codigo DESC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaCliente($f);
             }

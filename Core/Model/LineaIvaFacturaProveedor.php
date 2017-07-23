@@ -189,7 +189,7 @@ class LineaIvaFacturaProveedor
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE idfactura = ' . $this->var2str($id) . ' ORDER BY iva DESC;';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $l) {
                 $linealist[] = new LineaIvaFacturaProveedor($l);
             }

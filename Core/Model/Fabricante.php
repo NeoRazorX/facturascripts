@@ -137,7 +137,7 @@ class Fabricante
             /// si la lista no está en caché, leemos de la base de datos
             $sql = 'SELECT * FROM ' . $this->tableName() . ' ORDER BY nombre ASC;';
             $data = $this->database->select($sql);
-            if ($data) {
+            if (!empty($data)) {
                 foreach ($data as $d) {
                     $fablist[] = new Fabricante($d);
                 }
@@ -164,7 +164,7 @@ class Fabricante
         $sql = 'SELECT * FROM ' . $this->tableName()
             . " WHERE lower(nombre) LIKE '%" . $query . "%' ORDER BY nombre ASC;";
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $f) {
                 $fablist[] = new Fabricante($f);
             }

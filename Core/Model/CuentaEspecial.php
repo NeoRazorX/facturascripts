@@ -66,7 +66,7 @@ class CuentaEspecial
 
         $sql = 'SELECT * FROM ' . $this->tableName() . ' ORDER BY descripcion ASC;';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $c) {
                 $culist[] = new CuentaEspecial($c);
             }

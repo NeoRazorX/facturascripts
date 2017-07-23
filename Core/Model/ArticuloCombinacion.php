@@ -154,7 +154,7 @@ class ArticuloCombinacion
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codigo = ' . $this->var2str($cod) . ';';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             return new ArticuloCombinacion($data[0]);
         }
         return false;
@@ -187,7 +187,7 @@ class ArticuloCombinacion
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref)
             . ' ORDER BY codigo ASC, nombreatributo ASC;';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $lista[] = new ArticuloCombinacion($d);
             }
@@ -211,7 +211,7 @@ class ArticuloCombinacion
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codigo = ' . $this->var2str($cod)
             . ' ORDER BY nombreatributo ASC;';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $lista[] = new ArticuloCombinacion($d);
             }
@@ -235,7 +235,7 @@ class ArticuloCombinacion
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codigo2 = ' . $this->var2str($cod)
             . ' ORDER BY nombreatributo ASC;';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $lista[] = new ArticuloCombinacion($d);
             }
@@ -258,7 +258,7 @@ class ArticuloCombinacion
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref)
             . ' ORDER BY codigo ASC, nombreatributo ASC;';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 if (isset($lista[$d['codigo']])) {
                     $lista[$d['codigo']][] = new ArticuloCombinacion($d);
@@ -288,7 +288,7 @@ class ArticuloCombinacion
             . ' OR codbarras = ' . $this->var2str($query);
 
         $data = $this->database->selectLimit($sql, 200);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $artilist[] = new ArticuloCombinacion($d);
             }

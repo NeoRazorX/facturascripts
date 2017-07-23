@@ -332,7 +332,7 @@ class LineaFacturaProveedor
             . ' ORDER BY idlinea ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $l) {
                 $linlist[] = new LineaFacturaProveedor($l);
             }
@@ -357,7 +357,7 @@ class LineaFacturaProveedor
             ' ORDER BY idfactura DESC';
 
         $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $l) {
                 $linealist[] = new LineaFacturaProveedor($l);
             }
@@ -389,7 +389,7 @@ class LineaFacturaProveedor
         $sql .= ' ORDER BY idfactura DESC, idlinea ASC';
 
         $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $l) {
                 $linealist[] = new LineaFacturaProveedor($l);
             }
@@ -412,7 +412,7 @@ class LineaFacturaProveedor
             . ' WHERE idalbaran = ' . $this->var2str($id) . ';';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             $factura = new FacturaProveedor();
             foreach ($data as $l) {
                 $fac = $factura->get($l['idfactura']);

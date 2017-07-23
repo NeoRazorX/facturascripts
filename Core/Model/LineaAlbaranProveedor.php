@@ -312,7 +312,7 @@ class LineaAlbaranProveedor
             . ' ORDER BY idlinea ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $l) {
                 $linealist[] = new LineaAlbaranProveedor($l);
             }
@@ -337,7 +337,7 @@ class LineaAlbaranProveedor
             . ' ORDER BY idalbaran DESC';
 
         $data = $this->database->selectLimit($sql, $limit, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $l) {
                 $linealist[] = new LineaAlbaranProveedor($l);
             }
@@ -369,7 +369,7 @@ class LineaAlbaranProveedor
         $sql .= ' ORDER BY idalbaran DESC, idlinea ASC';
 
         $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $l) {
                 $linealist[] = new LineaAlbaranProveedor($l);
             }
@@ -403,7 +403,7 @@ class LineaAlbaranProveedor
         $sql .= ' ORDER BY idalbaran DESC, idlinea ASC';
 
         $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $l) {
                 $linealist[] = new LineaAlbaranProveedor($l);
             }

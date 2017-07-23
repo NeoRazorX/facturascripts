@@ -246,7 +246,7 @@ class Subcuenta
             . ' AND codejercicio = ' . $this->var2str($codejercicio) . ';';
 
         $subc = $this->database->select($sql);
-        if ($subc) {
+        if (!empty($subc)) {
             return new Subcuenta($subc[0]);
         }
         if ($crear) {
@@ -254,7 +254,7 @@ class Subcuenta
             $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codsubcuenta = ' . $this->var2str($cod)
                 . ' ORDER BY idsubcuenta DESC;';
             $subc = $this->database->select($sql);
-            if ($subc) {
+            if (!empty($subc)) {
                 $old_sc = new Subcuenta($subc[0]);
 
                 /// buscamos la cuenta equivalente es ESTE ejercicio
@@ -304,7 +304,7 @@ class Subcuenta
             . ' AND codejercicio = ' . $this->var2str($codeje) . ') ORDER BY codsubcuenta ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             return new Subcuenta($data[0]);
         }
         return false;
@@ -396,7 +396,7 @@ class Subcuenta
             . ' ORDER BY codsubcuenta ASC;';
 
         $subcuentas = $this->database->select($sql);
-        if ($subcuentas) {
+        if (!empty($subcuentas)) {
             foreach ($subcuentas as $s) {
                 $sublist[] = new Subcuenta($s);
             }
@@ -422,7 +422,7 @@ class Subcuenta
             . ' AND codejercicio = ' . $this->var2str($codeje) . ') ORDER BY codsubcuenta ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $cuentas[] = new Subcuenta($d);
             }
@@ -461,7 +461,7 @@ class Subcuenta
             $subcuentas = $this->database->select($sql);
         }
 
-        if ($subcuentas) {
+        if (!empty($subcuentas)) {
             foreach ($subcuentas as $s) {
                 $sublist[] = new Subcuenta($s);
             }
@@ -487,7 +487,7 @@ class Subcuenta
             . ' ORDER BY codejercicio DESC, codcuenta ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $s) {
                 $sublist[] = new Subcuenta($s);
             }
@@ -516,7 +516,7 @@ class Subcuenta
                 . " OR lower(descripcion) LIKE '%" . $query . "%') ORDER BY codcuenta ASC;";
 
             $data = $this->database->select($sql);
-            if ($data) {
+            if (!empty($data)) {
                 foreach ($data as $s) {
                     $sublist[] = new Subcuenta($s);
                 }

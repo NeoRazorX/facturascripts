@@ -140,7 +140,7 @@ class LineaTransferenciaStock
 
         $sql = 'SELECT * FROM lineastransstock WHERE idtrans = ' . $this->var2str($id) . ' ORDER BY referencia ASC;';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $list[] = new LineaTransferenciaStock($d);
             }
@@ -182,7 +182,7 @@ class LineaTransferenciaStock
         $sql .= ' ORDER BY t.fecha ASC, t.hora ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $list[] = new LineaTransferenciaStock($d);
             }

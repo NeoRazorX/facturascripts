@@ -201,7 +201,7 @@ class Proveedor
             /// Si hay usa lista personalizada en fs_vars, la usamos
             $fsvar = new FsVar();
             $data = $fsvar->simpleGet('proveedor::regimenes_iva');
-            if ($data) {
+            if (!empty($data)) {
                 self::$regimenes_iva = [];
                 foreach (explode(',', $data) as $d) {
                     self::$regimenes_iva[] = trim($d);
@@ -214,7 +214,7 @@ class Proveedor
             /// además de los que haya en la base de datos
             $sql = 'SELECT DISTINCT regimeniva FROM proveedores ORDER BY regimeniva ASC;';
             $data = $this->database->select($sql);
-            if ($data) {
+            if (!empty($data)) {
                 foreach ($data as $d) {
                     if (!in_array($d['regimeniva'], self::$regimenes_iva, false)) {
                         self::$regimenes_iva[] = $d['regimeniva'];
@@ -285,7 +285,7 @@ class Proveedor
         }
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             return new Proveedor($data[0]);
         }
         return false;
@@ -304,7 +304,7 @@ class Proveedor
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE lower(email) = ' . $this->var2str($email) . ';';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             return new Proveedor($data[0]);
         }
         return false;
@@ -318,7 +318,7 @@ class Proveedor
     {
         $sql = 'SELECT MAX(' . $this->database->sql2Int('codproveedor') . ') as cod FROM ' . $this->tableName() . ';';
         $cod = $this->database->select($sql);
-        if ($cod) {
+        if (!empty($cod)) {
             return sprintf('%06s', 1 + (int)$cod[0]['cod']);
         }
         return '000001';
@@ -481,7 +481,7 @@ class Proveedor
         }
 
         $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $p) {
                 $provelist[] = new Proveedor($p);
             }
@@ -502,7 +502,7 @@ class Proveedor
             /// si no la encontramos en la caché, leemos de la base de datos
             $sql = 'SELECT * FROM ' . $this->tableName() . ' ORDER BY lower(nombre) ASC;';
             $data = $this->database->select($sql);
-            if ($data) {
+            if (!empty($data)) {
                 foreach ($data as $d) {
                     $provelist[] = new Proveedor($d);
                 }
@@ -542,7 +542,7 @@ class Proveedor
         $consulta .= ' ORDER BY lower(nombre) ASC';
 
         $data = $this->database->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $prolist[] = new Proveedor($d);
             }

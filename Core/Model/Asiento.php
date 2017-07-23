@@ -224,7 +224,7 @@ class Asiento
             . ' WHERE codejercicio = ' . $this->var2str($this->codejercicio) . ';';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             $this->numero = 1 + (int)$data[0]['num'];
         }
 
@@ -314,7 +314,7 @@ class Asiento
             AND concepto = ' . $this->var2str($this->concepto) . ' AND importe = ' . $this->var2str($this->importe) . '
             AND idasiento != ' . $this->var2str($this->idasiento) . ';';
             $asientos = $this->database->select($sql);
-            if ($asientos) {
+            if (!empty($asientos)) {
                 foreach ($asientos as $as) {
                     /// comprobamos las líneas
                     if (strtolower(FS_DB_TYPE) === 'mysql') {
@@ -331,7 +331,7 @@ class Asiento
                         $aux = $this->database->select($sql);
                     }
 
-                    if (!$aux) {
+                    if (empty($aux)) {
                         $this->miniLog->alert("Este asiento es un posible duplicado de
                      <a href='index.php?page=ContabilidadAsiento&id=" . $as['idasiento'] . "'>este otro</a>.
                      Si no lo es, para evitar este mensaje, simplemente modifica el concepto.");
@@ -519,7 +519,7 @@ class Asiento
         $consulta .= ' ORDER BY fecha DESC';
 
         $data = $this->database->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $a) {
                 $alist[] = new Asiento($a);
             }
@@ -546,7 +546,7 @@ class Asiento
              ORDER BY p.idasiento DESC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $a) {
                 $alist[] = $this->get($a['idasiento']);
             }
@@ -573,7 +573,7 @@ class Asiento
                 . ' ORDER BY codejercicio ASC, fecha ASC, idasiento ASC';
 
             $asientos = $this->database->selectLimit($consulta, 1000, $posicion);
-            while ($asientos && $continuar) {
+            while (!empty($asientos) && $continuar) {
                 foreach ($asientos as $col) {
                     if ($col['numero'] !== $numero) {
                         $sql .= 'UPDATE ' . $this->tableName() . ' SET numero = ' . $this->var2str($numero)

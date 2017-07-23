@@ -147,7 +147,7 @@ class RegularizacionIva
             . ' AND fechafin >= ' . $this->var2str($fecha) . ';';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             return new RegularizacionIva($data[0]);
         }
         return false;
@@ -189,7 +189,7 @@ class RegularizacionIva
             . ' ORDER BY fechafin DESC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $r) {
                 $reglist[] = new RegularizacionIva($r);
             }

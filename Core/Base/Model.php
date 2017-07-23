@@ -281,7 +281,7 @@ trait Model
         }
 
         $data = $this->database->selectLimit($sql, 1);
-        if ($data) {
+        if (!empty($data)) {
             $class = $this->modelName();
             return new $class($data[0]);
         }
@@ -439,7 +439,7 @@ trait Model
         $sqlWhere = DataBase\DatabaseWhere::getSQLWhere($where);
         $sql = 'SELECT * FROM ' . $this->tableName() . $sqlWhere . $this->getOrderBy($order);
         $data = $this->database->selectLimit($sql, $limit, $offset);
-        if ($data) {
+        if (!empty($data)) {
             $class = $this->modelName();
             foreach ($data as $d) {
                 $modelList[] = new $class($d);

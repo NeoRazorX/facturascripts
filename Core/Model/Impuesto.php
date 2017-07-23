@@ -163,7 +163,7 @@ class Impuesto
             /// si no encontramos la lista en caché, leemos de la base de datos
             $sql = 'SELECT * FROM ' . $this->tableName() . ' ORDER BY iva DESC;';
             $data = $this->database->select($sql);
-            if ($data) {
+            if (!empty($data)) {
                 foreach ($data as $i) {
                     $impuestolist[] = new Impuesto($i);
                 }

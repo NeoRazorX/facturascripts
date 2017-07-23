@@ -152,7 +152,7 @@ class ArticuloProveedor
         }
         $sql = 'SELECT razonsocial FROM proveedores WHERE codproveedor = ' . $this->var2str($this->codproveedor) . ';';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             self::$nombres[$this->codproveedor] = $data[0]['razonsocial'];
             return $data[0]['razonsocial'];
         }
@@ -254,7 +254,7 @@ class ArticuloProveedor
         }
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             return new ArticuloProveedor($data[0]);
         }
         return false;
@@ -291,7 +291,7 @@ class ArticuloProveedor
         $sql = 'SELECT * FROM articulosprov WHERE referencia = ' . $this->var2str($ref) . ' ORDER BY precio ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $alist[] = new ArticuloProveedor($d);
             }
@@ -313,7 +313,7 @@ class ArticuloProveedor
             . ' ORDER BY precio ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             return new ArticuloProveedor($data[0]);
         }
         return false;
@@ -332,7 +332,7 @@ class ArticuloProveedor
         $sql = "SELECT * FROM articulosprov WHERE referencia !='' ORDER BY precio ASC;";
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $alist[] = new ArticuloProveedor($d);
             }

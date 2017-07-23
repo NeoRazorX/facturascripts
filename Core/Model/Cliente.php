@@ -259,7 +259,7 @@ class Cliente
             /// Si hay usa lista personalizada en fs_vars, la usamos
             $fsvar = new FsVar();
             $data = $fsvar->simpleGet('cliente::regimenes_iva');
-            if ($data) {
+            if (!empty($data)) {
                 self::$regimenes_iva = [];
                 foreach (explode(',', $data) as $d) {
                     self::$regimenes_iva[] = trim($d);
@@ -272,7 +272,7 @@ class Cliente
             /// además de añadir los que haya en la base de datos
             $sql = 'SELECT DISTINCT regimeniva FROM clientes ORDER BY regimeniva ASC;';
             $data = $this->database->select($sql);
-            if ($data) {
+            if (!empty($data)) {
                 foreach ($data as $d) {
                     if (!in_array($d['regimeniva'], self::$regimenes_iva, false)) {
                         self::$regimenes_iva[] = $d['regimeniva'];
@@ -306,7 +306,7 @@ class Cliente
         }
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             return new Cliente($data[0]);
         }
         return false;
@@ -325,7 +325,7 @@ class Cliente
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE lower(email) = ' . $this->var2str($email) . ';';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             return new Cliente($data[0]);
         }
         return false;
@@ -507,7 +507,7 @@ class Cliente
             /// si no la encontramos en la caché, leemos de la base de datos
             $sql = 'SELECT * FROM ' . $this->tableName() . ' ORDER BY lower(nombre) ASC;';
             $data = $this->database->select($sql);
-            if ($data) {
+            if (!empty($data)) {
                 foreach ($data as $d) {
                     $clientlist[] = new Cliente($d);
                 }
@@ -548,7 +548,7 @@ class Cliente
         $consulta .= ' ORDER BY lower(nombre) ASC';
 
         $data = $this->database->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $clilist[] = new Cliente($d);
             }
@@ -573,7 +573,7 @@ class Cliente
             . "AND lower(cifnif) LIKE '" . $query . "%' ORDER BY lower(nombre) ASC";
 
         $data = $this->database->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $clilist[] = new Cliente($d);
             }

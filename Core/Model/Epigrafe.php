@@ -130,7 +130,7 @@ class Epigrafe
             . ' ORDER BY codepigrafe ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $ep) {
                 $epilist[] = new Epigrafe($ep);
             }
@@ -163,7 +163,7 @@ class Epigrafe
             . ' AND codejercicio = ' . $this->var2str($codejercicio) . ';';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             return new Epigrafe($data[0]);
         }
         return false;
@@ -198,7 +198,7 @@ class Epigrafe
             . ' ORDER BY codepigrafe ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $ep) {
                 $epilist[] = new Epigrafe($ep);
             }
@@ -221,7 +221,7 @@ class Epigrafe
             . ' ORDER BY codepigrafe ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $ep) {
                 $epilist[] = new Epigrafe($ep);
             }
@@ -244,7 +244,7 @@ class Epigrafe
             . ' AND idpadre IS NULL AND idgrupo IS NULL ORDER BY codepigrafe ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $ep) {
                 $epilist[] = new Epigrafe($ep);
             }

@@ -142,7 +142,7 @@ class Cuenta
             ' AND codejercicio = ' . $this->var2str($codejercicio) . ';';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             return new Cuenta($data[0]);
         }
         return false;
@@ -162,7 +162,7 @@ class Cuenta
             ' AND codejercicio = ' . $this->var2str($codejercicio) . ' ORDER BY codcuenta ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             return new Cuenta($data[0]);
         }
         return false;
@@ -196,7 +196,7 @@ class Cuenta
             . ' ORDER BY codcuenta ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $c) {
                 $cuenlist[] = new Cuenta($c);
             }
@@ -219,7 +219,7 @@ class Cuenta
             ' ORDER BY codcuenta ASC';
 
         $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $c) {
                 $cuenlist[] = new Cuenta($c);
             }
@@ -241,7 +241,7 @@ class Cuenta
             . ' ORDER BY codcuenta ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $c) {
                 $cuenlist[] = new Cuenta($c);
             }
@@ -264,7 +264,7 @@ class Cuenta
             . ' AND codejercicio = ' . $this->var2str($codejercicio) . ' ORDER BY codcuenta ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $cuenlist[] = new Cuenta($d);
             }
@@ -289,7 +289,7 @@ class Cuenta
             ' ORDER BY codejercicio DESC, codcuenta ASC';
 
         $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $c) {
                 $cuenlist[] = new Cuenta($c);
             }

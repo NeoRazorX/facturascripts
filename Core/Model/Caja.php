@@ -168,7 +168,7 @@ class Caja
             . $this->var2str($codagente) . ' ORDER BY id DESC';
 
         $data = $this->database->selectLimit($sql, $limit, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $c) {
                 $cajalist[] = new Caja($c);
             }

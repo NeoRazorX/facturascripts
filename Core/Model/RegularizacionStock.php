@@ -138,7 +138,7 @@ class RegularizacionStock
         $sql .= ' ORDER BY fecha DESC, hora DESC';
 
         $data = $this->database->selectLimit($sql, $limit, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $rlist[] = new RegularizacionStock($d);
             }

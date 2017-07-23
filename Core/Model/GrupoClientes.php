@@ -102,7 +102,7 @@ class GrupoClientes
         }
 
         $data = $this->database->selectLimit($sql, 1);
-        if ($data) {
+        if (!empty($data)) {
             return sprintf('%06s', 1 + (int)$data[0]['codgrupo']);
         }
 
@@ -134,7 +134,7 @@ class GrupoClientes
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE codtarifa = ' . $this->var2str($cod) . ' ORDER BY codgrupo ASC;';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $glist[] = new GrupoClientes($d);
             }

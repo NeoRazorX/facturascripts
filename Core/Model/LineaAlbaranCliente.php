@@ -330,7 +330,7 @@ class LineaAlbaranCliente
             . ' ORDER BY orden DESC, idlinea ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $l) {
                 $linealist[] = new LineaAlbaranCliente($l);
             }
@@ -355,7 +355,7 @@ class LineaAlbaranCliente
             . ' ORDER BY idalbaran DESC';
 
         $data = $this->database->selectLimit($sql, $limit, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $l) {
                 $linealist[] = new LineaAlbaranCliente($l);
             }
@@ -387,7 +387,7 @@ class LineaAlbaranCliente
         $sql .= ' ORDER BY idalbaran DESC, idlinea ASC';
 
         $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $l) {
                 $linealist[] = new LineaAlbaranCliente($l);
             }
@@ -421,7 +421,7 @@ class LineaAlbaranCliente
         $sql .= ' ORDER BY idalbaran DESC, idlinea ASC';
 
         $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $l) {
                 $linealist[] = new LineaAlbaranCliente($l);
             }
@@ -458,7 +458,7 @@ class LineaAlbaranCliente
         $sql .= ' ORDER BY idalbaran DESC, idlinea ASC';
 
         $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $l) {
                 $linealist[] = new LineaAlbaranCliente($l);
             }
@@ -484,7 +484,7 @@ class LineaAlbaranCliente
          ORDER BY idalbaran DESC, idlinea ASC';
 
         $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $l) {
                 $linealist[] = new LineaAlbaranCliente($l);
             }
@@ -501,7 +501,7 @@ class LineaAlbaranCliente
     {
         $sql = 'SELECT COUNT(DISTINCT referencia) AS total FROM ' . $this->tableName() . ';';
         $lineas = $this->database->select($sql);
-        if ($lineas) {
+        if (!empty($lineas)) {
             return (int)$lineas[0]['total'];
         }
         return 0;

@@ -169,7 +169,7 @@ class CuentaBancoCliente
             . ' ORDER BY codcuenta DESC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $clist[] = new CuentaBancoCliente($d);
             }

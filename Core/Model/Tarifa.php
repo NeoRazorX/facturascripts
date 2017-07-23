@@ -244,7 +244,7 @@ class Tarifa
     {
         $sql = 'SELECT MAX(' . $this->database->sql2Int('codtarifa') . ') as cod FROM ' . $this->tableName() . ';';
         $cod = $this->database->select($sql);
-        if ($cod) {
+        if (!empty($cod)) {
             return sprintf('%06s', 1 + (int)$cod[0]['cod']);
         }
         return '000001';

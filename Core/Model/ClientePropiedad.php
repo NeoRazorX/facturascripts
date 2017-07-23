@@ -84,7 +84,7 @@ class ClientePropiedad
 
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codcliente = ' . $this->var2str($cod) . ';';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $vlist[$d['name']] = $d['text'];
             }

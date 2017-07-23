@@ -475,14 +475,14 @@ class AlbaranProveedor
                 . ' AND observaciones = ' . $this->var2str($this->observaciones)
                 . ' AND idalbaran != ' . $this->var2str($this->idalbaran) . ';';
             $data = $this->database->select($sql);
-            if ($data) {
+            if (!empty($data)) {
                 foreach ($data as $alb) {
                     /// comprobamos las líneas
                     $aux = $this->database->select('SELECT referencia FROM lineasalbaranesprov WHERE
                   idalbaran = ' . $this->var2str($this->idalbaran) . '
                   AND referencia NOT IN (SELECT referencia FROM lineasalbaranesprov
                   WHERE idalbaran = ' . $this->var2str($alb['idalbaran']) . ');');
-                    if (!$aux) {
+                    if (!empty($aux)) {
                         $this->miniLog->alert('Este ' . FS_ALBARAN . " es un posible duplicado de
                      <a href='index.php?page=ComprasAlbaran&id=" . $alb['idalbaran'] . "'>este otro</a>.
                      Si no lo es, para evitar este mensaje, simplemente modifica las observaciones.");
@@ -580,7 +580,7 @@ class AlbaranProveedor
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE ptefactura = TRUE ORDER BY ' . $order;
 
         $data = $this->database->selectLimit($sql, $limit, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $a) {
                 $albalist[] = new AlbaranProveedor($a);
             }
@@ -604,7 +604,7 @@ class AlbaranProveedor
             . $this->var2str($codproveedor) . ' ORDER BY fecha DESC, codigo DESC';
 
         $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $a) {
                 $alblist[] = new AlbaranProveedor($a);
             }
@@ -628,7 +628,7 @@ class AlbaranProveedor
             . $this->var2str($codagente) . ' ORDER BY fecha DESC, codigo DESC';
 
         $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $a) {
                 $alblist[] = new AlbaranProveedor($a);
             }
@@ -651,7 +651,7 @@ class AlbaranProveedor
             . $this->var2str($id) . ' ORDER BY fecha DESC, codigo DESC';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $a) {
                 $alblist[] = new AlbaranProveedor($a);
             }
@@ -676,7 +676,7 @@ class AlbaranProveedor
             . ' ORDER BY codigo ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $a) {
                 $alblist[] = new AlbaranProveedor($a);
             }
@@ -709,7 +709,7 @@ class AlbaranProveedor
         $consulta .= ' ORDER BY fecha DESC, codigo DESC';
 
         $data = $this->database->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $a) {
                 $alblist[] = new AlbaranProveedor($a);
             }
@@ -748,7 +748,7 @@ class AlbaranProveedor
         $sql .= ' ORDER BY fecha ASC, codigo ASC';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $a) {
                 $albalist[] = new AlbaranProveedor($a);
             }

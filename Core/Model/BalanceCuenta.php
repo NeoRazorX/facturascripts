@@ -79,7 +79,7 @@ class BalanceCuenta
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE codbalance = ' . $this->var2str($cod) . ' ORDER BY codcuenta ASC;';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $b) {
                 $balist[] = new BalanceCuenta($b);
             }

@@ -162,7 +162,7 @@ class ArticuloTraza
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE numserie = ' . $this->var2str($numserie) . ';';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             return new ArticuloTraza($data[0]);
         }
         return false;
@@ -187,7 +187,7 @@ class ArticuloTraza
         $sql .= ' ORDER BY id ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $lista[] = new ArticuloTraza($d);
             }
@@ -211,7 +211,7 @@ class ArticuloTraza
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE ' . $tipo . ' = ' . $this->var2str($idlinea) . ' ORDER BY id DESC;';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $lista[] = new ArticuloTraza($d);
             }

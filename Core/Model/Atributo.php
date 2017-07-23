@@ -95,7 +95,7 @@ class Atributo
             $data = $this->database->select($sql);
         }
 
-        if ($data) {
+        if (!empty($data)) {
             return new Atributo($data[0]);
         }
 

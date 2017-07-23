@@ -392,7 +392,7 @@ class LineaFacturaCliente
             ' ORDER BY idfactura DESC';
 
         $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $l) {
                 $linealist[] = new LineaFacturaCliente($l);
             }
@@ -424,7 +424,7 @@ class LineaFacturaCliente
         $sql .= ' ORDER BY idfactura DESC, idlinea ASC';
 
         $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $l) {
                 $linealist[] = new LineaFacturaCliente($l);
             }
@@ -458,7 +458,7 @@ class LineaFacturaCliente
         $sql .= ' ORDER BY idfactura DESC, idlinea ASC';
 
         $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $l) {
                 $linealist[] = new LineaFacturaCliente($l);
             }
@@ -495,7 +495,7 @@ class LineaFacturaCliente
         $sql .= ' ORDER BY idfactura DESC, idlinea ASC';
 
         $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $l) {
                 $linealist[] = new LineaFacturaCliente($l);
             }
@@ -518,7 +518,7 @@ class LineaFacturaCliente
             . ' WHERE idalbaran = ' . $this->var2str($id) . ';';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             $factura = new FacturaCliente();
             foreach ($data as $l) {
                 $fac = $factura->get($l['idfactura']);

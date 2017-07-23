@@ -256,7 +256,7 @@ class TerminalCaja
             . 'ORDER BY id ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $tlist[] = new TerminalCaja($d);
             }

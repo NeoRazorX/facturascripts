@@ -354,7 +354,7 @@ class Articulo
 
         $ref = 1;
         $data = $this->database->selectLimit($sql, 1);
-        if ($data) {
+        if (!empty($data)) {
             $ref = sprintf(1 + (int)$data[0]['referencia']);
         }
 
@@ -464,7 +464,7 @@ class Articulo
             $sql = 'SELECT ' . self::$column_list . ' FROM ' . $this->tableName() .
                 ' WHERE equivalencia = ' . $this->var2str($this->equivalencia) . ' ORDER BY referencia ASC;';
             $data = $this->database->select($sql);
-            if ($data) {
+            if (!empty($data)) {
                 foreach ($data as $d) {
                     if ($d['referencia'] !== $this->referencia) {
                         $artilist[] = new Articulo($d);
@@ -1035,7 +1035,7 @@ class Articulo
             }
 
             $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-            if ($data) {
+            if (!empty($data)) {
                 foreach ($data as $a) {
                     $artilist[] = new Articulo($a);
                 }
@@ -1062,7 +1062,7 @@ class Articulo
             . ' ORDER BY lower(referencia) ASC';
 
         $data = $this->database->selectLimit($sql, $limit, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $artilist[] = new Articulo($d);
             }
@@ -1086,7 +1086,7 @@ class Articulo
             . ' ORDER BY lower(referencia) ASC';
 
         $data = $this->database->selectLimit($sql, $limit, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $artilist[] = new Articulo($d);
             }
@@ -1110,7 +1110,7 @@ class Articulo
             . ' WHERE publico ORDER BY lower(referencia) ASC';
 
         $data = $this->database->selectLimit($sql, $limit, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $artilist[] = new Articulo($d);
             }
@@ -1135,7 +1135,7 @@ class Articulo
             . $this->var2str($cod) . ' ORDER BY lower(referencia) ASC';
 
         $data = $this->database->selectLimit($sql, $limit, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $artilist[] = new Articulo($d);
             }
@@ -1160,7 +1160,7 @@ class Articulo
             . $this->var2str($cod) . ' ORDER BY lower(referencia) ASC';
 
         $data = $this->database->selectLimit($sql, $limit, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $artilist[] = new Articulo($d);
             }

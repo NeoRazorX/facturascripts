@@ -174,7 +174,7 @@ class Familia
             /// si la lista no está en caché, leemos de la base de datos
             $sql = 'SELECT * FROM ' . $this->tableName() . ' ORDER BY lower(descripcion) ASC;';
             $data = $this->database->select($sql);
-            if ($data) {
+            if (!empty($data)) {
                 foreach ($data as $d) {
                     if ($d['madre'] === null) {
                         $famlist[] = new Familia($d);
@@ -202,7 +202,7 @@ class Familia
 
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE madre IS NULL ORDER BY lower(descripcion) ASC;';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $famlist[] = new Familia($d);
             }
@@ -234,7 +234,7 @@ class Familia
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE madre = ' . $this->var2str($codmadre) . ' ORDER BY descripcion ASC;';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $famlist[] = new Familia($d);
             }
@@ -257,7 +257,7 @@ class Familia
         $sql = 'SELECT * FROM ' . $this->tableName()
             . " WHERE lower(descripcion) LIKE '%" . $query . "%' ORDER BY descripcion ASC;";
         $familias = $this->database->select($sql);
-        if ($familias) {
+        if (!empty($familias)) {
             foreach ($familias as $f) {
                 $famlist[] = new Familia($f);
             }
@@ -274,7 +274,7 @@ class Familia
         /// comprobamos que las familias con madre, su madre exista.
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE madre IS NOT NULL;';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $fam = $this->get($d['madre']);
                 if (!$fam) {

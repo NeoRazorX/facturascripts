@@ -593,7 +593,7 @@ class FacturaProveedor
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE idfacturarect = ' . $this->var2str($this->idfactura) . ';';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $devoluciones[] = new FacturaProveedor($d);
             }
@@ -635,7 +635,7 @@ class FacturaProveedor
         $sql .= ' ORDER BY numero ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 if ((int)$d['numero'] < $num) {
                     /**
@@ -916,7 +916,7 @@ class FacturaProveedor
         $sql = 'SELECT * FROM ' . $this->tableName() . ' ORDER BY ' . $order;
 
         $data = $this->database->selectLimit($sql, $limit, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaProveedor($f);
             }
@@ -940,7 +940,7 @@ class FacturaProveedor
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE pagada = FALSE ORDER BY ' . $order;
 
         $data = $this->database->selectLimit($sql, $limit, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaProveedor($f);
             }
@@ -965,7 +965,7 @@ class FacturaProveedor
             ' ORDER BY fecha DESC, codigo DESC';
 
         $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaProveedor($f);
             }
@@ -990,7 +990,7 @@ class FacturaProveedor
             ' ORDER BY fecha DESC, codigo DESC';
 
         $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaProveedor($f);
             }
@@ -1043,7 +1043,7 @@ class FacturaProveedor
         $sql .= ' ORDER BY fecha ASC, codigo ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaProveedor($f);
             }
@@ -1076,7 +1076,7 @@ class FacturaProveedor
         $consulta .= ' ORDER BY fecha DESC, codigo DESC';
 
         $data = $this->database->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaProveedor($f);
             }

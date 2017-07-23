@@ -96,7 +96,7 @@ class SubcuentaProveedor
             . ' AND idsubcuenta = ' . $this->var2str($idsc) . ';';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             return new SubcuentaProveedor($data[0]);
         }
         return false;
@@ -113,7 +113,7 @@ class SubcuentaProveedor
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE id = ' . $this->var2str($id) . ';';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             return new SubcuentaProveedor($data[0]);
         }
         return false;
@@ -133,7 +133,7 @@ class SubcuentaProveedor
             . ' ORDER BY codejercicio DESC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $s) {
                 $sclist[] = new SubcuentaProveedor($s);
             }

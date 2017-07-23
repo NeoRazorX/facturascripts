@@ -191,7 +191,7 @@ class Stock
         }
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             return new Stock($data[0]);
         }
         return false;
@@ -223,7 +223,7 @@ class Stock
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE referencia = ' . $this->var2str($ref) . ' ORDER BY codalmacen ASC;';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $s) {
                 $stocklist[] = new Stock($s);
             }
@@ -251,7 +251,7 @@ class Stock
         }
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             $num = round((float)$data[0]['total'], 3);
         }
 
@@ -271,7 +271,7 @@ class Stock
 
         $sql = 'SELECT COUNT(idstock) AS total FROM ' . $this->tableName() . ';';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             $num = (int)$data[0]['total'];
         }
 

@@ -83,7 +83,7 @@ class AtributoValor
 
         $sql = 'SELECT * FROM atributos WHERE codatributo = ' . $this->var2str($this->codatributo) . ';';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             $nombre = $data[0]['nombre'];
         }
 
@@ -124,7 +124,7 @@ class AtributoValor
 
             $sql = 'SELECT MAX(id) AS max FROM ' . $this->tableName() .';';
             $data = $this->database->select($sql);
-            if ($data) {
+            if (!empty($data)) {
                 $this->id = 1 + (int)$data[0]['max'];
             }
         }
@@ -145,7 +145,7 @@ class AtributoValor
             . ' ORDER BY valor ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $lista[] = new AtributoValor($d);
             }

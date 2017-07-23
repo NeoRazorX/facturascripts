@@ -108,7 +108,7 @@ class BalanceCuentaA
             $data = $this->database->select($sql);
         }
 
-        if ($data) {
+        if (!empty($data)) {
             return (float)$data[0]['haber'] - (float)$data[0]['debe'];
         }
         return 0;
@@ -128,7 +128,7 @@ class BalanceCuentaA
             . ' WHERE codbalance = ' . $this->var2str($cod) . ' ORDER BY codcuenta ASC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $b) {
                 $balist[] = new BalanceCuentaA($b);
             }
@@ -151,7 +151,7 @@ class BalanceCuentaA
             . " WHERE codbalance LIKE '" . static::noHtml($cod) . "%' ORDER BY codcuenta ASC;";
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $b) {
                 $balist[] = new BalanceCuentaA($b);
             }

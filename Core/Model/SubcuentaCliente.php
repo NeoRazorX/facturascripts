@@ -96,7 +96,7 @@ class SubcuentaCliente
             . ' AND idsubcuenta = ' . $this->var2str($idsc) . ';';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             return new SubcuentaCliente($data[0]);
         }
         return false;
@@ -113,7 +113,7 @@ class SubcuentaCliente
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE id = ' . $this->var2str($id) . ';';
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             return new SubcuentaCliente($data[0]);
         }
         return false;
@@ -133,7 +133,7 @@ class SubcuentaCliente
             . ' ORDER BY codejercicio DESC;';
 
         $data = $this->database->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $s) {
                 $sublist[] = new SubcuentaCliente($s);
             }

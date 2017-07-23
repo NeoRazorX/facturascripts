@@ -418,7 +418,7 @@ class Partida
             . ' ORDER BY a.numero ASC, p.idpartida ASC;';
 
         $ordenadas = $this->database->select($sql);
-        if ($ordenadas) {
+        if (!empty($ordenadas)) {
             $partida = new Partida();
             $i = 0;
             $saldo = 0;
@@ -460,7 +460,7 @@ class Partida
             . $this->var2str($id) . ' ORDER BY codsubcuenta ASC;';
 
         $partidas = $this->database->select($sql);
-        if ($partidas) {
+        if (!empty($partidas)) {
             foreach ($partidas as $p) {
                 $plist[] = new Partida($p);
             }
@@ -490,7 +490,7 @@ class Partida
         $partida = new Partida();
         $offset = 0;
         $data = $this->database->selectLimit($sql, 100, $offset);
-        while ($data) {
+        while (!empty($data)) {
             foreach ($data as $po) {
                 $aux = $partida->get($po['idpartida']);
                 if ($aux) {
@@ -532,7 +532,7 @@ class Partida
             . ' ORDER BY a.numero ASC, p.codsubcuenta ASC';
 
         $data = $this->database->selectLimit($sql, $limit, $offset);
-        if ($data) {
+        if (!empty($data)) {
             return $data;
         }
         return [];
@@ -552,7 +552,7 @@ class Partida
             . ' ORDER BY a.numero ASC, p.idpartida ASC;';
 
         $ordenadas = $this->database->select($sql);
-        if ($ordenadas) {
+        if (!empty($ordenadas)) {
             return count($ordenadas);
         }
         return 0;
@@ -572,7 +572,7 @@ class Partida
             . ' FROM ' . $this->tableName() . ' WHERE idsubcuenta = ' . $this->var2str($id) . ';';
 
         $resultados = $this->database->select($sql);
-        if ($resultados) {
+        if (!empty($resultados)) {
             $totales['debe'] = (float)$resultados[0]['debe'];
             $totales['haber'] = (float)$resultados[0]['haber'];
             $totales['saldo'] = (float)$resultados[0]['debe'] - (float)$resultados[0]['haber'];
@@ -596,7 +596,7 @@ class Partida
             . ' WHERE p.idasiento = a.idasiento AND a.codejercicio = ' . $this->var2str($cod) . ';';
 
         $resultados = $this->database->select($sql);
-        if ($resultados) {
+        if (!empty($resultados)) {
             $totales['debe'] = (float)$resultados[0]['debe'];
             $totales['haber'] = (float)$resultados[0]['haber'];
             $totales['saldo'] = (float)$resultados[0]['debe'] - (float)$resultados[0]['haber'];
@@ -634,7 +634,7 @@ class Partida
             $resultados = $this->database->select($sql);
         }
 
-        if ($resultados) {
+        if (!empty($resultados)) {
             $totales['debe'] = (float)$resultados[0]['debe'];
             $totales['haber'] = (float)$resultados[0]['haber'];
             $totales['saldo'] = (float)$resultados[0]['debe'] - (float)$resultados[0]['haber'];
