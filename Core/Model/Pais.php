@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
@@ -52,15 +53,15 @@ class Pais
 
     /**
      * Pais constructor.
+     *
      * @param array $data
      */
     public function __construct(array $data = [])
     {
         $this->init(__CLASS__, 'paises', 'codpais');
+        $this->clear();
         if (!empty($data)) {
             $this->loadFromData($data);
-        } else {
-            $this->clear();
         }
     }
 
@@ -68,7 +69,7 @@ class Pais
      * Crea la consulta necesaria para crear los paises en la base de datos.
      * @return string
      */
-    public function install()
+    private function install()
     {
         return 'INSERT INTO ' . $this->tableName() . ' (codpais,codiso,nombre)'
             . " VALUES ('ESP','ES','España'),"
@@ -321,10 +322,10 @@ class Pais
     public function url()
     {
         if ($this->codpais === null) {
-            return 'index.php?page=admin_paises';
+            return 'index.php?page=AdminPaises';
         }
 
-        return 'index.php?page=admin_paises#' . $this->codpais;
+        return 'index.php?page=AdminPaises#' . $this->codpais;
     }
 
     /**
@@ -338,13 +339,15 @@ class Pais
 
     /**
      * Devuelve el pais con codido = $cod
+     *
      * @param string $cod
+     *
      * @return pais|bool
      */
     public function getByIso($cod)
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codiso = ' . $this->var2str($cod) . ';';
-        $data = $this->dataBase->select($sql);
+        $data = $this->database->select($sql);
         if (!empty($data)) {
             return new Pais($data[0]);
         }

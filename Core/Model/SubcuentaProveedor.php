@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of facturacion_base
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
@@ -13,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,7 +23,7 @@ use FacturaScripts\Core\Base\Model;
 
 /**
  * Relaciona a un proveedor con una subcuenta para cada ejercicio
- * 
+ *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class SubcuentaProveedor
@@ -33,119 +32,110 @@ class SubcuentaProveedor
 
     /**
      * Clave primaria
-     * @var type 
+     * @var int
      */
     public $id;
 
     /**
      * ID de la subcuenta
-     * @var type 
+     * @var int
      */
     public $idsubcuenta;
 
     /**
      * Código del proveedor
-     * @var type 
+     * @var string
      */
     public $codproveedor;
+    /**
+     * TODO
+     * @var string
+     */
     public $codsubcuenta;
+    /**
+     * TODO
+     * @var string
+     */
     public $codejercicio;
 
-    public function __construct(array $data = []) 
+    /**
+     * SubcuentaProveedor constructor.
+     *
+     * @param array $data
+     */
+    public function __construct(array $data = [])
     {
         $this->init(__CLASS__, 'co_subcuentasprov', 'id');
+        $this->clear();
         if (!empty($data)) {
             $this->loadFromData($data);
-        } else {
-            $this->clear();
         }
     }
-	
-    public function clear()
+
+    /**
+     * TODO
+     * @return bool|mixed
+     */
+    public function getSubcuenta()
     {
-        $this->id = NULL;
-        $this->idsubcuenta = NULL;
-        $this->codproveedor = NULL;
-        $this->codsubcuenta = NULL;
-        $this->codejercicio = NULL;
-    }
-
-    protected function install() {
-        return "";
-    }
-
-    public function get_subcuenta() {
-        $subc = new \subcuenta();
+        $subc = new Subcuenta();
         return $subc->get($this->idsubcuenta);
     }
 
-    public function get($pro, $idsc) {
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE codproveedor = " . $this->var2str($pro)
-                . " AND idsubcuenta = " . $this->var2str($idsc) . ";";
+    /**
+     * TODO
+     *
+     * @param $pro
+     * @param $idsc
+     *
+     * @return bool|SubcuentaProveedor
+     */
+    public function get($pro, $idsc)
+    {
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codproveedor = ' . $this->var2str($pro)
+            . ' AND idsubcuenta = ' . $this->var2str($idsc) . ';';
 
-        $data = self::$dataBase->select($sql);
+        $data = $this->database->select($sql);
         if ($data) {
-            return new \subcuenta_proveedor($data[0]);
-        } else {
-                    return FALSE;
+            return new SubcuentaProveedor($data[0]);
         }
+        return false;
     }
 
-    public function get2($id) {
-        $data = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($id) . ";");
+    /**
+     * TODO
+     *
+     * @param $id
+     *
+     * @return bool|SubcuentaProveedor
+     */
+    public function get2($id)
+    {
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE id = ' . $this->var2str($id) . ';';
+        $data = $this->database->select($sql);
         if ($data) {
-            return new \subcuenta_proveedor($data[0]);
-        } else {
-                    return FALSE;
+            return new SubcuentaProveedor($data[0]);
         }
+        return false;
     }
 
-    public function exists() {
-        if (is_null($this->id)) {
-            return FALSE;
-        } else {
-                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($this->id) . ";");
-        }
-    }
+    /**
+     * TODO
+     *
+     * @param string $codprov
+     *
+     * @return array
+     */
+    public function allFromProveedor($codprov)
+    {
+        $sclist = [];
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codproveedor = ' . $this->var2str($codprov)
+            . ' ORDER BY codejercicio DESC;';
 
-    public function save() {
-        if ($this->exists()) {
-            $sql = "UPDATE " . $this->table_name . " SET codproveedor = " . $this->var2str($this->codproveedor)
-                    . ", codsubcuenta = " . $this->var2str($this->codsubcuenta)
-                    . ", codejercicio = " . $this->var2str($this->codejercicio)
-                    . ", idsubcuenta = " . $this->var2str($this->idsubcuenta)
-                    . "  WHERE id = " . $this->var2str($this->id) . ";";
-
-            return self::$dataBase->exec($sql);
-        } else {
-            $sql = "INSERT INTO " . $this->table_name . " (codproveedor,codsubcuenta,codejercicio,idsubcuenta)
-            VALUES (" . $this->var2str($this->codproveedor)
-                    . "," . $this->var2str($this->codsubcuenta)
-                    . "," . $this->var2str($this->codejercicio)
-                    . "," . $this->var2str($this->idsubcuenta) . ");";
-
-            if (self::$dataBase->exec($sql)) {
-                $this->id = self::$dataBase->lastval();
-                return TRUE;
-            } else {
-                return FALSE;
-            }
-        }
-    }
-
-    public function delete() {
-        return self::$dataBase->exec("DELETE FROM " . $this->table_name . " WHERE id = " . $this->var2str($this->id) . ";");
-    }
-
-    public function all_from_proveedor($codprov) {
-        $sclist = array();
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE codproveedor = " . $this->var2str($codprov)
-                . " ORDER BY codejercicio DESC;";
-
-        $data = self::$dataBase->select($sql);
+        $data = $this->database->select($sql);
         if ($data) {
             foreach ($data as $s) {
-                $sclist[] = new \subcuenta_proveedor($s);
+                $sclist[] = new SubcuentaProveedor($s);
             }
         }
 
@@ -155,8 +145,10 @@ class SubcuentaProveedor
     /**
      * Aplica algunas correcciones a la tabla.
      */
-    public function fix_db() {
-        self::$dataBase->exec("DELETE FROM " . $this->table_name . " WHERE codproveedor NOT IN (SELECT codproveedor FROM proveedores);");
+    public function fixDb()
+    {
+        $sql = 'DELETE FROM ' . $this->tableName()
+            . ' WHERE codproveedor NOT IN (SELECT codproveedor FROM proveedores);';
+        $this->database->exec($sql);
     }
-
 }

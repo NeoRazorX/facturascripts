@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
 use FacturaScripts\Core\Base\ContactInformation;
+use FacturaScripts\Core\Base\Model;
 
 /**
  * El agente/empleado es el que se asocia a un albarán, factura o caja.
@@ -37,7 +38,7 @@ class Agente
 
     /**
      * Clave primaria. Varchar (10).
-     * @var integer
+     * @var int
      */
     public $codagente;
 
@@ -103,14 +104,14 @@ class Agente
 
     /**
      * Agente constructor.
+     *
      * @param array $data
      */
     public function __construct(array $data = [])
     {
         $this->init(__CLASS__, 'agentes', 'codagente');
-        if (empty($data)) {
-            $this->clear();
-        } else {
+        $this->clear();
+        if (!empty($data)) {
             $this->loadFromData($data);
         }
     }
@@ -136,16 +137,6 @@ class Agente
     }
 
     /**
-     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
-     * @return string
-     */
-    protected function install()
-    {
-        return 'INSERT INTO ' . $this->tableName() . ' (codagente,nombre,apellidos,dnicif)'
-            . " VALUES ('1','Paco','Pepe','00000014Z');";
-    }
-
-    /**
      * Devuelve nombre + apellidos del agente.
      * @return string
      */
@@ -155,13 +146,28 @@ class Agente
     }
 
     /**
-     * Devuelve la url donde se pueden ver/modificar estos datos
+     * Genera un nuevo código de agente
+     * @return string
+     */
+    public function getNewCodigo()
+    {
+        $sql = 'SELECT MAX(' . $this->database->sql2Int('codagente') . ') as cod FROM ' . $this->tableName() . ';';
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
+            return (string)(1 + (int)$data[0]['cod']);
+        }
+
+        return '1';
+    }
+
+    /**
+     * Devuelve la url donde ver/modificar estos datos
      * @return string
      */
     public function url()
     {
         $result = 'index.php?page=Agente';
-        if ($this->codagente != NULL) {
+        if ($this->codagente !== null) {
             $result .= '_card&cod=' . $this->codagente;
         }
 
@@ -197,5 +203,15 @@ class Agente
         }
 
         return true;
+    }
+
+    /**
+     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
+     * @return string
+     */
+    private function install()
+    {
+        return 'INSERT INTO ' . $this->tableName() . ' (codagente,nombre,apellidos,dnicif)'
+            . " VALUES ('1','Paco','Pepe','00000014Z');";
     }
 }

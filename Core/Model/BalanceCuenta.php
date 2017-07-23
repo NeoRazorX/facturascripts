@@ -1,7 +1,7 @@
 <?php
 /**
- * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * This file is part of facturacion_base
+ * Copyright (C) 2014-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,57 +22,69 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\Model;
 
 /**
- * Define que un usuario tiene acceso a una página concreta
- * y si tiene permisos de eliminación en esa página.
+ * Detalle de un balance.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class PageRule
+class BalanceCuenta
 {
-
     use Model;
 
     /**
-     * TODO
+     * Clave primaria.
      * @var
      */
     public $id;
-
-    /**
-     * Nick del usuario.
-     * @var string
-     */
-    public $nick;
-
-    /**
-     * Nombre de la página (nombre del controlador).
-     * @var string
-     */
-    public $pagename;
-
-    /**
-     * Otorga permisos al usuario a eliminar elementos en la página.
-     * @var bool
-     */
-    public $allowdelete;
-
     /**
      * TODO
      * @var
      */
-    public $allowupdate;
+    public $codbalance;
+    /**
+     * TODO
+     * @var
+     */
+    public $codcuenta;
+    /**
+     * TODO
+     * @var
+     */
+    public $desccuenta;
 
     /**
-     * PageRule constructor.
+     * BalanceCuenta constructor.
      *
      * @param array $data
      */
     public function __construct(array $data = [])
     {
-        $this->init(__CLASS__, 'fs_page_rules', 'id');
+        $this->init(__CLASS__, 'co_cuentascb', 'id');
         $this->clear();
         if (!empty($data)) {
             $this->loadFromData($data);
         }
+    }
+
+    /**
+     * TODO
+     *
+     * @param string $cod
+     *
+     * @return array
+     */
+    public function allFromCodbalance($cod)
+    {
+        $balist = [];
+
+        $sql = 'SELECT * FROM ' . $this->tableName()
+            . ' WHERE codbalance = ' . $this->var2str($cod) . ' ORDER BY codcuenta ASC;';
+        $data = $this->database->select($sql);
+        if ($data) {
+            foreach ($data as $b) {
+                $balist[] = new BalanceCuenta($b);
+            }
+        }
+
+        return $balist;
     }
 }

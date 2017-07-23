@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of facturacion_base
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
@@ -13,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,113 +23,177 @@ use FacturaScripts\Core\Base\Model;
 
 /**
  * El asiento contable. Se relaciona con un ejercicio y se compone de partidas.
- * 
+ *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class Asiento
 {
-    use Model;
+    use Model {
+        saveInsert as private saveInsertTrait;
+    }
 
     /**
      * Clave primaria.
-     * @var type 
+     * @var
      */
     public $idasiento;
 
     /**
      * Número de asiento. Se modificará al renumerar.
-     * @var type 
+     * @var
      */
     public $numero;
+    /**
+     * TODO
+     * @var
+     */
     public $idconcepto;
+    /**
+     * TODO
+     * @var
+     */
     public $concepto;
+    /**
+     * TODO
+     * @var
+     */
     public $fecha;
+    /**
+     * TODO
+     * @var
+     */
     public $codejercicio;
+    /**
+     * TODO
+     * @var
+     */
     public $codplanasiento;
+    /**
+     * TODO
+     * @var
+     */
     public $editable;
+    /**
+     * TODO
+     * @var
+     */
     public $documento;
+    /**
+     * TODO
+     * @var
+     */
     public $tipodocumento;
+    /**
+     * TODO
+     * @var
+     */
     public $importe;
+    /**
+     * TODO
+     * @var
+     */
     private $coddivisa;
 
-    public function __construct(array $data = []) 
+    /**
+     * Asiento constructor.
+     *
+     * @param array $data
+     */
+    public function __construct(array $data = [])
     {
         $this->init(__CLASS__, 'co_asientos', 'idasiento');
+        $this->clear();
         if (!empty($data)) {
             $this->loadFromData($data);
-        } else {
-            $this->clear();
         }
     }
+
+    /**
+     * Resetea los valores de todas las propiedades modelo.
+     */
     public function clear()
     {
-        $this->idasiento = NULL;
-        $this->numero = NULL;
-        $this->idconcepto = NULL;
-        $this->concepto = NULL;
-        $this->fecha = Date('d-m-Y');
-        $this->codejercicio = NULL;
-        $this->codplanasiento = NULL;
-        $this->editable = TRUE;
-        $this->documento = NULL;
-        $this->tipodocumento = NULL;
+        $this->idasiento = null;
+        $this->numero = null;
+        $this->idconcepto = null;
+        $this->concepto = null;
+        $this->fecha = date('d-m-Y');
+        $this->codejercicio = null;
+        $this->codplanasiento = null;
+        $this->editable = true;
+        $this->documento = null;
+        $this->tipodocumento = null;
         $this->importe = 0;
     }
 
-    protected function install() {
-        return '';
-    }
-
-    public function url() {
-        if (is_null($this->idasiento)) {
-            return 'index.php?page=contabilidad_asientos';
-        } else {
-                    return 'index.php?page=contabilidad_asiento&id=' . $this->idasiento;
+    /**
+     * Devuelve la url donde ver/modificar estos datos
+     * @return string
+     */
+    public function url()
+    {
+        if ($this->idasiento === null) {
+            return 'index.php?page=ContabilidadAsientos';
         }
+        return 'index.php?page=ContabilidadAsiento&id=' . $this->idasiento;
     }
 
-    public function get_factura() {
-        if ($this->tipodocumento == 'Factura de cliente') {
-            $fac = new \factura_cliente();
-            return $fac->get_by_codigo($this->documento);
-        } else if ($this->tipodocumento == 'Factura de proveedor') {
-            $fac = new \factura_proveedor();
-            return $fac->get_by_codigo($this->documento);
-        } else {
-                    return FALSE;
+    /**
+     * TODO
+     * @return bool|FacturaCliente|FacturaProveedor
+     */
+    public function getFactura()
+    {
+        if ($this->tipodocumento === 'Factura de cliente') {
+            $fac = new FacturaCliente();
+            return $fac->getByCodigo($this->documento);
         }
+        if ($this->tipodocumento === 'Factura de proveedor') {
+            $fac = new FacturaProveedor();
+            return $fac->getByCodigo($this->documento);
+        }
+        return false;
     }
 
-    public function factura_url() {
-        $fac = $this->get_factura();
+    /**
+     * TODO
+     * @return string
+     */
+    public function facturaUrl()
+    {
+        $fac = $this->getFactura();
         if ($fac) {
             return $fac->url();
-        } else {
-                    return '#';
         }
+        return '#';
     }
 
-    public function ejercicio_url() {
-        $ejercicio = new \ejercicio();
+    /**
+     * TODO
+     * @return string
+     */
+    public function ejercicioUrl()
+    {
+        $ejercicio = new Ejercicio();
         $eje0 = $ejercicio->get($this->codejercicio);
         if ($eje0) {
             return $eje0->url();
-        } else {
-                    return '#';
         }
+        return '#';
     }
 
     /**
      * Devuelve el código de la divisa.
      * Lo que pasa es que ese dato se almacena en las partidas, por eso
      * hay que usar esta función.
-     * @return type
+     * @return Divisa|null
      */
-    public function coddivisa() {
-        if (!isset($this->coddivisa)) {
-            $this->coddivisa = $this->defaultItems->coddivisa();
+    public function codDivisa()
+    {
+        if ($this->coddivisa === null) {
+            $this->coddivisa = $this->defaultItems->codDivisa();
 
-            foreach ($this->get_partidas() as $par) {
+            foreach ($this->getPartidas() as $par) {
                 if ($par->coddivisa) {
                     $this->coddivisa = $par->coddivisa;
                     break;
@@ -142,52 +205,32 @@ class Asiento
     }
 
     /**
-     * Devuelve el asiento con el $id solicitado.
-     * @param type $id
-     * @return \asiento|boolean
+     * TODO
+     * @return array
      */
-    public function get($id) {
-        if (isset($id)) {
-            $asiento = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idasiento = " . $this->var2str($id) . ";");
-            if ($asiento) {
-                return new \asiento($asiento[0]);
-            } else {
-                            return FALSE;
-            }
-        } else {
-                    return FALSE;
-        }
-    }
-
-    public function get_partidas() {
-        $partida = new \partida();
-        return $partida->all_from_asiento($this->idasiento);
-    }
-
-    public function exists() {
-        if (is_null($this->idasiento)) {
-            return FALSE;
-        } else {
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idasiento = " . $this->var2str($this->idasiento) . ";");
-        }
+    public function getPartidas()
+    {
+        $partida = new Partida();
+        return $partida->allFromAsiento($this->idasiento);
     }
 
     /**
      * Asignamos un número al asiento.
      */
-    public function new_numero() {
+    public function newNumero()
+    {
         $this->numero = 1;
-        $sql = "SELECT MAX(" . self::$dataBase->sql_to_int('numero') . ") as num FROM " . $this->table_name
-                . " WHERE codejercicio = " . $this->var2str($this->codejercicio) . ";";
+        $sql = 'SELECT MAX(' . $this->database->sql2Int('numero') . ') as num FROM ' . $this->tableName()
+            . ' WHERE codejercicio = ' . $this->var2str($this->codejercicio) . ';';
 
-        $data = self::$dataBase->select($sql);
+        $data = $this->database->select($sql);
         if ($data) {
-            $this->numero = 1 + intval($data[0]['num']);
+            $this->numero = 1 + (int)$data[0]['num'];
         }
 
         /// Nos guardamos la secuencia para dar compatibilidad con eneboo
-        $secc = new \secuencia_contabilidad();
-        $secc0 = $secc->get_by_params2($this->codejercicio, 'nasiento');
+        $secc = new SecuenciaContabilidad();
+        $secc0 = $secc->getByParams2($this->codejercicio, 'nasiento');
         if ($secc0) {
             if ($this->numero >= $secc0->valorout) {
                 $secc0->valorout = 1 + $this->numero;
@@ -196,88 +239,103 @@ class Asiento
         }
     }
 
-    public function test() {
-        $this->concepto = $this->no_html($this->concepto);
-        $this->documento = $this->no_html($this->documento);
+    /**
+     * TODO
+     * @return bool
+     */
+    public function test()
+    {
+        $this->concepto = static::noHtml($this->concepto);
+        $this->documento = static::noHtml($this->documento);
 
         if (strlen($this->concepto) > 255) {
-            $this->new_error_msg("Concepto del asiento demasiado largo.");
-            return FALSE;
-        } else {
-                    return TRUE;
+            $this->miniLog->alert('Concepto del asiento demasiado largo.');
+            return false;
         }
+        return true;
     }
 
-    public function full_test($duplicados = TRUE) {
-        $status = TRUE;
+    /**
+     * TODO
+     *
+     * @param bool $duplicados
+     *
+     * @return bool
+     */
+    public function fullTest($duplicados = true)
+    {
+        $status = true;
 
         /*
          * Comprobamos que el asiento no esté vacío o descuadrado.
          * También comprobamos que las subcuentas pertenezcan al mismo ejercicio.
          */
         $debe = $haber = 0;
-        $partidas = $this->get_partidas();
+        $partidas = $this->getPartidas();
         if ($partidas) {
             foreach ($partidas as $p) {
                 $debe += $p->debe;
                 $haber += $p->haber;
 
-                $sc = $p->get_subcuenta();
+                $sc = $p->getSubcuenta();
                 if ($sc) {
-                    if ($sc->codejercicio != $this->codejercicio) {
-                        $this->new_error_msg('La subcuenta ' . $sc->codsubcuenta . ' pertenece a otro ejercicio.');
-                        $status = FALSE;
+                    if ($sc->codejercicio !== $this->codejercicio) {
+                        $this->miniLog->alert('La subcuenta ' . $sc->codsubcuenta . ' pertenece a otro ejercicio.');
+                        $status = false;
                     }
                 } else {
-                    $this->new_error_msg('Subcuenta ' . $p->codsubcuenta . ' no encontrada.');
-                    $status = FALSE;
+                    $this->miniLog->alert('Subcuenta ' . $p->codsubcuenta . ' no encontrada.');
+                    $status = false;
                 }
             }
         }
 
-        if (!$this->floatcmp($debe, $haber, FS_NF0, TRUE)) {
-            $this->new_error_msg("Asiento descuadrado. Descuadre: " . round($debe - $haber, FS_NF0 + 1));
-            $status = FALSE;
-        } else if (!$this->floatcmp($this->importe, max(array(abs($debe), abs($haber))), FS_NF0, TRUE)) {
-            $this->new_error_msg('Importe del asiento incorrecto.');
-            $status = FALSE;
+        if (!$this->floatcmp($debe, $haber, FS_NF0, true)) {
+            $this->miniLog->alert('Asiento descuadrado. Descuadre: ' . round($debe - $haber, FS_NF0 + 1));
+            $status = false;
+        } elseif (!$this->floatcmp($this->importe, max([abs($debe), abs($haber)]), FS_NF0, true)) {
+            $this->miniLog->alert('Importe del asiento incorrecto.');
+            $status = false;
         }
 
         /// comprobamos que la fecha sea correcta
-        $ejercicio = new \ejercicio();
+        $ejercicio = new Ejercicio();
         $eje0 = $ejercicio->get($this->codejercicio);
         if ($eje0) {
-            if (strtotime($this->fecha) < strtotime($eje0->fechainicio) OR strtotime($this->fecha) > strtotime($eje0->fechafin)) {
-                $this->new_error_msg("La fecha de este asiento está fuera del rango del <a target='_blank' href='" . $eje0->url() . "'>ejercicio</a>.");
-                $status = FALSE;
+            if (strtotime($this->fecha) < strtotime($eje0->fechainicio) || strtotime($this->fecha) > strtotime($eje0->fechafin)) {
+                $this->miniLog->alert("La fecha de este asiento está fuera del rango del <a target='_blank' href='" . $eje0->url() . "'>ejercicio</a>.");
+                $status = false;
             }
         }
 
-        if ($status AND $duplicados) {
+        if ($status && $duplicados) {
             /// comprobamos si es un duplicado
-            $asientos = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE fecha = " . $this->var2str($this->fecha) . "
-            AND concepto = " . $this->var2str($this->concepto) . " AND importe = " . $this->var2str($this->importe) . "
-            AND idasiento != " . $this->var2str($this->idasiento) . ";");
+            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fecha = ' . $this->var2str($this->fecha) . '
+            AND concepto = ' . $this->var2str($this->concepto) . ' AND importe = ' . $this->var2str($this->importe) . '
+            AND idasiento != ' . $this->var2str($this->idasiento) . ';';
+            $asientos = $this->database->select($sql);
             if ($asientos) {
                 foreach ($asientos as $as) {
-                    /// comprobamos las líneas 
-                    if (strtolower(FS_DB_TYPE) == 'mysql') {
-                        $aux = self::$dataBase->select("SELECT codsubcuenta,debe,haber,codcontrapartida,concepto
-                     FROM co_partidas WHERE idasiento = " . $this->var2str($this->idasiento) . "
+                    /// comprobamos las líneas
+                    if (strtolower(FS_DB_TYPE) === 'mysql') {
+                        $sql = 'SELECT codsubcuenta,debe,haber,codcontrapartida,concepto
+                     FROM co_partidas WHERE idasiento = ' . $this->var2str($this->idasiento) . '
                      AND NOT EXISTS(SELECT codsubcuenta,debe,haber,codcontrapartida,concepto FROM co_partidas
-                     WHERE idasiento = " . $this->var2str($as['idasiento']) . ");");
+                     WHERE idasiento = ' . $this->var2str($as['idasiento']) . ');';
+                        $aux = $this->database->select($sql);
                     } else {
-                        $aux = self::$dataBase->select("SELECT codsubcuenta,debe,haber,codcontrapartida,concepto
-                     FROM co_partidas WHERE idasiento = " . $this->var2str($this->idasiento) . "
+                        $sql = 'SELECT codsubcuenta,debe,haber,codcontrapartida,concepto
+                     FROM co_partidas WHERE idasiento = ' . $this->var2str($this->idasiento) . '
                      EXCEPT SELECT codsubcuenta,debe,haber,codcontrapartida,concepto FROM co_partidas
-                     WHERE idasiento = " . $this->var2str($as['idasiento']) . ";");
+                     WHERE idasiento = ' . $this->var2str($as['idasiento']) . ';';
+                        $aux = $this->database->select($sql);
                     }
 
                     if (!$aux) {
-                        $this->new_error_msg("Este asiento es un posible duplicado de
-                     <a href='index.php?page=contabilidad_asiento&id=" . $as['idasiento'] . "'>este otro</a>.
+                        $this->miniLog->alert("Este asiento es un posible duplicado de
+                     <a href='index.php?page=ContabilidadAsiento&id=" . $as['idasiento'] . "'>este otro</a>.
                      Si no lo es, para evitar este mensaje, simplemente modifica el concepto.");
-                        $status = FALSE;
+                        $status = false;
                     }
                 }
             }
@@ -286,20 +344,25 @@ class Asiento
         return $status;
     }
 
-    public function fix() {
+    /**
+     * TODO
+     * @return bool
+     */
+    public function fix()
+    {
         $importe_old = $this->importe;
         $debe = $haber = 0;
-        foreach ($this->get_partidas() as $p) {
+        foreach ($this->getPartidas() as $p) {
             $debe += $p->debe;
             $haber += $p->haber;
         }
         $total = $debe - $haber;
-        $this->importe = max(array(abs($debe), abs($haber)));
+        $this->importe = max([abs($debe), abs($haber)]);
 
         /// corregimos descuadres de menos de 0.01
         if ($this->floatcmp($debe, $haber, 2)) {
             $debe = $haber = 0;
-            $partidas = $this->get_partidas();
+            $partidas = $this->getPartidas();
             foreach ($partidas as $p) {
                 $p->debe = bround($p->debe, 2);
                 $debe += $p->debe;
@@ -309,21 +372,21 @@ class Asiento
 
             /// si con el redondeo se soluciona el problema, pues genial!
             if ($this->floatcmp($debe, $haber)) {
-                $this->importe = max(array(abs($debe), abs($haber)));
+                $this->importe = max([abs($debe), abs($haber)]);
                 foreach ($partidas as $p) {
                     $p->save();
                 }
             } else {
                 /// si no ha funcionado, intentamos arreglarlo
                 $total = 0;
-                $partidas = $this->get_partidas();
+                $partidas = $this->getPartidas();
                 foreach ($partidas as $p) {
                     $total += ($p->debe - $p->haber);
                 }
 
-                if ($partidas[0]->debe != 0) {
-                    $partidas[0]->debe = ($partidas[0]->debe - $total);
-                } else if ($partidas[0]->haber != 0) {
+                if ($partidas[0]->debe !== 0) {
+                    $partidas[0]->debe -=  $total;
+                } elseif ($partidas[0]->haber !== 0) {
                     $partidas[0]->haber += $total;
                 }
 
@@ -335,7 +398,7 @@ class Asiento
 
                 /// si hemos resuelto el problema grabamos
                 if ($this->floatcmp($debe, $haber)) {
-                    $this->importe = max(array(abs($debe), abs($haber)));
+                    $this->importe = max([abs($debe), abs($haber)]);
                     foreach ($partidas as $p) {
                         $p->save();
                     }
@@ -349,168 +412,140 @@ class Asiento
         }
 
         /// comprobamos la factura asociada
-        $status = TRUE;
-        $fac = $this->get_factura();
+        $status = true;
+        $fac = $this->getFactura();
         if ($fac) {
-            if (is_null($fac->idasiento)) {
+            if ($fac->idasiento === null) {
                 $fac->idasiento = $this->idasiento;
                 $status = $fac->save();
             }
         }
 
         if ($status) {
-            return $this->full_test();
-        } else {
-                    return FALSE;
+            return $this->fullTest();
         }
+        return false;
     }
 
-    public function save() {
-        if ($this->test()) {
-            if ($this->exists()) {
-                $sql = "UPDATE " . $this->table_name . " SET numero = " . $this->var2str($this->numero)
-                        . ", idconcepto = " . $this->var2str($this->idconcepto)
-                        . ", concepto = " . $this->var2str($this->concepto)
-                        . ", fecha = " . $this->var2str($this->fecha)
-                        . ", codejercicio = " . $this->var2str($this->codejercicio)
-                        . ", codplanasiento = " . $this->var2str($this->codplanasiento)
-                        . ", editable = " . $this->var2str($this->editable)
-                        . ", documento = " . $this->var2str($this->documento)
-                        . ", tipodocumento = " . $this->var2str($this->tipodocumento)
-                        . ", importe = " . $this->var2str($this->importe)
-                        . "  WHERE idasiento = " . $this->var2str($this->idasiento) . ";";
-
-                return self::$dataBase->exec($sql);
-            } else {
-                $this->new_numero();
-                $sql = "INSERT INTO " . $this->table_name . " (numero,idconcepto,concepto,
-               fecha,codejercicio,codplanasiento,editable,documento,tipodocumento,importe)
-               VALUES (" . $this->var2str($this->numero)
-                        . "," . $this->var2str($this->idconcepto)
-                        . "," . $this->var2str($this->concepto)
-                        . "," . $this->var2str($this->fecha)
-                        . "," . $this->var2str($this->codejercicio)
-                        . "," . $this->var2str($this->codplanasiento)
-                        . "," . $this->var2str($this->editable)
-                        . "," . $this->var2str($this->documento)
-                        . "," . $this->var2str($this->tipodocumento)
-                        . "," . $this->var2str($this->importe) . ");";
-
-                if (self::$dataBase->exec($sql)) {
-                    $this->idasiento = self::$dataBase->lastval();
-                    return TRUE;
-                } else {
-                                    return FALSE;
-                }
-            }
-        } else {
-                    return FALSE;
-        }
+    /**
+     * Inserta los datos del modelo en la base de datos.
+     * @return bool
+     */
+    private function saveInsert()
+    {
+        $this->newNumero();
+        return $this->saveInsertTrait();
     }
 
-    public function delete() {
-        $bloquear = FALSE;
+    /**
+     * TODO
+     * @return bool
+     */
+    public function delete()
+    {
+        $bloquear = false;
 
-        $eje0 = new \ejercicio();
+        $eje0 = new Ejercicio();
         $ejercicio = $eje0->get($this->codejercicio);
         if ($ejercicio) {
-            if ($this->idasiento == $ejercicio->idasientoapertura) {
+            if ($this->idasiento === $ejercicio->idasientoapertura) {
                 /// permitimos eliminar el asiento de apertura
-            } else if ($this->idasiento == $ejercicio->idasientocierre) {
+            } elseif ($this->idasiento === $ejercicio->idasientocierre) {
                 /// permitimos eliminar el asiento de cierre
-            } else if ($this->idasiento == $ejercicio->idasientopyg) {
+            } elseif ($this->idasiento === $ejercicio->idasientopyg) {
                 /// permitimos eliminar el asiento de pérdidas y ganancias
-            } else if ($ejercicio->abierto()) {
-                $reg0 = new \regularizacion_iva();
-                if ($reg0->get_fecha_inside($this->fecha)) {
-                    $this->new_error_msg('El asiento se encuentra dentro de una regularización de '
-                            . FS_IVA . '. No se puede eliminar.');
-                    $bloquear = TRUE;
+            } elseif ($ejercicio->abierto()) {
+                $reg0 = new RegularizacionIva();
+                if ($reg0->getFechaInside($this->fecha)) {
+                    $this->miniLog->alert('El asiento se encuentra dentro de una regularización de '
+                        . FS_IVA . '. No se puede eliminar.');
+                    $bloquear = true;
                 }
             } else {
-                $this->new_error_msg('El ejercicio ' . $ejercicio->nombre . ' está cerrado.');
-                $bloquear = TRUE;
+                $this->miniLog->alert('El ejercicio ' . $ejercicio->nombre . ' está cerrado.');
+                $bloquear = true;
             }
         }
 
         if ($bloquear) {
-            return FALSE;
-        } else {
-            /// desvinculamos la factura
-            $fac = $this->get_factura();
-            if ($fac) {
-                if ($fac->idasiento == $this->idasiento) {
-                    $fac->idasiento = NULL;
-                    $fac->save();
-                }
-            }
-
-            /// eliminamos las partidas una a una para forzar la actualización de las subcuentas asociadas
-            foreach ($this->get_partidas() as $p) {
-                $p->delete();
-            }
-
-            return self::$dataBase->exec("DELETE FROM " . $this->table_name . " WHERE idasiento = " . $this->var2str($this->idasiento) . ";");
+            return false;
         }
+
+        /// desvinculamos la factura
+        $fac = $this->getFactura();
+        if ($fac) {
+            if ($fac->idasiento === $this->idasiento) {
+                $fac->idasiento = null;
+                $fac->save();
+            }
+        }
+
+        /// eliminamos las partidas una a una para forzar la actualización de las subcuentas asociadas
+        foreach ($this->getPartidas() as $p) {
+            $p->delete();
+        }
+
+        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idasiento = ' . $this->var2str($this->idasiento) . ';';
+        return $this->database->exec($sql);
     }
 
-    public function search($query, $offset = 0) {
-        $alist = array();
-        $query = $this->no_html(mb_strtolower($query, 'UTF8'));
+    /**
+     * TODO
+     *
+     * @param $query
+     * @param int $offset
+     *
+     * @return array
+     */
+    public function search($query, $offset = 0)
+    {
+        $alist = [];
+        $query = static::noHtml(mb_strtolower($query, 'UTF8'));
 
-        $consulta = "SELECT * FROM " . $this->table_name . " WHERE ";
+        $consulta = 'SELECT * FROM ' . $this->tableName() . ' WHERE ';
         if (is_numeric($query)) {
             $aux_sql = '';
-            if (strtolower(FS_DB_TYPE) == 'postgresql') {
+            if (strtolower(FS_DB_TYPE) === 'postgresql') {
                 $aux_sql = '::TEXT';
             }
 
-            $consulta .= "numero" . $aux_sql . " LIKE '%" . $query . "%' OR concepto LIKE '%" . $query
-                    . "%' OR importe BETWEEN " . ($query - .01) . " AND " . ($query + .01);
-        } else if (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query)) {
-            $consulta .= "fecha = " . $this->var2str($query) . " OR concepto LIKE '%" . $query . "%'";
+            $consulta .= 'numero' . $aux_sql . " LIKE '%" . $query . "%' OR concepto LIKE '%" . $query
+                . "%' OR importe BETWEEN " . ($query - .01) . ' AND ' . ($query + .01);
+        } elseif (preg_match('/^(\d{1,2})-(\d{1,2})-(\d{4})$/i', $query)) {
+            $consulta .= 'fecha = ' . $this->var2str($query) . " OR concepto LIKE '%" . $query . "%'";
         } else {
             $consulta .= "lower(concepto) LIKE '%" . $buscar = str_replace(' ', '%', $query) . "%'";
         }
-        $consulta .= " ORDER BY fecha DESC";
+        $consulta .= ' ORDER BY fecha DESC';
 
-        $data = self::$dataBase->select_limit($consulta, FS_ITEM_LIMIT, $offset);
+        $data = $this->database->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
         if ($data) {
             foreach ($data as $a) {
-                $alist[] = new \asiento($a);
+                $alist[] = new Asiento($a);
             }
         }
 
         return $alist;
     }
 
-    public function all($offset = 0, $limit = FS_ITEM_LIMIT) {
-        $alist = array();
-        $sql = "SELECT * FROM " . $this->table_name . " ORDER BY fecha DESC, numero DESC";
-
-        $data = self::$dataBase->select_limit($sql, $limit, $offset);
-        if ($data) {
-            foreach ($data as $a) {
-                $alist[] = new \asiento($a);
-            }
-        }
-
-        return $alist;
-    }
-
-    public function descuadrados() {
+    /**
+     * TODO
+     * @return array
+     */
+    public function descuadrados()
+    {
         /// iniciamos partidas para asegurarnos que existe la tabla
-        new \partida();
+        new Partida();
 
-        $alist = array();
-        $sql = "SELECT p.idasiento,SUM(p.debe) as sdebe,SUM(p.haber) as shaber
-         FROM co_partidas p, " . $this->table_name . " a
+        $alist = [];
+        $sql = 'SELECT p.idasiento,SUM(p.debe) AS sdebe,SUM(p.haber) AS shaber
+         FROM co_partidas p, ' . $this->tableName() . ' a
           WHERE p.idasiento = a.idasiento
            GROUP BY p.idasiento
             HAVING ABS(SUM(p.haber) - SUM(p.debe)) > 0.01
-             ORDER BY p.idasiento DESC;";
+             ORDER BY p.idasiento DESC;';
 
-        $data = self::$dataBase->select($sql);
+        $data = $this->database->select($sql);
         if ($data) {
             foreach ($data as $a) {
                 $alist[] = $this->get($a['idasiento']);
@@ -520,68 +555,82 @@ class Asiento
         return $alist;
     }
 
-    /// renumera todos los asientos. Devuelve FALSE en caso de error
-    public function renumerar() {
-        $ejercicio = new \ejercicio();
-        foreach ($ejercicio->all_abiertos() as $eje) {
+    /**
+     * TODO
+     * @return bool
+     */
+    public function renumerar()
+    {
+        $continuar = false;
+        $ejercicio = new Ejercicio();
+        foreach ($ejercicio->allAbiertos() as $eje) {
             $posicion = 0;
             $numero = 1;
             $sql = '';
-            $continuar = TRUE;
-            $consulta = "SELECT idasiento,numero,fecha FROM " . $this->table_name
-                    . " WHERE codejercicio = " . $this->var2str($eje->codejercicio)
-                    . " ORDER BY codejercicio ASC, fecha ASC, idasiento ASC";
+            $continuar = true;
+            $consulta = 'SELECT idasiento,numero,fecha FROM ' . $this->tableName()
+                . ' WHERE codejercicio = ' . $this->var2str($eje->codejercicio)
+                . ' ORDER BY codejercicio ASC, fecha ASC, idasiento ASC';
 
-            $asientos = self::$dataBase->select_limit($consulta, 1000, $posicion);
-            while ($asientos AND $continuar) {
+            $asientos = $this->database->selectLimit($consulta, 1000, $posicion);
+            while ($asientos && $continuar) {
                 foreach ($asientos as $col) {
-                    if ($col['numero'] != $numero) {
-                        $sql .= "UPDATE " . $this->table_name . " SET numero = " . $this->var2str($numero)
-                                . " WHERE idasiento = " . $this->var2str($col['idasiento']) . ";";
+                    if ($col['numero'] !== $numero) {
+                        $sql .= 'UPDATE ' . $this->tableName() . ' SET numero = ' . $this->var2str($numero)
+                            . ' WHERE idasiento = ' . $this->var2str($col['idasiento']) . ';';
                     }
 
                     $numero++;
                 }
                 $posicion += 1000;
 
-                if ($sql != '') {
-                    if (!self::$dataBase->exec($sql)) {
-                        $this->new_error_msg("Se ha producido un error mientras se renumeraban los asientos del ejercicio "
-                                . $eje->codejercicio);
-                        $continuar = FALSE;
+                if ($sql !== '') {
+                    if (!$this->database->exec($sql)) {
+                        $this->miniLog->alert(
+                            'Se ha producido un error mientras se renumeraban los asientos del ejercicio '
+                            . $eje->codejercicio
+                        );
+                        $continuar = false;
                     }
                     $sql = '';
                 }
 
-                $asientos = self::$dataBase->select_limit($consulta, 1000, $posicion);
+                $asientos = $this->database->selectLimit($consulta, 1000, $posicion);
             }
         }
 
         return $continuar;
     }
 
-    public function cron_job() {
+    /// renumera todos los asientos. Devuelve FALSE en caso de error
+
+    /**
+     * TODO
+     */
+    public function cronJob()
+    {
         /**
          * Bloqueamos asientos de ejercicios cerrados o dentro de regularizaciones.
          */
-        $eje0 = new \ejercicio();
-        $regiva0 = new \regularizacion_iva();
+        $eje0 = new Ejercicio();
+        $regiva0 = new RegularizacionIva();
         foreach ($eje0->all() as $ej) {
             if ($ej->abierto()) {
-                foreach ($regiva0->all_from_ejercicio($ej->codejercicio) as $reg) {
-                    self::$dataBase->exec("UPDATE " . $this->table_name . " SET editable = false WHERE editable = true"
-                            . " AND codejercicio = " . $this->var2str($ej->codejercicio)
-                            . " AND fecha >= " . $this->var2str($reg->fechainicio)
-                            . " AND fecha <= " . $this->var2str($reg->fechafin) . ";");
+                foreach ($regiva0->allFromEjercicio($ej->codejercicio) as $reg) {
+                    $sql = 'UPDATE ' . $this->tableName() . ' SET editable = false WHERE editable = true'
+                        . ' AND codejercicio = ' . $this->var2str($ej->codejercicio)
+                        . ' AND fecha >= ' . $this->var2str($reg->fechainicio)
+                        . ' AND fecha <= ' . $this->var2str($reg->fechafin) . ';';
+                    $this->database->exec($sql);
                 }
             } else {
-                self::$dataBase->exec("UPDATE " . $this->table_name . " SET editable = false WHERE editable = true"
-                        . " AND codejercicio = " . $this->var2str($ej->codejercicio) . ";");
+                $sql = 'UPDATE ' . $this->tableName() . ' SET editable = false WHERE editable = true'
+                    . ' AND codejercicio = ' . $this->var2str($ej->codejercicio) . ';';
+                $this->database->exec($sql);
             }
         }
 
         echo "\nRenumerando asientos...";
         $this->renumerar();
     }
-
 }

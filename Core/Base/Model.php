@@ -210,6 +210,9 @@ trait Model
      */
     private function install()
     {
+        if(function_exists($this->cleanCache())) {
+            $this->cleanCache();
+        }
         return '';
     }
 
@@ -384,6 +387,9 @@ trait Model
      */
     public function delete()
     {
+        if(function_exists($this->cleanCache())) {
+            $this->cleanCache();
+        }
         $sql = 'DELETE FROM ' . $this->tableName()
             . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
         return $this->database->exec($sql);

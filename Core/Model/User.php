@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
@@ -39,19 +40,46 @@ class User
      * @var string
      */
     public $nick;
-
-    /**
-     * Contraseña, cifrada con password_hash()
-     * @var string
-     */
-    private $password;
-
     /**
      * Email del usuario.
      * @var string
      */
     public $email;
-
+    /**
+     * TRUE -> el usuario es un administrador.
+     * @var bool
+     */
+    public $admin;
+    /**
+     * TRUE -> el usuario esta activo.
+     * @var bool
+     */
+    public $enabled;
+    /**
+     * Código del idioma seleccionado para este usuario.
+     * @var string
+     */
+    public $langcode;
+    /**
+     * Página de inicio.
+     * @var string
+     */
+    public $homepage;
+    /**
+     * Fecha y hora de la última actividad del usuario.
+     * @var string
+     */
+    public $lastactivity;
+    /**
+     * Última IP usada.
+     * @var string
+     */
+    public $lastip;
+    /**
+     * Contraseña, cifrada con password_hash()
+     * @var string
+     */
+    private $password;
     /**
      * Clave de sesión. El cliente se la guarda en una cookie,
      * sirve para no tener que guardar la contraseña.
@@ -62,42 +90,6 @@ class User
     private $logkey;
 
     /**
-     * TRUE -> el usuario es un administrador.
-     * @var bool
-     */
-    public $admin;
-
-    /**
-     * TRUE -> el usuario esta activo.
-     * @var bool
-     */
-    public $enabled;
-
-    /**
-     * Código del idioma seleccionado para este usuario.
-     * @var string
-     */
-    public $langcode;
-
-    /**
-     * Página de inicio.
-     * @var string
-     */
-    public $homepage;
-
-    /**
-     * Fecha y hora de la última actividad del usuario.
-     * @var string
-     */
-    public $lastactivity;
-
-    /**
-     * Última IP usada.
-     * @var string
-     */
-    public $lastip;
-
-    /**
      * User constructor.
      *
      * @param array $data
@@ -105,15 +97,14 @@ class User
     public function __construct(array $data = [])
     {
         $this->init(__CLASS__, 'fs_users', 'nick');
+        $this->clear();
         if (!empty($data)) {
             $this->loadFromData($data);
-        } else {
-            $this->clear();
         }
     }
 
     /**
-     * Reseta los valores de este objeto.
+     * Resetea los valores de todas las propiedades modelo.
      */
     public function clear()
     {
@@ -130,22 +121,10 @@ class User
     }
 
     /**
-     * Inserta valores por defecto a la tabla, en el proceso de creación de la misma.
-     * @return string
-     */
-    protected function install()
-    {
-        /// hay una clave ajena a fs_pages, así que cargamos el modelo necesario
-        new Page();
-
-        $this->miniLog->info($this->i18n->trans('created-default-admin-account'));
-        return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled) VALUES ('admin','"
-            . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE);";
-    }
-
-    /**
      * Devuelve el usuario con el nick solicitado
+     *
      * @param string $nick
+     *
      * @return User|bool
      */
     public function get($nick)
@@ -168,6 +147,7 @@ class User
 
     /**
      * Asigna la contraseña dada al usuario.
+     *
      * @param string $value
      */
     public function setPassword($value)
@@ -177,8 +157,10 @@ class User
 
     /**
      * Verifica si la contraseña dada es correcta.
+     *
      * @param string $value
-     * @return boolean
+     *
+     * @return bool
      */
     public function verifyPassword($value)
     {
@@ -188,21 +170,25 @@ class User
     /**
      * Genera una nueva clave de login para el usuario.
      * Además actualiza lastactivity y asigna la IP proporcionada.
+     *
      * @param string $ipAddress
+     *
      * @return string
      */
     public function newLogkey($ipAddress)
     {
         $this->lastactivity = date('d-m-Y H:i:s');
         $this->lastip = $ipAddress;
-        $this->logkey = $this->randomString(99);
+        $this->logkey = static::randomString(99);
         return $this->logkey;
     }
 
     /**
      * Verifica la clave de login proporcionada.
+     *
      * @param string $value
-     * @return boolean
+     *
+     * @return bool
      */
     public function verifyLogkey($value)
     {
@@ -224,5 +210,19 @@ class User
         }
 
         return true;
+    }
+
+    /**
+     * Inserta valores por defecto a la tabla, en el proceso de creación de la misma.
+     * @return string
+     */
+    private function install()
+    {
+        /// hay una clave ajena a fs_pages, así que cargamos el modelo necesario
+        new Page();
+
+        $this->miniLog->info($this->i18n->trans('created-default-admin-account'));
+        return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled) VALUES ('admin','"
+            . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE);";
     }
 }

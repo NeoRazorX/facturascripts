@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
@@ -34,7 +35,7 @@ class Empresa
 
     /**
      * Clave primaria. Integer.
-     * @var integer
+     * @var int
      */
     public $id;
 
@@ -216,7 +217,7 @@ class Empresa
     /**
      * Configuración de email de la empresa.
      * @var array de string
-      ] */
+     * ] */
     public $email_config;
 
     /**
@@ -227,11 +228,12 @@ class Empresa
     public function __construct(array $data = [])
     {
         $this->init(__CLASS__, 'empresa', 'id');
+        $this->clear();
         if (!empty($data)) {
             $this->loadFromData($data);
 
             /// cargamos las opciones de email por defecto
-            $this->email_config = array(
+            $this->email_config = [
                 'mail_password' => '',
                 'mail_bcc' => '',
                 'mail_firma' => "\n---\nEnviado con FacturaScripts",
@@ -241,30 +243,13 @@ class Empresa
                 'mail_enc' => 'ssl',
                 'mail_user' => '',
                 'mail_low_security' => false,
-            );
+            ];
 
             if ($this->xid === null) {
                 $this->xid = static::randomString(30);
                 $this->save();
             }
-        } else {
-            $this->clear();
         }
-    }
-
-    /**
-     * Crea la consulta necesaria para dotar de datos a la empresa en la base de datos.
-     * @return string
-     */
-    protected function install()
-    {
-        $num = mt_rand(1, 9999);
-        return 'INSERT INTO ' . $this->tableName() . ' (stockpedidos,contintegrada,recequivalencia,codserie,'
-            . 'codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,'
-            . 'ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,nombrecorto,lema,horario)'
-            . "VALUES (NULL,FALSE,NULL,'A','ALG','CONT','EUR','0001','https://www.facturascripts.com',"
-            . "NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','',NULL,'00000014Z',"
-            . "'Empresa " . $num . " S.L.','E-" . $num . "','','');";
     }
 
     /**
@@ -273,8 +258,9 @@ class Empresa
      */
     public function getDefault()
     {
-        foreach ($this->all() as $emp) {
-            return $emp;
+        $emp = $this->all();
+        if (!empty($emp)) {
+            return $emp[0];
         }
 
         return false;
@@ -286,7 +272,7 @@ class Empresa
      */
     public function url()
     {
-        return 'index.php?page=admin_empresa';
+        return 'index.php?page=AdminEmpresa';
     }
 
     /**
@@ -323,5 +309,20 @@ class Empresa
         }
 
         return $status;
+    }
+
+    /**
+     * Crea la consulta necesaria para dotar de datos a la empresa en la base de datos.
+     * @return string
+     */
+    private function install()
+    {
+        $num = mt_rand(1, 9999);
+        return 'INSERT INTO ' . $this->tableName() . ' (stockpedidos,contintegrada,recequivalencia,codserie,'
+            . 'codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,'
+            . 'ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,nombrecorto,lema,horario)'
+            . "VALUES (NULL,FALSE,NULL,'A','ALG','CONT','EUR','0001','https://www.facturascripts.com',"
+            . "NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','',NULL,'00000014Z',"
+            . "'Empresa " . $num . " S.L.','E-" . $num . "','','');";
     }
 }

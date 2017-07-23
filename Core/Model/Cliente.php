@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of facturacion_base
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
@@ -13,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,7 +23,7 @@ use FacturaScripts\Core\Base\Model;
 
 /**
  * El cliente. Puede tener una o varias direcciones y subcuentas asociadas.
- * 
+ *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class Cliente
@@ -32,137 +31,155 @@ class Cliente
     use Model;
 
     /**
+     * TODO
+     * @var array
+     */
+    private static $regimenes_iva;
+    /**
      * Clave primaria. Varchar (6).
-     * @var type 
+     * @var
      */
     public $codcliente;
-
     /**
      * Nombre por el que conocemos al cliente, no necesariamente el oficial.
-     * @var type 
+     * @var
      */
     public $nombre;
-
     /**
      * Razón social del cliente, es decir, el nombre oficial. El que aparece en las facturas.
-     * @var type
+     * @var
      */
     public $razonsocial;
-
     /**
      * Tipo de identificador fiscal del cliente.
      * Ejemplos: CIF, NIF, CUIT...
-     * @var type 
+     * @var
      */
     public $tipoidfiscal;
-
     /**
      * Identificador fiscal del cliente.
-     * @var type 
+     * @var
      */
     public $cifnif;
+    /**
+     * TODO
+     * @var
+     */
     public $telefono1;
+    /**
+     * TODO
+     * @var
+     */
     public $telefono2;
+    /**
+     * TODO
+     * @var
+     */
     public $fax;
+    /**
+     * TODO
+     * @var
+     */
     public $email;
+    /**
+     * TODO
+     * @var
+     */
     public $web;
-
     /**
      * Serie predeterminada para este cliente.
-     * @var type 
+     * @var
      */
     public $codserie;
-
     /**
      * Divisa predeterminada para este cliente.
-     * @var type 
+     * @var
      */
     public $coddivisa;
-
     /**
      * Forma de pago predeterminada para este cliente.
-     * @var type 
+     * @var
      */
     public $codpago;
-
     /**
      * Empleado/agente asignado al cliente.
-     * @var type 
+     * @var
      */
     public $codagente;
-
     /**
      * Grupo al que pertenece el cliente.
-     * @var type 
+     * @var
      */
     public $codgrupo;
-
     /**
      * TRUE -> el cliente ya no nos compra o no queremos nada con él.
-     * @var type 
+     * @var
      */
     public $debaja;
-
     /**
      * Fecha en la que se dió de baja al cliente.
-     * @var type 
+     * @var
      */
     public $fechabaja;
-
     /**
      * Fecha en la que se dió de alta al cliente.
-     * @var type 
+     * @var
      */
     public $fechaalta;
+    /**
+     * TODO
+     * @var
+     */
     public $observaciones;
-
     /**
      * Régimen de fiscalidad del cliente. Por ahora solo están implementados
      * general y exento.
-     * @var type 
+     * @var
      */
     public $regimeniva;
-
     /**
      * TRUE -> al cliente se le aplica recargo de equivalencia.
-     * @var type 
+     * @var
      */
     public $recargo;
-
     /**
      * TRUE  -> el cliente es una persona física.
      * FALSE -> el cliente es una persona jurídica (empresa).
-     * @var type 
+     * @var
      */
     public $personafisica;
-
     /**
      * Dias de pago preferidos a la hora de calcular el vencimiento de las facturas.
      * Días separados por comas: 1,15,31
-     * @var type 
+     * @var
      */
     public $diaspago;
-
     /**
      * Proveedor asociado equivalente
-     * @var type
+     * @var
      */
     public $codproveedor;
-    private static $regimenes_iva;
 
-    public function __construct(array $data = []) 
+    /**
+     * Cliente constructor.
+     *
+     * @param array $data
+     */
+    public function __construct(array $data = [])
     {
         $this->init(__CLASS__, 'clientes', 'codcliente');
+        $this->clear();
         if (!empty($data)) {
             $this->loadFromData($data);
-        } else {
-            $this->clear();
         }
     }
-    
+
+    /**
+     * Resetea los valores de todas las propiedades modelo.
+     */
     public function clear()
     {
-        $this->codcliente = NULL;
+        $this->codcliente = null;
         $this->nombre = '';
         $this->razonsocial = '';
         // $this->tipoidfiscal = FS_CIFNIF;
@@ -178,85 +195,86 @@ class Cliente
          * a este cliente se utilice la serie por defecto de la empresa.
          * NULL => usamos la serie de la empresa.
          */
-        $this->codserie = NULL;
+        $this->codserie = null;
 
         $this->coddivisa = $this->defaultItems->codDivisa();
         $this->codpago = $this->defaultItems->codPago();
-        $this->codagente = NULL;
-        $this->codgrupo = NULL;
-        $this->debaja = FALSE;
-        $this->fechabaja = NULL;
+        $this->codagente = null;
+        $this->codgrupo = null;
+        $this->debaja = false;
+        $this->fechabaja = null;
         $this->fechaalta = date('d-m-Y');
-        $this->observaciones = NULL;
+        $this->observaciones = null;
         $this->regimeniva = 'General';
-        $this->recargo = FALSE;
-        $this->personafisica = TRUE;
-        $this->diaspago = NULL;
-        $this->codproveedor = NULL;
-    }
-
-    protected function install() {
-        $this->clean_cache();
-
-        /**
-         * La tabla tiene varias claves ajenas, por eso debemos forzar la comprobación
-         * de estas tablas.
-         */
-        //new \grupo_clientes();
-
-        return '';
-    }
-
-    public function observaciones_resume() {
-        if ($this->observaciones == '') {
-            return '-';
-        } else if (strlen($this->observaciones) < 60) {
-            return $this->observaciones;
-        } else {
-                    return substr($this->observaciones, 0, 50) . '...';
-        }
-    }
-
-    public function url() {
-        if (is_null($this->codcliente)) {
-            return "index.php?page=ventas_clientes";
-        } else {
-                    return "index.php?page=ventas_cliente&cod=" . $this->codcliente;
-        }
+        $this->recargo = false;
+        $this->personafisica = true;
+        $this->diaspago = null;
+        $this->codproveedor = null;
     }
 
     /**
-     * @deprecated since version 50
-     * @return boolean
+     * Acorta el texto de observaciones
+     * @return string
      */
-    public function is_default() {
-        return FALSE;
+    public function observacionesResume()
+    {
+        if ($this->observaciones === '') {
+            return '-';
+        }
+        if (strlen($this->observaciones) < 60) {
+            return $this->observaciones;
+        }
+        return substr($this->observaciones, 0, 50) . '...';
+    }
+
+    /**
+     * Devuelve la url donde ver/modificar estos datos
+     * @return string
+     */
+    public function url()
+    {
+        if ($this->codcliente === null) {
+            return 'index.php?page=VentasClientes';
+        }
+        return 'index.php?page=VentasCliente&cod=' . $this->codcliente;
+    }
+
+    /**
+     * TODO
+     * @deprecated since version 50
+     * @return bool
+     */
+    public function isDefault()
+    {
+        return false;
     }
 
     /**
      * Devuelve un array con los regimenes de iva disponibles.
-     * @return type
+     * @return array
      */
-    public function regimenes_iva() {
-        if (!isset(self::$regimenes_iva)) {
+    public function regimenesIva()
+    {
+        if (self::$regimenes_iva === null) {
             /// Si hay usa lista personalizada en fs_vars, la usamos
-            $fsvar = new \fs_var();
-            $data = $fsvar->simple_get('cliente::regimenes_iva');
+            $fsvar = new FsVar();
+            $data = $fsvar->simpleGet('cliente::regimenes_iva');
             if ($data) {
-                self::$regimenes_iva = array();
+                self::$regimenes_iva = [];
                 foreach (explode(',', $data) as $d) {
                     self::$regimenes_iva[] = trim($d);
                 }
             } else {
                 /// sino usamos estos
-                self::$regimenes_iva = array('General', 'Exento');
+                self::$regimenes_iva = ['General', 'Exento'];
             }
 
             /// además de añadir los que haya en la base de datos
-            $data = self::$dataBase->select("SELECT DISTINCT regimeniva FROM clientes ORDER BY regimeniva ASC;");
+            $sql = 'SELECT DISTINCT regimeniva FROM clientes ORDER BY regimeniva ASC;';
+            $data = $this->database->select($sql);
             if ($data) {
                 foreach ($data as $d) {
-                    if (!in_array($d['regimeniva'], self::$regimenes_iva)) {
+                    if (!in_array($d['regimeniva'], self::$regimenes_iva, false)) {
                         self::$regimenes_iva[] = $d['regimeniva'];
                     }
                 }
@@ -267,84 +285,77 @@ class Cliente
     }
 
     /**
-     * Devuelve el cliente que tenga ese codcliente.
-     * @param type $cod
-     * @return \cliente|boolean
-     */
-    public function get($cod) {
-        $cli = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codcliente = " . $this->var2str($cod) . ";");
-        if ($cli) {
-            return new \cliente($cli[0]);
-        } else {
-                    return FALSE;
-        }
-    }
-
-    /**
      * Devuelve el primer cliente que tenga $cifnif como cifnif.
      * Si el cifnif está en blanco y se proporciona una razón social,
      * se devuelve el primer cliente que tenga esa razón social.
-     * @param type $cifnif
-     * @param type $razon
-     * @return boolean|\cliente
+     *
+     * @param $cifnif
+     * @param $razon
+     *
+     * @return bool|Cliente
      */
-    public function get_by_cifnif($cifnif, $razon = FALSE) {
-        if ($cifnif == '' AND $razon) {
-            $razon = $this->no_html(mb_strtolower($razon, 'UTF8'));
-            $sql = "SELECT * FROM " . $this->table_name . " WHERE cifnif = '' AND lower(razonsocial) = " . $this->var2str($razon) . ";";
+    public function getByCifnif($cifnif, $razon = false)
+    {
+        if ($cifnif === '' && $razon) {
+            $razon = static::noHtml(mb_strtolower($razon, 'UTF8'));
+            $sql = 'SELECT * FROM ' . $this->tableName()
+                . " WHERE cifnif = '' AND lower(razonsocial) = " . $this->var2str($razon) . ';';
         } else {
             $cifnif = mb_strtolower($cifnif, 'UTF8');
-            $sql = "SELECT * FROM " . $this->table_name . " WHERE lower(cifnif) = " . $this->var2str($cifnif) . ";";
+            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE lower(cifnif) = ' . $this->var2str($cifnif) . ';';
         }
 
-        $data = self::$dataBase->select($sql);
+        $data = $this->database->select($sql);
         if ($data) {
-            return new \cliente($data[0]);
-        } else {
-                    return FALSE;
+            return new Cliente($data[0]);
         }
+        return false;
     }
 
     /**
      * Devuelve el primer cliente que tenga $email como email.
-     * @param type $email
-     * @return boolean|\cliente
+     *
+     * @param $email
+     *
+     * @return bool|Cliente
      */
-    public function get_by_email($email) {
+    public function getByEmail($email)
+    {
         $email = mb_strtolower($email, 'UTF8');
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE lower(email) = " . $this->var2str($email) . ";";
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE lower(email) = ' . $this->var2str($email) . ';';
 
-        $data = self::$dataBase->select($sql);
+        $data = $this->database->select($sql);
         if ($data) {
-            return new \cliente($data[0]);
-        } else {
-                    return FALSE;
+            return new Cliente($data[0]);
         }
+        return false;
     }
 
     /**
      * Devuelve un array con las direcciones asociadas al cliente.
-     * @return type
+     * @return array
      */
-    public function get_direcciones() {
-        $dir = new \direccion_cliente();
-        return $dir->all_from_cliente($this->codcliente);
+    public function getDirecciones()
+    {
+        $dir = new DireccionCliente();
+        return $dir->allFromCliente($this->codcliente);
     }
 
     /**
      * Devuelve un array con todas las subcuentas asociadas al cliente.
      * Una para cada ejercicio.
-     * @return type
+     * @return array
      */
-    public function get_subcuentas() {
-        $subclist = array();
-        $subc = new \subcuenta_cliente();
-        foreach ($subc->all_from_cliente($this->codcliente) as $s) {
-            $s2 = $s->get_subcuenta();
+    public function getSubcuentas()
+    {
+        $subclist = [];
+        $subc = new SubcuentaCliente();
+        foreach ($subc->allFromCliente($this->codcliente) as $s) {
+            $s2 = $s->getSubcuenta();
             if ($s2) {
                 $subclist[] = $s2;
             } else {
-                            $s->delete();
+                $s->delete();
             }
         }
 
@@ -354,14 +365,17 @@ class Cliente
     /**
      * Devuelve la subcuenta asociada al cliente para el ejercicio $eje.
      * Si no existe intenta crearla. Si falla devuelve FALSE.
-     * @param type $codejercicio
+     *
+     * @param string $codejercicio
+     *
      * @return subcuenta
      */
-    public function get_subcuenta($codejercicio) {
-        $subcuenta = FALSE;
+    public function getSubcuenta($codejercicio)
+    {
+        $subcuenta = false;
 
-        foreach ($this->get_subcuentas() as $s) {
-            if ($s->codejercicio == $codejercicio) {
+        foreach ($this->getSubcuentas() as $s) {
+            if ($s->codejercicio === $codejercicio) {
                 $subcuenta = $s;
                 break;
             }
@@ -369,23 +383,23 @@ class Cliente
 
         if (!$subcuenta) {
             /// intentamos crear la subcuenta y asociarla
-            $continuar = TRUE;
+            $continuar = true;
 
-            $cuenta = new \cuenta();
-            $ccli = $cuenta->get_cuentaesp('CLIENT', $codejercicio);
+            $cuenta = new Cuenta();
+            $ccli = $cuenta->getCuentaesp('CLIENT', $codejercicio);
             if ($ccli) {
-                $continuar = FALSE;
+                $continuar = false;
 
-                $subc0 = $ccli->new_subcuenta($this->codcliente);
+                $subc0 = $ccli->newSubcuenta($this->codcliente);
                 if ($subc0) {
                     $subc0->descripcion = $this->razonsocial;
                     if ($subc0->save()) {
-                        $continuar = TRUE;
+                        $continuar = true;
                     }
                 }
 
                 if ($continuar) {
-                    $sccli = new \subcuenta_cliente();
+                    $sccli = new SubcuentaCliente();
                     $sccli->codcliente = $this->codcliente;
                     $sccli->codejercicio = $codejercicio;
                     $sccli->codsubcuenta = $subc0->codsubcuenta;
@@ -393,196 +407,109 @@ class Cliente
                     if ($sccli->save()) {
                         $subcuenta = $subc0;
                     } else {
-                                            $this->new_error_msg('Imposible asociar la subcuenta para el cliente ' . $this->codcliente);
+                        $this->miniLog->alert('Imposible asociar la subcuenta para el cliente ' . $this->codcliente);
                     }
                 } else {
-                    $this->new_error_msg('Imposible crear la subcuenta para el cliente ' . $this->codcliente);
+                    $this->miniLog->alert('Imposible crear la subcuenta para el cliente ' . $this->codcliente);
                 }
             } else {
                 /// obtenemos una url para el mensaje, pero a prueba de errores.
                 $eje_url = '';
-                $eje0 = new \ejercicio();
+                $eje0 = new Ejercicio();
                 $ejercicio = $eje0->get($codejercicio);
                 if ($ejercicio) {
                     $eje_url = $ejercicio->url();
                 }
 
-                $this->new_error_msg('No se encuentra ninguna cuenta especial para clientes en el ejercicio '
-                        . $codejercicio . ' ¿<a href="' . $eje_url . '">Has importado los datos del ejercicio</a>?');
+                $this->miniLog->alert('No se encuentra ninguna cuenta especial para clientes en el ejercicio '
+                    . $codejercicio . ' ¿<a href="' . $eje_url . '">Has importado los datos del ejercicio</a>?');
             }
         }
 
         return $subcuenta;
     }
 
-    public function exists() {
-        if (is_null($this->codcliente)) {
-            return FALSE;
-        } else {
-                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codcliente = " . $this->var2str($this->codcliente) . ";");
-        }
-    }
-
     /**
      * Devuelve un código que se usará como clave primaria/identificador único para este cliente.
      * @return string
      */
-    public function get_new_codigo() {
-        $cod = self::$dataBase->select("SELECT MAX(" . self::$dataBase->sql_to_int('codcliente') . ") as cod FROM " . $this->table_name . ";");
+    public function getNewCodigo()
+    {
+        $sql = 'SELECT MAX(' . $this->database->sql2Int('codcliente') . ') as cod FROM ' . $this->tableName() . ';';
+        $cod = $this->database->select($sql);
         if ($cod) {
-            return sprintf('%06s', (1 + intval($cod[0]['cod'])));
-        } else {
-                    return '000001';
+            return sprintf('%06s', 1 + (int)$cod[0]['cod']);
         }
+        return '000001';
     }
 
-    public function test() {
-        $status = FALSE;
+    /**
+     * TODO
+     * @return bool
+     */
+    public function test()
+    {
+        $status = false;
 
-        if (is_null($this->codcliente)) {
-            $this->codcliente = $this->get_new_codigo();
+        if ($this->codcliente === null) {
+            $this->codcliente = $this->getNewCodigo();
         } else {
             $this->codcliente = trim($this->codcliente);
         }
 
-        $this->nombre = $this->no_html($this->nombre);
-        $this->razonsocial = $this->no_html($this->razonsocial);
-        $this->cifnif = $this->no_html($this->cifnif);
-        $this->observaciones = $this->no_html($this->observaciones);
+        $this->nombre = static::noHtml($this->nombre);
+        $this->razonsocial = static::noHtml($this->razonsocial);
+        $this->cifnif = static::noHtml($this->cifnif);
+        $this->observaciones = static::noHtml($this->observaciones);
 
         if ($this->debaja) {
-            if (is_null($this->fechabaja)) {
+            if ($this->fechabaja === null) {
                 $this->fechabaja = date('d-m-Y');
             }
         } else {
-            $this->fechabaja = NULL;
+            $this->fechabaja = null;
         }
 
         /// validamos los dias de pago
-        $array_dias = array();
+        $array_dias = [];
         foreach (str_getcsv($this->diaspago) as $d) {
-            if (intval($d) >= 1 AND intval($d) <= 31) {
-                $array_dias[] = intval($d);
+            if ((int)$d >= 1 && (int)$d <= 31) {
+                $array_dias[] = (int)$d;
             }
         }
-        $this->diaspago = NULL;
+        $this->diaspago = null;
         if ($array_dias) {
-            $this->diaspago = join(',', $array_dias);
+            $this->diaspago = implode(',', $array_dias);
         }
 
-        if (!preg_match("/^[A-Z0-9]{1,6}$/i", $this->codcliente)) {
-            $this->new_error_msg("Código de cliente no válido: " . $this->codcliente);
-        } else if (strlen($this->nombre) < 1 OR strlen($this->nombre) > 100) {
-            $this->new_error_msg("Nombre de cliente no válido: " . $this->nombre);
-        } else if (strlen($this->razonsocial) < 1 OR strlen($this->razonsocial) > 100) {
-            $this->new_error_msg("Razón social del cliente no válida: " . $this->razonsocial);
+        if (!preg_match('/^[A-Z0-9]{1,6}$/i', $this->codcliente)) {
+            $this->miniLog->alert('Código de cliente no válido: ' . $this->codcliente);
+        } elseif (empty($this->nombre) || strlen($this->nombre) > 100) {
+            $this->miniLog->alert('Nombre de cliente no válido: ' . $this->nombre);
+        } elseif (empty($this->razonsocial) || strlen($this->razonsocial) > 100) {
+            $this->miniLog->alert('Razón social del cliente no válida: ' . $this->razonsocial);
         } else {
-                    $status = TRUE;
+            $status = true;
         }
 
         return $status;
     }
 
-    public function save() {
-        if ($this->test()) {
-            $this->clean_cache();
-
-            if ($this->exists()) {
-                $sql = "UPDATE " . $this->table_name . " SET nombre = " . $this->var2str($this->nombre)
-                        . ", razonsocial = " . $this->var2str($this->razonsocial)
-                        . ", tipoidfiscal = " . $this->var2str($this->tipoidfiscal)
-                        . ", cifnif = " . $this->var2str($this->cifnif)
-                        . ", telefono1 = " . $this->var2str($this->telefono1)
-                        . ", telefono2 = " . $this->var2str($this->telefono2)
-                        . ", fax = " . $this->var2str($this->fax)
-                        . ", email = " . $this->var2str($this->email)
-                        . ", web = " . $this->var2str($this->web)
-                        . ", codserie = " . $this->var2str($this->codserie)
-                        . ", coddivisa = " . $this->var2str($this->coddivisa)
-                        . ", codpago = " . $this->var2str($this->codpago)
-                        . ", codagente = " . $this->var2str($this->codagente)
-                        . ", codgrupo = " . $this->var2str($this->codgrupo)
-                        . ", debaja = " . $this->var2str($this->debaja)
-                        . ", fechabaja = " . $this->var2str($this->fechabaja)
-                        . ", fechaalta = " . $this->var2str($this->fechaalta)
-                        . ", observaciones = " . $this->var2str($this->observaciones)
-                        . ", regimeniva = " . $this->var2str($this->regimeniva)
-                        . ", recargo = " . $this->var2str($this->recargo)
-                        . ", personafisica = " . $this->var2str($this->personafisica)
-                        . ", diaspago = " . $this->var2str($this->diaspago)
-                        . ", codproveedor = " . $this->var2str($this->codproveedor)
-                        . "  WHERE codcliente = " . $this->var2str($this->codcliente) . ";";
-            } else {
-                $sql = "INSERT INTO " . $this->table_name . " (codcliente,nombre,razonsocial,tipoidfiscal,
-               cifnif,telefono1,telefono2,fax,email,web,codserie,coddivisa,codpago,codagente,codgrupo,
-               debaja,fechabaja,fechaalta,observaciones,regimeniva,recargo,personafisica,diaspago,codproveedor) VALUES
-                      (" . $this->var2str($this->codcliente)
-                        . "," . $this->var2str($this->nombre)
-                        . "," . $this->var2str($this->razonsocial)
-                        . "," . $this->var2str($this->tipoidfiscal)
-                        . "," . $this->var2str($this->cifnif)
-                        . "," . $this->var2str($this->telefono1)
-                        . "," . $this->var2str($this->telefono2)
-                        . "," . $this->var2str($this->fax)
-                        . "," . $this->var2str($this->email)
-                        . "," . $this->var2str($this->web)
-                        . "," . $this->var2str($this->codserie)
-                        . "," . $this->var2str($this->coddivisa)
-                        . "," . $this->var2str($this->codpago)
-                        . "," . $this->var2str($this->codagente)
-                        . "," . $this->var2str($this->codgrupo)
-                        . "," . $this->var2str($this->debaja)
-                        . "," . $this->var2str($this->fechabaja)
-                        . "," . $this->var2str($this->fechaalta)
-                        . "," . $this->var2str($this->observaciones)
-                        . "," . $this->var2str($this->regimeniva)
-                        . "," . $this->var2str($this->recargo)
-                        . "," . $this->var2str($this->personafisica)
-                        . "," . $this->var2str($this->diaspago)
-                        . "," . $this->var2str($this->codproveedor) . ");";
-            }
-
-            return self::$dataBase->exec($sql);
-        } else {
-                    return FALSE;
-        }
-    }
-
-    public function delete() {
-        $this->clean_cache();
-        return self::$dataBase->exec("DELETE FROM " . $this->table_name . " WHERE codcliente = " . $this->var2str($this->codcliente) . ";");
-    }
-
-    private function clean_cache() {
-        $this->cache->delete('m_cliente_all');
-    }
-
-    public function all($offset = 0) {
-        $clientlist = array();
-
-        $data = self::$dataBase->select_limit("SELECT * FROM " . $this->table_name . " ORDER BY lower(nombre) ASC", FS_ITEM_LIMIT, $offset);
-        if ($data) {
-            foreach ($data as $d) {
-                $clientlist[] = new \cliente($d);
-            }
-        }
-
-        return $clientlist;
-    }
-
     /**
      * Devuelve un array con la lista completa de clientes.
-     * @return \cliente
+     * @return array
      */
-    public function all_full() {
+    public function allFull()
+    {
         /// leemos la lista de la caché
-        $clientlist = $this->cache->get_array('m_cliente_all');
+        $clientlist = $this->cache->get('m_cliente_all');
         if (!$clientlist) {
             /// si no la encontramos en la caché, leemos de la base de datos
-            $data = self::$dataBase->select("SELECT * FROM " . $this->table_name . " ORDER BY lower(nombre) ASC;");
+            $sql = 'SELECT * FROM ' . $this->tableName() . ' ORDER BY lower(nombre) ASC;';
+            $data = $this->database->select($sql);
             if ($data) {
                 foreach ($data as $d) {
-                    $clientlist[] = new \cliente($d);
+                    $clientlist[] = new Cliente($d);
                 }
             }
 
@@ -593,28 +520,37 @@ class Cliente
         return $clientlist;
     }
 
-    public function search($query, $offset = 0) {
-        $clilist = array();
-        $query = mb_strtolower($this->no_html($query), 'UTF8');
+    /**
+     * TODO
+     *
+     * @param $query
+     * @param int $offset
+     *
+     * @return array
+     */
+    public function search($query, $offset = 0)
+    {
+        $clilist = [];
+        $query = mb_strtolower(static::noHtml($query), 'UTF8');
 
-        $consulta = "SELECT * FROM " . $this->table_name . " WHERE debaja = FALSE AND ";
+        $consulta = 'SELECT * FROM ' . $this->tableName() . ' WHERE debaja = FALSE AND ';
         if (is_numeric($query)) {
             $consulta .= "(nombre LIKE '%" . $query . "%' OR razonsocial LIKE '%" . $query . "%'"
-                    . " OR codcliente LIKE '%" . $query . "%' OR cifnif LIKE '%" . $query . "%'"
-                    . " OR telefono1 LIKE '" . $query . "%' OR telefono2 LIKE '" . $query . "%'"
-                    . " OR observaciones LIKE '%" . $query . "%')";
+                . " OR codcliente LIKE '%" . $query . "%' OR cifnif LIKE '%" . $query . "%'"
+                . " OR telefono1 LIKE '" . $query . "%' OR telefono2 LIKE '" . $query . "%'"
+                . " OR observaciones LIKE '%" . $query . "%')";
         } else {
             $buscar = str_replace(' ', '%', $query);
             $consulta .= "(lower(nombre) LIKE '%" . $buscar . "%' OR lower(razonsocial) LIKE '%" . $buscar . "%'"
-                    . " OR lower(cifnif) LIKE '%" . $buscar . "%' OR lower(observaciones) LIKE '%" . $buscar . "%'"
-                    . " OR lower(email) LIKE '%" . $buscar . "%')";
+                . " OR lower(cifnif) LIKE '%" . $buscar . "%' OR lower(observaciones) LIKE '%" . $buscar . "%'"
+                . " OR lower(email) LIKE '%" . $buscar . "%')";
         }
-        $consulta .= " ORDER BY lower(nombre) ASC";
+        $consulta .= ' ORDER BY lower(nombre) ASC';
 
-        $data = self::$dataBase->select_limit($consulta, FS_ITEM_LIMIT, $offset);
+        $data = $this->database->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
         if ($data) {
             foreach ($data as $d) {
-                $clilist[] = new \cliente($d);
+                $clilist[] = new Cliente($d);
             }
         }
 
@@ -623,20 +559,23 @@ class Cliente
 
     /**
      * Busca por cifnif.
+     *
      * @param string $dni
      * @param integer $offset
-     * @return \cliente
+     *
+     * @return array
      */
-    public function search_by_dni($dni, $offset = 0) {
-        $clilist = array();
-        $query = mb_strtolower($this->no_html($dni), 'UTF8');
-        $consulta = "SELECT * FROM " . $this->table_name . " WHERE debaja = FALSE "
-                . "AND lower(cifnif) LIKE '" . $query . "%' ORDER BY lower(nombre) ASC";
+    public function searchByDni($dni, $offset = 0)
+    {
+        $clilist = [];
+        $query = mb_strtolower(static::noHtml($dni), 'UTF8');
+        $consulta = 'SELECT * FROM' . $this->tableName() . ' WHERE debaja = FALSE'
+            . "AND lower(cifnif) LIKE '" . $query . "%' ORDER BY lower(nombre) ASC";
 
-        $data = self::$dataBase->select_limit($consulta, FS_ITEM_LIMIT, $offset);
+        $data = $this->database->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
         if ($data) {
             foreach ($data as $d) {
-                $clilist[] = new \cliente($d);
+                $clilist[] = new Cliente($d);
             }
         }
 
@@ -646,17 +585,48 @@ class Cliente
     /**
      * Aplicamos algunas correcciones a la tabla.
      */
-    public function fix_db() {
-        /// ponemos debaja a false en los casos que sea null
-        self::$dataBase->exec("UPDATE " . $this->table_name . " SET debaja = false WHERE debaja IS NULL;");
+    public function fixDb()
+    {
+        $fixes = [
+            /// ponemos debaja a false en los casos que sea null
+            'UPDATE ' . $this->tableName() . ' SET debaja = false WHERE debaja IS NULL;',
+            /// desvinculamos de grupos que no existen
+            'UPDATE ' . $this->tableName() . ' SET codgrupo = NULL WHERE codgrupo IS NOT NULL'
+            . ' AND codgrupo NOT IN (SELECT codgrupo FROM gruposclientes);',
+            /// desvinculamos de proveedores que no existan
+            'UPDATE ' . $this->tableName() . ' SET codproveedor = null WHERE codproveedor IS NOT NULL'
+            . ' AND codproveedor NOT IN (SELECT codproveedor FROM proveedores);'
+        ];
 
-        /// desvinculamos de grupos que no existen
-        self::$dataBase->exec("UPDATE " . $this->table_name . " SET codgrupo = NULL WHERE codgrupo IS NOT NULL"
-                . " AND codgrupo NOT IN (SELECT codgrupo FROM gruposclientes);");
-
-        /// desvinculamos de proveedores que no existan
-        self::$dataBase->exec("UPDATE " . $this->table_name . " SET codproveedor = null WHERE codproveedor IS NOT NULL"
-                . " AND codproveedor NOT IN (SELECT codproveedor FROM proveedores);");
+        foreach ($fixes as $sql) {
+            $this->database->exec($sql);
+        }
     }
 
+    /**
+     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará tras la creación de la tabla. útil para insertar valores
+     * por defecto.
+     * @return string
+     */
+    private function install()
+    {
+        $this->cleanCache();
+
+        /**
+         * La tabla tiene varias claves ajenas, por eso debemos forzar la comprobación
+         * de estas tablas.
+         */
+        //new GrupoClientes();
+
+        return '';
+    }
+
+    /**
+     * TODO
+     */
+    private function cleanCache()
+    {
+        $this->cache->delete('m_cliente_all');
+    }
 }

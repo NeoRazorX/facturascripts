@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
@@ -75,15 +76,15 @@ class FormaPago
 
     /**
      * FormaPago constructor.
+     *
      * @param array $data
      */
     public function __construct(array $data = [])
     {
         $this->init(__CLASS__, 'formaspago', 'codpago');
+        $this->clear();
         if (!empty($data)) {
             $this->loadFromData($data);
-        } else {
-            $this->clear();
         }
     }
 
@@ -105,7 +106,7 @@ class FormaPago
      * Crea la consulta necesaria para crear una nueva forma de pago en la base de datos.
      * @return string
      */
-    public function install()
+    private function install()
     {
         return 'INSERT INTO ' . $this->tableName()
             . ' (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)'
@@ -116,12 +117,12 @@ class FormaPago
     }
 
     /**
-     * Devuelve la URL donde ver/modificar los datos
+     * Devuelve la url donde ver/modificar estos datos
      * @return string
      */
     public function url()
     {
-        return 'index.php?page=contabilidad_formas_pago';
+        return 'index.php?page=ContabilidadFormasPago';
     }
 
     /**
@@ -155,8 +156,10 @@ class FormaPago
     /**
      * A partir de una fecha devuelve la nueva fecha de vencimiento en base a esta forma de pago.
      * Si se proporciona $dias_de_pago se usarán para la nueva fecha.
+     *
      * @param string $fecha_inicio
      * @param string $dias_de_pago dias de pago específicos para el cliente (separados por comas).
+     *
      * @return string
      */
     public function calcularVencimiento($fecha_inicio, $dias_de_pago = '')
@@ -164,10 +167,10 @@ class FormaPago
         $fecha = $this->calcularVencimiento2($fecha_inicio);
 
         /// validamos los días de pago
-        $array_dias = array();
+        $array_dias = [];
         foreach (str_getcsv($dias_de_pago) as $d) {
-            if ((int) $d >= 1 && (int) $d <= 31) {
-                $array_dias[] = (int) $d;
+            if ((int)$d >= 1 && (int)$d <= 31) {
+                $array_dias[] = (int)$d;
             }
         }
 
@@ -189,9 +192,11 @@ class FormaPago
     }
 
     /**
-     * Función recursiva auxiliar para calcular_vencimiento()
+     * Función recursiva auxiliar para calcularVencimiento()
+     *
      * @param string $fecha_inicio
      * @param string|integer $dia_de_pago
+     *
      * @return string
      */
     private function calcularVencimiento2($fecha_inicio, $dia_de_pago = 0)
@@ -213,7 +218,7 @@ class FormaPago
         }
 
         /// ahora elegimos un dia, pero que quepa en el mes, no puede ser 31 de febrero
-        $tmp_dia = min(array($dia_de_pago, (int) date('t', strtotime($fecha))));
+        $tmp_dia = min([$dia_de_pago, (int)date('t', strtotime($fecha))]);
 
         /// y por último generamos la fecha
         return date('d-m-Y', strtotime($tmp_dia . '-' . $tmp_mes . '-' . $tmp_anyo));

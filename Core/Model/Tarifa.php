@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of facturacion_base
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
@@ -13,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,7 +23,7 @@ use FacturaScripts\Core\Base\Model;
 
 /**
  * Una tarifa para los artículos.
- * 
+ *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class Tarifa
@@ -33,104 +32,125 @@ class Tarifa
 
     /**
      * Clave primaria.
-     * @var type 
+     * @var string
      */
     public $codtarifa;
 
     /**
      * Nombre de la tarifa.
-     * @var type 
+     * @var string
      */
     public $nombre;
-
+    /**
+     * Fórmula a aplicar
+     * @var
+     */
+    public $aplicar_a;
+    /**
+     * no vender por debajo de coste
+     * @var bool
+     */
+    public $mincoste;
+    /**
+     * no vender por encima de pvp
+     * @var bool
+     */
+    public $maxpvp;
     /**
      * Incremento porcentual o descuento
-     * @var type 
+     * @var float
      */
     private $incporcentual;
-
     /**
      * Incremento lineal o descuento lineal
-     * @var type 
+     * @var float
      */
     private $inclineal;
 
     /**
-     * Fórmula a aplicar
-     * @var type 
+     * Tarifa constructor.
+     *
+     * @param array $data
      */
-    public $aplicar_a;
-
-    /**
-     * no vender por debajo de coste
-     * @var boolean 
-     */
-    public $mincoste;
-
-    /**
-     * no vender por encima de pvp
-     * @var boolean 
-     */
-    public $maxpvp;
-
-    public function __construct(array $data = []) 
+    public function __construct(array $data = [])
     {
         $this->init(__CLASS__, 'tarifas', 'codtarifa');
+        $this->clear();
         if (!empty($data)) {
             $this->loadFromData($data);
-        } else {
-            $this->clear();
         }
     }
-	
+
+    /**
+     * Resetea los valores de todas las propiedades modelo.
+     */
     public function clear()
     {
-        $this->codtarifa = NULL;
-        $this->nombre = NULL;
+        $this->codtarifa = null;
+        $this->nombre = null;
         $this->incporcentual = 0;
         $this->inclineal = 0;
         $this->aplicar_a = 'pvp';
-        $this->mincoste = TRUE;
-        $this->maxpvp = TRUE;
+        $this->mincoste = true;
+        $this->maxpvp = true;
     }
 
-    protected function install() {
-        return '';
+    /**
+     * Devuelve la url donde ver/modificar estos datos
+     * @return string
+     */
+    public function url()
+    {
+        return 'index.php?page=VentasArticulos#tarifas';
     }
 
-    public function url() {
-        return 'index.php?page=ventas_articulos#tarifas';
-    }
-
-    public function x() {
-        if ($this->aplicar_a == 'pvp') {
+    /**
+     * TODO
+     * @return int
+     */
+    public function x()
+    {
+        if ($this->aplicar_a === 'pvp') {
             return (0 - $this->incporcentual);
-        } else {
-            return $this->incporcentual;
         }
+        return $this->incporcentual;
     }
 
-    public function set_x($dto) {
-        if ($this->aplicar_a == 'pvp') {
+    /**
+     * TODO
+     *
+     * @param $dto
+     */
+    public function setX($dto)
+    {
+        $this->incporcentual = $dto;
+        if ($this->aplicar_a === 'pvp') {
             $this->incporcentual = 0 - $dto;
-        } else {
-            $this->incporcentual = $dto;
         }
     }
 
-    public function y() {
-        if ($this->aplicar_a == 'pvp') {
+    /**
+     * TODO
+     * @return int
+     */
+    public function y()
+    {
+        if ($this->aplicar_a === 'pvp') {
             return (0 - $this->inclineal);
-        } else {
-            return $this->inclineal;
         }
+        return $this->inclineal;
     }
 
-    public function set_y($inc) {
-        if ($this->aplicar_a == 'pvp') {
+    /**
+     * TODO
+     *
+     * @param $inc
+     */
+    public function setY($inc)
+    {
+        $this->inclineal = $inc;
+        if ($this->aplicar_a === 'pvp') {
             $this->inclineal = 0 - $inc;
-        } else {
-            $this->inclineal = $inc;
         }
     }
 
@@ -138,12 +158,12 @@ class Tarifa
      * Devuelve un texto explicativo de lo que hace la tarifa
      * @return string
      */
-    public function diff() {
-        $texto = '';
+    public function diff()
+    {
         $x = $this->x();
         $y = $this->y();
 
-        if ($this->aplicar_a == 'pvp') {
+        if ($this->aplicar_a === 'pvp') {
             $texto = 'Precio de venta ';
             $x = 0 - $x;
             $y = 0 - $y;
@@ -151,7 +171,7 @@ class Tarifa
             $texto = 'Precio de coste ';
         }
 
-        if ($x != 0) {
+        if ($x !== 0) {
             if ($x > 0) {
                 $texto .= '+';
             }
@@ -159,7 +179,7 @@ class Tarifa
             $texto .= $x . '% ';
         }
 
-        if ($y != 0) {
+        if ($y !== 0) {
             if ($y > 0) {
                 $texto .= ' +';
             }
@@ -173,132 +193,82 @@ class Tarifa
     /**
      * Rellenamos los descuentos y los datos de la tarifa de una lista de
      * artículos.
-     * @param type $articulos
+     *
+     * @param array $articulos
      */
-    public function set_precios(&$articulos) {
-        foreach ($articulos as $i => $value) {
-            $articulos[$i]->codtarifa = $this->codtarifa;
-            $articulos[$i]->tarifa_nombre = $this->nombre;
-            $articulos[$i]->tarifa_url = $this->url();
-            $articulos[$i]->dtopor = 0;
+    public function setPrecios(&$articulos)
+    {
+        foreach ($articulos as $articulo) {
+            $articulo->codtarifa = $this->codtarifa;
+            $articulo->tarifa_nombre = $this->nombre;
+            $articulo->tarifa_url = $this->url();
+            $articulo->dtopor = 0;
 
-            $pvp = $articulos[$i]->pvp;
-            if ($this->aplicar_a == 'pvp') {
-                if ($this->y() == 0 AND $this->x() >= 0) {
-                    /// si y == 0 y x >= 0, usamos x como descuento
-                    $articulos[$i]->dtopor = $this->x();
+            $pvp = $articulo->pvp;
+            if ($this->aplicar_a === 'pvp') {
+                if ($this->y() === 0 && $this->x() >= 0) {
+                    /// si y === 0 y x >= 0, usamos x como descuento
+                    $articulo->dtopor = $this->x();
                 } else {
-                    $articulos[$i]->pvp = $articulos[$i]->pvp * (100 - $this->x()) / 100 - $this->y();
+                    $articulo->pvp = $articulo->pvp * (100 - $this->x()) / 100 - $this->y();
                 }
             } else {
-                $articulos[$i]->pvp = $articulos[$i]->preciocoste() * (100 + $this->x()) / 100 + $this->y();
+                $articulo->pvp = $articulo->preciocoste() * (100 + $this->x()) / 100 + $this->y();
             }
 
-            $articulos[$i]->tarifa_diff = $this->diff();
+            $articulo->tarifa_diff = $this->diff();
 
             if ($this->mincoste) {
-                if ($articulos[$i]->pvp * (100 - $articulos[$i]->dtopor) / 100 < $articulos[$i]->preciocoste()) {
-                    $articulos[$i]->dtopor = 0;
-                    $articulos[$i]->pvp = $articulos[$i]->preciocoste();
-                    $articulos[$i]->tarifa_diff = 'Precio de coste alcanzado';
+                if ($articulo->pvp * (100 - $articulo->dtopor) / 100 < $articulo->preciocoste()) {
+                    $articulo->dtopor = 0;
+                    $articulo->pvp = $articulo->preciocoste();
+                    $articulo->tarifa_diff = 'Precio de coste alcanzado';
                 }
             }
 
             if ($this->maxpvp) {
-                if ($articulos[$i]->pvp * (100 - $articulos[$i]->dtopor) / 100 > $pvp) {
-                    $articulos[$i]->dtopor = 0;
-                    $articulos[$i]->pvp = $pvp;
-                    $articulos[$i]->tarifa_diff = 'Precio de venta alcanzado';
+                if ($articulo->pvp * (100 - $articulo->dtopor) / 100 > $pvp) {
+                    $articulo->dtopor = 0;
+                    $articulo->pvp = $pvp;
+                    $articulo->tarifa_diff = 'Precio de venta alcanzado';
                 }
             }
         }
     }
 
-    public function get($cod) {
-        $tarifa = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codtarifa = " . $this->var2str($cod) . ";");
-        if ($tarifa) {
-            return new \tarifa($tarifa[0]);
-        } else {
-                    return FALSE;
-        }
-    }
-
-    public function get_new_codigo() {
-        $cod = self::$dataBase->select("SELECT MAX(" . self::$dataBase->sql_to_int('codtarifa') . ") as cod FROM " . $this->table_name . ";");
+    /**
+     * TODO
+     * @return string
+     */
+    public function getNewCodigo()
+    {
+        $sql = 'SELECT MAX(' . $this->database->sql2Int('codtarifa') . ') as cod FROM ' . $this->tableName() . ';';
+        $cod = $this->database->select($sql);
         if ($cod) {
-            return sprintf('%06s', (1 + intval($cod[0]['cod'])));
-        } else {
-                    return '000001';
+            return sprintf('%06s', 1 + (int)$cod[0]['cod']);
         }
+        return '000001';
     }
 
-    public function exists() {
-        if (is_null($this->codtarifa)) {
-            return FALSE;
-        } else {
-                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codtarifa = " . $this->var2str($this->codtarifa) . ";");
-        }
-    }
-
-    public function test() {
-        $status = FALSE;
+    /**
+     * TODO
+     * @return bool
+     */
+    public function test()
+    {
+        $status = false;
 
         $this->codtarifa = trim($this->codtarifa);
-        $this->nombre = $this->no_html($this->nombre);
+        $this->nombre = static::noHtml($this->nombre);
 
-        if (strlen($this->codtarifa) < 1 OR strlen($this->codtarifa) > 6) {
-            $this->new_error_msg("Código de tarifa no válido. Debe tener entre 1 y 6 caracteres.");
-        } else if (strlen($this->nombre) < 1 OR strlen($this->nombre) > 50) {
-            $this->new_error_msg("Nombre de tarifa no válido. Debe tener entre 1 y 50 caracteres.");
+        if (empty($this->codtarifa) || strlen($this->codtarifa) > 6) {
+            $this->miniLog->alert('Código de tarifa no válido. Debe tener entre 1 y 6 caracteres.');
+        } elseif (empty($this->nombre) || strlen($this->nombre) > 50) {
+            $this->miniLog->alert('Nombre de tarifa no válido. Debe tener entre 1 y 50 caracteres.');
         } else {
-                    $status = TRUE;
+            $status = true;
         }
 
         return $status;
     }
-
-    public function save() {
-        if ($this->test()) {
-            if ($this->exists()) {
-                $sql = "UPDATE " . $this->table_name . " SET nombre = " . $this->var2str($this->nombre)
-                        . ", incporcentual = " . $this->var2str($this->incporcentual)
-                        . ", inclineal =" . $this->var2str($this->inclineal)
-                        . ", aplicar_a =" . $this->var2str($this->aplicar_a)
-                        . ", mincoste =" . $this->var2str($this->mincoste)
-                        . ", maxpvp =" . $this->var2str($this->maxpvp)
-                        . "  WHERE codtarifa = " . $this->var2str($this->codtarifa) . ";";
-            } else {
-                $sql = "INSERT INTO " . $this->table_name . " (codtarifa,nombre,incporcentual,inclineal,
-               aplicar_a,mincoste,maxpvp) VALUES (" . $this->var2str($this->codtarifa)
-                        . "," . $this->var2str($this->nombre)
-                        . "," . $this->var2str($this->incporcentual)
-                        . "," . $this->var2str($this->inclineal)
-                        . "," . $this->var2str($this->aplicar_a)
-                        . "," . $this->var2str($this->mincoste)
-                        . "," . $this->var2str($this->maxpvp) . ");";
-            }
-
-            return self::$dataBase->exec($sql);
-        } else {
-                    return FALSE;
-        }
-    }
-
-    public function delete() {
-        return self::$dataBase->exec("DELETE FROM " . $this->table_name . " WHERE codtarifa = " . $this->var2str($this->codtarifa) . ";");
-    }
-
-    public function all() {
-        $tarlist = array();
-
-        $data = self::$dataBase->select("SELECT * FROM " . $this->table_name . " ORDER BY codtarifa ASC;");
-        if ($data) {
-            foreach ($data as $t) {
-                $tarlist[] = new \tarifa($t);
-            }
-        }
-
-        return $tarlist;
-    }
-
 }

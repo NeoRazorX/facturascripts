@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of facturacion_base
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
@@ -13,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,198 +23,157 @@ use FacturaScripts\Core\Base\Model;
 
 /**
  * Estructura para almacenar los datos de estado de una caja registradora (TPV).
- * 
+ *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class caja
+class Caja
 {
     use Model;
 
     /**
+     * UN array con todos los agentes utilizados, para agilizar la carga.
+     * @var array
+     */
+    private static $agentes;
+    /**
      * Clave primaria.
-     * @var type 
+     * @var
      */
     public $id;
-
     /**
      * Identificador del terminal. En la tabla cajas_terminales.
-     * @var type 
+     * @var
      */
     public $fs_id;
-
     /**
      * Codigo del agente que abre y usa la caja.
      * El agente asociado al usuario.
-     * @var type 
+     * @var
      */
     public $codagente;
-
     /**
      * Fecha de apertura (inicio) de la caja.
-     * @var type 
+     * @var
      */
     public $fecha_inicial;
+    /**
+     * TODO
+     * @var
+     */
     public $dinero_inicial;
+    /**
+     * TODO
+     * @var
+     */
     public $fecha_fin;
+    /**
+     * TODO
+     * @var
+     */
     public $dinero_fin;
-
     /**
      * Numero de tickets emitidos en esta caja.
-     * @var type 
+     * @var
      */
     public $tickets;
-
     /**
      * Ultima IP del usuario de la caja.
-     * @var type 
+     * @var
      */
     public $ip;
-
     /**
      * El objeto agente asignado.
-     * @var type 
+     * @var
      */
     public $agente;
 
     /**
-     * UN array con todos los agentes utilizados, para agilizar la carga.
-     * @var type 
+     * caja constructor.
+     *
+     * @param array $data
      */
-    private static $agentes;
-
-    public function __construct(array $data = []) 
+    public function __construct(array $data = [])
     {
         $this->init(__CLASS__, 'cajas', 'id');
+        $this->clear();
         if (!empty($data)) {
             $this->loadFromData($data);
-        } else {
-            $this->clear();
         }
     }
-    
+
+    /**
+     * Resetea los valores de todas las propiedades modelo.
+     */
     public function clear()
     {
-        $this->id = NULL;
-        $this->fs_id = NULL;
-        $this->codagente = NULL;
-        $this->fecha_inicial = Date('d-m-Y H:i:s');
+        $this->id = null;
+        $this->fs_id = null;
+        $this->codagente = null;
+        $this->fecha_inicial = date('d-m-Y H:i:s');
         $this->dinero_inicial = 0;
-        $this->fecha_fin = NULL;
+        $this->fecha_fin = null;
         $this->dinero_fin = 0;
         $this->tickets = 0;
 
-        $this->ip = NULL;
+        $this->ip = null;
         if (isset($_SERVER['REMOTE_ADDR'])) {
             $this->ip = $_SERVER['REMOTE_ADDR'];
         }
 
-        $this->agente = NULL;
+        $this->agente = null;
     }
 
-    protected function install() {
-        return '';
+    /**
+     * TODO
+     * @return bool
+     */
+    public function abierta()
+    {
+        return $this->fecha_fin === null;
     }
 
-    public function abierta() {
-        return is_null($this->fecha_fin);
-    }
-
-    public function show_fecha_fin() {
-        if (is_null($this->fecha_fin)) {
+    /**
+     * TODO
+     * @return string
+     */
+    public function showFechaFin()
+    {
+        if ($this->fecha_fin === null) {
             return '-';
-        } else {
-                    return $this->fecha_fin;
         }
+        return $this->fecha_fin;
     }
 
-    public function diferencia() {
+    /**
+     * TODO
+     * @return mixed
+     */
+    public function diferencia()
+    {
         return ($this->dinero_fin - $this->dinero_inicial);
     }
 
-    public function exists() {
-        if (is_null($this->id)) {
-            return FALSE;
-        } else {
-                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($this->id) . ";");
-        }
-    }
+    /**
+     * TODO
+     * @param string $codagente
+     * @param int $offset
+     * @param $limit
+     *
+     * @return array
+     */
+    public function allByAgente($codagente, $offset = 0, $limit = FS_ITEM_LIMIT)
+    {
+        $cajalist = [];
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codagente = '
+            . $this->var2str($codagente) . ' ORDER BY id DESC';
 
-    public function get($id) {
-        if (isset($id)) {
-            $caja = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($id) . ";");
-            if ($caja) {
-                return new \caja($caja[0]);
-            } else {
-                            return FALSE;
-            }
-        } else {
-                    return FALSE;
-        }
-    }
-
-    public function save() {
-        if ($this->exists()) {
-            $sql = "UPDATE " . $this->table_name . " SET fs_id = " . $this->var2str($this->fs_id)
-                    . ", codagente = " . $this->var2str($this->codagente)
-                    . ", ip = " . $this->var2str($this->ip)
-                    . ", f_inicio = " . $this->var2str($this->fecha_inicial)
-                    . ", d_inicio = " . $this->var2str($this->dinero_inicial)
-                    . ", f_fin = " . $this->var2str($this->fecha_fin)
-                    . ", d_fin = " . $this->var2str($this->dinero_fin)
-                    . ", tickets = " . $this->var2str($this->tickets)
-                    . "  WHERE id = " . $this->var2str($this->id) . ";";
-
-            return self::$dataBase->exec($sql);
-        } else {
-            $sql = "INSERT INTO " . $this->table_name . " (fs_id,codagente,f_inicio,d_inicio,f_fin,d_fin,tickets,ip) VALUES
-                   (" . $this->var2str($this->fs_id)
-                    . "," . $this->var2str($this->codagente)
-                    . "," . $this->var2str($this->fecha_inicial)
-                    . "," . $this->var2str($this->dinero_inicial)
-                    . "," . $this->var2str($this->fecha_fin)
-                    . "," . $this->var2str($this->dinero_fin)
-                    . "," . $this->var2str($this->tickets)
-                    . "," . $this->var2str($this->ip) . ");";
-
-            if (self::$dataBase->exec($sql)) {
-                $this->id = self::$dataBase->lastval();
-                return TRUE;
-            } else {
-                            return FALSE;
-            }
-        }
-    }
-
-    public function delete() {
-        return self::$dataBase->exec("DELETE FROM " . $this->table_name . " WHERE id = " . $this->var2str($this->id) . ";");
-    }
-
-    public function all($offset = 0, $limit = FS_ITEM_LIMIT) {
-        $cajalist = array();
-
-        $data = self::$dataBase->select_limit("SELECT * FROM " . $this->table_name . " ORDER BY id DESC", $limit, $offset);
+        $data = $this->database->selectLimit($sql, $limit, $offset);
         if ($data) {
             foreach ($data as $c) {
-                $cajalist[] = new \caja($c);
+                $cajalist[] = new Caja($c);
             }
         }
 
         return $cajalist;
     }
-
-    public function all_by_agente($codagente, $offset = 0, $limit = FS_ITEM_LIMIT) {
-        $cajalist = array();
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE codagente = "
-                . $this->var2str($codagente) . " ORDER BY id DESC";
-
-        $data = self::$dataBase->select_limit($sql, $limit, $offset);
-        if ($data) {
-            foreach ($data as $c) {
-                $cajalist[] = new \caja($c);
-            }
-        }
-
-        return $cajalist;
-    }
-
 }

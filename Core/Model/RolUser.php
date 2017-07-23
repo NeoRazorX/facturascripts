@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
@@ -34,33 +35,33 @@ class RolUser
 
     /**
      * TODO
-     * @var
+     * @var int
      */
     public $id;
 
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $codrol;
 
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $nick;
 
     /**
      * RolUser constructor.
+     *
      * @param array $data
      */
     public function __construct(array $data = [])
     {
         $this->init(__CLASS__, 'fs_roles_users', 'id');
+        $this->clear();
         if (!empty($data)) {
             $this->loadFromData($data);
-        } else {
-            $this->clear();
         }
     }
 }

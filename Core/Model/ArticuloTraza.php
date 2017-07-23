@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of facturacion_base
  * Copyright (C) 2016      Luismipr               <luismipr@gmail.com>.
  * Copyright (C) 2016-2017 Carlos García Gómez    <neorazorx@gmail.com>.
@@ -32,233 +31,165 @@ use FacturaScripts\Core\Base\Model;
  */
 class ArticuloTraza
 {
-    Use Model;
-    
+    use Model;
+
     /**
      * Clave primaria
-     * @var type 
+     * @var
      */
     public $id;
 
     /**
      * Referencia del artículo
-     * @var type varchar 
+     * @var string
      */
     public $referencia;
 
     /**
      * Numero de serie
      * Clave primaria.
-     * @var type varchar 
+     * @var string
      */
     public $numserie;
 
     /**
      * Número o identificador del lote
-     * @var type 
+     * @var
      */
     public $lote;
 
     /**
      * Id linea albaran venta
-     * @var type serial
+     * @var int
      */
     public $idlalbventa;
 
     /**
      * id linea factura venta
-     * @var type serial
+     * @var int
      */
     public $idlfacventa;
 
     /**
      * Id linea albaran compra
-     * @var type serial
+     * @var int
      */
     public $idlalbcompra;
 
     /**
      * Id linea factura compra
-     * @var type serial
+     * @var int
      */
     public $idlfaccompra;
+    /**
+     * Fecha de entrada del artículo
+     * @var |DateTime
+     */
     public $fecha_entrada;
+    /**
+     * Fecha de salida del artículo
+     * @var |DateTime
+     */
     public $fecha_salida;
 
-    public function __construct(array $data = []) 
+    /**
+     * ArticuloTraza constructor.
+     *
+     * @param array $data
+     */
+    public function __construct(array $data = [])
     {
         $this->init(__CLASS__, 'articulo_trazas', 'id');
+        $this->clear();
         if (!empty($data)) {
             $this->loadFromData($data);
-        } else {
-            $this->clear();
         }
-    }
-    
-    public function clear() 
-    {
-        $this->id = NULL;
-        $this->referencia = NULL;
-        $this->numserie = NULL;
-        $this->lote = NULL;
-        $this->idlalbventa = NULL;
-        $this->idlfacventa = NULL;
-        $this->idlalbcompra = NULL;
-        $this->idlfaccompra = NULL;
-        $this->fecha_entrada = NULL;
-        $this->fecha_salida = NULL;
-    }
-
-    protected function install() {
-        /// forzamos la comprobación de las tablas necesarias
-        //new \articulo();
-        //new \linea_albaran_cliente();
-        //new \linea_albaran_proveedor();
-        //new \linea_factura_cliente();
-        //new \linea_factura_proveedor();
-
-        return '';
     }
 
     /**
      * Devuelve la url del albarán o la factura de compra.
      * @return string
      */
-    public function documento_compra_url() {
+    public function documentoCompraUrl()
+    {
         if ($this->idlalbcompra) {
-            $lin0 = new \linea_albaran_proveedor();
+            $lin0 = new LineaAlbaranProveedor();
             $linea = $lin0->get($this->idlalbcompra);
             if ($linea) {
                 return $linea->url();
             }
-        } else if ($this->idlfaccompra) {
-            $lin0 = new \linea_factura_proveedor();
+        } elseif ($this->idlfaccompra) {
+            $lin0 = new LineaFacturaProveedor();
             $linea = $lin0->get($this->idlfaccompra);
             if ($linea) {
                 return $linea->url();
             }
-        } else {
-            return '#';
         }
+        return '#';
     }
 
     /**
      * Devuelve la url del albarán o factura de venta.
      * @return string
      */
-    public function documento_venta_url() {
+    public function documentoVentaUrl()
+    {
         if ($this->idlalbventa) {
-            $lin0 = new \linea_albaran_cliente();
+            $lin0 = new LineaAlbaranCliente();
             $linea = $lin0->get($this->idlalbventa);
             if ($linea) {
                 return $linea->url();
             }
-        } else if ($this->idlfaccompra) {
-            $lin0 = new \linea_factura_proveedor();
+        }
+        if ($this->idlfaccompra) {
+            $lin0 = new LineaFacturaProveedor();
             $linea = $lin0->get($this->idlfaccompra);
             if ($linea) {
                 return $linea->url();
             }
-        } else {
-            return '#';
         }
-    }
-
-    /**
-     * Devuelve una traza a partir de un $id.
-     * @param type $id
-     * @return boolean|\articulo_traza
-     */
-    public function get($id) {
-        $data = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($id) . ";");
-        if ($data) {
-            return new \articulo_traza($data[0]);
-        } else {
-            return FALSE;
-        }
+        return '#';
     }
 
     /**
      * Devuelve la traza correspondiente al número de serie $numserie.
-     * @param type $numserie
-     * @return boolean|\articulo_traza
+     *
+     * @param $numserie
+     *
+     * @return bool|ArticuloTraza
      */
-    public function get_by_numserie($numserie) {
-        $data = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE numserie = " . $this->var2str($numserie) . ";");
+    public function getByNumserie($numserie)
+    {
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE numserie = ' . $this->var2str($numserie) . ';';
+        $data = $this->database->select($sql);
         if ($data) {
-            return new \articulo_traza($data[0]);
-        } else {
-            return FALSE;
+            return new ArticuloTraza($data[0]);
         }
-    }
-
-    public function exists() {
-        if (is_null($this->id)) {
-            return FALSE;
-        } else {
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($this->id) . ";");
-        }
-    }
-
-    public function save() {
-        if ($this->exists()) {
-            $sql = "UPDATE " . $this->table_name . " SET referencia = " . $this->var2str($this->referencia)
-                    . ", numserie = " . $this->var2str($this->numserie)
-                    . ", lote = " . $this->var2str($this->lote)
-                    . ", idlalbventa = " . $this->var2str($this->idlalbventa)
-                    . ", idlfacventa = " . $this->var2str($this->idlfacventa)
-                    . ", idlalbcompra = " . $this->var2str($this->idlalbcompra)
-                    . ", idlfaccompra = " . $this->var2str($this->idlfaccompra)
-                    . ", fecha_entrada = " . $this->var2str($this->fecha_entrada)
-                    . ", fecha_salida = " . $this->var2str($this->fecha_salida)
-                    . "  WHERE id = " . $this->var2str($this->id) . ";";
-
-            return self::$dataBase->exec($sql);
-        } else {
-            $sql = "INSERT INTO " . $this->table_name . " (referencia,numserie,lote,idlalbventa,"
-                    . "idlfacventa,idlalbcompra,idlfaccompra,fecha_entrada,fecha_salida) VALUES "
-                    . "(" . $this->var2str($this->referencia)
-                    . "," . $this->var2str($this->numserie)
-                    . "," . $this->var2str($this->lote)
-                    . "," . $this->var2str($this->idlalbventa)
-                    . "," . $this->var2str($this->idlfacventa)
-                    . "," . $this->var2str($this->idlalbcompra)
-                    . "," . $this->var2str($this->idlfaccompra)
-                    . "," . $this->var2str($this->fecha_entrada)
-                    . "," . $this->var2str($this->fecha_salida) . ");";
-
-            if (self::$dataBase->exec($sql)) {
-                $this->id = self::$dataBase->lastval();
-                return TRUE;
-            } else {
-                return FALSE;
-            }
-        }
-    }
-
-    public function delete() {
-        return self::$dataBase->exec("DELETE FROM " . $this->table_name . " WHERE id = " . $this->var2str($this->id) . ";");
+        return false;
     }
 
     /**
      * Devuelve todas las trazas de un artículo.
-     * @param type $ref
-     * @param type $sololibre
-     * @return \articulo_traza
+     *
+     * @param string $ref
+     * @param bool $sololibre
+     *
+     * @return array
      */
-    public function all_from_ref($ref, $sololibre = FALSE) {
-        $lista = array();
+    public function allFromRef($ref, $sololibre = false)
+    {
+        $lista = [];
 
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE referencia = " . $this->var2str($ref);
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref);
         if ($sololibre) {
-            $sql .= " AND idlalbventa IS NULL AND idlfacventa IS NULL";
+            $sql .= ' AND idlalbventa IS NULL AND idlfacventa IS NULL';
         }
-        $sql .= " ORDER BY id ASC;";
+        $sql .= ' ORDER BY id ASC;';
 
-        $data = self::$dataBase->select($sql);
+        $data = $this->database->select($sql);
         if ($data) {
             foreach ($data as $d) {
-                $lista[] = new \articulo_traza($d);
+                $lista[] = new ArticuloTraza($d);
             }
         }
 
@@ -267,22 +198,43 @@ class ArticuloTraza
 
     /**
      * Devuelve todas las trazas cuya columna $tipo tenga valor $idlinea
-     * @param type $tipo
-     * @param type $idlinea
-     * @return \articulo_traza
+     *
+     * @param string $tipo
+     * @param string $idlinea
+     *
+     * @return array
      */
-    public function all_from_linea($tipo, $idlinea) {
-        $lista = array();
+    public function allFromLinea($tipo, $idlinea)
+    {
+        $lista = [];
 
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE " . $tipo . " = " . $this->var2str($idlinea) . " ORDER BY id DESC;";
-        $data = self::$dataBase->select($sql);
+        $sql = 'SELECT * FROM ' . $this->tableName()
+            . ' WHERE ' . $tipo . ' = ' . $this->var2str($idlinea) . ' ORDER BY id DESC;';
+        $data = $this->database->select($sql);
         if ($data) {
             foreach ($data as $d) {
-                $lista[] = new \articulo_traza($d);
+                $lista[] = new ArticuloTraza($d);
             }
         }
 
         return $lista;
     }
 
+    /**
+     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará tras la creación de la tabla. útil para insertar valores
+     * por defecto.
+     * @return string
+     */
+    private function install()
+    {
+        /// forzamos la comprobación de las tablas necesarias
+        //new Articulo();
+        //new LineaAlbaranCliente();
+        //new LineaAlbaranProveedor();
+        //new LineaFacturaCliente();
+        //new LineaFacturaProveedor();
+
+        return '';
+    }
 }

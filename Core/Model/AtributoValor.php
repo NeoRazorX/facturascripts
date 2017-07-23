@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of facturacion_base
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
@@ -13,8 +12,8 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
+ *
+ You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -29,50 +28,61 @@ use FacturaScripts\Core\Base\Model;
  */
 class AtributoValor
 {
-    use Model;
+    use Model {
+        save as private saveTrait;
+        saveInsert as private saveInsertTrait;
+    }
 
     /**
      * Clave primaria
-     * @var type 
+     * @var
      */
     public $id;
 
     /**
      * Código del atributo relacionado.
-     * @var type 
+     * @var
      */
     public $codatributo;
+    /**
+     * TODO
+     * @var
+     */
     public $valor;
 
-    public function __construct(array $data = []) 
+    /**
+     * AtributoValor constructor.
+     *
+     * @param array $data
+     */
+    public function __construct(array $data = [])
     {
         $this->init(__CLASS__, 'atributos_valores', 'id');
+        $this->clear();
         if (!empty($data)) {
             $this->loadFromData($data);
-        } else {
-            $this->clear();
         }
     }
-    
-    public function clear()
+
+    /**
+     * Devuelve la url donde ver/modificar estos datos
+     * @return string
+     */
+    public function url()
     {
-        $this->id = NULL;
-        $this->codatributo = NULL;
-        $this->valor = NULL;
+        return 'index.php?page=VentasAtributos&cod=' . $this->codatributo;
     }
 
-    protected function install() {
-        return '';
-    }
-
-    public function url() {
-        return 'index.php?page=ventas_atributos&cod=' . $this->codatributo;
-    }
-
-    public function nombre() {
+    /**
+     * TODO
+     * @return string
+     */
+    public function getNombre()
+    {
         $nombre = '';
 
-        $data = self::$dataBase->select("SELECT * FROM atributos WHERE codatributo = " . $this->var2str($this->codatributo) . ";");
+        $sql = 'SELECT * FROM atributos WHERE codatributo = ' . $this->var2str($this->codatributo) . ';';
+        $data = $this->database->select($sql);
         if ($data) {
             $nombre = $data[0]['nombre'];
         }
@@ -80,83 +90,67 @@ class AtributoValor
         return $nombre;
     }
 
-    public function get($id) {
-        if ($id) {
-            $data = self::$dataBase->select("SELECT * FROM atributos_valores WHERE id = " . $this->var2str($id) . ";");
+    /**
+     * Almacena los datos del modelo en la base de datos.
+     * @return bool
+     */
+    public function save()
+    {
+        $this->valor = static::noHtml($this->valor);
+
+        return $this->saveTrait();
+    }
+
+    /**
+     * Actualiza los datos del modelo en la base de datos.
+     * @return bool
+     */
+    private function saveUpdate()
+    {
+        $sql = 'UPDATE atributos_valores SET valor = ' . $this->var2str($this->valor)
+            . ', codatributo = ' . $this->var2str($this->codatributo)
+            . '  WHERE id = ' . $this->var2str($this->id) . ';';
+        return $this->database->exec($sql);
+    }
+
+    /**
+     * Inserta los datos del modelo en la base de datos.
+     * @return bool
+     */
+    private function saveInsert()
+    {
+        if ($this->id === null) {
+            $this->id = 1;
+
+            $sql = 'SELECT MAX(id) AS max FROM ' . $this->tableName() .';';
+            $data = $this->database->select($sql);
             if ($data) {
-                return new \atributo_valor($data[0]);
-            } else {
-                return FALSE;
+                $this->id = 1 + (int)$data[0]['max'];
             }
-        } else {
-            return FALSE;
-        }
-    }
-
-    public function exists() {
-        if (is_null($this->id)) {
-            return FALSE;
-        } else {
-            return self::$dataBase->select("SELECT * FROM atributos_valores WHERE id = " . $this->var2str($this->id) . ";");
-        }
-    }
-
-    public function save() {
-        $this->valor = $this->no_html($this->valor);
-
-        if ($this->exists()) {
-            $sql = "UPDATE atributos_valores SET valor = " . $this->var2str($this->valor)
-                    . ", codatributo = " . $this->var2str($this->codatributo)
-                    . "  WHERE id = " . $this->var2str($this->id) . ";";
-        } else {
-            if (is_null($this->id)) {
-                $this->id = 1;
-
-                $data = self::$dataBase->select("SELECT MAX(id) as max FROM atributos_valores;");
-                if ($data) {
-                    $this->id = 1 + intval($data[0]['max']);
-                }
-            }
-
-            $sql = "INSERT INTO atributos_valores (id,codatributo,valor) VALUES "
-                    . "(" . $this->var2str($this->id)
-                    . "," . $this->var2str($this->codatributo)
-                    . "," . $this->var2str($this->valor) . ");";
         }
 
-        return self::$dataBase->exec($sql);
+        return $this->saveInsertTrait();
     }
 
-    public function delete() {
-        return self::$dataBase->exec("DELETE FROM atributos_valores WHERE id = " . $this->var2str($this->id) . ";");
-    }
+    /**
+     * TODO
+     * @param string $cod
+     *
+     * @return array
+     */
+    public function allFromAtributo($cod)
+    {
+        $lista = [];
+        $sql = 'SELECT * FROM ' . $this->tableName() .' WHERE codatributo = ' . $this->var2str($cod)
+            . ' ORDER BY valor ASC;';
 
-    public function all() {
-        $lista = array();
-
-        $data = self::$dataBase->select("SELECT * FROM atributos_valores ORDER BY codatributo DESC;");
+        $data = $this->database->select($sql);
         if ($data) {
             foreach ($data as $d) {
-                $lista[] = new \atributo_valor($d);
+                $lista[] = new AtributoValor($d);
             }
         }
 
         return $lista;
     }
-
-    public function all_from_atributo($cod) {
-        $lista = array();
-        $sql = "SELECT * FROM atributos_valores WHERE codatributo = " . $this->var2str($cod)
-                . " ORDER BY valor ASC;";
-
-        $data = self::$dataBase->select($sql);
-        if ($data) {
-            foreach ($data as $d) {
-                $lista[] = new \atributo_valor($d);
-            }
-        }
-
-        return $lista;
-    }
-
 }

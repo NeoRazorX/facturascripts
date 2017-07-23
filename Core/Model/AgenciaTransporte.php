@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * This file is part of facturacion_base
  * Copyright (C) 2015         Pablo Peralta
  * Copyright (C) 2015-2016    Carlos Garcia Gomez  neorazorx@gmail.com
@@ -17,10 +17,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
 use FacturaScripts\Core\Base\ContactInformation;
+use FacturaScripts\Core\Base\Model;
 
 /**
  * Agencia de transporte de mercancías.
@@ -48,25 +49,43 @@ class AgenciaTransporte
 
     /**
      * TRUE => activo.
-     * @var boolean
+     * @var bool
      */
     public $activo;
 
+    /**
+     * AgenciaTransporte constructor.
+     *
+     * @param array $data
+     */
     public function __construct(array $data = [])
     {
         $this->init(__CLASS__, 'agenciastrans', 'codtrans');
-        if (empty($data)) {
-            $this->clear();
-        } else {
+        $this->clear();
+        if (!empty($data)) {
             $this->loadFromData($data);
         }
     }
 
     /**
-     * Devuelve el comando SQL que crea los datos iniciales tras la instalación
+     * Resetea los valores de todas las propiedades modelo.
+     */
+    public function clear()
+    {
+        $this->clearContactInformation();
+
+        $this->codtrans = null;
+        $this->nombre = null;
+        $this->activo = true;
+    }
+
+    /**
+     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará tras la creación de la tabla. útil para insertar valores
+     * por defecto.
      * @return string
      */
-    public function install()
+    private function install()
     {
         return 'INSERT INTO ' . $this->tableName() . ' (codtrans, nombre, web, activo) VALUES ' .
             "('ASM', 'ASM', 'http://es.asmred.com/', 1)," .
@@ -81,7 +100,7 @@ class AgenciaTransporte
     public function url()
     {
         $result = 'index.php?page=AgenciaTransporte';
-        if ($this->codtrans != NULL) {
+        if ($this->codtrans !== null) {
             $result .= '_card&cod=' . $this->codtrans;
         }
 
