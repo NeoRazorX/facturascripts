@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- You should have received a copy of the GNU Lesser General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -57,11 +57,11 @@ class Familia
      *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'familias', 'codfamilia');
         $this->clear();
-        if (!empty($data)) {
+        if (is_array($data) && !empty($data)) {
             $this->loadFromData($data);
         }
     }
@@ -91,6 +91,7 @@ class Familia
 
     /**
      * Devuelve la descripción, acortada a len
+     *
      * @param int $len
      *
      * @return string
@@ -115,6 +116,7 @@ class Familia
 
     /**
      * Devuelve todos los artículos de la família
+     *
      * @param int $offset
      * @param int $limit
      *
@@ -219,6 +221,7 @@ class Familia
 
     /**
      * TODO
+     *
      * @param string $codmadre
      *
      * @return array
@@ -245,6 +248,7 @@ class Familia
 
     /**
      * TODO
+     *
      * @param string $query
      *
      * @return array

@@ -217,11 +217,11 @@ class Articulo
      *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'articulos', 'referencia');
         $this->clear();
-        if (!empty($data)) {
+        if (is_array($data) && !empty($data)) {
             $this->loadFromData($data);
         }
     }
@@ -1202,10 +1202,10 @@ class Articulo
             'UPDATE ' . $this->tableName() . ' SET nostock = false WHERE nostock IS NULL;',
             /// desvinculamos de fabricantes que no existan
             'UPDATE ' . $this->tableName() . ' SET codfabricante = null WHERE codfabricante IS NOT NULL'
-                . ' AND codfabricante NOT IN (SELECT codfabricante FROM fabricantes);',
+            . ' AND codfabricante NOT IN (SELECT codfabricante FROM fabricantes);',
             /// desvinculamos de familias que no existan
             'UPDATE ' . $this->tableName() . ' SET codfamilia = null WHERE codfamilia IS NOT NULL'
-                . ' AND codfamilia NOT IN (SELECT codfamilia FROM familias);'
+            . ' AND codfamilia NOT IN (SELECT codfamilia FROM familias);'
         ];
         foreach ($fixes as $sql) {
             $this->database->exec($sql);

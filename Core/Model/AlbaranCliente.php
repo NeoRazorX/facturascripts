@@ -318,11 +318,11 @@ class AlbaranCliente
      *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'albaranescli', 'idalbaran');
         $this->clear();
-        if (!empty($data)) {
+        if (is_array($data) && !empty($data)) {
             $this->loadFromData($data);
         }
     }
@@ -622,7 +622,7 @@ class AlbaranCliente
                 if (count($facturas) > 1) {
                     $msg = 'Este ' . FS_ALBARAN . ' esta asociado a las siguientes facturas (y no debería):';
                     foreach ($facturas as $f) {
-                        if($f instanceof FacturaCliente) {
+                        if ($f instanceof FacturaCliente) {
                             $msg .= " <a href='" . $f->url() . "'>" . $f->codigo . '</a>';
                         }
                     }

@@ -56,11 +56,11 @@ class BalanceCuenta
      *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'co_cuentascb', 'id');
         $this->clear();
-        if (!empty($data)) {
+        if (is_array($data) && !empty($data)) {
             $this->loadFromData($data);
         }
     }

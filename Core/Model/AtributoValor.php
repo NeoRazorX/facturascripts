@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- You should have received a copy of the GNU Lesser General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -55,11 +55,11 @@ class AtributoValor
      *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'atributos_valores', 'id');
         $this->clear();
-        if (!empty($data)) {
+        if (is_array($data) && !empty($data)) {
             $this->loadFromData($data);
         }
     }
@@ -102,6 +102,29 @@ class AtributoValor
     }
 
     /**
+     * TODO
+     *
+     * @param string $cod
+     *
+     * @return array
+     */
+    public function allFromAtributo($cod)
+    {
+        $lista = [];
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codatributo = ' . $this->var2str($cod)
+            . ' ORDER BY valor ASC;';
+
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
+            foreach ($data as $d) {
+                $lista[] = new AtributoValor($d);
+            }
+        }
+
+        return $lista;
+    }
+
+    /**
      * Actualiza los datos del modelo en la base de datos.
      * @return bool
      */
@@ -122,7 +145,7 @@ class AtributoValor
         if ($this->id === null) {
             $this->id = 1;
 
-            $sql = 'SELECT MAX(id) AS max FROM ' . $this->tableName() .';';
+            $sql = 'SELECT MAX(id) AS max FROM ' . $this->tableName() . ';';
             $data = $this->database->select($sql);
             if (!empty($data)) {
                 $this->id = 1 + (int)$data[0]['max'];
@@ -130,27 +153,5 @@ class AtributoValor
         }
 
         return $this->saveInsertTrait();
-    }
-
-    /**
-     * TODO
-     * @param string $cod
-     *
-     * @return array
-     */
-    public function allFromAtributo($cod)
-    {
-        $lista = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() .' WHERE codatributo = ' . $this->var2str($cod)
-            . ' ORDER BY valor ASC;';
-
-        $data = $this->database->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $lista[] = new AtributoValor($d);
-            }
-        }
-
-        return $lista;
     }
 }

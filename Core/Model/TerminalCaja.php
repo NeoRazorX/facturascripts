@@ -96,11 +96,11 @@ class TerminalCaja
      *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'cajas_terminales', 'id');
         $this->clear();
-        if (!empty($data)) {
+        if (is_array($data) && !empty($data)) {
             $this->loadFromData($data);
         }
     }
@@ -322,14 +322,14 @@ class TerminalCaja
         foreach ($factura->getLineas() as $col) {
             if ($imprimirDescripciones) {
                 $linea = sprintf('%3s', $col->cantidad) . ' ' . sprintf(
-                        '%-' . $width . 's',
-                        substr($this->sanitize($col->descripcion), 0, $width - 1)
-                    ) . ' ' . sprintf('%10s', $this->showNumero($col->totalIva())) . "\n";
+                    '%-' . $width . 's',
+                    substr($this->sanitize($col->descripcion), 0, $width - 1)
+                ) . ' ' . sprintf('%10s', $this->showNumero($col->totalIva())) . "\n";
             } else {
                 $linea = sprintf('%3s', $col->cantidad) . ' ' . sprintf(
-                        '%-' . $width . 's',
-                        $this->sanitize($col->referencia)
-                    ) . ' ' . sprintf('%10s', $this->showNumero($col->totalIva())) . "\n";
+                    '%-' . $width . 's',
+                    $this->sanitize($col->referencia)
+                ) . ' ' . sprintf('%10s', $this->showNumero($col->totalIva())) . "\n";
             }
 
             $this->addLinea($linea);

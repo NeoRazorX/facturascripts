@@ -182,11 +182,11 @@ class Partida
      *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'co_partidas', 'idpartida');
         $this->clear();
-        if (!empty($data)) {
+        if (is_array($data) && !empty($data)) {
             $this->loadFromData($data);
         }
     }
@@ -298,90 +298,6 @@ class Partida
         $this->cifnif = static::noHtml($this->cifnif);
 
         return $this->saveTrait();
-    }
-
-    /**
-     * Inserta los datos del modelo en la base de datos.
-     * @return bool
-     */
-    private function saveInsert()
-    {
-        $sql = 'INSERT INTO ' . $this->tableName() . ' (idasiento,idsubcuenta,codsubcuenta,idconcepto,
-            concepto,idcontrapartida,codcontrapartida,punteada,tasaconv,coddivisa,haberme,debeme,recargo,iva,
-            baseimponible,factura,codserie,tipodocumento,documento,cifnif,debe,haber) VALUES
-                   (' . $this->var2str($this->idasiento)
-            . ', ' . $this->var2str($this->idsubcuenta)
-            . ', ' . $this->var2str($this->codsubcuenta)
-            . ', ' . $this->var2str($this->idconcepto)
-            . ', ' . $this->var2str($this->concepto)
-            . ', ' . $this->var2str($this->idcontrapartida)
-            . ', ' . $this->var2str($this->codcontrapartida)
-            . ', ' . $this->var2str($this->punteada)
-            . ', ' . $this->var2str($this->tasaconv)
-            . ', ' . $this->var2str($this->coddivisa)
-            . ', ' . $this->var2str($this->haberme)
-            . ', ' . $this->var2str($this->debeme)
-            . ', ' . $this->var2str($this->recargo)
-            . ', ' . $this->var2str($this->iva)
-            . ', ' . $this->var2str($this->baseimponible)
-            . ', ' . $this->var2str($this->factura)
-            . ', ' . $this->var2str($this->codserie)
-            . ', ' . $this->var2str($this->tipodocumento)
-            . ', ' . $this->var2str($this->documento)
-            . ', ' . $this->var2str($this->cifnif)
-            . ', ' . $this->var2str($this->debe)
-            . ', ' . $this->var2str($this->haber) . ');';
-
-        if ($this->database->exec($sql)) {
-            $this->idpartida = $this->database->lastval();
-
-            $subc = $this->getSubcuenta();
-            if ($subc) {
-                $subc->save(); /// guardamos la subcuenta para actualizar su saldo
-            }
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Actualiza los datos del modelo en la base de datos.
-     * @return bool
-     */
-    private function saveUpdate()
-    {
-        $sql = 'UPDATE ' . $this->tableName() . ' SET idasiento = ' . $this->var2str($this->idasiento)
-            . ', idsubcuenta = ' . $this->var2str($this->idsubcuenta)
-            . ', codsubcuenta = ' . $this->var2str($this->codsubcuenta)
-            . ', idconcepto = ' . $this->var2str($this->idconcepto)
-            . ', concepto = ' . $this->var2str($this->concepto)
-            . ', idcontrapartida = ' . $this->var2str($this->idcontrapartida)
-            . ', codcontrapartida = ' . $this->var2str($this->codcontrapartida)
-            . ', punteada = ' . $this->var2str($this->punteada)
-            . ', tasaconv = ' . $this->var2str($this->tasaconv)
-            . ', coddivisa = ' . $this->var2str($this->coddivisa)
-            . ', haberme = ' . $this->var2str($this->haberme)
-            . ', debeme = ' . $this->var2str($this->debeme)
-            . ', recargo = ' . $this->var2str($this->recargo)
-            . ', iva = ' . $this->var2str($this->iva)
-            . ', baseimponible = ' . $this->var2str($this->baseimponible)
-            . ', factura = ' . $this->var2str($this->factura)
-            . ', codserie = ' . $this->var2str($this->codserie)
-            . ', tipodocumento = ' . $this->var2str($this->tipodocumento)
-            . ', documento = ' . $this->var2str($this->documento)
-            . ', cifnif = ' . $this->var2str($this->cifnif)
-            . ', debe = ' . $this->var2str($this->debe)
-            . ', haber = ' . $this->var2str($this->haber)
-            . '  WHERE idpartida = ' . $this->var2str($this->idpartida) . ';';
-
-        if ($this->database->exec($sql)) {
-            $subc = $this->getSubcuenta();
-            if ($subc) {
-                $subc->save(); /// guardamos la subcuenta para actualizar su saldo
-            }
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -641,5 +557,89 @@ class Partida
         }
 
         return $totales;
+    }
+
+    /**
+     * Inserta los datos del modelo en la base de datos.
+     * @return bool
+     */
+    private function saveInsert()
+    {
+        $sql = 'INSERT INTO ' . $this->tableName() . ' (idasiento,idsubcuenta,codsubcuenta,idconcepto,
+            concepto,idcontrapartida,codcontrapartida,punteada,tasaconv,coddivisa,haberme,debeme,recargo,iva,
+            baseimponible,factura,codserie,tipodocumento,documento,cifnif,debe,haber) VALUES
+                   (' . $this->var2str($this->idasiento)
+            . ', ' . $this->var2str($this->idsubcuenta)
+            . ', ' . $this->var2str($this->codsubcuenta)
+            . ', ' . $this->var2str($this->idconcepto)
+            . ', ' . $this->var2str($this->concepto)
+            . ', ' . $this->var2str($this->idcontrapartida)
+            . ', ' . $this->var2str($this->codcontrapartida)
+            . ', ' . $this->var2str($this->punteada)
+            . ', ' . $this->var2str($this->tasaconv)
+            . ', ' . $this->var2str($this->coddivisa)
+            . ', ' . $this->var2str($this->haberme)
+            . ', ' . $this->var2str($this->debeme)
+            . ', ' . $this->var2str($this->recargo)
+            . ', ' . $this->var2str($this->iva)
+            . ', ' . $this->var2str($this->baseimponible)
+            . ', ' . $this->var2str($this->factura)
+            . ', ' . $this->var2str($this->codserie)
+            . ', ' . $this->var2str($this->tipodocumento)
+            . ', ' . $this->var2str($this->documento)
+            . ', ' . $this->var2str($this->cifnif)
+            . ', ' . $this->var2str($this->debe)
+            . ', ' . $this->var2str($this->haber) . ');';
+
+        if ($this->database->exec($sql)) {
+            $this->idpartida = $this->database->lastval();
+
+            $subc = $this->getSubcuenta();
+            if ($subc) {
+                $subc->save(); /// guardamos la subcuenta para actualizar su saldo
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Actualiza los datos del modelo en la base de datos.
+     * @return bool
+     */
+    private function saveUpdate()
+    {
+        $sql = 'UPDATE ' . $this->tableName() . ' SET idasiento = ' . $this->var2str($this->idasiento)
+            . ', idsubcuenta = ' . $this->var2str($this->idsubcuenta)
+            . ', codsubcuenta = ' . $this->var2str($this->codsubcuenta)
+            . ', idconcepto = ' . $this->var2str($this->idconcepto)
+            . ', concepto = ' . $this->var2str($this->concepto)
+            . ', idcontrapartida = ' . $this->var2str($this->idcontrapartida)
+            . ', codcontrapartida = ' . $this->var2str($this->codcontrapartida)
+            . ', punteada = ' . $this->var2str($this->punteada)
+            . ', tasaconv = ' . $this->var2str($this->tasaconv)
+            . ', coddivisa = ' . $this->var2str($this->coddivisa)
+            . ', haberme = ' . $this->var2str($this->haberme)
+            . ', debeme = ' . $this->var2str($this->debeme)
+            . ', recargo = ' . $this->var2str($this->recargo)
+            . ', iva = ' . $this->var2str($this->iva)
+            . ', baseimponible = ' . $this->var2str($this->baseimponible)
+            . ', factura = ' . $this->var2str($this->factura)
+            . ', codserie = ' . $this->var2str($this->codserie)
+            . ', tipodocumento = ' . $this->var2str($this->tipodocumento)
+            . ', documento = ' . $this->var2str($this->documento)
+            . ', cifnif = ' . $this->var2str($this->cifnif)
+            . ', debe = ' . $this->var2str($this->debe)
+            . ', haber = ' . $this->var2str($this->haber)
+            . '  WHERE idpartida = ' . $this->var2str($this->idpartida) . ';';
+
+        if ($this->database->exec($sql)) {
+            $subc = $this->getSubcuenta();
+            if ($subc) {
+                $subc->save(); /// guardamos la subcuenta para actualizar su saldo
+            }
+            return true;
+        }
+        return false;
     }
 }

@@ -74,11 +74,11 @@ class Cuenta
      *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'co_cuentas', 'idcuenta');
         $this->clear();
-        if (!empty($data)) {
+        if (is_array($data) && !empty($data)) {
             $this->loadFromData($data);
         }
     }
@@ -131,6 +131,7 @@ class Cuenta
 
     /**
      * TODO
+     *
      * @param string $cod
      * @param string $codejercicio
      *
@@ -185,6 +186,7 @@ class Cuenta
 
     /**
      * TODO
+     *
      * @param int $idepi
      *
      * @return array
@@ -207,6 +209,7 @@ class Cuenta
 
     /**
      * TODO
+     *
      * @param string $codejercicio
      * @param int $offset
      *
@@ -230,6 +233,7 @@ class Cuenta
 
     /**
      * TODO
+     *
      * @param string $codejercicio
      *
      * @return array
@@ -252,6 +256,7 @@ class Cuenta
 
     /**
      * TODO
+     *
      * @param int $idcuesp
      * @param string $codejercicio
      *
@@ -275,6 +280,7 @@ class Cuenta
 
     /**
      * TODO
+     *
      * @param string $query
      * @param int $offset
      *
@@ -300,6 +306,7 @@ class Cuenta
 
     /**
      * TODO
+     *
      * @param int $sumaCodigo
      *
      * @return bool|Subcuenta

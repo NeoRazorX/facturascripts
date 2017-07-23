@@ -92,11 +92,11 @@ class Caja
      *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'cajas', 'id');
         $this->clear();
-        if (!empty($data)) {
+        if (is_array($data) && !empty($data)) {
             $this->loadFromData($data);
         }
     }
@@ -155,6 +155,7 @@ class Caja
 
     /**
      * TODO
+     *
      * @param string $codagente
      * @param int $offset
      * @param int $limit

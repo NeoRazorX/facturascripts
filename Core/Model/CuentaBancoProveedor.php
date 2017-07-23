@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- You should have received a copy of the GNU Lesser General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -69,11 +69,11 @@ class CuentaBancoProveedor
      *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'cuentasbcopro', 'codcuenta');
         $this->clear();
-        if (!empty($data)) {
+        if (is_array($data) && !empty($data)) {
             $this->loadFromData($data);
         }
     }
@@ -148,6 +148,29 @@ class CuentaBancoProveedor
     }
 
     /**
+     * TODO
+     *
+     * @param string $codpro
+     *
+     * @return array
+     */
+    public function allFromProveedor($codpro)
+    {
+        $clist = [];
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codproveedor = ' . $this->var2str($codpro)
+            . ' ORDER BY codcuenta DESC;';
+
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
+            foreach ($data as $d) {
+                $clist[] = new CuentaBancoProveedor($d);
+            }
+        }
+
+        return $clist;
+    }
+
+    /**
      * Actualiza los datos del modelo en la base de datos.
      * @return string
      */
@@ -177,28 +200,6 @@ class CuentaBancoProveedor
             ',' . $this->var2str($this->swift) .
             ',' . $this->var2str($this->principal) . ');';
         return $sql;
-    }
-
-    /**
-     * TODO
-     * @param string $codpro
-     *
-     * @return array
-     */
-    public function allFromProveedor($codpro)
-    {
-        $clist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codproveedor = ' . $this->var2str($codpro)
-            . ' ORDER BY codcuenta DESC;';
-
-        $data = $this->database->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $clist[] = new CuentaBancoProveedor($d);
-            }
-        }
-
-        return $clist;
     }
 
     /**

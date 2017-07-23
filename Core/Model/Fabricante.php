@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- You should have received a copy of the GNU Lesser General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -46,11 +46,11 @@ class Fabricante
      *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'fabricantes', 'codfabricante');
         $this->clear();
-        if (!empty($data)) {
+        if (is_array($data) && !empty($data)) {
             $this->loadFromData($data);
         }
     }
@@ -78,6 +78,7 @@ class Fabricante
 
     /**
      * TODO
+     *
      * @param int $len
      *
      * @return string
@@ -92,6 +93,7 @@ class Fabricante
 
     /**
      * TODO
+     *
      * @param int $offset
      * @param int $limit
      *
@@ -152,6 +154,7 @@ class Fabricante
 
     /**
      * TODO
+     *
      * @param string $query
      *
      * @return array

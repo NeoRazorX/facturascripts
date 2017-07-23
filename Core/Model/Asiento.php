@@ -99,11 +99,11 @@ class Asiento
      *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'co_asientos', 'idasiento');
         $this->clear();
-        if (!empty($data)) {
+        if (is_array($data) && !empty($data)) {
             $this->loadFromData($data);
         }
     }
@@ -385,7 +385,7 @@ class Asiento
                 }
 
                 if ($partidas[0]->debe !== 0) {
-                    $partidas[0]->debe -=  $total;
+                    $partidas[0]->debe -= $total;
                 } elseif ($partidas[0]->haber !== 0) {
                     $partidas[0]->haber += $total;
                 }
@@ -425,16 +425,6 @@ class Asiento
             return $this->fullTest();
         }
         return false;
-    }
-
-    /**
-     * Inserta los datos del modelo en la base de datos.
-     * @return bool
-     */
-    private function saveInsert()
-    {
-        $this->newNumero();
-        return $this->saveInsertTrait();
     }
 
     /**
@@ -602,8 +592,6 @@ class Asiento
         return $continuar;
     }
 
-    /// renumera todos los asientos. Devuelve FALSE en caso de error
-
     /**
      * TODO
      */
@@ -632,5 +620,17 @@ class Asiento
 
         echo "\nRenumerando asientos...";
         $this->renumerar();
+    }
+
+    /// renumera todos los asientos. Devuelve FALSE en caso de error
+
+    /**
+     * Inserta los datos del modelo en la base de datos.
+     * @return bool
+     */
+    private function saveInsert()
+    {
+        $this->newNumero();
+        return $this->saveInsertTrait();
     }
 }

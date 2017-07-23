@@ -98,11 +98,11 @@ class Stock
      *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'stocks', 'idstock');
         $this->clear();
-        if (!empty($data)) {
+        if (is_array($data) && !empty($data)) {
             $this->loadFromData($data);
         }
     }
@@ -196,6 +196,7 @@ class Stock
         }
         return false;
     }
+
     /**
      * Almacena los datos del modelo en la base de datos.
      * @return bool

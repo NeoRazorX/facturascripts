@@ -73,11 +73,11 @@ class Serie
      *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'series', 'codserie');
         $this->clear();
-        if (!empty($data)) {
+        if (is_array($data) && !empty($data)) {
             $this->loadFromData($data);
         }
     }
@@ -93,16 +93,6 @@ class Serie
         $this->irpf = 0.00;
         $this->codejercicio = null;
         $this->numfactura = 1;
-    }
-
-    /**
-     * Crea la consulta necesaria para crear una nueva serie en la base de datos.
-     * @return string
-     */
-    private function install()
-    {
-        return 'INSERT INTO ' . $this->tableName() . ' (codserie,descripcion,siniva,irpf) VALUES '
-            . "('A','SERIE A',FALSE,'0'),('R','RECTIFICATIVAS',FALSE,'0');";
     }
 
     /**
@@ -151,5 +141,15 @@ class Serie
         }
 
         return $status;
+    }
+
+    /**
+     * Crea la consulta necesaria para crear una nueva serie en la base de datos.
+     * @return string
+     */
+    private function install()
+    {
+        return 'INSERT INTO ' . $this->tableName() . ' (codserie,descripcion,siniva,irpf) VALUES '
+            . "('A','SERIE A',FALSE,'0'),('R','RECTIFICATIVAS',FALSE,'0');";
     }
 }

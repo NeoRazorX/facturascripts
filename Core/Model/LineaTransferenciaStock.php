@@ -72,11 +72,11 @@ class LineaTransferenciaStock
      *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'lineastransstock', 'idlinea');
         $this->clear();
-        if (!empty($data)) {
+        if (is_array($data) && !empty($data)) {
             $this->loadFromData($data);
         }
     }
@@ -93,20 +93,6 @@ class LineaTransferenciaStock
         $this->descripcion = null;
         $this->fecha = null;
         $this->hora = null;
-    }
-
-    /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
-     * @return string
-     */
-    private function install()
-    {
-        /// forzamos la comprobación de la tabla de transferencias de stock
-        //new TransferenciaStock();
-
-        return '';
     }
 
     /**
@@ -189,5 +175,19 @@ class LineaTransferenciaStock
         }
 
         return $list;
+    }
+
+    /**
+     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará tras la creación de la tabla. útil para insertar valores
+     * por defecto.
+     * @return string
+     */
+    private function install()
+    {
+        /// forzamos la comprobación de la tabla de transferencias de stock
+        //new TransferenciaStock();
+
+        return '';
     }
 }

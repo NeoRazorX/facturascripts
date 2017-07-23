@@ -50,11 +50,11 @@ class Rol
      *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'fs_roles', 'codrol');
         $this->clear();
-        if (!empty($data)) {
+        if (is_array($data) && !empty($data)) {
             $this->codrol = $data['codrol'];
             $this->descripcion = $data['descripcion'];
         }

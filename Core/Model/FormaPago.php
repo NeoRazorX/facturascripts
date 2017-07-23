@@ -79,11 +79,11 @@ class FormaPago
      *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'formaspago', 'codpago');
         $this->clear();
-        if (!empty($data)) {
+        if (is_array($data) && !empty($data)) {
             $this->loadFromData($data);
         }
     }
@@ -100,20 +100,6 @@ class FormaPago
         $this->domiciliado = false;
         $this->imprimir = true;
         $this->vencimiento = '+1day';
-    }
-
-    /**
-     * Crea la consulta necesaria para crear una nueva forma de pago en la base de datos.
-     * @return string
-     */
-    private function install()
-    {
-        return 'INSERT INTO ' . $this->tableName()
-            . ' (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)'
-            . " VALUES ('CONT','Al contado','Pagados',NULL,FALSE,'+0day')"
-            . ",('TRANS','Transferencia bancaria','Emitidos',NULL,FALSE,'+1month')"
-            . ",('TARJETA','Tarjeta de crédito','Pagados',NULL,FALSE,'+0day')"
-            . ",('PAYPAL','PayPal','Pagados',NULL,FALSE,'+0day');";
     }
 
     /**
@@ -189,6 +175,20 @@ class FormaPago
         }
 
         return $fecha;
+    }
+
+    /**
+     * Crea la consulta necesaria para crear una nueva forma de pago en la base de datos.
+     * @return string
+     */
+    private function install()
+    {
+        return 'INSERT INTO ' . $this->tableName()
+            . ' (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)'
+            . " VALUES ('CONT','Al contado','Pagados',NULL,FALSE,'+0day')"
+            . ",('TRANS','Transferencia bancaria','Emitidos',NULL,FALSE,'+1month')"
+            . ",('TARJETA','Tarjeta de crédito','Pagados',NULL,FALSE,'+0day')"
+            . ",('PAYPAL','PayPal','Pagados',NULL,FALSE,'+0day');";
     }
 
     /**

@@ -58,11 +58,11 @@ class AgenciaTransporte
      *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'agenciastrans', 'codtrans');
         $this->clear();
-        if (!empty($data)) {
+        if (is_array($data) && !empty($data)) {
             $this->loadFromData($data);
         }
     }
@@ -80,20 +80,6 @@ class AgenciaTransporte
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
-     * @return string
-     */
-    private function install()
-    {
-        return 'INSERT INTO ' . $this->tableName() . ' (codtrans, nombre, web, activo) VALUES ' .
-            "('ASM', 'ASM', 'http://es.asmred.com/', 1)," .
-            "('TIPSA', 'TIPSA', 'http://www.tip-sa.com/', 1)," .
-            "('SEUR', 'SEUR', 'http://www.seur.com', 1);";
-    }
-
-    /**
      * Devuelve la url donde ver/modificar estos datos
      * @return string
      */
@@ -105,5 +91,19 @@ class AgenciaTransporte
         }
 
         return $result;
+    }
+
+    /**
+     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará tras la creación de la tabla. útil para insertar valores
+     * por defecto.
+     * @return string
+     */
+    private function install()
+    {
+        return 'INSERT INTO ' . $this->tableName() . ' (codtrans, nombre, web, activo) VALUES ' .
+            "('ASM', 'ASM', 'http://es.asmred.com/', '" . $this->bool2str(true) . "')," .
+            "('TIPSA', 'TIPSA', 'http://www.tip-sa.com/', '" . $this->bool2str(true) . "')," .
+            "('SEUR', 'SEUR', 'http://www.seur.com', '" . $this->bool2str(true) . "');";
     }
 }

@@ -63,23 +63,13 @@ class Almacen
      *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'almacenes', 'codalmacen');
         $this->clear();
-        if (!empty($data)) {
+        if (is_array($data) && !empty($data)) {
             $this->loadFromData($data);
         }
-    }
-
-    /**
-     * Crea la consulta necesaria para crear un nuevo almacen en la base de datos.
-     * @return string
-     */
-    private function install()
-    {
-        return 'INSERT INTO ' . $this->tableName() . ' (codalmacen,nombre,poblacion,'
-            . "direccion,codpostal,telefono,fax,contacto) VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
     }
 
     /**
@@ -132,5 +122,15 @@ class Almacen
         }
 
         return $status;
+    }
+
+    /**
+     * Crea la consulta necesaria para crear un nuevo almacen en la base de datos.
+     * @return string
+     */
+    private function install()
+    {
+        return 'INSERT INTO ' . $this->tableName() . ' (codalmacen,nombre,poblacion,'
+            . "direccion,codpostal,telefono,fax,contacto) VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
     }
 }

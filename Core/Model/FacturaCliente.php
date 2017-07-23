@@ -338,11 +338,11 @@ class FacturaCliente
      *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'facturascli', 'idfactura');
         $this->clear();
-        if (!empty($data)) {
+        if (is_array($data) && !empty($data)) {
             $this->loadFromData($data);
         }
     }
@@ -1298,7 +1298,7 @@ class FacturaCliente
      * @param string $codcliente
      * @param string $desde
      * @param string $hasta
-     * @param string$serie
+     * @param string $serie
      * @param string $obs
      *
      * @return array
