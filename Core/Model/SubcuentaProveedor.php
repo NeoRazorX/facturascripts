@@ -105,13 +105,13 @@ class SubcuentaProveedor
     /**
      * TODO
      *
-     * @param int $id
+     * @param int $idsubc
      *
      * @return bool|SubcuentaProveedor
      */
-    public function get2($id)
+    public function get2($idsubc)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE id = ' . $this->var2str($id) . ';';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE id = ' . $this->var2str($idsubc) . ';';
         $data = $this->database->select($sql);
         if (!empty($data)) {
             return new SubcuentaProveedor($data[0]);

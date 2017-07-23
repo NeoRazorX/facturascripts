@@ -178,20 +178,20 @@ class LineaIvaFacturaProveedor
     /**
      * TODO
      *
-     * @param int $id
+     * @param int $idfac
      *
      * @return array
      */
-    public function allFromFactura($id)
+    public function allFromFactura($idfac)
     {
         $linealist = [];
 
         $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE idfactura = ' . $this->var2str($id) . ' ORDER BY iva DESC;';
+            . ' WHERE idfactura = ' . $this->var2str($idfac) . ' ORDER BY iva DESC;';
         $data = $this->database->select($sql);
         if (!empty($data)) {
-            foreach ($data as $l) {
-                $linealist[] = new LineaIvaFacturaProveedor($l);
+            foreach ($data as $lin) {
+                $linealist[] = new LineaIvaFacturaProveedor($lin);
             }
         }
 

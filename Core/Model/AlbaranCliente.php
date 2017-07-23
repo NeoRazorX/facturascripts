@@ -657,11 +657,12 @@ class AlbaranCliente
             if (!empty($data)) {
                 foreach ($data as $alb) {
                     /// comprobamos las líneas
-                    $aux = $this->database->select('SELECT referencia FROM lineasalbaranescli WHERE
+                    $sql = 'SELECT referencia FROM lineasalbaranescli WHERE
                   idalbaran = ' . $this->var2str($this->idalbaran) . '
                   AND referencia NOT IN (SELECT referencia FROM lineasalbaranescli
-                  WHERE idalbaran = ' . $this->var2str($alb['idalbaran']) . ');');
-                    if (!$aux) {
+                  WHERE idalbaran = ' . $this->var2str($alb['idalbaran']) . ');';
+                    $aux = $this->database->select($sql);
+                    if (!empty($aux)) {
                         $this->miniLog->alert('Este ' . FS_ALBARAN . " es un posible duplicado de
                      <a href='index.php?page=VentasAlbaran&id=" . $alb['idalbaran'] . "'>este otro</a>.
                      Si no lo es, para evitar este mensaje, simplemente modifica las observaciones.");
@@ -814,14 +815,14 @@ class AlbaranCliente
     /**
      * Devuelve todos los albaranes relacionados con la factura.
      *
-     * @param int $id
+     * @param int $idfac
      *
      * @return array
      */
-    public function allFromFactura($id)
+    public function allFromFactura($idfac)
     {
         $albalist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idfactura = ' . $this->var2str($id)
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idfactura = ' . $this->var2str($idfac)
             . ' ORDER BY fecha DESC, codigo DESC;';
 
         $data = $this->database->select($sql);
@@ -956,7 +957,7 @@ class AlbaranCliente
     private function install()
     {
         /// nos aseguramos de que se comprueba la tabla de facturas antes
-        // new \FacturaCliente();
+        // new FacturaCliente();
 
         return '';
     }

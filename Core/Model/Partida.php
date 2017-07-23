@@ -263,7 +263,7 @@ class Partida
 
     /**
      * TODO
-     * @return bool
+     * @return bool|mixed
      */
     public function getContrapartida()
     {
@@ -405,16 +405,16 @@ class Partida
     /**
      * TODO
      *
-     * @param int $id
+     * @param int $idsubc
      * @param int $offset
      *
      * @return array
      */
-    public function allFromSubcuenta($id, $offset = 0)
+    public function allFromSubcuenta($idsubc, $offset = 0)
     {
         $plist = [];
         $sql = 'SELECT a.numero,a.fecha,p.idpartida,p.debe,p.haber FROM co_asientos a, co_partidas p'
-            . ' WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ' . $this->var2str($id)
+            . ' WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ' . $this->var2str($idsubc)
             . ' ORDER BY a.numero ASC, p.idpartida ASC;';
 
         $ordenadas = $this->database->select($sql);
@@ -449,20 +449,20 @@ class Partida
     /**
      * TODO
      *
-     * @param int $id
+     * @param int $idasi
      *
      * @return array
      */
-    public function allFromAsiento($id)
+    public function allFromAsiento($idasi)
     {
         $plist = [];
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idasiento = '
-            . $this->var2str($id) . ' ORDER BY codsubcuenta ASC;';
+            . $this->var2str($idasi) . ' ORDER BY codsubcuenta ASC;';
 
         $partidas = $this->database->select($sql);
         if (!empty($partidas)) {
-            foreach ($partidas as $p) {
-                $plist[] = new Partida($p);
+            foreach ($partidas as $par) {
+                $plist[] = new Partida($par);
             }
         }
 
@@ -472,15 +472,15 @@ class Partida
     /**
      * TODO
      *
-     * @param int $id
+     * @param int $idsubc
      *
      * @return array
      */
-    public function fullFromSubcuenta($id)
+    public function fullFromSubcuenta($idsubc)
     {
         $plist = [];
         $sql = 'SELECT a.numero,a.fecha,p.idpartida FROM co_asientos a, co_partidas p'
-            . ' WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ' . $this->var2str($id)
+            . ' WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ' . $this->var2str($idsubc)
             . ' ORDER BY a.numero ASC, p.idpartida ASC';
 
         $saldo = 0;
@@ -541,14 +541,14 @@ class Partida
     /**
      * TODO
      *
-     * @param int $id
+     * @param int $idsubc
      *
      * @return int
      */
-    public function countFromSubcuenta($id)
+    public function countFromSubcuenta($idsubc)
     {
         $sql = 'SELECT a.numero,a.fecha,p.idpartida FROM co_asientos a, co_partidas p'
-            . ' WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ' . $this->var2str($id)
+            . ' WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ' . $this->var2str($idsubc)
             . ' ORDER BY a.numero ASC, p.idpartida ASC;';
 
         $ordenadas = $this->database->select($sql);
@@ -561,15 +561,15 @@ class Partida
     /**
      * TODO
      *
-     * @param int $id
+     * @param int $idsubc
      *
      * @return array
      */
-    public function totalesFromSubcuenta($id)
+    public function totalesFromSubcuenta($idsubc)
     {
         $totales = ['debe' => 0, 'haber' => 0, 'saldo' => 0];
         $sql = 'SELECT COALESCE(SUM(debe), 0) as debe,COALESCE(SUM(haber), 0) as haber'
-            . ' FROM ' . $this->tableName() . ' WHERE idsubcuenta = ' . $this->var2str($id) . ';';
+            . ' FROM ' . $this->tableName() . ' WHERE idsubcuenta = ' . $this->var2str($idsubc) . ';';
 
         $resultados = $this->database->select($sql);
         if (!empty($resultados)) {
@@ -608,28 +608,28 @@ class Partida
     /**
      * TODO
      *
-     * @param int $id
+     * @param int $idsubc
      * @param string $fechaini
      * @param string $fechafin
      * @param bool $excluir
      *
      * @return array
      */
-    public function totalesFromSubcuentaFechas($id, $fechaini, $fechafin, $excluir = false)
+    public function totalesFromSubcuentaFechas($idsubc, $fechaini, $fechafin, $excluir = false)
     {
         $totales = ['debe' => 0, 'haber' => 0, 'saldo' => 0];
 
         if ($excluir) {
             $sql = 'SELECT COALESCE(SUM(p.debe), 0) AS debe,
             COALESCE(SUM(p.haber), 0) AS haber FROM co_partidas p, co_asientos a
-            WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ' . $this->var2str($id) . '
+            WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ' . $this->var2str($idsubc) . '
                AND a.fecha BETWEEN ' . $this->var2str($fechaini) . ' AND ' . $this->var2str($fechafin) . "
                AND p.idasiento NOT IN ('" . implode("','", $excluir) . "');";
             $resultados = $this->database->select($sql);
         } else {
             $sql = 'SELECT COALESCE(SUM(p.debe), 0) AS debe,
             COALESCE(SUM(p.haber), 0) AS haber FROM co_partidas p, co_asientos a
-            WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ' . $this->var2str($id) . '
+            WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ' . $this->var2str($idsubc) . '
                AND a.fecha BETWEEN ' . $this->var2str($fechaini) . ' AND ' . $this->var2str($fechafin) . ';';
             $resultados = $this->database->select($sql);
         }

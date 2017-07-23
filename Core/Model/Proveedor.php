@@ -273,9 +273,9 @@ class Proveedor
      *
      * @return bool|Proveedor
      */
-    public function getByCifnif($cifnif, $razon = false)
+    public function getByCifnif($cifnif, $razon = '')
     {
-        if ($cifnif === '' && $razon) {
+        if ($cifnif === '' && $razon !== '') {
             $razon = mb_strtolower(static::noHtml($razon), 'UTF8');
             $sql = 'SELECT * FROM ' . $this->tableName() . " WHERE cifnif = ''"
                 . ' AND lower(razonsocial) = ' . $this->var2str($razon) . ';';

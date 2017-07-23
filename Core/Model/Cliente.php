@@ -294,9 +294,9 @@ class Cliente
      *
      * @return bool|Cliente
      */
-    public function getByCifnif($cifnif, $razon = false)
+    public function getByCifnif($cifnif, $razon = '')
     {
-        if ($cifnif === '' && $razon) {
+        if ($cifnif === '' && $razon !== '') {
             $razon = static::noHtml(mb_strtolower($razon, 'UTF8'));
             $sql = 'SELECT * FROM ' . $this->tableName()
                 . " WHERE cifnif = '' AND lower(razonsocial) = " . $this->var2str($razon) . ';';

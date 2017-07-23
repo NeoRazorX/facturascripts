@@ -130,19 +130,19 @@ class LineaTransferenciaStock
     /**
      * TODO
      *
-     * @param int $id
+     * @param int $idtra
      *
      * @return array
      */
-    public function allFromTransferencia($id)
+    public function allFromTransferencia($idtra)
     {
         $list = [];
 
-        $sql = 'SELECT * FROM lineastransstock WHERE idtrans = ' . $this->var2str($id) . ' ORDER BY referencia ASC;';
+        $sql = 'SELECT * FROM lineastransstock WHERE idtrans = ' . $this->var2str($idtra) . ' ORDER BY referencia ASC;';
         $data = $this->database->select($sql);
         if (!empty($data)) {
-            foreach ($data as $d) {
-                $list[] = new LineaTransferenciaStock($d);
+            foreach ($data as $lin) {
+                $list[] = new LineaTransferenciaStock($lin);
             }
         }
 

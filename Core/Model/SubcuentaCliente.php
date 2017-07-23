@@ -105,13 +105,13 @@ class SubcuentaCliente
     /**
      * TODO
      *
-     * @param int $id
+     * @param int $idsubc
      *
      * @return bool|SubcuentaCliente
      */
-    public function get2($id)
+    public function get2($idsubc)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE id = ' . $this->var2str($id) . ';';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE id = ' . $this->var2str($idsubc) . ';';
         $data = $this->database->select($sql);
         if (!empty($data)) {
             return new SubcuentaCliente($data[0]);

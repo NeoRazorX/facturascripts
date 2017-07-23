@@ -292,15 +292,15 @@ class Subcuenta
      * Devuelve la primera subcuenta del ejercicio $codeje cuya cuenta madre
      * está marcada como cuenta especial $id.
      *
-     * @param int $id
+     * @param int $idcuesp
      * @param string $codeje
      *
      * @return Subcuenta|bool
      */
-    public function getCuentaesp($id, $codeje)
+    public function getCuentaesp($idcuesp, $codeje)
     {
         $sql = 'SELECT * FROM co_subcuentas WHERE idcuenta IN '
-            . '(SELECT idcuenta FROM co_cuentas WHERE idcuentaesp = ' . $this->var2str($id)
+            . '(SELECT idcuenta FROM co_cuentas WHERE idcuentaesp = ' . $this->var2str($idcuesp)
             . ' AND codejercicio = ' . $this->var2str($codeje) . ') ORDER BY codsubcuenta ASC;';
 
         $data = $this->database->select($sql);
@@ -409,16 +409,16 @@ class Subcuenta
      * Devuelve las subcuentas del ejercicio $codeje cuya cuenta madre
      * está marcada como cuenta especial $id.
      *
-     * @param int $id
+     * @param int $idcuesp
      * @param string $codeje
      *
      * @return array
      */
-    public function allFromCuentaesp($id, $codeje)
+    public function allFromCuentaesp($idcuesp, $codeje)
     {
         $cuentas = [];
         $sql = 'SELECT * FROM co_subcuentas WHERE idcuenta IN '
-            . '(SELECT idcuenta FROM co_cuentas WHERE idcuentaesp = ' . $this->var2str($id)
+            . '(SELECT idcuenta FROM co_cuentas WHERE idcuentaesp = ' . $this->var2str($idcuesp)
             . ' AND codejercicio = ' . $this->var2str($codeje) . ') ORDER BY codsubcuenta ASC;';
 
         $data = $this->database->select($sql);

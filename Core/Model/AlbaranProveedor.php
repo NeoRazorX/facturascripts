@@ -439,7 +439,7 @@ class AlbaranProveedor
             /// comprobamos las facturas asociadas
             $linea_factura = new LineaFacturaProveedor();
             $facturas = $linea_factura->facturasFromAlbaran($this->idalbaran);
-            if ($facturas) {
+            if (!empty($facturas)) {
                 if (count($facturas) > 1) {
                     $msg = 'Este ' . FS_ALBARAN . ' esta asociado a las siguientes facturas (y no debería):';
                     foreach ($facturas as $f) {
@@ -641,20 +641,20 @@ class AlbaranProveedor
     /**
      * Devuelve un array con los albaranes relacionados con la factura $id
      *
-     * @param int $id
+     * @param int $idfac
      *
      * @return array
      */
-    public function allFromFactura($id)
+    public function allFromFactura($idfac)
     {
         $alblist = [];
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idfactura = '
-            . $this->var2str($id) . ' ORDER BY fecha DESC, codigo DESC';
+            . $this->var2str($idfac) . ' ORDER BY fecha DESC, codigo DESC';
 
         $data = $this->database->select($sql);
         if (!empty($data)) {
-            foreach ($data as $a) {
-                $alblist[] = new AlbaranProveedor($a);
+            foreach ($data as $alb) {
+                $alblist[] = new AlbaranProveedor($alb);
             }
         }
 

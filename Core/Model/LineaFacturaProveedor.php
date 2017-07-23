@@ -321,20 +321,20 @@ class LineaFacturaProveedor
     /**
      * TODO
      *
-     * @param int $id
+     * @param int $idfac
      *
      * @return array
      */
-    public function allFromFactura($id)
+    public function allFromFactura($idfac)
     {
         $linlist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idfactura = ' . $this->var2str($id)
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idfactura = ' . $this->var2str($idfac)
             . ' ORDER BY idlinea ASC;';
 
         $data = $this->database->select($sql);
         if (!empty($data)) {
-            foreach ($data as $l) {
-                $linlist[] = new LineaFacturaProveedor($l);
+            foreach ($data as $lin) {
+                $linlist[] = new LineaFacturaProveedor($lin);
             }
         }
 
@@ -401,21 +401,21 @@ class LineaFacturaProveedor
     /**
      * TODO
      *
-     * @param int $id
+     * @param int $idalb
      *
      * @return array
      */
-    public function facturasFromAlbaran($id)
+    public function facturasFromAlbaran($idalb)
     {
         $facturalist = [];
         $sql = 'SELECT DISTINCT idfactura FROM ' . $this->tableName()
-            . ' WHERE idalbaran = ' . $this->var2str($id) . ';';
+            . ' WHERE idalbaran = ' . $this->var2str($idalb) . ';';
 
         $data = $this->database->select($sql);
         if (!empty($data)) {
             $factura = new FacturaProveedor();
-            foreach ($data as $l) {
-                $fac = $factura->get($l['idfactura']);
+            foreach ($data as $lfac) {
+                $fac = $factura->get($lfac['idfactura']);
                 if ($fac) {
                     $facturalist[] = $fac;
                 }

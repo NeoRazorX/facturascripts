@@ -151,14 +151,14 @@ class Cuenta
     /**
      * Obtiene la primera cuenta especial seleccionada.
      *
-     * @param int $id
+     * @param int $idcuesp
      * @param string $codejercicio
      *
      * @return bool|Cuenta
      */
-    public function getCuentaesp($id, $codejercicio)
+    public function getCuentaesp($idcuesp, $codejercicio)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idcuentaesp = ' . $this->var2str($id) .
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idcuentaesp = ' . $this->var2str($idcuesp) .
             ' AND codejercicio = ' . $this->var2str($codejercicio) . ' ORDER BY codcuenta ASC;';
 
         $data = $this->database->select($sql);
@@ -185,14 +185,14 @@ class Cuenta
 
     /**
      * TODO
-     * @param int $id
+     * @param int $idepi
      *
      * @return array
      */
-    public function fullFromEpigrafe($id)
+    public function fullFromEpigrafe($idepi)
     {
         $cuenlist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idepigrafe = ' . $this->var2str($id)
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idepigrafe = ' . $this->var2str($idepi)
             . ' ORDER BY codcuenta ASC;';
 
         $data = $this->database->select($sql);
@@ -252,21 +252,21 @@ class Cuenta
 
     /**
      * TODO
-     * @param int $id
+     * @param int $idcuesp
      * @param string $codejercicio
      *
      * @return array
      */
-    public function allFromCuentaesp($id, $codejercicio)
+    public function allFromCuentaesp($idcuesp, $codejercicio)
     {
         $cuenlist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idcuentaesp = ' . $this->var2str($id)
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idcuentaesp = ' . $this->var2str($idcuesp)
             . ' AND codejercicio = ' . $this->var2str($codejercicio) . ' ORDER BY codcuenta ASC;';
 
         $data = $this->database->select($sql);
         if (!empty($data)) {
-            foreach ($data as $d) {
-                $cuenlist[] = new Cuenta($d);
+            foreach ($data as $cue) {
+                $cuenlist[] = new Cuenta($cue);
             }
         }
 

@@ -319,20 +319,20 @@ class LineaAlbaranCliente
     /**
      * Devuelve las líneas del albarán.
      *
-     * @param int $id
+     * @param int $idalb
      *
      * @return array
      */
-    public function allFromAlbaran($id)
+    public function allFromAlbaran($idalb)
     {
         $linealist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idalbaran = ' . $this->var2str($id)
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idalbaran = ' . $this->var2str($idalb)
             . ' ORDER BY orden DESC, idlinea ASC;';
 
         $data = $this->database->select($sql);
         if (!empty($data)) {
-            foreach ($data as $l) {
-                $linealist[] = new LineaAlbaranCliente($l);
+            foreach ($data as $lin) {
+                $linealist[] = new LineaAlbaranCliente($lin);
             }
         }
 

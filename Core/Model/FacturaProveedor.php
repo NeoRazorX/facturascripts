@@ -827,7 +827,7 @@ class FacturaProveedor
                   AND referencia NOT IN (SELECT referencia FROM lineasfacturasprov
                   WHERE idfactura = ' . $this->var2str($fac['idfactura']) . ');';
                     $aux = $this->database->select($sql);
-                    if (!$aux) {
+                    if (!empty($aux)) {
                         $this->miniLog->alert("Esta factura es un posible duplicado de
                      <a href='index.php?page=ComprasFactura&id=" . $fac['idfactura'] . "'>esta otra</a>.
                      Si no lo es, para evitar este mensaje, simplemente modifica las observaciones.");

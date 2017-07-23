@@ -34,7 +34,7 @@ class CuentaBancoCliente
 
     /**
      * Clave primaria. Varchar(6).
-     * @var string
+     * @var int
      */
     public $codcuenta;
 

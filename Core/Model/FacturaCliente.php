@@ -1333,7 +1333,7 @@ class FacturaCliente
     public function huecos()
     {
         $error = true;
-        $huecolist = $this->cache->get('factura_cliente_huecos', $error);
+        $huecolist = $this->cache->get('factura_cliente_huecos');
         if ($error) {
             $huecolist = fsHuecosFacturasCliente($this->database, $this->tableName());
             $this->cache->set('factura_cliente_huecos', $huecolist);

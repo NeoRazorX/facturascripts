@@ -611,14 +611,14 @@ class Articulo
             }
 
             if ($png) {
-                $f = @fopen(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png', 'ab');
+                $file = @fopen(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png', 'ab');
             } else {
-                $f = @fopen(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.jpg', 'ab');
+                $file = @fopen(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.jpg', 'ab');
             }
 
-            if ($f) {
-                fwrite($f, $img);
-                fclose($f);
+            if ($file) {
+                fwrite($file, $img);
+                fclose($file);
             }
         }
     }

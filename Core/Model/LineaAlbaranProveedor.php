@@ -301,14 +301,14 @@ class LineaAlbaranProveedor
     /**
      * TODO
      *
-     * @param int $id
+     * @param int $idalb
      *
      * @return array
      */
-    public function allFromAlbaran($id)
+    public function allFromAlbaran($idalb)
     {
         $linealist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idalbaran = ' . $this->var2str($id)
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idalbaran = ' . $this->var2str($idalb)
             . ' ORDER BY idlinea ASC;';
 
         $data = $this->database->select($sql);

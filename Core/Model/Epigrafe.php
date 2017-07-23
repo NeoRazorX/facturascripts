@@ -187,20 +187,20 @@ class Epigrafe
     /**
      * TODO
      *
-     * @param int $id
+     * @param int $idgrp
      *
      * @return array
      */
-    public function allFromGrupo($id)
+    public function allFromGrupo($idgrp)
     {
         $epilist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idgrupo = ' . $this->var2str($id)
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idgrupo = ' . $this->var2str($idgrp)
             . ' ORDER BY codepigrafe ASC;';
 
         $data = $this->database->select($sql);
         if (!empty($data)) {
-            foreach ($data as $ep) {
-                $epilist[] = new Epigrafe($ep);
+            foreach ($data as $epi) {
+                $epilist[] = new Epigrafe($epi);
             }
         }
 

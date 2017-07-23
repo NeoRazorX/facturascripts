@@ -210,7 +210,7 @@ class ArticuloProveedor
 
     /**
      * TODO
-     * @return bool
+     * @return bool|mixed
      */
     public function getArticulo()
     {
