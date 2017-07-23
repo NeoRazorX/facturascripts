@@ -299,7 +299,7 @@ trait Model
      */
     public function delete()
     {
-        if (function_exists($this->cleanCache())) {
+        if (method_exists(__CLASS__,'cleanCache')) {
             $this->cleanCache();
         }
         $sql = 'DELETE FROM ' . $this->tableName()
@@ -404,16 +404,12 @@ trait Model
         switch ($val) {
             case true:
                 return 't';
-                break;
             case false:
                 return 'f';
-                break;
             case 1:
                 return '1';
-                break;
             case 0:
                 return '0';
-                break;
         }
     }
 
