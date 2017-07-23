@@ -255,28 +255,28 @@ class Subcuenta
                 . ' ORDER BY idsubcuenta DESC;';
             $subc = $this->database->select($sql);
             if (!empty($subc)) {
-                $old_sc = new Subcuenta($subc[0]);
+                $oldSc = new Subcuenta($subc[0]);
 
                 /// buscamos la cuenta equivalente es ESTE ejercicio
                 $cuenta = new Cuenta();
-                $new_c = $cuenta->getByCodigo($old_sc->codcuenta, $codejercicio);
-                if ($new_c) {
-                    $new_sc = new Subcuenta();
-                    $new_sc->codcuenta = $new_c->codcuenta;
-                    $new_sc->coddivisa = $old_sc->coddivisa;
-                    $new_sc->codejercicio = $codejercicio;
-                    $new_sc->codimpuesto = $old_sc->codimpuesto;
-                    $new_sc->codsubcuenta = $old_sc->codsubcuenta;
-                    $new_sc->descripcion = $old_sc->descripcion;
-                    $new_sc->idcuenta = $new_c->idcuenta;
-                    $new_sc->iva = $old_sc->iva;
-                    $new_sc->recargo = $old_sc->recargo;
-                    if ($new_sc->save()) {
-                        return $new_sc;
+                $newC = $cuenta->getByCodigo($oldSc->codcuenta, $codejercicio);
+                if ($newC) {
+                    $newSc = new Subcuenta();
+                    $newSc->codcuenta = $newC->codcuenta;
+                    $newSc->coddivisa = $oldSc->coddivisa;
+                    $newSc->codejercicio = $codejercicio;
+                    $newSc->codimpuesto = $oldSc->codimpuesto;
+                    $newSc->codsubcuenta = $oldSc->codsubcuenta;
+                    $newSc->descripcion = $oldSc->descripcion;
+                    $newSc->idcuenta = $newC->idcuenta;
+                    $newSc->iva = $oldSc->iva;
+                    $newSc->recargo = $oldSc->recargo;
+                    if ($newSc->save()) {
+                        return $newSc;
                     }
                     return false;
                 }
-                $this->miniLog->alert('No se ha encontrado la cuenta equivalente a ' . $old_sc->codcuenta
+                $this->miniLog->alert('No se ha encontrado la cuenta equivalente a ' . $oldSc->codcuenta
                     . ' en el ejercicio ' . $codejercicio
                     . ' <a href="index.php?page=ContabilidadEjercicio&cod=' . $codejercicio
                     . '">¿Has importado el plan contable?</a>');
@@ -327,25 +327,25 @@ class Subcuenta
     {
         $this->descripcion = static::noHtml($this->descripcion);
 
-        $limpiar_cache = false;
+        $limpiarCache = false;
         $totales = $this->getTotales();
 
         if (abs($this->debe - $totales['debe']) > .001) {
             $this->debe = $totales['debe'];
-            $limpiar_cache = true;
+            $limpiarCache = true;
         }
 
         if (abs($this->haber - $totales['haber']) > .001) {
             $this->haber = $totales['haber'];
-            $limpiar_cache = true;
+            $limpiarCache = true;
         }
 
         if (abs($this->saldo - $totales['saldo']) > .001) {
             $this->saldo = $totales['saldo'];
-            $limpiar_cache = true;
+            $limpiarCache = true;
         }
 
-        if ($limpiar_cache) {
+        if ($limpiarCache) {
             $this->cleanCache();
         }
 

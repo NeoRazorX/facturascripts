@@ -748,9 +748,9 @@ class Articulo
                 /// $result es TRUE
                 /// este código está muy optimizado para guardar solamente los cambios
 
-                $nuevo_stock = $stock->totalFromArticulo($this->referencia);
-                if ($this->stockfis !== $nuevo_stock) {
-                    $this->stockfis = $nuevo_stock;
+                $nuevoStock = $stock->totalFromArticulo($this->referencia);
+                if ($this->stockfis !== $nuevoStock) {
+                    $this->stockfis = $nuevoStock;
 
                     if ($this->exists) {
                         $this->cleanCache();
@@ -776,23 +776,23 @@ class Articulo
      *
      * @param string $codalmacen
      * @param integer $cantidad
-     * @param bool $recalcula_coste
+     * @param bool $recalculaCoste
      * @param string $codcombinacion
      *
      * @return bool
      */
-    public function sumStock($codalmacen, $cantidad = 1, $recalcula_coste = false, $codcombinacion = null)
+    public function sumStock($codalmacen, $cantidad = 1, $recalculaCoste = false, $codcombinacion = null)
     {
         $result = false;
 
-        if ($recalcula_coste) {
+        if ($recalculaCoste) {
             $this->costemedio = $this->getCostemedio();
         }
 
         if ($this->nostock) {
             $result = true;
 
-            if ($recalcula_coste) {
+            if ($recalculaCoste) {
                 /// este código está muy optimizado para guardar solamente los cambios
                 if ($this->exists) {
                     $this->cleanCache();
@@ -827,9 +827,9 @@ class Articulo
             if ($result) {
                 /// este código está muy optimizado para guardar solamente los cambios
 
-                $nuevo_stock = $stock->totalFromArticulo($this->referencia);
-                if ($this->stockfis !== $nuevo_stock) {
-                    $this->stockfis = $nuevo_stock;
+                $nuevoStock = $stock->totalFromArticulo($this->referencia);
+                if ($this->stockfis !== $nuevoStock) {
+                    $this->stockfis = $nuevoStock;
 
                     if ($this->exists) {
                         $this->cleanCache();
@@ -943,19 +943,19 @@ class Articulo
      * @param string $query
      * @param integer $offset
      * @param string $codfamilia
-     * @param bool $con_stock
+     * @param bool $conStock
      * @param string $codfabricante
      * @param bool $bloqueados
      *
      * @return Articulo
      */
-    public function search($query = '', $offset = 0, $codfamilia = '', $con_stock = false, $codfabricante = '', $bloqueados = false)
+    public function search($query = '', $offset = 0, $codfamilia = '', $conStock = false, $codfabricante = '', $bloqueados = false)
     {
         $artilist = [];
         $query = static::noHtml(mb_strtolower($query, 'UTF8'));
 
         if ($query !== '' && $offset === 0 && $codfamilia === '' &&
-            $codfabricante === '' && !$con_stock && !$bloqueados) {
+            $codfabricante === '' && !$conStock && !$bloqueados) {
             /// intentamos obtener los datos de memcache
             if ($this->newSearchTag($query)) {
                 $artilist = $this->cache->get('articulos_search_' . $query);
@@ -976,7 +976,7 @@ class Articulo
                 $separador = ' AND';
             }
 
-            if ($con_stock) {
+            if ($conStock) {
                 $sql .= $separador . ' stockfis > 0';
                 $separador = ' AND';
             }

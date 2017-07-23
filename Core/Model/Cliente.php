@@ -414,15 +414,15 @@ class Cliente
                 }
             } else {
                 /// obtenemos una url para el mensaje, pero a prueba de errores.
-                $eje_url = '';
+                $ejeUrl = '';
                 $eje0 = new Ejercicio();
                 $ejercicio = $eje0->get($codejercicio);
                 if ($ejercicio) {
-                    $eje_url = $ejercicio->url();
+                    $ejeUrl = $ejercicio->url();
                 }
 
                 $this->miniLog->alert('No se encuentra ninguna cuenta especial para clientes en el ejercicio '
-                    . $codejercicio . ' ¿<a href="' . $eje_url . '">Has importado los datos del ejercicio</a>?');
+                    . $codejercicio . ' ¿<a href="' . $ejeUrl . '">Has importado los datos del ejercicio</a>?');
             }
         }
 
@@ -471,15 +471,15 @@ class Cliente
         }
 
         /// validamos los dias de pago
-        $array_dias = [];
+        $arrayDias = [];
         foreach (str_getcsv($this->diaspago) as $d) {
             if ((int)$d >= 1 && (int)$d <= 31) {
-                $array_dias[] = (int)$d;
+                $arrayDias[] = (int)$d;
             }
         }
         $this->diaspago = null;
-        if (!empty($array_dias)) {
-            $this->diaspago = implode(',', $array_dias);
+        if (!empty($arrayDias)) {
+            $this->diaspago = implode(',', $arrayDias);
         }
 
         if (!preg_match('/^[A-Z0-9]{1,6}$/i', $this->codcliente)) {

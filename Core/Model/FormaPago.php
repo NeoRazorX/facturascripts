@@ -155,34 +155,34 @@ class FormaPago
 
     /**
      * A partir de una fecha devuelve la nueva fecha de vencimiento en base a esta forma de pago.
-     * Si se proporciona $dias_de_pago se usarán para la nueva fecha.
+     * Si se proporciona $diasDePago se usarán para la nueva fecha.
      *
-     * @param string $fecha_inicio
-     * @param string $dias_de_pago dias de pago específicos para el cliente (separados por comas).
+     * @param string $fechaInicio
+     * @param string $diasDePago dias de pago específicos para el cliente (separados por comas).
      *
      * @return string
      */
-    public function calcularVencimiento($fecha_inicio, $dias_de_pago = '')
+    public function calcularVencimiento($fechaInicio, $diasDePago = '')
     {
-        $fecha = $this->calcularVencimiento2($fecha_inicio);
+        $fecha = $this->calcularVencimiento2($fechaInicio);
 
         /// validamos los días de pago
-        $array_dias = [];
-        foreach (str_getcsv($dias_de_pago) as $d) {
+        $arrayDias = [];
+        foreach (str_getcsv($diasDePago) as $d) {
             if ((int)$d >= 1 && (int)$d <= 31) {
-                $array_dias[] = (int)$d;
+                $arrayDias[] = (int)$d;
             }
         }
 
-        if ($array_dias !== null) {
-            foreach ($array_dias as $i => $dia_de_pago) {
+        if ($arrayDias !== null) {
+            foreach ($arrayDias as $i => $diaDePago) {
                 if ($i === 0) {
-                    $fecha = $this->calcularVencimiento2($fecha_inicio, $dia_de_pago);
+                    $fecha = $this->calcularVencimiento2($fechaInicio, $diaDePago);
                 } else {
                     /// si hay varios dias de pago, elegimos la fecha más cercana
-                    $fecha_temp = $this->calcularVencimiento2($fecha_inicio, $dia_de_pago);
-                    if (strtotime($fecha_temp) < strtotime($fecha)) {
-                        $fecha = $fecha_temp;
+                    $fechaTemp = $this->calcularVencimiento2($fechaInicio, $diaDePago);
+                    if (strtotime($fechaTemp) < strtotime($fecha)) {
+                        $fecha = $fechaTemp;
                     }
                 }
             }
@@ -194,33 +194,33 @@ class FormaPago
     /**
      * Función recursiva auxiliar para calcularVencimiento()
      *
-     * @param string $fecha_inicio
-     * @param string|integer $dia_de_pago
+     * @param string $fechaInicio
+     * @param string|integer $diaDePago
      *
      * @return string
      */
-    private function calcularVencimiento2($fecha_inicio, $dia_de_pago = 0)
+    private function calcularVencimiento2($fechaInicio, $diaDePago = 0)
     {
-        if ($dia_de_pago === 0) {
-            return date('d-m-Y', strtotime($fecha_inicio . ' ' . $this->vencimiento));
+        if ($diaDePago === 0) {
+            return date('d-m-Y', strtotime($fechaInicio . ' ' . $this->vencimiento));
         }
 
-        $fecha = date('d-m-Y', strtotime($fecha_inicio . ' ' . $this->vencimiento));
-        $tmp_dia = date('d', strtotime($fecha));
-        $tmp_mes = date('m', strtotime($fecha));
-        $tmp_anyo = date('Y', strtotime($fecha));
+        $fecha = date('d-m-Y', strtotime($fechaInicio . ' ' . $this->vencimiento));
+        $tmpDia = date('d', strtotime($fecha));
+        $tmpMes = date('m', strtotime($fecha));
+        $tmpAnyo = date('Y', strtotime($fecha));
 
-        if ($tmp_dia > $dia_de_pago) {
+        if ($tmpDia > $diaDePago) {
             /// calculamos el dia de cobro para el mes siguiente
             $fecha = date('d-m-Y', strtotime($fecha . ' +1 month'));
-            $tmp_mes = date('m', strtotime($fecha));
-            $tmp_anyo = date('Y', strtotime($fecha));
+            $tmpMes = date('m', strtotime($fecha));
+            $tmpAnyo = date('Y', strtotime($fecha));
         }
 
         /// ahora elegimos un dia, pero que quepa en el mes, no puede ser 31 de febrero
-        $tmp_dia = min([$dia_de_pago, (int)date('t', strtotime($fecha))]);
+        $tmpDia = min([$diaDePago, (int)date('t', strtotime($fecha))]);
 
         /// y por último generamos la fecha
-        return date('d-m-Y', strtotime($tmp_dia . '-' . $tmp_mes . '-' . $tmp_anyo));
+        return date('d-m-Y', strtotime($tmpDia . '-' . $tmpMes . '-' . $tmpAnyo));
     }
 }

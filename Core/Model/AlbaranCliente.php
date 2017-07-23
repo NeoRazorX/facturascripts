@@ -616,8 +616,8 @@ class AlbaranCliente
 
         if ($this->total !== 0) {
             /// comprobamos las facturas asociadas
-            $linea_factura = new LineaFacturaCliente();
-            $facturas = $linea_factura->facturasFromAlbaran($this->idalbaran);
+            $lineaFactura = new LineaFacturaCliente();
+            $facturas = $lineaFactura->facturasFromAlbaran($this->idalbaran);
             if (!empty($facturas)) {
                 if (count($facturas) > 1) {
                     $msg = 'Este ' . FS_ALBARAN . ' esta asociado a las siguientes facturas (y no debería):';

@@ -559,12 +559,12 @@ class TerminalCaja
     {
         $symbol = ' ';
         $middle = round($ancho / 2);
-        $length_word = strlen($word);
-        $middle_word = round($length_word / 2);
-        $last_position = $middle + $middle_word;
-        $number_of_spaces = $middle - $middle_word;
-        $result = sprintf("%'{$symbol}{$last_position}s", $word);
-        for ($i = 0; $i < $number_of_spaces; $i++) {
+        $lengthWord = strlen($word);
+        $middleWord = round($lengthWord / 2);
+        $lastPosition = $middle + $middleWord;
+        $numberOfSpaces = $middle - $middleWord;
+        $result = sprintf("%'{$symbol}{$lastPosition}s", $word);
+        for ($i = 0; $i < $numberOfSpaces; $i++) {
             $result .= "$symbol";
         }
         return $result;

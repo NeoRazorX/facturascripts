@@ -422,20 +422,20 @@ class Partida
             $partida = new Partida();
             $i = 0;
             $saldo = 0;
-            $sum_debe = 0;
-            $sum_haber = 0;
+            $sumDebe = 0;
+            $sumHaber = 0;
             foreach ($ordenadas as $po) {
                 $saldo += (float)$po['debe'] - (float)$po['haber'];
-                $sum_debe += (float)$po['debe'];
-                $sum_haber += (float)$po['haber'];
+                $sumDebe += (float)$po['debe'];
+                $sumHaber += (float)$po['haber'];
                 if ($i >= $offset && $i < ($offset + FS_ITEM_LIMIT)) {
                     $aux = $partida->get($po['idpartida']);
                     if ($aux) {
                         $aux->numero = (int)$po['numero'];
                         $aux->fecha = date('d-m-Y', strtotime($po['fecha']));
                         $aux->saldo = $saldo;
-                        $aux->sum_debe = $sum_debe;
-                        $aux->sum_haber = $sum_haber;
+                        $aux->sum_debe = $sumDebe;
+                        $aux->sum_haber = $sumHaber;
                         $plist[] = $aux;
                     }
                 }
@@ -484,8 +484,8 @@ class Partida
             . ' ORDER BY a.numero ASC, p.idpartida ASC';
 
         $saldo = 0;
-        $sum_debe = 0;
-        $sum_haber = 0;
+        $sumDebe = 0;
+        $sumHaber = 0;
 
         $partida = new Partida();
         $offset = 0;
@@ -497,11 +497,11 @@ class Partida
                     $aux->numero = (int)$po['numero'];
                     $aux->fecha = date('d-m-Y', strtotime($po['fecha']));
                     $saldo += $aux->debe - $aux->haber;
-                    $sum_debe += $aux->debe;
-                    $sum_haber += $aux->haber;
+                    $sumDebe += $aux->debe;
+                    $sumHaber += $aux->haber;
                     $aux->saldo = $saldo;
-                    $aux->sum_debe = $sum_debe;
-                    $aux->sum_haber = $sum_haber;
+                    $aux->sum_debe = $sumDebe;
+                    $aux->sum_haber = $sumHaber;
                     $plist[] = $aux;
                 }
 

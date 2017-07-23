@@ -408,15 +408,15 @@ class Proveedor
                 }
             } else {
                 /// obtenemos una url para el mensaje, pero a prueba de errores.
-                $eje_url = '';
+                $ejeUrl = '';
                 $eje0 = new Ejercicio();
                 $ejercicio = $eje0->get($codeje);
                 if ($ejercicio) {
-                    $eje_url = $ejercicio->url();
+                    $ejeUrl = $ejercicio->url();
                 }
 
                 $this->miniLog->alert('No se encuentra ninguna cuenta especial para proveedores en el ejercicio '
-                    . $codeje . ' ¿<a href="' . $eje_url . '">Has importado los datos del ejercicio</a>?');
+                    . $codeje . ' ¿<a href="' . $ejeUrl . '">Has importado los datos del ejercicio</a>?');
             }
         }
 
@@ -468,15 +468,15 @@ class Proveedor
     /**
      * TODO
      * @param int $offset
-     * @param bool $solo_acreedores
+     * @param bool $soloAcreedores
      *
      * @return array
      */
-    public function all($offset = 0, $solo_acreedores = false)
+    public function all($offset = 0, $soloAcreedores = false)
     {
         $provelist = [];
         $sql = 'SELECT * FROM ' . $this->tableName() . ' ORDER BY lower(nombre) ASC';
-        if ($solo_acreedores) {
+        if ($soloAcreedores) {
             $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE acreedor ORDER BY lower(nombre) ASC';
         }
 

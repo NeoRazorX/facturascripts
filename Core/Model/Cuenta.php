@@ -300,16 +300,16 @@ class Cuenta
 
     /**
      * TODO
-     * @param int $suma_codigo
+     * @param int $sumaCodigo
      *
      * @return bool|Subcuenta
      */
-    public function newSubcuenta($suma_codigo)
+    public function newSubcuenta($sumaCodigo)
     {
         $ejercicio = new Ejercicio();
         $eje0 = $ejercicio->get($this->codejercicio);
         if ($eje0) {
-            $codsubcuenta = (float)sprintf('%-0' . $eje0->longsubcuenta . 's', $this->codcuenta) + $suma_codigo;
+            $codsubcuenta = (float)sprintf('%-0' . $eje0->longsubcuenta . 's', $this->codcuenta) + $sumaCodigo;
             $subcuenta = new Subcuenta();
             $subc0 = $subcuenta->getByCodigo($codsubcuenta, $this->codejercicio);
             if ($subc0) {

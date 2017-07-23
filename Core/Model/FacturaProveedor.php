@@ -434,8 +434,8 @@ class FacturaProveedor
      */
     public function getLineasIva()
     {
-        $linea_iva = new LineaIvaFacturaProveedor();
-        $lineasi = $linea_iva->allFromFactura($this->idfactura);
+        $lineaIva = new LineaIvaFacturaProveedor();
+        $lineasi = $lineaIva->allFromFactura($this->idfactura);
         /// si no hay lineas de IVA las generamos
         if (!empty($lineasi)) {
             $lineas = $this->getLineas();
@@ -477,23 +477,23 @@ class FacturaProveedor
                      * en líneas de iva podemos encontrarnos con un descuadre que
                      * hay que calcular y solucionar.
                      */
-                    $t_neto = 0;
-                    $t_iva = 0;
+                    $tNeto = 0;
+                    $tIva = 0;
                     foreach ($lineasi as $li) {
                         $li->neto = bround($li->neto, FS_NF0);
                         $li->totaliva = bround($li->totaliva, FS_NF0);
                         $li->totallinea = $li->neto + $li->totaliva + $li->totalrecargo;
 
-                        $t_neto += $li->neto;
-                        $t_iva += $li->totaliva;
+                        $tNeto += $li->neto;
+                        $tIva += $li->totaliva;
                     }
 
-                    if (!$this->floatcmp($this->neto, $t_neto)) {
+                    if (!$this->floatcmp($this->neto, $tNeto)) {
                         /*
                          * Sumamos o restamos un céntimo a los netos más altos
                          * hasta que desaparezca el descuadre
                          */
-                        $diferencia = round(($this->neto - $t_neto) * 100);
+                        $diferencia = round(($this->neto - $tNeto) * 100);
                         usort(
                             $lineasi,
                             function ($a, $b) {
@@ -520,12 +520,12 @@ class FacturaProveedor
                         }
                     }
 
-                    if (!$this->floatcmp($this->totaliva, $t_iva)) {
+                    if (!$this->floatcmp($this->totaliva, $tIva)) {
                         /*
                          * Sumamos o restamos un céntimo a los importes más altos
                          * hasta que desaparezca el descuadre
                          */
-                        $diferencia = round(($this->totaliva - $t_iva) * 100);
+                        $diferencia = round(($this->totaliva - $tIva) * 100);
                         usort(
                             $lineasi,
                             function ($a, $b) {
@@ -774,8 +774,8 @@ class FacturaProveedor
 
         /// comprobamos las líneas de IVA
         $this->getLineasIva();
-        $linea_iva = new LineaIvaFacturaProveedor();
-        if (!$linea_iva->facturaTest($this->idfactura, $neto, $iva, $recargo)) {
+        $lineaIva = new LineaIvaFacturaProveedor();
+        if (!$lineaIva->facturaTest($this->idfactura, $neto, $iva, $recargo)) {
             $status = false;
         }
 

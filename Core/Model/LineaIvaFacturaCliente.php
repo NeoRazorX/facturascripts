@@ -144,30 +144,30 @@ class LineaIvaFacturaCliente
     {
         $status = true;
 
-        $li_neto = 0;
-        $li_iva = 0;
-        $li_recargo = 0;
+        $liNeto = 0;
+        $liIva = 0;
+        $liRecargo = 0;
         foreach ($this->allFromFactura($idfactura) as $li) {
             if (!$li->test()) {
                 $status = false;
             }
 
-            $li_neto += $li->neto;
-            $li_iva += $li->totaliva;
-            $li_recargo += $li->totalrecargo;
+            $liNeto += $li->neto;
+            $liIva += $li->totaliva;
+            $liRecargo += $li->totalrecargo;
         }
 
-        $li_neto = round($li_neto, FS_NF0);
-        $li_iva = round($li_iva, FS_NF0);
-        $li_recargo = round($li_recargo, FS_NF0);
+        $liNeto = round($liNeto, FS_NF0);
+        $liIva = round($liIva, FS_NF0);
+        $liRecargo = round($liRecargo, FS_NF0);
 
-        if (!$this->floatcmp($neto, $li_neto, FS_NF0, true)) {
+        if (!$this->floatcmp($neto, $liNeto, FS_NF0, true)) {
             $this->miniLog->alert('La suma de los netos de las líneas de IVA debería ser: ' . $neto);
             $status = false;
-        } elseif (!$this->floatcmp($totaliva, $li_iva, FS_NF0, true)) {
+        } elseif (!$this->floatcmp($totaliva, $liIva, FS_NF0, true)) {
             $this->miniLog->alert('La suma de los totales de iva de las líneas de IVA debería ser: ' . $totaliva);
             $status = false;
-        } elseif (!$this->floatcmp($totalrecargo, $li_recargo, FS_NF0, true)) {
+        } elseif (!$this->floatcmp($totalrecargo, $liRecargo, FS_NF0, true)) {
             $this->miniLog->alert('La suma de los totalrecargo de las líneas de IVA debería ser: ' . $totalrecargo);
             $status = false;
         }

@@ -350,7 +350,7 @@ class Asiento
      */
     public function fix()
     {
-        $importe_old = $this->importe;
+        $importeOld = $this->importe;
         $debe = $haber = 0;
         foreach ($this->getPartidas() as $p) {
             $debe += $p->debe;
@@ -407,7 +407,7 @@ class Asiento
         }
 
         /// si el importe ha cambiado, lo guardamos
-        if (!$this->floatcmp($this->importe, $importe_old)) {
+        if (!$this->floatcmp($this->importe, $importeOld)) {
             $this->save();
         }
 
@@ -504,12 +504,12 @@ class Asiento
 
         $consulta = 'SELECT * FROM ' . $this->tableName() . ' WHERE ';
         if (is_numeric($query)) {
-            $aux_sql = '';
+            $auxSql = '';
             if (strtolower(FS_DB_TYPE) === 'postgresql') {
-                $aux_sql = '::TEXT';
+                $auxSql = '::TEXT';
             }
 
-            $consulta .= 'numero' . $aux_sql . " LIKE '%" . $query . "%' OR concepto LIKE '%" . $query
+            $consulta .= 'numero' . $auxSql . " LIKE '%" . $query . "%' OR concepto LIKE '%" . $query
                 . "%' OR importe BETWEEN " . ($query - .01) . ' AND ' . ($query + .01);
         } elseif (preg_match('/^(\d{1,2})-(\d{1,2})-(\d{4})$/i', $query)) {
             $consulta .= 'fecha = ' . $this->var2str($query) . " OR concepto LIKE '%" . $query . "%'";
