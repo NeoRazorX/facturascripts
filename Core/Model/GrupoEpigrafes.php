@@ -32,22 +32,22 @@ class GrupoEpigrafes
 
     /**
      * Clave primaria
-     * @var
+     * @var int
      */
     public $idgrupo;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $codgrupo;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $codejercicio;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $descripcion;
 
@@ -101,7 +101,7 @@ class GrupoEpigrafes
             . ' AND codejercicio = ' . $this->var2str($codejercicio) . ';';
 
         $grupo = $this->database->select($sql);
-        if ($grupo) {
+        if (!empty($grupo)) {
             return new GrupoEpigrafes($grupo[0]);
         }
         return false;

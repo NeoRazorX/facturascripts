@@ -236,15 +236,15 @@ class ArticuloProveedor
      * primer elemento que tenga $codproveedor como codproveedor y $refprov como refproveedor
      * o bien $ref como referencia.
      *
-     * @param $ref
+     * @param string $ref
      * @param string $codproveedor
-     * @param $refprov
+     * @param string $refprov
      *
      * @return ArticuloProveedor|bool
      */
-    public function getBy($ref, $codproveedor, $refprov = false)
+    public function getBy($ref, $codproveedor, $refprov = '')
     {
-        if ($refprov) {
+        if ($refprov !== '') {
             $sql = 'SELECT * FROM articulosprov WHERE codproveedor = ' . $this->var2str($codproveedor)
                 . ' AND (refproveedor = ' . $this->var2str($refprov)
                 . ' OR referencia = ' . $this->var2str($ref) . ');';
@@ -303,7 +303,7 @@ class ArticuloProveedor
     /**
      * Devuelve el artículo con menor precio de los que tienen $ref como referencia.
      *
-     * @param $ref
+     * @param string $ref
      *
      * @return bool|ArticuloProveedor
      */

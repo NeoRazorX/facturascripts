@@ -227,7 +227,7 @@ class Familia
     {
         $famlist = [];
 
-        if (!$codmadre) {
+        if (!empty($codmadre)) {
             $codmadre = $this->codfamilia;
         }
 
@@ -245,7 +245,7 @@ class Familia
 
     /**
      * TODO
-     * @param $query
+     * @param string $query
      *
      * @return array
      */

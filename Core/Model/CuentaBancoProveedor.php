@@ -34,28 +34,28 @@ class CuentaBancoProveedor
 
     /**
      * Clave primaria. Varchar(6).
-     * @var
+     * @var string
      */
     public $codcuenta;
 
     /**
      * Código del proveedor.
-     * @var
+     * @var string
      */
     public $codproveedor;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $descripcion;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $iban;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $swift;
     /**
@@ -94,7 +94,7 @@ class CuentaBancoProveedor
     /**
      * Devuelve el IBAN con o sin espacios.
      *
-     * @param $espacios
+     * @param bool $espacios
      *
      * @return string
      */
@@ -209,7 +209,7 @@ class CuentaBancoProveedor
     {
         $sql = 'SELECT MAX(' . $this->database->sql2Int('codcuenta') . ') as cod FROM ' . $this->tableName() . ';';
         $cod = $this->database->select($sql);
-        if ($cod) {
+        if (!empty($cod)) {
             return 1 + (int)$cod[0]['cod'];
         }
         return 1;

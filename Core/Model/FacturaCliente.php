@@ -113,12 +113,12 @@ class FacturaCliente
 
     /**
      * Fecha de la factura
-     * @var \DateTime
+     * @var string
      */
     public $fecha;
     /**
      * Hora de la factura
-     * @var \DateTime
+     * @var string
      */
     public $hora;
 
@@ -309,13 +309,13 @@ class FacturaCliente
 
     /**
      * Fecha de vencimiento de la factura.
-     * @var \DateTime
+     * @var string
      */
     public $vencimiento;
 
     /**
      * Fecha en la que se envió la factura por email.
-     * @var \DateTime
+     * @var string
      */
     public $femail;
 
@@ -440,8 +440,8 @@ class FacturaCliente
      * y las regularizaciones de IVA.
      * Devuelve TRUE si se asigna una fecha distinta a los solicitados.
      *
-     * @param $fecha
-     * @param $hora
+     * @param string $fecha
+     * @param string $hora
      *
      * @return bool
      */
@@ -619,9 +619,9 @@ class FacturaCliente
         $linea_iva = new LineaIvaFacturaCliente();
         $lineasi = $linea_iva->allFromFactura($this->idfactura);
         /// si no hay lineas de IVA las generamos
-        if (!$lineasi) {
+        if (!empty($lineasi)) {
             $lineas = $this->getLineas();
-            if ($lineas) {
+            if (!empty($lineas)) {
                 foreach ($lineas as $l) {
                     $i = 0;
                     $encontrada = false;
@@ -1135,7 +1135,7 @@ class FacturaCliente
      * Devuelve un array con las facturas sin pagar
      *
      * @param int $offset
-     * @param $limit
+     * @param int $limit
      * @param string $order
      *
      * @return array
@@ -1210,8 +1210,8 @@ class FacturaCliente
      *
      * @param string $desde
      * @param string $hasta
-     * @param bool $codserie código de la serie
-     * @param bool $codagente código del empleado
+     * @param string $codserie código de la serie
+     * @param string $codagente código del empleado
      * @param bool $codcliente código del cliente
      * @param bool $estado
      * @param bool $codpago código de la forma de pago
@@ -1219,32 +1219,32 @@ class FacturaCliente
      *
      * @return array
      */
-    public function allDesde($desde, $hasta, $codserie = false, $codagente = false, $codcliente = false, $estado = false, $codpago = false, $codalmacen = false)
+    public function allDesde($desde, $hasta, $codserie = '', $codagente = '', $codcliente = '', $estado = '', $codpago = '', $codalmacen = '')
     {
         $faclist = [];
 
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE fecha >= ' . $this->var2str($desde) . ' AND fecha <= ' . $this->var2str($hasta);
-        if ($codserie) {
+        if ($codserie !== '') {
             $sql .= ' AND codserie = ' . $this->var2str($codserie);
         }
-        if ($codagente) {
+        if ($codagente !== '') {
             $sql .= ' AND codagente = ' . $this->var2str($codagente);
         }
-        if ($codcliente) {
+        if ($codcliente !== '') {
             $sql .= ' AND codcliente = ' . $this->var2str($codcliente);
         }
-        if ($estado) {
+        if ($estado !== '') {
             if ($estado === 'pagada') {
                 $sql .= ' AND pagada = true';
             } else {
                 $sql .= ' AND pagada = false';
             }
         }
-        if ($codpago) {
+        if ($codpago !== '') {
             $sql .= ' AND codpago = ' . $this->var2str($codpago);
         }
-        if ($codalmacen) {
+        if ($codalmacen !== '') {
             $sql .= ' AND codalmacen = ' . $this->var2str($codalmacen);
         }
         $sql .= ' ORDER BY fecha ASC, codigo ASC;';
@@ -1262,7 +1262,7 @@ class FacturaCliente
     /**
      * Devuelve un array con las facturas que coinciden con $query
      *
-     * @param $query
+     * @param string $query
      * @param int $offset
      *
      * @return array
@@ -1298,7 +1298,7 @@ class FacturaCliente
      * @param string $codcliente
      * @param string $desde
      * @param string $hasta
-     * @param $serie
+     * @param string$serie
      * @param string $obs
      *
      * @return array
@@ -1333,7 +1333,7 @@ class FacturaCliente
     public function huecos()
     {
         $error = true;
-        $huecolist = $this->cache->getArray2('factura_cliente_huecos', $error);
+        $huecolist = $this->cache->get('factura_cliente_huecos', $error);
         if ($error) {
             $huecolist = fsHuecosFacturasCliente($this->database, $this->tableName());
             $this->cache->set('factura_cliente_huecos', $huecolist);

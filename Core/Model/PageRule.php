@@ -34,7 +34,7 @@ class PageRule
 
     /**
      * TODO
-     * @var
+     * @var int
      */
     public $id;
 
@@ -57,8 +57,8 @@ class PageRule
     public $allowdelete;
 
     /**
-     * TODO
-     * @var
+     * Otorga permisis al usuario a actualizar elementos en la página.
+     * @var bool
      */
     public $allowupdate;
 

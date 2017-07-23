@@ -34,28 +34,28 @@ class CuentaBancoCliente
 
     /**
      * Clave primaria. Varchar(6).
-     * @var
+     * @var string
      */
     public $codcuenta;
 
     /**
      * Código del cliente.
-     * @var
+     * @var string
      */
     public $codcliente;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $descripcion;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $iban;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $swift;
 
@@ -67,7 +67,7 @@ class CuentaBancoCliente
 
     /**
      * Fecha en la que se firmó el mandato para autorizar la domiciliación de recibos.
-     * @var
+     * @var string
      */
     public $fmandato;
 
@@ -102,7 +102,7 @@ class CuentaBancoCliente
     /**
      * Devuelve el IBAN con o sin espacios.
      *
-     * @param $espacios
+     * @param bool $espacios
      *
      * @return string
      */
@@ -221,7 +221,7 @@ class CuentaBancoCliente
     {
         $sql = 'SELECT MAX(' . $this->database->sql2Int('codcuenta') . ') as cod FROM ' . $this->tableName() . ';';
         $cod = $this->database->select($sql);
-        if ($cod) {
+        if (!empty($cod)) {
             return 1 + (int)$cod[0]['cod'];
         }
         return 1;

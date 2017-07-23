@@ -85,8 +85,8 @@ class SubcuentaProveedor
     /**
      * TODO
      *
-     * @param $pro
-     * @param $idsc
+     * @param string $pro
+     * @param int $idsc
      *
      * @return bool|SubcuentaProveedor
      */
@@ -105,7 +105,7 @@ class SubcuentaProveedor
     /**
      * TODO
      *
-     * @param $id
+     * @param int $id
      *
      * @return bool|SubcuentaProveedor
      */

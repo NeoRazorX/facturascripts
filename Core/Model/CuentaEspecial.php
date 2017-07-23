@@ -38,7 +38,7 @@ class CuentaEspecial
     public $idcuentaesp;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $descripcion;
 

@@ -32,7 +32,7 @@ class RegularizacionIva
 
     /**
      * Clave primaria.
-     * @var
+     * @var int
      */
     public $idregiva;
 
@@ -48,17 +48,17 @@ class RegularizacionIva
     public $codejercicio;
     /**
      * TODO
-     * @var \DateTime
+     * @var string
      */
     public $fechaasiento;
     /**
      * TODO
-     * @var \DateTime
+     * @var string
      */
     public $fechafin;
     /**
      * TODO
-     * @var \DateTime
+     * @var string
      */
     public $fechainicio;
     /**
@@ -137,7 +137,7 @@ class RegularizacionIva
      * proporcionada. Así puedes saber si el periodo sigue abierto para poder
      * facturar.
      *
-     * @param $fecha
+     * @param string $fecha
      *
      * @return bool|RegularizacionIva
      */

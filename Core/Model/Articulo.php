@@ -90,7 +90,7 @@ class Articulo
     public $pvp_ant;
     /**
      * Fecha de actualización del pvp.
-     * @var \DateTime('d-m-Y')
+     * @var string
      */
     public $factualizado;
     /**
@@ -198,7 +198,7 @@ class Articulo
     public $trazabilidad;
     /**
      * % IVA del impuesto asignado.
-     * @var
+     * @var float
      */
     private $iva;
     /**
@@ -403,7 +403,7 @@ class Articulo
 
     /**
      * Devuelve el impuesto del artículo
-     * @return impuesto
+     * @return bool|Impuesto
      */
     public function getImpuesto()
     {
@@ -417,7 +417,7 @@ class Articulo
      *
      * @param bool $reload
      *
-     * @return int|null
+     * @return float|null
      */
     public function getIva($reload = false)
     {
@@ -481,7 +481,7 @@ class Articulo
      * @deprecated since version 106
      *
      * @param int $offset
-     * @param $limit
+     * @param int $limit
      *
      * @return array
      */
@@ -496,7 +496,7 @@ class Articulo
      * @deprecated since version 106
      *
      * @param int $offset
-     * @param $limit
+     * @param int $limit
      *
      * @return array
      */
@@ -508,7 +508,7 @@ class Articulo
 
     /**
      * Devuelve la media del precio de compra del artículo en los últimos albaranes o facturas.
-     * @return integer
+     * @return int
      */
     public function getCostemedio()
     {
@@ -527,7 +527,7 @@ class Articulo
          * Ahora comprobamos la fecha del primer elemento de una y otra lista
          * para ver cual usamos.
          */
-        if ($lineasfac && $lineasalb) {
+        if (!empty($lineasfac) && !empty($lineasalb)) {
             if (strtotime($lineasalb[0]->showFecha()) > strtotime($lineasfac[0]->showFecha())) {
                 /**
                  * la fecha del último albarán es posterior a la de la última factura.
@@ -544,7 +544,7 @@ class Articulo
             }
         }
 
-        if ($lineasfac) {
+        if (!empty($lineasfac)) {
             /// usamos las facturas para el cálculo.
             foreach ($lineasfac as $linea) {
                 if ($stock < $this->stockfis || $this->stockfis <= 0) {
@@ -556,7 +556,7 @@ class Articulo
             }
         }
 
-        if ($lineasalb) {
+        if (!empty($lineasalb)) {
             /// usamos los albaranes para el cálculo.
             foreach ($lineasalb as $linea) {
                 if ($stock < $this->stockfis || $this->stockfis <= 0) {
@@ -626,7 +626,7 @@ class Articulo
     /**
      * Asigna el PVP
      *
-     * @param $pvp
+     * @param float $pvp
      */
     public function setPvp($pvp)
     {
@@ -642,7 +642,7 @@ class Articulo
     /**
      * Asigna el PVP con IVA
      *
-     * @param $pvp
+     * @param float $pvp
      */
     public function setPvpIva($pvp)
     {
@@ -653,7 +653,7 @@ class Articulo
      * Cambia la referencia del artículo.
      * Lo hace en el momento, no hace falta hacer save().
      *
-     * @param $ref
+     * @param string $ref
      */
     public function setReferencia($ref)
     {
@@ -776,7 +776,7 @@ class Articulo
      *
      * @param string $codalmacen
      * @param integer $cantidad
-     * @param $recalcula_coste
+     * @param bool $recalcula_coste
      * @param string $codcombinacion
      *
      * @return bool
@@ -844,7 +844,7 @@ class Articulo
                     }
 
                     /// ¿Alguna combinación?
-                    if ($codcombinacion && $result) {
+                    if ($codcombinacion !== null && $result) {
                         $com0 = new ArticuloCombinacion();
                         foreach ($com0->allFromCodigo($codcombinacion) as $combi) {
                             if ($combi instanceof ArticuloCombinacion) {
@@ -940,12 +940,12 @@ class Articulo
     /**
      * Devuelve un array con los artículos encontrados en base a la búsqueda.
      *
-     * @param $query
+     * @param string $query
      * @param integer $offset
      * @param string $codfamilia
-     * @param $con_stock
+     * @param bool $con_stock
      * @param string $codfabricante
-     * @param $bloqueados
+     * @param bool $bloqueados
      *
      * @return Articulo
      */
@@ -1050,7 +1050,7 @@ class Articulo
      *
      * @param string $cod
      * @param int $offset
-     * @param $limit
+     * @param int $limit
      *
      * @return array
      */
@@ -1075,7 +1075,7 @@ class Articulo
      * Devuelve el listado de artículos desde el resultado $offset hasta $offset+$limit.
      *
      * @param int $offset
-     * @param $limit
+     * @param int $limit
      *
      * @return array
      */
@@ -1099,7 +1099,7 @@ class Articulo
      * Devuelve el listado de artículos públicos, desde $offset hasta $offset+$limit
      *
      * @param int $offset
-     * @param $limit
+     * @param int $limit
      *
      * @return array
      */
@@ -1124,7 +1124,7 @@ class Articulo
      *
      * @param string $cod
      * @param int $offset
-     * @param $limit
+     * @param int $limit
      *
      * @return array
      */
@@ -1149,7 +1149,7 @@ class Articulo
      *
      * @param string $cod
      * @param int $offset
-     * @param $limit
+     * @param int $limit
      *
      * @return array
      */
@@ -1242,7 +1242,7 @@ class Articulo
      * en memcache. Devuelve TRUE si la cadena ya está en la lista de
      * precargadas.
      *
-     * @param $tag
+     * @param string $tag
      *
      * @return bool
      */
@@ -1288,11 +1288,11 @@ class Articulo
          * Durante las actualizaciones masivas de artículos se ejecuta esta
          * función cada vez que se guarda un artículo, por eso es mejor limitarla.
          */
-        if (!self::$cleaned_cache) {
+        if (self::$cleaned_cache !== null && !empty(self::$cleaned_cache)) {
             /// obtenemos los datos de memcache
             $this->getSearchTags();
 
-            if (self::$search_tags) {
+            if (!empty(self::$search_tags)) {
                 foreach (self::$search_tags as $value) {
                     $this->cache->delete('articulos_search_' . $value['tag']);
                 }

@@ -33,34 +33,34 @@ class Impuesto
 
     /**
      * Clave primaria. varchar(10).
-     * @var
+     * @var string
      */
     public $codimpuesto;
 
     /**
      * Código de la subcuenta para ventas.
-     * @var
+     * @var string
      */
     public $codsubcuentarep;
 
     /**
      * Código de la subcuenta para compras.
-     * @var
+     * @var string
      */
     public $codsubcuentasop;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $descripcion;
     /**
      * TODO
-     * @var
+     * @var float
      */
     public $iva;
     /**
      * TODO
-     * @var
+     * @var float
      */
     public $recargo;
 
@@ -115,7 +115,7 @@ class Impuesto
     /**
      * TODO
      *
-     * @param $iva
+     * @param float $iva
      *
      * @return bool|Impuesto
      */
@@ -123,7 +123,7 @@ class Impuesto
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE iva = ' . $this->var2str((float)$iva) . ';';
         $impuesto = $this->database->select($sql);
-        if ($impuesto) {
+        if (!empty($impuesto)) {
             return new Impuesto($impuesto[0]);
         }
         return false;

@@ -35,7 +35,7 @@ class ArticuloTraza
 
     /**
      * Clave primaria
-     * @var
+     * @var int
      */
     public $id;
 
@@ -154,7 +154,7 @@ class ArticuloTraza
     /**
      * Devuelve la traza correspondiente al número de serie $numserie.
      *
-     * @param $numserie
+     * @param string $numserie
      *
      * @return bool|ArticuloTraza
      */

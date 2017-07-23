@@ -34,38 +34,38 @@ class Cuenta
 
     /**
      * Clave primaria.
-     * @var
+     * @var int
      */
     public $idcuenta;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $codcuenta;
 
     /**
      * Código del ejercicio de esta cuenta.
-     * @var
+     * @var string
      */
     public $codejercicio;
     /**
      *
-     * @var
+     * @var int
      */
     public $idepigrafe;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $codepigrafe;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $descripcion;
     /**
      * TODO
-     * @var
+     * @var int
      */
     public $idcuentaesp;
 
@@ -151,7 +151,7 @@ class Cuenta
     /**
      * Obtiene la primera cuenta especial seleccionada.
      *
-     * @param $id
+     * @param int $id
      * @param string $codejercicio
      *
      * @return bool|Cuenta
@@ -185,7 +185,7 @@ class Cuenta
 
     /**
      * TODO
-     * @param $id
+     * @param int $id
      *
      * @return array
      */
@@ -252,7 +252,7 @@ class Cuenta
 
     /**
      * TODO
-     * @param $id
+     * @param int $id
      * @param string $codejercicio
      *
      * @return array
@@ -275,7 +275,7 @@ class Cuenta
 
     /**
      * TODO
-     * @param $query
+     * @param string $query
      * @param int $offset
      *
      * @return array
@@ -300,7 +300,7 @@ class Cuenta
 
     /**
      * TODO
-     * @param $suma_codigo
+     * @param int $suma_codigo
      *
      * @return bool|Subcuenta
      */

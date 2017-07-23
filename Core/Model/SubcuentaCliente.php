@@ -85,8 +85,8 @@ class SubcuentaCliente
     /**
      * TODO
      *
-     * @param $cli
-     * @param $idsc
+     * @param string $cli
+     * @param int $idsc
      *
      * @return bool|SubcuentaCliente
      */
@@ -105,7 +105,7 @@ class SubcuentaCliente
     /**
      * TODO
      *
-     * @param $id
+     * @param int $id
      *
      * @return bool|SubcuentaCliente
      */

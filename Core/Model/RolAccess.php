@@ -35,7 +35,7 @@ class RolAccess
 
     /**
      * TODO
-     * @var
+     * @var int
      */
     public $id;
 

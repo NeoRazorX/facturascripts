@@ -32,12 +32,12 @@ class Fabricante
 
     /**
      * Clave primaria.
-     * @var
+     * @var string
      */
     public $codfabricante;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $nombre;
 
@@ -152,7 +152,7 @@ class Fabricante
 
     /**
      * TODO
-     * @param $query
+     * @param string $query
      *
      * @return array
      */

@@ -48,12 +48,12 @@ class TransferenciaStock
     public $codalmaorigen;
     /**
      * TODO
-     * @var \DateTime
+     * @var string
      */
     public $fecha;
     /**
      * TODO
-     * @var \DateTime
+     * @var string
      */
     public $hora;
     /**

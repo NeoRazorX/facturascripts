@@ -34,12 +34,12 @@ class Atributo
 
     /**
      * Clave primaria.
-     * @var
+     * @var string
      */
     public $codatributo;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $nombre;
 
@@ -79,7 +79,7 @@ class Atributo
     /**
      * TODO
      *
-     * @param $nombre
+     * @param string $nombre
      * @param bool $minusculas
      *
      * @return Atributo|bool

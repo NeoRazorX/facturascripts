@@ -32,17 +32,17 @@ class ClientePropiedad
 
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $name;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $codcliente;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $text;
 

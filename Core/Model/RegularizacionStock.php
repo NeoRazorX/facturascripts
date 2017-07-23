@@ -59,12 +59,12 @@ class RegularizacionStock
     public $codalmacendest;
     /**
      * TODO
-     * @var \DateTime
+     * @var string
      */
     public $fecha;
     /**
      * TODO
-     * @var \DateTime
+     * @var string
      */
     public $hora;
     /**
@@ -112,7 +112,7 @@ class RegularizacionStock
     /**
      * Devuelve un array con todas las regularizaciones de un artículo.
      *
-     * @param $ref
+     * @param string $ref
      * @param string $codalmacen
      * @param string $desde
      * @param string $hasta
@@ -126,13 +126,13 @@ class RegularizacionStock
         $rlist = [];
         $sql = 'SELECT * FROM lineasregstocks WHERE idstock IN'
             . ' (SELECT idstock FROM stocks WHERE referencia = ' . $this->var2str($ref) . ')';
-        if ($codalmacen) {
+        if (!empty($codalmacen)) {
             $sql .= ' AND codalmacendest = ' . $this->var2str($codalmacen);
         }
-        if ($desde) {
+        if (!empty($desde)) {
             $sql .= ' AND fecha >= ' . $this->var2str($desde);
         }
-        if ($hasta) {
+        if (!empty($hasta)) {
             $sql .= ' AND fecha <= ' . $this->var2str($hasta);
         }
         $sql .= ' ORDER BY fecha DESC, hora DESC';

@@ -122,7 +122,7 @@ class LineaAlbaranProveedor
     private $codigo;
     /**
      * TODO
-     * @var \DateTime
+     * @var string
      */
     private $fecha;
 
@@ -301,7 +301,7 @@ class LineaAlbaranProveedor
     /**
      * TODO
      *
-     * @param $id
+     * @param int $id
      *
      * @return array
      */
@@ -324,9 +324,9 @@ class LineaAlbaranProveedor
     /**
      * TODO
      *
-     * @param $ref
+     * @param string $ref
      * @param int $offset
-     * @param $limit
+     * @param int $limit
      *
      * @return array
      */
@@ -420,7 +420,7 @@ class LineaAlbaranProveedor
     {
         $sql = 'SELECT COUNT(DISTINCT referencia) AS total FROM ' . $this->tableName() . ';';
         $lineas = $this->database->select($sql);
-        if ($lineas) {
+        if (!empty($lineas)) {
             return (int)$lineas[0]['total'];
         }
         return 0;

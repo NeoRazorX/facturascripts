@@ -34,38 +34,38 @@ class Asiento
 
     /**
      * Clave primaria.
-     * @var
+     * @var int
      */
     public $idasiento;
 
     /**
      * Número de asiento. Se modificará al renumerar.
-     * @var
+     * @var string
      */
     public $numero;
     /**
      * TODO
-     * @var
+     * @var int
      */
     public $idconcepto;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $concepto;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $fecha;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $codejercicio;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $codplanasiento;
     /**
@@ -85,12 +85,12 @@ class Asiento
     public $tipodocumento;
     /**
      * TODO
-     * @var
+     * @var float
      */
     public $importe;
     /**
      * TODO
-     * @var
+     * @var string
      */
     private $coddivisa;
 
@@ -272,7 +272,7 @@ class Asiento
          */
         $debe = $haber = 0;
         $partidas = $this->getPartidas();
-        if ($partidas) {
+        if (!empty($partidas)) {
             foreach ($partidas as $p) {
                 $debe += $p->debe;
                 $haber += $p->haber;
@@ -492,7 +492,7 @@ class Asiento
     /**
      * TODO
      *
-     * @param $query
+     * @param string $query
      * @param int $offset
      *
      * @return array

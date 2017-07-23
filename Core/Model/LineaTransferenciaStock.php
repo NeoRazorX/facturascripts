@@ -58,12 +58,12 @@ class LineaTransferenciaStock
     public $descripcion;
     /**
      * TODO
-     * @var \DateTime
+     * @var string
      */
     private $fecha;
     /**
      * TODO
-     * @var \DateTime
+     * @var string
      */
     private $hora;
 
@@ -130,7 +130,7 @@ class LineaTransferenciaStock
     /**
      * TODO
      *
-     * @param $id
+     * @param int $id
      *
      * @return array
      */
@@ -152,7 +152,7 @@ class LineaTransferenciaStock
     /**
      * TODO
      *
-     * @param $ref
+     * @param string $ref
      * @param string $codalmaorigen
      * @param string $codalmadestino
      * @param string $desde
@@ -167,16 +167,16 @@ class LineaTransferenciaStock
         $sql = 'SELECT l.idlinea,l.idtrans,l.referencia,l.cantidad,l.descripcion,t.fecha,t.hora FROM lineastransstock l'
             . ' LEFT JOIN transstock t ON l.idtrans = t.idtrans'
             . ' WHERE l.referencia = ' . $this->var2str($ref);
-        if ($codalmaorigen) {
+        if (!empty($codalmaorigen)) {
             $sql .= ' AND t.codalmaorigen = ' . $this->var2str($codalmaorigen);
         }
-        if ($codalmadestino) {
+        if (!empty($codalmadestino)) {
             $sql .= ' AND t.codalmadestino = ' . $this->var2str($codalmadestino);
         }
-        if ($desde) {
+        if (!empty($desde)) {
             $sql .= ' AND t.fecha >= ' . $this->var2str($desde);
         }
-        if ($hasta) {
+        if (!empty($hasta)) {
             $sql .= ' AND t.fecha >= ' . $this->var2str($hasta);
         }
         $sql .= ' ORDER BY t.fecha ASC, t.hora ASC;';

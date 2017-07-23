@@ -161,7 +161,7 @@ class AlbaranCliente
 
     /**
      * Fecha del albarán
-     * @var \DateTime('d-m-Y')
+     * @var string
      */
     public $fecha;
 
@@ -303,7 +303,7 @@ class AlbaranCliente
 
     /**
      * Fecha en la que se envió el albarán por email.
-     * @var \DateTime('d-m-Y')
+     * @var string
      */
     public $femail;
 
@@ -486,7 +486,7 @@ class AlbaranCliente
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE upper(codigo) = ' . strtoupper($this->var2str($cod)) . ';';
         $albaran = $this->database->select($sql);
-        if ($albaran) {
+        if (!empty($albaran)) {
             return new AlbaranCliente($albaran[0]);
         }
         return false;
@@ -618,7 +618,7 @@ class AlbaranCliente
             /// comprobamos las facturas asociadas
             $linea_factura = new LineaFacturaCliente();
             $facturas = $linea_factura->facturasFromAlbaran($this->idalbaran);
-            if ($facturas) {
+            if (!empty($facturas)) {
                 if (count($facturas) > 1) {
                     $msg = 'Este ' . FS_ALBARAN . ' esta asociado a las siguientes facturas (y no debería):';
                     foreach ($facturas as $f) {
@@ -681,7 +681,7 @@ class AlbaranCliente
     public function saveInsert()
     {
         $this->newCodigo();
-        $sql = 'INSERT INTO ' . $this->table_name . ' (idfactura,codigo,codagente,
+        $sql = 'INSERT INTO ' . $this->tableName() . ' (idfactura,codigo,codagente,
                codserie,codejercicio,codcliente,codpago,coddivisa,codalmacen,codpais,coddir,
                codpostal,numero,numero2,nombrecliente,cifnif,direccion,ciudad,provincia,apartado,
                fecha,hora,neto,total,totaliva,totaleuros,irpf,totalirpf,porcomision,tasaconv,
@@ -910,15 +910,15 @@ class AlbaranCliente
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codcliente = ' . $this->var2str($codcliente)
             . ' AND ptefactura AND fecha BETWEEN ' . $this->var2str($desde) . ' AND ' . $this->var2str($hasta);
 
-        if ($codserie) {
+        if ($codserie !== '') {
             $sql .= ' AND codserie = ' . $this->var2str($codserie);
         }
 
-        if ($obs) {
+        if ($obs !== '') {
             $sql .= ' AND lower(observaciones) = ' . $this->var2str(mb_strtolower($obs, 'UTF8'));
         }
 
-        if ($coddivisa) {
+        if ($coddivisa !== '') {
             $sql .= ' AND coddivisa = ' . $this->var2str($coddivisa);
         }
 

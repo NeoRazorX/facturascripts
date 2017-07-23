@@ -187,7 +187,7 @@ class TerminalCaja
             /// nada
         } elseif ($this->comandocorte) {
             $aux = explode('.', $this->comandocorte);
-            if ($aux) {
+            if (!empty($aux)) {
                 foreach ($aux as $a) {
                     $this->tickets .= chr($a);
                 }
@@ -205,9 +205,9 @@ class TerminalCaja
      *
      * @return string
      */
-    public function centerText($word = '', $ancho = false)
+    public function centerText($word = '', $ancho = 0)
     {
-        if (!$ancho) {
+        if ($ancho !== 0) {
             $ancho = $this->anchopapel;
         }
 
@@ -270,8 +270,8 @@ class TerminalCaja
      *
      * @param FacturaCliente $factura
      * @param Empresa $empresa
-     * @param $imprimirDescripciones
-     * @param $imprimirObservaciones
+     * @param bool $imprimirDescripciones
+     * @param bool $imprimirObservaciones
      */
     public function imprimirTicket(&$factura, &$empresa, $imprimirDescripciones = true, $imprimirObservaciones = false)
     {
@@ -521,7 +521,7 @@ class TerminalCaja
     /**
      * TODO
      *
-     * @param $precio
+     * @param float $precio
      * @param string $coddivisa
      *
      * @return string
@@ -538,7 +538,7 @@ class TerminalCaja
      * TODO
      *
      * @param int $num
-     * @param $decimales
+     * @param int $decimales
      *
      * @return string
      */

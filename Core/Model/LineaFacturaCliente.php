@@ -142,7 +142,7 @@ class LineaFacturaCliente
     private $codigo;
     /**
      * TODO
-     * @var \DateTime
+     * @var string
      */
     private $fecha;
     /**
@@ -157,7 +157,7 @@ class LineaFacturaCliente
     private $albaran_numero;
     /**
      * TODO
-     * @var \DateTime
+     * @var string
      */
     private $albaran_fecha;
 
@@ -356,7 +356,7 @@ class LineaFacturaCliente
     /**
      * TODO
      *
-     * @param $id
+     * @param int $id
      *
      * @return array
      */
@@ -367,7 +367,7 @@ class LineaFacturaCliente
             . ' ORDER BY orden DESC, idlinea ASC;';
 
         $lineas = $this->database->select($sql);
-        if ($lineas) {
+        if (!empty($lineas)) {
             foreach ($lineas as $l) {
                 $linlist[] = new LineaFacturaCliente($l);
             }
@@ -379,7 +379,7 @@ class LineaFacturaCliente
     /**
      * TODO
      *
-     * @param $ref
+     * @param string $ref
      * @param int $offset
      *
      * @return array
@@ -507,7 +507,7 @@ class LineaFacturaCliente
     /**
      * TODO
      *
-     * @param $id
+     * @param int $id
      *
      * @return array
      */

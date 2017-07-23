@@ -35,13 +35,13 @@ class AtributoValor
 
     /**
      * Clave primaria
-     * @var
+     * @var int
      */
     public $id;
 
     /**
      * Código del atributo relacionado.
-     * @var
+     * @var string
      */
     public $codatributo;
     /**

@@ -62,7 +62,7 @@ class LineaAlbaranCliente
     public $referencia;
     /**
      * Código de la combinación seleccionada, en el caso de los artículos con atributos.
-     * @var
+     * @var string
      */
     public $codcombinacion;
     /**
@@ -137,7 +137,7 @@ class LineaAlbaranCliente
     private $codigo;
     /**
      * TODO
-     * @var \DateTime
+     * @var string
      */
     private $fecha;
 
@@ -319,7 +319,7 @@ class LineaAlbaranCliente
     /**
      * Devuelve las líneas del albarán.
      *
-     * @param $id
+     * @param int $id
      *
      * @return array
      */
@@ -342,9 +342,9 @@ class LineaAlbaranCliente
     /**
      * TODO
      *
-     * @param $ref
+     * @param string $ref
      * @param int $offset
-     * @param $limit
+     * @param int $limit
      *
      * @return array
      */

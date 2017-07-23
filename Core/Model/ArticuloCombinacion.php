@@ -163,7 +163,7 @@ class ArticuloCombinacion
     /**
      * Elimina todas las combinaciones del artículo con referencia = $ref
      *
-     * @param $ref
+     * @param string $ref
      *
      * @return bool
      */
@@ -332,7 +332,7 @@ class ArticuloCombinacion
     {
         $sql = 'SELECT MAX(' . $this->database->sql2Int('codigo') . ') as cod FROM ' . $this->tableName() . ';';
         $cod = $this->database->select($sql);
-        if ($cod) {
+        if (!empty($cod)) {
             return 1 + (int)$cod[0]['cod'];
         }
         return 1;

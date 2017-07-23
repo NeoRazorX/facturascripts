@@ -102,13 +102,13 @@ class AlbaranProveedor
 
     /**
      * Fecha del albarán
-     * @var \DateTime('d-m-Y')
+     * @var string
      */
     public $fecha;
 
     /**
      * Hora del albarán
-     * @var \DateTime('H:i:s')
+     * @var string('H:i:s')
      */
     public $hora;
 
@@ -377,7 +377,7 @@ class AlbaranProveedor
     /**
      * Comprobaciones extra para el albarán. Devuelve TRUE si está correcto
      *
-     * @param $duplicados
+     * @param bool $duplicados
      *
      * @return bool
      */
@@ -478,10 +478,11 @@ class AlbaranProveedor
             if (!empty($data)) {
                 foreach ($data as $alb) {
                     /// comprobamos las líneas
-                    $aux = $this->database->select('SELECT referencia FROM lineasalbaranesprov WHERE
+                    $sql = 'SELECT referencia FROM lineasalbaranesprov WHERE
                   idalbaran = ' . $this->var2str($this->idalbaran) . '
                   AND referencia NOT IN (SELECT referencia FROM lineasalbaranesprov
-                  WHERE idalbaran = ' . $this->var2str($alb['idalbaran']) . ');');
+                  WHERE idalbaran = ' . $this->var2str($alb['idalbaran']) . ');';
+                    $aux = $this->database->select($sql);
                     if (!empty($aux)) {
                         $this->miniLog->alert('Este ' . FS_ALBARAN . " es un posible duplicado de
                      <a href='index.php?page=ComprasAlbaran&id=" . $alb['idalbaran'] . "'>este otro</a>.

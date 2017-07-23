@@ -187,7 +187,7 @@ class Epigrafe
     /**
      * TODO
      *
-     * @param $id
+     * @param int $id
      *
      * @return array
      */

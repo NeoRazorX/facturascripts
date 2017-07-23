@@ -63,7 +63,7 @@ class Partida
     public $idconcepto;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $concepto;
     /**
@@ -93,12 +93,12 @@ class Partida
     public $coddivisa;
     /**
      * TODO
-     * @var
+     * @var float
      */
     public $haberme;
     /**
      * TODO
-     * @var
+     * @var float
      */
     public $debeme;
     /**
@@ -158,7 +158,7 @@ class Partida
     public $numero;
     /**
      * TODO
-     * @var \DateTime
+     * @var string
      */
     public $fecha;
     /**
@@ -405,7 +405,7 @@ class Partida
     /**
      * TODO
      *
-     * @param $id
+     * @param int $id
      * @param int $offset
      *
      * @return array
@@ -449,7 +449,7 @@ class Partida
     /**
      * TODO
      *
-     * @param $id
+     * @param int $id
      *
      * @return array
      */
@@ -472,7 +472,7 @@ class Partida
     /**
      * TODO
      *
-     * @param $id
+     * @param int $id
      *
      * @return array
      */
@@ -517,9 +517,9 @@ class Partida
     /**
      * TODO
      *
-     * @param $eje
+     * @param string $eje
      * @param int $offset
-     * @param $limit
+     * @param int $limit
      *
      * @return array
      */
@@ -541,7 +541,7 @@ class Partida
     /**
      * TODO
      *
-     * @param $id
+     * @param int $id
      *
      * @return int
      */
@@ -561,7 +561,7 @@ class Partida
     /**
      * TODO
      *
-     * @param $id
+     * @param int $id
      *
      * @return array
      */
@@ -608,9 +608,9 @@ class Partida
     /**
      * TODO
      *
-     * @param $id
-     * @param $fechaini
-     * @param $fechafin
+     * @param int $id
+     * @param string $fechaini
+     * @param string $fechafin
      * @param bool $excluir
      *
      * @return array

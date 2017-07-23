@@ -34,27 +34,27 @@ class Stock
 
     /**
      * Clave primaria.
-     * @var
+     * @var int
      */
     public $idstock;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $codalmacen;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $referencia;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $nombre;
     /**
      * TODO
-     * @var
+     * @var float
      */
     public $cantidad;
     /**
@@ -74,12 +74,12 @@ class Stock
     public $pterecibir;
     /**
      * TODO
-     * @var
+     * @var float
      */
     public $stockmin;
     /**
      * TODO
-     * @var
+     * @var float
      */
     public $stockmax;
     /**
@@ -177,7 +177,7 @@ class Stock
     /**
      * TODO
      *
-     * @param $ref
+     * @param string $ref
      * @param bool $codalmacen
      *
      * @return bool|Stock
@@ -212,7 +212,7 @@ class Stock
     /**
      * TODO
      *
-     * @param $ref
+     * @param string $ref
      *
      * @return array
      */
@@ -235,7 +235,7 @@ class Stock
     /**
      * TODO
      *
-     * @param $ref
+     * @param string $ref
      * @param bool $codalmacen
      *
      * @return float|int

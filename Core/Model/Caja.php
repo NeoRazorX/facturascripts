@@ -157,7 +157,7 @@ class Caja
      * TODO
      * @param string $codagente
      * @param int $offset
-     * @param $limit
+     * @param int $limit
      *
      * @return array
      */

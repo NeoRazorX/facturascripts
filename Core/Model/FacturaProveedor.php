@@ -119,13 +119,13 @@ class FacturaProveedor
 
     /**
      * Fecha de la factura
-     * @var \DateTime
+     * @var string
      */
     public $fecha;
 
     /**
      * Horade la factura
-     * @var \DateTime
+     * @var string
      */
     public $hora;
 
@@ -294,8 +294,8 @@ class FacturaProveedor
      * regularizaciones de IVA.
      * Devuelve TRUE si se asigna una fecha u hora distinta a los solicitados.
      *
-     * @param $fecha
-     * @param $hora
+     * @param string $fecha
+     * @param string $hora
      *
      * @return bool
      */
@@ -437,9 +437,9 @@ class FacturaProveedor
         $linea_iva = new LineaIvaFacturaProveedor();
         $lineasi = $linea_iva->allFromFactura($this->idfactura);
         /// si no hay lineas de IVA las generamos
-        if (!$lineasi) {
+        if (!empty($lineasi)) {
             $lineas = $this->getLineas();
-            if ($lineas) {
+            if (!empty($lineas)) {
                 foreach ($lineas as $l) {
                     $i = 0;
                     $encontrada = false;
@@ -613,7 +613,7 @@ class FacturaProveedor
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codigo = ' . $this->var2str($cod) . ';';
         $fact = $this->database->select($sql);
-        if ($fact) {
+        if (!empty($fact)) {
             return new FacturaProveedor($fact[0]);
         }
         return false;
@@ -819,7 +819,7 @@ class FacturaProveedor
                 . ' AND observaciones = ' . $this->var2str($this->observaciones)
                 . ' AND idfactura != ' . $this->var2str($this->idfactura) . ';';
             $facturas = $this->database->select($sql);
-            if ($facturas) {
+            if (!empty($facturas)) {
                 foreach ($facturas as $fac) {
                     /// comprobamos las líneas
                     $sql = 'SELECT referencia FROM lineasfacturasprov WHERE
@@ -905,7 +905,7 @@ class FacturaProveedor
      * Devuelve un array con las últimas facturas
      *
      * @param int $offset
-     * @param $limit
+     * @param int $limit
      * @param string $order
      *
      * @return array
@@ -929,7 +929,7 @@ class FacturaProveedor
      * Devuelve un array con las facturas sin pagar.
      *
      * @param int $offset
-     * @param $limit
+     * @param int $limit
      * @param string $order
      *
      * @return array
@@ -1004,40 +1004,40 @@ class FacturaProveedor
      *
      * @param string $desde
      * @param string $hasta
-     * @param bool $codserie código de la serie
-     * @param bool $codagente código del empleado
-     * @param bool $codproveedor código del proveedor
-     * @param bool $estado
-     * @param bool $codpago código de la forma de pago
-     * @param bool $codalmacen código del almacén
+     * @param string $codserie código de la serie
+     * @param string $codagente código del empleado
+     * @param string $codproveedor código del proveedor
+     * @param string $estado
+     * @param string $codpago código de la forma de pago
+     * @param string $codalmacen código del almacén
      *
      * @return array
      */
-    public function allDesde($desde, $hasta, $codserie = false, $codagente = false, $codproveedor = false, $estado = false, $codpago = false, $codalmacen = false)
+    public function allDesde($desde, $hasta, $codserie = '', $codagente = '', $codproveedor = '', $estado = '', $codpago = '', $codalmacen = '')
     {
         $faclist = [];
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE fecha >= ' . $this->var2str($desde) . ' AND fecha <= ' . $this->var2str($hasta);
-        if ($codserie) {
+        if ($codserie !== '') {
             $sql .= ' AND codserie = ' . $this->var2str($codserie);
         }
-        if ($codagente) {
+        if ($codagente !== '') {
             $sql .= ' AND codagente = ' . $this->var2str($codagente);
         }
-        if ($codproveedor) {
+        if ($codproveedor !== '') {
             $sql .= ' AND codproveedor = ' . $this->var2str($codproveedor);
         }
-        if ($estado) {
+        if ($estado !== '') {
             if ($estado === 'pagada') {
                 $sql .= ' AND pagada = true';
             } else {
                 $sql .= ' AND pagada = false';
             }
         }
-        if ($codpago) {
+        if ($codpago !== '') {
             $sql .= ' AND codpago = ' . $this->var2str($codpago);
         }
-        if ($codalmacen) {
+        if ($codalmacen !== '') {
             $sql .= ' AND codalmacen = ' . $this->var2str($codalmacen);
         }
         $sql .= ' ORDER BY fecha ASC, codigo ASC;';
@@ -1055,7 +1055,7 @@ class FacturaProveedor
     /**
      * Devuelve un array con las facturas coincidentes con $query
      *
-     * @param $query
+     * @param string $query
      * @param int $offset
      *
      * @return array

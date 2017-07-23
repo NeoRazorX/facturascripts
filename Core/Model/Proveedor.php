@@ -37,74 +37,74 @@ class Proveedor
     private static $regimenes_iva;
     /**
      * Clave primaria. Varchar (6).
-     * @var
+     * @var string
      */
     public $codproveedor;
     /**
      * Nombre por el que se conoce al proveedor, puede ser el nombre oficial o no.
-     * @var
+     * @var string
      */
     public $nombre;
     /**
      * Razón social del proveedor, es decir, el nombre oficial, el que se usa en
      * las facturas.
-     * @var
+     * @var string
      */
     public $razonsocial;
     /**
      * Tipo de identificador fiscal del proveedor.
      * Ejemplo: NIF, CIF, CUIT...
-     * @var
+     * @var string
      */
     public $tipoidfiscal;
     /**
      * Identificador fiscal del proveedor.
-     * @var
+     * @var string
      */
     public $cifnif;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $telefono1;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $telefono2;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $fax;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $email;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $web;
     /**
      * Serie predeterminada para este proveedor.
-     * @var
+     * @var string
      */
     public $codserie;
     /**
      * Divisa predeterminada para este proveedor.
-     * @var
+     * @var string
      */
     public $coddivisa;
     /**
      * Forma de pago predeterminada para este proveedor.
-     * @var
+     * @var string
      */
     public $codpago;
     /**
      * TODO
-     * @var
+     * @var string
      */
     public $observaciones;
     /**
@@ -116,28 +116,28 @@ class Proveedor
     /**
      * TRUE -> el proveedor es un acreedor, es decir, no le compramos mercancia,
      * le compramos servicios, etc.
-     * @var
+     * @var bool
      */
     public $acreedor;
     /**
      * TRUE  -> el cliente es una persona física.
      * FALSE -> el cliente es una persona jurídica (empresa).
-     * @var
+     * @var bool
      */
     public $personafisica;
     /**
      * TRUE -> ya no queremos nada con el proveedor.
-     * @var
+     * @var bool
      */
     public $debaja;
     /**
      * Fecha en la que se dió de baja al proveedor.
-     * @var
+     * @var string
      */
     public $fechabaja;
     /**
      * Cliente asociado equivalente
-     * @var
+     * @var string
      */
     public $codcliente;
 
@@ -268,8 +268,8 @@ class Proveedor
      * Si el cifnif está en blanco y se proporciona una razón social, se devuelve
      * el primer proveedor con esa razón social.
      *
-     * @param $cifnif
-     * @param $razon
+     * @param string $cifnif
+     * @param string $razon
      *
      * @return bool|Proveedor
      */
@@ -294,7 +294,7 @@ class Proveedor
     /**
      * Devuelve el primer proveedor con $email como email.
      *
-     * @param $email
+     * @param string $email
      *
      * @return bool|Proveedor
      */
@@ -517,7 +517,7 @@ class Proveedor
 
     /**
      * TODO
-     * @param $query
+     * @param string $query
      * @param int $offset
      *
      * @return array

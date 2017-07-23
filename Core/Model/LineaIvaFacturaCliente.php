@@ -133,10 +133,10 @@ class LineaIvaFacturaCliente
     /**
      * TODO
      *
-     * @param $idfactura
-     * @param $neto
-     * @param $totaliva
-     * @param $totalrecargo
+     * @param int $idfactura
+     * @param float $neto
+     * @param float $totaliva
+     * @param float $totalrecargo
      *
      * @return bool
      */
@@ -178,7 +178,7 @@ class LineaIvaFacturaCliente
     /**
      * TODO
      *
-     * @param $id
+     * @param int $id
      *
      * @return array
      */

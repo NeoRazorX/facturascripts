@@ -289,8 +289,8 @@ class Cliente
      * Si el cifnif está en blanco y se proporciona una razón social,
      * se devuelve el primer cliente que tenga esa razón social.
      *
-     * @param $cifnif
-     * @param $razon
+     * @param string $cifnif
+     * @param string $razon
      *
      * @return bool|Cliente
      */
@@ -315,7 +315,7 @@ class Cliente
     /**
      * Devuelve el primer cliente que tenga $email como email.
      *
-     * @param $email
+     * @param string $email
      *
      * @return bool|Cliente
      */
@@ -437,7 +437,7 @@ class Cliente
     {
         $sql = 'SELECT MAX(' . $this->database->sql2Int('codcliente') . ') as cod FROM ' . $this->tableName() . ';';
         $cod = $this->database->select($sql);
-        if ($cod) {
+        if (!empty($cod)) {
             return sprintf('%06s', 1 + (int)$cod[0]['cod']);
         }
         return '000001';
@@ -478,7 +478,7 @@ class Cliente
             }
         }
         $this->diaspago = null;
-        if ($array_dias) {
+        if (!empty($array_dias)) {
             $this->diaspago = implode(',', $array_dias);
         }
 
@@ -523,7 +523,7 @@ class Cliente
     /**
      * TODO
      *
-     * @param $query
+     * @param string $query
      * @param int $offset
      *
      * @return array

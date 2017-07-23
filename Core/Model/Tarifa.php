@@ -119,7 +119,7 @@ class Tarifa
     /**
      * TODO
      *
-     * @param $dto
+     * @param float $dto
      */
     public function setX($dto)
     {
@@ -144,7 +144,7 @@ class Tarifa
     /**
      * TODO
      *
-     * @param $inc
+     * @param float $inc
      */
     public function setY($inc)
     {

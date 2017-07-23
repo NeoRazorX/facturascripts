@@ -127,7 +127,7 @@ class LineaFacturaProveedor
     private $codigo;
     /**
      * TODO
-     * @var \DateTime
+     * @var string
      */
     private $fecha;
     /**
@@ -321,7 +321,7 @@ class LineaFacturaProveedor
     /**
      * TODO
      *
-     * @param $id
+     * @param int $id
      *
      * @return array
      */
@@ -344,7 +344,7 @@ class LineaFacturaProveedor
     /**
      * TODO
      *
-     * @param $ref
+     * @param string $ref
      * @param int $offset
      *
      * @return array
@@ -401,7 +401,7 @@ class LineaFacturaProveedor
     /**
      * TODO
      *
-     * @param $id
+     * @param int $id
      *
      * @return array
      */

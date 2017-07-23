@@ -37,7 +37,7 @@ class Subcuenta
     public $idsubcuenta;
     /**
      * TODO
-     * @var string
+     * @var float
      */
     public $codsubcuenta;
 
@@ -292,7 +292,7 @@ class Subcuenta
      * Devuelve la primera subcuenta del ejercicio $codeje cuya cuenta madre
      * está marcada como cuenta especial $id.
      *
-     * @param $id
+     * @param int $id
      * @param string $codeje
      *
      * @return Subcuenta|bool
@@ -385,7 +385,7 @@ class Subcuenta
     /**
      * TODO
      *
-     * @param $idcuenta
+     * @param int $idcuenta
      *
      * @return array
      */
@@ -409,7 +409,7 @@ class Subcuenta
      * Devuelve las subcuentas del ejercicio $codeje cuya cuenta madre
      * está marcada como cuenta especial $id.
      *
-     * @param $id
+     * @param int $id
      * @param string $codeje
      *
      * @return array
@@ -473,7 +473,7 @@ class Subcuenta
     /**
      * TODO
      *
-     * @param $query
+     * @param string $query
      *
      * @return array
      */
@@ -501,7 +501,7 @@ class Subcuenta
      * ejercicio $codejercicio
      *
      * @param string $codejercicio
-     * @param $query
+     * @param string $query
      *
      * @return Subcuenta
      */
