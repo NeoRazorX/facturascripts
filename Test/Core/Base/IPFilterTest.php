@@ -27,7 +27,7 @@ class IPFilterTest extends \PHPUnit_Framework_TestCase {
     protected function tearDown() {
         
     }
-    
+
     /**
      * @covers FacturaScripts\Core\Base\IPFilter::setAttempt
      * @todo   Implement testSetAttempt().
@@ -40,6 +40,9 @@ class IPFilterTest extends \PHPUnit_Framework_TestCase {
         $this->object->setAttempt('192.168.1.1');
         $this->object->setAttempt('192.168.1.1');
         $this->object->setAttempt('192.168.1.1');
+        $file = fopen('' . '/Cache/ip.list', 'rb');
+        $line = explode(';', trim(fgets($file)));
+        $this->assertNotEmpty($line);
     }
 
     /**
@@ -50,7 +53,5 @@ class IPFilterTest extends \PHPUnit_Framework_TestCase {
         // Remove the following lines when you implement this test.
         $this->assertTrue($this->object->isBanned('192.168.1.1'));
     }
-
-    
 
 }
