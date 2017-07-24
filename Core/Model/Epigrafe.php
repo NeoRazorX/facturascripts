@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of facturacion_base
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
@@ -13,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -23,218 +22,93 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\Model;
 
 /**
- * Primer nivel del plan contable.
- * 
+ * Segundo nivel del plan contable.
+ *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-
-class GrupoEpigrafes
+class Epigrafe
 {
     use Model;
 
     /**
-     * Clave primaria
-     * @var type 
+     * TODO
+     * @var array
      */
-    public $idgrupo;
-    public $codgrupo;
-    public $codejercicio;
-    public $descripcion;
-
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'co_gruposepigrafes', 'idgrupo');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
-	
-    public function clear()
-    {
-        $this->idgrupo = NULL;
-        $this->codgrupo = NULL;
-        $this->descripcion = NULL;
-        $this->codejercicio = NULL;
-    }
-
-    protected function install() {
-        return '';
-    }
-
-    public function url() {
-        if (is_null($this->idgrupo)) {
-            return 'index.php?page=contabilidad_epigrafes';
-        } else {
-                    return 'index.php?page=contabilidad_epigrafes&grupo=' . $this->idgrupo;
-        }
-    }
-
-    public function get_epigrafes() {
-        $epigrafe = new \epigrafe();
-        return $epigrafe->all_from_grupo($this->idgrupo);
-    }
-
-    public function get($id) {
-        $grupo = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idgrupo = " . $this->var2str($id) . ";");
-        if ($grupo) {
-            return new \grupo_epigrafes($grupo[0]);
-        } else {
-                    return FALSE;
-        }
-    }
-
-    public function get_by_codigo($cod, $codejercicio) {
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE codgrupo = " . $this->var2str($cod)
-                . " AND codejercicio = " . $this->var2str($codejercicio) . ";";
-
-        $grupo = self::$dataBase->select($sql);
-        if ($grupo) {
-            return new \grupo_epigrafes($grupo[0]);
-        } else {
-                    return FALSE;
-        }
-    }
-
-    public function exists() {
-        if (is_null($this->idgrupo)) {
-            return FALSE;
-        } else {
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idgrupo = " . $this->var2str($this->idgrupo) . ";");
-        }
-    }
-
-    public function test() {
-        $this->descripcion = $this->no_html($this->descripcion);
-
-        if (strlen($this->codejercicio) > 0 AND strlen($this->codgrupo) > 0 AND strlen($this->descripcion) > 0) {
-            return TRUE;
-        } else {
-            $this->new_error_msg('Faltan datos en el grupo de epígrafes.');
-            return FALSE;
-        }
-    }
-
-    public function save() {
-        if ($this->test()) {
-            if ($this->exists()) {
-                $sql = "UPDATE " . $this->table_name . " SET codgrupo = " . $this->var2str($this->codgrupo)
-                        . ", descripcion = " . $this->var2str($this->descripcion)
-                        . ", codejercicio = " . $this->var2str($this->codejercicio)
-                        . "  WHERE idgrupo = " . $this->var2str($this->idgrupo) . ";";
-
-                return self::$dataBase->exec($sql);
-            } else {
-                $sql = "INSERT INTO " . $this->table_name . " (codgrupo,descripcion,codejercicio) VALUES
-                     (" . $this->var2str($this->codgrupo) .
-                        "," . $this->var2str($this->descripcion) .
-                        "," . $this->var2str($this->codejercicio) . ");";
-
-                if (self::$dataBase->exec($sql)) {
-                    $this->idgrupo = self::$dataBase->lastval();
-                    return TRUE;
-                } else {
-                                    return FALSE;
-                }
-            }
-        } else {
-                    return FALSE;
-        }
-    }
-
-    public function delete() {
-        return self::$dataBase->exec("DELETE FROM " . $this->table_name . " WHERE idgrupo = " . $this->var2str($this->idgrupo) . ";");
-    }
-
-    public function all_from_ejercicio($codejercicio) {
-        $epilist = array();
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE codejercicio = " . $this->var2str($codejercicio)
-                . " ORDER BY codgrupo ASC;";
-
-        $data = self::$dataBase->select($sql);
-        if ($data) {
-            foreach ($data as $ep) {
-                $epilist[] = new \grupo_epigrafes($ep);
-            }
-        }
-
-        return $epilist;
-    }
-
-}
-
-/**
- * Segundo nivel del plan contable.
- * 
- * @author Carlos García Gómez <neorazorx@gmail.com>
- */
-class Epigrafe 
-{
-    use Model;
-
+    private static $grupos;
     /**
      * Clave primaria.
-     * @var type 
+     * @var int
      */
     public $idepigrafe;
-
     /**
      * Existen varias versiones de la contabilidad de Eneboo/Abanq,
      * en una tenemos grupos, epigrafes, cuentas y subcuentas: 4 niveles.
      * En la otra tenemos epígrafes (con hijos), cuentas y subcuentas: multi-nivel.
      * FacturaScripts usa un híbrido: grupos, epígrafes (con hijos), cuentas
      * y subcuentas.
+     * @var int
      */
     public $idpadre;
+    /**
+     * TODO
+     * @var string
+     */
     public $codepigrafe;
+    /**
+     * TODO
+     * @var int
+     */
     public $idgrupo;
+    /**
+     * TODO
+     * @var string
+     */
     public $codejercicio;
+    /**
+     * TODO
+     * @var string
+     */
     public $descripcion;
+    /**
+     * TODO
+     * @var string
+     */
     public $codgrupo;
-    private static $grupos;
 
-    public function __construct(array $data = []) 
+    /**
+     * Epigrafe constructor.
+     *
+     * @param array $data
+     */
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'co_epigrafes', 'idepigrafe');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
+        if (is_null($data) || empty($data)) {
             $this->clear();
-        }
-    }
-	
-    public function clear()
-    {
-        $this->idepigrafe = NULL;
-        $this->idpadre = NULL;
-        $this->codepigrafe = NULL;
-        $this->idgrupo = NULL;
-        $this->codgrupo = NULL;
-        $this->descripcion = NULL;
-        $this->codejercicio = NULL;
-    }
-
-    protected function install() {
-        /// forzamos los creación de la tabla de grupos
-        //$grupo = new \grupo_epigrafes();
-        return '';
-    }
-
-    public function url() {
-        if (is_null($this->idepigrafe)) {
-            return 'index.php?page=contabilidad_epigrafes';
         } else {
-                    return 'index.php?page=contabilidad_epigrafes&epi=' . $this->idepigrafe;
+            $this->loadFromData($data);
         }
     }
 
     /**
-     * Devuelve el codepigrade del epigrafe padre o false si no lo hay
-     * @return type
+     * Devuelve la url donde ver/modificar estos datos
+     * @return string
      */
-    public function codpadre() {
-        $cod = FALSE;
+    public function url()
+    {
+        if ($this->idepigrafe === null) {
+            return 'index.php?page=ContabilidadEpigrafes';
+        }
+        return 'index.php?page=ContabilidadEpigrafes&epi=' . $this->idepigrafe;
+    }
+
+    /**
+     * Devuelve el codepigrade del epigrafe padre o false si no lo hay
+     * @return bool
+     */
+    public function codpadre()
+    {
+        $cod = false;
 
         if ($this->idpadre) {
             $padre = $this->get($this->idpadre);
@@ -246,154 +120,134 @@ class Epigrafe
         return $cod;
     }
 
-    public function hijos() {
-        $epilist = array();
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE idpadre = " . $this->var2str($this->idepigrafe)
-                . " ORDER BY codepigrafe ASC;";
+    /**
+     * TODO
+     * @return array
+     */
+    public function hijos()
+    {
+        $epilist = [];
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idpadre = ' . $this->var2str($this->idepigrafe)
+            . ' ORDER BY codepigrafe ASC;';
 
-        $data = self::$dataBase->select($sql);
-        if ($data) {
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
             foreach ($data as $ep) {
-                $epilist[] = new \epigrafe($ep);
+                $epilist[] = new Epigrafe($ep);
             }
         }
 
         return $epilist;
     }
 
-    public function get_cuentas() {
-        $cuenta = new \cuenta();
-        return $cuenta->full_from_epigrafe($this->idepigrafe);
+    /**
+     * TODO
+     * @return array
+     */
+    public function getCuentas()
+    {
+        $cuenta = new Cuenta();
+        return $cuenta->fullFromEpigrafe($this->idepigrafe);
     }
 
-    public function get($id) {
-        $data = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idepigrafe = " . $this->var2str($id) . ";");
-        if ($data) {
-            return new \epigrafe($data[0]);
-        } else {
-                    return FALSE;
+    /**
+     * TODO
+     *
+     * @param string $cod
+     * @param string $codejercicio
+     *
+     * @return bool|Epigrafe
+     */
+    public function getByCodigo($cod, $codejercicio)
+    {
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codepigrafe = ' . $this->var2str($cod)
+            . ' AND codejercicio = ' . $this->var2str($codejercicio) . ';';
+
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
+            return new Epigrafe($data[0]);
         }
+        return false;
     }
 
-    public function get_by_codigo($cod, $codejercicio) {
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE codepigrafe = " . $this->var2str($cod)
-                . " AND codejercicio = " . $this->var2str($codejercicio) . ";";
+    /**
+     * TODO
+     * @return bool
+     */
+    public function test()
+    {
+        $this->descripcion = static::noHtml($this->descripcion);
 
-        $data = self::$dataBase->select($sql);
-        if ($data) {
-            return new \epigrafe($data[0]);
-        } else {
-                    return FALSE;
+        if (strlen($this->codepigrafe) > 0 && strlen($this->descripcion) > 0) {
+            return true;
         }
+        $this->miniLog->alert('Faltan datos en el epígrafe.');
+        return false;
     }
 
-    public function exists() {
-        if (is_null($this->idepigrafe)) {
-            return FALSE;
-        } else {
-                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idepigrafe = " . $this->var2str($this->idepigrafe) . ";");
-        }
-    }
+    /**
+     * TODO
+     *
+     * @param int $idgrp
+     *
+     * @return array
+     */
+    public function allFromGrupo($idgrp)
+    {
+        $epilist = [];
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idgrupo = ' . $this->var2str($idgrp)
+            . ' ORDER BY codepigrafe ASC;';
 
-    public function test() {
-        $this->descripcion = $this->no_html($this->descripcion);
-
-        if (strlen($this->codepigrafe) > 0 AND strlen($this->descripcion) > 0) {
-            return TRUE;
-        } else {
-            $this->new_error_msg('Faltan datos en el epígrafe.');
-            return FALSE;
-        }
-    }
-
-    public function save() {
-        if ($this->test()) {
-            if ($this->exists()) {
-                $sql = "UPDATE " . $this->table_name . " SET codepigrafe = " . $this->var2str($this->codepigrafe)
-                        . ", idgrupo = " . $this->var2str($this->idgrupo)
-                        . ", descripcion = " . $this->var2str($this->descripcion)
-                        . ", codejercicio = " . $this->var2str($this->codejercicio)
-                        . ", idpadre = " . $this->var2str($this->idpadre)
-                        . "  WHERE idepigrafe = " . $this->var2str($this->idepigrafe) . ";";
-
-                return self::$dataBase->exec($sql);
-            } else {
-                $sql = "INSERT INTO " . $this->table_name . " (codepigrafe,idgrupo,descripcion,idpadre,codejercicio)
-                     VALUES (" . $this->var2str($this->codepigrafe) .
-                        "," . $this->var2str($this->idgrupo) .
-                        "," . $this->var2str($this->descripcion) .
-                        "," . $this->var2str($this->idpadre) .
-                        "," . $this->var2str($this->codejercicio) . ");";
-
-                if (self::$dataBase->exec($sql)) {
-                    $this->idepigrafe = self::$dataBase->lastval();
-                    return TRUE;
-                } else {
-                                    return FALSE;
-                }
-            }
-        } else {
-                    return FALSE;
-        }
-    }
-
-    public function delete() {
-        return self::$dataBase->exec("DELETE FROM " . $this->table_name . " WHERE idepigrafe = " . $this->var2str($this->idepigrafe) . ";");
-    }
-
-    public function all($offset = 0) {
-        $epilist = array();
-        $sql = "SELECT * FROM " . $this->table_name . " ORDER BY codejercicio DESC, codepigrafe ASC";
-
-        $data = self::$dataBase->select_limit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
-            foreach ($data as $ep) {
-                $epilist[] = new \epigrafe($ep);
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
+            foreach ($data as $epi) {
+                $epilist[] = new Epigrafe($epi);
             }
         }
 
         return $epilist;
     }
 
-    public function all_from_grupo($id) {
-        $epilist = array();
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE idgrupo = " . $this->var2str($id)
-                . " ORDER BY codepigrafe ASC;";
+    /**
+     * TODO
+     *
+     * @param string $codejercicio
+     *
+     * @return array
+     */
+    public function allFromEjercicio($codejercicio)
+    {
+        $epilist = [];
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($codejercicio)
+            . ' ORDER BY codepigrafe ASC;';
 
-        $data = self::$dataBase->select($sql);
-        if ($data) {
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
             foreach ($data as $ep) {
-                $epilist[] = new \epigrafe($ep);
+                $epilist[] = new Epigrafe($ep);
             }
         }
 
         return $epilist;
     }
 
-    public function all_from_ejercicio($codejercicio) {
-        $epilist = array();
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE codejercicio = " . $this->var2str($codejercicio)
-                . " ORDER BY codepigrafe ASC;";
+    /**
+     * TODO
+     *
+     * @param string $codejercicio
+     *
+     * @return array
+     */
+    public function superFromEjercicio($codejercicio)
+    {
+        $epilist = [];
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($codejercicio)
+            . ' AND idpadre IS NULL AND idgrupo IS NULL ORDER BY codepigrafe ASC;';
 
-        $data = self::$dataBase->select($sql);
-        if ($data) {
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
             foreach ($data as $ep) {
-                $epilist[] = new \epigrafe($ep);
-            }
-        }
-
-        return $epilist;
-    }
-
-    public function super_from_ejercicio($codejercicio) {
-        $epilist = array();
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE codejercicio = " . $this->var2str($codejercicio)
-                . " AND idpadre IS NULL AND idgrupo IS NULL ORDER BY codepigrafe ASC;";
-
-        $data = self::$dataBase->select($sql);
-        if ($data) {
-            foreach ($data as $ep) {
-                $epilist[] = new \epigrafe($ep);
+                $epilist[] = new Epigrafe($ep);
             }
         }
 
@@ -403,8 +257,23 @@ class Epigrafe
     /**
      * Aplica algunas correcciones a la tabla.
      */
-    public function fix_db() {
-        self::$dataBase->exec("UPDATE " . $this->table_name . " SET idgrupo = NULL WHERE idgrupo NOT IN (SELECT idgrupo FROM co_gruposepigrafes);");
+    public function fixDb()
+    {
+        $sql = 'UPDATE ' . $this->tableName()
+            . ' SET idgrupo = NULL WHERE idgrupo NOT IN (SELECT idgrupo FROM co_gruposepigrafes);';
+        $this->database->exec($sql);
     }
 
+    /**
+     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará tras la creación de la tabla. útil para insertar valores
+     * por defecto.
+     * @return string
+     */
+    private function install()
+    {
+        /// forzamos los creación de la tabla de grupos
+        //$grupo = new GrupoEpigrafes();
+        return '';
+    }
 }

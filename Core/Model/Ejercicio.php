@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
@@ -62,19 +63,19 @@ class Ejercicio
 
     /**
      * ID del asiento de cierre del ejercicio.
-     * @var integer
+     * @var int
      */
     public $idasientocierre;
 
     /**
      * ID del asiento de pérdidas y ganancias.
-     * @var integer
+     * @var int
      */
     public $idasientopyg;
 
     /**
      * ID del asiento de apertura.
-     * @var integer
+     * @var int
      */
     public $idasientoapertura;
 
@@ -87,26 +88,27 @@ class Ejercicio
 
     /**
      * Longitud de caracteres de las subcuentas asignadas.
-     * @var integer
+     * @var int
      */
     public $longsubcuenta;
 
     /**
      * Ejercicio constructor.
+     *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'ejercicios', 'codejercicio');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
+        if (is_null($data) || empty($data)) {
             $this->clear();
+        } else {
+            $this->loadFromData($data);
         }
     }
 
     /**
-     * Resetea los valores de las propiedades del modelo.
+     * Resetea los valores de todas las propiedades modelo.
      */
     public function clear()
     {
@@ -120,18 +122,6 @@ class Ejercicio
         $this->idasientoapertura = null;
         $this->plancontable = '08';
         $this->longsubcuenta = 10;
-    }
-
-    /**
-     * Crea la consulta necesaria para dotar de datos a un ejercicio en la base de datos.
-     * @return string
-     */
-    protected function install()
-    {
-        return 'INSERT INTO ' . $this->tableName() . ' (codejercicio,nombre,fechainicio,fechafin,'
-            . 'estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre) '
-            . "VALUES ('" . date('Y') . "','" . date('Y') . "'," . $this->var2str(date('01-01-Y'))
-            . ',' . $this->var2str(date('31-12-Y')) . ",'ABIERTO',10,'08',NULL,NULL,NULL);";
     }
 
     /**
@@ -154,20 +144,22 @@ class Ejercicio
 
     /**
      * Devuelve un nuevo código para un ejercicio
+     *
      * @param string $cod
+     *
      * @return string
      */
     public function newCodigo($cod = '0001')
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($cod) . ';';
-        if (!$this->dataBase->select($sql)) {
+        if (!$this->database->select($sql)) {
             return $cod;
         }
 
-        $sql = 'SELECT MAX(' . $this->dataBase->sql2int('codejercicio') . ') as cod FROM ' . $this->tableName() . ';';
-        $cod = $this->dataBase->select($sql);
+        $sql = 'SELECT MAX(' . $this->database->sql2int('codejercicio') . ') as cod FROM ' . $this->tableName() . ';';
+        $cod = $this->database->select($sql);
         if (!empty($cod)) {
-            return sprintf('%04s', 1 + (int) $cod[0]['cod']);
+            return sprintf('%04s', 1 + (int)$cod[0]['cod']);
         }
 
         return '0001';
@@ -180,10 +172,9 @@ class Ejercicio
     public function url()
     {
         if ($this->codejercicio === null) {
-            return 'index.php?page=contabilidad_ejercicios';
+            return 'index.php?page=ContabilidadEjercicios';
         }
-
-        return 'index.php?page=contabilidad_ejercicio&cod=' . $this->codejercicio;
+        return 'index.php?page=ContabilidadEjercicio&cod=' . $this->codejercicio;
     }
 
     /**
@@ -197,8 +188,10 @@ class Ejercicio
 
     /**
      * Devuelve la fecha más próxima a $fecha que esté dentro del intervalo de este ejercicio
+     *
      * @param string $fecha
      * @param bool $showError
+     *
      * @return string
      */
     public function getBestFecha($fecha, $showError = false)
@@ -225,9 +218,11 @@ class Ejercicio
     /**
      * Devuelve el ejercicio para la fecha indicada.
      * Si no existe, lo crea.
+     *
      * @param string $fecha
      * @param bool $soloAbierto
      * @param bool $crear
+     *
      * @return bool|ejercicio
      */
     public function getByFecha($fecha, $soloAbierto = true, $crear = true)
@@ -235,7 +230,7 @@ class Ejercicio
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fechainicio <= '
             . $this->var2str($fecha) . ' AND fechafin >= ' . $this->var2str($fecha) . ';';
 
-        $data = $this->dataBase->select($sql);
+        $data = $this->database->select($sql);
         if (!empty($data)) {
             $eje = new Ejercicio($data[0]);
             if ($eje->abierto() || !$soloAbierto) {
@@ -283,5 +278,17 @@ class Ejercicio
         }
 
         return $status;
+    }
+
+    /**
+     * Crea la consulta necesaria para dotar de datos a un ejercicio en la base de datos.
+     * @return string
+     */
+    private function install()
+    {
+        return 'INSERT INTO ' . $this->tableName() . ' (codejercicio,nombre,fechainicio,fechafin,'
+            . 'estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre) '
+            . "VALUES ('" . date('Y') . "','" . date('Y') . "'," . $this->var2str(date('01-01-Y'))
+            . ', ' . $this->var2str(date('31-12-Y')) . ",'ABIERTO',10,'08',NULL,NULL,NULL);";
     }
 }

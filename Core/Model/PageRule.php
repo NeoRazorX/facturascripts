@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
@@ -33,7 +34,7 @@ class PageRule
 
     /**
      * TODO
-     * @var
+     * @var int
      */
     public $id;
 
@@ -56,22 +57,23 @@ class PageRule
     public $allowdelete;
 
     /**
-     * TODO
-     * @var
+     * Otorga permisis al usuario a actualizar elementos en la página.
+     * @var bool
      */
     public $allowupdate;
 
     /**
      * PageRule constructor.
+     *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'fs_page_rules', 'id');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
+        if (is_null($data) || empty($data)) {
             $this->clear();
+        } else {
+            $this->loadFromData($data);
         }
     }
 }

@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
 use FacturaScripts\Core\Base\ContactInformation;
+use FacturaScripts\Core\Base\Model;
 
 /**
  * El almacén donde están físicamente los artículos.
@@ -59,26 +60,17 @@ class Almacen
 
     /**
      * Almacen constructor.
+     *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'almacenes', 'codalmacen');
-        if (empty($data)) {
+        if (is_null($data) || empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);
         }
-    }
-
-    /**
-     * Crea la consulta necesaria para crear un nuevo almacen en la base de datos.
-     * @return string
-     */
-    public function install()
-    {
-        return 'INSERT INTO ' . $this->tableName() . ' (codalmacen,nombre,poblacion,'
-            . "direccion,codpostal,telefono,fax,contacto) VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
     }
 
     /**
@@ -88,7 +80,7 @@ class Almacen
     public function url()
     {
         $result = 'index.php?page=Almacen';
-        if ($this->codalmacen != NULL) {
+        if ($this->codalmacen !== null) {
             $result .= '_card&cod=' . $this->codalmacen;
         }
 
@@ -131,5 +123,15 @@ class Almacen
         }
 
         return $status;
+    }
+
+    /**
+     * Crea la consulta necesaria para crear un nuevo almacen en la base de datos.
+     * @return string
+     */
+    private function install()
+    {
+        return 'INSERT INTO ' . $this->tableName() . ' (codalmacen,nombre,poblacion,'
+            . "direccion,codpostal,telefono,fax,contacto) VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
     }
 }

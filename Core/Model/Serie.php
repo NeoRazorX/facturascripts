@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
@@ -63,21 +64,22 @@ class Serie
 
     /**
      * numeración inicial para las facturas de esta serie.
-     * @var integer
+     * @var int
      */
     public $numfactura;
 
     /**
      * Serie constructor.
+     *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'series', 'codserie');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
+        if (is_null($data) || empty($data)) {
             $this->clear();
+        } else {
+            $this->loadFromData($data);
         }
     }
 
@@ -95,26 +97,16 @@ class Serie
     }
 
     /**
-     * Crea la consulta necesaria para crear una nueva serie en la base de datos.
-     * @return string
-     */
-    public function install()
-    {
-        return 'INSERT INTO ' . $this->tableName() . ' (codserie,descripcion,siniva,irpf) VALUES '
-            . "('A','SERIE A',FALSE,'0'),('R','RECTIFICATIVAS',FALSE,'0');";
-    }
-
-    /**
      * Devuelve la url donde ver/modificar la serie
      * @return string
      */
     public function url()
     {
         if ($this->codserie === null) {
-            return 'index.php?page=contabilidad_series';
+            return 'index.php?page=ContabilidadSeries';
         }
 
-        return 'index.php?page=contabilidad_series#' . $this->codserie;
+        return 'index.php?page=ContabilidadSeries#' . $this->codserie;
     }
 
     /**
@@ -141,7 +133,7 @@ class Serie
             $this->numfactura = 1;
         }
 
-        if (!preg_match("/^[A-Z0-9]{1,4}$/i", $this->codserie)) {
+        if (!preg_match('/^[A-Z0-9]{1,4}$/i', $this->codserie)) {
             $this->miniLog->alert($this->i18n->trans('serie-cod-invalid'));
         } elseif (!(strlen($this->descripcion) > 1) && !(strlen($this->descripcion) < 100)) {
             $this->miniLog->alert($this->i18n->trans('serie-desc-invalid'));
@@ -150,5 +142,15 @@ class Serie
         }
 
         return $status;
+    }
+
+    /**
+     * Crea la consulta necesaria para crear una nueva serie en la base de datos.
+     * @return string
+     */
+    private function install()
+    {
+        return 'INSERT INTO ' . $this->tableName() . ' (codserie,descripcion,siniva,irpf) VALUES '
+            . "('A','SERIE A',FALSE,'0'),('R','RECTIFICATIVAS',FALSE,'0');";
     }
 }

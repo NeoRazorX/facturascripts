@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -28,36 +29,51 @@ trait Model
 {
 
     /**
+     * Lista de campos de la tabla.
+     * @var array
+     */
+    protected static $fields;
+    /**
+     * Nombre del modelo. De la clase que inicia este trait.
+     * @var string
+     */
+    private static $modelName;
+    /**
+     * Nombre de la columna que es clave primaria.
+     * @var string
+     */
+    private static $primaryColumn;
+    /**
+     * Nombre de la tabla en la base de datos.
+     * @var string
+     */
+    private static $tableName;
+    /**
+     * Lista de tablas ya comprobadas.
+     * @var array|null
+     */
+    private static $checkedTables;
+    /**
      * Proporciona acceso directo a la base de datos.
      * @var DataBase
      */
     protected $dataBase;
-
     /**
      * Permite conectar e interactuar con el sistema de caché.
      * @var Cache
      */
     protected $cache;
-
     /**
      * Clase que se utiliza para definir algunos valores por defecto:
      * codejercicio, codserie, coddivisa, etc...
      * @var DefaultItems
      */
     protected $defaultItems;
-
-    /**
-     * Lista de campos de la tabla.
-     * @var array
-     */
-    protected static $fields;
-
     /**
      * Traductor multi-idioma.
      * @var Translator
      */
     protected $i18n;
-
     /**
      * Gestiona el log de todos los controladores, modelos y base de datos.
      * @var MiniLog
@@ -65,63 +81,28 @@ trait Model
     protected $miniLog;
 
     /**
-     * Nombre del modelo. De la clase que inicia este trait.
-     * @var string
+     * Esta función convierte:
+     * < en &lt;
+     * > en &gt;
+     * " en &quot;
+     * ' en &#39;
+     *
+     * No tengas la tentación de sustiturla por htmlentities o htmlspecialshars
+     * porque te encontrarás con muchas sorpresas desagradables.
+     *
+     * @param string $txt
+     *
+     * @return string
      */
-    private static $modelName;
-
-    /**
-     * Nombre de la columna que es clave primaria.
-     * @var string
-     */
-    private static $primaryColumn;
-
-    /**
-     * Nombre de la tabla en la base de datos.
-     * @var string
-     */
-    private static $tableName;
-
-    /**
-     * Lista de tablas ya comprobadas.
-     * @var array|null
-     */
-    private static $checkedTables;
-
-    /**
-     * Constructor.
-     * @param string $modelName
-     * @param string $tableName nombre de la tabla de la base de datos.
-     * @param string $primaryColumn
-     */
-    private function init($modelName = '', $tableName = '', $primaryColumn = '')
+    public static function noHtml($txt)
     {
-        $this->cache = new Cache();
-        $this->dataBase = new DataBase();
-        $this->defaultItems = new DefaultItems();
-        $this->i18n = new Translator();
-        $this->miniLog = new MiniLog();
+        $newt = str_replace(
+            ['<', '>', '"', "'"],
+            ['&lt;', '&gt;', '&quot;', '&#39;'],
+            $txt
+        );
 
-        if (self::$checkedTables === null) {
-            self::$checkedTables = $this->cache->get('fs_checked_tables');
-            if (self::$checkedTables === null) {
-                self::$checkedTables = [];
-            }
-
-            self::$modelName = $modelName;
-            self::$primaryColumn = $primaryColumn;
-            self::$tableName = $tableName;
-        }
-
-        if ($tableName !== '' && !in_array($tableName, self::$checkedTables, false) && $this->checkTable($tableName)) {
-            $this->miniLog->debug('Table ' . $tableName . ' checked.');
-            self::$checkedTables[] = $tableName;
-            $this->cache->set('fs_checked_tables', self::$checkedTables);
-        }
-
-        if (self::$fields === null) {
-            self::$fields = ($this->dataBase->tableExists($tableName) ? $this->dataBase->getColumns($tableName) : []);
-        }
+        return trim($newt);
     }
 
     /**
@@ -153,6 +134,7 @@ trait Model
 
     /**
      * Asigna a las propiedades del modelo los valores del array $data
+     *
      * @param array $data
      */
     public function loadFromData(array $data = [])
@@ -174,12 +156,12 @@ trait Model
 
                         case 'integer':
                         case 'int':
-                            $this->{$key} = (int) $value;
+                            $this->{$key} = (int)$value;
                             break;
 
                         case 'double':
                         case 'float':
-                            $this->{$key} = (float) $value;
+                            $this->{$key} = (float)$value;
                             break;
 
                         case 'date':
@@ -203,33 +185,12 @@ trait Model
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
-     * @return string
-     */
-    private function install()
-    {
-        return '';
-    }
-
-    /**
-     * Lee el registro cuya columna primaria corresponda al valor $cod
-     * @param string $cod
-     * @return array
-     */
-    private function getRecord($cod)
-    {
-        $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($cod) . ';';
-        return $this->dataBase->select($sql);
-    }
-
-    /**
      * Rellena la clase con los valores del registro
      * cuya columna primaria corresponda al valor $cod, o vacio si no existe.
      * Devuelve True si existe el registro y False en caso contrario.
+     *
      * @param string $cod
+     *
      * @return boolean
      */
     public function loadFromCode($cod)
@@ -246,7 +207,9 @@ trait Model
 
     /**
      * Devuelve el modelo cuya columna primaria corresponda al valor $cod
+     *
      * @param string $cod
+     *
      * @return mixed|bool
      */
     public function get($cod)
@@ -262,7 +225,9 @@ trait Model
 
     /**
      * Devuelve el primer modelo que coincide con los filtros establecidos.
+     *
      * @param array $fields filtros a aplicar a los campos. Por ejemplo ['codserie' => 'A']
+     *
      * @return mixed|bool
      */
     public function getBy(array $fields = [])
@@ -278,7 +243,7 @@ trait Model
         }
 
         $data = $this->dataBase->selectLimit($sql, 1);
-        if ($data) {
+        if (!empty($data)) {
             $class = $this->modelName();
             return new $class($data[0]);
         }
@@ -298,7 +263,7 @@ trait Model
 
         $sql = 'SELECT 1 FROM ' . $this->tableName()
             . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
-        return (bool) $this->dataBase->select($sql);
+        return (bool)$this->dataBase->select($sql);
     }
 
     /**
@@ -329,87 +294,24 @@ trait Model
     }
 
     /**
-     * Actualiza los datos del modelo en la base de datos.
-     * @return bool
-     */
-    private function saveUpdate()
-    {
-        $sql = 'UPDATE ' . $this->tableName();
-        $coma = ' SET';
-
-        foreach (self::$fields as $field) {
-            if ($field['name'] !== $this->primaryColumn()) {
-                $sql .= $coma . ' ' . $field['name'] . ' = ' . $this->var2str($this->{$field['name']});
-                if ($coma === ' SET') {
-                    $coma = ', ';
-                }
-            }
-        }
-
-        $sql .= ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
-        return $this->dataBase->exec($sql);
-    }
-
-    /**
-     * Inserta los datos del modelo en la base de datos.
-     * @return bool
-     */
-    private function saveInsert()
-    {
-        $insertFields = [];
-        $insertValues = [];
-        foreach (self::$fields as $field) {
-            if ($this->{$field['name']} !== null) {
-                $insertFields[] = $field['name'];
-                $insertValues[] = $this->var2str($this->{$field['name']});
-            }
-        }
-
-        $sql = 'INSERT INTO ' . $this->tableName()
-            . ' (' . implode(',', $insertFields) . ') VALUES (' . implode(',', $insertValues) . ');';
-        if ($this->dataBase->exec($sql)) {
-            if ($this->{$this->primaryColumn()} === null) {
-                $this->{$this->primaryColumn()} = $this->dataBase->lastval();
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Elimina los datos del modelo de la base de datos.
      * @return bool
      */
     public function delete()
     {
+        if (method_exists(__CLASS__,'cleanCache')) {
+            $this->cleanCache();
+        }
         $sql = 'DELETE FROM ' . $this->tableName()
             . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
         return $this->dataBase->exec($sql);
     }
 
     /**
-     * Convierte un array de filtros order by en string
-     * @param array $order
-     * @return string
-     */
-    private function getOrderBy(array $order)
-    {
-        $result = '';
-        $coma = ' ORDER BY ';
-        foreach ($order as $key => $value) {
-            $result .= $coma . $key . ' ' . $value;
-            if ($coma === ' ORDER BY ') {
-                $coma = ', ';
-            }
-        }
-        return $result;
-    }
-    
-    /**
      * Devuelve el número de registros en el modelo que cumplen la condición
+     *
      * @param array $where filtros a aplicar a los registros del modelo. (Array de DatabaseWhere)
+     *
      * @return int
      */
     public function count(array $where = [])
@@ -418,13 +320,15 @@ trait Model
         $data = $this->dataBase->select($sql);
         return $data[0]['total'];
     }
-    
+
     /**
      * Devuelve todos los modelos que se correspondan con los filtros seleccionados.
+     *
      * @param array $where filtros a aplicar a los registros del modelo. (Array de DatabaseWhere)
      * @param array $order campos a utilizar en la ordenación. Por ejemplo ['codigo' => 'ASC']
      * @param integer $offset
      * @param integer $limit
+     *
      * @return array
      */
     public function all(array $where = [], array $order = [], $offset = 0, $limit = 50)
@@ -433,7 +337,7 @@ trait Model
         $sqlWhere = DataBase\DatabaseWhere::getSQLWhere($where);
         $sql = 'SELECT * FROM ' . $this->tableName() . $sqlWhere . $this->getOrderBy($order);
         $data = $this->dataBase->selectLimit($sql, $limit, $offset);
-        if ($data) {
+        if (!empty($data)) {
             $class = $this->modelName();
             foreach ($data as $d) {
                 $modelList[] = new $class($d);
@@ -444,19 +348,11 @@ trait Model
     }
 
     /**
-     * Escapa las comillas de una cadena de texto.
-     * @param string $str cadena de texto a escapar
-     * @return string cadena de texto resultante
-     */
-    protected function escapeString($str)
-    {
-        return $this->dataBase->escapeString($str);
-    }
-
-    /**
      * Transforma una variable en una cadena de texto válida para ser
      * utilizada en una consulta SQL.
+     *
      * @param mixed $val
+     *
      * @return string
      */
     public function var2str($val)
@@ -487,7 +383,9 @@ trait Model
      * PostgreSQL guarda los valores TRUE como 't', MySQL como 1.
      * Esta función devuelve TRUE si el valor se corresponde con
      * alguno de los anteriores.
-     * @param string $val
+     *
+     * @param $val
+     *
      * @return bool
      */
     public function str2bool($val)
@@ -496,29 +394,58 @@ trait Model
     }
 
     /**
-     * Esta función convierte:
-     * < en &lt;
-     * > en &gt;
-     * " en &quot;
-     * ' en &#39;
+     * TODO
+     * @param $val
      *
-     * No tengas la tentación de sustiturla por htmlentities o htmlspecialshars
-     * porque te encontrarás con muchas sorpresas desagradables.
-     * @param string $txt
      * @return string
      */
-    public static function noHtml($txt)
+    public function bool2str($val)
     {
-        $newt = str_replace(
-            array('<', '>', '"', "'"), array('&lt;', '&gt;', '&quot;', '&#39;'), $txt
-        );
+        switch ($val) {
+            case true:
+                return 't';
+            case false:
+                return 'f';
+            case 1:
+                return '1';
+            case 0:
+                return '0';
+        }
+    }
 
-        return trim($newt);
+    /**
+     * Devuelve el siguiente código para la primary key del modelo
+     * @return int
+     */
+    public function newCode()
+    {
+        $field = $this->dataBase->sql2Int($this->primaryColumn());
+        $sql = 'SELECT MAX(' . $field . ') as cod FROM ' . $this->tableName() . ';';
+        $cod = $this->dataBase->select($sql);
+        if (empty($cod)) {
+            return 1;
+        }
+
+        return 1 + (int)$cod[0]['cod'];
+    }
+
+    /**
+     * Escapa las comillas de una cadena de texto.
+     *
+     * @param string $str cadena de texto a escapar
+     *
+     * @return string cadena de texto resultante
+     */
+    protected function escapeString($str)
+    {
+        return $this->dataBase->escapeString($str);
     }
 
     /**
      * Comprueba y actualiza la estructura de la tabla si es necesario
+     *
      * @param string $tableName
+     *
      * @return bool
      */
     protected function checkTable($tableName)
@@ -574,9 +501,11 @@ trait Model
 
     /**
      * Obtiene las columnas y restricciones del fichero xml para una tabla
+     *
      * @param string $tableName
      * @param array $columns
      * @param array $constraints
+     *
      * @return bool
      */
     protected function getXmlTable($tableName, &$columns, &$constraints)
@@ -593,8 +522,8 @@ trait Model
                 if ($xml->columna) {
                     $key = 0;
                     foreach ($xml->columna as $col) {
-                        $columns[$key]['nombre'] = (string) $col->nombre;
-                        $columns[$key]['tipo'] = (string) $col->tipo;
+                        $columns[$key]['nombre'] = (string)$col->nombre;
+                        $columns[$key]['tipo'] = (string)$col->tipo;
 
                         $columns[$key]['nulo'] = 'YES';
                         if ($col->nulo && strtolower($col->nulo) === 'no') {
@@ -604,7 +533,7 @@ trait Model
                         if ($col->defecto === '') {
                             $columns[$key]['defecto'] = null;
                         } else {
-                            $columns[$key]['defecto'] = (string) $col->defecto;
+                            $columns[$key]['defecto'] = (string)$col->defecto;
                         }
 
                         $key++;
@@ -617,8 +546,8 @@ trait Model
                 if ($xml->restriccion) {
                     $key = 0;
                     foreach ($xml->restriccion as $col) {
-                        $constraints[$key]['nombre'] = (string) $col->nombre;
-                        $constraints[$key]['consulta'] = (string) $col->consulta;
+                        $constraints[$key]['nombre'] = (string)$col->nombre;
+                        $constraints[$key]['consulta'] = (string)$col->consulta;
                         $key++;
                     }
                 }
@@ -631,20 +560,139 @@ trait Model
 
         return $return;
     }
-    
+
     /**
-     * Devuelve el siguiente código para la primary key del modelo
-     * @return int
+     * Constructor.
+     *
+     * @param string $modelName
+     * @param string $tableName nombre de la tabla de la base de datos.
+     * @param string $primaryColumn
      */
-    public function newCode()
+    private function init($modelName = '', $tableName = '', $primaryColumn = '')
     {
-        $field = $this->dataBase->sql2Int($this->primaryColumn());
-        $sql = 'SELECT MAX(' . $field . ') as cod FROM ' . $this->tableName() . ';';
-        $cod = $this->dataBase->select($sql);
-        if (empty($cod)) {
-            return 1;
+        $this->cache = new Cache();
+        $this->dataBase = new DataBase();
+        $this->defaultItems = new DefaultItems();
+        $this->i18n = new Translator();
+        $this->miniLog = new MiniLog();
+
+        if (self::$checkedTables === null) {
+            self::$checkedTables = $this->cache->get('fs_checked_tables');
+            if (self::$checkedTables === null) {
+                self::$checkedTables = [];
+            }
+
+            self::$modelName = $modelName;
+            self::$primaryColumn = $primaryColumn;
+            self::$tableName = $tableName;
         }
 
-        return 1 + (int) $cod[0]['cod'];
+        if ($tableName !== '' && !in_array($tableName, self::$checkedTables, false) && $this->checkTable($tableName)) {
+            $this->miniLog->debug('Table ' . $tableName . ' checked.');
+            self::$checkedTables[] = $tableName;
+            $this->cache->set('fs_checked_tables', self::$checkedTables);
+        }
+
+        if (self::$fields === null) {
+            self::$fields = ($this->dataBase->tableExists($tableName) ? $this->dataBase->getColumns($tableName) : []);
+        }
+    }
+
+    /**
+     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará tras la creación de la tabla. útil para insertar valores
+     * por defecto.
+     * @return string
+     */
+    private function install()
+    {
+        if (method_exists(__CLASS__,'cleanCache')) {
+            $this->cleanCache();
+        }
+        return '';
+    }
+
+    /**
+     * Lee el registro cuya columna primaria corresponda al valor $cod
+     *
+     * @param string $cod
+     *
+     * @return array
+     */
+    private function getRecord($cod)
+    {
+        $sql = 'SELECT * FROM ' . $this->tableName()
+            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($cod) . ';';
+        return $this->dataBase->select($sql);
+    }
+
+    /**
+     * Actualiza los datos del modelo en la base de datos.
+     * @return bool
+     */
+    private function saveUpdate()
+    {
+        $sql = 'UPDATE ' . $this->tableName();
+        $coma = ' SET';
+
+        foreach (self::$fields as $field) {
+            if ($field['name'] !== $this->primaryColumn()) {
+                $sql .= $coma . ' ' . $field['name'] . ' = ' . $this->var2str($this->{$field['name']});
+                if ($coma === ' SET') {
+                    $coma = ', ';
+                }
+            }
+        }
+
+        $sql .= ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
+        return $this->dataBase->exec($sql);
+    }
+
+    /**
+     * Inserta los datos del modelo en la base de datos.
+     * @return bool
+     */
+    private function saveInsert()
+    {
+        $insertFields = [];
+        $insertValues = [];
+        foreach (self::$fields as $field) {
+            if ($this->{$field['name']} !== null) {
+                $insertFields[] = $field['name'];
+                $insertValues[] = $this->var2str($this->{$field['name']});
+            }
+        }
+
+        $sql = 'INSERT INTO ' . $this->tableName()
+            . ' (' . implode(',', $insertFields) . ') VALUES (' . implode(',', $insertValues) . ');';
+        if ($this->dataBase->exec($sql)) {
+            if ($this->{$this->primaryColumn()} === null) {
+                $this->{$this->primaryColumn()} = $this->dataBase->lastval();
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Convierte un array de filtros order by en string
+     *
+     * @param array $order
+     *
+     * @return string
+     */
+    private function getOrderBy(array $order)
+    {
+        $result = '';
+        $coma = ' ORDER BY ';
+        foreach ($order as $key => $value) {
+            $result .= $coma . $key . ' ' . $value;
+            if ($coma === ' ORDER BY ') {
+                $coma = ', ';
+            }
+        }
+        return $result;
     }
 }
