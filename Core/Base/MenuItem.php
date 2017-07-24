@@ -63,21 +63,14 @@ class MenuItem
             return '<li><a href="' . $this->url . '">' . $this->title . '</a></li>';
         }
 
+        $base = '<a href="' . $this->url . '" class="dropdown-toggle"'
+            . ' data-toggle="dropdown" role="button" aria-haspopup="true"'
+            . ' aria-expanded="false">' . $this->title;
+        
         if ($level === 0) {
-            $html = '<li>';
+            $html = '<li>' . $base . ' <span class="caret"></span>' . '</a>' . '<ul class="dropdown-menu multi-level">';
         } else {
-            $html = '<li class="dropdown-submenu">';
-        }
-
-        if ($level === 0) {
-            $html .= '<a href="' . $this->url . '" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'
-                . $this->title . ' <span class="caret"></span>'
-                . '</a>'
-                . '<ul class="dropdown-menu multi-level">';
-        } else {
-            $html .= '<a href="' . $this->url . '" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'
-                . $this->title . '</a>'
-                . '<ul class="dropdown-menu">';
+            $html = '<li class="dropdown-submenu">' . $base . '</a>' . '<ul class="dropdown-menu">';
         }
 
         foreach ($this->menu as $menuItem) {
