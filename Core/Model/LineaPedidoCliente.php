@@ -201,7 +201,7 @@ class LineaPedidoCliente
         }
 
         if (!$encontrado) {
-            $pre = new \pedido_cliente();
+            $pre = new PedidoCliente();
             self::$pedidos[] = $pre->get($this->idpedido);
             $codigo = self::$pedidos[count(self::$pedidos) - 1]->codigo;
         }
@@ -223,7 +223,7 @@ class LineaPedidoCliente
         }
 
         if (!$encontrado) {
-            $pre = new \pedido_cliente();
+            $pre = new PedidoCliente();
             self::$pedidos[] = $pre->get($this->idpedido);
             $fecha = self::$pedidos[count(self::$pedidos) - 1]->fecha;
         }
@@ -245,7 +245,7 @@ class LineaPedidoCliente
         }
 
         if (!$encontrado) {
-            $pre = new \pedido_cliente();
+            $pre = new PedidoCliente();
             self::$pedidos[] = $pre->get($this->idpedido);
             $nombre = self::$pedidos[count(self::$pedidos) - 1]->nombrecliente;
         }
@@ -305,7 +305,7 @@ class LineaPedidoCliente
         $data = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
         if ($data) {
             foreach ($data as $l) {
-                $linealist[] = new \LineaPedidoCliente($l);
+                $linealist[] = new LineaPedidoCliente($l);
             }
         }
 

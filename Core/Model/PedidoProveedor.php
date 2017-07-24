@@ -274,7 +274,7 @@ class PedidoProveedor
 
     public function get_lineas()
     {
-        $linea = new \linea_PedidoProveedor();
+        $linea = new LineaPedidoProveedor();
         return $linea->all_from_pedido($this->idpedido);
     }
 
@@ -292,7 +292,7 @@ class PedidoProveedor
         $data = $this->db->select($sql);
         if ($data) {
             foreach ($data as $d) {
-                $versiones[] = new \PedidoProveedor($d);
+                $versiones[] = new PedidoProveedor($d);
             }
         }
 
@@ -378,7 +378,7 @@ class PedidoProveedor
         }
 
         if ($this->idalbaran) {
-            $alb0 = new \albaran_proveedor();
+            $alb0 = new AlbaranProveedor();
             $albaran = $alb0->get($this->idalbaran);
             if (!$albaran) {
                 $this->idalbaran = NULL;
@@ -430,7 +430,7 @@ class PedidoProveedor
         $data = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);
         if ($data) {
             foreach ($data as $p) {
-                $pedilist[] = new \PedidoProveedor($p);
+                $pedilist[] = new PedidoProveedor($p);
             }
         }
 

@@ -186,7 +186,7 @@ class LineaPresupuestoCliente
         }
 
         if (!$encontrado) {
-            $pre = new \presupuesto_cliente();
+            $pre = new PresupuestoCliente();
             self::$presupuestos[] = $pre->get($this->idpresupuesto);
             $codigo = self::$presupuestos[count(self::$presupuestos) - 1]->codigo;
         }
@@ -208,7 +208,7 @@ class LineaPresupuestoCliente
         }
 
         if (!$encontrado) {
-            $pre = new \presupuesto_cliente();
+            $pre = new PresupuestoCliente();
             self::$presupuestos[] = $pre->get($this->idpresupuesto);
             $fecha = self::$presupuestos[count(self::$presupuestos) - 1]->fecha;
         }
@@ -230,7 +230,7 @@ class LineaPresupuestoCliente
         }
 
         if (!$encontrado) {
-            $pre = new \presupuesto_cliente();
+            $pre = new PresupuestoCliente();
             self::$presupuestos[] = $pre->get($this->idpresupuesto);
             $nombre = self::$presupuestos[count(self::$presupuestos) - 1]->nombrecliente;
         }
@@ -290,7 +290,7 @@ class LineaPresupuestoCliente
         $data = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
         if ($data) {
             foreach ($data as $l) {
-                $linealist[] = new \LineaPresupuestoCliente($l);
+                $linealist[] = new LineaPresupuestoCliente($l);
             }
         }
 
@@ -325,7 +325,7 @@ class LineaPresupuestoCliente
         $data = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
         if ($data) {
             foreach ($data as $l) {
-                $linealist[] = new \LineaPresupuestoCliente($l);
+                $linealist[] = new LineaPresupuestoCliente($l);
             }
         }
 

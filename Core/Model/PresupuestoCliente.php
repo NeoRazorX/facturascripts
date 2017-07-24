@@ -348,7 +348,7 @@ class PresupuestoCliente
 
     public function get_lineas()
     {
-        $linea = new \linea_PresupuestoCliente();
+        $linea = new LineaPresupuestoCliente();
         return $linea->all_from_presupuesto($this->idpresupuesto);
     }
 
@@ -366,7 +366,7 @@ class PresupuestoCliente
         $data = $this->db->select($sql);
         if ($data) {
             foreach ($data as $d) {
-                $versiones[] = new \PresupuestoCliente($d);
+                $versiones[] = new PresupuestoCliente($d);
             }
         }
 
@@ -522,7 +522,7 @@ class PresupuestoCliente
         $data = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);
         if ($data) {
             foreach ($data as $p) {
-                $preslist[] = new \PresupuestoCliente($p);
+                $preslist[] = new PresupuestoCliente($p);
             }
         }
 
@@ -555,7 +555,7 @@ class PresupuestoCliente
         $data = $this->db->select($sql);
         if ($data) {
             foreach ($data as $p) {
-                $preslist[] = new \PresupuestoCliente($p);
+                $preslist[] = new PresupuestoCliente($p);
             }
         }
 

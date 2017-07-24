@@ -165,7 +165,7 @@ class LineaPedidoProveedor
         }
 
         if (!$encontrado) {
-            $pre = new \pedido_proveedor();
+            $pre = new PedidoProveedor();
             self::$pedidos[] = $pre->get($this->idpedido);
             $codigo = self::$pedidos[count(self::$pedidos) - 1]->codigo;
         }
@@ -187,7 +187,7 @@ class LineaPedidoProveedor
         }
 
         if (!$encontrado) {
-            $pre = new \pedido_proveedor();
+            $pre = new PedidoProveedor();
             self::$pedidos[] = $pre->get($this->idpedido);
             $fecha = self::$pedidos[count(self::$pedidos) - 1]->fecha;
         }
@@ -209,7 +209,7 @@ class LineaPedidoProveedor
         }
 
         if (!$encontrado) {
-            $pre = new \pedido_proveedor();
+            $pre = new PedidoProveedor();
             self::$pedidos[] = $pre->get($this->idpedido);
             $nombre = self::$pedidos[count(self::$pedidos) - 1]->nombre;
         }
@@ -269,7 +269,7 @@ class LineaPedidoProveedor
         $data = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
         if ($data) {
             foreach ($data as $l) {
-                $linealist[] = new \LineaPedidoProveedor($l);
+                $linealist[] = new LineaPedidoProveedor($l);
             }
         }
 

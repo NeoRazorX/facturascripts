@@ -346,7 +346,7 @@ class PedidoCliente
      */
     public function get_lineas()
     {
-        $linea = new \linea_PedidoCliente();
+        $linea = new LineaPedidoCliente();
         return $linea->all_from_pedido($this->idpedido);
     }
 
@@ -364,7 +364,7 @@ class PedidoCliente
         $data = $this->db->select($sql);
         if ($data) {
             foreach ($data as $d) {
-                $versiones[] = new \PedidoCliente($d);
+                $versiones[] = new PedidoCliente($d);
             }
         }
 
@@ -471,7 +471,7 @@ class PedidoCliente
         }
 
         if ($this->idalbaran) {
-            $alb0 = new \albaran_cliente();
+            $alb0 = new AlbaranCliente();
             $albaran = $alb0->get($this->idalbaran);
             if (!$albaran) {
                 $this->idalbaran = NULL;
@@ -544,7 +544,7 @@ class PedidoCliente
         $data = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);
         if ($data) {
             foreach ($data as $p) {
-                $pedilist[] = new \PedidoCliente($p);
+                $pedilist[] = new PedidoCliente($p);
             }
         }
 
@@ -577,7 +577,7 @@ class PedidoCliente
         $data = $this->db->select($sql);
         if ($data) {
             foreach ($data as $p) {
-                $pedilist[] = new \PedidoCliente($p);
+                $pedilist[] = new PedidoCliente($p);
             }
         }
 
