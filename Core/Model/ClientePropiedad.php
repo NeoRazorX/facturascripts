@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of facturacion_base
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
@@ -13,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,7 +20,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
-
 
 /**
  * Description of cliente_propiedad
@@ -32,67 +30,62 @@ class ClientePropiedad
 {
     use Model;
 
+    /**
+     * TODO
+     * @var string
+     */
     public $name;
+    /**
+     * TODO
+     * @var string
+     */
     public $codcliente;
+    /**
+     * TODO
+     * @var string
+     */
     public $text;
 
-    public function __construct(array $data = []) 
-	{
-        $this->init(__CLASS__, 'cliente_propiedades', 'name');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
-    
-    public function clear()
+    /**
+     * ClientePropiedad constructor.
+     *
+     * @param array $data
+     */
+    public function __construct($data = [])
     {
-        $this->name = NULL;
-        $this->codcliente = NULL;
-        $this->text = NULL;
-    }
-
-    protected function install() {
-        return '';
-    }
-
-    public function exists() {
-        if (is_null($this->name) OR is_null($this->codcliente)) {
-            return FALSE;
+        $this->init(__CLASS__, 'cliente_propiedades', 'name');
+        if (is_null($data) || empty($data)) {
+            $this->clear();
         } else {
-            return self::$dataBase->select("SELECT * FROM cliente_propiedades WHERE name = " .
-                            $this->var2str($this->name) . " AND codcliente = " . $this->var2str($this->codcliente) . ";");
+            $this->loadFromData($data);
         }
     }
 
-    public function save() {
-        if ($this->exists()) {
-            $sql = "UPDATE cliente_propiedades SET text = " . $this->var2str($this->text) . " WHERE name = " .
-                    $this->var2str($this->name) . " AND codcliente = " . $this->var2str($this->codcliente) . ";";
-        } else {
-            $sql = "INSERT INTO cliente_propiedades (name,codcliente,text) VALUES
-            (" . $this->var2str($this->name) . "," . $this->var2str($this->codcliente) . "," . $this->var2str($this->text) . ");";
-        }
-
-        return self::$dataBase->exec($sql);
-    }
-
-    public function delete() {
-        return self::$dataBase->exec("DELETE FROM cliente_propiedades WHERE name = " .
-                        $this->var2str($this->name) . " AND codcliente = " . $this->var2str($this->codcliente) . ";");
+    /**
+     * TODO
+     * @return bool
+     */
+    public function delete()
+    {
+        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE name = ' .
+            $this->var2str($this->name) . ' AND codcliente = ' . $this->var2str($this->codcliente) . ';';
+        return $this->database->exec($sql);
     }
 
     /**
      * Devuelve un array con los pares name => text para una codcliente dado.
-     * @param type $cod
-     * @return type
+     *
+     * @param string $cod
+     *
+     * @return array
      */
-    public function array_get($cod) {
-        $vlist = array();
+    public function arrayGet($cod)
+    {
+        $vlist = [];
 
-        $data = self::$dataBase->select("SELECT * FROM cliente_propiedades WHERE codcliente = " . $this->var2str($cod) . ";");
-        if ($data) {
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codcliente = ' . $this->var2str($cod) . ';';
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $vlist[$d['name']] = $d['text'];
             }
@@ -101,21 +94,29 @@ class ClientePropiedad
         return $vlist;
     }
 
-    public function array_save($cod, $values) {
-        $done = TRUE;
+    /**
+     * TODO
+     *
+     * @param string $cod
+     * @param array $values
+     *
+     * @return bool
+     */
+    public function arraySave($cod, $values)
+    {
+        $done = true;
 
         foreach ($values as $key => $value) {
-            $aux = new \cliente_propiedad();
+            $aux = new ClientePropiedad();
             $aux->name = $key;
             $aux->codcliente = $cod;
             $aux->text = $value;
             if (!$aux->save()) {
-                $done = FALSE;
+                $done = false;
                 break;
             }
         }
 
         return $done;
     }
-
 }

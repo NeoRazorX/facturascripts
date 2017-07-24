@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of facturacion_base
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
@@ -13,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -29,105 +28,88 @@ use FacturaScripts\Core\Base\Model;
  */
 class Atributo
 {
-    use Model;
+    use Model {
+        save as private saveTrait;
+    }
 
     /**
      * Clave primaria.
-     * @var type 
+     * @var string
      */
     public $codatributo;
+    /**
+     * TODO
+     * @var string
+     */
     public $nombre;
 
-    public function __construct(array $data = []) 
-	{
-        $this->init(__CLASS__, 'atributos', 'codatributo');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-			$this->clear();
-        }
-    }
-    
-    public function clear()
+    /**
+     * Atributo constructor.
+     *
+     * @param array $data
+     */
+    public function __construct($data = [])
     {
-        $this->codatributo = NULL;
-        $this->nombre = NULL;
-    }
-
-    protected function install() {
-        return '';
-    }
-
-    public function url() {
-        return 'index.php?page=ventas_atributos&cod=' . urlencode($this->codatributo);
-    }
-
-    public function valores() {
-        $valor0 = new \atributo_valor();
-        return $valor0->all_from_atributo($this->codatributo);
-    }
-
-    public function get($cod) {
-        $data = self::$dataBase->select("SELECT * FROM atributos WHERE codatributo = " . $this->var2str($cod) . ";");
-        if ($data) {
-            return new \atributo($data[0]);
+        $this->init(__CLASS__, 'atributos', 'codatributo');
+        if (is_null($data) || empty($data)) {
+            $this->clear();
+        } else {
+            $this->loadFromData($data);
         }
-
-        return FALSE;
     }
 
-    public function get_by_nombre($nombre, $minusculas = FALSE) {
+    /**
+     * Devuelve la url donde ver/modificar estos datos
+     * @return string
+     */
+    public function url()
+    {
+        return 'index.php?page=VentasAtributos&cod=' . urlencode($this->codatributo);
+    }
+
+    /**
+     * TODO
+     * @return array
+     */
+    public function valores()
+    {
+        $valor0 = new AtributoValor();
+        return $valor0->allFromAtributo($this->codatributo);
+    }
+
+    /**
+     * TODO
+     *
+     * @param string $nombre
+     * @param bool $minusculas
+     *
+     * @return Atributo|bool
+     */
+    public function getByNombre($nombre, $minusculas = false)
+    {
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE nombre = ' . $this->var2str($nombre) . ';';
         if ($minusculas) {
-            $data = self::$dataBase->select("SELECT * FROM atributos WHERE lower(nombre) = " . $this->var2str(mb_strtolower($nombre, 'UTF8')) . ";");
-        } else {
-            $data = self::$dataBase->select("SELECT * FROM atributos WHERE nombre = " . $this->var2str($nombre) . ";");
+            $sql = 'SELECT * FROM ' . $this->tableName()
+                . ' WHERE lower(nombre) = ' . $this->var2str(mb_strtolower($nombre, 'UTF8') . ';');
         }
 
-        if ($data) {
-            return new \atributo($data[0]);
+        $data = $this->database->select($sql);
+
+        if (!empty($data)) {
+            return new Atributo($data[0]);
         }
 
-        return FALSE;
+        return false;
     }
 
-    public function exists() {
-        if (is_null($this->codatributo)) {
-            return FALSE;
-        }
+    /**
+     * Almacena los datos del modelo en la base de datos.
+     * @return bool
+     */
+    public function save()
+    {
+        $this->nombre = static::noHtml($this->nombre);
 
-        return self::$dataBase->select("SELECT * FROM atributos WHERE codatributo = " . $this->var2str($this->codatributo) . ";");
+        return $this->saveTrait();
     }
-
-    public function save() {
-        $this->nombre = $this->no_html($this->nombre);
-
-        if ($this->exists()) {
-            $sql = "UPDATE atributos SET nombre = " . $this->var2str($this->nombre)
-                    . " WHERE codatributo = " . $this->var2str($this->codatributo) . ";";
-        } else {
-            $sql = "INSERT INTO atributos (codatributo,nombre) VALUES "
-                    . "(" . $this->var2str($this->codatributo)
-                    . "," . $this->var2str($this->nombre) . ");";
-        }
-
-        return self::$dataBase->exec($sql);
-    }
-
-    public function delete() {
-        return self::$dataBase->exec("DELETE FROM atributos WHERE codatributo = " . $this->var2str($this->codatributo) . ";");
-    }
-
-    public function all() {
-        $lista = array();
-
-        $data = self::$dataBase->select("SELECT * FROM atributos ORDER BY nombre DESC;");
-        if ($data) {
-            foreach ($data as $d) {
-                $lista[] = new \atributo($d);
-            }
-        }
-
-        return $lista;
-    }
-
 }

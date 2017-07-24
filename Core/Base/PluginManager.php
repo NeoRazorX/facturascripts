@@ -231,6 +231,9 @@ class PluginManager
         return $done;
     }
 
+    /**
+     * @param string $folder
+     */
     private function createFolder($folder)
     {
         if (!file_exists($folder) && !@mkdir($folder, 0775, true)) {
@@ -243,7 +246,7 @@ class PluginManager
 
     /**
      * Enlazamos los archivos
-     * @param $folder
+     * @param string $folder
      * @param string $place
      * @param string $pluginName
      */
@@ -275,8 +278,8 @@ class PluginManager
 
     /**
      * Enlaza las classes de forma dinamica
-     * @param $fileName
-     * @param $folder
+     * @param string $fileName
+     * @param string $folder
      * @param string $namespace
      */
     private function linkClassFile($fileName, $folder, $namespace = "\FacturaScripts\Core\\")
@@ -297,9 +300,9 @@ class PluginManager
 
     /**
      * Enlaza los XML de forma dinamica
-     * @param $fileName
-     * @param $folder
-     * @param $filePath
+     * @param string $fileName
+     * @param string $folder
+     * @param string $filePath
      */
     private function linkXmlFile($fileName, $folder, $filePath)
     {

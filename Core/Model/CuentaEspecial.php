@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of facturacion_base
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
@@ -13,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -22,11 +21,10 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
 
-
 /**
  * Permite relacionar cuentas especiales (VENTAS, por ejemplo)
  * con la cuenta o subcuenta real.
- * 
+ *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class CuentaEspecial
@@ -35,27 +33,73 @@ class CuentaEspecial
 
     /**
      * Identificador de la cuenta especial.
-     * @var type 
+     * @var
      */
     public $idcuentaesp;
+    /**
+     * TODO
+     * @var string
+     */
     public $descripcion;
 
-    public function __construct(array $data = []) 
-	{
+    /**
+     * CuentaEspecial constructor.
+     *
+     * @param array $data
+     */
+    public function __construct($data = [])
+    {
         $this->init(__CLASS__, 'co_cuentasesp', 'idcuentaesp');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
+        if (is_null($data) || empty($data)) {
             $this->clear();
+        } else {
+            $this->loadFromData($data);
         }
     }
 
-    public function clear() {
-        $this->idcuentaesp = NULL;
-        $this->descripcion = NULL;
+    /**
+     * TODO
+     * @return array
+     */
+    public function all()
+    {
+        $culist = [];
+
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' ORDER BY descripcion ASC;';
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
+            foreach ($data as $c) {
+                $culist[] = new CuentaEspecial($c);
+            }
+        }
+
+        /// comprobamos la de acreedores
+        $encontrada = false;
+        foreach ($culist as $ce) {
+            if ($ce->idcuentaesp === 'ACREED') {
+                $encontrada = true;
+            }
+        }
+        if (!$encontrada) {
+            $ce = new CuentaEspecial();
+            $ce->idcuentaesp = 'ACREED';
+            $ce->descripcion = 'Cuentas de acreedores';
+            if ($ce->save()) {
+                $culist[] = $ce;
+            }
+        }
+
+        return $culist;
     }
 
-    protected function install() {
+    /**
+     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará tras la creación de la tabla. útil para insertar valores
+     * por defecto.
+     * @return string
+     */
+    private function install()
+    {
         return "INSERT INTO co_cuentasesp (idcuentaesp,descripcion) VALUES 
          ('IVAREP','Cuentas de IVA repercutido'),
          ('IVASOP','Cuentas de IVA soportado'),
@@ -87,68 +131,4 @@ class CuentaEspecial
          ('IVARXP','Cuentas de IVA repercutido en exportaciones'),
          ('IVASIM','Cuentas de IVA soportado en importaciones')";
     }
-
-    public function get($id) {
-        $cuentae = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idcuentaesp = " . $this->var2str($id) . ";");
-        if ($cuentae) {
-            return new \cuenta_especial($cuentae[0]);
-        } else
-            return FALSE;
-    }
-
-    public function exists() {
-        if (is_null($this->idcuentaesp)) {
-            return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idcuentaesp = " . $this->var2str($this->idcuentaesp) . ";");
-    }
-
-    public function save() {
-        $this->descripcion = $this->no_html($this->descripcion);
-
-        if ($this->exists()) {
-            $sql = "UPDATE " . $this->table_name . " SET descripcion = " . $this->var2str($this->descripcion) .
-                    " WHERE idcuentaesp = " . $this->var2str($this->idcuentaesp) . ";";
-        } else {
-            $sql = "INSERT INTO " . $this->table_name . " (idcuentaesp,descripcion)" .
-                    " VALUES (" . $this->var2str($this->idcuentaesp) .
-                    "," . $this->var2str($this->descripcion) . ");";
-        }
-
-        return self::$dataBase->exec($sql);
-    }
-
-    public function delete() {
-        return self::$dataBase->exec("DELETE FROM " . $this->table_name . " WHERE idcuentaesp = " . $this->var2str($this->idcuentaesp) . ";");
-    }
-
-    public function all() {
-        $culist = array();
-
-        $data = self::$dataBase->select("SELECT * FROM " . $this->table_name . " ORDER BY descripcion ASC;");
-        if ($data) {
-            foreach ($data as $c) {
-                $culist[] = new \cuenta_especial($c);
-            }
-        }
-
-        /// comprobamos la de acreedores
-        $encontrada = FALSE;
-        foreach ($culist as $ce) {
-            if ($ce->idcuentaesp == 'ACREED') {
-                $encontrada = TRUE;
-            }
-        }
-        if (!$encontrada) {
-            $ce = new \cuenta_especial();
-            $ce->idcuentaesp = 'ACREED';
-            $ce->descripcion = 'Cuentas de acreedores';
-            if ($ce->save()) {
-                $culist[] = $ce;
-            }
-        }
-
-        return $culist;
-    }
-
 }

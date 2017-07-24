@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
@@ -69,15 +70,16 @@ class Page
 
     /**
      * Page constructor.
+     *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'fs_pages', 'name');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
+        if (is_null($data) || empty($data)) {
             $this->clear();
+        } else {
+            $this->loadFromData($data);
         }
     }
 
@@ -95,7 +97,7 @@ class Page
     }
 
     /**
-     * TODO
+     * Devuelve la url donde ver/modificar estos datos
      * @return string
      */
     public function url()
@@ -109,7 +111,7 @@ class Page
      */
     public function isDefault()
     {
-        return ( $this->name === $this->defaultItems->defaultPage() );
+        return ($this->name === $this->defaultItems->defaultPage());
     }
 
     /**
@@ -118,6 +120,6 @@ class Page
      */
     public function showing()
     {
-        return ( $this->name === $this->defaultItems->showingPage() );
+        return ($this->name === $this->defaultItems->showingPage());
     }
 }

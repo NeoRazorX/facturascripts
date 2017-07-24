@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of facturacion_base
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
@@ -13,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,133 +23,120 @@ use FacturaScripts\Core\Base\Model;
 
 /**
  * Un grupo de clientes, que puede estar asociado a una tarifa.
- * 
+ *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class GrupoClientes
 {
-    use Model;
+    use Model {
+        save as private saveTrait;
+    }
 
     /**
      * Clave primaria
-     * @var type 
+     * @var
      */
     public $codgrupo;
 
     /**
      * Nombre del grupo
-     * @var type 
+     * @var
      */
     public $nombre;
 
     /**
      * Código de la tarifa asociada, si la hay
-     * @var type 
+     * @var
      */
     public $codtarifa;
 
-    public function __construct(array $data = []) 
-	{
-        $this->init(__CLASS__, 'gruposclientes', 'codgrupo');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
-	
-    public function clear()
+    /**
+     * GrupoClientes constructor.
+     *
+     * @param array $data
+     */
+    public function __construct($data = [])
     {
-        $this->codgrupo = NULL;
-        $this->nombre = NULL;
-        $this->codtarifa = NULL;
-    }
-
-    protected function install() {
-        /// como hay una clave ajena a tarifas, tenemos que comprobar esa tabla antes
-        //new \tarifa();
-
-        return '';
+        $this->init(__CLASS__, 'gruposclientes', 'codgrupo');
+        if (is_null($data) || empty($data)) {
+            $this->clear();
+        } else {
+            $this->loadFromData($data);
+        }
     }
 
     /**
-     * Devuelve la url donde ver/modificar los datos
+     * Resetea los valores de todas las propiedades modelo.
+     */
+    public function clear()
+    {
+        $this->codgrupo = null;
+        $this->nombre = null;
+        $this->codtarifa = null;
+    }
+
+    /**
+     * Devuelve la url donde ver/modificar estos datos
      * @return string
      */
-    public function url() {
-        if ($this->codgrupo == NULL) {
-            return 'index.php?page=ventas_clientes#grupos';
+    public function url()
+    {
+        if ($this->codgrupo === null) {
+            return 'index.php?page=VentasClientes#grupos';
         }
 
-        return 'index.php?page=ventas_grupo&cod=' . urlencode($this->codgrupo);
+        return 'index.php?page=VentasGrupo&cod=' . urlencode($this->codgrupo);
     }
 
     /**
      * Devuelve un nuevo código para un nuevo grupo de clientes
      * @return string
      */
-    public function get_new_codigo() {
-        if (strtolower(FS_DB_TYPE) == 'postgresql') {
-            $sql = "SELECT codgrupo from " . $this->table_name . " where codgrupo ~ '^\d+$'"
-                    . " ORDER BY codgrupo::integer DESC";
-        } else {
-            $sql = "SELECT codgrupo from " . $this->table_name . " where codgrupo REGEXP '^[0-9]+$'"
-                    . " ORDER BY CAST(`codgrupo` AS decimal) DESC";
+    public function getNewCodigo()
+    {
+        $sql = 'SELECT codgrupo FROM ' . $this->tableName() . " WHERE codgrupo REGEXP '^\d+$'"
+            . ' ORDER BY CAST(`codgrupo` AS DECIMAL) DESC';
+        if (strtolower(FS_DB_TYPE) === 'postgresql') {
+            $sql = 'SELECT codgrupo FROM ' . $this->tableName() . " WHERE codgrupo ~ '^\d+$'"
+                . ' ORDER BY codgrupo::INTEGER DESC';
         }
 
-        $data = self::$dataBase->select_limit($sql, 1, 0);
-        if ($data) {
-            return sprintf('%06s', (1 + intval($data[0]['codgrupo'])));
+        $data = $this->database->selectLimit($sql, 1);
+        if (!empty($data)) {
+            return sprintf('%06s', 1 + (int)$data[0]['codgrupo']);
         }
 
         return '000001';
     }
 
-    public function get($cod) {
-        $data = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codgrupo = " . $this->var2str($cod) . ";");
-        if ($data) {
-            return new \grupo_clientes($data[0]);
-        }
+    /**
+     * Almacena los datos del modelo en la base de datos.
+     * @return bool
+     */
+    public function save()
+    {
+        $this->nombre = static::noHtml($this->nombre);
 
-        return FALSE;
+        return $this->saveTrait();
     }
 
-    public function exists() {
-        if (is_null($this->codgrupo)) {
-            return FALSE;
-        }
+    /**
+     * Devuelve todos los grupos con la tarifa $cod
+     *
+     * @param string $cod
+     *
+     * @return array
+     */
+    public function allWithTarifa($cod)
+    {
+        $glist = [];
 
-        return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codgrupo = " . $this->var2str($this->codgrupo) . ";");
-    }
-
-    public function save() {
-        $this->nombre = $this->no_html($this->nombre);
-
-        if ($this->exists()) {
-            $sql = "UPDATE " . $this->table_name . " SET nombre = " . $this->var2str($this->nombre)
-                    . ", codtarifa = " . $this->var2str($this->codtarifa)
-                    . "  WHERE codgrupo = " . $this->var2str($this->codgrupo) . ";";
-        } else {
-            $sql = "INSERT INTO " . $this->table_name . " (codgrupo,nombre,codtarifa) VALUES "
-                    . "(" . $this->var2str($this->codgrupo)
-                    . "," . $this->var2str($this->nombre)
-                    . "," . $this->var2str($this->codtarifa) . ");";
-        }
-
-        return self::$dataBase->exec($sql);
-    }
-
-    public function delete() {
-        return self::$dataBase->exec("DELETE FROM " . $this->table_name . " WHERE codgrupo = " . $this->var2str($this->codgrupo) . ";");
-    }
-
-    public function all() {
-        $glist = array();
-
-        $data = self::$dataBase->select("SELECT * FROM " . $this->table_name . " ORDER BY nombre ASC;");
-        if ($data) {
+        $sql = 'SELECT * FROM ' . $this->tableName()
+            . ' WHERE codtarifa = ' . $this->var2str($cod) . ' ORDER BY codgrupo ASC;';
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
             foreach ($data as $d) {
-                $glist[] = new \grupo_clientes($d);
+                $glist[] = new GrupoClientes($d);
             }
         }
 
@@ -158,21 +144,16 @@ class GrupoClientes
     }
 
     /**
-     * Devuelve todos los grupos con la tarifa $cod
-     * @param type $cod
-     * @return \grupo_clientes
+     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará tras la creación de la tabla. útil para insertar valores
+     * por defecto.
+     * @return string
      */
-    public function all_with_tarifa($cod) {
-        $glist = array();
+    private function install()
+    {
+        /// como hay una clave ajena a tarifas, tenemos que comprobar esa tabla antes
+        //new Tarifa();
 
-        $data = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE codtarifa = " . $this->var2str($cod) . " ORDER BY codgrupo ASC;");
-        if ($data) {
-            foreach ($data as $d) {
-                $glist[] = new \grupo_clientes($d);
-            }
-        }
-
-        return $glist;
+        return '';
     }
-
 }

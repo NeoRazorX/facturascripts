@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of facturacion_base
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
@@ -13,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,7 +23,7 @@ use FacturaScripts\Core\Base\Model;
 
 /**
  * Relaciona a un cliente con una subcuenta para cada ejercicio.
- * 
+ *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class SubcuentaCliente
@@ -33,116 +32,111 @@ class SubcuentaCliente
 
     /**
      * Clave primaria
-     * @var type 
+     * @var int
      */
     public $id;
 
     /**
      * ID de la subcuenta
-     * @var type 
+     * @var int
      */
     public $idsubcuenta;
 
     /**
      * Código del cliente
-     * @var type 
+     * @var string
      */
     public $codcliente;
+    /**
+     * TODO
+     * @var string
+     */
     public $codsubcuenta;
+    /**
+     * TODO
+     * @var string
+     */
     public $codejercicio;
 
-    public function __construct(array $data = []) 
-	{
+    /**
+     * SubcuentaCliente constructor.
+     *
+     * @param array $data
+     */
+    public function __construct($data = [])
+    {
         $this->init(__CLASS__, 'co_subcuentascli', 'id');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
+        if (is_null($data) || empty($data)) {
             $this->clear();
+        } else {
+            $this->loadFromData($data);
         }
     }
-	
-    public function clear() 
+
+    /**
+     * TODO
+     * @return bool|mixed
+     */
+    public function getSubcuenta()
     {
-        $this->id = NULL;
-        $this->idsubcuenta = NULL;
-        $this->codcliente = NULL;
-        $this->codsubcuenta = NULL;
-        $this->codejercicio = NULL;
-    }
-
-    protected function install() {
-        return '';
-    }
-
-    public function get_subcuenta() {
-        $subc = new \subcuenta();
+        $subc = new Subcuenta();
         return $subc->get($this->idsubcuenta);
     }
 
-    public function get($cli, $idsc) {
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE codcliente = " . $this->var2str($cli)
-                . " AND idsubcuenta = " . $this->var2str($idsc) . ";";
+    /**
+     * TODO
+     *
+     * @param string $cli
+     * @param int $idsc
+     *
+     * @return bool|SubcuentaCliente
+     */
+    public function get($cli, $idsc)
+    {
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codcliente = ' . $this->var2str($cli)
+            . ' AND idsubcuenta = ' . $this->var2str($idsc) . ';';
 
-        $data = self::$dataBase->select($sql);
-        if ($data) {
-            return new \subcuenta_cliente($data[0]);
-        } else
-            return FALSE;
-    }
-
-    public function get2($id) {
-        $data = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($id) . ";");
-        if ($data) {
-            return new \subcuenta_cliente($data[0]);
-        } else
-            return FALSE;
-    }
-
-    public function exists() {
-        if (is_null($this->id)) {
-            return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE id = " . $this->var2str($this->id) . ";");
-    }
-
-    public function save() {
-        if ($this->exists()) {
-            $sql = "UPDATE " . $this->table_name . " SET codcliente = " . $this->var2str($this->codcliente)
-                    . ", codsubcuenta = " . $this->var2str($this->codsubcuenta)
-                    . ", codejercicio = " . $this->var2str($this->codejercicio)
-                    . ", idsubcuenta = " . $this->var2str($this->idsubcuenta)
-                    . "  WHERE id = " . $this->var2str($this->id) . ";";
-
-            return self::$dataBase->exec($sql);
-        } else {
-            $sql = "INSERT INTO " . $this->table_name . " (codcliente,codsubcuenta,codejercicio,idsubcuenta)
-            VALUES (" . $this->var2str($this->codcliente)
-                    . "," . $this->var2str($this->codsubcuenta)
-                    . "," . $this->var2str($this->codejercicio)
-                    . "," . $this->var2str($this->idsubcuenta) . ");";
-
-            if (self::$dataBase->exec($sql)) {
-                $this->id = self::$dataBase->lastval();
-                return TRUE;
-            } else {
-                return FALSE;
-            }
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
+            return new SubcuentaCliente($data[0]);
         }
+        return false;
     }
 
-    public function delete() {
-        return self::$dataBase->exec("DELETE FROM " . $this->table_name . " WHERE id = " . $this->var2str($this->id) . ";");
+    /**
+     * TODO
+     *
+     * @param int $idsubc
+     *
+     * @return bool|SubcuentaCliente
+     */
+    public function get2($idsubc)
+    {
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE id = ' . $this->var2str($idsubc) . ';';
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
+            return new SubcuentaCliente($data[0]);
+        }
+        return false;
     }
 
-    public function all_from_cliente($cod) {
-        $sublist = array();
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE codcliente = " . $this->var2str($cod)
-                . " ORDER BY codejercicio DESC;";
+    /**
+     * TODO
+     *
+     * @param string $cod
+     *
+     * @return array
+     */
+    public function allFromCliente($cod)
+    {
+        $sublist = [];
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codcliente = ' . $this->var2str($cod)
+            . ' ORDER BY codejercicio DESC;';
 
-        $data = self::$dataBase->select($sql);
-        if ($data) {
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
             foreach ($data as $s) {
-                $sublist[] = new \subcuenta_cliente($s);
+                $sublist[] = new SubcuentaCliente($s);
             }
         }
 
@@ -152,8 +146,9 @@ class SubcuentaCliente
     /**
      * Aplica algunas correcciones a la tabla.
      */
-    public function fix_db() {
-        self::$dataBase->exec("DELETE FROM " . $this->table_name . " WHERE codcliente NOT IN (SELECT codcliente FROM clientes);");
+    public function fixDb()
+    {
+        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE codcliente NOT IN (SELECT codcliente FROM clientes);';
+        $this->database->exec($sql);
     }
-
 }

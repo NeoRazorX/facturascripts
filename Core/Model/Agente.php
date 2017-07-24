@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\ContactInformation;
 use FacturaScripts\Core\Base\Model;
 
 /**
@@ -26,15 +28,17 @@ use FacturaScripts\Core\Base\Model;
  * estar asociado a varios usuarios o a ninguno.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class Agente
 {
 
     use Model;
+    use ContactInformation;
 
     /**
      * Clave primaria. Varchar (10).
-     * @var integer
+     * @var int
      */
     public $codagente;
 
@@ -55,42 +59,6 @@ class Agente
      * @var string
      */
     public $apellidos;
-
-    /**
-     * Email del agente o empleado.
-     * @var string
-     */
-    public $email;
-
-    /**
-     * Teléfono del agente o empleado.
-     * @var string
-     */
-    public $telefono;
-
-    /**
-     * Código postal del agente o empleado.
-     * @var string
-     */
-    public $codpostal;
-
-    /**
-     * Provincia del agente o empleado.
-     * @var string
-     */
-    public $provincia;
-
-    /**
-     * Ciudad del agente o empleado.
-     * @var string
-     */
-    public $ciudad;
-
-    /**
-     * Dirección del agente o empleado.
-     * @var string
-     */
-    public $direccion;
 
     /**
      * Nº de la seguridad social.
@@ -136,15 +104,16 @@ class Agente
 
     /**
      * Agente constructor.
+     *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'agentes', 'codagente');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
+        if (is_null($data) || empty($data)) {
             $this->clear();
+        } else {
+            $this->loadFromData($data);
         }
     }
 
@@ -153,16 +122,12 @@ class Agente
      */
     public function clear()
     {
+        $this->clearContactInformation();
+
         $this->codagente = null;
         $this->nombre = '';
         $this->apellidos = '';
         $this->dnicif = '';
-        $this->email = null;
-        $this->telefono = null;
-        $this->codpostal = null;
-        $this->provincia = null;
-        $this->ciudad = null;
-        $this->direccion = null;
         $this->porcomision = 0.00;
         $this->seg_social = null;
         $this->banco = null;
@@ -170,16 +135,6 @@ class Agente
         $this->f_alta = date('d-m-Y');
         $this->f_baja = null;
         $this->f_nacimiento = date('d-m-Y');
-    }
-
-    /**
-     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
-     * @return string
-     */
-    protected function install()
-    {
-        return 'INSERT INTO ' . $this->tableName() . ' (codagente,nombre,apellidos,dnicif)'
-            . " VALUES ('1','Paco','Pepe','00000014Z');";
     }
 
     /**
@@ -193,30 +148,31 @@ class Agente
 
     /**
      * Genera un nuevo código de agente
-     * @return int
+     * @return string
      */
-    public function newCodigo()
+    public function getNewCodigo()
     {
-        $sql = 'SELECT MAX(' . $this->dataBase->sql2int('codagente') . ') as cod FROM ' . $this->tableName() . ';';
-        $cod = $this->dataBase->select($sql);
-        if (!empty($cod)) {
-            return 1 + (int) $cod[0]['cod'];
+        $sql = 'SELECT MAX(' . $this->database->sql2Int('codagente') . ') as cod FROM ' . $this->tableName() . ';';
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
+            return (string)(1 + (int)$data[0]['cod']);
         }
 
-        return 1;
+        return '1';
     }
 
     /**
-     * Devuelve la url donde se pueden ver/modificar estos datos
+     * Devuelve la url donde ver/modificar estos datos
      * @return string
      */
     public function url()
     {
-        if ($this->codagente === null) {
-            return 'index.php?page=admin_agentes';
+        $result = 'index.php?page=Agente';
+        if ($this->codagente !== null) {
+            $result .= '_card&cod=' . $this->codagente;
         }
 
-        return 'index.php?page=admin_agente&cod=' . $this->codagente;
+        return $result;
     }
 
     /**
@@ -244,9 +200,19 @@ class Agente
         }
 
         if ($this->codagente === null) {
-            $this->codagente = $this->newCodigo();
+            $this->codagente = $this->newCode();
         }
 
         return true;
+    }
+
+    /**
+     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
+     * @return string
+     */
+    private function install()
+    {
+        return 'INSERT INTO ' . $this->tableName() . ' (codagente,nombre,apellidos,dnicif)'
+            . " VALUES ('1','Paco','Pepe','00000014Z');";
     }
 }

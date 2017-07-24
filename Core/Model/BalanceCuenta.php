@@ -22,33 +22,43 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\Model;
 
 /**
- * Un concepto predefinido para una partida (la línea de un asiento contable).
+ * Detalle de un balance.
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class ConceptoPartida
+class BalanceCuenta
 {
     use Model;
 
     /**
      * Clave primaria.
-     * @var string
+     * @var
      */
-    public $idconceptopar;
+    public $id;
     /**
      * TODO
-     * @var string
+     * @var
      */
-    public $concepto;
+    public $codbalance;
+    /**
+     * TODO
+     * @var
+     */
+    public $codcuenta;
+    /**
+     * TODO
+     * @var
+     */
+    public $desccuenta;
 
     /**
-     * ConceptoPartida constructor.
+     * BalanceCuenta constructor.
      *
      * @param array $data
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'co_conceptospar', 'idconceptopar');
+        $this->init(__CLASS__, 'co_cuentascb', 'id');
         if (is_null($data) || empty($data)) {
             $this->clear();
         } else {
@@ -58,20 +68,24 @@ class ConceptoPartida
 
     /**
      * TODO
-     * @return bool
+     *
+     * @param string $cod
+     *
+     * @return array
      */
-    public function test()
+    public function allFromCodbalance($cod)
     {
-        $this->concepto = static::noHtml($this->concepto);
-        return true;
-    }
+        $balist = [];
 
-    /**
-     * Almacena los datos del modelo en la base de datos.
-     * @return bool
-     */
-    public function save()
-    {
-        return false;
+        $sql = 'SELECT * FROM ' . $this->tableName()
+            . ' WHERE codbalance = ' . $this->var2str($cod) . ' ORDER BY codcuenta ASC;';
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
+            foreach ($data as $b) {
+                $balist[] = new BalanceCuenta($b);
+            }
+        }
+
+        return $balist;
     }
 }

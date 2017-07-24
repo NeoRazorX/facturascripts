@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
@@ -34,42 +35,33 @@ class Rol
 
     /**
      * TODO
-     * @var mixed
+     * @var string
      */
     public $codrol;
 
     /**
      * TODO
-     * @var mixed
+     * @var string
      */
     public $descripcion;
 
     /**
      * Rol constructor.
+     *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'fs_roles', 'codrol');
-        if (!empty($data)) {
+        $this->clear();
+        if (is_array($data) && !empty($data)) {
             $this->codrol = $data['codrol'];
             $this->descripcion = $data['descripcion'];
-        } else {
-            $this->clear();
         }
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
-     */
-    public function clear()
-    {
-        $this->codrol = null;
-        $this->descripcion = null;
-    }
-
-    /**
-     * TODO
+     * Devuelve la url donde ver/modificar estos datos
      * @return string
      */
     public function url()

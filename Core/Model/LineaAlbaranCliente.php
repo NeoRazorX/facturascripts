@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of facturacion_base
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
@@ -13,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,142 +23,154 @@ use FacturaScripts\Core\Base\Model;
 
 /**
  * Línea de un albarán de cliente.
- * 
+ *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class LineaAlbaranCliente 
+class LineaAlbaranCliente
 {
     use Model;
 
     /**
+     * TODO
+     * @var array
+     */
+    private static $albaranes;
+    /**
      * Clave primaria.
-     * @var type 
+     * @var int
      */
     public $idlinea;
-
     /**
      * ID de la línea del pedido relacionado, si es que lo hay.
-     * @var type 
+     * @var int
      */
     public $idlineapedido;
-
     /**
      * ID del albaran de esta línea.
-     * @var type 
+     * @var int
      */
     public $idalbaran;
-
     /**
      * ID del pedido relacionado con el albarán relacionado.
-     * @var type 
+     * @var int
      */
     public $idpedido;
-
     /**
      * Referencia del artículo.
-     * @var type 
+     * @var string
      */
     public $referencia;
-
     /**
      * Código de la combinación seleccionada, en el caso de los artículos con atributos.
-     * @var type 
+     * @var string
      */
     public $codcombinacion;
+    /**
+     * TODO
+     * @var string
+     */
     public $descripcion;
+    /**
+     * TODO
+     * @var float
+     */
     public $cantidad;
-
     /**
      * % de descuento.
-     * @var type 
+     * @var float
      */
     public $dtopor;
-
     /**
      * Código del impuesto del artículo.
-     * @var type 
+     * @var string
      */
     public $codimpuesto;
-
     /**
      * % del impuesto relacionado.
-     * @var type 
+     * @var float
      */
     public $iva;
-
     /**
      * Importe neto de la linea, sin impuestos.
-     * @var type 
+     * @var float
      */
     public $pvptotal;
-
     /**
      * Importe neto sin descuento, es decir, pvpunitario * cantidad.
-     * @var type 
+     * @var float
      */
     public $pvpsindto;
-
     /**
      * Precio del artículo, una sola unidad.
-     * @var type 
+     * @var float
      */
     public $pvpunitario;
-
     /**
      * % de IRPF de la línea.
-     * @var type 
+     * @var float
      */
     public $irpf;
-
     /**
      * % de recargo de equivalencia de la línea.
-     * @var type 
+     * @var float
      */
     public $recargo;
-
     /**
      * Posición de la linea en el documento. Cuanto más alto más abajo.
-     * @var type 
+     * @var int
      */
     public $orden;
-
     /**
      * False -> no se muestra la columna cantidad al imprimir.
-     * @var type 
+     * @var bool
      */
     public $mostrar_cantidad;
-
     /**
      * False -> no se muestran las columnas precio, descuento, impuestos y total al imprimir.
-     * @var type 
+     * @var bool
      */
     public $mostrar_precio;
+    /**
+     * TODO
+     * @var string
+     */
     private $codigo;
+    /**
+     * TODO
+     * @var string
+     */
     private $fecha;
-    private static $albaranes;
 
-    public function __construct(array $data = []) 
-	{
+    /**
+     * LineaAlbaranCliente constructor.
+     *
+     * @param array $data
+     */
+    public function __construct($data = [])
+    {
         $this->init(__CLASS__, 'lineasalbaranescli', 'idlinea');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
+        if (is_null($data) || empty($data)) {
             $this->clear();
+        } else {
+            $this->loadFromData($data);
         }
     }
-	
-    public function clear() 
+
+    /**
+     * Resetea los valores de todas las propiedades modelo.
+     */
+    public function clear()
     {
-        $this->idlinea = NULL;
-        $this->idlineapedido = NULL;
-        $this->idalbaran = NULL;
-        $this->idpedido = NULL;
-        $this->referencia = NULL;
-        $this->codcombinacion = NULL;
+        $this->idlinea = null;
+        $this->idlineapedido = null;
+        $this->idalbaran = null;
+        $this->idpedido = null;
+        $this->referencia = null;
+        $this->codcombinacion = null;
         $this->descripcion = '';
         $this->cantidad = 0;
         $this->dtopor = 0;
-        $this->codimpuesto = NULL;
+        $this->codimpuesto = null;
         $this->iva = 0;
         $this->pvptotal = 0;
         $this->pvpsindto = 0;
@@ -167,77 +178,85 @@ class LineaAlbaranCliente
         $this->irpf = 0;
         $this->recargo = 0;
         $this->orden = 0;
-        $this->mostrar_cantidad = TRUE;
-        $this->mostrar_precio = TRUE;
-    }
-
-    protected function install() {
-        return '';
+        $this->mostrar_cantidad = true;
+        $this->mostrar_precio = true;
     }
 
     /**
-     * Completa con los datos del albarán.
+     * TODO
+     * @return float
      */
-    private function fill() {
-        $encontrado = FALSE;
-        foreach (self::$albaranes as $a) {
-            if ($a->idalbaran == $this->idalbaran) {
-                $this->codigo = $a->codigo;
-                $this->fecha = $a->fecha;
-                $encontrado = TRUE;
-                break;
-            }
-        }
-        if (!$encontrado) {
-            $alb = new \albaran_cliente();
-            $alb = $alb->get($this->idalbaran);
-            if ($alb) {
-                $this->codigo = $alb->codigo;
-                $this->fecha = $alb->fecha;
-                self::$albaranes[] = $alb;
-            }
-        }
-    }
-
-    public function pvp_iva() {
+    public function pvpIva()
+    {
         return $this->pvpunitario * (100 + $this->iva) / 100;
     }
 
-    public function total_iva() {
+    /**
+     * TODO
+     * @return float
+     */
+    public function totalIva()
+    {
         return $this->pvptotal * (100 + $this->iva - $this->irpf + $this->recargo) / 100;
     }
 
-    /// Devuelve el precio total por unidad (con descuento incluido e iva aplicado)
-    public function total_iva2() {
-        if ($this->cantidad == 0) {
+    /**
+     * TODO
+     * @return float
+     */
+    public function totalIva2()
+    {
+        if ($this->cantidad === 0) {
             return 0;
-        } else
-            return $this->pvptotal * (100 + $this->iva) / 100 / $this->cantidad;
+        }
+        return $this->pvptotal * (100 + $this->iva) / 100 / $this->cantidad;
     }
 
-    public function descripcion() {
+    /**
+     * TODO
+     * @return string
+     */
+    public function getDescripcion()
+    {
         return nl2br($this->descripcion);
     }
 
-    public function show_codigo() {
-        if (!isset($this->codigo)) {
+    /// Devuelve el precio total por unidad (con descuento incluido e iva aplicado)
+
+    /**
+     * TODO
+     * @return string
+     */
+    public function showCodigo()
+    {
+        if ($this->codigo === null) {
             $this->fill();
         }
         return $this->codigo;
     }
 
-    public function show_fecha() {
-        if (!isset($this->fecha)) {
+    /**
+     * TODO
+     * @return \DateTime
+     */
+    public function showFecha()
+    {
+        if ($this->fecha === null) {
             $this->fill();
         }
         return $this->fecha;
     }
 
-    public function show_nombrecliente() {
+    /**
+     * TODO
+     * @return string
+     */
+    public function showNombrecliente()
+    {
         $nombre = 'desconocido';
 
         foreach (self::$albaranes as $a) {
-            if ($a->idalbaran == $this->idalbaran) {
+            if ($a->idalbaran === $this->idalbaran) {
                 $nombre = $a->nombrecliente;
                 break;
             }
@@ -246,254 +265,271 @@ class LineaAlbaranCliente
         return $nombre;
     }
 
-    public function url() {
-        return 'index.php?page=ventas_albaran&id=' . $this->idalbaran;
-    }
-
-    public function articulo_url() {
-        if (is_null($this->referencia) OR $this->referencia == '') {
-            return "index.php?page=ventas_articulos";
-        } else
-            return "index.php?page=ventas_articulo&ref=" . urlencode($this->referencia);
+    /**
+     * Devuelve la url donde ver/modificar estos datos
+     * @return string
+     */
+    public function url()
+    {
+        return 'index.php?page=VentasAlbaran&id=' . $this->idalbaran;
     }
 
     /**
-     * Devuelve los datos de una linea.
-     * @param type $idlinea
-     * @return boolean|\linea_albaran_cliente
+     * TODO
+     * @return string
      */
-    public function get($idlinea) {
-        $data = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idlinea = " . $this->var2str($idlinea) . ";");
-        if ($data) {
-            return new \linea_albaran_cliente($data[0]);
-        } else {
-            return FALSE;
+    public function articuloUrl()
+    {
+        if ($this->referencia === null || $this->referencia === '') {
+            return 'index.php?page=VentasArticulos';
         }
+        return 'index.php?page=VentasArticulo&ref=' . urlencode($this->referencia);
     }
 
-    public function exists() {
-        if (is_null($this->idlinea)) {
-            return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idlinea = " . $this->var2str($this->idlinea) . ";");
-    }
-
-    public function test() {
-        $this->descripcion = $this->no_html($this->descripcion);
+    /**
+     * TODO
+     * @return bool
+     */
+    public function test()
+    {
+        $this->descripcion = static::noHtml($this->descripcion);
         $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
         $totalsindto = $this->pvpunitario * $this->cantidad;
 
-        if (!$this->floatcmp($this->pvptotal, $total, FS_NF0, TRUE)) {
-            $this->new_error_msg("Error en el valor de pvptotal de la línea " . $this->referencia
-                    . " del " . FS_ALBARAN . ". Valor correcto: " . $total);
-            return FALSE;
-        } else if (!$this->floatcmp($this->pvpsindto, $totalsindto, FS_NF0, TRUE)) {
-            $this->new_error_msg("Error en el valor de pvpsindto de la línea " . $this->referencia
-                    . " del " . FS_ALBARAN . ". Valor correcto: " . $totalsindto);
-            return FALSE;
-        } else
-            return TRUE;
+        if (!$this->floatcmp($this->pvptotal, $total, FS_NF0, true)) {
+            $this->miniLog->alert('Error en el valor de pvptotal de la línea ' . $this->referencia
+                . ' del ' . FS_ALBARAN . '. Valor correcto: ' . $total);
+            return false;
+        }
+        if (!$this->floatcmp($this->pvpsindto, $totalsindto, FS_NF0, true)) {
+            $this->miniLog->alert('Error en el valor de pvpsindto de la línea ' . $this->referencia
+                . ' del ' . FS_ALBARAN . '. Valor correcto: ' . $totalsindto);
+            return false;
+        }
+        return true;
     }
 
-    public function save() {
-        if ($this->test()) {
-            $this->clean_cache();
-
-            if ($this->exists()) {
-                $sql = "UPDATE " . $this->table_name . " SET idalbaran = " . $this->var2str($this->idalbaran)
-                        . ", idpedido = " . $this->var2str($this->idpedido)
-                        . ", idlineapedido = " . $this->var2str($this->idlineapedido)
-                        . ", referencia = " . $this->var2str($this->referencia)
-                        . ", codcombinacion = " . $this->var2str($this->codcombinacion)
-                        . ", descripcion = " . $this->var2str($this->descripcion)
-                        . ", cantidad = " . $this->var2str($this->cantidad)
-                        . ", dtopor = " . $this->var2str($this->dtopor)
-                        . ", codimpuesto = " . $this->var2str($this->codimpuesto)
-                        . ", iva = " . $this->var2str($this->iva)
-                        . ", pvptotal = " . $this->var2str($this->pvptotal)
-                        . ", pvpsindto = " . $this->var2str($this->pvpsindto)
-                        . ", pvpunitario = " . $this->var2str($this->pvpunitario)
-                        . ", irpf = " . $this->var2str($this->irpf)
-                        . ", recargo = " . $this->var2str($this->recargo)
-                        . ", orden = " . $this->var2str($this->orden)
-                        . ", mostrar_cantidad = " . $this->var2str($this->mostrar_cantidad)
-                        . ", mostrar_precio = " . $this->var2str($this->mostrar_precio)
-                        . "  WHERE idlinea = " . $this->var2str($this->idlinea) . ";";
-
-                return self::$dataBase->exec($sql);
-            } else {
-                $sql = "INSERT INTO " . $this->table_name . " (idlineapedido,idalbaran,idpedido,referencia,codcombinacion,
-               descripcion,cantidad,dtopor,codimpuesto,iva,pvptotal,pvpsindto,pvpunitario,irpf,recargo,orden,
-               mostrar_cantidad,mostrar_precio) VALUES
-                      (" . $this->var2str($this->idlineapedido)
-                        . "," . $this->var2str($this->idalbaran)
-                        . "," . $this->var2str($this->idpedido)
-                        . "," . $this->var2str($this->referencia)
-                        . "," . $this->var2str($this->codcombinacion)
-                        . "," . $this->var2str($this->descripcion)
-                        . "," . $this->var2str($this->cantidad)
-                        . "," . $this->var2str($this->dtopor)
-                        . "," . $this->var2str($this->codimpuesto)
-                        . "," . $this->var2str($this->iva)
-                        . "," . $this->var2str($this->pvptotal)
-                        . "," . $this->var2str($this->pvpsindto)
-                        . "," . $this->var2str($this->pvpunitario)
-                        . "," . $this->var2str($this->irpf)
-                        . "," . $this->var2str($this->recargo)
-                        . "," . $this->var2str($this->orden)
-                        . "," . $this->var2str($this->mostrar_cantidad)
-                        . "," . $this->var2str($this->mostrar_precio) . ");";
-
-                if (self::$dataBase->exec($sql)) {
-                    $this->idlinea = self::$dataBase->lastval();
-                    return TRUE;
-                } else
-                    return FALSE;
-            }
-        } else
-            return FALSE;
-    }
-
-    public function delete() {
-        $this->clean_cache();
-        return self::$dataBase->exec("DELETE FROM " . $this->table_name . " WHERE idlinea = " . $this->var2str($this->idlinea) . ";");
-    }
-
-    public function clean_cache() {
+    /**
+     * TODO
+     */
+    public function cleanCache()
+    {
         $this->cache->delete('albcli_top_articulos');
     }
 
     /**
      * Devuelve las líneas del albarán.
-     * @param type $id
-     * @return \linea_albaran_cliente
+     *
+     * @param int $idalb
+     *
+     * @return array
      */
-    public function all_from_albaran($id) {
-        $linealist = array();
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE idalbaran = " . $this->var2str($id)
-                . " ORDER BY orden DESC, idlinea ASC;";
+    public function allFromAlbaran($idalb)
+    {
+        $linealist = [];
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idalbaran = ' . $this->var2str($idalb)
+            . ' ORDER BY orden DESC, idlinea ASC;';
 
-        $data = self::$dataBase->select($sql);
-        if ($data) {
-            foreach ($data as $l) {
-                $linealist[] = new \linea_albaran_cliente($l);
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
+            foreach ($data as $lin) {
+                $linealist[] = new LineaAlbaranCliente($lin);
             }
         }
 
         return $linealist;
     }
 
-    public function all_from_articulo($ref, $offset = 0, $limit = FS_ITEM_LIMIT) {
-        $linealist = array();
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE referencia = " . $this->var2str($ref)
-                . " ORDER BY idalbaran DESC";
+    /**
+     * TODO
+     *
+     * @param string $ref
+     * @param int $offset
+     * @param int $limit
+     *
+     * @return array
+     */
+    public function allFromArticulo($ref, $offset = 0, $limit = FS_ITEM_LIMIT)
+    {
+        $linealist = [];
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref)
+            . ' ORDER BY idalbaran DESC';
 
-        $data = self::$dataBase->select_limit($sql, $limit, $offset);
-        if ($data) {
+        $data = $this->database->selectLimit($sql, $limit, $offset);
+        if (!empty($data)) {
             foreach ($data as $l) {
-                $linealist[] = new \linea_albaran_cliente($l);
+                $linealist[] = new LineaAlbaranCliente($l);
             }
         }
 
         return $linealist;
     }
 
-    public function search($query = '', $offset = 0) {
-        $linealist = array();
-        $query = mb_strtolower($this->no_html($query), 'UTF8');
+    /**
+     * TODO
+     *
+     * @param string $query
+     * @param int $offset
+     *
+     * @return array
+     */
+    public function search($query = '', $offset = 0)
+    {
+        $linealist = [];
+        $query = mb_strtolower(static::noHtml($query), 'UTF8');
 
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE ";
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE ';
         if (is_numeric($query)) {
             $sql .= "referencia LIKE '%" . $query . "%' OR descripcion LIKE '%" . $query . "%'";
         } else {
             $buscar = str_replace(' ', '%', $query);
             $sql .= "lower(referencia) LIKE '%" . $buscar . "%' OR lower(descripcion) LIKE '%" . $buscar . "%'";
         }
-        $sql .= " ORDER BY idalbaran DESC, idlinea ASC";
+        $sql .= ' ORDER BY idalbaran DESC, idlinea ASC';
 
-        $data = self::$dataBase->select_limit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
+        if (!empty($data)) {
             foreach ($data as $l) {
-                $linealist[] = new \linea_albaran_cliente($l);
+                $linealist[] = new LineaAlbaranCliente($l);
             }
         }
 
         return $linealist;
     }
 
-    public function search_from_cliente($codcliente, $query = '', $offset = 0) {
-        $linealist = array();
-        $query = mb_strtolower($this->no_html($query), 'UTF8');
+    /**
+     * TODO
+     *
+     * @param string $codcliente
+     * @param string $query
+     * @param int $offset
+     *
+     * @return array
+     */
+    public function searchFromCliente($codcliente, $query = '', $offset = 0)
+    {
+        $linealist = [];
+        $query = mb_strtolower(static::noHtml($query), 'UTF8');
 
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE idalbaran IN
-         (SELECT idalbaran FROM albaranescli WHERE codcliente = " . $this->var2str($codcliente) . ") AND ";
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idalbaran IN
+         (SELECT idalbaran FROM albaranescli WHERE codcliente = ' . $this->var2str($codcliente) . ') AND ';
         if (is_numeric($query)) {
             $sql .= "(referencia LIKE '%" . $query . "%' OR descripcion LIKE '%" . $query . "%')";
         } else {
             $buscar = str_replace(' ', '%', $query);
             $sql .= "(lower(referencia) LIKE '%" . $buscar . "%' OR lower(descripcion) LIKE '%" . $buscar . "%')";
         }
-        $sql .= " ORDER BY idalbaran DESC, idlinea ASC";
+        $sql .= ' ORDER BY idalbaran DESC, idlinea ASC';
 
-        $data = self::$dataBase->select_limit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
+        if (!empty($data)) {
             foreach ($data as $l) {
-                $linealist[] = new \linea_albaran_cliente($l);
+                $linealist[] = new LineaAlbaranCliente($l);
             }
         }
 
         return $linealist;
     }
 
-    public function search_from_cliente2($codcliente, $ref = '', $obs = '', $offset = 0) {
-        $linealist = array();
-        $ref = mb_strtolower($this->no_html($ref), 'UTF8');
-        $obs = mb_strtolower($this->no_html($obs), 'UTF8');
+    /**
+     * TODO
+     *
+     * @param string $codcliente
+     * @param string $ref
+     * @param string $obs
+     * @param int $offset
+     *
+     * @return array
+     */
+    public function searchFromCliente2($codcliente, $ref = '', $obs = '', $offset = 0)
+    {
+        $linealist = [];
+        $ref = mb_strtolower(static::noHtml($ref), 'UTF8');
+        $obs = mb_strtolower(static::noHtml($obs), 'UTF8');
 
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE idalbaran IN
-         (SELECT idalbaran FROM albaranescli WHERE codcliente = " . $this->var2str($codcliente) . "
-         AND lower(observaciones) LIKE '" . $obs . "%') AND ";
+        $sql = 'SELECT * FROM ' . $this->tableName()
+            . ' WHERE idalbaran IN (SELECT idalbaran FROM albaranescli WHERE codcliente = '
+            . $this->var2str($codcliente) . " AND lower(observaciones) LIKE '" . $obs . "%') AND ";
         if (is_numeric($ref)) {
             $sql .= "(referencia LIKE '%" . $ref . "%' OR descripcion LIKE '%" . $ref . "%')";
         } else {
             $buscar = str_replace(' ', '%', $ref);
             $sql .= "(lower(referencia) LIKE '%" . $ref . "%' OR lower(descripcion) LIKE '%" . $ref . "%')";
         }
-        $sql .= " ORDER BY idalbaran DESC, idlinea ASC";
+        $sql .= ' ORDER BY idalbaran DESC, idlinea ASC';
 
-        $data = self::$dataBase->select_limit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
+        if (!empty($data)) {
             foreach ($data as $l) {
-                $linealist[] = new \linea_albaran_cliente($l);
+                $linealist[] = new LineaAlbaranCliente($l);
             }
         }
 
         return $linealist;
     }
 
-    public function last_from_cliente($codcliente, $offset = 0) {
-        $linealist = array();
+    /**
+     * TODO
+     *
+     * @param string $codcliente
+     * @param int $offset
+     *
+     * @return array
+     */
+    public function lastFromCliente($codcliente, $offset = 0)
+    {
+        $linealist = [];
 
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE idalbaran IN
-         (SELECT idalbaran FROM albaranescli WHERE codcliente = " . $this->var2str($codcliente) . ")
-         ORDER BY idalbaran DESC, idlinea ASC";
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idalbaran IN
+         (SELECT idalbaran FROM albaranescli WHERE codcliente = ' . $this->var2str($codcliente) . ')
+         ORDER BY idalbaran DESC, idlinea ASC';
 
-        $data = self::$dataBase->select_limit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
+        if (!empty($data)) {
             foreach ($data as $l) {
-                $linealist[] = new \linea_albaran_cliente($l);
+                $linealist[] = new LineaAlbaranCliente($l);
             }
         }
 
         return $linealist;
     }
 
-    public function count_by_articulo() {
-        $lineas = self::$dataBase->select("SELECT COUNT(DISTINCT referencia) as total FROM " . $this->table_name . ";");
-        if ($lineas) {
-            return intval($lineas[0]['total']);
-        } else
-            return 0;
+    /**
+     * TODO
+     * @return int
+     */
+    public function countByArticulo()
+    {
+        $sql = 'SELECT COUNT(DISTINCT referencia) AS total FROM ' . $this->tableName() . ';';
+        $lineas = $this->database->select($sql);
+        if (!empty($lineas)) {
+            return (int)$lineas[0]['total'];
+        }
+        return 0;
     }
 
+    /**
+     * Completa con los datos del albarán.
+     */
+    private function fill()
+    {
+        $encontrado = false;
+        foreach (self::$albaranes as $a) {
+            if ($a->idalbaran === $this->idalbaran) {
+                $this->codigo = $a->codigo;
+                $this->fecha = $a->fecha;
+                $encontrado = true;
+                break;
+            }
+        }
+        if (!$encontrado) {
+            $alb = new AlbaranCliente();
+            $alb = $alb->get($this->idalbaran);
+            if ($alb) {
+                $this->codigo = $alb->codigo;
+                $this->fecha = $alb->fecha;
+                self::$albaranes[] = $alb;
+            }
+        }
+    }
 }

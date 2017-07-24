@@ -1,8 +1,20 @@
 <?php
-
-/*
- * @author Carlos García Gómez      neorazorx@gmail.com
- * @copyright 2016-2017, Carlos García Gómez. All Rights Reserved.
+/**
+ * This file is part of facturacion_base
+ * Copyright (C) 2016-2017    Carlos Garcia Gomez  neorazorx@gmail.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 namespace FacturaScripts\Core\Model;
@@ -14,132 +26,169 @@ use FacturaScripts\Core\Base\Model;
  *
  * @author Carlos García Gómez
  */
-class LineaTransferenciaStock 
+class LineaTransferenciaStock
 {
     use Model;
 
     /// clave primaria. integer
+    /**
+     * TODO
+     * @var int
+     */
     public $idlinea;
+    /**
+     * TODO
+     * @var int
+     */
     public $idtrans;
+    /**
+     * TODO
+     * @var string
+     */
     public $referencia;
+    /**
+     * TODO
+     * @var float
+     */
     public $cantidad;
+    /**
+     * TODO
+     * @var string
+     */
     public $descripcion;
+    /**
+     * TODO
+     * @var string
+     */
     private $fecha;
+    /**
+     * TODO
+     * @var string
+     */
     private $hora;
 
-    public function __construct(array $data = []) 
-	{
+    /**
+     * LineaTransferenciaStock constructor.
+     *
+     * @param array $data
+     */
+    public function __construct($data = [])
+    {
         $this->init(__CLASS__, 'lineastransstock', 'idlinea');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
+        if (is_null($data) || empty($data)) {
             $this->clear();
+        } else {
+            $this->loadFromData($data);
         }
     }
-	
-    public function clear() {
-        $this->idlinea = NULL;
-        $this->idtrans = NULL;
-        $this->referencia = NULL;
+
+    /**
+     * Resetea los valores de todas las propiedades modelo.
+     */
+    public function clear()
+    {
+        $this->idlinea = null;
+        $this->idtrans = null;
+        $this->referencia = null;
         $this->cantidad = 0;
-        $this->descripcion = NULL;
-        $this->fecha = NULL;
-        $this->hora = NULL;
+        $this->descripcion = null;
+        $this->fecha = null;
+        $this->hora = null;
     }
 
-    public function install() {
-        /// forzamos la comprobación de la tabla de transferencias de stock
-        //new \transferencia_stock();
-
-        return '';
-    }
-
-    public function fecha() {
+    /**
+     * TODO
+     * @return \DateTime
+     */
+    public function fecha()
+    {
         return $this->fecha;
     }
 
-    public function hora() {
+    /**
+     * TODO
+     * @return \DateTime
+     */
+    public function hora()
+    {
         return $this->hora;
     }
 
-    public function exists() {
-        if (is_null($this->idlinea)) {
-            return FALSE;
-        } else {
-            return self::$dataBase->select('SELECT * FROM lineastransstock WHERE idlinea = ' . $this->var2str($this->idlinea) . ';');
-        }
-    }
+    /**
+     * TODO
+     *
+     * @param int $idtra
+     *
+     * @return array
+     */
+    public function allFromTransferencia($idtra)
+    {
+        $list = [];
 
-    public function save() {
-        if ($this->exists()) {
-            $sql = "UPDATE lineastransstock SET idtrans = " . $this->var2str($this->idtrans)
-                    . ", referencia = " . $this->var2str($this->referencia)
-                    . ", cantidad = " . $this->var2str($this->cantidad)
-                    . ", descripcion = " . $this->var2str($this->descripcion)
-                    . "  WHERE idlinea = " . $this->var2str($this->idlinea) . ";";
-
-            return self::$dataBase->exec($sql);
-        } else {
-            $sql = "INSERT INTO lineastransstock (idtrans,referencia,cantidad,descripcion) VALUES "
-                    . "(" . $this->var2str($this->idtrans)
-                    . "," . $this->var2str($this->referencia)
-                    . "," . $this->var2str($this->cantidad)
-                    . "," . $this->var2str($this->descripcion) . ");";
-
-            if (self::$dataBase->exec($sql)) {
-                $this->idlinea = self::$dataBase->lastval();
-                return TRUE;
-            } else {
-                return FALSE;
-            }
-        }
-    }
-
-    public function delete() {
-        return self::$dataBase->exec('DELETE FROM lineastransstock WHERE idlinea = ' . $this->var2str($this->idlinea) . ';');
-    }
-
-    public function all_from_transferencia($id) {
-        $list = array();
-
-        $data = self::$dataBase->select("SELECT * FROM lineastransstock WHERE idtrans = " . $this->var2str($id) . " ORDER BY referencia ASC;");
-        if ($data) {
-            foreach ($data as $d) {
-                $list[] = new \linea_transferencia_stock($d);
+        $sql = 'SELECT * FROM lineastransstock WHERE idtrans = ' . $this->var2str($idtra) . ' ORDER BY referencia ASC;';
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
+            foreach ($data as $lin) {
+                $list[] = new LineaTransferenciaStock($lin);
             }
         }
 
         return $list;
     }
 
-    public function all_from_referencia($ref, $codalmaorigen = '', $codalmadestino = '', $desde = '', $hasta = '') {
-        $list = array();
+    /**
+     * TODO
+     *
+     * @param string $ref
+     * @param string $codalmaorigen
+     * @param string $codalmadestino
+     * @param string $desde
+     * @param string $hasta
+     *
+     * @return array
+     */
+    public function allFromReferencia($ref, $codalmaorigen = '', $codalmadestino = '', $desde = '', $hasta = '')
+    {
+        $list = [];
 
-        $sql = "SELECT l.idlinea,l.idtrans,l.referencia,l.cantidad,l.descripcion,t.fecha,t.hora FROM lineastransstock l"
-                . " LEFT JOIN transstock t ON l.idtrans = t.idtrans"
-                . " WHERE l.referencia = " . $this->var2str($ref);
-        if ($codalmaorigen) {
-            $sql .= " AND t.codalmaorigen = " . $this->var2str($codalmaorigen);
+        $sql = 'SELECT l.idlinea,l.idtrans,l.referencia,l.cantidad,l.descripcion,t.fecha,t.hora FROM lineastransstock l'
+            . ' LEFT JOIN transstock t ON l.idtrans = t.idtrans'
+            . ' WHERE l.referencia = ' . $this->var2str($ref);
+        if (!empty($codalmaorigen)) {
+            $sql .= ' AND t.codalmaorigen = ' . $this->var2str($codalmaorigen);
         }
-        if ($codalmadestino) {
-            $sql .= " AND t.codalmadestino = " . $this->var2str($codalmadestino);
+        if (!empty($codalmadestino)) {
+            $sql .= ' AND t.codalmadestino = ' . $this->var2str($codalmadestino);
         }
-        if ($desde) {
-            $sql .= " AND t.fecha >= " . $this->var2str($desde);
+        if (!empty($desde)) {
+            $sql .= ' AND t.fecha >= ' . $this->var2str($desde);
         }
-        if ($hasta) {
-            $sql .= " AND t.fecha >= " . $this->var2str($hasta);
+        if (!empty($hasta)) {
+            $sql .= ' AND t.fecha >= ' . $this->var2str($hasta);
         }
-        $sql .= " ORDER BY t.fecha ASC, t.hora ASC;";
+        $sql .= ' ORDER BY t.fecha ASC, t.hora ASC;';
 
-        $data = self::$dataBase->select($sql);
-        if ($data) {
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
             foreach ($data as $d) {
-                $list[] = new \linea_transferencia_stock($d);
+                $list[] = new LineaTransferenciaStock($d);
             }
         }
 
         return $list;
     }
 
+    /**
+     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará tras la creación de la tabla. útil para insertar valores
+     * por defecto.
+     * @return string
+     */
+    private function install()
+    {
+        /// forzamos la comprobación de la tabla de transferencias de stock
+        //new TransferenciaStock();
+
+        return '';
+    }
 }

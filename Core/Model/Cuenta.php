@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of facturacion_base
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
@@ -13,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -26,7 +25,7 @@ use FacturaScripts\Core\Base\Model;
  * Elemento de tercer nivel del plan contable.
  * Está relacionada con un único ejercicio y epígrafe,
  * pero puede estar relacionada con muchas subcuentas.
- * 
+ *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class Cuenta
@@ -35,267 +34,317 @@ class Cuenta
 
     /**
      * Clave primaria.
-     * @var type 
+     * @var int
      */
     public $idcuenta;
+    /**
+     * TODO
+     * @var string
+     */
     public $codcuenta;
 
     /**
      * Código del ejercicio de esta cuenta.
-     * @var type 
+     * @var string
      */
     public $codejercicio;
+    /**
+     *
+     * @var int
+     */
     public $idepigrafe;
+    /**
+     * TODO
+     * @var string
+     */
     public $codepigrafe;
+    /**
+     * TODO
+     * @var string
+     */
     public $descripcion;
+    /**
+     * TODO
+     * @var int
+     */
     public $idcuentaesp;
 
-    public function __construct(array $data = []) 
-	{
+    /**
+     * Cuenta constructor.
+     *
+     * @param array $data
+     */
+    public function __construct($data = [])
+    {
         $this->init(__CLASS__, 'co_cuentas', 'idcuenta');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
+        if (is_null($data) || empty($data)) {
             $this->clear();
+        } else {
+            $this->loadFromData($data);
         }
     }
 
+    /**
+     * Resetea los valores de todas las propiedades modelo.
+     */
     public function clear()
     {
-        $this->idcuenta = NULL;
-        $this->codcuenta = NULL;
-        $this->codejercicio = NULL;
-        $this->idepigrafe = NULL;
-        $this->codepigrafe = NULL;
+        $this->idcuenta = null;
+        $this->codcuenta = null;
+        $this->codejercicio = null;
+        $this->idepigrafe = null;
+        $this->codepigrafe = null;
         $this->descripcion = '';
-        $this->idcuentaesp = NULL;
+        $this->idcuentaesp = null;
     }
 
-    protected function install() {
-        /// forzamos la creación de la tabla epigrafes
-        //$epi = new \epigrafe();
-
-        return '';
+    /**
+     * Devuelve la url donde ver/modificar estos datos
+     * @return string
+     */
+    public function url()
+    {
+        if ($this->idcuenta === null) {
+            return 'index.php?page=ContabilidadCuentas';
+        }
+        return 'index.php?page=ContabilidadCuenta&id=' . $this->idcuenta;
     }
 
-    public function url() {
-        if (is_null($this->idcuenta)) {
-            return 'index.php?page=contabilidad_cuentas';
-        } else
-            return 'index.php?page=contabilidad_cuenta&id=' . $this->idcuenta;
+    /**
+     * TODO
+     * @return array
+     */
+    public function getSubcuentas()
+    {
+        $subcuenta = new Subcuenta();
+        return $subcuenta->allFromCuenta($this->idcuenta);
     }
 
-    public function get_subcuentas() {
-        $subcuenta = new \subcuenta();
-        return $subcuenta->all_from_cuenta($this->idcuenta);
-    }
-
-    public function get_ejercicio() {
-        $eje = new \ejercicio();
+    /**
+     * TODO
+     * @return bool|mixed
+     */
+    public function getEjercicio()
+    {
+        $eje = new Ejercicio();
         return $eje->get($this->codejercicio);
     }
 
-    public function get($id) {
-        $cuenta = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idcuenta = " . $this->var2str($id) . ";");
-        if ($cuenta) {
-            return new \cuenta($cuenta[0]);
-        } else
-            return FALSE;
-    }
+    /**
+     * TODO
+     *
+     * @param string $cod
+     * @param string $codejercicio
+     *
+     * @return bool|Cuenta
+     */
+    public function getByCodigo($cod, $codejercicio)
+    {
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codcuenta = ' . $this->var2str($cod) .
+            ' AND codejercicio = ' . $this->var2str($codejercicio) . ';';
 
-    public function get_by_codigo($cod, $codejercicio) {
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE codcuenta = " . $this->var2str($cod) .
-                " AND codejercicio = " . $this->var2str($codejercicio) . ";";
-
-        $data = self::$dataBase->select($sql);
-        if ($data) {
-            return new \cuenta($data[0]);
-        } else
-            return FALSE;
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
+            return new Cuenta($data[0]);
+        }
+        return false;
     }
 
     /**
      * Obtiene la primera cuenta especial seleccionada.
-     * @param type $id
-     * @param type $codejercicio
-     * @return boolean|\cuenta
+     *
+     * @param int $idcuesp
+     * @param string $codejercicio
+     *
+     * @return bool|Cuenta
      */
-    public function get_cuentaesp($id, $codejercicio) {
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE idcuentaesp = " . $this->var2str($id) .
-                " AND codejercicio = " . $this->var2str($codejercicio) . " ORDER BY codcuenta ASC;";
+    public function getCuentaesp($idcuesp, $codejercicio)
+    {
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idcuentaesp = ' . $this->var2str($idcuesp) .
+            ' AND codejercicio = ' . $this->var2str($codejercicio) . ' ORDER BY codcuenta ASC;';
 
-        $data = self::$dataBase->select($sql);
-        if ($data) {
-            return new \cuenta($data[0]);
-        } else
-            return FALSE;
-    }
-
-    public function exists() {
-        if (is_null($this->idcuenta)) {
-            return FALSE;
-        } else
-            return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idcuenta = " . $this->var2str($this->idcuenta) . ";");
-    }
-
-    public function test() {
-        $this->descripcion = $this->no_html($this->descripcion);
-
-        if (strlen($this->codcuenta) > 0 AND strlen($this->descripcion) > 0) {
-            return TRUE;
-        } else {
-            $this->new_error_msg('Faltan datos en la cuenta');
-            return FALSE;
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
+            return new Cuenta($data[0]);
         }
+        return false;
     }
 
-    public function save() {
-        if ($this->test()) {
-            if ($this->exists()) {
-                $sql = "UPDATE " . $this->table_name . " SET codcuenta = " . $this->var2str($this->codcuenta) .
-                        ", codejercicio = " . $this->var2str($this->codejercicio) .
-                        ", idepigrafe = " . $this->var2str($this->idepigrafe) .
-                        ", codepigrafe = " . $this->var2str($this->codepigrafe) .
-                        ", descripcion = " . $this->var2str($this->descripcion) .
-                        ", idcuentaesp = " . $this->var2str($this->idcuentaesp) .
-                        "  WHERE idcuenta = " . $this->var2str($this->idcuenta) . ";";
+    /**
+     * TODO
+     * @return bool
+     */
+    public function test()
+    {
+        $this->descripcion = static::noHtml($this->descripcion);
 
-                return self::$dataBase->exec($sql);
-            } else {
-                $sql = "INSERT INTO " . $this->table_name . " (codcuenta,codejercicio,idepigrafe,codepigrafe," .
-                        "descripcion,idcuentaesp) VALUES (" .
-                        $this->var2str($this->codcuenta) . "," .
-                        $this->var2str($this->codejercicio) . "," .
-                        $this->var2str($this->idepigrafe) . "," .
-                        $this->var2str($this->codepigrafe) . "," .
-                        $this->var2str($this->descripcion) . "," .
-                        $this->var2str($this->idcuentaesp) . ");";
-
-                if (self::$dataBase->exec($sql)) {
-                    $this->idcuenta = self::$dataBase->lastval();
-                    return TRUE;
-                } else
-                    return FALSE;
-            }
-        } else
-            return FALSE;
+        if (strlen($this->codcuenta) > 0 && strlen($this->descripcion) > 0) {
+            return true;
+        }
+        $this->miniLog->alert('Faltan datos en la cuenta');
+        return false;
     }
 
-    public function delete() {
-        return self::$dataBase->exec("DELETE FROM " . $this->table_name . " WHERE idcuenta = " . $this->var2str($this->idcuenta) . ";");
-    }
+    /**
+     * TODO
+     *
+     * @param int $idepi
+     *
+     * @return array
+     */
+    public function fullFromEpigrafe($idepi)
+    {
+        $cuenlist = [];
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idepigrafe = ' . $this->var2str($idepi)
+            . ' ORDER BY codcuenta ASC;';
 
-    public function all($offset = 0) {
-        $cuenlist = array();
-        $sql = "SELECT * FROM " . $this->table_name . " ORDER BY codejercicio DESC, codcuenta ASC";
-
-        $data = self::$dataBase->select_limit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
             foreach ($data as $c) {
-                $cuenlist[] = new \cuenta($c);
+                $cuenlist[] = new Cuenta($c);
             }
         }
 
         return $cuenlist;
     }
 
-    public function full_from_epigrafe($id) {
-        $cuenlist = array();
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE idepigrafe = " . $this->var2str($id)
-                . " ORDER BY codcuenta ASC;";
+    /**
+     * TODO
+     *
+     * @param string $codejercicio
+     * @param int $offset
+     *
+     * @return array
+     */
+    public function allFromEjercicio($codejercicio, $offset = 0)
+    {
+        $cuenlist = [];
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($codejercicio) .
+            ' ORDER BY codcuenta ASC';
 
-        $data = self::$dataBase->select($sql);
-        if ($data) {
+        $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
+        if (!empty($data)) {
             foreach ($data as $c) {
-                $cuenlist[] = new \cuenta($c);
+                $cuenlist[] = new Cuenta($c);
             }
         }
 
         return $cuenlist;
     }
 
-    public function all_from_ejercicio($codejercicio, $offset = 0) {
-        $cuenlist = array();
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE codejercicio = " . $this->var2str($codejercicio) .
-                " ORDER BY codcuenta ASC";
+    /**
+     * TODO
+     *
+     * @param string $codejercicio
+     *
+     * @return array
+     */
+    public function fullFromEjercicio($codejercicio)
+    {
+        $cuenlist = [];
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($codejercicio)
+            . ' ORDER BY codcuenta ASC;';
 
-        $data = self::$dataBase->select_limit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
             foreach ($data as $c) {
-                $cuenlist[] = new \cuenta($c);
+                $cuenlist[] = new Cuenta($c);
             }
         }
 
         return $cuenlist;
     }
 
-    public function full_from_ejercicio($codejercicio) {
-        $cuenlist = array();
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE codejercicio = " . $this->var2str($codejercicio)
-                . " ORDER BY codcuenta ASC;";
+    /**
+     * TODO
+     *
+     * @param int $idcuesp
+     * @param string $codejercicio
+     *
+     * @return array
+     */
+    public function allFromCuentaesp($idcuesp, $codejercicio)
+    {
+        $cuenlist = [];
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idcuentaesp = ' . $this->var2str($idcuesp)
+            . ' AND codejercicio = ' . $this->var2str($codejercicio) . ' ORDER BY codcuenta ASC;';
 
-        $data = self::$dataBase->select($sql);
-        if ($data) {
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
+            foreach ($data as $cue) {
+                $cuenlist[] = new Cuenta($cue);
+            }
+        }
+
+        return $cuenlist;
+    }
+
+    /**
+     * TODO
+     *
+     * @param string $query
+     * @param int $offset
+     *
+     * @return array
+     */
+    public function search($query, $offset = 0)
+    {
+        $cuenlist = [];
+        $query = mb_strtolower(static::noHtml($query), 'UTF8');
+        $sql = 'SELECT * FROM ' . $this->tableName() .
+            " WHERE codcuenta LIKE '" . $query . "%' OR lower(descripcion) LIKE '%" . $query . "%'" .
+            ' ORDER BY codejercicio DESC, codcuenta ASC';
+
+        $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
+        if (!empty($data)) {
             foreach ($data as $c) {
-                $cuenlist[] = new \cuenta($c);
+                $cuenlist[] = new Cuenta($c);
             }
         }
 
         return $cuenlist;
     }
 
-    public function all_from_cuentaesp($id, $codejercicio) {
-        $cuenlist = array();
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE idcuentaesp = " . $this->var2str($id)
-                . " AND codejercicio = " . $this->var2str($codejercicio) . " ORDER BY codcuenta ASC;";
-
-        $data = self::$dataBase->select($sql);
-        if ($data) {
-            foreach ($data as $d) {
-                $cuenlist[] = new \cuenta($d);
-            }
-        }
-
-        return $cuenlist;
-    }
-
-    public function search($query, $offset = 0) {
-        $cuenlist = array();
-        $query = mb_strtolower($this->no_html($query), 'UTF8');
-        $sql = "SELECT * FROM " . $this->table_name .
-                " WHERE codcuenta LIKE '" . $query . "%' OR lower(descripcion) LIKE '%" . $query . "%'" .
-                " ORDER BY codejercicio DESC, codcuenta ASC";
-
-        $data = self::$dataBase->select_limit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
-            foreach ($data as $c) {
-                $cuenlist[] = new \cuenta($c);
-            }
-        }
-
-        return $cuenlist;
-    }
-
-    public function new_subcuenta($suma_codigo) {
-        $ejercicio = new \ejercicio();
+    /**
+     * TODO
+     *
+     * @param int $sumaCodigo
+     *
+     * @return bool|Subcuenta
+     */
+    public function newSubcuenta($sumaCodigo)
+    {
+        $ejercicio = new Ejercicio();
         $eje0 = $ejercicio->get($this->codejercicio);
         if ($eje0) {
-            $codsubcuenta = floatval(sprintf('%-0' . $eje0->longsubcuenta . 's', $this->codcuenta)) + $suma_codigo;
-            $subcuenta = new \subcuenta();
-            $subc0 = $subcuenta->get_by_codigo($codsubcuenta, $this->codejercicio);
+            $codsubcuenta = (float)sprintf('%-0' . $eje0->longsubcuenta . 's', $this->codcuenta) + $sumaCodigo;
+            $subcuenta = new Subcuenta();
+            $subc0 = $subcuenta->getByCodigo($codsubcuenta, $this->codejercicio);
             if ($subc0) {
                 return $subc0;
-            } else {
-                $subc0 = new \subcuenta();
-                $subc0->codcuenta = $this->codcuenta;
-                $subc0->idcuenta = $this->idcuenta;
-                $subc0->codejercicio = $this->codejercicio;
-                $subc0->codsubcuenta = $codsubcuenta;
-
-                return $subc0;
             }
-        } else
-            return FALSE;
+            $subc0 = new Subcuenta();
+            $subc0->codcuenta = $this->codcuenta;
+            $subc0->idcuenta = $this->idcuenta;
+            $subc0->codejercicio = $this->codejercicio;
+            $subc0->codsubcuenta = $codsubcuenta;
+
+            return $subc0;
+        }
+        return false;
     }
 
+    /**
+     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará tras la creación de la tabla. útil para insertar valores
+     * por defecto.
+     * @return string
+     */
+    private function install()
+    {
+        /// forzamos la creación de la tabla epigrafes
+        //$epi = new Epigrafe();
+
+        return '';
+    }
 }

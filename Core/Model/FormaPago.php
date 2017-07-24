@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
@@ -75,15 +76,16 @@ class FormaPago
 
     /**
      * FormaPago constructor.
+     *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'formaspago', 'codpago');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
+        if (is_null($data) || empty($data)) {
             $this->clear();
+        } else {
+            $this->loadFromData($data);
         }
     }
 
@@ -102,26 +104,12 @@ class FormaPago
     }
 
     /**
-     * Crea la consulta necesaria para crear una nueva forma de pago en la base de datos.
-     * @return string
-     */
-    public function install()
-    {
-        return 'INSERT INTO ' . $this->tableName()
-            . ' (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)'
-            . " VALUES ('CONT','Al contado','Pagados',NULL,FALSE,'+0day')"
-            . ",('TRANS','Transferencia bancaria','Emitidos',NULL,FALSE,'+1month')"
-            . ",('TARJETA','Tarjeta de crédito','Pagados',NULL,FALSE,'+0day')"
-            . ",('PAYPAL','PayPal','Pagados',NULL,FALSE,'+0day');";
-    }
-
-    /**
-     * Devuelve la URL donde ver/modificar los datos
+     * Devuelve la url donde ver/modificar estos datos
      * @return string
      */
     public function url()
     {
-        return 'index.php?page=contabilidad_formas_pago';
+        return 'index.php?page=ContabilidadFormasPago';
     }
 
     /**
@@ -130,7 +118,7 @@ class FormaPago
      */
     public function isDefault()
     {
-        return ( $this->codpago === $this->defaultItems->codPago() );
+        return ($this->codpago === $this->defaultItems->codPago());
     }
 
     /**
@@ -154,32 +142,34 @@ class FormaPago
 
     /**
      * A partir de una fecha devuelve la nueva fecha de vencimiento en base a esta forma de pago.
-     * Si se proporciona $dias_de_pago se usarán para la nueva fecha.
-     * @param string $fecha_inicio
-     * @param string $dias_de_pago dias de pago específicos para el cliente (separados por comas).
+     * Si se proporciona $diasDePago se usarán para la nueva fecha.
+     *
+     * @param string $fechaInicio
+     * @param string $diasDePago dias de pago específicos para el cliente (separados por comas).
+     *
      * @return string
      */
-    public function calcularVencimiento($fecha_inicio, $dias_de_pago = '')
+    public function calcularVencimiento($fechaInicio, $diasDePago = '')
     {
-        $fecha = $this->calcularVencimiento2($fecha_inicio);
+        $fecha = $this->calcularVencimiento2($fechaInicio);
 
         /// validamos los días de pago
-        $array_dias = array();
-        foreach (str_getcsv($dias_de_pago) as $d) {
-            if ((int) $d >= 1 && (int) $d <= 31) {
-                $array_dias[] = (int) $d;
+        $arrayDias = [];
+        foreach (str_getcsv($diasDePago) as $d) {
+            if ((int)$d >= 1 && (int)$d <= 31) {
+                $arrayDias[] = (int)$d;
             }
         }
 
-        if ($array_dias !== null) {
-            foreach ($array_dias as $i => $dia_de_pago) {
+        if ($arrayDias !== null) {
+            foreach ($arrayDias as $i => $diaDePago) {
                 if ($i === 0) {
-                    $fecha = $this->calcularVencimiento2($fecha_inicio, $dia_de_pago);
+                    $fecha = $this->calcularVencimiento2($fechaInicio, $diaDePago);
                 } else {
                     /// si hay varios dias de pago, elegimos la fecha más cercana
-                    $fecha_temp = $this->calcularVencimiento2($fecha_inicio, $dia_de_pago);
-                    if (strtotime($fecha_temp) < strtotime($fecha)) {
-                        $fecha = $fecha_temp;
+                    $fechaTemp = $this->calcularVencimiento2($fechaInicio, $diaDePago);
+                    if (strtotime($fechaTemp) < strtotime($fecha)) {
+                        $fecha = $fechaTemp;
                     }
                 }
             }
@@ -189,33 +179,49 @@ class FormaPago
     }
 
     /**
-     * Función recursiva auxiliar para calcular_vencimiento()
-     * @param string $fecha_inicio
-     * @param string|integer $dia_de_pago
+     * Crea la consulta necesaria para crear una nueva forma de pago en la base de datos.
      * @return string
      */
-    private function calcularVencimiento2($fecha_inicio, $dia_de_pago = 0)
+    private function install()
     {
-        if ($dia_de_pago === 0) {
-            return date('d-m-Y', strtotime($fecha_inicio . ' ' . $this->vencimiento));
+        return 'INSERT INTO ' . $this->tableName()
+            . ' (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)'
+            . " VALUES ('CONT','Al contado','Pagados',NULL,FALSE,'+0day')"
+            . ",('TRANS','Transferencia bancaria','Emitidos',NULL,FALSE,'+1month')"
+            . ",('TARJETA','Tarjeta de crédito','Pagados',NULL,FALSE,'+0day')"
+            . ",('PAYPAL','PayPal','Pagados',NULL,FALSE,'+0day');";
+    }
+
+    /**
+     * Función recursiva auxiliar para calcularVencimiento()
+     *
+     * @param string $fechaInicio
+     * @param string|integer $diaDePago
+     *
+     * @return string
+     */
+    private function calcularVencimiento2($fechaInicio, $diaDePago = 0)
+    {
+        if ($diaDePago === 0) {
+            return date('d-m-Y', strtotime($fechaInicio . ' ' . $this->vencimiento));
         }
 
-        $fecha = date('d-m-Y', strtotime($fecha_inicio . ' ' . $this->vencimiento));
-        $tmp_dia = date('d', strtotime($fecha));
-        $tmp_mes = date('m', strtotime($fecha));
-        $tmp_anyo = date('Y', strtotime($fecha));
+        $fecha = date('d-m-Y', strtotime($fechaInicio . ' ' . $this->vencimiento));
+        $tmpDia = date('d', strtotime($fecha));
+        $tmpMes = date('m', strtotime($fecha));
+        $tmpAnyo = date('Y', strtotime($fecha));
 
-        if ($tmp_dia > $dia_de_pago) {
+        if ($tmpDia > $diaDePago) {
             /// calculamos el dia de cobro para el mes siguiente
             $fecha = date('d-m-Y', strtotime($fecha . ' +1 month'));
-            $tmp_mes = date('m', strtotime($fecha));
-            $tmp_anyo = date('Y', strtotime($fecha));
+            $tmpMes = date('m', strtotime($fecha));
+            $tmpAnyo = date('Y', strtotime($fecha));
         }
 
         /// ahora elegimos un dia, pero que quepa en el mes, no puede ser 31 de febrero
-        $tmp_dia = min(array($dia_de_pago, (int) date('t', strtotime($fecha))));
+        $tmpDia = min([$diaDePago, (int)date('t', strtotime($fecha))]);
 
         /// y por último generamos la fecha
-        return date('d-m-Y', strtotime($tmp_dia . '-' . $tmp_mes . '-' . $tmp_anyo));
+        return date('d-m-Y', strtotime($tmpDia . '-' . $tmpMes . '-' . $tmpAnyo));
     }
 }

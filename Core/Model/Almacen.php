@@ -16,19 +16,23 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\ContactInformation;
 use FacturaScripts\Core\Base\Model;
 
 /**
  * El almacén donde están físicamente los artículos.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class Almacen
 {
 
     use Model;
+    use ContactInformation;
 
     /**
      * Clave primaria. Varchar (4).
@@ -43,52 +47,10 @@ class Almacen
     public $nombre;
 
     /**
-     * Código que representa al páis donde está ubicado el almacen.
-     * @var string
-     */
-    public $codpais;
-
-    /**
-     * Nombre de la provincia donde está ubicado el almacen.
-     * @var string
-     */
-    public $provincia;
-
-    /**
-     * Nombre de la población donde está ubicado el almacen.
-     * @var string
-     */
-    public $poblacion;
-
-    /**
-     * Código postal donde está ubicado el almacen.
-     * @var string
-     */
-    public $codpostal;
-
-    /**
-     * Dirección donde está ubicado el almacen.
-     * @var string
-     */
-    public $direccion;
-
-    /**
      * Persona de contacto del almacen.
      * @var string
      */
     public $contacto;
-
-    /**
-     * Número de fax del almacen.
-     * @var string
-     */
-    public $fax;
-
-    /**
-     * Número de teléfono del almacen.
-     * @var string
-     */
-    public $telefono;
 
     /**
      * Todavía sin uso.
@@ -98,26 +60,17 @@ class Almacen
 
     /**
      * Almacen constructor.
+     *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'almacenes', 'codalmacen');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
+        if (is_null($data) || empty($data)) {
             $this->clear();
+        } else {
+            $this->loadFromData($data);
         }
-    }
-
-    /**
-     * Crea la consulta necesaria para crear un nuevo almacen en la base de datos.
-     * @return string
-     */
-    public function install()
-    {
-        return 'INSERT INTO ' . $this->tableName() . ' (codalmacen,nombre,poblacion,'
-            . "direccion,codpostal,telefono,fax,contacto) VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
     }
 
     /**
@@ -126,11 +79,12 @@ class Almacen
      */
     public function url()
     {
-        if ($this->codalmacen === null) {
-            return 'index.php?page=admin_almacenes';
+        $result = 'index.php?page=Almacen';
+        if ($this->codalmacen !== null) {
+            $result .= '_card&cod=' . $this->codalmacen;
         }
 
-        return 'index.php?page=admin_almacenes#' . $this->codalmacen;
+        return $result;
     }
 
     /**
@@ -139,7 +93,7 @@ class Almacen
      */
     public function isDefault()
     {
-        return ( $this->codalmacen === $this->defaultItems->codAlmacen() );
+        return ($this->codalmacen === $this->defaultItems->codAlmacen());
     }
 
     /**
@@ -169,5 +123,15 @@ class Almacen
         }
 
         return $status;
+    }
+
+    /**
+     * Crea la consulta necesaria para crear un nuevo almacen en la base de datos.
+     * @return string
+     */
+    private function install()
+    {
+        return 'INSERT INTO ' . $this->tableName() . ' (codalmacen,nombre,poblacion,'
+            . "direccion,codpostal,telefono,fax,contacto) VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
     }
 }
