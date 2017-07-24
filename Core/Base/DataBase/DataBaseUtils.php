@@ -37,7 +37,7 @@ class DataBaseUtils
     
     /**
      * Construye y prepara la clase para su uso
-     * @param DatabaseEngine $engine
+     * @param DataBaseEngine $engine
      */
     public function __construct($engine)
     {

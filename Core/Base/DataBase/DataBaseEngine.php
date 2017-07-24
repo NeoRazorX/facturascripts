@@ -24,7 +24,7 @@ namespace FacturaScripts\Core\Base\DataBase;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-interface DatabaseEngine
+interface DataBaseEngine
 {
     /**
      * Devuelve el enlace a la clase de Utilidades del engine
@@ -34,7 +34,7 @@ interface DatabaseEngine
 
     /**
      * Devuelve el enlace a la clase de SQL del engine
-     * @return DatabaseSQL
+     * @return DataBaseSQL
      */
     public function getSQL();    
     

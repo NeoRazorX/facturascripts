@@ -160,7 +160,7 @@ class ListController extends Controller
     protected function getParams()
     {
         $result = "";
-        if ($this->query) {
+        if (!empty($this->query)) {
             $result = "&query=" . $this->query;
         }
 
@@ -260,7 +260,7 @@ class ListController extends Controller
 
         // Establecemos el orderby seleccionado
         $orderKey = $this->request->get("order");
-        $this->selectedOrderBy = $orderKey ? $this->getSelectedOrder($orderKey) : array_keys($this->orderby)[0];
+        $this->selectedOrderBy = empty($orderKey) ? (string) array_keys($this->orderby)[0] : $this->getSelectedOrder($orderKey);
     }
 
     /**
@@ -295,9 +295,9 @@ class ListController extends Controller
     public function optionlist($field, $table, $where)
     {
         $result = [];
-        if ($this->database->tableExists($table)) {
-            if ($where != "") {
-                $sql .= " AND " . $where;
+        if ($this->dataBase->tableExists($table)) {
+            if (!empty($where)) {
+                $where = " AND " . $where;
             }
             
             $sql = "SELECT DISTINCT " . $field 
@@ -305,7 +305,7 @@ class ListController extends Controller
                 . " WHERE COALESCE(" . $field . ", '')" . " <> ''" . $where
                 . " ORDER BY 1 ASC;";
 
-            $data = $this->database->select($sql);
+            $data = $this->dataBase->select($sql);
             foreach ($data as $item) {
                 $value = $item[$field];
                 if ($value != "") {

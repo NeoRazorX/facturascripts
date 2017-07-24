@@ -27,7 +27,7 @@ use mysqli;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class Mysql implements DatabaseEngine
+class Mysql implements DataBaseEngine
 {
 
     /**
@@ -38,7 +38,7 @@ class Mysql implements DatabaseEngine
 
     /**
      * Enlace al conjunto de sentencias SQL de la base de datos conectada
-     * @var DatabaseSQL; 
+     * @var DataBaseSQL; 
      */
     private $utilsSQL;
 
@@ -423,7 +423,7 @@ class Mysql implements DatabaseEngine
     
     /**
      * Devuelve el enlace a la clase de SQL del engine
-     * @return DatabaseSQL
+     * @return DataBaseSQL
      */
     public function getSQL()
     {

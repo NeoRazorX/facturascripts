@@ -31,7 +31,7 @@ trait Model
      * Proporciona acceso directo a la base de datos.
      * @var DataBase
      */
-    protected $database;
+    protected $dataBase;
 
     /**
      * Permite conectar e interactuar con el sistema de caché.
@@ -97,7 +97,7 @@ trait Model
     private function init($modelName = '', $tableName = '', $primaryColumn = '')
     {
         $this->cache = new Cache();
-        $this->database = new DataBase();
+        $this->dataBase = new DataBase();
         $this->defaultItems = new DefaultItems();
         $this->i18n = new Translator();
         $this->miniLog = new MiniLog();
@@ -120,7 +120,7 @@ trait Model
         }
 
         if (self::$fields === null) {
-            self::$fields = ($this->database->tableExists($tableName) ? $this->database->getColumns($tableName) : []);
+            self::$fields = ($this->dataBase->tableExists($tableName) ? $this->dataBase->getColumns($tableName) : []);
         }
     }
 
@@ -222,7 +222,7 @@ trait Model
     {
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($cod) . ';';
-        return $this->database->select($sql);
+        return $this->dataBase->select($sql);
     }
 
     /**
@@ -277,7 +277,7 @@ trait Model
             }
         }
 
-        $data = $this->database->selectLimit($sql, 1);
+        $data = $this->dataBase->selectLimit($sql, 1);
         if ($data) {
             $class = $this->modelName();
             return new $class($data[0]);
@@ -298,7 +298,7 @@ trait Model
 
         $sql = 'SELECT 1 FROM ' . $this->tableName()
             . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
-        return (bool) $this->database->select($sql);
+        return (bool) $this->dataBase->select($sql);
     }
 
     /**
@@ -347,7 +347,7 @@ trait Model
         }
 
         $sql .= ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
-        return $this->database->exec($sql);
+        return $this->dataBase->exec($sql);
     }
 
     /**
@@ -367,9 +367,9 @@ trait Model
 
         $sql = 'INSERT INTO ' . $this->tableName()
             . ' (' . implode(',', $insertFields) . ') VALUES (' . implode(',', $insertValues) . ');';
-        if ($this->database->exec($sql)) {
+        if ($this->dataBase->exec($sql)) {
             if ($this->{$this->primaryColumn()} === null) {
-                $this->{$this->primaryColumn()} = $this->database->lastval();
+                $this->{$this->primaryColumn()} = $this->dataBase->lastval();
             }
 
             return true;
@@ -386,7 +386,7 @@ trait Model
     {
         $sql = 'DELETE FROM ' . $this->tableName()
             . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
-        return $this->database->exec($sql);
+        return $this->dataBase->exec($sql);
     }
 
     /**
@@ -415,7 +415,7 @@ trait Model
     public function count(array $where = [])
     {
         $sql = 'SELECT COUNT(1) AS total FROM ' . $this->tableName() . DataBase\DatabaseWhere::getSQLWhere($where);
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         return $data[0]['total'];
     }
     
@@ -432,7 +432,7 @@ trait Model
         $modelList = [];
         $sqlWhere = DataBase\DatabaseWhere::getSQLWhere($where);
         $sql = 'SELECT * FROM ' . $this->tableName() . $sqlWhere . $this->getOrderBy($order);
-        $data = $this->database->selectLimit($sql, $limit, $offset);
+        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if ($data) {
             $class = $this->modelName();
             foreach ($data as $d) {
@@ -450,7 +450,7 @@ trait Model
      */
     protected function escapeString($str)
     {
-        return $this->database->escapeString($str);
+        return $this->dataBase->escapeString($str);
     }
 
     /**
@@ -473,14 +473,14 @@ trait Model
         }
 
         if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4})$/i", $val)) {
-            return "'" . date($this->database->dateStyle(), strtotime($val)) . "'"; /// es una fecha
+            return "'" . date($this->dataBase->dateStyle(), strtotime($val)) . "'"; /// es una fecha
         }
 
         if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4}) ([\d]{1,2}):([\d]{1,2}):([\d]{1,2})$/i", $val)) {
-            return "'" . date($this->database->dateStyle() . ' H:i:s', strtotime($val)) . "'"; /// es una fecha+hora
+            return "'" . date($this->dataBase->dateStyle() . ' H:i:s', strtotime($val)) . "'"; /// es una fecha+hora
         }
 
-        return "'" . $this->database->escapeString($val) . "'";
+        return "'" . $this->dataBase->escapeString($val) . "'";
     }
 
     /**
@@ -529,8 +529,8 @@ trait Model
         $xmlCons = [];
 
         if ($this->getXmlTable($tableName, $xmlCols, $xmlCons)) {
-            if ($this->database->tableExists($tableName)) {
-                if (!$this->database->checkTableAux($tableName)) {
+            if ($this->dataBase->tableExists($tableName)) {
+                if (!$this->dataBase->checkTableAux($tableName)) {
                     $this->miniLog->critical('Error al convertir la tabla a InnoDB.');
                 }
 
@@ -538,29 +538,29 @@ trait Model
                  * Si hay que hacer cambios en las restricciones, eliminamos todas las restricciones,
                  * luego añadiremos las correctas. Lo hacemos así porque evita problemas en MySQL.
                  */
-                $dbCons = $this->database->getConstraints($tableName);
-                $sql2 = $this->database->compareConstraints($tableName, $xmlCons, $dbCons, true);
+                $dbCons = $this->dataBase->getConstraints($tableName);
+                $sql2 = $this->dataBase->compareConstraints($tableName, $xmlCons, $dbCons, true);
                 if ($sql2 !== '') {
-                    if (!$this->database->exec($sql2)) {
+                    if (!$this->dataBase->exec($sql2)) {
                         $this->miniLog->critical('Error al comprobar la tabla ' . $tableName);
                     }
 
                     /// leemos de nuevo las restricciones
-                    $dbCons = $this->database->getConstraints($tableName);
+                    $dbCons = $this->dataBase->getConstraints($tableName);
                 }
 
                 /// comparamos las columnas
-                $dbCols = $this->database->getColumns($tableName);
-                $sql .= $this->database->compareColumns($tableName, $xmlCols, $dbCols);
+                $dbCols = $this->dataBase->getColumns($tableName);
+                $sql .= $this->dataBase->compareColumns($tableName, $xmlCols, $dbCols);
 
                 /// comparamos las restricciones
-                $sql .= $this->database->compareConstraints($tableName, $xmlCons, $dbCons);
+                $sql .= $this->dataBase->compareConstraints($tableName, $xmlCons, $dbCons);
             } else {
                 /// generamos el sql para crear la tabla
-                $sql .= $this->database->generateTable($tableName, $xmlCols, $xmlCons);
+                $sql .= $this->dataBase->generateTable($tableName, $xmlCols, $xmlCons);
                 $sql .= $this->install();
             }
-            if ($sql !== '' && !$this->database->exec($sql)) {
+            if ($sql !== '' && !$this->dataBase->exec($sql)) {
                 $this->miniLog->critical('Error al comprobar la tabla ' . $tableName);
                 $done = false;
             }
@@ -638,9 +638,9 @@ trait Model
      */
     public function newCode()
     {
-        $field = $this->database->sql2Int($this->primaryColumn());
+        $field = $this->dataBase->sql2Int($this->primaryColumn());
         $sql = 'SELECT MAX(' . $field . ') as cod FROM ' . $this->tableName() . ';';
-        $cod = $this->database->select($sql);
+        $cod = $this->dataBase->select($sql);
         if (empty($cod)) {
             return 1;
         }
