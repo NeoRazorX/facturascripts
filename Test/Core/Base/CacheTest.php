@@ -35,8 +35,8 @@ class CacheTest extends \PHPUnit_Framework_TestCase {
     public function testGet() {
         // Remove the following lines when you implement this test.
         $this->object->set('TEST', 1234);
-        $a = $this->object->get('TEST');
-        $this->assertEquals(1234, $a);
+        $data = $this->object->get('TEST');
+        $this->assertEquals(1234, $data);
     }
 
 

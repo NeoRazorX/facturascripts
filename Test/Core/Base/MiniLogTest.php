@@ -37,12 +37,12 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase {
         $level = ['emergency'];
         $this->object->clear();
         $this->object->emergency('emergency');
-        $a = $this->object->read($level);
+        $data = $this->object->read($level);
         
-        $this->assertEquals(1, count($a));
-        $this->assertEquals($a[0]['level'], $level[0]);
-        $this->assertEquals($a[0]['message'], 'emergency');
-        $this->assertEmpty($a[0]['context']);
+        $this->assertEquals(1, count($data));
+        $this->assertEquals($data[0]['level'], $level[0]);
+        $this->assertEquals($data[0]['message'], 'emergency');
+        $this->assertEmpty($data[0]['context']);
     }
 
     /**
@@ -54,12 +54,12 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase {
         $level = ['alert'];
         $this->object->clear();
         $this->object->alert('alert');
-        $a = $this->object->read($level);
+        $data = $this->object->read($level);
         
-        $this->assertEquals(1, count($a));
-        $this->assertEquals($a[0]['level'], $level[0]);
-        $this->assertEquals($a[0]['message'], 'alert');
-        $this->assertEmpty($a[0]['context']);
+        $this->assertEquals(1, count($data));
+        $this->assertEquals($data[0]['level'], $level[0]);
+        $this->assertEquals($data[0]['message'], 'alert');
+        $this->assertEmpty($data[0]['context']);
     }
 
     /**
@@ -71,12 +71,12 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase {
         $level = ['critical'];
         $this->object->clear();
         $this->object->critical('critical');
-        $a = $this->object->read($level);
+        $data = $this->object->read($level);
         
-        $this->assertEquals(1, count($a));
-        $this->assertEquals($a[0]['level'], $level[0]);
-        $this->assertEquals($a[0]['message'], 'critical');
-        $this->assertEmpty($a[0]['context']);
+        $this->assertEquals(1, count($data));
+        $this->assertEquals($data[0]['level'], $level[0]);
+        $this->assertEquals($data[0]['message'], 'critical');
+        $this->assertEmpty($data[0]['context']);
     }
 
     /**
@@ -88,12 +88,12 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase {
         $level = ['error'];
         $this->object->clear();
         $this->object->error('error');
-        $a = $this->object->read($level);
+        $data = $this->object->read($level);
         
-        $this->assertEquals(1, count($a));
-        $this->assertEquals($a[0]['level'], $level[0]);
-        $this->assertEquals($a[0]['message'], 'error');
-        $this->assertEmpty($a[0]['context']);
+        $this->assertEquals(1, count($data));
+        $this->assertEquals($data[0]['level'], $level[0]);
+        $this->assertEquals($data[0]['message'], 'error');
+        $this->assertEmpty($data[0]['context']);
     }
 
     /**
@@ -105,12 +105,12 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase {
         $level = ['warning'];
         $this->object->clear();
         $this->object->warning('warning');
-        $a = $this->object->read($level);
+        $data = $this->object->read($level);
         
-        $this->assertEquals(1, count($a));
-        $this->assertEquals($a[0]['level'], $level[0]);
-        $this->assertEquals($a[0]['message'], 'warning');
-        $this->assertEmpty($a[0]['context']);
+        $this->assertEquals(1, count($data));
+        $this->assertEquals($data[0]['level'], $level[0]);
+        $this->assertEquals($data[0]['message'], 'warning');
+        $this->assertEmpty($data[0]['context']);
     }
 
     /**
@@ -122,12 +122,12 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase {
         $level = ['notice'];
         $this->object->clear();
         $this->object->notice('notice');
-        $a = $this->object->read($level);
+        $data = $this->object->read($level);
         
-        $this->assertEquals(1, count($a));
-        $this->assertEquals($a[0]['level'], $level[0]);
-        $this->assertEquals($a[0]['message'], 'notice');
-        $this->assertEmpty($a[0]['context']);
+        $this->assertEquals(1, count($data));
+        $this->assertEquals($data[0]['level'], $level[0]);
+        $this->assertEquals($data[0]['message'], 'notice');
+        $this->assertEmpty($data[0]['context']);
     }
 
     /**
@@ -139,12 +139,12 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase {
         $level = ['info'];
         $this->object->clear();
         $this->object->info('info');
-        $a = $this->object->read($level);
+        $data = $this->object->read($level);
         
-        $this->assertEquals(1, count($a));
-        $this->assertEquals($a[0]['level'], $level[0]);
-        $this->assertEquals($a[0]['message'], 'info');
-        $this->assertEmpty($a[0]['context']);
+        $this->assertEquals(1, count($data));
+        $this->assertEquals($data[0]['level'], $level[0]);
+        $this->assertEquals($data[0]['message'], 'info');
+        $this->assertEmpty($data[0]['context']);
     }
 
     /**
@@ -156,12 +156,12 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase {
         $level = ['debug'];
         $this->object->clear();
         $this->object->debug('debug');
-        $a = $this->object->read($level);
+        $data = $this->object->read($level);
         
-        $this->assertEquals(1, count($a));
-        $this->assertEquals($a[0]['level'], $level[0]);
-        $this->assertEquals($a[0]['message'], 'debug');
-        $this->assertEmpty($a[0]['context']);
+        $this->assertEquals(1, count($data));
+        $this->assertEquals($data[0]['level'], $level[0]);
+        $this->assertEquals($data[0]['message'], 'debug');
+        $this->assertEmpty($data[0]['context']);
     }
 
     /**
@@ -173,12 +173,12 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase {
         $level = ['sql'];
         $this->object->clear();
         $this->object->sql('sql');
-        $a = $this->object->read($level);
+        $data = $this->object->read($level);
         
-        $this->assertEquals(1, count($a));
-        $this->assertEquals($a[0]['level'], $level[0]);
-        $this->assertEquals($a[0]['message'], 'sql');
-        $this->assertEmpty($a[0]['context']);
+        $this->assertEquals(1, count($data));
+        $this->assertEquals($data[0]['level'], $level[0]);
+        $this->assertEquals($data[0]['message'], 'sql');
+        $this->assertEmpty($data[0]['context']);
 
         
     }

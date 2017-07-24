@@ -35,8 +35,8 @@ class DefaultItemsTest extends \PHPUnit_Framework_TestCase {
     public function testCodEjercicio() {
         // Remove the following lines when you implement this test.
         $this->object->setCodEjercicio(1);
-        $a = $this->object->codEjercicio();
-        $this->assertEquals(1, $a);
+        $data = $this->object->codEjercicio();
+        $this->assertEquals(1, $data);
     }
 
 
@@ -47,8 +47,8 @@ class DefaultItemsTest extends \PHPUnit_Framework_TestCase {
     public function testCodAlmacen() {
         // Remove the following lines when you implement this test.
         $this->object->setCodAlmacen(1);
-        $a = $this->object->codAlmacen();
-        $this->assertEquals(1, $a);
+        $data = $this->object->codAlmacen();
+        $this->assertEquals(1, $data);
     }
 
 
@@ -59,8 +59,8 @@ class DefaultItemsTest extends \PHPUnit_Framework_TestCase {
     public function testCodDivisa() {
         // Remove the following lines when you implement this test.
         $this->object->setCodDivisa(1);
-        $a = $this->object->codDivisa();
-        $this->assertEquals(1, $a);
+        $data = $this->object->codDivisa();
+        $this->assertEquals(1, $data);
     }
 
 
@@ -71,8 +71,8 @@ class DefaultItemsTest extends \PHPUnit_Framework_TestCase {
     public function testCodPago() {
         // Remove the following lines when you implement this test.
         $this->object->setCodPago(1);
-        $a = $this->object->codPago();
-        $this->assertEquals(1, $a);
+        $data = $this->object->codPago();
+        $this->assertEquals(1, $data);
     }
 
 
@@ -83,8 +83,8 @@ class DefaultItemsTest extends \PHPUnit_Framework_TestCase {
     public function testCodImpuesto() {
         // Remove the following lines when you implement this test.
         $this->object->setCodImpuesto(1);
-        $a = $this->object->codImpuesto();
-        $this->assertEquals(1, $a);
+        $data = $this->object->codImpuesto();
+        $this->assertEquals(1, $data);
     }
 
 
@@ -95,8 +95,8 @@ class DefaultItemsTest extends \PHPUnit_Framework_TestCase {
     public function testCodPais() {
         // Remove the following lines when you implement this test.
         $this->object->setCodPais(1);
-        $a = $this->object->codPais();
-        $this->assertEquals(1, $a);
+        $data = $this->object->codPais();
+        $this->assertEquals(1, $data);
     }
 
 
@@ -107,8 +107,8 @@ class DefaultItemsTest extends \PHPUnit_Framework_TestCase {
     public function testCodSerie() {
         // Remove the following lines when you implement this test.
         $this->object->setCodSerie(1);
-        $a = $this->object->codSerie();
-        $this->assertEquals(1, $a);
+        $data = $this->object->codSerie();
+        $this->assertEquals(1, $data);
     }
 
 
@@ -120,8 +120,8 @@ class DefaultItemsTest extends \PHPUnit_Framework_TestCase {
     public function testDefaultPage() {
         // Remove the following lines when you implement this test.
         $this->object->setDefaultPage('principal');
-        $a = $this->object->defaultPage();
-        $this->assertEquals('principal', $a);
+        $data = $this->object->defaultPage();
+        $this->assertEquals('principal', $data);
     }
 
 
@@ -133,8 +133,8 @@ class DefaultItemsTest extends \PHPUnit_Framework_TestCase {
     public function testShowingPage() {
         // Remove the following lines when you implement this test.
         $this->object->setShowingPage('default');
-        $a = $this->object->showingPage();
-        $this->assertEquals('default', $a);
+        $data = $this->object->showingPage();
+        $this->assertEquals('default', $data);
     }
 
 

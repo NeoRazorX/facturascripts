@@ -40,9 +40,8 @@ class IPFilterTest extends \PHPUnit_Framework_TestCase {
         $this->object->setAttempt('192.168.1.1');
         $this->object->setAttempt('192.168.1.1');
         $this->object->setAttempt('192.168.1.1');
-        $file = fopen('' . '/Cache/ip.list', 'rb');
-        $line = explode(';', trim(fgets($file)));
-        $this->assertNotEmpty($line);
+        $file = file_get_contents('' . '/Cache/ip.list', 'rb');
+        $this->assertNotEmpty($file);
     }
 
     /**
