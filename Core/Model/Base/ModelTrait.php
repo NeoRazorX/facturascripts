@@ -45,47 +45,24 @@ trait ModelTrait
      * @var string
      */
     private static $modelName;
+
     /**
      * Nombre de la columna que es clave primaria.
      * @var string
      */
     private static $primaryColumn;
+
     /**
      * Nombre de la tabla en la base de datos.
      * @var string
      */
     private static $tableName;
+
     /**
      * Lista de tablas ya comprobadas.
      * @var array|null
      */
     private static $checkedTables;
-    /**
-     * Proporciona acceso directo a la base de datos.
-     * @var DataBase
-     */
-    protected $dataBase;
-    /**
-     * Permite conectar e interactuar con el sistema de caché.
-     * @var Cache
-     */
-    protected $cache;
-    /**
-     * Clase que se utiliza para definir algunos valores por defecto:
-     * codejercicio, codserie, coddivisa, etc...
-     * @var DefaultItems
-     */
-    protected $defaultItems;
-    /**
-     * Traductor multi-idioma.
-     * @var Translator
-     */
-    protected $i18n;
-    /**
-     * Gestiona el log de todos los controladores, modelos y base de datos.
-     * @var MiniLog
-     */
-    protected $miniLog;
 
     /**
      * Proporciona acceso directo a la base de datos.
@@ -125,7 +102,7 @@ trait ModelTrait
      * @param string $tableName nombre de la tabla de la base de datos.
      * @param string $primaryColumn
      */
-    public static function noHtml($txt)
+    private function init($modelName = '', $tableName = '', $primaryColumn = '')
     {
         $this->cache = new Cache();
         $this->dataBase = new DataBase();
@@ -243,12 +220,12 @@ trait ModelTrait
 
                         case 'integer':
                         case 'int':
-                            $this->{$key} = (int)$value;
+                            $this->{$key} = (int) $value;
                             break;
 
                         case 'double':
                         case 'float':
-                            $this->{$key} = (float)$value;
+                            $this->{$key} = (float) $value;
                             break;
 
                         case 'date':
@@ -609,8 +586,8 @@ trait ModelTrait
                 if ($xml->columna) {
                     $key = 0;
                     foreach ($xml->columna as $col) {
-                        $columns[$key]['nombre'] = (string)$col->nombre;
-                        $columns[$key]['tipo'] = (string)$col->tipo;
+                        $columns[$key]['nombre'] = (string) $col->nombre;
+                        $columns[$key]['tipo'] = (string) $col->tipo;
 
                         $columns[$key]['nulo'] = 'YES';
                         if ($col->nulo && strtolower($col->nulo) === 'no') {
@@ -620,7 +597,7 @@ trait ModelTrait
                         if ($col->defecto === '') {
                             $columns[$key]['defecto'] = null;
                         } else {
-                            $columns[$key]['defecto'] = (string)$col->defecto;
+                            $columns[$key]['defecto'] = (string) $col->defecto;
                         }
 
                         $key++;
@@ -633,8 +610,8 @@ trait ModelTrait
                 if ($xml->restriccion) {
                     $key = 0;
                     foreach ($xml->restriccion as $col) {
-                        $constraints[$key]['nombre'] = (string)$col->nombre;
-                        $constraints[$key]['consulta'] = (string)$col->consulta;
+                        $constraints[$key]['nombre'] = (string) $col->nombre;
+                        $constraints[$key]['consulta'] = (string) $col->consulta;
                         $key++;
                     }
                 }
