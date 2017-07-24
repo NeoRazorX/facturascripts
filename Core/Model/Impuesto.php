@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Un impuesto (IVA) que puede estar asociado a artículos, líneas de albaranes,
  * facturas, etc.
@@ -29,7 +27,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class Impuesto
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria. varchar(10).
@@ -123,7 +121,7 @@ class Impuesto
     public function getByIva($iva)
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE iva = ' . $this->var2str((float)$iva) . ';';
-        $impuesto = $this->database->select($sql);
+        $impuesto = $this->dataBase->select($sql);
         if (!empty($impuesto)) {
             return new Impuesto($impuesto[0]);
         }
@@ -163,7 +161,7 @@ class Impuesto
         if (!$impuestolist) {
             /// si no encontramos la lista en caché, leemos de la base de datos
             $sql = 'SELECT * FROM ' . $this->tableName() . ' ORDER BY iva DESC;';
-            $data = $this->database->select($sql);
+            $data = $this->dataBase->select($sql);
             if (!empty($data)) {
                 foreach ($data as $i) {
                     $impuestolist[] = new Impuesto($i);

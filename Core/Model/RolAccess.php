@@ -20,8 +20,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Define los permisos individuales para cada página dentro de un rol de usuarios.
  *
@@ -31,7 +29,7 @@ use FacturaScripts\Core\Base\Model;
 class RolAccess
 {
 
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * TODO

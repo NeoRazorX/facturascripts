@@ -16,10 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
-
-use FacturaScripts\Core\Base\Model;
 
 /**
  * Este modelo representa el par atributo => valor de la combinación de un artículo con atributos.
@@ -38,7 +35,8 @@ use FacturaScripts\Core\Base\Model;
  */
 class ArticuloCombinacion
 {
-    use Model {
+
+    use Base\ModelTrait {
         saveInsert as private saveInsertTrait;
     }
 
@@ -154,7 +152,7 @@ class ArticuloCombinacion
     public function getByCodigo($cod)
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codigo = ' . $this->var2str($cod) . ';';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return new ArticuloCombinacion($data[0]);
         }
@@ -171,7 +169,7 @@ class ArticuloCombinacion
     public function deleteFromRef($ref)
     {
         $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref) . ';';
-        return $this->database->exec($sql);
+        return $this->dataBase->exec($sql);
     }
 
     /**
@@ -187,7 +185,7 @@ class ArticuloCombinacion
 
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref)
             . ' ORDER BY codigo ASC, nombreatributo ASC;';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $lista[] = new ArticuloCombinacion($d);
@@ -211,7 +209,7 @@ class ArticuloCombinacion
 
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codigo = ' . $this->var2str($cod)
             . ' ORDER BY nombreatributo ASC;';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $lista[] = new ArticuloCombinacion($d);
@@ -235,7 +233,7 @@ class ArticuloCombinacion
 
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codigo2 = ' . $this->var2str($cod)
             . ' ORDER BY nombreatributo ASC;';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $lista[] = new ArticuloCombinacion($d);
@@ -258,7 +256,7 @@ class ArticuloCombinacion
 
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref)
             . ' ORDER BY codigo ASC, nombreatributo ASC;';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 if (isset($lista[$d['codigo']])) {
@@ -288,7 +286,7 @@ class ArticuloCombinacion
         $sql = 'SELECT * FROM ' . $this->tableName() . " WHERE referencia LIKE '" . $query . "%'"
             . ' OR codbarras = ' . $this->var2str($query);
 
-        $data = $this->database->selectLimit($sql, 200);
+        $data = $this->dataBase->selectLimit($sql, 200);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $artilist[] = new ArticuloCombinacion($d);
@@ -331,10 +329,10 @@ class ArticuloCombinacion
      */
     private function getNewCodigo()
     {
-        $sql = 'SELECT MAX(' . $this->database->sql2Int('codigo') . ') as cod FROM ' . $this->tableName() . ';';
-        $cod = $this->database->select($sql);
+        $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codigo') . ') as cod FROM ' . $this->tableName() . ';';
+        $cod = $this->dataBase->select($sql);
         if (!empty($cod)) {
-            return 1 + (int)$cod[0]['cod'];
+            return 1 + (int) $cod[0]['cod'];
         }
         return 1;
     }

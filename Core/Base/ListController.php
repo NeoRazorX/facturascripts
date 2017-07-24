@@ -123,15 +123,15 @@ class ListController extends Controller
                 switch ($value['type']) {
                     case 'datepicker':
                     case 'select':
-                        $field = $value['options']['field'];
-                        $result[] = new DataBase\DatabaseWhere($field, $value['value']);
-                        break;
+                            $field = $value['options']['field'];
+                            $result[] = new DataBase\DataBaseWhere($field, $value['value']);
+                            break;
 
                     case 'checkbox':
-                        $field = $value['options']['field'];
-                        $value = !$value['options']['inverse'];
-                        $result[] = new DataBase\DatabaseWhere($field, $value);
-                        break;
+                            $field = $value['options']['field'];
+                            $value = $value['options']['inverse'] ? !$value['value'] : $value['value'];
+                            $result[] = new DataBase\DataBaseWhere($field, $value);
+                            break;
                 }
             }
         }
@@ -275,7 +275,7 @@ class ListController extends Controller
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->setTemplate('ListController');
+        $this->setTemplate("Master/ListController");
 
         $offset = $this->request->get('offset');
         $this->offset = $offset ? $offset : 0;
@@ -296,14 +296,18 @@ class ListController extends Controller
     {
         $result = [];
         if ($this->dataBase->tableExists($table)) {
-            if (!empty($where)) {
-                $where = " AND " . $where;
+            $sql = "SELECT DISTINCT " . $field . " FROM " . $table . " WHERE COALESCE(" . $field . ", '')" . " <> ''";
+
+            if ($where != "") {
+                $sql .= " AND " . $where;
             }
             
             $sql = "SELECT DISTINCT " . $field 
                 . " FROM " . $table 
                 . " WHERE COALESCE(" . $field . ", '')" . " <> ''" . $where
                 . " ORDER BY 1 ASC;";
+
+            $sql .= " ORDER BY 1 ASC;";
 
             $data = $this->dataBase->select($sql);
             foreach ($data as $item) {

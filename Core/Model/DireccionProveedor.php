@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Una dirección de un proveedor. Puede tener varias.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class DireccionProveedor
 {
-    use Model {
+    use Base\ModelTrait {
         save as private saveTrait;
     }
 
@@ -166,7 +164,7 @@ class DireccionProveedor
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codproveedor = ' . $this->var2str($codprov)
             . ' ORDER BY id DESC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $dirlist[] = new DireccionProveedor($d);
@@ -183,7 +181,7 @@ class DireccionProveedor
     {
         $sql = 'DELETE FROM ' . $this->tableName()
             . ' WHERE codproveedor NOT IN (SELECT codproveedor FROM proveedores);';
-        $this->database->exec($sql);
+        $this->dataBase->exec($sql);
     }
 
     /**
@@ -207,7 +205,7 @@ class DireccionProveedor
             . ', fecha = ' . $this->var2str($this->fecha)
             . '  WHERE id = ' . $this->var2str($this->id) . ';';
 
-        return $this->database->exec($sql);
+        return $this->dataBase->exec($sql);
     }
 
     /**
@@ -231,8 +229,8 @@ class DireccionProveedor
             . ',' . $this->var2str($this->descripcion)
             . ',' . $this->var2str($this->fecha) . ');';
 
-        if ($this->database->exec($sql)) {
-            $this->id = $this->database->lastval();
+        if ($this->dataBase->exec($sql)) {
+            $this->id = $this->dataBase->lastval();
             return true;
         }
         return false;

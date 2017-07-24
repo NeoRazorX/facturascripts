@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Primer nivel del plan contable.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class GrupoEpigrafes
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria
@@ -101,7 +99,7 @@ class GrupoEpigrafes
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codgrupo = ' . $this->var2str($cod)
             . ' AND codejercicio = ' . $this->var2str($codejercicio) . ';';
 
-        $grupo = $this->database->select($sql);
+        $grupo = $this->dataBase->select($sql);
         if (!empty($grupo)) {
             return new GrupoEpigrafes($grupo[0]);
         }
@@ -136,7 +134,7 @@ class GrupoEpigrafes
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($codejercicio)
             . ' ORDER BY codgrupo ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $ep) {
                 $epilist[] = new GrupoEpigrafes($ep);

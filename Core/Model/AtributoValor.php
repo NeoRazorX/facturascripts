@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Un Valor para un atributo de artículos.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class AtributoValor
 {
-    use Model {
+    use Base\ModelTrait {
         save as private saveTrait;
         saveInsert as private saveInsertTrait;
     }
@@ -83,7 +81,7 @@ class AtributoValor
         $nombre = '';
 
         $sql = 'SELECT * FROM atributos WHERE codatributo = ' . $this->var2str($this->codatributo) . ';';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             $nombre = $data[0]['nombre'];
         }
@@ -115,7 +113,7 @@ class AtributoValor
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codatributo = ' . $this->var2str($cod)
             . ' ORDER BY valor ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $lista[] = new AtributoValor($d);
@@ -134,7 +132,7 @@ class AtributoValor
         $sql = 'UPDATE atributos_valores SET valor = ' . $this->var2str($this->valor)
             . ', codatributo = ' . $this->var2str($this->codatributo)
             . '  WHERE id = ' . $this->var2str($this->id) . ';';
-        return $this->database->exec($sql);
+        return $this->dataBase->exec($sql);
     }
 
     /**
@@ -147,7 +145,7 @@ class AtributoValor
             $this->id = 1;
 
             $sql = 'SELECT MAX(id) AS max FROM ' . $this->tableName() . ';';
-            $data = $this->database->select($sql);
+            $data = $this->dataBase->select($sql);
             if (!empty($data)) {
                 $this->id = 1 + (int)$data[0]['max'];
             }

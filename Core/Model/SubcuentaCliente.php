@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Relaciona a un cliente con una subcuenta para cada ejercicio.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class SubcuentaCliente
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria
@@ -96,7 +94,7 @@ class SubcuentaCliente
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codcliente = ' . $this->var2str($cli)
             . ' AND idsubcuenta = ' . $this->var2str($idsc) . ';';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return new SubcuentaCliente($data[0]);
         }
@@ -113,7 +111,7 @@ class SubcuentaCliente
     public function get2($idsubc)
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE id = ' . $this->var2str($idsubc) . ';';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return new SubcuentaCliente($data[0]);
         }
@@ -133,7 +131,7 @@ class SubcuentaCliente
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codcliente = ' . $this->var2str($cod)
             . ' ORDER BY codejercicio DESC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $s) {
                 $sublist[] = new SubcuentaCliente($s);
@@ -149,6 +147,6 @@ class SubcuentaCliente
     public function fixDb()
     {
         $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE codcliente NOT IN (SELECT codcliente FROM clientes);';
-        $this->database->exec($sql);
+        $this->dataBase->exec($sql);
     }
 }

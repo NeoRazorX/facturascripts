@@ -19,9 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\ContactInformation;
-use FacturaScripts\Core\Base\Model;
-
 /**
  * El almacén donde están físicamente los artículos.
  *
@@ -31,8 +28,8 @@ use FacturaScripts\Core\Base\Model;
 class Almacen
 {
 
-    use Model;
-    use ContactInformation;
+    use Base\ModelTrait;
+    use Base\ContactInformation;
 
     /**
      * Clave primaria. Varchar (4).

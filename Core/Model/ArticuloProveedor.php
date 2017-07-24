@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Artículo vendido por un proveedor.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class ArticuloProveedor
 {
-    use Model {
+    use Base\ModelTrait {
         save as private saveTrait;
     }
 
@@ -152,7 +150,7 @@ class ArticuloProveedor
             return self::$nombres[$this->codproveedor];
         }
         $sql = 'SELECT razonsocial FROM proveedores WHERE codproveedor = ' . $this->var2str($this->codproveedor) . ';';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             self::$nombres[$this->codproveedor] = $data[0]['razonsocial'];
             return $data[0]['razonsocial'];
@@ -253,7 +251,7 @@ class ArticuloProveedor
                 . ' OR referencia = ' . $this->var2str($ref) . ');';
         }
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return new ArticuloProveedor($data[0]);
         }
@@ -290,7 +288,7 @@ class ArticuloProveedor
         $alist = [];
         $sql = 'SELECT * FROM articulosprov WHERE referencia = ' . $this->var2str($ref) . ' ORDER BY precio ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $alist[] = new ArticuloProveedor($d);
@@ -312,7 +310,7 @@ class ArticuloProveedor
         $sql = 'SELECT * FROM articulosprov WHERE referencia = ' . $this->var2str($ref)
             . ' ORDER BY precio ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return new ArticuloProveedor($data[0]);
         }
@@ -331,7 +329,7 @@ class ArticuloProveedor
         $alist = [];
         $sql = "SELECT * FROM articulosprov WHERE referencia !='' ORDER BY precio ASC;";
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $alist[] = new ArticuloProveedor($d);
@@ -351,7 +349,7 @@ class ArticuloProveedor
             'UPDATE articulosprov SET refproveedor = referencia WHERE refproveedor IS NULL;'
         ];
         foreach ($fixes as $sql) {
-            $this->database->exec($sql);
+            $this->dataBase->exec($sql);
         }
     }
 }

@@ -20,8 +20,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Esta clase sirve para guardar la información de trazabilidad del artículo.
  * Números de serie, de lote y albaranes y facturas relacionadas.
@@ -31,7 +29,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class ArticuloTraza
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria
@@ -162,7 +160,7 @@ class ArticuloTraza
     public function getByNumserie($numserie)
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE numserie = ' . $this->var2str($numserie) . ';';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return new ArticuloTraza($data[0]);
         }
@@ -187,7 +185,7 @@ class ArticuloTraza
         }
         $sql .= ' ORDER BY id ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $lista[] = new ArticuloTraza($d);
@@ -211,7 +209,7 @@ class ArticuloTraza
 
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE ' . $tipo . ' = ' . $this->var2str($idlinea) . ' ORDER BY id DESC;';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $lista[] = new ArticuloTraza($d);

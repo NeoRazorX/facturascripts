@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Elemento de tercer nivel del plan contable.
  * Está relacionada con un único ejercicio y epígrafe,
@@ -30,7 +28,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class Cuenta
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria.
@@ -143,7 +141,7 @@ class Cuenta
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codcuenta = ' . $this->var2str($cod) .
             ' AND codejercicio = ' . $this->var2str($codejercicio) . ';';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return new Cuenta($data[0]);
         }
@@ -163,7 +161,7 @@ class Cuenta
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idcuentaesp = ' . $this->var2str($idcuesp) .
             ' AND codejercicio = ' . $this->var2str($codejercicio) . ' ORDER BY codcuenta ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return new Cuenta($data[0]);
         }
@@ -198,7 +196,7 @@ class Cuenta
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idepigrafe = ' . $this->var2str($idepi)
             . ' ORDER BY codcuenta ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $c) {
                 $cuenlist[] = new Cuenta($c);
@@ -222,7 +220,7 @@ class Cuenta
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($codejercicio) .
             ' ORDER BY codcuenta ASC';
 
-        $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
+        $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $c) {
                 $cuenlist[] = new Cuenta($c);
@@ -245,7 +243,7 @@ class Cuenta
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($codejercicio)
             . ' ORDER BY codcuenta ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $c) {
                 $cuenlist[] = new Cuenta($c);
@@ -269,7 +267,7 @@ class Cuenta
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idcuentaesp = ' . $this->var2str($idcuesp)
             . ' AND codejercicio = ' . $this->var2str($codejercicio) . ' ORDER BY codcuenta ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $cue) {
                 $cuenlist[] = new Cuenta($cue);
@@ -295,7 +293,7 @@ class Cuenta
             " WHERE codcuenta LIKE '" . $query . "%' OR lower(descripcion) LIKE '%" . $query . "%'" .
             ' ORDER BY codejercicio DESC, codcuenta ASC';
 
-        $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
+        $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $c) {
                 $cuenlist[] = new Cuenta($c);

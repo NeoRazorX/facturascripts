@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -30,7 +29,7 @@ use FacturaScripts\Core\Base\Utils;
 class Empresa
 {
 
-    use Model;
+    use Base\ModelTrait;
     use Utils;
 
     /**

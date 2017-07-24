@@ -81,7 +81,7 @@ class Almacen extends Base\ListController
 
         if ($this->query != '') {
             $fields = "nombre|codalmacen|contacto";
-            $result[] = new Base\DataBase\DatabaseWhere($fields, $this->query, "LIKE");
+            $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
     }

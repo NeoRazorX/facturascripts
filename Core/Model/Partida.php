@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * La línea de un asiento.
  * Se relaciona con un asiento y una subcuenta.
@@ -308,7 +306,7 @@ class Partida
     public function delete()
     {
         $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idpartida = ' . $this->var2str($this->idpartida) . ';';
-        if ($this->database->exec($sql)) {
+        if ($this->dataBase->exec($sql)) {
             $subc = $this->getSubcuenta();
             if ($subc) {
                 $subc->save(); /// guardamos la subcuenta para actualizar su saldo
@@ -334,7 +332,7 @@ class Partida
             . ' WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ' . $this->var2str($idsubc)
             . ' ORDER BY a.numero ASC, p.idpartida ASC;';
 
-        $ordenadas = $this->database->select($sql);
+        $ordenadas = $this->dataBase->select($sql);
         if (!empty($ordenadas)) {
             $partida = new Partida();
             $i = 0;
@@ -376,7 +374,7 @@ class Partida
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idasiento = '
             . $this->var2str($idasi) . ' ORDER BY codsubcuenta ASC;';
 
-        $partidas = $this->database->select($sql);
+        $partidas = $this->dataBase->select($sql);
         if (!empty($partidas)) {
             foreach ($partidas as $par) {
                 $plist[] = new Partida($par);
@@ -406,7 +404,7 @@ class Partida
 
         $partida = new Partida();
         $offset = 0;
-        $data = $this->database->selectLimit($sql, 100, $offset);
+        $data = $this->dataBase->selectLimit($sql, 100, $offset);
         while (!empty($data)) {
             foreach ($data as $po) {
                 $aux = $partida->get($po['idpartida']);
@@ -425,7 +423,7 @@ class Partida
                 $offset++;
             }
 
-            $data = $this->database->selectLimit($sql, 100, $offset);
+            $data = $this->dataBase->selectLimit($sql, 100, $offset);
         }
 
         return $plist;
@@ -448,7 +446,7 @@ class Partida
             . ' AND p.idasiento = a.idasiento AND p.idsubcuenta = s.idsubcuenta'
             . ' ORDER BY a.numero ASC, p.codsubcuenta ASC';
 
-        $data = $this->database->selectLimit($sql, $limit, $offset);
+        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
             return $data;
         }
@@ -468,7 +466,7 @@ class Partida
             . ' WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ' . $this->var2str($idsubc)
             . ' ORDER BY a.numero ASC, p.idpartida ASC;';
 
-        $ordenadas = $this->database->select($sql);
+        $ordenadas = $this->dataBase->select($sql);
         if (!empty($ordenadas)) {
             return count($ordenadas);
         }
@@ -488,7 +486,7 @@ class Partida
         $sql = 'SELECT COALESCE(SUM(debe), 0) as debe,COALESCE(SUM(haber), 0) as haber'
             . ' FROM ' . $this->tableName() . ' WHERE idsubcuenta = ' . $this->var2str($idsubc) . ';';
 
-        $resultados = $this->database->select($sql);
+        $resultados = $this->dataBase->select($sql);
         if (!empty($resultados)) {
             $totales['debe'] = (float)$resultados[0]['debe'];
             $totales['haber'] = (float)$resultados[0]['haber'];
@@ -512,7 +510,7 @@ class Partida
             . ' FROM co_partidas p, co_asientos a'
             . ' WHERE p.idasiento = a.idasiento AND a.codejercicio = ' . $this->var2str($cod) . ';';
 
-        $resultados = $this->database->select($sql);
+        $resultados = $this->dataBase->select($sql);
         if (!empty($resultados)) {
             $totales['debe'] = (float)$resultados[0]['debe'];
             $totales['haber'] = (float)$resultados[0]['haber'];
@@ -542,13 +540,13 @@ class Partida
             WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ' . $this->var2str($idsubc) . '
                AND a.fecha BETWEEN ' . $this->var2str($fechaini) . ' AND ' . $this->var2str($fechafin) . "
                AND p.idasiento NOT IN ('" . implode("','", $excluir) . "');";
-            $resultados = $this->database->select($sql);
+            $resultados = $this->dataBase->select($sql);
         } else {
             $sql = 'SELECT COALESCE(SUM(p.debe), 0) AS debe,
             COALESCE(SUM(p.haber), 0) AS haber FROM co_partidas p, co_asientos a
             WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ' . $this->var2str($idsubc) . '
                AND a.fecha BETWEEN ' . $this->var2str($fechaini) . ' AND ' . $this->var2str($fechafin) . ';';
-            $resultados = $this->database->select($sql);
+            $resultados = $this->dataBase->select($sql);
         }
 
         if (!empty($resultados)) {
@@ -592,8 +590,8 @@ class Partida
             . ', ' . $this->var2str($this->debe)
             . ', ' . $this->var2str($this->haber) . ');';
 
-        if ($this->database->exec($sql)) {
-            $this->idpartida = $this->database->lastval();
+        if ($this->dataBase->exec($sql)) {
+            $this->idpartida = $this->dataBase->lastval();
 
             $subc = $this->getSubcuenta();
             if ($subc) {
@@ -634,7 +632,7 @@ class Partida
             . ', haber = ' . $this->var2str($this->haber)
             . '  WHERE idpartida = ' . $this->var2str($this->idpartida) . ';';
 
-        if ($this->database->exec($sql)) {
+        if ($this->dataBase->exec($sql)) {
             $subc = $this->getSubcuenta();
             if ($subc) {
                 $subc->save(); /// guardamos la subcuenta para actualizar su saldo

@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * La línea de IVA de una factura de proveedor.
  * Indica el neto, iva y total para un determinado IVA y una factura.
@@ -29,7 +27,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class LineaIvaFacturaProveedor
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria.
@@ -189,7 +187,7 @@ class LineaIvaFacturaProveedor
 
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE idfactura = ' . $this->var2str($idfac) . ' ORDER BY iva DESC;';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $lin) {
                 $linealist[] = new LineaIvaFacturaProveedor($lin);

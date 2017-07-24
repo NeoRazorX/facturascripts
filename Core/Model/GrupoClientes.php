@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Un grupo de clientes, que puede estar asociado a una tarifa.
  *
@@ -101,7 +99,7 @@ class GrupoClientes
                 . ' ORDER BY codgrupo::INTEGER DESC';
         }
 
-        $data = $this->database->selectLimit($sql, 1);
+        $data = $this->dataBase->selectLimit($sql, 1);
         if (!empty($data)) {
             return sprintf('%06s', 1 + (int)$data[0]['codgrupo']);
         }
@@ -133,7 +131,7 @@ class GrupoClientes
 
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE codtarifa = ' . $this->var2str($cod) . ' ORDER BY codgrupo ASC;';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $glist[] = new GrupoClientes($d);

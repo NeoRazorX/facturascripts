@@ -56,7 +56,7 @@ class MiniLog
     /**
      * Action must be taken immediately.
      *
-     * Example: Entire website down, database unavailable, etc. This should
+     * Example: Entire website down, dataBase unavailable, etc. This should
      * trigger the SMS alerts and wake you up.
      *
      * @param string $message

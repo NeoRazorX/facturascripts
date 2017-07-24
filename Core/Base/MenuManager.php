@@ -142,7 +142,7 @@ class MenuManager
         $result = [];
         
         $where = [];
-        $where[] = new DataBase\DatabaseWhere('showonmenu', TRUE);
+        $where[] = new DataBase\DataBaseWhere('showonmenu', TRUE);
 
         $order = [
             'lower(menu)' => 'ASC',

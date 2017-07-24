@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * La cantidad en inventario de un artículo en un almacén concreto.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class Stock
 {
-    use Model {
+    use Base\ModelTrait {
         save as private saveTrait;
     }
 
@@ -191,7 +189,7 @@ class Stock
                 . ', codalmacen = ' . $this->var2str($codalmacen) . ';';
         }
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return new Stock($data[0]);
         }
@@ -224,7 +222,7 @@ class Stock
 
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE referencia = ' . $this->var2str($ref) . ' ORDER BY codalmacen ASC;';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $s) {
                 $stocklist[] = new Stock($s);
@@ -252,7 +250,7 @@ class Stock
             $sql .= ' AND codalmacen = ' . $this->var2str($codalmacen);
         }
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             $num = round((float)$data[0]['total'], 3);
         }
@@ -272,7 +270,7 @@ class Stock
         $num = 0;
 
         $sql = 'SELECT COUNT(idstock) AS total FROM ' . $this->tableName() . ';';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             $num = (int)$data[0]['total'];
         }
@@ -299,7 +297,7 @@ class Stock
          */
         $sql = 'DELETE FROM stocks s WHERE NOT EXISTS '
             . '(SELECT referencia FROM articulos a WHERE a.referencia = s.referencia);';
-        $this->database->exec($sql);
+        $this->dataBase->exec($sql);
     }
 
     /**

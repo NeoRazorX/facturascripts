@@ -20,9 +20,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\ContactInformation;
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Agencia de transporte de mercancías.
  *
@@ -32,8 +29,8 @@ use FacturaScripts\Core\Base\Model;
 class AgenciaTransporte
 {
 
-    use Model;
-    use ContactInformation;
+    use Base\ModelTrait;
+    use Base\ContactInformation;
 
     /**
      * Clave primaria. Varchar(8).

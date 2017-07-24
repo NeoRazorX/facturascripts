@@ -31,7 +31,7 @@ class DataBaseUtils
 
     /**
      * Enlace al motor de base de datos seleccionado en la configuración
-     * @var DatabaseEngine
+     * @var DataBaseEngine
      */
     private $engine;
     

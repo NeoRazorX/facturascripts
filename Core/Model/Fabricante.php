@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Un fabricante de artículos.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class Fabricante
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria.
@@ -139,7 +137,7 @@ class Fabricante
         if (!$fablist) {
             /// si la lista no está en caché, leemos de la base de datos
             $sql = 'SELECT * FROM ' . $this->tableName() . ' ORDER BY nombre ASC;';
-            $data = $this->database->select($sql);
+            $data = $this->dataBase->select($sql);
             if (!empty($data)) {
                 foreach ($data as $d) {
                     $fablist[] = new Fabricante($d);
@@ -167,7 +165,7 @@ class Fabricante
 
         $sql = 'SELECT * FROM ' . $this->tableName()
             . " WHERE lower(nombre) LIKE '%" . $query . "%' ORDER BY nombre ASC;";
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $f) {
                 $fablist[] = new Fabricante($f);

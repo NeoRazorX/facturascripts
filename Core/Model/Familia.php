@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Una familia de artículos.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class Familia
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria.
@@ -162,7 +160,7 @@ class Familia
             . 'UPDATE ' . $this->tableName() . ' SET madre = ' . $this->var2str($this->madre)
             . ' WHERE madre = ' . $this->var2str($this->codfamilia) . ';';
 
-        return $this->database->exec($sql);
+        return $this->dataBase->exec($sql);
     }
 
     /**
@@ -176,7 +174,7 @@ class Familia
         if (!$famlist) {
             /// si la lista no está en caché, leemos de la base de datos
             $sql = 'SELECT * FROM ' . $this->tableName() . ' ORDER BY lower(descripcion) ASC;';
-            $data = $this->database->select($sql);
+            $data = $this->dataBase->select($sql);
             if (!empty($data)) {
                 foreach ($data as $d) {
                     if ($d['madre'] === null) {
@@ -204,7 +202,7 @@ class Familia
         $famlist = [];
 
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE madre IS NULL ORDER BY lower(descripcion) ASC;';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $famlist[] = new Familia($d);
@@ -214,7 +212,7 @@ class Familia
         if (empty($famlist)) {
             /// si la lista está vacía, ponemos madre a NULL en todas por si el usuario ha estado jugando
             $sql = 'UPDATE ' . $this->tableName() . ' SET madre = NULL;';
-            $this->database->exec($sql);
+            $this->dataBase->exec($sql);
         }
 
         return $famlist;
@@ -237,7 +235,7 @@ class Familia
 
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE madre = ' . $this->var2str($codmadre) . ' ORDER BY descripcion ASC;';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $famlist[] = new Familia($d);
@@ -261,7 +259,7 @@ class Familia
 
         $sql = 'SELECT * FROM ' . $this->tableName()
             . " WHERE lower(descripcion) LIKE '%" . $query . "%' ORDER BY descripcion ASC;";
-        $familias = $this->database->select($sql);
+        $familias = $this->dataBase->select($sql);
         if (!empty($familias)) {
             foreach ($familias as $f) {
                 $famlist[] = new Familia($f);
@@ -278,7 +276,7 @@ class Familia
     {
         /// comprobamos que las familias con madre, su madre exista.
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE madre IS NOT NULL;';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $fam = $this->get($d['madre']);
@@ -286,7 +284,7 @@ class Familia
                     /// si no existe, desvinculamos
                     $sql = 'UPDATE ' . $this->tableName() . ' SET madre = null WHERE codfamilia = '
                         . $this->var2str($d['codfamilia']) . ':';
-                    $this->database->exec($sql);
+                    $this->dataBase->exec($sql);
                 }
             }
         }

@@ -85,7 +85,7 @@
         {% endif %}
         {% block body %}{% endblock %}
         {% if sql|length > 0 %}
-        <div class="alert alert-warning">
+        <div class="alert alert-warning hidden-print">
             <h3>SQL:</h3>
             <ol>
                 {% for msg in sql %}

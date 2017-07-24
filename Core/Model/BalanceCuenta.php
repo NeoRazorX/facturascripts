@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Detalle de un balance.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class BalanceCuenta
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria.
@@ -79,7 +77,7 @@ class BalanceCuenta
 
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE codbalance = ' . $this->var2str($cod) . ' ORDER BY codcuenta ASC;';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $b) {
                 $balist[] = new BalanceCuenta($b);

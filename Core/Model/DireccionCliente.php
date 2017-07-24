@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Una dirección de un cliente. Puede tener varias.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class DireccionCliente
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria.
@@ -176,7 +174,7 @@ class DireccionCliente
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codcliente = ' . $this->var2str($cod)
             . ' ORDER BY id DESC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $dirlist[] = new DireccionCliente($d);
@@ -192,7 +190,7 @@ class DireccionCliente
     public function fixDb()
     {
         $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE codcliente NOT IN (SELECT codcliente FROM clientes);';
-        $this->database->exec($sql);
+        $this->dataBase->exec($sql);
     }
 
     /**
@@ -217,7 +215,7 @@ class DireccionCliente
             . ', fecha = ' . $this->var2str($this->fecha)
             . '  WHERE id = ' . $this->var2str($this->id) . ';';
 
-        return $this->database->exec($sql);
+        return $this->dataBase->exec($sql);
     }
 
     /**
@@ -242,8 +240,8 @@ class DireccionCliente
             . ', ' . $this->var2str($this->descripcion)
             . ', ' . $this->var2str($this->fecha) . ');';
 
-        if ($this->database->exec($sql)) {
-            $this->id = $this->database->lastval();
+        if ($this->dataBase->exec($sql)) {
+            $this->id = $this->dataBase->lastval();
             return true;
         }
         return false;

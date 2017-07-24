@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Un proveedor. Puede estar relacionado con varias direcciones o subcuentas.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class Proveedor
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * TODO
@@ -214,7 +212,7 @@ class Proveedor
 
             /// además de los que haya en la base de datos
             $sql = 'SELECT DISTINCT regimeniva FROM proveedores ORDER BY regimeniva ASC;';
-            $data = $this->database->select($sql);
+            $data = $this->dataBase->select($sql);
             if (!empty($data)) {
                 foreach ($data as $d) {
                     if (!in_array($d['regimeniva'], self::$regimenes_iva, false)) {
@@ -285,7 +283,7 @@ class Proveedor
             $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE lower(cifnif) = ' . $this->var2str($cifnif) . ';';
         }
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return new Proveedor($data[0]);
         }
@@ -304,7 +302,7 @@ class Proveedor
         $email = mb_strtolower($email, 'UTF8');
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE lower(email) = ' . $this->var2str($email) . ';';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return new Proveedor($data[0]);
         }
@@ -317,8 +315,8 @@ class Proveedor
      */
     public function getNewCodigo()
     {
-        $sql = 'SELECT MAX(' . $this->database->sql2Int('codproveedor') . ') as cod FROM ' . $this->tableName() . ';';
-        $cod = $this->database->select($sql);
+        $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codproveedor') . ') as cod FROM ' . $this->tableName() . ';';
+        $cod = $this->dataBase->select($sql);
         if (!empty($cod)) {
             return sprintf('%06s', 1 + (int)$cod[0]['cod']);
         }
@@ -481,7 +479,7 @@ class Proveedor
             $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE acreedor ORDER BY lower(nombre) ASC';
         }
 
-        $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
+        $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $p) {
                 $provelist[] = new Proveedor($p);
@@ -502,7 +500,7 @@ class Proveedor
         if (!$provelist) {
             /// si no la encontramos en la caché, leemos de la base de datos
             $sql = 'SELECT * FROM ' . $this->tableName() . ' ORDER BY lower(nombre) ASC;';
-            $data = $this->database->select($sql);
+            $data = $this->dataBase->select($sql);
             if (!empty($data)) {
                 foreach ($data as $d) {
                     $provelist[] = new Proveedor($d);
@@ -543,7 +541,7 @@ class Proveedor
         }
         $consulta .= ' ORDER BY lower(nombre) ASC';
 
-        $data = $this->database->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
+        $data = $this->dataBase->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $prolist[] = new Proveedor($d);
@@ -567,7 +565,7 @@ class Proveedor
         ];
 
         foreach ($fixes as $sql) {
-            $this->database->exec($sql);
+            $this->dataBase->exec($sql);
         }
     }
 

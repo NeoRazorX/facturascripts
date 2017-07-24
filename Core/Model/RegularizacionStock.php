@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Regularización del stock de un almacén de un artículos en una fecha concreta.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class RegularizacionStock
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria.
@@ -138,7 +136,7 @@ class RegularizacionStock
         }
         $sql .= ' ORDER BY fecha DESC, hora DESC';
 
-        $data = $this->database->selectLimit($sql, $limit, $offset);
+        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $rlist[] = new RegularizacionStock($d);
@@ -154,7 +152,7 @@ class RegularizacionStock
     public function fixDb()
     {
         $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idstock NOT IN (SELECT idstock FROM stocks);';
-        $this->database->exec($sql);
+        $this->dataBase->exec($sql);
     }
 
     /**

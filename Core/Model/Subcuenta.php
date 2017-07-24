@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * El cuarto nivel de un plan contable. Está relacionada con una única cuenta.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class Subcuenta
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria.
@@ -246,7 +244,7 @@ class Subcuenta
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codsubcuenta = ' . $this->var2str($cod)
             . ' AND codejercicio = ' . $this->var2str($codejercicio) . ';';
 
-        $subc = $this->database->select($sql);
+        $subc = $this->dataBase->select($sql);
         if (!empty($subc)) {
             return new Subcuenta($subc[0]);
         }
@@ -254,7 +252,7 @@ class Subcuenta
             /// buscamos la subcuenta equivalente en otro ejercicio
             $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codsubcuenta = ' . $this->var2str($cod)
                 . ' ORDER BY idsubcuenta DESC;';
-            $subc = $this->database->select($sql);
+            $subc = $this->dataBase->select($sql);
             if (!empty($subc)) {
                 $oldSc = new Subcuenta($subc[0]);
 
@@ -304,7 +302,7 @@ class Subcuenta
             . '(SELECT idcuenta FROM co_cuentas WHERE idcuentaesp = ' . $this->var2str($idcuesp)
             . ' AND codejercicio = ' . $this->var2str($codeje) . ') ORDER BY codsubcuenta ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return new Subcuenta($data[0]);
         }
@@ -396,7 +394,7 @@ class Subcuenta
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idcuenta = ' . $this->var2str($idcuenta)
             . ' ORDER BY codsubcuenta ASC;';
 
-        $subcuentas = $this->database->select($sql);
+        $subcuentas = $this->dataBase->select($sql);
         if (!empty($subcuentas)) {
             foreach ($subcuentas as $s) {
                 $sublist[] = new Subcuenta($s);
@@ -422,7 +420,7 @@ class Subcuenta
             . '(SELECT idcuenta FROM co_cuentas WHERE idcuentaesp = ' . $this->var2str($idcuesp)
             . ' AND codejercicio = ' . $this->var2str($codeje) . ') ORDER BY codsubcuenta ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $cuentas[] = new Subcuenta($d);
@@ -454,11 +452,11 @@ class Subcuenta
                 $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = '
                     . $this->var2str($codejercicio) . ' ORDER BY RAND()';
             }
-            $subcuentas = $this->database->selectLimit($sql, $limit);
+            $subcuentas = $this->dataBase->selectLimit($sql, $limit);
         } else {
             $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = '
                 . $this->var2str($codejercicio) . ' ORDER BY codsubcuenta ASC;';
-            $subcuentas = $this->database->select($sql);
+            $subcuentas = $this->dataBase->select($sql);
         }
 
         if (!empty($subcuentas)) {
@@ -486,7 +484,7 @@ class Subcuenta
             . " OR lower(descripcion) LIKE '%" . $query . "%'"
             . ' ORDER BY codejercicio DESC, codcuenta ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $s) {
                 $sublist[] = new Subcuenta($s);
@@ -515,7 +513,7 @@ class Subcuenta
                 . " AND (codsubcuenta LIKE '" . $query . "%' OR codsubcuenta LIKE '%" . $query . "'"
                 . " OR lower(descripcion) LIKE '%" . $query . "%') ORDER BY codcuenta ASC;";
 
-            $data = $this->database->select($sql);
+            $data = $this->dataBase->select($sql);
             if (!empty($data)) {
                 foreach ($data as $s) {
                     $sublist[] = new Subcuenta($s);

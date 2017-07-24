@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Factura de un proveedor.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class FacturaProveedor
 {
-    use Model {
+    use Base\ModelTrait {
         saveInsert as private saveInsertTrait;
     }
 
@@ -593,7 +591,7 @@ class FacturaProveedor
 
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE idfacturarect = ' . $this->var2str($this->idfactura) . ';';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $devoluciones[] = new FacturaProveedor($d);
@@ -613,7 +611,7 @@ class FacturaProveedor
     public function getByCodigo($cod)
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codigo = ' . $this->var2str($cod) . ';';
-        $fact = $this->database->select($sql);
+        $fact = $this->dataBase->select($sql);
         if (!empty($fact)) {
             return new FacturaProveedor($fact[0]);
         }
@@ -628,14 +626,14 @@ class FacturaProveedor
         /// buscamos un hueco o el siguiente número disponible
         $encontrado = false;
         $num = 1;
-        $sql = 'SELECT ' . $this->database->sql2Int('numero') . ' as numero,fecha,hora FROM ' . $this->tableName();
+        $sql = 'SELECT ' . $this->dataBase->sql2Int('numero') . ' as numero,fecha,hora FROM ' . $this->tableName();
         if (FS_NEW_CODIGO !== 'NUM' && FS_NEW_CODIGO !== '0-NUM') {
             $sql .= ' WHERE codejercicio = ' . $this->var2str($this->codejercicio)
                 . ' AND codserie = ' . $this->var2str($this->codserie);
         }
         $sql .= ' ORDER BY numero ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 if ((int)$d['numero'] < $num) {
@@ -819,7 +817,7 @@ class FacturaProveedor
                 . ' AND numproveedor = ' . $this->var2str($this->numproveedor)
                 . ' AND observaciones = ' . $this->var2str($this->observaciones)
                 . ' AND idfactura != ' . $this->var2str($this->idfactura) . ';';
-            $facturas = $this->database->select($sql);
+            $facturas = $this->dataBase->select($sql);
             if (!empty($facturas)) {
                 foreach ($facturas as $fac) {
                     /// comprobamos las líneas
@@ -827,7 +825,7 @@ class FacturaProveedor
                   idfactura = ' . $this->var2str($this->idfactura) . '
                   AND referencia NOT IN (SELECT referencia FROM lineasfacturasprov
                   WHERE idfactura = ' . $this->var2str($fac['idfactura']) . ');';
-                    $aux = $this->database->select($sql);
+                    $aux = $this->dataBase->select($sql);
                     if (!empty($aux)) {
                         $this->miniLog->alert("Esta factura es un posible duplicado de
                      <a href='index.php?page=ComprasFactura&id=" . $fac['idfactura'] . "'>esta otra</a>.
@@ -879,7 +877,7 @@ class FacturaProveedor
         if ($bloquear) {
             return false;
         }
-        if ($this->database->exec($sql)) {
+        if ($this->dataBase->exec($sql)) {
             if ($this->idasiento) {
                 /**
                  * Delegamos la eliminación del asiento en la clase correspondiente.
@@ -916,7 +914,7 @@ class FacturaProveedor
         $faclist = [];
         $sql = 'SELECT * FROM ' . $this->tableName() . ' ORDER BY ' . $order;
 
-        $data = $this->database->selectLimit($sql, $limit, $offset);
+        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaProveedor($f);
@@ -940,7 +938,7 @@ class FacturaProveedor
         $faclist = [];
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE pagada = FALSE ORDER BY ' . $order;
 
-        $data = $this->database->selectLimit($sql, $limit, $offset);
+        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaProveedor($f);
@@ -965,7 +963,7 @@ class FacturaProveedor
             ' WHERE codagente = ' . $this->var2str($codagente) .
             ' ORDER BY fecha DESC, codigo DESC';
 
-        $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
+        $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaProveedor($f);
@@ -990,7 +988,7 @@ class FacturaProveedor
             ' WHERE codproveedor = ' . $this->var2str($codproveedor) .
             ' ORDER BY fecha DESC, codigo DESC';
 
-        $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
+        $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaProveedor($f);
@@ -1043,7 +1041,7 @@ class FacturaProveedor
         }
         $sql .= ' ORDER BY fecha ASC, codigo ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaProveedor($f);
@@ -1076,7 +1074,7 @@ class FacturaProveedor
         }
         $consulta .= ' ORDER BY fecha DESC, codigo DESC';
 
-        $data = $this->database->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
+        $data = $this->dataBase->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaProveedor($f);

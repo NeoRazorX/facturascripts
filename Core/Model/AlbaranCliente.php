@@ -16,10 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
-
-use FacturaScripts\Core\Base\Model;
 
 /**
  * Albarán de cliente o albarán de venta. Representa la entrega a un cliente
@@ -30,7 +27,8 @@ use FacturaScripts\Core\Base\Model;
  */
 class AlbaranCliente
 {
-    use Model;
+
+    use Base\ModelTrait;
 
     /**
      * Clave primaria. Integer.
@@ -486,7 +484,7 @@ class AlbaranCliente
     {
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE upper(codigo) = ' . strtoupper($this->var2str($cod)) . ';';
-        $albaran = $this->database->select($sql);
+        $albaran = $this->dataBase->select($sql);
         if (!empty($albaran)) {
             return new AlbaranCliente($albaran[0]);
         }
@@ -499,11 +497,7 @@ class AlbaranCliente
     public function newCodigo()
     {
         $this->numero = fsDocumentoNewNumero(
-            $this->database,
-            $this->tableName(),
-            $this->codejercicio,
-            $this->codserie,
-            'nalbarancli'
+            $this->dataBase, $this->tableName(), $this->codejercicio, $this->codserie, 'nalbarancli'
         );
         $this->codigo = fsDocumentoNewCodigo(FS_ALBARAN, $this->codejercicio, $this->codserie, $this->numero);
     }
@@ -542,11 +536,8 @@ class AlbaranCliente
         }
 
         if ($this->floatcmp(
-            $this->total,
-            $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo,
-            FS_NF0,
-            true
-        )) {
+                $this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true
+            )) {
             return true;
         }
 
@@ -654,7 +645,7 @@ class AlbaranCliente
                 . ' AND numero2 = ' . $this->var2str($this->numero2)
                 . ' AND observaciones = ' . $this->var2str($this->observaciones)
                 . ' AND idalbaran != ' . $this->var2str($this->idalbaran) . ';';
-            $data = $this->database->select($sql);
+            $data = $this->dataBase->select($sql);
             if (!empty($data)) {
                 foreach ($data as $alb) {
                     /// comprobamos las líneas
@@ -662,7 +653,7 @@ class AlbaranCliente
                   idalbaran = ' . $this->var2str($this->idalbaran) . '
                   AND referencia NOT IN (SELECT referencia FROM lineasalbaranescli
                   WHERE idalbaran = ' . $this->var2str($alb['idalbaran']) . ');';
-                    $aux = $this->database->select($sql);
+                    $aux = $this->dataBase->select($sql);
                     if (!empty($aux)) {
                         $this->miniLog->alert('Este ' . FS_ALBARAN . " es un posible duplicado de
                      <a href='index.php?page=VentasAlbaran&id=" . $alb['idalbaran'] . "'>este otro</a>.
@@ -676,188 +667,18 @@ class AlbaranCliente
         return $status;
     }
 
-    /**
-     * Inserta los datos del modelo en la base de datos.
-     * @return boolean
-     */
-    public function saveInsert()
+    public function save()
     {
-        $this->newCodigo();
-        $sql = 'INSERT INTO ' . $this->tableName() . ' (idfactura,codigo,codagente,
-               codserie,codejercicio,codcliente,codpago,coddivisa,codalmacen,codpais,coddir,
-               codpostal,numero,numero2,nombrecliente,cifnif,direccion,ciudad,provincia,apartado,
-               fecha,hora,neto,total,totaliva,totaleuros,irpf,totalirpf,porcomision,tasaconv,
-               totalrecargo,observaciones,ptefactura,femail,codtrans,codigoenv,nombreenv,apellidosenv,
-               apartadoenv,direccionenv,codpostalenv,ciudadenv,provinciaenv,codpaisenv,numdocs) VALUES '
-            . '(' . $this->var2str($this->idfactura)
-            . ', ' . $this->var2str($this->codigo)
-            . ', ' . $this->var2str($this->codagente)
-            . ', ' . $this->var2str($this->codserie)
-            . ', ' . $this->var2str($this->codejercicio)
-            . ', ' . $this->var2str($this->codcliente)
-            . ', ' . $this->var2str($this->codpago)
-            . ', ' . $this->var2str($this->coddivisa)
-            . ', ' . $this->var2str($this->codalmacen)
-            . ', ' . $this->var2str($this->codpais)
-            . ', ' . $this->var2str($this->coddir)
-            . ', ' . $this->var2str($this->codpostal)
-            . ', ' . $this->var2str($this->numero)
-            . ', ' . $this->var2str($this->numero2)
-            . ', ' . $this->var2str($this->nombrecliente)
-            . ', ' . $this->var2str($this->cifnif)
-            . ', ' . $this->var2str($this->direccion)
-            . ', ' . $this->var2str($this->ciudad)
-            . ', ' . $this->var2str($this->provincia)
-            . ', ' . $this->var2str($this->apartado)
-            . ', ' . $this->var2str($this->fecha)
-            . ', ' . $this->var2str($this->hora)
-            . ', ' . $this->var2str($this->neto)
-            . ', ' . $this->var2str($this->total)
-            . ', ' . $this->var2str($this->totaliva)
-            . ', ' . $this->var2str($this->totaleuros)
-            . ', ' . $this->var2str($this->irpf)
-            . ', ' . $this->var2str($this->totalirpf)
-            . ', ' . $this->var2str($this->porcomision)
-            . ', ' . $this->var2str($this->tasaconv)
-            . ', ' . $this->var2str($this->totalrecargo)
-            . ', ' . $this->var2str($this->observaciones)
-            . ', ' . $this->var2str($this->ptefactura)
-            . ', ' . $this->var2str($this->femail)
-            . ', ' . $this->var2str($this->envio_codtrans)
-            . ', ' . $this->var2str($this->envio_codigo)
-            . ', ' . $this->var2str($this->envio_nombre)
-            . ', ' . $this->var2str($this->envio_apellidos)
-            . ', ' . $this->var2str($this->envio_apartado)
-            . ', ' . $this->var2str($this->envio_direccion)
-            . ', ' . $this->var2str($this->envio_codpostal)
-            . ', ' . $this->var2str($this->envio_ciudad)
-            . ', ' . $this->var2str($this->envio_provincia)
-            . ', ' . $this->var2str($this->envio_codpais)
-            . ', ' . $this->var2str($this->numdocs) . ');';
-        if ($this->database->exec($sql)) {
-            $this->idalbaran = $this->database->lastval();
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Devuelve un array con los albaranes pendientes.
-     *
-     * @param int $offset
-     * @param string $order
-     * @param int $limit
-     *
-     * @return array
-     */
-    public function allPtefactura($offset = 0, $order = 'fecha ASC', $limit = FS_ITEM_LIMIT)
-    {
-        $albalist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE ptefactura = TRUE ORDER BY ' . $order;
-
-        $data = $this->database->selectLimit($sql, $limit, $offset);
-        if (!empty($data)) {
-            foreach ($data as $a) {
-                $albalist[] = new AlbaranCliente($a);
+        if ($this->test()) {
+            if ($this->exists()) {
+                return $this->saveUpdate();
             }
+
+            $this->newCodigo();
+            return $this->saveInsert();
         }
 
-        return $albalist;
-    }
-
-    /**
-     * Devuelve un array con los albaranes del cliente.
-     *
-     * @param string $codcliente
-     * @param int $offset
-     *
-     * @return array
-     */
-    public function allFromCliente($codcliente, $offset = 0)
-    {
-        $albalist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codcliente = ' . $this->var2str($codcliente)
-            . ' ORDER BY fecha DESC, codigo DESC';
-
-        $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if (!empty($data)) {
-            foreach ($data as $a) {
-                $albalist[] = new AlbaranCliente($a);
-            }
-        }
-
-        return $albalist;
-    }
-
-    /**
-     * Devuelve un array con los albaranes del agente/empleado
-     *
-     * @param string $codagente
-     * @param int $offset
-     *
-     * @return array
-     */
-    public function allFromAgente($codagente, $offset = 0)
-    {
-        $albalist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codagente = ' . $this->var2str($codagente)
-            . ' ORDER BY fecha DESC, codigo DESC';
-
-        $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if (!empty($data)) {
-            foreach ($data as $a) {
-                $albalist[] = new AlbaranCliente($a);
-            }
-        }
-
-        return $albalist;
-    }
-
-    /**
-     * Devuelve todos los albaranes relacionados con la factura.
-     *
-     * @param int $idfac
-     *
-     * @return array
-     */
-    public function allFromFactura($idfac)
-    {
-        $albalist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idfactura = ' . $this->var2str($idfac)
-            . ' ORDER BY fecha DESC, codigo DESC;';
-
-        $data = $this->database->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $a) {
-                $albalist[] = new AlbaranCliente($a);
-            }
-        }
-
-        return $albalist;
-    }
-
-    /**
-     * Devuelve un array con los albaranes comprendidos entre $desde y $hasta
-     *
-     * @param string $desde
-     * @param string $hasta
-     *
-     * @return array
-     */
-    public function allDesde($desde, $hasta)
-    {
-        $alblist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fecha >= ' . $this->var2str($desde)
-            . ' AND fecha <= ' . $this->var2str($hasta) . ' ORDER BY codigo ASC;';
-
-        $data = $this->database->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $a) {
-                $alblist[] = new AlbaranCliente($a);
-            }
-        }
-
-        return $alblist;
+        return FALSE;
     }
 
     /**
@@ -883,7 +704,7 @@ class AlbaranCliente
         }
         $consulta .= ' ORDER BY fecha DESC, codigo DESC';
 
-        $data = $this->database->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
+        $data = $this->dataBase->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $a) {
                 $alblist[] = new AlbaranCliente($a);
@@ -926,7 +747,7 @@ class AlbaranCliente
 
         $sql .= ' ORDER BY fecha ASC, codigo ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $a) {
                 $albalist[] = new AlbaranCliente($a);
@@ -945,21 +766,7 @@ class AlbaranCliente
          * Ponemos a NULL todos los idfactura que no están en facturascli.
          * ¿Por qué? Porque muchos usuarios se dedican a tocar la base de datos.
          */
-        $this->database->exec('UPDATE ' . $this->tableName() . ' SET idfactura = NULL WHERE idfactura IS NOT NULL'
+        $this->dataBase->exec('UPDATE ' . $this->tableName() . ' SET idfactura = NULL WHERE idfactura IS NOT NULL'
             . ' AND idfactura NOT IN (SELECT idfactura FROM facturascli);');
-    }
-
-    /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
-     * @return string
-     */
-    private function install()
-    {
-        /// nos aseguramos de que se comprueba la tabla de facturas antes
-        // new FacturaCliente();
-
-        return '';
     }
 }

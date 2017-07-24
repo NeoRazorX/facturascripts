@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Permite relacionar cuentas especiales (VENTAS, por ejemplo)
  * con la cuenta o subcuenta real.
@@ -29,7 +27,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class CuentaEspecial
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Identificador de la cuenta especial.
@@ -66,7 +64,7 @@ class CuentaEspecial
         $culist = [];
 
         $sql = 'SELECT * FROM ' . $this->tableName() . ' ORDER BY descripcion ASC;';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $c) {
                 $culist[] = new CuentaEspecial($c);

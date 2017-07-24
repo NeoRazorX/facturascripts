@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Define que cuentas hay que usar para generar los distintos informes contables.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class Balance
 {
-    use Model {
+    use Base\ModelTrait {
         save as private saveTrait;
     }
 

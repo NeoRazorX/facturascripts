@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Define que un usuario tiene acceso a una página concreta
  * y si tiene permisos de eliminación en esa página.
@@ -30,7 +28,7 @@ use FacturaScripts\Core\Base\Model;
 class PageRule
 {
 
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * TODO

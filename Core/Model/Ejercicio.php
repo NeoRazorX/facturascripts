@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Ejercicio contable. Es el periodo en el que se agrupan asientos, facturas, albaranes...
  *
@@ -29,7 +27,7 @@ use FacturaScripts\Core\Base\Model;
 class Ejercicio
 {
 
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria. Varchar(4).

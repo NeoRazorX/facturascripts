@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Un atributo para artículos.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class Atributo
 {
-    use Model {
+    use Base\ModelTrait {
         save as private saveTrait;
     }
 
@@ -93,7 +91,7 @@ class Atributo
                 . ' WHERE lower(nombre) = ' . $this->var2str(mb_strtolower($nombre, 'UTF8') . ';');
         }
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
 
         if (!empty($data)) {
             return new Atributo($data[0]);

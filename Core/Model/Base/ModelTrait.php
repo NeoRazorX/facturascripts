@@ -16,8 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+namespace FacturaScripts\Core\Model\Base;
 
-namespace FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\Cache;
+use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DefaultItems;
+use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Base\PluginManager;
+use FacturaScripts\Core\Base\Translator;
 
 /**
  * La clase de la que heredan todos los modelos, conecta a la base de datos,
@@ -25,7 +31,7 @@ namespace FacturaScripts\Core\Base;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-trait Model
+trait ModelTrait
 {
 
     /**
@@ -33,6 +39,7 @@ trait Model
      * @var array
      */
     protected static $fields;
+
     /**
      * Nombre del modelo. De la clase que inicia este trait.
      * @var string
@@ -81,6 +88,88 @@ trait Model
     protected $miniLog;
 
     /**
+     * Proporciona acceso directo a la base de datos.
+     * @var DataBase
+     */
+    protected $dataBase;
+
+    /**
+     * Permite conectar e interactuar con el sistema de caché.
+     * @var Cache
+     */
+    protected $cache;
+
+    /**
+     * Clase que se utiliza para definir algunos valores por defecto:
+     * codejercicio, codserie, coddivisa, etc...
+     * @var DefaultItems
+     */
+    protected $defaultItems;
+
+    /**
+     * Traductor multi-idioma.
+     * @var Translator
+     */
+    protected $i18n;
+
+    /**
+     * Gestiona el log de todos los controladores, modelos y base de datos.
+     * @var MiniLog
+     */
+    protected $miniLog;
+
+    /**
+     * Constructor.
+     *
+     * @param string $modelName
+     * @param string $tableName nombre de la tabla de la base de datos.
+     * @param string $primaryColumn
+     */
+    public static function noHtml($txt)
+    {
+        $this->cache = new Cache();
+        $this->dataBase = new DataBase();
+        $this->defaultItems = new DefaultItems();
+        $this->i18n = new Translator();
+        $this->miniLog = new MiniLog();
+
+        if (self::$checkedTables === null) {
+            self::$checkedTables = $this->cache->get('fs_checked_tables');
+            if (self::$checkedTables === null) {
+                self::$checkedTables = [];
+            }
+
+            self::$modelName = $modelName;
+            self::$primaryColumn = $primaryColumn;
+            self::$tableName = $tableName;
+        }
+
+        if ($tableName !== '' && !in_array($tableName, self::$checkedTables, false) && $this->checkTable($tableName)) {
+            $this->miniLog->debug('Table ' . $tableName . ' checked.');
+            self::$checkedTables[] = $tableName;
+            $this->cache->set('fs_checked_tables', self::$checkedTables);
+        }
+
+        if (self::$fields === null) {
+            self::$fields = ($this->dataBase->tableExists($tableName) ? $this->dataBase->getColumns($tableName) : []);
+        }
+    }
+
+    /**
+     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará tras la creación de la tabla. útil para insertar valores
+     * por defecto.
+     * @return string
+     */
+    private function install()
+    {
+        if (method_exists(__CLASS__, 'cleanCache')) {
+            $this->cleanCache();
+        }
+        return '';
+    }
+
+    /**
      * Esta función convierte:
      * < en &lt;
      * > en &gt;
@@ -97,9 +186,7 @@ trait Model
     public static function noHtml($txt)
     {
         $newt = str_replace(
-            ['<', '>', '"', "'"],
-            ['&lt;', '&gt;', '&quot;', '&#39;'],
-            $txt
+            ['<', '>', '"', "'"], ['&lt;', '&gt;', '&quot;', '&#39;'], $txt
         );
 
         return trim($newt);
@@ -263,7 +350,7 @@ trait Model
 
         $sql = 'SELECT 1 FROM ' . $this->tableName()
             . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
-        return (bool)$this->dataBase->select($sql);
+        return (bool) $this->dataBase->select($sql);
     }
 
     /**
@@ -299,7 +386,7 @@ trait Model
      */
     public function delete()
     {
-        if (method_exists(__CLASS__,'cleanCache')) {
+        if (method_exists(__CLASS__, 'cleanCache')) {
             $this->cleanCache();
         }
         $sql = 'DELETE FROM ' . $this->tableName()
@@ -310,13 +397,13 @@ trait Model
     /**
      * Devuelve el número de registros en el modelo que cumplen la condición
      *
-     * @param array $where filtros a aplicar a los registros del modelo. (Array de DatabaseWhere)
+     * @param array $where filtros a aplicar a los registros del modelo. (Array de DataBaseWhere)
      *
      * @return int
      */
     public function count(array $where = [])
     {
-        $sql = 'SELECT COUNT(1) AS total FROM ' . $this->tableName() . DataBase\DatabaseWhere::getSQLWhere($where);
+        $sql = 'SELECT COUNT(1) AS total FROM ' . $this->tableName() . DataBase\DataBaseWhere::getSQLWhere($where);
         $data = $this->dataBase->select($sql);
         return $data[0]['total'];
     }
@@ -324,7 +411,7 @@ trait Model
     /**
      * Devuelve todos los modelos que se correspondan con los filtros seleccionados.
      *
-     * @param array $where filtros a aplicar a los registros del modelo. (Array de DatabaseWhere)
+     * @param array $where filtros a aplicar a los registros del modelo. (Array de DataBaseWhere)
      * @param array $order campos a utilizar en la ordenación. Por ejemplo ['codigo' => 'ASC']
      * @param integer $offset
      * @param integer $limit
@@ -334,7 +421,7 @@ trait Model
     public function all(array $where = [], array $order = [], $offset = 0, $limit = 50)
     {
         $modelList = [];
-        $sqlWhere = DataBase\DatabaseWhere::getSQLWhere($where);
+        $sqlWhere = DataBase\DataBaseWhere::getSQLWhere($where);
         $sql = 'SELECT * FROM ' . $this->tableName() . $sqlWhere . $this->getOrderBy($order);
         $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
@@ -426,7 +513,7 @@ trait Model
             return 1;
         }
 
-        return 1 + (int)$cod[0]['cod'];
+        return 1 + (int) $cod[0]['cod'];
     }
 
     /**
@@ -559,57 +646,6 @@ trait Model
         }
 
         return $return;
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param string $modelName
-     * @param string $tableName nombre de la tabla de la base de datos.
-     * @param string $primaryColumn
-     */
-    private function init($modelName = '', $tableName = '', $primaryColumn = '')
-    {
-        $this->cache = new Cache();
-        $this->dataBase = new DataBase();
-        $this->defaultItems = new DefaultItems();
-        $this->i18n = new Translator();
-        $this->miniLog = new MiniLog();
-
-        if (self::$checkedTables === null) {
-            self::$checkedTables = $this->cache->get('fs_checked_tables');
-            if (self::$checkedTables === null) {
-                self::$checkedTables = [];
-            }
-
-            self::$modelName = $modelName;
-            self::$primaryColumn = $primaryColumn;
-            self::$tableName = $tableName;
-        }
-
-        if ($tableName !== '' && !in_array($tableName, self::$checkedTables, false) && $this->checkTable($tableName)) {
-            $this->miniLog->debug('Table ' . $tableName . ' checked.');
-            self::$checkedTables[] = $tableName;
-            $this->cache->set('fs_checked_tables', self::$checkedTables);
-        }
-
-        if (self::$fields === null) {
-            self::$fields = ($this->dataBase->tableExists($tableName) ? $this->dataBase->getColumns($tableName) : []);
-        }
-    }
-
-    /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
-     * @return string
-     */
-    private function install()
-    {
-        if (method_exists(__CLASS__,'cleanCache')) {
-            $this->cleanCache();
-        }
-        return '';
     }
 
     /**

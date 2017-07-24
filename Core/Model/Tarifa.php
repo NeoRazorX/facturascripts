@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Una tarifa para los artículos.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class Tarifa
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria.
@@ -241,8 +239,8 @@ class Tarifa
      */
     public function getNewCodigo()
     {
-        $sql = 'SELECT MAX(' . $this->database->sql2Int('codtarifa') . ') as cod FROM ' . $this->tableName() . ';';
-        $cod = $this->database->select($sql);
+        $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codtarifa') . ') as cod FROM ' . $this->tableName() . ';';
+        $cod = $this->dataBase->select($sql);
         if (!empty($cod)) {
             return sprintf('%06s', 1 + (int)$cod[0]['cod']);
         }

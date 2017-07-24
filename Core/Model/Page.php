@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Elemento del menú de FacturaScripts, cada uno se corresponde con un controlador.
  *
@@ -29,7 +27,7 @@ use FacturaScripts\Core\Base\Model;
 class Page
 {
 
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria. Varchar (30).

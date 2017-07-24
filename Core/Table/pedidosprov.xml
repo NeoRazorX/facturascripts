@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : pedidosprov.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla pedidosprov.
+-->
+<tabla>
+    <columna>
+        <nombre>codigo</nombre>
+        <tipo>character varying(20)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>totaleuros</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codagente</nombre>
+        <tipo>character varying(10)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>codpago</nombre>
+        <tipo>character varying(10)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codejercicio</nombre>
+        <tipo>character varying(4)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>tasaconv</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>total</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>irpf</nombre>
+        <tipo>double precision</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idpedido</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('pedidosprov_idpedido_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>idalbaran</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>observaciones</nombre>
+        <tipo>text</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>servido</nombre>
+        <tipo>character varying(10)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>editable</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codalmacen</nombre>
+        <tipo>character varying(4)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>numproveedor</nombre>
+        <tipo>character varying(50)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>cifnif</nombre>
+        <tipo>character varying(30)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codproveedor</nombre>
+        <tipo>character varying(6)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>fechaentrada</nombre>
+        <tipo>date</tipo>
+    </columna>
+    <columna>
+        <nombre>totalrecargo</nombre>
+        <tipo>double precision</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>recfinanciero</nombre>
+        <tipo>double precision</tipo>
+    </columna>
+    <columna>
+        <nombre>nombre</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>fecha</nombre>
+        <tipo>date</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>hora</nombre>
+        <tipo>time without time zone</tipo>
+        <nulo>YES</nulo>
+        <defecto>now()</defecto>
+    </columna>
+    <columna>
+        <nombre>neto</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>totalirpf</nombre>
+        <tipo>double precision</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>codserie</nombre>
+        <tipo>character varying(2)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>totaliva</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>numero</nombre>
+        <tipo>character varying(12)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>coddivisa</nombre>
+        <tipo>character varying(3)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>numdocs</nombre>
+        <tipo>integer</tipo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>idoriginal</nombre>
+        <tipo>integer</tipo>
+    </columna>
+    <restriccion>
+        <nombre>pedidosprov_pkey</nombre>
+        <consulta>PRIMARY KEY (idpedido)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>ca_pedidosprov_series</nombre>
+        <consulta>FOREIGN KEY (codserie)
+            REFERENCES series (codserie)
+            ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>ca_pedidosprov_ejercicios</nombre>
+        <consulta>FOREIGN KEY (codejercicio)
+            REFERENCES ejercicios (codejercicio)
+            ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>uniq_codigo_pedidosprov</nombre>
+        <consulta>UNIQUE (codigo)</consulta>
+    </restriccion>
+</tabla>

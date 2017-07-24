@@ -265,7 +265,7 @@ class PluginManager
         // Ahora recorremos solo archivos o carpetas
         foreach ($filesPath as $fileName) {
             $infoFile = pathinfo($fileName);
-            if (!is_dir($fileName) && $infoFile['filename'] !== '') {
+            if (is_file($path . '/' . $fileName) && $infoFile['filename'] !== '') {
                 if ($infoFile['extension'] === 'php') {
                     $this->linkClassFile($fileName, $folder, $namespace);
                 } elseif ($infoFile['extension'] === 'xml') {
