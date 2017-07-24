@@ -25,7 +25,7 @@ namespace FacturaScripts\Core\Base\DataBase;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class MysqlSQL implements DatabaseSQL
+class MysqlSQL implements DataBaseSQL
 {
 
     /**

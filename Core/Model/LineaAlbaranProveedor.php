@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Línea de un albarán de proveedor.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class LineaAlbaranProveedor
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * TODO
@@ -312,7 +310,7 @@ class LineaAlbaranProveedor
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idalbaran = ' . $this->var2str($idalb)
             . ' ORDER BY idlinea ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $l) {
                 $linealist[] = new LineaAlbaranProveedor($l);
@@ -337,7 +335,7 @@ class LineaAlbaranProveedor
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref)
             . ' ORDER BY idalbaran DESC';
 
-        $data = $this->database->selectLimit($sql, $limit, $offset);
+        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
             foreach ($data as $l) {
                 $linealist[] = new LineaAlbaranProveedor($l);
@@ -369,7 +367,7 @@ class LineaAlbaranProveedor
         }
         $sql .= ' ORDER BY idalbaran DESC, idlinea ASC';
 
-        $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
+        $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $l) {
                 $linealist[] = new LineaAlbaranProveedor($l);
@@ -403,7 +401,7 @@ class LineaAlbaranProveedor
         }
         $sql .= ' ORDER BY idalbaran DESC, idlinea ASC';
 
-        $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
+        $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $l) {
                 $linealist[] = new LineaAlbaranProveedor($l);
@@ -420,7 +418,7 @@ class LineaAlbaranProveedor
     public function countByArticulo()
     {
         $sql = 'SELECT COUNT(DISTINCT referencia) AS total FROM ' . $this->tableName() . ';';
-        $lineas = $this->database->select($sql);
+        $lineas = $this->dataBase->select($sql);
         if (!empty($lineas)) {
             return (int)$lineas[0]['total'];
         }

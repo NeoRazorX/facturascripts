@@ -142,13 +142,13 @@ class ListController extends Controller
                     case 'datepicker':
                     case 'select':
                             $field = $value['options']['field'];
-                            $result[] = new DataBase\DatabaseWhere($field, $value['value']);
+                            $result[] = new DataBase\DataBaseWhere($field, $value['value']);
                             break;
 
                     case 'checkbox':
                             $field = $value['options']['field'];
                             $value = $value['options']['inverse'] ? !$value['value'] : $value['value'];
-                            $result[] = new DataBase\DatabaseWhere($field, $value);
+                            $result[] = new DataBase\DataBaseWhere($field, $value);
                             break;
                 }
             }
@@ -293,7 +293,7 @@ class ListController extends Controller
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->setTemplate("ListController");
+        $this->setTemplate("Master/ListController");
 
         $this->offset = isset($_GET["offset"]) ? intval($_GET["offset"]) : 0;
         $this->query = $this->getParamValue('query');
@@ -312,7 +312,7 @@ class ListController extends Controller
     public function optionlist($field, $table, $where)
     {
         $result = [];
-        if ($this->database->tableExists($table)) {
+        if ($this->dataBase->tableExists($table)) {
             $sql = "SELECT DISTINCT " . $field . " FROM " . $table . " WHERE COALESCE(" . $field . ", '')" . " <> ''";
 
             if ($where != "") {
@@ -321,7 +321,7 @@ class ListController extends Controller
 
             $sql .= " ORDER BY 1 ASC;";
 
-            $data = $this->database->select($sql);
+            $data = $this->dataBase->select($sql);
             foreach ($data as $item) {
                 $value = $item[$field];
                 if ($value != "") {

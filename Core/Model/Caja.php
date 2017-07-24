@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Estructura para almacenar los datos de estado de una caja registradora (TPV).
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class Caja
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * UN array con todos los agentes utilizados, para agilizar la carga.
@@ -169,7 +167,7 @@ class Caja
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codagente = '
             . $this->var2str($codagente) . ' ORDER BY id DESC';
 
-        $data = $this->database->selectLimit($sql, $limit, $offset);
+        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
             foreach ($data as $c) {
                 $cajalist[] = new Caja($c);

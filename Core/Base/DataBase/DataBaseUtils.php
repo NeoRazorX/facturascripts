@@ -31,13 +31,13 @@ class DataBaseUtils
 
     /**
      * Enlace al motor de base de datos seleccionado en la configuración
-     * @var DatabaseEngine
+     * @var DataBaseEngine
      */
     private $engine;
     
     /**
      * Construye y prepara la clase para su uso
-     * @param DatabaseEngine $engine
+     * @param DataBaseEngine $engine
      */
     public function __construct($engine)
     {

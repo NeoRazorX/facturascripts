@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Propiedad de un artículos. Permite añadir propiedades a un artículo
  * sin necesidad de modificar la clase artículo.
@@ -29,7 +27,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class ArticuloPropiedad
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Nombre de la propiedad
@@ -74,7 +72,7 @@ class ArticuloPropiedad
         $vlist = [];
 
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref) . ';';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $vlist[$d['name']] = $d['text'];
@@ -122,7 +120,7 @@ class ArticuloPropiedad
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref)
             . ' AND name = ' . $this->var2str($name) . ';';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return $data[0]['text'];
         }
@@ -141,7 +139,7 @@ class ArticuloPropiedad
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE text = ' . $this->var2str($text)
             . ' AND name = ' . $this->var2str($name) . ';';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return $data[0]['referencia'];
         }
@@ -161,6 +159,6 @@ class ArticuloPropiedad
         $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref)
             . ' AND name = ' . $this->var2str($name) . ';';
 
-        return $this->database->exec($sql);
+        return $this->dataBase->exec($sql);
     }
 }

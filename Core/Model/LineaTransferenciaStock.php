@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Description of linea_transferencia_stock
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class LineaTransferenciaStock
 {
-    use Model;
+    use Base\ModelTrait;
 
     /// clave primaria. integer
     /**
@@ -126,7 +124,7 @@ class LineaTransferenciaStock
         $list = [];
 
         $sql = 'SELECT * FROM lineastransstock WHERE idtrans = ' . $this->var2str($idtra) . ' ORDER BY referencia ASC;';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $lin) {
                 $list[] = new LineaTransferenciaStock($lin);
@@ -168,7 +166,7 @@ class LineaTransferenciaStock
         }
         $sql .= ' ORDER BY t.fecha ASC, t.hora ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $list[] = new LineaTransferenciaStock($d);

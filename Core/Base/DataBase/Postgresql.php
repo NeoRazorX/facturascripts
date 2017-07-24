@@ -26,7 +26,7 @@ use Exception;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class Postgresql implements DatabaseEngine
+class Postgresql implements DataBaseEngine
 {
 
     /**
@@ -37,7 +37,7 @@ class Postgresql implements DatabaseEngine
 
     /**
      * Enlace al conjunto de sentencias SQL de la base de datos conectada
-     * @var DatabaseSQL; 
+     * @var DataBaseSQL; 
      */
     private $utilsSQL;
 
@@ -330,7 +330,7 @@ class Postgresql implements DatabaseEngine
     
     /**
      * Devuelve el enlace a la clase de SQL del engine
-     * @return DatabaseSQL
+     * @return DataBaseSQL
      */
     public function getSQL()
     {

@@ -20,8 +20,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Define un paquete de permisos para asignar rápidamente a usuarios.
  *
@@ -31,7 +29,7 @@ use FacturaScripts\Core\Base\Model;
 class Rol
 {
 
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * TODO

@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Una divisa (moneda) con su símbolo y su tasa de conversión respecto al euro.
  *
@@ -29,7 +27,7 @@ use FacturaScripts\Core\Base\Model;
 class Divisa
 {
 
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria. Varchar (3).

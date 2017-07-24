@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Albarán de proveedor o albarán de compra. Representa la recepción
  * de un material que se ha comprado. Implica la entrada de ese material
@@ -30,7 +28,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class AlbaranProveedor
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria. Integer
@@ -328,7 +326,7 @@ class AlbaranProveedor
     public function newCodigo()
     {
         $this->numero = fsDocumentoNewNumero(
-            $this->database,
+            $this->dataBase,
             $this->tableName(),
             $this->codejercicio,
             $this->codserie,
@@ -475,7 +473,7 @@ class AlbaranProveedor
                 . ' AND numproveedor = ' . $this->var2str($this->numproveedor)
                 . ' AND observaciones = ' . $this->var2str($this->observaciones)
                 . ' AND idalbaran != ' . $this->var2str($this->idalbaran) . ';';
-            $data = $this->database->select($sql);
+            $data = $this->dataBase->select($sql);
             if (!empty($data)) {
                 foreach ($data as $alb) {
                     /// comprobamos las líneas
@@ -483,7 +481,7 @@ class AlbaranProveedor
                   idalbaran = ' . $this->var2str($this->idalbaran) . '
                   AND referencia NOT IN (SELECT referencia FROM lineasalbaranesprov
                   WHERE idalbaran = ' . $this->var2str($alb['idalbaran']) . ');';
-                    $aux = $this->database->select($sql);
+                    $aux = $this->dataBase->select($sql);
                     if (!empty($aux)) {
                         $this->miniLog->alert('Este ' . FS_ALBARAN . " es un posible duplicado de
                      <a href='index.php?page=ComprasAlbaran&id=" . $alb['idalbaran'] . "'>este otro</a>.
@@ -534,8 +532,8 @@ class AlbaranProveedor
             . ', ' . $this->var2str($this->hora)
             . ', ' . $this->var2str($this->numdocs) . ');';
 
-        if ($this->database->exec($sql)) {
-            $this->idalbaran = $this->database->lastval();
+        if ($this->dataBase->exec($sql)) {
+            $this->idalbaran = $this->dataBase->lastval();
             return true;
         }
         return false;
@@ -548,7 +546,7 @@ class AlbaranProveedor
     public function delete()
     {
         $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idalbaran = ' . $this->var2str($this->idalbaran) . ';';
-        if ($this->database->exec($sql)) {
+        if ($this->dataBase->exec($sql)) {
             if ($this->idfactura) {
                 /**
                  * Delegamos la eliminación de la factura en la clase correspondiente,
@@ -581,7 +579,7 @@ class AlbaranProveedor
         $albalist = [];
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE ptefactura = TRUE ORDER BY ' . $order;
 
-        $data = $this->database->selectLimit($sql, $limit, $offset);
+        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
             foreach ($data as $a) {
                 $albalist[] = new AlbaranProveedor($a);
@@ -605,7 +603,7 @@ class AlbaranProveedor
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codproveedor = '
             . $this->var2str($codproveedor) . ' ORDER BY fecha DESC, codigo DESC';
 
-        $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
+        $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $a) {
                 $alblist[] = new AlbaranProveedor($a);
@@ -629,7 +627,7 @@ class AlbaranProveedor
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codagente = '
             . $this->var2str($codagente) . ' ORDER BY fecha DESC, codigo DESC';
 
-        $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
+        $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $a) {
                 $alblist[] = new AlbaranProveedor($a);
@@ -652,7 +650,7 @@ class AlbaranProveedor
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idfactura = '
             . $this->var2str($idfac) . ' ORDER BY fecha DESC, codigo DESC';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $alb) {
                 $alblist[] = new AlbaranProveedor($alb);
@@ -677,7 +675,7 @@ class AlbaranProveedor
             . $this->var2str($desde) . ' AND fecha <= ' . $this->var2str($hasta)
             . ' ORDER BY codigo ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $a) {
                 $alblist[] = new AlbaranProveedor($a);
@@ -710,7 +708,7 @@ class AlbaranProveedor
         }
         $consulta .= ' ORDER BY fecha DESC, codigo DESC';
 
-        $data = $this->database->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
+        $data = $this->dataBase->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $a) {
                 $alblist[] = new AlbaranProveedor($a);
@@ -749,7 +747,7 @@ class AlbaranProveedor
 
         $sql .= ' ORDER BY fecha ASC, codigo ASC';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $a) {
                 $albalist[] = new AlbaranProveedor($a);
@@ -769,7 +767,7 @@ class AlbaranProveedor
          */
         $sql = 'UPDATE ' . $this->tableName() . ' SET idfactura = NULL WHERE idfactura IS NOT NULL'
             . ' AND idfactura NOT IN (SELECT idfactura FROM facturasprov);';
-        $this->database->exec($sql);
+        $this->dataBase->exec($sql);
     }
 
     /**

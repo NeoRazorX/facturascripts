@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Un país, por ejemplo España.
  *
@@ -29,7 +27,7 @@ use FacturaScripts\Core\Base\Model;
 class Pais
 {
 
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria. Varchar(3).
@@ -98,7 +96,7 @@ class Pais
     public function getByIso($cod)
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codiso = ' . $this->var2str($cod) . ';';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return new Pais($data[0]);
         }

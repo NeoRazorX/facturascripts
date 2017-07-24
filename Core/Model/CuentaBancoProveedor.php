@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Una cuenta bancaria de un proveedor.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class CuentaBancoProveedor
 {
-    use Model {
+    use Base\ModelTrait {
         save as private saveTrait;
     }
 
@@ -145,7 +143,7 @@ class CuentaBancoProveedor
                 ' AND codcuenta != ' . $this->var2str($this->codcuenta) . ';';
         }
 
-        return $this->database->exec($sql);
+        return $this->dataBase->exec($sql);
     }
 
     /**
@@ -161,7 +159,7 @@ class CuentaBancoProveedor
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codproveedor = ' . $this->var2str($codpro)
             . ' ORDER BY codcuenta DESC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $clist[] = new CuentaBancoProveedor($d);
@@ -209,8 +207,8 @@ class CuentaBancoProveedor
      */
     private function getNewCodigo()
     {
-        $sql = 'SELECT MAX(' . $this->database->sql2Int('codcuenta') . ') as cod FROM ' . $this->tableName() . ';';
-        $cod = $this->database->select($sql);
+        $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codcuenta') . ') as cod FROM ' . $this->tableName() . ';';
+        $cod = $this->dataBase->select($sql);
         if (!empty($cod)) {
             return 1 + (int)$cod[0]['cod'];
         }

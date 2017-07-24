@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Un concepto predefinido para una partida (la línea de un asiento contable).
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class ConceptoPartida
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria.

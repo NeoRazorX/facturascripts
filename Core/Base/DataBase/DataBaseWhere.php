@@ -25,7 +25,7 @@ namespace FacturaScripts\Core\Base\DataBase;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class DatabaseWhere
+class DataBaseWhere
 {
 
     const MATCH_DATE = "/^([\d]{1,2})-([\d]{1,2})-([\d]{4})$/i";
@@ -35,7 +35,7 @@ class DatabaseWhere
      * Enlace con la base de datos activa
      * @var DataBase
      */
-    private $database;
+    private $dataBase;
 
     /**
      * Lista de campos, separados por '|' a los que se aplica el filtro
@@ -67,7 +67,7 @@ class DatabaseWhere
         $this->value = $value;
         $this->operator = $operator;
         $this->operation = $operation;
-        $this->database = new \FacturaScripts\Core\Base\DataBase();
+        $this->dataBase = new \FacturaScripts\Core\Base\DataBase();
     }
 
     /**
@@ -78,7 +78,7 @@ class DatabaseWhere
     private function format2Date($addTime = FALSE)
     {
         $time = $addTime ? ' H:i:s' : '';
-        return "'" . date($this->database->dateStyle() . $time, strtotime($this->value)) . "'";    
+        return "'" . date($this->dataBase->dateStyle() . $time, strtotime($this->value)) . "'";    
     }
     
     /**
@@ -89,7 +89,7 @@ class DatabaseWhere
     {
         switch (gettype($this->value)) {
             case ($this->operator == "LIKE"):
-                $result = "LOWER('%" . $this->database->escapeString($this->value) . "%')";
+                $result = "LOWER('%" . $this->dataBase->escapeString($this->value) . "%')";
                 break;
 
             case "boolean":
@@ -99,7 +99,7 @@ class DatabaseWhere
             case "integer":
             case "double":
             case "float":
-                $result = $this->database->escapeString($this->value);
+                $result = $this->dataBase->escapeString($this->value);
                 break;
             
             /// DATE
@@ -113,7 +113,7 @@ class DatabaseWhere
                 break;
 
             default:
-                $result = "'" . $this->database->escapeString($this->value) . "'";
+                $result = "'" . $this->dataBase->escapeString($this->value) . "'";
         }
         return $result;
     }
@@ -150,7 +150,7 @@ class DatabaseWhere
     }
 
     /**
-     * Dado un array de DatabaseWhere devuelve la clausula WHERE completa
+     * Dado un array de DataBaseWhere devuelve la clausula WHERE completa
      * @param array $whereItems
      * @return string
      */

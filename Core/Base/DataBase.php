@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Base\DataBase\DatabaseEngine;
+use FacturaScripts\Core\Base\DataBase\DataBaseEngine;
 use FacturaScripts\Core\Base\DataBase\Mysql;
 use FacturaScripts\Core\Base\DataBase\Postgresql;
 
@@ -43,7 +43,7 @@ class DataBase
 
     /**
      * Enlace al motor de base de datos seleccionado en la configuración
-     * @var DatabaseEngine
+     * @var DataBaseEngine
      */
     private static $engine;
     

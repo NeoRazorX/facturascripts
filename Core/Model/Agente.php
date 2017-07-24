@@ -19,9 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\ContactInformation;
-use FacturaScripts\Core\Base\Model;
-
 /**
  * El agente/empleado es el que se asocia a un albarán, factura o caja.
  * Cada usuario puede estar asociado a un agente, y un agente puede
@@ -33,8 +30,8 @@ use FacturaScripts\Core\Base\Model;
 class Agente
 {
 
-    use Model;
-    use ContactInformation;
+    use Base\ModelTrait;
+    use Base\ContactInformation;
 
     /**
      * Clave primaria. Varchar (10).
@@ -152,8 +149,8 @@ class Agente
      */
     public function getNewCodigo()
     {
-        $sql = 'SELECT MAX(' . $this->database->sql2Int('codagente') . ') as cod FROM ' . $this->tableName() . ';';
-        $data = $this->database->select($sql);
+        $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codagente') . ') as cod FROM ' . $this->tableName() . ';';
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return (string)(1 + (int)$data[0]['cod']);
         }

@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Segundo nivel del plan contable.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class Epigrafe
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * TODO
@@ -130,7 +128,7 @@ class Epigrafe
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idpadre = ' . $this->var2str($this->idepigrafe)
             . ' ORDER BY codepigrafe ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $ep) {
                 $epilist[] = new Epigrafe($ep);
@@ -163,7 +161,7 @@ class Epigrafe
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codepigrafe = ' . $this->var2str($cod)
             . ' AND codejercicio = ' . $this->var2str($codejercicio) . ';';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return new Epigrafe($data[0]);
         }
@@ -198,7 +196,7 @@ class Epigrafe
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idgrupo = ' . $this->var2str($idgrp)
             . ' ORDER BY codepigrafe ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $epi) {
                 $epilist[] = new Epigrafe($epi);
@@ -221,7 +219,7 @@ class Epigrafe
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($codejercicio)
             . ' ORDER BY codepigrafe ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $ep) {
                 $epilist[] = new Epigrafe($ep);
@@ -244,7 +242,7 @@ class Epigrafe
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($codejercicio)
             . ' AND idpadre IS NULL AND idgrupo IS NULL ORDER BY codepigrafe ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $ep) {
                 $epilist[] = new Epigrafe($ep);
@@ -261,7 +259,7 @@ class Epigrafe
     {
         $sql = 'UPDATE ' . $this->tableName()
             . ' SET idgrupo = NULL WHERE idgrupo NOT IN (SELECT idgrupo FROM co_gruposepigrafes);';
-        $this->database->exec($sql);
+        $this->dataBase->exec($sql);
     }
 
     /**

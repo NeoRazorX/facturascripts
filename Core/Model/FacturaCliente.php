@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Factura de un cliente.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class FacturaCliente
 {
-    use Model {
+    use Base\ModelTrait {
         saveInsert as private saveInsertTrait;
     }
 
@@ -456,7 +454,7 @@ class FacturaCliente
                 . ' WHERE codserie = ' . $this->var2str($this->codserie)
                 . ' AND codejercicio = ' . $this->var2str($this->codejercicio) . ';';
 
-            $data = $this->database->select($sql);
+            $data = $this->dataBase->select($sql);
             if (!empty($data)) {
                 if (strtotime($data[0]['fecha']) > strtotime($fecha)) {
                     $fechaOld = $fecha;
@@ -474,7 +472,7 @@ class FacturaCliente
                 . ' AND codejercicio = ' . $this->var2str($this->codejercicio)
                 . ' AND fecha = ' . $this->var2str($fecha) . ';';
 
-            $data = $this->database->select($sql);
+            $data = $this->dataBase->select($sql);
             if (!empty($data)) {
                 if (strtotime($data[0]['hora']) > strtotime($hora) || $cambio) {
                     $hora = date('H:i:s', strtotime($data[0]['hora']));
@@ -755,7 +753,7 @@ class FacturaCliente
 
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE idfacturarect = ' . $this->var2str($this->idfactura) . ';';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $devoluciones[] = new FacturaCliente($d);
@@ -775,7 +773,7 @@ class FacturaCliente
     public function getByCodigo($cod)
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codigo = ' . $this->var2str($cod) . ';';
-        $fact = $this->database->select($sql);
+        $fact = $this->dataBase->select($sql);
         if (!empty($fact)) {
             return new FacturaCliente($fact[0]);
         }
@@ -797,7 +795,7 @@ class FacturaCliente
             . ' AND codserie = ' . $this->var2str($serie)
             . ' AND codejercicio = ' . $this->var2str($eje) . ';';
 
-        $fact = $this->database->select($sql);
+        $fact = $this->dataBase->select($sql);
         if (!empty($fact)) {
             return new FacturaCliente($fact[0]);
         }
@@ -822,14 +820,14 @@ class FacturaCliente
         $encontrado = false;
         $fecha = $this->fecha;
         $hora = $this->hora;
-        $sql = 'SELECT ' . $this->database->sql2Int('numero') . ' as numero,fecha,hora FROM ' . $this->tableName();
+        $sql = 'SELECT ' . $this->dataBase->sql2Int('numero') . ' as numero,fecha,hora FROM ' . $this->tableName();
         if (FS_NEW_CODIGO !== 'NUM' && FS_NEW_CODIGO !== '0-NUM') {
             $sql .= ' WHERE codejercicio = ' . $this->var2str($this->codejercicio)
                 . ' AND codserie = ' . $this->var2str($this->codserie);
         }
         $sql .= ' ORDER BY numero ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 if ((int)$d['numero'] < $num) {
@@ -1047,7 +1045,7 @@ class FacturaCliente
                 . ' AND numero2 = ' . $this->var2str($this->numero2)
                 . ' AND observaciones = ' . $this->var2str($this->observaciones)
                 . ' AND idfactura != ' . $this->var2str($this->idfactura) . ';';
-            $data = $this->database->select($sql);
+            $data = $this->dataBase->select($sql);
             if (!empty($data)) {
                 foreach ($data as $fac) {
                     /// comprobamos las líneas
@@ -1055,7 +1053,7 @@ class FacturaCliente
                   idfactura = ' . $this->var2str($this->idfactura) . '
                   AND referencia NOT IN (SELECT referencia FROM lineasfacturascli
                   WHERE idfactura = ' . $this->var2str($fac['idfactura']) . ');';
-                    $aux = $this->database->select($sql);
+                    $aux = $this->dataBase->select($sql);
                     if (empty($aux)) {
                         $this->miniLog->alert("Esta factura es un posible duplicado de
                      <a href='index.php?page=VentasFactura&id=" . $fac['idfactura'] . "'>esta otra</a>.
@@ -1107,7 +1105,7 @@ class FacturaCliente
         if ($bloquear) {
             return false;
         }
-        if ($this->database->exec($sql)) {
+        if ($this->dataBase->exec($sql)) {
             $this->cleanCache();
 
             if ($this->idasiento) {
@@ -1146,7 +1144,7 @@ class FacturaCliente
         $faclist = [];
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE pagada = FALSE ORDER BY ' . $order;
 
-        $data = $this->database->selectLimit($sql, $limit, $offset);
+        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaCliente($f);
@@ -1171,7 +1169,7 @@ class FacturaCliente
             ' WHERE codagente = ' . $this->var2str($codagente) .
             ' ORDER BY fecha DESC, codigo DESC';
 
-        $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
+        $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaCliente($f);
@@ -1196,7 +1194,7 @@ class FacturaCliente
             ' WHERE codcliente = ' . $this->var2str($codcliente) .
             ' ORDER BY fecha DESC, codigo DESC';
 
-        $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
+        $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaCliente($f);
@@ -1250,7 +1248,7 @@ class FacturaCliente
         }
         $sql .= ' ORDER BY fecha ASC, codigo ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaCliente($f);
@@ -1283,7 +1281,7 @@ class FacturaCliente
         }
         $consulta .= ' ORDER BY fecha DESC, codigo DESC';
 
-        $data = $this->database->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
+        $data = $this->dataBase->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaCliente($f);
@@ -1317,7 +1315,7 @@ class FacturaCliente
 
         $sql .= ' ORDER BY fecha DESC, codigo DESC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $f) {
                 $faclist[] = new FacturaCliente($f);
@@ -1336,7 +1334,7 @@ class FacturaCliente
         $error = true;
         $huecolist = $this->cache->get('factura_cliente_huecos');
         if ($error) {
-            $huecolist = fsHuecosFacturasCliente($this->database, $this->tableName());
+            $huecolist = fsHuecosFacturasCliente($this->dataBase, $this->tableName());
             $this->cache->set('factura_cliente_huecos', $huecolist);
         }
 

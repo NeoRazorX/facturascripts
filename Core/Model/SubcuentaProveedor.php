@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Relaciona a un proveedor con una subcuenta para cada ejercicio
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class SubcuentaProveedor
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria
@@ -96,7 +94,7 @@ class SubcuentaProveedor
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codproveedor = ' . $this->var2str($pro)
             . ' AND idsubcuenta = ' . $this->var2str($idsc) . ';';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return new SubcuentaProveedor($data[0]);
         }
@@ -113,7 +111,7 @@ class SubcuentaProveedor
     public function get2($idsubc)
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE id = ' . $this->var2str($idsubc) . ';';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return new SubcuentaProveedor($data[0]);
         }
@@ -133,7 +131,7 @@ class SubcuentaProveedor
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codproveedor = ' . $this->var2str($codprov)
             . ' ORDER BY codejercicio DESC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $s) {
                 $sclist[] = new SubcuentaProveedor($s);
@@ -150,6 +148,6 @@ class SubcuentaProveedor
     {
         $sql = 'DELETE FROM ' . $this->tableName()
             . ' WHERE codproveedor NOT IN (SELECT codproveedor FROM proveedores);';
-        $this->database->exec($sql);
+        $this->dataBase->exec($sql);
     }
 }

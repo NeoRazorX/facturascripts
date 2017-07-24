@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Ejercicio contable. Es el periodo en el que se agrupan asientos, facturas, albaranes...
  *
@@ -29,7 +27,7 @@ use FacturaScripts\Core\Base\Model;
 class Ejercicio
 {
 
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria. Varchar(4).
@@ -152,12 +150,12 @@ class Ejercicio
     public function newCodigo($cod = '0001')
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($cod) . ';';
-        if (!$this->database->select($sql)) {
+        if (!$this->dataBase->select($sql)) {
             return $cod;
         }
 
-        $sql = 'SELECT MAX(' . $this->database->sql2int('codejercicio') . ') as cod FROM ' . $this->tableName() . ';';
-        $cod = $this->database->select($sql);
+        $sql = 'SELECT MAX(' . $this->dataBase->sql2int('codejercicio') . ') as cod FROM ' . $this->tableName() . ';';
+        $cod = $this->dataBase->select($sql);
         if (!empty($cod)) {
             return sprintf('%04s', 1 + (int)$cod[0]['cod']);
         }
@@ -230,7 +228,7 @@ class Ejercicio
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fechainicio <= '
             . $this->var2str($fecha) . ' AND fechafin >= ' . $this->var2str($fecha) . ';';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             $eje = new Ejercicio($data[0]);
             if ($eje->abierto() || !$soloAbierto) {

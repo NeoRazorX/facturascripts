@@ -85,7 +85,7 @@ class Agente extends Base\ListController
 
         if ($this->query != '') {
             $fields = "nombre|apellidos|codagente";
-            $result[] = new Base\DataBase\DatabaseWhere($fields, $this->query, "LIKE");
+            $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
     }

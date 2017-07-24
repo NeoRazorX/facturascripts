@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * El asiento contable. Se relaciona con un ejercicio y se compone de partidas.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class Asiento
 {
-    use Model {
+    use Base\ModelTrait {
         saveInsert as private saveInsertTrait;
     }
 
@@ -221,10 +219,10 @@ class Asiento
     public function newNumero()
     {
         $this->numero = 1;
-        $sql = 'SELECT MAX(' . $this->database->sql2Int('numero') . ') as num FROM ' . $this->tableName()
+        $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('numero') . ') as num FROM ' . $this->tableName()
             . ' WHERE codejercicio = ' . $this->var2str($this->codejercicio) . ';';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             $this->numero = 1 + (int)$data[0]['num'];
         }
@@ -314,7 +312,7 @@ class Asiento
             $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fecha = ' . $this->var2str($this->fecha) . '
             AND concepto = ' . $this->var2str($this->concepto) . ' AND importe = ' . $this->var2str($this->importe) . '
             AND idasiento != ' . $this->var2str($this->idasiento) . ';';
-            $asientos = $this->database->select($sql);
+            $asientos = $this->dataBase->select($sql);
             if (!empty($asientos)) {
                 foreach ($asientos as $as) {
                     /// comprobamos las líneas
@@ -323,13 +321,13 @@ class Asiento
                      FROM co_partidas WHERE idasiento = ' . $this->var2str($this->idasiento) . '
                      AND NOT EXISTS(SELECT codsubcuenta,debe,haber,codcontrapartida,concepto FROM co_partidas
                      WHERE idasiento = ' . $this->var2str($as['idasiento']) . ');';
-                        $aux = $this->database->select($sql);
+                        $aux = $this->dataBase->select($sql);
                     } else {
                         $sql = 'SELECT codsubcuenta,debe,haber,codcontrapartida,concepto
                      FROM co_partidas WHERE idasiento = ' . $this->var2str($this->idasiento) . '
                      EXCEPT SELECT codsubcuenta,debe,haber,codcontrapartida,concepto FROM co_partidas
                      WHERE idasiento = ' . $this->var2str($as['idasiento']) . ';';
-                        $aux = $this->database->select($sql);
+                        $aux = $this->dataBase->select($sql);
                     }
 
                     if (empty($aux)) {
@@ -477,7 +475,7 @@ class Asiento
         }
 
         $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idasiento = ' . $this->var2str($this->idasiento) . ';';
-        return $this->database->exec($sql);
+        return $this->dataBase->exec($sql);
     }
 
     /**
@@ -509,7 +507,7 @@ class Asiento
         }
         $consulta .= ' ORDER BY fecha DESC';
 
-        $data = $this->database->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
+        $data = $this->dataBase->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $a) {
                 $alist[] = new Asiento($a);
@@ -536,7 +534,7 @@ class Asiento
             HAVING ABS(SUM(p.haber) - SUM(p.debe)) > 0.01
              ORDER BY p.idasiento DESC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $a) {
                 $alist[] = $this->get($a['idasiento']);
@@ -563,7 +561,7 @@ class Asiento
                 . ' WHERE codejercicio = ' . $this->var2str($eje->codejercicio)
                 . ' ORDER BY codejercicio ASC, fecha ASC, idasiento ASC';
 
-            $asientos = $this->database->selectLimit($consulta, 1000, $posicion);
+            $asientos = $this->dataBase->selectLimit($consulta, 1000, $posicion);
             while (!empty($asientos) && $continuar) {
                 foreach ($asientos as $col) {
                     if ($col['numero'] !== $numero) {
@@ -576,7 +574,7 @@ class Asiento
                 $posicion += 1000;
 
                 if ($sql !== '') {
-                    if (!$this->database->exec($sql)) {
+                    if (!$this->dataBase->exec($sql)) {
                         $this->miniLog->alert(
                             'Se ha producido un error mientras se renumeraban los asientos del ejercicio '
                             . $eje->codejercicio
@@ -586,7 +584,7 @@ class Asiento
                     $sql = '';
                 }
 
-                $asientos = $this->database->selectLimit($consulta, 1000, $posicion);
+                $asientos = $this->dataBase->selectLimit($consulta, 1000, $posicion);
             }
         }
 
@@ -610,12 +608,12 @@ class Asiento
                         . ' AND codejercicio = ' . $this->var2str($ej->codejercicio)
                         . ' AND fecha >= ' . $this->var2str($reg->fechainicio)
                         . ' AND fecha <= ' . $this->var2str($reg->fechafin) . ';';
-                    $this->database->exec($sql);
+                    $this->dataBase->exec($sql);
                 }
             } else {
                 $sql = 'UPDATE ' . $this->tableName() . ' SET editable = false WHERE editable = true'
                     . ' AND codejercicio = ' . $this->var2str($ej->codejercicio) . ';';
-                $this->database->exec($sql);
+                $this->dataBase->exec($sql);
             }
         }
 

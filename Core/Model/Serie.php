@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Una serie de facturación o contabilidad, para tener distinta numeración
  * en cada serie.
@@ -30,7 +28,7 @@ use FacturaScripts\Core\Base\Model;
 class Serie
 {
 
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria. Varchar (2).

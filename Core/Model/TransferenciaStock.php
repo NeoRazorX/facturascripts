@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Description of transferencia_stock
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class TransferenciaStock
 {
-    use Model;
+    use Base\ModelTrait;
 
     /// clave primaria. integer
     /**

@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Una regularización de IVA.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class RegularizacionIva
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria.
@@ -147,7 +145,7 @@ class RegularizacionIva
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fechainicio <= ' . $this->var2str($fecha)
             . ' AND fechafin >= ' . $this->var2str($fecha) . ';';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return new RegularizacionIva($data[0]);
         }
@@ -161,7 +159,7 @@ class RegularizacionIva
     public function delete()
     {
         $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idregiva = ' . $this->var2str($this->idregiva) . ';';
-        if ($this->database->exec($sql)) {
+        if ($this->dataBase->exec($sql)) {
             /// si hay un asiento asociado lo eliminamos
             if ($this->idasiento !== null) {
                 $asiento = new Asiento();
@@ -189,7 +187,7 @@ class RegularizacionIva
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($codejercicio)
             . ' ORDER BY fechafin DESC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $r) {
                 $reglist[] = new RegularizacionIva($r);

@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Detalle abreviado de un balance.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class BalanceCuentaA
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria.
@@ -99,13 +97,13 @@ class BalanceCuentaA
             WHERE idsubcuenta IN (SELECT idsubcuenta FROM co_subcuentas
               WHERE (codcuenta LIKE '6%' OR codcuenta LIKE '7%') 
                 AND codejercicio = " . $this->var2str($ejercicio->codejercicio) . ')' . $extra . ';';
-            $data = $this->database->select($sql);
+            $data = $this->dataBase->select($sql);
         } else {
             $sql = "SELECT SUM(debe) AS debe, SUM(haber) AS haber FROM co_partidas
             WHERE idsubcuenta IN (SELECT idsubcuenta FROM co_subcuentas
                WHERE codcuenta LIKE '" . static::noHtml($this->codcuenta) . "%'"
                 . ' AND codejercicio = ' . $this->var2str($ejercicio->codejercicio) . ')' . $extra . ';';
-            $data = $this->database->select($sql);
+            $data = $this->dataBase->select($sql);
         }
 
         if (!empty($data)) {
@@ -127,7 +125,7 @@ class BalanceCuentaA
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE codbalance = ' . $this->var2str($cod) . ' ORDER BY codcuenta ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $b) {
                 $balist[] = new BalanceCuentaA($b);
@@ -150,7 +148,7 @@ class BalanceCuentaA
         $sql = 'SELECT * FROM ' . $this->tableName()
             . " WHERE codbalance LIKE '" . static::noHtml($cod) . "%' ORDER BY codcuenta ASC;";
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $b) {
                 $balist[] = new BalanceCuentaA($b);

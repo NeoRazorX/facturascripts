@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Forma de pago de una factura, albarán, pedido o presupuesto.
  *
@@ -29,7 +27,7 @@ use FacturaScripts\Core\Base\Model;
 class FormaPago
 {
 
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria. Varchar (10).

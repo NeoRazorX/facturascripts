@@ -20,8 +20,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Define la relación entre un usuario y un rol.
  *
@@ -31,7 +29,7 @@ use FacturaScripts\Core\Base\Model;
 class RolUser
 {
 
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * TODO

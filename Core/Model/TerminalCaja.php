@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Configuración de un terminal de TPV y de la impresora de tickets,
  * además almacena los tickets a imprimir.
@@ -29,7 +27,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class TerminalCaja
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * Clave primaria.
@@ -130,7 +128,7 @@ class TerminalCaja
     public function disponible()
     {
         $sql = 'SELECT * FROM cajas WHERE f_fin IS NULL AND fs_id = ' . $this->var2str($this->id) . ';';
-        if ($this->database->select($sql)) {
+        if ($this->dataBase->select($sql)) {
             return false;
         }
         return true;
@@ -256,7 +254,7 @@ class TerminalCaja
             . '(SELECT fs_id AS id FROM cajas WHERE f_fin IS NULL) '
             . 'ORDER BY id ASC;';
 
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $tlist[] = new TerminalCaja($d);

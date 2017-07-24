@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Description of cliente_propiedad
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class ClientePropiedad
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * TODO
@@ -69,7 +67,7 @@ class ClientePropiedad
     {
         $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE name = ' .
             $this->var2str($this->name) . ' AND codcliente = ' . $this->var2str($this->codcliente) . ';';
-        return $this->database->exec($sql);
+        return $this->dataBase->exec($sql);
     }
 
     /**
@@ -84,7 +82,7 @@ class ClientePropiedad
         $vlist = [];
 
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codcliente = ' . $this->var2str($cod) . ';';
-        $data = $this->database->select($sql);
+        $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $vlist[$d['name']] = $d['text'];

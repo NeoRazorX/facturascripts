@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Model;
-
 /**
  * Almacena los datos de un artículos.
  *
@@ -28,7 +26,7 @@ use FacturaScripts\Core\Base\Model;
  */
 class Articulo
 {
-    use Model;
+    use Base\ModelTrait;
 
     /**
      * TODO
@@ -353,7 +351,7 @@ class Articulo
         }
 
         $ref = 1;
-        $data = $this->database->selectLimit($sql, 1);
+        $data = $this->dataBase->selectLimit($sql, 1);
         if (!empty($data)) {
             $ref = sprintf(1 + (int)$data[0]['referencia']);
         }
@@ -463,7 +461,7 @@ class Articulo
         if ($this->equivalencia !== null) {
             $sql = 'SELECT ' . self::$column_list . ' FROM ' . $this->tableName() .
                 ' WHERE equivalencia = ' . $this->var2str($this->equivalencia) . ' ORDER BY referencia ASC;';
-            $data = $this->database->select($sql);
+            $data = $this->dataBase->select($sql);
             if (!empty($data)) {
                 foreach ($data as $d) {
                     if ($d['referencia'] !== $this->referencia) {
@@ -663,7 +661,7 @@ class Articulo
         } elseif ($ref !== $this->referencia && !$this->referencia === null) {
             $sql = 'UPDATE ' . $this->tableName() . ' SET referencia = ' . $this->var2str($ref)
                 . ' WHERE referencia = ' . $this->var2str($this->referencia) . ';';
-            if ($this->database->exec($sql)) {
+            if ($this->dataBase->exec($sql)) {
                 /// renombramos la imagen, si la hay
                 if (file_exists(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png')) {
                     rename(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png',
@@ -756,7 +754,7 @@ class Articulo
                         $sql = 'UPDATE ' . $this->tableName()
                             . ' SET stockfis = ' . $this->var2str($this->stockfis)
                             . ' WHERE referencia = ' . $this->var2str($this->referencia) . ';';
-                        $result = $this->database->exec($sql);
+                        $result = $this->dataBase->exec($sql);
                     } elseif (!$this->save()) {
                         $this->miniLog->alert('¡Error al actualizar el stock del artículo!');
                     }
@@ -798,7 +796,7 @@ class Articulo
                     $sql = 'UPDATE ' . $this->tableName()
                         . '  SET costemedio = ' . $this->var2str($this->costemedio)
                         . '  WHERE referencia = ' . $this->var2str($this->referencia) . ';';
-                    $result = $this->database->exec($sql);
+                    $result = $this->dataBase->exec($sql);
                 } elseif (!$this->save()) {
                     $this->miniLog->alert('¡Error al actualizar el stock del artículo!');
                     $result = false;
@@ -836,7 +834,7 @@ class Articulo
                             . '  SET stockfis = ' . $this->var2str($this->stockfis)
                             . ', costemedio = ' . $this->var2str($this->costemedio)
                             . '  WHERE referencia = ' . $this->var2str($this->referencia) . ';';
-                        $result = $this->database->exec($sql);
+                        $result = $this->dataBase->exec($sql);
                     } elseif (!$this->save()) {
                         $this->miniLog->alert('¡Error al actualizar el stock del artículo!');
                         $result = false;
@@ -914,7 +912,7 @@ class Articulo
 
         $sql = 'DELETE FROM articulosprov WHERE referencia = ' . $this->var2str($this->referencia) . ';';
         $sql .= 'DELETE FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($this->referencia) . ';';
-        if ($this->database->exec($sql)) {
+        if ($this->dataBase->exec($sql)) {
             $this->setImagen(false);
 
             $this->exists = false;
@@ -1033,7 +1031,7 @@ class Articulo
                 $sql .= ' ORDER BY referencia ASC';
             }
 
-            $data = $this->database->selectLimit($sql, FS_ITEM_LIMIT, $offset);
+            $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
             if (!empty($data)) {
                 foreach ($data as $a) {
                     $artilist[] = new Articulo($a);
@@ -1060,7 +1058,7 @@ class Articulo
             . ' WHERE codbarras = ' . $this->var2str($cod)
             . ' ORDER BY lower(referencia) ASC';
 
-        $data = $this->database->selectLimit($sql, $limit, $offset);
+        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $artilist[] = new Articulo($d);
@@ -1084,7 +1082,7 @@ class Articulo
         $sql = 'SELECT ' . self::$column_list . ' FROM ' . $this->tableName()
             . ' ORDER BY lower(referencia) ASC';
 
-        $data = $this->database->selectLimit($sql, $limit, $offset);
+        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $artilist[] = new Articulo($d);
@@ -1108,7 +1106,7 @@ class Articulo
         $sql = 'SELECT ' . self::$column_list . ' FROM ' . $this->tableName()
             . ' WHERE publico ORDER BY lower(referencia) ASC';
 
-        $data = $this->database->selectLimit($sql, $limit, $offset);
+        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $artilist[] = new Articulo($d);
@@ -1133,7 +1131,7 @@ class Articulo
         $sql = 'SELECT ' . self::$column_list . ' FROM ' . $this->tableName() . ' WHERE codfamilia = '
             . $this->var2str($cod) . ' ORDER BY lower(referencia) ASC';
 
-        $data = $this->database->selectLimit($sql, $limit, $offset);
+        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $artilist[] = new Articulo($d);
@@ -1158,7 +1156,7 @@ class Articulo
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codfabricante = '
             . $this->var2str($cod) . ' ORDER BY lower(referencia) ASC';
 
-        $data = $this->database->selectLimit($sql, $limit, $offset);
+        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $artilist[] = new Articulo($d);
@@ -1209,7 +1207,7 @@ class Articulo
             . ' AND codfamilia NOT IN (SELECT codfamilia FROM familias);'
         ];
         foreach ($fixes as $sql) {
-            $this->database->exec($sql);
+            $this->dataBase->exec($sql);
         }
     }
 
