@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Model;
@@ -52,23 +53,86 @@ class Pais
 
     /**
      * Pais constructor.
+     *
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'paises', 'codpais');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
+        if (is_null($data) || empty($data)) {
             $this->clear();
+        } else {
+            $this->loadFromData($data);
         }
+    }
+
+    /**
+     * Devuelve la URL donde ver/modificar los datos
+     * @return string
+     */
+    public function url()
+    {
+        if ($this->codpais === null) {
+            return 'index.php?page=AdminPaises';
+        }
+
+        return 'index.php?page=AdminPaises#' . $this->codpais;
+    }
+
+    /**
+     * Devuelve TRUE si el pais es el predeterminado de la empresa
+     * @return bool
+     */
+    public function isDefault()
+    {
+        return ($this->codpais === $this->defaultItems->codPais());
+    }
+
+    /**
+     * Devuelve el pais con codido = $cod
+     *
+     * @param string $cod
+     *
+     * @return pais|bool
+     */
+    public function getByIso($cod)
+    {
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codiso = ' . $this->var2str($cod) . ';';
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
+            return new Pais($data[0]);
+        }
+
+        return false;
+    }
+
+    /**
+     * Comprueba los datos del pais, devuelve TRUE si son correctos
+     * @return bool
+     */
+    public function test()
+    {
+        $status = false;
+
+        $this->codpais = trim($this->codpais);
+        $this->nombre = static::noHtml($this->nombre);
+
+        if (!preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {
+            $this->miniLog->alert($this->i18n->trans('country-cod-invalid', [$this->codpais]));
+        } elseif (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
+            $this->miniLog->alert($this->i18n->trans('country-name-invalid'));
+        } else {
+            $status = true;
+        }
+
+        return $status;
     }
 
     /**
      * Crea la consulta necesaria para crear los paises en la base de datos.
      * @return string
      */
-    public function install()
+    private function install()
     {
         return 'INSERT INTO ' . $this->tableName() . ' (codpais,codiso,nombre)'
             . " VALUES ('ESP','ES','España'),"
@@ -312,65 +376,5 @@ class Pais
             . " ('DJI','DJ','Yibuti'),"
             . " ('ZMB','ZM','Zambia'),"
             . " ('ZWE','ZW','Zimbabue');";
-    }
-
-    /**
-     * Devuelve la URL donde ver/modificar los datos
-     * @return string
-     */
-    public function url()
-    {
-        if ($this->codpais === null) {
-            return 'index.php?page=admin_paises';
-        }
-
-        return 'index.php?page=admin_paises#' . $this->codpais;
-    }
-
-    /**
-     * Devuelve TRUE si el pais es el predeterminado de la empresa
-     * @return bool
-     */
-    public function isDefault()
-    {
-        return ($this->codpais === $this->defaultItems->codPais());
-    }
-
-    /**
-     * Devuelve el pais con codido = $cod
-     * @param string $cod
-     * @return pais|bool
-     */
-    public function getByIso($cod)
-    {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codiso = ' . $this->var2str($cod) . ';';
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            return new Pais($data[0]);
-        }
-
-        return false;
-    }
-
-    /**
-     * Comprueba los datos del pais, devuelve TRUE si son correctos
-     * @return bool
-     */
-    public function test()
-    {
-        $status = false;
-
-        $this->codpais = trim($this->codpais);
-        $this->nombre = static::noHtml($this->nombre);
-
-        if (!preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {
-            $this->miniLog->alert($this->i18n->trans('country-cod-invalid', [$this->codpais]));
-        } elseif (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
-            $this->miniLog->alert($this->i18n->trans('country-name-invalid'));
-        } else {
-            $status = true;
-        }
-
-        return $status;
     }
 }

@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of facturacion_base
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
@@ -13,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -27,147 +26,177 @@ use FacturaScripts\Core\Base\Model;
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
-class ArticuloProveedor 
+class ArticuloProveedor
 {
-    use Model;
-    
+    use Model {
+        save as private saveTrait;
+    }
+
+    /**
+     * TODO
+     * @var array
+     */
+    private static $impuestos;
+    /**
+     * TODO
+     * @var array
+     */
+    private static $nombres;
     /**
      * Clave primaria.
-     * @var type 
+     * @var int
      */
     public $id;
-
     /**
      * Referencia del artículo en nuestro catálogo. Puede no estar actualmente.
-     * @var type 
+     * @var string
      */
     public $referencia;
-
     /**
      * Código del proveedor asociado.
-     * @var type 
+     * @var string
      */
     public $codproveedor;
-
     /**
      * Referencia del artículo para el proveedor.
-     * @var type 
+     * @var string
      */
     public $refproveedor;
+    /**
+     * Descripción del artículo
+     * @var string
+     */
     public $descripcion;
-
     /**
      * Precio neto al que nos ofrece el proveedor este producto.
-     * @var type 
+     * @var float
      */
     public $precio;
-
     /**
      * Descuento sobre el precio que nos hace el proveedor.
-     * @var type 
+     * @var float
      */
     public $dto;
-
     /**
      * Impuesto asignado. Clase impuesto.
-     * @var type 
+     * @var string
      */
     public $codimpuesto;
-
     /**
      * Stock del artículo en el almacén del proveedor.
-     * @var type 
+     * @var float
      */
     public $stock;
-
     /**
      * TRUE -> el artículo no ofrece stock.
-     * @var type 
+     * @var bool
      */
     public $nostock;
-
+    /**
+     * Código de barras del artículo
+     * @var string
+     */
+    public $codbarras;
+    /**
+     * Part Number
+     * @var string
+     */
+    public $partnumber;
     /**
      * % IVA del impuesto asignado.
-     * @var type 
+     * @var float
      */
     private $iva;
-    public $codbarras;
-    public $partnumber;
-    private static $impuestos;
-    private static $nombres;
 
-    public function __construct(array $data = []) 
+    /**
+     * ArticuloProveedor constructor.
+     *
+     * @param array $data
+     */
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'articulosprov', 'id');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
+        if (is_null($data) || empty($data)) {
             $this->clear();
+        } else {
+            $this->loadFromData($data);
         }
     }
+
+    /**
+     * Resetea los valores de todas las propiedades modelo.
+     */
     public function clear()
     {
-        $this->id = NULL;
-        $this->referencia = NULL;
-        $this->codproveedor = NULL;
-        $this->refproveedor = NULL;
-        $this->descripcion = NULL;
+        $this->id = null;
+        $this->referencia = null;
+        $this->codproveedor = null;
+        $this->refproveedor = null;
+        $this->descripcion = null;
         $this->precio = 0;
         $this->dto = 0;
-        $this->codimpuesto = NULL;
+        $this->codimpuesto = null;
         $this->stock = 0;
-        $this->nostock = TRUE;
-        $this->codbarras = NULL;
-        $this->partnumber = NULL;
+        $this->nostock = true;
+        $this->codbarras = null;
+        $this->partnumber = null;
     }
 
-    protected function install() {
-        return '';
-    }
-
-    public function nombre_proveedor() {
+    /**
+     * TODO
+     * @return string
+     */
+    public function nombreProveedor()
+    {
         if (isset(self::$nombres[$this->codproveedor])) {
             return self::$nombres[$this->codproveedor];
-        } else {
-            $data = self::$dataBase->select("SELECT razonsocial FROM proveedores WHERE codproveedor = " . $this->var2str($this->codproveedor) . ";");
-            if ($data) {
-                self::$nombres[$this->codproveedor] = $data[0]['razonsocial'];
-                return $data[0]['razonsocial'];
-            } else {
-                            return '-';
-            }
         }
+        $sql = 'SELECT razonsocial FROM proveedores WHERE codproveedor = ' . $this->var2str($this->codproveedor) . ';';
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
+            self::$nombres[$this->codproveedor] = $data[0]['razonsocial'];
+            return $data[0]['razonsocial'];
+        }
+        return '-';
     }
 
-    public function url_proveedor() {
-        return 'index.php?page=compras_proveedor&cod=' . $this->codproveedor;
+    /**
+     * TODO
+     * @return string
+     */
+    public function urlProveedor()
+    {
+        return 'index.php?page=ComprasProveedor&cod=' . $this->codproveedor;
     }
 
     /**
      * Devuelve el % de IVA del artículo.
      * Si $reload es TRUE, vuelve a consultarlo en lugar de usar los datos cargados.
-     * @param type $reload
-     * @return type
+     *
+     * @param bool $reload
+     *
+     * @return float|int|null
      */
-    public function get_iva($reload = TRUE) {
+    public function getIva($reload = true)
+    {
         if ($reload) {
-            $this->iva = NULL;
+            $this->iva = null;
         }
 
-        if (is_null($this->iva)) {
+        if ($this->iva === null) {
             $this->iva = 0;
 
-            if (!is_null($this->codimpuesto)) {
-                $encontrado = FALSE;
+            if (!$this->codimpuesto === null) {
+                $encontrado = false;
                 foreach (self::$impuestos as $i) {
-                    if ($i->codimpuesto == $this->codimpuesto) {
+                    if ($i instanceof Impuesto && $i->codimpuesto === $this->codimpuesto) {
                         $this->iva = $i->iva;
-                        $encontrado = TRUE;
+                        $encontrado = true;
                         break;
                     }
                 }
                 if (!$encontrado) {
-                    $imp = new \impuesto();
+                    $imp = new Impuesto();
                     $imp0 = $imp->get($this->codimpuesto);
                     if ($imp0) {
                         $this->iva = $imp0->iva;
@@ -180,35 +209,26 @@ class ArticuloProveedor
         return $this->iva;
     }
 
-    public function get_articulo() {
-        if (is_null($this->referencia)) {
-            return FALSE;
-        } else {
-            $art0 = new \articulo();
-            return $art0->get($this->referencia);
+    /**
+     * TODO
+     * @return bool|mixed
+     */
+    public function getArticulo()
+    {
+        if ($this->referencia === null) {
+            return false;
         }
+        $art0 = new Articulo();
+        return $art0->get($this->referencia);
     }
 
     /**
      * Devuelve el precio final, aplicando descuento e impuesto.
-     * @return type
+     * @return float
      */
-    public function total_iva() {
-        return $this->precio * (100 - $this->dto) / 100 * (100 + $this->get_iva()) / 100;
-    }
-
-    /**
-     * Devuelve el artículo de proveedor solicitado, o false si no se encuentra.
-     * @param type $id
-     * @return \articulo_proveedor|boolean
-     */
-    public function get($id) {
-        $data = self::$dataBase->select("SELECT * FROM articulosprov WHERE id = " . $this->var2str($id) . ";");
-        if ($data) {
-            return new \articulo_proveedor($data[0]);
-        } else {
-                    return FALSE;
-        }
+    public function totalIva()
+    {
+        return $this->precio * (100 - $this->dto) / 100 * (100 + $this->getIva()) / 100;
     }
 
     /**
@@ -216,102 +236,64 @@ class ArticuloProveedor
      * como codproveedor. Si se proporciona $refprov, entonces lo que devuelve es el
      * primer elemento que tenga $codproveedor como codproveedor y $refprov como refproveedor
      * o bien $ref como referencia.
-     * @param type $ref
-     * @param type $codproveedor
-     * @param type $refprov
-     * @return \articulo_proveedor|boolean
+     *
+     * @param string $ref
+     * @param string $codproveedor
+     * @param string $refprov
+     *
+     * @return ArticuloProveedor|bool
      */
-    public function get_by($ref, $codproveedor, $refprov = FALSE) {
-        if ($refprov) {
-            $sql = "SELECT * FROM articulosprov WHERE codproveedor = " . $this->var2str($codproveedor)
-                    . " AND (refproveedor = " . $this->var2str($refprov)
-                    . " OR referencia = " . $this->var2str($ref) . ");";
-        } else {
-            $sql = "SELECT * FROM articulosprov WHERE referencia = " . $this->var2str($ref)
-                    . " AND codproveedor = " . $this->var2str($codproveedor) . ";";
+    public function getBy($ref, $codproveedor, $refprov = '')
+    {
+        $sql = 'SELECT * FROM articulosprov WHERE referencia = ' . $this->var2str($ref)
+            . ' AND codproveedor = ' . $this->var2str($codproveedor) . ';';
+        if ($refprov !== '') {
+            $sql = 'SELECT * FROM articulosprov WHERE codproveedor = ' . $this->var2str($codproveedor)
+                . ' AND (refproveedor = ' . $this->var2str($refprov)
+                . ' OR referencia = ' . $this->var2str($ref) . ');';
         }
 
-        $data = self::$dataBase->select($sql);
-        if ($data) {
-            return new \articulo_proveedor($data[0]);
-        } else {
-                    return FALSE;
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
+            return new ArticuloProveedor($data[0]);
         }
+        return false;
     }
 
-    public function exists() {
-        if (is_null($this->id)) {
-            return FALSE;
-        } else {
-                    return self::$dataBase->select("SELECT * FROM articulosprov WHERE id = " . $this->var2str($this->id) . ";");
-        }
-    }
-
-    public function save() {
-        $this->descripcion = $this->no_html($this->descripcion);
+    /**
+     * Almacena los datos del modelo en la base de datos.
+     * @return bool
+     */
+    public function save()
+    {
+        $this->descripcion = static::noHtml($this->descripcion);
 
         if ($this->nostock) {
             $this->stock = 0;
         }
 
-        if (is_null($this->refproveedor) OR strlen($this->refproveedor) < 1 OR strlen($this->refproveedor) > 25) {
-            $this->new_error_msg('La referencia de proveedor debe contener entre 1 y 25 caracteres.');
-        } else if ($this->exists()) {
-            $sql = "UPDATE articulosprov SET referencia = " . $this->var2str($this->referencia) .
-                    ", codproveedor = " . $this->var2str($this->codproveedor) .
-                    ", refproveedor = " . $this->var2str($this->refproveedor) .
-                    ", descripcion = " . $this->var2str($this->descripcion) .
-                    ", precio = " . $this->var2str($this->precio) .
-                    ", dto = " . $this->var2str($this->dto) .
-                    ", codimpuesto = " . $this->var2str($this->codimpuesto) .
-                    ", stock = " . $this->var2str($this->stock) .
-                    ", nostock = " . $this->var2str($this->nostock) .
-                    ", codbarras = " . $this->var2str($this->codbarras) .
-                    ", partnumber = " . $this->var2str($this->partnumber) .
-                    "  WHERE id = " . $this->var2str($this->id) . ";";
-
-            return self::$dataBase->exec($sql);
-        } else {
-            $sql = "INSERT INTO articulosprov (referencia,codproveedor,refproveedor,descripcion," .
-                    "precio,dto,codimpuesto,stock,nostock,codbarras,partnumber) VALUES " .
-                    "(" . $this->var2str($this->referencia) .
-                    "," . $this->var2str($this->codproveedor) .
-                    "," . $this->var2str($this->refproveedor) .
-                    "," . $this->var2str($this->descripcion) .
-                    "," . $this->var2str($this->precio) .
-                    "," . $this->var2str($this->dto) .
-                    "," . $this->var2str($this->codimpuesto) .
-                    "," . $this->var2str($this->stock) .
-                    "," . $this->var2str($this->nostock) .
-                    "," . $this->var2str($this->codbarras) .
-                    "," . $this->var2str($this->partnumber) . ");";
-
-            if (self::$dataBase->exec($sql)) {
-                $this->id = self::$dataBase->lastval();
-                return TRUE;
-            } else {
-                            return FALSE;
-            }
+        if ($this->refproveedor === null || empty($this->refproveedor) || strlen($this->refproveedor) > 25) {
+            $this->miniLog->alert('La referencia de proveedor debe contener entre 1 y 25 caracteres.');
         }
-    }
-
-    public function delete() {
-        return self::$dataBase->exec("DELETE FROM articulosprov WHERE id = " . $this->var2str($this->id) . ";");
+        return $this->saveTrait();
     }
 
     /**
      * Devuelve todos los elementos que tienen $ref como referencia.
-     * @param type $ref
-     * @return \articulo_proveedor
+     *
+     * @param string $ref
+     *
+     * @return array
      */
-    public function all_from_ref($ref) {
-        $alist = array();
-        $sql = "SELECT * FROM articulosprov WHERE referencia = " . $this->var2str($ref) . " ORDER BY precio ASC;";
+    public function allFromRef($ref)
+    {
+        $alist = [];
+        $sql = 'SELECT * FROM articulosprov WHERE referencia = ' . $this->var2str($ref) . ' ORDER BY precio ASC;';
 
-        $data = self::$dataBase->select($sql);
-        if ($data) {
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
             foreach ($data as $d) {
-                $alist[] = new \articulo_proveedor($d);
+                $alist[] = new ArticuloProveedor($d);
             }
         }
 
@@ -320,34 +302,39 @@ class ArticuloProveedor
 
     /**
      * Devuelve el artículo con menor precio de los que tienen $ref como referencia.
-     * @param type $ref
-     * @return \articulo_proveedor
+     *
+     * @param string $ref
+     *
+     * @return bool|ArticuloProveedor
      */
-    public function mejor_from_ref($ref) {
-        $sql = "SELECT * FROM articulosprov WHERE referencia = " . $this->var2str($ref)
-                . " ORDER BY precio ASC;";
+    public function mejorFromRef($ref)
+    {
+        $sql = 'SELECT * FROM articulosprov WHERE referencia = ' . $this->var2str($ref)
+            . ' ORDER BY precio ASC;';
 
-        $data = self::$dataBase->select($sql);
-        if ($data) {
-            return new \articulo_proveedor($data[0]);
-        } else {
-                    return FALSE;
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
+            return new ArticuloProveedor($data[0]);
         }
+        return false;
     }
 
     /**
      * Devuelve todos los articulos que tienen asociada una referencia para actualizar.
-     * @param 
-     * @return \articulo_proveedor
+     *
+     * @param
+     *
+     * @return array
      */
-    public function all_con_ref() {
-        $alist = array();
+    public function allConRef()
+    {
+        $alist = [];
         $sql = "SELECT * FROM articulosprov WHERE referencia !='' ORDER BY precio ASC;";
 
-        $data = self::$dataBase->select($sql);
-        if ($data) {
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
             foreach ($data as $d) {
-                $alist[] = new \articulo_proveedor($d);
+                $alist[] = new ArticuloProveedor($d);
             }
         }
 
@@ -357,9 +344,14 @@ class ArticuloProveedor
     /**
      * Aplicamos correcciones a la tabla.
      */
-    public function fix_db() {
-        self::$dataBase->exec("DELETE FROM articulosprov WHERE codproveedor NOT IN (SELECT codproveedor FROM proveedores);");
-        self::$dataBase->exec("UPDATE articulosprov SET refproveedor = referencia WHERE refproveedor IS NULL;");
+    public function fixDb()
+    {
+        $fixes = [
+            'DELETE FROM articulosprov WHERE codproveedor NOT IN (SELECT codproveedor FROM proveedores);',
+            'UPDATE articulosprov SET refproveedor = referencia WHERE refproveedor IS NULL;'
+        ];
+        foreach ($fixes as $sql) {
+            $this->database->exec($sql);
+        }
     }
-
 }

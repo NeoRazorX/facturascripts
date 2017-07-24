@@ -1,6 +1,5 @@
 <?php
-
-/*
+/**
  * This file is part of facturacion_base
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
@@ -13,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,44 +23,99 @@ use FacturaScripts\Core\Base\Model;
 
 /**
  * La cantidad en inventario de un artículo en un almacén concreto.
- * 
+ *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class Stock
 {
-    use Model;
+    use Model {
+        save as private saveTrait;
+    }
 
     /**
      * Clave primaria.
-     * @var type 
+     * @var int
      */
     public $idstock;
+    /**
+     * TODO
+     * @var string
+     */
     public $codalmacen;
+    /**
+     * TODO
+     * @var string
+     */
     public $referencia;
+    /**
+     * TODO
+     * @var string
+     */
     public $nombre;
+    /**
+     * TODO
+     * @var float
+     */
     public $cantidad;
+    /**
+     * TODO
+     * @var
+     */
     public $reservada;
+    /**
+     * TODO
+     * @var
+     */
     public $disponible;
+    /**
+     * TODO
+     * @var
+     */
     public $pterecibir;
+    /**
+     * TODO
+     * @var float
+     */
     public $stockmin;
+    /**
+     * TODO
+     * @var float
+     */
     public $stockmax;
+    /**
+     * TODO
+     * @var
+     */
     public $cantidadultreg;
+    /**
+     * TODO
+     * @var
+     */
     public $ubicacion;
 
-    public function __construct(array $data = []) 
+    /**
+     * Stock constructor.
+     *
+     * @param array $data
+     */
+    public function __construct($data = [])
     {
         $this->init(__CLASS__, 'stocks', 'idstock');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
+        if (is_null($data) || empty($data)) {
             $this->clear();
+        } else {
+            $this->loadFromData($data);
         }
     }
-	
-    public function clear() {
-        $this->idstock = NULL;
-        $this->codalmacen = NULL;
-        $this->referencia = NULL;
+
+    /**
+     * Resetea los valores de todas las propiedades modelo.
+     */
+    public function clear()
+    {
+        $this->idstock = null;
+        $this->codalmacen = null;
+        $this->referencia = null;
         $this->nombre = '';
         $this->cantidad = 0;
         $this->reservada = 0;
@@ -70,23 +124,16 @@ class Stock
         $this->stockmin = 0;
         $this->stockmax = 0;
         $this->cantidadultreg = 0;
-        $this->ubicacion = NULL;
+        $this->ubicacion = null;
     }
 
-    protected function install() {
-        /**
-         * La tabla stocks tiene claves ajenas a artículos y almacenes,
-         * por eso creamos un objeto de cada uno, para forzar la comprobación
-         * de las tablas.
-         */
-        //new \almacen();
-        //new \articulo();
-
-        return '';
-    }
-
-    public function nombre() {
-        $al0 = new \almacen();
+    /**
+     * TODO
+     * @return mixed
+     */
+    public function getNombre()
+    {
+        $al0 = new Almacen();
         $almacen = $al0->get($this->codalmacen);
         if ($almacen) {
             $this->nombre = $almacen->nombre;
@@ -95,160 +142,182 @@ class Stock
         return $this->nombre;
     }
 
-    public function set_cantidad($c = 0) {
-        $this->cantidad = floatval($c);
+    /**
+     * TODO
+     *
+     * @param int $c
+     */
+    public function setCantidad($c = 0)
+    {
+        $this->cantidad = (float)$c;
 
-        if ($this->cantidad < 0 AND !FS_STOCK_NEGATIVO) {
+        if ($this->cantidad < 0 && !FS_STOCK_NEGATIVO) {
             $this->cantidad = 0;
         }
 
         $this->disponible = $this->cantidad - $this->reservada;
     }
 
-    public function sum_cantidad($c = 0) {
+    /**
+     * TODO
+     *
+     * @param int $c
+     */
+    public function sumCantidad($c = 0)
+    {
         /// convertimos a flot por si acaso nos ha llegado un string
-        $this->cantidad += floatval($c);
+        $this->cantidad += (float)$c;
 
-        if ($this->cantidad < 0 AND !FS_STOCK_NEGATIVO) {
+        if ($this->cantidad < 0 && !FS_STOCK_NEGATIVO) {
             $this->cantidad = 0;
         }
 
         $this->disponible = $this->cantidad - $this->reservada;
     }
 
-    public function get($id) {
-        $data = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idstock = " . $this->var2str($id) . ";");
-        if ($data) {
-            return new \stock($data[0]);
-        } else {
-                    return FALSE;
-        }
-    }
-
-    public function get_by_referencia($ref, $codalmacen = FALSE) {
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE referencia = " . $this->var2str($ref) . ";";
+    /**
+     * TODO
+     *
+     * @param string $ref
+     * @param bool $codalmacen
+     *
+     * @return bool|Stock
+     */
+    public function getByReferencia($ref, $codalmacen = false)
+    {
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref) . ';';
         if ($codalmacen) {
-            $sql = "SELECT * FROM " . $this->table_name . " WHERE referencia = " . $this->var2str($ref)
-                    . ", codalmacen = " . $this->var2str($codalmacen) . ";";
+            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref)
+                . ', codalmacen = ' . $this->var2str($codalmacen) . ';';
         }
 
-        $data = self::$dataBase->select($sql);
-        if ($data) {
-            return new \stock($data[0]);
-        } else {
-                    return FALSE;
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
+            return new Stock($data[0]);
         }
+        return false;
     }
 
-    public function exists() {
-        if (is_null($this->idstock)) {
-            return FALSE;
-        } else {
-                    return self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE idstock = " . $this->var2str($this->idstock) . ";");
-        }
-    }
-
-    public function save() {
+    /**
+     * Almacena los datos del modelo en la base de datos.
+     * @return bool
+     */
+    public function save()
+    {
         $this->cantidad = round($this->cantidad, 3);
         $this->reservada = round($this->reservada, 3);
         $this->disponible = $this->cantidad - $this->reservada;
 
-        if ($this->exists()) {
-            $sql = "UPDATE " . $this->table_name . " SET codalmacen = " . $this->var2str($this->codalmacen)
-                    . ", referencia = " . $this->var2str($this->referencia)
-                    . ", nombre = " . $this->var2str($this->nombre)
-                    . ", cantidad = " . $this->var2str($this->cantidad)
-                    . ", reservada = " . $this->var2str($this->reservada)
-                    . ", disponible = " . $this->var2str($this->disponible)
-                    . ", pterecibir = " . $this->var2str($this->pterecibir)
-                    . ", stockmin = " . $this->var2str($this->stockmin)
-                    . ", stockmax = " . $this->var2str($this->stockmax)
-                    . ", cantidadultreg = " . $this->var2str($this->cantidadultreg)
-                    . ", ubicacion = " . $this->var2str($this->ubicacion)
-                    . "  WHERE idstock = " . $this->var2str($this->idstock) . ";";
-
-            return self::$dataBase->exec($sql);
-        } else {
-            $sql = "INSERT INTO " . $this->table_name . " (codalmacen,referencia,nombre,cantidad,reservada,
-            disponible,pterecibir,stockmin,stockmax,cantidadultreg,ubicacion) VALUES 
-                   (" . $this->var2str($this->codalmacen)
-                    . "," . $this->var2str($this->referencia)
-                    . "," . $this->var2str($this->nombre)
-                    . "," . $this->var2str($this->cantidad)
-                    . "," . $this->var2str($this->reservada)
-                    . "," . $this->var2str($this->disponible)
-                    . "," . $this->var2str($this->pterecibir)
-                    . "," . $this->var2str($this->stockmin)
-                    . "," . $this->var2str($this->stockmax)
-                    . "," . $this->var2str($this->cantidadultreg)
-                    . "," . $this->var2str($this->ubicacion) . ");";
-
-            if (self::$dataBase->exec($sql)) {
-                $this->idstock = self::$dataBase->lastval();
-                return TRUE;
-            } else {
-                            return FALSE;
-            }
-        }
+        return $this->saveTrait();
     }
 
-    public function delete() {
-        return self::$dataBase->exec("DELETE FROM " . $this->table_name . " WHERE idstock = " . $this->var2str($this->idstock) . ";");
-    }
+    /**
+     * TODO
+     *
+     * @param string $ref
+     *
+     * @return array
+     */
+    public function allFromArticulo($ref)
+    {
+        $stocklist = [];
 
-    public function all_from_articulo($ref) {
-        $stocklist = array();
-
-        $data = self::$dataBase->select("SELECT * FROM " . $this->table_name . " WHERE referencia = " . $this->var2str($ref) . " ORDER BY codalmacen ASC;");
-        if ($data) {
+        $sql = 'SELECT * FROM ' . $this->tableName()
+            . ' WHERE referencia = ' . $this->var2str($ref) . ' ORDER BY codalmacen ASC;';
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
             foreach ($data as $s) {
-                $stocklist[] = new \stock($s);
+                $stocklist[] = new Stock($s);
             }
         }
 
         return $stocklist;
     }
 
-    public function total_from_articulo($ref, $codalmacen = FALSE) {
+    /**
+     * TODO
+     *
+     * @param string $ref
+     * @param bool $codalmacen
+     *
+     * @return float|int
+     */
+    public function totalFromArticulo($ref, $codalmacen = false)
+    {
         $num = 0;
-        $sql = "SELECT SUM(cantidad) as total FROM " . $this->table_name . " WHERE referencia = " . $this->var2str($ref);
+        $sql = 'SELECT SUM(cantidad) AS total FROM ' . $this->tableName()
+            . ' WHERE referencia = ' . $this->var2str($ref);
 
         if ($codalmacen) {
-            $sql .= " AND codalmacen = " . $this->var2str($codalmacen);
+            $sql .= ' AND codalmacen = ' . $this->var2str($codalmacen);
         }
 
-        $data = self::$dataBase->select($sql);
-        if ($data) {
-            $num = round(floatval($data[0]['total']), 3);
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
+            $num = round((float)$data[0]['total'], 3);
         }
 
         return $num;
     }
 
-    public function count($column = 'idstock') {
+    /**
+     * TODO
+     *
+     * @param string $column
+     *
+     * @return int
+     */
+    public function count($column = 'idstock')
+    {
         $num = 0;
 
-        $data = self::$dataBase->select("SELECT COUNT(idstock) as total FROM " . $this->table_name . ";");
-        if ($data) {
-            $num = intval($data[0]['total']);
+        $sql = 'SELECT COUNT(idstock) AS total FROM ' . $this->tableName() . ';';
+        $data = $this->database->select($sql);
+        if (!empty($data)) {
+            $num = (int)$data[0]['total'];
         }
 
         return $num;
     }
 
-    public function count_by_articulo() {
+    /**
+     * TODO
+     * @return int
+     */
+    public function countByArticulo()
+    {
         return $this->count('DISTINCT referencia');
     }
 
     /**
      * Aplicamos algunas correcciones a la tabla.
      */
-    public function fix_db() {
+    public function fixDb()
+    {
         /**
          * Esta consulta produce un error si no hay datos erroneos, pero da igual
          */
-        self::$dataBase->exec("DELETE FROM stocks s WHERE NOT EXISTS "
-                . "(SELECT referencia FROM articulos a WHERE a.referencia = s.referencia);");
+        $sql = 'DELETE FROM stocks s WHERE NOT EXISTS '
+            . '(SELECT referencia FROM articulos a WHERE a.referencia = s.referencia);';
+        $this->database->exec($sql);
     }
 
+    /**
+     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará tras la creación de la tabla. útil para insertar valores
+     * por defecto.
+     * @return string
+     */
+    private function install()
+    {
+        /**
+         * La tabla stocks tiene claves ajenas a artículos y almacenes,
+         * por eso creamos un objeto de cada uno, para forzar la comprobación
+         * de las tablas.
+         */
+        //new Almacen();
+        //new Articulo();
+
+        return '';
+    }
 }

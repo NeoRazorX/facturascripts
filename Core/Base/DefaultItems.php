@@ -18,15 +18,6 @@
  */
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Model\Almacen;
-use FacturaScripts\Core\Model\Divisa;
-use FacturaScripts\Core\Model\Ejercicio;
-use FacturaScripts\Core\Model\FormaPago;
-use FacturaScripts\Core\Model\Impuesto;
-use FacturaScripts\Core\Model\Page;
-use FacturaScripts\Core\Model\Pais;
-use FacturaScripts\Core\Model\Serie;
-
 /**
  * Esta clase sólo sirve para que los modelos sepan que elementos son los
  * predeterminados para la sesión. Pero para guardar los valores hay que usar
@@ -39,61 +30,61 @@ class DefaultItems
 
     /**
      * Página por defecto
-     * @var Page
+     * @var string
      */
     private static $defaultPage;
 
     /**
      * Página que se está mostrando
-     * @var Page
+     * @var string
      */
     private static $showingPage;
 
     /**
      * Código de ejercicio
-     * @var Ejercicio
+     * @var string
      */
     private static $codEjercicio;
 
     /**
      * Código de almacén
-     * @var Almacen
+     * @var string
      */
     private static $codAlmacen;
 
     /**
      * Código de divisa
-     * @var Divisa
+     * @var string
      */
     private static $codDivisa;
 
     /**
      * Código de forma de pago
-     * @var FormaPago
+     * @var string
      */
     private static $codPago;
 
     /**
      * Código de impuesto
-     * @var Impuesto
+     * @var string
      */
     private static $codImpuesto;
 
     /**
      * Código de país
-     * @var Pais
+     * @var string
      */
     private static $codPais;
 
     /**
      * Código de serie
-     * @var Serie
+     * @var string
      */
     private static $codSerie;
 
     /**
      * Devuelve el código de ejercicio por defecto
-     * @return Ejercicio|null
+     * @return string|null
      */
     public function codEjercicio()
     {
@@ -102,7 +93,7 @@ class DefaultItems
 
     /**
      * Asigna el código de ejercicio por defecto
-     * @param $cod
+     * @param string $cod
      */
     public function setCodEjercicio($cod)
     {
@@ -111,7 +102,7 @@ class DefaultItems
 
     /**
      * Devuelve el código de almacén por defecto
-     * @return Almacen|null
+     * @return string|null
      */
     public function codAlmacen()
     {
@@ -120,7 +111,7 @@ class DefaultItems
 
     /**
      * Asigna el código de almacén por defecto
-     * @param $cod
+     * @param string $cod
      */
     public function setCodAlmacen($cod)
     {
@@ -129,7 +120,7 @@ class DefaultItems
 
     /**
      * Devuelve el código de la divisa por defecto
-     * @return Divisa|null
+     * @return string|null
      */
     public function codDivisa()
     {
@@ -138,7 +129,7 @@ class DefaultItems
 
     /**
      * Asigna el código de la divisa por defecto
-     * @param $cod
+     * @param string $cod
      */
     public function setCodDivisa($cod)
     {
@@ -147,7 +138,7 @@ class DefaultItems
 
     /**
      * Devuelve el código de la forma de pago por defecto
-     * @return FormaPago|null
+     * @return string|null
      */
     public function codPago()
     {
@@ -156,7 +147,7 @@ class DefaultItems
 
     /**
      * Asigna el código de la forma de pago por defecto
-     * @param $cod
+     * @param string $cod
      */
     public function setCodPago($cod)
     {
@@ -165,7 +156,7 @@ class DefaultItems
 
     /**
      * Devuelve el código del impuesto por defecto
-     * @return Impuesto|null
+     * @return string|null
      */
     public function codImpuesto()
     {
@@ -174,7 +165,7 @@ class DefaultItems
 
     /**
      * Asigna el código del impuesto por defecto
-     * @param $cod
+     * @param string $cod
      */
     public function setCodImpuesto($cod)
     {
@@ -183,7 +174,7 @@ class DefaultItems
 
     /**
      * Devuelve el código de país por defecto
-     * @return Pais|null
+     * @return string|null
      */
     public function codPais()
     {
@@ -192,7 +183,7 @@ class DefaultItems
 
     /**
      * Asigna el código de país por defecto
-     * @param $cod
+     * @param string $cod
      */
     public function setCodPais($cod)
     {
@@ -201,7 +192,7 @@ class DefaultItems
 
     /**
      * Devuelve el código de la serie por defecto
-     * @return Serie|null
+     * @return string|null
      */
     public function codSerie()
     {
@@ -210,7 +201,7 @@ class DefaultItems
 
     /**
      * Asigna el código de la serie por defecto
-     * @param $cod
+     * @param string $cod
      */
     public function setCodSerie($cod)
     {
@@ -219,7 +210,7 @@ class DefaultItems
 
     /**
      * Devuelve la página por defecto
-     * @return Page|null
+     * @return string|null
      */
     public function defaultPage()
     {
@@ -228,7 +219,7 @@ class DefaultItems
 
     /**
      * Asigna la página por defecto
-     * @param $name
+     * @param string $name
      */
     public function setDefaultPage($name)
     {
@@ -237,7 +228,7 @@ class DefaultItems
 
     /**
      * Devuelve la página que se está mostrando
-     * @return Page|null
+     * @return string|null
      */
     public function showingPage()
     {
@@ -246,7 +237,7 @@ class DefaultItems
 
     /**
      * Asigna la página que se está mostrando
-     * @param $name
+     * @param string $name
      */
     public function setShowingPage($name)
     {
