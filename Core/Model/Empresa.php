@@ -228,8 +228,9 @@ class Empresa
     public function __construct($data = [])
     {
         $this->init(__CLASS__, 'empresa', 'id');
-        $this->clear();
-        if (is_array($data) && !empty($data)) {
+        if (is_null($data) || empty($data)) {
+            $this->clear();
+        } else {
             $this->loadFromData($data);
 
             /// cargamos las opciones de email por defecto

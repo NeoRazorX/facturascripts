@@ -207,8 +207,9 @@ class AlbaranProveedor
     public function __construct($data = [])
     {
         $this->init(__CLASS__, 'albaranesprov', 'idalbaran');
-        $this->clear();
-        if (is_array($data) && !empty($data)) {
+        if (is_null($data) || empty($data)) {
+            $this->clear();
+        } else {
             $this->loadFromData($data);
         }
     }

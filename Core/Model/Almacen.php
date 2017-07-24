@@ -66,8 +66,9 @@ class Almacen
     public function __construct($data = [])
     {
         $this->init(__CLASS__, 'almacenes', 'codalmacen');
-        $this->clear();
-        if (is_array($data) && !empty($data)) {
+        if (is_null($data) || empty($data)) {
+            $this->clear();
+        } else {
             $this->loadFromData($data);
         }
     }
