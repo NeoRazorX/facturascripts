@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,9 +25,12 @@ namespace FacturaScripts\Core\Model;
  */
 class CuentaBancoCliente
 {
+
     use Base\ModelTrait {
         save as private saveTrait;
     }
+
+    use Base\BankAccount;
 
     /**
      * Clave primaria. Varchar(6).
@@ -41,25 +43,16 @@ class CuentaBancoCliente
      * @var string
      */
     public $codcliente;
+
     /**
-     * TODO
+     * Identificación descriptiva para humanos
      * @var string
      */
     public $descripcion;
-    /**
-     * TODO
-     * @var string
-     */
-    public $iban;
-    /**
-     * TODO
-     * @var string
-     */
-    public $swift;
 
     /**
      * ¿Es la cuenta principal del cliente?
-     * @var
+     * @var boolean
      */
     public $principal;
 
@@ -76,7 +69,7 @@ class CuentaBancoCliente
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'cuentasbcocli', 'codcliente');
+        $this->init(__CLASS__, 'cuentasbcocli', 'codcuenta');
         if (is_null($data) || empty($data)) {
             $this->clear();
         } else {
@@ -89,33 +82,12 @@ class CuentaBancoCliente
      */
     public function clear()
     {
-        $this->codcliente = null;
         $this->codcuenta = null;
+        $this->codcliente = null;
         $this->descripcion = null;
-        $this->iban = null;
-        $this->swift = null;
         $this->principal = true;
         $this->fmandato = null;
-    }
-
-    /**
-     * Devuelve el IBAN con o sin espacios.
-     *
-     * @param bool $espacios
-     *
-     * @return string
-     */
-    public function getIban($espacios = false)
-    {
-        if ($espacios) {
-            $txt = '';
-            $iban = str_replace(' ', '', $this->iban);
-            for ($i = 0; $i < $len = strlen($iban); $i += 4) {
-                $txt .= substr($iban, $i, 4) . ' ';
-            }
-            return $txt;
-        }
-        return str_replace(' ', '', $this->iban);
+        $this->clearBankAccount();
     }
 
     /**
@@ -124,7 +96,7 @@ class CuentaBancoCliente
      */
     public function url()
     {
-        if ($this->codcliente === null) {
+        if (empty($this->codcliente)) {
             return '#';
         }
         return 'index.php?page=VentasCliente&cod=' . $this->codcliente . '#cuentasb';
@@ -136,93 +108,35 @@ class CuentaBancoCliente
      */
     public function save()
     {
-        $this->descripcion = static::noHtml($this->descripcion);
-
-        if ($this->exists()) {
-            $sql = $this->saveUpdateSQL();
-        } else {
-            $sql = $this->saveInsertSQL();
-        }
-
-        if ($this->principal) {
-            /// si esta cuenta es la principal, desmarcamos las demás
-            $sql .= 'UPDATE ' . $this->tableName() . ' SET principal = false' .
-                ' WHERE codcliente = ' . $this->var2str($this->codcliente) .
-                ' AND codcuenta != ' . $this->var2str($this->codcuenta) . ';';
-        }
-
-        return $this->dataBase->exec($sql);
-    }
-
-    /**
-     * TODO
-     *
-     * @param string $codcli
-     *
-     * @return array
-     */
-    public function allFromCliente($codcli)
-    {
-        $clist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codcliente = ' . $this->var2str($codcli)
-            . ' ORDER BY codcuenta DESC;';
-
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $clist[] = new CuentaBancoCliente($d);
+        if ($this->test()) {
+            if ($this->exists()) {
+                $allOK = $this->saveUpdate();
+            } else {
+                $this->codcuenta = $this->newCode();
+                $allOK = $this->saveInsert();
             }
+
+            if ($allOK) {
+                /// si esta cuenta es la principal, desmarcamos las demás
+                $sql = 'UPDATE ' . $this->tableName()
+                    . ' SET principal = false'
+                    . ' WHERE codcliente = ' . $this->var2str($this->codcliente)
+                    . ' AND codcuenta <> ' . $this->var2str($this->codcuenta) . ';';
+                $allOK = $this->dataBase->exec($sql);
+            }
+            return $allOK;
         }
 
-        return $clist;
+        return FALSE;
     }
 
     /**
-     * Actualiza los datos del modelo en la base de datos.
-     * @return string
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * @return boolean
      */
-    private function saveUpdateSQL()
+    public function test()
     {
-        $sql = 'UPDATE ' . $this->tableName() . ' SET descripcion = ' . $this->var2str($this->descripcion) .
-            ', codcliente = ' . $this->var2str($this->codcliente) .
-            ', iban = ' . $this->var2str($this->iban) .
-            ', swift = ' . $this->var2str($this->swift) .
-            ', principal = ' . $this->var2str($this->principal) .
-            ', fmandato = ' . $this->var2str($this->fmandato) .
-            '  WHERE codcuenta = ' . $this->var2str($this->codcuenta) . ';';
-        return $sql;
-    }
-
-    /**
-     * Inserta los datos del modelo en la base de datos.
-     * @return string
-     */
-    private function saveInsertSQL()
-    {
-        $this->codcuenta = $this->getNewCodigo();
-        $sql = 'INSERT INTO ' . $this->tableName()
-            . ' (codcliente,codcuenta,descripcion,iban,swift,principal,fmandato)' .
-            ' VALUES (' . $this->var2str($this->codcliente) .
-            ',' . $this->var2str($this->codcuenta) .
-            ',' . $this->var2str($this->descripcion) .
-            ',' . $this->var2str($this->iban) .
-            ',' . $this->var2str($this->swift) .
-            ',' . $this->var2str($this->principal) .
-            ',' . $this->var2str($this->fmandato) . ');';
-        return $sql;
-    }
-
-    /**
-     * TODO
-     * @return int
-     */
-    private function getNewCodigo()
-    {
-        $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codcuenta') . ') as cod FROM ' . $this->tableName() . ';';
-        $cod = $this->dataBase->select($sql);
-        if (!empty($cod)) {
-            return 1 + (int)$cod[0]['cod'];
-        }
-        return 1;
+        $this->descripcion = static::noHtml($this->descripcion);
+        return $this->testBankAccount();
     }
 }

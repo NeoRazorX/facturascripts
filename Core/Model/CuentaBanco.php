@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -27,22 +27,25 @@ class CuentaBanco
 {
 
     use Base\ModelTrait;
+    use Base\BankAccount;
 
     /**
      * Clave primaria. Varchar (6).
-     * @var string 
+     * @var string
      */
     public $codcuenta;
     public $descripcion;
-    public $iban;
-    public $swift;
 
     /**
      * Código de la subcuenta de contabilidad
-     * @var string 
+     * @var string
      */
     public $codsubcuenta;
 
+    /**
+     * Contructor e inicializador de la clase
+     * @param array $data
+     */
     public function __construct($data = [])
     {
         $this->init(__CLASS__, 'cuentasbanco', 'codcuenta');
@@ -54,22 +57,12 @@ class CuentaBanco
     }
 
     /**
-     * Devuelve el IBAN con o sin espacios.
-     * @param boolean $espacios
-     * @return string
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * @return boolean
      */
-    public function iban($espacios = FALSE)
+    public function test()
     {
-        if ($espacios) {
-            $txt = '';
-            $iban = str_replace(' ', '', $this->iban);
-            for ($i = 0; $i < strlen($iban); $i += 4) {
-                $txt .= substr($iban, $i, 4) . ' ';
-            }
-            return $txt;
-        }
-
-        return str_replace(' ', '', $this->iban);
+        return $this->testBankAccount();
     }
 
     /**
@@ -79,45 +72,5 @@ class CuentaBanco
     public function url()
     {
         return 'index.php?page=admin_empresa#cuentasb';
-    }
-
-    /**
-     * Devuelve un nuevo código para una cuenta bancaria
-     * @return int
-     */
-    private function get_new_codigo()
-    {
-        $sql = "SELECT MAX(" . $this->db->sql_to_int('codcuenta') . ") as cod FROM " . $this->table_name . ";";
-        $data = $this->db->select($sql);
-        if ($data) {
-            return (string) (1 + (int) $data[0]['cod']);
-        }
-
-        return '1';
-    }
-
-    /**
-     * Calcula el IBAN a partir de la cuenta bancaria del cliente CCC
-     * @param string $ccc
-     * @return string
-     */
-    public function calcular_iban($ccc)
-    {
-        $codpais = substr($this->default_items->codpais(), 0, 2);
-
-        $pesos = array('A' => '10', 'B' => '11', 'C' => '12', 'D' => '13', 'E' => '14', 'F' => '15',
-            'G' => '16', 'H' => '17', 'I' => '18', 'J' => '19', 'K' => '20', 'L' => '21', 'M' => '22',
-            'N' => '23', 'O' => '24', 'P' => '25', 'Q' => '26', 'R' => '27', 'S' => '28', 'T' => '29',
-            'U' => '30', 'V' => '31', 'W' => '32', 'X' => '33', 'Y' => '34', 'Z' => '35'
-        );
-
-        $dividendo = $ccc . $pesos[substr($codpais, 0, 1)] . $pesos[substr($codpais, 1, 1)] . '00';
-        $digitoControl = 98 - bcmod($dividendo, '97');
-
-        if (strlen($digitoControl) == 1) {
-            $digitoControl = '0' . $digitoControl;
-        }
-
-        return $codpais . $digitoControl . $ccc;
     }
 }

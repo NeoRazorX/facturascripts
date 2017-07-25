@@ -478,12 +478,15 @@ trait ModelTrait
     }
 
     /**
-     * Devuelve el siguiente código para la primary key del modelo
+     * Devuelve el siguiente código para el campo informado o de la primary key del modelo
+     * @param string $field
      * @return int
      */
-    public function newCode()
+    public function newCode($field = '')
     {
-        $field = $this->dataBase->sql2Int($this->primaryColumn());
+        if (empty($field)) {
+            $field = $this->dataBase->sql2Int($this->primaryColumn());
+        }
         $sql = 'SELECT MAX(' . $field . ') as cod FROM ' . $this->tableName() . ';';
         $cod = $this->dataBase->select($sql);
         if (empty($cod)) {
