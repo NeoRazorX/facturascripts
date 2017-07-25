@@ -27,8 +27,6 @@ namespace FacturaScripts\Core\Model\Base;
  */
 trait BankAccount
 {
-    abstract function new_error_msg($message);
-
     /**
      * Cuenta bancaria
      * @var string
@@ -102,13 +100,13 @@ trait BankAccount
     {
         $ibanOK = (empty($this->iban) || $this->verificarIBAN($this->iban));
         if (!$ibanOK) {
-            $this->new_error_msg("Error grave: El IBAN está mal calculado");
+            $this->miniLog->alert("Error grave: El IBAN está mal calculado");
             return FALSE;
         }
 
         $cccOK = (empty($this->ccc) || $this->verificarCCC($this->ccc));
         if (!$cccOK) {
-            $this->new_error_msg("Error grave: La cuenta bancaria está mal calculada");
+            $this->miniLog->alert("Error grave: La cuenta bancaria está mal calculada");
             return FALSE;
         }
 
@@ -124,7 +122,7 @@ trait BankAccount
     private function calcularIBAN($ccc, $codpais = '')
     {
         if (empty($codpais)) {
-            $codpais = $this->default_items->codpais();
+            $codpais = $this->defaultItems->codpais();
         }
         $pais = substr($codpais, 0, 2);
         $pesos = ['A' => '10', 'B' => '11', 'C' => '12', 'D' => '13', 'E' => '14', 'F' => '15',
