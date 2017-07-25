@@ -131,6 +131,10 @@ class CuentaBancoProveedor
     public function test()
     {
         $this->descripcion = static::noHtml($this->descripcion);
-        return $this->testBankAccount();
+        if (!$this->testBankAccount()) {
+            $this->miniLog->alert("Error grave: Los datos bancarios son incorrectos");
+            return FALSE;
+        }
+        return TRUE;        
     }
 }

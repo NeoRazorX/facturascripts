@@ -62,7 +62,11 @@ class CuentaBanco
      */
     public function test()
     {
-        return $this->testBankAccount();
+        if (!$this->testBankAccount()) {
+            $this->miniLog->alert("Error grave: Los datos bancarios son incorrectos");
+            return FALSE;
+        }
+        return TRUE;        
     }
 
     /**

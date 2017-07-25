@@ -99,18 +99,8 @@ trait BankAccount
     public function testBankAccount()
     {
         $ibanOK = (empty($this->iban) || $this->verificarIBAN($this->iban));
-        if (!$ibanOK) {
-            $this->miniLog->alert("Error grave: El IBAN está mal calculado");
-            return FALSE;
-        }
-
         $cccOK = (empty($this->ccc) || $this->verificarCCC($this->ccc));
-        if (!$cccOK) {
-            $this->miniLog->alert("Error grave: La cuenta bancaria está mal calculada");
-            return FALSE;
-        }
-
-        return TRUE;
+        return ($ibanOK && $cccOK);
     }
 
     /**
@@ -121,9 +111,6 @@ trait BankAccount
      */
     private function calcularIBAN($ccc, $codpais = '')
     {
-        if (empty($codpais)) {
-            $codpais = $this->defaultItems->codpais();
-        }
         $pais = substr($codpais, 0, 2);
         $pesos = ['A' => '10', 'B' => '11', 'C' => '12', 'D' => '13', 'E' => '14', 'F' => '15',
             'G' => '16', 'H' => '17', 'I' => '18', 'J' => '19', 'K' => '20', 'L' => '21', 'M' => '22',
