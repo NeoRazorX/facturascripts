@@ -27,6 +27,7 @@ namespace FacturaScripts\Core\Model\Base;
  */
 trait BankAccount
 {
+    abstract function new_error_msg($message);
 
     /**
      * Cuenta bancaria
@@ -183,8 +184,8 @@ trait BankAccount
             return '';
         }
 
-        $dc1 = $this->calcularDC_CCC($banco, [4, 8, 5, 10, 9, 7, 3, 6]);
-        $dc2 = $this->calcularDC_CCC($cuenta, [1, 2, 4, 8, 5, 10, 9, 7, 3, 6]);
+        $dc1 = $this->calcularDC($banco, [4, 8, 5, 10, 9, 7, 3, 6]);
+        $dc2 = $this->calcularDC($cuenta, [1, 2, 4, 8, 5, 10, 9, 7, 3, 6]);
         return $banco . $dc1 . $dc2 . $cuenta;
     }
 

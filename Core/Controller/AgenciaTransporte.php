@@ -49,11 +49,6 @@ class AgenciaTransporte extends Base\ListController
         $this->addFilterCheckbox('activo', 'Activo', '', TRUE);
     }
 
-    public function publicCore(&$response)
-    {
-        parent::publicCore($response);
-    }
-
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);

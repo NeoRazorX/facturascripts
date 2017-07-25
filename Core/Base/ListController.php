@@ -244,14 +244,6 @@ class ListController extends Controller
     }
 
     /**
-     * Ejecuta la lógica pública del controlador.
-     */
-    public function publicCore(&$response)
-    {
-        parent::publicCore($response);
-    }
-
-    /**
      * Ejecuta la lógica privada del controlador.
      */
     public function privateCore(&$response, $user)

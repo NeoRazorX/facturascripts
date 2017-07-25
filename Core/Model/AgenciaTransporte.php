@@ -97,7 +97,7 @@ class AgenciaTransporte
      * por defecto.
      * @return string
      */
-    private function install()
+    public function install()
     {
         return 'INSERT INTO ' . $this->tableName() . ' (codtrans, nombre, web, activo) VALUES ' .
             "('ASM', 'ASM', 'http://es.asmred.com/', '" . $this->bool2str(true) . "')," .

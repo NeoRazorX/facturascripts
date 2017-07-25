@@ -60,11 +60,6 @@ class Agente extends Base\ListController
         $this->addFilterSelect('país', 'paises', '', 'codpais');
     }
 
-    public function publicCore(&$response)
-    {
-        parent::publicCore($response);
-    }
-
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
