@@ -163,18 +163,6 @@ class Ejercicio
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        if ($this->codejercicio === null) {
-            return 'index.php?page=Ejercicio';
-        }
-        return 'index.php?page=ContabilidadEjercicio&cod=' . $this->codejercicio;
-    }
-
-    /**
      * Devuelve TRUE si este es el ejercicio predeterminado de la empresa
      * @return bool
      */

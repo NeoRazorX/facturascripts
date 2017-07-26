@@ -93,15 +93,6 @@ class Divisa
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        return 'index.php?page=AdminDivisas';
-    }
-
-    /**
      * Devuelve TRUE si esta es la divisa predeterminada de la empresa
      * @return bool
      */

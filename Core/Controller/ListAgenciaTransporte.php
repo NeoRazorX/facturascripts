@@ -1,6 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
+ * Copyright (C) 2015       Pablo Peralta
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,21 +23,22 @@ use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la lista de divisas utilizadas
+ * Controlador para la lista de agencias de transportes
  *
+ * @author Pablo Peralta
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class Divisa extends Base\ListController
+class ListAgenciaTransporte extends Base\ListController
 {
-
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('coddivisa', 'Código');
-        $this->addOrderBy('descripcion');
-        $this->addOrderBy('codiso');
+        $this->addOrderBy('codtrans', 'Código');
+        $this->addOrderBy('nombre');
+
+        $this->addFilterCheckbox('activo', 'Activo', '', TRUE);
     }
 
     public function privateCore(&$response, $user)
@@ -46,7 +48,7 @@ class Divisa extends Base\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Divisa();
+        $model = new Model\AgenciaTransporte();
         $this->count = $model->count($where);
         if ($this->count > 0) {
             $this->cursor = $model->all($where, $order);
@@ -58,7 +60,7 @@ class Divisa extends Base\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "descripcion|coddivisa";
+            $fields = "nombre|codtrans";
             $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
@@ -67,7 +69,8 @@ class Divisa extends Base\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['icon'] = 'fa-money';
+        $pagedata['title'] = 'Transportistas';
+        $pagedata['icon'] = 'fa-truck';
         $pagedata['menu'] = 'admin';
         return $pagedata;
     }
@@ -75,14 +78,11 @@ class Divisa extends Base\ListController
     protected function getColumns()
     {
         return [
-            ['label' => 'Codigo', 'field' => 'coddivisa', 'display' => 'left'],
-            ['label' => 'Descripcion', 'field' => 'descripcion', 'display' => 'left'],
-            ['label' => 'ISO', 'field' => 'codiso', 'display' => 'left'],
-            ['label' => 'Fecha', 'field' => 'fecha', 'display' => 'left'],
-            ['label' => 'Tasa Conv.', 'field' => 'tasaconv', 'display' => 'right'],
-            ['label' => 'Tasa Compras', 'field' => 'tasaconvcompra', 'display' => 'right'],
-            ['label' => 'Símbolo', 'field' => 'simbolo', 'display' => 'center'],
-            ['label' => 'Bandera', 'field' => 'bandera', 'display' => 'none']
+            ['label' => 'Codigo', 'field' => 'codtrans', 'display' => 'left'],
+            ['label' => 'Nombre', 'field' => 'nombre', 'display' => 'left'],
+            ['label' => 'Teléfono', 'field' => 'telefono', 'display' => 'left'],
+            ['label' => 'Web', 'field' => 'web', 'display' => 'left'],
+            ['label' => 'Activo', 'field' => 'activo', 'display' => 'left']
         ];        
     }
 }

@@ -89,6 +89,7 @@ class MenuManager
             $pageModel->showonmenu = $pageData['showonmenu'];
             $pageModel->title = $pageData['title'];
             $pageModel->icon = $pageData['icon'];
+            $pageModel->orden = $pageData['orden'];
             $pageModel->save();
         }
         

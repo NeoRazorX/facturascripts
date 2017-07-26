@@ -27,17 +27,18 @@ use FacturaScripts\Core\Model;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class Almacen extends Base\ListController
+class ListAgente extends Base\ListController
 {
-
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('codalmacen', 'Código');
+        $this->addOrderBy('codagente', 'Código');
         $this->addOrderBy('nombre');
-
-        $this->addFilterSelect('provincia', 'almacenes');
+        $this->addOrderBy('apellidos');
+        $this->addOrderBy('provincia');
+        
+        $this->addFilterSelect('provincia', 'agentes');
         $this->addFilterSelect('país', 'paises', '', 'codpais');
     }
 
@@ -48,7 +49,7 @@ class Almacen extends Base\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Almacen();
+        $model = new Model\Agente();
         $this->count = $model->count($where);
         if ($this->count > 0) {
             $this->cursor = $model->all($where, $order);
@@ -60,7 +61,7 @@ class Almacen extends Base\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "nombre|codalmacen|contacto";
+            $fields = "nombre|apellidos|codagente";
             $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
@@ -69,7 +70,8 @@ class Almacen extends Base\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['icon'] = 'fa-building';
+        $pagedata['title'] = 'Agentes';
+        $pagedata['icon'] = 'fa-user-circle-o';
         $pagedata['menu'] = 'admin';
         return $pagedata;
     }
@@ -77,18 +79,21 @@ class Almacen extends Base\ListController
     protected function getColumns()
     {
         return [
-            ['label' => 'Codigo', 'field' => 'codalmacen', 'display' => 'left'],
+            ['label' => 'Codigo', 'field' => 'codagente', 'display' => 'left'],
             ['label' => 'Nombre', 'field' => 'nombre', 'display' => 'left'],
-            ['label' => 'Contacto', 'field' => 'contacto', 'display' => 'left'],
+            ['label' => 'Cargo', 'field' => 'cargo', 'display' => 'left'],
+            ['label' => '% Com.', 'field' => 'porcomision', 'display' => 'center'],
             ['label' => 'Dirección', 'field' => 'direccion', 'display' => 'left'],
-            ['label' => 'Poblacion', 'field' => 'poblacion', 'display' => 'center'],
+            ['label' => 'Ciudad', 'field' => 'ciudad', 'display' => 'center'],
             ['label' => 'Cod. Postal', 'field' => 'codpostal', 'display' => 'none'],
             ['label' => 'Provincia', 'field' => 'direccion', 'display' => 'center'],
-            ['label' => 'País', 'field' => 'codpais', 'display' => 'center'],
             ['label' => 'Teléfono', 'field' => 'telefono', 'display' => 'left'],
-            ['label' => 'Fax', 'field' => 'fax', 'display' => 'left'],
-            ['label' => 'Valoración', 'field' => 'tipovaloracion', 'display' => 'center'],
-            ['label' => 'Apartado', 'field' => 'apartado', 'display' => 'none']
+            ['label' => 'Email', 'field' => 'email', 'display' => 'left'],
+            ['label' => 'Fec. Alta', 'field' => 'f_alta', 'display' => 'none'],
+            ['label' => 'Fec. Baja', 'field' => 'f_baja', 'display' => 'center'],
+            ['label' => 'Nacimiento', 'field' => 'f_nacimiento', 'display' => 'none'],
+            ['label' => 'Seg. Social', 'field' => 'seg_social', 'display' => 'none'],
+            ['label' => 'Cta. Banco', 'field' => 'banco', 'display' => 'none']
         ];        
     }
 }

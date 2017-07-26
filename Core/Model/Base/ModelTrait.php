@@ -683,4 +683,18 @@ trait ModelTrait
         }
         return $result;
     }
+    
+    /**
+     * Devuelve la url donde ver/modificar los datos
+     * @return string
+     */
+    public function url()
+    {
+        $value = $this->{$this->primaryColumn()};
+        $model = $this->modelName();
+        $result = empty($value)
+            ? 'index.php?page=List' . $model
+            : 'index.php?page=Edit' . $model . '&cod=' . $value;
+        return $result;
+    }
 }

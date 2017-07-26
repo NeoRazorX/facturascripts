@@ -1,7 +1,6 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015       Pablo Peralta
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,22 +22,24 @@ use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la lista de agencias de transportes
+ * Controlador para la lista de series de facturación
  *
- * @author Pablo Peralta
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class AgenciaTransporte extends Base\ListController
+class ListSerie extends Base\ListController
 {
+
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('codtrans', 'Código');
-        $this->addOrderBy('nombre');
+        $this->addOrderBy('codserie', 'Código');
+        $this->addOrderBy('descripcion');
+        $this->addOrderBy('codejercicio', 'Ejercicio');
 
-        $this->addFilterCheckbox('activo', 'Activo', '', TRUE);
+        $this->addFilterSelect('ejercicio', 'series', '', 'codejercicio');
+        $this->addFilterCheckbox('siniva', 'Sin Impuesto', 'siniva');
     }
 
     public function privateCore(&$response, $user)
@@ -48,7 +49,7 @@ class AgenciaTransporte extends Base\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\AgenciaTransporte();
+        $model = new Model\Serie();
         $this->count = $model->count($where);
         if ($this->count > 0) {
             $this->cursor = $model->all($where, $order);
@@ -60,7 +61,7 @@ class AgenciaTransporte extends Base\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "nombre|codtrans";
+            $fields = "descripcion|codserie|codcuenta";
             $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
@@ -69,20 +70,23 @@ class AgenciaTransporte extends Base\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['icon'] = 'fa-truck';
-        $pagedata['title'] = 'Agencia Transporte';
-        $pagedata['menu'] = 'admin';
+        $pagedata['title'] = 'Series';
+        $pagedata['icon'] = 'fa-file-text';
+        $pagedata['menu'] = 'contabilidad';
         return $pagedata;
     }
 
     protected function getColumns()
     {
         return [
-            ['label' => 'Codigo', 'field' => 'codtrans', 'display' => 'left'],
-            ['label' => 'Nombre', 'field' => 'nombre', 'display' => 'left'],
-            ['label' => 'Teléfono', 'field' => 'telefono', 'display' => 'left'],
-            ['label' => 'Web', 'field' => 'web', 'display' => 'left'],
-            ['label' => 'Activo', 'field' => 'activo', 'display' => 'left']
-        ];        
+            ['label' => 'Codigo', 'field' => 'codimpuesto', 'display' => 'left'],
+            ['label' => 'Descripcion', 'field' => 'descripcion', 'display' => 'left'],
+            ['label' => '% Iva', 'field' => 'iva', 'display' => 'right'],
+            ['label' => '% Recargo', 'field' => 'recargo', 'display' => 'right'],
+            ['label' => 'Sin Impuesto', 'field' => 'siniva', 'display' => 'center'],
+            ['label' => 'Cuenta', 'field' => 'codcuenta', 'display' => 'left'],
+            ['label' => 'Ejercicio', 'field' => 'codejercicio', 'display' => 'center'],
+            ['label' => 'Núm. Factura', 'field' => 'numfactura', 'display' => 'right']
+        ];
     }
 }

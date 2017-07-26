@@ -22,24 +22,20 @@ use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la lista de series de facturación
+ * Controlador para la lista de agencias de transportes
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class Serie extends Base\ListController
+class ListImpuesto extends Base\ListController
 {
 
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('codserie', 'Código');
+        $this->addOrderBy('codimpuesto', 'Código');
         $this->addOrderBy('descripcion');
-        $this->addOrderBy('codejercicio', 'Ejercicio');
-
-        $this->addFilterSelect('ejercicio', 'series', '', 'codejercicio');
-        $this->addFilterCheckbox('siniva', 'Sin Impuesto', 'siniva');
     }
 
     public function privateCore(&$response, $user)
@@ -49,7 +45,7 @@ class Serie extends Base\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Serie();
+        $model = new Model\Impuesto();
         $this->count = $model->count($where);
         if ($this->count > 0) {
             $this->cursor = $model->all($where, $order);
@@ -61,7 +57,7 @@ class Serie extends Base\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "descripcion|codserie|codcuenta";
+            $fields = "descripcion|codimpuesto";
             $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
@@ -70,6 +66,7 @@ class Serie extends Base\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
+        $pagedata['title'] = 'Impuestos';
         $pagedata['icon'] = 'fa-plus-square-o';
         $pagedata['menu'] = 'contabilidad';
         return $pagedata;
@@ -81,11 +78,7 @@ class Serie extends Base\ListController
             ['label' => 'Codigo', 'field' => 'codimpuesto', 'display' => 'left'],
             ['label' => 'Descripcion', 'field' => 'descripcion', 'display' => 'left'],
             ['label' => '% Iva', 'field' => 'iva', 'display' => 'right'],
-            ['label' => '% Recargo', 'field' => 'recargo', 'display' => 'right'],
-            ['label' => 'Sin Impuesto', 'field' => 'siniva', 'display' => 'center'],
-            ['label' => 'Cuenta', 'field' => 'codcuenta', 'display' => 'left'],
-            ['label' => 'Ejercicio', 'field' => 'codejercicio', 'display' => 'center'],
-            ['label' => 'Núm. Factura', 'field' => 'numfactura', 'display' => 'right']
+            ['label' => '% Recargo', 'field' => 'recargo', 'display' => 'right']
         ];
     }
 }

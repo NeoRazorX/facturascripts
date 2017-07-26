@@ -106,6 +106,7 @@ class AdminHome extends Base\Controller
         $pageData = parent::getPageData();
         $pageData['menu'] = 'admin';
         $pageData['title'] = 'Panel de control';
+        $pageData['orden'] = '999';
         
         return $pageData;
     }

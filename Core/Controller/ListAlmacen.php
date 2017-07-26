@@ -22,25 +22,23 @@ use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la lista de Formas de Pago
+ * Controlador para la lista de Agentes
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class FormaPago extends Base\ListController
+class ListAlmacen extends Base\ListController
 {
 
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('codpago', 'Código');
-        $this->addOrderBy('descripcion');
+        $this->addOrderBy('codalmacen', 'Código');
+        $this->addOrderBy('nombre');
 
-        $this->addFilterSelect('generación', 'formaspago', '', 'genrecibos');
-        $this->addFilterSelect('vencimiento', 'formaspago');
-        $this->addFilterCheckbox('domiciliado', 'Domiciliado');
-        $this->addFilterCheckbox('imprimir', 'Imprimir');
+        $this->addFilterSelect('provincia', 'almacenes');
+        $this->addFilterSelect('país', 'paises', '', 'codpais');
     }
 
     public function privateCore(&$response, $user)
@@ -50,7 +48,7 @@ class FormaPago extends Base\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\FormaPago();
+        $model = new Model\Almacen();
         $this->count = $model->count($where);
         if ($this->count > 0) {
             $this->cursor = $model->all($where, $order);
@@ -62,7 +60,7 @@ class FormaPago extends Base\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "descripcion|codpago|codcuenta";
+            $fields = "nombre|codalmacen|contacto";
             $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
@@ -71,22 +69,27 @@ class FormaPago extends Base\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['icon'] = 'fa-credit-card';
-        $pagedata['title'] = 'Forma de Pago';
-        $pagedata['menu'] = 'contabilidad';
+        $pagedata['title'] = 'Almacenes';
+        $pagedata['icon'] = 'fa-building';
+        $pagedata['menu'] = 'admin';
         return $pagedata;
     }
 
     protected function getColumns()
     {
         return [
-            ['label' => 'Codigo', 'field' => 'codpago', 'display' => 'left'],
-            ['label' => 'Descripción', 'field' => 'descripcion', 'display' => 'left'],
-            ['label' => 'Cod. Cuenta', 'field' => 'codcuenta', 'display' => 'left'],
-            ['label' => 'Vencimiento', 'field' => 'vencimiento', 'display' => 'center'],
-            ['label' => 'Gen. Recibos', 'field' => 'genrecibos', 'display' => 'center'],
-            ['label' => 'Domiciliado', 'field' => 'domiciliado', 'display' => 'center'],
-            ['label' => 'Imprimir', 'field' => 'imprimir', 'display' => 'center']
-        ];
+            ['label' => 'Codigo', 'field' => 'codalmacen', 'display' => 'left'],
+            ['label' => 'Nombre', 'field' => 'nombre', 'display' => 'left'],
+            ['label' => 'Contacto', 'field' => 'contacto', 'display' => 'left'],
+            ['label' => 'Dirección', 'field' => 'direccion', 'display' => 'left'],
+            ['label' => 'Poblacion', 'field' => 'poblacion', 'display' => 'center'],
+            ['label' => 'Cod. Postal', 'field' => 'codpostal', 'display' => 'none'],
+            ['label' => 'Provincia', 'field' => 'direccion', 'display' => 'center'],
+            ['label' => 'País', 'field' => 'codpais', 'display' => 'center'],
+            ['label' => 'Teléfono', 'field' => 'telefono', 'display' => 'left'],
+            ['label' => 'Fax', 'field' => 'fax', 'display' => 'left'],
+            ['label' => 'Valoración', 'field' => 'tipovaloracion', 'display' => 'center'],
+            ['label' => 'Apartado', 'field' => 'apartado', 'display' => 'none']
+        ];        
     }
 }

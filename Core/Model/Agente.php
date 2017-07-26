@@ -159,20 +159,6 @@ class Agente
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        $result = 'index.php?page=Agente';
-        if ($this->codagente !== null) {
-            $result .= '_card&cod=' . $this->codagente;
-        }
-
-        return $result;
-    }
-
-    /**
      * Comprueba los datos del empleado/agente, devuelve TRUE si son correctos
      * @return bool
      */

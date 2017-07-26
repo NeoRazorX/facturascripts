@@ -99,11 +99,9 @@ class Impuesto
      */
     public function url()
     {
-        $result = 'index.php?page=Impuesto';
-        if ($this->codimpuesto !== null) {
-            $result .= '_card&cod=' . $this->codimpuesto;
-        }
-
+        $result = empty($this->codimpuesto)
+            ? 'index.php?page=ListImpuesto'
+            : 'index.php?page=EditImpuesto&cod=' . $this->codimpuesto;
         return $result;
     }
 

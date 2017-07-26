@@ -27,7 +27,7 @@ use FacturaScripts\Core\Model;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class Ejercicio extends Base\ListController
+class ListEjercicio extends Base\ListController
 {
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
@@ -67,6 +67,7 @@ class Ejercicio extends Base\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
+        $pagedata['title'] = 'Ejercicios';
         $pagedata['icon'] = 'fa-calendar';
         $pagedata['menu'] = 'contabilidad';
         return $pagedata;

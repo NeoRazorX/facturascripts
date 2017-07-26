@@ -107,11 +107,9 @@ class FormaPago
      */
     public function url()
     {
-        $result = 'index.php?page=FormaPago';
-        if ($this->codpago !== null) {
-            $result .= '_card&cod=' . $this->codpago;
-        }
-
+        $result = empty($this->codpago)
+            ? 'index.php?page=ListFormaPago'
+            : 'index.php?page=EditFormaPago&cod=' . $this->codpago;
         return $result;
     }
 

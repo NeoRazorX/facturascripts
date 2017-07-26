@@ -22,24 +22,20 @@ use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la lista de Agentes
+ * Controlador para la lista de empresas
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class Agente extends Base\ListController
+class ListEmpresa extends Base\ListController
 {
+
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('codagente', 'Código');
+        $this->addOrderBy('id', 'Código');
         $this->addOrderBy('nombre');
-        $this->addOrderBy('apellidos');
-        $this->addOrderBy('provincia');
-        
-        $this->addFilterSelect('provincia', 'agentes');
-        $this->addFilterSelect('país', 'paises', '', 'codpais');
     }
 
     public function privateCore(&$response, $user)
@@ -49,7 +45,7 @@ class Agente extends Base\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Agente();
+        $model = new Model\Empresa();
         $this->count = $model->count($where);
         if ($this->count > 0) {
             $this->cursor = $model->all($where, $order);
@@ -61,7 +57,7 @@ class Agente extends Base\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "nombre|apellidos|codagente";
+            $fields = "nombre|nombrecorto|id";
             $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
@@ -70,7 +66,8 @@ class Agente extends Base\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['icon'] = 'fa-user-circle-o';
+        $pagedata['title'] = 'Empresas';
+        $pagedata['icon'] = 'fa fa-building-o';
         $pagedata['menu'] = 'admin';
         return $pagedata;
     }
@@ -78,21 +75,14 @@ class Agente extends Base\ListController
     protected function getColumns()
     {
         return [
-            ['label' => 'Codigo', 'field' => 'codagente', 'display' => 'left'],
+            ['label' => 'Codigo', 'field' => 'id', 'display' => 'center'],
             ['label' => 'Nombre', 'field' => 'nombre', 'display' => 'left'],
-            ['label' => 'Cargo', 'field' => 'cargo', 'display' => 'left'],
-            ['label' => '% Com.', 'field' => 'porcomision', 'display' => 'center'],
-            ['label' => 'Dirección', 'field' => 'direccion', 'display' => 'left'],
-            ['label' => 'Ciudad', 'field' => 'ciudad', 'display' => 'center'],
-            ['label' => 'Cod. Postal', 'field' => 'codpostal', 'display' => 'none'],
-            ['label' => 'Provincia', 'field' => 'direccion', 'display' => 'center'],
+            ['label' => 'Nom. Corto', 'field' => 'nombrecorto', 'display' => 'left'],
+            ['label' => 'Inicio', 'field' => 'inicioact', 'display' => 'center'],
             ['label' => 'Teléfono', 'field' => 'telefono', 'display' => 'left'],
             ['label' => 'Email', 'field' => 'email', 'display' => 'left'],
-            ['label' => 'Fec. Alta', 'field' => 'f_alta', 'display' => 'none'],
-            ['label' => 'Fec. Baja', 'field' => 'f_baja', 'display' => 'center'],
-            ['label' => 'Nacimiento', 'field' => 'f_nacimiento', 'display' => 'none'],
-            ['label' => 'Seg. Social', 'field' => 'seg_social', 'display' => 'none'],
-            ['label' => 'Cta. Banco', 'field' => 'banco', 'display' => 'none']
+            ['label' => 'Web', 'field' => 'web', 'display' => 'left'],
+            ['label' => 'Divisa', 'field' => 'coddivisa', 'display' => 'center']
         ];        
     }
 }

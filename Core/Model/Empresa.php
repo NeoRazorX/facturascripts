@@ -212,7 +212,10 @@ class Empresa
      */
     public function url()
     {
-        return 'index.php?page=Empresa';
+        $result = empty($this->id)
+            ? 'index.php?page=ListEmpresa'
+            : 'index.php?page=EditEmpresa&cod=' . $this->id;
+        return $result;
     }
 
     /**

@@ -99,12 +99,11 @@ class Serie
      */
     public function url()
     {
-        $result = 'index.php?page=Serie';
-        if ($this->codserie !== null) {
-            $result .= '_card&cod=' . $this->codserie;
-        }
+        $result = empty($this->codserie)
+            ? 'index.php?page=ListSerie'
+            : 'index.php?page=EditSerie&cod=' . $this->codserie;
 
-        return $result;
+        return $result;        
     }
 
     /**
@@ -146,7 +145,7 @@ class Serie
      * Crea la consulta necesaria para crear una nueva serie en la base de datos.
      * @return string
      */
-    private function install()
+    public function install()
     {
         return 'INSERT INTO ' . $this->tableName() . ' (codserie,descripcion,siniva,irpf) VALUES '
             . "('A','SERIE A',FALSE,'0'),('R','RECTIFICATIVAS',FALSE,'0');";

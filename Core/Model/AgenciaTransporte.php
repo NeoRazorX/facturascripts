@@ -83,10 +83,9 @@ class AgenciaTransporte
      */
     public function url()
     {
-        $result = 'index.php?page=AgenciaTransporte';
-        if ($this->codtrans !== null) {
-            $result .= '_card&cod=' . $this->codtrans;
-        }
+        $result = empty($this->codtrans)
+            ? 'index.php?page=ListAgenciaTransporte'
+            : 'index.php?page=EditAgenciaTransporte&cod=' . $this->codtrans;
 
         return $result;
     }

@@ -22,20 +22,21 @@ use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la lista de agencias de transportes
+ * Controlador para la lista de divisas utilizadas
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class Impuesto extends Base\ListController
+class ListDivisa extends Base\ListController
 {
 
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('codimpuesto', 'Código');
+        $this->addOrderBy('coddivisa', 'Código');
         $this->addOrderBy('descripcion');
+        $this->addOrderBy('codiso');
     }
 
     public function privateCore(&$response, $user)
@@ -45,7 +46,7 @@ class Impuesto extends Base\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Impuesto();
+        $model = new Model\Divisa();
         $this->count = $model->count($where);
         if ($this->count > 0) {
             $this->cursor = $model->all($where, $order);
@@ -57,7 +58,7 @@ class Impuesto extends Base\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "descripcion|codimpuesto";
+            $fields = "descripcion|coddivisa";
             $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
@@ -66,18 +67,23 @@ class Impuesto extends Base\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['icon'] = 'fa-plus-square-o';
-        $pagedata['menu'] = 'contabilidad';
+        $pagedata['title'] = 'Divisas';
+        $pagedata['icon'] = 'fa-money';
+        $pagedata['menu'] = 'admin';
         return $pagedata;
     }
 
     protected function getColumns()
     {
         return [
-            ['label' => 'Codigo', 'field' => 'codimpuesto', 'display' => 'left'],
+            ['label' => 'Codigo', 'field' => 'coddivisa', 'display' => 'left'],
             ['label' => 'Descripcion', 'field' => 'descripcion', 'display' => 'left'],
-            ['label' => '% Iva', 'field' => 'iva', 'display' => 'right'],
-            ['label' => '% Recargo', 'field' => 'recargo', 'display' => 'right']
-        ];
+            ['label' => 'ISO', 'field' => 'codiso', 'display' => 'left'],
+            ['label' => 'Fecha', 'field' => 'fecha', 'display' => 'left'],
+            ['label' => 'Tasa Conv.', 'field' => 'tasaconv', 'display' => 'right'],
+            ['label' => 'Tasa Compras', 'field' => 'tasaconvcompra', 'display' => 'right'],
+            ['label' => 'Símbolo', 'field' => 'simbolo', 'display' => 'center'],
+            ['label' => 'Bandera', 'field' => 'bandera', 'display' => 'none']
+        ];        
     }
 }
