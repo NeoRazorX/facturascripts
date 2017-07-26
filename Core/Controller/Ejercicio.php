@@ -22,23 +22,21 @@ use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la lista de Agentes
+ * Controlador para la lista de ejercicios contables
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class Almacen extends Base\ListController
+class Ejercicio extends Base\ListController
 {
-
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('codalmacen', 'Código');
+        $this->addOrderBy('codejercicio', 'Código');
         $this->addOrderBy('nombre');
-
-        $this->addFilterSelect('provincia', 'almacenes');
-        $this->addFilterSelect('país', 'paises', '', 'codpais');
+        
+        $this->addFilterSelect('estado', 'ejercicios');
     }
 
     public function privateCore(&$response, $user)
@@ -48,7 +46,7 @@ class Almacen extends Base\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Almacen();
+        $model = new Model\Ejercicio();
         $this->count = $model->count($where);
         if ($this->count > 0) {
             $this->cursor = $model->all($where, $order);
@@ -60,35 +58,30 @@ class Almacen extends Base\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "nombre|codalmacen|contacto";
+            $fields = "nombre|codtrans";
             $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
     }
-
+    
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['icon'] = 'fa-building';
-        $pagedata['menu'] = 'admin';
+        $pagedata['icon'] = 'fa-calendar';
+        $pagedata['menu'] = 'contabilidad';
         return $pagedata;
     }
 
     protected function getColumns()
     {
         return [
-            ['label' => 'Codigo', 'field' => 'codalmacen', 'display' => 'left'],
+            ['label' => 'Codigo', 'field' => 'codejercicio', 'display' => 'left'],
             ['label' => 'Nombre', 'field' => 'nombre', 'display' => 'left'],
-            ['label' => 'Contacto', 'field' => 'contacto', 'display' => 'left'],
-            ['label' => 'Dirección', 'field' => 'direccion', 'display' => 'left'],
-            ['label' => 'Poblacion', 'field' => 'poblacion', 'display' => 'center'],
-            ['label' => 'Cod. Postal', 'field' => 'codpostal', 'display' => 'none'],
-            ['label' => 'Provincia', 'field' => 'direccion', 'display' => 'center'],
-            ['label' => 'País', 'field' => 'codpais', 'display' => 'center'],
-            ['label' => 'Teléfono', 'field' => 'telefono', 'display' => 'left'],
-            ['label' => 'Fax', 'field' => 'fax', 'display' => 'left'],
-            ['label' => 'Valoración', 'field' => 'tipovaloracion', 'display' => 'center'],
-            ['label' => 'Apartado', 'field' => 'apartado', 'display' => 'none']
-        ];        
+            ['label' => 'Inicio', 'field' => 'fechainicio', 'display' => 'center'],
+            ['label' => 'Fin', 'field' => 'fechafin', 'display' => 'center'],
+            ['label' => 'Estado', 'field' => 'estado', 'display' => 'center'],
+            ['label' => 'Plan', 'field' => 'plancontable', 'display' => 'center'],
+            ['label' => 'Long.Cta', 'field' => 'longsubcuenta', 'display' => 'center']
+        ];       
     }
 }

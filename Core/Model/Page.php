@@ -65,6 +65,12 @@ class Page
      * @var
      */
     public $orden;
+    
+    /**
+     * Icono de la página
+     * @var string
+     */
+    public $icon;
 
     /**
      * Page constructor.
@@ -90,6 +96,7 @@ class Page
         $this->title = null;
         $this->menu = null;
         $this->submenu = null;
+        $this->icon = null;
         $this->showonmenu = true;
         $this->orden = 100;
     }

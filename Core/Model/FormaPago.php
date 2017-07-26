@@ -107,7 +107,12 @@ class FormaPago
      */
     public function url()
     {
-        return 'index.php?page=ContabilidadFormasPago';
+        $result = 'index.php?page=FormaPago';
+        if ($this->codpago !== null) {
+            $result .= '_card&cod=' . $this->codpago;
+        }
+
+        return $result;
     }
 
     /**

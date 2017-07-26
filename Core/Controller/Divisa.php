@@ -22,23 +22,21 @@ use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la lista de Agentes
+ * Controlador para la lista de divisas utilizadas
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class Almacen extends Base\ListController
+class Divisa extends Base\ListController
 {
 
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('codalmacen', 'Código');
-        $this->addOrderBy('nombre');
-
-        $this->addFilterSelect('provincia', 'almacenes');
-        $this->addFilterSelect('país', 'paises', '', 'codpais');
+        $this->addOrderBy('coddivisa', 'Código');
+        $this->addOrderBy('descripcion');
+        $this->addOrderBy('codiso');
     }
 
     public function privateCore(&$response, $user)
@@ -48,7 +46,7 @@ class Almacen extends Base\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Almacen();
+        $model = new Model\Divisa();
         $this->count = $model->count($where);
         if ($this->count > 0) {
             $this->cursor = $model->all($where, $order);
@@ -60,7 +58,7 @@ class Almacen extends Base\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "nombre|codalmacen|contacto";
+            $fields = "descripcion|coddivisa";
             $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
@@ -69,7 +67,7 @@ class Almacen extends Base\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['icon'] = 'fa-building';
+        $pagedata['icon'] = 'fa-money';
         $pagedata['menu'] = 'admin';
         return $pagedata;
     }
@@ -77,18 +75,14 @@ class Almacen extends Base\ListController
     protected function getColumns()
     {
         return [
-            ['label' => 'Codigo', 'field' => 'codalmacen', 'display' => 'left'],
-            ['label' => 'Nombre', 'field' => 'nombre', 'display' => 'left'],
-            ['label' => 'Contacto', 'field' => 'contacto', 'display' => 'left'],
-            ['label' => 'Dirección', 'field' => 'direccion', 'display' => 'left'],
-            ['label' => 'Poblacion', 'field' => 'poblacion', 'display' => 'center'],
-            ['label' => 'Cod. Postal', 'field' => 'codpostal', 'display' => 'none'],
-            ['label' => 'Provincia', 'field' => 'direccion', 'display' => 'center'],
-            ['label' => 'País', 'field' => 'codpais', 'display' => 'center'],
-            ['label' => 'Teléfono', 'field' => 'telefono', 'display' => 'left'],
-            ['label' => 'Fax', 'field' => 'fax', 'display' => 'left'],
-            ['label' => 'Valoración', 'field' => 'tipovaloracion', 'display' => 'center'],
-            ['label' => 'Apartado', 'field' => 'apartado', 'display' => 'none']
+            ['label' => 'Codigo', 'field' => 'coddivisa', 'display' => 'left'],
+            ['label' => 'Descripcion', 'field' => 'descripcion', 'display' => 'left'],
+            ['label' => 'ISO', 'field' => 'codiso', 'display' => 'left'],
+            ['label' => 'Fecha', 'field' => 'fecha', 'display' => 'left'],
+            ['label' => 'Tasa Conv.', 'field' => 'tasaconv', 'display' => 'right'],
+            ['label' => 'Tasa Compras', 'field' => 'tasaconvcompra', 'display' => 'right'],
+            ['label' => 'Símbolo', 'field' => 'simbolo', 'display' => 'center'],
+            ['label' => 'Bandera', 'field' => 'bandera', 'display' => 'none']
         ];        
     }
 }

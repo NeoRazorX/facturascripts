@@ -152,11 +152,10 @@ class Controller
         return [
             'name' => $this->className,
             'title' => $this->className,
-            'icon' => '<i class="fa fa-circle-o" aria-hidden="true"></i>',
+            'icon' => 'fa-circle-o',
             'menu' => 'new',
             'submenu' => NULL,
-            'showonmenu' => TRUE,
-            'isDefault' => FALSE
+            'showonmenu' => TRUE
         ];
     }
 

@@ -40,6 +40,12 @@ class MenuItem
     public $url;
 
     /**
+     * Icono de la fuente Fontawesome de la opción de menú
+     * @var string 
+     */
+    public $icon;
+    
+    /**
      * Lista de opciones de menú para el item
      * @var MenuItem[]
      */
@@ -50,17 +56,36 @@ class MenuItem
      * @param string $title
      * @param string $url
      */
-    public function __construct($title, $url)
+    public function __construct($title, $url, $icon)
     {
         $this->title = $title;
         $this->url = $url;
+        $this->icon = $icon;
         $this->menu = [];
     }
-
+    
+    /**
+     * Devuelve el html para el icono del item
+     * @return string
+     */
+    private function getHTMLIcon()
+    {
+        $result = '<i class="fa " aria-hidden="true" style="margin-right: 19px"></i> ';
+        if (!empty($this->icon)) {
+          $result = '<i class="fa ' . $this->icon . '" aria-hidden="true" style="margin-right: 5px"></i> ';
+        }
+        return $result;
+    }
+    
+    /**
+     * Devuelve el html para el menú / submenú
+     * @param int $level
+     * @return string
+     */
     public function getHTML($level = 0)
     {
         if (empty($this->menu)) {
-            return '<li><a href="' . $this->url . '">' . $this->title . '</a></li>';
+            return '<li><a href="' . $this->url . '">' . $this->getHTMLIcon() . $this->title . '</a></li>';
         }
 
         $base = '<a href="' . $this->url . '" class="dropdown-toggle"'

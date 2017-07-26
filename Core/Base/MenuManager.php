@@ -71,6 +71,11 @@ class MenuManager
         $this->init();
     }
 
+    /**
+     * Actualiza los datos en el modelo Models\Page en base los datos
+     * del getPageData() del controlador
+     * @param array $pageData
+     */
     public function selectPage($pageData)
     {
         $pageModel = self::$pageModel->get($pageData['name']);
@@ -83,6 +88,7 @@ class MenuManager
             $pageModel->submenu = $pageData['submenu'];
             $pageModel->showonmenu = $pageData['showonmenu'];
             $pageModel->title = $pageData['title'];
+            $pageModel->icon = $pageData['icon'];
             $pageModel->save();
         }
         
@@ -95,6 +101,10 @@ class MenuManager
         }
     }
 
+    /**
+     * Carga la estructura de menú para el usuario
+     * @return \FacturaScripts\Core\Base\MenuItem
+     */
     private function loadUserMenu()
     {
         $result = [];
@@ -113,7 +123,7 @@ class MenuManager
             if ($menuValue !== $page->menu) {
                 $menuValue = $page->menu;
                 $submenuValue = NULL;
-                $result[$menuValue] = new MenuItem(ucfirst($menuValue), '#');
+                $result[$menuValue] = new MenuItem(ucfirst($menuValue), '#', null);
                 $menuItem = &$result[$menuValue]->menu;
             }
 
@@ -122,12 +132,12 @@ class MenuManager
                 $submenuValue = $page->submenu;
                 $menuItem = &$result[$menuValue]->menu;
                 if ($submenuValue != NULL) {
-                    $menuItem[$submenuValue] = new MenuItem(ucfirst($submenuValue), '#');
+                    $menuItem[$submenuValue] = new MenuItem(ucfirst($submenuValue), '#', null);
                     $menuItem = &$menuItem[$submenuValue]->menu;
                 }
             }
 
-            $menuItem[$page->name] = new MenuItem($page->title, $page->url());
+            $menuItem[$page->name] = new MenuItem($page->title, $page->url(), $page->icon);
         }
 
         return $result;

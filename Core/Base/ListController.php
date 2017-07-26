@@ -24,7 +24,7 @@ namespace FacturaScripts\Core\Base;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListController extends Controller
+abstract class ListController extends Controller
 {
 
     /**
@@ -85,6 +85,8 @@ class ListController extends Controller
      * @var int
      */
     public $count;
+
+    protected abstract function getColumns();
 
     /**
      * Devuelve la key del campo seleccionado en el order by
@@ -203,7 +205,8 @@ class ListController extends Controller
             $options['field'] = $key;
         }
 
-        $this->filters[$key] = ['type' => $type, 'value' => $this->request->get($key), 'options' => $options];
+        $value = $this->request->get($key);
+        $this->filters[$key] = ['type' => $type, 'value' => $value, 'options' => $options];
     }
 
     /**
@@ -275,6 +278,7 @@ class ListController extends Controller
         $this->count = 0;
         $this->orderby = [];
         $this->filters = [];
+        $this->fields = $this->getColumns();
     }
 
     /**
@@ -298,8 +302,6 @@ class ListController extends Controller
                 . " FROM " . $table 
                 . " WHERE COALESCE(" . $field . ", '')" . " <> ''" . $where
                 . " ORDER BY 1 ASC;";
-
-            $sql .= " ORDER BY 1 ASC;";
 
             $data = $this->dataBase->select($sql);
             foreach ($data as $item) {

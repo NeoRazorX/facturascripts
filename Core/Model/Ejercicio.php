@@ -155,9 +155,9 @@ class Ejercicio
         }
 
         $sql = 'SELECT MAX(' . $this->dataBase->sql2int('codejercicio') . ') as cod FROM ' . $this->tableName() . ';';
-        $cod = $this->dataBase->select($sql);
-        if (!empty($cod)) {
-            return sprintf('%04s', 1 + (int)$cod[0]['cod']);
+        $newCod = $this->dataBase->select($sql);
+        if (!empty($newCod)) {
+            return sprintf('%04s', 1 + (int)$newCod[0]['cod']);
         }
 
         return '0001';
@@ -170,7 +170,7 @@ class Ejercicio
     public function url()
     {
         if ($this->codejercicio === null) {
-            return 'index.php?page=ContabilidadEjercicios';
+            return 'index.php?page=Ejercicio';
         }
         return 'index.php?page=ContabilidadEjercicio&cod=' . $this->codejercicio;
     }

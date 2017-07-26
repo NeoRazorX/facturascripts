@@ -288,34 +288,6 @@ trait ModelTrait
     }
 
     /**
-     * Devuelve el primer modelo que coincide con los filtros establecidos.
-     *
-     * @param array $fields filtros a aplicar a los campos. Por ejemplo ['codserie' => 'A']
-     *
-     * @return mixed|bool
-     */
-    public function getBy(array $fields = [])
-    {
-        $sql = 'SELECT * FROM ' . $this->tableName();
-        $coma = ' WHERE ';
-
-        foreach ($fields as $key => $value) {
-            $sql .= $coma . $key . ' = ' . $this->var2str($value);
-            if ($coma === ' WHERE ') {
-                $coma = ', ';
-            }
-        }
-
-        $data = $this->dataBase->selectLimit($sql, 1);
-        if (!empty($data)) {
-            $class = $this->modelName();
-            return new $class($data[0]);
-        }
-
-        return false;
-    }
-
-    /**
      * Devuelve true si los datos del modelo se encuentran almacenados en la base de datos.
      * @return bool
      */

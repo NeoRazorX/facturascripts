@@ -22,23 +22,24 @@ use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la lista de Agentes
+ * Controlador para la lista de Formas de Pago
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class Almacen extends Base\ListController
+class FormaPago extends Base\ListController
 {
-
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+   public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('codalmacen', 'Código');
-        $this->addOrderBy('nombre');
-
-        $this->addFilterSelect('provincia', 'almacenes');
-        $this->addFilterSelect('país', 'paises', '', 'codpais');
+        $this->addOrderBy('codpago', 'Código');
+        $this->addOrderBy('descripcion');
+        
+        $this->addFilterSelect('Gen. Recibo', 'formaspago', '', 'genrecibos');
+        $this->addFilterSelect('vencimiento', 'formaspago');
+        $this->addFilterCheckbox('domiciliado', 'Domiciliado');
+        $this->addFilterCheckbox('imprimir', 'Imprimir');        
     }
 
     public function privateCore(&$response, $user)
@@ -48,7 +49,7 @@ class Almacen extends Base\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Almacen();
+        $model = new Model\FormaPago();
         $this->count = $model->count($where);
         if ($this->count > 0) {
             $this->cursor = $model->all($where, $order);
@@ -60,7 +61,7 @@ class Almacen extends Base\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "nombre|codalmacen|contacto";
+            $fields = "nombre|apellidos|codagente";
             $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
@@ -69,26 +70,21 @@ class Almacen extends Base\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['icon'] = 'fa-building';
-        $pagedata['menu'] = 'admin';
+        $pagedata['icon'] = 'fa-credit-card';
+        $pagedata['menu'] = 'contabilidad';
         return $pagedata;
     }
 
     protected function getColumns()
     {
         return [
-            ['label' => 'Codigo', 'field' => 'codalmacen', 'display' => 'left'],
-            ['label' => 'Nombre', 'field' => 'nombre', 'display' => 'left'],
-            ['label' => 'Contacto', 'field' => 'contacto', 'display' => 'left'],
-            ['label' => 'Dirección', 'field' => 'direccion', 'display' => 'left'],
-            ['label' => 'Poblacion', 'field' => 'poblacion', 'display' => 'center'],
-            ['label' => 'Cod. Postal', 'field' => 'codpostal', 'display' => 'none'],
-            ['label' => 'Provincia', 'field' => 'direccion', 'display' => 'center'],
-            ['label' => 'País', 'field' => 'codpais', 'display' => 'center'],
-            ['label' => 'Teléfono', 'field' => 'telefono', 'display' => 'left'],
-            ['label' => 'Fax', 'field' => 'fax', 'display' => 'left'],
-            ['label' => 'Valoración', 'field' => 'tipovaloracion', 'display' => 'center'],
-            ['label' => 'Apartado', 'field' => 'apartado', 'display' => 'none']
-        ];        
+            ['label' => 'Codigo', 'field' => 'codpago', 'display' => 'left'],
+            ['label' => 'Descripción', 'field' => 'descripcion', 'display' => 'left'],
+            ['label' => 'Cod. Cuenta', 'field' => 'codcuenta', 'display' => 'left'],
+            ['label' => 'Vencimiento', 'field' => 'vencimiento', 'display' => 'center'],
+            ['label' => 'Gen. Recibos', 'field' => 'genrecibos', 'display' => 'center'],
+            ['label' => 'Domiciliado', 'field' => 'domiciliado', 'display' => 'center'],
+            ['label' => 'Imprimir', 'field' => 'imprimir', 'display' => 'center']
+        ];
     }
 }
