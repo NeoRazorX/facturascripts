@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -100,11 +99,12 @@ class Serie
      */
     public function url()
     {
-        if ($this->codserie === null) {
-            return 'index.php?page=ContabilidadSeries';
+        $result = 'index.php?page=Serie';
+        if ($this->codserie !== null) {
+            $result .= '_card&cod=' . $this->codserie;
         }
 
-        return 'index.php?page=ContabilidadSeries#' . $this->codserie;
+        return $result;
     }
 
     /**

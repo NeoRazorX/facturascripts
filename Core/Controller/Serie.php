@@ -22,21 +22,24 @@ use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la lista de ejercicios contables
+ * Controlador para la lista de series de facturación
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class Ejercicio extends Base\ListController
+class Serie extends Base\ListController
 {
+
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('codejercicio', 'Código');
-        $this->addOrderBy('nombre');
-        
-        $this->addFilterSelect('estado', 'ejercicios');
+        $this->addOrderBy('codserie', 'Código');
+        $this->addOrderBy('descripcion');
+        $this->addOrderBy('codejercicio', 'Ejercicio');
+
+        $this->addFilterSelect('ejercicio', 'series', '', 'codejercicio');
+        $this->addFilterCheckbox('siniva', 'Sin Impuesto', 'siniva');
     }
 
     public function privateCore(&$response, $user)
@@ -46,7 +49,7 @@ class Ejercicio extends Base\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Ejercicio();
+        $model = new Model\Serie();
         $this->count = $model->count($where);
         if ($this->count > 0) {
             $this->cursor = $model->all($where, $order);
@@ -58,16 +61,16 @@ class Ejercicio extends Base\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "nombre|codejercicio";
+            $fields = "descripcion|codserie|codcuenta";
             $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
     }
-    
+
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['icon'] = 'fa-calendar';
+        $pagedata['icon'] = 'fa-plus-square-o';
         $pagedata['menu'] = 'contabilidad';
         return $pagedata;
     }
@@ -75,13 +78,14 @@ class Ejercicio extends Base\ListController
     protected function getColumns()
     {
         return [
-            ['label' => 'Codigo', 'field' => 'codejercicio', 'display' => 'left'],
-            ['label' => 'Nombre', 'field' => 'nombre', 'display' => 'left'],
-            ['label' => 'Inicio', 'field' => 'fechainicio', 'display' => 'center'],
-            ['label' => 'Fin', 'field' => 'fechafin', 'display' => 'center'],
-            ['label' => 'Estado', 'field' => 'estado', 'display' => 'center'],
-            ['label' => 'Plan', 'field' => 'plancontable', 'display' => 'center'],
-            ['label' => 'Long.Cta', 'field' => 'longsubcuenta', 'display' => 'center']
-        ];       
+            ['label' => 'Codigo', 'field' => 'codimpuesto', 'display' => 'left'],
+            ['label' => 'Descripcion', 'field' => 'descripcion', 'display' => 'left'],
+            ['label' => '% Iva', 'field' => 'iva', 'display' => 'right'],
+            ['label' => '% Recargo', 'field' => 'recargo', 'display' => 'right'],
+            ['label' => 'Sin Impuesto', 'field' => 'siniva', 'display' => 'center'],
+            ['label' => 'Cuenta', 'field' => 'codcuenta', 'display' => 'left'],
+            ['label' => 'Ejercicio', 'field' => 'codejercicio', 'display' => 'center'],
+            ['label' => 'Núm. Factura', 'field' => 'numfactura', 'display' => 'right']
+        ];
     }
 }

@@ -70,6 +70,7 @@ class AgenciaTransporte extends Base\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['icon'] = 'fa-truck';
+        $pagedata['title'] = 'Agencia Transporte';
         $pagedata['menu'] = 'admin';
         return $pagedata;
     }

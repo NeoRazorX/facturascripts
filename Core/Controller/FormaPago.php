@@ -37,7 +37,7 @@ class FormaPago extends Base\ListController
         $this->addOrderBy('codpago', 'Código');
         $this->addOrderBy('descripcion');
 
-        $this->addFilterSelect('Gen. Recibo', 'formaspago', '', 'genrecibos');
+        $this->addFilterSelect('generación', 'formaspago', '', 'genrecibos');
         $this->addFilterSelect('vencimiento', 'formaspago');
         $this->addFilterCheckbox('domiciliado', 'Domiciliado');
         $this->addFilterCheckbox('imprimir', 'Imprimir');
@@ -62,7 +62,7 @@ class FormaPago extends Base\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "nombre|apellidos|codagente";
+            $fields = "descripcion|codpago|codcuenta";
             $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
@@ -72,6 +72,7 @@ class FormaPago extends Base\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['icon'] = 'fa-credit-card';
+        $pagedata['title'] = 'Forma de Pago';
         $pagedata['menu'] = 'contabilidad';
         return $pagedata;
     }

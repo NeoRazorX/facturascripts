@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -27,6 +26,7 @@ namespace FacturaScripts\Core\Model;
  */
 class Impuesto
 {
+
     use Base\ModelTrait;
 
     /**
@@ -46,16 +46,19 @@ class Impuesto
      * @var string
      */
     public $codsubcuentasop;
+
     /**
      * TODO
      * @var string
      */
     public $descripcion;
+
     /**
      * TODO
      * @var float
      */
     public $iva;
+
     /**
      * TODO
      * @var float
@@ -96,10 +99,12 @@ class Impuesto
      */
     public function url()
     {
-        if ($this->codimpuesto === null) {
-            return 'index.php?page=ContabilidadImpuestos';
+        $result = 'index.php?page=Impuesto';
+        if ($this->codimpuesto !== null) {
+            $result .= '_card&cod=' . $this->codimpuesto;
         }
-        return 'index.php?page=ContabilidadImpuestos#' . $this->codimpuesto;
+
+        return $result;
     }
 
     /**
@@ -109,23 +114,6 @@ class Impuesto
     public function isDefault()
     {
         return ($this->codimpuesto === $this->defaultItems->codImpuesto());
-    }
-
-    /**
-     * TODO
-     *
-     * @param float $iva
-     *
-     * @return bool|Impuesto
-     */
-    public function getByIva($iva)
-    {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE iva = ' . $this->var2str((float)$iva) . ';';
-        $impuesto = $this->dataBase->select($sql);
-        if (!empty($impuesto)) {
-            return new Impuesto($impuesto[0]);
-        }
-        return false;
     }
 
     /**
@@ -151,31 +139,6 @@ class Impuesto
     }
 
     /**
-     * Devuelve un array con todos los impuestos
-     * @return array
-     */
-    public function all()
-    {
-        /// leemos la lista de la caché
-        $impuestolist = $this->cache->get('m_impuesto_all');
-        if (!$impuestolist) {
-            /// si no encontramos la lista en caché, leemos de la base de datos
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' ORDER BY iva DESC;';
-            $data = $this->dataBase->select($sql);
-            if (!empty($data)) {
-                foreach ($data as $i) {
-                    $impuestolist[] = new Impuesto($i);
-                }
-            }
-
-            /// guardamos la lista en caché
-            $this->cache->set('m_impuesto_all', $impuestolist);
-        }
-
-        return $impuestolist;
-    }
-
-    /**
      * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
      * que se ejecutará tras la creación de la tabla. útil para insertar valores
      * por defecto.
@@ -183,17 +146,8 @@ class Impuesto
      */
     private function install()
     {
-        $this->cleanCache();
         return 'INSERT INTO ' . $this->tableName() . ' (codimpuesto,descripcion,iva,recargo) VALUES '
             . "('IVA0','IVA 0%','0','0'),('IVA21','IVA 21%','21','5.2'),"
             . "('IVA10','IVA 10%','10','1.4'),('IVA4','IVA 4%','4','0.5');";
-    }
-
-    /**
-     * TODO
-     */
-    private function cleanCache()
-    {
-        $this->cache->delete('m_impuesto_all');
     }
 }
