@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -157,7 +156,7 @@ class Ejercicio
         $sql = 'SELECT MAX(' . $this->dataBase->sql2int('codejercicio') . ') as cod FROM ' . $this->tableName() . ';';
         $newCod = $this->dataBase->select($sql);
         if (!empty($newCod)) {
-            return sprintf('%04s', 1 + (int)$newCod[0]['cod']);
+            return sprintf('%04s', 1 + (int) $newCod[0]['cod']);
         }
 
         return '0001';

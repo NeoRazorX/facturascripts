@@ -41,10 +41,10 @@ class MenuItem
 
     /**
      * Icono de la fuente Fontawesome de la opción de menú
-     * @var string 
+     * @var string
      */
     public $icon;
-    
+
     /**
      * Lista de opciones de menú para el item
      * @var MenuItem[]
@@ -63,7 +63,7 @@ class MenuItem
         $this->icon = $icon;
         $this->menu = [];
     }
-    
+
     /**
      * Devuelve el html para el icono del item
      * @return string
@@ -72,11 +72,11 @@ class MenuItem
     {
         $result = '<i class="fa " aria-hidden="true" style="margin-right: 19px"></i> ';
         if (!empty($this->icon)) {
-          $result = '<i class="fa ' . $this->icon . '" aria-hidden="true" style="margin-right: 5px"></i> ';
+            $result = '<i class="fa ' . $this->icon . '" aria-hidden="true" style="margin-right: 5px"></i> ';
         }
         return $result;
     }
-    
+
     /**
      * Devuelve el html para el menú / submenú
      * @param int $level
@@ -91,7 +91,7 @@ class MenuItem
         $base = '<a href="' . $this->url . '" class="dropdown-toggle"'
             . ' data-toggle="dropdown" role="button" aria-haspopup="true"'
             . ' aria-expanded="false">' . $this->title;
-        
+
         if ($level === 0) {
             $html = '<li>' . $base . ' <span class="caret"></span>' . '</a>' . '<ul class="dropdown-menu multi-level">';
         } else {

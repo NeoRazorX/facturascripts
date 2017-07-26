@@ -29,17 +29,18 @@ use FacturaScripts\Core\Model;
  */
 class FormaPago extends Base\ListController
 {
-   public function __construct(&$cache, &$i18n, &$miniLog, $className)
+
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         $this->addOrderBy('codpago', 'Código');
         $this->addOrderBy('descripcion');
-        
+
         $this->addFilterSelect('Gen. Recibo', 'formaspago', '', 'genrecibos');
         $this->addFilterSelect('vencimiento', 'formaspago');
         $this->addFilterCheckbox('domiciliado', 'Domiciliado');
-        $this->addFilterCheckbox('imprimir', 'Imprimir');        
+        $this->addFilterCheckbox('imprimir', 'Imprimir');
     }
 
     public function privateCore(&$response, $user)

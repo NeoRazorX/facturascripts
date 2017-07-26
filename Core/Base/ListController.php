@@ -86,7 +86,7 @@ abstract class ListController extends Controller
      */
     public $count;
 
-    protected abstract function getColumns();
+    abstract protected function getColumns();
 
     /**
      * Devuelve la key del campo seleccionado en el order by
