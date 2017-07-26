@@ -495,7 +495,7 @@ class FacturaProveedor
                         $diferencia = round(($this->neto - $tNeto) * 100);
                         usort(
                             $lineasi,
-                            function ($a, $b) {
+                            function($a, $b) {
                                 if ($a->totallinea === $b->totallinea) {
                                     return 0;
                                 }
@@ -527,7 +527,7 @@ class FacturaProveedor
                         $diferencia = round(($this->totaliva - $tIva) * 100);
                         usort(
                             $lineasi,
-                            function ($a, $b) {
+                            function($a, $b) {
                                 if ($a->totaliva === $b->totaliva) {
                                     return 0;
                                 }
@@ -636,13 +636,13 @@ class FacturaProveedor
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
-                if ((int)$d['numero'] < $num) {
+                if ((int) $d['numero'] < $num) {
                     /**
                      * El número de la factura es menor que el inicial.
                      * El usuario ha cambiado el número inicial después de hacer
                      * facturas.
                      */
-                } elseif ((int)$d['numero'] === $num) {
+                } elseif ((int) $d['numero'] === $num) {
                     /// el número es correcto, avanzamos
                     $num++;
                 } else {

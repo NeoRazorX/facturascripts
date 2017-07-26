@@ -209,7 +209,7 @@ class LineaFacturaProveedor
 
     /**
      * TODO
-     * @return \DateTime|null
+     * @return string
      */
     public function showFecha()
     {

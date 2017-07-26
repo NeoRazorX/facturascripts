@@ -152,7 +152,7 @@ class Agente
         $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codagente') . ') as cod FROM ' . $this->tableName() . ';';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
-            return (string)(1 + (int)$data[0]['cod']);
+            return (string) (1 + (int) $data[0]['cod']);
         }
 
         return '1';

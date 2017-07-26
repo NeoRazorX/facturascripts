@@ -677,7 +677,7 @@ class FacturaCliente
                         $diferencia = round(($this->neto - $tNeto) * 100);
                         usort(
                             $lineasi,
-                            function ($a, $b) {
+                            function($a, $b) {
                                 if ($a->totallinea === $b->totallinea) {
                                     return 0;
                                 }
@@ -709,7 +709,7 @@ class FacturaCliente
                         $diferencia = round(($this->totaliva - $tIva) * 100);
                         usort(
                             $lineasi,
-                            function ($a, $b) {
+                            function($a, $b) {
                                 if ($a->totaliva === $b->totaliva) {
                                     return 0;
                                 }
@@ -830,13 +830,13 @@ class FacturaCliente
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
-                if ((int)$d['numero'] < $num) {
+                if ((int) $d['numero'] < $num) {
                     /**
                      * El número de la factura es menor que el inicial.
                      * El usuario ha cambiado el número inicial después de hacer
                      * facturas.
                      */
-                } elseif ((int)$d['numero'] === $num) {
+                } elseif ((int) $d['numero'] === $num) {
                     /// el número es correcto, avanzamos
                     $num++;
                 } else {
@@ -930,7 +930,7 @@ class FacturaCliente
                     . " <a target='_blank' href='" . $eje0->url() . "'>ejercicio</a>.");
             }
         }
-        $numero0 = (int)$this->numero - 1;
+        $numero0 = (int) $this->numero - 1;
         if ($numero0 > 0) {
             $fac0 = $this->getByNumSerie($numero0, $this->codserie, $this->codejercicio);
             if ($fac0) {
@@ -941,7 +941,7 @@ class FacturaCliente
                 }
             }
         }
-        $numero2 = (int)$this->numero + 1;
+        $numero2 = (int) $this->numero + 1;
         $fac2 = $this->getByNumSerie($numero2, $this->codserie, $this->codejercicio);
         if ($fac2) {
             if (strtotime($fac2->fecha) < strtotime($this->fecha)) {
@@ -1211,10 +1211,10 @@ class FacturaCliente
      * @param string $hasta
      * @param string $codserie código de la serie
      * @param string $codagente código del empleado
-     * @param bool $codcliente código del cliente
-     * @param bool $estado
-     * @param bool $codpago código de la forma de pago
-     * @param bool $codalmacen código del almacén
+     * @param string|boolean $codcliente código del cliente
+     * @param string|boolean $estado
+     * @param string|boolean $codpago código de la forma de pago
+     * @param string|boolean $codalmacen código del almacén
      *
      * @return array
      */
