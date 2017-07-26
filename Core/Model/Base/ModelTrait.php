@@ -431,7 +431,7 @@ trait ModelTrait
 
     /**
      * TODO
-     * @param $val
+     * @param boolean $val
      *
      * @return string
      */

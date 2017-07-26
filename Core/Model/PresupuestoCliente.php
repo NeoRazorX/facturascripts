@@ -295,8 +295,9 @@ class PresupuestoCliente
     {
         if ($s) {
             return Date('H:i:s', strtotime($this->hora));
-        } else
-            return Date('H:i', strtotime($this->hora));
+        } else {
+                    return Date('H:i', strtotime($this->hora));
+        }
     }
 
     public function observaciones_resume()
@@ -305,45 +306,50 @@ class PresupuestoCliente
             return '-';
         } else if (strlen($this->observaciones) < 60) {
             return $this->observaciones;
-        } else
-            return substr($this->observaciones, 0, 50) . '...';
+        } else {
+                    return substr($this->observaciones, 0, 50) . '...';
+        }
     }
 
     public function finoferta()
     {
-        return ( strtotime(Date('d-m-Y')) > strtotime($this->finoferta) );
+        return (strtotime(Date('d-m-Y')) > strtotime($this->finoferta));
     }
 
     public function url()
     {
         if (is_null($this->idpresupuesto)) {
             return 'index.php?page=ventas_presupuestos';
-        } else
-            return 'index.php?page=ventas_presupuesto&id=' . $this->idpresupuesto;
+        } else {
+                    return 'index.php?page=ventas_presupuesto&id=' . $this->idpresupuesto;
+        }
     }
 
     public function pedido_url()
     {
         if (is_null($this->idpedido)) {
             return 'index.php?page=ventas_pedido';
-        } else
-            return 'index.php?page=ventas_pedido&id=' . $this->idpedido;
+        } else {
+                    return 'index.php?page=ventas_pedido&id=' . $this->idpedido;
+        }
     }
 
     public function agente_url()
     {
         if (is_null($this->codagente)) {
             return "index.php?page=admin_agentes";
-        } else
-            return "index.php?page=admin_agente&cod=" . $this->codagente;
+        } else {
+                    return "index.php?page=admin_agente&cod=" . $this->codagente;
+        }
     }
 
     public function cliente_url()
     {
         if (is_null($this->codcliente)) {
             return "index.php?page=ventas_clientes";
-        } else
-            return "index.php?page=ventas_cliente&cod=" . $this->codcliente;
+        } else {
+                    return "index.php?page=ventas_cliente&cod=" . $this->codcliente;
+        }
     }
 
     public function get_lineas()
@@ -498,7 +504,7 @@ class PresupuestoCliente
     /**
      * Devuelve un array con los presupuestos que coinciden con $query
      * @param type $query
-     * @param type $offset
+     * @param integer $offset
      * @return \PresupuestoCliente
      */
     public function search($query, $offset = 0)
@@ -536,7 +542,7 @@ class PresupuestoCliente
      * @param type $hasta
      * @param type $serie
      * @param type $obs
-     * @return \PresupuestoCliente
+     * @return PresupuestoCliente[]
      */
     public function search_from_cliente($codcliente, $desde, $hasta, $serie, $obs = '')
     {

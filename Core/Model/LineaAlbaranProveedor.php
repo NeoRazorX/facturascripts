@@ -217,7 +217,7 @@ class LineaAlbaranProveedor
 
     /**
      * TODO
-     * @return \DateTime|null
+     * @return string
      */
     public function showFecha()
     {
@@ -420,7 +420,7 @@ class LineaAlbaranProveedor
         $sql = 'SELECT COUNT(DISTINCT referencia) AS total FROM ' . $this->tableName() . ';';
         $lineas = $this->dataBase->select($sql);
         if (!empty($lineas)) {
-            return (int)$lineas[0]['total'];
+            return (int) $lineas[0]['total'];
         }
         return 0;
     }

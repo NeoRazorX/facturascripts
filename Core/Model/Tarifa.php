@@ -105,7 +105,7 @@ class Tarifa
 
     /**
      * TODO
-     * @return int
+     * @return double
      */
     public function x()
     {
@@ -130,7 +130,7 @@ class Tarifa
 
     /**
      * TODO
-     * @return int
+     * @return double
      */
     public function y()
     {
@@ -242,7 +242,7 @@ class Tarifa
         $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codtarifa') . ') as cod FROM ' . $this->tableName() . ';';
         $cod = $this->dataBase->select($sql);
         if (!empty($cod)) {
-            return sprintf('%06s', 1 + (int)$cod[0]['cod']);
+            return sprintf('%06s', 1 + (int) $cod[0]['cod']);
         }
         return '000001';
     }

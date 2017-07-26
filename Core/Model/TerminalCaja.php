@@ -449,7 +449,7 @@ class TerminalCaja
      *
      * @param string $txt
      *
-     * @return mixed
+     * @return string
      */
     public function sanitize($txt)
     {

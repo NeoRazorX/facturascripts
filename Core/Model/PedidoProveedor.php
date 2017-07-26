@@ -226,8 +226,9 @@ class PedidoProveedor
     {
         if ($s) {
             return Date('H:i:s', strtotime($this->hora));
-        } else
-            return Date('H:i', strtotime($this->hora));
+        } else {
+                    return Date('H:i', strtotime($this->hora));
+        }
     }
 
     public function observaciones_resume()
@@ -236,40 +237,45 @@ class PedidoProveedor
             return '-';
         } else if (strlen($this->observaciones) < 60) {
             return $this->observaciones;
-        } else
-            return substr($this->observaciones, 0, 50) . '...';
+        } else {
+                    return substr($this->observaciones, 0, 50) . '...';
+        }
     }
 
     public function url()
     {
         if (is_null($this->idpedido)) {
             return 'index.php?page=compras_pedidos';
-        } else
-            return 'index.php?page=compras_pedido&id=' . $this->idpedido;
+        } else {
+                    return 'index.php?page=compras_pedido&id=' . $this->idpedido;
+        }
     }
 
     public function albaran_url()
     {
         if (is_null($this->idalbaran)) {
             return 'index.php?page=compras_albaranes';
-        } else
-            return 'index.php?page=compras_albaran&id=' . $this->idalbaran;
+        } else {
+                    return 'index.php?page=compras_albaran&id=' . $this->idalbaran;
+        }
     }
 
     public function agente_url()
     {
         if (is_null($this->codagente)) {
             return "index.php?page=admin_agentes";
-        } else
-            return "index.php?page=admin_agente&cod=" . $this->codagente;
+        } else {
+                    return "index.php?page=admin_agente&cod=" . $this->codagente;
+        }
     }
 
     public function proveedor_url()
     {
         if (is_null($this->codproveedor)) {
             return "index.php?page=compras_proveedores";
-        } else
-            return "index.php?page=compras_proveedor&cod=" . $this->codproveedor;
+        } else {
+                    return "index.php?page=compras_proveedor&cod=" . $this->codproveedor;
+        }
     }
 
     public function get_lineas()
@@ -406,7 +412,7 @@ class PedidoProveedor
     /**
      * Devuelve un array con los pedidos que coinciden con $query
      * @param type $query
-     * @param type $offset
+     * @param integer $offset
      * @return \PedidoProveedor
      */
     public function search($query, $offset = 0)
