@@ -78,19 +78,6 @@ class AgenciaTransporte
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        $result = empty($this->codtrans)
-            ? 'index.php?page=ListAgenciaTransporte'
-            : 'index.php?page=EditAgenciaTransporte&cod=' . $this->codtrans;
-
-        return $result;
-    }
-
-    /**
      * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
      * que se ejecutará tras la creación de la tabla. útil para insertar valores
      * por defecto.

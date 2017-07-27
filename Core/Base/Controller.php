@@ -155,7 +155,8 @@ class Controller
             'icon' => 'fa-circle-o',
             'menu' => 'new',
             'submenu' => NULL,
-            'showonmenu' => TRUE
+            'showonmenu' => TRUE,
+            'orden' => 100
         ];
     }
 
