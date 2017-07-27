@@ -73,7 +73,6 @@ class ListFormaPago extends Base\ListController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'Formas de Pago';
         $pagedata['icon'] = 'fa-credit-card';
-        $pagedata['title'] = 'Forma de Pago';
         $pagedata['menu'] = 'contabilidad';
         return $pagedata;
     }
