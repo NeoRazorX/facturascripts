@@ -78,26 +78,12 @@ class AgenciaTransporte
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        $result = 'index.php?page=AgenciaTransporte';
-        if ($this->codtrans !== null) {
-            $result .= '_card&cod=' . $this->codtrans;
-        }
-
-        return $result;
-    }
-
-    /**
      * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
      * que se ejecutará tras la creación de la tabla. útil para insertar valores
      * por defecto.
      * @return string
      */
-    private function install()
+    public function install()
     {
         return 'INSERT INTO ' . $this->tableName() . ' (codtrans, nombre, web, activo) VALUES ' .
             "('ASM', 'ASM', 'http://es.asmred.com/', '" . $this->bool2str(true) . "')," .

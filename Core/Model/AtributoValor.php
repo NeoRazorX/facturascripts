@@ -147,7 +147,7 @@ class AtributoValor
             $sql = 'SELECT MAX(id) AS max FROM ' . $this->tableName() . ';';
             $data = $this->dataBase->select($sql);
             if (!empty($data)) {
-                $this->id = 1 + (int)$data[0]['max'];
+                $this->id = 1 + (int) $data[0]['max'];
             }
         }
 

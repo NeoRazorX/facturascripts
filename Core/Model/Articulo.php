@@ -325,7 +325,7 @@ class Articulo
      *
      * @param bool $ref
      *
-     * @return bool|mixed|string
+     * @return string
      */
     public function imageRef($ref = false)
     {
@@ -353,7 +353,7 @@ class Articulo
         $ref = 1;
         $data = $this->dataBase->selectLimit($sql, 1);
         if (!empty($data)) {
-            $ref = sprintf(1 + (int)$data[0]['referencia']);
+            $ref = sprintf(1 + (int) $data[0]['referencia']);
         }
 
         $this->exists = false;
@@ -574,7 +574,7 @@ class Articulo
 
     /**
      * Devuelve la url relativa de la imagen del artículo.
-     * @return bool|string
+     * @return string|false
      */
     public function imagenUrl()
     {
@@ -690,7 +690,7 @@ class Articulo
             $encontrado = false;
             foreach (self::$impuestos as $i) {
                 if ($i->codimpuesto === $this->codimpuesto) {
-                    $this->iva = (float)$i->iva;
+                    $this->iva = (float) $i->iva;
                     $encontrado = true;
                     break;
                 }
@@ -700,7 +700,7 @@ class Articulo
                 $imp0 = $imp->get($this->codimpuesto);
                 $this->iva = 0;
                 if ($imp0) {
-                    $this->iva = (float)$imp0->iva;
+                    $this->iva = (float) $imp0->iva;
                     self::$impuestos[] = $imp0;
                 }
             }

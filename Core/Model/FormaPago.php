@@ -107,7 +107,10 @@ class FormaPago
      */
     public function url()
     {
-        return 'index.php?page=ContabilidadFormasPago';
+        $result = empty($this->codpago)
+            ? 'index.php?page=ListFormaPago'
+            : 'index.php?page=EditFormaPago&cod=' . $this->codpago;
+        return $result;
     }
 
     /**
@@ -154,8 +157,8 @@ class FormaPago
         /// validamos los días de pago
         $arrayDias = [];
         foreach (str_getcsv($diasDePago) as $d) {
-            if ((int)$d >= 1 && (int)$d <= 31) {
-                $arrayDias[] = (int)$d;
+            if ((int) $d >= 1 && (int) $d <= 31) {
+                $arrayDias[] = (int) $d;
             }
         }
 
@@ -194,7 +197,7 @@ class FormaPago
      * Función recursiva auxiliar para calcularVencimiento()
      *
      * @param string $fechaInicio
-     * @param string|integer $diaDePago
+     * @param integer $diaDePago
      *
      * @return string
      */
@@ -217,7 +220,7 @@ class FormaPago
         }
 
         /// ahora elegimos un dia, pero que quepa en el mes, no puede ser 31 de febrero
-        $tmpDia = min([$diaDePago, (int)date('t', strtotime($fecha))]);
+        $tmpDia = min([$diaDePago, (int) date('t', strtotime($fecha))]);
 
         /// y por último generamos la fecha
         return date('d-m-Y', strtotime($tmpDia . '-' . $tmpMes . '-' . $tmpAnyo));

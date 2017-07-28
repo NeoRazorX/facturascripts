@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Utils;
@@ -30,6 +29,7 @@ class Empresa
 {
 
     use Base\ModelTrait;
+    use Base\ContactInformation;
     use Utils;
 
     /**
@@ -92,66 +92,6 @@ class Empresa
      * @var string
      */
     public $codejercicio;
-
-    /**
-     * URL de la web de la empresa.
-     * @var string
-     */
-    public $web;
-
-    /**
-     * Dirección de email de la empresa.
-     * @var string
-     */
-    public $email;
-
-    /**
-     * Número de fax de la empresa.
-     * @var string
-     */
-    public $fax;
-
-    /**
-     * Número de teléfono de la empresa.
-     * @var string
-     */
-    public $telefono;
-
-    /**
-     * Código del país predeterminado.
-     * @var string
-     */
-    public $codpais;
-
-    /**
-     * Apartado de correos de la empresa.
-     * @var string
-     */
-    public $apartado;
-
-    /**
-     * Provincia de la empresa.
-     * @var string
-     */
-    public $provincia;
-
-    /**
-     * Ciudad de la empresa.
-     * @var string
-     */
-    public $ciudad;
-
-    /**
-     * Código postal de la empresa.
-     * @var string
-     */
-    public $codpostal;
-
-    /**
-     * Dirección de la empresa.
-     * @var string
-     */
-    public $direccion;
 
     /**
      * Nombre del administrador de la empresa.
@@ -272,7 +212,10 @@ class Empresa
      */
     public function url()
     {
-        return 'index.php?page=AdminEmpresa';
+        $result = empty($this->id)
+            ? 'index.php?page=ListEmpresa'
+            : 'index.php?page=EditEmpresa&cod=' . $this->id;
+        return $result;
     }
 
     /**
@@ -281,8 +224,6 @@ class Empresa
      */
     public function test()
     {
-        $status = false;
-
         $this->nombre = static::noHtml($this->nombre);
         $this->nombrecorto = static::noHtml($this->nombrecorto);
         $this->administrador = static::noHtml($this->administrador);
@@ -300,15 +241,18 @@ class Empresa
         $this->telefono = static::noHtml($this->telefono);
         $this->web = static::noHtml($this->web);
 
-        if (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
+        $lenName = strlen($this->nombre);
+        if (($lenName == 0) || ($lenName > 99)) {
             $this->miniLog->alert($this->i18n->trans('company-name-invalid'));
-        } elseif (strlen($this->nombre) < strlen($this->nombrecorto)) {
-            $this->miniLog->alert($this->i18n->trans('company-short-name-smaller-name'));
-        } else {
-            $status = true;
+            return FALSE;
         }
 
-        return $status;
+        if ($lenName < strlen($this->nombrecorto)) {
+            $this->miniLog->alert($this->i18n->trans('company-short-name-smaller-name'));
+            return FALSE;
+        }
+
+        return TRUE;
     }
 
     /**

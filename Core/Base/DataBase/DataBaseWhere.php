@@ -33,7 +33,7 @@ class DataBaseWhere
 
     /**
      * Enlace con la base de datos activa
-     * @var DataBase
+     * @var \FacturaScripts\Core\Base\DataBase
      */
     private $dataBase;
 

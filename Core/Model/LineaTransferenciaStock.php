@@ -96,7 +96,7 @@ class LineaTransferenciaStock
 
     /**
      * TODO
-     * @return \DateTime
+     * @return string
      */
     public function fecha()
     {
@@ -105,7 +105,7 @@ class LineaTransferenciaStock
 
     /**
      * TODO
-     * @return \DateTime
+     * @return string
      */
     public function hora()
     {

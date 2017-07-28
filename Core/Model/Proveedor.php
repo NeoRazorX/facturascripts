@@ -318,7 +318,7 @@ class Proveedor
         $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codproveedor') . ') as cod FROM ' . $this->tableName() . ';';
         $cod = $this->dataBase->select($sql);
         if (!empty($cod)) {
-            return sprintf('%06s', 1 + (int)$cod[0]['cod']);
+            return sprintf('%06s', 1 + (int) $cod[0]['cod']);
         }
         return '000001';
     }

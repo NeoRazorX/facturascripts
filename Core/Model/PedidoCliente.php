@@ -294,8 +294,9 @@ class PedidoCliente
     {
         if ($s) {
             return Date('H:i:s', strtotime($this->hora));
-        } else
-            return Date('H:i', strtotime($this->hora));
+        } else {
+                    return Date('H:i', strtotime($this->hora));
+        }
     }
 
     public function observaciones_resume()
@@ -304,40 +305,45 @@ class PedidoCliente
             return '-';
         } else if (strlen($this->observaciones) < 60) {
             return $this->observaciones;
-        } else
-            return substr($this->observaciones, 0, 50) . '...';
+        } else {
+                    return substr($this->observaciones, 0, 50) . '...';
+        }
     }
 
     public function url()
     {
         if (is_null($this->idpedido)) {
             return 'index.php?page=ventas_pedidos';
-        } else
-            return 'index.php?page=ventas_pedido&id=' . $this->idpedido;
+        } else {
+                    return 'index.php?page=ventas_pedido&id=' . $this->idpedido;
+        }
     }
 
     public function albaran_url()
     {
         if (is_null($this->idalbaran)) {
             return 'index.php?page=ventas_albaran';
-        } else
-            return 'index.php?page=ventas_albaran&id=' . $this->idalbaran;
+        } else {
+                    return 'index.php?page=ventas_albaran&id=' . $this->idalbaran;
+        }
     }
 
     public function agente_url()
     {
         if (is_null($this->codagente)) {
             return "index.php?page=admin_agentes";
-        } else
-            return "index.php?page=admin_agente&cod=" . $this->codagente;
+        } else {
+                    return "index.php?page=admin_agente&cod=" . $this->codagente;
+        }
     }
 
     public function cliente_url()
     {
         if (is_null($this->codcliente)) {
             return "index.php?page=ventas_clientes";
-        } else
-            return "index.php?page=ventas_cliente&cod=" . $this->codcliente;
+        } else {
+                    return "index.php?page=ventas_cliente&cod=" . $this->codcliente;
+        }
     }
 
     /**
@@ -520,7 +526,7 @@ class PedidoCliente
     /**
      * Devuelve un array con todos los pedidos que coinciden con $query
      * @param type $query
-     * @param type $offset
+     * @param integer $offset
      * @return \PedidoCliente
      */
     public function search($query, $offset = 0)

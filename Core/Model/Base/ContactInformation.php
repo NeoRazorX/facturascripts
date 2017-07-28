@@ -64,6 +64,12 @@ trait ContactInformation
     public $codpostal;
 
     /**
+     * Apartado de correos del contacto.
+     * @var string
+     */
+    public $apartado;
+    
+    /**
      * Ciudad del contacto.
      * @var string
      */
@@ -98,6 +104,7 @@ trait ContactInformation
         $this->web = null;
         $this->direccion = null;
         $this->codpostal = null;
+        $this->apartado = null;
         $this->ciudad = null;
         $this->poblacion = null;
         $this->provincia = null;

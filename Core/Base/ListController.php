@@ -24,7 +24,7 @@ namespace FacturaScripts\Core\Base;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListController extends Controller
+abstract class ListController extends Controller
 {
 
     /**
@@ -33,7 +33,7 @@ class ListController extends Controller
     const ICONO_ASC = 'glyphicon-sort-by-attributes';
     const ICONO_DESC = 'glyphicon-sort-by-attributes-alt';
     const FS_ITEM_LIMIT = 50;
-    
+
     /**
      * Cursor con los datos a mostrar
      * @var array
@@ -64,7 +64,7 @@ class ListController extends Controller
     /**
      * Esta variable contiene el texto enviado como parámetro query
      * usado para el filtrado de datos del modelo
-     * @var string
+     * @var string|false
      */
     public $query;
 
@@ -85,6 +85,8 @@ class ListController extends Controller
      * @var int
      */
     public $count;
+
+    abstract protected function getColumns();
 
     /**
      * Devuelve la key del campo seleccionado en el order by
@@ -109,24 +111,6 @@ class ListController extends Controller
         return $result;
     }
 
-    /**
-     * Comprueba el valor de un parámetro pasado en una url
-     * @param string $field
-     * @return string|FALSE
-     */
-    protected function getParamValue($field)
-    {
-        $result = (isset($_REQUEST[$field])) ? $_REQUEST[$field] : FALSE;
-        if (!$result) {
-            $result = (filter_input(INPUT_POST, $field)) ? filter_input(INPUT_POST, $field) : FALSE;
-        }
-
-        if (!$result) {
-            $result = (filter_input(INPUT_GET, $field)) ? filter_input(INPUT_GET, $field) : FALSE;
-        }
-
-        return $result;
-    }
 
     /**
      * Establece la clausula WHERE según los filtros definidos
@@ -178,7 +162,7 @@ class ListController extends Controller
     protected function getParams()
     {
         $result = "";
-        if ($this->query != '') {
+        if (!empty($this->query)) {
             $result = "&query=" . $this->query;
         }
 
@@ -221,7 +205,8 @@ class ListController extends Controller
             $options['field'] = $key;
         }
 
-        $this->filters[$key] = ['type' => $type, 'value' => $this->getParamValue($key), 'options' => $options];
+        $value = $this->request->get($key);
+        $this->filters[$key] = ['type' => $type, 'value' => $value, 'options' => $options];
     }
 
     /**
@@ -262,14 +247,6 @@ class ListController extends Controller
     }
 
     /**
-     * Ejecuta la lógica pública del controlador.
-     */
-    public function publicCore(&$response)
-    {
-        parent::publicCore($response);
-    }
-
-    /**
      * Ejecuta la lógica privada del controlador.
      */
     public function privateCore(&$response, $user)
@@ -277,8 +254,8 @@ class ListController extends Controller
         parent::privateCore($response, $user);
 
         // Establecemos el orderby seleccionado
-        $orderKey = $this->getParamValue("order");
-        $this->selectedOrderBy = ($orderKey == TRUE) ? $this->getSelectedOrder($orderKey) : array_keys($this->orderby)[0];
+        $orderKey = $this->request->get("order");
+        $this->selectedOrderBy = empty($orderKey) ? (string) array_keys($this->orderby)[0] : $this->getSelectedOrder($orderKey);
     }
 
     /**
@@ -295,11 +272,13 @@ class ListController extends Controller
 
         $this->setTemplate("Master/ListController");
 
-        $this->offset = isset($_GET["offset"]) ? intval($_GET["offset"]) : 0;
-        $this->query = $this->getParamValue('query');
+        $offset = $this->request->get('offset');
+        $this->offset = $offset ? $offset : 0;
+        $this->query = $this->request->get('query');
         $this->count = 0;
         $this->orderby = [];
         $this->filters = [];
+        $this->fields = $this->getColumns();
     }
 
     /**
@@ -318,8 +297,11 @@ class ListController extends Controller
             if ($where != "") {
                 $sql .= " AND " . $where;
             }
-
-            $sql .= " ORDER BY 1 ASC;";
+            
+            $sql = "SELECT DISTINCT " . $field 
+                . " FROM " . $table 
+                . " WHERE COALESCE(" . $field . ", '')" . " <> ''" . $where
+                . " ORDER BY 1 ASC;";
 
             $data = $this->dataBase->select($sql);
             foreach ($data as $item) {
@@ -385,13 +367,14 @@ class ListController extends Controller
             $recordMax = $this->count;
         }
 
-        // Add first page, if not included in pagMargin
+        // Añadimos la primera página, si no está incluida en el margen de páginas
         if ($this->offset > (self::FS_ITEM_LIMIT * $pageMargin)) {
             $result[$index] = $this->addPaginationItem($url, 1, 0, "glyphicon-step-backward");
             $index++;
         }
 
-        // Add middle left page, if offset is greater than pageMargin
+        // Añadimos la página de en medio entre la primera y la página seleccionada, 
+        // si la página seleccionada es mayor que el margen de páginas
         $recordMiddleLeft = ($recordMin > self::FS_ITEM_LIMIT) ? ($this->offset / 2) : $recordMin;
         if ($recordMiddleLeft < $recordMin) {
             $page = floor($recordMiddleLeft / self::FS_ITEM_LIMIT);
@@ -399,16 +382,17 @@ class ListController extends Controller
             $index++;
         }
 
-        // Add -pagination / offset / +pagination
+        // Añadimos la página seleccionada y el margen de páginas a su izquierda y su derecha
         for ($record = $recordMin; $record < $recordMax; $record += self::FS_ITEM_LIMIT) {
-            if (($record >= $recordMin AND $record <= $this->offset) OR ($record <= $recordMax AND $record >= $this->offset)) {
+            if (($record >= $recordMin && $record <= $this->offset) || ($record <= $recordMax && $record >= $this->offset)) {
                 $page = ($record / self::FS_ITEM_LIMIT) + 1;
                 $result[$index] = $this->addPaginationItem($url, $page, $record, FALSE, ($record == $this->offset));
                 $index++;
             }
         }
 
-        // Add middle right page, if offset is lesser than pageMargin
+        // Añadimos la página de en medio entre la página seleccionada y la última,
+        // si la página seleccionada es más pequeña que el márgen entre páginas
         $recordMiddleRight = $this->offset + (($this->count - $this->offset) / 2);
         if ($recordMiddleRight > $recordMax) {
             $page = floor($recordMiddleRight / self::FS_ITEM_LIMIT);
@@ -416,7 +400,7 @@ class ListController extends Controller
             $index++;
         }
 
-        // Add last page, if not include in pagMargin
+        // Añadimos la última página, si no está incluida en el margen de páginas
         if ($recordMax < $this->count) {
             $pageMax = floor($this->count / self::FS_ITEM_LIMIT);
             $result[$index] = $this->addPaginationItem($url, ($pageMax + 1), ($pageMax * self::FS_ITEM_LIMIT), "glyphicon-step-forward");

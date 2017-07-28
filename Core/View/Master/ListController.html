@@ -59,7 +59,7 @@
         </div>
         <div class="col-sm-5 col-xs-6 text-right">
             <h2 style="margin-top: 0px;">
-                <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ fsc.title }}
+                <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ fsc.getPageData()['title'] }}
             </h2>
         </div>
     </div>
@@ -108,41 +108,41 @@
 
                         <!-- Aditionals filters -->
                         {% for key1, filter in fsc.filters %}
-                        {% if filter['type'] == 'select' %}
+                        {% if filter.type == 'select' %}
                         <div class="col-sm-2">
                             <select name="{{ key1 }}" class="form-control" onchange="this.form.submit()">
                                 <option value="">Cualquier {{ key1 }}</option>
                                 <option value="">------</option>
-                                {% for key2, value in fsc.optionlist(filter['options']['field'], filter['options']['table'], filter['options']['where']) %}
-                                {% if key2 == value['value'] %}
-                                <option value="{{ key2 }}" selected="">{{ value }}</option>
+                                {% for key2, data in fsc.optionlist(filter.options.field, filter.options.table, filter.options.where) %}
+                                {% if data == filter.value %}
+                                <option value="{{ data }}" selected="">{{ data }}</option>
                                 {% else %}
-                                <option value="{{ key2 }}">{{ value }}</option>
+                                <option value="{{ data }}">{{ data }}</option>
                                 {% endif %}
                                 {% endfor %}
                             </select>
                         </div>
                         {% endif %}
 
-                        {% if filter['type'] == 'checkbox' %}
+                        {% if filter.type == 'checkbox' %}
                         <div class="col-sm-1">
                             <div class="checkbox-inline">
                                 <label>
-                                    {% if filter['value'] %}
+                                    {% if filter.value %}
                                     <input type="checkbox" name="{{ key1 }}" value="TRUE" checked="" onchange="this.form.submit()"/>
                                     {% else %}
                                     <input type="checkbox" name="{{ key1 }}" value="TRUE" onchange="this.form.submit()"/>
                                     {% endif %}
-                                    {{ filter['options']['label'] }}
+                                    {{ filter.options.label }}
                                 </label>
                             </div>
                         </div>
                         {% endif %}
                         
-                        {% if filter['type'] == 'datepicker' %}
+                        {% if filter.type == 'datepicker' %}
                         <div class="col-sm-2">
-                            <input type="text" name="{{ key1 }}" value="{{ filter['value'] }}" class="form-control datepicker"
-                                   placeholder="{{ filter['options']['label'] }}" autocomplete="off" onchange="this.form.submit()"/>                            
+                            <input type="text" name="{{ key1 }}" value="{{ filter.value }}" class="form-control datepicker"
+                                   placeholder="{{ filter.options.label }}" autocomplete="off" onchange="this.form.submit()"/>                            
                         </div>
                         {% endif %}                        
                         {% endfor %}
@@ -181,8 +181,8 @@
                     <thead>
                         <tr>
                             {% for field in fsc.fields %}
-                            {% if field['display'] != 'none' %}
-                            <th class="text-{{ field['display'] }}">{{ field['label'] }}</th>
+                            {% if field.display != 'none' %}
+                            <th class="text-{{ field.display }}">{{ field.label }}</th>
                             {% endif %}
                             {% endfor %}
                         </tr>
@@ -190,8 +190,8 @@
                     {% for data in fsc.cursor %}
                     <tr>
                         {% for field in fsc.fields %}
-                        {% if field['display'] != 'none' %}
-                        <td class="text-{{ field['display'] }}">{{ attribute(data, field['field']) }}</td>
+                        {% if field.display != 'none' %}
+                        <td class="text-{{ field.display }}">{{ attribute(data, field.field) }}</td>
                         {% endif %}
                         {% endfor %}
                     </tr>
@@ -209,16 +209,16 @@
                     <div class="col-sm-12 text-center">
                         <ul class="pagination">
                             {% for item in fsc.pagination() %}
-                            {% if item['active'] %}
+                            {% if item.active %}
                             <li class="active">
                                 {% else %}
                             <li>
                                 {% endif %}
-                                <a href="{{ item['url'] }}">
-                                    {% if item['icon'] %}
-                                    <span class="glyphicon {{ item['icon'] }}" aria-hidden="true" />
+                                <a href="{{ item.url }}">
+                                    {% if item.icon %}
+                                    <span class="glyphicon {{ item.icon }}" aria-hidden="true" />
                                     {% else %}
-                                    <span>{{ item['page'] }}</span>
+                                    <span>{{ item.page }}</span>
                                     {% endif %}
                                 </a>
                             </li>

@@ -147,7 +147,7 @@ class Stock
      */
     public function setCantidad($c = 0)
     {
-        $this->cantidad = (float)$c;
+        $this->cantidad = (float) $c;
 
         if ($this->cantidad < 0 && !FS_STOCK_NEGATIVO) {
             $this->cantidad = 0;
@@ -164,7 +164,7 @@ class Stock
     public function sumCantidad($c = 0)
     {
         /// convertimos a flot por si acaso nos ha llegado un string
-        $this->cantidad += (float)$c;
+        $this->cantidad += (float) $c;
 
         if ($this->cantidad < 0 && !FS_STOCK_NEGATIVO) {
             $this->cantidad = 0;
@@ -252,7 +252,7 @@ class Stock
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
-            $num = round((float)$data[0]['total'], 3);
+            $num = round((float) $data[0]['total'], 3);
         }
 
         return $num;
@@ -272,7 +272,7 @@ class Stock
         $sql = 'SELECT COUNT(idstock) AS total FROM ' . $this->tableName() . ';';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
-            $num = (int)$data[0]['total'];
+            $num = (int) $data[0]['total'];
         }
 
         return $num;

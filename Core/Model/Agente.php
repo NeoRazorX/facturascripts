@@ -152,24 +152,10 @@ class Agente
         $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codagente') . ') as cod FROM ' . $this->tableName() . ';';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
-            return (string)(1 + (int)$data[0]['cod']);
+            return (string) (1 + (int) $data[0]['cod']);
         }
 
         return '1';
-    }
-
-    /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        $result = 'index.php?page=Agente';
-        if ($this->codagente !== null) {
-            $result .= '_card&cod=' . $this->codagente;
-        }
-
-        return $result;
     }
 
     /**

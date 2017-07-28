@@ -224,7 +224,7 @@ class Asiento
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
-            $this->numero = 1 + (int)$data[0]['num'];
+            $this->numero = 1 + (int) $data[0]['num'];
         }
 
         /// Nos guardamos la secuencia para dar compatibilidad con eneboo

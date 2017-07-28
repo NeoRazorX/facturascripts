@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -91,15 +90,6 @@ class Divisa
         $this->tasaconvcompra = 1.00;
         $this->codiso = null;
         $this->simbolo = '?';
-    }
-
-    /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        return 'index.php?page=AdminDivisas';
     }
 
     /**

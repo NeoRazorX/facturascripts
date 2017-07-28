@@ -437,7 +437,7 @@ class Cliente
         $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codcliente') . ') as cod FROM ' . $this->tableName() . ';';
         $cod = $this->dataBase->select($sql);
         if (!empty($cod)) {
-            return sprintf('%06s', 1 + (int)$cod[0]['cod']);
+            return sprintf('%06s', 1 + (int) $cod[0]['cod']);
         }
         return '000001';
     }
@@ -472,8 +472,8 @@ class Cliente
         /// validamos los dias de pago
         $arrayDias = [];
         foreach (str_getcsv($this->diaspago) as $d) {
-            if ((int)$d >= 1 && (int)$d <= 31) {
-                $arrayDias[] = (int)$d;
+            if ((int) $d >= 1 && (int) $d <= 31) {
+                $arrayDias[] = (int) $d;
             }
         }
         $this->diaspago = null;

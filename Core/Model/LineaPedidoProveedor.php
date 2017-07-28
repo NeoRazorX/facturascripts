@@ -226,8 +226,9 @@ class LineaPedidoProveedor
     {
         if (is_null($this->referencia) OR $this->referencia == '') {
             return "index.php?page=ventas_articulos";
-        } else
-            return "index.php?page=ventas_articulo&ref=" . urlencode($this->referencia);
+        } else {
+                    return "index.php?page=ventas_articulo&ref=" . urlencode($this->referencia);
+        }
     }
 
     public function test()
@@ -242,8 +243,9 @@ class LineaPedidoProveedor
         } else if (!$this->floatcmp($this->pvpsindto, $totalsindto, FS_NF0, TRUE)) {
             $this->new_error_msg("Error en el valor de pvpsindto de la línea " . $this->referencia . " del " . FS_PEDIDO . ". Valor correcto: " . $totalsindto);
             return FALSE;
-        } else
-            return TRUE;
+        } else {
+                    return TRUE;
+        }
     }
 
     /**

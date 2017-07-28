@@ -71,20 +71,6 @@ class Almacen
     }
 
     /**
-     * Devuelve la URL para ver/modificar los datos de este almacén
-     * @return string
-     */
-    public function url()
-    {
-        $result = 'index.php?page=Almacen';
-        if ($this->codalmacen !== null) {
-            $result .= '_card&cod=' . $this->codalmacen;
-        }
-
-        return $result;
-    }
-
-    /**
      * Devuelve TRUE si este es almacén predeterminado de la empresa.
      * @return bool
      */

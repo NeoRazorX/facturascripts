@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,9 +25,12 @@ namespace FacturaScripts\Core\Model;
  */
 class CuentaBancoProveedor
 {
+
     use Base\ModelTrait {
         save as private saveTrait;
     }
+
+    use Base\BankAccount;
 
     /**
      * Clave primaria. Varchar(6).
@@ -41,21 +43,13 @@ class CuentaBancoProveedor
      * @var string
      */
     public $codproveedor;
+
     /**
      * TODO
      * @var string
      */
     public $descripcion;
-    /**
-     * TODO
-     * @var string
-     */
-    public $iban;
-    /**
-     * TODO
-     * @var string
-     */
-    public $swift;
+
     /**
      * TODO
      * @var
@@ -85,29 +79,8 @@ class CuentaBancoProveedor
         $this->codcuenta = null;
         $this->codproveedor = null;
         $this->descripcion = null;
-        $this->iban = null;
-        $this->swift = null;
         $this->principal = true;
-    }
-
-    /**
-     * Devuelve el IBAN con o sin espacios.
-     *
-     * @param bool $espacios
-     *
-     * @return string
-     */
-    public function getIban($espacios = false)
-    {
-        if ($espacios) {
-            $txt = '';
-            $iban = str_replace(' ', '', $this->iban);
-            for ($i = 0; $i < $len = strlen($iban); $i += 4) {
-                $txt .= substr($iban, $i, 4) . ' ';
-            }
-            return $txt;
-        }
-        return str_replace(' ', '', $this->iban);
+        $this->clearBankAccount();
     }
 
     /**
@@ -116,7 +89,7 @@ class CuentaBancoProveedor
      */
     public function url()
     {
-        if ($this->codproveedor === null) {
+        if (empty($this->codproveedor)) {
             return '#';
         }
         return 'index.php?page=ComprasProveedor&cod=' . $this->codproveedor . '#cuentasb';
@@ -128,90 +101,40 @@ class CuentaBancoProveedor
      */
     public function save()
     {
-        $this->descripcion = static::noHtml($this->descripcion);
-
-        if ($this->exists()) {
-            $sql = $this->saveUpdateSQL();
-        } else {
-            $sql = $this->saveInsertSQL();
-        }
-
-        if ($this->principal) {
-            /// si esta cuenta es la principal, desmarcamos las demás
-            $sql .= 'UPDATE ' . $this->tableName() . ' SET principal = false' .
-                ' WHERE codproveedor = ' . $this->var2str($this->codproveedor) .
-                ' AND codcuenta != ' . $this->var2str($this->codcuenta) . ';';
-        }
-
-        return $this->dataBase->exec($sql);
-    }
-
-    /**
-     * TODO
-     *
-     * @param string $codpro
-     *
-     * @return array
-     */
-    public function allFromProveedor($codpro)
-    {
-        $clist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codproveedor = ' . $this->var2str($codpro)
-            . ' ORDER BY codcuenta DESC;';
-
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $clist[] = new CuentaBancoProveedor($d);
+        if ($this->test()) {
+            if ($this->exists()) {
+                $allOK = $this->saveUpdate();
+            } else {
+                $this->codcuenta = $this->newCode();
+                $allOK = $this->saveInsert();
             }
+
+            if ($allOK) {
+                /// si esta cuenta es la principal, desmarcamos las demás
+                $sql = 'UPDATE ' . $this->tableName()
+                    . ' SET principal = false'
+                    . ' WHERE codproveedor = ' . $this->var2str($this->codproveedor)
+                    . ' AND codcuenta <> ' . $this->var2str($this->codcuenta) . ';';
+                $allOK = $this->dataBase->exec($sql);
+            }
+
+            return $allOK;
         }
 
-        return $clist;
+        return FALSE;
     }
 
     /**
-     * Actualiza los datos del modelo en la base de datos.
-     * @return string
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * @return boolean
      */
-    private function saveUpdateSQL()
+    public function test()
     {
-        $sql = 'UPDATE ' . $this->tableName() . ' SET descripcion = ' . $this->var2str($this->descripcion) .
-            ', codproveedor = ' . $this->var2str($this->codproveedor) .
-            ', iban = ' . $this->var2str($this->iban) .
-            ', swift = ' . $this->var2str($this->swift) .
-            ', principal = ' . $this->var2str($this->principal) .
-            '  WHERE codcuenta = ' . $this->var2str($this->codcuenta) . ';';
-        return $sql;
-    }
-
-    /**
-     * Inserta los datos del modelo en la base de datos.
-     * @return string
-     */
-    private function saveInsertSQL()
-    {
-        $this->codcuenta = $this->getNewCodigo();
-        $sql = 'INSERT INTO ' . $this->tableName() . ' (codcuenta,codproveedor,descripcion,iban,swift,principal)' .
-            ' VALUES (' . $this->var2str($this->codcuenta) .
-            ',' . $this->var2str($this->codproveedor) .
-            ',' . $this->var2str($this->descripcion) .
-            ',' . $this->var2str($this->iban) .
-            ',' . $this->var2str($this->swift) .
-            ',' . $this->var2str($this->principal) . ');';
-        return $sql;
-    }
-
-    /**
-     * TODO
-     * @return int
-     */
-    private function getNewCodigo()
-    {
-        $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codcuenta') . ') as cod FROM ' . $this->tableName() . ';';
-        $cod = $this->dataBase->select($sql);
-        if (!empty($cod)) {
-            return 1 + (int)$cod[0]['cod'];
+        $this->descripcion = static::noHtml($this->descripcion);
+        if (!$this->testBankAccount()) {
+            $this->miniLog->alert("Error grave: Los datos bancarios son incorrectos");
+            return FALSE;
         }
-        return 1;
+        return TRUE;        
     }
 }

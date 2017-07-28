@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -155,24 +154,12 @@ class Ejercicio
         }
 
         $sql = 'SELECT MAX(' . $this->dataBase->sql2int('codejercicio') . ') as cod FROM ' . $this->tableName() . ';';
-        $cod = $this->dataBase->select($sql);
-        if (!empty($cod)) {
-            return sprintf('%04s', 1 + (int)$cod[0]['cod']);
+        $newCod = $this->dataBase->select($sql);
+        if (!empty($newCod)) {
+            return sprintf('%04s', 1 + (int) $newCod[0]['cod']);
         }
 
         return '0001';
-    }
-
-    /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        if ($this->codejercicio === null) {
-            return 'index.php?page=ContabilidadEjercicios';
-        }
-        return 'index.php?page=ContabilidadEjercicio&cod=' . $this->codejercicio;
     }
 
     /**

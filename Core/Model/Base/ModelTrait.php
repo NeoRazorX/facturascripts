@@ -288,34 +288,6 @@ trait ModelTrait
     }
 
     /**
-     * Devuelve el primer modelo que coincide con los filtros establecidos.
-     *
-     * @param array $fields filtros a aplicar a los campos. Por ejemplo ['codserie' => 'A']
-     *
-     * @return mixed|bool
-     */
-    public function getBy(array $fields = [])
-    {
-        $sql = 'SELECT * FROM ' . $this->tableName();
-        $coma = ' WHERE ';
-
-        foreach ($fields as $key => $value) {
-            $sql .= $coma . $key . ' = ' . $this->var2str($value);
-            if ($coma === ' WHERE ') {
-                $coma = ', ';
-            }
-        }
-
-        $data = $this->dataBase->selectLimit($sql, 1);
-        if (!empty($data)) {
-            $class = $this->modelName();
-            return new $class($data[0]);
-        }
-
-        return false;
-    }
-
-    /**
      * Devuelve true si los datos del modelo se encuentran almacenados en la base de datos.
      * @return bool
      */
@@ -459,7 +431,7 @@ trait ModelTrait
 
     /**
      * TODO
-     * @param $val
+     * @param boolean $val
      *
      * @return string
      */
@@ -478,12 +450,15 @@ trait ModelTrait
     }
 
     /**
-     * Devuelve el siguiente código para la primary key del modelo
+     * Devuelve el siguiente código para el campo informado o de la primary key del modelo
+     * @param string $field
      * @return int
      */
-    public function newCode()
+    public function newCode($field = '')
     {
-        $field = $this->dataBase->sql2Int($this->primaryColumn());
+        if (empty($field)) {
+            $field = $this->dataBase->sql2Int($this->primaryColumn());
+        }
         $sql = 'SELECT MAX(' . $field . ') as cod FROM ' . $this->tableName() . ';';
         $cod = $this->dataBase->select($sql);
         if (empty($cod)) {
@@ -706,6 +681,20 @@ trait ModelTrait
                 $coma = ', ';
             }
         }
+        return $result;
+    }
+    
+    /**
+     * Devuelve la url donde ver/modificar los datos
+     * @return string
+     */
+    public function url()
+    {
+        $value = $this->{$this->primaryColumn()};
+        $model = $this->modelName();
+        $result = empty($value)
+            ? 'index.php?page=List' . $model
+            : 'index.php?page=Edit' . $model . '&cod=' . $value;
         return $result;
     }
 }

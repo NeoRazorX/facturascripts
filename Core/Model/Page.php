@@ -43,28 +43,35 @@ class Page
     public $title;
 
     /**
-     * TODO
-     * @var
+     * Título de la opción de menú donde se visualiza
+     * @var string
      */
     public $menu;
 
     /**
-     * TODO
-     * @var
+     * Título de la subopción de menú donde se visualiza (si usa 2 nivel)
+     * @var string
      */
     public $submenu;
 
     /**
+     * Indica si se visualiza en el menú
      * FALSE -> ocultar en el menú.
      * @var bool
      */
     public $showonmenu;
 
     /**
-     * TODO
-     * @var
+     * Posición donde se coloca en el menú
+     * @var int
      */
     public $orden;
+    
+    /**
+     * Icono de la página
+     * @var string
+     */
+    public $icon;
 
     /**
      * Page constructor.
@@ -90,6 +97,7 @@ class Page
         $this->title = null;
         $this->menu = null;
         $this->submenu = null;
+        $this->icon = null;
         $this->showonmenu = true;
         $this->orden = 100;
     }

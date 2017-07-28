@@ -232,7 +232,7 @@ class LineaFacturaCliente
 
     /**
      * TODO
-     * @return \DateTime
+     * @return string
      */
     public function showFecha()
     {
@@ -307,7 +307,7 @@ class LineaFacturaCliente
 
     /**
      * TODO
-     * @return \DateTime
+     * @return string
      */
     public function albaranFecha()
     {

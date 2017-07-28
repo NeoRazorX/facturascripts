@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -100,11 +99,11 @@ class Serie
      */
     public function url()
     {
-        if ($this->codserie === null) {
-            return 'index.php?page=ContabilidadSeries';
-        }
+        $result = empty($this->codserie)
+            ? 'index.php?page=ListSerie'
+            : 'index.php?page=EditSerie&cod=' . $this->codserie;
 
-        return 'index.php?page=ContabilidadSeries#' . $this->codserie;
+        return $result;        
     }
 
     /**
@@ -146,7 +145,7 @@ class Serie
      * Crea la consulta necesaria para crear una nueva serie en la base de datos.
      * @return string
      */
-    private function install()
+    public function install()
     {
         return 'INSERT INTO ' . $this->tableName() . ' (codserie,descripcion,siniva,irpf) VALUES '
             . "('A','SERIE A',FALSE,'0'),('R','RECTIFICATIVAS',FALSE,'0');";
