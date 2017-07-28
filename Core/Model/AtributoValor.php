@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class AtributoValor
 {
+
     use Base\ModelTrait {
         save as private saveTrait;
         saveInsert as private saveInsertTrait;
@@ -42,6 +42,7 @@ class AtributoValor
      * @var string
      */
     public $codatributo;
+
     /**
      * TODO
      * @var

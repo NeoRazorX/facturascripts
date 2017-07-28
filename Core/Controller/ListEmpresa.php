@@ -83,6 +83,6 @@ class ListEmpresa extends Base\ListController
             ['label' => 'Email', 'field' => 'email', 'display' => 'left'],
             ['label' => 'Web', 'field' => 'web', 'display' => 'left'],
             ['label' => 'Divisa', 'field' => 'coddivisa', 'display' => 'center']
-        ];        
+        ];
     }
 }

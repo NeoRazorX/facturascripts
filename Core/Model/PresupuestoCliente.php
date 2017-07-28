@@ -296,7 +296,7 @@ class PresupuestoCliente
         if ($s) {
             return Date('H:i:s', strtotime($this->hora));
         } else {
-                    return Date('H:i', strtotime($this->hora));
+            return Date('H:i', strtotime($this->hora));
         }
     }
 
@@ -306,9 +306,9 @@ class PresupuestoCliente
             return '-';
         } else if (strlen($this->observaciones) < 60) {
             return $this->observaciones;
-        } else {
-                    return substr($this->observaciones, 0, 50) . '...';
         }
+
+        return substr($this->observaciones, 0, 50) . '...';
     }
 
     public function finoferta()
@@ -320,36 +320,36 @@ class PresupuestoCliente
     {
         if (is_null($this->idpresupuesto)) {
             return 'index.php?page=ventas_presupuestos';
-        } else {
-                    return 'index.php?page=ventas_presupuesto&id=' . $this->idpresupuesto;
         }
+
+        return 'index.php?page=ventas_presupuesto&id=' . $this->idpresupuesto;
     }
 
     public function pedido_url()
     {
         if (is_null($this->idpedido)) {
             return 'index.php?page=ventas_pedido';
-        } else {
-                    return 'index.php?page=ventas_pedido&id=' . $this->idpedido;
         }
+
+        return 'index.php?page=ventas_pedido&id=' . $this->idpedido;
     }
 
     public function agente_url()
     {
         if (is_null($this->codagente)) {
             return "index.php?page=admin_agentes";
-        } else {
-                    return "index.php?page=admin_agente&cod=" . $this->codagente;
         }
+
+        return "index.php?page=admin_agente&cod=" . $this->codagente;
     }
 
     public function cliente_url()
     {
         if (is_null($this->codcliente)) {
             return "index.php?page=ventas_clientes";
-        } else {
-                    return "index.php?page=ventas_cliente&cod=" . $this->codcliente;
         }
+
+        return "index.php?page=ventas_cliente&cod=" . $this->codcliente;
     }
 
     public function get_lineas()
@@ -435,10 +435,10 @@ class PresupuestoCliente
 
         if ($this->floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, TRUE)) {
             return TRUE;
-        } else {
-            $this->new_error_msg("Error grave: El total está mal calculado. ¡Informa del error!");
-            return FALSE;
         }
+
+        $this->new_error_msg("Error grave: El total está mal calculado. ¡Informa del error!");
+        return FALSE;
     }
 
     public function full_test($duplicados = TRUE)
@@ -492,10 +492,10 @@ class PresupuestoCliente
         if ($this->test()) {
             if ($this->exists()) {
                 return $this->saveUpdate();
-            } else {
-                $this->new_codigo();
-                return $this->saveInsert();
             }
+
+            $this->new_codigo();
+            return $this->saveInsert();
         }
 
         return FALSE;

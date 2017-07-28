@@ -31,6 +31,7 @@ use FacturaScripts\Core\Model;
  */
 class ListAgenciaTransporte extends Base\ListController
 {
+
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
@@ -83,6 +84,6 @@ class ListAgenciaTransporte extends Base\ListController
             ['label' => 'Teléfono', 'field' => 'telefono', 'display' => 'left'],
             ['label' => 'Web', 'field' => 'web', 'display' => 'left'],
             ['label' => 'Activo', 'field' => 'activo', 'display' => 'left']
-        ];        
+        ];
     }
 }

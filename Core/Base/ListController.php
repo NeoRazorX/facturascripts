@@ -111,7 +111,6 @@ abstract class ListController extends Controller
         return $result;
     }
 
-
     /**
      * Establece la clausula WHERE según los filtros definidos
      * @return array
@@ -125,15 +124,15 @@ abstract class ListController extends Controller
                 switch ($value['type']) {
                     case 'datepicker':
                     case 'select':
-                            $field = $value['options']['field'];
-                            $result[] = new DataBase\DataBaseWhere($field, $value['value']);
-                            break;
+                        $field = $value['options']['field'];
+                        $result[] = new DataBase\DataBaseWhere($field, $value['value']);
+                        break;
 
                     case 'checkbox':
-                            $field = $value['options']['field'];
-                            $value = $value['options']['inverse'] ? !$value['value'] : $value['value'];
-                            $result[] = new DataBase\DataBaseWhere($field, $value);
-                            break;
+                        $field = $value['options']['field'];
+                        $value = $value['options']['inverse'] ? !$value['value'] : $value['value'];
+                        $result[] = new DataBase\DataBaseWhere($field, $value);
+                        break;
                 }
             }
         }
@@ -297,9 +296,9 @@ abstract class ListController extends Controller
             if ($where != "") {
                 $sql .= " AND " . $where;
             }
-            
-            $sql = "SELECT DISTINCT " . $field 
-                . " FROM " . $table 
+
+            $sql = "SELECT DISTINCT " . $field
+                . " FROM " . $table
                 . " WHERE COALESCE(" . $field . ", '')" . " <> ''" . $where
                 . " ORDER BY 1 ASC;";
 
@@ -404,6 +403,11 @@ abstract class ListController extends Controller
         if ($recordMax < $this->count) {
             $pageMax = floor($this->count / self::FS_ITEM_LIMIT);
             $result[$index] = $this->addPaginationItem($url, ($pageMax + 1), ($pageMax * self::FS_ITEM_LIMIT), "glyphicon-step-forward");
+        }
+
+        /// si solamente hay una página, no merece la pena mostrar un único botón
+        if (count($result) == 1) {
+            return [];
         }
 
         return $result;

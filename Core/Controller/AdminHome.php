@@ -28,6 +28,7 @@ use FacturaScripts\Core\Model;
  */
 class AdminHome extends Base\Controller
 {
+
     /**
      * TODO
      * @var Model\Agente
@@ -89,7 +90,7 @@ class AdminHome extends Base\Controller
 
         /// por ahora desplegamos siempre el contenido de Dinamic, para las pruebas
         $pluginManager = new Base\PluginManager();
-        $pluginManager->deploy();
+        $pluginManager->deploy(true);
 
         $this->agente = new Model\Agente();
         $this->almacen = new Model\Almacen();
@@ -100,15 +101,14 @@ class AdminHome extends Base\Controller
         $this->serie = new Model\Serie();
         $this->agenciaTrans = new Model\AgenciaTransporte();
     }
-    
+
     public function getPageData()
     {
         $pageData = parent::getPageData();
         $pageData['menu'] = 'admin';
         $pageData['title'] = 'Panel de control';
         $pageData['orden'] = '999';
-        
+
         return $pageData;
     }
-
 }

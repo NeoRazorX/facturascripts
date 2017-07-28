@@ -314,7 +314,7 @@ class ArticuloCombinacion
      * por defecto.
      * @return string
      */
-    private function install()
+    public function install()
     {
         /// nos aseguramos de que existan las tablas necesarias
         //new Atributo();

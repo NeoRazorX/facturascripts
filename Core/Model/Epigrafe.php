@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class Epigrafe
 {
+
     use Base\ModelTrait;
 
     /**
@@ -33,11 +33,13 @@ class Epigrafe
      * @var array
      */
     private static $grupos;
+
     /**
      * Clave primaria.
      * @var int
      */
     public $idepigrafe;
+
     /**
      * Existen varias versiones de la contabilidad de Eneboo/Abanq,
      * en una tenemos grupos, epigrafes, cuentas y subcuentas: 4 niveles.
@@ -47,26 +49,31 @@ class Epigrafe
      * @var int
      */
     public $idpadre;
+
     /**
      * TODO
      * @var string
      */
     public $codepigrafe;
+
     /**
      * TODO
      * @var int
      */
     public $idgrupo;
+
     /**
      * TODO
      * @var string
      */
     public $codejercicio;
+
     /**
      * TODO
      * @var string
      */
     public $descripcion;
+
     /**
      * TODO
      * @var string
@@ -268,7 +275,7 @@ class Epigrafe
      * por defecto.
      * @return string
      */
-    private function install()
+    public function install()
     {
         /// forzamos los creación de la tabla de grupos
         //$grupo = new GrupoEpigrafes();

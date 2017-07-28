@@ -269,7 +269,7 @@ class Ejercicio
      * Crea la consulta necesaria para dotar de datos a un ejercicio en la base de datos.
      * @return string
      */
-    private function install()
+    public function install()
     {
         return 'INSERT INTO ' . $this->tableName() . ' (codejercicio,nombre,fechainicio,fechafin,'
             . 'estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre) '

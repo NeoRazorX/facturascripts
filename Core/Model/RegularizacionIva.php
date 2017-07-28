@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class RegularizacionIva
 {
+
     use Base\ModelTrait;
 
     /**
@@ -39,26 +39,31 @@ class RegularizacionIva
      * @var int
      */
     public $idasiento;
+
     /**
      * TODO
      * @var string
      */
     public $codejercicio;
+
     /**
      * TODO
      * @var string
      */
     public $fechaasiento;
+
     /**
      * TODO
      * @var string
      */
     public $fechafin;
+
     /**
      * TODO
      * @var string
      */
     public $fechainicio;
+
     /**
      * TODO
      * @var

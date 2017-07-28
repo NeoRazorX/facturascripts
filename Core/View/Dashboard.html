@@ -1,0 +1,107 @@
+{% extends "Master/MenuTemplate.html" %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="page-header">
+                <h1>
+                    <i class="fa fa-tachometer" aria-hidden="true"></i> Dashboard
+                    <a href="{{ fsc.url() }}" class="btn btn-xs btn-default">
+                        <i class="fa fa-refresh" aria-hidden="true"></i>
+                    </a>
+                </h1>
+            </div>
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active">
+                    <a href="#dash_tab_1" aria-controls="dash_tab_1" role="tab" data-toggle="tab">Este mes</a>
+                </li>
+                <li role="presentation">
+                    <a href="#dash_tab_2" aria-controls="dash_tab_2" role="tab" data-toggle="tab">Trimestre</a>
+                </li>
+                <li role="presentation">
+                    <a href="#dash_tab_3" aria-controls="dash_tab_3" role="tab" data-toggle="tab">Año</a>
+                </li>
+                <li role="presentation">
+                    <a href="#dash_tab_4" aria-controls="dash_tab_4" role="tab" data-toggle="tab">Configuración</a>
+                </li>
+            </ul>
+            <br/>
+        </div>
+    </div>
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="dash_tab_1">
+            <div class="row">
+                <div class="col-sm-3">
+                    <a href="#" class="btn btn-lg btn-block btn-info">
+                        Tarjeta 1
+                        <p class="help-block">Texto de tarjeta 1</p>
+                        <small>fecha hora</small>
+                    </a>
+                    <br/>
+                </div>
+                <div class="col-sm-3">
+                    <a href="#" class="btn btn-lg btn-block btn-warning">
+                        Tarjeta 2
+                        <p class="help-block">Texto de tarjeta 2</p>
+                        <small>fecha hora</small>
+                    </a>
+                </div>
+                <div class="col-sm-3">
+                    <a href="#" class="btn btn-lg btn-block btn-info">
+                        Tarjeta 3
+                        <p class="help-block">Texto de tarjeta 3</p>
+                        <small>fecha hora</small>
+                    </a>
+                </div>
+                <div class="col-sm-3">
+                    <a href="#" class="btn btn-lg btn-block btn-default">
+                        Tarjeta 4
+                        <p class="help-block">Texto de tarjeta 4</p>
+                        <small>fecha hora</small>
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <a href="#" class="btn btn-lg btn-block btn-default">
+                        Tarjeta 5
+                        <p class="help-block">Texto de tarjeta 5</p>
+                        <small>fecha hora</small>
+                    </a>
+                </div>
+                <div class="col-sm-3">
+                    <a href="#" class="btn btn-lg btn-block btn-default">
+                        Tarjeta 6
+                        <p class="help-block">Texto de tarjeta 6</p>
+                        <small>fecha hora</small>
+                    </a>
+                </div>
+                <div class="col-sm-3">
+                    <a href="#" class="btn btn-lg btn-block btn-default">
+                        Tarjeta 7
+                        <p class="help-block">Texto de tarjeta 7</p>
+                        <small>fecha hora</small>
+                    </a>
+                </div>
+                <div class="col-sm-3">
+                    <a href="#" class="btn btn-lg btn-block btn-default">
+                        Tarjeta 8
+                        <p class="help-block">Texto de tarjeta 8</p>
+                        <small>fecha hora</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="dash_tab_2">
+            ...
+        </div>
+        <div role="tabpanel" class="tab-pane" id="dash_tab_3">
+            ...
+        </div>
+        <div role="tabpanel" class="tab-pane" id="dash_tab_4">
+            ...
+        </div>
+    </div>
+</div>
+{% endblock %}

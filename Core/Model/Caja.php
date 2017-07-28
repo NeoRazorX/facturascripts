@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class Caja
 {
+
     use Base\ModelTrait;
 
     /**
@@ -33,52 +33,62 @@ class Caja
      * @var array
      */
     private static $agentes;
+
     /**
      * Clave primaria.
      * @var
      */
     public $id;
+
     /**
      * Identificador del terminal. En la tabla cajas_terminales.
      * @var
      */
     public $fs_id;
+
     /**
      * Codigo del agente que abre y usa la caja.
      * El agente asociado al usuario.
      * @var
      */
     public $codagente;
+
     /**
      * Fecha de apertura (inicio) de la caja.
      * @var
      */
     public $fecha_inicial;
+
     /**
      * TODO
      * @var
      */
     public $dinero_inicial;
+
     /**
      * TODO
      * @var
      */
     public $fecha_fin;
+
     /**
      * TODO
      * @var
      */
     public $dinero_fin;
+
     /**
      * Numero de tickets emitidos en esta caja.
      * @var
      */
     public $tickets;
+
     /**
      * Ultima IP del usuario de la caja.
      * @var
      */
     public $ip;
+
     /**
      * El objeto agente asignado.
      * @var

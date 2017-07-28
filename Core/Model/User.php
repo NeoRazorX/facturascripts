@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Utils;
@@ -39,46 +38,55 @@ class User
      * @var string
      */
     public $nick;
+
     /**
      * Email del usuario.
      * @var string
      */
     public $email;
+
     /**
      * TRUE -> el usuario es un administrador.
      * @var bool
      */
     public $admin;
+
     /**
      * TRUE -> el usuario esta activo.
      * @var bool
      */
     public $enabled;
+
     /**
      * Código del idioma seleccionado para este usuario.
      * @var string
      */
     public $langcode;
+
     /**
      * Página de inicio.
      * @var string
      */
     public $homepage;
+
     /**
      * Fecha y hora de la última actividad del usuario.
      * @var string
      */
     public $lastactivity;
+
     /**
      * Última IP usada.
      * @var string
      */
     public $lastip;
+
     /**
      * Contraseña, cifrada con password_hash()
      * @var string
      */
     private $password;
+
     /**
      * Clave de sesión. El cliente se la guarda en una cookie,
      * sirve para no tener que guardar la contraseña.
@@ -216,7 +224,7 @@ class User
      * Inserta valores por defecto a la tabla, en el proceso de creación de la misma.
      * @return string
      */
-    private function install()
+    public function install()
     {
         /// hay una clave ajena a fs_pages, así que cargamos el modelo necesario
         new Page();

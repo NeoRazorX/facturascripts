@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class Familia
 {
+
     use Base\ModelTrait;
 
     /**
@@ -33,6 +33,7 @@ class Familia
      * @var string
      */
     public $codfamilia;
+
     /**
      * Descripción de la fanília
      * @var string
@@ -44,6 +45,7 @@ class Familia
      * @var string
      */
     public $madre;
+
     /**
      * Nivel
      * @var string
@@ -296,7 +298,7 @@ class Familia
      * por defecto.
      * @return string
      */
-    private function install()
+    public function install()
     {
         $this->cleanCache();
         return 'INSERT INTO ' . $this->tableName() . " (codfamilia,descripcion) VALUES ('VARI','VARIOS');";

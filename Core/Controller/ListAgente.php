@@ -29,6 +29,7 @@ use FacturaScripts\Core\Model;
  */
 class ListAgente extends Base\ListController
 {
+
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
@@ -37,7 +38,7 @@ class ListAgente extends Base\ListController
         $this->addOrderBy('nombre');
         $this->addOrderBy('apellidos');
         $this->addOrderBy('provincia');
-        
+
         $this->addFilterSelect('provincia', 'agentes');
         $this->addFilterSelect('país', 'paises', '', 'codpais');
     }
@@ -94,6 +95,6 @@ class ListAgente extends Base\ListController
             ['label' => 'Nacimiento', 'field' => 'f_nacimiento', 'display' => 'none'],
             ['label' => 'Seg. Social', 'field' => 'seg_social', 'display' => 'none'],
             ['label' => 'Cta. Banco', 'field' => 'banco', 'display' => 'none']
-        ];        
+        ];
     }
 }

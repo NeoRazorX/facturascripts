@@ -79,7 +79,7 @@ class ListSerie extends Base\ListController
     protected function getColumns()
     {
         return [
-            ['label' => 'Codigo', 'field' => 'codimpuesto', 'display' => 'left'],
+            ['label' => 'Codigo', 'field' => 'codserie', 'display' => 'left'],
             ['label' => 'Descripcion', 'field' => 'descripcion', 'display' => 'left'],
             ['label' => '% Iva', 'field' => 'iva', 'display' => 'right'],
             ['label' => '% Recargo', 'field' => 'recargo', 'display' => 'right'],

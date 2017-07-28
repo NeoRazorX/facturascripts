@@ -28,5 +28,11 @@ use FacturaScripts\Core\Model;
  */
 class Dashboard extends Base\Controller
 {
-    //put your code here
+    public function getPageData()
+    {
+        $pageData = parent::getPageData();
+        $pageData['menu'] = 'informes';
+        $pageData['icon'] = 'fa-dashboard';
+        return $pageData;
+    }
 }

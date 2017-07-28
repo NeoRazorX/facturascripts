@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -86,8 +85,8 @@ class AgenciaTransporte
     public function install()
     {
         return 'INSERT INTO ' . $this->tableName() . ' (codtrans, nombre, web, activo) VALUES ' .
-            "('ASM', 'ASM', 'http://es.asmred.com/', '" . $this->bool2str(true) . "')," .
-            "('TIPSA', 'TIPSA', 'http://www.tip-sa.com/', '" . $this->bool2str(true) . "')," .
-            "('SEUR', 'SEUR', 'http://www.seur.com', '" . $this->bool2str(true) . "');";
+            "('ASM', 'ASM', 'http://es.asmred.com/', true)," .
+            "('TIPSA', 'TIPSA', 'http://www.tip-sa.com/', true)," .
+            "('SEUR', 'SEUR', 'http://www.seur.com', true);";
     }
 }

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -28,6 +27,7 @@ namespace FacturaScripts\Core\Model;
  */
 class Cuenta
 {
+
     use Base\ModelTrait;
 
     /**
@@ -35,6 +35,7 @@ class Cuenta
      * @var int
      */
     public $idcuenta;
+
     /**
      * TODO
      * @var string
@@ -46,21 +47,25 @@ class Cuenta
      * @var string
      */
     public $codejercicio;
+
     /**
      *
      * @var int
      */
     public $idepigrafe;
+
     /**
      * TODO
      * @var string
      */
     public $codepigrafe;
+
     /**
      * TODO
      * @var string
      */
     public $descripcion;
+
     /**
      * TODO
      * @var int
@@ -338,7 +343,7 @@ class Cuenta
      * por defecto.
      * @return string
      */
-    private function install()
+    public function install()
     {
         /// forzamos la creación de la tabla epigrafes
         //$epi = new Epigrafe();

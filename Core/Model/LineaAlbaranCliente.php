@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class LineaAlbaranCliente
 {
+
     use Base\ModelTrait;
 
     /**
@@ -33,106 +33,127 @@ class LineaAlbaranCliente
      * @var array
      */
     private static $albaranes;
+
     /**
      * Clave primaria.
      * @var int
      */
     public $idlinea;
+
     /**
      * ID de la línea del pedido relacionado, si es que lo hay.
      * @var int
      */
     public $idlineapedido;
+
     /**
      * ID del albaran de esta línea.
      * @var int
      */
     public $idalbaran;
+
     /**
      * ID del pedido relacionado con el albarán relacionado.
      * @var int
      */
     public $idpedido;
+
     /**
      * Referencia del artículo.
      * @var string
      */
     public $referencia;
+
     /**
      * Código de la combinación seleccionada, en el caso de los artículos con atributos.
      * @var string
      */
     public $codcombinacion;
+
     /**
      * TODO
      * @var string
      */
     public $descripcion;
+
     /**
      * TODO
      * @var float
      */
     public $cantidad;
+
     /**
      * % de descuento.
      * @var float
      */
     public $dtopor;
+
     /**
      * Código del impuesto del artículo.
      * @var string
      */
     public $codimpuesto;
+
     /**
      * % del impuesto relacionado.
      * @var float
      */
     public $iva;
+
     /**
      * Importe neto de la linea, sin impuestos.
      * @var float
      */
     public $pvptotal;
+
     /**
      * Importe neto sin descuento, es decir, pvpunitario * cantidad.
      * @var float
      */
     public $pvpsindto;
+
     /**
      * Precio del artículo, una sola unidad.
      * @var float
      */
     public $pvpunitario;
+
     /**
      * % de IRPF de la línea.
      * @var float
      */
     public $irpf;
+
     /**
      * % de recargo de equivalencia de la línea.
      * @var float
      */
     public $recargo;
+
     /**
      * Posición de la linea en el documento. Cuanto más alto más abajo.
      * @var int
      */
     public $orden;
+
     /**
      * False -> no se muestra la columna cantidad al imprimir.
      * @var bool
      */
     public $mostrar_cantidad;
+
     /**
      * False -> no se muestran las columnas precio, descuento, impuestos y total al imprimir.
      * @var bool
      */
     public $mostrar_precio;
+
     /**
      * TODO
      * @var string
      */
     private $codigo;
+
     /**
      * TODO
      * @var string
@@ -218,7 +239,6 @@ class LineaAlbaranCliente
     {
         return nl2br($this->descripcion);
     }
-
     /// Devuelve el precio total por unidad (con descuento incluido e iva aplicado)
 
     /**

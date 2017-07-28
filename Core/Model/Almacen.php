@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -112,7 +111,7 @@ class Almacen
      * Crea la consulta necesaria para crear un nuevo almacen en la base de datos.
      * @return string
      */
-    private function install()
+    public function install()
     {
         return 'INSERT INTO ' . $this->tableName() . ' (codalmacen,nombre,poblacion,'
             . "direccion,codpostal,telefono,fax,contacto) VALUES ('ALG','ALMACEN GENERAL','','','','','','');";

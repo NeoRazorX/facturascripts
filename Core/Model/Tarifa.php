@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class Tarifa
 {
+
     use Base\ModelTrait;
 
     /**
@@ -39,26 +39,31 @@ class Tarifa
      * @var string
      */
     public $nombre;
+
     /**
      * Fórmula a aplicar
      * @var
      */
     public $aplicar_a;
+
     /**
      * no vender por debajo de coste
      * @var bool
      */
     public $mincoste;
+
     /**
      * no vender por encima de pvp
      * @var bool
      */
     public $maxpvp;
+
     /**
      * Incremento porcentual o descuento
      * @var float
      */
     private $incporcentual;
+
     /**
      * Incremento lineal o descuento lineal
      * @var float

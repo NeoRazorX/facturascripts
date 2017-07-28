@@ -99,9 +99,7 @@ class Impuesto
      */
     public function url()
     {
-        $result = empty($this->codimpuesto)
-            ? 'index.php?page=ListImpuesto'
-            : 'index.php?page=EditImpuesto&cod=' . $this->codimpuesto;
+        $result = empty($this->codimpuesto) ? 'index.php?page=ListImpuesto' : 'index.php?page=EditImpuesto&cod=' . $this->codimpuesto;
         return $result;
     }
 
@@ -142,7 +140,7 @@ class Impuesto
      * por defecto.
      * @return string
      */
-    private function install()
+    public function install()
     {
         return 'INSERT INTO ' . $this->tableName() . ' (codimpuesto,descripcion,iva,recargo) VALUES '
             . "('IVA0','IVA 0%','0','0'),('IVA21','IVA 21%','21','5.2'),"

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class Subcuenta
 {
+
     use Base\ModelTrait;
 
     /**
@@ -33,6 +33,7 @@ class Subcuenta
      * @var int
      */
     public $idsubcuenta;
+
     /**
      * TODO
      * @var float
@@ -44,51 +45,61 @@ class Subcuenta
      * @var int
      */
     public $idcuenta;
+
     /**
      * TODO
      * @var string
      */
     public $codcuenta;
+
     /**
      * TODO
      * @var string
      */
     public $codejercicio;
+
     /**
      * TODO
      * @var string
      */
     public $coddivisa;
+
     /**
      * TODO
      * @var string
      */
     public $codimpuesto;
+
     /**
      * TODO
      * @var string
      */
     public $descripcion;
+
     /**
      * TODO
      * @var float
      */
     public $haber;
+
     /**
      * TODO
      * @var float
      */
     public $debe;
+
     /**
      * TODO
      * @var float
      */
     public $saldo;
+
     /**
      * TODO
      * @var float
      */
     public $recargo;
+
     /**
      * TODO
      * @var float
@@ -361,23 +372,23 @@ class Subcuenta
     public function cleanCache()
     {
         /*
-        if (file_exists('tmp/' . FS_TMP_NAME . 'libro_mayor/' . $this->idsubcuenta . '.pdf')) {
-            if (!@unlink('tmp/' . FS_TMP_NAME . 'libro_mayor/' . $this->idsubcuenta . '.pdf')) {
-                $this->miniLog->alert('Error al eliminar tmp/' . FS_TMP_NAME . 'libro_mayor/' . $this->idsubcuenta . '.pdf');
-            }
-        }
+          if (file_exists('tmp/' . FS_TMP_NAME . 'libro_mayor/' . $this->idsubcuenta . '.pdf')) {
+          if (!@unlink('tmp/' . FS_TMP_NAME . 'libro_mayor/' . $this->idsubcuenta . '.pdf')) {
+          $this->miniLog->alert('Error al eliminar tmp/' . FS_TMP_NAME . 'libro_mayor/' . $this->idsubcuenta . '.pdf');
+          }
+          }
 
-        if (file_exists('tmp/' . FS_TMP_NAME . 'libro_diario/' . $this->codejercicio . '.pdf')) {
-            if (!@unlink('tmp/' . FS_TMP_NAME . 'libro_diario/' . $this->codejercicio . '.pdf')) {
-                $this->miniLog->alert('Error al eliminar tmp/' . FS_TMP_NAME . 'libro_diario/' . $this->codejercicio . '.pdf');
-            }
-        }
+          if (file_exists('tmp/' . FS_TMP_NAME . 'libro_diario/' . $this->codejercicio . '.pdf')) {
+          if (!@unlink('tmp/' . FS_TMP_NAME . 'libro_diario/' . $this->codejercicio . '.pdf')) {
+          $this->miniLog->alert('Error al eliminar tmp/' . FS_TMP_NAME . 'libro_diario/' . $this->codejercicio . '.pdf');
+          }
+          }
 
-        if (file_exists('tmp/' . FS_TMP_NAME . 'inventarios_balances/' . $this->codejercicio . '.pdf')) {
-            if (!@unlink('tmp/' . FS_TMP_NAME . 'inventarios_balances/' . $this->codejercicio . '.pdf')) {
-                $this->miniLog->alert('Error al eliminar tmp/' . FS_TMP_NAME . 'inventarios_balances/' . $this->codejercicio . '.pdf');
-            }
-        }
+          if (file_exists('tmp/' . FS_TMP_NAME . 'inventarios_balances/' . $this->codejercicio . '.pdf')) {
+          if (!@unlink('tmp/' . FS_TMP_NAME . 'inventarios_balances/' . $this->codejercicio . '.pdf')) {
+          $this->miniLog->alert('Error al eliminar tmp/' . FS_TMP_NAME . 'inventarios_balances/' . $this->codejercicio . '.pdf');
+          }
+          }
          */
     }
 
@@ -532,36 +543,36 @@ class Subcuenta
      * por defecto.
      * @return string
      */
-    private function install()
+    public function install()
     {
         $this->cleanCache();
         /*
 
-        /// eliminamos todos los PDFs relacionados
-        if (file_exists('tmp/' . FS_TMP_NAME . 'libro_mayor')) {
-            foreach (glob('tmp/' . FS_TMP_NAME . 'libro_mayor/*') as $file) {
-                if (is_file($file)) {
-                    unlink($file);
-                }
-            }
-        }
-        if (file_exists('tmp/' . FS_TMP_NAME . 'libro_diario')) {
-            foreach (glob('tmp/' . FS_TMP_NAME . 'libro_diario/*') as $file) {
-                if (is_file($file)) {
-                    unlink($file);
-                }
-            }
-        }
-        if (file_exists('tmp/' . FS_TMP_NAME . 'inventarios_balances')) {
-            foreach (glob('tmp/' . FS_TMP_NAME . 'inventarios_balances/*') as $file) {
-                if (is_file($file)) {
-                    unlink($file);
-                }
-            }
-        }
+          /// eliminamos todos los PDFs relacionados
+          if (file_exists('tmp/' . FS_TMP_NAME . 'libro_mayor')) {
+          foreach (glob('tmp/' . FS_TMP_NAME . 'libro_mayor/*') as $file) {
+          if (is_file($file)) {
+          unlink($file);
+          }
+          }
+          }
+          if (file_exists('tmp/' . FS_TMP_NAME . 'libro_diario')) {
+          foreach (glob('tmp/' . FS_TMP_NAME . 'libro_diario/*') as $file) {
+          if (is_file($file)) {
+          unlink($file);
+          }
+          }
+          }
+          if (file_exists('tmp/' . FS_TMP_NAME . 'inventarios_balances')) {
+          foreach (glob('tmp/' . FS_TMP_NAME . 'inventarios_balances/*') as $file) {
+          if (is_file($file)) {
+          unlink($file);
+          }
+          }
+          }
 
-        /// forzamos la creación de la tabla de cuentas
-        $cuenta = new Cuenta();
+          /// forzamos la creación de la tabla de cuentas
+          $cuenta = new Cuenta();
          */
         return '';
     }

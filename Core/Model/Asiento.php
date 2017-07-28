@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class Asiento
 {
+
     use Base\ModelTrait {
         saveInsert as private saveInsertTrait;
     }
@@ -41,51 +41,61 @@ class Asiento
      * @var string
      */
     public $numero;
+
     /**
      * TODO
      * @var int
      */
     public $idconcepto;
+
     /**
      * TODO
      * @var string
      */
     public $concepto;
+
     /**
      * TODO
      * @var string
      */
     public $fecha;
+
     /**
      * TODO
      * @var string
      */
     public $codejercicio;
+
     /**
      * TODO
      * @var string
      */
     public $codplanasiento;
+
     /**
      * TODO
      * @var
      */
     public $editable;
+
     /**
      * TODO
      * @var
      */
     public $documento;
+
     /**
      * TODO
      * @var
      */
     public $tipodocumento;
+
     /**
      * TODO
      * @var float
      */
     public $importe;
+
     /**
      * TODO
      * @var string
@@ -620,7 +630,6 @@ class Asiento
         echo "\nRenumerando asientos...";
         $this->renumerar();
     }
-
     /// renumera todos los asientos. Devuelve FALSE en caso de error
 
     /**

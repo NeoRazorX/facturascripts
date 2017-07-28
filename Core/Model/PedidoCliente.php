@@ -294,9 +294,9 @@ class PedidoCliente
     {
         if ($s) {
             return Date('H:i:s', strtotime($this->hora));
-        } else {
-                    return Date('H:i', strtotime($this->hora));
         }
+
+        return Date('H:i', strtotime($this->hora));
     }
 
     public function observaciones_resume()
@@ -305,45 +305,45 @@ class PedidoCliente
             return '-';
         } else if (strlen($this->observaciones) < 60) {
             return $this->observaciones;
-        } else {
-                    return substr($this->observaciones, 0, 50) . '...';
         }
+
+        return substr($this->observaciones, 0, 50) . '...';
     }
 
     public function url()
     {
         if (is_null($this->idpedido)) {
             return 'index.php?page=ventas_pedidos';
-        } else {
-                    return 'index.php?page=ventas_pedido&id=' . $this->idpedido;
         }
+
+        return 'index.php?page=ventas_pedido&id=' . $this->idpedido;
     }
 
     public function albaran_url()
     {
         if (is_null($this->idalbaran)) {
             return 'index.php?page=ventas_albaran';
-        } else {
-                    return 'index.php?page=ventas_albaran&id=' . $this->idalbaran;
         }
+
+        return 'index.php?page=ventas_albaran&id=' . $this->idalbaran;
     }
 
     public function agente_url()
     {
         if (is_null($this->codagente)) {
             return "index.php?page=admin_agentes";
-        } else {
-                    return "index.php?page=admin_agente&cod=" . $this->codagente;
         }
+
+        return "index.php?page=admin_agente&cod=" . $this->codagente;
     }
 
     public function cliente_url()
     {
         if (is_null($this->codcliente)) {
             return "index.php?page=ventas_clientes";
-        } else {
-                    return "index.php?page=ventas_cliente&cod=" . $this->codcliente;
         }
+
+        return "index.php?page=ventas_cliente&cod=" . $this->codcliente;
     }
 
     /**
@@ -495,10 +495,10 @@ class PedidoCliente
         if ($this->test()) {
             if ($this->exists()) {
                 return $this->saveUpdate();
-            } else {
-                $this->new_codigo();
-                return $this->saveInsert();
             }
+
+            $this->new_codigo();
+            return $this->saveInsert();
         }
 
         return FALSE;

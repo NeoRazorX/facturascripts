@@ -90,6 +90,6 @@ class ListAlmacen extends Base\ListController
             ['label' => 'Fax', 'field' => 'fax', 'display' => 'left'],
             ['label' => 'Valoración', 'field' => 'tipovaloracion', 'display' => 'center'],
             ['label' => 'Apartado', 'field' => 'apartado', 'display' => 'none']
-        ];        
+        ];
     }
 }

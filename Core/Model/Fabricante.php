@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class Fabricante
 {
+
     use Base\ModelTrait;
 
     /**
@@ -33,6 +33,7 @@ class Fabricante
      * @var string
      */
     public $codfabricante;
+
     /**
      * TODO
      * @var string
@@ -181,11 +182,10 @@ class Fabricante
      * por defecto.
      * @return string
      */
-    private function install()
+    public function install()
     {
         $this->cleanCache();
-        $sql = 'INSERT INTO ' . $this->tableName() . " (codfabricante,nombre) VALUES ('OEM','OEM');";
-        return $sql;
+        return 'INSERT INTO ' . $this->tableName() . " (codfabricante,nombre) VALUES ('OEM','OEM');";
     }
 
     /**

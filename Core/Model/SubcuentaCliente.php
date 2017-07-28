@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class SubcuentaCliente
 {
+
     use Base\ModelTrait;
 
     /**
@@ -45,11 +45,13 @@ class SubcuentaCliente
      * @var string
      */
     public $codcliente;
+
     /**
      * TODO
      * @var string
      */
     public $codsubcuenta;
+
     /**
      * TODO
      * @var string
@@ -139,14 +141,5 @@ class SubcuentaCliente
         }
 
         return $sublist;
-    }
-
-    /**
-     * Aplica algunas correcciones a la tabla.
-     */
-    public function fixDb()
-    {
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE codcliente NOT IN (SELECT codcliente FROM clientes);';
-        $this->dataBase->exec($sql);
     }
 }

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -107,9 +106,7 @@ class FormaPago
      */
     public function url()
     {
-        $result = empty($this->codpago)
-            ? 'index.php?page=ListFormaPago'
-            : 'index.php?page=EditFormaPago&cod=' . $this->codpago;
+        $result = empty($this->codpago) ? 'index.php?page=ListFormaPago' : 'index.php?page=EditFormaPago&cod=' . $this->codpago;
         return $result;
     }
 
@@ -183,7 +180,7 @@ class FormaPago
      * Crea la consulta necesaria para crear una nueva forma de pago en la base de datos.
      * @return string
      */
-    private function install()
+    public function install()
     {
         return 'INSERT INTO ' . $this->tableName()
             . ' (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)'
