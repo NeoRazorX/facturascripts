@@ -45,16 +45,9 @@ class Familia
     public $madre;
     public $nivel;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'familias', 'codfamilia');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
-	
+    const TABLENAME='familias';
+    const INDEXNAME='codfamilia';
+
     public function clear() {
         $this->codfamilia = NULL;
         $this->descripcion = '';

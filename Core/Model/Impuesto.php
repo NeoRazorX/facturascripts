@@ -53,15 +53,8 @@ class Impuesto
     public $iva;
     public $recargo;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'impuestos', 'codimpuesto');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='impuestos';
+    const INDEXNAME='codimpuesto';
 	
     public function clear() {
         $this->codimpuesto = NULL;

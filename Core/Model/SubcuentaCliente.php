@@ -51,16 +51,9 @@ class SubcuentaCliente
     public $codsubcuenta;
     public $codejercicio;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'co_subcuentascli', 'id');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
-	
+    const TABLENAME='co_subcuentascli';
+    const INDEXNAME='id';
+
     public function clear() 
     {
         $this->id = NULL;

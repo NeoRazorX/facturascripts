@@ -238,15 +238,8 @@ class FacturaCliente
      */
     public $numdocs;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'facturascli', 'idfactura');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='facturascli';
+    const INDEXNAME='idfactura';
 	
     public function clear() {
         $this->idfactura = NULL;

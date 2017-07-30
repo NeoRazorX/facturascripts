@@ -92,16 +92,9 @@ class TerminalCaja
      */
     public $sin_comandos;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'cajas_terminales', 'id');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
-	
+    const TABLENAME='cajas_terminales';
+    const INDEXNAME='id';
+
     public function clear()
     {
         $this->id = NULL;

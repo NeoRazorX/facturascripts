@@ -40,15 +40,8 @@ class CuentaEspecial
     public $idcuentaesp;
     public $descripcion;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'co_cuentasesp', 'idcuentaesp');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='co_cuentaesp';
+    const INDEXNAME='idcuentaesp';
 
     public function clear() {
         $this->idcuentaesp = NULL;

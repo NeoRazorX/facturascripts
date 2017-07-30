@@ -91,19 +91,8 @@ class Ejercicio
      */
     public $longsubcuenta;
 
-    /**
-     * Ejercicio constructor.
-     * @param array $data
-     */
-    public function __construct(array $data = [])
-    {
-        $this->init(__CLASS__, 'ejercicios', 'codejercicio');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='ejercicios';
+    const INDEXNAME='codejercicio';
 
     /**
      * Resetea los valores de las propiedades del modelo.

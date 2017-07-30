@@ -41,15 +41,8 @@ class GrupoEpigrafes
     public $codejercicio;
     public $descripcion;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'co_gruposepigrafes', 'idgrupo');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='co_gruposepigrafes';
+    const INDEXNAME='idgrupo';
 	
     public function clear()
     {

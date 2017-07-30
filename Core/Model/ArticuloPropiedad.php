@@ -37,15 +37,8 @@ class ArticuloPropiedad
     public $referencia;
     public $text;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'articulo_propiedades', 'name');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='articulo_propiedades';
+    const INDEXNAME='name';
     
     public function clear() 
     {

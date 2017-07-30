@@ -150,15 +150,8 @@ class Cliente
     public $codproveedor;
     private static $regimenes_iva;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'clientes', 'codcliente');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='clientes';
+    const INDEXNAME='codcliente';
     
     public function clear()
     {

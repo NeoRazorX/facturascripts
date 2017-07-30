@@ -63,15 +63,8 @@ class DireccionProveedor
      */
     public $fecha;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'dirproveedores', 'id');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='dirproveedores';
+    const INDEXNAME='id';
 	
     public function clear() {
         $this->id = NULL;

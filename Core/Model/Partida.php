@@ -80,15 +80,8 @@ class Partida
     public $sum_debe;
     public $sum_haber;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'co_partidas', 'idpartida');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='co_partidas';
+    const INDEXNAME='idpartida';
 	
     public function clear()
     {

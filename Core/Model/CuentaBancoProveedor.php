@@ -48,15 +48,8 @@ class CuentaBancoProveedor
     public $swift;
     public $principal;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'cuentasbcopro', 'codcuenta');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='cuentasbcopro';
+    const INDEXNAME='codcuenta';
 
     public function clear()
     {

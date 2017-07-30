@@ -73,16 +73,9 @@ class Tarifa
      */
     public $maxpvp;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'tarifas', 'codtarifa');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
-	
+    const TABLENAME='tarifas';
+    const INDEXNAME='codtarifa';
+
     public function clear()
     {
         $this->codtarifa = NULL;

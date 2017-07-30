@@ -66,19 +66,8 @@ class Divisa
      */
     public $simbolo;
 
-    /**
-     * Divisa constructor.
-     * @param array $data
-     */
-    public function __construct(array $data = [])
-    {
-        $this->init(__CLASS__, 'divisas', 'coddivisa');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='divisas';
+    const INDEXNAME='coddivisa';
 
     /**
      * Resetea los valores de todas las propiedades modelo.

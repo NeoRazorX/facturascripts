@@ -54,16 +54,9 @@ class Subcuenta
     public $recargo;
     public $iva;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'co_subcuentas', 'idsubcuenta');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
-	
+    const TABLENAME='fs_users';
+    const INDEXNAME='nick';
+
     public function clear()
     {
         $this->idsubcuenta = NULL;

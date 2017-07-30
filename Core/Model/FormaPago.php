@@ -73,19 +73,8 @@ class FormaPago
      */
     public $vencimiento;
 
-    /**
-     * FormaPago constructor.
-     * @param array $data
-     */
-    public function __construct(array $data = [])
-    {
-        $this->init(__CLASS__, 'formaspago', 'codpago');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='formaspago';
+    const INDEXNAME='codpago';
 
     /**
      * Resetea los valores de todas las propiedades modelo.

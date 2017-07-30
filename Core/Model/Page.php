@@ -67,19 +67,8 @@ class Page
      */
     public $orden;
 
-    /**
-     * Page constructor.
-     * @param array $data
-     */
-    public function __construct(array $data = [])
-    {
-        $this->init(__CLASS__, 'fs_pages', 'name');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='fs_pages';
+    const INDEXNAME='name';
 
     /**
      * Resetea los valores de todas las propiedades modelo.

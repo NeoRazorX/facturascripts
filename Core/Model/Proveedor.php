@@ -127,15 +127,8 @@ class Proveedor
     public $codcliente;
     private static $regimenes_iva;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'proveedores', 'codproveedor');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='proveedores';
+    const INDEXNAME='codproveedor';
 	
     public function clear()
     {

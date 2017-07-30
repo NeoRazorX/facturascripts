@@ -97,20 +97,8 @@ class User
      */
     public $lastip;
 
-    /**
-     * User constructor.
-     *
-     * @param array $data
-     */
-    public function __construct(array $data = [])
-    {
-        $this->init(__CLASS__, 'fs_users', 'nick');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='fs_users';
+    const INDEXNAME='nick';
 
     /**
      * Reseta los valores de este objeto.

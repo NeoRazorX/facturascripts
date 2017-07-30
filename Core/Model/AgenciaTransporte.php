@@ -52,15 +52,8 @@ class AgenciaTransporte
      */
     public $activo;
 
-    public function __construct(array $data = [])
-    {
-        $this->init(__CLASS__, 'agenciastrans', 'codtrans');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
-    }
+    const TABLENAME='agenciastrans';
+    const INDEXNAME='codtrans';
 
     /**
      * Devuelve el comando SQL que crea los datos iniciales tras la instalación

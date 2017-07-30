@@ -62,17 +62,6 @@ class RolAccess
      */
     public $allowupdate;
 
-    /**
-     * RolAccess constructor.
-     * @param array $data
-     */
-    public function __construct(array $data = [])
-    {
-        $this->init(__CLASS__, 'fs_roles_access', 'id');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='fs_roles_access';
+    const INDEXNAME='id';
 }

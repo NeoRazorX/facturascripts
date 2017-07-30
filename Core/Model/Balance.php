@@ -48,15 +48,8 @@ class Balance
     public $nivel1;
     public $naturaleza;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'co_codbalances08', 'codbalance');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='co_codbalances08';
+    const INDEXNAME='codbalance';
 
     public function clear()
     {

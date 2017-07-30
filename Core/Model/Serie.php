@@ -67,19 +67,8 @@ class Serie
      */
     public $numfactura;
 
-    /**
-     * Serie constructor.
-     * @param array $data
-     */
-    public function __construct(array $data = [])
-    {
-        $this->init(__CLASS__, 'series', 'codserie');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='series';
+    const INDEXNAME='codserie';
 
     /**
      * Resetea los valores de todas las propiedades modelo.

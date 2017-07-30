@@ -110,16 +110,9 @@ class ArticuloCombinacion
      */
     public $stockfis;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'articulo_combinaciones', 'id');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
-    
+    const TABLENAME='articulo_combinaciones';
+    const INDEXNAME='id';
+
     public function clear() {
         $this->id = NULL;
         $this->codigo = NULL;

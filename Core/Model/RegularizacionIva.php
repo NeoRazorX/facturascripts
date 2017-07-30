@@ -48,15 +48,8 @@ class RegularizacionIva
     public $fechainicio;
     public $periodo;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'co_regiva', 'idregiva');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='co_regiva';
+    const INDEXNAME='idregiva';
 	
     public function clear()
     {

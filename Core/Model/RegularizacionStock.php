@@ -60,15 +60,8 @@ class RegularizacionStock
      */
     public $nick;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'agenciastrans', 'codtrans');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='agenciastrans';
+    const INDEXNAME='codtrans';
 	
     public function clear()
     {

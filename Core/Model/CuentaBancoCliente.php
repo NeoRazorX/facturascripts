@@ -59,15 +59,9 @@ class CuentaBancoCliente
      */
     public $fmandato;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'cuentasbcocli', 'codcliente');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='cuentasbcocli';
+    const INDEXNAME='codcliente';
+
     public function clear()
     {
         $this->codcliente = NULL;

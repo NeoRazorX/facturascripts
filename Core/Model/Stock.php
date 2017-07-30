@@ -48,15 +48,8 @@ class Stock
     public $cantidadultreg;
     public $ubicacion;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'stocks', 'idstock');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='stocks';
+    const INDEXNAME='idstock';
 	
     public function clear() {
         $this->idstock = NULL;

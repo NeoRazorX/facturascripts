@@ -138,15 +138,8 @@ class LineaAlbaranCliente
     private $fecha;
     private static $albaranes;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'lineasalbaranescli', 'idlinea');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='lineasalbaranescli';
+    const INDEXNAME='idlinea';
 	
     public function clear() 
     {

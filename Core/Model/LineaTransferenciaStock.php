@@ -27,15 +27,8 @@ class LineaTransferenciaStock
     private $fecha;
     private $hora;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'lineastransstock', 'idlinea');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='lineastransstock';
+    const INDEXNAME='idlinea';
 	
     public function clear() {
         $this->idlinea = NULL;

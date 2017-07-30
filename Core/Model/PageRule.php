@@ -61,17 +61,7 @@ class PageRule
      */
     public $allowupdate;
 
-    /**
-     * PageRule constructor.
-     * @param array $data
-     */
-    public function __construct(array $data = [])
-    {
-        $this->init(__CLASS__, 'fs_page_rules', 'id');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='fs_page_rules';
+    const INDEXNAME='id';
+
 }

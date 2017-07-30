@@ -38,15 +38,8 @@ class Atributo
     public $codatributo;
     public $nombre;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'atributos', 'codatributo');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='atributos';
+    const INDEXNAME='codatributo';
     
     public function clear()
     {

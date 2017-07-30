@@ -192,15 +192,8 @@ class FacturaProveedor
      */
     public $numdocs;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'facturasprov', ''); // No sé cual es la clave principal
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='facturasprov';
+    const INDEXNAME=''; // No sé cual es la clave principal
 	
     public function clear()
     {

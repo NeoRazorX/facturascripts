@@ -100,20 +100,9 @@ class Agente
      * @var float
      */
     public $porcomision;
-
-    /**
-     * Agente constructor.
-     * @param array $data
-     */
-    public function __construct(array $data = [])
-    {
-        $this->init(__CLASS__, 'agentes', 'codagente');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
-    }
+    
+    const TABLENAME='agentes';
+    const INDEXNAME='codagente';
 
     /**
      * Resetea los valores de todas las propiedades modelo.

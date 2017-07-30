@@ -86,15 +86,8 @@ class LineaIvaFacturaProveedor
      */
     public $neto;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'lineasivafactprov', 'idlinea');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='lineasivafactprov';
+    const INDEXNAME='idlinea';
 	
     public function clear()
     {

@@ -69,15 +69,8 @@ class DireccionCliente
      */
     public $fecha;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'dirclientes', 'id');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='dirclientes';
+    const INDEXNAME='id';
 	
     public function clear()
     {

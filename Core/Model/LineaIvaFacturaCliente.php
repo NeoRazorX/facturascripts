@@ -86,16 +86,9 @@ class LineaIvaFacturaCliente
      */
     public $neto;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'lineasivafactcli', 'idlinea');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
-	
+    const TABLENAME='lineasivafactcli';
+    const INDEXNAME='idlinea';
+
     public function clear()
     {
         $this->idlinea = NULL;

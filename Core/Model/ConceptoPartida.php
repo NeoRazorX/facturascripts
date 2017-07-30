@@ -39,15 +39,8 @@ class ConceptoPartida
     public $idconceptopar;
     public $concepto;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'co_conceptospar', 'idconceptopar');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='co_conceptospar';
+    const INDEXNAME='idconceptopar';
 
     public function clear()
     {

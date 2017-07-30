@@ -175,15 +175,8 @@ class AlbaranProveedor
      */
     public $numdocs;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'albaranesprov', 'idalbaran');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='albaranesprov';
+    const INDEXNAME='idalbaran';
 	
     public function clear()
     {

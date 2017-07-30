@@ -57,19 +57,8 @@ class Almacen
      */
     public $observaciones;
 
-    /**
-     * Almacen constructor.
-     * @param array $data
-     */
-    public function __construct(array $data = [])
-    {
-        $this->init(__CLASS__, 'almacenes', 'codalmacen');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
-    }
+    const TABLENAME='almacenes';
+    const INDEXNAME='codalmacen';
 
     /**
      * Crea la consulta necesaria para crear un nuevo almacen en la base de datos.

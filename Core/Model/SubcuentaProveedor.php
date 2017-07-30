@@ -51,16 +51,9 @@ class SubcuentaProveedor
     public $codsubcuenta;
     public $codejercicio;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'co_subcuentasprov', 'id');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
-	
+    const TABLENAME='co_subcuentasprov';
+    const INDEXNAME='id';
+
     public function clear()
     {
         $this->id = NULL;

@@ -219,16 +219,9 @@ class AlbaranCliente
      */
     public $numdocs;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'albaranescli', 'idalbaran');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
-	
+    const TABLENAME='albaranescli';
+    const INDEXNAME='idalbaran';
+
     public function clear()
     {
             $this->idalbaran = NULL;

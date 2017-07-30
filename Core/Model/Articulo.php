@@ -191,15 +191,8 @@ class Articulo
     private static $cleaned_cache;
     private static $column_list;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'articulos', 'referencia');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='articulos';
+    const INDEXNAME='referencia';
     
     /**
      * Limpia los registros del registro en curso

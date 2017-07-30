@@ -88,6 +88,16 @@ trait Model
      */
     private static $checkedTables;
 
+    public function __construct(array $data = [])
+    {
+        $this->init(__CLASS__, self::TABLENAME, self::INDEXNAME);
+        if (empty($data)) {
+            $this->clear();
+        } else {
+            $this->loadFromData($data);
+        }
+    }
+
     /**
      * Constructor.
      * @param string $modelName
@@ -189,6 +199,10 @@ trait Model
                     break;
                 }
             }
+        }
+        if (method_exists($this, 'loadMoreFromData')) 
+        {
+            $this->loadMoreFromData($data);
         }
     }
 

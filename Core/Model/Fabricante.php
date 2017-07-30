@@ -39,15 +39,8 @@ class Fabricante
     public $codfabricante;
     public $nombre;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'fabricantes', 'codfabricante');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='fabricantes';
+    const INDEXNAME='codfabricante';
 	
     public function clear()
     {

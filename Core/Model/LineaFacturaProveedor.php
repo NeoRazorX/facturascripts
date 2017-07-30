@@ -123,15 +123,8 @@ class LineaFacturaProveedor
     private static $facturas;
     private static $albaranes;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'lineasfacturasprov', 'idlinea');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='lineasfacturasprov';
+    const INDEXNAME='idlinea';
 	
     public function clear($l = FALSE)
     {

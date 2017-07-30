@@ -85,15 +85,8 @@ class ArticuloTraza
     public $fecha_entrada;
     public $fecha_salida;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'articulo_trazas', 'id');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='articulo_trazas';
+    const INDEXNAME='id';
     
     public function clear() 
     {

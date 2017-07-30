@@ -83,15 +83,8 @@ class caja
      */
     private static $agentes;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'cajas', 'id');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='cajas';
+    const INDEXNAME='id';
     
     public function clear()
     {

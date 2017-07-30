@@ -53,15 +53,9 @@ class Asiento
     public $importe;
     private $coddivisa;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'co_asientos', 'idasiento');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='co_asientos';
+    const INDEXNAME='idasiento';
+
     public function clear()
     {
         $this->idasiento = NULL;

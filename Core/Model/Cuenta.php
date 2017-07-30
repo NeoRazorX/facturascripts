@@ -50,15 +50,8 @@ class Cuenta
     public $descripcion;
     public $idcuentaesp;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'co_cuentas', 'idcuenta');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='co_cuentas';
+    const INDEXNAME='idcuenta';
 
     public function clear()
     {

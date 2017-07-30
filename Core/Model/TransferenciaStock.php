@@ -26,16 +26,9 @@ class TransferenciaStock
     public $hora;
     public $usuario;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'transstock', 'idtrans');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
-	
+    const TABLENAME='transstock';
+    const INDEXNAME='idtrans';
+
     public function clear()
     {
         $this->idtrans = NULL;

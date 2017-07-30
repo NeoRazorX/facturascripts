@@ -96,15 +96,9 @@ class ArticuloProveedor
     private static $impuestos;
     private static $nombres;
 
-    public function __construct(array $data = []) 
-    {
-        $this->init(__CLASS__, 'articulosprov', 'id');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='articulosprov';
+    const INDEXNAME='id';
+
     public function clear()
     {
         $this->id = NULL;

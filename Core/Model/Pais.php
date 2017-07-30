@@ -50,19 +50,8 @@ class Pais
      */
     public $nombre;
 
-    /**
-     * Pais constructor.
-     * @param array $data
-     */
-    public function __construct(array $data = [])
-    {
-        $this->init(__CLASS__, 'paises', 'codpais');
-        if (!empty($data)) {
-            $this->loadFromData($data);
-        } else {
-            $this->clear();
-        }
-    }
+    const TABLENAME='paises';
+    const INDEXNAME='codpais';
 
     /**
      * Crea la consulta necesaria para crear los paises en la base de datos.

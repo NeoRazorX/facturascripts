@@ -219,38 +219,34 @@ class Empresa
       ] */
     public $email_config;
 
+    const TABLENAME='empresa';
+    const INDEXNAME='id';
+
     /**
-     * Empresa constructor.
-     *
+     * Se añade a loadFromData
      * @param array $data
      */
-    public function __construct(array $data = [])
+    public function loadMoreFromData(array $data = [])
     {
-        $this->init(__CLASS__, 'empresa', 'id');
-        if (!empty($data)) {
-            $this->loadFromData($data);
+        /// cargamos las opciones de email por defecto
+        $this->email_config = array(
+            'mail_password' => '',
+            'mail_bcc' => '',
+            'mail_firma' => "\n---\nEnviado con FacturaScripts",
+            'mail_mailer' => 'smtp',
+            'mail_host' => 'smtp.gmail.com',
+            'mail_port' => '465',
+            'mail_enc' => 'ssl',
+            'mail_user' => '',
+            'mail_low_security' => false,
+        );
 
-            /// cargamos las opciones de email por defecto
-            $this->email_config = array(
-                'mail_password' => '',
-                'mail_bcc' => '',
-                'mail_firma' => "\n---\nEnviado con FacturaScripts",
-                'mail_mailer' => 'smtp',
-                'mail_host' => 'smtp.gmail.com',
-                'mail_port' => '465',
-                'mail_enc' => 'ssl',
-                'mail_user' => '',
-                'mail_low_security' => false,
-            );
-
-            if ($this->xid === null) {
-                $this->xid = static::randomString(30);
-                $this->save();
-            }
-        } else {
-            $this->clear();
+        if ($this->xid === null) {
+            $this->xid = static::randomString(30);
+            $this->save();
         }
     }
+    
 
     /**
      * Crea la consulta necesaria para dotar de datos a la empresa en la base de datos.
