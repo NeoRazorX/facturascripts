@@ -182,7 +182,7 @@
                         <tr>
                             {% for field in fsc.fields %}
                             {% if field.display != 'none' %}
-                            <th class="text-{{ field.display }}">{{ field.label }}</th>
+                            <th class="text-{{ field['display'] }}">{{ field['label'] }}</th>
                             {% endif %}
                             {% endfor %}
                         </tr>

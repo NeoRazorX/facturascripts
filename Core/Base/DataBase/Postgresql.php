@@ -191,7 +191,7 @@ class Postgresql implements DataBaseEngine
      */
     private function runSql($link, $sql, $selectRows = true)
     {
-        $result = ['ok' => TRUE];
+        $result = [];
         try {
             $aux = pg_query($link, $sql);
             if ($aux) {
@@ -202,7 +202,7 @@ class Postgresql implements DataBaseEngine
             }
         } catch (Exception $e) {
             $this->lastErrorMsg = $e->getMessage();
-            $result = [];
+            $result = $selectRows ? [] : ['ok' => 'false'];
         }
 
         return $result;
@@ -228,7 +228,7 @@ class Postgresql implements DataBaseEngine
      */
     public function exec($link, $sql)
     {
-        return (bool) $this->runSql($link, $sql, false);
+        return empty($this->runSql($link, $sql, false));
     }
 
     /**

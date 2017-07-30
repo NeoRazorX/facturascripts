@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\ViewController;
 use FacturaScripts\Core\Model;
 
 /**
@@ -27,7 +28,7 @@ use FacturaScripts\Core\Model;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListImpuesto extends Base\ListController
+class ListImpuesto extends ViewController\ListController
 {
 
     public function __construct(&$cache, &$i18n, &$miniLog, $className)

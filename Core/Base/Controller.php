@@ -130,6 +130,16 @@ class Controller
     }
 
     /**
+     * Devuelve el nombre del controlador
+     * @return string
+     */
+    protected function getClassName()
+    {
+        return $this->className;
+    }
+
+
+    /**
      * Devuelve el template HTML a utilizar para este controlador.
      * @return string
      */

@@ -16,15 +16,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Base;
+namespace FacturaScripts\Core\Base\ViewController;
 
+use FacturaScripts\Core\Base as Base;
+use FacturaScripts\Core\Model as Models;
+use FacturaScripts\Core\Base\DataBase as DataBase;
+    
 /**
  * Controlador para listado de datos en modo tabla
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-abstract class ListController extends Controller
+abstract class ListController extends Base\Controller
 {
 
     /**
@@ -41,12 +45,14 @@ abstract class ListController extends Controller
     public $cursor;
 
     /**
-     * Lista de campos cargados en el cursor y su parametrización
-     * Ejemplo: ["label" => "Etiqueta", "field" => "Nombre del campo", "display" => "left/center/right/none"]
-     * @var array
+     * Configuración de columnas y filtros
+     * @var Model\PageOption
      */
+    private $pageOption;
+    
+    public $filters;
     public $fields;
-
+    
     /**
      * Lista de campos disponibles en el order by
      * Ejemplo: orderby[key] = ["label" => "Etiqueta", "icon" => ICONO_ASC]
@@ -69,12 +75,6 @@ abstract class ListController extends Controller
     public $query;
 
     /**
-     * Lista de filtros disponibles y su parametrización
-     * @var array
-     */
-    public $filters;
-
-    /**
      * Primer registro a seleccionar de la base de datos
      * @var int
      */
@@ -86,8 +86,51 @@ abstract class ListController extends Controller
      */
     public $count;
 
-    abstract protected function getColumns();
+    protected abstract function getColumns();
 
+    /**
+     * Inicia todos los objetos y propiedades.
+     *
+     * @param Cache $cache
+     * @param Translator $i18n
+     * @param MiniLog $miniLog
+     * @param string $className
+     */
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    {
+        parent::__construct($cache, $i18n, $miniLog, $className);
+
+        $this->setTemplate("Master/ListController");
+
+        $offset = $this->request->get('offset');
+        $this->offset = $offset ? $offset : 0;
+        $this->query = $this->request->get('query');
+        $this->count = 0;
+        $this->orderby = [];
+        $this->filters = [];
+        $this->fields = [];
+        
+        $this->pageOption = new Models\PageOption();
+    }
+    
+    /**
+     * Ejecuta la lógica privada del controlador.
+     */
+    public function privateCore(&$response, $user)
+    {
+        parent::privateCore($response, $user);
+
+        // Cargamos configuración de columnas y filtros 
+        $this->fields = $this->getColumns();
+        
+        $className = $this->getClassName();
+        $this->pageOption->getForUser($className, $user->nick);
+        
+        // Establecemos el orderby seleccionado
+        $orderKey = $this->request->get("order");
+        $this->selectedOrderBy = empty($orderKey) ? (string) array_keys($this->orderby)[0] : $this->getSelectedOrder($orderKey);
+    }
+        
     /**
      * Devuelve la key del campo seleccionado en el order by
      * @param string $orderKey
@@ -244,41 +287,6 @@ abstract class ListController extends Controller
     {
         $options = ['label' => $label, 'field' => $field];
         $this->addFilter('datepicker', $key, $options);
-    }
-
-    /**
-     * Ejecuta la lógica privada del controlador.
-     */
-    public function privateCore(&$response, $user)
-    {
-        parent::privateCore($response, $user);
-
-        // Establecemos el orderby seleccionado
-        $orderKey = $this->request->get("order");
-        $this->selectedOrderBy = empty($orderKey) ? (string) array_keys($this->orderby)[0] : $this->getSelectedOrder($orderKey);
-    }
-
-    /**
-     * Inicia todos los objetos y propiedades.
-     *
-     * @param Cache $cache
-     * @param Translator $i18n
-     * @param MiniLog $miniLog
-     * @param string $className
-     */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
-    {
-        parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->setTemplate("Master/ListController");
-
-        $offset = $this->request->get('offset');
-        $this->offset = $offset ? $offset : 0;
-        $this->query = $this->request->get('query');
-        $this->count = 0;
-        $this->orderby = [];
-        $this->filters = [];
-        $this->fields = $this->getColumns();
     }
 
     /**
