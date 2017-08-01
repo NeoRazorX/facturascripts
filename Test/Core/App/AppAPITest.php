@@ -18,7 +18,7 @@ class AppAPITest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->object = new AppAPI;
+        $this->object = new AppAPI(PHPUNIT_PATH);
     }
 
     /**
@@ -29,22 +29,17 @@ class AppAPITest extends \PHPUnit_Framework_TestCase
     {
         
     }
-    
+
     public function testConnect()
     {
-        // Remove the following lines when you implement this test.
         $this->assertTrue($this->object->connect());
     }
-    
 
     /**
      * @covers FacturaScripts\Core\App\AppAPI::run
-     * @todo   Implement testRun().
      */
     public function testRun()
     {
-        // Remove the following lines when you implement this test.
         $this->assertTrue($this->object->run());
     }
-    
 }

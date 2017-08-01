@@ -19,7 +19,8 @@
 namespace FacturaScripts\Core\Base;
 
 /**
- * Previene los ataques de fuerza bruta
+ * Previene los ataques de fuerza bruta mediante una lista de direcciones IP
+ * y sus contadores de intentos fallidos.
  *
  * @author Carlos García Gómez
  */
@@ -27,23 +28,23 @@ class IPFilter
 {
 
     /**
-     * Número máximo de intentos de acceso
+     * Número máximo de intentos de acceso.
      */
     const MAX_ATTEMPTS = 5;
 
     /**
-     * Número de segundos que el sistema bloquea el acceso
+     * Número de segundos que el sistema bloquea el acceso.
      */
     const BAN_SECONDS = 600;
 
     /**
-     * Ruta del archivo de la cache
+     * Ruta del archivo con la lista.
      * @var string
      */
     private $filePath;
 
     /**
-     * Contiene las direcciones IP
+     * Contiene las direcciones IP.
      * @var array
      */
     private $ipList;
@@ -58,12 +59,11 @@ class IPFilter
         $this->ipList = [];
 
         if (file_exists($this->filePath)) {
-            /// Read IP list file
+            /// leemos la lista de direcciones de IP del archivo
             $file = fopen($this->filePath, 'rb');
             if ($file) {
                 while (!feof($file)) {
                     $line = explode(';', trim(fgets($file)));
-
                     $this->readIp($line);
                 }
 
@@ -74,11 +74,12 @@ class IPFilter
 
     /**
      * Carga las direcciones IP en el array $ipList
-     * @param  array $line
+     * @param array $line
      */
     private function readIp($line)
     {
-        if (count($line) === 3 && (int) $line[2] > time()) { /// if not expired
+        /// si no ha expirado
+        if (count($line) === 3 && (int) $line[2] > time()) {
             $this->ipList[] = [
                 'ip' => $line[0],
                 'count' => (int) $line[1],
@@ -88,8 +89,8 @@ class IPFilter
     }
 
     /**
-     * Devuelve true si los intentos de acceso desde una IP sobrepasa el límite MAX_ATTEMPTS
-     * @param $ip
+     * Devuelve true si los intentos de acceso desde la dirección IP sobrepasa el límite MAX_ATTEMPTS.
+     * @param string $ip
      * @return bool
      */
     public function isBanned($ip)
@@ -107,15 +108,15 @@ class IPFilter
     }
 
     /**
-     * Cuenta las veces que un usuario intenta acceder desde una dirección IP
-     * @param $ip
+     * Añade o incrementa el contador de intentos de la dirección IP proporcionada.
+     * @param string $ip
      */
     public function setAttempt($ip)
     {
         $found = false;
         foreach ($this->ipList as $key => $line) {
             if ($line['ip'] === $ip) {
-                $this->ipList[$key]['count']++;
+                $this->ipList[$key]['count'] ++;
                 $this->ipList[$key]['expire'] = time() + self::BAN_SECONDS;
                 $found = true;
                 break;
@@ -134,7 +135,7 @@ class IPFilter
     }
 
     /**
-     * Almacena las direcciones IP en la cache ip.list
+     * Almacena la lista de direcciones IP en el archivo.
      */
     private function save()
     {
@@ -146,5 +147,14 @@ class IPFilter
 
             fclose($file);
         }
+    }
+
+    /**
+     * Limpia la lista de direcciones IP y guarda los datos.
+     */
+    public function clear()
+    {
+        $this->ipList = [];
+        $this->save();
     }
 }
