@@ -26,6 +26,7 @@ namespace FacturaScripts\Core\Model;
 class LineaAlbaranCliente
 {
 
+    use Base\LineaDocumento;
     use Base\ModelTrait;
 
     /**
@@ -33,12 +34,6 @@ class LineaAlbaranCliente
      * @var array
      */
     private static $albaranes;
-
-    /**
-     * Clave primaria.
-     * @var int
-     */
-    public $idlinea;
 
     /**
      * ID de la línea del pedido relacionado, si es que lo hay.
@@ -57,78 +52,6 @@ class LineaAlbaranCliente
      * @var int
      */
     public $idpedido;
-
-    /**
-     * Referencia del artículo.
-     * @var string
-     */
-    public $referencia;
-
-    /**
-     * Código de la combinación seleccionada, en el caso de los artículos con atributos.
-     * @var string
-     */
-    public $codcombinacion;
-
-    /**
-     * TODO
-     * @var string
-     */
-    public $descripcion;
-
-    /**
-     * TODO
-     * @var float
-     */
-    public $cantidad;
-
-    /**
-     * % de descuento.
-     * @var float
-     */
-    public $dtopor;
-
-    /**
-     * Código del impuesto del artículo.
-     * @var string
-     */
-    public $codimpuesto;
-
-    /**
-     * % del impuesto relacionado.
-     * @var float
-     */
-    public $iva;
-
-    /**
-     * Importe neto de la linea, sin impuestos.
-     * @var float
-     */
-    public $pvptotal;
-
-    /**
-     * Importe neto sin descuento, es decir, pvpunitario * cantidad.
-     * @var float
-     */
-    public $pvpsindto;
-
-    /**
-     * Precio del artículo, una sola unidad.
-     * @var float
-     */
-    public $pvpunitario;
-
-    /**
-     * % de IRPF de la línea.
-     * @var float
-     */
-    public $irpf;
-
-    /**
-     * % de recargo de equivalencia de la línea.
-     * @var float
-     */
-    public $recargo;
 
     /**
      * Posición de la linea en el documento. Cuanto más alto más abajo.
@@ -203,46 +126,6 @@ class LineaAlbaranCliente
 
     /**
      * TODO
-     * @return float
-     */
-    public function pvpIva()
-    {
-        return $this->pvpunitario * (100 + $this->iva) / 100;
-    }
-
-    /**
-     * TODO
-     * @return float
-     */
-    public function totalIva()
-    {
-        return $this->pvptotal * (100 + $this->iva - $this->irpf + $this->recargo) / 100;
-    }
-
-    /**
-     * TODO
-     * @return float
-     */
-    public function totalIva2()
-    {
-        if ($this->cantidad === 0) {
-            return 0;
-        }
-        return $this->pvptotal * (100 + $this->iva) / 100 / $this->cantidad;
-    }
-
-    /**
-     * TODO
-     * @return string
-     */
-    public function getDescripcion()
-    {
-        return nl2br($this->descripcion);
-    }
-    /// Devuelve el precio total por unidad (con descuento incluido e iva aplicado)
-
-    /**
-     * TODO
      * @return string
      */
     public function showCodigo()
@@ -290,18 +173,6 @@ class LineaAlbaranCliente
     public function url()
     {
         return 'index.php?page=VentasAlbaran&id=' . $this->idalbaran;
-    }
-
-    /**
-     * TODO
-     * @return string
-     */
-    public function articuloUrl()
-    {
-        if ($this->referencia === null || $this->referencia === '') {
-            return 'index.php?page=VentasArticulos';
-        }
-        return 'index.php?page=VentasArticulo&ref=' . urlencode($this->referencia);
     }
 
     /**

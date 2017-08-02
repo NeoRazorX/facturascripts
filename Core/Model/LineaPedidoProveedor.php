@@ -27,87 +27,20 @@ namespace FacturaScripts\Core\Model;
 class LineaPedidoProveedor
 {
 
+    use Base\LineaDocumento;
     use Base\ModelTrait;
 
     /**
-     * Clave primaria.
-     * @var type 
-     */
-    public $idlinea;
-
-    /**
      * ID del pedido.
-     * @var type 
+     * @var integer
      */
     public $idpedido;
-    public $cantidad;
-
-    /**
-     * Código del impuesto relacionado.
-     * @var type 
-     */
-    public $codimpuesto;
-    public $descripcion;
-
-    /**
-     * % de descuento.
-     * @var type 
-     */
-    public $dtopor;
-
-    /**
-     * % de retención IRPF
-     * @var type 
-     */
-    public $irpf;
-
-    /**
-     * % del impuesto relacionado.
-     * @var type 
-     */
-    public $iva;
-
-    /**
-     * Importe neto sin descuento, es decir, pvpunitario * cantidad.
-     * @var type 
-     */
-    public $pvpsindto;
-
-    /**
-     * Importe neto de la linea, sin impuestos.
-     * @var type 
-     */
-    public $pvptotal;
-
-    /**
-     * Precio de un unidad.
-     * @var type 
-     */
-    public $pvpunitario;
-
-    /**
-     * % de recargo de equivalencia RE.
-     * @var type 
-     */
-    public $recargo;
-
-    /**
-     * Referencia del artículo.
-     * @var type 
-     */
-    public $referencia;
-
-    /**
-     * Código de la combinación seleccionada, en el caso de los artículos con atributos.
-     * @var type 
-     */
-    public $codcombinacion;
     private static $pedidos;
 
     public function __construct($data = [])
     {
         if (!isset(self::$pedidos)) {
-            self::$pedidos = array();
+            self::$pedidos = [];
         }
 
         $this->init('lineaspedidosprov', 'idlinea');
@@ -116,39 +49,6 @@ class LineaPedidoProveedor
         } else {
             $this->loadFromData($data);
         }
-    }
-
-    public function clear()
-    {
-        $this->cantidad = 0;
-        $this->codimpuesto = NULL;
-        $this->descripcion = '';
-        $this->dtopor = 0;
-        $this->idlinea = NULL;
-        $this->idpedido = NULL;
-        $this->irpf = 0;
-        $this->iva = 0;
-        $this->pvpsindto = 0;
-        $this->pvptotal = 0;
-        $this->pvpunitario = 0;
-        $this->recargo = 0;
-        $this->referencia = NULL;
-        $this->codcombinacion = NULL;
-    }
-
-    public function pvp_iva()
-    {
-        return $this->pvpunitario * (100 + $this->iva) / 100;
-    }
-
-    public function total_iva()
-    {
-        return $this->pvptotal * (100 + $this->iva - $this->irpf + $this->recargo) / 100;
-    }
-
-    public function descripcion()
-    {
-        return nl2br($this->descripcion);
     }
 
     public function show_codigo()
@@ -220,15 +120,6 @@ class LineaPedidoProveedor
     public function url()
     {
         return 'index.php?page=compras_pedido&id=' . $this->idpedido;
-    }
-
-    public function articulo_url()
-    {
-        if (is_null($this->referencia) OR $this->referencia == '') {
-            return "index.php?page=ventas_articulos";
-        } else {
-            return "index.php?page=ventas_articulo&ref=" . urlencode($this->referencia);
-        }
     }
 
     public function test()

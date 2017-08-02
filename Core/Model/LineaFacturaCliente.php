@@ -26,6 +26,7 @@ namespace FacturaScripts\Core\Model;
 class LineaFacturaCliente
 {
 
+    use Base\LineaDocumento;
     use Base\ModelTrait;
 
     /**
@@ -39,12 +40,6 @@ class LineaFacturaCliente
      * @var array
      */
     private static $albaranes;
-
-    /**
-     * Clave primaria.
-     * @var int
-     */
-    public $idlinea;
 
     /**
      * ID de la linea del albarán relacionado, si lo hay.
@@ -63,78 +58,6 @@ class LineaFacturaCliente
      * @var int
      */
     public $idalbaran;
-
-    /**
-     * Importe neto de la línea, sin impuestos.
-     * @var float
-     */
-    public $pvptotal;
-
-    /**
-     * % de descuento.
-     * @var float
-     */
-    public $dtopor;
-
-    /**
-     * % de recargo de equivalencia.
-     * @var float
-     */
-    public $recargo;
-
-    /**
-     * % de IRPF.
-     * @var float
-     */
-    public $irpf;
-
-    /**
-     * Importe neto sin descuentos.
-     * @var float
-     */
-    public $pvpsindto;
-
-    /**
-     * TODO
-     * @var float
-     */
-    public $cantidad;
-
-    /**
-     * Impuesto del artículo.
-     * @var string
-     */
-    public $codimpuesto;
-
-    /**
-     * Precio del artículo, una unidad.
-     * @var float
-     */
-    public $pvpunitario;
-
-    /**
-     * TODO
-     * @var string
-     */
-    public $descripcion;
-
-    /**
-     * Referencia del artículo.
-     * @var string
-     */
-    public $referencia;
-
-    /**
-     * Código de la combinación seleccionada, en el caso de los artículos con atributos.
-     * @var
-     */
-    public $codcombinacion;
-
-    /**
-     * % de IVA de la línea, el que corresponde al impuesto.
-     * @var float
-     */
-    public $iva;
 
     /**
      * Posición de la linea en el documento. Cuanto más alto más abajo.
@@ -223,24 +146,6 @@ class LineaFacturaCliente
         $this->orden = 0;
         $this->mostrar_cantidad = true;
         $this->mostrar_precio = true;
-    }
-
-    /**
-     * TODO
-     * @return float
-     */
-    public function totalIva()
-    {
-        return $this->pvptotal * (100 + $this->iva - $this->irpf + $this->recargo) / 100;
-    }
-
-    /**
-     * TODO
-     * @return string
-     */
-    public function getDescripcion()
-    {
-        return nl2br($this->descripcion);
     }
 
     /**
@@ -344,18 +249,6 @@ class LineaFacturaCliente
 
     /**
      * TODO
-     * @return string
-     */
-    public function articuloUrl()
-    {
-        if ($this->referencia === null || $this->referencia === '') {
-            return 'index.php?page=VentasArticulos';
-        }
-        return 'index.php?page=VentasArticulo&ref=' . urlencode($this->referencia);
-    }
-
-    /**
-     * TODO
      * @return bool
      */
     public function test()
@@ -375,54 +268,6 @@ class LineaFacturaCliente
             return false;
         }
         return true;
-    }
-
-    /**
-     * TODO
-     *
-     * @param int $idfac
-     *
-     * @return array
-     */
-    public function allFromFactura($idfac)
-    {
-        $linlist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idfactura = ' . $this->var2str($idfac)
-            . ' ORDER BY orden DESC, idlinea ASC;';
-
-        $lineas = $this->dataBase->select($sql);
-        if (!empty($lineas)) {
-            foreach ($lineas as $lin) {
-                $linlist[] = new LineaFacturaCliente($lin);
-            }
-        }
-
-        return $linlist;
-    }
-
-    /**
-     * TODO
-     *
-     * @param string $ref
-     * @param int $offset
-     *
-     * @return array
-     */
-    public function allFromArticulo($ref, $offset = 0)
-    {
-        $linealist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() .
-            ' WHERE referencia = ' . $this->var2str($ref) .
-            ' ORDER BY idfactura DESC';
-
-        $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if (!empty($data)) {
-            foreach ($data as $l) {
-                $linealist[] = new LineaFacturaCliente($l);
-            }
-        }
-
-        return $linealist;
     }
 
     /**
