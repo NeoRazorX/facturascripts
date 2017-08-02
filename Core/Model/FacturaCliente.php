@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * Factura de un cliente.
  *
@@ -252,30 +254,6 @@ class FacturaCliente
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos del agente
-     * @return string
-     */
-    public function agenteUrl()
-    {
-        if ($this->codagente === null) {
-            return 'index.php?page=AdminAgentes';
-        }
-        return 'index.php?page=AdminAgente&cod=' . $this->codagente;
-    }
-
-    /**
-     * Devuelve la url donde ver/modificar estos datos del cliente
-     * @return string
-     */
-    public function clienteUrl()
-    {
-        if ($this->codcliente === null) {
-            return 'index.php?page=VentasClientes';
-        }
-        return 'index.php?page=VentasCliente&cod=' . $this->codcliente;
-    }
-
-    /**
      * Devuelve el asiento asociado
      * @return bool|Asiento
      */
@@ -301,8 +279,8 @@ class FacturaCliente
      */
     public function getLineas()
     {
-        $linea = new LineaFacturaCliente();
-        return $linea->allFromFactura($this->idfactura);
+        $lineaModel = new LineaFacturaCliente();
+        return $lineaModel->all(new DataBaseWhere('idfactura', $this->idfactura));
     }
 
     /**

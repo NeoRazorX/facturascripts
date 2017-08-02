@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * Albarán de proveedor o albarán de compra. Representa la recepción
  * de un material que se ha comprado. Implica la entrada de ese material
@@ -135,8 +137,8 @@ class AlbaranProveedor
      */
     public function getLineas()
     {
-        $linea = new LineaAlbaranProveedor();
-        return $linea->allFromAlbaran($this->idalbaran);
+        $lineaModel = new LineaAlbaranProveedor();
+        return $lineaModel->all(new DataBaseWhere('idalbaran', $this->idalbaran));
     }
 
     /**

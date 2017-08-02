@@ -19,6 +19,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * Presupuesto de cliente
  */
@@ -111,28 +113,10 @@ class PresupuestoCliente
         return 'index.php?page=ventas_pedido&id=' . $this->idpedido;
     }
 
-    public function agente_url()
+    public function getLineas()
     {
-        if (is_null($this->codagente)) {
-            return "index.php?page=admin_agentes";
-        }
-
-        return "index.php?page=admin_agente&cod=" . $this->codagente;
-    }
-
-    public function cliente_url()
-    {
-        if (is_null($this->codcliente)) {
-            return "index.php?page=ventas_clientes";
-        }
-
-        return "index.php?page=ventas_cliente&cod=" . $this->codcliente;
-    }
-
-    public function get_lineas()
-    {
-        $linea = new LineaPresupuestoCliente();
-        return $linea->all_from_presupuesto($this->idpresupuesto);
+        $lineaModel = new LineaPresupuestoCliente();
+        return $lineaModel->all(new DataBaseWhere('idpresupuesto', $this->idpresupuesto));
     }
 
     public function get_versiones()
@@ -214,7 +198,7 @@ class PresupuestoCliente
             return TRUE;
         }
 
-        $this->new_error_msg("Error grave: El total está mal calculado. ¡Informa del error!");
+        $this->miniLog->critical("Error grave: El total está mal calculado. ¡Informa del error!");
         return FALSE;
     }
 
@@ -245,19 +229,19 @@ class PresupuestoCliente
         $total = $neto + $iva - $irpf + $recargo;
 
         if (!$this->floatcmp($this->neto, $neto, FS_NF0, TRUE)) {
-            $this->new_error_msg("Valor neto de " . FS_PRESUPUESTO . " incorrecto. Valor correcto: " . $neto);
+            $this->miniLog->critical("Valor neto de " . FS_PRESUPUESTO . " incorrecto. Valor correcto: " . $neto);
             $status = FALSE;
         } else if (!$this->floatcmp($this->totaliva, $iva, FS_NF0, TRUE)) {
-            $this->new_error_msg("Valor totaliva de " . FS_PRESUPUESTO . " incorrecto. Valor correcto: " . $iva);
+            $this->miniLog->critical("Valor totaliva de " . FS_PRESUPUESTO . " incorrecto. Valor correcto: " . $iva);
             $status = FALSE;
         } else if (!$this->floatcmp($this->totalirpf, $irpf, FS_NF0, TRUE)) {
-            $this->new_error_msg("Valor totalirpf de " . FS_PRESUPUESTO . " incorrecto. Valor correcto: " . $irpf);
+            $this->miniLog->critical("Valor totalirpf de " . FS_PRESUPUESTO . " incorrecto. Valor correcto: " . $irpf);
             $status = FALSE;
         } else if (!$this->floatcmp($this->totalrecargo, $recargo, FS_NF0, TRUE)) {
-            $this->new_error_msg("Valor totalrecargo de " . FS_PRESUPUESTO . " incorrecto. Valor correcto: " . $recargo);
+            $this->miniLog->critical("Valor totalrecargo de " . FS_PRESUPUESTO . " incorrecto. Valor correcto: " . $recargo);
             $status = FALSE;
         } else if (!$this->floatcmp($this->total, $total, FS_NF0, TRUE)) {
-            $this->new_error_msg("Valor total de " . FS_PRESUPUESTO . " incorrecto. Valor correcto: " . $total);
+            $this->miniLog->critical("Valor total de " . FS_PRESUPUESTO . " incorrecto. Valor correcto: " . $total);
             $status = FALSE;
         }
 

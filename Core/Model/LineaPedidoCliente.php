@@ -183,10 +183,10 @@ class LineaPedidoCliente
         $totalsindto = $this->pvpunitario * $this->cantidad;
 
         if (!$this->floatcmp($this->pvptotal, $total, FS_NF0, TRUE)) {
-            $this->new_error_msg("Error en el valor de pvptotal de la línea " . $this->referencia . " del " . FS_PEDIDO . ". Valor correcto: " . $total);
+            $this->miniLog->critical("Error en el valor de pvptotal de la línea " . $this->referencia . " del " . FS_PEDIDO . ". Valor correcto: " . $total);
             return FALSE;
         } else if (!$this->floatcmp($this->pvpsindto, $totalsindto, FS_NF0, TRUE)) {
-            $this->new_error_msg("Error en el valor de pvpsindto de la línea " . $this->referencia . " del " . FS_PEDIDO . ". Valor correcto: " . $totalsindto);
+            $this->miniLog->critical("Error en el valor de pvpsindto de la línea " . $this->referencia . " del " . FS_PEDIDO . ". Valor correcto: " . $totalsindto);
             return FALSE;
         }
 

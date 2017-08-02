@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * Factura de un proveedor.
  *
@@ -237,8 +239,8 @@ class FacturaProveedor
      */
     public function getLineas()
     {
-        $linea = new LineaFacturaProveedor();
-        return $linea->allFromFactura($this->idfactura);
+        $lineaModel = new LineaFacturaProveedor();
+        return $lineaModel->all( new DataBaseWhere('idfactura', $this->idfactura) );
     }
 
     /**
