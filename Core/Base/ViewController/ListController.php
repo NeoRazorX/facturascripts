@@ -21,14 +21,14 @@ namespace FacturaScripts\Core\Base\ViewController;
 use FacturaScripts\Core\Base as Base;
 use FacturaScripts\Core\Model as Models;
 use FacturaScripts\Core\Base\DataBase as DataBase;
-    
+
 /**
  * Controlador para listado de datos en modo tabla
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-abstract class ListController extends Base\Controller
+class ListController extends Base\Controller
 {
 
     /**
@@ -49,10 +49,9 @@ abstract class ListController extends Base\Controller
      * @var Model\PageOption
      */
     private $pageOption;
-    
+//    public $fields;
     public $filters;
-    public $fields;
-    
+
     /**
      * Lista de campos disponibles en el order by
      * Ejemplo: orderby[key] = ["label" => "Etiqueta", "icon" => ICONO_ASC]
@@ -86,8 +85,6 @@ abstract class ListController extends Base\Controller
      */
     public $count;
 
-    protected abstract function getColumns();
-
     /**
      * Inicia todos los objetos y propiedades.
      *
@@ -108,11 +105,11 @@ abstract class ListController extends Base\Controller
         $this->count = 0;
         $this->orderby = [];
         $this->filters = [];
-        $this->fields = [];
-        
+//        $this->fields = [];
+
         $this->pageOption = new Models\PageOption();
     }
-    
+
     /**
      * Ejecuta la lógica privada del controlador.
      */
@@ -120,17 +117,27 @@ abstract class ListController extends Base\Controller
     {
         parent::privateCore($response, $user);
 
-        // Cargamos configuración de columnas y filtros 
-        $this->fields = $this->getColumns();
-        
+        // Cargamos configuración de columnas y filtros
+//        $this->fields = $this->getColumns();
+
         $className = $this->getClassName();
         $this->pageOption->getForUser($className, $user->nick);
-        
+
         // Establecemos el orderby seleccionado
         $orderKey = $this->request->get("order");
         $this->selectedOrderBy = empty($orderKey) ? (string) array_keys($this->orderby)[0] : $this->getSelectedOrder($orderKey);
     }
-        
+
+    /**
+     * Lista de columnas y su configuración
+     * (Array of ColumnItem)
+     * @return array
+     */
+    public function getColumns()
+    {
+        return $this->pageOption->columns;
+    }
+
     /**
      * Devuelve la key del campo seleccionado en el order by
      * @param string $orderKey
@@ -154,7 +161,6 @@ abstract class ListController extends Base\Controller
         return $result;
     }
 
-
     /**
      * Establece la clausula WHERE según los filtros definidos
      * @return array
@@ -168,15 +174,15 @@ abstract class ListController extends Base\Controller
                 switch ($value['type']) {
                     case 'datepicker':
                     case 'select':
-                            $field = $value['options']['field'];
-                            $result[] = new DataBase\DataBaseWhere($field, $value['value']);
-                            break;
+                        $field = $value['options']['field'];
+                        $result[] = new DataBase\DataBaseWhere($field, $value['value']);
+                        break;
 
                     case 'checkbox':
-                            $field = $value['options']['field'];
-                            $value = $value['options']['inverse'] ? !$value['value'] : $value['value'];
-                            $result[] = new DataBase\DataBaseWhere($field, $value);
-                            break;
+                        $field = $value['options']['field'];
+                        $value = $value['options']['inverse'] ? !$value['value'] : $value['value'];
+                        $result[] = new DataBase\DataBaseWhere($field, $value);
+                        break;
                 }
             }
         }
@@ -305,9 +311,9 @@ abstract class ListController extends Base\Controller
             if ($where != "") {
                 $sql .= " AND " . $where;
             }
-            
-            $sql = "SELECT DISTINCT " . $field 
-                . " FROM " . $table 
+
+            $sql = "SELECT DISTINCT " . $field
+                . " FROM " . $table
                 . " WHERE COALESCE(" . $field . ", '')" . " <> ''" . $where
                 . " ORDER BY 1 ASC;";
 
@@ -381,7 +387,7 @@ abstract class ListController extends Base\Controller
             $index++;
         }
 
-        // Añadimos la página de en medio entre la primera y la página seleccionada, 
+        // Añadimos la página de en medio entre la primera y la página seleccionada,
         // si la página seleccionada es mayor que el margen de páginas
         $recordMiddleLeft = ($recordMin > self::FS_ITEM_LIMIT) ? ($this->offset / 2) : $recordMin;
         if ($recordMiddleLeft < $recordMin) {

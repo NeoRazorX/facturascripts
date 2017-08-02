@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Base\ViewController;
 
-use FacturaScripts\Core\Model as Models;
-
 /**
  * Description of ColumnItem
  *
@@ -27,100 +25,102 @@ use FacturaScripts\Core\Model as Models;
  */
 class ColumnItem
 {
+
     /**
      * Etiqueta o título de la columna
      * @var string
      */
     public $title;
-    
+
     /**
      * URL de salto si hacen click en $title
      * @var string
      */
     public $titleURL;
-    
+
     /**
      * Configuración del campo de la columna
      * @var FieldOptions
      */
     public $field;
-    
+
     /**
      * Texto adicional que explica el campo al usuario
      * @var string
      */
     public $description;
-    
+
     /**
      * Configuración del objeto de visualización del campo
      * @var WidgetOptions
      */
     public $widget;
-    
+
     /**
      * Número de columnas que usa el campo en su visualización
      * (Mínimo 1 - Máximo 8)
      * @var int
      */
     public $numColumns;
-    
+
     /**
      * Configuración del estado y alineamiento de la visualización
      * (left|right|center|none)
      * @var string
      */
     public $display;
-    
+
     /**
-     * Constructor de la clase. Si se informa un array se cargan los datos
-     * informados en el nuevo objeto
-     * @param array $data
+     * Construye e inicializa la clase.
      */
-    public function __construct($data = [])
+    public function __construct()
     {
-        if (empty($data)) {
-            $this->init();
-        } else {
-            $this->loadFromData($data);
-        }
-    }
-    
-    /**
-     * Inicializa la clase con valores nulos
-     */
-    private function init() {
-        $this->title = null;
-        $this->titleURL = null;
-        $this->description = null;
-        $this->field = new FieldOptions();
-        $this->widget = new WidgetOptions();
+        $this->title = '';
+        $this->titleURL = '';
+        $this->description = '';
         $this->numColumns = 1;
         $this->display = 'none';
-    }
-    
-    /**
-     * Inicializa la clase con los datos de un array
-     * @param array $data
-     */
-    private function loadFromData($data) {
-        $this->title = $data['title'];
-        $this->titleURL = $data['titleurl'];
-        $this->description = $data['description'];
-        $this->field = new FieldOptions($data['field']);
-        $this->widget = new WidgetOptions($data['widget']);
-        $this->numColumns = $data['numcolumns'];
-        $this->display = $data['display'];
+        $this->field = new FieldOptions();
+        $this->widget = new WidgetOptions();
     }
 
     /**
-     * Carga la configuración de columnas de un controlador para el usuario
-     * @param string $controller
-     * @param string $user
-     * @return array ColumnItem
+     * Inicializa la clase con los valores pasados.
+     * Es una estructura de columna leida desde un XML
+     * @param SimpleXMLElement $column
      */
-    public static function getColumns($controller, $user)
+    public function loadFromXMLColumn($column)
     {
-        $pageOption = new Models\PageOption();
-        $pageOption->all();
-    }    
+        $column_atributes = $column->attributes();
+        $this->title = (string) $column_atributes->title;
+        $this->titleURL = (string) $column_atributes->titleurl;
+        $this->description = (string) $column_atributes->description;
+        $this->numColumns = (int) $column_atributes->numcolumns;
+        $this->display = (string) $column_atributes->display;
+
+        $this->field->loadFromXMLColumn($column);
+        $this->widget->loadFromXMLColumn($column);
+    }
+
+    public function loadFromJSONColumn($column)
+    {
+        $this->title = (string) $column['title'];
+        $this->titleURL = (string) $column['titleURL'];
+        $this->description = (string) $column['description'];
+        $this->numColumns = (int) $column['numColumns'];
+        $this->display = (string) $column['display'];
+    }
+
+    public function columnsFromJSON($columns)
+    {
+        $result = [];
+        foreach ($columns as $data) {
+            $columnItem = new ColumnItem();
+            $columnItem->loadFromJSONColumn($data);
+            $columnItem->field->loadFromJSONColumn($data);
+            $columnItem->widget->loadFromJSONColumn($data);
+            $result[] = $columnItem;
+        }
+        return $result;
+    }
 }

@@ -75,25 +75,4 @@ class ListAgente extends ViewController\ListController
         $pagedata['menu'] = 'admin';
         return $pagedata;
     }
-
-    protected function getColumns()
-    {
-        return [
-            ['label' => 'Codigo', 'field' => 'codagente', 'display' => 'left'],
-            ['label' => 'Nombre', 'field' => 'nombre', 'display' => 'left'],
-            ['label' => 'Cargo', 'field' => 'cargo', 'display' => 'left'],
-            ['label' => '% Com.', 'field' => 'porcomision', 'display' => 'center'],
-            ['label' => 'Dirección', 'field' => 'direccion', 'display' => 'left'],
-            ['label' => 'Ciudad', 'field' => 'ciudad', 'display' => 'center'],
-            ['label' => 'Cod. Postal', 'field' => 'codpostal', 'display' => 'none'],
-            ['label' => 'Provincia', 'field' => 'direccion', 'display' => 'center'],
-            ['label' => 'Teléfono', 'field' => 'telefono', 'display' => 'left'],
-            ['label' => 'Email', 'field' => 'email', 'display' => 'left'],
-            ['label' => 'Fec. Alta', 'field' => 'f_alta', 'display' => 'none'],
-            ['label' => 'Fec. Baja', 'field' => 'f_baja', 'display' => 'center'],
-            ['label' => 'Nacimiento', 'field' => 'f_nacimiento', 'display' => 'none'],
-            ['label' => 'Seg. Social', 'field' => 'seg_social', 'display' => 'none'],
-            ['label' => 'Cta. Banco', 'field' => 'banco', 'display' => 'none']
-        ];        
-    }
 }

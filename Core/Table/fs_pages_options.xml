@@ -11,7 +11,7 @@
         <nombre>id</nombre>
         <tipo>serial</tipo>
         <nulo>NO</nulo>
-        <defecto>nextval('pagesoptions_id_seq'::regclass)</defecto>
+        <defecto>nextval('fs_pages_options_id_seq'::regclass)</defecto>
     </columna>    
     <columna>
         <nombre>name</nombre>

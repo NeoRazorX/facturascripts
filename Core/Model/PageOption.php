@@ -19,9 +19,11 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\Database as DataBase;
+use FacturaScripts\Core\Base\ViewController as ViewController;
 
 /**
- * Elemento del menú de FacturaScripts, cada uno se corresponde con un controlador.
+ * Configuración visual de las vistas de FacturaScripts,
+ * cada PageOption se corresponde con un controlador.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -88,8 +90,14 @@ class PageOption
         $this->id = $data['id'];
         $this->name = $data['name'];
         $this->nick = $data['nick'];
-        $this->columns = json_decode($data['columns'], true);
-        $this->filters = json_decode($data['filters'], true);
+
+        $columns = json_decode($data['columns'], true);
+        $columnItem = new ViewController\ColumnItem();
+        $this->columns = $columnItem->columnsFromJSON($columns);
+
+        // TODO: Cargar estructura de filtros
+        $filters = json_decode($data['filters'], true);
+        $this->filters = $filters;
     }
 
     /**
@@ -117,13 +125,14 @@ class PageOption
         $columns = json_encode($this->columns);
         $filters = json_encode($this->filters);
 
-        $sql = 'INSERT INTO ' . $this->tableName()
-            . ' (id, name, nick, columns, filters) VALUES ('
-            . $this->var2str($this->name) . ','
-            . $this->var2str($this->nick) . ','
-            . $this->var2str($columns) . ','
+        $sql = "INSERT INTO " . $this->tableName()
+            . " (id, name, nick, columns, filters) VALUES ("
+            . "nextval('fs_pages_options_id_seq')" . ","
+            . $this->var2str($this->name) . ","
+            . $this->var2str($this->nick) . ","
+            . $this->var2str($columns) . ","
             . $this->var2str($filters)
-            . ');';
+            . ");";
 
         if ($this->dataBase->exec($sql)) {
             $this->id = $this->dataBase->lastval();
@@ -132,19 +141,49 @@ class PageOption
 
         return false;
     }
-    
+
+    public function installXML($name)
+    {
+        $this->id = null;
+        $this->name = $name;
+        $this->columns = [];
+        $this->filters = [];
+        $file = "Dinamic/Controller/{$name}.xml";
+        $xml = simplexml_load_file($file);
+
+        if ($xml) {
+            $columnItem = new ViewController\ColumnItem();
+            foreach ($xml->columns->column as $column) {
+                $columnItem->loadFromXMLColumn($column);
+                $this->columns[$columnItem->field->name] = $columnItem;
+            }
+            unset($columnItem);
+
+//        foreach ($xml->filters->filter as $filter) {
+//        }
+        }
+        $this->saveInsert();
+    }
+
     public function getForUser($name, $nick)
     {
         $where = [];
         $where[] = new DataBase\DataBaseWhere('name', $name);
         $where[] = new DataBase\DataBaseWhere('nick', $nick);
         $where[] = new DataBase\DataBaseWhere('nick', 'NULL', 'IS', 'OR');
-        
+
         $orderby = ['nick' => 'ASC'];
-        
+
         $data = $this->all($where, $orderby, 0, 1);
-        if (!empty($data)) {
-            $this->loadFromData($data);
+        if (empty($data)) {
+            $this->installXML($name);
+        } else {
+            $pageOption = $data[0];
+            $this->id = $pageOption->id;
+            $this->name = $pageOption->name;
+            $this->nick = $pageOption->nick;
+            $this->columns = $pageOption->columns;
+            $this->filters = $pageOption->filters;
         }
     }
 }

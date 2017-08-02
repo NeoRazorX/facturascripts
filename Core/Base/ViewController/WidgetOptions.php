@@ -25,24 +25,25 @@ namespace FacturaScripts\Core\Base\ViewController;
  */
 class WidgetOptions
 {
+
     /**
      * Tipo de widget que se visualiza
      * @var string
      */
     public $type;
-    
-    /**
-     * Datos adicionales dependientes del tipo de Widget
-     * @var string
-     */
-    public $value;
-    
+
     /**
      * Información adicional para el usuario
      * @var string
      */
-    public $title;
-    
+    public $hint;
+
+    /**
+     * Icono que se usa como valor o acompañante del widget
+     * @var string
+     */
+    public $icon;
+
     /**
      * Código HTML para la representación del widget
      * @var string
@@ -54,38 +55,65 @@ class WidgetOptions
      * informados en el nuevo objeto
      * @param string $type
      */
-    public function __construct($type, $value, $title)
+    public function __construct()
     {
-        $this->type = $type;
-        $this->value = $value;
-        $this->title = $title;
-        $this->html = $this->getHTML();            
+        $this->type = 'text';
+        $this->hint = '';
+        $this->icon = null;
+        $this->html = '';
     }
-    
-    private function getHTML()
+
+    public function loadFromXMLColumn($column)
+    {
+        $widget_atributes = $column->widget->attributes();
+        $this->type = (string) $widget_atributes->type;
+        $this->hint = (string) $widget_atributes->hint;
+        $this->icon = (string) $widget_atributes->icon;
+    }
+
+    public function loadFromJSONColumn($column)
+    {
+        $this->type = (string) $column['widget']['type'];
+        $this->hint = (string) $column['widget']['hint'];
+        $this->icon = (string) $column['widget']['icon'];
+    }
+
+    public function getHTML($value)
     {
         $html = '';
         switch ($this->type) {
             case "text":
+                $html = empty($value) ? '' : $value;
                 break;
-            
+
             case "check":
-                $html = '<span class="glyphicon glyphicon-ok"></span>';
+                if ($value) {
+                    $html = '<span class="glyphicon glyphicon-ok"></span>';
+                }
                 break;
-            
+
+            case "icon":
+                $html = '<span class="glyphicon "' . $this->icon . ' aria-hidden="true" title="' . $this->title . '"></span>';
+                break;
+
+            default:
+                $html = $this->extraWidgetHTML($value);
+        }
+
+        return $html;
+    }
+
+    private function extraWidgetHTML($value)
+    {
+        $html = $value;
+        switch ($this->type) {
             case "downdrop":
                 break;
-            
+
             case "textarea":
                 break;
-            
-            case "icon":
-                $html = '<span class="glyphicon "' . $this->value . ' aria-hidden="true" title="' . $this->title . '"></span>';
-                break;
-            
-            default:
         }
-        
+
         return $html;
     }
 }

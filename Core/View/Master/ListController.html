@@ -180,18 +180,19 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            {% for field in fsc.fields %}
-                            {% if field.display != 'none' %}
-                            <th class="text-{{ field['display'] }}">{{ field['label'] }}</th>
+                            {% for column in fsc.getColumns() %}
+                            {% if column.display != 'none' %}
+                            <th class="text-{{ column.display }}">{{ column.title }}</th>
                             {% endif %}
                             {% endfor %}
                         </tr>
                     </thead>
                     {% for data in fsc.cursor %}
                     <tr>
-                        {% for field in fsc.fields %}
-                        {% if field.display != 'none' %}
-                        <td class="text-{{ field.display }}">{{ attribute(data, field.field) }}</td>
+                        {% for column in fsc.getColumns() %}
+                        {% if column.display != 'none' %}
+                        {% set value = attribute(data, column.field.name) %}
+                        <td class="text-{{ column.display }}">{{ column.widget.getHTML(value)|raw }}</td>
                         {% endif %}
                         {% endfor %}
                     </tr>

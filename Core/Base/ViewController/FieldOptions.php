@@ -25,71 +25,66 @@ namespace FacturaScripts\Core\Base\ViewController;
  */
 class FieldOptions
 {
+
     /**
      * Nombre del campo del modelo
      * @var string
      */
     public $name;
-    
+
     /**
      * Indica que el campo es obligatorio y debe contener un valor
      * @var boolean
      */
     public $required;
-    
+
     /**
      * Indica que el campos es no editable
      * @var boolean
      */
     public $readOnly;
- 
+
     /**
      * Indica si se puede hacer click en el valor del campo
      * @var boolean
      */
     public $clickable;
-    
-    /**
-     * Icono que se usa como sustitutivo del valor del campo
-     * o como acompañante del widget de edición
-     * @var string
-     */
-    public $icon;
-    
+
     /**
      * Constructor de la clase. Si se informa un array se cargan los datos
      * informados en el nuevo objeto
      * @param array $data
      */
-    public function __construct($data = [])
+    public function __construct()
     {
-        if (empty($data)) {
-            $this->init();
-        } else {
-            $this->loadFromData($data);
-        }
+        $this->init();
     }
-    
+
     /**
      * Inicializa la clase con valores nulos
      */
-    private function init() {
+    public function init()
+    {
         $this->name = null;
         $this->required = FALSE;
         $this->readOnly = FALSE;
         $this->clickable = FALSE;
-        $this->icon = null;
     }
-    
-    /**
-     * Inicializa la clase con los datos de un array
-     * @param array $data
-     */
-    private function loadFromData($data) {
-        $this->name = $data['name'];
-        $this->required = $data['required'];
-        $this->readOnly = $data['readonly'];
-        $this->clickable = $data['clickable'];
-        $this->icon = $data['icon'];
+
+    public function loadFromXMLColumn($column)
+    {
+        $field_atributes = $column->field->attributes();
+        $this->name = (string) $column->field;
+        $this->required = (bool) $field_atributes->required;
+        $this->readonly = (bool) $field_atributes->readonly;
+        $this->clickable = (bool) $field_atributes->clickable;
+    }
+
+    public function loadFromJSONColumn($column)
+    {
+        $this->name = (string) $column['field']['name'];
+        $this->required = (bool) $column['field']['required'];
+        $this->readOnly = (bool) $column['field']['readOnly'];
+        $this->clickable = (bool) $column['field']['clickable'];
     }
 }

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view>
+    <columns>
+        <column title="Código" titleurl="" description="" numcolumns="1" display="left">
+            <field required="true" readonly="false" clickable="false">codagente</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="Nombre" titleurl="" description="" numcolumns="1" display="left">
+            <field required="true" readonly="false" clickable="false">nombre</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="Cargo" titleurl="" description="" numcolumns="1" display="left">
+            <field required="false" readonly="false" clickable="false">cargo</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="% Com." titleurl="" description="" numcolumns="1" display="none">
+            <field required="false" readonly="false" clickable="false">porcomision</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="Dirección" titleurl="" description="" numcolumns="1" display="none">
+            <field required="false" readonly="false" clickable="false">direccion</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="Ciudad" titleurl="" description="" numcolumns="1" display="center">
+            <field required="false" readonly="false" clickable="false">ciudad</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="Cod. Postal" titleurl="" description="" numcolumns="1" display="none">
+            <field required="false" readonly="false" clickable="false">codpostal</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="Provincia" titleurl="" description="" numcolumns="1" display="center">
+            <field required="false" readonly="false" clickable="false">provincia</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="Teléfono" titleurl="" description="" numcolumns="1" display="left">
+            <field required="false" readonly="false" clickable="false">telefono</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="Email" titleurl="" description="" numcolumns="1" display="left">
+            <field required="false" readonly="false" clickable="false">email</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="Fec. Alta" titleurl="" description="" numcolumns="1" display="none">
+            <field required="false" readonly="false" clickable="false">f_alta</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="Fec. Baja" titleurl="" description="" numcolumns="1" display="center">
+            <field required="false" readonly="false" clickable="false">f_baja</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="Nacimiento" titleurl="" description="" numcolumns="1" display="none">
+            <field required="false" readonly="false" clickable="false">f_nacimiento</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="Seg. Social" titleurl="" description="" numcolumns="1" display="none">
+            <field required="false" readonly="false" clickable="false">seg_social</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="Cta. Banco" titleurl="" description="" numcolumns="1" display="none">
+            <field required="false" readonly="false" clickable="false">banco</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+    </columns>
+    
+    <filters>        
+    </filters>
+</view>
