@@ -13,10 +13,9 @@
 </script>
 {% endblock %}
 
-
 {% block body %}
 <!-- Page Header -->
-<div class="container-fluid">
+<div class="container-fluid hidden-print">
     <div class="row">
         <div class="col-sm-7 col-xs-6">
             <div class="btn-group hidden-xs">
@@ -38,12 +37,10 @@
                     <span class="glyphicon glyphicon-plus"></span>
                     <span class="hidden-xs">&nbsp;Nuevo</span>
                 </a>
-
                 <a href="#" id="b_options" class="btn btn-sm btn-default">
                     <span class="glyphicon glyphicon-wrench" aria-hidden="true" title="Opciones de configuración"></span>
                     <span class="hidden-xs">&nbsp;Opciones</span>
                 </a>
-                
                 <a id="b_print" class="btn btn-sm btn-default" onclick="window.print();">
                     <span class="glyphicon glyphicon-print" aria-hidden="true" title="Imprimir lista de registros"></span>
                     <span class="hidden-xs">&nbsp;Imprimir</span>
@@ -68,7 +65,7 @@
 <!-- Main Data -->
 <div id="tab_options" role="tabpanel">
     <!-- Tabs declaration -->
-    <ul class="nav nav-tabs" role="tablist">
+    <ul class="nav nav-tabs hidden-print" role="tablist">
         <li role="presentation" class="active">
             <a href="#search" aria-controls="search" role="tab" data-toggle="tab">
                 <span class="glyphicon glyphicon-search"></span>
@@ -92,7 +89,7 @@
         <div role="tabpanel" class="tab-pane active" id="search">
             <!-- Filters Row -->
             <form name="f_custom_search" action="{{ fsc.url() }}" method="post" class="form">
-                <div class="container-fluid" style="margin-top: 15px; margin-bottom: 10px;">
+                <div class="container-fluid hidden-print" style="margin-top: 15px; margin-bottom: 10px;">
                     <div class="row">
                         <!-- Main filter -->
                         <div class="col-sm-2">

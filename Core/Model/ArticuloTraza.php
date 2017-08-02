@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -29,6 +28,7 @@ namespace FacturaScripts\Core\Model;
  */
 class ArticuloTraza
 {
+
     use Base\ModelTrait;
 
     /**
@@ -79,11 +79,13 @@ class ArticuloTraza
      * @var int
      */
     public $idlfaccompra;
+
     /**
      * Fecha de entrada del artículo
      * @var |DateTime
      */
     public $fecha_entrada;
+
     /**
      * Fecha de salida del artículo
      * @var |DateTime
@@ -225,7 +227,7 @@ class ArticuloTraza
      * por defecto.
      * @return string
      */
-    private function install()
+    public function install()
     {
         /// forzamos la comprobación de las tablas necesarias
         //new Articulo();

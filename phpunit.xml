@@ -14,4 +14,4 @@ and open the template in the editor.
          stopOnFailure="true">
 </phpunit-->
 
-<phpunit bootstrap="bootstrap.php" colors="false" />
+<phpunit bootstrap="Test/bootstrap.php" colors="false" />

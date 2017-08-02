@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class LineaTransferenciaStock
 {
+
     use Base\ModelTrait;
 
     /// clave primaria. integer
@@ -34,31 +34,37 @@ class LineaTransferenciaStock
      * @var int
      */
     public $idlinea;
+
     /**
      * TODO
      * @var int
      */
     public $idtrans;
+
     /**
      * TODO
      * @var string
      */
     public $referencia;
+
     /**
      * TODO
      * @var float
      */
     public $cantidad;
+
     /**
      * TODO
      * @var string
      */
     public $descripcion;
+
     /**
      * TODO
      * @var string
      */
     private $fecha;
+
     /**
      * TODO
      * @var string
@@ -182,7 +188,7 @@ class LineaTransferenciaStock
      * por defecto.
      * @return string
      */
-    private function install()
+    public function install()
     {
         /// forzamos la comprobación de la tabla de transferencias de stock
         //new TransferenciaStock();

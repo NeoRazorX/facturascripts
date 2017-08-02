@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class LineaFacturaCliente
 {
+
     use Base\ModelTrait;
 
     /**
@@ -33,126 +33,151 @@ class LineaFacturaCliente
      * @var array
      */
     private static $facturas;
+
     /**
      * TODO
      * @var array
      */
     private static $albaranes;
+
     /**
      * Clave primaria.
      * @var int
      */
     public $idlinea;
+
     /**
      * ID de la linea del albarán relacionado, si lo hay.
      * @var int
      */
     public $idlineaalbaran;
+
     /**
      * ID de la factura de esta línea.
      * @var int
      */
     public $idfactura;
+
     /**
      * ID del albarán relacionado con esta factura, si lo hay.
      * @var int
      */
     public $idalbaran;
+
     /**
      * Importe neto de la línea, sin impuestos.
      * @var float
      */
     public $pvptotal;
+
     /**
      * % de descuento.
      * @var float
      */
     public $dtopor;
+
     /**
      * % de recargo de equivalencia.
      * @var float
      */
     public $recargo;
+
     /**
      * % de IRPF.
      * @var float
      */
     public $irpf;
+
     /**
      * Importe neto sin descuentos.
      * @var float
      */
     public $pvpsindto;
+
     /**
      * TODO
      * @var float
      */
     public $cantidad;
+
     /**
      * Impuesto del artículo.
      * @var string
      */
     public $codimpuesto;
+
     /**
      * Precio del artículo, una unidad.
      * @var float
      */
     public $pvpunitario;
+
     /**
      * TODO
      * @var string
      */
     public $descripcion;
+
     /**
      * Referencia del artículo.
      * @var string
      */
     public $referencia;
+
     /**
      * Código de la combinación seleccionada, en el caso de los artículos con atributos.
      * @var
      */
     public $codcombinacion;
+
     /**
      * % de IVA de la línea, el que corresponde al impuesto.
      * @var float
      */
     public $iva;
+
     /**
      * Posición de la linea en el documento. Cuanto más alto más abajo.
      * @var int
      */
     public $orden;
+
     /**
      * False -> no se muestra la columna cantidad al imprimir.
      * @var bool
      */
     public $mostrar_cantidad;
+
     /**
      * False -> no se muestran las columnas precio, descuento, impuestos y total al imprimir.
      * @var bool
      */
     public $mostrar_precio;
+
     /**
      * TODO
      * @var string
      */
     private $codigo;
+
     /**
      * TODO
      * @var string
      */
     private $fecha;
+
     /**
      * TODO
      * @var string
      */
     private $albaran_codigo;
+
     /**
      * TODO
      * @var int
      */
     private $albaran_numero;
+
     /**
      * TODO
      * @var string
@@ -536,7 +561,7 @@ class LineaFacturaCliente
      * por defecto.
      * @return string
      */
-    private function install()
+    public function install()
     {
         /**
          * cargamos el modelo de factura_cliente simplemente para forzar

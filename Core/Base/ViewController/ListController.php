@@ -420,6 +420,11 @@ class ListController extends Base\Controller
             $result[$index] = $this->addPaginationItem($url, ($pageMax + 1), ($pageMax * self::FS_ITEM_LIMIT), "glyphicon-step-forward");
         }
 
+        /// si solamente hay una página, no merece la pena mostrar un único botón
+        if (count($result) == 1) {
+            return [];
+        }
+
         return $result;
     }
 }

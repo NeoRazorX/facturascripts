@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class FacturaCliente
 {
+
     use Base\ModelTrait {
         saveInsert as private saveInsertTrait;
     }
@@ -114,6 +114,7 @@ class FacturaCliente
      * @var string
      */
     public $fecha;
+
     /**
      * Hora de la factura
      * @var string
@@ -125,31 +126,37 @@ class FacturaCliente
      * @var string
      */
     public $codcliente;
+
     /**
      * Nombre del cliente de la factura
      * @var string
      */
     public $nombrecliente;
+
     /**
      * CIF/NIF del cliente
      * @var string
      */
     public $cifnif;
+
     /**
      * Dirección del cliente
      * @var string
      */
     public $direccion;
+
     /**
      * Ciudad del cliente
      * @var string
      */
     public $ciudad;
+
     /**
      * Provincia del cliente
      * @var string
      */
     public $provincia;
+
     /**
      * Apartado de correos del cliente
      * @var string
@@ -161,46 +168,55 @@ class FacturaCliente
      * @var string
      */
     public $envio_codtrans;
+
     /**
      * Código de seguimiento
      * @var string
      */
     public $envio_codigo;
+
     /**
      * Nombre para la dirección del envío
      * @var string
      */
     public $envio_nombre;
+
     /**
      * Apellidos para la dirección del envío
      * @var string
      */
     public $envio_apellidos;
+
     /**
      * Apartado de correos para la dirección del envío
      * @var string
      */
     public $envio_apartado;
+
     /**
      * Dirección para el envío
      * @var string
      */
     public $envio_direccion;
+
     /**
      * Código postal para la dirección del envío
      * @var string
      */
     public $envio_codpostal;
+
     /**
      * Ciudad para la dirección del envío
      * @var string
      */
     public $envio_ciudad;
+
     /**
      * Provincia para la dirección del envío
      * @var string
      */
     public $envio_provincia;
+
     /**
      * Código del país para la dirección del envío
      * @var string
@@ -213,11 +229,13 @@ class FacturaCliente
      * @var string
      */
     public $coddir;
+
     /**
      * Código postal del cliente
      * @var string
      */
     public $codpostal;
+
     /**
      * Código del país del cliente
      * @var string
@@ -288,11 +306,13 @@ class FacturaCliente
      * @var float
      */
     public $totalrecargo;
+
     /**
      * Observaciones de la factura
      * @var string
      */
     public $observaciones;
+
     /**
      * TRUE => pagada
      * @var bool
@@ -676,16 +696,15 @@ class FacturaCliente
                          */
                         $diferencia = round(($this->neto - $tNeto) * 100);
                         usort(
-                            $lineasi,
-                            function($a, $b) {
-                                if ($a->totallinea === $b->totallinea) {
-                                    return 0;
-                                }
-                                if ($a->totallinea < 0) {
-                                    return ($a->totallinea < $b->totallinea) ? -1 : 1;
-                                }
-                                return ($a->totallinea < $b->totallinea) ? 1 : -1;
+                            $lineasi, function($a, $b) {
+                            if ($a->totallinea === $b->totallinea) {
+                                return 0;
                             }
+                            if ($a->totallinea < 0) {
+                                return ($a->totallinea < $b->totallinea) ? -1 : 1;
+                            }
+                            return ($a->totallinea < $b->totallinea) ? 1 : -1;
+                        }
                         );
 
                         foreach ($lineasi as $i => $value) {
@@ -708,16 +727,15 @@ class FacturaCliente
                          */
                         $diferencia = round(($this->totaliva - $tIva) * 100);
                         usort(
-                            $lineasi,
-                            function($a, $b) {
-                                if ($a->totaliva === $b->totaliva) {
-                                    return 0;
-                                }
-                                if ($a->totallinea < 0) {
-                                    return ($a->totaliva < $b->totaliva) ? -1 : 1;
-                                }
-                                return ($a->totaliva < $b->totaliva) ? 1 : -1;
+                            $lineasi, function($a, $b) {
+                            if ($a->totaliva === $b->totaliva) {
+                                return 0;
                             }
+                            if ($a->totallinea < 0) {
+                                return ($a->totaliva < $b->totaliva) ? -1 : 1;
+                            }
+                            return ($a->totaliva < $b->totaliva) ? 1 : -1;
+                        }
                         );
 
                         foreach ($lineasi as $i => $value) {
@@ -897,11 +915,8 @@ class FacturaCliente
         $this->totaleuros = round($this->total / $this->tasaconv, 5);
 
         if ($this->floatcmp(
-            $this->total,
-            $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo,
-            FS_NF0,
-            true
-        )) {
+                $this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true
+            )) {
             return true;
         }
         $this->miniLog->alert('Error grave: El total está mal calculado. ¡Informa del error!');
@@ -1346,7 +1361,7 @@ class FacturaCliente
      */
     public function cronJob()
     {
-
+        
     }
 
     /**
@@ -1365,7 +1380,7 @@ class FacturaCliente
      * por defecto.
      * @return string
      */
-    private function install()
+    public function install()
     {
         // new Serie();
         // new Asiento();

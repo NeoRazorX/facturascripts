@@ -66,7 +66,7 @@ class CuentaBanco
             $this->miniLog->alert("Error grave: Los datos bancarios son incorrectos");
             return FALSE;
         }
-        return TRUE;        
+        return TRUE;
     }
 
     /**

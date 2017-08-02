@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class Proveedor
 {
+
     use Base\ModelTrait;
 
     /**
@@ -33,106 +33,126 @@ class Proveedor
      * @var array
      */
     private static $regimenes_iva;
+
     /**
      * Clave primaria. Varchar (6).
      * @var string
      */
     public $codproveedor;
+
     /**
      * Nombre por el que se conoce al proveedor, puede ser el nombre oficial o no.
      * @var string
      */
     public $nombre;
+
     /**
      * Razón social del proveedor, es decir, el nombre oficial, el que se usa en
      * las facturas.
      * @var string
      */
     public $razonsocial;
+
     /**
      * Tipo de identificador fiscal del proveedor.
      * Ejemplo: NIF, CIF, CUIT...
      * @var string
      */
     public $tipoidfiscal;
+
     /**
      * Identificador fiscal del proveedor.
      * @var string
      */
     public $cifnif;
+
     /**
      * TODO
      * @var string
      */
     public $telefono1;
+
     /**
      * TODO
      * @var string
      */
     public $telefono2;
+
     /**
      * TODO
      * @var string
      */
     public $fax;
+
     /**
      * TODO
      * @var string
      */
     public $email;
+
     /**
      * TODO
      * @var string
      */
     public $web;
+
     /**
      * Serie predeterminada para este proveedor.
      * @var string
      */
     public $codserie;
+
     /**
      * Divisa predeterminada para este proveedor.
      * @var string
      */
     public $coddivisa;
+
     /**
      * Forma de pago predeterminada para este proveedor.
      * @var string
      */
     public $codpago;
+
     /**
      * TODO
      * @var string
      */
     public $observaciones;
+
     /**
      * Régimen de fiscalidad del proveedor. Por ahora solo están implementados
      * general y exento.
      * @var
      */
     public $regimeniva;
+
     /**
      * TRUE -> el proveedor es un acreedor, es decir, no le compramos mercancia,
      * le compramos servicios, etc.
      * @var bool
      */
     public $acreedor;
+
     /**
      * TRUE  -> el cliente es una persona física.
      * FALSE -> el cliente es una persona jurídica (empresa).
      * @var bool
      */
     public $personafisica;
+
     /**
      * TRUE -> ya no queremos nada con el proveedor.
      * @var bool
      */
     public $debaja;
+
     /**
      * Fecha en la que se dió de baja al proveedor.
      * @var string
      */
     public $fechabaja;
+
     /**
      * Cliente asociado equivalente
      * @var string

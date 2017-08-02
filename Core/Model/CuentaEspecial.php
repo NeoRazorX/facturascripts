@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -27,6 +26,7 @@ namespace FacturaScripts\Core\Model;
  */
 class CuentaEspecial
 {
+
     use Base\ModelTrait;
 
     /**
@@ -34,6 +34,7 @@ class CuentaEspecial
      * @var
      */
     public $idcuentaesp;
+
     /**
      * TODO
      * @var string
@@ -96,7 +97,7 @@ class CuentaEspecial
      * por defecto.
      * @return string
      */
-    private function install()
+    public function install()
     {
         return "INSERT INTO co_cuentasesp (idcuentaesp,descripcion) VALUES 
          ('IVAREP','Cuentas de IVA repercutido'),

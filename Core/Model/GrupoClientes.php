@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,9 +25,8 @@ namespace FacturaScripts\Core\Model;
  */
 class GrupoClientes
 {
-    use Model {
-        save as private saveTrait;
-    }
+
+    use Base\ModelTrait;
 
     /**
      * Clave primaria
@@ -107,15 +105,10 @@ class GrupoClientes
         return '000001';
     }
 
-    /**
-     * Almacena los datos del modelo en la base de datos.
-     * @return bool
-     */
-    public function save()
+    public function test()
     {
         $this->nombre = static::noHtml($this->nombre);
-
-        return $this->saveTrait();
+        return TRUE;
     }
 
     /**
@@ -147,7 +140,7 @@ class GrupoClientes
      * por defecto.
      * @return string
      */
-    private function install()
+    public function install()
     {
         /// como hay una clave ajena a tarifas, tenemos que comprobar esa tabla antes
         //new Tarifa();

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class Cliente
 {
+
     use Base\ModelTrait;
 
     /**
@@ -33,125 +33,149 @@ class Cliente
      * @var array
      */
     private static $regimenes_iva;
+
     /**
      * Clave primaria. Varchar (6).
      * @var
      */
     public $codcliente;
+
     /**
      * Nombre por el que conocemos al cliente, no necesariamente el oficial.
      * @var
      */
     public $nombre;
+
     /**
      * Razón social del cliente, es decir, el nombre oficial. El que aparece en las facturas.
      * @var
      */
     public $razonsocial;
+
     /**
      * Tipo de identificador fiscal del cliente.
      * Ejemplos: CIF, NIF, CUIT...
      * @var
      */
     public $tipoidfiscal;
+
     /**
      * Identificador fiscal del cliente.
      * @var
      */
     public $cifnif;
+
     /**
      * TODO
      * @var
      */
     public $telefono1;
+
     /**
      * TODO
      * @var
      */
     public $telefono2;
+
     /**
      * TODO
      * @var
      */
     public $fax;
+
     /**
      * TODO
      * @var
      */
     public $email;
+
     /**
      * TODO
      * @var
      */
     public $web;
+
     /**
      * Serie predeterminada para este cliente.
      * @var
      */
     public $codserie;
+
     /**
      * Divisa predeterminada para este cliente.
      * @var
      */
     public $coddivisa;
+
     /**
      * Forma de pago predeterminada para este cliente.
      * @var
      */
     public $codpago;
+
     /**
      * Empleado/agente asignado al cliente.
      * @var
      */
     public $codagente;
+
     /**
      * Grupo al que pertenece el cliente.
      * @var
      */
     public $codgrupo;
+
     /**
      * TRUE -> el cliente ya no nos compra o no queremos nada con él.
      * @var
      */
     public $debaja;
+
     /**
      * Fecha en la que se dió de baja al cliente.
      * @var
      */
     public $fechabaja;
+
     /**
      * Fecha en la que se dió de alta al cliente.
      * @var
      */
     public $fechaalta;
+
     /**
      * TODO
      * @var
      */
     public $observaciones;
+
     /**
      * Régimen de fiscalidad del cliente. Por ahora solo están implementados
      * general y exento.
      * @var
      */
     public $regimeniva;
+
     /**
      * TRUE -> al cliente se le aplica recargo de equivalencia.
      * @var
      */
     public $recargo;
+
     /**
      * TRUE  -> el cliente es una persona física.
      * FALSE -> el cliente es una persona jurídica (empresa).
      * @var
      */
     public $personafisica;
+
     /**
      * Dias de pago preferidos a la hora de calcular el vencimiento de las facturas.
      * Días separados por comas: 1,15,31
      * @var
      */
     public $diaspago;
+
     /**
      * Proveedor asociado equivalente
      * @var
@@ -608,7 +632,7 @@ class Cliente
      * por defecto.
      * @return string
      */
-    private function install()
+    public function install()
     {
         $this->cleanCache();
 

@@ -131,7 +131,7 @@ class Divisa
      * Crea la consulta necesaria para crear una nueva divisa en la base de datos.
      * @return string
      */
-    private function install()
+    public function install()
     {
         return 'INSERT INTO ' . $this->tableName() . ' (coddivisa,descripcion,tasaconv,tasaconvcompra,codiso,simbolo)'
             . " VALUES ('EUR','EUROS','1','1','978','€')"

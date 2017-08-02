@@ -226,9 +226,9 @@ class PedidoProveedor
     {
         if ($s) {
             return Date('H:i:s', strtotime($this->hora));
-        } else {
-                    return Date('H:i', strtotime($this->hora));
         }
+
+        return Date('H:i', strtotime($this->hora));
     }
 
     public function observaciones_resume()
@@ -237,45 +237,45 @@ class PedidoProveedor
             return '-';
         } else if (strlen($this->observaciones) < 60) {
             return $this->observaciones;
-        } else {
-                    return substr($this->observaciones, 0, 50) . '...';
         }
+
+        return substr($this->observaciones, 0, 50) . '...';
     }
 
     public function url()
     {
         if (is_null($this->idpedido)) {
             return 'index.php?page=compras_pedidos';
-        } else {
-                    return 'index.php?page=compras_pedido&id=' . $this->idpedido;
         }
+
+        return 'index.php?page=compras_pedido&id=' . $this->idpedido;
     }
 
     public function albaran_url()
     {
         if (is_null($this->idalbaran)) {
             return 'index.php?page=compras_albaranes';
-        } else {
-                    return 'index.php?page=compras_albaran&id=' . $this->idalbaran;
         }
+
+        return 'index.php?page=compras_albaran&id=' . $this->idalbaran;
     }
 
     public function agente_url()
     {
         if (is_null($this->codagente)) {
             return "index.php?page=admin_agentes";
-        } else {
-                    return "index.php?page=admin_agente&cod=" . $this->codagente;
         }
+
+        return "index.php?page=admin_agente&cod=" . $this->codagente;
     }
 
     public function proveedor_url()
     {
         if (is_null($this->codproveedor)) {
             return "index.php?page=compras_proveedores";
-        } else {
-                    return "index.php?page=compras_proveedor&cod=" . $this->codproveedor;
         }
+
+        return "index.php?page=compras_proveedor&cod=" . $this->codproveedor;
     }
 
     public function get_lineas()
@@ -334,10 +334,10 @@ class PedidoProveedor
 
         if ($this->floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, TRUE)) {
             return TRUE;
-        } else {
-            $this->new_error_msg("Error grave: El total está mal calculado. ¡Informa del error!");
-            return FALSE;
         }
+
+        $this->new_error_msg("Error grave: El total está mal calculado. ¡Informa del error!");
+        return FALSE;
     }
 
     public function full_test($duplicados = TRUE)
@@ -400,10 +400,10 @@ class PedidoProveedor
         if ($this->test()) {
             if ($this->exists()) {
                 return $this->saveUpdate();
-            } else {
-                $this->new_codigo();
-                return $this->saveInsert();
             }
+
+            $this->new_codigo();
+            return $this->saveInsert();
         }
 
         return FALSE;

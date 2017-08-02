@@ -189,4 +189,9 @@ class MiniLog
 
         return $messages;
     }
+
+    public function clear()
+    {
+        self::$dataLog = [];
+    }
 }

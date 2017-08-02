@@ -1,0 +1,22 @@
+{% extends "Master/MenuTemplate.html" %}
+
+{% block body %}
+<div class="container-fluid">
+    <form action="{{ fsc.url() }}" method="post" class="form">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" name="query" class="form-control"/>
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-info">
+                                <i class="fa fa-search" aria-hidden="true"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

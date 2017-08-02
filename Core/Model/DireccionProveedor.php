@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class DireccionProveedor
 {
+
     use Base\ModelTrait {
         save as private saveTrait;
     }
@@ -41,31 +41,37 @@ class DireccionProveedor
      * @var
      */
     public $codproveedor;
+
     /**
      * TODO
      * @var
      */
     public $codpais;
+
     /**
      * TODO
      * @var
      */
     public $apartado;
+
     /**
      * TODO
      * @var
      */
     public $provincia;
+
     /**
      * TODO
      * @var
      */
     public $ciudad;
+
     /**
      * TODO
      * @var
      */
     public $codpostal;
+
     /**
      * TODO
      * @var
@@ -77,6 +83,7 @@ class DireccionProveedor
      * @var
      */
     public $direccionppal;
+
     /**
      * TODO
      * @var

@@ -85,6 +85,6 @@ class ListDivisa extends ViewController\ListController
             ['label' => 'Tasa Compras', 'field' => 'tasaconvcompra', 'display' => 'right'],
             ['label' => 'Símbolo', 'field' => 'simbolo', 'display' => 'center'],
             ['label' => 'Bandera', 'field' => 'bandera', 'display' => 'none']
-        ];        
+        ];
     }
 }

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class ArticuloProveedor
 {
+
     use Base\ModelTrait {
         save as private saveTrait;
     }
@@ -35,71 +35,85 @@ class ArticuloProveedor
      * @var array
      */
     private static $impuestos;
+
     /**
      * TODO
      * @var array
      */
     private static $nombres;
+
     /**
      * Clave primaria.
      * @var int
      */
     public $id;
+
     /**
      * Referencia del artículo en nuestro catálogo. Puede no estar actualmente.
      * @var string
      */
     public $referencia;
+
     /**
      * Código del proveedor asociado.
      * @var string
      */
     public $codproveedor;
+
     /**
      * Referencia del artículo para el proveedor.
      * @var string
      */
     public $refproveedor;
+
     /**
      * Descripción del artículo
      * @var string
      */
     public $descripcion;
+
     /**
      * Precio neto al que nos ofrece el proveedor este producto.
      * @var float
      */
     public $precio;
+
     /**
      * Descuento sobre el precio que nos hace el proveedor.
      * @var float
      */
     public $dto;
+
     /**
      * Impuesto asignado. Clase impuesto.
      * @var string
      */
     public $codimpuesto;
+
     /**
      * Stock del artículo en el almacén del proveedor.
      * @var float
      */
     public $stock;
+
     /**
      * TRUE -> el artículo no ofrece stock.
      * @var bool
      */
     public $nostock;
+
     /**
      * Código de barras del artículo
      * @var string
      */
     public $codbarras;
+
     /**
      * Part Number
      * @var string
      */
     public $partnumber;
+
     /**
      * % IVA del impuesto asignado.
      * @var float

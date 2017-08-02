@@ -18,9 +18,11 @@
  */
 namespace FacturaScripts\Core\App;
 
+use DebugBar\Bridge\Twig;
 use DebugBar\StandardDebugBar;
 use Exception;
 use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Base\DataBase\DataBaseCollector;
 use FacturaScripts\Core\Base\MenuManager;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Model\User;
@@ -51,7 +53,7 @@ class AppController extends App
 
     /**
      * Para gestionar el menú del usuario
-     * @var MenuManager 
+     * @var MenuManager
      */
     private $menuManager;
 
@@ -124,6 +126,8 @@ class AppController extends App
             }
         }
 
+        $this->debugBar->addCollector(new DataBaseCollector($this->miniLog->read(['sql'])));
+
         $this->response->setStatusCode($httpStatus);
         if ($template) {
             $this->renderHtml($template);
@@ -155,6 +159,8 @@ class AppController extends App
     {
         /// cargamos el motor de plantillas
         $twigLoader = new Twig_Loader_Filesystem($this->folder . '/Core/View');
+        $env = new Twig\TraceableTwigEnvironment(new Twig_Environment($twigLoader));
+        $this->debugBar->addCollector(new Twig\TwigCollector($env));
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
             if (file_exists($this->folder . '/Plugins/' . $pluginName . '/View')) {
                 $twigLoader->prependPath($this->folder . '/Plugins/' . $pluginName . '/View');

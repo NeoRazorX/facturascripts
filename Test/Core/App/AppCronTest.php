@@ -18,7 +18,7 @@ class AppCronTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->object = new AppCron;
+        $this->object = new AppCron(PHPUNIT_PATH);
     }
 
     /**
@@ -30,15 +30,16 @@ class AppCronTest extends \PHPUnit_Framework_TestCase
         
     }
 
+    public function testConnect()
+    {
+        $this->assertTrue($this->object->connect());
+    }
+
     /**
      * @covers FacturaScripts\Core\App\AppCron::run
-     * @todo   Implement testRun().
      */
     public function testRun()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $this->assertTrue($this->object->run());
     }
 }

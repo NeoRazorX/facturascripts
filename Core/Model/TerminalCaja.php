@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -27,6 +26,7 @@ namespace FacturaScripts\Core\Model;
  */
 class TerminalCaja
 {
+
     use Base\ModelTrait;
 
     /**
@@ -309,11 +309,8 @@ class TerminalCaja
             sprintf('%10s', 'TOTAL') . "\n");
         $this->addLinea(
             sprintf('%3s', '---') . ' ' . sprintf(
-                '%-' . $width . 's',
-                substr(
-                    '--------------------------------------------------------',
-                    0,
-                    $width - 1
+                '%-' . $width . 's', substr(
+                    '--------------------------------------------------------', 0, $width - 1
                 )
             ) . ' ' .
             sprintf('%10s', '----------') . "\n"
@@ -321,14 +318,12 @@ class TerminalCaja
         foreach ($factura->getLineas() as $col) {
             if ($imprimirDescripciones) {
                 $linea = sprintf('%3s', $col->cantidad) . ' ' . sprintf(
-                    '%-' . $width . 's',
-                    substr($this->sanitize($col->descripcion), 0, $width - 1)
-                ) . ' ' . sprintf('%10s', $this->showNumero($col->totalIva())) . "\n";
+                        '%-' . $width . 's', substr($this->sanitize($col->descripcion), 0, $width - 1)
+                    ) . ' ' . sprintf('%10s', $this->showNumero($col->totalIva())) . "\n";
             } else {
                 $linea = sprintf('%3s', $col->cantidad) . ' ' . sprintf(
-                    '%-' . $width . 's',
-                    $this->sanitize($col->referencia)
-                ) . ' ' . sprintf('%10s', $this->showNumero($col->totalIva())) . "\n";
+                        '%-' . $width . 's', $this->sanitize($col->referencia)
+                    ) . ' ' . sprintf('%10s', $this->showNumero($col->totalIva())) . "\n";
             }
 
             $this->addLinea($linea);
@@ -340,8 +335,7 @@ class TerminalCaja
         }
         $this->addLinea($lineaiguales . "\n");
         $this->addLinea('TOTAL A PAGAR: ' . sprintf(
-                '%' . ($this->anchopapel - 15) . 's',
-                $this->showPrecio($factura->total, $factura->coddivisa)
+                '%' . ($this->anchopapel - 15) . 's', $this->showPrecio($factura->total, $factura->coddivisa)
             ) . "\n");
         $this->addLinea($lineaiguales . "\n");
 
@@ -411,22 +405,19 @@ class TerminalCaja
             sprintf('%10s', 'TOTAL') . "\n");
         $this->addLinea(
             sprintf('%3s', '---') . ' ' . sprintf(
-                '%-' . $width . 's',
-                substr('--------------------------------------------------------', 0, $width - 1)
+                '%-' . $width . 's', substr('--------------------------------------------------------', 0, $width - 1)
             ) . ' ' .
             sprintf('%10s', '----------') . "\n"
         );
         foreach ($factura->getLineas() as $col) {
             if ($imprimirDescripciones) {
                 $linea = sprintf('%3s', $col->cantidad) . ' ' . sprintf(
-                    '%-' . $width . 's',
-                    substr($this->sanitize($col->descripcion), 0, $width - 1)
-                ) . ' ' . sprintf('%10s', '-') . "\n";
+                        '%-' . $width . 's', substr($this->sanitize($col->descripcion), 0, $width - 1)
+                    ) . ' ' . sprintf('%10s', '-') . "\n";
             } else {
                 $linea = sprintf('%3s', $col->cantidad) . ' ' . sprintf(
-                    '%-' . $width . 's',
-                    $this->sanitize($col->referencia)
-                ) . ' ' . sprintf('%10s', '-') . "\n";
+                        '%-' . $width . 's', $this->sanitize($col->referencia)
+                    ) . ' ' . sprintf('%10s', '-') . "\n";
             }
 
             $this->addLinea($linea);

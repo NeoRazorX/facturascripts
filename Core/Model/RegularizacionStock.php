@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class RegularizacionStock
 {
+
     use Base\ModelTrait;
 
     /**
@@ -39,11 +39,13 @@ class RegularizacionStock
      * @var int
      */
     public $idstock;
+
     /**
      * TODO
      * @var float
      */
     public $cantidadini;
+
     /**
      * TODO
      * @var float
@@ -55,16 +57,19 @@ class RegularizacionStock
      * @var string
      */
     public $codalmacendest;
+
     /**
      * TODO
      * @var string
      */
     public $fecha;
+
     /**
      * TODO
      * @var string
      */
     public $hora;
+
     /**
      * TODO
      * @var string
@@ -161,7 +166,7 @@ class RegularizacionStock
      * por defecto.
      * @return string
      */
-    private function install()
+    public function install()
     {
         new Stock();
 

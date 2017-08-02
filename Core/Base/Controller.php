@@ -126,7 +126,12 @@ class Controller
         $this->miniLog = $miniLog;
         $this->request = Request::createFromGlobals();
         $this->template = $this->className . '.html';
+        
         $this->title = $this->className;
+        $pageData = $this->getPageData();
+        if($pageData) {
+            $this->title = $pageData['title'];
+        }
     }
 
     /**

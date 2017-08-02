@@ -138,7 +138,7 @@ trait ModelTrait
      * por defecto.
      * @return string
      */
-    private function install()
+    public function install()
     {
         if (method_exists(__CLASS__, 'cleanCache')) {
             $this->cleanCache();

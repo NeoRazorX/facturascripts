@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class Articulo
 {
+
     use Base\ModelTrait;
 
     /**
@@ -33,52 +33,62 @@ class Articulo
      * @var array
      */
     private static $impuestos;
+
     /**
      * TODO
      * @var array
      */
     private static $search_tags;
+
     /**
      * TODO
      * @var
      */
     private static $cleaned_cache;
+
     /**
      * TODO
      * @var array
      */
     private static $column_list;
+
     /**
      * Clave primaria. Varchar (18).
      * @var string
      */
     public $referencia;
+
     /**
      * Define el tipo de artículo, así se pueden establecer distinciones
      * según un tipo u otro. Varchar (10)
      * @var string
      */
     public $tipo;
+
     /**
      * Código de la familia a la que pertenece. En la clase familia.
      * @var string
      */
     public $codfamilia;
+
     /**
      * Descripción del artículo. Tipo text, sin límite de caracteres.
      * @var string
      */
     public $descripcion;
+
     /**
      * Código del fabricante al que pertenece. En la clase fabricante.
      * @var string
      */
     public $codfabricante;
+
     /**
      * Precio del artículo, sin impuestos.
      * @var float
      */
     public $pvp;
+
     /**
      * Almacena el valor del pvp antes de hacer el cambio.
      * Este valor no se almacena en la base de datos, es decir,
@@ -86,16 +96,19 @@ class Articulo
      * @var float
      */
     public $pvp_ant;
+
     /**
      * Fecha de actualización del pvp.
      * @var string
      */
     public $factualizado;
+
     /**
      * Coste medio al comprar el artículo. Calculado.
      * @var float
      */
     public $costemedio;
+
     /**
      * Precio de coste editado manualmente.
      * No necesariamente es el precio de compra, puede incluir
@@ -103,57 +116,68 @@ class Articulo
      * @var float
      */
     public $preciocoste;
+
     /**
      * Impuesto asignado. Clase impuesto.
      * @var string
      */
     public $codimpuesto;
+
     /**
      * TRUE => el artículos está bloqueado / obsoleto.
      * @var bool
      */
     public $bloqueado;
+
     /**
      * TRUE => el artículo se compra
      * @var bool
      */
     public $secompra;
+
     /**
      * TRUE => el artículo se vende
      * @var bool
      */
     public $sevende;
+
     /**
      * TRUE -> se mostrará sincronizará con la tienda online.
      * @var bool
      */
     public $publico;
+
     /**
      * Código de equivalencia. Varchar (18).
      * Dos artículos o más son equivalentes si tienen el mismo código de equivalencia.
      * @var string
      */
     public $equivalencia;
+
     /**
      * Partnumber del producto. Máximo 38 caracteres.
      * @var string
      */
     public $partnumber;
+
     /**
      * Stock físico. La suma de las cantidades de esta referencia que en la tabla stocks.
      * @var float
      */
     public $stockfis;
+
     /**
      * El stock mínimo que debe haber
      * @var float
      */
     public $stockmin;
+
     /**
      * El stock máximo que debe haber
      * @var float
      */
     public $stockmax;
+
     /**
      * TRUE -> permitir ventas sin stock.
      * Si, sé que no tiene sentido que poner controlstock a TRUE
@@ -163,47 +187,56 @@ class Articulo
      * @var bool
      */
     public $controlstock;
+
     /**
      * TRUE -> no controlar el stock.
      * Activarlo implica poner a TRUE $controlstock;
      * @var bool
      */
     public $nostock;
+
     /**
      * Código de barras.
      * @var string
      */
     public $codbarras;
+
     /**
      * Observaciones del artículo
      * @var string
      */
     public $observaciones;
+
     /**
      * Código de la subcuenta para compras.
      * @var string
      */
     public $codsubcuentacom;
+
     /**
      * Código para la subcuenta de compras, pero con IRPF.
      * @var string
      */
     public $codsubcuentairpfcom;
+
     /**
      * Control de trazabilidad.
      * @var bool
      */
     public $trazabilidad;
+
     /**
      * % IVA del impuesto asignado.
      * @var float
      */
     private $iva;
+
     /**
      * Ruta a la imagen
      * @var string
      */
     private $imagen;
+
     /**
      * TODO
      * @var bool
@@ -664,8 +697,7 @@ class Articulo
             if ($this->dataBase->exec($sql)) {
                 /// renombramos la imagen, si la hay
                 if (file_exists(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png')) {
-                    rename(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png',
-                        FS_MYDOCS . 'images/articulos/' . $this->imageRef($ref) . '-1.png');
+                    rename(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png', FS_MYDOCS . 'images/articulos/' . $this->imageRef($ref) . '-1.png');
                 }
 
                 $this->referencia = $ref;
@@ -1217,7 +1249,7 @@ class Articulo
      * por defecto.
      * @return string
      */
-    private function install()
+    public function install()
     {
         /**
          * Limpiamos la caché por si el usuario ha borrado la tabla, pero ya tenía búsquedas.
@@ -1256,7 +1288,7 @@ class Articulo
                 if ($value['tag'] === $tag) {
                     $encontrado = true;
                     if (time() + 5400 > $value['expires'] + 300) {
-                        self::$search_tags[$i]['count']++;
+                        self::$search_tags[$i]['count'] ++;
                         self::$search_tags[$i]['expires'] = time() + (self::$search_tags[$i]['count'] * 5400);
                         $actualizar = true;
                     }

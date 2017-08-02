@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -193,7 +192,7 @@ class Agente
      * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
      * @return string
      */
-    private function install()
+    public function install()
     {
         return 'INSERT INTO ' . $this->tableName() . ' (codagente,nombre,apellidos,dnicif)'
             . " VALUES ('1','Paco','Pepe','00000014Z');";

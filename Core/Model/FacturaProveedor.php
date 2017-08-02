@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class FacturaProveedor
 {
+
     use Base\ModelTrait {
         saveInsert as private saveInsertTrait;
     }
@@ -158,11 +158,13 @@ class FacturaProveedor
      * @var string
      */
     public $numproveedor;
+
     /**
      * Observaciones de la factura
      * @var string
      */
     public $observaciones;
+
     /**
      * TRUE => pagada
      * @var bool
@@ -494,16 +496,15 @@ class FacturaProveedor
                          */
                         $diferencia = round(($this->neto - $tNeto) * 100);
                         usort(
-                            $lineasi,
-                            function($a, $b) {
-                                if ($a->totallinea === $b->totallinea) {
-                                    return 0;
-                                }
-                                if ($a->totallinea < 0) {
-                                    return ($a->totallinea < $b->totallinea) ? -1 : 1;
-                                }
-                                return ($a->totallinea < $b->totallinea) ? 1 : -1;
+                            $lineasi, function($a, $b) {
+                            if ($a->totallinea === $b->totallinea) {
+                                return 0;
                             }
+                            if ($a->totallinea < 0) {
+                                return ($a->totallinea < $b->totallinea) ? -1 : 1;
+                            }
+                            return ($a->totallinea < $b->totallinea) ? 1 : -1;
+                        }
                         );
 
                         foreach ($lineasi as $i => $value) {
@@ -526,16 +527,15 @@ class FacturaProveedor
                          */
                         $diferencia = round(($this->totaliva - $tIva) * 100);
                         usort(
-                            $lineasi,
-                            function($a, $b) {
-                                if ($a->totaliva === $b->totaliva) {
-                                    return 0;
-                                }
-                                if ($a->totaliva < 0) {
-                                    return ($a->totaliva < $b->totaliva) ? -1 : 1;
-                                }
-                                return ($a->totaliva < $b->totaliva) ? 1 : -1;
+                            $lineasi, function($a, $b) {
+                            if ($a->totaliva === $b->totaliva) {
+                                return 0;
                             }
+                            if ($a->totaliva < 0) {
+                                return ($a->totaliva < $b->totaliva) ? -1 : 1;
+                            }
+                            return ($a->totaliva < $b->totaliva) ? 1 : -1;
+                        }
                         );
 
                         foreach ($lineasi as $i => $value) {
@@ -690,11 +690,8 @@ class FacturaProveedor
         $this->totaleuros = round($this->total / $this->tasaconv, 5);
 
         if ($this->floatcmp(
-            $this->total,
-            $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo,
-            FS_NF0,
-            true
-        )) {
+                $this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true
+            )) {
             return true;
         }
         $this->miniLog->alert('Error grave: El total está mal calculado. ¡Informa del error!');
@@ -1089,6 +1086,7 @@ class FacturaProveedor
      */
     public function cronJob()
     {
+        
     }
 
     /**
@@ -1107,7 +1105,7 @@ class FacturaProveedor
      * por defecto.
      * @return string
      */
-    private function install()
+    public function install()
     {
         // new Serie();
         // new Asiento();

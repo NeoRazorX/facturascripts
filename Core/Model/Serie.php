@@ -99,11 +99,9 @@ class Serie
      */
     public function url()
     {
-        $result = empty($this->codserie)
-            ? 'index.php?page=ListSerie'
-            : 'index.php?page=EditSerie&cod=' . $this->codserie;
+        $result = empty($this->codserie) ? 'index.php?page=ListSerie' : 'index.php?page=EditSerie&cod=' . $this->codserie;
 
-        return $result;        
+        return $result;
     }
 
     /**

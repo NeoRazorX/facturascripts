@@ -18,7 +18,7 @@ class AppControllerTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->object = new AppController;
+        $this->object = new AppController(PHPUNIT_PATH);
     }
 
     /**
@@ -30,15 +30,17 @@ class AppControllerTest extends \PHPUnit_Framework_TestCase
         
     }
 
+    public function testConnect()
+    {
+        $this->assertTrue($this->object->connect());
+    }
+
     /**
      * @covers FacturaScripts\Core\App\AppController::run
-     * @todo   Implement testRun().
      */
     public function testRun()
     {
         // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $this->assertTrue($this->object->run());
     }
 }

@@ -212,9 +212,7 @@ class Empresa
      */
     public function url()
     {
-        $result = empty($this->id)
-            ? 'index.php?page=ListEmpresa'
-            : 'index.php?page=EditEmpresa&cod=' . $this->id;
+        $result = empty($this->id) ? 'index.php?page=ListEmpresa' : 'index.php?page=EditEmpresa&cod=' . $this->id;
         return $result;
     }
 
@@ -259,7 +257,7 @@ class Empresa
      * Crea la consulta necesaria para dotar de datos a la empresa en la base de datos.
      * @return string
      */
-    private function install()
+    public function install()
     {
         $num = mt_rand(1, 9999);
         return 'INSERT INTO ' . $this->tableName() . ' (stockpedidos,contintegrada,recequivalencia,codserie,'

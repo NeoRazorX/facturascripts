@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -28,6 +27,7 @@ namespace FacturaScripts\Core\Model;
  */
 class AlbaranProveedor
 {
+
     use Base\ModelTrait;
 
     /**
@@ -326,11 +326,7 @@ class AlbaranProveedor
     public function newCodigo()
     {
         $this->numero = fsDocumentoNewNumero(
-            $this->dataBase,
-            $this->tableName(),
-            $this->codejercicio,
-            $this->codserie,
-            'nalbaranprov'
+            $this->dataBase, $this->tableName(), $this->codejercicio, $this->codserie, 'nalbaranprov'
         );
         $this->codigo = fsDocumentoNewCodigo(FS_ALBARAN, $this->codejercicio, $this->codserie, $this->numero, 'C');
     }
@@ -361,11 +357,8 @@ class AlbaranProveedor
         }
 
         if ($this->floatcmp(
-            $this->total,
-            $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo,
-            FS_NF0,
-            true
-        )) {
+                $this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true
+            )) {
             return true;
         }
 
@@ -776,7 +769,7 @@ class AlbaranProveedor
      * por defecto.
      * @return string
      */
-    private function install()
+    public function install()
     {
         /// nos aseguramos de que se comprueban las tablas de facturas y series antes
         // new Serie();

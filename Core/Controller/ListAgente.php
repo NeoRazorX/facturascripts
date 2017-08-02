@@ -30,6 +30,7 @@ use FacturaScripts\Core\Model;
  */
 class ListAgente extends ViewController\ListController
 {
+
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
@@ -38,7 +39,7 @@ class ListAgente extends ViewController\ListController
         $this->addOrderBy('nombre');
         $this->addOrderBy('apellidos');
         $this->addOrderBy('provincia');
-        
+
         $this->addFilterSelect('provincia', 'agentes');
     }
 

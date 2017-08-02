@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class BalanceCuentaA
 {
+
     use Base\ModelTrait;
 
     /**
@@ -33,16 +33,19 @@ class BalanceCuentaA
      * @var
      */
     public $id;
+
     /**
      * TODO
      * @var
      */
     public $codbalance;
+
     /**
      * TODO
      * @var
      */
     public $codcuenta;
+
     /**
      * TODO
      * @var

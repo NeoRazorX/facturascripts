@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -130,7 +129,7 @@ class Pais
      * Crea la consulta necesaria para crear los paises en la base de datos.
      * @return string
      */
-    private function install()
+    public function install()
     {
         return 'INSERT INTO ' . $this->tableName() . ' (codpais,codiso,nombre)'
             . " VALUES ('ESP','ES','España'),"

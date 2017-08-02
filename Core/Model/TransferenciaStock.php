@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class TransferenciaStock
 {
+
     use Base\ModelTrait;
 
     /// clave primaria. integer
@@ -34,26 +34,31 @@ class TransferenciaStock
      * @var int
      */
     public $idtrans;
+
     /**
      * TODO
      * @var string
      */
     public $codalmadestino;
+
     /**
      * TODO
      * @var string
      */
     public $codalmaorigen;
+
     /**
      * TODO
      * @var string
      */
     public $fecha;
+
     /**
      * TODO
      * @var string
      */
     public $hora;
+
     /**
      * TODO
      * @var string

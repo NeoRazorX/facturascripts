@@ -109,7 +109,7 @@ class FileCache
         if ($ret !== false) {
             return @rename($temp_file_name, $dest_file_name);
         }
-        unlink($temp_file_name);
+        @unlink($temp_file_name);
         return false;
     }
 

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -27,6 +26,7 @@ namespace FacturaScripts\Core\Model;
  */
 class Partida
 {
+
     use Model {
         save as private saveTrait;
     }
@@ -54,121 +54,145 @@ class Partida
      * @var string
      */
     public $codsubcuenta;
+
     /**
      * TODO
      * @var int
      */
     public $idconcepto;
+
     /**
      * TODO
      * @var string
      */
     public $concepto;
+
     /**
      * TODO
      * @var int
      */
     public $idcontrapartida;
+
     /**
      * TODO
      * @var string
      */
     public $codcontrapartida;
+
     /**
      * TODO
      * @var
      */
     public $punteada;
+
     /**
      * TODO
      * @var float
      */
     public $tasaconv;
+
     /**
      * TODO
      * @var string
      */
     public $coddivisa;
+
     /**
      * TODO
      * @var float
      */
     public $haberme;
+
     /**
      * TODO
      * @var float
      */
     public $debeme;
+
     /**
      * TODO
      * @var float
      */
     public $recargo;
+
     /**
      * TODO
      * @var float
      */
     public $iva;
+
     /**
      * TODO
      * @var float
      */
     public $baseimponible;
+
     /**
      * TODO
      * @var
      */
     public $factura;
+
     /**
      * TODO
      * @var string
      */
     public $codserie;
+
     /**
      * TODO
      * @var
      */
     public $tipodocumento;
+
     /**
      * TODO
      * @var
      */
     public $documento;
+
     /**
      * TODO
      * @var string
      */
     public $cifnif;
+
     /**
      * TODO
      * @var float
      */
     public $haber;
+
     /**
      * TODO
      * @var float
      */
     public $debe;
+
     /**
      * TODO
      * @var int
      */
     public $numero;
+
     /**
      * TODO
      * @var string
      */
     public $fecha;
+
     /**
      * TODO
      * @var float
      */
     public $saldo;
+
     /**
      * TODO
      * @var float
      */
     public $sum_debe;
+
     /**
      * TODO
      * @var float

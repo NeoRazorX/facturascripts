@@ -28,5 +28,10 @@ use FacturaScripts\Core\Model;
  */
 class MegaSearch extends Base\Controller
 {
-    //put your code here
+    public function getPageData()
+    {
+        $pageData = parent::getPageData();
+        $pageData['showonmenu'] = FALSE;
+        return $pageData;
+    }
 }

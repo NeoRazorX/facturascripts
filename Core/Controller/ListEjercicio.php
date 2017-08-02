@@ -30,13 +30,14 @@ use FacturaScripts\Core\Model;
  */
 class ListEjercicio extends ViewController\ListController
 {
+
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         $this->addOrderBy('codejercicio', 'Código');
         $this->addOrderBy('nombre');
-        
+
         $this->addFilterSelect('estado', 'ejercicios');
     }
 
@@ -64,7 +65,7 @@ class ListEjercicio extends ViewController\ListController
         }
         return $result;
     }
-    
+
     public function getPageData()
     {
         $pagedata = parent::getPageData();
@@ -84,6 +85,6 @@ class ListEjercicio extends ViewController\ListController
             ['label' => 'Estado', 'field' => 'estado', 'display' => 'center'],
             ['label' => 'Plan', 'field' => 'plancontable', 'display' => 'center'],
             ['label' => 'Long.Cta', 'field' => 'longsubcuenta', 'display' => 'center']
-        ];       
+        ];
     }
 }
