@@ -17,40 +17,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Definición inicial para el controlador ListDivisa
+ * Definición inicial para el controlador ListPais
  *
  * @author Artex Trading sa <jcuello@artextrading.com>  
 -->
 
 <view>
     <columns>
-        <column title="Código" titleurl="" description="" numcolumns="1" display="left">
-            <field required="true" readonly="false" clickable="false">coddivisa</field>
+        <column title="Código Alfa-3" titleurl="http://es.wikipedia.org/wiki/ISO_3166-1#C.C3.B3digos_ISO_3166-1" description="" numcolumns="1" display="left">
+            <field required="true" readonly="false" clickable="false">codpais</field>
             <widget type="text" hint="" icon="" />
         </column>
-        <column title="Descripcion" titleurl="" description="" numcolumns="1" display="left">
-            <field required="false" readonly="false" clickable="false">descripcion</field>
-            <widget type="text" hint="" icon="" />
-        </column>
-        <column title="ISO" titleurl="https://es.wikipedia.org/wiki/ISO_4217" description="" numcolumns="1" display="left">
+        <column title="Código Alfa-2" titleurl="http://es.wikipedia.org/wiki/ISO_3166-1#C.C3.B3digos_ISO_3166-1" description="" numcolumns="1" display="left">
             <field required="false" readonly="false" clickable="false">codiso</field>
             <widget type="text" hint="" icon="" />
         </column>
-        <column title="Fecha" titleurl="" description="" numcolumns="1" display="left">
-            <field required="false" readonly="false" clickable="false">fecha</field>
+        <column title="Nombre" titleurl="" description="" numcolumns="1" display="left">
+            <field required="false" readonly="false" clickable="false">nombre</field>
             <widget type="text" hint="" icon="" />
         </column>
-        <column title="Tasa Ventas" titleurl="" description="" numcolumns="1" display="right">
-            <field required="false" readonly="false" clickable="false">tasaconv</field>
-            <widget type="text" hint="" icon="" />
-        </column>
-        <column title="Tasa Compras" titleurl="" description="" numcolumns="1" display="right">
-            <field required="false" readonly="false" clickable="false">tasaconvcompra</field>
-            <widget type="text" hint="" icon="" />
-        </column>
-        <column title="Símbolo" titleurl="" description="" numcolumns="1" display="center">
-            <field required="false" readonly="false" clickable="false">simbolo</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Validar Prov." titleurl="" description="" numcolumns="1" display="center">
+            <field required="false" readonly="false" clickable="false">validarprov</field>
+            <widget type="check" hint="" icon="" />
         </column>
         <column title="Bandera" titleurl="" description="" numcolumns="1" display="none">
             <field required="false" readonly="false" clickable="false">bandera</field>

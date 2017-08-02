@@ -32,7 +32,7 @@
             <field required="true" readonly="false" clickable="false">descripcion</field>
             <widget type="text" hint="" icon="" />
         </column>
-        <column title="Cod. Cuenta" titleurl="" description="" numcolumns="1" display="left">
+        <column title="Cod. Cuenta" titleurl="?page=ListEmpresa" description="" numcolumns="1" display="left">
             <field required="false" readonly="false" clickable="false">codcuenta</field>
             <widget type="text" hint="" icon="" />
         </column>

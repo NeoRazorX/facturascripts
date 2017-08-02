@@ -123,4 +123,15 @@ class ColumnItem
         }
         return $result;
     }
+    
+    public function getHeaderHTML($value)
+    {
+        $html = $value;
+        if (!empty($this->titleURL)) {
+            $target = (substr($this->titleURL, 0, 1) != '?') ? "target='_blank'" : '';
+            $html = "<a href='" . $this->titleURL . "' " . $target . ">" . $value . "</a>";
+        }
+        
+        return $html;
+    }
 }

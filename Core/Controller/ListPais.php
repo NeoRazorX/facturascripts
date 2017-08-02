@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,23 +18,28 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ViewController;
 use FacturaScripts\Core\Model;
 
 /**
- * Description of AdminUsers
+ * Controlador para la lista de divisas utilizadas
  *
- * @author carlos
+ * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListUser extends ViewController\ListController
+class ListPais extends ViewController\ListController
 {
 
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('nick');
-        $this->addOrderBy('email');
+        $this->addOrderBy('codpais', 'Código');
+        $this->addOrderBy('nombre');
+        $this->addOrderBy('codiso');
+        
+        $this->addFilterCheckbox('validarprov', 'Validar Proveedor');
     }
 
     public function privateCore(&$response, $user)
@@ -44,18 +49,29 @@ class ListUser extends ViewController\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\User();
+        $model = new Model\Pais();
         $this->count = $model->count($where);
         if ($this->count > 0) {
             $this->cursor = $model->all($where, $order);
         }
     }
 
+    protected function getWhere()
+    {
+        $result = parent::getWhere();
+
+        if ($this->query != '') {
+            $fields = "nombre|codiso|codpais";
+            $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
+        }
+        return $result;
+    }
+
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Usuarios';
-        $pagedata['icon'] = 'fa-users';
+        $pagedata['title'] = 'Países';
+        $pagedata['icon'] = 'fa-globe';
         $pagedata['menu'] = 'admin';
         return $pagedata;
     }

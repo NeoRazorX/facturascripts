@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Database as DataBase;
+use FacturaScripts\Core\Base\DataBase as DataBase;
 use FacturaScripts\Core\Base\ViewController as ViewController;
 
 /**
@@ -65,7 +65,7 @@ class PageOption
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'fs_pages_options', 'id');
+        $this->init('fs_pages_options', 'id');
         if (is_null($data) || empty($data)) {
             $this->clear();
         } else {
@@ -85,6 +85,7 @@ class PageOption
         $this->filters = [];
     }
 
+    
     public function loadFromData($data)
     {
         $this->id = $data['id'];
@@ -142,13 +143,17 @@ class PageOption
         return false;
     }
 
+    /**
+     * Instala la configuración inicial de un controlador
+     * @param string $name
+     */
     public function installXML($name)
     {
         $this->id = null;
         $this->name = $name;
         $this->columns = [];
         $this->filters = [];
-        $file = "Dinamic/Controller/{$name}.xml";
+        $file = "Core/Controller/{$name}.xml";
         $xml = simplexml_load_file($file);
 
         if ($xml) {
@@ -162,9 +167,14 @@ class PageOption
 //        foreach ($xml->filters->filter as $filter) {
 //        }
         }
-        $this->saveInsert();
+//        $this->saveInsert();
     }
 
+    /**
+     * Obtiene la configuración para el controlador y usuario
+     * @param string $name
+     * @param string $nick
+     */
     public function getForUser($name, $nick)
     {
         $where = [];

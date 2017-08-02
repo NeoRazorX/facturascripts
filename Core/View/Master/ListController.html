@@ -7,8 +7,9 @@
         $("#b_new_record").click(function(event) {
             event.preventDefault();
         });
-
-        document.f_custom_search.query.focus();        
+        
+        document.f_custom_search.query.focus();
+        document.f_custom_search.query.select(); 
    });
 </script>
 {% endblock %}
@@ -179,7 +180,7 @@
                         <tr>
                             {% for column in fsc.getColumns() %}
                             {% if column.display != 'none' %}
-                            <th class="text-{{ column.display }}">{{ column.title }}</th>
+                            <th class="text-{{ column.display }}">{{ column.getHeaderHTML(column.title)|raw }}</th>
                             {% endif %}
                             {% endfor %}
                         </tr>
