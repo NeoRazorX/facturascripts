@@ -25,7 +25,10 @@ namespace FacturaScripts\Core\Model;
 class PedidoCliente
 {
 
-    use Base\ModelTrait;
+    use Base\DocumentoVenta;
+    use Base\ModelTrait {
+        clear as clearTrait;
+    }
 
     /**
      * Clave primaria.
@@ -40,148 +43,6 @@ class PedidoCliente
     public $idalbaran;
 
     /**
-     * Código único. Para humanos.
-     * @var type 
-     */
-    public $codigo;
-
-    /**
-     * Serie relacionada.
-     * @var type 
-     */
-    public $codserie;
-
-    /**
-     * Ejercicio relacionado. El que corresponde a la fecha.
-     * @var type 
-     */
-    public $codejercicio;
-
-    /**
-     * Código del cliente del pedido.
-     * @var type 
-     */
-    public $codcliente;
-
-    /**
-     * Empleado que ha creado el pedido.
-     * @var type 
-     */
-    public $codagente;
-
-    /**
-     * Forma de pago asociada.
-     * @var type 
-     */
-    public $codpago;
-
-    /**
-     * Divisa del pedido.
-     * @var type 
-     */
-    public $coddivisa;
-
-    /**
-     * Almacén del que saldrá el material
-     * @var type 
-     */
-    public $codalmacen;
-
-    /**
-     * País del cliente.
-     * @var type 
-     */
-    public $codpais;
-
-    /**
-     * ID de la dirección del cliente.
-     * Modelo direccion_cliente.
-     * @var type 
-     */
-    public $coddir;
-    public $codpostal;
-
-    /**
-     * Número del pedido.
-     * Único dentro de la serie+ejercicio.
-     * @var type 
-     */
-    public $numero;
-
-    /**
-     * Número opcional a disposición del usuario.
-     * @var type 
-     */
-    public $numero2;
-    public $nombrecliente;
-    public $cifnif;
-    public $direccion;
-    public $ciudad;
-    public $provincia;
-    public $apartado;
-    public $fecha;
-    public $hora;
-
-    /**
-     * Importe total antes de impuestos.
-     * Es la suma del pvptotal de las líneas.
-     * @var type 
-     */
-    public $neto;
-
-    /**
-     * Importe total de la factura, con impuestos.
-     * @var type 
-     */
-    public $total;
-
-    /**
-     * Suma del IVA de las líneas.
-     * @var type 
-     */
-    public $totaliva;
-
-    /**
-     * Total expresado en euros, por si no fuese la divisa del pedido.
-     * totaleuros = total/tasaconv
-     * No hace falta rellenarlo, al hacer save() se calcula el valor.
-     * @var type 
-     */
-    public $totaleuros;
-
-    /**
-     * % de retención IRPF del pedido. Se obtiene de la serie.
-     * Cada línea puede tener un % distinto.
-     * @var type 
-     */
-    public $irpf;
-
-    /**
-     * Suma de las retenciones IRPF de las líneas del pedido.
-     * @var type 
-     */
-    public $totalirpf;
-
-    /**
-     * % de comisión del empleado.
-     * @var type 
-     */
-    public $porcomision;
-
-    /**
-     * Tasa de conversión a Euros de la divisa seleccionada.
-     * @var type 
-     */
-    public $tasaconv;
-
-    /**
-     * Suma total del recargo de equivalencia de las líneas.
-     * @var type 
-     */
-    public $totalrecargo;
-    public $observaciones;
-
-    /**
      * Estado del pedido:
      * 0 -> pendiente. (editable)
      * 1 -> aprobado. (hay un idalbaran y no es editable)
@@ -192,33 +53,10 @@ class PedidoCliente
     public $editable;
 
     /**
-     * Fecha en la que se envió el pedido por email.
-     * @var type 
-     */
-    public $femail;
-
-    /**
      * Fecha de salida prevista del material.
      * @var type 
      */
     public $fechasalida;
-    /// datos de transporte
-    public $envio_codtrans;
-    public $envio_codigo;
-    public $envio_nombre;
-    public $envio_apellidos;
-    public $envio_apartado;
-    public $envio_direccion;
-    public $envio_codpostal;
-    public $envio_ciudad;
-    public $envio_provincia;
-    public $envio_codpais;
-
-    /**
-     * Número de documentos adjuntos.
-     * @var integer 
-     */
-    public $numdocs;
 
     /**
      * Si este presupuesto es la versión de otro, aquí se almacena el idpresupuesto del original.
@@ -238,56 +76,16 @@ class PedidoCliente
 
     public function clear()
     {
-        $this->idpedido = NULL;
-        $this->idalbaran = NULL;
-        $this->codigo = NULL;
-        $this->codagente = NULL;
+        $this->clearTrait();
         $this->codpago = $this->default_items->codpago();
         $this->codserie = $this->default_items->codserie();
-        $this->codejercicio = NULL;
-        $this->codcliente = NULL;
-        $this->coddivisa = NULL;
         $this->codalmacen = $this->default_items->codalmacen();
-        $this->codpais = NULL;
-        $this->coddir = NULL;
-        $this->codpostal = '';
-        $this->numero = NULL;
-        $this->numero2 = NULL;
-        $this->nombrecliente = '';
-        $this->cifnif = '';
-        $this->direccion = NULL;
-        $this->ciudad = NULL;
-        $this->provincia = NULL;
-        $this->apartado = NULL;
         $this->fecha = Date('d-m-Y');
         $this->hora = Date('H:i:s');
-        $this->neto = 0;
-        $this->total = 0;
-        $this->totaliva = 0;
-        $this->totaleuros = 0;
-        $this->irpf = 0;
-        $this->totalirpf = 0;
-        $this->porcomision = 0;
         $this->tasaconv = 1;
-        $this->totalrecargo = 0;
-        $this->observaciones = NULL;
         $this->status = 0;
         $this->editable = TRUE;
-        $this->femail = NULL;
         $this->fechasalida = NULL;
-
-        $this->envio_codtrans = NULL;
-        $this->envio_codigo = NULL;
-        $this->envio_nombre = NULL;
-        $this->envio_apellidos = NULL;
-        $this->envio_apartado = NULL;
-        $this->envio_direccion = NULL;
-        $this->envio_codpostal = NULL;
-        $this->envio_ciudad = NULL;
-        $this->envio_provincia = NULL;
-        $this->envio_codpais = NULL;
-
-        $this->numdocs = 0;
         $this->idoriginal = NULL;
     }
 
