@@ -75,22 +75,4 @@ class ListAlmacen extends ViewController\ListController
         $pagedata['menu'] = 'admin';
         return $pagedata;
     }
-
-    protected function getColumns()
-    {
-        return [
-            ['label' => 'Codigo', 'field' => 'codalmacen', 'display' => 'left'],
-            ['label' => 'Nombre', 'field' => 'nombre', 'display' => 'left'],
-            ['label' => 'Contacto', 'field' => 'contacto', 'display' => 'left'],
-            ['label' => 'Dirección', 'field' => 'direccion', 'display' => 'left'],
-            ['label' => 'Poblacion', 'field' => 'poblacion', 'display' => 'center'],
-            ['label' => 'Cod. Postal', 'field' => 'codpostal', 'display' => 'none'],
-            ['label' => 'Provincia', 'field' => 'direccion', 'display' => 'center'],
-            ['label' => 'País', 'field' => 'codpais', 'display' => 'center'],
-            ['label' => 'Teléfono', 'field' => 'telefono', 'display' => 'left'],
-            ['label' => 'Fax', 'field' => 'fax', 'display' => 'left'],
-            ['label' => 'Valoración', 'field' => 'tipovaloracion', 'display' => 'center'],
-            ['label' => 'Apartado', 'field' => 'apartado', 'display' => 'none']
-        ];
-    }
 }

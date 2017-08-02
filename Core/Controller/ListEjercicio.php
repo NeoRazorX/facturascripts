@@ -74,17 +74,4 @@ class ListEjercicio extends ViewController\ListController
         $pagedata['menu'] = 'contabilidad';
         return $pagedata;
     }
-
-    protected function getColumns()
-    {
-        return [
-            ['label' => 'Codigo', 'field' => 'codejercicio', 'display' => 'left'],
-            ['label' => 'Nombre', 'field' => 'nombre', 'display' => 'left'],
-            ['label' => 'Inicio', 'field' => 'fechainicio', 'display' => 'center'],
-            ['label' => 'Fin', 'field' => 'fechafin', 'display' => 'center'],
-            ['label' => 'Estado', 'field' => 'estado', 'display' => 'center'],
-            ['label' => 'Plan', 'field' => 'plancontable', 'display' => 'center'],
-            ['label' => 'Long.Cta', 'field' => 'longsubcuenta', 'display' => 'center']
-        ];
-    }
 }

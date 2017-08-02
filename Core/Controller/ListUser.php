@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\ViewController;
 use FacturaScripts\Core\Model;
 
 /**
@@ -26,7 +27,7 @@ use FacturaScripts\Core\Model;
  *
  * @author carlos
  */
-class ListUser extends Base\ListController
+class ListUser extends ViewController\ListController
 {
 
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
@@ -58,15 +59,5 @@ class ListUser extends Base\ListController
         $pagedata['icon'] = 'fa-users';
         $pagedata['menu'] = 'admin';
         return $pagedata;
-    }
-
-    protected function getColumns()
-    {
-        return [
-            ['label' => 'Nick', 'field' => 'nick', 'display' => 'left'],
-            ['label' => 'Email', 'field' => 'email', 'display' => 'left'],
-            ['label' => 'Última IP', 'field' => 'lastip', 'display' => 'left'],
-            ['label' => 'Última actividad', 'field' => 'lastactivity', 'display' => 'right']
-        ];
     }
 }

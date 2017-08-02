@@ -72,14 +72,4 @@ class ListImpuesto extends ViewController\ListController
         $pagedata['menu'] = 'contabilidad';
         return $pagedata;
     }
-
-    protected function getColumns()
-    {
-        return [
-            ['label' => 'Codigo', 'field' => 'codimpuesto', 'display' => 'left'],
-            ['label' => 'Descripcion', 'field' => 'descripcion', 'display' => 'left'],
-            ['label' => '% Iva', 'field' => 'iva', 'display' => 'right'],
-            ['label' => '% Recargo', 'field' => 'recargo', 'display' => 'right']
-        ];
-    }
 }

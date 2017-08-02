@@ -77,17 +77,4 @@ class ListFormaPago extends ViewController\ListController
         $pagedata['menu'] = 'contabilidad';
         return $pagedata;
     }
-
-    protected function getColumns()
-    {
-        return [
-            ['label' => 'Codigo', 'field' => 'codpago', 'display' => 'left'],
-            ['label' => 'Descripción', 'field' => 'descripcion', 'display' => 'left'],
-            ['label' => 'Cod. Cuenta', 'field' => 'codcuenta', 'display' => 'left'],
-            ['label' => 'Vencimiento', 'field' => 'vencimiento', 'display' => 'center'],
-            ['label' => 'Gen. Recibos', 'field' => 'genrecibos', 'display' => 'center'],
-            ['label' => 'Domiciliado', 'field' => 'domiciliado', 'display' => 'center'],
-            ['label' => 'Imprimir', 'field' => 'imprimir', 'display' => 'center']
-        ];
-    }
 }

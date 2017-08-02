@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Definición inicial para el controlador ListFormaPago
+ *
+ * @author Artex Trading sa <jcuello@artextrading.com>  
+-->
+
+<view>
+    <columns>
+        <column title="Código" titleurl="" description="" numcolumns="1" display="left">
+            <field required="true" readonly="false" clickable="false">codpago</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="Descripción" titleurl="" description="" numcolumns="1" display="left">
+            <field required="true" readonly="false" clickable="false">descripcion</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="Cod. Cuenta" titleurl="" description="" numcolumns="1" display="left">
+            <field required="false" readonly="false" clickable="false">codcuenta</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="Vencimiento" titleurl="" description="" numcolumns="1" display="center">
+            <field required="false" readonly="false" clickable="false">vencimiento</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="Gen. Recibos" titleurl="" description="" numcolumns="1" display="center">
+            <field required="false" readonly="false" clickable="false">genrecibos</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="Domiciliado" titleurl="" description="" numcolumns="1" display="center">
+            <field required="false" readonly="false" clickable="false">domiciliado</field>
+            <widget type="check" hint="" icon="" />
+        </column>
+        <column title="Imprimir" titleurl="" description="" numcolumns="1" display="center">
+            <field required="false" readonly="false" clickable="false">imprimir</field>
+            <widget type="check" hint="" icon="" />
+        </column>
+    </columns>
+    
+    <filters>        
+    </filters>    
+</view>

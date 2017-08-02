@@ -53,7 +53,6 @@ class FieldOptions
     /**
      * Constructor de la clase. Si se informa un array se cargan los datos
      * informados en el nuevo objeto
-     * @param array $data
      */
     public function __construct()
     {
@@ -71,15 +70,23 @@ class FieldOptions
         $this->clickable = FALSE;
     }
 
+    /**
+     * 
+     * @param SimpleXMLElement $column
+     */
     public function loadFromXMLColumn($column)
     {
         $field_atributes = $column->field->attributes();
         $this->name = (string) $column->field;
         $this->required = (bool) $field_atributes->required;
-        $this->readonly = (bool) $field_atributes->readonly;
+        $this->readOnly = (bool) $field_atributes->readonly;
         $this->clickable = (bool) $field_atributes->clickable;
     }
 
+    /**
+     * 
+     * @param array $column
+     */
     public function loadFromJSONColumn($column)
     {
         $this->name = (string) $column['field']['name'];

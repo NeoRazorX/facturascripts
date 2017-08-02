@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Base\ViewController;
 
 use FacturaScripts\Core\Base as Base;
-use FacturaScripts\Core\Model as Models;
+use FacturaScripts\Core\Model as Model;
 use FacturaScripts\Core\Base\DataBase as DataBase;
 
 /**
@@ -107,7 +107,7 @@ class ListController extends Base\Controller
         $this->filters = [];
 //        $this->fields = [];
 
-        $this->pageOption = new Models\PageOption();
+        $this->pageOption = new Model\PageOption();
     }
 
     /**

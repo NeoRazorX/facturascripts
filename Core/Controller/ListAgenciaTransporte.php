@@ -76,15 +76,4 @@ class ListAgenciaTransporte extends ViewController\ListController
         $pagedata['menu'] = 'admin';
         return $pagedata;
     }
-
-    protected function getColumns()
-    {
-        return [
-            ['label' => 'Codigo', 'field' => 'codtrans', 'display' => 'left'],
-            ['label' => 'Nombre', 'field' => 'nombre', 'display' => 'left'],
-            ['label' => 'Teléfono', 'field' => 'telefono', 'display' => 'left'],
-            ['label' => 'Web', 'field' => 'web', 'display' => 'left'],
-            ['label' => 'Activo', 'field' => 'activo', 'display' => 'left']
-        ];
-    }
 }

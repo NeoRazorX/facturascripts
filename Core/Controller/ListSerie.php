@@ -76,18 +76,4 @@ class ListSerie extends ViewController\ListController
         $pagedata['menu'] = 'contabilidad';
         return $pagedata;
     }
-
-    protected function getColumns()
-    {
-        return [
-            ['label' => 'Codigo', 'field' => 'codserie', 'display' => 'left'],
-            ['label' => 'Descripcion', 'field' => 'descripcion', 'display' => 'left'],
-            ['label' => '% Iva', 'field' => 'iva', 'display' => 'right'],
-            ['label' => '% Recargo', 'field' => 'recargo', 'display' => 'right'],
-            ['label' => 'Sin Impuesto', 'field' => 'siniva', 'display' => 'center'],
-            ['label' => 'Cuenta', 'field' => 'codcuenta', 'display' => 'left'],
-            ['label' => 'Ejercicio', 'field' => 'codejercicio', 'display' => 'center'],
-            ['label' => 'Núm. Factura', 'field' => 'numfactura', 'display' => 'right']
-        ];
-    }
 }

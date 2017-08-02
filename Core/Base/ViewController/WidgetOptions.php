@@ -53,7 +53,6 @@ class WidgetOptions
     /**
      * Constructor de la clase. Si se informa un array se cargan los datos
      * informados en el nuevo objeto
-     * @param string $type
      */
     public function __construct()
     {
@@ -87,13 +86,13 @@ class WidgetOptions
                 break;
 
             case "check":
-                if ($value) {
+                if (in_array($value, ['t', '1'])) {
                     $html = '<span class="glyphicon glyphicon-ok"></span>';
                 }
                 break;
 
             case "icon":
-                $html = '<span class="glyphicon "' . $this->icon . ' aria-hidden="true" title="' . $this->title . '"></span>';
+                $html = '<span class="glyphicon "' . $this->icon . ' aria-hidden="true" title="' . $this->hint . '"></span>';
                 break;
 
             default:

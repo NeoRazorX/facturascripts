@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Definición inicial para el controlador ListSerie
+ *
+ * @author Artex Trading sa <jcuello@artextrading.com>  
+-->
+
+<view>
+    <columns>
+        <column title="Código" titleurl="" description="" numcolumns="1" display="left">
+            <field required="true" readonly="false" clickable="false">codserie</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="Descripción" titleurl="" description="" numcolumns="1" display="left">
+            <field required="true" readonly="false" clickable="false">descripcion</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="% Iva" titleurl="" description="" numcolumns="1" display="right">
+            <field required="false" readonly="false" clickable="false">iva</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="% Recargo" titleurl="" description="" numcolumns="1" display="right">
+            <field required="false" readonly="false" clickable="false">recargo</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="Sin Impuesto" titleurl="" description="" numcolumns="1" display="center">
+            <field required="false" readonly="false" clickable="false">siniva</field>
+            <widget type="check" hint="" icon="" />
+        </column>
+        <column title="Cuenta" titleurl="" description="" numcolumns="1" display="left">
+            <field required="false" readonly="false" clickable="false">codcuenta</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="Ejercicio" titleurl="" description="" numcolumns="1" display="center">
+            <field required="false" readonly="false" clickable="false">codejercicio</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+        <column title="Núm. Factura" titleurl="" description="" numcolumns="1" display="right">
+            <field required="false" readonly="false" clickable="false">numfactura</field>
+            <widget type="text" hint="" icon="" />
+        </column>
+    </columns>
+    
+    <filters>        
+    </filters>    
+</view>

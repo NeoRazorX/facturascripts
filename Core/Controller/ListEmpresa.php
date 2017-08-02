@@ -72,18 +72,4 @@ class ListEmpresa extends ViewController\ListController
         $pagedata['menu'] = 'admin';
         return $pagedata;
     }
-
-    protected function getColumns()
-    {
-        return [
-            ['label' => 'Codigo', 'field' => 'id', 'display' => 'center'],
-            ['label' => 'Nombre', 'field' => 'nombre', 'display' => 'left'],
-            ['label' => 'Nom. Corto', 'field' => 'nombrecorto', 'display' => 'left'],
-            ['label' => 'Inicio', 'field' => 'inicioact', 'display' => 'center'],
-            ['label' => 'Teléfono', 'field' => 'telefono', 'display' => 'left'],
-            ['label' => 'Email', 'field' => 'email', 'display' => 'left'],
-            ['label' => 'Web', 'field' => 'web', 'display' => 'left'],
-            ['label' => 'Divisa', 'field' => 'coddivisa', 'display' => 'center']
-        ];
-    }
 }

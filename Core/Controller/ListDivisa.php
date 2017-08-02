@@ -73,18 +73,4 @@ class ListDivisa extends ViewController\ListController
         $pagedata['menu'] = 'admin';
         return $pagedata;
     }
-
-    protected function getColumns()
-    {
-        return [
-            ['label' => 'Codigo', 'field' => 'coddivisa', 'display' => 'left'],
-            ['label' => 'Descripcion', 'field' => 'descripcion', 'display' => 'left'],
-            ['label' => 'ISO', 'field' => 'codiso', 'display' => 'left'],
-            ['label' => 'Fecha', 'field' => 'fecha', 'display' => 'left'],
-            ['label' => 'Tasa Conv.', 'field' => 'tasaconv', 'display' => 'right'],
-            ['label' => 'Tasa Compras', 'field' => 'tasaconvcompra', 'display' => 'right'],
-            ['label' => 'Símbolo', 'field' => 'simbolo', 'display' => 'center'],
-            ['label' => 'Bandera', 'field' => 'bandera', 'display' => 'none']
-        ];
-    }
 }

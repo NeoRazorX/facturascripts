@@ -96,8 +96,8 @@ class PageOption
         $this->columns = $columnItem->columnsFromJSON($columns);
 
         // TODO: Cargar estructura de filtros
-        $filters = json_decode($data['filters'], true);
-        $this->filters = $filters;
+//        $filters = json_decode($data['filters'], true);
+//        $this->filters = $filters;
     }
 
     /**
@@ -152,12 +152,12 @@ class PageOption
         $xml = simplexml_load_file($file);
 
         if ($xml) {
-            $columnItem = new ViewController\ColumnItem();
             foreach ($xml->columns->column as $column) {
+                $columnItem = new ViewController\ColumnItem();
                 $columnItem->loadFromXMLColumn($column);
                 $this->columns[$columnItem->field->name] = $columnItem;
+                unset($columnItem);
             }
-            unset($columnItem);
 
 //        foreach ($xml->filters->filter as $filter) {
 //        }
@@ -168,9 +168,9 @@ class PageOption
     public function getForUser($name, $nick)
     {
         $where = [];
-        $where[] = new DataBase\DataBaseWhere('name', $name);
         $where[] = new DataBase\DataBaseWhere('nick', $nick);
         $where[] = new DataBase\DataBaseWhere('nick', 'NULL', 'IS', 'OR');
+        $where[] = new DataBase\DataBaseWhere('name', $name);
 
         $orderby = ['nick' => 'ASC'];
 
