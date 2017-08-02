@@ -48,7 +48,7 @@ class CuentaBanco
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'cuentasbanco', 'codcuenta');
+        $this->init('cuentasbanco', 'codcuenta');
         if (empty($data)) {
             $this->clear();
         } else {

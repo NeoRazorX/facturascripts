@@ -77,8 +77,8 @@ class Tarifa
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'tarifas', 'codtarifa');
-        if (is_null($data) || empty($data)) {
+        $this->init('tarifas', 'codtarifa');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

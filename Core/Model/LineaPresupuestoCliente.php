@@ -128,7 +128,7 @@ class LineaPresupuestoCliente
             self::$presupuestos = array();
         }
 
-        $this->init(__CLASS__, 'lineaspresupuestoscli', 'idlinea');
+        $this->init('lineaspresupuestoscli', 'idlinea');
         if (empty($data)) {
             $this->clear();
         } else {

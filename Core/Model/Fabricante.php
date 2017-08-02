@@ -47,8 +47,8 @@ class Fabricante
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'fabricantes', 'codfabricante');
-        if (is_null($data) || empty($data)) {
+        $this->init('fabricantes', 'codfabricante');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

@@ -206,8 +206,8 @@ class Partida
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'co_partidas', 'idpartida');
-        if (is_null($data) || empty($data)) {
+        $this->init('co_partidas', 'idpartida');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

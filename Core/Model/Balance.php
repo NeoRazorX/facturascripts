@@ -109,8 +109,8 @@ class Balance
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'co_codbalances08', 'codbalance');
-        if (is_null($data) || empty($data)) {
+        $this->init('co_codbalances08', 'codbalance');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

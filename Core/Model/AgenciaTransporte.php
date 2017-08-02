@@ -56,8 +56,8 @@ class AgenciaTransporte
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'agenciastrans', 'codtrans');
-        if (is_null($data) || empty($data)) {
+        $this->init('agenciastrans', 'codtrans');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

@@ -48,8 +48,8 @@ class CuentaEspecial
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'co_cuentasesp', 'idcuentaesp');
-        if (is_null($data) || empty($data)) {
+        $this->init('co_cuentasesp', 'idcuentaesp');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

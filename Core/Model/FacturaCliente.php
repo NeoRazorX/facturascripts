@@ -26,8 +26,9 @@ namespace FacturaScripts\Core\Model;
 class FacturaCliente
 {
 
+    use Base\DocumentoVenta;
     use Base\ModelTrait {
-        saveInsert as private saveInsertTrait;
+        clear as clearTrait;
     }
 
     /**
@@ -55,263 +56,10 @@ class FacturaCliente
     public $idfacturarect;
 
     /**
-     * Código único de la factura. Para humanos.
-     * @var string
-     */
-    public $codigo;
-
-    /**
-     * Número de la factura.
-     * Único dentro de la serie+ejercicio.
-     * @var string
-     */
-    public $numero;
-
-    /**
-     * Número opcional a disposición del usuario.
-     * @var string
-     */
-    public $numero2;
-
-    /**
      * Código de la factura que rectifica.
      * @var string
      */
     public $codigorect;
-
-    /**
-     * Ejercicio relacionado. El que corresponde a la fecha.
-     * @var string
-     */
-    public $codejercicio;
-
-    /**
-     * Serie relacionada.
-     * @var string
-     */
-    public $codserie;
-
-    /**
-     * Almacén del que sale la mercancía.
-     * @var string
-     */
-    public $codalmacen;
-
-    /**
-     * Forma de pago.
-     * @var string
-     */
-    public $codpago;
-
-    /**
-     * Divisa de la factura.
-     * @var string
-     */
-    public $coddivisa;
-
-    /**
-     * Fecha de la factura
-     * @var string
-     */
-    public $fecha;
-
-    /**
-     * Hora de la factura
-     * @var string
-     */
-    public $hora;
-
-    /**
-     * Código identificador del cliente de la factura.
-     * @var string
-     */
-    public $codcliente;
-
-    /**
-     * Nombre del cliente de la factura
-     * @var string
-     */
-    public $nombrecliente;
-
-    /**
-     * CIF/NIF del cliente
-     * @var string
-     */
-    public $cifnif;
-
-    /**
-     * Dirección del cliente
-     * @var string
-     */
-    public $direccion;
-
-    /**
-     * Ciudad del cliente
-     * @var string
-     */
-    public $ciudad;
-
-    /**
-     * Provincia del cliente
-     * @var string
-     */
-    public $provincia;
-
-    /**
-     * Apartado de correos del cliente
-     * @var string
-     */
-    public $apartado;
-    /// datos de transporte
-    /**
-     * Código del transportista
-     * @var string
-     */
-    public $envio_codtrans;
-
-    /**
-     * Código de seguimiento
-     * @var string
-     */
-    public $envio_codigo;
-
-    /**
-     * Nombre para la dirección del envío
-     * @var string
-     */
-    public $envio_nombre;
-
-    /**
-     * Apellidos para la dirección del envío
-     * @var string
-     */
-    public $envio_apellidos;
-
-    /**
-     * Apartado de correos para la dirección del envío
-     * @var string
-     */
-    public $envio_apartado;
-
-    /**
-     * Dirección para el envío
-     * @var string
-     */
-    public $envio_direccion;
-
-    /**
-     * Código postal para la dirección del envío
-     * @var string
-     */
-    public $envio_codpostal;
-
-    /**
-     * Ciudad para la dirección del envío
-     * @var string
-     */
-    public $envio_ciudad;
-
-    /**
-     * Provincia para la dirección del envío
-     * @var string
-     */
-    public $envio_provincia;
-
-    /**
-     * Código del país para la dirección del envío
-     * @var string
-     */
-    public $envio_codpais;
-
-    /**
-     * ID de la dirección en dirclientes.
-     * Modelo direccion_cliente.
-     * @var string
-     */
-    public $coddir;
-
-    /**
-     * Código postal del cliente
-     * @var string
-     */
-    public $codpostal;
-
-    /**
-     * Código del país del cliente
-     * @var string
-     */
-    public $codpais;
-
-    /**
-     * Empleado que ha creado la factura.
-     * Modelo agente.
-     * @var string
-     */
-    public $codagente;
-
-    /**
-     * Suma de los pvptotal de las líneas.
-     * Es el total antes de impuestos.
-     * @var float
-     */
-    public $neto;
-
-    /**
-     * Suma total del IVA de las líneas.
-     * @var float
-     */
-    public $totaliva;
-
-    /**
-     * Suma total de la factura, con impuestos.
-     * @var float
-     */
-    public $total;
-
-    /**
-     * Total expresado en euros, por si no fuese la divisa de la factura.
-     * totaleuros = total/tasaconv
-     * No hace falta rellenarlo, al hacer save() se calcula el valor.
-     * @var float
-     */
-    public $totaleuros;
-
-    /**
-     * % de retención IRPF de la factura.
-     * Puede variar en cada línea.
-     * @var float
-     */
-    public $irpf;
-
-    /**
-     * Suma total de retenciones IRPF de las líneas.
-     * @var float
-     */
-    public $totalirpf;
-
-    /**
-     * % comisión del empleado (agente).
-     * @var float
-     */
-    public $porcomision;
-
-    /**
-     * Tasa de conversión a Euros de la divisa de la factura.
-     * @var float
-     */
-    public $tasaconv;
-
-    /**
-     * Suma del recargo de equivalencia de las líneas.
-     * @var float
-     */
-    public $totalrecargo;
-
-    /**
-     * Observaciones de la factura
-     * @var string
-     */
-    public $observaciones;
 
     /**
      * TRUE => pagada
@@ -332,12 +80,6 @@ class FacturaCliente
     public $vencimiento;
 
     /**
-     * Fecha en la que se envió la factura por email.
-     * @var string
-     */
-    public $femail;
-
-    /**
      * Identificador opcional para la impresión. Todavía sin uso.
      * Se puede usar para identificar una forma de impresión y usar siempre
      * esa en esta factura.
@@ -346,20 +88,14 @@ class FacturaCliente
     public $idimprenta;
 
     /**
-     * Número de documentos adjuntos.
-     * @var int
-     */
-    public $numdocs;
-
-    /**
      * FacturaCliente constructor.
      *
      * @param array $data
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'facturascli', 'idfactura');
-        if (is_null($data) || empty($data)) {
+        $this->init('facturascli', 'idfactura');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);
@@ -371,60 +107,16 @@ class FacturaCliente
      */
     public function clear()
     {
-        $this->idfactura = null;
-        $this->idasiento = null;
-        $this->idasientop = null;
-        $this->idfacturarect = null;
-        $this->codigo = null;
-        $this->numero = null;
-        $this->numero2 = null;
-        $this->codigorect = null;
-        $this->codejercicio = null;
+        $this->clearTrait();
         $this->codserie = $this->defaultItems->codSerie();
         $this->codalmacen = $this->defaultItems->codAlmacen();
         $this->codpago = $this->defaultItems->codPago();
-        $this->coddivisa = null;
         $this->fecha = date('d-m-Y');
         $this->hora = date('H:i:s');
-        $this->codcliente = null;
-        $this->nombrecliente = '';
-        $this->cifnif = '';
-        $this->direccion = null;
-        $this->provincia = null;
-        $this->ciudad = null;
-        $this->apartado = null;
-        $this->coddir = null;
-        $this->codpostal = null;
-        $this->codpais = null;
-        $this->codagente = null;
-        $this->neto = 0;
-        $this->totaliva = 0;
-        $this->total = 0;
-        $this->totaleuros = 0;
-        $this->irpf = 0;
-        $this->totalirpf = 0;
-        $this->porcomision = 0;
         $this->tasaconv = 1;
-        $this->totalrecargo = 0;
-        $this->observaciones = null;
         $this->pagada = false;
         $this->anulada = false;
         $this->vencimiento = date('d-m-Y', strtotime('+1 day'));
-        $this->femail = null;
-
-        $this->envio_codtrans = null;
-        $this->envio_codigo = null;
-        $this->envio_nombre = null;
-        $this->envio_apellidos = null;
-        $this->envio_apartado = null;
-        $this->envio_direccion = null;
-        $this->envio_codpostal = null;
-        $this->envio_ciudad = null;
-        $this->envio_provincia = null;
-        $this->envio_codpais = null;
-
-        $this->idimprenta = null;
-        $this->numdocs = 0;
     }
 
     /**
@@ -1082,6 +774,20 @@ class FacturaCliente
         return $status;
     }
 
+    public function save()
+    {
+        if ($this->test()) {
+            if ($this->exists()) {
+                return $this->saveUpdate();
+            }
+
+            $this->newCodigo();
+            return $this->saveInsert();
+        }
+
+        return FALSE;
+    }
+
     /**
      * Elimina una factura y actualiza los registros relacionados con ella.
      * @return bool
@@ -1143,134 +849,6 @@ class FacturaCliente
             return true;
         }
         return false;
-    }
-
-    /**
-     * Devuelve un array con las facturas sin pagar
-     *
-     * @param int $offset
-     * @param int $limit
-     * @param string $order
-     *
-     * @return array
-     */
-    public function allSinPagar($offset = 0, $limit = FS_ITEM_LIMIT, $order = 'vencimiento ASC, codigo ASC')
-    {
-        $faclist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE pagada = FALSE ORDER BY ' . $order;
-
-        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
-        if (!empty($data)) {
-            foreach ($data as $f) {
-                $faclist[] = new FacturaCliente($f);
-            }
-        }
-
-        return $faclist;
-    }
-
-    /**
-     * Devuelve un array con las facturas del agente/empleado
-     *
-     * @param string $codagente
-     * @param int $offset
-     *
-     * @return array
-     */
-    public function allFromAgente($codagente, $offset = 0)
-    {
-        $faclist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() .
-            ' WHERE codagente = ' . $this->var2str($codagente) .
-            ' ORDER BY fecha DESC, codigo DESC';
-
-        $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if (!empty($data)) {
-            foreach ($data as $f) {
-                $faclist[] = new FacturaCliente($f);
-            }
-        }
-
-        return $faclist;
-    }
-
-    /**
-     * Devuelve un array con las facturas del cliente $codcliente
-     *
-     * @param string $codcliente
-     * @param int $offset
-     *
-     * @return array
-     */
-    public function allFromCliente($codcliente, $offset = 0)
-    {
-        $faclist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() .
-            ' WHERE codcliente = ' . $this->var2str($codcliente) .
-            ' ORDER BY fecha DESC, codigo DESC';
-
-        $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if (!empty($data)) {
-            foreach ($data as $f) {
-                $faclist[] = new FacturaCliente($f);
-            }
-        }
-
-        return $faclist;
-    }
-
-    /**
-     * Devuelve un array con las facturas comprendidas entre $desde y $hasta
-     *
-     * @param string $desde
-     * @param string $hasta
-     * @param string $codserie código de la serie
-     * @param string $codagente código del empleado
-     * @param string|boolean $codcliente código del cliente
-     * @param string|boolean $estado
-     * @param string|boolean $codpago código de la forma de pago
-     * @param string|boolean $codalmacen código del almacén
-     *
-     * @return array
-     */
-    public function allDesde($desde, $hasta, $codserie = '', $codagente = '', $codcliente = '', $estado = '', $codpago = '', $codalmacen = '')
-    {
-        $faclist = [];
-
-        $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE fecha >= ' . $this->var2str($desde) . ' AND fecha <= ' . $this->var2str($hasta);
-        if ($codserie !== '') {
-            $sql .= ' AND codserie = ' . $this->var2str($codserie);
-        }
-        if ($codagente !== '') {
-            $sql .= ' AND codagente = ' . $this->var2str($codagente);
-        }
-        if ($codcliente !== '') {
-            $sql .= ' AND codcliente = ' . $this->var2str($codcliente);
-        }
-        if ($estado !== '') {
-            if ($estado === 'pagada') {
-                $sql .= ' AND pagada = true';
-            } else {
-                $sql .= ' AND pagada = false';
-            }
-        }
-        if ($codpago !== '') {
-            $sql .= ' AND codpago = ' . $this->var2str($codpago);
-        }
-        if ($codalmacen !== '') {
-            $sql .= ' AND codalmacen = ' . $this->var2str($codalmacen);
-        }
-        $sql .= ' ORDER BY fecha ASC, codigo ASC;';
-
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $f) {
-                $faclist[] = new FacturaCliente($f);
-            }
-        }
-
-        return $faclist;
     }
 
     /**
@@ -1362,16 +940,6 @@ class FacturaCliente
     public function cronJob()
     {
         
-    }
-
-    /**
-     * Inserta los datos del modelo en la base de datos.
-     * @return bool
-     */
-    private function saveInsert()
-    {
-        $this->newCodigo();
-        return $this->saveInsertTrait();
     }
 
     /**

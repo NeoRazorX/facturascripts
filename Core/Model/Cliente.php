@@ -189,8 +189,8 @@ class Cliente
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'clientes', 'codcliente');
-        if (is_null($data) || empty($data)) {
+        $this->init('clientes', 'codcliente');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

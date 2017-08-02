@@ -25,7 +25,10 @@ namespace FacturaScripts\Core\Model;
 class PresupuestoCliente
 {
 
-    use Base\ModelTrait;
+    use Base\DocumentoVenta;
+    use Base\ModelTrait {
+        clear as clearTrait;
+    }
 
     /**
      * Clave primaria.
@@ -40,152 +43,10 @@ class PresupuestoCliente
     public $idpedido;
 
     /**
-     * Código identificador único. Para humanos.
-     * @var type 
-     */
-    public $codigo;
-
-    /**
-     * Serie relacionada.
-     * @var type 
-     */
-    public $codserie;
-
-    /**
-     * Ejercicio relacionado. El que corresponde ala fecha.
-     * @var type 
-     */
-    public $codejercicio;
-
-    /**
-     * Código del cliente del presupuesto.
-     * @var type 
-     */
-    public $codcliente;
-
-    /**
-     * Empleado que ha creado el presupuesto.
-     * @var type 
-     */
-    public $codagente;
-
-    /**
-     * Forma de pago del presupuesto.
-     * @var type 
-     */
-    public $codpago;
-
-    /**
-     * Divisa del presupuesto.
-     * @var type 
-     */
-    public $coddivisa;
-
-    /**
-     * Almacén del que saldría la mercancía.
-     * @var type 
-     */
-    public $codalmacen;
-
-    /**
-     * país del cliente.
-     * @var type 
-     */
-    public $codpais;
-
-    /**
-     * ID de la dirección del cliente.
-     * Modelo direccion_cliente.
-     * @var type 
-     */
-    public $coddir;
-    public $codpostal;
-
-    /**
-     * Número de presupuesto.
-     * Único en la serie+ejercicio.
-     * @var type 
-     */
-    public $numero;
-
-    /**
-     * Número opcional a disposición del usuario.
-     * @var type 
-     */
-    public $numero2;
-    public $nombrecliente;
-    public $cifnif;
-    public $direccion;
-    public $ciudad;
-    public $provincia;
-    public $apartado;
-    public $fecha;
-
-    /**
      * Fecha en la que termina la validéz del presupuesto.
      * @var type 
      */
     public $finoferta;
-    public $hora;
-
-    /**
-     * Importe del presupuesto antes de impuestos.
-     * Es la suma del pvptotal de las líneas.
-     * @var type 
-     */
-    public $neto;
-
-    /**
-     * Importe total del presupuesto, con impuestos.
-     * @var type 
-     */
-    public $total;
-
-    /**
-     * Suma del IVA de las líneas.
-     * @var type 
-     */
-    public $totaliva;
-
-    /**
-     * Total expresado en euros, por si no fuese la divisa del presupuesto.
-     * totaleuros = total/tasaconv
-     * No hace falta rellenarlo, al hacer save() se calcula el valor.
-     * @var type 
-     */
-    public $totaleuros;
-
-    /**
-     * % de retención IRPF del presupuesto. Se obtiene de la serie.
-     * Cada línea puede tener un % distinto.
-     * @var type 
-     */
-    public $irpf;
-
-    /**
-     * Suma de las retenciones IRPF de las líneas del presupuesto.
-     * @var type 
-     */
-    public $totalirpf;
-
-    /**
-     * % de comisión del empleado.
-     * @var type 
-     */
-    public $porcomision;
-
-    /**
-     * Tasa de conversión a Euros de la divisa seleccionada.
-     * @var type 
-     */
-    public $tasaconv;
-
-    /**
-     * Suma total del recargo de equivalencia de las líneas.
-     * @var type 
-     */
-    public $totalrecargo;
-    public $observaciones;
 
     /**
      * Estado del presupuesto:
@@ -198,29 +59,6 @@ class PresupuestoCliente
     public $editable;
 
     /**
-     * Fecha en la que se envió el presupuesto por email.
-     * @var type 
-     */
-    public $femail;
-    /// datos de transporte
-    public $envio_codtrans;
-    public $envio_codigo;
-    public $envio_nombre;
-    public $envio_apellidos;
-    public $envio_apartado;
-    public $envio_direccion;
-    public $envio_codpostal;
-    public $envio_ciudad;
-    public $envio_provincia;
-    public $envio_codpais;
-
-    /**
-     * Número de documentos adjuntos.
-     * @var integer 
-     */
-    public $numdocs;
-
-    /**
      * Si este presupuesto es la versión de otro, aquí se almacena el idpresupuesto del original.
      * @var type 
      */
@@ -228,7 +66,7 @@ class PresupuestoCliente
 
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'presupuestoscli', 'idpresupuesto');
+        $this->init('presupuestoscli', 'idpresupuesto');
         if (empty($data)) {
             $this->clear();
         } else {
@@ -238,66 +76,25 @@ class PresupuestoCliente
 
     public function clear()
     {
-        $this->idpresupuesto = NULL;
-        $this->idpedido = NULL;
-        $this->codigo = NULL;
-        $this->codagente = NULL;
+        $this->clearTrait();
         $this->codpago = $this->default_items->codpago();
         $this->codserie = $this->default_items->codserie();
-        $this->codejercicio = NULL;
-        $this->codcliente = NULL;
-        $this->coddivisa = NULL;
         $this->codalmacen = $this->default_items->codalmacen();
-        $this->codpais = NULL;
-        $this->coddir = NULL;
-        $this->codpostal = '';
-        $this->numero = NULL;
-        $this->numero2 = NULL;
-        $this->nombrecliente = '';
-        $this->cifnif = '';
-        $this->direccion = NULL;
-        $this->ciudad = NULL;
-        $this->provincia = NULL;
-        $this->apartado = NULL;
         $this->fecha = Date('d-m-Y');
         $this->finoferta = date("d-m-Y", strtotime(Date('d-m-Y') . " +1month"));
         $this->hora = Date('H:i:s');
-        $this->neto = 0;
-        $this->total = 0;
-        $this->totaliva = 0;
-        $this->totaleuros = 0;
-        $this->irpf = 0;
-        $this->totalirpf = 0;
-        $this->porcomision = 0;
         $this->tasaconv = 1;
-        $this->totalrecargo = 0;
-        $this->observaciones = NULL;
         $this->status = 0;
         $this->editable = TRUE;
-        $this->femail = NULL;
-
-        $this->envio_codtrans = NULL;
-        $this->envio_codigo = NULL;
-        $this->envio_nombre = NULL;
-        $this->envio_apellidos = NULL;
-        $this->envio_apartado = NULL;
-        $this->envio_direccion = NULL;
-        $this->envio_codpostal = NULL;
-        $this->envio_ciudad = NULL;
-        $this->envio_provincia = NULL;
-        $this->envio_codpais = NULL;
-
-        $this->numdocs = 0;
-        $this->idoriginal = NULL;
     }
 
     public function show_hora($s = TRUE)
     {
         if ($s) {
             return Date('H:i:s', strtotime($this->hora));
-        } else {
-            return Date('H:i', strtotime($this->hora));
         }
+
+        return Date('H:i', strtotime($this->hora));
     }
 
     public function observaciones_resume()
@@ -379,7 +176,7 @@ class PresupuestoCliente
         return $versiones;
     }
 
-    public function new_codigo()
+    public function newCodigo()
     {
         $this->numero = fs_documento_new_numero($this->db, $this->table_name, $this->codejercicio, $this->codserie, 'npresupuestocli');
 
@@ -494,7 +291,7 @@ class PresupuestoCliente
                 return $this->saveUpdate();
             }
 
-            $this->new_codigo();
+            $this->newCodigo();
             return $this->saveInsert();
         }
 

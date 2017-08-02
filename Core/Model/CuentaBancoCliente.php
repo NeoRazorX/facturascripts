@@ -69,8 +69,8 @@ class CuentaBancoCliente
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'cuentasbcocli', 'codcuenta');
-        if (is_null($data) || empty($data)) {
+        $this->init('cuentasbcocli', 'codcuenta');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

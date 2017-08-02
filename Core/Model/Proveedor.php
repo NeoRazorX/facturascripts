@@ -166,8 +166,8 @@ class Proveedor
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'proveedores', 'codproveedor');
-        if (is_null($data) || empty($data)) {
+        $this->init('proveedores', 'codproveedor');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

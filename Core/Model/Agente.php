@@ -105,8 +105,8 @@ class Agente
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'agentes', 'codagente');
-        if (is_null($data) || empty($data)) {
+        $this->init('agentes', 'codagente');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

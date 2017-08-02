@@ -182,7 +182,7 @@ class PedidoProveedor
 
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'pedidosprov', 'idpedido');
+        $this->init('pedidosprov', 'idpedido');
         if (empty($data)) {
             $this->clear();
         } else {
@@ -305,7 +305,7 @@ class PedidoProveedor
         return $versiones;
     }
 
-    public function new_codigo()
+    public function newCodigo()
     {
         $this->numero = fs_documento_new_numero($this->db, $this->table_name, $this->codejercicio, $this->codserie, 'npedidoprov');
         $this->codigo = fs_documento_new_codigo(FS_PEDIDO, $this->codejercicio, $this->codserie, $this->numero, 'C');
@@ -402,7 +402,7 @@ class PedidoProveedor
                 return $this->saveUpdate();
             }
 
-            $this->new_codigo();
+            $this->newCodigo();
             return $this->saveInsert();
         }
 

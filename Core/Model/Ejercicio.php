@@ -96,8 +96,8 @@ class Ejercicio
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'ejercicios', 'codejercicio');
-        if (is_null($data) || empty($data)) {
+        $this->init('ejercicios', 'codejercicio');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

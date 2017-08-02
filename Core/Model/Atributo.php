@@ -49,8 +49,8 @@ class Atributo
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'atributos', 'codatributo');
-        if (is_null($data) || empty($data)) {
+        $this->init('atributos', 'codatributo');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

@@ -90,8 +90,8 @@ class LineaIvaFacturaCliente
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'lineasivafactcli', 'idlinea');
-        if (is_null($data) || empty($data)) {
+        $this->init('lineasivafactcli', 'idlinea');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

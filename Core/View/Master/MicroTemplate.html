@@ -27,16 +27,6 @@
 </div>
 {% endif %}
 {% block body %}{% endblock %}
-{% if sql|length > 0 %}
-<div class="alert alert-warning">
-    <h3>SQL:</h3>
-    <ol>
-        {% for msg in sql %}
-            <li>{{ msg.message }}</li>
-        {% endfor %}
-    </ol>
-</div>
-{% endif %}
 {{ debugBarRender.render()|raw }}
 </body>
 </html>

@@ -28,6 +28,7 @@ class AppCron extends App
 
     /**
      * Ejecuta el cron.
+     * @return boolean
      */
     public function run()
     {

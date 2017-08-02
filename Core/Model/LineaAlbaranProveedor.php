@@ -149,8 +149,8 @@ class LineaAlbaranProveedor
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'lineasalbaranesprov', 'idlinea');
-        if (is_null($data) || empty($data)) {
+        $this->init('lineasalbaranesprov', 'idlinea');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);
