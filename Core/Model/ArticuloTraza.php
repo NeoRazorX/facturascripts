@@ -99,8 +99,8 @@ class ArticuloTraza
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'articulo_trazas', 'id');
-        if (is_null($data) || empty($data)) {
+        $this->init('articulo_trazas', 'id');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

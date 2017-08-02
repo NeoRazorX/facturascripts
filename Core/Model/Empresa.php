@@ -166,8 +166,8 @@ class Empresa
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'empresa', 'id');
-        if (is_null($data) || empty($data)) {
+        $this->init('empresa', 'id');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

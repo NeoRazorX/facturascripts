@@ -26,9 +26,7 @@ namespace FacturaScripts\Core\Model;
 class FacturaCliente
 {
 
-    use Base\ModelTrait {
-        saveInsert as private saveInsertTrait;
-    }
+    use Base\ModelTrait;
 
     /**
      * Clave primaria.
@@ -358,8 +356,8 @@ class FacturaCliente
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'facturascli', 'idfactura');
-        if (is_null($data) || empty($data)) {
+        $this->init('facturascli', 'idfactura');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);
@@ -1081,6 +1079,20 @@ class FacturaCliente
 
         return $status;
     }
+    
+    public function save()
+    {
+        if ($this->test()) {
+            if ($this->exists()) {
+                return $this->saveUpdate();
+            }
+
+            $this->newCodigo();
+            return $this->saveInsert();
+        }
+
+        return FALSE;
+    }
 
     /**
      * Elimina una factura y actualiza los registros relacionados con ella.
@@ -1143,134 +1155,6 @@ class FacturaCliente
             return true;
         }
         return false;
-    }
-
-    /**
-     * Devuelve un array con las facturas sin pagar
-     *
-     * @param int $offset
-     * @param int $limit
-     * @param string $order
-     *
-     * @return array
-     */
-    public function allSinPagar($offset = 0, $limit = FS_ITEM_LIMIT, $order = 'vencimiento ASC, codigo ASC')
-    {
-        $faclist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE pagada = FALSE ORDER BY ' . $order;
-
-        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
-        if (!empty($data)) {
-            foreach ($data as $f) {
-                $faclist[] = new FacturaCliente($f);
-            }
-        }
-
-        return $faclist;
-    }
-
-    /**
-     * Devuelve un array con las facturas del agente/empleado
-     *
-     * @param string $codagente
-     * @param int $offset
-     *
-     * @return array
-     */
-    public function allFromAgente($codagente, $offset = 0)
-    {
-        $faclist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() .
-            ' WHERE codagente = ' . $this->var2str($codagente) .
-            ' ORDER BY fecha DESC, codigo DESC';
-
-        $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if (!empty($data)) {
-            foreach ($data as $f) {
-                $faclist[] = new FacturaCliente($f);
-            }
-        }
-
-        return $faclist;
-    }
-
-    /**
-     * Devuelve un array con las facturas del cliente $codcliente
-     *
-     * @param string $codcliente
-     * @param int $offset
-     *
-     * @return array
-     */
-    public function allFromCliente($codcliente, $offset = 0)
-    {
-        $faclist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() .
-            ' WHERE codcliente = ' . $this->var2str($codcliente) .
-            ' ORDER BY fecha DESC, codigo DESC';
-
-        $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if (!empty($data)) {
-            foreach ($data as $f) {
-                $faclist[] = new FacturaCliente($f);
-            }
-        }
-
-        return $faclist;
-    }
-
-    /**
-     * Devuelve un array con las facturas comprendidas entre $desde y $hasta
-     *
-     * @param string $desde
-     * @param string $hasta
-     * @param string $codserie código de la serie
-     * @param string $codagente código del empleado
-     * @param string|boolean $codcliente código del cliente
-     * @param string|boolean $estado
-     * @param string|boolean $codpago código de la forma de pago
-     * @param string|boolean $codalmacen código del almacén
-     *
-     * @return array
-     */
-    public function allDesde($desde, $hasta, $codserie = '', $codagente = '', $codcliente = '', $estado = '', $codpago = '', $codalmacen = '')
-    {
-        $faclist = [];
-
-        $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE fecha >= ' . $this->var2str($desde) . ' AND fecha <= ' . $this->var2str($hasta);
-        if ($codserie !== '') {
-            $sql .= ' AND codserie = ' . $this->var2str($codserie);
-        }
-        if ($codagente !== '') {
-            $sql .= ' AND codagente = ' . $this->var2str($codagente);
-        }
-        if ($codcliente !== '') {
-            $sql .= ' AND codcliente = ' . $this->var2str($codcliente);
-        }
-        if ($estado !== '') {
-            if ($estado === 'pagada') {
-                $sql .= ' AND pagada = true';
-            } else {
-                $sql .= ' AND pagada = false';
-            }
-        }
-        if ($codpago !== '') {
-            $sql .= ' AND codpago = ' . $this->var2str($codpago);
-        }
-        if ($codalmacen !== '') {
-            $sql .= ' AND codalmacen = ' . $this->var2str($codalmacen);
-        }
-        $sql .= ' ORDER BY fecha ASC, codigo ASC;';
-
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $f) {
-                $faclist[] = new FacturaCliente($f);
-            }
-        }
-
-        return $faclist;
     }
 
     /**
@@ -1362,16 +1246,6 @@ class FacturaCliente
     public function cronJob()
     {
         
-    }
-
-    /**
-     * Inserta los datos del modelo en la base de datos.
-     * @return bool
-     */
-    private function saveInsert()
-    {
-        $this->newCodigo();
-        return $this->saveInsertTrait();
     }
 
     /**

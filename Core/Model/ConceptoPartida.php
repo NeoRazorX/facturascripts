@@ -47,8 +47,8 @@ class ConceptoPartida
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'co_conceptospar', 'idconceptopar');
-        if (is_null($data) || empty($data)) {
+        $this->init('co_conceptospar', 'idconceptopar');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

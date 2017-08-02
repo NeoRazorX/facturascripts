@@ -58,7 +58,7 @@ class crm_contacto
 
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'crm_contactos', 'codcontacto');
+        $this->init('crm_contactos', 'codcontacto');
         if (empty($data)) {
             $this->clear();
         } else {

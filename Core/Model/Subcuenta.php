@@ -113,8 +113,8 @@ class Subcuenta
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'co_subcuentas', 'idsubcuenta');
-        if (is_null($data) || empty($data)) {
+        $this->init('co_subcuentas', 'idsubcuenta');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

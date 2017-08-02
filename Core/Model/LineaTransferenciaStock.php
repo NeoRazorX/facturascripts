@@ -78,8 +78,8 @@ class LineaTransferenciaStock
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'lineastransstock', 'idlinea');
-        if (is_null($data) || empty($data)) {
+        $this->init('lineastransstock', 'idlinea');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

@@ -98,11 +98,10 @@ trait ModelTrait
     /**
      * Constructor.
      *
-     * @param string $modelName
      * @param string $tableName nombre de la tabla de la base de datos.
      * @param string $primaryColumn
      */
-    private function init($modelName = '', $tableName = '', $primaryColumn = '')
+    private function init($tableName = '', $primaryColumn = '')
     {
         $this->cache = new Cache();
         $this->dataBase = new DataBase();
@@ -116,7 +115,7 @@ trait ModelTrait
                 self::$checkedTables = [];
             }
 
-            self::$modelName = $modelName;
+            self::$modelName = __CLASS__;
             self::$primaryColumn = $primaryColumn;
             self::$tableName = $tableName;
         }

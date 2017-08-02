@@ -107,8 +107,8 @@ class DireccionCliente
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'dirclientes', 'id');
-        if (is_null($data) || empty($data)) {
+        $this->init('dirclientes', 'id');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

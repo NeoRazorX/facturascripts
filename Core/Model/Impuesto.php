@@ -72,8 +72,8 @@ class Impuesto
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'impuestos', 'codimpuesto');
-        if (is_null($data) || empty($data)) {
+        $this->init('impuestos', 'codimpuesto');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

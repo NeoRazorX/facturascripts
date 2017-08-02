@@ -228,7 +228,7 @@ class PresupuestoCliente
 
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'presupuestoscli', 'idpresupuesto');
+        $this->init('presupuestoscli', 'idpresupuesto');
         if (empty($data)) {
             $this->clear();
         } else {
@@ -295,9 +295,9 @@ class PresupuestoCliente
     {
         if ($s) {
             return Date('H:i:s', strtotime($this->hora));
-        } else {
-            return Date('H:i', strtotime($this->hora));
         }
+        
+        return Date('H:i', strtotime($this->hora));
     }
 
     public function observaciones_resume()
@@ -379,7 +379,7 @@ class PresupuestoCliente
         return $versiones;
     }
 
-    public function new_codigo()
+    public function newCodigo()
     {
         $this->numero = fs_documento_new_numero($this->db, $this->table_name, $this->codejercicio, $this->codserie, 'npresupuestocli');
 
@@ -494,7 +494,7 @@ class PresupuestoCliente
                 return $this->saveUpdate();
             }
 
-            $this->new_codigo();
+            $this->newCodigo();
             return $this->saveInsert();
         }
 

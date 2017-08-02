@@ -228,6 +228,7 @@ class PedidoCliente
 
     public function __construct($data = [])
     {
+        $this->init('pedidoscli', 'idpedido');
         if (empty($data)) {
             $this->clear();
         } else {
@@ -380,7 +381,7 @@ class PedidoCliente
     /**
      * Genera un nuevo código y número para el pedido
      */
-    public function new_codigo()
+    public function newCodigo()
     {
         $this->numero = fs_documento_new_numero($this->db, $this->table_name, $this->codejercicio, $this->codserie, 'npedidocli');
         $this->codigo = fs_documento_new_codigo(FS_PEDIDO, $this->codejercicio, $this->codserie, $this->numero);
@@ -497,7 +498,7 @@ class PedidoCliente
                 return $this->saveUpdate();
             }
 
-            $this->new_codigo();
+            $this->newCodigo();
             return $this->saveInsert();
         }
 

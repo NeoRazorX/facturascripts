@@ -109,8 +109,8 @@ class Asiento
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'co_asientos', 'idasiento');
-        if (is_null($data) || empty($data)) {
+        $this->init('co_asientos', 'idasiento');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

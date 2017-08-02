@@ -204,8 +204,8 @@ class AlbaranProveedor
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'albaranesprov', 'idalbaran');
-        if (is_null($data) || empty($data)) {
+        $this->init('albaranesprov', 'idalbaran');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);
@@ -487,49 +487,19 @@ class AlbaranProveedor
 
         return $status;
     }
-
-    /**
-     * Inserta los datos del modelo en la base de datos.
-     * @return bool
-     */
-    public function saveInsert()
+    
+    public function save()
     {
-        $this->newCodigo();
-        $sql = 'INSERT INTO ' . $this->tableName() . ' (codigo,numero,numproveedor,
-               codejercicio,codserie,coddivisa,codpago,codagente,codalmacen,fecha,codproveedor,
-               nombre,cifnif,neto,total,totaliva,totaleuros,irpf,totalirpf,tasaconv,
-               totalrecargo,observaciones,ptefactura,hora,numdocs) VALUES
-                      (' . $this->var2str($this->codigo)
-            . ', ' . $this->var2str($this->numero)
-            . ', ' . $this->var2str($this->numproveedor)
-            . ', ' . $this->var2str($this->codejercicio)
-            . ', ' . $this->var2str($this->codserie)
-            . ', ' . $this->var2str($this->coddivisa)
-            . ', ' . $this->var2str($this->codpago)
-            . ', ' . $this->var2str($this->codagente)
-            . ', ' . $this->var2str($this->codalmacen)
-            . ', ' . $this->var2str($this->fecha)
-            . ', ' . $this->var2str($this->codproveedor)
-            . ', ' . $this->var2str($this->nombre)
-            . ', ' . $this->var2str($this->cifnif)
-            . ', ' . $this->var2str($this->neto)
-            . ', ' . $this->var2str($this->total)
-            . ', ' . $this->var2str($this->totaliva)
-            . ', ' . $this->var2str($this->totaleuros)
-            . ', ' . $this->var2str($this->irpf)
-            . ', ' . $this->var2str($this->totalirpf)
-            . ', ' . $this->var2str($this->tasaconv)
-            . ', ' . $this->var2str($this->totalrecargo)
-            . ', ' . $this->var2str($this->observaciones)
-            . ', ' . $this->var2str($this->ptefactura)
-            . ', ' . $this->var2str($this->hora)
-            . ', ' . $this->var2str($this->numdocs) . ');';
+        if ($this->test()) {
+            if ($this->exists()) {
+                return $this->saveUpdate();
+            }
 
-        if ($this->dataBase->exec($sql)) {
-            $this->idalbaran = $this->dataBase->lastval();
-            return true;
+            $this->newCodigo();
+            return $this->saveInsert();
         }
-        return false;
+
+        return FALSE;
     }
 
     /**
@@ -556,126 +526,6 @@ class AlbaranProveedor
             return true;
         }
         return false;
-    }
-
-    /**
-     * Devuelve un array con los albaranes pendientes
-     *
-     * @param int $offset
-     * @param string $order
-     * @param int $limit
-     *
-     * @return array
-     */
-    public function allPtefactura($offset = 0, $order = 'fecha ASC, codigo ASC', $limit = FS_ITEM_LIMIT)
-    {
-        $albalist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE ptefactura = TRUE ORDER BY ' . $order;
-
-        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
-        if (!empty($data)) {
-            foreach ($data as $a) {
-                $albalist[] = new AlbaranProveedor($a);
-            }
-        }
-
-        return $albalist;
-    }
-
-    /**
-     * Devuelve un array con los albaranes del proveedor
-     *
-     * @param string $codproveedor
-     * @param int $offset
-     *
-     * @return array
-     */
-    public function allFromProveedor($codproveedor, $offset = 0)
-    {
-        $alblist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codproveedor = '
-            . $this->var2str($codproveedor) . ' ORDER BY fecha DESC, codigo DESC';
-
-        $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if (!empty($data)) {
-            foreach ($data as $a) {
-                $alblist[] = new AlbaranProveedor($a);
-            }
-        }
-
-        return $alblist;
-    }
-
-    /**
-     * Devuelve un array con los albaranes del agente/empleado
-     *
-     * @param string $codagente
-     * @param int $offset
-     *
-     * @return array
-     */
-    public function allFromAgente($codagente, $offset = 0)
-    {
-        $alblist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codagente = '
-            . $this->var2str($codagente) . ' ORDER BY fecha DESC, codigo DESC';
-
-        $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if (!empty($data)) {
-            foreach ($data as $a) {
-                $alblist[] = new AlbaranProveedor($a);
-            }
-        }
-
-        return $alblist;
-    }
-
-    /**
-     * Devuelve un array con los albaranes relacionados con la factura $id
-     *
-     * @param int $idfac
-     *
-     * @return array
-     */
-    public function allFromFactura($idfac)
-    {
-        $alblist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idfactura = '
-            . $this->var2str($idfac) . ' ORDER BY fecha DESC, codigo DESC';
-
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $alb) {
-                $alblist[] = new AlbaranProveedor($alb);
-            }
-        }
-
-        return $alblist;
-    }
-
-    /**
-     * Devuelve un array con los albaranes comprendidos entre $desde y $hasta
-     *
-     * @param string $desde
-     * @param string $hasta
-     *
-     * @return array
-     */
-    public function allDesde($desde, $hasta)
-    {
-        $alblist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fecha >= '
-            . $this->var2str($desde) . ' AND fecha <= ' . $this->var2str($hasta)
-            . ' ORDER BY codigo ASC;';
-
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $a) {
-                $alblist[] = new AlbaranProveedor($a);
-            }
-        }
-
-        return $alblist;
     }
 
     /**

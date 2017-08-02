@@ -55,8 +55,8 @@ class Pais
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'paises', 'codpais');
-        if (is_null($data) || empty($data)) {
+        $this->init('paises', 'codpais');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

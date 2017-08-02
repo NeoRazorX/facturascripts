@@ -167,8 +167,8 @@ class LineaAlbaranCliente
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'lineasalbaranescli', 'idlinea');
-        if (is_null($data) || empty($data)) {
+        $this->init('lineasalbaranescli', 'idlinea');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

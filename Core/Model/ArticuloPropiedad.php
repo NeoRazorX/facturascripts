@@ -54,8 +54,8 @@ class ArticuloPropiedad
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'articulo_propiedades', 'name');
-        if (is_null($data) || empty($data)) {
+        $this->init('articulo_propiedades', 'name');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

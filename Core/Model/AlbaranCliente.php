@@ -318,8 +318,8 @@ class AlbaranCliente
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'albaranescli', 'idalbaran');
-        if (is_null($data) || empty($data)) {
+        $this->init('albaranescli', 'idalbaran');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

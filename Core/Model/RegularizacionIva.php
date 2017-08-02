@@ -77,8 +77,8 @@ class RegularizacionIva
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'co_regiva', 'idregiva');
-        if (is_null($data) || empty($data)) {
+        $this->init('co_regiva', 'idregiva');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

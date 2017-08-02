@@ -66,8 +66,8 @@ class PageRule
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'fs_page_rules', 'id');
-        if (is_null($data) || empty($data)) {
+        $this->init('fs_page_rules', 'id');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

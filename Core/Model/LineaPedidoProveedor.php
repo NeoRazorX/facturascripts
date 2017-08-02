@@ -110,7 +110,7 @@ class LineaPedidoProveedor
             self::$pedidos = array();
         }
 
-        $this->init(__CLASS__, 'lineaspedidosprov', 'idlinea');
+        $this->init('lineaspedidosprov', 'idlinea');
         if (empty($data)) {
             $this->clear();
         } else {

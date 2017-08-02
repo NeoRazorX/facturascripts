@@ -65,8 +65,8 @@ class SubcuentaProveedor
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'co_subcuentasprov', 'id');
-        if (is_null($data) || empty($data)) {
+        $this->init('co_subcuentasprov', 'id');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

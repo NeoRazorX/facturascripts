@@ -49,7 +49,7 @@ class Rol
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'fs_roles', 'codrol');
+        $this->init('fs_roles', 'codrol');
         $this->clear();
         if (is_array($data) && !empty($data)) {
             $this->codrol = $data['codrol'];

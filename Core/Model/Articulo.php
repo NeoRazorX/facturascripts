@@ -26,7 +26,9 @@ namespace FacturaScripts\Core\Model;
 class Articulo
 {
 
-    use Base\ModelTrait;
+    use Base\ModelTrait {
+        clear as clearTrait;
+    }
 
     /**
      * TODO
@@ -250,8 +252,8 @@ class Articulo
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'articulos', 'referencia');
-        if (is_null($data) || empty($data)) {
+        $this->init('articulos', 'referencia');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);
@@ -263,33 +265,8 @@ class Articulo
      */
     public function clear()
     {
-        $this->referencia = null;
-        $this->tipo = null;
-        $this->codfamilia = null;
-        $this->codfabricante = null;
-        $this->descripcion = '';
-        $this->pvp = 0;
+        $this->clearTrait();
         $this->factualizado = date('d-m-Y');
-        $this->costemedio = 0;
-        $this->preciocoste = 0;
-        $this->codimpuesto = null;
-        $this->stockfis = 0;
-        $this->stockmin = 0;
-        $this->stockmax = 0;
-        // $this->controlstock = (bool) FS_VENTAS_SIN_STOCK;
-        $this->nostock = false;
-        $this->bloqueado = false;
-        $this->secompra = true;
-        $this->sevende = true;
-        $this->publico = false;
-        $this->equivalencia = null;
-        $this->partnumber = null;
-        $this->codbarras = '';
-        $this->observaciones = '';
-        $this->codsubcuentacom = null;
-        $this->codsubcuentairpfcom = null;
-        $this->trazabilidad = false;
-
         $this->imagen = null;
         $this->exists = false;
     }
@@ -349,6 +326,7 @@ class Articulo
         if ($this->referencia === null) {
             return 'index.php?page=VentasArticulos';
         }
+        
         return 'index.php?page=VentasArticulo&ref=' . urlencode($this->referencia);
     }
 
@@ -480,129 +458,6 @@ class Articulo
         }
 
         return $this->iva;
-    }
-
-    /**
-     * Devuelve un array con los artículos que tengan el mismo código de
-     * equivalencia que el artículo.
-     * @return array
-     */
-    public function getEquivalentes()
-    {
-        $artilist = [];
-
-        if ($this->equivalencia !== null) {
-            $sql = 'SELECT ' . self::$column_list . ' FROM ' . $this->tableName() .
-                ' WHERE equivalencia = ' . $this->var2str($this->equivalencia) . ' ORDER BY referencia ASC;';
-            $data = $this->dataBase->select($sql);
-            if (!empty($data)) {
-                foreach ($data as $d) {
-                    if ($d['referencia'] !== $this->referencia) {
-                        $artilist[] = new Articulo($d);
-                    }
-                }
-            }
-        }
-
-        return $artilist;
-    }
-
-    /**
-     * Devuelve las últimas líneas de albaranes de clientes con este artículo.
-     * @deprecated since version 106
-     *
-     * @param int $offset
-     * @param int $limit
-     *
-     * @return array
-     */
-    public function getLineasAlbaranCli($offset = 0, $limit = FS_ITEM_LIMIT)
-    {
-        $linea = new LineaAlbaranCliente();
-        return $linea->allFromArticulo($this->referencia, $offset, $limit);
-    }
-
-    /**
-     * Devuelve las últimas líneas de albaranes de proveedores con este artículo.
-     * @deprecated since version 106
-     *
-     * @param int $offset
-     * @param int $limit
-     *
-     * @return array
-     */
-    public function getLineasAlbaranProv($offset = 0, $limit = FS_ITEM_LIMIT)
-    {
-        $linea = new LineaAlbaranProveedor();
-        return $linea->allFromArticulo($this->referencia, $offset, $limit);
-    }
-
-    /**
-     * Devuelve la media del precio de compra del artículo en los últimos albaranes o facturas.
-     * @return int
-     */
-    public function getCostemedio()
-    {
-        $coste = 0;
-        $stock = 0;
-
-        /// obtenemos las últimas líneas de facturas con este artículo
-        $lfp = new LineaFacturaProveedor();
-        $lineasfac = $lfp->allFromArticulo($this->referencia);
-
-        /// obtenemos las últimas líneas de albaranes con este artículo
-        $lap = new LineaAlbaranProveedor();
-        $lineasalb = $lap->allFromArticulo($this->referencia);
-
-        /**
-         * Ahora comprobamos la fecha del primer elemento de una y otra lista
-         * para ver cual usamos.
-         */
-        if (!empty($lineasfac) && !empty($lineasalb)) {
-            if (strtotime($lineasalb[0]->showFecha()) > strtotime($lineasfac[0]->showFecha())) {
-                /**
-                 * la fecha del último albarán es posterior a la de la última factura.
-                 * Usamos los albaranes para el cálculo.
-                 */
-                foreach ($lineasalb as $linea) {
-                    if ($stock < $this->stockfis || $this->stockfis <= 0) {
-                        $coste += $linea->pvptotal;
-                        $stock += $linea->cantidad;
-                    } else {
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (!empty($lineasfac)) {
-            /// usamos las facturas para el cálculo.
-            foreach ($lineasfac as $linea) {
-                if ($stock < $this->stockfis || $this->stockfis <= 0) {
-                    $coste += $linea->pvptotal;
-                    $stock += $linea->cantidad;
-                } else {
-                    break;
-                }
-            }
-        }
-
-        if (!empty($lineasalb)) {
-            /// usamos los albaranes para el cálculo.
-            foreach ($lineasalb as $linea) {
-                if ($stock < $this->stockfis || $this->stockfis <= 0) {
-                    $coste += $linea->pvptotal;
-                    $stock += $linea->cantidad;
-                } else {
-                    break;
-                }
-            }
-        }
-
-        if ($stock > 0) {
-            return $coste / $stock;
-        }
-        return $coste;
     }
 
     /**
@@ -1089,104 +944,6 @@ class Articulo
         $sql = 'SELECT ' . self::$column_list . ' FROM ' . $this->tableName()
             . ' WHERE codbarras = ' . $this->var2str($cod)
             . ' ORDER BY lower(referencia) ASC';
-
-        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $artilist[] = new Articulo($d);
-            }
-        }
-
-        return $artilist;
-    }
-
-    /**
-     * Devuelve el listado de artículos desde el resultado $offset hasta $offset+$limit.
-     *
-     * @param int $offset
-     * @param int $limit
-     *
-     * @return array
-     */
-    public function all($offset = 0, $limit = FS_ITEM_LIMIT)
-    {
-        $artilist = [];
-        $sql = 'SELECT ' . self::$column_list . ' FROM ' . $this->tableName()
-            . ' ORDER BY lower(referencia) ASC';
-
-        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $artilist[] = new Articulo($d);
-            }
-        }
-
-        return $artilist;
-    }
-
-    /**
-     * Devuelve el listado de artículos públicos, desde $offset hasta $offset+$limit
-     *
-     * @param int $offset
-     * @param int $limit
-     *
-     * @return array
-     */
-    public function allPublico($offset = 0, $limit = FS_ITEM_LIMIT)
-    {
-        $artilist = [];
-        $sql = 'SELECT ' . self::$column_list . ' FROM ' . $this->tableName()
-            . ' WHERE publico ORDER BY lower(referencia) ASC';
-
-        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $artilist[] = new Articulo($d);
-            }
-        }
-
-        return $artilist;
-    }
-
-    /**
-     * Devuelve los artículos de una familia.
-     *
-     * @param string $cod
-     * @param int $offset
-     * @param int $limit
-     *
-     * @return array
-     */
-    public function allFromFamilia($cod, $offset = 0, $limit = FS_ITEM_LIMIT)
-    {
-        $artilist = [];
-        $sql = 'SELECT ' . self::$column_list . ' FROM ' . $this->tableName() . ' WHERE codfamilia = '
-            . $this->var2str($cod) . ' ORDER BY lower(referencia) ASC';
-
-        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $artilist[] = new Articulo($d);
-            }
-        }
-
-        return $artilist;
-    }
-
-    /**
-     * Devuelve los artículos de un fabricante.
-     *
-     * @param string $cod
-     * @param int $offset
-     * @param int $limit
-     *
-     * @return array
-     */
-    public function allFromFabricante($cod, $offset = 0, $limit = FS_ITEM_LIMIT)
-    {
-        $artilist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codfabricante = '
-            . $this->var2str($cod) . ' ORDER BY lower(referencia) ASC';
 
         $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {

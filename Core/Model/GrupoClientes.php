@@ -53,8 +53,8 @@ class GrupoClientes
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'gruposclientes', 'codgrupo');
-        if (is_null($data) || empty($data)) {
+        $this->init('gruposclientes', 'codgrupo');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

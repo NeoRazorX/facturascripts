@@ -59,8 +59,8 @@ class GrupoEpigrafes
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'co_gruposepigrafes', 'idgrupo');
-        if (is_null($data) || empty($data)) {
+        $this->init('co_gruposepigrafes', 'idgrupo');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

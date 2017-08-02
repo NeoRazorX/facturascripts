@@ -55,8 +55,8 @@ class RolUser
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'fs_roles_users', 'id');
-        if (is_null($data) || empty($data)) {
+        $this->init('fs_roles_users', 'id');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

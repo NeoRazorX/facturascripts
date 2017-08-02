@@ -115,8 +115,8 @@ class ArticuloCombinacion
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'articulo_combinaciones', 'id');
-        if (is_null($data) || empty($data)) {
+        $this->init('articulo_combinaciones', 'id');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

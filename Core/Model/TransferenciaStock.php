@@ -72,8 +72,8 @@ class TransferenciaStock
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'transstock', 'idtrans');
-        if (is_null($data) || empty($data)) {
+        $this->init('transstock', 'idtrans');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

@@ -109,8 +109,8 @@ class Stock
      */
     public function __construct($data = [])
     {
-        $this->init(__CLASS__, 'stocks', 'idstock');
-        if (is_null($data) || empty($data)) {
+        $this->init('stocks', 'idstock');
+        if (empty($data)) {
             $this->clear();
         } else {
             $this->loadFromData($data);

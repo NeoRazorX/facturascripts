@@ -141,7 +141,7 @@ class LineaPedidoCliente
             self::$pedidos = array();
         }
 
-        $this->init(__CLASS__, 'lineaspedidoscli', 'idlinea');
+        $this->init('lineaspedidoscli', 'idlinea');
         if (empty($data)) {
             $this->clear();
         } else {
