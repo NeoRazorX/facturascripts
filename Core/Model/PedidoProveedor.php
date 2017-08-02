@@ -25,7 +25,10 @@ namespace FacturaScripts\Core\Model;
 class PedidoProveedor
 {
 
-    use Base\ModelTrait;
+    use Base\DocumentoCompra;
+    use Base\ModelTrait {
+        clear as clearTrait;
+    }
 
     /**
      * Clave primaria.
@@ -40,139 +43,10 @@ class PedidoProveedor
     public $idalbaran;
 
     /**
-     * Código único. Para humanos.
-     * @var type 
-     */
-    public $codigo;
-
-    /**
-     * Serie relacionada.
-     * @var type 
-     */
-    public $codserie;
-
-    /**
-     * Ejercicio relacionado. El que corresponde a la fecha.
-     * @var type 
-     */
-    public $codejercicio;
-
-    /**
-     * Código del proveedor del pedido.
-     * @var type 
-     */
-    public $codproveedor;
-
-    /**
-     * Empleado que ha creado el pedido.
-     * @var type 
-     */
-    public $codagente;
-
-    /**
-     * Forma de pago del pedido.
-     * @var type 
-     */
-    public $codpago;
-
-    /**
-     * Divisa del pedido.
-     * @var type 
-     */
-    public $coddivisa;
-
-    /**
-     * Almacén en el que entrará la mercancía.
-     * @var type 
-     */
-    public $codalmacen;
-
-    /**
-     * Número de pedido.
-     * Único para la serie+ejercicio.
-     * @var type 
-     */
-    public $numero;
-
-    /**
-     * Número del pedido del proveedor. Si lo tiene.
-     * @var type 
-     */
-    public $numproveedor;
-
-    /**
-     * Nombre del proveedor.
-     * @var type 
-     */
-    public $nombre;
-    public $cifnif;
-    public $fecha;
-    public $hora;
-
-    /**
-     * Imprte total antes de impuestos.
-     * es la suma del pvptotal de las líneas.
-     * @var type 
-     */
-    public $neto;
-
-    /**
-     * Importe total del pedido, con impuestos.
-     * @var type 
-     */
-    public $total;
-
-    /**
-     * Suma total del IVA de las líneas.
-     * @var type 
-     */
-    public $totaliva;
-
-    /**
-     * Total expresado en euros, por si no fuese la divisa del pedido.
-     * totaleuros = total/tasaconv
-     * No hace falta rellenarlo, al hacer save() se calcula el valor.
-     * @var type 
-     */
-    public $totaleuros;
-
-    /**
-     * % de retención IRPF del pedido. Se obtiene de la serie.
-     * Cada línea puede tener un % distinto.
-     * @var type 
-     */
-    public $irpf;
-
-    /**
-     * Suma de las retenciones IRPF de las líneas del pedido.
-     * @var type 
-     */
-    public $totalirpf;
-
-    /**
-     * Tasa de conversión a Euros de la divisa seleccionada.
-     * @var type 
-     */
-    public $tasaconv;
-
-    /**
-     * Suma total del recargo de equivalencia de las líneas.
-     * @var type 
-     */
-    public $totalrecargo;
-    public $observaciones;
-
-    /**
      * Indica si se puede editar o no.
      * @var type 
      */
     public $editable;
-
-    /**
-     * Número de documentos adjuntos.
-     * @var integer 
-     */
-    public $numdocs;
 
     /**
      * Si este presupuesto es la versión de otro, aquí se almacena el idpresupuesto del original.
@@ -192,54 +66,14 @@ class PedidoProveedor
 
     public function clear()
     {
-        $this->idpedido = NULL;
-        $this->idalbaran = NULL;
-        $this->codigo = NULL;
-        $this->codagente = NULL;
+        $this->clearTrait();
         $this->codpago = $this->default_items->codpago();
         $this->codserie = $this->default_items->codserie();
-        $this->codejercicio = NULL;
-        $this->codproveedor = NULL;
-        $this->coddivisa = NULL;
         $this->codalmacen = $this->default_items->codalmacen();
-        $this->numero = NULL;
-        $this->numproveedor = NULL;
-        $this->nombre = '';
-        $this->cifnif = '';
         $this->fecha = Date('d-m-Y');
         $this->hora = Date('H:i:s');
-        $this->neto = 0;
-        $this->total = 0;
-        $this->totaliva = 0;
-        $this->totaleuros = 0;
-        $this->irpf = 0;
-        $this->totalirpf = 0;
         $this->tasaconv = 1;
-        $this->totalrecargo = 0;
-        $this->observaciones = NULL;
         $this->editable = TRUE;
-        $this->numdocs = 0;
-        $this->idoriginal = NULL;
-    }
-
-    public function show_hora($s = TRUE)
-    {
-        if ($s) {
-            return Date('H:i:s', strtotime($this->hora));
-        }
-
-        return Date('H:i', strtotime($this->hora));
-    }
-
-    public function observaciones_resume()
-    {
-        if ($this->observaciones == '') {
-            return '-';
-        } else if (strlen($this->observaciones) < 60) {
-            return $this->observaciones;
-        }
-
-        return substr($this->observaciones, 0, 50) . '...';
     }
 
     public function url()

@@ -88,26 +88,6 @@ class PresupuestoCliente
         $this->editable = TRUE;
     }
 
-    public function show_hora($s = TRUE)
-    {
-        if ($s) {
-            return Date('H:i:s', strtotime($this->hora));
-        }
-
-        return Date('H:i', strtotime($this->hora));
-    }
-
-    public function observaciones_resume()
-    {
-        if ($this->observaciones == '') {
-            return '-';
-        } else if (strlen($this->observaciones) < 60) {
-            return $this->observaciones;
-        }
-
-        return substr($this->observaciones, 0, 50) . '...';
-    }
-
     public function finoferta()
     {
         return (strtotime(Date('d-m-Y')) > strtotime($this->finoferta));

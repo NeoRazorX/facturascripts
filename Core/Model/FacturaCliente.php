@@ -120,21 +120,6 @@ class FacturaCliente
     }
 
     /**
-     * Acorta el texto de observaciones
-     * @return string
-     */
-    public function observacionesResume()
-    {
-        if ($this->observaciones === '') {
-            return '-';
-        }
-        if (strlen($this->observaciones) < 60) {
-            return $this->observaciones;
-        }
-        return substr($this->observaciones, 0, 50) . '...';
-    }
-
-    /**
      * Devuelve true su está vencida, sino false
      * @return bool
      */
