@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Model as Models;
+use FacturaScripts\Core\Model;
 
 /**
  * Gestiona el uso del menú de Facturascripts
@@ -31,19 +31,25 @@ class MenuManager
 
     /**
      * Contiene la estructura del menú para el usuario.
-     * @var array 
+     * @var MenuItem[]
      */
     private static $menu;
 
     /**
      *
-     * @var Models\Page
+     * @var bool
+     */
+    private static $menuActive;
+
+    /**
+     *
+     * @var Model\Page
      */
     private static $pageModel;
 
     /**
      * Usuario para quien se ha creado el menú.
-     * @var Models\User
+     * @var Model\User
      */
     private static $user;
 
@@ -53,7 +59,7 @@ class MenuManager
     public function init()
     {
         if (self::$pageModel === null) {
-            self::$pageModel = new Models\Page();
+            self::$pageModel = new Model\Page();
         }
 
         if (self::$user !== null) {
@@ -63,7 +69,7 @@ class MenuManager
 
     /**
      * Asigna el usuario para cargar su menú.
-     * @param Models\User|null $user
+     * @param Model\User|null $user
      */
     public function setUser($user)
     {
@@ -72,7 +78,7 @@ class MenuManager
     }
 
     /**
-     * Actualiza los datos en el modelo Models\Page en base los datos
+     * Actualiza los datos en el modelo Model\Page en base los datos
      * del getPageData() del controlador
      * @param array $pageData
      */
@@ -81,7 +87,7 @@ class MenuManager
         $pageModel = self::$pageModel->get($pageData['name']);
         if ($pageModel === false) {
             $pageData['order'] = 100;
-            $pageModel = new Models\Page($pageData);
+            $pageModel = new Model\Page($pageData);
             $pageModel->save();
         } elseif ($pageModel->menu != $pageData['menu'] || $pageModel->title != $pageData['title'] || $pageModel->icon != $pageData['icon']) {
             $pageModel->menu = $pageData['menu'];
@@ -92,13 +98,40 @@ class MenuManager
             $pageModel->orden = $pageData['orden'];
             $pageModel->save();
         }
-        
-        if (!empty(self::$menu)) {
-            /**
-             * TODO: navegar por el menú y marcar como activa la página seleccionada:
-             * $pageData['name']
-             * @return \FacturaScripts\Core\Base\MenuItem
-             */
+
+        if (self::$menu !== null && self::$menuActive !== true) {
+            $this->setActiveMenu($pageModel);
+            self::$menuActive = true;
+        }
+    }
+
+    /**
+     * 
+     * @param Model\Page $pageModel
+     */
+    private function setActiveMenu($pageModel)
+    {
+        foreach (self::$menu as $key => $menuItem) {
+            if ($menuItem->name == $pageModel->menu) {
+                self::$menu[$key]->active = true;
+                $this->setActiveMenuItem(self::$menu[$key]->menu, $pageModel);
+                break;
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param MenuItem[] $menu
+     * @param Model\Page $pageModel
+     */
+    private function setActiveMenuItem(&$menu, $pageModel)
+    {
+        foreach ($menu as $key => $menuItem) {
+            if ($menuItem->name == $pageModel->name) {
+                $menu[$key]->active = true;
+                break;
+            }
         }
     }
 
@@ -124,7 +157,7 @@ class MenuManager
             if ($menuValue !== $page->menu) {
                 $menuValue = $page->menu;
                 $submenuValue = NULL;
-                $result[$menuValue] = new MenuItem(ucfirst($menuValue), '#', null);
+                $result[$menuValue] = new MenuItem($menuValue, $menuValue, '#');
                 $menuItem = &$result[$menuValue]->menu;
             }
 
@@ -133,12 +166,12 @@ class MenuManager
                 $submenuValue = $page->submenu;
                 $menuItem = &$result[$menuValue]->menu;
                 if ($submenuValue != NULL) {
-                    $menuItem[$submenuValue] = new MenuItem(ucfirst($submenuValue), '#', null);
+                    $menuItem[$submenuValue] = new MenuItem($submenuValue, $submenuValue, '#');
                     $menuItem = &$menuItem[$submenuValue]->menu;
                 }
             }
 
-            $menuItem[$page->name] = new MenuItem($page->title, $page->url(), $page->icon);
+            $menuItem[$page->name] = new MenuItem($page->name, $page->title, $page->url(), $page->icon);
         }
 
         return $result;
@@ -146,12 +179,12 @@ class MenuManager
 
     /**
      * Carga la lista de páginas para el usuario
-     * @return array
+     * @return Model\Page[]
      */
     private function loadPages()
     {
         $result = [];
-        
+
         $where = [];
         $where[] = new DataBase\DataBaseWhere('showonmenu', TRUE);
 
@@ -169,7 +202,7 @@ class MenuManager
                 break;
 
             default:
-                $pageRuleModel = new Models\PageRule();
+                $pageRuleModel = new Model\PageRule();
                 $pageRule_list = $pageRuleModel->all(['nick' => self::$user]);
                 foreach ($pages as $page) {
                     foreach ($pageRule_list as $pageRule) {

@@ -70,6 +70,7 @@ class AppController extends App
 
     /**
      * Selecciona y ejecuta el controlador pertinente.
+     * @return boolean
      */
     public function run()
     {

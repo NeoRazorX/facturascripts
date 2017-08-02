@@ -28,40 +28,56 @@ class MenuItem
 {
 
     /**
-     * Título de la opción de menú
+     * Nombre identificativo del elemento.
+     * @var string
+     */
+    public $name;
+
+    /**
+     * Título de la opción de menú.
      * @var string
      */
     public $title;
 
     /**
-     * URL para el href de la opción de menú
+     * URL para el href de la opción de menú.
      * @var string
      */
     public $url;
 
     /**
-     * Icono de la fuente Fontawesome de la opción de menú
+     * Icono de la fuente Fontawesome de la opción de menú.
      * @var string
      */
     public $icon;
 
     /**
-     * Lista de opciones de menú para el item
+     * Indica si está activado o no.
+     * @var bool
+     */
+    public $active;
+
+    /**
+     * Lista de opciones de menú para el item.
      * @var MenuItem[]
      */
     public $menu;
 
     /**
      * Contruye y rellena los valores principales del Item
+     * @param string $name
      * @param string $title
      * @param string $url
+     * @param string $icon
      */
-    public function __construct($title, $url, $icon)
+    public function __construct($name, $title, $url, $icon = null)
     {
+        $this->name = $name;
         $this->title = $title;
         $this->url = $url;
         $this->icon = $icon;
         $this->menu = [];
+        $this->active = false;
     }
 
     /**
@@ -84,8 +100,13 @@ class MenuItem
      */
     public function getHTML($level = 0)
     {
+        $liClass = '';
+        if ($this->active) {
+            $liClass = 'active';
+        }
+
         if (empty($this->menu)) {
-            return '<li><a href="' . $this->url . '">' . $this->getHTMLIcon() . $this->title . '</a></li>';
+            return '<li class="' . $liClass . '" data-name="' . $this->name . '"><a href="' . $this->url . '">' . $this->getHTMLIcon() . $this->title . '</a></li>';
         }
 
         $base = '<a href="' . $this->url . '" class="dropdown-toggle"'
@@ -93,9 +114,9 @@ class MenuItem
             . ' aria-expanded="false">' . $this->title;
 
         if ($level === 0) {
-            $html = '<li>' . $base . ' <span class="caret"></span>' . '</a>' . '<ul class="dropdown-menu multi-level">';
+            $html = '<li class="' . $liClass . '" data-name="' . $this->name . '">' . $base . ' <span class="caret"></span>' . '</a>' . '<ul class="dropdown-menu multi-level">';
         } else {
-            $html = '<li class="dropdown-submenu">' . $base . '</a>' . '<ul class="dropdown-menu">';
+            $html = '<li class="dropdown-submenu ' . $liClass . '" data-name="' . $this->name . '">' . $base . '</a>' . '<ul class="dropdown-menu">';
         }
 
         foreach ($this->menu as $menuItem) {

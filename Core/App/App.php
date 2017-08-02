@@ -120,7 +120,7 @@ abstract class App
 
     /**
      * TODO
-     * @return mixed
+     * @return bool
      */
     abstract public function run();
 

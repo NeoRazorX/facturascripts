@@ -29,6 +29,7 @@ class AppAPI extends App
 
     /**
      * Ejecuta la API.
+     * @return boolean
      */
     public function run()
     {
