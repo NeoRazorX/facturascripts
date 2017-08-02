@@ -51,31 +51,15 @@ class Familia
      * @var string
      */
     public $nivel;
-
-    /**
-     * Familia constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('familias', 'codfamilia');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'familias';
     }
-
-    /**
-     * Resetea los valores de todas las propiedades modelo.
-     */
-    public function clear()
+    
+    public function primaryColumn()
     {
-        $this->codfamilia = null;
-        $this->descripcion = '';
-        $this->madre = null;
-        $this->nivel = '';
+        return 'codfamilia';
     }
 
     /**

@@ -47,19 +47,14 @@ class RolUser
      * @var string
      */
     public $nick;
-
-    /**
-     * RolUser constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('fs_roles_users', 'id');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'fs_roles_users';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'id';
     }
 }

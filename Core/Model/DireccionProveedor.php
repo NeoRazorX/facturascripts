@@ -95,20 +95,15 @@ class DireccionProveedor
      * @var
      */
     public $fecha;
-
-    /**
-     * DireccionProveedor constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('dirproveedores', 'id');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'dirproveedores';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'id';
     }
 
     /**

@@ -48,20 +48,15 @@ class AgenciaTransporte
      * @var bool
      */
     public $activo;
-
-    /**
-     * AgenciaTransporte constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('agenciastrans', 'codtrans');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'agenciastrans';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'codtrans';
     }
 
     /**

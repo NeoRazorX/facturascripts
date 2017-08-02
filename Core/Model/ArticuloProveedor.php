@@ -119,20 +119,15 @@ class ArticuloProveedor
      * @var float
      */
     private $iva;
-
-    /**
-     * ArticuloProveedor constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('articulosprov', 'id');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'articulosprov';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'id';
     }
 
     /**

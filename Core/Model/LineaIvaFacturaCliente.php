@@ -82,20 +82,15 @@ class LineaIvaFacturaCliente
      * @var float
      */
     public $neto;
-
-    /**
-     * LineaIvaFacturaCliente constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('lineasivafactcli', 'idlinea');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'lineasivafactcli';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idlinea';
     }
 
     /**

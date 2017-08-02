@@ -61,20 +61,15 @@ class CuentaBancoCliente
      * @var string
      */
     public $fmandato;
-
-    /**
-     * CuentaBancoCliente constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('cuentasbcocli', 'codcuenta');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'cuentasbcocli';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'cocuenta';
     }
 
     /**

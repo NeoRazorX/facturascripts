@@ -106,20 +106,15 @@ class LineaFacturaCliente
      * @var string
      */
     private $albaran_fecha;
-
-    /**
-     * LineaFacturaCliente constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('lineasfacturascli', 'idlinea');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'lineasfacturascli';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idlinea';
     }
 
     /**

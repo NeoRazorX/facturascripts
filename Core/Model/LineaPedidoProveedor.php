@@ -36,19 +36,15 @@ class LineaPedidoProveedor
      */
     public $idpedido;
     private static $pedidos;
-
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        if (!isset(self::$pedidos)) {
-            self::$pedidos = [];
-        }
-
-        $this->init('lineaspedidosprov', 'idlinea');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'lineaspedidosprov';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idlinea';
     }
 
     public function show_codigo()

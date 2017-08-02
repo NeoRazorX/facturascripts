@@ -65,15 +65,15 @@ class PresupuestoCliente
      * @var type 
      */
     public $idoriginal;
-
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('presupuestoscli', 'idpresupuesto');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'presupuestoscli';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idpresupuesto';
     }
 
     public function clear()

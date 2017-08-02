@@ -55,15 +55,15 @@ class crm_contacto
     public $estado;
     public $potencial;
     public $codgrupo;
-
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('crm_contactos', 'codcontacto');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'crm_contactos';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'codcontacto';
     }
 
     public function clear()

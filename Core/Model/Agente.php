@@ -98,19 +98,14 @@ class Agente
      */
     public $porcomision;
 
-    /**
-     * Agente constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    public function tableName()
     {
-        $this->init('agentes', 'codagente');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'agentes';
+    }
+
+    public function primaryColumn()
+    {
+        return 'codagente';
     }
 
     /**

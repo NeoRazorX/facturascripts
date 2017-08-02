@@ -51,42 +51,14 @@ class BalanceCuenta
      * @var
      */
     public $desccuenta;
-
-    /**
-     * BalanceCuenta constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('co_cuentascb', 'id');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'co_cuentascb';
     }
-
-    /**
-     * TODO
-     *
-     * @param string $cod
-     *
-     * @return array
-     */
-    public function allFromCodbalance($cod)
+    
+    public function primaryColumn()
     {
-        $balist = [];
-
-        $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE codbalance = ' . $this->var2str($cod) . ' ORDER BY codcuenta ASC;';
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $b) {
-                $balist[] = new BalanceCuenta($b);
-            }
-        }
-
-        return $balist;
+        return 'id';
     }
 }

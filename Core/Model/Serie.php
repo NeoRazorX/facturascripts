@@ -64,20 +64,15 @@ class Serie
      * @var int
      */
     public $numfactura;
-
-    /**
-     * Serie constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('series', 'codserie');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'series';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'codserie';
     }
 
     /**
@@ -88,7 +83,7 @@ class Serie
         $this->codserie = '';
         $this->descripcion = '';
         $this->siniva = false;
-        $this->irpf = 0.00;
+        $this->irpf = 0.0;
         $this->codejercicio = null;
         $this->numfactura = 1;
     }

@@ -198,20 +198,15 @@ class Partida
      * @var float
      */
     public $sum_haber;
-
-    /**
-     * Partida constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('co_partidas', 'idpartida');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'co_partidas';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idpartida';
     }
 
     /**

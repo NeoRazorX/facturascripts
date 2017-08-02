@@ -65,15 +65,15 @@ class PedidoCliente
      * @var type 
      */
     public $idoriginal;
-
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('pedidoscli', 'idpedido');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'pedidoscli';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idpedido';
     }
 
     public function clear()

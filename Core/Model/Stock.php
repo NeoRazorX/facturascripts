@@ -101,20 +101,15 @@ class Stock
      * @var
      */
     public $ubicacion;
-
-    /**
-     * Stock constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('stocks', 'idstock');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'stocks';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idstock';
     }
 
     /**

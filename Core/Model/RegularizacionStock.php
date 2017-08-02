@@ -81,20 +81,15 @@ class RegularizacionStock
      * @var string
      */
     public $nick;
-
-    /**
-     * RegularizacionStock constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('agenciastrans', 'codtrans');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'lineasregstocks';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'id';
     }
 
     /**

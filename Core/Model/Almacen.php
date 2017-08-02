@@ -53,20 +53,15 @@ class Almacen
      * @var string
      */
     public $observaciones;
-
-    /**
-     * Almacen constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('almacenes', 'codalmacen');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'almacenes';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'codalmacen';
     }
 
     /**

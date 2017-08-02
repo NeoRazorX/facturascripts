@@ -52,20 +52,15 @@ class AlbaranCliente
      * @var bool
      */
     public $ptefactura;
-
-    /**
-     * AlbaranCliente constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('albaranescli', 'idalbaran');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'albaranescli';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idalbaran';
     }
 
     /**

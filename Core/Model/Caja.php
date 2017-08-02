@@ -94,20 +94,15 @@ class Caja
      * @var
      */
     public $agente;
-
-    /**
-     * caja constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('cajas', 'id');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'cajas';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'id';
     }
 
     /**

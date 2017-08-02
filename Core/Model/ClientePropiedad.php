@@ -45,20 +45,15 @@ class ClientePropiedad
      * @var string
      */
     public $text;
-
-    /**
-     * ClientePropiedad constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('cliente_propiedades', 'name');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'cliente_propiedades';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'name';
     }
 
     /**

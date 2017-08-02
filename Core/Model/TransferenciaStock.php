@@ -64,20 +64,15 @@ class TransferenciaStock
      * @var string
      */
     public $usuario;
-
-    /**
-     * TransferenciaStock constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('transstock', 'idtrans');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'transstock';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idtrans';
     }
 
     /**

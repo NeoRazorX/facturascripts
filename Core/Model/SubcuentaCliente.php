@@ -57,20 +57,15 @@ class SubcuentaCliente
      * @var string
      */
     public $codejercicio;
-
-    /**
-     * SubcuentaCliente constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('co_subcuentascli', 'id');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'co_subcuentascli';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'id';
     }
 
     /**

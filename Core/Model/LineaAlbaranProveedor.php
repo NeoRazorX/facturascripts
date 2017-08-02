@@ -64,20 +64,15 @@ class LineaAlbaranProveedor
      * @var string
      */
     private $fecha;
-
-    /**
-     * LineaAlbaranProveedor constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('lineasalbaranesprov', 'idlinea');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'lineasalbaranesprov';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idlinea';
     }
 
     /**

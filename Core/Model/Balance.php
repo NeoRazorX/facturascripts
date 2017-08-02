@@ -101,20 +101,15 @@ class Balance
      * @var
      */
     public $naturaleza;
-
-    /**
-     * Balance constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('co_codbalances08', 'codbalance');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'co_codbalances08';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'codbalance';
     }
 
     /**

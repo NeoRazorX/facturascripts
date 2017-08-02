@@ -45,30 +45,15 @@ class GrupoClientes
      * @var
      */
     public $codtarifa;
-
-    /**
-     * GrupoClientes constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('gruposclientes', 'codgrupo');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'gruposclientes';
     }
-
-    /**
-     * Resetea los valores de todas las propiedades modelo.
-     */
-    public function clear()
+    
+    public function primaryColumn()
     {
-        $this->codgrupo = null;
-        $this->nombre = null;
-        $this->codtarifa = null;
+        return 'codgrupo';
     }
 
     /**

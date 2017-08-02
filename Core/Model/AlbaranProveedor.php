@@ -52,20 +52,15 @@ class AlbaranProveedor
      * @var bool
      */
     public $ptefactura;
-
-    /**
-     * AlbaranProveedor constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('albaranesprov', 'idalbaran');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'albaranesprov';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idalbaran';
     }
 
     /**

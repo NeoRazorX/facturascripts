@@ -51,20 +51,15 @@ class BalanceCuentaA
      * @var
      */
     public $desccuenta;
-
-    /**
-     * BalanceCuentaA constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('co_cuentascbba', 'id');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'co_cuentascbba';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'id';
     }
 
     /**

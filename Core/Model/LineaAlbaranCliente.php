@@ -82,20 +82,15 @@ class LineaAlbaranCliente
      * @var string
      */
     private $fecha;
-
-    /**
-     * LineaAlbaranCliente constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('lineasalbaranescli', 'idlinea');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'lineasalbaranescli';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idlinea';
     }
 
     /**

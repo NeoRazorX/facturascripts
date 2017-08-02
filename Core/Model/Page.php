@@ -71,20 +71,15 @@ class Page
      * @var string
      */
     public $icon;
-
-    /**
-     * Page constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('fs_pages', 'name');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'fs_pages';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'name';
     }
 
     /**

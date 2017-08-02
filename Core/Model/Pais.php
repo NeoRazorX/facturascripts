@@ -47,20 +47,15 @@ class Pais
      * @var string
      */
     public $nombre;
-
-    /**
-     * Pais constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('paises', 'codpais');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'paises';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'codpais';
     }
 
     /**

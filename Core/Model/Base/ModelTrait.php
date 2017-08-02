@@ -46,18 +46,6 @@ trait ModelTrait
     private static $modelName;
 
     /**
-     * Nombre de la columna que es clave primaria.
-     * @var string
-     */
-    private static $primaryColumn;
-
-    /**
-     * Nombre de la tabla en la base de datos.
-     * @var string
-     */
-    private static $tableName;
-
-    /**
      * Lista de tablas ya comprobadas.
      * @var array|null
      */
@@ -93,14 +81,25 @@ trait ModelTrait
      * @var MiniLog
      */
     protected $miniLog;
+    
+    /**
+     * Constructor por defecto.
+     * @param array $data
+     */
+    public function __construct($data = [])
+    {
+        $this->init();
+        if (empty($data)) {
+            $this->clear();
+        } else {
+            $this->loadFromData($data);
+        }
+    }
 
     /**
-     * Constructor.
-     *
-     * @param string $tableName nombre de la tabla de la base de datos.
-     * @param string $primaryColumn
+     * Inicializa todo lo necesario.
      */
-    private function init($tableName = '', $primaryColumn = '')
+    private function init()
     {
         $this->cache = new Cache();
         $this->dataBase = new DataBase();
@@ -115,18 +114,16 @@ trait ModelTrait
             }
 
             self::$modelName = __CLASS__;
-            self::$primaryColumn = $primaryColumn;
-            self::$tableName = $tableName;
         }
 
-        if ($tableName !== '' && !in_array($tableName, self::$checkedTables, false) && $this->checkTable($tableName)) {
-            $this->miniLog->debug('Table ' . $tableName . ' checked.');
-            self::$checkedTables[] = $tableName;
+        if ($this->tableName() !== '' && !in_array($this->tableName(), self::$checkedTables, false) && $this->checkTable($this->tableName())) {
+            $this->miniLog->debug('Table ' . $this->tableName() . ' checked.');
+            self::$checkedTables[] = $this->tableName();
             $this->cache->set('fs_checked_tables', self::$checkedTables);
         }
 
         if (self::$fields === null) {
-            self::$fields = ($this->dataBase->tableExists($tableName) ? $this->dataBase->getColumns($tableName) : []);
+            self::$fields = ($this->dataBase->tableExists($this->tableName()) ? $this->dataBase->getColumns($this->tableName()) : []);
         }
     }
 
@@ -180,19 +177,13 @@ trait ModelTrait
      * Devuelve el nombre de la columna que es clave primaria del modelo.
      * @return string
      */
-    public function primaryColumn()
-    {
-        return self::$primaryColumn;
-    }
+    abstract public function primaryColumn();
 
     /**
      * Devuelve el nombdre de la tabla que usa este modelo.
      * @return string
      */
-    public function tableName()
-    {
-        return self::$tableName;
-    }
+    abstract public function tableName();
 
     /**
      * Asigna a las propiedades del modelo los valores del array $data

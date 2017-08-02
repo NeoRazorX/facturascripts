@@ -181,20 +181,15 @@ class Cliente
      * @var
      */
     public $codproveedor;
-
-    /**
-     * Cliente constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('clientes', 'codcliente');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'clientes';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'codcliente';
     }
 
     /**

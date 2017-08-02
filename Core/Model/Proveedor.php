@@ -158,20 +158,15 @@ class Proveedor
      * @var string
      */
     public $codcliente;
-
-    /**
-     * Proveedor constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('proveedores', 'codproveedor');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'proveedores';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'codproveedor';
     }
 
     /**

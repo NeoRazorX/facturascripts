@@ -54,19 +54,15 @@ class LineaPresupuestoCliente
      */
     public $mostrar_precio;
     private static $presupuestos;
-
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        if (!isset(self::$presupuestos)) {
-            self::$presupuestos = array();
-        }
-
-        $this->init('lineaspresupuestoscli', 'idlinea');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'lineaspresupuestoscli';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idlinea';
     }
 
     public function clear()

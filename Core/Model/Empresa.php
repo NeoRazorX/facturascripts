@@ -158,38 +158,15 @@ class Empresa
      * @var array de string
      * ] */
     public $email_config;
-
-    /**
-     * Empresa constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('empresa', 'id');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-
-            /// cargamos las opciones de email por defecto
-            $this->email_config = [
-                'mail_password' => '',
-                'mail_bcc' => '',
-                'mail_firma' => "\n---\nEnviado con FacturaScripts",
-                'mail_mailer' => 'smtp',
-                'mail_host' => 'smtp.gmail.com',
-                'mail_port' => '465',
-                'mail_enc' => 'ssl',
-                'mail_user' => '',
-                'mail_low_security' => false,
-            ];
-
-            if ($this->xid === null) {
-                $this->xid = static::randomString(30);
-                $this->save();
-            }
-        }
+        return 'empresa';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'id';
     }
 
     /**

@@ -89,19 +89,14 @@ class TerminalCaja
      */
     public $sin_comandos;
 
-    /**
-     * TerminalCaja constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    public function tableName()
     {
-        $this->init('cajas_terminales', 'id');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'cajas_terminales';
+    }
+
+    public function primaryColumn()
+    {
+        return 'id';
     }
 
     /**

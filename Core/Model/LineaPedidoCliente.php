@@ -67,19 +67,15 @@ class LineaPedidoCliente
      */
     public $mostrar_precio;
     private static $pedidos;
-
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        if (!isset(self::$pedidos)) {
-            self::$pedidos = array();
-        }
-
-        $this->init('lineaspedidoscli', 'idlinea');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'lineaspedidoscli';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idlinea';
     }
 
     public function clear()

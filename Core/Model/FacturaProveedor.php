@@ -74,20 +74,15 @@ class FacturaProveedor
      * @var bool
      */
     public $anulada;
-
-    /**
-     * FacturaProveedor constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('facturasprov', 'idfactura');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'facturasprov';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idfactura';
     }
 
     /**

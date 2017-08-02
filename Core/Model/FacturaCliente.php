@@ -88,20 +88,15 @@ class FacturaCliente
      * @var int
      */
     public $idimprenta;
-
-    /**
-     * FacturaCliente constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('facturascli', 'idfactura');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'facturascli';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idfactura';
     }
 
     /**

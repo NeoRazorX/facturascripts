@@ -244,20 +244,15 @@ class Articulo
      * @var bool
      */
     private $exists;
-
-    /**
-     * Articulo constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('articulos', 'referencia');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'articulos';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'referencia';
     }
 
     /**

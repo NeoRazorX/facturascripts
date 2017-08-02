@@ -82,20 +82,15 @@ class LineaFacturaProveedor
      * @var int
      */
     private $albaran_numero;
-
-    /**
-     * LineaFacturaProveedor constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('lineasfacturasprov', 'idlinea');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'lineasfacturasprov';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idlinea';
     }
 
     /**
