@@ -90,6 +90,11 @@ abstract class App
      */
     public function __construct($folder = '')
     {
+        /// al tener la carpeta en una constante la podemos usar más fácilmente
+        if (!defined('FS_FOLDER')) {
+            define('FS_FOLDER', $folder);
+        }
+
         $this->cache = new Base\Cache($folder);
         $this->dataBase = new Base\DataBase();
         $this->folder = $folder;

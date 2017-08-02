@@ -22,7 +22,6 @@ use FacturaScripts\Core\Base\Cache;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DefaultItems;
 use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\Translator;
 
 /**
@@ -550,10 +549,7 @@ trait ModelTrait
     {
         $return = false;
 
-        /// necesitamos el plugin manager para obtener la carpeta de trabajo de FacturaScripts
-        $pluginManager = new PluginManager();
-
-        $filename = $pluginManager->folder() . '/Dinamic/Table/' . $tableName . '.xml';
+        $filename = FS_FOLDER . '/Dinamic/Table/' . $tableName . '.xml';
         if (file_exists($filename)) {
             $xml = simplexml_load_string(file_get_contents($filename, FILE_USE_INCLUDE_PATH));
             if ($xml) {
@@ -682,7 +678,7 @@ trait ModelTrait
         }
         return $result;
     }
-    
+
     /**
      * Devuelve la url donde ver/modificar los datos
      * @return string
@@ -691,9 +687,7 @@ trait ModelTrait
     {
         $value = $this->{$this->primaryColumn()};
         $model = $this->modelName();
-        $result = empty($value)
-            ? 'index.php?page=List' . $model
-            : 'index.php?page=Edit' . $model . '&cod=' . $value;
+        $result = empty($value) ? 'index.php?page=List' . $model : 'index.php?page=Edit' . $model . '&cod=' . $value;
         return $result;
     }
 }
