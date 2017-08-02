@@ -211,7 +211,7 @@ class PresupuestoCliente
         $iva = 0;
         $irpf = 0;
         $recargo = 0;
-        foreach ($this->get_lineas() as $l) {
+        foreach ($this->getLineas() as $l) {
             if (!$l->test()) {
                 $status = FALSE;
             }
