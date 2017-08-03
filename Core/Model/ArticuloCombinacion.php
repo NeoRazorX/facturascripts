@@ -107,20 +107,15 @@ class ArticuloCombinacion
      * @var
      */
     public $stockfis;
-
-    /**
-     * ArticuloCombinacion constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('articulo_combinaciones', 'id');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'articulo_combinaciones';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'id';
     }
 
     /**

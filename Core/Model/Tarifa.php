@@ -69,20 +69,15 @@ class Tarifa
      * @var float
      */
     private $inclineal;
-
-    /**
-     * Tarifa constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('tarifas', 'codtarifa');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'tarifas';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'codtarifa';
     }
 
     /**

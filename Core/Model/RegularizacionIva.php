@@ -69,20 +69,15 @@ class RegularizacionIva
      * @var
      */
     public $periodo;
-
-    /**
-     * RegularizacionIva constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('co_regiva', 'idregiva');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'co_regiva';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idregiva';
     }
 
     /**

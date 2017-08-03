@@ -46,20 +46,15 @@ class ArticuloPropiedad
      * @var string
      */
     public $text;
-
-    /**
-     * ArticuloPropiedad constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('articulo_propiedades', 'name');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'articulo_propiedades';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'name';
     }
 
     /**

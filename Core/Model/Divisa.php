@@ -63,20 +63,15 @@ class Divisa
      * @var string
      */
     public $simbolo;
-
-    /**
-     * Divisa constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('divisas', 'coddivisa');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'divisas';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'coddivisa';
     }
 
     /**

@@ -71,34 +71,15 @@ class Cuenta
      * @var int
      */
     public $idcuentaesp;
-
-    /**
-     * Cuenta constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('co_cuentas', 'idcuenta');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'co_cuentas';
     }
-
-    /**
-     * Resetea los valores de todas las propiedades modelo.
-     */
-    public function clear()
+    
+    public function primaryColumn()
     {
-        $this->idcuenta = null;
-        $this->codcuenta = null;
-        $this->codejercicio = null;
-        $this->idepigrafe = null;
-        $this->codepigrafe = null;
-        $this->descripcion = '';
-        $this->idcuentaesp = null;
+        return 'idcuenta';
     }
 
     /**

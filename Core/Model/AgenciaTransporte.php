@@ -2,7 +2,7 @@
 /**
  * This file is part of facturacion_base
  * Copyright (C) 2015         Pablo Peralta
- * Copyright (C) 2015-2016    Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2015-2017    Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -48,20 +48,15 @@ class AgenciaTransporte
      * @var bool
      */
     public $activo;
-
-    /**
-     * AgenciaTransporte constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('agenciastrans', 'codtrans');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'agenciastrans';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'codtrans';
     }
 
     /**

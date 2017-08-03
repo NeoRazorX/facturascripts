@@ -55,20 +55,15 @@ class CuentaBancoProveedor
      * @var
      */
     public $principal;
-
-    /**
-     * CuentaBancoProveedor constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('cuentasbcopro', 'codcuenta');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'cuentasbcopro';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'cocuenta';
     }
 
     /**

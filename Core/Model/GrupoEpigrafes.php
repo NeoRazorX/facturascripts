@@ -51,20 +51,15 @@ class GrupoEpigrafes
      * @var string
      */
     public $descripcion;
-
-    /**
-     * GrupoEpigrafes constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('co_gruposepigrafes', 'idgrupo');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'co_gruposepigrafes';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idgrupo';
     }
 
     /**

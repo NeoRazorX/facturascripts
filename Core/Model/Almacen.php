@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2016  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -53,20 +53,15 @@ class Almacen
      * @var string
      */
     public $observaciones;
-
-    /**
-     * Almacen constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('almacenes', 'codalmacen');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'almacenes';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'codalmacen';
     }
 
     /**

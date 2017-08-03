@@ -40,55 +40,15 @@ class CuentaEspecial
      * @var string
      */
     public $descripcion;
-
-    /**
-     * CuentaEspecial constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('co_cuentasesp', 'idcuentaesp');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'co_cuentasesp';
     }
-
-    /**
-     * TODO
-     * @return array
-     */
-    public function all()
+    
+    public function primaryColumn()
     {
-        $culist = [];
-
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' ORDER BY descripcion ASC;';
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $c) {
-                $culist[] = new CuentaEspecial($c);
-            }
-        }
-
-        /// comprobamos la de acreedores
-        $encontrada = false;
-        foreach ($culist as $ce) {
-            if ($ce->idcuentaesp === 'ACREED') {
-                $encontrada = true;
-            }
-        }
-        if (!$encontrada) {
-            $ce = new CuentaEspecial();
-            $ce->idcuentaesp = 'ACREED';
-            $ce->descripcion = 'Cuentas de acreedores';
-            if ($ce->save()) {
-                $culist[] = $ce;
-            }
-        }
-
-        return $culist;
+        return 'idcuentaesp';
     }
 
     /**

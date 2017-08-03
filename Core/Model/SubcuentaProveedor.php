@@ -57,20 +57,15 @@ class SubcuentaProveedor
      * @var string
      */
     public $codejercicio;
-
-    /**
-     * SubcuentaProveedor constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('co_subcuentasprov', 'id');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'co_subcuentasprov';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'id';
     }
 
     /**

@@ -64,20 +64,15 @@ class Impuesto
      * @var float
      */
     public $recargo;
-
-    /**
-     * Impuesto constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('impuestos', 'codimpuesto');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'impuestos';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'codimpuesto';
     }
 
     /**
@@ -89,8 +84,8 @@ class Impuesto
         $this->codsubcuentarep = null;
         $this->codsubcuentasop = null;
         $this->descripcion = null;
-        $this->iva = 0;
-        $this->recargo = 0;
+        $this->iva = 0.0;
+        $this->recargo = 0.0;
     }
 
     /**

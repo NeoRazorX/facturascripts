@@ -91,20 +91,15 @@ class ArticuloTraza
      * @var |DateTime
      */
     public $fecha_salida;
-
-    /**
-     * ArticuloTraza constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('articulo_trazas', 'id');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'articulo_trazas';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'id';
     }
 
     /**

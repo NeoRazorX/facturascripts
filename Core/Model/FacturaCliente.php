@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * Factura de un cliente.
  *
@@ -86,20 +88,15 @@ class FacturaCliente
      * @var int
      */
     public $idimprenta;
-
-    /**
-     * FacturaCliente constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('facturascli', 'idfactura');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'facturascli';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idfactura';
     }
 
     /**
@@ -117,21 +114,6 @@ class FacturaCliente
         $this->pagada = false;
         $this->anulada = false;
         $this->vencimiento = date('d-m-Y', strtotime('+1 day'));
-    }
-
-    /**
-     * Acorta el texto de observaciones
-     * @return string
-     */
-    public function observacionesResume()
-    {
-        if ($this->observaciones === '') {
-            return '-';
-        }
-        if (strlen($this->observaciones) < 60) {
-            return $this->observaciones;
-        }
-        return substr($this->observaciones, 0, 50) . '...';
     }
 
     /**
@@ -267,30 +249,6 @@ class FacturaCliente
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos del agente
-     * @return string
-     */
-    public function agenteUrl()
-    {
-        if ($this->codagente === null) {
-            return 'index.php?page=AdminAgentes';
-        }
-        return 'index.php?page=AdminAgente&cod=' . $this->codagente;
-    }
-
-    /**
-     * Devuelve la url donde ver/modificar estos datos del cliente
-     * @return string
-     */
-    public function clienteUrl()
-    {
-        if ($this->codcliente === null) {
-            return 'index.php?page=VentasClientes';
-        }
-        return 'index.php?page=VentasCliente&cod=' . $this->codcliente;
-    }
-
-    /**
      * Devuelve el asiento asociado
      * @return bool|Asiento
      */
@@ -316,8 +274,8 @@ class FacturaCliente
      */
     public function getLineas()
     {
-        $linea = new LineaFacturaCliente();
-        return $linea->allFromFactura($this->idfactura);
+        $lineaModel = new LineaFacturaCliente();
+        return $lineaModel->all(new DataBaseWhere('idfactura', $this->idfactura));
     }
 
     /**

@@ -79,20 +79,15 @@ class Epigrafe
      * @var string
      */
     public $codgrupo;
-
-    /**
-     * Epigrafe constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('co_epigrafes', 'idepigrafe');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'co_epigrafes';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idepigrafe';
     }
 
     /**

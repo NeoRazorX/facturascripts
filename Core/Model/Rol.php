@@ -41,20 +41,15 @@ class Rol
      * @var string
      */
     public $descripcion;
-
-    /**
-     * Rol constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('fs_roles', 'codrol');
-        $this->clear();
-        if (is_array($data) && !empty($data)) {
-            $this->codrol = $data['codrol'];
-            $this->descripcion = $data['descripcion'];
-        }
+        return 'fs_roles';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'codrol';
     }
 
     /**

@@ -26,6 +26,7 @@ namespace FacturaScripts\Core\Model;
 class LineaFacturaProveedor
 {
 
+    use Base\LineaDocumento;
     use Base\ModelTrait;
 
     /**
@@ -39,12 +40,6 @@ class LineaFacturaProveedor
      * @var array
      */
     private static $albaranes;
-
-    /**
-     * Clave primaria.
-     * @var int
-     */
-    public $idlinea;
 
     /**
      * ID de la linea del albarán relacionado, si lo hay.
@@ -63,78 +58,6 @@ class LineaFacturaProveedor
      * @var int
      */
     public $idalbaran;
-
-    /**
-     * Importe neto de la línea, sin impuestos.
-     * @var float
-     */
-    public $pvptotal;
-
-    /**
-     * % de descuento.
-     * @var float
-     */
-    public $dtopor;
-
-    /**
-     * % de recargo de equivalencia.
-     * @var float
-     */
-    public $recargo;
-
-    /**
-     * % de IRPF
-     * @var float
-     */
-    public $irpf;
-
-    /**
-     * Importe neto sin descuentos.
-     * @var float
-     */
-    public $pvpsindto;
-
-    /**
-     * TODO
-     * @var float
-     */
-    public $cantidad;
-
-    /**
-     * Impuesto relacionado.
-     * @var string
-     */
-    public $codimpuesto;
-
-    /**
-     * Precio del artículo, una unidad.
-     * @var float
-     */
-    public $pvpunitario;
-
-    /**
-     * TODO
-     * @var string
-     */
-    public $descripcion;
-
-    /**
-     * Referencia del artículo.
-     * @var string
-     */
-    public $referencia;
-
-    /**
-     * Código de la combinación seleccionada, en el caso de los artículos con atributos.
-     * @var
-     */
-    public $codcombinacion;
-
-    /**
-     * % de iva, el que corresponde al impuesto.
-     * @var float
-     */
-    public $iva;
 
     /**
      * TODO
@@ -159,20 +82,15 @@ class LineaFacturaProveedor
      * @var int
      */
     private $albaran_numero;
-
-    /**
-     * LineaFacturaProveedor constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('lineasfacturasprov', 'idlinea');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'lineasfacturasprov';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idlinea';
     }
 
     /**
@@ -196,24 +114,6 @@ class LineaFacturaProveedor
         $this->iva = 0;
         $this->recargo = 0;
         $this->irpf = 0;
-    }
-
-    /**
-     * TODO
-     * @return float
-     */
-    public function totalIva()
-    {
-        return $this->pvptotal * (100 + $this->iva - $this->irpf + $this->recargo) / 100;
-    }
-
-    /**
-     * TODO
-     * @return string
-     */
-    public function getDescripcion()
-    {
-        return nl2br($this->descripcion);
     }
 
     /**
@@ -305,18 +205,6 @@ class LineaFacturaProveedor
 
     /**
      * TODO
-     * @return string
-     */
-    public function articuloUrl()
-    {
-        if ($this->referencia === null || $this->referencia === '') {
-            return 'index.php?page=VentasArticulos';
-        }
-        return 'index.php?page=VentasArticulo&ref=' . urlencode($this->referencia);
-    }
-
-    /**
-     * TODO
      * @return bool
      */
     public function test()
@@ -336,54 +224,6 @@ class LineaFacturaProveedor
             return false;
         }
         return true;
-    }
-
-    /**
-     * TODO
-     *
-     * @param int $idfac
-     *
-     * @return array
-     */
-    public function allFromFactura($idfac)
-    {
-        $linlist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idfactura = ' . $this->var2str($idfac)
-            . ' ORDER BY idlinea ASC;';
-
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $lin) {
-                $linlist[] = new LineaFacturaProveedor($lin);
-            }
-        }
-
-        return $linlist;
-    }
-
-    /**
-     * TODO
-     *
-     * @param string $ref
-     * @param int $offset
-     *
-     * @return array
-     */
-    public function allFromArticulo($ref, $offset = 0)
-    {
-        $linealist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() .
-            ' WHERE referencia = ' . $this->var2str($ref) .
-            ' ORDER BY idfactura DESC';
-
-        $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if (!empty($data)) {
-            foreach ($data as $l) {
-                $linealist[] = new LineaFacturaProveedor($l);
-            }
-        }
-
-        return $linealist;
     }
 
     /**

@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * Albarán de cliente o albarán de venta. Representa la entrega a un cliente
  * de un material que se le ha vendido. Implica la salida de ese material
@@ -50,20 +52,15 @@ class AlbaranCliente
      * @var bool
      */
     public $ptefactura;
-
-    /**
-     * AlbaranCliente constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('albaranescli', 'idalbaran');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'albaranescli';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idalbaran';
     }
 
     /**
@@ -79,39 +76,6 @@ class AlbaranCliente
         $this->hora = date('H:i:s');
         $this->tasaconv = 1;
         $this->ptefactura = true;
-    }
-
-    /**
-     * Muestra la hora en formato legible,
-     * si $seg = true el formato es 'H:i:s'
-     * y sino 'H:i'
-     *
-     * @param bool $seg
-     *
-     * @return false|string
-     */
-    public function showHora($seg = true)
-    {
-        if ($seg) {
-            return date('H:i:s', strtotime($this->hora));
-        }
-
-        return date('H:i', strtotime($this->hora));
-    }
-
-    /**
-     * Acorta el texto de observaciones
-     * @return string
-     */
-    public function observacionesResume()
-    {
-        if ($this->observaciones === '') {
-            return '-';
-        }
-        if (strlen($this->observaciones) < 60) {
-            return $this->observaciones;
-        }
-        return substr($this->observaciones, 0, 50) . '...';
     }
 
     /**
@@ -139,37 +103,13 @@ class AlbaranCliente
     }
 
     /**
-     * Devuelve la url donde se pueden ver/modificar los datos de los agentes
-     * @return string
-     */
-    public function agenteUrl()
-    {
-        if ($this->codagente === null) {
-            return 'index.php?page=AdminAgentes';
-        }
-        return 'index.php?page=AdminAgente&cod=' . $this->codagente;
-    }
-
-    /**
-     * Devuelve la url donde se pueden ver/modificar los datos de los clientes
-     * @return string
-     */
-    public function clienteUrl()
-    {
-        if ($this->codcliente === null) {
-            return 'index.php?page=VentasClientes';
-        }
-        return 'index.php?page=VentasCliente&cod=' . $this->codcliente;
-    }
-
-    /**
      * Devuelve las líneas del albarán.
      * @return array
      */
     public function getLineas()
     {
-        $linea = new LineaAlbaranCliente();
-        return $linea->allFromAlbaran($this->idalbaran);
+        $lineaModel = new LineaAlbaranCliente();
+        return $lineaModel->all(new DataBaseWhere('idalbaran', $this->idalbaran));
     }
 
     /**

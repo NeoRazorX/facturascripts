@@ -101,20 +101,15 @@ class Asiento
      * @var string
      */
     private $coddivisa;
-
-    /**
-     * Asiento constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('co_asientos', 'idasiento');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'co_asientos';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idasiento';
     }
 
     /**

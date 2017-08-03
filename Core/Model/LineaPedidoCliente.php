@@ -27,13 +27,8 @@ namespace FacturaScripts\Core\Model;
 class LineaPedidoCliente
 {
 
+    use Base\LineaDocumento;
     use Base\ModelTrait;
-
-    /**
-     * Clave primaria.
-     * @var integer
-     */
-    public $idlinea;
 
     /**
      * ID de la linea relacionada en el presupuesto relacionado,
@@ -53,68 +48,6 @@ class LineaPedidoCliente
      * @var integer
      */
     public $idpresupuesto;
-    public $cantidad;
-
-    /**
-     * Código del impuesto relacionado.
-     * @var type 
-     */
-    public $codimpuesto;
-    public $descripcion;
-
-    /**
-     * % de descuento
-     * @var type 
-     */
-    public $dtopor;
-
-    /**
-     * % de retención IRPF.
-     * @var type 
-     */
-    public $irpf;
-
-    /**
-     * % del impuesto relacionado.
-     * @var type 
-     */
-    public $iva;
-
-    /**
-     * Importe neto sin descuento, es decir, pvpunitario * cantidad.
-     * @var type 
-     */
-    public $pvpsindto;
-
-    /**
-     * Importe neto de la linea, sin impuestos.
-     * @var type 
-     */
-    public $pvptotal;
-
-    /**
-     * Precio de una unidad.
-     * @var type 
-     */
-    public $pvpunitario;
-
-    /**
-     * % de recargo de equivalencia RE.
-     * @var type 
-     */
-    public $recargo;
-
-    /**
-     * Referencia del artículo.
-     * @var type 
-     */
-    public $referencia;
-
-    /**
-     * Código de la combinación seleccionada, en el caso de los artículos con atributos.
-     * @var type 
-     */
-    public $codcombinacion;
 
     /**
      * Posición de la linea en el documento. Cuanto más alto más abajo.
@@ -134,19 +67,15 @@ class LineaPedidoCliente
      */
     public $mostrar_precio;
     private static $pedidos;
-
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        if (!isset(self::$pedidos)) {
-            self::$pedidos = array();
-        }
-
-        $this->init('lineaspedidoscli', 'idlinea');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'lineaspedidoscli';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idlinea';
     }
 
     public function clear()
@@ -170,21 +99,6 @@ class LineaPedidoCliente
         $this->orden = 0;
         $this->mostrar_cantidad = TRUE;
         $this->mostrar_precio = TRUE;
-    }
-
-    public function pvp_iva()
-    {
-        return $this->pvpunitario * (100 + $this->iva) / 100;
-    }
-
-    public function total_iva()
-    {
-        return $this->pvptotal * (100 + $this->iva - $this->irpf + $this->recargo) / 100;
-    }
-
-    public function descripcion()
-    {
-        return nl2br($this->descripcion);
     }
 
     public function show_codigo()
@@ -258,15 +172,6 @@ class LineaPedidoCliente
         return 'index.php?page=ventas_pedido&id=' . $this->idpedido;
     }
 
-    public function articulo_url()
-    {
-        if (is_null($this->referencia) OR $this->referencia == '') {
-            return "index.php?page=ventas_articulos";
-        }
-
-        return "index.php?page=ventas_articulo&ref=" . urlencode($this->referencia);
-    }
-
     public function test()
     {
         $this->descripcion = $this->no_html($this->descripcion);
@@ -274,10 +179,10 @@ class LineaPedidoCliente
         $totalsindto = $this->pvpunitario * $this->cantidad;
 
         if (!$this->floatcmp($this->pvptotal, $total, FS_NF0, TRUE)) {
-            $this->new_error_msg("Error en el valor de pvptotal de la línea " . $this->referencia . " del " . FS_PEDIDO . ". Valor correcto: " . $total);
+            $this->miniLog->critical("Error en el valor de pvptotal de la línea " . $this->referencia . " del " . FS_PEDIDO . ". Valor correcto: " . $total);
             return FALSE;
         } else if (!$this->floatcmp($this->pvpsindto, $totalsindto, FS_NF0, TRUE)) {
-            $this->new_error_msg("Error en el valor de pvpsindto de la línea " . $this->referencia . " del " . FS_PEDIDO . ". Valor correcto: " . $totalsindto);
+            $this->miniLog->critical("Error en el valor de pvpsindto de la línea " . $this->referencia . " del " . FS_PEDIDO . ". Valor correcto: " . $totalsindto);
             return FALSE;
         }
 

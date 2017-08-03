@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * Factura de un proveedor.
  *
@@ -26,7 +28,10 @@ namespace FacturaScripts\Core\Model;
 class FacturaProveedor
 {
 
-    use Base\ModelTrait;
+    use Base\DocumentoCompra;
+    use Base\ModelTrait {
+        clear as clearTrait;
+    }
 
     /**
      * Clave primaria.
@@ -53,115 +58,10 @@ class FacturaProveedor
     public $idasientop;
 
     /**
-     * CIF/NIF del proveedor
-     * @var string
-     */
-    public $cifnif;
-
-    /**
-     * Empleado que ha creado la factura.
-     * Modelo agente.
-     * @var string
-     */
-    public $codagente;
-
-    /**
-     * Almacén en el que entra la mercancía.
-     * @var string
-     */
-    public $codalmacen;
-
-    /**
-     * Divisa de la factura.
-     * @var string
-     */
-    public $coddivisa;
-
-    /**
-     * Ejercicio relacionado. El que corresponde a la fecha.
-     * @var string
-     */
-    public $codejercicio;
-
-    /**
-     * Código único de la factura. Para humanos.
-     * @var string
-     */
-    public $codigo;
-
-    /**
      * Código de la factura a la que rectifica.
      * @var string
      */
     public $codigorect;
-
-    /**
-     * Forma de pago.
-     * @var string
-     */
-    public $codpago;
-
-    /**
-     * Proveedor de la factura.
-     * @var string
-     */
-    public $codproveedor;
-
-    /**
-     * Serie de la factura.
-     * @var string
-     */
-    public $codserie;
-
-    /**
-     * Fecha de la factura
-     * @var string
-     */
-    public $fecha;
-
-    /**
-     * Horade la factura
-     * @var string
-     */
-    public $hora;
-
-    /**
-     * % de retención IRPF de la factura.
-     * Cada línea puede tener uno distinto.
-     * @var float
-     */
-    public $irpf;
-
-    /**
-     * Suma total antes de impuestos.
-     * @var float
-     */
-    public $neto;
-
-    /**
-     * Nombre del proveedor.
-     * @var string
-     */
-    public $nombre;
-
-    /**
-     * Número de la factura.
-     * Único dentro de serie+ejercicio.
-     * @var string
-     */
-    public $numero;
-
-    /**
-     * Número de factura del proveedor, si lo hay.
-     * @var string
-     */
-    public $numproveedor;
-
-    /**
-     * Observaciones de la factura
-     * @var string
-     */
-    public $observaciones;
 
     /**
      * TRUE => pagada
@@ -170,68 +70,19 @@ class FacturaProveedor
     public $pagada;
 
     /**
-     * Tasa de conversión a Euros de la divisa de la factura.
-     * @var float
-     */
-    public $tasaconv;
-
-    /**
-     * Importe total de la factura, con impuestos.
-     * @var float
-     */
-    public $total;
-
-    /**
-     * Total expresado en euros, por si no fuese la divisa de la factura.
-     * totaleuros = total/tasaconv
-     * No hace falta rellenarlo, al hacer save() se calcula el valor.
-     * @var float
-     */
-    public $totaleuros;
-
-    /**
-     * Suma total de retenciones IRPF de las líneas.
-     * @var float
-     */
-    public $totalirpf;
-
-    /**
-     * Suma total del IVA de las líneas.
-     * @var float
-     */
-    public $totaliva;
-
-    /**
-     * Suma del recargo de equivalencia de las líneas.
-     * @var float
-     */
-    public $totalrecargo;
-
-    /**
      * TRUE => anulada
      * @var bool
      */
     public $anulada;
-
-    /**
-     * Número de documentos adjuntos.
-     * @var int
-     */
-    public $numdocs;
-
-    /**
-     * FacturaProveedor constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('facturasprov', 'idfactura');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'facturasprov';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idfactura';
     }
 
     /**
@@ -239,53 +90,14 @@ class FacturaProveedor
      */
     public function clear()
     {
+        $this->clearTrait();
         $this->anulada = false;
-        $this->cifnif = '';
-        $this->codagente = null;
         $this->codalmacen = $this->defaultItems->codAlmacen();
-        $this->coddivisa = null;
-        $this->codejercicio = null;
-        $this->codigo = null;
-        $this->codigorect = null;
         $this->codpago = $this->defaultItems->codPago();
-        $this->codproveedor = null;
         $this->codserie = $this->defaultItems->codSerie();
         $this->fecha = date('d-m-Y');
         $this->hora = date('H:i:s');
-        $this->idasiento = null;
-        $this->idasientop = null;
-        $this->idfactura = null;
-        $this->idfacturarect = null;
-        $this->irpf = 0;
-        $this->neto = 0;
-        $this->nombre = '';
-        $this->numero = null;
-        $this->numproveedor = null;
-        $this->observaciones = null;
-        $this->pagada = false;
         $this->tasaconv = 1;
-        $this->total = 0;
-        $this->totaleuros = 0;
-        $this->totalirpf = 0;
-        $this->totaliva = 0;
-        $this->totalrecargo = 0;
-
-        $this->numdocs = 0;
-    }
-
-    /**
-     * Acorta el texto de observaciones
-     * @return string
-     */
-    public function observacionesResume()
-    {
-        if ($this->observaciones === '') {
-            return '-';
-        }
-        if (strlen($this->observaciones) < 60) {
-            return $this->observaciones;
-        }
-        return substr($this->observaciones, 0, 50) . '...';
     }
 
     /**
@@ -422,8 +234,8 @@ class FacturaProveedor
      */
     public function getLineas()
     {
-        $linea = new LineaFacturaProveedor();
-        return $linea->allFromFactura($this->idfactura);
+        $lineaModel = new LineaFacturaProveedor();
+        return $lineaModel->all( new DataBaseWhere('idfactura', $this->idfactura) );
     }
 
     /**

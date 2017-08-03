@@ -99,20 +99,15 @@ class DireccionCliente
      * @var
      */
     public $fecha;
-
-    /**
-     * DireccionCliente constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('dirclientes', 'id');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'dirclientes';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'id';
     }
 
     /**

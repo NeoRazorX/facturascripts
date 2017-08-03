@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Model\Base;
 /**
  * Description of DocumentoVenta
  *
- * @author carlos
+ * @author Carlos García Gómez
  */
 trait DocumentoVenta
 {
@@ -289,4 +289,60 @@ trait DocumentoVenta
      */
     public $numdocs;
 
+    /**
+     * Muestra la hora en formato legible,
+     * si $seg = true el formato es 'H:i:s'
+     * y sino 'H:i'
+     *
+     * @param bool $seg
+     *
+     * @return false|string
+     */
+    public function showHora($seg = true)
+    {
+        if ($seg) {
+            return date('H:i:s', strtotime($this->hora));
+        }
+
+        return date('H:i', strtotime($this->hora));
+    }
+
+    /**
+     * Acorta el texto de observaciones
+     * @return string
+     */
+    public function observacionesResume()
+    {
+        if ($this->observaciones === '') {
+            return '-';
+        }
+        if (strlen($this->observaciones) < 60) {
+            return $this->observaciones;
+        }
+        return substr($this->observaciones, 0, 50) . '...';
+    }
+
+    /**
+     * Devuelve la url donde se pueden ver/modificar los datos de los agentes
+     * @return string
+     */
+    public function agenteUrl()
+    {
+        if ($this->codagente === null) {
+            return 'index.php?page=AdminAgentes';
+        }
+        return 'index.php?page=AdminAgente&cod=' . $this->codagente;
+    }
+
+    /**
+     * Devuelve la url donde se pueden ver/modificar los datos de los clientes
+     * @return string
+     */
+    public function clienteUrl()
+    {
+        if ($this->codcliente === null) {
+            return 'index.php?page=VentasClientes';
+        }
+        return 'index.php?page=VentasCliente&cod=' . $this->codcliente;
+    }
 }

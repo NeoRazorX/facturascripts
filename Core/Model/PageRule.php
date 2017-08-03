@@ -58,19 +58,14 @@ class PageRule
      * @var bool
      */
     public $allowupdate;
-
-    /**
-     * PageRule constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('fs_page_rules', 'id');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'fs_page_rules';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'id';
     }
 }

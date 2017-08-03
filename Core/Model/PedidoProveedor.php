@@ -19,13 +19,18 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * Pedido de proveedor
  */
 class PedidoProveedor
 {
 
-    use Base\ModelTrait;
+    use Base\DocumentoCompra;
+    use Base\ModelTrait {
+        clear as clearTrait;
+    }
 
     /**
      * Clave primaria.
@@ -40,206 +45,37 @@ class PedidoProveedor
     public $idalbaran;
 
     /**
-     * Código único. Para humanos.
-     * @var type 
-     */
-    public $codigo;
-
-    /**
-     * Serie relacionada.
-     * @var type 
-     */
-    public $codserie;
-
-    /**
-     * Ejercicio relacionado. El que corresponde a la fecha.
-     * @var type 
-     */
-    public $codejercicio;
-
-    /**
-     * Código del proveedor del pedido.
-     * @var type 
-     */
-    public $codproveedor;
-
-    /**
-     * Empleado que ha creado el pedido.
-     * @var type 
-     */
-    public $codagente;
-
-    /**
-     * Forma de pago del pedido.
-     * @var type 
-     */
-    public $codpago;
-
-    /**
-     * Divisa del pedido.
-     * @var type 
-     */
-    public $coddivisa;
-
-    /**
-     * Almacén en el que entrará la mercancía.
-     * @var type 
-     */
-    public $codalmacen;
-
-    /**
-     * Número de pedido.
-     * Único para la serie+ejercicio.
-     * @var type 
-     */
-    public $numero;
-
-    /**
-     * Número del pedido del proveedor. Si lo tiene.
-     * @var type 
-     */
-    public $numproveedor;
-
-    /**
-     * Nombre del proveedor.
-     * @var type 
-     */
-    public $nombre;
-    public $cifnif;
-    public $fecha;
-    public $hora;
-
-    /**
-     * Imprte total antes de impuestos.
-     * es la suma del pvptotal de las líneas.
-     * @var type 
-     */
-    public $neto;
-
-    /**
-     * Importe total del pedido, con impuestos.
-     * @var type 
-     */
-    public $total;
-
-    /**
-     * Suma total del IVA de las líneas.
-     * @var type 
-     */
-    public $totaliva;
-
-    /**
-     * Total expresado en euros, por si no fuese la divisa del pedido.
-     * totaleuros = total/tasaconv
-     * No hace falta rellenarlo, al hacer save() se calcula el valor.
-     * @var type 
-     */
-    public $totaleuros;
-
-    /**
-     * % de retención IRPF del pedido. Se obtiene de la serie.
-     * Cada línea puede tener un % distinto.
-     * @var type 
-     */
-    public $irpf;
-
-    /**
-     * Suma de las retenciones IRPF de las líneas del pedido.
-     * @var type 
-     */
-    public $totalirpf;
-
-    /**
-     * Tasa de conversión a Euros de la divisa seleccionada.
-     * @var type 
-     */
-    public $tasaconv;
-
-    /**
-     * Suma total del recargo de equivalencia de las líneas.
-     * @var type 
-     */
-    public $totalrecargo;
-    public $observaciones;
-
-    /**
      * Indica si se puede editar o no.
      * @var type 
      */
     public $editable;
 
     /**
-     * Número de documentos adjuntos.
-     * @var integer 
-     */
-    public $numdocs;
-
-    /**
      * Si este presupuesto es la versión de otro, aquí se almacena el idpresupuesto del original.
      * @var type 
      */
     public $idoriginal;
-
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('pedidosprov', 'idpedido');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'pedidosprov';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idpedido';
     }
 
     public function clear()
     {
-        $this->idpedido = NULL;
-        $this->idalbaran = NULL;
-        $this->codigo = NULL;
-        $this->codagente = NULL;
+        $this->clearTrait();
         $this->codpago = $this->default_items->codpago();
         $this->codserie = $this->default_items->codserie();
-        $this->codejercicio = NULL;
-        $this->codproveedor = NULL;
-        $this->coddivisa = NULL;
         $this->codalmacen = $this->default_items->codalmacen();
-        $this->numero = NULL;
-        $this->numproveedor = NULL;
-        $this->nombre = '';
-        $this->cifnif = '';
         $this->fecha = Date('d-m-Y');
         $this->hora = Date('H:i:s');
-        $this->neto = 0;
-        $this->total = 0;
-        $this->totaliva = 0;
-        $this->totaleuros = 0;
-        $this->irpf = 0;
-        $this->totalirpf = 0;
         $this->tasaconv = 1;
-        $this->totalrecargo = 0;
-        $this->observaciones = NULL;
         $this->editable = TRUE;
-        $this->numdocs = 0;
-        $this->idoriginal = NULL;
-    }
-
-    public function show_hora($s = TRUE)
-    {
-        if ($s) {
-            return Date('H:i:s', strtotime($this->hora));
-        }
-
-        return Date('H:i', strtotime($this->hora));
-    }
-
-    public function observaciones_resume()
-    {
-        if ($this->observaciones == '') {
-            return '-';
-        } else if (strlen($this->observaciones) < 60) {
-            return $this->observaciones;
-        }
-
-        return substr($this->observaciones, 0, 50) . '...';
     }
 
     public function url()
@@ -278,10 +114,10 @@ class PedidoProveedor
         return "index.php?page=compras_proveedor&cod=" . $this->codproveedor;
     }
 
-    public function get_lineas()
+    public function getLineas()
     {
-        $linea = new LineaPedidoProveedor();
-        return $linea->all_from_pedido($this->idpedido);
+        $lineaModel = new LineaPedidoProveedor();
+        return $lineaModel->all(new DataBaseWhere('idpedido', $this->idpedido));
     }
 
     public function get_versiones()
@@ -336,7 +172,7 @@ class PedidoProveedor
             return TRUE;
         }
 
-        $this->new_error_msg("Error grave: El total está mal calculado. ¡Informa del error!");
+        $this->miniLog->critical("Error grave: El total está mal calculado. ¡Informa del error!");
         return FALSE;
     }
 
@@ -349,7 +185,7 @@ class PedidoProveedor
         $iva = 0;
         $irpf = 0;
         $recargo = 0;
-        foreach ($this->get_lineas() as $l) {
+        foreach ($this->getLineas() as $l) {
             if (!$l->test()) {
                 $status = FALSE;
             }
@@ -367,19 +203,19 @@ class PedidoProveedor
         $total = $neto + $iva - $irpf + $recargo;
 
         if (!$this->floatcmp($this->neto, $neto, FS_NF0, TRUE)) {
-            $this->new_error_msg("Valor neto de " . FS_PEDIDO . " incorrecto. Valor correcto: " . $neto);
+            $this->miniLog->critical("Valor neto de " . FS_PEDIDO . " incorrecto. Valor correcto: " . $neto);
             $status = FALSE;
         } else if (!$this->floatcmp($this->totaliva, $iva, FS_NF0, TRUE)) {
-            $this->new_error_msg("Valor totaliva de " . FS_PEDIDO . " incorrecto. Valor correcto: " . $iva);
+            $this->miniLog->critical("Valor totaliva de " . FS_PEDIDO . " incorrecto. Valor correcto: " . $iva);
             $status = FALSE;
         } else if (!$this->floatcmp($this->totalirpf, $irpf, FS_NF0, TRUE)) {
-            $this->new_error_msg("Valor totalirpf de " . FS_PEDIDO . " incorrecto. Valor correcto: " . $irpf);
+            $this->miniLog->critical("Valor totalirpf de " . FS_PEDIDO . " incorrecto. Valor correcto: " . $irpf);
             $status = FALSE;
         } else if (!$this->floatcmp($this->totalrecargo, $recargo, FS_NF0, TRUE)) {
-            $this->new_error_msg("Valor totalrecargo de " . FS_PEDIDO . " incorrecto. Valor correcto: " . $recargo);
+            $this->miniLog->critical("Valor totalrecargo de " . FS_PEDIDO . " incorrecto. Valor correcto: " . $recargo);
             $status = FALSE;
         } else if (!$this->floatcmp($this->total, $total, FS_NF0, TRUE)) {
-            $this->new_error_msg("Valor total de " . FS_PEDIDO . " incorrecto. Valor correcto: " . $total);
+            $this->miniLog->critical("Valor total de " . FS_PEDIDO . " incorrecto. Valor correcto: " . $total);
             $status = FALSE;
         }
 

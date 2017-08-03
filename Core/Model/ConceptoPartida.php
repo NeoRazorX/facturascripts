@@ -39,20 +39,15 @@ class ConceptoPartida
      * @var string
      */
     public $concepto;
-
-    /**
-     * ConceptoPartida constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('co_conceptospar', 'idconceptopar');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'co_conceptospar';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idconceptopar';
     }
 
     /**

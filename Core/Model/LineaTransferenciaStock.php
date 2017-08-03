@@ -70,20 +70,15 @@ class LineaTransferenciaStock
      * @var string
      */
     private $hora;
-
-    /**
-     * LineaTransferenciaStock constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('lineastransstock', 'idlinea');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'lineastranstocks';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'idlinea';
     }
 
     /**

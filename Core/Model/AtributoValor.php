@@ -48,20 +48,15 @@ class AtributoValor
      * @var
      */
     public $valor;
-
-    /**
-     * AtributoValor constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('atributos_valores', 'id');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'atributos_valores';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'id';
     }
 
     /**

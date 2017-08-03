@@ -39,29 +39,15 @@ class Fabricante
      * @var string
      */
     public $nombre;
-
-    /**
-     * Fabricante constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
+    
+    public function tableName()
     {
-        $this->init('fabricantes', 'codfabricante');
-        if (empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
+        return 'fabricantes';
     }
-
-    /**
-     * Resetea los valores de todas las propiedades modelo.
-     */
-    public function clear()
+    
+    public function primaryColumn()
     {
-        $this->codfabricante = null;
-        $this->nombre = '';
+        return 'codfabricante';
     }
 
     /**
