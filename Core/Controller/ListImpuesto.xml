@@ -24,21 +24,17 @@
 
 <view>
     <columns>
-        <column title="Código" titleurl="" description="" numcolumns="1" display="left">
-            <field required="true" readonly="false" clickable="false">codimpuesto</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Código" display="left" order="100">
+            <widget type="text" fieldname="codimpuesto" onclick="EditImpuesto" />
         </column>
-        <column title="Descripción" titleurl="" description="" numcolumns="1" display="left">
-            <field required="true" readonly="false" clickable="false">descripcion</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Descripción" display="left" order="110">
+            <widget type="text" fieldname="descripcion" />
         </column>
-        <column title="% Iva" titleurl="" description="" numcolumns="1" display="right">
-            <field required="false" readonly="false" clickable="false">iva</field>
-            <widget type="text" hint="" icon="" />
+        <column title="% Iva" display="right" order="120">
+            <widget type="text" fieldname="iva" />
         </column>
-        <column title="% Recargo" titleurl="" description="" numcolumns="1" display="right">
-            <field required="false" readonly="false" clickable="false">recargo</field>
-            <widget type="text" hint="" icon="" />
+        <column title="% Recargo" display="right" order="130">
+            <widget type="text" fieldname="recargo" />
         </column>
     </columns>
     

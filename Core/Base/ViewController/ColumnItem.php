@@ -39,12 +39,6 @@ class ColumnItem
     public $titleURL;
 
     /**
-     * Configuración del campo de la columna
-     * @var FieldOptions
-     */
-    public $field;
-
-    /**
      * Texto adicional que explica el campo al usuario
      * @var string
      */
@@ -64,6 +58,12 @@ class ColumnItem
     public $numColumns;
 
     /**
+     * Posición en la que se visualizá ( de menor a mayor )
+     * @var int
+     */
+    public $order;
+
+    /**
      * Configuración del estado y alineamiento de la visualización
      * (left|right|center|none)
      * @var string
@@ -80,7 +80,7 @@ class ColumnItem
         $this->description = '';
         $this->numColumns = 1;
         $this->display = 'none';
-        $this->field = new FieldOptions();
+        $this->order = 100;
         $this->widget = new WidgetOptions();
     }
 
@@ -97,8 +97,8 @@ class ColumnItem
         $this->description = (string) $column_atributes->description;
         $this->numColumns = (int) $column_atributes->numcolumns;
         $this->display = (string) $column_atributes->display;
+        $this->order = (int) $column_atributes->order;
 
-        $this->field->loadFromXMLColumn($column);
         $this->widget->loadFromXMLColumn($column);
     }
 
@@ -109,6 +109,7 @@ class ColumnItem
         $this->description = (string) $column['description'];
         $this->numColumns = (int) $column['numColumns'];
         $this->display = (string) $column['display'];
+        $this->display = (int) $column['order'];
     }
 
     public function columnsFromJSON($columns)
@@ -117,21 +118,24 @@ class ColumnItem
         foreach ($columns as $data) {
             $columnItem = new ColumnItem();
             $columnItem->loadFromJSONColumn($data);
-            $columnItem->field->loadFromJSONColumn($data);
             $columnItem->widget->loadFromJSONColumn($data);
             $result[] = $columnItem;
         }
         return $result;
     }
-    
+
     public function getHeaderHTML($value)
     {
         $html = $value;
+        if (!empty($this->description)) {
+            $html = '<span title="' . $this->description . '">' . $html . '</span>';
+        }
+
         if (!empty($this->titleURL)) {
             $target = (substr($this->titleURL, 0, 1) != '?') ? "target='_blank'" : '';
-            $html = "<a href='" . $this->titleURL . "' " . $target . ">" . $value . "</a>";
+            $html = '<a href="' . $this->titleURL . '" ' . $target . '>' . $html . '</a>';
         }
-        
+
         return $html;
     }
 }

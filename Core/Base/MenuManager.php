@@ -78,6 +78,19 @@ class MenuManager
     }
 
     /**
+     * 
+     * @param Model\Page $pageModel
+     * @param array $pageData
+     * @return boolean
+     */
+    private function pageNeedSave($pageModel, $pageData)
+    {
+        return ($pageModel->menu != $pageData['menu'])
+            || ($pageModel->title != $pageData['title'])
+            || ($pageModel->icon != $pageData['icon']);
+    }
+    
+    /**
      * Actualiza los datos en el modelo Model\Page en base los datos
      * del getPageData() del controlador
      * @param array $pageData
@@ -89,7 +102,7 @@ class MenuManager
             $pageData['order'] = 100;
             $pageModel = new Model\Page($pageData);
             $pageModel->save();
-        } elseif ($pageModel->menu != $pageData['menu'] || $pageModel->title != $pageData['title'] || $pageModel->icon != $pageData['icon']) {
+        } elseif ($this->pageNeedSave($pageModel, $pageData)) {
             $pageModel->menu = $pageData['menu'];
             $pageModel->submenu = $pageData['submenu'];
             $pageModel->showonmenu = $pageData['showonmenu'];

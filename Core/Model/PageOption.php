@@ -85,7 +85,6 @@ class PageOption
         $this->filters = [];
     }
 
-    
     public function loadFromData($data)
     {
         $this->id = $data['id'];
@@ -95,10 +94,6 @@ class PageOption
         $columns = json_decode($data['columns'], true);
         $columnItem = new ViewController\ColumnItem();
         $this->columns = $columnItem->columnsFromJSON($columns);
-
-        // TODO: Cargar estructura de filtros
-//        $filters = json_decode($data['filters'], true);
-//        $this->filters = $filters;
     }
 
     /**
@@ -160,12 +155,11 @@ class PageOption
             foreach ($xml->columns->column as $column) {
                 $columnItem = new ViewController\ColumnItem();
                 $columnItem->loadFromXMLColumn($column);
-                $this->columns[$columnItem->field->name] = $columnItem;
+                $key = str_pad($columnItem->order, 3, '0', STR_PAD_LEFT) . '_' . $columnItem->widget->fieldName;
+                $this->columns[$key] = $columnItem;
                 unset($columnItem);
             }
-
-//        foreach ($xml->filters->filter as $filter) {
-//        }
+            ksort($this->columns, SORT_STRING);
         }
 //        $this->saveInsert();
     }

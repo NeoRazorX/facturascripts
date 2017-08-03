@@ -24,37 +24,33 @@
 
 <view>
     <columns>
-        <column title="Código" titleurl="" description="" numcolumns="1" display="left">
-            <field required="true" readonly="false" clickable="false">coddivisa</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Código" display="left" order="100">
+            <widget type="text" fieldname="coddivisa" onclick="EditDivisa" />
         </column>
-        <column title="Descripcion" titleurl="" description="" numcolumns="1" display="left">
-            <field required="false" readonly="false" clickable="false">descripcion</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Descripcion" display="left" order="110">
+            <widget type="text" fieldname="descripcion" />
         </column>
-        <column title="ISO" titleurl="https://es.wikipedia.org/wiki/ISO_4217" description="" numcolumns="1" display="left">
-            <field required="false" readonly="false" clickable="false">codiso</field>
-            <widget type="text" hint="" icon="" />
+        <column title="ISO" display="left" order="120"
+                titleurl="https://es.wikipedia.org/wiki/ISO_4217" 
+                description="El estándar internacional ISO 4217 fue creado por la ISO con el objetivo de definir códigos de tres letras para todas las divisas del mundo.">
+            <widget type="text" fieldname="codiso" />
         </column>
-        <column title="Fecha" titleurl="" description="" numcolumns="1" display="left">
-            <field required="false" readonly="false" clickable="false">fecha</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Fecha" display="left" order="130">
+            <widget type="text" fieldname="fecha" />
         </column>
-        <column title="Tasa Ventas" titleurl="" description="" numcolumns="1" display="right">
-            <field required="false" readonly="false" clickable="false">tasaconv</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Tasa Ventas" display="right" order="140"
+                description="Cambio que se aplica en las VENTAS respecto a la moneda de la empresa">
+            <widget type="text" fieldname="tasaconv" />
         </column>
-        <column title="Tasa Compras" titleurl="" description="" numcolumns="1" display="right">
-            <field required="false" readonly="false" clickable="false">tasaconvcompra</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Tasa Compras" display="right" order="150"
+                description="Cambio que se aplica en las COMPRAS respecto a la moneda de la empresa">
+            <widget type="text" fieldname="tasaconvcompra" />
         </column>
-        <column title="Símbolo" titleurl="" description="" numcolumns="1" display="center">
-            <field required="false" readonly="false" clickable="false">simbolo</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Símbolo" display="center" order="160">
+            <widget type="text" fieldname="simbolo" />
         </column>
-        <column title="Bandera" titleurl="" description="" numcolumns="1" display="none">
-            <field required="false" readonly="false" clickable="false">bandera</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Bandera" display="none" order="170">
+            <widget type="text" fieldname="bandera" />
         </column>
     </columns>
     

@@ -189,7 +189,7 @@
                     <tr>
                         {% for column in fsc.getColumns() %}
                         {% if column.display != 'none' %}
-                        {% set value = attribute(data, column.field.name) %}
+                        {% set value = attribute(data, column.widget.fieldName) %}
                         <td class="text-{{ column.display }}">{{ column.widget.getHTML(value)|raw }}</td>
                         {% endif %}
                         {% endfor %}

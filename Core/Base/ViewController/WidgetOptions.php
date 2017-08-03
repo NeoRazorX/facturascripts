@@ -27,6 +27,12 @@ class WidgetOptions
 {
 
     /**
+     * Nombre del campo con los datos que visualiza el widget
+     * @var string
+     */
+    public $fieldName;
+
+    /**
      * Tipo de widget que se visualiza
      * @var string
      */
@@ -45,10 +51,16 @@ class WidgetOptions
     public $icon;
 
     /**
-     * Código HTML para la representación del widget
+     * Controlador destino al hacer click sobre los datos visualizados
      * @var string
      */
-    public $html;
+    public $onClick;
+
+    /**
+     * Opciones para configurar el widget
+     * @var array
+     */
+    public $options;
 
     /**
      * Constructor de la clase. Si se informa un array se cargan los datos
@@ -57,42 +69,84 @@ class WidgetOptions
     public function __construct()
     {
         $this->type = 'text';
+        $this->fieldName = '';
         $this->hint = '';
         $this->icon = null;
-        $this->html = '';
+        $this->onClick = '';
+        $this->options = [];
     }
 
     public function loadFromXMLColumn($column)
     {
         $widget_atributes = $column->widget->attributes();
+        $this->fieldName = (string) $widget_atributes->fieldname;
         $this->type = (string) $widget_atributes->type;
         $this->hint = (string) $widget_atributes->hint;
         $this->icon = (string) $widget_atributes->icon;
+        $this->onClick = (string) $widget_atributes->onclick;
+
+        foreach ($column->widget->option as $option) {
+            $values = [];
+            foreach ($option->attributes() as $key => $value) {
+                $values[$key] = (string) $value;
+            }
+            $values['value'] = (string) $option;
+            $this->options[] = $values;
+            unset($values);
+        }
     }
 
     public function loadFromJSONColumn($column)
     {
+        $this->fieldName = (string) $column['widget']['fieldName'];
         $this->type = (string) $column['widget']['type'];
         $this->hint = (string) $column['widget']['hint'];
         $this->icon = (string) $column['widget']['icon'];
+        $this->onClick = (string) $column['widget']['onClick'];
+        $this->options = (array) $column['widget']['options'];
+    }
+
+    private function getTextOptionsHTML($valueItem)
+    {
+        $html = '';
+        foreach ($this->options as $option) {
+            if ($option['value'] == $valueItem) {
+                $html = ' style="';
+                foreach ($option as $key => $value) {
+                    if ($key != 'value') {
+                        $html .= $key . ':' . $value . '; ';
+                    }
+                }
+                $html .= '"';
+                break;
+            }
+        }
+
+        return $html;
     }
 
     public function getHTML($value)
     {
+        if (empty($value)) {
+            return '';
+        }
+
         $html = '';
         switch ($this->type) {
-            case "text":
-                $html = empty($value) ? '' : $value;
+            case 'text':
+                $style = $this->getTextOptionsHTML($value);
+                $html = (empty($this->onClick)) ? '<span' . $style . '>' . $value . '</span>' : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $value . '</a>';
                 break;
 
-            case "check":
-                if (in_array($value, ['t', '1'])) {
-                    $html = '<span class="glyphicon glyphicon-ok"></span>';
-                }
+            case 'check':
+                $value = in_array($value, ['t', '1']);
+                $icon = $value ? 'glyphicon-ok' : 'glyphicon-minus';
+                $style = $this->getTextOptionsHTML($value);
+                $html = '<span class="glyphicon ' . $icon . '"' . $style . '></span>';
                 break;
 
-            case "icon":
-                $html = '<span class="glyphicon "' . $this->icon . ' aria-hidden="true" title="' . $this->hint . '"></span>';
+            case 'icon':
+                $html = '<span class="glyphicon "' . $this->icon . ' aria-hidden="true" title="' . $this->hint . '">' . $value . '</span>';
                 break;
 
             default:

@@ -135,7 +135,7 @@ class DataBaseWhere
      */
     private function getValue()
     {
-        return (in_array($this->operator, ['LIKE','IS']))
+        return (in_array($this->operator, ['LIKE', 'IS']))
             ? $this->getValueFromOperator()
             : $this->getValueFromType();
     }

@@ -24,25 +24,20 @@
 
 <view>
     <columns>
-        <column title="Código" titleurl="" description="" numcolumns="1" display="left">
-            <field required="true" readonly="false" clickable="false">codtrans</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Código" display="left" order="100">
+            <widget type="text" fieldname="codtrans" onclick="EditAgenciaTransporte" />
         </column>
-        <column title="Nombre" titleurl="" description="" numcolumns="1" display="left">
-            <field required="false" readonly="false" clickable="false">nombre</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Nombre" display="left" order="110">
+            <widget type="text" fieldname="nombre" />
         </column>
-        <column title="Teléfono" titleurl="" description="" numcolumns="1" display="left">
-            <field required="false" readonly="false" clickable="false">telefono</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Teléfono" display="left" order="120">
+            <widget type="text" fieldname="telefono" />
         </column>
-        <column title="Web" titleurl="" description="" numcolumns="1" display="left">
-            <field required="false" readonly="false" clickable="false">web</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Web" display="left" order="130">
+            <widget type="text" fieldname="web" />
         </column>
-        <column title="Activo" titleurl="" description="" numcolumns="1" display="center">
-            <field required="false" readonly="false" clickable="false">activo</field>
-            <widget type="check" hint="" icon="" />
+        <column title="Activo" display="center" order="140">
+            <widget type="check" fieldname="activo" />
         </column>
     </columns>
     

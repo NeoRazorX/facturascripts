@@ -24,65 +24,50 @@
 
 <view>
     <columns>
-        <column title="Código" titleurl="" description="" numcolumns="1" display="left">
-            <field required="true" readonly="false" clickable="false">codagente</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Código" display="left" order="100">
+            <widget type="text" fieldname="codagente" onclick="EditAgente" />
         </column>
-        <column title="Nombre" titleurl="" description="" numcolumns="1" display="left">
-            <field required="true" readonly="false" clickable="false">nombre</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Nombre" display="left" order="110">
+            <widget type="text" fieldname="nombre" />
         </column>
-        <column title="Cargo" titleurl="" description="" numcolumns="1" display="left">
-            <field required="false" readonly="false" clickable="false">cargo</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Cargo" display="left" order="120">
+            <widget type="text" fieldname="cargo" />
         </column>
-        <column title="% Com." titleurl="" description="" numcolumns="1" display="none">
-            <field required="false" readonly="false" clickable="false">porcomision</field>
-            <widget type="text" hint="" icon="" />
+        <column title="% Com." display="none" order="130">
+            <widget type="text" fieldname="porcomision" />
         </column>
-        <column title="Dirección" titleurl="" description="" numcolumns="1" display="none">
-            <field required="false" readonly="false" clickable="false">direccion</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Dirección" display="none" order="140">
+            <widget type="text" fieldname="direccion" />
         </column>
-        <column title="Ciudad" titleurl="" description="" numcolumns="1" display="center">
-            <field required="false" readonly="false" clickable="false">ciudad</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Ciudad" display="center" order="150">
+            <widget type="text" fieldname="ciudad" />
         </column>
-        <column title="Cod. Postal" titleurl="" description="" numcolumns="1" display="none">
-            <field required="false" readonly="false" clickable="false">codpostal</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Cod. Postal" display="none" order="160">
+            <widget type="text" fieldname="codpostal" />
         </column>
-        <column title="Provincia" titleurl="" description="" numcolumns="1" display="center">
-            <field required="false" readonly="false" clickable="false">provincia</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Provincia" display="center" order="170">
+            <widget type="text" fieldname="provincia" />
         </column>
-        <column title="Teléfono" titleurl="" description="" numcolumns="1" display="left">
-            <field required="false" readonly="false" clickable="false">telefono</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Teléfono" display="left" order="180">
+            <widget type="text" fieldname="telefono" />
         </column>
-        <column title="Email" titleurl="" description="" numcolumns="1" display="left">
-            <field required="false" readonly="false" clickable="false">email</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Email" display="left" order="190">
+            <widget type="text" fieldname="email" />
         </column>
-        <column title="Fec. Alta" titleurl="" description="" numcolumns="1" display="none">
-            <field required="false" readonly="false" clickable="false">f_alta</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Fec. Alta" display="none" order="200">
+            <widget type="text" fieldname="f_alta" />
         </column>
-        <column title="Fec. Baja" titleurl="" description="" numcolumns="1" display="center">
-            <field required="false" readonly="false" clickable="false">f_baja</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Fec. Baja" display="center" order="210">
+            <widget type="text" fieldname="f_baja" />
         </column>
-        <column title="Nacimiento" titleurl="" description="" numcolumns="1" display="none">
-            <field required="false" readonly="false" clickable="false">f_nacimiento</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Nacimiento" display="none" order="220">
+            <widget type="text" fieldname="f_nacimiento" />
         </column>
-        <column title="Seg. Social" titleurl="" description="" numcolumns="1" display="none">
-            <field required="false" readonly="false" clickable="false">seg_social</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Seg. Social" display="none" order="230">
+            <widget type="text" fieldname="seg_social" />
         </column>
-        <column title="Cta. Banco" titleurl="" description="" numcolumns="1" display="none">
-            <field required="false" readonly="false" clickable="false">banco</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Cta. Banco" display="none" order="240">
+            <widget type="text" fieldname="banco" />
         </column>
     </columns>
     

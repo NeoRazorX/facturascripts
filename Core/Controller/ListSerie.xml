@@ -24,37 +24,31 @@
 
 <view>
     <columns>
-        <column title="Código" titleurl="" description="" numcolumns="1" display="left">
-            <field required="true" readonly="false" clickable="false">codserie</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Código" display="left" order="100">
+            <widget type="text" fieldname="codserie" onclick="EditSerie" />
         </column>
-        <column title="Descripción" titleurl="" description="" numcolumns="1" display="left">
-            <field required="true" readonly="false" clickable="false">descripcion</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Descripción" display="left" order="110">
+            <widget type="text" fieldname="descripcion" />
         </column>
-        <column title="% Iva" titleurl="" description="" numcolumns="1" display="right">
-            <field required="false" readonly="false" clickable="false">iva</field>
-            <widget type="text" hint="" icon="" />
+        <column title="% Iva" display="right" order="120">
+            <widget type="text" fieldname="iva" />
         </column>
-        <column title="% Recargo" titleurl="" description="" numcolumns="1" display="right">
-            <field required="false" readonly="false" clickable="false">recargo</field>
-            <widget type="text" hint="" icon="" />
+        <column title="% Recargo" display="right" order="130">
+            <widget type="text" fieldname="recargo" />
         </column>
-        <column title="Sin Impuesto" titleurl="" description="" numcolumns="1" display="center">
-            <field required="false" readonly="false" clickable="false">siniva</field>
-            <widget type="check" hint="" icon="" />
+        <column title="Sin Impuesto" display="center" order="140">
+            <widget type="check" fieldname="siniva">
+                <option color="red">0</option>
+            </widget>
         </column>
-        <column title="Cuenta" titleurl="" description="" numcolumns="1" display="left">
-            <field required="false" readonly="false" clickable="false">codcuenta</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Cuenta" display="left" order="150">
+            <widget type="text" fieldname="codcuenta" />
         </column>
-        <column title="Ejercicio" titleurl="" description="" numcolumns="1" display="center">
-            <field required="false" readonly="false" clickable="false">codejercicio</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Ejercicio" display="center" order="160">
+            <widget type="text" fieldname="codejercicio" />
         </column>
-        <column title="Núm. Factura" titleurl="" description="" numcolumns="1" display="right">
-            <field required="false" readonly="false" clickable="false">numfactura</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Núm. Factura" display="right" order="170">
+            <widget type="text" fieldname="numfactura" />
         </column>
     </columns>
     

@@ -24,33 +24,29 @@
 
 <view>
     <columns>
-        <column title="Código" titleurl="" description="" numcolumns="1" display="left">
-            <field required="true" readonly="false" clickable="false">codejercicio</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Código" display="left" order="100">
+            <widget type="text" fieldname="codejercicio" onclick="EditEjercicio" />
         </column>
-        <column title="Nombre" titleurl="" description="" numcolumns="1" display="left">
-            <field required="true" readonly="false" clickable="false">nombre</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Nombre" display="left" order="110">
+            <widget type="text" fieldname="nombre" />
         </column>
-        <column title="Inicio" titleurl="" description="" numcolumns="1" display="center">
-            <field required="false" readonly="false" clickable="false">fechainicio</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Inicio" display="center" order="120">
+            <widget type="text" fieldname="fechainicio" />
         </column>
-        <column title="Fin" titleurl="" description="" numcolumns="1" display="center">
-            <field required="false" readonly="false" clickable="false">fechafin</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Fin" display="center" order="130">
+            <widget type="text" fieldname="fechafin" />
         </column>
-        <column title="Estado" titleurl="" description="" numcolumns="1" display="center">
-            <field required="false" readonly="false" clickable="false">estado</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Estado" display="center" order="140">
+            <widget type="text" fieldname="estado">
+                <option color="red" font-weight="bold">ABIERTO</option>
+                <option color="blue">CERRADO</option>
+            </widget>
         </column>
-        <column title="Plan" titleurl="" description="" numcolumns="1" display="center">
-            <field required="false" readonly="false" clickable="false">plancontable</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Plan" description="Indica si se usa un plancontable anterior o posterior al 2008" display="center" order="150">
+            <widget type="text" fieldname="plancontable" />
         </column>
-        <column title="Long.Cta" titleurl="" description="" numcolumns="1" display="center">
-            <field required="false" readonly="false" clickable="false">longsubcuenta</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Long.Cta" display="center" order="160">
+            <widget type="text" fieldname="longsubcuenta" />
         </column>
     </columns>
     

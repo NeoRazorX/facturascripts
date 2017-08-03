@@ -24,25 +24,24 @@
 
 <view>
     <columns>
-        <column title="Código Alfa-3" titleurl="http://es.wikipedia.org/wiki/ISO_3166-1#C.C3.B3digos_ISO_3166-1" description="" numcolumns="1" display="left">
-            <field required="true" readonly="false" clickable="false">codpais</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Código Alfa-3" display="left" order="100"
+                titleurl="https://es.wikipedia.org/wiki/ISO_3166-1" 
+                description="Identificación oficial para los nombres de países y otras dependencias administrativas">
+            <widget type="text" fieldname="codpais" onclick="EditPais" />
         </column>
-        <column title="Código Alfa-2" titleurl="http://es.wikipedia.org/wiki/ISO_3166-1#C.C3.B3digos_ISO_3166-1" description="" numcolumns="1" display="left">
-            <field required="false" readonly="false" clickable="false">codiso</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Código Alfa-2" display="left" order="110"
+                titleurl="https://es.wikipedia.org/wiki/ISO_3166-1#C.C3.B3digos_ISO_3166-1"
+                description="Identificación oficial para los nombres de países y otras dependencias administrativas">
+            <widget type="text" fieldname="codiso" />
         </column>
-        <column title="Nombre" titleurl="" description="" numcolumns="1" display="left">
-            <field required="false" readonly="false" clickable="false">nombre</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Nombre" display="left" order="120">
+            <widget type="text" fieldname="nombre" />
         </column>
-        <column title="Validar Prov." titleurl="" description="" numcolumns="1" display="center">
-            <field required="false" readonly="false" clickable="false">validarprov</field>
-            <widget type="check" hint="" icon="" />
+        <column title="Validar Prov." display="center" order="130">
+            <widget type="check" fieldname="validarprov" />
         </column>
-        <column title="Bandera" titleurl="" description="" numcolumns="1" display="none">
-            <field required="false" readonly="false" clickable="false">bandera</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Bandera" display="none" order="140">
+            <widget type="text" fieldname="bandera" />
         </column>
     </columns>
     

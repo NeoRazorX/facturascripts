@@ -24,33 +24,26 @@
 
 <view>
     <columns>
-        <column title="Código" titleurl="" description="" numcolumns="1" display="left">
-            <field required="true" readonly="false" clickable="false">codpago</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Código" display="left" order="100">
+            <widget type="text" fieldname="codpago" onclick="EditPago" />
         </column>
-        <column title="Descripción" titleurl="" description="" numcolumns="1" display="left">
-            <field required="true" readonly="false" clickable="false">descripcion</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Descripción" display="left" order="110">
+            <widget type="text" fieldname="descripcion" />
         </column>
-        <column title="Cod. Cuenta" titleurl="?page=ListEmpresa" description="" numcolumns="1" display="left">
-            <field required="false" readonly="false" clickable="false">codcuenta</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Cod. Cuenta" titleurl="?page=ListEmpresa" display="left" order="115">
+            <widget type="text" fieldname="codcuenta" />
         </column>
-        <column title="Vencimiento" titleurl="" description="" numcolumns="1" display="center">
-            <field required="false" readonly="false" clickable="false">vencimiento</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Vencimiento" display="center" order="120">
+            <widget type="text" fieldname="vencimiento" />
         </column>
-        <column title="Gen. Recibos" titleurl="" description="" numcolumns="1" display="center">
-            <field required="false" readonly="false" clickable="false">genrecibos</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Gen. Recibos" display="center" order="130">
+            <widget type="text" fieldname="genrecibos" />
         </column>
-        <column title="Domiciliado" titleurl="" description="" numcolumns="1" display="center">
-            <field required="false" readonly="false" clickable="false">domiciliado</field>
-            <widget type="check" hint="" icon="" />
+        <column title="Domiciliado" display="center" order="140">
+            <widget type="check" fieldname="domiciliado" />
         </column>
-        <column title="Imprimir" titleurl="" description="" numcolumns="1" display="center">
-            <field required="false" readonly="false" clickable="false">imprimir</field>
-            <widget type="check" hint="" icon="" />
+        <column title="Imprimir" display="center" order="150">
+            <widget type="check" fieldname="imprimir" />
         </column>
     </columns>
     

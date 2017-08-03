@@ -24,49 +24,38 @@
 
 <view>
     <columns>
-        <column title="Código" titleurl="" description="" numcolumns="1" display="left">
-            <field required="true" readonly="false" clickable="false">codalmacen</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Código" display="left" order="100">
+            <widget type="text" fieldname="codalmacen" onclick="EditAlmacen" />
         </column>
-        <column title="Nombre" titleurl="" description="" numcolumns="1" display="left">
-            <field required="true" readonly="false" clickable="false">nombre</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Nombre" display="left" order="100">
+            <widget type="text" fieldname="nombre" />
         </column>
-        <column title="Contacto" titleurl="" description="" numcolumns="1" display="left">
-            <field required="true" readonly="false" clickable="false">contacto</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Contacto" display="left" order="100">
+            <widget type="text" fieldname="contacto" />
         </column>
-        <column title="Dirección" titleurl="" description="" numcolumns="1" display="left">
-            <field required="true" readonly="false" clickable="false">direccion</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Dirección" display="left" order="100">
+            <widget type="text" fieldname="direccion" />
         </column>
-        <column title="Apartado" titleurl="" description="" numcolumns="1" display="none">
-            <field required="true" readonly="false" clickable="false">apartado</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Apartado" display="none" order="100">
+            <widget type="text" fieldname="apartado" />
         </column>
-        <column title="Poblacion" titleurl="" description="" numcolumns="1" display="left">
-            <field required="true" readonly="false" clickable="false">poblacion</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Poblacion" display="left" order="100">
+            <widget type="text" fieldname="poblacion" />
         </column>
-        <column title="Cod. Postal" titleurl="" description="" numcolumns="1" display="none">
-            <field required="true" readonly="false" clickable="false">codpostal</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Cod. Postal" display="none" order="100">
+            <widget type="text" fieldname="codpostal" />
         </column>
-        <column title="Provincia" titleurl="" description="" numcolumns="1" display="center">
-            <field required="true" readonly="false" clickable="false">provincia</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Provincia" display="center" order="100">
+            <widget type="text" fieldname="provincia" />
         </column>
-        <column title="Teléfono" titleurl="" description="" numcolumns="1" display="left">
-            <field required="true" readonly="false" clickable="false">telefono</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Teléfono" display="left" order="100">
+            <widget type="text" fieldname="telefono" />
         </column>
-        <column title="Fax" titleurl="" description="" numcolumns="1" display="left">
-            <field required="true" readonly="false" clickable="false">fax</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Fax" display="left" order="100">
+            <widget type="text" fieldname="fax" />
         </column>
-        <column title="Valoración" titleurl="" description="" numcolumns="1" display="center">
-            <field required="true" readonly="false" clickable="false">tipovaloracion</field>
-            <widget type="text" hint="" icon="" />
+        <column title="Valoración" display="center" order="100">
+            <widget type="text" fieldname="tipovaloracion" />
         </column>
     </columns>
     
