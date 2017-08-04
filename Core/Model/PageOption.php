@@ -73,6 +73,16 @@ class PageOption
         }
     }
 
+    public function tableName()
+    {
+        return 'fs_pages_options';
+    }
+    
+    public function primaryColumn()
+    {
+        return 'id';
+    }
+    
     /**
      * Resetea los valores de todas las propiedades modelo.
      */

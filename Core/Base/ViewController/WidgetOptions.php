@@ -131,7 +131,6 @@ class WidgetOptions
             return '';
         }
 
-        $html = '';
         switch ($this->type) {
             case 'text':
                 $style = $this->getTextOptionsHTML($value);
