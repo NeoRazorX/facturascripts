@@ -186,7 +186,13 @@
                         </tr>
                     </thead>
                     {% for data in fsc.cursor %}
+                    {% set row = fsc.getRow('status') %}
+                    {% if row is empty %}
                     <tr>
+                    {% else %}
+                    {% set status = attribute(data, row.fieldName) %}
+                    <tr class="{{ row.getStatus(status) }}">
+                    {% endif %}
                         {% for column in fsc.getColumns() %}
                         {% if column.display != 'none' %}
                         {% set value = attribute(data, column.widget.fieldName) %}

@@ -49,7 +49,7 @@ class ListController extends Base\Controller
      * @var Model\PageOption
      */
     private $pageOption;
-//    public $fields;
+
     public $filters;
 
     /**
@@ -105,7 +105,6 @@ class ListController extends Base\Controller
         $this->count = 0;
         $this->orderby = [];
         $this->filters = [];
-//        $this->fields = [];
 
         $this->pageOption = new Model\PageOption();
     }
@@ -118,10 +117,8 @@ class ListController extends Base\Controller
         parent::privateCore($response, $user);
 
         // Cargamos configuración de columnas y filtros
-//        $this->fields = $this->getColumns();
-
         $className = $this->getClassName();
-        $this->pageOption->getForUser($className, $user->nick);
+        $this->pageOption-> getForUser($className, $user->nick);
 
         // Establecemos el orderby seleccionado
         $orderKey = $this->request->get("order");
@@ -136,6 +133,11 @@ class ListController extends Base\Controller
     public function getColumns()
     {
         return $this->pageOption->columns;
+    }
+
+    public function getRow($key)
+    {
+        return empty($this->pageOption->rows) ? NULL : $this->pageOption->rows[$key];
     }
 
     /**

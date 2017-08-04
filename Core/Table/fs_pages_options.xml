@@ -24,6 +24,11 @@
         <nulo>YES</nulo>
     </columna>
     <columna>
+        <nombre>rows</nombre>
+        <tipo>text</tipo>
+        <nulo>YES</nulo>
+    </columna>    
+    <columna>
         <nombre>columns</nombre>
         <tipo>text</tipo>
         <nulo>YES</nulo>

@@ -30,7 +30,10 @@ use FacturaScripts\Core\Base\ViewController as ViewController;
 class PageOption
 {
 
-    use Base\ModelTrait;
+    use Base\ModelTrait {
+        clear as clearTrait;
+        loadFromData as loadFromDataTrait;
+    }
 
     public $id;
 
@@ -47,6 +50,12 @@ class PageOption
     public $nick;
 
     /**
+     * Definición para tratamiento especial de filas
+     * @var array
+     */
+    public $rows;
+
+    /**
      * Definición de las columnas
      * @var array
      */
@@ -58,52 +67,38 @@ class PageOption
      */
     public $filters;
 
-    /**
-     * Page constructor.
-     *
-     * @param array $data
-     */
-    public function __construct($data = [])
-    {
-        $this->init('fs_pages_options', 'id');
-        if (is_null($data) || empty($data)) {
-            $this->clear();
-        } else {
-            $this->loadFromData($data);
-        }
-    }
-
     public function tableName()
     {
         return 'fs_pages_options';
     }
-    
+
     public function primaryColumn()
     {
         return 'id';
     }
-    
+
     /**
      * Resetea los valores de todas las propiedades modelo.
      */
     public function clear()
     {
-        $this->id = null;
-        $this->name = null;
-        $this->nick = null;
+        $this->clearTrait();
         $this->columns = [];
         $this->filters = [];
+        $this->rows = [];
     }
 
     public function loadFromData($data)
     {
-        $this->id = $data['id'];
-        $this->name = $data['name'];
-        $this->nick = $data['nick'];
+        $this->loadFromDataTrait($data);
 
         $columns = json_decode($data['columns'], true);
         $columnItem = new ViewController\ColumnItem();
         $this->columns = $columnItem->columnsFromJSON($columns);
+
+        $rows = json_decode($data['rows'], true);
+        $rowItem = new ViewController\RowItem();
+        $this->rows = $rowItem->rowsFromJSON($rows);
     }
 
     /**
@@ -114,10 +109,12 @@ class PageOption
     {
         $columns = json_encode($this->columns);
         $filters = json_encode($this->filters);
+        $rows = json_encode($this->rows);
 
         $sql = 'UPDATE ' . $this->tableName() . ' SET '
             . '  columns = ' . $this->var2str($columns)
             . ' ,filters = ' . $this->var2str($filters)
+            . ' ,rows = ' . $this->var2str($rows)
             . ' WHERE id = ' . $this->id . ';';
         return $this->dataBase->exec($sql);
     }
@@ -130,14 +127,16 @@ class PageOption
     {
         $columns = json_encode($this->columns);
         $filters = json_encode($this->filters);
+        $rows = json_encode($this->rows);
 
         $sql = "INSERT INTO " . $this->tableName()
-            . " (id, name, nick, columns, filters) VALUES ("
+            . " (id, name, nick, columns, filters, rows) VALUES ("
             . "nextval('fs_pages_options_id_seq')" . ","
             . $this->var2str($this->name) . ","
             . $this->var2str($this->nick) . ","
             . $this->var2str($columns) . ","
-            . $this->var2str($filters)
+            . $this->var2str($filters) . ","
+            . $this->var2str($rows)
             . ");";
 
         if ($this->dataBase->exec($sql)) {
@@ -146,6 +145,36 @@ class PageOption
         }
 
         return false;
+    }
+
+    /**
+     * Carga la estructura de columnas desde el XML
+     * @param SimpleXMLElement $columns
+     */
+    private function getXMLColumns($columns)
+    {
+        foreach ($columns->column as $column) {
+            $columnItem = new ViewController\ColumnItem();
+            $columnItem->loadFromXMLColumn($column);
+            $key = str_pad($columnItem->order, 3, '0', STR_PAD_LEFT) . '_' . $columnItem->widget->fieldName;
+            $this->columns[$key] = $columnItem;
+            unset($columnItem);
+        }
+    }
+
+    /**
+     * Carga las condiciones especiales para las filas
+     * desde el XML
+     * @param SimpleXMLElement $rows
+     */
+    private function getXMLRows($rows)
+    {
+        foreach ($rows->row as $row) {
+            $rowOptions = new ViewController\RowOptions();
+            $rowOptions->loadFromXMLRow($row);
+            $this->rows[$rowOptions->type] = $rowOptions;
+            unset($rowOptions);
+        }
     }
 
     /**
@@ -158,20 +187,19 @@ class PageOption
         $this->name = $name;
         $this->columns = [];
         $this->filters = [];
+        $this->rows = [];
         $file = "Core/Controller/{$name}.xml";
         $xml = simplexml_load_file($file);
 
         if ($xml) {
-            foreach ($xml->columns->column as $column) {
-                $columnItem = new ViewController\ColumnItem();
-                $columnItem->loadFromXMLColumn($column);
-                $key = str_pad($columnItem->order, 3, '0', STR_PAD_LEFT) . '_' . $columnItem->widget->fieldName;
-                $this->columns[$key] = $columnItem;
-                unset($columnItem);
-            }
+            $this->getXMLColumns($xml->columns);
             ksort($this->columns, SORT_STRING);
-        }
+
+            if (!empty($xml->rows)) {
+                $this->getXMLRows($xml->rows);
+            }
 //        $this->saveInsert();
+        }
     }
 
     /**
@@ -191,13 +219,14 @@ class PageOption
         $data = $this->all($where, $orderby, 0, 1);
         if (empty($data)) {
             $this->installXML($name);
-        } else {
-            $pageOption = $data[0];
-            $this->id = $pageOption->id;
-            $this->name = $pageOption->name;
-            $this->nick = $pageOption->nick;
-            $this->columns = $pageOption->columns;
-            $this->filters = $pageOption->filters;
+            return;
         }
+
+        $pageOption = $data[0];
+        $this->id = $pageOption->id;
+        $this->name = $pageOption->name;
+        $this->nick = $pageOption->nick;
+        $this->columns = $pageOption->columns;
+        $this->filters = $pageOption->filters;
     }
 }
