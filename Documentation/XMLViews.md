@@ -1,20 +1,20 @@
 # Construcción de vistas por XML
 Usaremos un archivo con estructura **XML** y con el nombre del controlador al cual define para establecer la composición visual de los campos y opciones de la vista.
 
-El elemento raíz del archivo XML será _<view>_ y se podrán incluir los siguientes grupos:
+El elemento raíz del archivo XML será _\<view\>_ y se podrán incluir los siguientes grupos:
 
 **OPCIONES**
-* **<columns>** : (obligatorio) Para definir la lista de campos que se visualizan en la vista.
-* **<rows>**    : (opcional) Permite definir condiciones especiales para la filas en las vistas List.
-* **<filters>** : (opcional) Para definir la lista de filtros disponibles en la vista.
+* **\<columns\>** : (obligatorio) Para definir la lista de campos que se visualizan en la vista.
+* **\<rows\>**    : (opcional) Permite definir condiciones especiales para la filas en las vistas List.
+* **\<filters\>** : (opcional) Para definir la lista de filtros disponibles en la vista.
 
 ## COLUMNS
-Permite definir mediante la etiqueta _<column>_ cada uno de los campos que se visualizarán en la vista. 
-Se complementa con la etiqueda _<widget>_, que sirve para personalizar el tipo de objeto que se usa en la visualización del dato.
-Tanto la etiqueta _<column>_ como _<widget>_ disponen de un grupo de atributos que permiten la personalización y que varían según
+Permite definir mediante la etiqueta _\<column\>_ cada uno de los campos que se visualizarán en la vista. 
+Se complementa con la etiqueda _\<widget\>_, que sirve para personalizar el tipo de objeto que se usa en la visualización del dato.
+Tanto la etiqueta _\<column\>_ como _\<widget\>_ disponen de un grupo de atributos que permiten la personalización y que varían según
 el contexto en que se ejecuta, es decir si es una vista _List_ o una vista _Edit_. Para las vistas _Edit_ se podrá agrupar las
-columnas en grupos _<group>_.
-Es posible indicar el número de columnas que ocupará _<column>_ y el grupo _<group>_ dentro de la rejilla bootstrap (por defecto el máximo disponible).
+columnas en grupos _\<group\>_.
+Es posible indicar el número de columnas que ocupará _\<column\>_ y el grupo _\<group\>_ dentro de la rejilla bootstrap (por defecto el máximo disponible).
 
 Ejemplo ListController:
     
@@ -54,10 +54,11 @@ Ejemplo EditController:
     </group>
 ```
 
+
 ### column
 Cada uno de los campos que componen la vista.
 
-**OPCIONES**
+**Opciones**
 * **title** : Etiqueta descriptiva del campo
 
 * **titleurl** : URL destino si el usuario hace click sobre el título de la columna.
@@ -70,10 +71,11 @@ En las vistas Edit se muestra como un label inferior a la zona de edición del c
 
 * **order** : Posición que ocupa la columna. Sirve para indicar el orden en que se visualizan.
 
+
 ### widget
 Complemento visual que se utiliza para la visualización y/o edición del campo. 
-En las vistas List, se puede completar la clusula html _style_ que se aplicará a la columna mediante una listas de _<option>_, 
-donde cada atributo de la etiqueta _<option>_ se corresponde con su equivalente CSS que se desea aplicar y el valor de la etiqueta
+En las vistas List, se puede completar la clusula html _style_ que se aplicará a la columna mediante una listas de _\<option\>_, 
+donde cada atributo de la etiqueta _\<option\>_ se corresponde con su equivalente CSS que se desea aplicar y el valor de la etiqueta
 es el valor cuando se aplicará el formato.
 
 Ejemplo:
@@ -88,7 +90,8 @@ Ejemplo:
         <option color="blue">CERRADO</option>
     </widget>
 ```
-**OPCIONES**
+
+**Opciones**
 * **type** : (obligatorio) Indica el tipo de widget a utilizar.
     * text : Campos varchar o de texto.
     * check: Valores booleanos que se visualizan mediante el icono de un check (true) o un guión (false) respectivamente.
@@ -97,12 +100,14 @@ Ejemplo:
 
 * **onclick** : (opcional) Nombre del controlador al que llamará y se pasará el valor del campo al hacer click sobre el valor de la columna.
 
+
+
 ## ROWS
-Este grupo permite añadir funcionalidad a cada una de las filas o añadir filas con procesos especiales. Así mediante la etiqueta _<row>_ 
+Este grupo permite añadir funcionalidad a cada una de las filas o añadir filas con procesos especiales. Así mediante la etiqueta _\<row\>_ 
 podemos ir añadiendo las funcionalidades, de manera única (es decir, no podemos incluir dos veces el mismo tipo de row) y
 mediante el atributo _type_ indicar la acción que realiza, teniendo cada tipo unos requerimientos propios.
 
-* **status** : Permite colorear las filas en base al valor de un campo del registro. Requiere de uno o varios registros _<option>_ indicando la
+* **status** : Permite colorear las filas en base al valor de un campo del registro. Requiere de uno o varios registros _\<option\>_ indicando la
 configuración bootstrap para paneles que deseamos para la fila.
 ```XML
     <rows>
@@ -112,10 +117,11 @@ configuración bootstrap para paneles que deseamos para la fila.
         </row>
     </rows>
 ```
-* **<header>**  : Permite definir una lista de botones estadísticos y relacionales con otros modelos que dan información al usuario y le permite
+* **\<header\>**  : Permite definir una lista de botones estadísticos y relacionales con otros modelos que dan información al usuario y le permite
 consultar al hacer click (Futuras versiones).
 
-* **<footer>**  : Permite añadir información adicional a visualizar al usuario en el pie de la vista (Futuras versiones).
+* **\<footer\>**  : Permite añadir información adicional a visualizar al usuario en el pie de la vista (Futuras versiones).
+
 
 
 ## FILTERS
