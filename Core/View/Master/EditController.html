@@ -1,0 +1,162 @@
+{% extends "Master/MenuTemplate.html" %}
+
+{% block css %}
+    {{ parent() }}
+    <style type="text/css">
+        .cust-text{
+            margin-left: 35px;
+            overflow: hidden;
+            font-size: 80%;
+        }
+    </style>
+{% endblock %}
+
+
+{% block javascript %}
+{{ parent() }}
+<script type="text/javascript">
+    $(document).ready(function() {
+   });
+</script>
+{% endblock %}
+
+{% block body %}
+{{ parent() }}
+
+<!-- Calculate texts according to language -->
+{% set go_back = i18n.trans('Todos') %}
+{% set save = i18n.trans('Guardar') %}
+{% set refresh = i18n.trans('Refrescar la página') %}
+{% set print, print_title = i18n.trans('Imprimir'), i18n.trans('Imprimir datos del registro') %}
+{% set remove, remove_title = i18n.trans('Eliminar'), i18n.trans('Eliminar el registro') %}
+{% set panel_header = i18n.trans('Datos generales') %}
+{% set title = fsc.getPageData()['title'] %}
+{% set title = i18n.trans(title) %}
+
+<!-- Main Body -->
+<div class="container-fluid">
+    <!-- Header Row -->
+    <div id="header" class="row">
+        <div class="col-xs-3 hidden-print">
+            <div class="btn-group">
+                <a href="#" class="btn btn-sm btn-default">
+                   <span class="glyphicon glyphicon-arrow-left"></span>
+                   <span class="hidden-xs hidden-sm">&nbsp; {{ go_back }} </span>
+                </a>
+                <a id="b_print" class="btn btn-sm btn-default" onclick="window.print();" title="{{ print_title }}">
+                    <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+                    <span class="hidden-xs">&nbsp; {{ print }}</span>
+                </a>
+                <a href="{$fsc->url()}" class="btn btn-sm btn-default" title="{{ refresh }}">
+                   <span class="glyphicon glyphicon-refresh"></span>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-xs-6 text-center">
+            <div class="page-header">
+                <h2>
+                    <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
+                </h2>
+            </div>
+        </div>
+
+        <div class="col-xs-3 text-right hidden-print">
+            <a class="btn btn-sm btn-success" href="#" title="{{ i18n.trans("Nuevo") }} {{ title }}">
+               <span class="glyphicon glyphicon-plus"></span>
+            </a>
+            <a id="b_eliminar" class="btn btn-sm btn-danger" href="#" title="{{ remove_title }}">
+               <span class="glyphicon glyphicon-trash"></span>
+               <span class="hidden-xs">&nbsp; {{ remove }}</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Data Row -->
+    <div id="data" class="row">
+        <div class="col-xs-10 col-md-offset-1">
+            <form name="mainform" action="" method="post" class="form" role="form">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{{ panel_header }}</h3>
+                    </div>
+
+                    <div class="panel-body">
+                        <!-- Statistical buttons bar -->
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12">
+                                <div class="btn-toolbar pull-right" role="toolbar">
+                                    <div class="btn-group btn-group-lg" role="group">
+                                        {% set header = fsc.getRow('header') %}
+                                        {% if header is not empty %}
+                                        {% for button in header.options %}
+                                        <button type="button" class="btn btn-default" onclick="{{ button.onclick }}">
+                                            <i class="fa {{ button.icon }} fa-lg pull-left"></i>
+                                            <div class="cust-text">
+                                                {{ i18n.trans(button.label) }} xxxx.xx €
+                                            </div>
+                                        </button>                            
+                                        {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Main Form -->
+                        <div class="row">
+                            {% for group in fsc.getGroupColumns() %}
+                            <div class="{{ 'col-md-' ~ group.numColumns }}">
+                                {% if group.title is not empty %}
+                                <h5>{{ i18n.trans(group.title) }}</h5>
+                                {% endif %}                                    
+                                {% for column in group.columns %}
+                                    {% if column.display != 'none' %}
+                                    {% set value = attribute(fsc.model, column.widget.fieldName) %}
+                                    {{ column.getEditHTML(value)|raw }}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="panel-footer text-right">
+                        <small class="pull-left">Texto opcional en el footer</small>
+                        <button class="btn btn-sm btn-primary" type="submit" onclick="">
+                           <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp; {{ save }}
+                        </button>
+                    </div>
+                </div>
+            </form>                
+        </div>
+    </div>
+
+    <!-- Footer Row -->
+    <div id="footer" class="row">
+        <div class="col-xs-10 col-md-offset-1">
+            {% set footer = fsc.getRow('footer') %}
+            {% if footer is not empty %}
+            <div class="panel-group">
+                {% for panel in footer.options %}            
+                <div class="panel panel-{{ panel.color }}">
+                    {% if panel.label is not empty %}
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{{ i18n.trans(panel.label) }}</h3>
+                    </div>
+                    {% endif %}
+                    <div class="panel-body">
+                      {{ i18n.trans(panel.value) }}
+                    </div>
+
+                    {% if panel.footer is not empty %}
+                    <div class="panel-footer">{{ i18n.trans(panel.footer) }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Base\ViewController;
 
+use FacturaScripts\Core\Base as Base;
+
 /**
  * Description of ColumnItem
  *
@@ -25,6 +27,7 @@ namespace FacturaScripts\Core\Base\ViewController;
  */
 class ColumnItem
 {
+    private $i18n;
 
     /**
      * Etiqueta o título de la columna
@@ -46,13 +49,13 @@ class ColumnItem
 
     /**
      * Configuración del objeto de visualización del campo
-     * @var WidgetOptions
+     * @var WidgetItem
      */
     public $widget;
 
     /**
      * Número de columnas que usa el campo en su visualización
-     * (Mínimo 1 - Máximo 8)
+     * ([1, 2, 4, 6, 8, 10, 12])
      * @var int
      */
     public $numColumns;
@@ -78,10 +81,11 @@ class ColumnItem
         $this->title = '';
         $this->titleURL = '';
         $this->description = '';
-        $this->numColumns = 1;
+        $this->numColumns = 12;
         $this->display = 'none';
         $this->order = 100;
-        $this->widget = new WidgetOptions();
+        $this->widget = new WidgetItem();
+        $this->i18n = new Base\Translator();
     }
 
     /**
@@ -95,10 +99,16 @@ class ColumnItem
         $this->title = (string) $column_atributes->title;
         $this->titleURL = (string) $column_atributes->titleurl;
         $this->description = (string) $column_atributes->description;
-        $this->numColumns = (int) $column_atributes->numcolumns;
         $this->display = (string) $column_atributes->display;
-        $this->order = (int) $column_atributes->order;
 
+        if (!empty($column_atributes->numcolumns)) {
+            $this->numColumns = (int) $column_atributes->numcolumns;
+        }
+        
+        if (!empty($column_atributes->order)) {
+            $this->order = (int) $column_atributes->order;
+        }        
+        
         $this->widget->loadFromXMLColumn($column);
     }
 
@@ -109,7 +119,7 @@ class ColumnItem
         $this->description = (string) $column['description'];
         $this->numColumns = (int) $column['numColumns'];
         $this->display = (string) $column['display'];
-        $this->display = (int) $column['order'];
+        $this->order = (int) $column['order'];
     }
 
     public function columnsFromJSON($columns)
@@ -126,11 +136,11 @@ class ColumnItem
 
     public function getHeaderHTML($value)
     {
-        $html = $value;
+        $html = $this->i18n->trans($value);
         if (!empty($this->description)) {
-            $html = '<span title="' . $this->description . '">' . $html . '</span>';
+            $html = '<span title="' . $this->i18n->trans($this->description) . '">' . $html . '</span>';
         }
-
+        
         if (!empty($this->titleURL)) {
             $target = (substr($this->titleURL, 0, 1) != '?') ? "target='_blank'" : '';
             $html = '<a href="' . $this->titleURL . '" ' . $target . '>' . $html . '</a>';
@@ -138,4 +148,39 @@ class ColumnItem
 
         return $html;
     }
+    
+    public function getListHTML($value)
+    {
+        return $this->widget->getListHTML($value);
+    }
+    
+    public function getEditHTML($value)
+    {
+        $columnClass = ($this->numColumns < 12) ? (' col-md-' . $this->numColumns) : '';
+        $input = $this->widget->getEditHTML($value);
+        $header = $this->getHeaderHTML($this->title);
+        $hint = empty($this->widget->hint) ? '' : ' title="' . $this->i18n->trans($this->widget->hint) . '"';
+        $description = empty($this->description) ? '' : '<span class="help-block">' . $this->i18n->trans($this->description) . '</span>';
+        
+        switch ($this->widget->type) {
+            case "checkbox-inline":
+            case "checkbox":
+                $html = '<div class="' . $this->widget->type . $columnClass . '">'
+                        . '<label class="checkbox-inline"' . $hint . '>'
+                        . $input . $header 
+                        . '</label>'
+                        . $description
+                        . '</div>';
+                break;
+
+            default:
+                $html = '<div class="form-group' . $columnClass . '">'
+                        . '<label for="' . $this->widget->fieldName . '"' . $hint . '>' . $header . '</label>'
+                        . $input
+                        . $description
+                        . '</div>';                        
+                break;
+        }
+        return $html;
+    }        
 }

@@ -15,36 +15,51 @@
 {% endblock %}
 
 {% block body %}
+{{ parent() }}
+
+<!-- Calculate texts according to language -->
+{% set refresh = i18n.trans('Refrescar la página') %}
+{% set defaultT, defaultF = i18n.trans('marcar como página de inicio'), i18n.trans('Marcada como página de inicio (pulsa de nuevo para desmarcar)') %}
+{% set options, options_title = i18n.trans('Opciones'), i18n.trans('Opciones de configuración') %}
+{% set print, print_title = i18n.trans('Imprimir'), i18n.trans('Imprimir lista de registros') %}
+{% set new_record, new_record_title = i18n.trans('Nuevo'), i18n.trans('Crear un nuevo registro') %}
+{% set search, search_title = i18n.trans('Buscar'), i18n.trans('Filtra los registros que contienen el valor indicado') %}
+{% set any = i18n.trans('Cualquier') %}
+{% set panel_header = i18n.trans('Datos generales') %}
+{% set title = fsc.getPageData()['title'] %}
+{% set title = i18n.trans(title) %}
+{% set no_data = i18n.trans('No hay registros con esas condiciones. Pulse el botón Nuevo para dar de alta.') %}
+
 <!-- Page Header -->
 <div class="container-fluid hidden-print">
     <div class="row">
         <div class="col-sm-7 col-xs-6">
             <div class="btn-group hidden-xs">
-                <a class="btn btn-sm btn-default" href="{{ fsc.url() }}" title="Recargar la página">
+                <a class="btn btn-sm btn-default" href="{{ fsc.url() }}" title="{{ refresh }}">
                     <span class="glyphicon glyphicon-refresh"></span>
                 </a>
                 {% if fsc.getPageData()['isDefault'] %}
-                <a class="btn btn-sm btn-default active" href="{{ fsc.url() }}&amp;default_page=FALSE" title="Marcada como página de inicio (pulsa de nuevo para desmarcar)">
+                <a class="btn btn-sm btn-default active" href="{{ fsc.url() }}&amp;default_page=FALSE" title="{{ defaultF }}">
                     <i class="fa fa-bookmark" aria-hidden="true"></i>
                 </a>
                 {% else %}
-                <a class="btn btn-sm btn-default" href="{{ fsc.url() }}&amp;default_page=TRUE" title="marcar como página de inicio">
+                <a class="btn btn-sm btn-default" href="{{ fsc.url() }}&amp;default_page=TRUE" title="{{ defaultT }}">
                     <i class="fa fa-bookmark-o" aria-hidden="true"></i>
                 </a>
                 {% endif %}
             </div>
             <div class="btn-group">
-                <a href="#" id="b_new_record" class="btn btn-sm btn-success">
+                <a href="#" id="b_new_record" class="btn btn-sm btn-success" title="{{ new_record_title }}">
                     <span class="glyphicon glyphicon-plus"></span>
-                    <span class="hidden-xs">&nbsp;Nuevo</span>
+                    <span class="hidden-xs">&nbsp;{{ new_record }}</span>
                 </a>
-                <a href="#" id="b_options" class="btn btn-sm btn-default">
-                    <span class="glyphicon glyphicon-wrench" aria-hidden="true" title="Opciones de configuración"></span>
-                    <span class="hidden-xs">&nbsp;Opciones</span>
+                <a href="#" id="b_options" class="btn btn-sm btn-default" title="{{ options_title }}">
+                    <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                    <span class="hidden-xs">&nbsp;{{ options }}</span>
                 </a>
-                <a id="b_print" class="btn btn-sm btn-default" onclick="window.print();">
-                    <span class="glyphicon glyphicon-print" aria-hidden="true" title="Imprimir lista de registros"></span>
-                    <span class="hidden-xs">&nbsp;Imprimir</span>
+                <a id="b_print" class="btn btn-sm btn-default" onclick="window.print();" title="{{ print_title }}">
+                    <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+                    <span class="hidden-xs">&nbsp;{{ print }}</span>
                 </a>
                 {#    TODO: Aplicar extensiones
                 {% for value in fsc.extensions %}
@@ -57,7 +72,7 @@
         </div>
         <div class="col-sm-5 col-xs-6 text-right">
             <h2 style="margin-top: 0px;">
-                <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ fsc.getPageData()['title'] }}
+                <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
             </h2>
         </div>
     </div>
@@ -68,9 +83,9 @@
     <!-- Tabs declaration -->
     <ul class="nav nav-tabs hidden-print" role="tablist">
         <li role="presentation" class="active">
-            <a href="#search" aria-controls="search" role="tab" data-toggle="tab">
+            <a href="#search" aria-controls="search" role="tab" data-toggle="tab" title="{{ search_title }}">
                 <span class="glyphicon glyphicon-search"></span>
-                <span class="hidden-xs">&nbsp; Buscar</span>
+                <span class="hidden-xs">&nbsp; {{ search }}</span>
                 <span class="badge">{{ fsc.count }}</span>
             </a>
         </li>
@@ -109,7 +124,7 @@
                         {% if filter.type == 'select' %}
                         <div class="col-sm-2">
                             <select name="{{ key1 }}" class="form-control" onchange="this.form.submit()">
-                                <option value="">Cualquier {{ key1 }}</option>
+                                <option value="">{{ any }} {{ key1 }}</option>
                                 <option value="">------</option>
                                 {% for key2, data in fsc.optionlist(filter.options.field, filter.options.table, filter.options.where) %}
                                 {% if data == filter.value %}
@@ -151,14 +166,14 @@
                                 <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuOrder" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                     <span class="glyphicon {{ fsc.orderby[fsc.selectedOrderBy]['icon'] }}" aria-hidden="true"></span>
                                     &nbsp;
-                                    {{ fsc.orderby[fsc.selectedOrderBy]['label'] }}
+                                    {{ i18n.trans(fsc.orderby[fsc.selectedOrderBy]['label']) }}
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuOrder">
                                     {% for key, orderby in fsc.orderby %}
                                     <li>
                                         <a href="{{ fsc.url() }}&order={{ key }}">
-                                            <span class="glyphicon {{ orderby['icon'] }}" aria-hidden="true"></span>&nbsp; {{ orderby['label'] }} &nbsp;
+                                            <span class="glyphicon {{ orderby['icon'] }}" aria-hidden="true"></span>&nbsp; {{ i18n.trans(orderby['label']) }} &nbsp;
                                             {% if fsc.selectedOrderBy == key %}
                                             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
                                             {% endif %}
@@ -196,13 +211,13 @@
                         {% for column in fsc.getColumns() %}
                         {% if column.display != 'none' %}
                         {% set value = attribute(data, column.widget.fieldName) %}
-                        <td class="text-{{ column.display }}">{{ column.widget.getHTML(value)|raw }}</td>
+                        <td class="text-{{ column.display }}">{{ column.getListHTML(value)|raw }}</td>
                         {% endif %}
                         {% endfor %}
                     </tr>
                     {% else %}
                     <tr class="warning">
-                        <td colspan="6">No hay registros con esas condiciones. Pulse el botón <b>Nuevo</b> para dar de alta.</td>
+                        <td colspan="6"><b>{{ no_data }}</b></td>
                     </tr>
                     {% endfor %}
                 </table>

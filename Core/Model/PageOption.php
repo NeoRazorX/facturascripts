@@ -56,7 +56,8 @@ class PageOption
     public $rows;
 
     /**
-     * Definición de las columnas
+     * Definición de las columnas. Se denomina columns pero contiene
+     * siempre GroupItem, el cual contiene las columnas.
      * @var array
      */
     public $columns;
@@ -76,7 +77,7 @@ class PageOption
     {
         return 'id';
     }
-
+    
     /**
      * Resetea los valores de todas las propiedades modelo.
      */
@@ -93,12 +94,12 @@ class PageOption
         $this->loadFromDataTrait($data);
 
         $columns = json_decode($data['columns'], true);
-        $columnItem = new ViewController\ColumnItem();
-        $this->columns = $columnItem->columnsFromJSON($columns);
+        $groupItem = new ViewController\GroupItem();
+        $this->columns = $groupItem->loadFromJSON($columns);
 
         $rows = json_decode($data['rows'], true);
         $rowItem = new ViewController\RowItem();
-        $this->rows = $rowItem->rowsFromJSON($rows);
+        $this->rows = $rowItem->loadFromJSON($rows);
     }
 
     /**
@@ -146,19 +147,28 @@ class PageOption
 
         return false;
     }
-
+    
     /**
      * Carga la estructura de columnas desde el XML
      * @param SimpleXMLElement $columns
      */
-    private function getXMLColumns($columns)
+    private function getXMLGroupsColumns($columns)
     {
-        foreach ($columns->column as $column) {
-            $columnItem = new ViewController\ColumnItem();
-            $columnItem->loadFromXMLColumn($column);
-            $key = str_pad($columnItem->order, 3, '0', STR_PAD_LEFT) . '_' . $columnItem->widget->fieldName;
-            $this->columns[$key] = $columnItem;
-            unset($columnItem);
+        // No hay agrupación de columnas
+        if (empty($columns->group)) {
+            $groupItem = new ViewController\GroupItem();
+            $groupItem->loadFromXMLColumns($columns);
+            $this->columns[] = $groupItem;
+            unset($groupItem);
+            return;
+        }
+        
+        // Con agrupación de columnas
+        foreach ($columns->group as $group) {
+            $groupItem = new ViewController\GroupItem();
+            $groupItem->loadFromXML($group);
+            $this->columns[] = $groupItem;
+            unset($groupItem);
         }
     }
 
@@ -170,10 +180,10 @@ class PageOption
     private function getXMLRows($rows)
     {
         foreach ($rows->row as $row) {
-            $rowOptions = new ViewController\RowOptions();
-            $rowOptions->loadFromXMLRow($row);
-            $this->rows[$rowOptions->type] = $rowOptions;
-            unset($rowOptions);
+            $rowItem = new ViewController\RowItem();
+            $rowItem->loadFromXML($row);
+            $this->rows[$rowItem->type] = $rowItem;
+            unset($rowItem);
         }
     }
 
@@ -192,8 +202,7 @@ class PageOption
         $xml = simplexml_load_file($file);
 
         if ($xml) {
-            $this->getXMLColumns($xml->columns);
-            ksort($this->columns, SORT_STRING);
+            $this->getXMLGroupsColumns($xml->columns);
 
             if (!empty($xml->rows)) {
                 $this->getXMLRows($xml->rows);

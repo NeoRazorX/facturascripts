@@ -19,11 +19,11 @@
 namespace FacturaScripts\Core\Base\ViewController;
 
 /**
- * Description of RowOptions
+ * Description of RowItem
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class RowOptions
+class RowItem
 {
     /**
      * Tipo de row que se visualiza
@@ -51,7 +51,7 @@ class RowOptions
         $this->options = [];
     }
     
-    public function loadFromXMLRow($row)
+    public function loadFromXML($row)
     {
         $row_atributes = $row->attributes();
         $this->type = (string) $row_atributes->type;
@@ -68,7 +68,7 @@ class RowOptions
         }
     }
 
-    public function loadFromJSONRow($row)
+    public function loadFromJSON($row)
     {
         $this->type = (string) $row['type'];
         $this->fieldName = (string) $row['fieldName'];
@@ -87,11 +87,3 @@ class RowOptions
         return $result;
     }
 }
-
-/*
-.active	Applies the hover color to the table row or table cell
-.success	Indicates a successful or positive action
-.info	Indicates a neutral informative change or action
-.warning	Indicates a warning that might need attention
-.danger	Indicates a dangerous or potentially negative action
- */
