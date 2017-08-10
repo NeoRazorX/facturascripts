@@ -32,11 +32,12 @@ class ListController extends Base\Controller
 {
 
     /**
-     * Iconos para ordenación
+     * Constantes para ordenación y paginación
      */
     const ICONO_ASC = 'glyphicon-sort-by-attributes';
     const ICONO_DESC = 'glyphicon-sort-by-attributes-alt';
     const FS_ITEM_LIMIT = 50;
+    const FS_PAGE_MARGIN = 5;
 
     /**
      * Cursor con los datos a mostrar
@@ -49,7 +50,6 @@ class ListController extends Base\Controller
      * @var Model\PageOption
      */
     private $pageOption;
-
     public $filters;
 
     /**
@@ -118,7 +118,7 @@ class ListController extends Base\Controller
 
         // Cargamos configuración de columnas y filtros
         $className = $this->getClassName();
-        $this->pageOption-> getForUser($className, $user->nick);
+        $this->pageOption->getForUser($className, $user->nick);
 
         // Establecemos el orderby seleccionado
         $orderKey = $this->request->get("order");
@@ -132,7 +132,7 @@ class ListController extends Base\Controller
      */
     public function getColumns()
     {
-        return $this->pageOption->columns;
+        return $this->pageOption->columns[0]->columns;
     }
 
     public function getRow($key)
@@ -350,6 +350,34 @@ class ListController extends Base\Controller
     }
 
     /**
+     * Devuelve el offset para el primer elemento del margen especificado
+     * para la paginación
+     * @return int
+     */
+    private function getRecordMin()
+    {
+        $result = $this->offset - (self::FS_ITEM_LIMIT * self::FS_PAGE_MARGIN);
+        if ($result < 0) {
+            $result = 0;
+        }
+        return $result;
+    }
+
+    /**
+     * Devuelve el offset para el último elemento del margen especificado
+     * para la paginación
+     * @return int
+     */
+    private function getRecordMax()
+    {
+        $result = $this->offset + (self::FS_ITEM_LIMIT * (self::FS_PAGE_MARGIN + 1));
+        if ($result > $this->count) {
+            $result = $this->count;
+        }
+        return $result;
+    }
+
+    /**
      * Calcula el navegador entre páginas.
      * Permite saltar a:
      *      primera,
@@ -370,21 +398,13 @@ class ListController extends Base\Controller
     {
         $result = [];
         $url = $this->url() . $this->getParams();
-        $pageMargin = 5;
+
+        $recordMin = $this->getRecordMin();
+        $recordMax = $this->getRecordMax();
         $index = 0;
 
-        $recordMin = $this->offset - (self::FS_ITEM_LIMIT * $pageMargin);
-        if ($recordMin < 0) {
-            $recordMin = 0;
-        }
-
-        $recordMax = $this->offset + (self::FS_ITEM_LIMIT * ($pageMargin + 1));
-        if ($recordMax > $this->count) {
-            $recordMax = $this->count;
-        }
-
         // Añadimos la primera página, si no está incluida en el margen de páginas
-        if ($this->offset > (self::FS_ITEM_LIMIT * $pageMargin)) {
+        if ($this->offset > (self::FS_ITEM_LIMIT * self::FS_PAGE_MARGIN)) {
             $result[$index] = $this->addPaginationItem($url, 1, 0, "glyphicon-step-backward");
             $index++;
         }
@@ -423,10 +443,6 @@ class ListController extends Base\Controller
         }
 
         /// si solamente hay una página, no merece la pena mostrar un único botón
-        if (count($result) == 1) {
-            return [];
-        }
-
-        return $result;
+        return (count($result) > 1) ? $result : [];
     }
 }

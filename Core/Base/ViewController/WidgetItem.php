@@ -19,11 +19,11 @@
 namespace FacturaScripts\Core\Base\ViewController;
 
 /**
- * Description of WidgetOptions
+ * Description of WidgetItem
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class WidgetOptions
+class WidgetItem
 {
 
     /**
@@ -44,6 +44,18 @@ class WidgetOptions
      */
     public $hint;
 
+    /**
+     * Indica que el campo es no editable
+     * @var boolean
+     */
+    public $readOnly;
+
+    /**
+     * Indica que el campo es obligatorio y debe contener un valor
+     * @var boolean
+     */
+    public $required;
+    
     /**
      * Icono que se usa como valor o acompañante del widget
      * @var string
@@ -71,6 +83,8 @@ class WidgetOptions
         $this->type = 'text';
         $this->fieldName = '';
         $this->hint = '';
+        $this->readOnly = FALSE;
+        $this->required = FALSE;
         $this->icon = null;
         $this->onClick = '';
         $this->options = [];
@@ -81,6 +95,9 @@ class WidgetOptions
         $widget_atributes = $column->widget->attributes();
         $this->fieldName = (string) $widget_atributes->fieldname;
         $this->type = (string) $widget_atributes->type;
+        $this->hint = (string) $widget_atributes->hint;
+        $this->readOnly = (boolean) boolval($widget_atributes->readonly);
+        $this->required = (boolean) boolval($widget_atributes->required);
         $this->hint = (string) $widget_atributes->hint;
         $this->icon = (string) $widget_atributes->icon;
         $this->onClick = (string) $widget_atributes->onclick;
@@ -101,6 +118,8 @@ class WidgetOptions
         $this->fieldName = (string) $column['widget']['fieldName'];
         $this->type = (string) $column['widget']['type'];
         $this->hint = (string) $column['widget']['hint'];
+        $this->readOnly = (boolean) boolval($column['widget']['readonly']);
+        $this->required = (boolean) boolval($column['widget']['required']);
         $this->icon = (string) $column['widget']['icon'];
         $this->onClick = (string) $column['widget']['onClick'];
         $this->options = (array) $column['widget']['options'];
@@ -125,7 +144,7 @@ class WidgetOptions
         return $html;
     }
 
-    public function getHTML($value)
+    public function getListHTML($value)
     {
         if (empty($value)) {
             return '';
@@ -134,7 +153,9 @@ class WidgetOptions
         switch ($this->type) {
             case 'text':
                 $style = $this->getTextOptionsHTML($value);
-                $html = (empty($this->onClick)) ? '<span' . $style . '>' . $value . '</span>' : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $value . '</a>';
+                $html = (empty($this->onClick)) 
+                        ? '<span' . $style . '>' . $value . '</span>' 
+                        : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $value . '</a>';
                 break;
 
             case 'check':
@@ -149,23 +170,25 @@ class WidgetOptions
                 break;
 
             default:
-                $html = $this->extraWidgetHTML($value);
+                $html = $value;
         }
 
         return $html;
     }
-
-    private function extraWidgetHTML($value)
-    {
-        $html = $value;
+    
+    public function getEditHTML($value)
+    {        
         switch ($this->type) {
-            case "downdrop":
+            case 'checkbox-inline':
+            case 'checkbox':
+                $html = '<input type="checkbox" name="' . $this->fieldName . '"  value="TRUE">';
                 break;
 
-            case "textarea":
-                break;
+            default:
+                $html = '<input type="' . $this->type . '" class="form-control" name="' . $this->fieldName . '" value="' . $value . '">';
         }
 
         return $html;
-    }
+    }    
 }
+        
