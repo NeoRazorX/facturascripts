@@ -94,10 +94,6 @@ class GroupItem extends VisualItem implements VisualItemInterface
             return '';
         }
         
-        if (strpos($this->icon, 'glyphicon') === 0) {    
-            return '<i class="glyphicon ' . $this->icon . '"></i>&nbsp;&nbsp;</span>';
-        }
-        
         if (strpos($this->icon, 'fa-') === 0) {
             return '<i class="fa ' . $this->icon . '" aria-hidden="true">&nbsp;&nbsp;</i></span>';
         }

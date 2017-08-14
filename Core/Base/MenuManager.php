@@ -87,7 +87,8 @@ class MenuManager
     {
         return ($pageModel->menu != $pageData['menu'])
             || ($pageModel->title != $pageData['title'])
-            || ($pageModel->icon != $pageData['icon']);
+            || ($pageModel->icon != $pageData['icon'])
+            || ($pageModel->showonmenu != $pageData['showonmenu']);
     }
     
     /**

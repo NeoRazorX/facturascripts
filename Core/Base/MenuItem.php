@@ -106,7 +106,7 @@ class MenuItem
         }
 
         if (empty($this->menu)) {
-            return '<li class="' . $liClass . '" data-name="' . $this->name . '"><a href="' . $this->url . '">' . $this->getHTMLIcon() . $this->title . '</a></li>';
+            return '<li class="text-capitalize ' . $liClass . '" data-name="' . $this->name . '"><a href="' . $this->url . '">' . $this->getHTMLIcon() . $this->title . '</a></li>';
         }
 
         $base = '<a href="' . $this->url . '" class="dropdown-toggle"'
@@ -114,7 +114,7 @@ class MenuItem
             . ' aria-expanded="false">' . $this->title;
 
         if ($level === 0) {
-            $html = '<li class="' . $liClass . '" data-name="' . $this->name . '">' . $base . ' <span class="caret"></span>' . '</a>' . '<ul class="dropdown-menu multi-level">';
+            $html = '<li class="text-capitalize ' . $liClass . '" data-name="' . $this->name . '">' . $base . ' <span class="caret"></span>' . '</a>' . '<ul class="dropdown-menu multi-level">';
         } else {
             $html = '<li class="dropdown-submenu ' . $liClass . '" data-name="' . $this->name . '">' . $base . '</a>' . '<ul class="dropdown-menu">';
         }

@@ -36,7 +36,7 @@
         <div class="col-sm-7 col-xs-6">
             <div class="btn-group hidden-xs">
                 <a class="btn btn-sm btn-default" href="{{ fsc.url() }}" title="{{ refresh }}">
-                    <span class="glyphicon glyphicon-refresh"></span>
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
                 {% if fsc.getPageData()['isDefault'] %}
                 <a class="btn btn-sm btn-default active" href="{{ fsc.url() }}&amp;default_page=FALSE" title="{{ defaultF }}">
@@ -50,15 +50,15 @@
             </div>
             <div class="btn-group">
                 <a href="#" id="b_new_record" class="btn btn-sm btn-success" title="{{ new_record_title }}">
-                    <span class="glyphicon glyphicon-plus"></span>
+                    <i class="fa fa-plus" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;{{ new_record }}</span>
                 </a>
                 <a href="#" id="b_options" class="btn btn-sm btn-default" title="{{ options_title }}">
-                    <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                    <i class="fa fa-wrench" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;{{ options }}</span>
                 </a>
                 <a id="b_print" class="btn btn-sm btn-default" onclick="window.print();" title="{{ print_title }}">
-                    <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+                    <i class="fa fa-print" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;{{ print }}</span>
                 </a>
                 {#    TODO: Aplicar extensiones
@@ -84,8 +84,8 @@
     <ul class="nav nav-tabs hidden-print" role="tablist">
         <li role="presentation" class="active">
             <a href="#search" aria-controls="search" role="tab" data-toggle="tab" title="{{ search_title }}">
-                <span class="glyphicon glyphicon-search"></span>
-                <span class="hidden-xs">&nbsp; {{ search }}</span>
+                <i class="fa fa-search" aria-hidden="true"></i>
+                <span class="hidden-xs">&nbsp;{{ search }}</span>
                 <span class="badge">{{ fsc.count }}</span>
             </a>
         </li>
@@ -113,7 +113,7 @@
                                 <input class="form-control" type="text" name="query" value="{{ fsc.query }}" autocomplete="off" placeholder="Buscar">
                                 <span class="input-group-btn hidden-sm">
                                     <button class="btn btn-primary" type="submit">
-                                        <span class="glyphicon glyphicon-search"></span>
+                                        <i class="fa fa-search" aria-hidden="true"></i>
                                     </button>
                                 </span>
                             </div>
@@ -164,7 +164,7 @@
                         <div class="col-sm-2 pull-right">
                             <div class="btn-group pull-right">
                                 <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuOrder" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    <span class="glyphicon {{ fsc.orderby[fsc.selectedOrderBy]['icon'] }}" aria-hidden="true"></span>
+                                    <i class="fa {{ fsc.orderby[fsc.selectedOrderBy]['icon'] }}" aria-hidden="true"></i>
                                     &nbsp;
                                     {{ i18n.trans(fsc.orderby[fsc.selectedOrderBy]['label']) }}
                                     <span class="caret"></span>
@@ -173,9 +173,9 @@
                                     {% for key, orderby in fsc.orderby %}
                                     <li>
                                         <a href="{{ fsc.url() }}&order={{ key }}">
-                                            <span class="glyphicon {{ orderby['icon'] }}" aria-hidden="true"></span>&nbsp; {{ i18n.trans(orderby['label']) }} &nbsp;
+                                            <i class="fa {{ orderby['icon'] }}" aria-hidden="true"></i>&nbsp; {{ i18n.trans(orderby['label']) }} &nbsp;
                                             {% if fsc.selectedOrderBy == key %}
-                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                                            <i class="fa fa-check" aria-hidden="true"></i>
                                             {% endif %}
                                         </a>
                                     </li>
@@ -236,7 +236,7 @@
                                 {% endif %}
                                 <a href="{{ item.url }}">
                                     {% if item.icon %}
-                                    <span class="glyphicon {{ item.icon }}" aria-hidden="true" />
+                                    <i class="fa {{ item.icon }}" aria-hidden="true"></i>
                                     {% else %}
                                     <span>{{ item.page }}</span>
                                     {% endif %}

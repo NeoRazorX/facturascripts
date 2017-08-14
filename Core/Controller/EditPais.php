@@ -35,6 +35,7 @@ class EditPais extends ViewController\EditController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'Países';
         $pagedata['icon'] = 'fa-globe';
+        $pagedata['showonmenu'] = FALSE;
         return $pagedata;
     }    
 }
