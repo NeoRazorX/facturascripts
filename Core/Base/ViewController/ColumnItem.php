@@ -18,53 +18,19 @@
  */
 namespace FacturaScripts\Core\Base\ViewController;
 
-use FacturaScripts\Core\Base as Base;
 
 /**
  * Description of ColumnItem
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ColumnItem
-{
-    private $i18n;
-
-    /**
-     * Etiqueta o título de la columna
-     * @var string
-     */
-    public $title;
-
-    /**
-     * URL de salto si hacen click en $title
-     * @var string
-     */
-    public $titleURL;
-
+class ColumnItem extends VisualItem implements VisualItemInterface
+{    
     /**
      * Texto adicional que explica el campo al usuario
      * @var string
      */
     public $description;
-
-    /**
-     * Configuración del objeto de visualización del campo
-     * @var WidgetItem
-     */
-    public $widget;
-
-    /**
-     * Número de columnas que usa el campo en su visualización
-     * ([1, 2, 4, 6, 8, 10, 12])
-     * @var int
-     */
-    public $numColumns;
-
-    /**
-     * Posición en la que se visualizá ( de menor a mayor )
-     * @var int
-     */
-    public $order;
 
     /**
      * Configuración del estado y alineamiento de la visualización
@@ -74,86 +40,94 @@ class ColumnItem
     public $display;
 
     /**
+     * Configuración del objeto de visualización del campo
+     * @var WidgetItem
+     */
+    public $widget;
+    
+    /**
      * Construye e inicializa la clase.
      */
     public function __construct()
     {
-        $this->title = '';
-        $this->titleURL = '';
+        parent::__construct();
+
         $this->description = '';
-        $this->numColumns = 12;
         $this->display = 'none';
-        $this->order = 100;
         $this->widget = new WidgetItem();
-        $this->i18n = new Base\Translator();
     }
 
     /**
-     * Inicializa la clase con los valores pasados.
-     * Es una estructura de columna leida desde un XML
+     * Carga la estructura de atributos en base a un archivo XML
      * @param SimpleXMLElement $column
      */
-    public function loadFromXMLColumn($column)
+    public function loadFromXML($column)
     {
+        parent::loadFromXML($column);
+        
         $column_atributes = $column->attributes();
-        $this->title = (string) $column_atributes->title;
-        $this->titleURL = (string) $column_atributes->titleurl;
         $this->description = (string) $column_atributes->description;
-        $this->display = (string) $column_atributes->display;
-
-        if (!empty($column_atributes->numcolumns)) {
-            $this->numColumns = (int) $column_atributes->numcolumns;
-        }
-        
-        if (!empty($column_atributes->order)) {
-            $this->order = (int) $column_atributes->order;
-        }        
-        
+        $this->display = (string) $column_atributes->display;        
         $this->widget->loadFromXMLColumn($column);
     }
 
-    public function loadFromJSONColumn($column)
+    /**
+     * Carga la estructura de atributos en base a la base de datos
+     * @param SimpleXMLElement $column
+     */    
+    public function loadFromJSON($column)
     {
-        $this->title = (string) $column['title'];
-        $this->titleURL = (string) $column['titleURL'];
+        parent::loadFromJSON($column);
         $this->description = (string) $column['description'];
-        $this->numColumns = (int) $column['numColumns'];
         $this->display = (string) $column['display'];
-        $this->order = (int) $column['order'];
     }
 
+    /**
+     * Carga un grupo de columnas en base a la base de datos
+     * @param type $columns
+     * @return array
+     */
     public function columnsFromJSON($columns)
     {
         $result = [];
         foreach ($columns as $data) {
             $columnItem = new ColumnItem();
-            $columnItem->loadFromJSONColumn($data);
-            $columnItem->widget->loadFromJSONColumn($data);
+            $columnItem->loadFromJSON($data);
+            $columnItem->widget->loadFromJSON($data);
             $result[] = $columnItem;
         }
         return $result;
     }
 
+    /**
+     * Genera el código html para visualizar la cabecera del elemento visual
+     * @param string $value
+     */
     public function getHeaderHTML($value)
     {
-        $html = $this->i18n->trans($value);
-        if (!empty($this->description)) {
-            $html = '<span title="' . $this->i18n->trans($this->description) . '">' . $html . '</span>';
-        }
+        $html = parent::getHeaderHTML($value);
         
-        if (!empty($this->titleURL)) {
-            $target = (substr($this->titleURL, 0, 1) != '?') ? "target='_blank'" : '';
-            $html = '<a href="' . $this->titleURL . '" ' . $target . '>' . $html . '</a>';
+        if (!empty($this->description)) {
+            $html .= '<span title="' . $this->i18n->trans($this->description) . '"></span>';
         }
-
         return $html;
     }
     
+    /**
+     * Genera el código html para visualizar el dato del modelo
+     * para controladores List
+     * @param string $value
+     */
     public function getListHTML($value)
     {
         return $this->widget->getListHTML($value);
     }
     
+    /**
+     * Genera el código html para visualizar el dato del modelo
+     * para controladores Edit
+     * @param string $value
+     */
     public function getEditHTML($value)
     {
         $columnClass = ($this->numColumns < 12) ? (' col-md-' . $this->numColumns) : '';
@@ -178,7 +152,7 @@ class ColumnItem
                         . '<label for="' . $this->widget->fieldName . '"' . $hint . '>' . $header . '</label>'
                         . $input
                         . $description
-                        . '</div>';                        
+                        . '</div>';            
                 break;
         }
         return $html;

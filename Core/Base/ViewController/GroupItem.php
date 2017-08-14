@@ -18,35 +18,18 @@
  */
 namespace FacturaScripts\Core\Base\ViewController;
 
-use FacturaScripts\Core\Base as Base;
-
 /**
  * Description of GroupItem
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class GroupItem
-{
-    private $i18n;
-    
+class GroupItem extends VisualItem implements VisualItemInterface
+{    
     /**
-     * Etiqueta o título del grupo
+     * Icono que se usa como valor o acompañante del título de grupo
      * @var string
-     */
-    public $title;
-
-    /**
-     * Número de columnas que ocupa en su visualización
-     * ([1, 2, 4, 6, 8, 10, 12])
-     * @var int
-     */
-    public $numColumns;
-
-    /**
-     * Posición en la que se visualizá ( de menor a mayor )
-     * @var int
-     */
-    public $order;
+     */    
+    public $icon;
     
     /**
      * Definición de columnas que incluye el grupo
@@ -59,11 +42,10 @@ class GroupItem
      */
     public function __construct()
     {
-        $this->title = '';
-        $this->numColumns = 12;
-        $this->order = 100;
+        parent::__construct();
+
+        $this->icon = NULL;
         $this->columns = [];
-        $this->i18n = new Base\Translator();
     }
     
     public function loadFromXMLColumns($group)
@@ -71,7 +53,7 @@ class GroupItem
         $this->columns = [];
         foreach ($group->column as $column) {
             $columnItem = new ColumnItem();
-            $columnItem->loadFromXMLColumn($column);
+            $columnItem->loadFromXML($column);
             $key = str_pad($columnItem->order, 3, '0', STR_PAD_LEFT) . '_' . $columnItem->widget->fieldName;
             $this->columns[$key] = $columnItem;
             unset($columnItem);
@@ -79,27 +61,57 @@ class GroupItem
         ksort($this->columns, SORT_STRING);
     }    
     
+    /**
+     * Carga la estructura de atributos en base a un archivo XML
+     * @param SimpleXMLElement $group
+     */    
     public function loadFromXML($group)
     {
-        $group_atributes = $group->attributes();
-        $this->title = (string) $group_atributes->title;
-
-        if (!empty($group_atributes->numcolumns)) {
-            $this->numColumns = (int) $group_atributes->numcolumns;
-        }
+        parent::loadFromXML($group);
         
-        if (!empty($group_atributes->order)) {
-            $this->order = (int) $group_atributes->order;
-        }        
-
+        $group_atributes = $group->attributes();
+        $this->icon = (string) $group_atributes->icon;        
         $this->loadFromXMLColumns($group);
     }   
     
+    /**
+     * Carga la estructura de atributos en base a la base de datos
+     * @param SimpleXMLElement $group
+     */    
     public function loadFromJSON($group)
     {
-        $this->title = (string) $group['title'];
-        $this->numColumns = (int) $group['numColumns'];
-        $this->order = (int) $group['order'];
+        parent::loadFromJSON($group);
         $this->options = (array) $group['columns'];
-    }    
+    }
+
+    /**
+     * Obtiene el código html para visualizar un icono
+     * @return string
+     */
+    private function getIconHTML()
+    {        
+        if (empty($this->icon)) {
+            return '';
+        }
+        
+        if (strpos($this->icon, 'glyphicon') === 0) {    
+            return '<i class="glyphicon ' . $this->icon . '"></i>&nbsp;&nbsp;</span>';
+        }
+        
+        if (strpos($this->icon, 'fa-') === 0) {
+            return '<i class="fa ' . $this->icon . '" aria-hidden="true">&nbsp;&nbsp;</i></span>';
+        }
+                
+        return '<i aria-hidden="true">' . $this->icon . '</i>&nbsp;&nbsp;</span>';            
+    }
+    
+    /**
+     * Genera el código html para visualizar la cabecera del elemento visual
+     * @param string $value
+     */    
+    public function getHeaderHTML($value)
+    {
+        $html = $this->getIconHTML() . parent::getHeaderHTML($value);        
+        return $html;        
+    }
 }

@@ -63,6 +63,10 @@ class EditController extends Base\Controller
         // Cargamos datos del modelo
         $value = $this->request->get('code');
         $this->model->loadFromCode($value);
+        
+        // Bloqueamos el campo Primary Key si no es una alta
+        $column = $this->pageOption->columnForField( $this->model->primaryColumn() );
+        $column->widget->readOnly = (!empty($value));
     }    
     
     public function getRow($key)

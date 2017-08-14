@@ -238,4 +238,21 @@ class PageOption
         $this->columns = $pageOption->columns;
         $this->filters = $pageOption->filters;
     }
+    
+    public function columnForField($fieldName)
+    {
+        $result = NULL;
+        foreach ($this->columns as $group) {
+            foreach ($group->columns as $column) {
+                if ($column->widget->fieldName === $fieldName) {
+                    $result = $column;
+                    break;
+                }
+            }
+            if (!empty($result)) {
+                break;
+            }
+        }
+        return $result;
+    }
 }

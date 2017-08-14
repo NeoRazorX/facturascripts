@@ -3,10 +3,23 @@
 {% block css %}
     {{ parent() }}
     <style type="text/css">
-        .cust-text{
+        .cust-text {
             margin-left: 35px;
             overflow: hidden;
             font-size: 80%;
+        }
+        
+        legend {
+            font-size: 120%;
+            font-weight: bold;
+        }
+        
+        label {
+            font-weight: 500;
+        }
+        
+        input[required] {
+            background: aliceblue;
         }
     </style>
 {% endblock %}
@@ -107,8 +120,9 @@
                         <div class="row">
                             {% for group in fsc.getGroupColumns() %}
                             <div class="{{ 'col-md-' ~ group.numColumns }}">
+                                <fieldset>
                                 {% if group.title is not empty %}
-                                <h5>{{ i18n.trans(group.title) }}</h5>
+                                <legend>{{ group.getHeaderHTML(group.title)|raw }}</legend>
                                 {% endif %}                                    
                                 {% for column in group.columns %}
                                     {% if column.display != 'none' %}
@@ -116,6 +130,7 @@
                                     {{ column.getEditHTML(value)|raw }}
                                     {% endif %}
                                 {% endfor %}
+                                </fieldset>
                             </div>
                             {% endfor %}
                         </div>

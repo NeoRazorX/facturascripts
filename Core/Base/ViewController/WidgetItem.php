@@ -176,19 +176,52 @@ class WidgetItem
         return $html;
     }
     
-    public function getEditHTML($value)
+    private function getIconHTML()
     {        
+        if (empty($this->icon)) {
+            return '';
+        }
+        
+        $html = '<div class="input-group"><span class="input-group-addon">';
+        if (strpos($this->icon, 'glyphicon') === 0) {    
+            return $html . '<i class="glyphicon ' . $this->icon . '"></i></span>';
+        }
+        
+        if (strpos($this->icon, 'fa-') === 0) {
+            return $html . '<i class="fa ' . $this->icon . '" aria-hidden="true"></i></span>';
+        }
+                
+        return $html . '<i aria-hidden="true">' . $this->icon . '</i></span>';            
+    }
+    
+    private function specialClass()
+    {
+        $readOnly = (empty($this->readOnly)) ? '' : ' readonly="readonly"';
+        $required = (empty($this->required)) ? '' : ' required="required"';
+        
+        return $readOnly . $required;
+    }
+    
+    public function getEditHTML($value)
+    {
+        $specialClass = $this->specialClass();
+        $fieldName = '"' . $this->fieldName . '"';
+        $html = $this->getIconHTML();
+        
         switch ($this->type) {
             case 'checkbox-inline':
             case 'checkbox':
-                $html = '<input type="checkbox" name="' . $this->fieldName . '"  value="TRUE">';
+                $html .= '<input id=' . $fieldName . ' type="checkbox" name=' . $fieldName . ' value="TRUE"' . $specialClass . '>';
                 break;
 
             default:
-                $html = '<input type="' . $this->type . '" class="form-control" name="' . $this->fieldName . '" value="' . $value . '">';
+                $html .= '<input id=' . $fieldName . ' type="' . $this->type . '" class="form-control" name=' . $fieldName . ' value="' . $value . '"' . $specialClass . '>';
         }
 
+        if (!empty($this->icon)) {
+            $html .= '</div>';
+        }
+        
         return $html;
     }    
 }
-        

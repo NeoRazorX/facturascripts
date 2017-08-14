@@ -9,12 +9,12 @@ El elemento raíz del archivo XML será _\<view\>_ y se podrán incluir los sigu
 
 
 ## COLUMNS
-Permite definir mediante la etiqueta _\<column\>_ cada uno de los campos que se visualizarán en la vista. 
-Se complementa con la etiqueda _\<widget\>_, que sirve para personalizar el tipo de objeto que se usa en la visualización/edición del dato.
-Tanto la etiqueta _\<column\>_ como _\<widget\>_ disponen de un grupo de atributos que permiten la personalización y que varían según
-el contexto en que se ejecuta, es decir si es una vista _List_ o una vista _Edit_. Para las vistas _Edit_ se podrá agrupar las
-columnas en grupos _\<group\>_.
-Es posible indicar el número de columnas que ocupará _\<column\>_ y el grupo _\<group\>_ dentro de la rejilla bootstrap (por defecto el máximo disponible).
+Permite definir mediante la etiqueta _\<column\>_ cada uno de los campos que se visualizarán en la vista pudiendo, en las vistas _Edit_, agrupar las
+columnas mediante la etiqueta _\<group\>_. Las columnsa, se complementan con la etiqueta obligatoria _\<widget\>_, que sirve para personalizar el tipo de objeto que se usa en la visualización/edición del dato.
+
+Tanto las etiquetas _\<group\>_, _\<column\>_ como _\<widget\>_ disponen de un conjunto de atributos que permiten la personalización y que varían según
+el contexto en que se ejecutan, es decir si es una vista _List_ o una vista _Edit_.
+Es posible indicar el número de columnas que ocupará _\<column\>_ y/o el grupo _\<group\>_ dentro de la rejilla bootstrap (por defecto el máximo disponible).
 
 Ejemplo ListController:
     
@@ -46,7 +46,7 @@ Ejemplo EditController:
     
 ```XML
     <columns>
-        <group numcolumns="8">
+        <group numcolumns="8" title="Identificación internacional" icon="fa-globe">
             <column title="Código" display="left" numcolumns="4" order="100">
                 <widget type="text" fieldname="codigo" onclick="EditMyModel" />
             </column>
@@ -67,7 +67,7 @@ Ejemplo EditController:
 
 
 ### column
-Cada uno de los campos que componen la vista.
+Entendemos que es cada uno de los campos del modelo que componen la vista y con los que el usuario puede interactuar.
 
 * **title** : Etiqueta descriptiva del campo
 
@@ -83,7 +83,7 @@ En las vistas Edit se muestra como un label inferior a la zona de edición del c
 
 
 ### widget
-Complemento visual que se utiliza para la visualización y/o edición del campo. 
+Complemento visual que se utiliza para la visualización y/o edición del campo/columna. 
 En las vistas List, se puede completar la clusula html _style_ que se aplicará a la columna mediante una listas de _\<option\>_, 
 donde cada atributo de la etiqueta _\<option\>_ se corresponde con su equivalente CSS que se desea aplicar y el valor de la etiqueta
 es el valor cuando se aplicará el formato.
@@ -116,6 +116,19 @@ Ejemplo:
 * **icon** : (opcional) Si se indica se visualizará el icono a la izquierda del campo.
 
 * **hint** : (opcional) Texto explicativo que se visualiza al colocar el ratón sobre el título en el controlador Edit.
+
+
+### group
+Crea una rejilla bootstrap donde incluirá cada una de las columnas _\<column\>_ declaradas dentro del grupo. Se puede personalizar el grupo
+mediante los siguientes atributos:
+
+* **title** : Etiqueta descriptiva del grupo.
+
+* **titleurl** : URL destino si el usuario hace click sobre el título del grupo.
+
+* **icon** : Si se indica se visualizará el icono a la izquierda del título.
+
+* **order** : Posición que ocupa el grupo. Sirve para indicar el orden en que se visualizara.
 
 
 ## ROWS

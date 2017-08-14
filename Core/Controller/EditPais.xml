@@ -24,21 +24,21 @@
 
 <view>
     <columns>
-        <group numcolumns="6">
+        <group numcolumns="6" title="Identificación internacional" icon="fa-globe" titleurl="https://es.wikipedia.org/wiki/ISO_3166-1">
             <column title="Código Alfa-3" display="left" numcolumns="6" order="100"
                     titleurl="https://es.wikipedia.org/wiki/ISO_3166-1"
                     description="Identificación oficial para los nombres de países y otras dependencias administrativas">
-                <widget type="text" fieldname="codpais" onclick="" />
+                <widget type="text" fieldname="codpais" onclick="" required="true" />
             </column>
             <column title="Código Alfa-2" display="left" numcolumns="6" order="110"
                     titleurl="https://es.wikipedia.org/wiki/ISO_3166-1#C.C3.B3digos_ISO_3166-1"
                     description="Identificación oficial para los nombres de países y otras dependencias administrativas">
-                    <widget type="text" fieldname="codiso" />
+                    <widget type="text" fieldname="codiso" icon="fa-truck" />
             </column>
         </group>
-        <group numcolumns="6">
+        <group numcolumns="6" title="Otros datos" icon="fa-area-chart">
             <column title="Nombre" display="left" order="120">
-                <widget type="text" fieldname="nombre" />
+                <widget type="text" fieldname="nombre" required="true" />
             </column>
             <column title="Bandera" display="none" order="130">
                 <widget type="text" fieldname="bandera" />
