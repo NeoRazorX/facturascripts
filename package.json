@@ -23,8 +23,9 @@
   },
   "homepage": "https://www.facturascripts.com",
   "dependencies": {
-    "bootstrap": "^3.3.7",
-    "font-awesome": "^4.7.0",
-    "jquery": "^3.2.1"
+    "bootstrap": "4.0.0-beta",
+    "font-awesome": "^4.x",
+    "jquery": "^3.x",
+    "popper.js": "^1.11.1"
   }
 }

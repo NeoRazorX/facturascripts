@@ -100,31 +100,36 @@ class MenuItem
      */
     public function getHTML($level = 0)
     {
-        $liClass = '';
+        if ($level == 0) {
+            $liClass = 'nav-item';
+            if ($this->active) {
+                $liClass .= ' active';
+            }
+
+            if (empty($this->menu)) {
+                return '<li class="text-capitalize ' . $liClass . '"><a class="nav-link" href="' . $this->url . '">'
+                    . $this->getHTMLIcon() . $this->title . "</a></li>\n";
+            }
+
+            $html = '<li class="text-capitalize ' . $liClass . ' dropdown">'
+                . '<a class="nav-link dropdown-toggle" href="' . $this->url . '" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
+                . $this->getHTMLIcon() . $this->title . '</a>'
+                . '<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">';
+
+            foreach ($this->menu as $menuItem) {
+                $html .= $menuItem->getHTML($level + 1);
+            }
+
+            $html .= '</div></li>';
+            return $html;
+        }
+
+        $liClass = 'dropdown-item';
         if ($this->active) {
-            $liClass = 'active';
+            $liClass .= ' active';
         }
 
-        if (empty($this->menu)) {
-            return '<li class="text-capitalize ' . $liClass . '" data-name="' . $this->name . '"><a href="' . $this->url . '">' . $this->getHTMLIcon() . $this->title . '</a></li>';
-        }
-
-        $base = '<a href="' . $this->url . '" class="dropdown-toggle"'
-            . ' data-toggle="dropdown" role="button" aria-haspopup="true"'
-            . ' aria-expanded="false">' . $this->title;
-
-        if ($level === 0) {
-            $html = '<li class="text-capitalize ' . $liClass . '" data-name="' . $this->name . '">' . $base . ' <span class="caret"></span>' . '</a>' . '<ul class="dropdown-menu multi-level">';
-        } else {
-            $html = '<li class="dropdown-submenu ' . $liClass . '" data-name="' . $this->name . '">' . $base . '</a>' . '<ul class="dropdown-menu">';
-        }
-
-        foreach ($this->menu as $menuItem) {
-            $html .= $menuItem->getHTML($level + 1);
-        }
-
-        $html .= '</ul></li>';
-
+        $html = '<a class="' . $liClass . '" href="' . $this->url . '">' . $this->getHTMLIcon() . $this->title . '</a>';
         return $html;
     }
 }

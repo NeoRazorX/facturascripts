@@ -50,23 +50,23 @@
 <div class="container-fluid">
     <!-- Header Row -->
     <div id="header" class="row">
-        <div class="col-xs-3 hidden-print">
+        <div class="col-3 hidden-print">
             <div class="btn-group">
-                <a href="#" class="btn btn-sm btn-default">
+                <a href="#" class="btn btn-sm btn-secondary">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i>
                     <span class="hidden-xs hidden-sm">&nbsp; {{ go_back }} </span>
                 </a>
-                <a id="b_print" class="btn btn-sm btn-default" onclick="window.print();" title="{{ print_title }}">
+                <a href="#" id="b_print" class="btn btn-sm btn-secondary" onclick="window.print();" title="{{ print_title }}">
                     <i class="fa fa-print" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp; {{ print }}</span>
                 </a>
-                <a href="{{ fsc.url() }}" class="btn btn-sm btn-default" title="{{ refresh }}">
+                <a href="{{ fsc.url() }}" class="btn btn-sm btn-secondary" title="{{ refresh }}">
                     <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
             </div>
         </div>
 
-        <div class="col-xs-6 text-center">
+        <div class="col-6 text-center">
             <div class="page-header">
                 <h2>
                     <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
@@ -74,7 +74,7 @@
             </div>
         </div>
 
-        <div class="col-xs-3 text-right hidden-print">
+        <div class="col-3 text-right hidden-print">
             <a class="btn btn-sm btn-success" href="#" title="{{ i18n.trans("Nuevo") }} {{ title }}">
                 <i class="fa fa-plus" aria-hidden="true"></i>
             </a>
@@ -87,17 +87,17 @@
 
     <!-- Data Row -->
     <div id="data" class="row">
-        <div class="col-xs-10 col-md-offset-1">
+        <div class="col-12">
             <form name="mainform" action="" method="post" class="form" role="form">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">{{ panel_header }}</h3>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">{{ panel_header }}</h3>
                     </div>
 
-                    <div class="panel-body">
+                    <div class="card-body">
                         <!-- Statistical buttons bar -->
                         <div class="row">
-                            <div class="col-xs-12 col-md-12">
+                            <div class="col-12 col-md-12">
                                 <div class="btn-toolbar pull-right" role="toolbar">
                                     <div class="btn-group btn-group-lg" role="group">
                                         {% set header = fsc.getRow('header') %}
@@ -136,7 +136,7 @@
                         </div>
                     </div>
 
-                    <div class="panel-footer text-right">
+                    <div class="card-footer text-right">
                         <small class="pull-left">Texto opcional en el footer</small>
                         <button class="btn btn-sm btn-primary" type="submit" onclick="">
                             <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
@@ -149,7 +149,7 @@
 
     <!-- Footer Row -->
     <div id="footer" class="row">
-        <div class="col-xs-10 col-md-offset-1">
+        <div class="col-10">
             {% set footer = fsc.getRow('footer') %}
             {% if footer is not empty %}
             <div class="panel-group">
