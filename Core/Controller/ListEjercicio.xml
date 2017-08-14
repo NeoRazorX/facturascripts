@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Definición inicial para el controlador ListEjercicio
+ *
+ * @author Artex Trading sa <jcuello@artextrading.com>  
+-->
+
+<view>
+    <columns>
+        <column title="Código" display="left" order="100">
+            <widget type="text" fieldname="codejercicio" onclick="EditEjercicio" />
+        </column>
+        <column title="Nombre" display="left" order="110">
+            <widget type="text" fieldname="nombre" />
+        </column>
+        <column title="Inicio" display="center" order="120">
+            <widget type="text" fieldname="fechainicio" />
+        </column>
+        <column title="Fin" display="center" order="130">
+            <widget type="text" fieldname="fechafin" />
+        </column>
+        <column title="Estado" display="center" order="140">
+            <widget type="text" fieldname="estado">
+                <option color="red" font-weight="bold">ABIERTO</option>
+                <option color="blue">CERRADO</option>
+            </widget>
+        </column>
+        <column title="Plan" description="Indica si se usa un plancontable anterior o posterior al 2008" display="center" order="150">
+            <widget type="text" fieldname="plancontable" />
+        </column>
+        <column title="Long.Cta" display="center" order="160">
+            <widget type="text" fieldname="longsubcuenta" />
+        </column>
+    </columns>
+    
+    <filters>        
+    </filters>    
+</view>

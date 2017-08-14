@@ -59,19 +59,6 @@ class Pais
     }
 
     /**
-     * Devuelve la URL donde ver/modificar los datos
-     * @return string
-     */
-    public function url()
-    {
-        if ($this->codpais === null) {
-            return 'index.php?page=AdminPaises';
-        }
-
-        return 'index.php?page=AdminPaises#' . $this->codpais;
-    }
-
-    /**
      * Devuelve TRUE si el pais es el predeterminado de la empresa
      * @return bool
      */
@@ -81,43 +68,25 @@ class Pais
     }
 
     /**
-     * Devuelve el pais con codido = $cod
-     *
-     * @param string $cod
-     *
-     * @return pais|bool
-     */
-    public function getByIso($cod)
-    {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codiso = ' . $this->var2str($cod) . ';';
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            return new Pais($data[0]);
-        }
-
-        return false;
-    }
-
-    /**
      * Comprueba los datos del pais, devuelve TRUE si son correctos
      * @return bool
      */
     public function test()
     {
-        $status = false;
-
         $this->codpais = trim($this->codpais);
         $this->nombre = static::noHtml($this->nombre);
 
         if (!preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {
             $this->miniLog->alert($this->i18n->trans('country-cod-invalid', [$this->codpais]));
-        } elseif (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
-            $this->miniLog->alert($this->i18n->trans('country-name-invalid'));
-        } else {
-            $status = true;
+            return false;
         }
-
-        return $status;
+        
+        if (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
+            $this->miniLog->alert($this->i18n->trans('country-name-invalid'));
+            return false;
+        }
+        
+        return true;
     }
 
     /**

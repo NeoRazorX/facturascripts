@@ -343,6 +343,9 @@ trait ModelTrait
     {
         $sql = 'SELECT COUNT(1) AS total FROM ' . $this->tableName() . DataBase\DataBaseWhere::getSQLWhere($where);
         $data = $this->dataBase->select($sql);
+        if (empty($data)) {
+            return 0;
+        }
         return $data[0]['total'];
     }
 

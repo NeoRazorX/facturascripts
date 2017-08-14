@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\ViewController;
 use FacturaScripts\Core\Model;
 
 /**
@@ -27,7 +28,7 @@ use FacturaScripts\Core\Model;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListEjercicio extends Base\ListController
+class ListEjercicio extends ViewController\ListController
 {
 
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
@@ -72,18 +73,5 @@ class ListEjercicio extends Base\ListController
         $pagedata['icon'] = 'fa-calendar';
         $pagedata['menu'] = 'contabilidad';
         return $pagedata;
-    }
-
-    protected function getColumns()
-    {
-        return [
-            ['label' => 'Codigo', 'field' => 'codejercicio', 'display' => 'left'],
-            ['label' => 'Nombre', 'field' => 'nombre', 'display' => 'left'],
-            ['label' => 'Inicio', 'field' => 'fechainicio', 'display' => 'center'],
-            ['label' => 'Fin', 'field' => 'fechafin', 'display' => 'center'],
-            ['label' => 'Estado', 'field' => 'estado', 'display' => 'center'],
-            ['label' => 'Plan', 'field' => 'plancontable', 'display' => 'center'],
-            ['label' => 'Long.Cta', 'field' => 'longsubcuenta', 'display' => 'center']
-        ];
     }
 }

@@ -81,17 +81,28 @@ class DataBaseWhere
         return "'" . date($this->dataBase->dateStyle() . $time, strtotime($this->value)) . "'";    
     }
     
-    /**
-     * Devuelve el valor del filtro formateado según el tipo
-     * @return string
-     */
-    private function getValue()
+    
+    private function getValueFromOperator()
     {
-        switch (gettype($this->value)) {
-            case ($this->operator == "LIKE"):
+        switch ($this->operator) {
+            case "LIKE":
                 $result = "LOWER('%" . $this->dataBase->escapeString($this->value) . "%')";
                 break;
 
+            case "IS":
+                $result = $this->value;
+                break;
+            
+            default:
+                $result = '';
+        }
+
+        return $result;
+    }
+    
+    private function getValueFromType()
+    {
+        switch (gettype($this->value)) {
             case "boolean":
                 $result = $this->value ? "TRUE" : "FALSE";
                 break;
@@ -116,6 +127,17 @@ class DataBaseWhere
                 $result = "'" . $this->dataBase->escapeString($this->value) . "'";
         }
         return $result;
+    }
+    
+    /**
+     * Devuelve el valor del filtro formateado según el tipo
+     * @return string
+     */
+    private function getValue()
+    {
+        return (in_array($this->operator, ['LIKE', 'IS']))
+            ? $this->getValueFromOperator()
+            : $this->getValueFromType();
     }
 
     /**

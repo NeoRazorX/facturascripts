@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\ViewController;
 use FacturaScripts\Core\Model;
 
 /**
@@ -27,7 +28,7 @@ use FacturaScripts\Core\Model;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListFormaPago extends Base\ListController
+class ListFormaPago extends ViewController\ListController
 {
 
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
@@ -75,18 +76,5 @@ class ListFormaPago extends Base\ListController
         $pagedata['icon'] = 'fa-credit-card';
         $pagedata['menu'] = 'contabilidad';
         return $pagedata;
-    }
-
-    protected function getColumns()
-    {
-        return [
-            ['label' => 'Codigo', 'field' => 'codpago', 'display' => 'left'],
-            ['label' => 'Descripción', 'field' => 'descripcion', 'display' => 'left'],
-            ['label' => 'Cod. Cuenta', 'field' => 'codcuenta', 'display' => 'left'],
-            ['label' => 'Vencimiento', 'field' => 'vencimiento', 'display' => 'center'],
-            ['label' => 'Gen. Recibos', 'field' => 'genrecibos', 'display' => 'center'],
-            ['label' => 'Domiciliado', 'field' => 'domiciliado', 'display' => 'center'],
-            ['label' => 'Imprimir', 'field' => 'imprimir', 'display' => 'center']
-        ];
     }
 }

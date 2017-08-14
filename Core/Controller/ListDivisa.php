@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\ViewController;
 use FacturaScripts\Core\Model;
 
 /**
@@ -27,7 +28,7 @@ use FacturaScripts\Core\Model;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListDivisa extends Base\ListController
+class ListDivisa extends ViewController\ListController
 {
 
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
@@ -71,19 +72,5 @@ class ListDivisa extends Base\ListController
         $pagedata['icon'] = 'fa-money';
         $pagedata['menu'] = 'admin';
         return $pagedata;
-    }
-
-    protected function getColumns()
-    {
-        return [
-            ['label' => 'Codigo', 'field' => 'coddivisa', 'display' => 'left'],
-            ['label' => 'Descripcion', 'field' => 'descripcion', 'display' => 'left'],
-            ['label' => 'ISO', 'field' => 'codiso', 'display' => 'left'],
-            ['label' => 'Fecha', 'field' => 'fecha', 'display' => 'left'],
-            ['label' => 'Tasa Conv.', 'field' => 'tasaconv', 'display' => 'right'],
-            ['label' => 'Tasa Compras', 'field' => 'tasaconvcompra', 'display' => 'right'],
-            ['label' => 'Símbolo', 'field' => 'simbolo', 'display' => 'center'],
-            ['label' => 'Bandera', 'field' => 'bandera', 'display' => 'none']
-        ];
     }
 }

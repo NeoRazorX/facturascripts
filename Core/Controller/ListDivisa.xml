@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Definición inicial para el controlador ListDivisa
+ *
+ * @author Artex Trading sa <jcuello@artextrading.com>  
+-->
+
+<view>
+    <columns>
+        <column title="Código" display="left" order="100">
+            <widget type="text" fieldname="coddivisa" onclick="EditDivisa" />
+        </column>
+        <column title="Descripcion" display="left" order="110">
+            <widget type="text" fieldname="descripcion" />
+        </column>
+        <column title="ISO" display="left" order="120"
+                titleurl="https://es.wikipedia.org/wiki/ISO_4217" 
+                description="El estándar internacional ISO 4217 fue creado por la ISO con el objetivo de definir códigos de tres letras para todas las divisas del mundo.">
+            <widget type="text" fieldname="codiso" />
+        </column>
+        <column title="Fecha" display="left" order="130">
+            <widget type="text" fieldname="fecha" />
+        </column>
+        <column title="Tasa Ventas" display="right" order="140"
+                description="Cambio que se aplica en las VENTAS respecto a la moneda de la empresa">
+            <widget type="text" fieldname="tasaconv" />
+        </column>
+        <column title="Tasa Compras" display="right" order="150"
+                description="Cambio que se aplica en las COMPRAS respecto a la moneda de la empresa">
+            <widget type="text" fieldname="tasaconvcompra" />
+        </column>
+        <column title="Símbolo" display="center" order="160">
+            <widget type="text" fieldname="simbolo" />
+        </column>
+        <column title="Bandera" display="none" order="170">
+            <widget type="text" fieldname="bandera" />
+        </column>
+    </columns>
+    
+    <filters>        
+    </filters>    
+</view>

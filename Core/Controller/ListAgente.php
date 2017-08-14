@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\ViewController;
 use FacturaScripts\Core\Model;
 
 /**
@@ -27,7 +28,7 @@ use FacturaScripts\Core\Model;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListAgente extends Base\ListController
+class ListAgente extends ViewController\ListController
 {
 
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
@@ -40,7 +41,6 @@ class ListAgente extends Base\ListController
         $this->addOrderBy('provincia');
 
         $this->addFilterSelect('provincia', 'agentes');
-        $this->addFilterSelect('país', 'paises', '', 'codpais');
     }
 
     public function privateCore(&$response, $user)
@@ -75,26 +75,5 @@ class ListAgente extends Base\ListController
         $pagedata['icon'] = 'fa-user-circle-o';
         $pagedata['menu'] = 'admin';
         return $pagedata;
-    }
-
-    protected function getColumns()
-    {
-        return [
-            ['label' => 'Codigo', 'field' => 'codagente', 'display' => 'left'],
-            ['label' => 'Nombre', 'field' => 'nombre', 'display' => 'left'],
-            ['label' => 'Cargo', 'field' => 'cargo', 'display' => 'left'],
-            ['label' => '% Com.', 'field' => 'porcomision', 'display' => 'center'],
-            ['label' => 'Dirección', 'field' => 'direccion', 'display' => 'left'],
-            ['label' => 'Ciudad', 'field' => 'ciudad', 'display' => 'center'],
-            ['label' => 'Cod. Postal', 'field' => 'codpostal', 'display' => 'none'],
-            ['label' => 'Provincia', 'field' => 'direccion', 'display' => 'center'],
-            ['label' => 'Teléfono', 'field' => 'telefono', 'display' => 'left'],
-            ['label' => 'Email', 'field' => 'email', 'display' => 'left'],
-            ['label' => 'Fec. Alta', 'field' => 'f_alta', 'display' => 'none'],
-            ['label' => 'Fec. Baja', 'field' => 'f_baja', 'display' => 'center'],
-            ['label' => 'Nacimiento', 'field' => 'f_nacimiento', 'display' => 'none'],
-            ['label' => 'Seg. Social', 'field' => 'seg_social', 'display' => 'none'],
-            ['label' => 'Cta. Banco', 'field' => 'banco', 'display' => 'none']
-        ];
     }
 }

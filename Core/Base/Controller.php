@@ -129,10 +129,20 @@ class Controller
         
         $this->title = $this->className;
         $pageData = $this->getPageData();
-        if($pageData) {
+        if ($pageData) {
             $this->title = $pageData['title'];
         }
     }
+
+    /**
+     * Devuelve el nombre del controlador
+     * @return string
+     */
+    protected function getClassName()
+    {
+        return $this->className;
+    }
+
 
     /**
      * Devuelve el template HTML a utilizar para este controlador.

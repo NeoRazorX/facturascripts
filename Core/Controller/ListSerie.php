@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\ViewController;
 use FacturaScripts\Core\Model;
 
 /**
@@ -27,7 +28,7 @@ use FacturaScripts\Core\Model;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListSerie extends Base\ListController
+class ListSerie extends ViewController\ListController
 {
 
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
@@ -74,19 +75,5 @@ class ListSerie extends Base\ListController
         $pagedata['icon'] = 'fa-file-text';
         $pagedata['menu'] = 'contabilidad';
         return $pagedata;
-    }
-
-    protected function getColumns()
-    {
-        return [
-            ['label' => 'Codigo', 'field' => 'codserie', 'display' => 'left'],
-            ['label' => 'Descripcion', 'field' => 'descripcion', 'display' => 'left'],
-            ['label' => '% Iva', 'field' => 'iva', 'display' => 'right'],
-            ['label' => '% Recargo', 'field' => 'recargo', 'display' => 'right'],
-            ['label' => 'Sin Impuesto', 'field' => 'siniva', 'display' => 'center'],
-            ['label' => 'Cuenta', 'field' => 'codcuenta', 'display' => 'left'],
-            ['label' => 'Ejercicio', 'field' => 'codejercicio', 'display' => 'center'],
-            ['label' => 'Núm. Factura', 'field' => 'numfactura', 'display' => 'right']
-        ];
     }
 }

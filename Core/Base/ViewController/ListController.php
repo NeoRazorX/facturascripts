@@ -16,7 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Base;
+namespace FacturaScripts\Core\Base\ViewController;
+
+use FacturaScripts\Core\Base as Base;
+use FacturaScripts\Core\Model as Model;
+use FacturaScripts\Core\Base\DataBase as DataBase;
 
 /**
  * Controlador para listado de datos en modo tabla
@@ -24,15 +28,16 @@ namespace FacturaScripts\Core\Base;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-abstract class ListController extends Controller
+class ListController extends Base\Controller
 {
 
     /**
-     * Iconos para ordenación
+     * Constantes para ordenación y paginación
      */
     const ICONO_ASC = 'glyphicon-sort-by-attributes';
     const ICONO_DESC = 'glyphicon-sort-by-attributes-alt';
     const FS_ITEM_LIMIT = 50;
+    const FS_PAGE_MARGIN = 5;
 
     /**
      * Cursor con los datos a mostrar
@@ -41,11 +46,11 @@ abstract class ListController extends Controller
     public $cursor;
 
     /**
-     * Lista de campos cargados en el cursor y su parametrización
-     * Ejemplo: ["label" => "Etiqueta", "field" => "Nombre del campo", "display" => "left/center/right/none"]
-     * @var array
+     * Configuración de columnas y filtros
+     * @var Model\PageOption
      */
-    public $fields;
+    private $pageOption;
+    public $filters;
 
     /**
      * Lista de campos disponibles en el order by
@@ -69,12 +74,6 @@ abstract class ListController extends Controller
     public $query;
 
     /**
-     * Lista de filtros disponibles y su parametrización
-     * @var array
-     */
-    public $filters;
-
-    /**
      * Primer registro a seleccionar de la base de datos
      * @var int
      */
@@ -86,7 +85,60 @@ abstract class ListController extends Controller
      */
     public $count;
 
-    abstract protected function getColumns();
+    /**
+     * Inicia todos los objetos y propiedades.
+     *
+     * @param Cache $cache
+     * @param Translator $i18n
+     * @param MiniLog $miniLog
+     * @param string $className
+     */
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    {
+        parent::__construct($cache, $i18n, $miniLog, $className);
+
+        $this->setTemplate("Master/ListController");
+
+        $offset = $this->request->get('offset');
+        $this->offset = $offset ? $offset : 0;
+        $this->query = $this->request->get('query');
+        $this->count = 0;
+        $this->orderby = [];
+        $this->filters = [];
+
+        $this->pageOption = new Model\PageOption();
+    }
+
+    /**
+     * Ejecuta la lógica privada del controlador.
+     */
+    public function privateCore(&$response, $user)
+    {
+        parent::privateCore($response, $user);
+
+        // Cargamos configuración de columnas y filtros
+        $className = $this->getClassName();
+        $this->pageOption->getForUser($className, $user->nick);
+
+        // Establecemos el orderby seleccionado
+        $orderKey = $this->request->get("order");
+        $this->selectedOrderBy = empty($orderKey) ? (string) array_keys($this->orderby)[0] : $this->getSelectedOrder($orderKey);
+    }
+
+    /**
+     * Lista de columnas y su configuración
+     * (Array of ColumnItem)
+     * @return array
+     */
+    public function getColumns()
+    {
+        return $this->pageOption->columns[0]->columns;
+    }
+
+    public function getRow($key)
+    {
+        return empty($this->pageOption->rows) ? NULL : $this->pageOption->rows[$key];
+    }
 
     /**
      * Devuelve la key del campo seleccionado en el order by
@@ -246,41 +298,6 @@ abstract class ListController extends Controller
     }
 
     /**
-     * Ejecuta la lógica privada del controlador.
-     */
-    public function privateCore(&$response, $user)
-    {
-        parent::privateCore($response, $user);
-
-        // Establecemos el orderby seleccionado
-        $orderKey = $this->request->get("order");
-        $this->selectedOrderBy = empty($orderKey) ? (string) array_keys($this->orderby)[0] : $this->getSelectedOrder($orderKey);
-    }
-
-    /**
-     * Inicia todos los objetos y propiedades.
-     *
-     * @param Cache $cache
-     * @param Translator $i18n
-     * @param MiniLog $miniLog
-     * @param string $className
-     */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
-    {
-        parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->setTemplate("Master/ListController");
-
-        $offset = $this->request->get('offset');
-        $this->offset = $offset ? $offset : 0;
-        $this->query = $this->request->get('query');
-        $this->count = 0;
-        $this->orderby = [];
-        $this->filters = [];
-        $this->fields = $this->getColumns();
-    }
-
-    /**
      * Carga una lista de datos desde una tabla
      * @param string $field : Field name to load
      * @param string $table : Table name from load
@@ -333,6 +350,34 @@ abstract class ListController extends Controller
     }
 
     /**
+     * Devuelve el offset para el primer elemento del margen especificado
+     * para la paginación
+     * @return int
+     */
+    private function getRecordMin()
+    {
+        $result = $this->offset - (self::FS_ITEM_LIMIT * self::FS_PAGE_MARGIN);
+        if ($result < 0) {
+            $result = 0;
+        }
+        return $result;
+    }
+
+    /**
+     * Devuelve el offset para el último elemento del margen especificado
+     * para la paginación
+     * @return int
+     */
+    private function getRecordMax()
+    {
+        $result = $this->offset + (self::FS_ITEM_LIMIT * (self::FS_PAGE_MARGIN + 1));
+        if ($result > $this->count) {
+            $result = $this->count;
+        }
+        return $result;
+    }
+
+    /**
      * Calcula el navegador entre páginas.
      * Permite saltar a:
      *      primera,
@@ -353,26 +398,18 @@ abstract class ListController extends Controller
     {
         $result = [];
         $url = $this->url() . $this->getParams();
-        $pageMargin = 5;
+
+        $recordMin = $this->getRecordMin();
+        $recordMax = $this->getRecordMax();
         $index = 0;
 
-        $recordMin = $this->offset - (self::FS_ITEM_LIMIT * $pageMargin);
-        if ($recordMin < 0) {
-            $recordMin = 0;
-        }
-
-        $recordMax = $this->offset + (self::FS_ITEM_LIMIT * ($pageMargin + 1));
-        if ($recordMax > $this->count) {
-            $recordMax = $this->count;
-        }
-
         // Añadimos la primera página, si no está incluida en el margen de páginas
-        if ($this->offset > (self::FS_ITEM_LIMIT * $pageMargin)) {
+        if ($this->offset > (self::FS_ITEM_LIMIT * self::FS_PAGE_MARGIN)) {
             $result[$index] = $this->addPaginationItem($url, 1, 0, "glyphicon-step-backward");
             $index++;
         }
 
-        // Añadimos la página de en medio entre la primera y la página seleccionada, 
+        // Añadimos la página de en medio entre la primera y la página seleccionada,
         // si la página seleccionada es mayor que el margen de páginas
         $recordMiddleLeft = ($recordMin > self::FS_ITEM_LIMIT) ? ($this->offset / 2) : $recordMin;
         if ($recordMiddleLeft < $recordMin) {
@@ -406,10 +443,6 @@ abstract class ListController extends Controller
         }
 
         /// si solamente hay una página, no merece la pena mostrar un único botón
-        if (count($result) == 1) {
-            return [];
-        }
-
-        return $result;
+        return (count($result) > 1) ? $result : [];
     }
 }

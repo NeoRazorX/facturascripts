@@ -116,7 +116,7 @@ class IPFilter
         $found = false;
         foreach ($this->ipList as $key => $line) {
             if ($line['ip'] === $ip) {
-                $this->ipList[$key]['count'] ++;
+                $this->ipList[$key]['count']++;
                 $this->ipList[$key]['expire'] = time() + self::BAN_SECONDS;
                 $found = true;
                 break;

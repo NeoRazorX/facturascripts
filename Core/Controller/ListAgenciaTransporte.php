@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\ViewController;
 use FacturaScripts\Core\Model;
 
 /**
@@ -29,7 +30,7 @@ use FacturaScripts\Core\Model;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListAgenciaTransporte extends Base\ListController
+class ListAgenciaTransporte extends ViewController\ListController
 {
 
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
@@ -74,16 +75,5 @@ class ListAgenciaTransporte extends Base\ListController
         $pagedata['icon'] = 'fa-truck';
         $pagedata['menu'] = 'admin';
         return $pagedata;
-    }
-
-    protected function getColumns()
-    {
-        return [
-            ['label' => 'Codigo', 'field' => 'codtrans', 'display' => 'left'],
-            ['label' => 'Nombre', 'field' => 'nombre', 'display' => 'left'],
-            ['label' => 'Teléfono', 'field' => 'telefono', 'display' => 'left'],
-            ['label' => 'Web', 'field' => 'web', 'display' => 'left'],
-            ['label' => 'Activo', 'field' => 'activo', 'display' => 'left']
-        ];
     }
 }

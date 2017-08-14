@@ -1040,7 +1040,7 @@ class Articulo
                 if ($value['tag'] === $tag) {
                     $encontrado = true;
                     if (time() + 5400 > $value['expires'] + 300) {
-                        self::$search_tags[$i]['count'] ++;
+                        self::$search_tags[$i]['count']++;
                         self::$search_tags[$i]['expires'] = time() + (self::$search_tags[$i]['count'] * 5400);
                         $actualizar = true;
                     }

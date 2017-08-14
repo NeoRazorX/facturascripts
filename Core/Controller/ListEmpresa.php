@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\ViewController;
 use FacturaScripts\Core\Model;
 
 /**
@@ -27,7 +28,7 @@ use FacturaScripts\Core\Model;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListEmpresa extends Base\ListController
+class ListEmpresa extends ViewController\ListController
 {
 
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
@@ -70,19 +71,5 @@ class ListEmpresa extends Base\ListController
         $pagedata['icon'] = 'fa fa-building-o';
         $pagedata['menu'] = 'admin';
         return $pagedata;
-    }
-
-    protected function getColumns()
-    {
-        return [
-            ['label' => 'Codigo', 'field' => 'id', 'display' => 'center'],
-            ['label' => 'Nombre', 'field' => 'nombre', 'display' => 'left'],
-            ['label' => 'Nom. Corto', 'field' => 'nombrecorto', 'display' => 'left'],
-            ['label' => 'Inicio', 'field' => 'inicioact', 'display' => 'center'],
-            ['label' => 'Teléfono', 'field' => 'telefono', 'display' => 'left'],
-            ['label' => 'Email', 'field' => 'email', 'display' => 'left'],
-            ['label' => 'Web', 'field' => 'web', 'display' => 'left'],
-            ['label' => 'Divisa', 'field' => 'coddivisa', 'display' => 'center']
-        ];
     }
 }
