@@ -52,12 +52,12 @@ class AlbaranCliente
      * @var bool
      */
     public $ptefactura;
-    
+
     public function tableName()
     {
         return 'albaranescli';
     }
-    
+
     public function primaryColumn()
     {
         return 'idalbaran';

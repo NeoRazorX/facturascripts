@@ -29,6 +29,7 @@ use DebugBar\DataCollector\Renderable;
  */
 class DataBaseCollector extends DataCollector implements Renderable, AssetProvider
 {
+
     /**
      * Array con las consultas realizadas
      *

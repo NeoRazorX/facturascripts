@@ -198,12 +198,12 @@ class Partida
      * @var float
      */
     public $sum_haber;
-    
+
     public function tableName()
     {
         return 'co_partidas';
     }
-    
+
     public function primaryColumn()
     {
         return 'idpartida';

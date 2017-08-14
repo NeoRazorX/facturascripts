@@ -16,8 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Base\ViewController;
-
+namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
  * Description of ColumnItem
@@ -25,7 +24,8 @@ namespace FacturaScripts\Core\Base\ViewController;
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class ColumnItem extends VisualItem implements VisualItemInterface
-{    
+{
+
     /**
      * Texto adicional que explica el campo al usuario
      * @var string
@@ -44,7 +44,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      * @var WidgetItem
      */
     public $widget;
-    
+
     /**
      * Construye e inicializa la clase.
      */
@@ -64,17 +64,17 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     public function loadFromXML($column)
     {
         parent::loadFromXML($column);
-        
+
         $column_atributes = $column->attributes();
         $this->description = (string) $column_atributes->description;
-        $this->display = (string) $column_atributes->display;        
+        $this->display = (string) $column_atributes->display;
         $this->widget->loadFromXMLColumn($column);
     }
 
     /**
      * Carga la estructura de atributos en base a la base de datos
      * @param SimpleXMLElement $column
-     */    
+     */
     public function loadFromJSON($column)
     {
         parent::loadFromJSON($column);
@@ -106,13 +106,13 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     public function getHeaderHTML($value)
     {
         $html = parent::getHeaderHTML($value);
-        
+
         if (!empty($this->description)) {
             $html .= '<span title="' . $this->i18n->trans($this->description) . '"></span>';
         }
         return $html;
     }
-    
+
     /**
      * Genera el código html para visualizar el dato del modelo
      * para controladores List
@@ -122,7 +122,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     {
         return $this->widget->getListHTML($value);
     }
-    
+
     /**
      * Genera el código html para visualizar el dato del modelo
      * para controladores Edit
@@ -135,26 +135,26 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         $header = $this->getHeaderHTML($this->title);
         $hint = empty($this->widget->hint) ? '' : ' title="' . $this->i18n->trans($this->widget->hint) . '"';
         $description = empty($this->description) ? '' : '<span class="help-block">' . $this->i18n->trans($this->description) . '</span>';
-        
+
         switch ($this->widget->type) {
             case "checkbox-inline":
             case "checkbox":
                 $html = '<div class="' . $this->widget->type . $columnClass . '">'
-                        . '<label class="checkbox-inline"' . $hint . '>'
-                        . $input . $header 
-                        . '</label>'
-                        . $description
-                        . '</div>';
+                    . '<label class="checkbox-inline"' . $hint . '>'
+                    . $input . $header
+                    . '</label>'
+                    . $description
+                    . '</div>';
                 break;
 
             default:
                 $html = '<div class="form-group' . $columnClass . '">'
-                        . '<label for="' . $this->widget->fieldName . '"' . $hint . '>' . $header . '</label>'
-                        . $input
-                        . $description
-                        . '</div>';            
+                    . '<label for="' . $this->widget->fieldName . '"' . $hint . '>' . $header . '</label>'
+                    . $input
+                    . $description
+                    . '</div>';
                 break;
         }
         return $html;
-    }        
+    }
 }

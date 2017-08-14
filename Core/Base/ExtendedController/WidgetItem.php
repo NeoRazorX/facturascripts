@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Base\ViewController;
+namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
  * Description of WidgetItem
@@ -55,7 +55,7 @@ class WidgetItem
      * @var boolean
      */
     public $required;
-    
+
     /**
      * Icono que se usa como valor o acompañante del widget
      * @var string
@@ -153,9 +153,7 @@ class WidgetItem
         switch ($this->type) {
             case 'text':
                 $style = $this->getTextOptionsHTML($value);
-                $html = (empty($this->onClick)) 
-                        ? '<span' . $style . '>' . $value . '</span>' 
-                        : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $value . '</a>';
+                $html = (empty($this->onClick)) ? '<span' . $style . '>' . $value . '</span>' : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $value . '</a>';
                 break;
 
             case 'check':
@@ -175,36 +173,36 @@ class WidgetItem
 
         return $html;
     }
-    
+
     private function getIconHTML()
-    {        
+    {
         if (empty($this->icon)) {
             return '';
         }
-        
+
         $html = '<div class="input-group"><span class="input-group-addon">';
-        
+
         if (strpos($this->icon, 'fa-') === 0) {
             return $html . '<i class="fa ' . $this->icon . '" aria-hidden="true"></i></span>';
         }
-                
-        return $html . '<i aria-hidden="true">' . $this->icon . '</i></span>';            
+
+        return $html . '<i aria-hidden="true">' . $this->icon . '</i></span>';
     }
-    
+
     private function specialClass()
     {
         $readOnly = (empty($this->readOnly)) ? '' : ' readonly="readonly"';
         $required = (empty($this->required)) ? '' : ' required="required"';
-        
+
         return $readOnly . $required;
     }
-    
+
     public function getEditHTML($value)
     {
         $specialClass = $this->specialClass();
         $fieldName = '"' . $this->fieldName . '"';
         $html = $this->getIconHTML();
-        
+
         switch ($this->type) {
             case 'checkbox-inline':
             case 'checkbox':
@@ -218,7 +216,7 @@ class WidgetItem
         if (!empty($this->icon)) {
             $html .= '</div>';
         }
-        
+
         return $html;
-    }    
+    }
 }

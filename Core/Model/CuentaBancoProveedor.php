@@ -55,12 +55,12 @@ class CuentaBancoProveedor
      * @var
      */
     public $principal;
-    
+
     public function tableName()
     {
         return 'cuentasbcopro';
     }
-    
+
     public function primaryColumn()
     {
         return 'cocuenta';

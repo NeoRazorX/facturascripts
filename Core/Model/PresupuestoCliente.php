@@ -65,12 +65,12 @@ class PresupuestoCliente
      * @var type 
      */
     public $idoriginal;
-    
+
     public function tableName()
     {
         return 'presupuestoscli';
     }
-    
+
     public function primaryColumn()
     {
         return 'idpresupuesto';

@@ -38,7 +38,7 @@ trait ContactInformation
      * @var string
      */
     public $fax;
-    
+
     /**
      * Email de contacto.
      * @var string
@@ -68,7 +68,7 @@ trait ContactInformation
      * @var string
      */
     public $apartado;
-    
+
     /**
      * Ciudad del contacto.
      * @var string
@@ -80,7 +80,7 @@ trait ContactInformation
      * @var string
      */
     public $poblacion;
-    
+
     /**
      * Provincia del contacto.
      * @var string
@@ -92,7 +92,7 @@ trait ContactInformation
      * @var string
      */
     public $codpais;
-    
+
     /**
      * Inicializa los valores del contacto.
      */

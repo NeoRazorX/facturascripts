@@ -106,12 +106,12 @@ class LineaFacturaCliente
      * @var string
      */
     private $albaran_fecha;
-    
+
     public function tableName()
     {
         return 'lineasfacturascli';
     }
-    
+
     public function primaryColumn()
     {
         return 'idlinea';

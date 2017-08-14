@@ -101,12 +101,12 @@ class Asiento
      * @var string
      */
     private $coddivisa;
-    
+
     public function tableName()
     {
         return 'co_asientos';
     }
-    
+
     public function primaryColumn()
     {
         return 'idasiento';

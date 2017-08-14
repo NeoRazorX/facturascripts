@@ -53,12 +53,12 @@ class Almacen
      * @var string
      */
     public $observaciones;
-    
+
     public function tableName()
     {
         return 'almacenes';
     }
-    
+
     public function primaryColumn()
     {
         return 'codalmacen';

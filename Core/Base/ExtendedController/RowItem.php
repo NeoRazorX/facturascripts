@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Base\ViewController;
+namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
  * Description of RowItem
@@ -25,6 +25,7 @@ namespace FacturaScripts\Core\Base\ViewController;
  */
 class RowItem
 {
+
     /**
      * Tipo de row que se visualiza
      * @var string
@@ -36,21 +37,20 @@ class RowItem
      * @var string
      */
     public $fieldName;
-    
+
     /**
      * Opciones para configurar la fila
      * @var array
      */
     public $options;
-    
-        
+
     public function __construct()
     {
         $this->type = 'status';
         $this->fieldName = '';
         $this->options = [];
     }
-    
+
     public function loadFromXML($row)
     {
         $row_atributes = $row->attributes();

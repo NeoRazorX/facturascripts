@@ -70,12 +70,12 @@ class LineaTransferenciaStock
      * @var string
      */
     private $hora;
-    
+
     public function tableName()
     {
         return 'lineastranstocks';
     }
-    
+
     public function primaryColumn()
     {
         return 'idlinea';

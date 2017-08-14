@@ -81,7 +81,7 @@ trait ModelTrait
      * @var MiniLog
      */
     protected $miniLog;
-    
+
     /**
      * Constructor por defecto.
      * @param array $data

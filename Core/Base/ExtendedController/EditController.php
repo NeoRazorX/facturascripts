@@ -16,10 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Base\ViewController;
+namespace FacturaScripts\Core\Base\ExtendedController;
 
-use FacturaScripts\Core\Base as Base;
-use FacturaScripts\Core\Model as Model;
+use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Model;
 
 /**
  * Controlador para edición de datos
@@ -29,26 +29,27 @@ use FacturaScripts\Core\Model as Model;
  */
 class EditController extends Base\Controller
 {
+
     /**
      * Modelo con los datos a mostrar
      * @var class
      */
     public $model;
-    
+
     /**
      * Configuración de columnas y filtros
      * @var Model\PageOption
      */
     private $pageOption;
-    
+
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->setTemplate("Master/EditController");                
+        $this->setTemplate("Master/EditController");
         $this->pageOption = new Model\PageOption();
     }
-    
+
     /**
      * Ejecuta la lógica privada del controlador.
      */
@@ -58,25 +59,24 @@ class EditController extends Base\Controller
 
         // Cargamos configuración de columnas y filtros
         $className = $this->getClassName();
-        $this->pageOption-> getForUser($className, $user->nick);
+        $this->pageOption->getForUser($className, $user->nick);
 
         // Cargamos datos del modelo
         $value = $this->request->get('code');
         $this->model->loadFromCode($value);
-        
+
         // Bloqueamos el campo Primary Key si no es una alta
-        $column = $this->pageOption->columnForField( $this->model->primaryColumn() );
+        $column = $this->pageOption->columnForField($this->model->primaryColumn());
         $column->widget->readOnly = (!empty($value));
-    }    
-    
+    }
+
     public function getRow($key)
     {
         return empty($this->pageOption->rows) ? NULL : $this->pageOption->rows[$key];
-    }    
+    }
 
     public function getGroupColumns()
     {
         return $this->pageOption->columns;
     }
-    
 }

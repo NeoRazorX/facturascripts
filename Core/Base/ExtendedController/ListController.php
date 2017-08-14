@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Base\ViewController;
+namespace FacturaScripts\Core\Base\ExtendedController;
 
-use FacturaScripts\Core\Base as Base;
-use FacturaScripts\Core\Model as Model;
-use FacturaScripts\Core\Base\DataBase as DataBase;
+use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Model;
+use FacturaScripts\Core\Base\DataBase;
 
 /**
  * Controlador para listado de datos en modo tabla

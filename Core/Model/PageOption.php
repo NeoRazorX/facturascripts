@@ -18,8 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase as DataBase;
-use FacturaScripts\Core\Base\ViewController as ViewController;
+use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\ExtendedController;
 
 /**
  * Configuración visual de las vistas de FacturaScripts,
@@ -77,7 +77,7 @@ class PageOption
     {
         return 'id';
     }
-    
+
     /**
      * Resetea los valores de todas las propiedades modelo.
      */
@@ -94,11 +94,11 @@ class PageOption
         $this->loadFromDataTrait($data);
 
         $columns = json_decode($data['columns'], true);
-        $groupItem = new ViewController\GroupItem();
+        $groupItem = new ExtendedController\GroupItem();
         $this->columns = $groupItem->loadFromJSON($columns);
 
         $rows = json_decode($data['rows'], true);
-        $rowItem = new ViewController\RowItem();
+        $rowItem = new ExtendedController\RowItem();
         $this->rows = $rowItem->loadFromJSON($rows);
     }
 
@@ -147,7 +147,7 @@ class PageOption
 
         return false;
     }
-    
+
     /**
      * Carga la estructura de columnas desde el XML
      * @param SimpleXMLElement $columns
@@ -156,16 +156,16 @@ class PageOption
     {
         // No hay agrupación de columnas
         if (empty($columns->group)) {
-            $groupItem = new ViewController\GroupItem();
+            $groupItem = new ExtendedController\GroupItem();
             $groupItem->loadFromXMLColumns($columns);
             $this->columns[] = $groupItem;
             unset($groupItem);
             return;
         }
-        
+
         // Con agrupación de columnas
         foreach ($columns->group as $group) {
-            $groupItem = new ViewController\GroupItem();
+            $groupItem = new ExtendedController\GroupItem();
             $groupItem->loadFromXML($group);
             $this->columns[] = $groupItem;
             unset($groupItem);
@@ -180,7 +180,7 @@ class PageOption
     private function getXMLRows($rows)
     {
         foreach ($rows->row as $row) {
-            $rowItem = new ViewController\RowItem();
+            $rowItem = new ExtendedController\RowItem();
             $rowItem->loadFromXML($row);
             $this->rows[$rowItem->type] = $rowItem;
             unset($rowItem);
@@ -238,7 +238,7 @@ class PageOption
         $this->columns = $pageOption->columns;
         $this->filters = $pageOption->filters;
     }
-    
+
     public function columnForField($fieldName)
     {
         $result = NULL;

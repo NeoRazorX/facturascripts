@@ -35,11 +35,10 @@ class AppCron extends App
         $this->response->headers->set('Content-Type', 'text/plain');
         if ($this->dataBase->connected()) {
             /// implementar aquí
-            
             /// todo OK, para los tests
             return true;
         }
-        
+
         $this->response->setContent('DB-ERROR');
         return false;
     }

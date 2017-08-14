@@ -101,12 +101,12 @@ class Balance
      * @var
      */
     public $naturaleza;
-    
+
     public function tableName()
     {
         return 'co_codbalances08';
     }
-    
+
     public function primaryColumn()
     {
         return 'codbalance';

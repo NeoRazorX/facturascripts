@@ -46,12 +46,12 @@ class ArticuloPropiedad
      * @var string
      */
     public $text;
-    
+
     public function tableName()
     {
         return 'articulo_propiedades';
     }
-    
+
     public function primaryColumn()
     {
         return 'name';

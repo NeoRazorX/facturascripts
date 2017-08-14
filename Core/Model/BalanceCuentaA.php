@@ -51,12 +51,12 @@ class BalanceCuentaA
      * @var
      */
     public $desccuenta;
-    
+
     public function tableName()
     {
         return 'co_cuentascbba';
     }
-    
+
     public function primaryColumn()
     {
         return 'id';

@@ -82,12 +82,12 @@ class LineaAlbaranCliente
      * @var string
      */
     private $fecha;
-    
+
     public function tableName()
     {
         return 'lineasalbaranescli';
     }
-    
+
     public function primaryColumn()
     {
         return 'idlinea';

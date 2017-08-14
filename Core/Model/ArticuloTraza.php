@@ -91,12 +91,12 @@ class ArticuloTraza
      * @var |DateTime
      */
     public $fecha_salida;
-    
+
     public function tableName()
     {
         return 'articulo_trazas';
     }
-    
+
     public function primaryColumn()
     {
         return 'id';

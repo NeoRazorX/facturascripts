@@ -55,12 +55,12 @@ class crm_contacto
     public $estado;
     public $potencial;
     public $codgrupo;
-    
+
     public function tableName()
     {
         return 'crm_contactos';
     }
-    
+
     public function primaryColumn()
     {
         return 'codcontacto';

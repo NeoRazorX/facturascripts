@@ -74,12 +74,12 @@ class FacturaProveedor
      * @var bool
      */
     public $anulada;
-    
+
     public function tableName()
     {
         return 'facturasprov';
     }
-    
+
     public function primaryColumn()
     {
         return 'idfactura';
@@ -235,7 +235,7 @@ class FacturaProveedor
     public function getLineas()
     {
         $lineaModel = new LineaFacturaProveedor();
-        return $lineaModel->all( new DataBaseWhere('idfactura', $this->idfactura) );
+        return $lineaModel->all(new DataBaseWhere('idfactura', $this->idfactura));
     }
 
     /**

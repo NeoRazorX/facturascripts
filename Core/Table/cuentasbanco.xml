@@ -6,29 +6,29 @@
         Estructura de la tabla cuentasbanco.
 -->
 <tabla>
-   <columna>
-      <nombre>codsubcuenta</nombre>
-      <tipo>character varying(15)</tipo>
-   </columna>
-   <columna>
-      <nombre>descripcion</nombre>
-      <tipo>character varying(100)</tipo>
-   </columna>
-   <columna>
-      <nombre>iban</nombre>
-      <tipo>character varying(34)</tipo>
-   </columna>
-   <columna>
-      <nombre>codcuenta</nombre>
-      <tipo>character varying(6)</tipo>
-      <nulo>NO</nulo>
-   </columna>
-   <columna>
-      <nombre>swift</nombre>
-      <tipo>character varying(11)</tipo>
-   </columna>
-   <restriccion>
-      <nombre>cuentasbanco_pkey</nombre>
-      <consulta>PRIMARY KEY (codcuenta)</consulta>
-   </restriccion>
+    <columna>
+        <nombre>codsubcuenta</nombre>
+        <tipo>character varying(15)</tipo>
+    </columna>
+    <columna>
+        <nombre>descripcion</nombre>
+        <tipo>character varying(100)</tipo>
+    </columna>
+    <columna>
+        <nombre>iban</nombre>
+        <tipo>character varying(34)</tipo>
+    </columna>
+    <columna>
+        <nombre>codcuenta</nombre>
+        <tipo>character varying(6)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>swift</nombre>
+        <tipo>character varying(11)</tipo>
+    </columna>
+    <restriccion>
+        <nombre>cuentasbanco_pkey</nombre>
+        <consulta>PRIMARY KEY (codcuenta)</consulta>
+    </restriccion>
 </tabla>

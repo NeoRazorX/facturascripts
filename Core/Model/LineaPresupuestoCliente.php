@@ -54,12 +54,12 @@ class LineaPresupuestoCliente
      */
     public $mostrar_precio;
     private static $presupuestos;
-    
+
     public function tableName()
     {
         return 'lineaspresupuestoscli';
     }
-    
+
     public function primaryColumn()
     {
         return 'idlinea';

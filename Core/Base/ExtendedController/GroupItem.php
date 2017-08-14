@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Base\ViewController;
+namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
  * Description of GroupItem
@@ -24,19 +24,20 @@ namespace FacturaScripts\Core\Base\ViewController;
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class GroupItem extends VisualItem implements VisualItemInterface
-{    
+{
+
     /**
      * Icono que se usa como valor o acompañante del título de grupo
      * @var string
-     */    
+     */
     public $icon;
-    
+
     /**
      * Definición de columnas que incluye el grupo
      * @var array 
      */
     public $columns;
-    
+
     /**
      * Construye e inicializa la clase.
      */
@@ -47,7 +48,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
         $this->icon = NULL;
         $this->columns = [];
     }
-    
+
     public function loadFromXMLColumns($group)
     {
         $this->columns = [];
@@ -59,25 +60,25 @@ class GroupItem extends VisualItem implements VisualItemInterface
             unset($columnItem);
         }
         ksort($this->columns, SORT_STRING);
-    }    
-    
+    }
+
     /**
      * Carga la estructura de atributos en base a un archivo XML
      * @param SimpleXMLElement $group
-     */    
+     */
     public function loadFromXML($group)
     {
         parent::loadFromXML($group);
-        
+
         $group_atributes = $group->attributes();
-        $this->icon = (string) $group_atributes->icon;        
+        $this->icon = (string) $group_atributes->icon;
         $this->loadFromXMLColumns($group);
-    }   
-    
+    }
+
     /**
      * Carga la estructura de atributos en base a la base de datos
      * @param SimpleXMLElement $group
-     */    
+     */
     public function loadFromJSON($group)
     {
         parent::loadFromJSON($group);
@@ -89,25 +90,25 @@ class GroupItem extends VisualItem implements VisualItemInterface
      * @return string
      */
     private function getIconHTML()
-    {        
+    {
         if (empty($this->icon)) {
             return '';
         }
-        
+
         if (strpos($this->icon, 'fa-') === 0) {
             return '<i class="fa ' . $this->icon . '" aria-hidden="true">&nbsp;&nbsp;</i></span>';
         }
-                
-        return '<i aria-hidden="true">' . $this->icon . '</i>&nbsp;&nbsp;</span>';            
+
+        return '<i aria-hidden="true">' . $this->icon . '</i>&nbsp;&nbsp;</span>';
     }
-    
+
     /**
      * Genera el código html para visualizar la cabecera del elemento visual
      * @param string $value
-     */    
+     */
     public function getHeaderHTML($value)
     {
-        $html = $this->getIconHTML() . parent::getHeaderHTML($value);        
-        return $html;        
+        $html = $this->getIconHTML() . parent::getHeaderHTML($value);
+        return $html;
     }
 }

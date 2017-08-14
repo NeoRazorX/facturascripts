@@ -82,12 +82,12 @@ class LineaIvaFacturaProveedor
      * @var float
      */
     public $neto;
-    
+
     public function tableName()
     {
         return 'lineasivafactprov';
     }
-    
+
     public function primaryColumn()
     {
         return 'idlinea';

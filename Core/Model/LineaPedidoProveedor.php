@@ -36,12 +36,12 @@ class LineaPedidoProveedor
      */
     public $idpedido;
     private static $pedidos;
-    
+
     public function tableName()
     {
         return 'lineaspedidosprov';
     }
-    
+
     public function primaryColumn()
     {
         return 'idlinea';

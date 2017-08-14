@@ -64,12 +64,12 @@ class TransferenciaStock
      * @var string
      */
     public $usuario;
-    
+
     public function tableName()
     {
         return 'transstock';
     }
-    
+
     public function primaryColumn()
     {
         return 'idtrans';

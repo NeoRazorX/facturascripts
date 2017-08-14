@@ -27,6 +27,7 @@ namespace FacturaScripts\Core\Model\Base;
  */
 trait BankAccount
 {
+
     /**
      * Cuenta bancaria
      * @var string

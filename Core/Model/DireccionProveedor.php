@@ -95,12 +95,12 @@ class DireccionProveedor
      * @var
      */
     public $fecha;
-    
+
     public function tableName()
     {
         return 'dirproveedores';
     }
-    
+
     public function primaryColumn()
     {
         return 'id';

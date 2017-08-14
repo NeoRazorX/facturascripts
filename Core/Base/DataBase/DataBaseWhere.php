@@ -78,10 +78,9 @@ class DataBaseWhere
     private function format2Date($addTime = FALSE)
     {
         $time = $addTime ? ' H:i:s' : '';
-        return "'" . date($this->dataBase->dateStyle() . $time, strtotime($this->value)) . "'";    
+        return "'" . date($this->dataBase->dateStyle() . $time, strtotime($this->value)) . "'";
     }
-    
-    
+
     private function getValueFromOperator()
     {
         switch ($this->operator) {
@@ -92,14 +91,14 @@ class DataBaseWhere
             case "IS":
                 $result = $this->value;
                 break;
-            
+
             default:
                 $result = '';
         }
 
         return $result;
     }
-    
+
     private function getValueFromType()
     {
         switch (gettype($this->value)) {
@@ -112,7 +111,7 @@ class DataBaseWhere
             case "float":
                 $result = $this->dataBase->escapeString($this->value);
                 break;
-            
+
             /// DATE
             case (preg_match(self::MATCH_DATE, $this->value) > 0):
                 $result = $this->format2Date();
@@ -128,16 +127,14 @@ class DataBaseWhere
         }
         return $result;
     }
-    
+
     /**
      * Devuelve el valor del filtro formateado según el tipo
      * @return string
      */
     private function getValue()
     {
-        return (in_array($this->operator, ['LIKE', 'IS']))
-            ? $this->getValueFromOperator()
-            : $this->getValueFromType();
+        return (in_array($this->operator, ['LIKE', 'IS'])) ? $this->getValueFromOperator() : $this->getValueFromType();
     }
 
     /**
@@ -163,7 +160,7 @@ class DataBaseWhere
             if (count($fields) > 1) {
                 $result = '(' . $result . ')';
             }
-            
+
             if ($applyOperation) {
                 $result = ' ' . $this->operation . ' ' . $result;
             }

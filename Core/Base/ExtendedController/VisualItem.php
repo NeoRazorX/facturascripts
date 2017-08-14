@@ -16,9 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Base\ViewController;
+namespace FacturaScripts\Core\Base\ExtendedController;
 
-use FacturaScripts\Core\Base as Base;
+use FacturaScripts\Core\Base;
 
 /**
  * Estructura básica/común para cabecera visual
@@ -27,12 +27,13 @@ use FacturaScripts\Core\Base as Base;
  */
 class VisualItem
 {
+
     /**
      * Motor de traducción.
      * @var Base\Translator
      */
     protected $i18n;
-    
+
     /**
      * Etiqueta o título del grupo
      * @var string
@@ -44,8 +45,8 @@ class VisualItem
      * @var string
      */
     public $titleURL;
-    
-   /**
+
+    /**
      * Número de columnas que ocupa en su visualización
      * ([1, 2, 4, 6, 8, 10, 12])
      * @var int
@@ -57,19 +58,19 @@ class VisualItem
      * @var int
      */
     public $order;
-    
+
     /**
      * Construye e inicializa la clase.
      */
     public function __construct()
     {
         $this->title = '';
-        $this->titleURL = '';        
+        $this->titleURL = '';
         $this->numColumns = 12;
         $this->order = 100;
         $this->i18n = new Base\Translator();
     }
-    
+
     /**
      * Carga
      * @param type $items
@@ -79,33 +80,33 @@ class VisualItem
         $items_atributes = $items->attributes();
         $this->title = (string) $items_atributes->title;
         $this->titleURL = (string) $items_atributes->titleurl;
-        
+
         if (!empty($items_atributes->numcolumns)) {
             $this->numColumns = (int) $items_atributes->numcolumns;
         }
-        
+
         if (!empty($items_atributes->order)) {
             $this->order = (int) $items_atributes->order;
-        }                
+        }
     }
-    
+
     public function loadFromJSON($items)
     {
         $this->title = (string) $items['title'];
         $this->titleURL = (string) $items['titleURL'];
         $this->numColumns = (int) $items['numColumns'];
-        $this->order = (int) $items['order'];        
+        $this->order = (int) $items['order'];
     }
-    
+
     public function getHeaderHTML($value)
     {
         $html = $this->i18n->trans($value);
-        
+
         if (!empty($this->titleURL)) {
             $target = (substr($this->titleURL, 0, 1) != '?') ? "target='_blank'" : '';
             $html = '<a href="' . $this->titleURL . '" ' . $target . '>' . $html . '</a>';
         }
-        
+
         return $html;
     }
 }

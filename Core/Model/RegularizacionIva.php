@@ -69,12 +69,12 @@ class RegularizacionIva
      * @var
      */
     public $periodo;
-    
+
     public function tableName()
     {
         return 'co_regiva';
     }
-    
+
     public function primaryColumn()
     {
         return 'idregiva';

@@ -45,12 +45,12 @@ class GrupoClientes
      * @var
      */
     public $codtarifa;
-    
+
     public function tableName()
     {
         return 'gruposclientes';
     }
-    
+
     public function primaryColumn()
     {
         return 'codgrupo';

@@ -67,12 +67,12 @@ class LineaPedidoCliente
      */
     public $mostrar_precio;
     private static $pedidos;
-    
+
     public function tableName()
     {
         return 'lineaspedidoscli';
     }
-    
+
     public function primaryColumn()
     {
         return 'idlinea';

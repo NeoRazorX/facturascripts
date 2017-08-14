@@ -39,12 +39,12 @@ class Fabricante
      * @var string
      */
     public $nombre;
-    
+
     public function tableName()
     {
         return 'fabricantes';
     }
-    
+
     public function primaryColumn()
     {
         return 'codfabricante';

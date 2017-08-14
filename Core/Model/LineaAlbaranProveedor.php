@@ -64,12 +64,12 @@ class LineaAlbaranProveedor
      * @var string
      */
     private $fecha;
-    
+
     public function tableName()
     {
         return 'lineasalbaranesprov';
     }
-    
+
     public function primaryColumn()
     {
         return 'idlinea';

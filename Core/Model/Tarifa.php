@@ -69,12 +69,12 @@ class Tarifa
      * @var float
      */
     private $inclineal;
-    
+
     public function tableName()
     {
         return 'tarifas';
     }
-    
+
     public function primaryColumn()
     {
         return 'codtarifa';

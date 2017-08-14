@@ -55,12 +55,12 @@ class PedidoProveedor
      * @var type 
      */
     public $idoriginal;
-    
+
     public function tableName()
     {
         return 'pedidosprov';
     }
-    
+
     public function primaryColumn()
     {
         return 'idpedido';

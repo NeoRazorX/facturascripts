@@ -181,12 +181,12 @@ class Cliente
      * @var
      */
     public $codproveedor;
-    
+
     public function tableName()
     {
         return 'clientes';
     }
-    
+
     public function primaryColumn()
     {
         return 'codcliente';

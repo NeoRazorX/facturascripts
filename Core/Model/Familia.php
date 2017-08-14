@@ -51,12 +51,12 @@ class Familia
      * @var string
      */
     public $nivel;
-    
+
     public function tableName()
     {
         return 'familias';
     }
-    
+
     public function primaryColumn()
     {
         return 'codfamilia';

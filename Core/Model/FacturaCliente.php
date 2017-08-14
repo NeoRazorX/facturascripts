@@ -88,12 +88,12 @@ class FacturaCliente
      * @var int
      */
     public $idimprenta;
-    
+
     public function tableName()
     {
         return 'facturascli';
     }
-    
+
     public function primaryColumn()
     {
         return 'idfactura';

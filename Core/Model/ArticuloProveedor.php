@@ -119,12 +119,12 @@ class ArticuloProveedor
      * @var float
      */
     private $iva;
-    
+
     public function tableName()
     {
         return 'articulosprov';
     }
-    
+
     public function primaryColumn()
     {
         return 'id';

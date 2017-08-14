@@ -45,12 +45,12 @@ class ClientePropiedad
      * @var string
      */
     public $text;
-    
+
     public function tableName()
     {
         return 'cliente_propiedades';
     }
-    
+
     public function primaryColumn()
     {
         return 'name';

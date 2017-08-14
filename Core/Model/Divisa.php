@@ -63,12 +63,12 @@ class Divisa
      * @var string
      */
     public $simbolo;
-    
+
     public function tableName()
     {
         return 'divisas';
     }
-    
+
     public function primaryColumn()
     {
         return 'coddivisa';

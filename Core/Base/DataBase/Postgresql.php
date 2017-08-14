@@ -327,7 +327,7 @@ class Postgresql implements DataBaseEngine
     {
         return $this->utils;
     }
-    
+
     /**
      * Devuelve el enlace a la clase de SQL del engine
      * @return DataBaseSQL

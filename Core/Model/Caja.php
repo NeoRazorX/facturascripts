@@ -94,12 +94,12 @@ class Caja
      * @var
      */
     public $agente;
-    
+
     public function tableName()
     {
         return 'cajas';
     }
-    
+
     public function primaryColumn()
     {
         return 'id';

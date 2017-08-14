@@ -34,7 +34,7 @@ class DataBaseUtils
      * @var DataBaseEngine
      */
     private $engine;
-    
+
     /**
      * Construye y prepara la clase para su uso
      * @param DataBaseEngine $engine

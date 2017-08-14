@@ -99,12 +99,12 @@ class DireccionCliente
      * @var
      */
     public $fecha;
-    
+
     public function tableName()
     {
         return 'dirclientes';
     }
-    
+
     public function primaryColumn()
     {
         return 'id';

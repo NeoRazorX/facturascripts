@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\ViewController;
+use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Model;
 
 /**
@@ -26,7 +26,7 @@ use FacturaScripts\Core\Model;
  *
  * @author carlos
  */
-class ListUser extends ViewController\ListController
+class ListUser extends ExtendedController\ListController
 {
 
     public function __construct(&$cache, &$i18n, &$miniLog, $className)

@@ -158,12 +158,12 @@ class Proveedor
      * @var string
      */
     public $codcliente;
-    
+
     public function tableName()
     {
         return 'proveedores';
     }
-    
+
     public function primaryColumn()
     {
         return 'codproveedor';

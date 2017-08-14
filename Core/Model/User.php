@@ -95,12 +95,12 @@ class User
      * @var string
      */
     private $logkey;
-    
+
     public function tableName()
     {
         return 'fs_users';
     }
-    
+
     public function primaryColumn()
     {
         return 'nick';
