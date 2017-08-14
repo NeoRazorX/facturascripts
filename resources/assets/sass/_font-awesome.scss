@@ -1,0 +1,25 @@
+@import "node_modules/font-awesome/scss/variables";
+@import "node_modules/font-awesome/scss/mixins";
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('//netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.eot?v=#{$fa-version}');
+  src: url('//netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.eot?#iefix&v=#{$fa-version}') format('embedded-opentype'),
+    url('//netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2?v=#{$fa-version}') format('woff2'),
+    url('//netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff?v=#{$fa-version}') format('woff'),
+    url('//netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.ttf?v=#{$fa-version}') format('truetype'),
+    url('//netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.svg?v=#{$fa-version}#fontawesomeregular') format('svg');
+//  src: url('//netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts/FontAwesome.otf') format('opentype'); // used when developing fonts
+  font-weight: normal;
+  font-style: normal;
+}
+
+@import "node_modules/font-awesome/scss/core";
+@import "node_modules/font-awesome/scss/larger";
+@import "node_modules/font-awesome/scss/fixed-width";
+@import "node_modules/font-awesome/scss/list";
+@import "node_modules/font-awesome/scss/bordered-pulled";
+@import "node_modules/font-awesome/scss/animated";
+@import "node_modules/font-awesome/scss/rotated-flipped";
+@import "node_modules/font-awesome/scss/stacked";
+@import "node_modules/font-awesome/scss/icons";
+@import "node_modules/font-awesome/scss/screen-reader";

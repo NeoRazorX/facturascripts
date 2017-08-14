@@ -7,13 +7,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="generator" content="FacturaScripts" />
         {% block css %}
-        <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css" />
-        <link rel="stylesheet" href="Core/View/CSS/custom.css" />
+        <link rel="stylesheet" href="dist/css/app.css" />
         {% endblock %}
         {% block javascript %}
-        <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
-        <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="dist/js/app.js"></script>
         {% endblock %}
         {{ debugBarRender.renderHead()|raw }}
     </head>
