@@ -61,12 +61,12 @@ class CuentaBancoCliente
      * @var string
      */
     public $fmandato;
-    
+
     public function tableName()
     {
         return 'cuentasbcocli';
     }
-    
+
     public function primaryColumn()
     {
         return 'cocuenta';

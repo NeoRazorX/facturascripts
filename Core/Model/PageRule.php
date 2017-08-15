@@ -58,12 +58,12 @@ class PageRule
      * @var bool
      */
     public $allowupdate;
-    
+
     public function tableName()
     {
         return 'fs_page_rules';
     }
-    
+
     public function primaryColumn()
     {
         return 'id';

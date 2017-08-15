@@ -41,12 +41,12 @@ class Rol
      * @var string
      */
     public $descripcion;
-    
+
     public function tableName()
     {
         return 'fs_roles';
     }
-    
+
     public function primaryColumn()
     {
         return 'codrol';

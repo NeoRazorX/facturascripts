@@ -64,12 +64,12 @@ class Serie
      * @var int
      */
     public $numfactura;
-    
+
     public function tableName()
     {
         return 'series';
     }
-    
+
     public function primaryColumn()
     {
         return 'codserie';

@@ -16,10 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-namespace FacturaScripts\Core\App;
-
-use FacturaScripts\Core\Base;
+namespace FacturaScripts\Core\Base;
 
 /**
  * Define atributos y métodos globales a todas las clases
@@ -27,9 +24,9 @@ use FacturaScripts\Core\Base;
  * @author Carlos García Gómez
  * @author Rafael San José Tovar
  */
-
 abstract class CronClass
 {
+
     protected static $cache = null;
     protected static $dataBase = null;
     protected static $i18n = null;
@@ -50,6 +47,6 @@ abstract class CronClass
             self::$miniLog = new Base\MiniLog();
         }
     }
-	
+
     abstract public function run();
 }

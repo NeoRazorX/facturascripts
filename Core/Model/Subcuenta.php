@@ -105,12 +105,12 @@ class Subcuenta
      * @var float
      */
     public $iva;
-    
+
     public function tableName()
     {
         return 'co_subcuentas';
     }
-    
+
     public function primaryColumn()
     {
         return 'idsubcuenta';

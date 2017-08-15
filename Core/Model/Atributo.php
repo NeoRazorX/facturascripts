@@ -41,12 +41,12 @@ class Atributo
      * @var string
      */
     public $nombre;
-    
+
     public function tableName()
     {
         return 'atributos';
     }
-    
+
     public function primaryColumn()
     {
         return 'codatributo';

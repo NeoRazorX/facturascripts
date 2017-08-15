@@ -81,7 +81,7 @@ trait ModelTrait
      * @var MiniLog
      */
     protected $miniLog;
-    
+
     /**
      * Método que se implementa en los modelos para limpiar la cache del modelo
      */

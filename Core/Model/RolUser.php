@@ -47,12 +47,12 @@ class RolUser
      * @var string
      */
     public $nick;
-    
+
     public function tableName()
     {
         return 'fs_roles_users';
     }
-    
+
     public function primaryColumn()
     {
         return 'id';

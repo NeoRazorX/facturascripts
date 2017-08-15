@@ -48,12 +48,12 @@ class AtributoValor
      * @var
      */
     public $valor;
-    
+
     public function tableName()
     {
         return 'atributos_valores';
     }
-    
+
     public function primaryColumn()
     {
         return 'id';

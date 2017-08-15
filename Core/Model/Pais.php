@@ -47,12 +47,12 @@ class Pais
      * @var string
      */
     public $nombre;
-    
+
     public function tableName()
     {
         return 'paises';
     }
-    
+
     public function primaryColumn()
     {
         return 'codpais';
@@ -80,12 +80,12 @@ class Pais
             $this->miniLog->alert($this->i18n->trans('country-cod-invalid', [$this->codpais]));
             return false;
         }
-        
+
         if (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
             $this->miniLog->alert($this->i18n->trans('country-name-invalid'));
             return false;
         }
-        
+
         return true;
     }
 

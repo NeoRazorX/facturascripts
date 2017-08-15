@@ -45,7 +45,7 @@
             </column>
             <column title="Validar Prov." display="center" order="140">
                 <widget type="checkbox" fieldname="validarprov" />
-            </column> 
+            </column>
         </group>
-    </columns>    
+    </columns>
 </view>

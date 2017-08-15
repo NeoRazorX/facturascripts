@@ -158,12 +158,12 @@ class Empresa
      * @var array de string
      * ] */
     public $email_config;
-    
+
     public function tableName()
     {
         return 'empresa';
     }
-    
+
     public function primaryColumn()
     {
         return 'id';

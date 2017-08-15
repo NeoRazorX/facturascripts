@@ -18,8 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase as DataBase;
-use FacturaScripts\Core\Base\ViewController as ViewController;
+use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\ExtendedController;
 
 /**
  * Configuración visual de las vistas de FacturaScripts,
@@ -99,12 +99,12 @@ class PageOption
         $this->loadFromDataTrait($data);
 
         $columns = json_decode($data['columns'], true);
-        $groupItem = new ViewController\GroupItem();
+        $groupItem = new ExtendedController\GroupItem();
         $groupItem->loadFromJSON($columns);
         $this->columns[] = $groupItem;
 
         $rows = json_decode($data['rows'], true);
-        $rowItem = new ViewController\RowItem();
+        $rowItem = new ExtendedController\RowItem();
         $rowItem->loadFromJSON($rows);
         $this->rows[] = $rowItem;
     }
@@ -166,7 +166,7 @@ class PageOption
     {
         // No hay agrupación de columnas
         if (empty($columns->group)) {
-            $groupItem = new ViewController\GroupItem();
+            $groupItem = new ExtendedController\GroupItem();
             $groupItem->loadFromXMLColumns($columns);
             $this->columns[] = $groupItem;
             unset($groupItem);
@@ -175,7 +175,7 @@ class PageOption
 
         // Con agrupación de columnas
         foreach ($columns->group as $group) {
-            $groupItem = new ViewController\GroupItem();
+            $groupItem = new ExtendedController\GroupItem();
             $groupItem->loadFromXML($group);
             $this->columns[] = $groupItem;
             unset($groupItem);
@@ -191,7 +191,7 @@ class PageOption
     private function getXMLRows($rows)
     {
         foreach ($rows->row as $row) {
-            $rowItem = new ViewController\RowItem();
+            $rowItem = new ExtendedController\RowItem();
             $rowItem->loadFromXML($row);
             $this->rows[$rowItem->type] = $rowItem;
             unset($rowItem);

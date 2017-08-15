@@ -107,12 +107,12 @@ class ArticuloCombinacion
      * @var
      */
     public $stockfis;
-    
+
     public function tableName()
     {
         return 'articulo_combinaciones';
     }
-    
+
     public function primaryColumn()
     {
         return 'id';

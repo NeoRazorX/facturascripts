@@ -39,12 +39,12 @@ class ConceptoPartida
      * @var string
      */
     public $concepto;
-    
+
     public function tableName()
     {
         return 'co_conceptospar';
     }
-    
+
     public function primaryColumn()
     {
         return 'idconceptopar';

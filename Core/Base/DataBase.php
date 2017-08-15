@@ -46,7 +46,7 @@ class DataBase
      * @var DataBaseEngine
      */
     private static $engine;
-    
+
     /**
      * Gestiona el log de todos los controladores, modelos y base de datos.
      * @var MiniLog

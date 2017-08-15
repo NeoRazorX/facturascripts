@@ -101,12 +101,12 @@ class Stock
      * @var
      */
     public $ubicacion;
-    
+
     public function tableName()
     {
         return 'stocks';
     }
-    
+
     public function primaryColumn()
     {
         return 'idstock';

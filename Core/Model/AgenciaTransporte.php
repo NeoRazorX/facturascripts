@@ -48,12 +48,12 @@ class AgenciaTransporte
      * @var bool
      */
     public $activo;
-    
+
     public function tableName()
     {
         return 'agenciastrans';
     }
-    
+
     public function primaryColumn()
     {
         return 'codtrans';

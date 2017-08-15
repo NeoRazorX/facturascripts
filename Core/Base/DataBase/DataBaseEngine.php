@@ -26,18 +26,19 @@ namespace FacturaScripts\Core\Base\DataBase;
  */
 interface DataBaseEngine
 {
+
     /**
      * Devuelve el enlace a la clase de Utilidades del engine
      * @return DataBaseUtils
      */
-    public function getUtils();    
+    public function getUtils();
 
     /**
      * Devuelve el enlace a la clase de SQL del engine
      * @return DataBaseSQL
      */
-    public function getSQL();    
-    
+    public function getSQL();
+
     /**
      * Convierte los datos leidos del sqlColumns a estructura de trabajo
      * @param array $colData

@@ -81,12 +81,12 @@ class RegularizacionStock
      * @var string
      */
     public $nick;
-    
+
     public function tableName()
     {
         return 'lineasregstocks';
     }
-    
+
     public function primaryColumn()
     {
         return 'id';

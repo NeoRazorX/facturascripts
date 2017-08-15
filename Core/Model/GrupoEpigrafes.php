@@ -51,12 +51,12 @@ class GrupoEpigrafes
      * @var string
      */
     public $descripcion;
-    
+
     public function tableName()
     {
         return 'co_gruposepigrafes';
     }
-    
+
     public function primaryColumn()
     {
         return 'idgrupo';

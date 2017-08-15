@@ -41,12 +41,12 @@ class CuentaBanco
      * @var string
      */
     public $codsubcuenta;
-    
+
     public function tableName()
     {
         return 'cuentasbanco';
     }
-    
+
     public function primaryColumn()
     {
         return 'cocuenta';

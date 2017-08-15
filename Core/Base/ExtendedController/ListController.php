@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Base\ViewController;
+namespace FacturaScripts\Core\Base\ExtendedController;
 
-use FacturaScripts\Core\Base as Base;
-use FacturaScripts\Core\Model as Model;
-use FacturaScripts\Core\Base\DataBase as DataBase;
+use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Model;
+use FacturaScripts\Core\Base\DataBase;
 
 /**
  * Controlador para listado de datos en modo tabla
@@ -34,8 +34,8 @@ class ListController extends Base\Controller
     /**
      * Constantes para ordenación y paginación
      */
-    const ICONO_ASC = 'glyphicon-sort-by-attributes';
-    const ICONO_DESC = 'glyphicon-sort-by-attributes-alt';
+    const ICONO_ASC = 'fa-sort-amount-asc';
+    const ICONO_DESC = 'fa-sort-amount-desc';
     const FS_ITEM_LIMIT = 50;
     const FS_PAGE_MARGIN = 5;
 
@@ -405,7 +405,7 @@ class ListController extends Base\Controller
 
         // Añadimos la primera página, si no está incluida en el margen de páginas
         if ($this->offset > (self::FS_ITEM_LIMIT * self::FS_PAGE_MARGIN)) {
-            $result[$index] = $this->addPaginationItem($url, 1, 0, "glyphicon-step-backward");
+            $result[$index] = $this->addPaginationItem($url, 1, 0, "fa-backward");
             $index++;
         }
 
@@ -414,7 +414,7 @@ class ListController extends Base\Controller
         $recordMiddleLeft = ($recordMin > self::FS_ITEM_LIMIT) ? ($this->offset / 2) : $recordMin;
         if ($recordMiddleLeft < $recordMin) {
             $page = floor($recordMiddleLeft / self::FS_ITEM_LIMIT);
-            $result[$index] = $this->addPaginationItem($url, ($page + 1), ($page * self::FS_ITEM_LIMIT), "glyphicon-backward");
+            $result[$index] = $this->addPaginationItem($url, ($page + 1), ($page * self::FS_ITEM_LIMIT), "fa-backward");
             $index++;
         }
 
@@ -432,14 +432,14 @@ class ListController extends Base\Controller
         $recordMiddleRight = $this->offset + (($this->count - $this->offset) / 2);
         if ($recordMiddleRight > $recordMax) {
             $page = floor($recordMiddleRight / self::FS_ITEM_LIMIT);
-            $result[$index] = $this->addPaginationItem($url, ($page + 1), ($page * self::FS_ITEM_LIMIT), "glyphicon-forward");
+            $result[$index] = $this->addPaginationItem($url, ($page + 1), ($page * self::FS_ITEM_LIMIT), "fa-forward");
             $index++;
         }
 
         // Añadimos la última página, si no está incluida en el margen de páginas
         if ($recordMax < $this->count) {
             $pageMax = floor($this->count / self::FS_ITEM_LIMIT);
-            $result[$index] = $this->addPaginationItem($url, ($pageMax + 1), ($pageMax * self::FS_ITEM_LIMIT), "glyphicon-step-forward");
+            $result[$index] = $this->addPaginationItem($url, ($pageMax + 1), ($pageMax * self::FS_ITEM_LIMIT), "fa-forward");
         }
 
         /// si solamente hay una página, no merece la pena mostrar un único botón

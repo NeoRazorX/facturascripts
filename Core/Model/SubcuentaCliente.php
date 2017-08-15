@@ -57,12 +57,12 @@ class SubcuentaCliente
      * @var string
      */
     public $codejercicio;
-    
+
     public function tableName()
     {
         return 'co_subcuentascli';
     }
-    
+
     public function primaryColumn()
     {
         return 'id';

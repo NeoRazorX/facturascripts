@@ -88,12 +88,12 @@ class Ejercicio
      * @var int
      */
     public $longsubcuenta;
-    
+
     public function tableName()
     {
         return 'ejercicios';
     }
-    
+
     public function primaryColumn()
     {
         return 'codejercicio';

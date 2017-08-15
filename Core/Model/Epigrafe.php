@@ -79,12 +79,12 @@ class Epigrafe
      * @var string
      */
     public $codgrupo;
-    
+
     public function tableName()
     {
         return 'co_epigrafes';
     }
-    
+
     public function primaryColumn()
     {
         return 'idepigrafe';

@@ -52,12 +52,12 @@ class AlbaranProveedor
      * @var bool
      */
     public $ptefactura;
-    
+
     public function tableName()
     {
         return 'albaranesprov';
     }
-    
+
     public function primaryColumn()
     {
         return 'idalbaran';

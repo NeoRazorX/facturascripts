@@ -244,12 +244,12 @@ class Articulo
      * @var bool
      */
     private $exists;
-    
+
     public function tableName()
     {
         return 'articulos';
     }
-    
+
     public function primaryColumn()
     {
         return 'referencia';
@@ -321,7 +321,7 @@ class Articulo
         if ($this->referencia === null) {
             return 'index.php?page=VentasArticulos';
         }
-        
+
         return 'index.php?page=VentasArticulo&ref=' . urlencode($this->referencia);
     }
 
@@ -1040,7 +1040,7 @@ class Articulo
                 if ($value['tag'] === $tag) {
                     $encontrado = true;
                     if (time() + 5400 > $value['expires'] + 300) {
-                        self::$search_tags[$i]['count']++;
+                        self::$search_tags[$i]['count'] ++;
                         self::$search_tags[$i]['expires'] = time() + (self::$search_tags[$i]['count'] * 5400);
                         $actualizar = true;
                     }

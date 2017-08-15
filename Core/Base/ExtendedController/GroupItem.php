@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Base\ViewController;
+namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
  * Description of GroupItem
@@ -93,10 +93,6 @@ class GroupItem extends VisualItem implements VisualItemInterface
     {
         if (empty($this->icon)) {
             return '';
-        }
-
-        if (strpos($this->icon, 'glyphicon') === 0) {
-            return '<i class="glyphicon ' . $this->icon . '"></i>&nbsp;&nbsp;</span>';
         }
 
         if (strpos($this->icon, 'fa-') === 0) {

@@ -82,12 +82,12 @@ class LineaFacturaProveedor
      * @var int
      */
     private $albaran_numero;
-    
+
     public function tableName()
     {
         return 'lineasfacturasprov';
     }
-    
+
     public function primaryColumn()
     {
         return 'idlinea';

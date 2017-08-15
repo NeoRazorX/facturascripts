@@ -59,12 +59,12 @@ class RolAccess
      * @var bool
      */
     public $allowupdate;
-    
+
     public function tableName()
     {
         return 'fs_roles_access';
     }
-    
+
     public function primaryColumn()
     {
         return 'id';

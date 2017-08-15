@@ -40,12 +40,12 @@ class CuentaEspecial
      * @var string
      */
     public $descripcion;
-    
+
     public function tableName()
     {
         return 'co_cuentasesp';
     }
-    
+
     public function primaryColumn()
     {
         return 'idcuentaesp';

@@ -13,69 +13,53 @@
         {% endblock %}
         {% block javascript %}
         <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
         <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
         {% endblock %}
         {{ debugBarRender.renderHead()|raw }}
     </head>
     <body>
-        <nav class="navbar navbar-inverse navbar-fixed-top">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="index.php">
-                        <i class="fa fa-home" aria-hidden="true"></i>&nbsp; {{ fsc.empresa.nombrecorto }}
-                    </a>
-                </div>
-                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                    <ul class="nav navbar-nav">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top hidden-print">
+            <a class="navbar-brand" href="index.php">
+                <i class="fa fa-home" aria-hidden="true"></i>&nbsp; {{ fsc.empresa.nombrecorto }}
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
                     {% for menuItem in menuManager.getMenu() %}
-                        {{ menuItem.getHTML()|raw }}
+                    {{ menuItem.getHTML()|raw }}
                     {% endfor %}
-                    </ul>
-                    {% if template != 'MegaSearch.html' %}
-                    <form action="index.php?page=MegaSearch" method="post" class="navbar-form navbar-right">
-                        <div class="form-group">
-                            <div class="input-group">
-                                <input type="text" name="query" class="form-control"/>
-                                <span class="input-group-btn">
-                                    <button type="submit" class="btn btn-info">
-                                        <i class="fa fa-search" aria-hidden="true"></i>
-                                    </button>
-                                </span>
-                            </div>
-                        </div>
-                    </form>
-                    {% endif %}
-                    <ul class="nav navbar-nav navbar-right">
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="{{ fsc.user.nick }}">
-                                <i class="fa fa-user-circle hidden-xs" aria-hidden="true"></i>
-                                <span class="hidden-sm">&nbsp;{{ fsc.user.nick }}</span>
+                </ul>
+                <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
+                    <li class="nav-item dropdown">
+                        <a class="nav-item nav-link dropdown-toggle mr-md-2" href="#" id="user-list" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-user-circle hidden-xs" aria-hidden="true"></i>
+                            <span class="hidden-sm">&nbsp;{{ fsc.user.nick }}</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="user-list">
+                            <a class="dropdown-item" href="{{ fsc.user.url() }}">
+                                <i class="fa fa-user-circle" aria-hidden="true"></i>&nbsp; {{ fsc.user.nick }}
                             </a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a href="{{ fsc.user.url() }}">
-                                        <i class="fa fa-user-circle" aria-hidden="true"></i>&nbsp; {{ fsc.user.nick }}
-                                    </a>
-                                </li>
-                                <li class="divider"></li>
-                                <li>
-                                    <a href="index.php?logout=TRUE">
-                                        <i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp; {{ i18n.trans('logout') }}
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="index.php?logout=TRUE">
+                                <i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp; {{ i18n.trans('logout') }}
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+                {% if template != 'MegaSearch.html' %}
+                <form action="index.php?page=MegaSearch" method="post" class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="text" placeholder="{{ i18n.trans('search') }}" aria-label="Search"/>
+                    <button class="btn btn-outline-info my-2 my-sm-0" type="submit">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                    </button>
+                </form>
+                {% endif %}
             </div>
         </nav>
-        <br/><br/><br/>
+        <br/>
         {% if log|length > 0 %}
         <div class="alert alert-warning">
             <ul>

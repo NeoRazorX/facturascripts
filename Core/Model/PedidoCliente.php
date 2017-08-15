@@ -65,12 +65,12 @@ class PedidoCliente
      * @var type 
      */
     public $idoriginal;
-    
+
     public function tableName()
     {
         return 'pedidoscli';
     }
-    
+
     public function primaryColumn()
     {
         return 'idpedido';

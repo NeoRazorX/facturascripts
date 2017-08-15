@@ -28,6 +28,7 @@ use FacturaScripts\Core\Model;
  */
 class MegaSearch extends Base\Controller
 {
+
     public function getPageData()
     {
         $pageData = parent::getPageData();

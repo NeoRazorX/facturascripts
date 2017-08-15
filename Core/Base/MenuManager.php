@@ -85,11 +85,9 @@ class MenuManager
      */
     private function pageNeedSave($pageModel, $pageData)
     {
-        return ($pageModel->menu != $pageData['menu'])
-            || ($pageModel->title != $pageData['title'])
-            || ($pageModel->icon != $pageData['icon']);
+        return ($pageModel->menu != $pageData['menu']) || ($pageModel->title != $pageData['title']) || ($pageModel->icon != $pageData['icon']) || ($pageModel->showonmenu != $pageData['showonmenu']);
     }
-    
+
     /**
      * Actualiza los datos en el modelo Model\Page en base los datos
      * del getPageData() del controlador

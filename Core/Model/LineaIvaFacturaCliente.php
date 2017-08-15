@@ -82,12 +82,12 @@ class LineaIvaFacturaCliente
      * @var float
      */
     public $neto;
-    
+
     public function tableName()
     {
         return 'lineasivafactcli';
     }
-    
+
     public function primaryColumn()
     {
         return 'idlinea';

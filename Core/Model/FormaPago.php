@@ -70,12 +70,12 @@ class FormaPago
      * @var string
      */
     public $vencimiento;
-    
+
     public function tableName()
     {
         return 'formaspago';
     }
-    
+
     public function primaryColumn()
     {
         return 'codpago';

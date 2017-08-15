@@ -71,12 +71,12 @@ class Cuenta
      * @var int
      */
     public $idcuentaesp;
-    
+
     public function tableName()
     {
         return 'co_cuentas';
     }
-    
+
     public function primaryColumn()
     {
         return 'idcuenta';

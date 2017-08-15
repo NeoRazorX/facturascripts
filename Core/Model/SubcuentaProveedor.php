@@ -57,12 +57,12 @@ class SubcuentaProveedor
      * @var string
      */
     public $codejercicio;
-    
+
     public function tableName()
     {
         return 'co_subcuentasprov';
     }
-    
+
     public function primaryColumn()
     {
         return 'id';

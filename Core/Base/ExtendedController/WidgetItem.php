@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Base\ViewController;
+namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
  * Description of WidgetItem
@@ -221,13 +221,13 @@ class WidgetItem
             case 'check':
             case 'checkbox':
                 $value = in_array($value, ['t', '1']);
-                $icon = $value ? 'glyphicon-ok' : 'glyphicon-minus';
+                $icon = $value ? 'fa-check' : 'fa-minus';
                 $style = $this->getTextOptionsHTML($value);
-                $html = '<span class="glyphicon ' . $icon . '"' . $style . '></span>';
+                $html = '<i class="fa ' . $icon . '" aria-hidden="true"' . $style . '></i>';
                 break;
 
             case 'icon':
-                $html = '<span class="glyphicon "' . $this->icon . ' aria-hidden="true" title="' . $this->hint . '">' . $value . '</span>';
+                $html = '<i class="fa "' . $this->icon . '" aria-hidden="true"></i>';
                 break;
 
             default:
@@ -250,10 +250,6 @@ class WidgetItem
         }
 
         $html = '<div class="input-group"><span class="input-group-addon">';
-        if (strpos($this->icon, 'glyphicon') === 0) {
-            return $html . '<i class="glyphicon ' . $this->icon . '"></i></span>';
-        }
-
         if (strpos($this->icon, 'fa-') === 0) {
             return $html . '<i class="fa ' . $this->icon . '" aria-hidden="true"></i></span>';
         }

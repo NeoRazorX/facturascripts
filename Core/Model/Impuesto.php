@@ -64,12 +64,12 @@ class Impuesto
      * @var float
      */
     public $recargo;
-    
+
     public function tableName()
     {
         return 'impuestos';
     }
-    
+
     public function primaryColumn()
     {
         return 'codimpuesto';

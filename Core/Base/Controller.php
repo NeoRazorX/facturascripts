@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Model as Models;
+use FacturaScripts\Core\Model;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,7 +42,7 @@ class Controller
      * @var DataBase
      */
     protected $dataBase;
-    
+
     /**
      * Nombre de la clase del controlador (aunque se herede de esta clase, el nombre
      * de la clase final lo tendremos aquí).
@@ -58,7 +58,7 @@ class Controller
 
     /**
      * Empresa seleccionada.
-     * @var Models\Empresa|false
+     * @var Model\Empresa|false
      */
     public $empresa;
 
@@ -100,7 +100,7 @@ class Controller
 
     /**
      * Usuario que ha iniciado sesión.
-     * @var Models\User|null
+     * @var Model\User|null
      */
     public $user;
 
@@ -119,14 +119,14 @@ class Controller
         $this->dispatcher = new EventDispatcher();
         $this->dataBase = new DataBase();
 
-        $empresa = new Models\Empresa();
+        $empresa = new Model\Empresa();
         $this->empresa = $empresa->getDefault();
 
         $this->i18n = $i18n;
         $this->miniLog = $miniLog;
         $this->request = Request::createFromGlobals();
         $this->template = $this->className . '.html';
-        
+
         $this->title = $this->className;
         $pageData = $this->getPageData();
         if ($pageData) {
@@ -142,7 +142,6 @@ class Controller
     {
         return $this->className;
     }
-
 
     /**
      * Devuelve el template HTML a utilizar para este controlador.
@@ -198,7 +197,7 @@ class Controller
     /**
      * Ejecuta la lógica privada del controlador.
      * @param Response $response
-     * @param Models\User|null $user
+     * @param Model\User|null $user
      */
     public function privateCore(&$response, $user)
     {

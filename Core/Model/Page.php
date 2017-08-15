@@ -71,12 +71,12 @@ class Page
      * @var string
      */
     public $icon;
-    
+
     public function tableName()
     {
         return 'fs_pages';
     }
-    
+
     public function primaryColumn()
     {
         return 'name';
