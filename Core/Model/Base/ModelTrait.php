@@ -83,6 +83,11 @@ trait ModelTrait
     protected $miniLog;
     
     /**
+     * Método que se implementa en los modelos para limpiar la cache del modelo
+     */
+    abstract private function cleanCache();
+
+    /**
      * Constructor por defecto.
      * @param array $data
      */

@@ -45,7 +45,7 @@ class VisualItem
      */
     public $titleURL;
     
-   /**
+    /**
      * Número de columnas que ocupa en su visualización
      * ([1, 2, 4, 6, 8, 10, 12])
      * @var int

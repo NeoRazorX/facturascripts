@@ -18,61 +18,40 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ViewController;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la lista de paises
+ * Controlador para la edición de un registro del modelo Cliente
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListPais extends ViewController\ListController
+class EditCliente extends ViewController\EditController
 {
-
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('codpais', 'Código');
-        $this->addOrderBy('nombre');
-        $this->addOrderBy('codiso');
         
-        $this->addFilterCheckbox('validarprov', 'Validar Proveedor');
+        // Establecemos el modelo de datos
+        $this->model = new Model\Cliente();
     }
-
+    
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-
-        // Load data with estructure data
-        $where = $this->getWhere();
-        $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Pais();
-        $this->count = $model->count($where);
-        if ($this->count > 0) {
-            $this->cursor = $model->all($where, $order);
-        }
     }
-
-    protected function getWhere()
+    
+    public function getPanelFooter()
     {
-        $result = parent::getWhere();
-
-        if ($this->query != '') {
-            $fields = "nombre|codiso|codpais";
-            $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
-        }
-        return $result;
+        return $this->i18n->trans('Fecha de alta: ') . $this->model->fechaalta;
     }
-
+    
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Países';
-        $pagedata['icon'] = 'fa-globe';
-        $pagedata['menu'] = 'admin';
+        $pagedata['title'] = 'Clientes';
+        $pagedata['icon'] = 'fa-users';
         return $pagedata;
-    }
+    }    
 }

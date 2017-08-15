@@ -18,28 +18,30 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ViewController;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la lista de paises
+ * Controlador para la lista de clientes
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListPais extends ViewController\ListController
+class ListCliente extends ViewController\ListController
 {
-
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('codpais', 'Código');
         $this->addOrderBy('nombre');
-        $this->addOrderBy('codiso');
+        $this->addOrderBy('fecha');
+        $this->addOrderBy('codcliente', 'Código');
+
+        $this->addFilterSelect('provincia', 'clientes', '', 'codprovincia');
+        $this->addFilterSelect('ciudad', 'clientes');
+        $this->addFilterSelect('grupo', 'clientes', '', 'codgrupo');  
         
-        $this->addFilterCheckbox('validarprov', 'Validar Proveedor');
+        $this->addFilterCheckbox('debaja', 'De baja');
     }
 
     public function privateCore(&$response, $user)
@@ -49,19 +51,19 @@ class ListPais extends ViewController\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Pais();
+        $model = new Model\Cliente();
         $this->count = $model->count($where);
         if ($this->count > 0) {
             $this->cursor = $model->all($where, $order);
         }
     }
-
+    
     protected function getWhere()
     {
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "nombre|codiso|codpais";
+            $fields = "nombre|nombrecomercial|codcliente";
             $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
@@ -70,9 +72,9 @@ class ListPais extends ViewController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Países';
-        $pagedata['icon'] = 'fa-globe';
-        $pagedata['menu'] = 'admin';
+        $pagedata['title'] = 'Clientes';
+        $pagedata['icon'] = 'fa-users';
+        $pagedata['menu'] = 'ventas';
         return $pagedata;
     }
 }

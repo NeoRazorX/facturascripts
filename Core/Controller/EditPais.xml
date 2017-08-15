@@ -28,12 +28,12 @@
             <column title="Código Alfa-3" display="left" numcolumns="6" order="100"
                     titleurl="https://es.wikipedia.org/wiki/ISO_3166-1"
                     description="Identificación oficial para los nombres de países y otras dependencias administrativas">
-                <widget type="text" fieldname="codpais" onclick="" required="true" />
+                <widget type="text" fieldname="codpais" onclick="" icon="fa-globe" required="true" />
             </column>
             <column title="Código Alfa-2" display="left" numcolumns="6" order="110"
                     titleurl="https://es.wikipedia.org/wiki/ISO_3166-1#C.C3.B3digos_ISO_3166-1"
                     description="Identificación oficial para los nombres de países y otras dependencias administrativas">
-                    <widget type="text" fieldname="codiso" icon="fa-truck" />
+                    <widget type="text" fieldname="codiso" icon="fa-globe" />
             </column>
         </group>
         <group numcolumns="6" title="Otros datos" icon="fa-area-chart">

@@ -252,9 +252,9 @@ class Cliente
     public function url()
     {
         if ($this->codcliente === null) {
-            return 'index.php?page=VentasClientes';
+            return 'index.php?page=ListCliente';
         }
-        return 'index.php?page=VentasCliente&cod=' . $this->codcliente;
+        return 'index.php?page=EditCliente&code=' . $this->codcliente;
     }
 
     /**

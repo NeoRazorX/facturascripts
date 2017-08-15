@@ -55,7 +55,7 @@ class WidgetItem
      * @var boolean
      */
     public $required;
-    
+
     /**
      * Icono que se usa como valor o acompañante del widget
      * @var string
@@ -69,10 +69,16 @@ class WidgetItem
     public $onClick;
 
     /**
-     * Opciones para configurar el widget
+     * Opciones visuales para configurar el widget
      * @var array
      */
     public $options;
+
+    /**
+     * Valores aceptados por el campo asociado al widget
+     * @var array
+     */
+    public $values;
 
     /**
      * Constructor de la clase. Si se informa un array se cargan los datos
@@ -88,8 +94,52 @@ class WidgetItem
         $this->icon = null;
         $this->onClick = '';
         $this->options = [];
+        $this->values = [];
     }
 
+    /**
+     * Carga la lista de valores según un array con codigo y descripción
+     *
+     * @param array $rows
+     */
+    public function setValuesFromCodeModel(&$rows)
+    {
+        $this->values = [];
+        foreach ($rows as $codeModel) {
+            $values = [];
+            $values['value'] = $codeModel->code;
+            $values['title'] = $codeModel->description;
+            $this->values[] = $values;
+            unset($values);
+        }
+    }
+
+    /**
+     * Carga el diccionario de atributos de un grupo de opciones o valores
+     * del widget
+     *
+     * @param array $property
+     * @param SimpleXMLElement $group
+     */
+    private function getAttributesGroup(&$property, $group)
+    {
+        $property = [];
+        foreach ($group as $item) {
+            $values = [];
+            foreach ($item->attributes() as $attributeKey => $attributeValue) {
+                $values[$attributeKey] = (string) $attributeValue;
+            }
+            $values['value'] = (string) $item;
+            $property[] = $values;
+            unset($values);
+        }
+    }
+
+    /**
+     * Carga la estructura de atributos en base a un archivo XML
+     *
+     * @param SimpleXMLElement $column
+     */
     public function loadFromXMLColumn($column)
     {
         $widget_atributes = $column->widget->attributes();
@@ -102,17 +152,15 @@ class WidgetItem
         $this->icon = (string) $widget_atributes->icon;
         $this->onClick = (string) $widget_atributes->onclick;
 
-        foreach ($column->widget->option as $option) {
-            $values = [];
-            foreach ($option->attributes() as $key => $value) {
-                $values[$key] = (string) $value;
-            }
-            $values['value'] = (string) $option;
-            $this->options[] = $values;
-            unset($values);
-        }
+        $this->getAttributesGroup($this->options, $column->widget->option);
+        $this->getAttributesGroup($this->values, $column->widget->values);
     }
 
+    /**
+     * Carga la estructura de atributos en base a la base de datos
+     *
+     * @param SimpleXMLElement $column
+     */
     public function loadFromJSONColumn($column)
     {
         $this->fieldName = (string) $column['widget']['fieldName'];
@@ -123,8 +171,15 @@ class WidgetItem
         $this->icon = (string) $column['widget']['icon'];
         $this->onClick = (string) $column['widget']['onClick'];
         $this->options = (array) $column['widget']['options'];
+        $this->values = (array) $column['widget']['values'];
     }
 
+    /**
+     * Genera el código CSS para el style del widget en base a los options
+     *
+     * @param string $valueItem
+     * @return string
+     */
     private function getTextOptionsHTML($valueItem)
     {
         $html = '';
@@ -144,6 +199,13 @@ class WidgetItem
         return $html;
     }
 
+    /**
+     * Genera el código html para la visualización de los datos en el
+     * controlador List
+     *
+     * @param string $value
+     * @return string
+     */
     public function getListHTML($value)
     {
         if (empty($value)) {
@@ -153,12 +215,11 @@ class WidgetItem
         switch ($this->type) {
             case 'text':
                 $style = $this->getTextOptionsHTML($value);
-                $html = (empty($this->onClick)) 
-                        ? '<span' . $style . '>' . $value . '</span>' 
-                        : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $value . '</a>';
+                $html = (empty($this->onClick)) ? '<span' . $style . '>' . $value . '</span>' : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $value . '</a>';
                 break;
 
             case 'check':
+            case 'checkbox':
                 $value = in_array($value, ['t', '1']);
                 $icon = $value ? 'glyphicon-ok' : 'glyphicon-minus';
                 $style = $this->getTextOptionsHTML($value);
@@ -175,43 +236,76 @@ class WidgetItem
 
         return $html;
     }
-    
+
+    /**
+     * General el código html para la visualización del icono en el lado
+     * izquierda de los datos
+     *
+     * @return string
+     */
     private function getIconHTML()
-    {        
+    {
         if (empty($this->icon)) {
             return '';
         }
-        
+
         $html = '<div class="input-group"><span class="input-group-addon">';
-        if (strpos($this->icon, 'glyphicon') === 0) {    
+        if (strpos($this->icon, 'glyphicon') === 0) {
             return $html . '<i class="glyphicon ' . $this->icon . '"></i></span>';
         }
-        
+
         if (strpos($this->icon, 'fa-') === 0) {
             return $html . '<i class="fa ' . $this->icon . '" aria-hidden="true"></i></span>';
         }
-                
-        return $html . '<i aria-hidden="true">' . $this->icon . '</i></span>';            
+
+        return $html . '<i aria-hidden="true">' . $this->icon . '</i></span>';
     }
-    
+
+    /**
+     * Genera el código html para clases especiales como:
+     * sólo lectura
+     * valor obligatorio
+     *
+     * @return string
+     */
     private function specialClass()
     {
         $readOnly = (empty($this->readOnly)) ? '' : ' readonly="readonly"';
         $required = (empty($this->required)) ? '' : ' required="required"';
-        
+
         return $readOnly . $required;
     }
-    
+
+    /**
+     * Genera el código html para la visualización y edición de los datos
+     * en el controlador Edit
+     *
+     * @param string $value
+     * @return string
+     */
     public function getEditHTML($value)
     {
         $specialClass = $this->specialClass();
         $fieldName = '"' . $this->fieldName . '"';
         $html = $this->getIconHTML();
-        
+
         switch ($this->type) {
             case 'checkbox-inline':
             case 'checkbox':
                 $html .= '<input id=' . $fieldName . ' type="checkbox" name=' . $fieldName . ' value="TRUE"' . $specialClass . '>';
+                break;
+
+            case 'textarea':
+                $html .= '<textarea id=' . $fieldName . ' class="form-control" name=' . $fieldName . ' rows="3"' . $specialClass . '>' . $value . $specialClass . '</textarea>';
+                break;
+
+            case 'select':
+                $html .= '<select id=' . $fieldName . ' class="form-control" name=' . $fieldName . $specialClass . '>';
+                foreach ($this->values as $selectValue) {
+                    $selected = ($selectValue['value'] == $value) ? ' selected="selected" ' : '';
+                    $html .= '<option value="' . $selectValue['value'] . '"' . $selected . '>' . $selectValue['title'] . '</option>';
+                }
+                $html .= '</select>';
                 break;
 
             default:
@@ -221,7 +315,7 @@ class WidgetItem
         if (!empty($this->icon)) {
             $html .= '</div>';
         }
-        
+
         return $html;
-    }    
+    }
 }
