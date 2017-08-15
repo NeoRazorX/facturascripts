@@ -130,11 +130,11 @@ class Balance
      */
     public function save()
     {
-        $this->descripcion1 = static::noHtml($this->descripcion1);
-        $this->descripcion2 = static::noHtml($this->descripcion2);
-        $this->descripcion3 = static::noHtml($this->descripcion3);
-        $this->descripcion4 = static::noHtml($this->descripcion4);
-        $this->descripcion4ba = static::noHtml($this->descripcion4ba);
+        $this->descripcion1 = self::noHtml($this->descripcion1);
+        $this->descripcion2 = self::noHtml($this->descripcion2);
+        $this->descripcion3 = self::noHtml($this->descripcion3);
+        $this->descripcion4 = self::noHtml($this->descripcion4);
+        $this->descripcion4ba = self::noHtml($this->descripcion4ba);
 
         return $this->saveTrait();
     }

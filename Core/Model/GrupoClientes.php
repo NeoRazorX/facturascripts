@@ -92,7 +92,7 @@ class GrupoClientes
 
     public function test()
     {
-        $this->nombre = static::noHtml($this->nombre);
+        $this->nombre = self::noHtml($this->nombre);
         return TRUE;
     }
 

@@ -84,29 +84,11 @@ class PedidoCliente
         $this->codalmacen = $this->default_items->codalmacen();
         $this->fecha = Date('d-m-Y');
         $this->hora = Date('H:i:s');
-        $this->tasaconv = 1;
+        $this->tasaconv = 1.0;
         $this->status = 0;
         $this->editable = TRUE;
         $this->fechasalida = NULL;
         $this->idoriginal = NULL;
-    }
-
-    public function url()
-    {
-        if (is_null($this->idpedido)) {
-            return 'index.php?page=ventas_pedidos';
-        }
-
-        return 'index.php?page=ventas_pedido&id=' . $this->idpedido;
-    }
-
-    public function albaran_url()
-    {
-        if (is_null($this->idalbaran)) {
-            return 'index.php?page=ventas_albaran';
-        }
-
-        return 'index.php?page=ventas_albaran&id=' . $this->idalbaran;
     }
 
     /**

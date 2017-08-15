@@ -749,9 +749,9 @@ class Articulo
     {
         $status = false;
 
-        $this->descripcion = static::noHtml($this->descripcion);
-        $this->codbarras = static::noHtml($this->codbarras);
-        $this->observaciones = static::noHtml($this->observaciones);
+        $this->descripcion = self::noHtml($this->descripcion);
+        $this->codbarras = self::noHtml($this->codbarras);
+        $this->observaciones = self::noHtml($this->observaciones);
 
         if ($this->equivalencia === '') {
             $this->equivalencia = null;
@@ -831,7 +831,7 @@ class Articulo
     public function search($query = '', $offset = 0, $codfamilia = '', $conStock = false, $codfabricante = '', $bloqueados = false)
     {
         $artilist = [];
-        $query = static::noHtml(mb_strtolower($query, 'UTF8'));
+        $query = self::noHtml(mb_strtolower($query, 'UTF8'));
 
         if ($query !== '' && $offset === 0 && $codfamilia === '' &&
             $codfabricante === '' && !$conStock && !$bloqueados) {

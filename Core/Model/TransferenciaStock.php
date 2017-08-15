@@ -89,15 +89,6 @@ class TransferenciaStock
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        return 'index.php?page=EditarTransferenciaStock&id=' . $this->idtrans;
-    }
-
-    /**
      * TODO
      * @return bool
      */

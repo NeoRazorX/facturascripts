@@ -118,21 +118,12 @@ class LineaAlbaranProveedor
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        return 'index.php?page=ComprasAlbaran&id=' . $this->idalbaran;
-    }
-
-    /**
      * TODO
      * @return bool
      */
     public function test()
     {
-        $this->descripcion = static::noHtml($this->descripcion);
+        $this->descripcion = self::noHtml($this->descripcion);
         $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
         $totalsindto = $this->pvpunitario * $this->cantidad;
 
@@ -168,7 +159,7 @@ class LineaAlbaranProveedor
     public function search($query = '', $offset = 0)
     {
         $linealist = [];
-        $query = mb_strtolower(static::noHtml($query), 'UTF8');
+        $query = mb_strtolower(self::noHtml($query), 'UTF8');
 
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE ';
         if (is_numeric($query)) {
@@ -201,7 +192,7 @@ class LineaAlbaranProveedor
     public function searchFromProveedor($codproveedor, $query = '', $offset = 0)
     {
         $linealist = [];
-        $query = mb_strtolower(static::noHtml($query), 'UTF8');
+        $query = mb_strtolower(self::noHtml($query), 'UTF8');
 
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idalbaran IN
          (SELECT idalbaran FROM albaranesprov WHERE codproveedor = ' . $this->var2str($codproveedor) . ') AND ';

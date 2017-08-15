@@ -143,18 +143,18 @@ class Agente
      */
     public function test()
     {
-        $this->apellidos = static::noHtml($this->apellidos);
-        $this->banco = static::noHtml($this->banco);
-        $this->cargo = static::noHtml($this->cargo);
-        $this->ciudad = static::noHtml($this->ciudad);
-        $this->codpostal = static::noHtml($this->codpostal);
-        $this->direccion = static::noHtml($this->direccion);
-        $this->dnicif = static::noHtml($this->dnicif);
-        $this->email = static::noHtml($this->email);
-        $this->nombre = static::noHtml($this->nombre);
-        $this->provincia = static::noHtml($this->provincia);
-        $this->seg_social = static::noHtml($this->seg_social);
-        $this->telefono = static::noHtml($this->telefono);
+        $this->apellidos = self::noHtml($this->apellidos);
+        $this->banco = self::noHtml($this->banco);
+        $this->cargo = self::noHtml($this->cargo);
+        $this->ciudad = self::noHtml($this->ciudad);
+        $this->codpostal = self::noHtml($this->codpostal);
+        $this->direccion = self::noHtml($this->direccion);
+        $this->dnicif = self::noHtml($this->dnicif);
+        $this->email = self::noHtml($this->email);
+        $this->nombre = self::noHtml($this->nombre);
+        $this->provincia = self::noHtml($this->provincia);
+        $this->seg_social = self::noHtml($this->seg_social);
+        $this->telefono = self::noHtml($this->telefono);
 
         if (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 50)) {
             $this->miniLog->alert($this->i18n->trans('agent-name-between-1-50'));

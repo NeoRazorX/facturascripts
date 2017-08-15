@@ -152,11 +152,6 @@ class LineaPresupuestoCliente
         return $nombre;
     }
 
-    public function url()
-    {
-        return 'index.php?page=ventas_presupuesto&id=' . $this->idpresupuesto;
-    }
-
     public function test()
     {
         $this->descripcion = $this->no_html($this->descripcion);

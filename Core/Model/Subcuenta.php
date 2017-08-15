@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Utils;
+
 /**
  * El cuarto nivel de un plan contable. Está relacionada con una única cuenta.
  *
@@ -27,6 +29,7 @@ class Subcuenta
 {
 
     use Base\ModelTrait;
+    use Utils;
 
     /**
      * Clave primaria.
@@ -129,20 +132,11 @@ class Subcuenta
         $this->coddivisa = $this->defaultItems->codDivisa();
         $this->codimpuesto = null;
         $this->descripcion = '';
-        $this->debe = 0;
-        $this->haber = 0;
-        $this->saldo = 0;
-        $this->recargo = 0;
-        $this->iva = 0;
-    }
-
-    /**
-     * Devuelve la descripción en base64.
-     * @return string
-     */
-    public function getDescripcion64()
-    {
-        return base64_encode($this->descripcion);
+        $this->debe = 0.0;
+        $this->haber = 0.0;
+        $this->saldo = 0.0;
+        $this->recargo = 0.0;
+        $this->iva = 0.0;
     }
 
     /**
@@ -152,25 +146,13 @@ class Subcuenta
     public function tasaconv()
     {
         if ($this->coddivisa !== null) {
-            $divisa = new Divisa();
-            $div0 = $divisa->get($this->coddivisa);
-            if ($div0) {
-                return $div0->tasaconv;
+            $divisaModel = new Divisa();
+            $div = $divisaModel->get($this->coddivisa);
+            if ($div) {
+                return $div->tasaconv;
             }
         }
-        return 1;
-    }
-
-    /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        if ($this->idsubcuenta === null) {
-            return 'index.php?page=ContabilidadCuentas';
-        }
-        return 'index.php?page=ContabilidadSubcuenta&id=' . $this->idsubcuenta;
+        return 1.0;
     }
 
     /**
@@ -330,7 +312,7 @@ class Subcuenta
      */
     public function test()
     {
-        $this->descripcion = static::noHtml($this->descripcion);
+        $this->descripcion = self::noHtml($this->descripcion);
 
         $limpiarCache = false;
         $totales = $this->getTotales();
@@ -362,55 +344,6 @@ class Subcuenta
     }
 
     /**
-     * TODO
-     */
-    public function cleanCache()
-    {
-        /*
-          if (file_exists('tmp/' . FS_TMP_NAME . 'libro_mayor/' . $this->idsubcuenta . '.pdf')) {
-          if (!@unlink('tmp/' . FS_TMP_NAME . 'libro_mayor/' . $this->idsubcuenta . '.pdf')) {
-          $this->miniLog->alert('Error al eliminar tmp/' . FS_TMP_NAME . 'libro_mayor/' . $this->idsubcuenta . '.pdf');
-          }
-          }
-
-          if (file_exists('tmp/' . FS_TMP_NAME . 'libro_diario/' . $this->codejercicio . '.pdf')) {
-          if (!@unlink('tmp/' . FS_TMP_NAME . 'libro_diario/' . $this->codejercicio . '.pdf')) {
-          $this->miniLog->alert('Error al eliminar tmp/' . FS_TMP_NAME . 'libro_diario/' . $this->codejercicio . '.pdf');
-          }
-          }
-
-          if (file_exists('tmp/' . FS_TMP_NAME . 'inventarios_balances/' . $this->codejercicio . '.pdf')) {
-          if (!@unlink('tmp/' . FS_TMP_NAME . 'inventarios_balances/' . $this->codejercicio . '.pdf')) {
-          $this->miniLog->alert('Error al eliminar tmp/' . FS_TMP_NAME . 'inventarios_balances/' . $this->codejercicio . '.pdf');
-          }
-          }
-         */
-    }
-
-    /**
-     * TODO
-     *
-     * @param int $idcuenta
-     *
-     * @return array
-     */
-    public function allFromCuenta($idcuenta)
-    {
-        $sublist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idcuenta = ' . $this->var2str($idcuenta)
-            . ' ORDER BY codsubcuenta ASC;';
-
-        $subcuentas = $this->dataBase->select($sql);
-        if (!empty($subcuentas)) {
-            foreach ($subcuentas as $s) {
-                $sublist[] = new Subcuenta($s);
-            }
-        }
-
-        return $sublist;
-    }
-
-    /**
      * Devuelve las subcuentas del ejercicio $codeje cuya cuenta madre
      * está marcada como cuenta especial $id.
      *
@@ -437,44 +370,6 @@ class Subcuenta
     }
 
     /**
-     * Devuelve las subcuentas de un ejercicio:
-     * - Todas si $random = false.
-     * - $limit si $random = true.
-     *
-     * @param string $codejercicio
-     * @param bool $random
-     * @param bool $limit
-     *
-     * @return array
-     */
-    public function allFromEjercicio($codejercicio, $random = false, $limit = false)
-    {
-        $sublist = [];
-
-        if ($random && $limit) {
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = '
-                . $this->var2str($codejercicio) . ' ORDER BY random()';
-            if (strtolower(FS_DB_TYPE) === 'mysql') {
-                $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = '
-                    . $this->var2str($codejercicio) . ' ORDER BY RAND()';
-            }
-            $subcuentas = $this->dataBase->selectLimit($sql, $limit);
-        } else {
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = '
-                . $this->var2str($codejercicio) . ' ORDER BY codsubcuenta ASC;';
-            $subcuentas = $this->dataBase->select($sql);
-        }
-
-        if (!empty($subcuentas)) {
-            foreach ($subcuentas as $s) {
-                $sublist[] = new Subcuenta($s);
-            }
-        }
-
-        return $sublist;
-    }
-
-    /**
      * TODO
      *
      * @param string $query
@@ -484,7 +379,7 @@ class Subcuenta
     public function search($query)
     {
         $sublist = [];
-        $query = mb_strtolower(static::noHtml($query), 'UTF8');
+        $query = mb_strtolower(self::noHtml($query), 'UTF8');
         $sql = 'SELECT * FROM ' . $this->tableName() . " WHERE codsubcuenta LIKE '" . $query . "%'"
             . " OR codsubcuenta LIKE '%" . $query . "'"
             . " OR lower(descripcion) LIKE '%" . $query . "%'"
@@ -530,45 +425,5 @@ class Subcuenta
         }
 
         return $sublist;
-    }
-
-    /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
-     * @return string
-     */
-    public function install()
-    {
-        $this->cleanCache();
-        /*
-
-          /// eliminamos todos los PDFs relacionados
-          if (file_exists('tmp/' . FS_TMP_NAME . 'libro_mayor')) {
-          foreach (glob('tmp/' . FS_TMP_NAME . 'libro_mayor/*') as $file) {
-          if (is_file($file)) {
-          unlink($file);
-          }
-          }
-          }
-          if (file_exists('tmp/' . FS_TMP_NAME . 'libro_diario')) {
-          foreach (glob('tmp/' . FS_TMP_NAME . 'libro_diario/*') as $file) {
-          if (is_file($file)) {
-          unlink($file);
-          }
-          }
-          }
-          if (file_exists('tmp/' . FS_TMP_NAME . 'inventarios_balances')) {
-          foreach (glob('tmp/' . FS_TMP_NAME . 'inventarios_balances/*') as $file) {
-          if (is_file($file)) {
-          unlink($file);
-          }
-          }
-          }
-
-          /// forzamos la creación de la tabla de cuentas
-          $cuenta = new Cuenta();
-         */
-        return '';
     }
 }

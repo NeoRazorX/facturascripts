@@ -116,28 +116,6 @@ class LineaTransferenciaStock
     /**
      * TODO
      *
-     * @param int $idtra
-     *
-     * @return array
-     */
-    public function allFromTransferencia($idtra)
-    {
-        $list = [];
-
-        $sql = 'SELECT * FROM lineastransstock WHERE idtrans = ' . $this->var2str($idtra) . ' ORDER BY referencia ASC;';
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $lin) {
-                $list[] = new LineaTransferenciaStock($lin);
-            }
-        }
-
-        return $list;
-    }
-
-    /**
-     * TODO
-     *
      * @param string $ref
      * @param string $codalmaorigen
      * @param string $codalmadestino

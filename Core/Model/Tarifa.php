@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\Utils;
+
 /**
  * Una tarifa para los artículos.
  *
@@ -27,6 +29,7 @@ class Tarifa
 {
 
     use Base\ModelTrait;
+    use Utils;
 
     /**
      * Clave primaria.
@@ -92,15 +95,6 @@ class Tarifa
         $this->aplicar_a = 'pvp';
         $this->mincoste = true;
         $this->maxpvp = true;
-    }
-
-    /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        return 'index.php?page=VentasArticulos#tarifas';
     }
 
     /**
@@ -256,7 +250,7 @@ class Tarifa
         $status = false;
 
         $this->codtarifa = trim($this->codtarifa);
-        $this->nombre = static::noHtml($this->nombre);
+        $this->nombre = self::noHtml($this->nombre);
 
         if (empty($this->codtarifa) || strlen($this->codtarifa) > 6) {
             $this->miniLog->alert('Código de tarifa no válido. Debe tener entre 1 y 6 caracteres.');

@@ -242,7 +242,7 @@ class Ejercicio
         $status = false;
 
         $this->codejercicio = trim($this->codejercicio);
-        $this->nombre = static::noHtml($this->nombre);
+        $this->nombre = self::noHtml($this->nombre);
 
         if (!preg_match('/^[A-Z0-9_]{1,4}$/i', $this->codejercicio)) {
             $this->miniLog->alert($this->i18n->trans('fiscal-year-code-invalid'));

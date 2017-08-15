@@ -74,7 +74,7 @@ class Pais
     public function test()
     {
         $this->codpais = trim($this->codpais);
-        $this->nombre = static::noHtml($this->nombre);
+        $this->nombre = self::noHtml($this->nombre);
 
         if (!preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {
             $this->miniLog->alert($this->i18n->trans('country-cod-invalid', [$this->codpais]));

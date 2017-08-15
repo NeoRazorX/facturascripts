@@ -93,7 +93,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         foreach ($columns as $data) {
             $columnItem = new ColumnItem();
             $columnItem->loadFromJSON($data);
-            $columnItem->widget->loadFromJSON($data);
+            $columnItem->widget->loadFromJSONColumn($data);
             $result[] = $columnItem;
         }
         return $result;

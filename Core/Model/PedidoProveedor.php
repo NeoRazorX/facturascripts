@@ -74,44 +74,8 @@ class PedidoProveedor
         $this->codalmacen = $this->default_items->codalmacen();
         $this->fecha = Date('d-m-Y');
         $this->hora = Date('H:i:s');
-        $this->tasaconv = 1;
+        $this->tasaconv = 1.0;
         $this->editable = TRUE;
-    }
-
-    public function url()
-    {
-        if (is_null($this->idpedido)) {
-            return 'index.php?page=compras_pedidos';
-        }
-
-        return 'index.php?page=compras_pedido&id=' . $this->idpedido;
-    }
-
-    public function albaran_url()
-    {
-        if (is_null($this->idalbaran)) {
-            return 'index.php?page=compras_albaranes';
-        }
-
-        return 'index.php?page=compras_albaran&id=' . $this->idalbaran;
-    }
-
-    public function agente_url()
-    {
-        if (is_null($this->codagente)) {
-            return "index.php?page=admin_agentes";
-        }
-
-        return "index.php?page=admin_agente&cod=" . $this->codagente;
-    }
-
-    public function proveedor_url()
-    {
-        if (is_null($this->codproveedor)) {
-            return "index.php?page=compras_proveedores";
-        }
-
-        return "index.php?page=compras_proveedor&cod=" . $this->codproveedor;
     }
 
     public function getLineas()

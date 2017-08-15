@@ -199,22 +199,22 @@ class Empresa
      */
     public function test()
     {
-        $this->nombre = static::noHtml($this->nombre);
-        $this->nombrecorto = static::noHtml($this->nombrecorto);
-        $this->administrador = static::noHtml($this->administrador);
-        $this->apartado = static::noHtml($this->apartado);
-        $this->cifnif = static::noHtml($this->cifnif);
-        $this->ciudad = static::noHtml($this->ciudad);
-        $this->codpostal = static::noHtml($this->codpostal);
-        $this->direccion = static::noHtml($this->direccion);
-        $this->email = static::noHtml($this->email);
-        $this->fax = static::noHtml($this->fax);
-        $this->horario = static::noHtml($this->horario);
-        $this->lema = static::noHtml($this->lema);
-        $this->pie_factura = static::noHtml($this->pie_factura);
-        $this->provincia = static::noHtml($this->provincia);
-        $this->telefono = static::noHtml($this->telefono);
-        $this->web = static::noHtml($this->web);
+        $this->nombre = self::noHtml($this->nombre);
+        $this->nombrecorto = self::noHtml($this->nombrecorto);
+        $this->administrador = self::noHtml($this->administrador);
+        $this->apartado = self::noHtml($this->apartado);
+        $this->cifnif = self::noHtml($this->cifnif);
+        $this->ciudad = self::noHtml($this->ciudad);
+        $this->codpostal = self::noHtml($this->codpostal);
+        $this->direccion = self::noHtml($this->direccion);
+        $this->email = self::noHtml($this->email);
+        $this->fax = self::noHtml($this->fax);
+        $this->horario = self::noHtml($this->horario);
+        $this->lema = self::noHtml($this->lema);
+        $this->pie_factura = self::noHtml($this->pie_factura);
+        $this->provincia = self::noHtml($this->provincia);
+        $this->telefono = self::noHtml($this->telefono);
+        $this->web = self::noHtml($this->web);
 
         $lenName = strlen($this->nombre);
         if (($lenName == 0) || ($lenName > 99)) {

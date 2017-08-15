@@ -32,7 +32,7 @@ class EditController extends Base\Controller
 
     /**
      * Modelo con los datos a mostrar
-     * @var class
+     * @var mixed
      */
     public $model;
 

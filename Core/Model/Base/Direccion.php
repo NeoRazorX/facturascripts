@@ -16,65 +16,75 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Model;
+namespace FacturaScripts\Core\Model\Base;
+
+use FacturaScripts\Core\Base;
 
 /**
- * Relaciona a un proveedor con una subcuenta para cada ejercicio
+ * Description of Direccion
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez
  */
-class SubcuentaProveedor
+trait Direccion
 {
 
-    use Base\ModelTrait;
+    use Base\Utils;
 
     /**
-     * Clave primaria
-     * @var int
-     */
-    public $id;
-
-    /**
-     * ID de la subcuenta
-     * @var int
-     */
-    public $idsubcuenta;
-
-    /**
-     * Código del proveedor
+     *
      * @var string
      */
-    public $codproveedor;
+    public $codpais;
 
     /**
-     * TODO
+     *
      * @var string
      */
-    public $codsubcuenta;
+    public $apartado;
 
     /**
-     * TODO
+     *
      * @var string
      */
-    public $codejercicio;
-
-    public function tableName()
-    {
-        return 'co_subcuentasprov';
-    }
-
-    public function primaryColumn()
-    {
-        return 'id';
-    }
+    public $provincia;
 
     /**
-     * TODO
-     * @return bool|mixed
+     *
+     * @var string
      */
-    public function getSubcuenta()
+    public $ciudad;
+
+    /**
+     *
+     * @var string
+     */
+    public $codpostal;
+
+    /**
+     *
+     * @var string
+     */
+    public $direccion;
+
+    /**
+     *
+     * @var string
+     */
+    public $descripcion;
+
+    /**
+     * Fecha de la última modificación.
+     * @var string
+     */
+    public $fecha;
+
+    public function test()
     {
-        $subc = new Subcuenta();
-        return $subc->get($this->idsubcuenta);
+        $this->apartado = self::noHtml($this->apartado);
+        $this->ciudad = self::noHtml($this->ciudad);
+        $this->codpostal = self::noHtml($this->codpostal);
+        $this->descripcion = self::noHtml($this->descripcion);
+        $this->direccion = self::noHtml($this->direccion);
+        $this->provincia = self::noHtml($this->provincia);
     }
 }

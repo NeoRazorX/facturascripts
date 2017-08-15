@@ -276,7 +276,7 @@ class ArticuloCombinacion
     public function search($query = '')
     {
         $artilist = [];
-        $query = static::noHtml(mb_strtolower($query, 'UTF8'));
+        $query = self::noHtml(mb_strtolower($query, 'UTF8'));
 
         $sql = 'SELECT * FROM ' . $this->tableName() . " WHERE referencia LIKE '" . $query . "%'"
             . ' OR codbarras = ' . $this->var2str($query);

@@ -56,7 +56,7 @@ class ConceptoPartida
      */
     public function test()
     {
-        $this->concepto = static::noHtml($this->concepto);
+        $this->concepto = self::noHtml($this->concepto);
         return true;
     }
 

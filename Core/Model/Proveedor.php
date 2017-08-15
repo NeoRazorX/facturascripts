@@ -27,6 +27,7 @@ class Proveedor
 {
 
     use Base\ModelTrait;
+    use Base\Persona;
 
     /**
      * TODO
@@ -41,89 +42,9 @@ class Proveedor
     public $codproveedor;
 
     /**
-     * Nombre por el que se conoce al proveedor, puede ser el nombre oficial o no.
-     * @var string
-     */
-    public $nombre;
-
-    /**
-     * Razón social del proveedor, es decir, el nombre oficial, el que se usa en
-     * las facturas.
-     * @var string
-     */
-    public $razonsocial;
-
-    /**
-     * Tipo de identificador fiscal del proveedor.
-     * Ejemplo: NIF, CIF, CUIT...
-     * @var string
-     */
-    public $tipoidfiscal;
-
-    /**
-     * Identificador fiscal del proveedor.
-     * @var string
-     */
-    public $cifnif;
-
-    /**
-     * TODO
-     * @var string
-     */
-    public $telefono1;
-
-    /**
-     * TODO
-     * @var string
-     */
-    public $telefono2;
-
-    /**
-     * TODO
-     * @var string
-     */
-    public $fax;
-
-    /**
-     * TODO
-     * @var string
-     */
-    public $email;
-
-    /**
-     * TODO
-     * @var string
-     */
-    public $web;
-
-    /**
-     * Serie predeterminada para este proveedor.
-     * @var string
-     */
-    public $codserie;
-
-    /**
-     * Divisa predeterminada para este proveedor.
-     * @var string
-     */
-    public $coddivisa;
-
-    /**
-     * Forma de pago predeterminada para este proveedor.
-     * @var string
-     */
-    public $codpago;
-
-    /**
-     * TODO
-     * @var string
-     */
-    public $observaciones;
-
-    /**
      * Régimen de fiscalidad del proveedor. Por ahora solo están implementados
      * general y exento.
-     * @var
+     * @var string
      */
     public $regimeniva;
 
@@ -133,13 +54,6 @@ class Proveedor
      * @var bool
      */
     public $acreedor;
-
-    /**
-     * TRUE  -> el cliente es una persona física.
-     * FALSE -> el cliente es una persona jurídica (empresa).
-     * @var bool
-     */
-    public $personafisica;
 
     /**
      * TRUE -> ya no queremos nada con el proveedor.
@@ -241,43 +155,6 @@ class Proveedor
     }
 
     /**
-     * Acorta el texto de observaciones
-     * @return string
-     */
-    public function observacionesResume()
-    {
-        if ($this->observaciones === '') {
-            return '-';
-        }
-        if (strlen($this->observaciones) < 60) {
-            return $this->observaciones;
-        }
-        return substr($this->observaciones, 0, 50) . '...';
-    }
-
-    /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        if ($this->codproveedor === null) {
-            return 'index.php?page=ComprasProveedores';
-        }
-        return 'index.php?page=ComprasProveedor&cod=' . $this->codproveedor;
-    }
-
-    /**
-     * TODO
-     * @deprecated since version 50
-     * @return bool
-     */
-    public function isDefault()
-    {
-        return false;
-    }
-
-    /**
      * Devuelve el primer proveedor que tenga ese cifnif.
      * Si el cifnif está en blanco y se proporciona una razón social, se devuelve
      * el primer proveedor con esa razón social.
@@ -290,7 +167,7 @@ class Proveedor
     public function getByCifnif($cifnif, $razon = '')
     {
         if ($cifnif === '' && $razon !== '') {
-            $razon = mb_strtolower(static::noHtml($razon), 'UTF8');
+            $razon = mb_strtolower(self::noHtml($razon), 'UTF8');
             $sql = 'SELECT * FROM ' . $this->tableName() . " WHERE cifnif = ''"
                 . ' AND lower(razonsocial) = ' . $this->var2str($razon) . ';';
         } else {
@@ -460,10 +337,10 @@ class Proveedor
             $this->codproveedor = trim($this->codproveedor);
         }
 
-        $this->nombre = static::noHtml($this->nombre);
-        $this->razonsocial = static::noHtml($this->razonsocial);
-        $this->cifnif = static::noHtml($this->cifnif);
-        $this->observaciones = static::noHtml($this->observaciones);
+        $this->nombre = self::noHtml($this->nombre);
+        $this->razonsocial = self::noHtml($this->razonsocial);
+        $this->cifnif = self::noHtml($this->cifnif);
+        $this->observaciones = self::noHtml($this->observaciones);
 
         if (!preg_match('/^[A-Z0-9]{1,6}$/i', $this->codproveedor)) {
             $this->miniLog->alert('Código de proveedor no válido.');
@@ -481,57 +358,6 @@ class Proveedor
     /**
      * TODO
      *
-     * @param int $offset
-     * @param bool $soloAcreedores
-     *
-     * @return array
-     */
-    public function all($offset = 0, $soloAcreedores = false)
-    {
-        $provelist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' ORDER BY lower(nombre) ASC';
-        if ($soloAcreedores) {
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE acreedor ORDER BY lower(nombre) ASC';
-        }
-
-        $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-        if (!empty($data)) {
-            foreach ($data as $p) {
-                $provelist[] = new Proveedor($p);
-            }
-        }
-
-        return $provelist;
-    }
-
-    /**
-     * Devuelve un array con la lista completa de proveedores.
-     * @return Proveedor
-     */
-    public function allFull()
-    {
-        /// leemos la lista de la caché
-        $provelist = $this->cache->get('m_proveedor_all');
-        if (!$provelist) {
-            /// si no la encontramos en la caché, leemos de la base de datos
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' ORDER BY lower(nombre) ASC;';
-            $data = $this->dataBase->select($sql);
-            if (!empty($data)) {
-                foreach ($data as $d) {
-                    $provelist[] = new Proveedor($d);
-                }
-            }
-
-            /// guardamos la lista en la caché
-            $this->cache->set('m_proveedor_all', $provelist);
-        }
-
-        return $provelist;
-    }
-
-    /**
-     * TODO
-     *
      * @param string $query
      * @param int $offset
      *
@@ -540,7 +366,7 @@ class Proveedor
     public function search($query, $offset = 0)
     {
         $prolist = [];
-        $query = mb_strtolower(static::noHtml($query), 'UTF8');
+        $query = mb_strtolower(self::noHtml($query), 'UTF8');
 
         $consulta = 'SELECT * FROM ' . $this->tableName() . ' WHERE ';
         if (is_numeric($query)) {
@@ -564,31 +390,5 @@ class Proveedor
         }
 
         return $prolist;
-    }
-
-    /**
-     * Aplicamos algunas correcciones a la tabla.
-     */
-    public function fixDb()
-    {
-        $fixes = [
-            /// ponemos debaja a false en los casos que sea null
-            'UPDATE ' . $this->tableName() . ' SET debaja = false WHERE debaja IS NULL;',
-            /// desvinculamos de clientes que no existan
-            'UPDATE ' . $this->tableName() . ' SET codcliente = null WHERE codcliente IS NOT NULL'
-            . ' AND codcliente NOT IN (SELECT codcliente FROM clientes);'
-        ];
-
-        foreach ($fixes as $sql) {
-            $this->dataBase->exec($sql);
-        }
-    }
-
-    /**
-     * TODO
-     */
-    private function cleanCache()
-    {
-        $this->cache->delete('m_proveedor_all');
     }
 }

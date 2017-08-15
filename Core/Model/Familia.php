@@ -121,8 +121,8 @@ class Familia
     {
         $status = false;
 
-        $this->codfamilia = static::noHtml($this->codfamilia);
-        $this->descripcion = static::noHtml($this->descripcion);
+        $this->codfamilia = self::noHtml($this->codfamilia);
+        $this->descripcion = self::noHtml($this->descripcion);
 
         if (empty($this->codfamilia) || strlen($this->codfamilia) > 8) {
             $this->miniLog->alert('Código de familia no válido. Deben ser entre 1 y 8 caracteres.');
@@ -241,7 +241,7 @@ class Familia
     public function search($query)
     {
         $famlist = [];
-        $query = static::noHtml(mb_strtolower($query, 'UTF8'));
+        $query = self::noHtml(mb_strtolower($query, 'UTF8'));
 
         $sql = 'SELECT * FROM ' . $this->tableName()
             . " WHERE lower(descripcion) LIKE '%" . $query . "%' ORDER BY descripcion ASC;";

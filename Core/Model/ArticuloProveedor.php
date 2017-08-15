@@ -273,7 +273,7 @@ class ArticuloProveedor
      */
     public function save()
     {
-        $this->descripcion = static::noHtml($this->descripcion);
+        $this->descripcion = self::noHtml($this->descripcion);
 
         if ($this->nostock) {
             $this->stock = 0;

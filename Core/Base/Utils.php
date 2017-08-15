@@ -120,4 +120,61 @@ trait Utils
     {
         return mb_substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, $length);
     }
+
+    /**
+     * Esta función convierte:
+     * < en &lt;
+     * > en &gt;
+     * " en &quot;
+     * ' en &#39;
+     *
+     * No tengas la tentación de sustiturla por htmlentities o htmlspecialshars
+     * porque te encontrarás con muchas sorpresas desagradables.
+     *
+     * @param string $txt
+     *
+     * @return string
+     */
+    public static function noHtml($txt)
+    {
+        $newt = str_replace(
+            ['<', '>', '"', "'"], ['&lt;', '&gt;', '&quot;', '&#39;'], $txt
+        );
+
+        return trim($newt);
+    }
+
+    /**
+     * PostgreSQL guarda los valores TRUE como 't', MySQL como 1.
+     * Esta función devuelve TRUE si el valor se corresponde con
+     * alguno de los anteriores.
+     *
+     * @param $val
+     *
+     * @return bool
+     */
+    public function str2bool($val)
+    {
+        return ($val === 't' || $val === '1');
+    }
+
+    /**
+     * TODO
+     * @param boolean $val
+     *
+     * @return string
+     */
+    public function bool2str($val)
+    {
+        switch ($val) {
+            case true:
+                return 't';
+            case false:
+                return 'f';
+            case 1:
+                return '1';
+            case 0:
+                return '0';
+        }
+    }
 }
