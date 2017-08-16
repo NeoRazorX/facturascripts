@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * Factura de un proveedor.
@@ -29,51 +30,11 @@ class FacturaProveedor
 {
 
     use Base\DocumentoCompra;
+    use Base\Factura;
     use Base\ModelTrait {
         clear as clearTrait;
     }
-
-    /**
-     * Clave primaria.
-     * @var int
-     */
-    public $idfactura;
-
-    /**
-     * ID de la factura a la que rectifica.
-     * @var int
-     */
-    public $idfacturarect;
-
-    /**
-     * ID del asiento relacionado, si lo hay.
-     * @var int
-     */
-    public $idasiento;
-
-    /**
-     * ID del asiento de pago relacionado, si lo hay.
-     * @var int
-     */
-    public $idasientop;
-
-    /**
-     * Código de la factura a la que rectifica.
-     * @var string
-     */
-    public $codigorect;
-
-    /**
-     * TRUE => pagada
-     * @var bool
-     */
-    public $pagada;
-
-    /**
-     * TRUE => anulada
-     * @var bool
-     */
-    public $anulada;
+    use Utils;
 
     public function tableName()
     {
@@ -97,7 +58,7 @@ class FacturaProveedor
         $this->codserie = $this->defaultItems->codSerie();
         $this->fecha = date('d-m-Y');
         $this->hora = date('H:i:s');
-        $this->tasaconv = 1;
+        $this->tasaconv = 1.0;
     }
 
     /**
@@ -166,42 +127,6 @@ class FacturaProveedor
         }
 
         return $cambio;
-    }
-
-    /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        if ($this->idfactura === null) {
-            return 'index.php?page=ComprasFacturas';
-        }
-        return 'index.php?page=ComprasFactura&id=' . $this->idfactura;
-    }
-
-    /**
-     * Devuelve la url donde ver/modificar estos datos del asiento
-     * @return string
-     */
-    public function asientoUrl()
-    {
-        if ($this->idasiento === null) {
-            return 'index.php?page=ContabilidadAsientos';
-        }
-        return 'index.php?page=ContabilidadAsiento&id=' . $this->idasiento;
-    }
-
-    /**
-     * Devuelve la url donde ver/modificar estos datos del asiento de pago
-     * @return string
-     */
-    public function asientoPagoUrl()
-    {
-        if ($this->idasientop === null) {
-            return 'index.php?page=ContabilidadAsientos';
-        }
-        return 'index.php?page=ContabilidadAsiento&id=' . $this->idasientop;
     }
 
     /**
@@ -372,63 +297,6 @@ class FacturaProveedor
     }
 
     /**
-     * Devuelve el asiento asociado a la factura
-     * @return bool|mixed
-     */
-    public function getAsiento()
-    {
-        $asiento = new Asiento();
-        return $asiento->get($this->idasiento);
-    }
-
-    /**
-     * Devuelve el asiento de pago asociado a la factura
-     * @return bool|mixed
-     */
-    public function getAsientoPago()
-    {
-        $asiento = new Asiento();
-        return $asiento->get($this->idasientop);
-    }
-
-    /**
-     * Devuelve un array con todas las facturas rectificativas de esta factura.
-     * @return array
-     */
-    public function getRectificativas()
-    {
-        $devoluciones = [];
-
-        $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE idfacturarect = ' . $this->var2str($this->idfactura) . ';';
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $devoluciones[] = new FacturaProveedor($d);
-            }
-        }
-
-        return $devoluciones;
-    }
-
-    /**
-     * Devuelve una factura por su código
-     *
-     * @param string $cod
-     *
-     * @return bool|FacturaProveedor
-     */
-    public function getByCodigo($cod)
-    {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codigo = ' . $this->var2str($cod) . ';';
-        $fact = $this->dataBase->select($sql);
-        if (!empty($fact)) {
-            return new FacturaProveedor($fact[0]);
-        }
-        return false;
-    }
-
-    /**
      * Genera el número y código de la factura.
      */
     public function newCodigo()
@@ -484,13 +352,13 @@ class FacturaProveedor
      */
     public function test()
     {
-        $this->nombre = static::noHtml($this->nombre);
+        $this->nombre = self::noHtml($this->nombre);
         if ($this->nombre === '') {
             $this->nombre = '-';
         }
 
-        $this->numproveedor = static::noHtml($this->numproveedor);
-        $this->observaciones = static::noHtml($this->observaciones);
+        $this->numproveedor = self::noHtml($this->numproveedor);
+        $this->observaciones = self::noHtml($this->observaciones);
 
         /**
          * Usamos el euro como divisa puente a la hora de sumar, comparar
@@ -732,7 +600,7 @@ class FacturaProveedor
     public function search($query, $offset = 0)
     {
         $faclist = [];
-        $query = mb_strtolower(static::noHtml($query), 'UTF8');
+        $query = mb_strtolower(self::noHtml($query), 'UTF8');
 
         $consulta = 'SELECT * FROM ' . $this->tableName() . ' WHERE ';
         if (is_numeric($query)) {
@@ -752,27 +620,5 @@ class FacturaProveedor
         }
 
         return $faclist;
-    }
-
-    /**
-     * TODO
-     */
-    public function cronJob()
-    {
-        
-    }
-
-    /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
-     * @return string
-     */
-    public function install()
-    {
-        // new Serie();
-        // new Asiento();
-
-        return '';
     }
 }

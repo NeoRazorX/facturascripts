@@ -176,7 +176,7 @@ class LineaAlbaranCliente
      */
     public function test()
     {
-        $this->descripcion = static::noHtml($this->descripcion);
+        $this->descripcion = self::noHtml($this->descripcion);
         $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
         $totalsindto = $this->pvpunitario * $this->cantidad;
 
@@ -260,7 +260,7 @@ class LineaAlbaranCliente
     public function search($query = '', $offset = 0)
     {
         $linealist = [];
-        $query = mb_strtolower(static::noHtml($query), 'UTF8');
+        $query = mb_strtolower(self::noHtml($query), 'UTF8');
 
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE ';
         if (is_numeric($query)) {
@@ -293,7 +293,7 @@ class LineaAlbaranCliente
     public function searchFromCliente($codcliente, $query = '', $offset = 0)
     {
         $linealist = [];
-        $query = mb_strtolower(static::noHtml($query), 'UTF8');
+        $query = mb_strtolower(self::noHtml($query), 'UTF8');
 
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idalbaran IN
          (SELECT idalbaran FROM albaranescli WHERE codcliente = ' . $this->var2str($codcliente) . ') AND ';
@@ -328,8 +328,8 @@ class LineaAlbaranCliente
     public function searchFromCliente2($codcliente, $ref = '', $obs = '', $offset = 0)
     {
         $linealist = [];
-        $ref = mb_strtolower(static::noHtml($ref), 'UTF8');
-        $obs = mb_strtolower(static::noHtml($obs), 'UTF8');
+        $ref = mb_strtolower(self::noHtml($ref), 'UTF8');
+        $obs = mb_strtolower(self::noHtml($obs), 'UTF8');
 
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE idalbaran IN (SELECT idalbaran FROM albaranescli WHERE codcliente = '

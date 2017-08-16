@@ -62,14 +62,14 @@ class MenuManager
             self::$pageModel = new Model\Page();
         }
 
-        if (self::$user !== null) {
+        if (self::$user !== false) {
             self::$menu = $this->loadUserMenu();
         }
     }
 
     /**
      * Asigna el usuario para cargar su menú.
-     * @param Model\User|null $user
+     * @param Model\User|false $user
      */
     public function setUser($user)
     {

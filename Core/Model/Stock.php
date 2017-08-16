@@ -26,9 +26,7 @@ namespace FacturaScripts\Core\Model;
 class Stock
 {
 
-    use Base\ModelTrait {
-        save as private saveTrait;
-    }
+    use Base\ModelTrait;
 
     /**
      * Clave primaria.
@@ -202,40 +200,13 @@ class Stock
         return false;
     }
 
-    /**
-     * Almacena los datos del modelo en la base de datos.
-     * @return bool
-     */
-    public function save()
+    public function test()
     {
         $this->cantidad = round($this->cantidad, 3);
         $this->reservada = round($this->reservada, 3);
         $this->disponible = $this->cantidad - $this->reservada;
 
-        return $this->saveTrait();
-    }
-
-    /**
-     * TODO
-     *
-     * @param string $ref
-     *
-     * @return array
-     */
-    public function allFromArticulo($ref)
-    {
-        $stocklist = [];
-
-        $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE referencia = ' . $this->var2str($ref) . ' ORDER BY codalmacen ASC;';
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $s) {
-                $stocklist[] = new Stock($s);
-            }
-        }
-
-        return $stocklist;
+        return true;
     }
 
     /**
@@ -291,37 +262,5 @@ class Stock
     public function countByArticulo()
     {
         return $this->count('DISTINCT referencia');
-    }
-
-    /**
-     * Aplicamos algunas correcciones a la tabla.
-     */
-    public function fixDb()
-    {
-        /**
-         * Esta consulta produce un error si no hay datos erroneos, pero da igual
-         */
-        $sql = 'DELETE FROM stocks s WHERE NOT EXISTS '
-            . '(SELECT referencia FROM articulos a WHERE a.referencia = s.referencia);';
-        $this->dataBase->exec($sql);
-    }
-
-    /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
-     * @return string
-     */
-    public function install()
-    {
-        /**
-         * La tabla stocks tiene claves ajenas a artículos y almacenes,
-         * por eso creamos un objeto de cada uno, para forzar la comprobación
-         * de las tablas.
-         */
-        //new Almacen();
-        //new Articulo();
-
-        return '';
     }
 }

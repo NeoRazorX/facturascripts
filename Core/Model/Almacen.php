@@ -82,14 +82,14 @@ class Almacen
         $status = false;
 
         $this->codalmacen = trim($this->codalmacen);
-        $this->nombre = static::noHtml($this->nombre);
-        $this->provincia = static::noHtml($this->provincia);
-        $this->poblacion = static::noHtml($this->poblacion);
-        $this->direccion = static::noHtml($this->direccion);
-        $this->codpostal = static::noHtml($this->codpostal);
-        $this->telefono = static::noHtml($this->telefono);
-        $this->fax = static::noHtml($this->fax);
-        $this->contacto = static::noHtml($this->contacto);
+        $this->nombre = self::noHtml($this->nombre);
+        $this->provincia = self::noHtml($this->provincia);
+        $this->poblacion = self::noHtml($this->poblacion);
+        $this->direccion = self::noHtml($this->direccion);
+        $this->codpostal = self::noHtml($this->codpostal);
+        $this->telefono = self::noHtml($this->telefono);
+        $this->fax = self::noHtml($this->fax);
+        $this->contacto = self::noHtml($this->contacto);
 
         if (!preg_match('/^[A-Z0-9]{1,4}$/i', $this->codalmacen)) {
             $this->miniLog->alert($this->i18n->trans('store-cod-invalid'));

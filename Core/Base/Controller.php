@@ -129,7 +129,7 @@ class Controller
 
         $this->title = $this->className;
         $pageData = $this->getPageData();
-        if ($pageData) {
+        if (!empty($pageData)) {
             $this->title = $pageData['title'];
         }
     }

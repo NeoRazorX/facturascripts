@@ -113,11 +113,6 @@ class LineaPedidoProveedor
         return $nombre;
     }
 
-    public function url()
-    {
-        return 'index.php?page=compras_pedido&id=' . $this->idpedido;
-    }
-
     public function test()
     {
         $this->descripcion = $this->no_html($this->descripcion);

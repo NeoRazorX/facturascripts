@@ -160,7 +160,7 @@ class Cuenta
      */
     public function test()
     {
-        $this->descripcion = static::noHtml($this->descripcion);
+        $this->descripcion = self::noHtml($this->descripcion);
 
         if (strlen($this->codcuenta) > 0 && strlen($this->descripcion) > 0) {
             return true;
@@ -274,7 +274,7 @@ class Cuenta
     public function search($query, $offset = 0)
     {
         $cuenlist = [];
-        $query = mb_strtolower(static::noHtml($query), 'UTF8');
+        $query = mb_strtolower(self::noHtml($query), 'UTF8');
         $sql = 'SELECT * FROM ' . $this->tableName() .
             " WHERE codcuenta LIKE '" . $query . "%' OR lower(descripcion) LIKE '%" . $query . "%'" .
             ' ORDER BY codejercicio DESC, codcuenta ASC';

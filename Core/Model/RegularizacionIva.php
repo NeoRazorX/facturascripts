@@ -81,18 +81,6 @@ class RegularizacionIva
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        if ($this->idregiva === null) {
-            return 'index.php?page=ContabilidadRegusiva';
-        }
-        return 'index.php?page=ContabilidadRegusiva&id=' . $this->idregiva;
-    }
-
-    /**
      * TODO
      * @return string
      */
@@ -172,28 +160,5 @@ class RegularizacionIva
             return true;
         }
         return false;
-    }
-
-    /**
-     * Devuelve todas las regularizaciones del ejercicio.
-     *
-     * @param string $codejercicio
-     *
-     * @return array
-     */
-    public function allFromEjercicio($codejercicio)
-    {
-        $reglist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($codejercicio)
-            . ' ORDER BY fechafin DESC;';
-
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $r) {
-                $reglist[] = new RegularizacionIva($r);
-            }
-        }
-
-        return $reglist;
     }
 }

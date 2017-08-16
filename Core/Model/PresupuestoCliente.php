@@ -85,7 +85,7 @@ class PresupuestoCliente
         $this->fecha = Date('d-m-Y');
         $this->finoferta = date("d-m-Y", strtotime(Date('d-m-Y') . " +1month"));
         $this->hora = Date('H:i:s');
-        $this->tasaconv = 1;
+        $this->tasaconv = 1.0;
         $this->status = 0;
         $this->editable = TRUE;
     }
@@ -93,24 +93,6 @@ class PresupuestoCliente
     public function finoferta()
     {
         return (strtotime(Date('d-m-Y')) > strtotime($this->finoferta));
-    }
-
-    public function url()
-    {
-        if (is_null($this->idpresupuesto)) {
-            return 'index.php?page=ventas_presupuestos';
-        }
-
-        return 'index.php?page=ventas_presupuesto&id=' . $this->idpresupuesto;
-    }
-
-    public function pedido_url()
-    {
-        if (is_null($this->idpedido)) {
-            return 'index.php?page=ventas_pedido';
-        }
-
-        return 'index.php?page=ventas_pedido&id=' . $this->idpedido;
     }
 
     public function getLineas()

@@ -73,7 +73,7 @@ class AdminHome extends Base\Controller
 
     /**
      * TODO
-     * @var Model\AgenciasTrans
+     * @var Model\AgenciasTransporte
      */
     public $agenciaTrans;
 

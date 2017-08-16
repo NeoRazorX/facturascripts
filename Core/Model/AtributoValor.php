@@ -91,7 +91,7 @@ class AtributoValor
      */
     public function save()
     {
-        $this->valor = static::noHtml($this->valor);
+        $this->valor = self::noHtml($this->valor);
 
         return $this->saveTrait();
     }

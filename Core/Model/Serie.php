@@ -89,17 +89,6 @@ class Serie
     }
 
     /**
-     * Devuelve la url donde ver/modificar la serie
-     * @return string
-     */
-    public function url()
-    {
-        $result = empty($this->codserie) ? 'index.php?page=ListSerie' : 'index.php?page=EditSerie&cod=' . $this->codserie;
-
-        return $result;
-    }
-
-    /**
      * Devuelve TRUE si la serie es la predeterminada de la empresa
      * @return bool
      */
@@ -117,7 +106,7 @@ class Serie
         $status = false;
 
         $this->codserie = trim($this->codserie);
-        $this->descripcion = static::noHtml($this->descripcion);
+        $this->descripcion = self::noHtml($this->descripcion);
 
         if ($this->numfactura < 1) {
             $this->numfactura = 1;

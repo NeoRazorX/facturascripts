@@ -53,26 +53,13 @@ class Rol
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        if ($this->codrol === null) {
-            return 'index.php?page=AdminRol';
-        }
-
-        return 'index.php?page=AdminRol&codrol=' . $this->codrol;
-    }
-
-    /**
      * Devuelve true si no hay errores en los valores de las propiedades del modelo.
      * Se ejecuta dentro del método save.
      * @return bool
      */
     public function test()
     {
-        $this->descripcion = static::noHtml($this->descripcion);
+        $this->descripcion = self::noHtml($this->descripcion);
         return true;
     }
 }

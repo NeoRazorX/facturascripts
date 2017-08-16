@@ -27,6 +27,7 @@ class Cliente
 {
 
     use Base\ModelTrait;
+    use Base\Persona;
 
     /**
      * TODO
@@ -36,149 +37,51 @@ class Cliente
 
     /**
      * Clave primaria. Varchar (6).
-     * @var
+     * @var string
      */
     public $codcliente;
 
     /**
-     * Nombre por el que conocemos al cliente, no necesariamente el oficial.
-     * @var
-     */
-    public $nombre;
-
-    /**
-     * Razón social del cliente, es decir, el nombre oficial. El que aparece en las facturas.
-     * @var
-     */
-    public $razonsocial;
-
-    /**
-     * Tipo de identificador fiscal del cliente.
-     * Ejemplos: CIF, NIF, CUIT...
-     * @var
-     */
-    public $tipoidfiscal;
-
-    /**
-     * Identificador fiscal del cliente.
-     * @var
-     */
-    public $cifnif;
-
-    /**
-     * TODO
-     * @var
-     */
-    public $telefono1;
-
-    /**
-     * TODO
-     * @var
-     */
-    public $telefono2;
-
-    /**
-     * TODO
-     * @var
-     */
-    public $fax;
-
-    /**
-     * TODO
-     * @var
-     */
-    public $email;
-
-    /**
-     * TODO
-     * @var
-     */
-    public $web;
-
-    /**
-     * Serie predeterminada para este cliente.
-     * @var
-     */
-    public $codserie;
-
-    /**
-     * Divisa predeterminada para este cliente.
-     * @var
-     */
-    public $coddivisa;
-
-    /**
-     * Forma de pago predeterminada para este cliente.
-     * @var
-     */
-    public $codpago;
-
-    /**
-     * Empleado/agente asignado al cliente.
-     * @var
-     */
-    public $codagente;
-
-    /**
      * Grupo al que pertenece el cliente.
-     * @var
+     * @var string
      */
     public $codgrupo;
 
     /**
      * TRUE -> el cliente ya no nos compra o no queremos nada con él.
-     * @var
+     * @var boolean
      */
     public $debaja;
 
     /**
      * Fecha en la que se dió de baja al cliente.
-     * @var
+     * @var string
      */
     public $fechabaja;
 
     /**
-     * Fecha en la que se dió de alta al cliente.
-     * @var
-     */
-    public $fechaalta;
-
-    /**
-     * TODO
-     * @var
-     */
-    public $observaciones;
-
-    /**
      * Régimen de fiscalidad del cliente. Por ahora solo están implementados
      * general y exento.
-     * @var
+     * @var string
      */
     public $regimeniva;
 
     /**
      * TRUE -> al cliente se le aplica recargo de equivalencia.
-     * @var
+     * @var boolean
      */
     public $recargo;
 
     /**
-     * TRUE  -> el cliente es una persona física.
-     * FALSE -> el cliente es una persona jurídica (empresa).
-     * @var
-     */
-    public $personafisica;
-
-    /**
      * Dias de pago preferidos a la hora de calcular el vencimiento de las facturas.
      * Días separados por comas: 1,15,31
-     * @var
+     * @var string
      */
     public $diaspago;
 
     /**
      * Proveedor asociado equivalente
-     * @var
+     * @var string
      */
     public $codproveedor;
 
@@ -231,43 +134,6 @@ class Cliente
     }
 
     /**
-     * Acorta el texto de observaciones
-     * @return string
-     */
-    public function observacionesResume()
-    {
-        if ($this->observaciones === '') {
-            return '-';
-        }
-        if (strlen($this->observaciones) < 60) {
-            return $this->observaciones;
-        }
-        return substr($this->observaciones, 0, 50) . '...';
-    }
-
-    /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        if ($this->codcliente === null) {
-            return 'index.php?page=ListCliente';
-        }
-        return 'index.php?page=EditCliente&code=' . $this->codcliente;
-    }
-
-    /**
-     * TODO
-     * @deprecated since version 50
-     * @return bool
-     */
-    public function isDefault()
-    {
-        return false;
-    }
-
-    /**
      * Devuelve un array con los regimenes de iva disponibles.
      * @return array
      */
@@ -315,7 +181,7 @@ class Cliente
     public function getByCifnif($cifnif, $razon = '')
     {
         if ($cifnif === '' && $razon !== '') {
-            $razon = static::noHtml(mb_strtolower($razon, 'UTF8'));
+            $razon = self::noHtml(mb_strtolower($razon, 'UTF8'));
             $sql = 'SELECT * FROM ' . $this->tableName()
                 . " WHERE cifnif = '' AND lower(razonsocial) = " . $this->var2str($razon) . ';';
         } else {
@@ -475,10 +341,10 @@ class Cliente
             $this->codcliente = trim($this->codcliente);
         }
 
-        $this->nombre = static::noHtml($this->nombre);
-        $this->razonsocial = static::noHtml($this->razonsocial);
-        $this->cifnif = static::noHtml($this->cifnif);
-        $this->observaciones = static::noHtml($this->observaciones);
+        $this->nombre = self::noHtml($this->nombre);
+        $this->razonsocial = self::noHtml($this->razonsocial);
+        $this->cifnif = self::noHtml($this->cifnif);
+        $this->observaciones = self::noHtml($this->observaciones);
 
         if ($this->debaja) {
             if ($this->fechabaja === null) {
@@ -514,31 +380,6 @@ class Cliente
     }
 
     /**
-     * Devuelve un array con la lista completa de clientes.
-     * @return array
-     */
-    public function allFull()
-    {
-        /// leemos la lista de la caché
-        $clientlist = $this->cache->get('m_cliente_all');
-        if (!$clientlist) {
-            /// si no la encontramos en la caché, leemos de la base de datos
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' ORDER BY lower(nombre) ASC;';
-            $data = $this->dataBase->select($sql);
-            if (!empty($data)) {
-                foreach ($data as $d) {
-                    $clientlist[] = new Cliente($d);
-                }
-            }
-
-            /// guardamos la lista en la caché
-            $this->cache->set('m_cliente_all', $clientlist);
-        }
-
-        return $clientlist;
-    }
-
-    /**
      * TODO
      *
      * @param string $query
@@ -549,7 +390,7 @@ class Cliente
     public function search($query, $offset = 0)
     {
         $clilist = [];
-        $query = mb_strtolower(static::noHtml($query), 'UTF8');
+        $query = mb_strtolower(self::noHtml($query), 'UTF8');
 
         $consulta = 'SELECT * FROM ' . $this->tableName() . ' WHERE debaja = FALSE AND ';
         if (is_numeric($query)) {
@@ -586,7 +427,7 @@ class Cliente
     public function searchByDni($dni, $offset = 0)
     {
         $clilist = [];
-        $query = mb_strtolower(static::noHtml($dni), 'UTF8');
+        $query = mb_strtolower(self::noHtml($dni), 'UTF8');
         $consulta = 'SELECT * FROM' . $this->tableName() . ' WHERE debaja = FALSE'
             . "AND lower(cifnif) LIKE '" . $query . "%' ORDER BY lower(nombre) ASC";
 
@@ -598,53 +439,5 @@ class Cliente
         }
 
         return $clilist;
-    }
-
-    /**
-     * Aplicamos algunas correcciones a la tabla.
-     */
-    public function fixDb()
-    {
-        $fixes = [
-            /// ponemos debaja a false en los casos que sea null
-            'UPDATE ' . $this->tableName() . ' SET debaja = false WHERE debaja IS NULL;',
-            /// desvinculamos de grupos que no existen
-            'UPDATE ' . $this->tableName() . ' SET codgrupo = NULL WHERE codgrupo IS NOT NULL'
-            . ' AND codgrupo NOT IN (SELECT codgrupo FROM gruposclientes);',
-            /// desvinculamos de proveedores que no existan
-            'UPDATE ' . $this->tableName() . ' SET codproveedor = null WHERE codproveedor IS NOT NULL'
-            . ' AND codproveedor NOT IN (SELECT codproveedor FROM proveedores);'
-        ];
-
-        foreach ($fixes as $sql) {
-            $this->dataBase->exec($sql);
-        }
-    }
-
-    /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
-     * @return string
-     */
-    public function install()
-    {
-        $this->cleanCache();
-
-        /**
-         * La tabla tiene varias claves ajenas, por eso debemos forzar la comprobación
-         * de estas tablas.
-         */
-        //new GrupoClientes();
-
-        return '';
-    }
-
-    /**
-     * TODO
-     */
-    private function cleanCache()
-    {
-        $this->cache->delete('m_cliente_all');
     }
 }

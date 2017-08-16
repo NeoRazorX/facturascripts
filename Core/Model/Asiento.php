@@ -249,8 +249,8 @@ class Asiento
      */
     public function test()
     {
-        $this->concepto = static::noHtml($this->concepto);
-        $this->documento = static::noHtml($this->documento);
+        $this->concepto = self::noHtml($this->concepto);
+        $this->documento = self::noHtml($this->documento);
 
         if (strlen($this->concepto) > 255) {
             $this->miniLog->alert('Concepto del asiento demasiado largo.');
@@ -494,7 +494,7 @@ class Asiento
     public function search($query, $offset = 0)
     {
         $alist = [];
-        $query = static::noHtml(mb_strtolower($query, 'UTF8'));
+        $query = self::noHtml(mb_strtolower($query, 'UTF8'));
 
         $consulta = 'SELECT * FROM ' . $this->tableName() . ' WHERE ';
         if (is_numeric($query)) {

@@ -99,7 +99,7 @@ class BalanceCuentaA
         } else {
             $sql = "SELECT SUM(debe) AS debe, SUM(haber) AS haber FROM co_partidas
             WHERE idsubcuenta IN (SELECT idsubcuenta FROM co_subcuentas
-               WHERE codcuenta LIKE '" . static::noHtml($this->codcuenta) . "%'"
+               WHERE codcuenta LIKE '" . self::noHtml($this->codcuenta) . "%'"
                 . ' AND codejercicio = ' . $this->var2str($ejercicio->codejercicio) . ')' . $extra . ';';
             $data = $this->dataBase->select($sql);
         }
@@ -144,7 +144,7 @@ class BalanceCuentaA
     {
         $balist = [];
         $sql = 'SELECT * FROM ' . $this->tableName()
-            . " WHERE codbalance LIKE '" . static::noHtml($cod) . "%' ORDER BY codcuenta ASC;";
+            . " WHERE codbalance LIKE '" . self::noHtml($cod) . "%' ORDER BY codcuenta ASC;";
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {

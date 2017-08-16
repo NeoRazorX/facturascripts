@@ -27,54 +27,19 @@ class DireccionCliente
 {
 
     use Base\ModelTrait;
+    use Base\Direccion;
 
     /**
      * Clave primaria.
-     * @var
+     * @var integer
      */
     public $id;
 
     /**
      * Código del cliente asociado.
-     * @var
+     * @var string
      */
     public $codcliente;
-
-    /**
-     * TODO
-     * @var
-     */
-    public $codpais;
-
-    /**
-     * TODO
-     * @var
-     */
-    public $apartado;
-
-    /**
-     * TODO
-     * @var
-     */
-    public $provincia;
-
-    /**
-     * TODO
-     * @var
-     */
-    public $ciudad;
-
-    /**
-     * TODO
-     * @var
-     */
-    public $codpostal;
-
-    /**
-     * TODO
-     * @var
-     */
-    public $direccion;
 
     /**
      * TRUE -> esta dirección es la principal para envíos.
@@ -87,18 +52,6 @@ class DireccionCliente
      * @var
      */
     public $domfacturacion;
-
-    /**
-     * TODO
-     * @var
-     */
-    public $descripcion;
-
-    /**
-     * Fecha de última modificación.
-     * @var
-     */
-    public $fecha;
 
     public function tableName()
     {
@@ -135,117 +88,29 @@ class DireccionCliente
      */
     public function save()
     {
-        $this->apartado = static::noHtml($this->apartado);
-        $this->ciudad = static::noHtml($this->ciudad);
-        $this->codpostal = static::noHtml($this->codpostal);
-        $this->descripcion = static::noHtml($this->descripcion);
-        $this->direccion = static::noHtml($this->direccion);
-        $this->provincia = static::noHtml($this->provincia);
-
         /// actualizamos la fecha de modificación
         $this->fecha = date('d-m-Y');
 
-        /// ¿Desmarcamos las demás direcciones principales?
-        $sql = '';
-        if ($this->domenvio) {
-            $sql .= 'UPDATE ' . $this->tableName() . ' SET domenvio = false'
-                . ' WHERE codcliente = ' . $this->var2str($this->codcliente) . ';';
-        }
-        if ($this->domfacturacion) {
-            $sql .= 'UPDATE ' . $this->tableName() . ' SET domfacturacion = false'
-                . ' WHERE codcliente = ' . $this->var2str($this->codcliente) . ';';
-        }
+        if ($this->test()) {
+            if ($this->exists()) {
+                /// ¿Desmarcamos las demás direcciones principales?
+                $sql = '';
+                if ($this->domenvio) {
+                    $sql .= 'UPDATE ' . $this->tableName() . ' SET domenvio = false'
+                        . ' WHERE codcliente = ' . $this->var2str($this->codcliente) . ';';
+                }
+                if ($this->domfacturacion) {
+                    $sql .= 'UPDATE ' . $this->tableName() . ' SET domfacturacion = false'
+                        . ' WHERE codcliente = ' . $this->var2str($this->codcliente) . ';';
+                }
+                $this->dataBase->exec($sql);
 
-        if ($this->exists()) {
-            return $this->saveUpdateCon($sql);
-        }
-
-        return $this->saveInsertCon($sql);
-    }
-
-    /**
-     * TODO
-     *
-     * @param string $cod
-     *
-     * @return array
-     */
-    public function allFromCliente($cod)
-    {
-        $dirlist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codcliente = ' . $this->var2str($cod)
-            . ' ORDER BY id DESC;';
-
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $dirlist[] = new DireccionCliente($d);
+                return $this->saveUpdate();
             }
+
+            return $this->saveInsert();
         }
 
-        return $dirlist;
-    }
-
-    /**
-     * Aplica algunas correcciones a la tabla.
-     */
-    public function fixDb()
-    {
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE codcliente NOT IN (SELECT codcliente FROM clientes);';
-        $this->dataBase->exec($sql);
-    }
-
-    /**
-     * Actualiza los datos del modelo en la base de datos.
-     *
-     * @param string $sql
-     *
-     * @return bool
-     */
-    private function saveUpdateCon($sql)
-    {
-        $sql .= 'UPDATE ' . $this->tableName() . ' SET codcliente = ' . $this->var2str($this->codcliente)
-            . ', codpais = ' . $this->var2str($this->codpais)
-            . ', apartado = ' . $this->var2str($this->apartado)
-            . ', provincia = ' . $this->var2str($this->provincia)
-            . ', ciudad = ' . $this->var2str($this->ciudad)
-            . ', codpostal = ' . $this->var2str($this->codpostal)
-            . ', direccion = ' . $this->var2str($this->direccion)
-            . ', domenvio = ' . $this->var2str($this->domenvio)
-            . ', domfacturacion = ' . $this->var2str($this->domfacturacion)
-            . ', descripcion = ' . $this->var2str($this->descripcion)
-            . ', fecha = ' . $this->var2str($this->fecha)
-            . '  WHERE id = ' . $this->var2str($this->id) . ';';
-
-        return $this->dataBase->exec($sql);
-    }
-
-    /**
-     * Inserta los datos del modelo en la base de datos.
-     *
-     * @param string $sql
-     *
-     * @return bool
-     */
-    private function saveInsertCon($sql)
-    {
-        $sql .= 'INSERT INTO ' . $this->tableName() . ' (codcliente,codpais,apartado,provincia,ciudad,codpostal,
-            direccion,domenvio,domfacturacion,descripcion,fecha) VALUES (' . $this->var2str($this->codcliente)
-            . ', ' . $this->var2str($this->codpais)
-            . ', ' . $this->var2str($this->apartado)
-            . ', ' . $this->var2str($this->provincia)
-            . ', ' . $this->var2str($this->ciudad)
-            . ', ' . $this->var2str($this->codpostal)
-            . ', ' . $this->var2str($this->direccion)
-            . ', ' . $this->var2str($this->domenvio)
-            . ', ' . $this->var2str($this->domfacturacion)
-            . ', ' . $this->var2str($this->descripcion)
-            . ', ' . $this->var2str($this->fecha) . ');';
-
-        if ($this->dataBase->exec($sql)) {
-            $this->id = $this->dataBase->lastval();
-            return true;
-        }
         return false;
     }
 }

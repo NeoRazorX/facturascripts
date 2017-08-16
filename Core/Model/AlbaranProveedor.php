@@ -74,7 +74,7 @@ class AlbaranProveedor
         $this->codalmacen = $this->defaultItems->codAlmacen();
         $this->fecha = date('d-m-Y');
         $this->hora = date('H:i:s');
-        $this->tasaconv = 1;
+        $this->tasaconv = 1.0;
         $this->ptefactura = true;
     }
 
@@ -153,13 +153,13 @@ class AlbaranProveedor
      */
     public function test()
     {
-        $this->nombre = static::noHtml($this->nombre);
+        $this->nombre = self::noHtml($this->nombre);
         if ($this->nombre === '') {
             $this->nombre = '-';
         }
 
-        $this->numproveedor = static::noHtml($this->numproveedor);
-        $this->observaciones = static::noHtml($this->observaciones);
+        $this->numproveedor = self::noHtml($this->numproveedor);
+        $this->observaciones = self::noHtml($this->observaciones);
 
         /**
          * Usamos el euro como divisa puente a la hora de sumar, comparar
@@ -355,7 +355,7 @@ class AlbaranProveedor
     public function search($query, $offset = 0)
     {
         $alblist = [];
-        $query = static::noHtml(mb_strtolower($query, 'UTF8'));
+        $query = self::noHtml(mb_strtolower($query, 'UTF8'));
 
         $consulta = 'SELECT * FROM ' . $this->tableName() . ' WHERE ';
         if (is_numeric($query)) {

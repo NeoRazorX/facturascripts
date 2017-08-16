@@ -103,8 +103,8 @@ class Divisa
     public function test()
     {
         $status = false;
-        $this->descripcion = static::noHtml($this->descripcion);
-        $this->simbolo = static::noHtml($this->simbolo);
+        $this->descripcion = self::noHtml($this->descripcion);
+        $this->simbolo = self::noHtml($this->simbolo);
 
         if (!preg_match('/^[A-Z0-9]{1,3}$/i', $this->coddivisa)) {
             $this->miniLog->alert($this->i18n->trans('bage-cod-invalid'));

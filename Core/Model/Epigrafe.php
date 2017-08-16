@@ -176,7 +176,7 @@ class Epigrafe
      */
     public function test()
     {
-        $this->descripcion = static::noHtml($this->descripcion);
+        $this->descripcion = self::noHtml($this->descripcion);
 
         if (strlen($this->codepigrafe) > 0 && strlen($this->descripcion) > 0) {
             return true;

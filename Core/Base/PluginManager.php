@@ -221,7 +221,7 @@ class PluginManager
             /// Ahora recorremos y eliminamos lo que encontramos
             foreach ($items as $item) {
                 if (is_dir($folder . '/' . $item)) {
-                    $done = $this->cleanDinamic($folder . '/' . $item . '/');
+                    $done = $this->cleanFolder($folder . '/' . $item . '/');
                 } else {
                     $done = unlink($folder . '/' . $item);
                 }

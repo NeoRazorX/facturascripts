@@ -113,7 +113,7 @@ class AppController extends App
 
             try {
                 $this->controller = new $controllerName($this->cache, $this->i18n, $this->miniLog, $pageName);
-                if ($user === null) {
+                if ($user === false) {
                     $this->controller->publicCore($this->response);
                 } else {
                     $this->menuManager->selectPage($this->controller->getPageData());
@@ -207,7 +207,7 @@ class AppController extends App
 
     /**
      * TODO
-     * @return User|null
+     * @return User|false
      */
     private function userAuth()
     {
@@ -228,12 +228,12 @@ class AppController extends App
 
                 $this->ipFilter->setAttempt($this->request->getClientIp());
                 $this->miniLog->alert('login-password-fail');
-                return null;
+                return false;
             }
 
             $this->ipFilter->setAttempt($this->request->getClientIp());
             $this->miniLog->alert('login-user-not-found');
-            return null;
+            return false;
         }
 
         $cookieNick = $this->request->cookies->get('fsNick', '');
@@ -246,14 +246,14 @@ class AppController extends App
                 }
 
                 $this->miniLog->alert('login-cookie-fail');
-                return null;
+                return false;
             }
 
             $this->miniLog->alert('login-user-not-found');
-            return null;
+            return false;
         }
 
-        return null;
+        return false;
     }
 
     /**

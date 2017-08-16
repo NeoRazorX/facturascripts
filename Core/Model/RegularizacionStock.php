@@ -147,15 +147,6 @@ class RegularizacionStock
     }
 
     /**
-     * Aplica algunas correcciones a la tabla.
-     */
-    public function fixDb()
-    {
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idstock NOT IN (SELECT idstock FROM stocks);';
-        $this->dataBase->exec($sql);
-    }
-
-    /**
      * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
      * que se ejecutará tras la creación de la tabla. útil para insertar valores
      * por defecto.

@@ -99,8 +99,8 @@ class Fabricante
     {
         $status = false;
 
-        $this->codfabricante = static::noHtml($this->codfabricante);
-        $this->nombre = static::noHtml($this->nombre);
+        $this->codfabricante = self::noHtml($this->codfabricante);
+        $this->nombre = self::noHtml($this->nombre);
 
         if (empty($this->codfabricante) || strlen($this->codfabricante) > 8) {
             $this->miniLog->alert('Código de fabricante no válido. Deben ser entre 1 y 8 caracteres.');
@@ -148,7 +148,7 @@ class Fabricante
     public function search($query)
     {
         $fablist = [];
-        $query = static::noHtml(mb_strtolower($query, 'UTF8'));
+        $query = self::noHtml(mb_strtolower($query, 'UTF8'));
 
         $sql = 'SELECT * FROM ' . $this->tableName()
             . " WHERE lower(nombre) LIKE '%" . $query . "%' ORDER BY nombre ASC;";

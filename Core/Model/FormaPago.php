@@ -120,7 +120,7 @@ class FormaPago
      */
     public function test()
     {
-        $this->descripcion = static::noHtml($this->descripcion);
+        $this->descripcion = self::noHtml($this->descripcion);
 
         /// comprobamos la validez del vencimiento
         $fecha1 = date('d-m-Y');

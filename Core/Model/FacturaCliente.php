@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * Factura de un cliente.
@@ -29,57 +30,11 @@ class FacturaCliente
 {
 
     use Base\DocumentoVenta;
+    use Base\Factura;
     use Base\ModelTrait {
         clear as clearTrait;
     }
-
-    /**
-     * Clave primaria.
-     * @var int
-     */
-    public $idfactura;
-
-    /**
-     * ID del asiento relacionado, si lo hay.
-     * @var int
-     */
-    public $idasiento;
-
-    /**
-     * ID del asiento de pago relacionado, si lo hay.
-     * @var int
-     */
-    public $idasientop;
-
-    /**
-     * ID de la factura que rectifica.
-     * @var int
-     */
-    public $idfacturarect;
-
-    /**
-     * Código de la factura que rectifica.
-     * @var string
-     */
-    public $codigorect;
-
-    /**
-     * TRUE => pagada
-     * @var bool
-     */
-    public $pagada;
-
-    /**
-     * TRUE => anulada
-     * @var bool
-     */
-    public $anulada;
-
-    /**
-     * Fecha de vencimiento de la factura.
-     * @var string
-     */
-    public $vencimiento;
+    use Utils;
 
     /**
      * Identificador opcional para la impresión. Todavía sin uso.
@@ -110,7 +65,7 @@ class FacturaCliente
         $this->codpago = $this->defaultItems->codPago();
         $this->fecha = date('d-m-Y');
         $this->hora = date('H:i:s');
-        $this->tasaconv = 1;
+        $this->tasaconv = 1.0;
         $this->pagada = false;
         $this->anulada = false;
         $this->vencimiento = date('d-m-Y', strtotime('+1 day'));
@@ -210,62 +165,6 @@ class FacturaCliente
         }
 
         return $cambio;
-    }
-
-    /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        if ($this->idfactura === null) {
-            return 'index.php?page=VentasFacturas';
-        }
-        return 'index.php?page=VentasFactura&id=' . $this->idfactura;
-    }
-
-    /**
-     * Devuelve la url donde ver/modificar estos datos del asiento
-     * @return string
-     */
-    public function asientoUrl()
-    {
-        if ($this->idasiento === null) {
-            return 'index.php?page=ContabilidadAsientos';
-        }
-        return 'index.php?page=ContabilidadAsiento&id=' . $this->idasiento;
-    }
-
-    /**
-     * Devuelve la url donde ver/modificar estos datos del asiento de pago
-     * @return string
-     */
-    public function asientoPagoUrl()
-    {
-        if ($this->idasientop === null) {
-            return 'index.php?page=ContabilidadAsientos';
-        }
-        return 'index.php?page=ContabilidadAsiento&id=' . $this->idasientop;
-    }
-
-    /**
-     * Devuelve el asiento asociado
-     * @return bool|Asiento
-     */
-    public function getAsiento()
-    {
-        $asiento = new Asiento();
-        return $asiento->get($this->idasiento);
-    }
-
-    /**
-     * Devuelve el asiento de pago asociado
-     * @return bool|mixed
-     */
-    public function getAsientoPago()
-    {
-        $asiento = new Asiento();
-        return $asiento->get($this->idasientop);
     }
 
     /**
@@ -412,65 +311,6 @@ class FacturaCliente
     }
 
     /**
-     * Devuelve un array con todas las facturas rectificativas de esta factura.
-     * @return array
-     */
-    public function getRectificativas()
-    {
-        $devoluciones = [];
-
-        $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE idfacturarect = ' . $this->var2str($this->idfactura) . ';';
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $devoluciones[] = new FacturaCliente($d);
-            }
-        }
-
-        return $devoluciones;
-    }
-
-    /**
-     * Devuelve la factura por su código
-     *
-     * @param string $cod
-     *
-     * @return bool|FacturaCliente
-     */
-    public function getByCodigo($cod)
-    {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codigo = ' . $this->var2str($cod) . ';';
-        $fact = $this->dataBase->select($sql);
-        if (!empty($fact)) {
-            return new FacturaCliente($fact[0]);
-        }
-        return false;
-    }
-
-    /**
-     * Devuelve la factura por número, serie y ejercicio
-     *
-     * @param string $num
-     * @param string $serie
-     * @param string $eje
-     *
-     * @return bool|FacturaCliente
-     */
-    public function getByNumSerie($num, $serie, $eje)
-    {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE numero = ' . $this->var2str($num)
-            . ' AND codserie = ' . $this->var2str($serie)
-            . ' AND codejercicio = ' . $this->var2str($eje) . ';';
-
-        $fact = $this->dataBase->select($sql);
-        if (!empty($fact)) {
-            return new FacturaCliente($fact[0]);
-        }
-        return false;
-    }
-
-    /**
      * Genera el número y código de la factura.
      */
     public function newCodigo()
@@ -541,21 +381,21 @@ class FacturaCliente
      */
     public function test()
     {
-        $this->nombrecliente = static::noHtml($this->nombrecliente);
+        $this->nombrecliente = self::noHtml($this->nombrecliente);
         if ($this->nombrecliente === '') {
             $this->nombrecliente = '-';
         }
 
-        $this->direccion = static::noHtml($this->direccion);
-        $this->ciudad = static::noHtml($this->ciudad);
-        $this->provincia = static::noHtml($this->provincia);
-        $this->envio_nombre = static::noHtml($this->envio_nombre);
-        $this->envio_apellidos = static::noHtml($this->envio_apellidos);
-        $this->envio_direccion = static::noHtml($this->envio_direccion);
-        $this->envio_ciudad = static::noHtml($this->envio_ciudad);
-        $this->envio_provincia = static::noHtml($this->envio_provincia);
-        $this->numero2 = static::noHtml($this->numero2);
-        $this->observaciones = static::noHtml($this->observaciones);
+        $this->direccion = self::noHtml($this->direccion);
+        $this->ciudad = self::noHtml($this->ciudad);
+        $this->provincia = self::noHtml($this->provincia);
+        $this->envio_nombre = self::noHtml($this->envio_nombre);
+        $this->envio_apellidos = self::noHtml($this->envio_apellidos);
+        $this->envio_direccion = self::noHtml($this->envio_direccion);
+        $this->envio_ciudad = self::noHtml($this->envio_ciudad);
+        $this->envio_provincia = self::noHtml($this->envio_provincia);
+        $this->numero2 = self::noHtml($this->numero2);
+        $this->observaciones = self::noHtml($this->observaciones);
 
         /**
          * Usamos el euro como divisa puente a la hora de sumar, comparar
@@ -820,7 +660,7 @@ class FacturaCliente
     public function search($query, $offset = 0)
     {
         $faclist = [];
-        $query = mb_strtolower(static::noHtml($query), 'UTF8');
+        $query = mb_strtolower(self::noHtml($query), 'UTF8');
 
         $consulta = 'SELECT * FROM ' . $this->tableName() . ' WHERE ';
         if (is_numeric($query)) {
@@ -890,28 +730,6 @@ class FacturaCliente
         }
 
         return $huecolist;
-    }
-
-    /**
-     * TODO
-     */
-    public function cronJob()
-    {
-        
-    }
-
-    /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
-     * @return string
-     */
-    public function install()
-    {
-        // new Serie();
-        // new Asiento();
-
-        return '';
     }
 
     /**

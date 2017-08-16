@@ -102,7 +102,7 @@ class Atributo
      */
     public function save()
     {
-        $this->nombre = static::noHtml($this->nombre);
+        $this->nombre = self::noHtml($this->nombre);
 
         return $this->saveTrait();
     }

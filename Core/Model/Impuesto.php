@@ -116,7 +116,7 @@ class Impuesto
         $status = false;
 
         $this->codimpuesto = trim($this->codimpuesto);
-        $this->descripcion = static::noHtml($this->descripcion);
+        $this->descripcion = self::noHtml($this->descripcion);
 
         if (empty($this->codimpuesto) || strlen($this->codimpuesto) > 10) {
             $this->miniLog->alert('Código del impuesto no válido. Debe tener entre 1 y 10 caracteres.');

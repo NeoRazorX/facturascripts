@@ -110,13 +110,4 @@ class crm_contacto
 
         return substr($this->observaciones, 0, 57) . '...';
     }
-
-    public function url()
-    {
-        if (is_null($this->codcontacto)) {
-            return 'index.php?page=crm_contactos';
-        }
-
-        return 'index.php?page=ver_crm_contacto&cod=' . $this->codcontacto;
-    }
 }

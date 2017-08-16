@@ -74,7 +74,7 @@ class AlbaranCliente
         $this->codalmacen = $this->defaultItems->codAlmacen();
         $this->fecha = date('d-m-Y');
         $this->hora = date('H:i:s');
-        $this->tasaconv = 1;
+        $this->tasaconv = 1.0;
         $this->ptefactura = true;
     }
 
@@ -148,21 +148,21 @@ class AlbaranCliente
      */
     public function test()
     {
-        $this->nombrecliente = static::noHtml($this->nombrecliente);
+        $this->nombrecliente = self::noHtml($this->nombrecliente);
         if ($this->nombrecliente === '') {
             $this->nombrecliente = '-';
         }
 
-        $this->direccion = static::noHtml($this->direccion);
-        $this->ciudad = static::noHtml($this->ciudad);
-        $this->provincia = static::noHtml($this->provincia);
-        $this->envio_nombre = static::noHtml($this->envio_nombre);
-        $this->envio_apellidos = static::noHtml($this->envio_apellidos);
-        $this->envio_direccion = static::noHtml($this->envio_direccion);
-        $this->envio_ciudad = static::noHtml($this->envio_ciudad);
-        $this->envio_provincia = static::noHtml($this->envio_provincia);
-        $this->numero2 = static::noHtml($this->numero2);
-        $this->observaciones = static::noHtml($this->observaciones);
+        $this->direccion = self::noHtml($this->direccion);
+        $this->ciudad = self::noHtml($this->ciudad);
+        $this->provincia = self::noHtml($this->provincia);
+        $this->envio_nombre = self::noHtml($this->envio_nombre);
+        $this->envio_apellidos = self::noHtml($this->envio_apellidos);
+        $this->envio_direccion = self::noHtml($this->envio_direccion);
+        $this->envio_ciudad = self::noHtml($this->envio_ciudad);
+        $this->envio_provincia = self::noHtml($this->envio_provincia);
+        $this->numero2 = self::noHtml($this->numero2);
+        $this->observaciones = self::noHtml($this->observaciones);
 
         /**
          * Usamos el euro como divisa puente a la hora de sumar, comparar
@@ -332,7 +332,7 @@ class AlbaranCliente
     public function search($query, $offset = 0)
     {
         $alblist = [];
-        $query = mb_strtolower(static::noHtml($query), 'UTF8');
+        $query = mb_strtolower(self::noHtml($query), 'UTF8');
 
         $consulta = 'SELECT * FROM ' . $this->tableName() . ' WHERE ';
         if (is_numeric($query)) {
