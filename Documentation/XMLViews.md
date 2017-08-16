@@ -104,6 +104,25 @@ Ejemplo:
 * **type** : (obligatorio) Indica el tipo de widget a utilizar.
     * text : Campos varchar o de texto.
     * checkbox: Valores booleanos que se visualizan mediante el icono de un check (true) o un guión (false) respectivamente.
+    * select: Lista de valores establecidos por un conjunto de etiquetas _\<values\>_ descritas dentro del grupo _\<widget\>_.
+Los valores podrán ser fijos, incluyendo tantos _\<values\>_ como necesitemos e indicando el atributo _title_ y asignando un valor,
+como dinámicos o calculados en base al contenido de los registros de una tabla de la base de datos.
+Para este caso se utilizará una sóla etiqueta _\<values\>_ indicando los atributos:
+    * _source_: Indica el nombre de la tabla origen de los datos
+    * _fieldcode_: Indica el campo que contiene el valor a grabar en el campo de la columna
+    * _fieldtitle_: Indica el campo que contiene el valor que se visualizará en pantalla
+
+        ```XML
+            <widget type="select" fieldname="documentacion">
+                <values title="Pasaporte">PASAPORTE</values>
+                <values title="D.N.I.">DNI</values>
+                <values title="N.I.E.">NIE</values>
+            </widget>
+
+            <widget type="select" fieldname="codgrupo">
+                <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
+            </widget>
+        ```
 
 * **fieldname** : (obligatorio) Nombre del campo que contiene la información.
 

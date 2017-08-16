@@ -70,11 +70,42 @@ class EditController extends Base\Controller
         $column->widget->readOnly = (!empty($value));
     }
 
+    /**
+     * Devuelve el texto para la cabecera del panel principal de datos
+     *
+     * @return string
+     */
+    public function getPanelHeader()
+    {
+        return $this->i18n->trans('Datos generales');
+    }
+
+    /**
+     * Devuelve el texto para el pie del panel principal de datos
+     *
+     * @return string
+     */
+    public function getPanelFooter()
+    {
+        return '';
+    }
+
+    /**
+     * Si existe, devuelve el tipo de row especificado
+     *
+     * @param string $key
+     * @return RowItem
+     */
     public function getRow($key)
     {
         return empty($this->pageOption->rows) ? NULL : $this->pageOption->rows[$key];
     }
 
+    /**
+     * Devuelve la configuración de columnas
+     *
+     * @return array
+     */
     public function getGroupColumns()
     {
         return $this->pageOption->columns;

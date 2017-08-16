@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class RowItem
+class RowItem implements VisualItemInterface
 {
 
     /**
@@ -85,5 +85,10 @@ class RowItem
             }
         }
         return $result;
+    }
+
+    public function getHeaderHTML($value)
+    {
+        return $value;
     }
 }
