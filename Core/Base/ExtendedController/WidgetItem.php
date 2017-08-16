@@ -286,9 +286,8 @@ class WidgetItem
         $html = $this->getIconHTML();
 
         switch ($this->type) {
-            case 'checkbox-inline':
             case 'checkbox':
-                $html .= '<input id=' . $fieldName . ' type="checkbox" name=' . $fieldName . ' value="TRUE"' . $specialClass . '>';
+                $html .= '<input id=' . $fieldName . ' class="form-check-input" type="checkbox" name=' . $fieldName . ' value=""' . $specialClass . '>';
                 break;
 
             case 'textarea':

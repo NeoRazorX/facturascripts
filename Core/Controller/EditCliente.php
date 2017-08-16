@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\ViewController;
+use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Model;
 
 /**
@@ -27,7 +27,7 @@ use FacturaScripts\Core\Model;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class EditCliente extends ViewController\EditController
+class EditCliente extends ExtendedController\EditController
 {
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {

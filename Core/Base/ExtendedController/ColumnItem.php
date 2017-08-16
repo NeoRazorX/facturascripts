@@ -130,18 +130,17 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      */
     public function getEditHTML($value)
     {
-        $columnClass = ($this->numColumns < 13) ? (' col-md-' . $this->numColumns) : '';
+        $columnClass = ($this->numColumns < 12) ? (' col-md-' . $this->numColumns) : ' col';
         $input = $this->widget->getEditHTML($value);
         $header = $this->getHeaderHTML($this->title);
         $hint = empty($this->widget->hint) ? '' : ' title="' . $this->i18n->trans($this->widget->hint) . '"';
-        $description = empty($this->description) ? '' : '<span class="help-block">' . $this->i18n->trans($this->description) . '</span>';
+        $description = empty($this->description) ? '' : '<small class="form-text text-muted">' . $this->i18n->trans($this->description) . '</small>';
 
         switch ($this->widget->type) {
-            case "checkbox-inline":
             case "checkbox":
-                $html = '<div class="' . $this->widget->type . $columnClass . '">'
-                    . '<label class="checkbox-inline"' . $hint . '>'
-                    . $input . $header
+                $html = '<div class="form-check' . $columnClass . '">'
+                    . '<label class="form-check-label"' . $hint . '>'
+                    . $input . '&nbsp;' . $header
                     . '</label>'
                     . $description
                     . '</div>';

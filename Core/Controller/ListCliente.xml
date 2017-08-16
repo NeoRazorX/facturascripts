@@ -30,7 +30,7 @@
         <column title="Nombre" display="left" description="Nombre oficial del cliente, para las facturas y otros documentos." order="110">
             <widget type="text" fieldname="nombre" />
         </column>
-        <column title="Razón Social" display="left" order="120">
+        <column title="Razón Social" display="left" order="200">
             <widget type="text" fieldname="razonsocial" />
         </column>
         <column title="CIF/NIF" display="left" order="130">

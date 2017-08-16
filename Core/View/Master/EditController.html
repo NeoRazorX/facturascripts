@@ -101,7 +101,7 @@
                     <div class="card-body">
                         <!-- Statistical buttons bar -->
                         <div class="row">
-                            <div class="col-12 col-md-12">
+                            <div class="col-12">
                                 <div class="btn-toolbar pull-right" role="toolbar">
                                     <div class="btn-group btn-group-lg" role="group">
                                         {% set header = fsc.getRow('header') %}
@@ -123,18 +123,16 @@
                         <!-- Main Form -->
                         <div class="row">
                             {% for group in fsc.getGroupColumns() %}
-                            <div class="{{ 'col-md-' ~ group.numColumns }}">
-                                <fieldset>
-                                    {% if group.title is not empty %}
-                                    <legend>{{ group.getHeaderHTML(group.title)|raw }}</legend>
-                                    {% endif %}
-                                    {% for column in group.columns %}
-                                    {% if column.display != 'none' %}
-                                    {% set value = attribute(fsc.model, column.widget.fieldName) %}
-                                    {{ column.getEditHTML(value)|raw }}
-                                    {% endif %}
-                                    {% endfor %}
-                                </fieldset>
+                            <div class="form-row {{ 'col-md-' ~ group.numColumns }}">
+                                {% if group.title is not empty %}
+                                <legend>{{ group.getHeaderHTML(group.title)|raw }}</legend>
+                                {% endif %}
+                                {% for column in group.columns %}
+                                {% if column.display != 'none' %}
+                                {% set value = attribute(fsc.model, column.widget.fieldName) %}
+                                {{ column.getEditHTML(value)|raw }}
+                                {% endif %}
+                                {% endfor %}
                             </div>
                             {% endfor %}
                         </div>
