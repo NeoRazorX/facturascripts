@@ -131,7 +131,7 @@ class AppController extends App
 
         $this->response->setStatusCode($httpStatus);
         if ($template) {
-            $this->renderHtml($template);
+            $this->renderHtml($template, $controllerName);
         }
     }
 
@@ -145,7 +145,7 @@ class AppController extends App
         $controllerName = "FacturaScripts\\Dinamic\\Controller\\{$pageName}";
         if (!class_exists($controllerName)) {
             $controllerName = "FacturaScripts\\Core\\Controller\\{$pageName}";
-            $this->deployPlugins();
+            ///$this->deployPlugins();
         }
 
         return $controllerName;
@@ -156,7 +156,7 @@ class AppController extends App
      * hasta ejecutar render()
      * @param string $template archivo html a utilizar
      */
-    private function renderHtml($template)
+    private function renderHtml($template, $controllerName = '')
     {
         /// cargamos el motor de plantillas
         $twigLoader = new Twig_Loader_Filesystem($this->folder . '/Core/View');
@@ -173,6 +173,7 @@ class AppController extends App
 
         /// variables para la plantilla HTML
         $templateVars = array(
+            'controllerName' => $controllerName,
             'debugBarRender' => false,
             'fsc' => $this->controller,
             'i18n' => $this->i18n,
