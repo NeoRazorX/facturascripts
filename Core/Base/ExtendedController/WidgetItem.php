@@ -291,7 +291,7 @@ class WidgetItem
                 break;
 
             case 'textarea':
-                $html .= '<textarea id=' . $fieldName . ' class="form-control" name=' . $fieldName . ' rows="3"' . $specialClass . '>' . $value . $specialClass . '</textarea>';
+                $html .= '<textarea id=' . $fieldName . ' class="form-control" name=' . $fieldName . ' rows="3"' . $specialClass . '>' . $value . '</textarea>';
                 break;
 
             case 'select':

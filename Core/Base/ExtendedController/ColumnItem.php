@@ -130,7 +130,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      */
     public function getEditHTML($value)
     {
-        $columnClass = ($this->numColumns < 12) ? (' col-md-' . $this->numColumns) : ' col';
+        $columnClass = ($this->numColumns === 0) ? ' col' : (' col-md-' . $this->numColumns);
         $input = $this->widget->getEditHTML($value);
         $header = $this->getHeaderHTML($this->title);
         $hint = empty($this->widget->hint) ? '' : ' title="' . $this->i18n->trans($this->widget->hint) . '"';
@@ -138,20 +138,20 @@ class ColumnItem extends VisualItem implements VisualItemInterface
 
         switch ($this->widget->type) {
             case "checkbox":
-                $html = '<div class="form-check' . $columnClass . '">'
+                $html = '<div class="form-row ' .  $columnClass . ' align-items-center"><div class="form-check">'
                     . '<label class="form-check-label"' . $hint . '>'
                     . $input . '&nbsp;' . $header
                     . '</label>'
                     . $description
-                    . '</div>';
+                    . '</div></div>';
                 break;
 
             default:
-                $html = '<div class="form-group' . $columnClass . '">'
+                $html = '<div class="' . $columnClass . '"><div class="form-group">'
                     . '<label for="' . $this->widget->fieldName . '"' . $hint . '>' . $header . '</label>'
                     . $input
                     . $description
-                    . '</div>';
+                    . '</div></div>';
                 break;
         }
         return $html;

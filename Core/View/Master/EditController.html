@@ -3,6 +3,12 @@
 {% block css %}
     {{ parent() }}
     <style type="text/css">
+        .card-header {
+            padding: .5rem 1.25rem;
+            font-size: 120%;
+            font-weight: bold;
+        }
+        
         .cust-text {
             margin-left: 35px;
             overflow: hidden;
@@ -95,7 +101,7 @@
             <form name="mainform" action="" method="post" class="form" role="form">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">{{ panel_header }}</h3>
+                        <span class="card-title">{{ panel_header }}</span>
                     </div>
 
                     <div class="card-body">
@@ -123,16 +129,18 @@
                         <!-- Main Form -->
                         <div class="row">
                             {% for group in fsc.getGroupColumns() %}
-                            <div class="form-row {{ 'col-md-' ~ group.numColumns }}">
-                                {% if group.title is not empty %}
-                                <legend>{{ group.getHeaderHTML(group.title)|raw }}</legend>
-                                {% endif %}
-                                {% for column in group.columns %}
-                                {% if column.display != 'none' %}
-                                {% set value = attribute(fsc.model, column.widget.fieldName) %}
-                                {{ column.getEditHTML(value)|raw }}
-                                {% endif %}
-                                {% endfor %}
+                            <div class="{{ group.numColumns == 0 ? 'col' : 'col-md-' ~ group.numColumns }}">
+                                <div class="form-row">
+                                    {% if group.title is not empty %}
+                                    <legend>{{ group.getHeaderHTML(group.title)|raw }}</legend>
+                                    {% endif %}
+                                    {% for column in group.columns %}
+                                    {% if column.display != 'none' %}
+                                    {% set value = attribute(fsc.model, column.widget.fieldName) %}
+                                    {{ column.getEditHTML(value)|raw }}
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
                             </div>
                             {% endfor %}
                         </div>
