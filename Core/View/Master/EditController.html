@@ -50,7 +50,7 @@
 <div class="container-fluid">
     <!-- Header Row -->
     <div id="header" class="row">
-        <div class="col-3 hidden-print">
+        <div class="col-3 d-print-none">
             <div class="btn-group">
                 <a href="#" class="btn btn-sm btn-secondary">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i>
@@ -74,8 +74,8 @@
             </div>
         </div>
 
-        <div class="col-3 text-right hidden-print">
-            <a class="btn btn-sm btn-success" href="#" title="{{ i18n.trans("Nuevo") }} {{ title }}">
+        <div class="col-3 text-right d-print-none">
+            <a class="btn btn-sm btn-success" href="#" title='{{ i18n.trans("Nuevo") }} {{ title }}'>
                 <i class="fa fa-plus" aria-hidden="true"></i>
             </a>
             <a id="b_eliminar" class="btn btn-sm btn-danger" href="#" title="{{ remove_title }}">

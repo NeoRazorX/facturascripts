@@ -31,7 +31,7 @@
 {% set no_data = i18n.trans('No hay registros con esas condiciones. Pulse el botón Nuevo para dar de alta.') %}
 
 <!-- Page Header -->
-<div class="container-fluid hidden-print">
+<div class="container-fluid d-print-none">
     <div class="row">
         <div class="col-sm-7 col-6">
             <div class="btn-group hidden-xs">
@@ -81,7 +81,7 @@
 <!-- Main Data -->
 <div id="tab_options" role="tabpanel">
     <!-- Tabs declaration -->
-    <ul class="nav nav-tabs hidden-print">
+    <ul class="nav nav-tabs d-print-none">
         <li class="nav-item">
             <a href="#search" class="nav-link active" title="{{ search_title }}">
                 <i class="fa fa-search" aria-hidden="true"></i>
@@ -105,7 +105,7 @@
         <div role="tabpanel" class="tab-pane active" id="search">
             <!-- Filters Row -->
             <form name="f_custom_search" action="{{ fsc.url() }}" method="post" class="form">
-                <div class="container-fluid hidden-print" style="margin-top: 15px; margin-bottom: 10px;">
+                <div class="container-fluid d-print-none" style="margin-top: 15px; margin-bottom: 10px;">
                     <div class="row">
                         <!-- Main filter -->
                         <div class="col-sm-2">
