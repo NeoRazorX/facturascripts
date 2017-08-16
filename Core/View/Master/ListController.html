@@ -35,15 +35,15 @@
     <div class="row">
         <div class="col-sm-7 col-6">
             <div class="btn-group hidden-xs">
-                <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}" title="{{ refresh }}">
+                <a class="btn btn-sm btn-light" href="{{ fsc.url() }}" title="{{ refresh }}">
                     <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
                 {% if fsc.getPageData()['isDefault'] %}
-                <a class="btn btn-sm btn-secondary active" href="{{ fsc.url() }}&amp;default_page=FALSE" title="{{ defaultF }}">
+                <a class="btn btn-sm btn-light active" href="{{ fsc.url() }}&amp;default_page=FALSE" title="{{ defaultF }}">
                     <i class="fa fa-bookmark" aria-hidden="true"></i>
                 </a>
                 {% else %}
-                <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}&amp;default_page=TRUE" title="{{ defaultT }}">
+                <a class="btn btn-sm btn-light" href="{{ fsc.url() }}&amp;default_page=TRUE" title="{{ defaultT }}">
                     <i class="fa fa-bookmark-o" aria-hidden="true"></i>
                 </a>
                 {% endif %}
@@ -64,7 +64,7 @@
                 {#    TODO: Aplicar extensiones
                 {% for value in fsc.extensions %}
                 {% if value.type == 'button' %}
-                <a href="index.php?page={{ value.from }}{{ value.params }}" class="btn btn-sm btn-secondary">{{ value.text }}</a>
+                <a href="index.php?page={{ value.from }}{{ value.params }}" class="btn btn-sm btn-light">{{ value.text }}</a>
                 {% endif %}
                 {% endfor %}
                 #}
@@ -163,7 +163,7 @@
                         <!-- Order by selector -->
                         <div class="col-sm-2">
                             <div class="btn-group">
-                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuOrder" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuOrder" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                     <i class="fa {{ fsc.orderby[fsc.selectedOrderBy]['icon'] }}" aria-hidden="true"></i>
                                     &nbsp; {{ i18n.trans(fsc.orderby[fsc.selectedOrderBy]['label']) }}
                                     <span class="caret"></span>
@@ -200,7 +200,7 @@
                     {% for data in fsc.cursor %}
                     {% set row = fsc.getRow('status') %}
                     {% if row is empty %}
-                    <tr>
+                    <tr class="table-light">
                         {% else %}
                         {% set status = attribute(data, row.fieldName) %}
                     <tr class="{{ row.getStatus(status) }}">
@@ -224,23 +224,23 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-sm-12 text-center">
-                        <ul class="pagination">
+                        <div class="btn-group">
                             {% for item in fsc.pagination() %}
-                            {% if item.active %}
-                            <li class="active">
+                                {% if item.active %}
+                                <a href="#" class="btn btn-light active">{{ item.page }}</a>
                                 {% else %}
-                            <li>
-                                {% endif %}
-                                <a href="{{ item.url }}">
+                                <a href="{{ item.url }}" class="btn btn-light">
                                     {% if item.icon %}
                                     <i class="fa {{ item.icon }}" aria-hidden="true"></i>
                                     {% else %}
                                     <span>{{ item.page }}</span>
                                     {% endif %}
                                 </a>
-                            </li>
+                                {% endif %}
                             {% endfor %}
-                        </ul>
+                        </div>
+                        <br/>
+                        <br/>
                     </div>
                 </div>
             </div>

@@ -35,18 +35,16 @@ class ListPais extends ExtendedController\ListController
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('codpais', 'Código');
+        $this->addFilterCheckbox('validarprov', 'validate-states');
+        $this->addOrderBy('codpais', 'code');
         $this->addOrderBy('nombre');
         $this->addOrderBy('codiso');
-
-        $this->addFilterCheckbox('validarprov', 'Validar Proveedor');
     }
 
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
 
-        // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
         $model = new Model\Pais();
@@ -59,11 +57,11 @@ class ListPais extends ExtendedController\ListController
     protected function getWhere()
     {
         $result = parent::getWhere();
-
         if ($this->query != '') {
             $fields = "nombre|codiso|codpais";
             $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }
+
         return $result;
     }
 
@@ -73,6 +71,7 @@ class ListPais extends ExtendedController\ListController
         $pagedata['title'] = 'Países';
         $pagedata['icon'] = 'fa-globe';
         $pagedata['menu'] = 'admin';
+
         return $pagedata;
     }
 }

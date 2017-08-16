@@ -62,16 +62,18 @@
     <div id="header" class="row">
         <div class="col-3 d-print-none">
             <div class="btn-group">
-                <a href="#" class="btn btn-sm btn-secondary">
+                <a href="#" class="btn btn-sm btn-light">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i>
                     <span class="hidden-xs hidden-sm">&nbsp;{{ go_back }} </span>
                 </a>
+                <a href="{{ fsc.url() }}" class="btn btn-sm btn-light" title="{{ refresh }}">
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                </a>
+            </div>
+            <div class="btn-group">
                 <a href="#" id="b_print" class="btn btn-sm btn-secondary" onclick="window.print();" title="{{ print_title }}">
                     <i class="fa fa-print" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;{{ print }}</span>
-                </a>
-                <a href="{{ fsc.url() }}" class="btn btn-sm btn-secondary" title="{{ refresh }}">
-                    <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
             </div>
         </div>

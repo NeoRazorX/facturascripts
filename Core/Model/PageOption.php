@@ -210,7 +210,7 @@ class PageOption
         $this->columns = [];
         $this->filters = [];
         $this->rows = [];
-        $file = "Core/Controller/{$name}.xml";
+        $file = "Core/XMLView/{$name}.xml";
         $xml = simplexml_load_file($file);
 
         if ($xml) {

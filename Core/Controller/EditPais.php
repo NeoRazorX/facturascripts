@@ -46,7 +46,7 @@ class EditPais extends ExtendedController\EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Países';
+        $pagedata['title'] = 'País';
         $pagedata['icon'] = 'fa-globe';
         $pagedata['showonmenu'] = FALSE;
         return $pagedata;
