@@ -75,6 +75,7 @@ class ListCliente extends ExtendedController\ListController
         $pagedata['title'] = 'Clientes';
         $pagedata['icon'] = 'fa-users';
         $pagedata['menu'] = 'ventas';
+        
         return $pagedata;
     }
 }

@@ -94,6 +94,14 @@ class Cliente
     {
         return 'codcliente';
     }
+    
+    public function install()
+    {
+        /// necesitamos la tabla de grupos comprobada para la clave ajena
+        new GrupoClientes();
+        
+        return '';
+    }
 
     /**
      * Resetea los valores de todas las propiedades modelo.

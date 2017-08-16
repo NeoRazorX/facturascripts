@@ -50,8 +50,10 @@ class EditCliente extends ExtendedController\EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Clientes';
+        $pagedata['title'] = 'Cliente';
         $pagedata['icon'] = 'fa-users';
+        $pagedata['showonmenu'] = FALSE;
+        
         return $pagedata;
     }    
 }
