@@ -89,21 +89,29 @@ class PageOption
         $this->rows = [];
     }
 
+    /**
+     * Carga los datos desde un array
+     *
+     * @param array $data
+     */
     public function loadFromData($data)
     {
         $this->loadFromDataTrait($data);
 
         $columns = json_decode($data['columns'], true);
         $groupItem = new ExtendedController\GroupItem();
-        $this->columns = $groupItem->loadFromJSON($columns);
+        $groupItem->loadFromJSON($columns);
+        $this->columns[] = $groupItem;
 
         $rows = json_decode($data['rows'], true);
         $rowItem = new ExtendedController\RowItem();
-        $this->rows = $rowItem->loadFromJSON($rows);
+        $rowItem->loadFromJSON($rows);
+        $this->rows[] = $rowItem;
     }
 
     /**
      * Actualiza los datos del modelo en la base de datos.
+     *
      * @return bool
      */
     private function saveUpdate()
@@ -122,6 +130,7 @@ class PageOption
 
     /**
      * Inserta los datos del modelo en la base de datos.
+     *
      * @return bool
      */
     private function saveInsert()
@@ -150,6 +159,7 @@ class PageOption
 
     /**
      * Carga la estructura de columnas desde el XML
+     *
      * @param SimpleXMLElement $columns
      */
     private function getXMLGroupsColumns($columns)
@@ -175,6 +185,7 @@ class PageOption
     /**
      * Carga las condiciones especiales para las filas
      * desde el XML
+     *
      * @param SimpleXMLElement $rows
      */
     private function getXMLRows($rows)
@@ -189,6 +200,7 @@ class PageOption
 
     /**
      * Instala la configuración inicial de un controlador
+     *
      * @param string $name
      */
     public function installXML($name)
@@ -213,6 +225,7 @@ class PageOption
 
     /**
      * Obtiene la configuración para el controlador y usuario
+     *
      * @param string $name
      * @param string $nick
      */
@@ -228,17 +241,25 @@ class PageOption
         $data = $this->all($where, $orderby, 0, 1);
         if (empty($data)) {
             $this->installXML($name);
-            return;
+        } else {
+            $pageOption = $data[0];
+            $this->id = $pageOption->id;
+            $this->name = $pageOption->name;
+            $this->nick = $pageOption->nick;
+            $this->columns = $pageOption->columns;
+            $this->filters = $pageOption->filters;
         }
 
-        $pageOption = $data[0];
-        $this->id = $pageOption->id;
-        $this->name = $pageOption->name;
-        $this->nick = $pageOption->nick;
-        $this->columns = $pageOption->columns;
-        $this->filters = $pageOption->filters;
+        // Aplicamos sobre los widgets Select enlazados a base de datos los valores de los registros.
+        $this->searchSelectValues();
     }
 
+    /**
+     * Obtiene la columna para el nombre de campo informado
+     *
+     * @param string $fieldName
+     * @return ColumnItem
+     */
     public function columnForField($fieldName)
     {
         $result = NULL;
@@ -254,5 +275,26 @@ class PageOption
             }
         }
         return $result;
+    }
+
+    /**
+     * Carga la lista de valores para un widget de tipo select relacionado
+     * con un modelo de la base de datos
+     */
+    private function searchSelectValues()
+    {
+        foreach ($this->columns as $group) {
+            foreach ($group->columns as $column) {
+                if (($column->widget->type === 'select') && array_key_exists('source', $column->widget->values[0])) {
+                    $tableName = $column->widget->values[0]['source'];
+                    $fieldCode = $column->widget->values[0]['fieldcode'];
+                    $fieldDesc = $column->widget->values[0]['fieldtitle'];
+                    $allowEmpty = !$column->widget->required;
+                    $rows = CodeModel::all($tableName, $fieldCode, $fieldDesc, $allowEmpty);
+                    $column->widget->setValuesFromCodeModel($rows);
+                    unset($rows);
+                }
+            }
+        }
     }
 }

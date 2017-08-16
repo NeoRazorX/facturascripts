@@ -66,7 +66,7 @@ class VisualItem
     {
         $this->title = '';
         $this->titleURL = '';
-        $this->numColumns = 12;
+        $this->numColumns = 0;
         $this->order = 100;
         $this->i18n = new Base\Translator();
     }
