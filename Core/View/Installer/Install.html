@@ -11,9 +11,9 @@
         <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
         <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
         <script type="text/javascript">
-            $( document ).ready(function() {
+            $(document).ready(function () {
                 $('#db_type').on('change', function () {
-                    $('#db_type option:selected').each(function() {
+                    $('#db_type option:selected').each(function () {
                         str = $(this).val();
                     });
                     if (str === 'mysql') {
@@ -28,18 +28,17 @@
         </script>
     </head>
     <body>
+        <br/>
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
-                    <div class="page-header">
-                        <h1>
-                            <i class="fa fa-magic" aria-hidden="true"></i> {{ i18n.trans('installer') }}
-                            <a href="install.php" class="btn btn-xs btn-default">
-                                <i class="fa fa-refresh" aria-hidden="true"></i>
-                            </a>
-                        </h1>
-                        <p class="help-block">{{ i18n.trans('installer-p') }}</p>
-                    </div>
+                    <h1>
+                        <i class="fa fa-magic" aria-hidden="true"></i> {{ i18n.trans('installer') }}
+                        <a href="install.php" class="btn btn-sm btn-secondary">
+                            <i class="fa fa-refresh" aria-hidden="true"></i>
+                        </a>
+                    </h1>
+                    <p class="help-block">{{ i18n.trans('installer-p') }}</p>
                 </div>
             </div>
             <div class="row">
@@ -58,13 +57,13 @@
             <div class="row">
                 <div class="col-sm-12">
                     <ul class="nav nav-tabs" role="tablist">
-                        <li role="presentation" class="active">
-                            <a href="#preferencias" aria-controls="preferencias" role="tab" data-toggle="tab">
+                        <li role="presentation" class="nav-item">
+                            <a class="nav-link active" href="#preferencias" aria-controls="preferencias" role="tab" data-toggle="tab">
                                 <i class="fa fa-cogs" aria-hidden="true"></i>&nbsp; {{ i18n.trans('preferences') }}
                             </a>
                         </li>
-                        <li role="presentation">
-                            <a href="#licencia" aria-controls="licencia" role="tab" data-toggle="tab">
+                        <li role="presentation" class="nav-item">
+                            <a class="nav-link" href="#licencia" aria-controls="licencia" role="tab" data-toggle="tab">
                                 <i class="fa fa-file-text-o"></i>&nbsp; {{ i18n.trans('license') }}
                             </a>
                         </li>
@@ -80,13 +79,13 @@
                                 <div class="form-group">
                                     {{ i18n.trans('select-language') }}:
                                     <select name="fs_lang" class="form-control">
-                                    {% for langCode, langName in languages %}
+                                        {% for langCode, langName in languages %}
                                         {% if langCode == 'es_ES' %}
                                         <option value="{{ langCode }}" selected="">{{ langName }}</option>
                                         {% else %}
                                         <option value="{{ langCode }}">{{ langName }}</option>
                                         {% endif %}
-                                    {% endfor %}
+                                        {% endfor %}
                                     </select>
                                 </div>
                             </div>

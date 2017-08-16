@@ -194,11 +194,7 @@ class MenuManager
      */
     private function loadPages()
     {
-        $result = [];
-
-        $where = [];
-        $where[] = new DataBase\DataBaseWhere('showonmenu', TRUE);
-
+        $where = [new DataBase\DataBaseWhere('showonmenu', TRUE)];
         $order = [
             'lower(menu)' => 'ASC',
             'lower(submenu)' => 'ASC',
@@ -207,24 +203,21 @@ class MenuManager
         ];
 
         $pages = self::$pageModel->all($where, $order);
-        switch (TRUE) {
-            case self::$user->admin:
-                $result = $pages;
-                break;
+        if (self::$user && self::$user->admin) {
+            return $pages;
+        }
 
-            default:
-                $pageRuleModel = new Model\PageRule();
-                $pageRule_list = $pageRuleModel->all(['nick' => self::$user]);
-                foreach ($pages as $page) {
-                    foreach ($pageRule_list as $pageRule) {
-                        if ($page->name == $pageRule->pagename) {
-                            $result[] = $page;
-                            // TODO: Eliminar del array de Reglas la pagina añadida
-                            break;
-                        }
-                    }
+        $result = [];
+        $pageRuleModel = new Model\PageRule();
+        $pageRule_list = $pageRuleModel->all(['nick' => self::$user->nick]);
+        foreach ($pages as $page) {
+            foreach ($pageRule_list as $pageRule) {
+                if ($page->name == $pageRule->pagename) {
+                    $result[] = $page;
+                    // TODO: Eliminar del array de Reglas la pagina añadida
+                    break;
                 }
-                break;
+            }
         }
 
         return $result;
