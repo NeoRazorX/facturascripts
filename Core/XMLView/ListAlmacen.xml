@@ -24,22 +24,22 @@
 
 <view>
     <columns>
-        <column title="Código" display="left" order="100">
+        <column title="Código" order="100">
             <widget type="text" fieldname="codalmacen" onclick="EditAlmacen" />
         </column>
-        <column title="Nombre" display="left" order="100">
+        <column title="Nombre" order="100">
             <widget type="text" fieldname="nombre" />
         </column>
-        <column title="Contacto" display="left" order="100">
+        <column title="Contacto" order="100">
             <widget type="text" fieldname="contacto" />
         </column>
-        <column title="Dirección" display="left" order="100">
+        <column title="Dirección" order="100">
             <widget type="text" fieldname="direccion" />
         </column>
         <column title="Apartado" display="none" order="100">
             <widget type="text" fieldname="apartado" />
         </column>
-        <column title="Poblacion" display="left" order="100">
+        <column title="Poblacion" order="100">
             <widget type="text" fieldname="poblacion" />
         </column>
         <column title="Cod. Postal" display="none" order="100">
@@ -48,10 +48,10 @@
         <column title="Provincia" display="center" order="100">
             <widget type="text" fieldname="provincia" />
         </column>
-        <column title="Teléfono" display="left" order="100">
+        <column title="Teléfono" order="100">
             <widget type="text" fieldname="telefono" />
         </column>
-        <column title="Fax" display="left" order="100">
+        <column title="Fax" order="100">
             <widget type="text" fieldname="fax" />
         </column>
         <column title="Valoración" display="center" order="100">

@@ -308,12 +308,6 @@ class ListController extends Base\Controller
     {
         $result = [];
         if ($this->dataBase->tableExists($table)) {
-            $sql = "SELECT DISTINCT " . $field . " FROM " . $table . " WHERE COALESCE(" . $field . ", '')" . " <> ''";
-
-            if ($where != "") {
-                $sql .= " AND " . $where;
-            }
-
             $sql = "SELECT DISTINCT " . $field
                 . " FROM " . $table
                 . " WHERE COALESCE(" . $field . ", '')" . " <> ''" . $where

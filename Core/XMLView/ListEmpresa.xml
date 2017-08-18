@@ -24,25 +24,25 @@
 
 <view>
     <columns>
-        <column title="Código" display="left" order="100">
+        <column title="Código" order="100">
             <widget type="text" fieldname="id" onclick="EditEmpresa" />
         </column>
-        <column title="Nombre" display="left" order="110">
+        <column title="Nombre" order="110">
             <widget type="text" fieldname="nombre" />
         </column>
-        <column title="Nom. Corto" display="left" order="120">
+        <column title="Nom. Corto" order="120">
             <widget type="text" fieldname="nombrecorto" />
         </column>
         <column title="Inicio" display="center" order="130">
             <widget type="text" fieldname="inicioact" />
         </column>
-        <column title="Teléfono" display="left" order="140">
+        <column title="Teléfono" order="140">
             <widget type="text" fieldname="telefono" />
         </column>
-        <column title="Email" display="left" order="150">
+        <column title="Email" order="150">
             <widget type="text" fieldname="email" />
         </column>
-        <column title="Web" display="left" order="160">
+        <column title="Web" order="160">
             <widget type="text" fieldname="web" />
         </column>
         <column title="Divisa" display="center" order="170">

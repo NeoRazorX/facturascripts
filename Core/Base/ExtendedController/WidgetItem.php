@@ -218,7 +218,6 @@ class WidgetItem
                 $html = (empty($this->onClick)) ? '<span' . $style . '>' . $value . '</span>' : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $value . '</a>';
                 break;
 
-            case 'check':
             case 'checkbox':
                 $value = in_array($value, ['t', '1']);
                 $icon = $value ? 'fa-check' : 'fa-minus';
@@ -286,31 +285,51 @@ class WidgetItem
         $html = $this->getIconHTML();
 
         switch ($this->type) {
+            case 'text':
+                $html .= $this->standardHTMLWidget($fieldName, $value, $specialClass);
+                break;
+            
             case 'checkbox':
                 $html .= '<input id=' . $fieldName . ' class="form-check-input" type="checkbox" name=' . $fieldName . ' value=""' . $specialClass . '>';
                 break;
 
+            case 'radio':
+                $html .= '<input id=' . $fieldName . 'sufix% class="form-check-input" type="radio" name=' . $fieldName . ' value=""value%"' . $specialClass . '"checked%>';
+                break;
+            
             case 'textarea':
                 $html .= '<textarea id=' . $fieldName . ' class="form-control" name=' . $fieldName . ' rows="3"' . $specialClass . '>' . $value . '</textarea>';
                 break;
 
             case 'select':
-                $html .= '<select id=' . $fieldName . ' class="form-control" name=' . $fieldName . $specialClass . '>';
-                foreach ($this->values as $selectValue) {
-                    $selected = ($selectValue['value'] == $value) ? ' selected="selected" ' : '';
-                    $html .= '<option value="' . $selectValue['value'] . '"' . $selected . '>' . $selectValue['title'] . '</option>';
-                }
-                $html .= '</select>';
+                $html .= $this->selectHTMLWidget($fieldName, $value, $specialClass);
                 break;
 
             default:
-                $html .= '<input id=' . $fieldName . ' type="' . $this->type . '" class="form-control" name=' . $fieldName . ' value="' . $value . '"' . $specialClass . '>';
+                $html .= $this->standardHTMLWidget($fieldName, $value, $specialClass);
         }
 
         if (!empty($this->icon)) {
             $html .= '</div>';
         }
 
+        return $html;
+    }
+
+    private function standardHTMLWidget($fieldName, $value, $specialClass)
+    {
+        return '<input id=' . $fieldName . ' type="text" class="form-control" name=' . $fieldName . ' value="' . $value . '"' . $specialClass . '>';
+    }
+    
+    private function selectHTMLWidget($fieldName, $value, $specialClass)
+    {
+        $html = '<select id=' . $fieldName . ' class="form-control" name=' . $fieldName . $specialClass . '>';
+        foreach ($this->values as $selectValue) {
+            $selected = ($selectValue['value'] == $value) ? ' selected="selected" ' : '';
+            $html .= '<option value="' . $selectValue['value'] . '"' . $selected . '>' . $selectValue['title'] . '</option>';
+        }
+        $html .= '</select>';
+        
         return $html;
     }
 }

@@ -24,10 +24,10 @@
 
 <view>
     <columns>
-        <column title="Código" display="left" order="100">
+        <column title="Código" order="100">
             <widget type="text" fieldname="codimpuesto" onclick="EditImpuesto" />
         </column>
-        <column title="Descripción" display="left" order="110">
+        <column title="Descripción" order="110">
             <widget type="text" fieldname="descripcion" />
         </column>
         <column title="% Iva" display="right" order="120">

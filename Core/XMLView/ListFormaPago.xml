@@ -24,13 +24,13 @@
 
 <view>
     <columns>
-        <column title="Código" display="left" order="100">
+        <column title="Código" order="100">
             <widget type="text" fieldname="codpago" onclick="EditPago" />
         </column>
-        <column title="Descripción" display="left" order="110">
+        <column title="Descripción" order="110">
             <widget type="text" fieldname="descripcion" />
         </column>
-        <column title="Cod. Cuenta" titleurl="?page=ListEmpresa" display="left" order="115">
+        <column title="Cod. Cuenta" titleurl="?page=ListEmpresa" order="115">
             <widget type="text" fieldname="codcuenta" />
         </column>
         <column title="Vencimiento" display="center" order="120">

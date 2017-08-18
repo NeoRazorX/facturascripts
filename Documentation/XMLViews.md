@@ -77,9 +77,13 @@ Entendemos que es cada uno de los campos del modelo que componen la vista y con 
 En las vistas List se muestra como un hint sobre el título de la columna.
 En las vistas Edit se muestra como un label inferior a la zona de edición del campo.
 
-* **display** : Indica si se visualiza o no el campo y su alineación **[_left|center|right|none_]**
+* **display** : Indica si se visualiza o no el campo y su alineación. Si no se informa, toma como valor _left_. Valores: **[_left|center|right|none_]**
 
-* **order** : Posición que ocupa la columna. Sirve para indicar el orden en que se visualizan.
+* **order** : Posición que ocupa la columna. Sirve para indicar el orden en que se visualizan. Si no se informa toma el valor _100_
+Cuando no se informa una ordenación específica, se ordena por la posición secuencial en el archivo XML, siempre dentro de su grupo.
+
+* **numcolumns : Fuerza el tamaño de la columna al valor indicado, usando el sistema de grid de Bootstrap siendo mínimo 1 y máximo 12.
+Si no se informa toma como valor _0_ aplicando el sistema de tamaño automático de Bootstrap.
 
 
 ### widget
@@ -123,6 +127,9 @@ Para este caso se utilizará una sóla etiqueta _\<values\>_ indicando los atrib
                 <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
             </widget>
         ```
+    * radio: Lista de valores donde podemos seleccionar una de ellas.
+Se indican las distintas opciones mediante sistema de etiquetas _\<values\>_ descritas dentro del grupo _\<widget\>_, al estilo del tipo _select_.
+
 
 * **fieldname** : (obligatorio) Nombre del campo que contiene la información.
 

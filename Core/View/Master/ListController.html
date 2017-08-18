@@ -108,7 +108,7 @@
                 <div class="container-fluid d-print-none" style="margin-top: 15px; margin-bottom: 10px;">
                     <div class="row">
                         <!-- Main filter -->
-                        <div class="col-sm-2">
+                        <div class="col-md-2">
                             <div class="input-group">
                                 <input class="form-control" type="text" name="query" value="{{ fsc.query }}" autocomplete="off" placeholder="Buscar">
                                 <span class="input-group-btn hidden-sm">
@@ -122,7 +122,7 @@
                         <!-- Aditionals filters -->
                         {% for key1, filter in fsc.filters %}
                         {% if filter.type == 'select' %}
-                        <div class="col-sm-2">
+                        <div class="col">
                             <select name="{{ key1 }}" class="form-control" onchange="this.form.submit()">
                                 <option value="">{{ any }} {{ key1 }}</option>
                                 <option value="">------</option>
@@ -138,7 +138,7 @@
                         {% endif %}
 
                         {% if filter.type == 'checkbox' %}
-                        <div class="col-sm-1">
+                        <div class="col">
                             <div class="checkbox-inline">
                                 <label>
                                     {% if filter.value %}
@@ -153,7 +153,7 @@
                         {% endif %}
 
                         {% if filter.type == 'datepicker' %}
-                        <div class="col-sm-2">
+                        <div class="col">
                             <input type="text" name="{{ key1 }}" value="{{ filter.value }}" class="form-control datepicker"
                                    placeholder="{{ filter.options.label }}" autocomplete="off" onchange="this.form.submit()"/>                            
                         </div>
@@ -161,8 +161,8 @@
                         {% endfor %}
 
                         <!-- Order by selector -->
-                        <div class="col-sm-2">
-                            <div class="btn-group">
+                        <div class="col">
+                            <div class="btn-group float-md-right">
                                 <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuOrder" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                     <i class="fa {{ fsc.orderby[fsc.selectedOrderBy]['icon'] }}" aria-hidden="true"></i>
                                     &nbsp; {{ i18n.trans(fsc.orderby[fsc.selectedOrderBy]['label']) }}

@@ -137,10 +137,10 @@
                                     <legend>{{ group.getHeaderHTML(group.title)|raw }}</legend>
                                     {% endif %}
                                     {% for column in group.columns %}
-                                    {% if column.display != 'none' %}
-                                    {% set value = attribute(fsc.model, column.widget.fieldName) %}
-                                    {{ column.getEditHTML(value)|raw }}
-                                    {% endif %}
+                                        {% if column.display != 'none' %}
+                                        {% set value = attribute(fsc.model, column.widget.fieldName) %}
+                                        {{ column.getEditHTML(value)|raw }}
+                                        {% endif %}
                                     {% endfor %}
                                 </div>
                             </div>

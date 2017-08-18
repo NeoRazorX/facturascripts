@@ -24,10 +24,10 @@
 
 <view>
     <columns>
-        <column title="Código" display="left" order="100">
+        <column title="Código" order="100">
             <widget type="text" fieldname="codejercicio" onclick="EditEjercicio" />
         </column>
-        <column title="Nombre" display="left" order="110">
+        <column title="Nombre" order="110">
             <widget type="text" fieldname="nombre" />
         </column>
         <column title="Inicio" display="center" order="120">

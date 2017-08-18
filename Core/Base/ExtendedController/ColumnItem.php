@@ -53,7 +53,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         parent::__construct();
 
         $this->description = '';
-        $this->display = 'none';
+        $this->display = 'left';
         $this->widget = new WidgetItem();
     }
 
@@ -67,7 +67,11 @@ class ColumnItem extends VisualItem implements VisualItemInterface
 
         $column_atributes = $column->attributes();
         $this->description = (string) $column_atributes->description;
-        $this->display = (string) $column_atributes->display;
+        
+        if (!empty($column_atributes->display)) {
+            $this->display = (string) $column_atributes->display;
+        }
+        
         $this->widget->loadFromXMLColumn($column);
     }
 
@@ -136,23 +140,59 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         $hint = empty($this->widget->hint) ? '' : ' title="' . $this->i18n->trans($this->widget->hint) . '"';
         $description = empty($this->description) ? '' : '<small class="form-text text-muted">' . $this->i18n->trans($this->description) . '</small>';
 
-        switch ($this->widget->type) {
+        switch ($this->widget->type) {            
             case "checkbox":
-                $html = '<div class="form-row ' .  $columnClass . ' align-items-center"><div class="form-check">'
-                    . '<label class="form-check-label"' . $hint . '>'
-                    . $input . '&nbsp;' . $header
-                    . '</label>'
-                    . $description
-                    . '</div></div>';
+                $html = '<div class="form-row align-items-center' . $columnClass . '">'
+                        . $this->checkboxHTMLColumn($header, $input, $hint, $description)
+                        . '</div>';
                 break;
 
-            default:
-                $html = '<div class="' . $columnClass . '"><div class="form-group">'
-                    . '<label for="' . $this->widget->fieldName . '"' . $hint . '>' . $header . '</label>'
-                    . $input
-                    . $description
-                    . '</div></div>';
+            case "radio":
+                $html = '<div class="' .  $columnClass . '">'
+                        . '<label>' . $header . '</label>'
+                        . $this->radioHTMLColumn($input, $hint, $value)
+                        . '</div>';                
                 break;
+            
+            default:
+                $html = $this->standardHTMLColumn($header, $input, $hint, $description, $columnClass);
+                break;
+        }
+        return $html;
+    }
+    
+    private function standardHTMLColumn($header, $input, $hint, $description, $columnClass)
+    {
+        return '<div class="form-group' . $columnClass . '">'
+            . '<label for="' . $this->widget->fieldName . '"' . $hint . '>' . $header . '</label>'
+            . $input
+            . $description
+            . '</div>';
+    }
+    
+    private function checkboxHTMLColumn($header, $input, $hint, $description)
+    {
+        return '<div class="form-check col">'
+            . '<label class="form-check-label"' . $hint . '>'
+            . $input . '&nbsp;' . $header
+            . '</label>'
+            . $description
+            . '</div>';        
+    }
+    
+    private function radioHTMLColumn($input, $hint, $value)
+    {
+        $html = '';
+        $index = 0;
+        $template_var = ['"sufix%', '"value%', '"checked%'];
+        foreach ($this->widget->values as $optionValue) {
+            $checked = ($optionValue['value'] == $value) ? ' checked="checked"' : '';
+            $index++;
+            $values = [($index . '"'), $optionValue['value'], $checked];
+            $html .= '<div class="form-check"><label class="form-check-label"' . $hint . '>'
+                    . str_replace($template_var, $values, $input)
+                    . '&nbsp;' . $optionValue['title']
+                    . '</label></div>';
         }
         return $html;
     }

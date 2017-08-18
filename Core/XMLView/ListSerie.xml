@@ -24,10 +24,10 @@
 
 <view>
     <columns>
-        <column title="Código" display="left" order="100">
+        <column title="Código" order="100">
             <widget type="text" fieldname="codserie" onclick="EditSerie" />
         </column>
-        <column title="Descripción" display="left" order="110">
+        <column title="Descripción" order="110">
             <widget type="text" fieldname="descripcion" />
         </column>
         <column title="% Iva" display="right" order="120">
@@ -41,7 +41,7 @@
                 <option color="red">0</option>
             </widget>
         </column>
-        <column title="Cuenta" display="left" order="150">
+        <column title="Cuenta" order="150">
             <widget type="text" fieldname="codcuenta" />
         </column>
         <column title="Ejercicio" display="center" order="160">
