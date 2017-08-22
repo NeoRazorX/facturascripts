@@ -18,32 +18,17 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Base\DefaultItems;
+use FacturaScripts\Core\Lib\IDFiscal;
+use FacturaScripts\Core\Lib\RegimenIVA;
+
 /**
  * Description of Persona
  *
  * @author carlos
  */
-trait Persona
+abstract class Persona
 {
-
-    /**
-     * Nombre por el que conocemos al cliente, no necesariamente el oficial.
-     * @var string
-     */
-    public $nombre;
-
-    /**
-     * Razón social del cliente, es decir, el nombre oficial. El que aparece en las facturas.
-     * @var string
-     */
-    public $razonsocial;
-
-    /**
-     * Tipo de identificador fiscal del cliente.
-     * Ejemplos: CIF, NIF, CUIT...
-     * @var string
-     */
-    public $tipoidfiscal;
 
     /**
      * Identificador fiscal del cliente.
@@ -52,34 +37,16 @@ trait Persona
     public $cifnif;
 
     /**
-     * TODO
+     * Empleado/agente asignado al cliente.
      * @var string
      */
-    public $telefono1;
+    public $codagente;
 
     /**
-     * TODO
+     * Código identificador del cliente.
      * @var string
      */
-    public $telefono2;
-
-    /**
-     * TODO
-     * @var string
-     */
-    public $email;
-
-    /**
-     * TODO
-     * @var string
-     */
-    public $web;
-
-    /**
-     * Serie predeterminada para este cliente.
-     * @var string
-     */
-    public $codserie;
+    public $codcliente;
 
     /**
      * Divisa predeterminada para este cliente.
@@ -94,16 +61,58 @@ trait Persona
     public $codpago;
 
     /**
-     * Empleado/agente asignado al cliente.
+     * Código identificador del proveedor.
      * @var string
      */
-    public $codagente;
+    public $codproveedor;
+
+    /**
+     * Serie predeterminada para este cliente.
+     * @var string
+     */
+    public $codserie;
+
+    /**
+     * TRUE -> el cliente ya no nos compra o no queremos nada con él.
+     * @var boolean
+     */
+    public $debaja;
+
+    /**
+     *
+     * @var DefaultItems
+     */
+    private static $defaultItems;
+
+    /**
+     * TODO
+     * @var string
+     */
+    public $email;
 
     /**
      * Fecha en la que se dió de alta al cliente.
      * @var string
      */
     public $fechaalta;
+
+    /**
+     * Fecha en la que se dió de baja al cliente.
+     * @var string
+     */
+    public $fechabaja;
+
+    /**
+     *
+     * @var IDFiscal
+     */
+    private static $idFiscal;
+
+    /**
+     * Nombre por el que conocemos al cliente, no necesariamente el oficial.
+     * @var string
+     */
+    public $nombre;
 
     /**
      * TODO
@@ -119,6 +128,90 @@ trait Persona
     public $personafisica;
 
     /**
+     * Razón social del cliente, es decir, el nombre oficial. El que aparece en las facturas.
+     * @var string
+     */
+    public $razonsocial;
+
+    /**
+     * Régimen de fiscalidad del proveedor. Por ahora solo están implementados
+     * general y exento.
+     * @var string
+     */
+    public $regimeniva;
+
+    /**
+     *
+     * @var RegimenIVA
+     */
+    private static $regimenIVA;
+
+    /**
+     * TODO
+     * @var string
+     */
+    public $telefono1;
+
+    /**
+     * TODO
+     * @var string
+     */
+    public $telefono2;
+
+    /**
+     * Tipo de identificador fiscal del cliente.
+     * Ejemplos: CIF, NIF, CUIT...
+     * @var string
+     */
+    public $tipoidfiscal;
+
+    /**
+     * TODO
+     * @var string
+     */
+    public $web;
+
+    public function __construct()
+    {
+        if (self::$defaultItems === NULL) {
+            self::$defaultItems = new DefaultItems();
+            self::$idFiscal = new IDFiscal();
+            self::$regimenIVA = new RegimenIVA();
+        }
+    }
+
+    /**
+     * Resetea los valores de todas las propiedades modelo.
+     */
+    public function clear()
+    {
+        $this->cifnif = '';
+        $this->coddivisa = self::$defaultItems->codDivisa();
+        $this->codpago = self::$defaultItems->codPago();
+        $this->debaja = FALSE;
+        $this->email = '';
+        $this->fax = '';
+        $this->fechaalta = date('d-m-Y');
+        $this->fechabaja = NULL;
+        $this->nombre = '';
+        $this->personafisica = TRUE;
+        $this->razonsocial = '';
+        $this->regimeniva = self::$regimenIVA->defaultValue();
+        $this->telefono1 = '';
+        $this->telefono2 = '';
+        $this->tipoidfiscal = self::$idFiscal->defaultValue();
+        $this->web = '';
+    }
+
+    abstract public function getByCifnif($cifnif, $razon = '');
+
+    abstract public function getDirecciones();
+
+    abstract public function getSubcuentas();
+
+    abstract public function getSubcuenta($codejercicio);
+
+    /**
      * Acorta el texto de observaciones
      * @return string
      */
@@ -131,5 +224,14 @@ trait Persona
             return $this->observaciones;
         }
         return substr($this->observaciones, 0, 50) . '...';
+    }
+
+    /**
+     * Devuelve un array con los regimenes de iva disponibles.
+     * @return array
+     */
+    public function regimenesIVA()
+    {
+        return self::$regimenIVA;
     }
 }

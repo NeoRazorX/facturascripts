@@ -229,20 +229,6 @@ class Tarifa
 
     /**
      * TODO
-     * @return string
-     */
-    public function getNewCodigo()
-    {
-        $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codtarifa') . ') as cod FROM ' . $this->tableName() . ';';
-        $cod = $this->dataBase->select($sql);
-        if (!empty($cod)) {
-            return sprintf('%06s', 1 + (int) $cod[0]['cod']);
-        }
-        return '000001';
-    }
-
-    /**
-     * TODO
      * @return bool
      */
     public function test()

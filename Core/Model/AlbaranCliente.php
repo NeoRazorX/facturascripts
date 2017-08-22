@@ -132,17 +132,6 @@ class AlbaranCliente
     }
 
     /**
-     * Genera un nuevo código y número para este albarán
-     */
-    public function newCodigo()
-    {
-        $this->numero = fsDocumentoNewNumero(
-            $this->dataBase, $this->tableName(), $this->codejercicio, $this->codserie, 'nalbarancli'
-        );
-        $this->codigo = fsDocumentoNewCodigo(FS_ALBARAN, $this->codejercicio, $this->codserie, $this->numero);
-    }
-
-    /**
      * Comprueba los datos del albarán, devuelve TRUE si son correctos
      * @return bool
      */

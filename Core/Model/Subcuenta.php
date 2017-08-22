@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -229,24 +230,16 @@ class Subcuenta
      */
     public function getByCodigo($cod, $codejercicio, $crear = false)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codsubcuenta = ' . $this->var2str($cod)
-            . ' AND codejercicio = ' . $this->var2str($codejercicio) . ';';
-
-        $subc = $this->dataBase->select($sql);
-        if (!empty($subc)) {
-            return new Subcuenta($subc[0]);
+        foreach ($this->all([new DataBaseWhere('codsubcuenta', $cod), new DataBaseWhere('codejercicio', $codejercicio)]) as $subc) {
+            return $subc;
         }
+
         if ($crear) {
             /// buscamos la subcuenta equivalente en otro ejercicio
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codsubcuenta = ' . $this->var2str($cod)
-                . ' ORDER BY idsubcuenta DESC;';
-            $subc = $this->dataBase->select($sql);
-            if (!empty($subc)) {
-                $oldSc = new Subcuenta($subc[0]);
-
+            foreach ($this->all([new DataBaseWhere('codsubcuenta', $cod)], ['idsubcuenta' => 'DESC']) as $oldSc) {
                 /// buscamos la cuenta equivalente es ESTE ejercicio
-                $cuenta = new Cuenta();
-                $newC = $cuenta->getByCodigo($oldSc->codcuenta, $codejercicio);
+                $cuentaModel = new Cuenta();
+                $newC = $cuentaModel->getByCodigo($oldSc->codcuenta, $codejercicio);
                 if ($newC) {
                     $newSc = new Subcuenta();
                     $newSc->codcuenta = $newC->codcuenta;
@@ -261,17 +254,21 @@ class Subcuenta
                     if ($newSc->save()) {
                         return $newSc;
                     }
+                    
                     return false;
                 }
+
                 $this->miniLog->alert('No se ha encontrado la cuenta equivalente a ' . $oldSc->codcuenta
                     . ' en el ejercicio ' . $codejercicio
                     . ' <a href="index.php?page=ContabilidadEjercicio&cod=' . $codejercicio
                     . '">¿Has importado el plan contable?</a>');
                 return false;
             }
+
             $this->miniLog->alert('No se ha encontrado ninguna subcuenta equivalente a ' . $cod . ' para copiar.');
             return false;
         }
+
         return false;
     }
 
@@ -294,6 +291,7 @@ class Subcuenta
         if (!empty($data)) {
             return new Subcuenta($data[0]);
         }
+        
         return false;
     }
 

@@ -290,24 +290,6 @@ trait DocumentoVenta
     public $numdocs;
 
     /**
-     * Muestra la hora en formato legible,
-     * si $seg = true el formato es 'H:i:s'
-     * y sino 'H:i'
-     *
-     * @param bool $seg
-     *
-     * @return false|string
-     */
-    public function showHora($seg = true)
-    {
-        if ($seg) {
-            return date('H:i:s', strtotime($this->hora));
-        }
-
-        return date('H:i', strtotime($this->hora));
-    }
-
-    /**
      * Acorta el texto de observaciones
      * @return string
      */
@@ -321,28 +303,11 @@ trait DocumentoVenta
         }
         return substr($this->observaciones, 0, 50) . '...';
     }
-
-    /**
-     * Devuelve la url donde se pueden ver/modificar los datos de los agentes
-     * @return string
-     */
-    public function agenteUrl()
+    
+    private function newCodigo()
     {
-        if ($this->codagente === null) {
-            return 'index.php?page=AdminAgentes';
-        }
-        return 'index.php?page=AdminAgente&cod=' . $this->codagente;
-    }
-
-    /**
-     * Devuelve la url donde se pueden ver/modificar los datos de los clientes
-     * @return string
-     */
-    public function clienteUrl()
-    {
-        if ($this->codcliente === null) {
-            return 'index.php?page=VentasClientes';
-        }
-        return 'index.php?page=VentasCliente&cod=' . $this->codcliente;
+        $newCodigoDoc = new NewCodigoDoc();
+        $this->numero = $newCodigoDoc->getNumero($this->tableName(), $this->codejercicio, $this->codserie);
+        $this->codigo = $newCodigoDoc->getCodigo($this->tableName(), $this->numero);
     }
 }

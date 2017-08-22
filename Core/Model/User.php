@@ -136,19 +136,6 @@ class User
     }
 
     /**
-     * Devuelve la url desde donde editar este usuario.
-     * @return string
-     */
-    public function url()
-    {
-        if ($this->nick === null) {
-            return 'index.php?page=AdminUsers';
-        }
-
-        return 'index.php?page=AdminUser&id=' . $this->nick;
-    }
-
-    /**
      * Asigna la contraseña dada al usuario.
      *
      * @param string $value
