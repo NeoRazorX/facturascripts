@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * La cantidad en inventario de un artículo en un almacén concreto.
  *
@@ -135,8 +137,8 @@ class Stock
      */
     public function getNombre()
     {
-        $al0 = new Almacen();
-        $almacen = $al0->get($this->codalmacen);
+        $almacenModel = new Almacen();
+        $almacen = $almacenModel->get($this->codalmacen);
         if ($almacen) {
             $this->nombre = $almacen->nombre;
         }
@@ -147,11 +149,11 @@ class Stock
     /**
      * TODO
      *
-     * @param int $c
+     * @param int $cant
      */
-    public function setCantidad($c = 0)
+    public function setCantidad($cant = 0)
     {
-        $this->cantidad = (float) $c;
+        $this->cantidad = (float) $cant;
 
         if ($this->cantidad < 0 && !FS_STOCK_NEGATIVO) {
             $this->cantidad = 0;
@@ -163,12 +165,12 @@ class Stock
     /**
      * TODO
      *
-     * @param int $c
+     * @param int $cant
      */
-    public function sumCantidad($c = 0)
+    public function sumCantidad($cant = 0)
     {
         /// convertimos a flot por si acaso nos ha llegado un string
-        $this->cantidad += (float) $c;
+        $this->cantidad += (float) $cant;
 
         if ($this->cantidad < 0 && !FS_STOCK_NEGATIVO) {
             $this->cantidad = 0;
@@ -183,20 +185,19 @@ class Stock
      * @param string $ref
      * @param bool $codalmacen
      *
-     * @return bool|Stock
+     * @return Stock|false
      */
     public function getByReferencia($ref, $codalmacen = false)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref) . ';';
-        if ($codalmacen) {
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref)
-                . ', codalmacen = ' . $this->var2str($codalmacen) . ';';
+        $where = [new DataBaseWhere('referencia', $ref)];
+        if($codalmacen) {
+            $where[] = new DataBaseWhere('codalmacen', $codalmacen);
         }
 
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            return new Stock($data[0]);
+        foreach ($this->all($where) as $stock) {
+            return $stock;
         }
+
         return false;
     }
 
@@ -219,7 +220,6 @@ class Stock
      */
     public function totalFromArticulo($ref, $codalmacen = false)
     {
-        $num = 0;
         $sql = 'SELECT SUM(cantidad) AS total FROM ' . $this->tableName()
             . ' WHERE referencia = ' . $this->var2str($ref);
 
@@ -229,10 +229,10 @@ class Stock
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
-            $num = round((float) $data[0]['total'], 3);
+            return round((float) $data[0]['total'], 3);
         }
 
-        return $num;
+        return 0;
     }
 
     /**

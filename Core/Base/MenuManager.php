@@ -49,9 +49,9 @@ class MenuManager
 
     /**
      * Usuario para quien se ha creado el menú.
-     * @var Model\User
+     * @var Model\User|false
      */
-    private static $user;
+    private static $user = false;
 
     /**
      * Llamar solamente cuando se ha conectado a la base de datos.

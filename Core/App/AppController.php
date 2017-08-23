@@ -145,7 +145,7 @@ class AppController extends App
         $controllerName = "FacturaScripts\\Dinamic\\Controller\\{$pageName}";
         if (!class_exists($controllerName)) {
             $controllerName = "FacturaScripts\\Core\\Controller\\{$pageName}";
-            ///$this->deployPlugins();
+            $this->deployPlugins();
         }
 
         return $controllerName;

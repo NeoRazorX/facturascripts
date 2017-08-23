@@ -101,7 +101,7 @@ class PresupuestoCliente
         return $lineaModel->all(new DataBaseWhere('idpresupuesto', $this->idpresupuesto));
     }
 
-    public function get_versiones()
+    public function getVersiones()
     {
         $versiones = array();
 
@@ -120,21 +120,6 @@ class PresupuestoCliente
         }
 
         return $versiones;
-    }
-
-    public function newCodigo()
-    {
-        $this->numero = fs_documento_new_numero($this->db, $this->table_name, $this->codejercicio, $this->codserie, 'npresupuestocli');
-
-        /**
-         * Para evitar confusiones, si se elige "factura proforma" o algo similar
-         * como traducción de FS_PRESUPUESTO, mejor ponemos "PRO" como inicio de código.
-         */
-        $tipodoc = strtoupper(substr(FS_PRESUPUESTO, 0, 3));
-        if ($tipodoc == 'FAC') {
-            $tipodoc = 'PRO';
-        }
-        $this->codigo = fs_documento_new_codigo($tipodoc, $this->codejercicio, $this->codserie, $this->numero);
     }
 
     /**

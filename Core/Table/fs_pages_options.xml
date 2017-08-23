@@ -12,7 +12,7 @@
         <tipo>serial</tipo>
         <nulo>NO</nulo>
         <defecto>nextval('fs_pages_options_id_seq'::regclass)</defecto>
-    </columna>    
+    </columna>
     <columna>
         <nombre>name</nombre>
         <tipo>character varying(30)</tipo>
@@ -27,7 +27,7 @@
         <nombre>rows</nombre>
         <tipo>text</tipo>
         <nulo>YES</nulo>
-    </columna>    
+    </columna>
     <columna>
         <nombre>columns</nombre>
         <tipo>text</tipo>
@@ -45,7 +45,7 @@
     <restriccion>
         <nombre>uniq_pages_options</nombre>
         <consulta>UNIQUE (name, nick)</consulta>
-    </restriccion>    
+    </restriccion>
     <restriccion>
         <nombre>ca_fs_pagesoptions_pages</nombre>
         <consulta>FOREIGN KEY (name) REFERENCES fs_pages (name) ON DELETE CASCADE ON UPDATE CASCADE</consulta>

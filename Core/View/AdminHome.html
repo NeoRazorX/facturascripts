@@ -4,15 +4,27 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
-            <div class="page-header">
-                <h1>
-                    {{ i18n.trans('hello-world') }}
-                    <a href="{{ fsc.url() }}" class="btn btn-sm btn-secondary">
-                        <i class="fa fa-refresh" aria-hidden="true"></i>
-                    </a>
-                </h1>
-                <p class="help-block">{{ i18n.trans('hello-world-text') }}</p>
-            </div>
+            <h1>
+                {{ i18n.trans('hello-world') }}
+                <a href="{{ fsc.url() }}" class="btn btn-sm btn-secondary">
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                </a>
+            </h1>
+            <p class="help-block">{{ i18n.trans('hello-world-text') }}</p>
+            <hr/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <input type="text" name="fecha" value="01-01-2017" class="form-control datepicker"/>
+        </div>
+        <div class="col-sm-6">
+            <button type="button" class="btn btn-primary" onclick='bootbox.alert("Hello world!");'>Hello world</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <hr/>
         </div>
     </div>
     <div class="row">
@@ -20,7 +32,7 @@
             <h3>Agentes:</h3>
             <ul>
                 {% for agente in fsc.agente.all() %}
-                <li>{{ agente.fullName() }}</li>
+                <li>{{ agente.fullName()|raw }}</li>
                 {% endfor %}
             </ul>
             <h3>Almacenes:</h3>

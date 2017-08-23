@@ -109,44 +109,6 @@ class RegularizacionStock
     }
 
     /**
-     * Devuelve un array con todas las regularizaciones de un artículo.
-     *
-     * @param string $ref
-     * @param string $codalmacen
-     * @param string $desde
-     * @param string $hasta
-     * @param int $limit
-     * @param int $offset
-     *
-     * @return array
-     */
-    public function allFromArticulo($ref, $codalmacen = '', $desde = '', $hasta = '', $limit = 1000, $offset = 0)
-    {
-        $rlist = [];
-        $sql = 'SELECT * FROM lineasregstocks WHERE idstock IN'
-            . ' (SELECT idstock FROM stocks WHERE referencia = ' . $this->var2str($ref) . ')';
-        if (!empty($codalmacen)) {
-            $sql .= ' AND codalmacendest = ' . $this->var2str($codalmacen);
-        }
-        if (!empty($desde)) {
-            $sql .= ' AND fecha >= ' . $this->var2str($desde);
-        }
-        if (!empty($hasta)) {
-            $sql .= ' AND fecha <= ' . $this->var2str($hasta);
-        }
-        $sql .= ' ORDER BY fecha DESC, hora DESC';
-
-        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $rlist[] = new RegularizacionStock($d);
-            }
-        }
-
-        return $rlist;
-    }
-
-    /**
      * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
      * que se ejecutará tras la creación de la tabla. útil para insertar valores
      * por defecto.

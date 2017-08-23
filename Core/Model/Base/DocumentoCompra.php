@@ -174,15 +174,8 @@ trait DocumentoCompra
      * @var int
      */
     public $numdocs;
-
-    public function show_hora($s = TRUE)
-    {
-        if ($s) {
-            return Date('H:i:s', strtotime($this->hora));
-        }
-
-        return Date('H:i', strtotime($this->hora));
-    }
+    
+    abstract public function tableName();
 
     public function observaciones_resume()
     {
@@ -193,5 +186,12 @@ trait DocumentoCompra
         }
 
         return substr($this->observaciones, 0, 50) . '...';
+    }
+    
+    private function newCodigo()
+    {
+        $newCodigoDoc = new NewCodigoDoc();
+        $this->numero = $newCodigoDoc->getNumero($this->tableName(), $this->codejercicio, $this->codserie);
+        $this->codigo = $newCodigoDoc->getCodigo($this->tableName(), $this->numero);
     }
 }

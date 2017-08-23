@@ -77,6 +77,15 @@ class PageOption
     {
         return 'id';
     }
+    
+    public function install()
+    {
+        /// necesitamos estas clase para las claves ajenas
+        new Page();
+        new User();
+        
+        return '';
+    }
 
     /**
      * Resetea los valores de todas las propiedades modelo.

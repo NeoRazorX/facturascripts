@@ -82,30 +82,6 @@ class RegularizacionIva
 
     /**
      * TODO
-     * @return string
-     */
-    public function asientoUrl()
-    {
-        if ($this->idasiento === null) {
-            return 'index.php?page=ContabilidadAsientos';
-        }
-        return 'index.php?page=ContabilidadAsiento&id=' . $this->idasiento;
-    }
-
-    /**
-     * TODO
-     * @return string
-     */
-    public function ejercicioUrl()
-    {
-        if ($this->codejercicio === null) {
-            return 'index.php?page=ContabilidadEjercicios';
-        }
-        return 'index.php?page=ContabilidadEjercicio&cod=' . $this->codejercicio;
-    }
-
-    /**
-     * TODO
      * @return array|bool
      */
     public function getPartidas()
@@ -150,10 +126,10 @@ class RegularizacionIva
         if ($this->dataBase->exec($sql)) {
             /// si hay un asiento asociado lo eliminamos
             if ($this->idasiento !== null) {
-                $asiento = new Asiento();
-                $as0 = $asiento->get($this->idasiento);
-                if ($as0) {
-                    $as0->delete();
+                $asientoModel = new Asiento();
+                $asiento = $asientoModel->get($this->idasiento);
+                if ($asiento) {
+                    $asiento->delete();
                 }
             }
 

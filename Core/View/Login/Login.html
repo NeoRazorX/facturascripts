@@ -15,7 +15,7 @@
                             <span class="input-group-addon">
                                 <i class="fa fa-user" aria-hidden="true"></i>
                             </span>
-                            <input type="text" name="fsNick" class="form-control" maxlength="50" required="" autocomplete="off" autofocus=""/>
+                            <input type="text" name="fsNick" class="form-control" maxlength="50" placeholder="{{ i18n.trans('user') }}" required="" autocomplete="off" autofocus=""/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -23,7 +23,7 @@
                             <span class="input-group-addon">
                                 <i class="fa fa-key" aria-hidden="true"></i>
                             </span>
-                            <input type="password" name="fsPassword" class="form-control" maxlength="50" required="" autocomplete="off"/>
+                            <input type="password" name="fsPassword" class="form-control" maxlength="50" placeholder="{{ i18n.trans('password') }}" required="" autocomplete="off"/>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-block btn-primary">

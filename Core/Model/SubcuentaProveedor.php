@@ -70,11 +70,11 @@ class SubcuentaProveedor
 
     /**
      * TODO
-     * @return bool|mixed
+     * @return Subcuenta|false
      */
     public function getSubcuenta()
     {
-        $subc = new Subcuenta();
-        return $subc->get($this->idsubcuenta);
+        $subcuentaModel = new Subcuenta();
+        return $subcuentaModel->get($this->idsubcuenta);
     }
 }

@@ -153,7 +153,7 @@ class PluginManager
      */
     public function deploy($clean = true)
     {
-        $folders = ['Controller', 'Model', 'Table'];
+        $folders = ['Controller', 'Model', 'Lib', 'Table'];
         foreach ($folders as $folder) {
             if ($clean) {
                 $this->cleanFolder(self::$folder . '/Dinamic/' . $folder);
@@ -169,7 +169,9 @@ class PluginManager
             }
 
             /// examinamos el core
-            $this->linkFiles($folder);
+            if (file_exists(self::$folder . '/Core/' . $folder)) {
+                $this->linkFiles($folder);
+            }
         }
 
         if (self::$deployedControllers === FALSE) {
