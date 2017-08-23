@@ -60,16 +60,13 @@
             </div>
         </nav>
         <br/>
-        {% if log|length > 0 %}
-        <div class="alert alert-warning">
-            <ul>
-                {% for msg in log %}
-                <li>{{ msg.message }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        {% endif %}
-        {% block body %}{% endblock %}
+        {% block messages %}
+            {% from 'Master/Utils.html' import message as show_message %}
+            {{ show_message(log, ['error', 'critical', 'alert', 'emergency'], 'danger') }}
+        {% endblock %}
+        
+        {% block body %}
+        {% endblock %}
         {{ debugBarRender.render()|raw }}
     </body>
 </html>

@@ -134,16 +134,18 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      */
     public function getEditHTML($value)
     {
-        $columnClass = ($this->numColumns === 0) ? ' col' : (' col-md-' . $this->numColumns);
+        $columnClass = $this->getColumnClass();
         $input = $this->widget->getEditHTML($value);
         $header = $this->getHeaderHTML($this->title);
-        $hint = empty($this->widget->hint) ? '' : ' title="' . $this->i18n->trans($this->widget->hint) . '"';
-        $description = empty($this->description) ? '' : '<small class="form-text text-muted">' . $this->i18n->trans($this->description) . '</small>';
+        $hint = $this->getColumnHint();
+        $required = $this->getColumnRequired();
+        $description = $this->getColumnDescription();
 
         switch ($this->widget->type) {            
             case "checkbox":
                 $html = '<div class="form-row align-items-center' . $columnClass . '">'
                         . $this->checkboxHTMLColumn($header, $input, $hint, $description)
+                        . $required
                         . '</div>';
                 break;
 
@@ -151,25 +153,46 @@ class ColumnItem extends VisualItem implements VisualItemInterface
                 $html = '<div class="' .  $columnClass . '">'
                         . '<label>' . $header . '</label>'
                         . $this->radioHTMLColumn($input, $hint, $value)
+                        . $required
                         . '</div>';                
                 break;
             
             default:
-                $html = $this->standardHTMLColumn($header, $input, $hint, $description, $columnClass);
+                $html = $this->standardHTMLColumn($header, $input, $hint, $description, $columnClass, $required);
                 break;
         }
         return $html;
     }
     
-    private function standardHTMLColumn($header, $input, $hint, $description, $columnClass)
+    /**
+     * Devuelve el código HTML para el visionado de un campo no especial
+     * 
+     * @param string $header
+     * @param string $input
+     * @param string $hint
+     * @param string $description
+     * @param string $columnClass
+     * @return string
+     */
+    private function standardHTMLColumn($header, $input, $hint, $description, $columnClass, $required)
     {
         return '<div class="form-group' . $columnClass . '">'
             . '<label for="' . $this->widget->fieldName . '"' . $hint . '>' . $header . '</label>'
             . $input
             . $description
+            . $required
             . '</div>';
     }
     
+    /**
+     * Devuelve el código HTML para el visionado de un campo checkbox
+     * 
+     * @param string $header
+     * @param string $input
+     * @param string $hint
+     * @param string $description
+     * @return string
+     */
     private function checkboxHTMLColumn($header, $input, $hint, $description)
     {
         return '<div class="form-check col">'
@@ -180,6 +203,14 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             . '</div>';        
     }
     
+    /**
+     * Devuelve el código HTML para el visionado de una lista de opciones
+     * 
+     * @param string $input
+     * @param string $hint
+     * @param string $value
+     * @return string
+     */
     private function radioHTMLColumn($input, $hint, $value)
     {
         $html = '';
@@ -195,5 +226,33 @@ class ColumnItem extends VisualItem implements VisualItemInterface
                     . '</label></div>';
         }
         return $html;
+    }
+    
+    private function getColumnClass()
+    {
+        return ($this->numColumns > 0)
+            ? (' col-md-' . $this->numColumns)
+            : ' col';
+    }
+    
+    private function getColumnHint()
+    {
+        return empty($this->widget->hint) 
+            ? ''
+            : 'data-toggle="tooltip" data-placement="auto" data-delay=500 data-trigger="hover" title="' . $this->i18n->trans($this->widget->hint) . '"';
+    }
+    
+    private function getColumnRequired()
+    {
+        return $this->widget->required 
+            ? '<div class="invalid-feedback">' . $this->i18n->trans('Por favor, introduzca un valor para el campo') . '</div>'
+            : '';        
+    }
+    
+    private function getColumnDescription()
+    {
+        return empty($this->description) 
+            ? '' 
+            : '<small class="form-text text-muted">' . $this->i18n->trans($this->description) . '</small>';
     }
 }

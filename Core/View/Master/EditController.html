@@ -2,6 +2,7 @@
 
 {% block css %}
     {{ parent() }}
+    
     <style type="text/css">
         .card-header {
             padding: .5rem 1.25rem;
@@ -28,6 +29,11 @@
         input[required] {
             background: aliceblue;
         }
+        
+        input:invalid,
+        input:required:invalid {
+            border: 1px solid red;
+        }
     </style>
 {% endblock %}
 
@@ -35,20 +41,30 @@
 {% block javascript %}
 {{ parent() }}
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(document).ready(function() {
+        $('[data-toggle="tooltip"]').tooltip();
     });
 </script>
 {% endblock %}
 
-{% block body %}
-{{ parent() }}
+{% block messages %}
+<div class="container-fluid">
+    <div id="messages" class="row">
+        <div class="col-12">            
+            {{ parent() }}
+        </div>
+    </div>
+</div>
+{% endblock %}
 
+{% block body %}
 <!-- Calculate texts according to language -->
-{% set go_back = i18n.trans('Todos') %}
-{% set save = i18n.trans('Guardar') %}
-{% set refresh = i18n.trans('Refrescar la página') %}
-{% set print, print_title = i18n.trans('Imprimir'), i18n.trans('Imprimir datos del registro') %}
-{% set remove, remove_title = i18n.trans('Eliminar'), i18n.trans('Eliminar el registro') %}
+{% set go_back = i18n.trans('back') %}
+{% set save = i18n.trans('save') %}
+{% set undo = i18n.trans('undo') %}
+{% set refresh = i18n.trans('refresh') %}
+{% set print, print_title = i18n.trans('print'), i18n.trans('print data') %}
+{% set remove, remove_title = i18n.trans('delete'), i18n.trans('delete record') %}
 
 {% set panel_header = fsc.getPanelHeader() %}
 {% set panel_footer = fsc.getPanelFooter() %}
@@ -58,6 +74,8 @@
 
 <!-- Main Body -->
 <div class="container-fluid">
+    {{ parent() }}
+
     <!-- Header Row -->
     <div id="header" class="row">
         <div class="col-3 d-print-none">
@@ -97,6 +115,14 @@
         </div>
     </div>
 
+    <!-- Info Row -->
+    <div id="info" class="row">
+        <div class="col-12">
+        {% from 'Master/Utils.html' import message as show_message %}
+        {{ show_message(log, ['notice'], 'success') }}    
+        </div>
+    </div>
+    
     <!-- Data Row -->
     <div id="data" class="row">
         <div class="col-12">
@@ -150,6 +176,9 @@
 
                     <div class="card-footer text-right">
                         <small class="pull-left">{{ panel_footer }}</small>
+                        <button class="btn btn-sm btn btn-secondary" type="reset">
+                            <i class="fa fa-undo" aria-hidden="true"></i>&nbsp; {{ undo }}
+                        </button>
                         <button class="btn btn-sm btn-primary" type="submit" onclick="">
                             <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
                         </button>

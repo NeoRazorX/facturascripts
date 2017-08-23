@@ -31,12 +31,12 @@
             
             <column title="Nombre" numcolumns="3" order="110"
                     description="Nombre por el que se conoce al cliente. Para uso interno.">
-                <widget type="text" fieldname="nombre" required="true" />
+                <widget type="text" fieldname="nombre" required="true" hint="Nombre comercial del cliente" />
             </column>
             
             <column title="Razón Social" numcolumns="3" order="120"
                     description="Nombre oficial del cliente, para las facturas y otros documentos.">
-                <widget type="text" fieldname="razonsocial" />
+                <widget type="text" fieldname="razonsocial" hint="Nombre fiscal o legalmente registrado del cliente" />
             </column>
             
             <column title="Id. fiscal" numcolumns="2" order="130">
@@ -55,7 +55,7 @@
                 <widget type="text" fieldname="cifnif" required="true" />
             </column>                                    
 
-            <column title="Es una persona física (no una empresa)" order="200">
+            <column title="Es una persona física (no una empresa)" numcolumns="4" order="200">
                 <widget type="checkbox" fieldname="personafisica" />
             </column>
         </group>
@@ -93,36 +93,36 @@
         
         <group title="Datos de contacto" numcolumns="4">
             <column title="Telefono" numcolumns="4" order="100">
-                <widget type="text" fieldname="telefono1" />
+                <widget type="tel" fieldname="telefono1" />
             </column>
             
             <column title="Telefono2" numcolumns="4" order="110">
-                <widget type="text" fieldname="telefono2" />
+                <widget type="tel" fieldname="telefono2" />
             </column>
             
             <column title="Fax" numcolumns="4" order="120">
-                <widget type="text" fieldname="fax" />
+                <widget type="tel" fieldname="fax" />
             </column>
             
             <column title="eMail" numcolumns="12" order="200">
-                <widget type="text" fieldname="email" />
+                <widget type="email" fieldname="email" />
             </column>
 
             <column title="Web" numcolumns="12" order="210">
-                <widget type="text" fieldname="web" />
+                <widget type="url" fieldname="web" />
             </column>
         </group>        
 
         <group title="Otros datos" numcolumns="4">
-            <column title="Fec. Alta" numcolumns="4" order="80">
-                <widget type="datepicker" fieldname="fechaalta" readonly="true" />
+            <column title="Fec. Alta" numcolumns="6" order="80">
+                <widget type="date" fieldname="fechaalta" readonly="true" />
             </column>
 
-            <column title="Fec. Baja" numcolumns="4" order="90">
-                <widget type="datepicker" fieldname="fechabaja" />
+            <column title="Fec. Baja" numcolumns="6" order="90">
+                <widget type="date" fieldname="fechabaja" />
             </column>
 
-            <column title="De baja" numcolumns="4" order="100">
+            <column title="De baja" numcolumns="12" order="100">
                 <widget type="checkbox" fieldname="debaja" />
             </column>            
         </group>

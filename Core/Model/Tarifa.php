@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * Una tarifa para los artículos.
@@ -29,7 +28,6 @@ class Tarifa
 {
 
     use Base\ModelTrait;
-    use Utils;
 
     /**
      * Clave primaria.

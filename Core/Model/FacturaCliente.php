@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * Factura de un cliente.
@@ -34,7 +33,6 @@ class FacturaCliente
     use Base\ModelTrait {
         clear as clearTrait;
     }
-    use Utils;
 
     /**
      * Identificador opcional para la impresión. Todavía sin uso.

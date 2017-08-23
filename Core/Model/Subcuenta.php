@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * El cuarto nivel de un plan contable. Está relacionada con una única cuenta.
@@ -29,7 +28,6 @@ class Subcuenta
 {
 
     use Base\ModelTrait;
-    use Utils;
 
     /**
      * Clave primaria.

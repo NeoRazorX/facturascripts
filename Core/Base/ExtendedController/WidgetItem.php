@@ -148,7 +148,6 @@ class WidgetItem
         $this->hint = (string) $widget_atributes->hint;
         $this->readOnly = (boolean) boolval($widget_atributes->readonly);
         $this->required = (boolean) boolval($widget_atributes->required);
-        $this->hint = (string) $widget_atributes->hint;
         $this->icon = (string) $widget_atributes->icon;
         $this->onClick = (string) $widget_atributes->onclick;
 
@@ -290,11 +289,12 @@ class WidgetItem
                 break;
             
             case 'checkbox':
-                $html .= '<input id=' . $fieldName . ' class="form-check-input" type="checkbox" name=' . $fieldName . ' value=""' . $specialClass . '>';
+                $checked = in_array(strtolower($value), ['true', 't', '1']) ? ' checked ' : '';
+                $html .= '<input id=' . $fieldName . ' class="form-check-input" type="checkbox" name=' . $fieldName . ' value="true"' . ' title="' . $this->hint . '"' . $specialClass . $checked . '>';
                 break;
 
             case 'radio':
-                $html .= '<input id=' . $fieldName . 'sufix% class="form-check-input" type="radio" name=' . $fieldName . ' value=""value%"' . $specialClass . '"checked%>';
+                $html .= '<input id=' . $fieldName . 'sufix% class="form-check-input" type="radio" name=' . $fieldName . ' value=""value%"' . ' title="' . $this->hint . '"' . $specialClass . '"checked%>';
                 break;
             
             case 'textarea':
@@ -316,14 +316,31 @@ class WidgetItem
         return $html;
     }
 
+    /**
+     * Devuelve el código HTML para controles no especiales
+     * 
+     * @param string $fieldName
+     * @param string $value
+     * @param string $specialClass
+     * @return string
+     */
     private function standardHTMLWidget($fieldName, $value, $specialClass)
     {
-        return '<input id=' . $fieldName . ' type="text" class="form-control" name=' . $fieldName . ' value="' . $value . '"' . $specialClass . '>';
+        return '<input id=' . $fieldName . ' type="' . $this->type . '" class="form-control" name=' . $fieldName 
+                . $this->getHintHTML() . ' value="' . $value . '"' . $specialClass . '>';
     }
     
+    /**
+     * Devuelve el código HTML para controles tipo Select
+     * 
+     * @param string $fieldName
+     * @param string $value
+     * @param string $specialClass
+     * @return string
+     */
     private function selectHTMLWidget($fieldName, $value, $specialClass)
     {
-        $html = '<select id=' . $fieldName . ' class="form-control" name=' . $fieldName . $specialClass . '>';
+        $html = '<select id=' . $fieldName . ' class="form-control" name=' . $fieldName . $this->getHintHTML() . $specialClass . '>';
         foreach ($this->values as $selectValue) {
             $selected = ($selectValue['value'] == $value) ? ' selected="selected" ' : '';
             $html .= '<option value="' . $selectValue['value'] . '"' . $selected . '>' . $selectValue['title'] . '</option>';
@@ -332,4 +349,11 @@ class WidgetItem
         
         return $html;
     }
+    
+    private function getHintHTML()
+    {
+        return empty($this->hint) 
+            ? ''
+            : ' data-toggle="tooltip" data-placement="auto" data-delay=500 data-trigger="hover" title="' . $this->hint . '" ';
+    }    
 }

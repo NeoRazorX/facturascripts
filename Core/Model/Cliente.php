@@ -94,12 +94,12 @@ class Cliente
     {
         return 'codcliente';
     }
-    
+
     public function install()
     {
         /// necesitamos la tabla de grupos comprobada para la clave ajena
         new GrupoClientes();
-        
+
         return '';
     }
 
@@ -375,11 +375,11 @@ class Cliente
         }
 
         if (!preg_match('/^[A-Z0-9]{1,6}$/i', $this->codcliente)) {
-            $this->miniLog->alert('Código de cliente no válido: ' . $this->codcliente);
+            $this->miniLog->alert('Código de cliente no válido: ' . $this->codcliente, ['fieldname' => 'codcliente']);
         } elseif (empty($this->nombre) || strlen($this->nombre) > 100) {
-            $this->miniLog->alert('Nombre de cliente no válido: ' . $this->nombre);
+            $this->miniLog->alert('Nombre de cliente no válido: ' . $this->nombre, ['fieldname' => 'nombre']);
         } elseif (empty($this->razonsocial) || strlen($this->razonsocial) > 100) {
-            $this->miniLog->alert('Razón social del cliente no válida: ' . $this->razonsocial);
+            $this->miniLog->alert('Razón social del cliente no válida: ' . $this->razonsocial, ['fieldname' => 'razonsocial']);
         } else {
             $status = true;
         }
@@ -447,5 +447,16 @@ class Cliente
         }
 
         return $clilist;
+    }
+    
+    public function checkArrayData(&$data)
+    {
+        if (!isset($data['personafisica'])) {
+            $data['personafisica'] = false;
+        }    
+
+        if (!isset($data['debaja'])) {
+            $data['debaja'] = false;
+        }    
     }
 }

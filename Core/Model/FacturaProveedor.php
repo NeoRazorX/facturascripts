@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * Factura de un proveedor.
@@ -34,7 +33,6 @@ class FacturaProveedor
     use Base\ModelTrait {
         clear as clearTrait;
     }
-    use Utils;
 
     public function tableName()
     {
