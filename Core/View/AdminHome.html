@@ -16,10 +16,23 @@
     </div>
     <div class="row">
         <div class="col-sm-6">
+            <input type="text" name="fecha" value="01-01-2017" class="form-control datepicker"/>
+        </div>
+        <div class="col-sm-6">
+            <button type="button" class="btn btn-primary" onclick='bootbox.alert("Hello world!");'>Hello world</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <hr/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
             <h3>Agentes:</h3>
             <ul>
                 {% for agente in fsc.agente.all() %}
-                <li>{{ agente.fullName() }}</li>
+                <li>{{ agente.fullName()|raw }}</li>
                 {% endfor %}
             </ul>
             <h3>Almacenes:</h3>

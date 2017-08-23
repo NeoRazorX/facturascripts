@@ -23,6 +23,7 @@
   },
   "homepage": "https://www.facturascripts.com",
   "dependencies": {
+    "bootbox.js": "^4.3.0",
     "bootstrap": "4.0.0-beta",
     "font-awesome": "^4.x",
     "jquery": "^3.x",
