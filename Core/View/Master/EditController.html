@@ -42,7 +42,9 @@
 {{ parent() }}
 <script type="text/javascript">
     $(document).ready(function() {
-        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="popover"]').popover({
+            delay: { "show": 1000, "hide": 100 }
+        });
     });
 </script>
 {% endblock %}

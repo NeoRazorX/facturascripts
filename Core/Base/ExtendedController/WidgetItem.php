@@ -288,6 +288,10 @@ class WidgetItem
                 $html .= $this->standardHTMLWidget($fieldName, $value, $specialClass);
                 break;
             
+            case 'datepicker':
+                $html .= '<input id=' . $fieldName . ' class="form-control datepicker" type="text" name=' . $fieldName . ' value="' . $value . '" title="' . $this->hint . '"' . $specialClass . '>';
+                break;
+            
             case 'checkbox':
                 $checked = in_array(strtolower($value), ['true', 't', '1']) ? ' checked ' : '';
                 $html .= '<input id=' . $fieldName . ' class="form-check-input" type="checkbox" name=' . $fieldName . ' value="true"' . ' title="' . $this->hint . '"' . $specialClass . $checked . '>';
@@ -312,7 +316,7 @@ class WidgetItem
         if (!empty($this->icon)) {
             $html .= '</div>';
         }
-
+    
         return $html;
     }
 
@@ -354,6 +358,6 @@ class WidgetItem
     {
         return empty($this->hint) 
             ? ''
-            : ' data-toggle="tooltip" data-placement="auto" data-delay=500 data-trigger="hover" title="' . $this->hint . '" ';
+            : ' data-toggle="popover" data-placement="auto" data-delay=500 data-trigger="hover" data-content="' . $this->hint . '" ';
     }    
 }
