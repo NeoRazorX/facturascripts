@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Model;
 
@@ -35,16 +35,20 @@ class ListEjercicio extends ExtendedController\ListController
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('codejercicio', 'Código');
-        $this->addOrderBy('nombre');
-
+        $this->addOrderBy('fechainicio', 'start-date');
+        $this->addOrderBy('codejercicio', 'code');
+        $this->addOrderBy('nombre', 'name');
+        
+        /// forzamos el orden por defecto como el segundo, que es fechainicio desc
+        $this->selectedOrderBy = array_keys($this->orderby)[1];
+        
         $this->addFilterSelect('estado', 'ejercicios');
     }
 
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-
+        
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
@@ -61,7 +65,7 @@ class ListEjercicio extends ExtendedController\ListController
 
         if ($this->query != '') {
             $fields = "nombre|codejercicio";
-            $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
+            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
     }

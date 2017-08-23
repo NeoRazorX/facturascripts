@@ -121,7 +121,7 @@ class ListController extends Base\Controller
         $this->pageOption->getForUser($className, $user->nick);
 
         // Establecemos el orderby seleccionado
-        $orderKey = $this->request->get("order");
+        $orderKey = $this->request->get("order", $this->selectedOrderBy);
         $this->selectedOrderBy = empty($orderKey) ? (string) array_keys($this->orderby)[0] : $this->getSelectedOrder($orderKey);
     }
 
