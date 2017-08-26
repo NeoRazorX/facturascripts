@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model;
 
 /**
@@ -42,6 +43,8 @@ class ListCliente extends ExtendedController\ListController
         $this->addFilterSelect('grupo', 'clientes', '', 'codgrupo');  
         
         $this->addFilterCheckbox('debaja', 'De baja');
+        
+        $this->model = new Model\Cliente();
     }
 
     public function privateCore(&$response, $user)
@@ -51,10 +54,9 @@ class ListCliente extends ExtendedController\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Cliente();
-        $this->count = $model->count($where);
+        $this->count = $this->model->count($where);
         if ($this->count > 0) {
-            $this->cursor = $model->all($where, $order);
+            $this->cursor = $this->model->all($where, $order);
         }
     }
     
@@ -63,8 +65,8 @@ class ListCliente extends ExtendedController\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "nombre|nombrecomercial|codcliente";
-            $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
+            $fields = "nombre|razonsocial|codcliente";
+            $result[] = new DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
     }

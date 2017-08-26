@@ -35,7 +35,7 @@ class EditController extends Base\Controller
      * @var mixed
      */
     public $model;
-
+    
     /**
      * Configuración de columnas y filtros
      * @var Model\PageOption
@@ -65,22 +65,43 @@ class EditController extends Base\Controller
         $value = $this->request->get('code');
         $this->model->loadFromCode($value);
 
-        // Comprobamos si hay operaciones por realizar
-        if ($this->request->isMethod('POST')) {
-            $data = $this->request->request->all();
-            $this->model->checkArrayData($data);
-            $this->model->loadFromData($data);
-            if ($this->model->save()) {
-                $this->miniLog->notice($this->i18n->trans('Record updated correctly!'));
-            }
-        }        
-        
         // Bloqueamos el campo Primary Key si no es una alta
         $fieldName = $this->model->primaryColumn();
         $column = $this->pageOption->columnForField($fieldName);
         $column->widget->readOnly = (!empty($this->model->{$fieldName}));
+        
+        // Comprobamos si hay operaciones por realizar
+        if ($this->request->isMethod('POST')) {
+            $this->setActionForm();
+        }                
     }
 
+    /**
+     * Aplica la acción solicitada por el usuario
+     */
+    private function setActionForm()
+    {
+        $data = $this->request->request->all();
+        if (isset($data['action'])) {        
+            switch ($data['action']) {
+                case 'save':
+                    $this->model->checkArrayData($data);
+                    $this->model->loadFromData($data);
+                    if ($this->model->save()) {
+                        $this->miniLog->notice($this->i18n->trans('Record updated correctly!'));
+                    }
+                    break;
+
+                case 'insert':
+                    $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+    
     /**
      * Devuelve el texto para la cabecera del panel principal de datos
      *

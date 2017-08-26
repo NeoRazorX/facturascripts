@@ -150,7 +150,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
                 break;
 
             case "radio":
-                $html = '<div class="' .  $columnClass . '">'
+                $html = '<div class="' . $columnClass . '">'
                         . '<label>' . $header . '</label>'
                         . $this->radioHTMLColumn($input, $hint, $value)
                         . $required
@@ -237,9 +237,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     
     private function getColumnHint()
     {
-        return empty($this->widget->hint) 
-            ? ''
-            : 'data-toggle="tooltip" data-placement="auto" data-delay=500 data-trigger="hover" title="' . $this->i18n->trans($this->widget->hint) . '"';
+        return $this->widget->getHintHTML($this->i18n->trans($this->widget->hint));
     }
     
     private function getColumnRequired()

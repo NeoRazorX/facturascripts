@@ -61,13 +61,13 @@
         </group>
         
         <group title="Condiciones comerciales" numcolumns="4">
-            <column title="Grupo" numcolumns="6" order="100">
+            <column title="Grupo" numcolumns="6" titleurl="?page=ListGrupoCliente" order="100">
                 <widget type="select" fieldname="codgrupo">
                     <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
                 </widget>
             </column>
 
-            <column title="Forma de Pago" numcolumns="6" order="120">
+            <column title="Forma de Pago" numcolumns="6" titleurl="?page=ListFormaPago" order="120">
                 <widget type="select" fieldname="codpago">
                     <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
                 </widget>
@@ -77,7 +77,7 @@
                 <widget type="text" fieldname="diaspago" />
             </column>
 
-            <column title="Empleado asignado" numcolumns="6" order="140">
+            <column title="Empleado asignado" numcolumns="6" titleurl="?page=ListUser" order="140">
                 <widget type="select" fieldname="codagente">
                     <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
                 </widget>

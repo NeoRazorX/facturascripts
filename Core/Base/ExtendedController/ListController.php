@@ -40,6 +40,12 @@ class ListController extends Base\Controller
     const FS_PAGE_MARGIN = 5;
 
     /**
+     * Modelo principal de datos
+     * @var mixed
+     */
+    public $model;
+    
+    /**
      * Cursor con los datos a mostrar
      * @var array
      */
@@ -123,6 +129,33 @@ class ListController extends Base\Controller
         // Establecemos el orderby seleccionado
         $orderKey = $this->request->get("order");
         $this->selectedOrderBy = empty($orderKey) ? (string) array_keys($this->orderby)[0] : $this->getSelectedOrder($orderKey);
+        
+        // Comprobamos si hay operaciones por realizar
+        if ($this->request->isMethod('POST')) {
+            $this->setActionForm();
+        }        
+    }
+    
+    /**
+     * Aplica la acción solicitada por el usuario
+     */
+    private function setActionForm()
+    {
+        $data = $this->request->request->all();
+        if (isset($data['action'])) {
+            switch ($data['action']) {
+                case 'delete':
+                    $this->model->loadFromCode($data['code']);
+                    if ($this->model->delete()) {
+                        $this->miniLog->notice($this->i18n->trans('Record deleted correctly!'));
+                    }
+
+                    break;
+
+                default:
+                    break;
+            }
+        }
     }
 
     /**

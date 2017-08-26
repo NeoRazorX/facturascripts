@@ -2,21 +2,33 @@
 
 {% block javascript %}
 {{ parent() }}
-<script type="text/javascript">
+<script type="text/javascript">    
     $(document).ready(function () {
-        $("#b_new_record").click(function (event) {
-            event.preventDefault();
+        $('[data-toggle="popover"]').popover({
+            delay: { "show": 1000, "hide": 100 }
         });
 
         document.f_custom_search.query.focus();
         document.f_custom_search.query.select();
     });
+
+    function insertRecord() {
+        document.insert_form.submit(); 
+    }    
 </script>
 {% endblock %}
 
-{% block body %}
-{{ parent() }}
+{% block messages %}
+<div class="container-fluid">
+    <div id="messages" class="row">
+        <div class="col-12">            
+            {{ parent() }}
+        </div>
+    </div>
+</div>
+{% endblock %}
 
+{% block body %}
 <!-- Calculate texts according to language -->
 {% set refresh = i18n.trans('Refrescar la página') %}
 {% set defaultT, defaultF = i18n.trans('marcar como página de inicio'), i18n.trans('Marcada como página de inicio (pulsa de nuevo para desmarcar)') %}
@@ -30,34 +42,50 @@
 {% set title = i18n.trans(title) %}
 {% set no_data = i18n.trans('No hay registros con esas condiciones. Pulse el botón Nuevo para dar de alta.') %}
 
+<!-- Calculate common values -->
+{% set list_url = fsc.model.url('list') %}
+
+<!-- Macros Template Imports -->
+{% from 'Master/Utils.html' import popoverTitle as popoverTitle %}
+{% from 'Master/Utils.html' import message as show_message %}
+
 <!-- Page Header -->
 <div class="container-fluid d-print-none">
+ {{ parent() }}
+ 
+    <!-- Header Row -->
     <div class="row">
         <div class="col-sm-7 col-6">
             <div class="btn-group hidden-xs">
-                <a class="btn btn-sm btn-light" href="{{ fsc.url() }}" title="{{ refresh }}">
+                <a class="btn btn-sm btn-light" href="{{ list_url }}" {{ popoverTitle(refresh, 'bottom') }}>
                     <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
                 {% if fsc.getPageData()['isDefault'] %}
-                <a class="btn btn-sm btn-light active" href="{{ fsc.url() }}&amp;default_page=FALSE" title="{{ defaultF }}">
+                <a class="btn btn-sm btn-light active" href="{{ list_url }}&amp;default_page=FALSE" {{ popoverTitle(defaultF, 'bottom') }}>
                     <i class="fa fa-bookmark" aria-hidden="true"></i>
                 </a>
                 {% else %}
-                <a class="btn btn-sm btn-light" href="{{ fsc.url() }}&amp;default_page=TRUE" title="{{ defaultT }}">
+                <a class="btn btn-sm btn-light" href="{{ list_url }}&amp;default_page=TRUE" {{ popoverTitle(defaultT, 'bottom') }}>
                     <i class="fa fa-bookmark-o" aria-hidden="true"></i>
                 </a>
                 {% endif %}
             </div>
             <div class="btn-group">
-                <a href="#" id="b_new_record" class="btn btn-sm btn-success" title="{{ new_record_title }}">
+                <form action="{{ fsc.model.url('edit') }}" method=post name="insert_form">
+                    <input type="hidden" name="action" value="insert"> 
+                </form>             
+                
+                <a id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord();" href="#" {{ popoverTitle(new_record_title, 'bottom') }}>
                     <i class="fa fa-plus" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;{{ new_record }}</span>
                 </a>
-                <a href="#" id="b_options" class="btn btn-sm btn-secondary" title="{{ options_title }}">
+                                
+                <a href="#" id="b_options" class="btn btn-sm btn-secondary" {{ popoverTitle(options_title, 'bottom') }}>
                     <i class="fa fa-wrench" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;{{ options }}</span>
                 </a>
-                <a href="#" id="b_print" class="btn btn-sm btn-secondary" onclick="window.print();" title="{{ print_title }}">
+                
+                <a href="#" id="b_print" class="btn btn-sm btn-secondary" onclick="window.print();" {{ popoverTitle(print_title, 'bottom') }}>
                     <i class="fa fa-print" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;{{ print }}</span>
                 </a>
@@ -76,6 +104,13 @@
             </h2>
         </div>
     </div>
+
+    <!-- Info Row -->
+    <div id="info" class="row">
+        <div class="col-12">
+        {{ show_message(log, ['notice'], 'success') }}    
+        </div>
+    </div>    
 </div>
 
 <!-- Main Data -->
@@ -83,7 +118,7 @@
     <!-- Tabs declaration -->
     <ul class="nav nav-tabs d-print-none">
         <li class="nav-item">
-            <a href="#search" class="nav-link active" title="{{ search_title }}">
+            <a href="#search" class="nav-link active" {{ popoverTitle(search_title, 'bottom') }}>
                 <i class="fa fa-search" aria-hidden="true"></i>
                 <span class="hidden-xs">&nbsp;{{ search }}</span>
                 <span class="badge badge-secondary">{{ fsc.count }}</span>
@@ -104,7 +139,7 @@
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="search">
             <!-- Filters Row -->
-            <form name="f_custom_search" action="{{ fsc.url() }}" method="post" class="form">
+            <form name="f_custom_search" action="{{ list_url }}" method="post" class="form">
                 <div class="container-fluid d-print-none" style="margin-top: 15px; margin-bottom: 10px;">
                     <div class="row">
                         <!-- Main filter -->
@@ -170,7 +205,7 @@
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuOrder">
                                     {% for key, orderby in fsc.orderby %}
-                                    <a class="dropdown-item" href="{{ fsc.url() }}&order={{ key }}">
+                                    <a class="dropdown-item" href="{{ list_url }}&order={{ key }}">
                                         <i class="fa {{ orderby['icon'] }}" aria-hidden="true"></i>&nbsp; {{ i18n.trans(orderby['label']) }} &nbsp;
                                         {% if fsc.selectedOrderBy == key %}
                                         <i class="fa fa-check" aria-hidden="true"></i>

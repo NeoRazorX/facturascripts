@@ -174,6 +174,20 @@ class WidgetItem
     }
 
     /**
+     * Devuelve el código HTML para la visualización de un popover 
+     * con el texto indicado.
+     * 
+     * @param string $hint
+     * @return string
+     */
+    public function getHintHTML($hint)
+    {
+        return empty($hint) 
+            ? ''
+            : ' data-toggle="popover" data-placement="auto" data-trigger="hover" data-content="' . $hint . '" ';
+    }    
+    
+    /**
      * Genera el código CSS para el style del widget en base a los options
      *
      * @param string $valueItem
@@ -264,10 +278,11 @@ class WidgetItem
      */
     private function specialClass()
     {
+        $hint = $this->getHintHTML($this->hint);
         $readOnly = (empty($this->readOnly)) ? '' : ' readonly="readonly"';
         $required = (empty($this->required)) ? '' : ' required="required"';
 
-        return $readOnly . $required;
+        return $hint . $readOnly . $required;
     }
 
     /**
@@ -289,16 +304,16 @@ class WidgetItem
                 break;
             
             case 'datepicker':
-                $html .= '<input id=' . $fieldName . ' class="form-control datepicker" type="text" name=' . $fieldName . ' value="' . $value . '" title="' . $this->hint . '"' . $specialClass . '>';
+                $html .= '<input id=' . $fieldName . ' class="form-control datepicker" type="text" name=' . $fieldName . ' value="' . $value . '"' . $specialClass . '>';
                 break;
             
             case 'checkbox':
                 $checked = in_array(strtolower($value), ['true', 't', '1']) ? ' checked ' : '';
-                $html .= '<input id=' . $fieldName . ' class="form-check-input" type="checkbox" name=' . $fieldName . ' value="true"' . ' title="' . $this->hint . '"' . $specialClass . $checked . '>';
+                $html .= '<input id=' . $fieldName . ' class="form-check-input" type="checkbox" name=' . $fieldName . ' value="true"' . $specialClass . $checked . '>';
                 break;
 
             case 'radio':
-                $html .= '<input id=' . $fieldName . 'sufix% class="form-check-input" type="radio" name=' . $fieldName . ' value=""value%"' . ' title="' . $this->hint . '"' . $specialClass . '"checked%>';
+                $html .= '<input id=' . $fieldName . 'sufix% class="form-check-input" type="radio" name=' . $fieldName . ' value=""value%"' . $specialClass . '"checked%>';
                 break;
             
             case 'textarea':
@@ -331,7 +346,7 @@ class WidgetItem
     private function standardHTMLWidget($fieldName, $value, $specialClass)
     {
         return '<input id=' . $fieldName . ' type="' . $this->type . '" class="form-control" name=' . $fieldName 
-                . $this->getHintHTML() . ' value="' . $value . '"' . $specialClass . '>';
+                . ' value="' . $value . '"' . $specialClass . '>';
     }
     
     /**
@@ -344,7 +359,7 @@ class WidgetItem
      */
     private function selectHTMLWidget($fieldName, $value, $specialClass)
     {
-        $html = '<select id=' . $fieldName . ' class="form-control" name=' . $fieldName . $this->getHintHTML() . $specialClass . '>';
+        $html = '<select id=' . $fieldName . ' class="form-control" name=' . $fieldName . $specialClass . '>';
         foreach ($this->values as $selectValue) {
             $selected = ($selectValue['value'] == $value) ? ' selected="selected" ' : '';
             $html .= '<option value="' . $selectValue['value'] . '"' . $selected . '>' . $selectValue['title'] . '</option>';
@@ -352,12 +367,5 @@ class WidgetItem
         $html .= '</select>';
         
         return $html;
-    }
-    
-    private function getHintHTML()
-    {
-        return empty($this->hint) 
-            ? ''
-            : ' data-toggle="popover" data-placement="auto" data-delay=500 data-trigger="hover" data-content="' . $this->hint . '" ';
     }    
 }

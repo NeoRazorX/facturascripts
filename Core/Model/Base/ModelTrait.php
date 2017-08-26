@@ -115,7 +115,7 @@ trait ModelTrait
                 self::$checkedTables = [];
             }
 
-            self::$modelName = __CLASS__;
+            self::$modelName = get_class($this);
         }
 
         if ($this->tableName() !== '' && !in_array($this->tableName(), self::$checkedTables, false) && $this->checkTable($this->tableName())) {
@@ -144,6 +144,17 @@ trait ModelTrait
     }
 
     /**
+     * Devuelve el nombre de la clase del modelo
+     * @return string
+     */
+    public function modelClassName()
+    {
+        $result = explode('\\', $this->modelName());
+        $index = count($result) - 1;
+        return $result[$index];
+    }
+    
+    /**
      * Devuelve el nombre del modelo.
      * @return string
      */
@@ -158,6 +169,15 @@ trait ModelTrait
      */
     abstract public function primaryColumn();
 
+    /**
+     * Devuelve el valor actual de la columna principal del modelo
+     * @return mixed
+     */
+    public function primaryColumnValue()
+    {
+        return $this->{$this->primaryColumn()};
+    }
+    
     /**
      * Devuelve el nombdre de la tabla que usa este modelo.
      * @return string
@@ -274,12 +294,12 @@ trait ModelTrait
      */
     public function exists()
     {
-        if ($this->{$this->primaryColumn()} === null) {
+        if ($this->primaryColumnValue() === null) {
             return false;
         }
 
         $sql = 'SELECT 1 FROM ' . $this->tableName()
-            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
+            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->primaryColumnValue()) . ';';
         return (bool) $this->dataBase->select($sql);
     }
 
@@ -320,7 +340,7 @@ trait ModelTrait
             $this->cleanCache();
         }
         $sql = 'DELETE FROM ' . $this->tableName()
-            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
+            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->primaryColumnValue()) . ';';
         return $this->dataBase->exec($sql);
     }
 
@@ -579,7 +599,7 @@ trait ModelTrait
             }
         }
 
-        $sql .= ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
+        $sql .= ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->primaryColumnValue()) . ';';
         return $this->dataBase->exec($sql);
     }
 
@@ -601,7 +621,7 @@ trait ModelTrait
         $sql = 'INSERT INTO ' . $this->tableName()
             . ' (' . implode(',', $insertFields) . ') VALUES (' . implode(',', $insertValues) . ');';
         if ($this->dataBase->exec($sql)) {
-            if ($this->{$this->primaryColumn()} === null) {
+            if ($this->primaryColumnValue() === null) {
                 $this->{$this->primaryColumn()} = $this->dataBase->lastval();
             }
 
@@ -635,11 +655,24 @@ trait ModelTrait
      * Devuelve la url donde ver/modificar los datos
      * @return string
      */
-    public function url()
+    public function url($type = 'auto')
     {
-        $value = $this->{$this->primaryColumn()};
-        $model = $this->modelName();
-        $result = empty($value) ? 'index.php?page=List' . $model : 'index.php?page=Edit' . $model . '&cod=' . $value;
+        $value = $this->primaryColumnValue();
+        $model = $this->modelClassName();
+        $result = 'index.php?page=';
+        switch ($type) {
+            case 'list':
+                $result .= 'List' . $model;
+                break;
+            
+            case 'edit':
+                $result .= 'Edit' . $model . '&code=' . $value;
+                break;
+
+            default:
+                $result .= empty($value) ? 'List' . $model : 'Edit' . $model . '&code=' . $value;
+                break;
+        }
         return $result;
     }
 }
