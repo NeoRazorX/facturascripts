@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Model;
 
@@ -38,6 +38,8 @@ class ListDivisa extends ExtendedController\ListController
         $this->addOrderBy('coddivisa', 'Código');
         $this->addOrderBy('descripcion');
         $this->addOrderBy('codiso');
+
+        $this->model = new Model\Divisa();
     }
 
     public function privateCore(&$response, $user)
@@ -47,10 +49,9 @@ class ListDivisa extends ExtendedController\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Divisa();
-        $this->count = $model->count($where);
+        $this->count = $this->model->count($where);
         if ($this->count > 0) {
-            $this->cursor = $model->all($where, $order);
+            $this->cursor = $this->model->all($where, $order);
         }
     }
 
@@ -60,7 +61,7 @@ class ListDivisa extends ExtendedController\ListController
 
         if ($this->query != '') {
             $fields = "descripcion|coddivisa";
-            $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
+            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
     }

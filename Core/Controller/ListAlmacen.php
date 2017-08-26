@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Model;
 
@@ -40,6 +40,8 @@ class ListAlmacen extends ExtendedController\ListController
 
         $this->addFilterSelect('provincia', 'almacenes');
         $this->addFilterSelect('país', 'paises', '', 'codpais');
+
+        $this->model = new Model\Almacen();
     }
 
     public function privateCore(&$response, $user)
@@ -49,10 +51,9 @@ class ListAlmacen extends ExtendedController\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Almacen();
-        $this->count = $model->count($where);
+        $this->count = $this->model->count($where);
         if ($this->count > 0) {
-            $this->cursor = $model->all($where, $order);
+            $this->cursor = $this->model->all($where, $order);
         }
     }
 
@@ -62,7 +63,7 @@ class ListAlmacen extends ExtendedController\ListController
 
         if ($this->query != '') {
             $fields = "nombre|codalmacen|contacto";
-            $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
+            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
     }

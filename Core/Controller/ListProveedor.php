@@ -23,26 +23,24 @@ use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la lista de series de facturación
+ * Description of ListProveedor
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author carlos
  */
-class ListSerie extends ExtendedController\ListController
+class ListProveedor extends ExtendedController\ListController
 {
 
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('codserie', 'Código');
-        $this->addOrderBy('descripcion');
-        $this->addOrderBy('codejercicio', 'Ejercicio');
+        $this->addOrderBy('nombre', 'name');
+        $this->addOrderBy('fecha', 'date');
+        $this->addOrderBy('codproveedor', 'code');
 
-        $this->addFilterSelect('ejercicio', 'series', '', 'codejercicio');
-        $this->addFilterCheckbox('siniva', 'Sin Impuesto', 'siniva');
+        $this->addFilterCheckbox('debaja', 'De baja');
         
-        $this->model = new Model\Serie();        
+        $this->model = new Model\Proveedor();        
     }
 
     public function privateCore(&$response, $user)
@@ -63,7 +61,7 @@ class ListSerie extends ExtendedController\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "descripcion|codserie|codcuenta";
+            $fields = "nombre|razonsocial|codproveedor";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
@@ -72,9 +70,10 @@ class ListSerie extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Series';
-        $pagedata['icon'] = 'fa-file-text';
-        $pagedata['menu'] = 'contabilidad';
+        $pagedata['title'] = 'Proveedores';
+        $pagedata['icon'] = 'fa-users';
+        $pagedata['menu'] = 'compras';
+
         return $pagedata;
     }
 }

@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Model;
 
@@ -41,6 +41,7 @@ class ListAgente extends ExtendedController\ListController
         $this->addOrderBy('provincia');
 
         $this->addFilterSelect('provincia', 'agentes');
+        $this->model = new Model\Agente();
     }
 
     public function privateCore(&$response, $user)
@@ -50,10 +51,9 @@ class ListAgente extends ExtendedController\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Agente();
-        $this->count = $model->count($where);
+        $this->count = $this->model->count($where);
         if ($this->count > 0) {
-            $this->cursor = $model->all($where, $order);
+            $this->cursor = $this->model->all($where, $order);
         }
     }
 
@@ -63,7 +63,7 @@ class ListAgente extends ExtendedController\ListController
 
         if ($this->query != '') {
             $fields = "nombre|apellidos|codagente";
-            $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
+            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
     }

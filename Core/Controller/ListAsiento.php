@@ -23,26 +23,22 @@ use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la lista de series de facturación
+ * Description of ListAsiento
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author carlos
  */
-class ListSerie extends ExtendedController\ListController
+class ListAsiento extends ExtendedController\ListController
 {
-
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('codserie', 'Código');
-        $this->addOrderBy('descripcion');
-        $this->addOrderBy('codejercicio', 'Ejercicio');
-
-        $this->addFilterSelect('ejercicio', 'series', '', 'codejercicio');
-        $this->addFilterCheckbox('siniva', 'Sin Impuesto', 'siniva');
+        $this->addOrderBy('numero', 'number');
+        $this->addOrderBy('fecha', 'date');
         
-        $this->model = new Model\Serie();        
+        /// forzamos el orden por defecto como el cuarto, que es fecha desc
+        $this->selectedOrderBy = array_keys($this->orderby)[3];
+        $this->model = new Model\Asiento();
     }
 
     public function privateCore(&$response, $user)
@@ -57,13 +53,13 @@ class ListSerie extends ExtendedController\ListController
             $this->cursor = $this->model->all($where, $order);
         }
     }
-
+    
     protected function getWhere()
     {
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "descripcion|codserie|codcuenta";
+            $fields = "numero|concepto";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
@@ -72,9 +68,10 @@ class ListSerie extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Series';
-        $pagedata['icon'] = 'fa-file-text';
+        $pagedata['title'] = 'Asientos';
+        $pagedata['icon'] = 'fa-balance-scale';
         $pagedata['menu'] = 'contabilidad';
+        
         return $pagedata;
     }
 }

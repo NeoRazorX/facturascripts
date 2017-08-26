@@ -35,6 +35,8 @@ class ListUser extends ExtendedController\ListController
 
         $this->addOrderBy('nick');
         $this->addOrderBy('email');
+    
+        $this->model = new Model\User();
     }
 
     public function privateCore(&$response, $user)
@@ -44,10 +46,9 @@ class ListUser extends ExtendedController\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\User();
-        $this->count = $model->count($where);
+        $this->count = $this->model->count($where);
         if ($this->count > 0) {
-            $this->cursor = $model->all($where, $order);
+            $this->cursor = $this->model->all($where, $order);
         }
     }
 

@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Model;
 
@@ -39,6 +39,8 @@ class ListPais extends ExtendedController\ListController
         $this->addOrderBy('codpais', 'code');
         $this->addOrderBy('nombre');
         $this->addOrderBy('codiso');
+        
+        $this->model = new Model\Pais();
     }
 
     public function privateCore(&$response, $user)
@@ -47,10 +49,9 @@ class ListPais extends ExtendedController\ListController
 
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Pais();
-        $this->count = $model->count($where);
+        $this->count = $this->model->count($where);
         if ($this->count > 0) {
-            $this->cursor = $model->all($where, $order);
+            $this->cursor = $this->model->all($where, $order);
         }
     }
 
@@ -59,7 +60,7 @@ class ListPais extends ExtendedController\ListController
         $result = parent::getWhere();
         if ($this->query != '') {
             $fields = "nombre|codiso|codpais";
-            $result[] = new Base\DataBase\DataBaseWhere($fields, $this->query, "LIKE");
+            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
 
         return $result;

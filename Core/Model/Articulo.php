@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * Almacena los datos de un artículos.
  *
@@ -101,7 +103,7 @@ class Articulo
 
     /**
      * Fecha de actualización del pvp.
-     * @var string
+    * @var string
      */
     public $factualizado;
 
@@ -402,7 +404,7 @@ class Articulo
             return [];
         }
         $stock = new Stock();
-        return $stock->allFromArticulo($this->referencia);
+        return $stock->all([new DataBaseWhere('referencia', $this->referencia)]);
     }
 
     /**

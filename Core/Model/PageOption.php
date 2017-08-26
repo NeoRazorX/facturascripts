@@ -77,13 +77,13 @@ class PageOption
     {
         return 'id';
     }
-    
+
     public function install()
     {
         /// necesitamos estas clase para las claves ajenas
         new Page();
         new User();
-        
+
         return '';
     }
 
@@ -222,13 +222,14 @@ class PageOption
         $file = "Core/XMLView/{$name}.xml";
         $xml = simplexml_load_file($file);
 
-        if ($xml) {
+        if ($xml === false) {
+            $this->miniLog->critical('error-processing-xmlview');
+        } else {
             $this->getXMLGroupsColumns($xml->columns);
 
             if (!empty($xml->rows)) {
                 $this->getXMLRows($xml->rows);
             }
-//        $this->saveInsert();
         }
     }
 

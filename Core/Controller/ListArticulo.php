@@ -23,26 +23,21 @@ use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la lista de series de facturación
+ * Description of ListArticulo
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author carlos
  */
-class ListSerie extends ExtendedController\ListController
+class ListArticulo extends ExtendedController\ListController
 {
-
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('codserie', 'Código');
-        $this->addOrderBy('descripcion');
-        $this->addOrderBy('codejercicio', 'Ejercicio');
+        $this->addOrderBy('referencia', 'reference');
+        $this->addOrderBy('descripcion', 'description');
+        $this->addOrderBy('pvp', 'price');
 
-        $this->addFilterSelect('ejercicio', 'series', '', 'codejercicio');
-        $this->addFilterCheckbox('siniva', 'Sin Impuesto', 'siniva');
-        
-        $this->model = new Model\Serie();        
+        $this->model = new Model\Articulo();
     }
 
     public function privateCore(&$response, $user)
@@ -57,13 +52,13 @@ class ListSerie extends ExtendedController\ListController
             $this->cursor = $this->model->all($where, $order);
         }
     }
-
+    
     protected function getWhere()
     {
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "descripcion|codserie|codcuenta";
+            $fields = "referencia|descripcion";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
@@ -72,9 +67,10 @@ class ListSerie extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Series';
-        $pagedata['icon'] = 'fa-file-text';
-        $pagedata['menu'] = 'contabilidad';
+        $pagedata['title'] = 'Articulos';
+        $pagedata['icon'] = 'fa-cubes';
+        $pagedata['menu'] = 'ventas';
+        
         return $pagedata;
     }
 }

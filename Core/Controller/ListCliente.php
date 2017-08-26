@@ -18,8 +18,8 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model;
 
 /**
@@ -34,16 +34,16 @@ class ListCliente extends ExtendedController\ListController
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('nombre');
-        $this->addOrderBy('fecha');
-        $this->addOrderBy('codcliente', 'Código');
+        $this->addOrderBy('nombre', 'name');
+        $this->addOrderBy('fecha', 'date');
+        $this->addOrderBy('codcliente', 'code');
 
         $this->addFilterSelect('provincia', 'clientes', '', 'codprovincia');
         $this->addFilterSelect('ciudad', 'clientes');
-        $this->addFilterSelect('grupo', 'clientes', '', 'codgrupo');  
-        
+        $this->addFilterSelect('grupo', 'clientes', '', 'codgrupo');
+
         $this->addFilterCheckbox('debaja', 'De baja');
-        
+
         $this->model = new Model\Cliente();
     }
 
@@ -59,14 +59,14 @@ class ListCliente extends ExtendedController\ListController
             $this->cursor = $this->model->all($where, $order);
         }
     }
-    
+
     protected function getWhere()
     {
         $result = parent::getWhere();
 
         if ($this->query != '') {
             $fields = "nombre|razonsocial|codcliente";
-            $result[] = new DataBase\DataBaseWhere($fields, $this->query, "LIKE");
+            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
     }
@@ -77,7 +77,7 @@ class ListCliente extends ExtendedController\ListController
         $pagedata['title'] = 'Clientes';
         $pagedata['icon'] = 'fa-users';
         $pagedata['menu'] = 'ventas';
-        
+
         return $pagedata;
     }
 }
