@@ -33,8 +33,9 @@ use FacturaScripts\Core\Base\Translator;
  */
 trait ModelTrait
 {
+
     use Base\Utils;
-    
+
     /**
      * Lista de campos de la tabla.
      * @var array
@@ -153,7 +154,7 @@ trait ModelTrait
         $index = count($result) - 1;
         return $result[$index];
     }
-    
+
     /**
      * Devuelve el nombre del modelo.
      * @return string
@@ -177,36 +178,35 @@ trait ModelTrait
     {
         return $this->{$this->primaryColumn()};
     }
-    
+
     /**
      * Devuelve el nombdre de la tabla que usa este modelo.
      * @return string
      */
     abstract public function tableName();
-    
+
     /**
      * Comprueba un array de datos para que tenga la estructura correcta del modelo
      * @param array $data
      */
     public function checkArrayData(&$data)
     {
+        
     }
-    
+
     /**
      * Asigna a las propiedades del modelo los valores del array $data
      *
      * @param array $data
      */
     public function loadFromData(array $data = [])
-    {        
+    {
         foreach ($data as $key => $value) {
             foreach (self::$fields as $field) {
                 if ($field['name'] === $key) {
                     // Comprobamos si es un varchar (con longitud establecida) u otro tipo de dato
-                    $type = (strpos($field['type'], '(') === FALSE)
-                        ? $field['type']
-                        : strstr($field['type'], '('); 
-                                        
+                    $type = (strpos($field['type'], '(') === FALSE) ? $field['type'] : substr($field['type'], 0, strpos($field['type'], '('));
+
                     switch ($type) {
                         case 'tinyint':
                         case 'boolean':
@@ -226,7 +226,7 @@ trait ModelTrait
                         case 'date':
                             $this->{$key} = empty($value) ? NULL : date('d-m-Y', strtotime($value));
                             break;
-                        
+
                         default:
                             if (empty($value)) {
                                 $value = ($field['is_nullable'] === 'NO') ? '' : NULL;
@@ -664,7 +664,7 @@ trait ModelTrait
             case 'list':
                 $result .= 'List' . $model;
                 break;
-            
+
             case 'edit':
                 $result .= 'Edit' . $model . '&code=' . $value;
                 break;

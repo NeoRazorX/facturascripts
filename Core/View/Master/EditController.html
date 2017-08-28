@@ -103,7 +103,7 @@
 {% set title = fsc.getPageData()['title'] %}
 {% set title = i18n.trans(title) %}
 
-{% from 'Master/Utils.html' import popoverTitle as popoverTitle %}
+{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 
 <!-- Main Body -->
 <div class="container-fluid">
@@ -161,7 +161,7 @@
     <!-- Info Row -->
     <div id="info" class="row">
         <div class="col-12">
-        {% from 'Master/Utils.html' import message as show_message %}
+        {% from 'Macro/Utils.html' import message as show_message %}
         {{ show_message(log, ['notice'], 'success') }}    
         </div>
     </div>

@@ -169,10 +169,10 @@ class AppController extends App
         }
 
         /// opciones de twig
-        $twigOptions = array('cache' => $this->folder . '/Cache/Twig');
+        $twigOptions = ['cache' => $this->folder . '/Cache/Twig'];
 
         /// variables para la plantilla HTML
-        $templateVars = array(
+        $templateVars = [
             'controllerName' => $controllerName,
             'debugBarRender' => false,
             'fsc' => $this->controller,
@@ -181,7 +181,7 @@ class AppController extends App
             'menuManager' => $this->menuManager,
             'sql' => $this->miniLog->read(['sql']),
             'template' => $template
-        );
+        ];
 
         if (FS_DEBUG) {
             unset($twigOptions['cache']);
