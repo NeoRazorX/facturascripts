@@ -39,7 +39,17 @@ class FileCache
      * @var array
      */
     private static $config;
+
+    /**
+     *
+     * @var Translator
+     */
     private $i18n;
+
+    /**
+     *
+     * @var MiniLog
+     */
     private $minilog;
 
     /**
@@ -120,12 +130,12 @@ class FileCache
      */
     public function delete($key)
     {
-        $done = true;
         $ruta = $this->getRoute($key);
         if (file_exists($ruta)) {
-            $done = unlink($ruta);
+            return unlink($ruta);
         }
-        return $done;
+
+        return true;
     }
 
     /**
@@ -134,10 +144,12 @@ class FileCache
      */
     public function clear()
     {
-        $cache_files = glob(self::$config['cache_path'] . '/*.php', GLOB_NOSORT);
-        foreach ($cache_files as $file) {
-            unlink($file);
+        foreach (scandir(self::$config['cache_path']) as $fileName) {
+            if (substr($fileName, -4) == '.php') {
+                unlink(self::$config['cache_path'] . '/' . $fileName);
+            }
         }
+
         return true;
     }
 
@@ -149,10 +161,10 @@ class FileCache
      */
     private function fileExpired($file, $time = null)
     {
-        $done = true;
         if (file_exists($file)) {
-            $done = (time() > (filemtime($file) + 60 * ($time ?: self::$config['expires'])));
+            return (time() > (filemtime($file) + 60 * ($time ?: self::$config['expires'])));
         }
-        return $done;
+
+        return true;
     }
 }

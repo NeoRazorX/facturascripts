@@ -44,15 +44,9 @@
             </div>
             <div class="row">
                 <div class="col-sm-12">
-                    {% if errors|length > 0 %}
-                    <div class="alert alert-danger">
-                        <ul>
-                            {% for msg in errors %}
-                            <li>{{ msg }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    {% endif %}
+                    {% for msg in errors %}
+                    <div class="alert alert-danger">{{ msg }}</div>
+                    {% endfor %}
                 </div>
             </div>
             <div class="row">

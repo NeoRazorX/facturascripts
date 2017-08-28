@@ -258,6 +258,29 @@ class Articulo
     }
 
     /**
+     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará tras la creación de la tabla. útil para insertar valores
+     * por defecto.
+     * @return string
+     */
+    public function install()
+    {
+        /**
+         * Limpiamos la caché por si el usuario ha borrado la tabla, pero ya tenía búsquedas.
+         */
+        $this->cleanCache();
+
+        /**
+         * La tabla articulos tiene varias claves ajenas, por eso debemos forzar la comprobación de esas tablas.
+         */
+        new Fabricante();
+        new Familia();
+        new Impuesto();
+
+        return '';
+    }
+    
+    /**
      * Resetea los valores de todas las propiedades modelo.
      */
     public function clear()
@@ -995,29 +1018,6 @@ class Articulo
         foreach ($fixes as $sql) {
             $this->dataBase->exec($sql);
         }
-    }
-
-    /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
-     * @return string
-     */
-    public function install()
-    {
-        /**
-         * Limpiamos la caché por si el usuario ha borrado la tabla, pero ya tenía búsquedas.
-         */
-        $this->cleanCache();
-
-        /**
-         * La tabla articulos tiene varias claves ajenas, por eso debemos forzar la comprobación de esas tablas.
-         */
-        // new Fabricante();
-        // new Familia();
-        // new Impuesto();
-
-        return '';
     }
 
     /**
