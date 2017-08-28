@@ -27,6 +27,6 @@
     "bootstrap": "4.0.0-beta",
     "font-awesome": "^4.x",
     "jquery": "^3.x",
-    "popper.js": "^1.11.1"
+    "popper.js": "^1.12.4"
   }
 }
