@@ -1,0 +1,26 @@
+<!--
+    Carga y visualiza la lista de mensajes de los tipos indicados
+-->
+{% macro message(log, types, style) %}
+    {% set messages = log.read(types) %}
+    {% if messages|length > 0 %}
+    <div class="alert alert-{{ style }}" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        {% for msg in messages %}
+        {{ msg.message|raw }}
+        {% if not loop.last %}<br />{% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}        
+{% endmacro %}
+
+<!--
+    Devuelve el código CSS para la visualización de la ayuda al usuario
+-->
+{% macro popoverTitle(msg, position = 'auto') %}
+    {% if msg|length > 0 %}
+    data-toggle="popover" data-placement="{{ position }}" data-trigger="hover" data-content="{{ msg }}"
+    {% endif %}        
+{% endmacro %}

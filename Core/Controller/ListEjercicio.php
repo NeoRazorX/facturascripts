@@ -43,6 +43,8 @@ class ListEjercicio extends ExtendedController\ListController
         $this->selectedOrderBy = array_keys($this->orderby)[1];
         
         $this->addFilterSelect('estado', 'ejercicios');
+
+        $this->model = new Model\Ejercicio();
     }
 
     public function privateCore(&$response, $user)
@@ -52,10 +54,9 @@ class ListEjercicio extends ExtendedController\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Ejercicio();
-        $this->count = $model->count($where);
+        $this->count = $this->model->count($where);
         if ($this->count > 0) {
-            $this->cursor = $model->all($where, $order);
+            $this->cursor = $this->model->all($where, $order);
         }
     }
 

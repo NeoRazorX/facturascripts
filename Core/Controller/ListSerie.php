@@ -41,6 +41,8 @@ class ListSerie extends ExtendedController\ListController
 
         $this->addFilterSelect('ejercicio', 'series', '', 'codejercicio');
         $this->addFilterCheckbox('siniva', 'Sin Impuesto', 'siniva');
+        
+        $this->model = new Model\Serie();        
     }
 
     public function privateCore(&$response, $user)
@@ -50,10 +52,9 @@ class ListSerie extends ExtendedController\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Serie();
-        $this->count = $model->count($where);
+        $this->count = $this->model->count($where);
         if ($this->count > 0) {
-            $this->cursor = $model->all($where, $order);
+            $this->cursor = $this->model->all($where, $order);
         }
     }
 

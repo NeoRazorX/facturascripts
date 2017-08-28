@@ -39,6 +39,8 @@ class ListPais extends ExtendedController\ListController
         $this->addOrderBy('codpais', 'code');
         $this->addOrderBy('nombre');
         $this->addOrderBy('codiso');
+        
+        $this->model = new Model\Pais();
     }
 
     public function privateCore(&$response, $user)
@@ -47,10 +49,9 @@ class ListPais extends ExtendedController\ListController
 
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Pais();
-        $this->count = $model->count($where);
+        $this->count = $this->model->count($where);
         if ($this->count > 0) {
-            $this->cursor = $model->all($where, $order);
+            $this->cursor = $this->model->all($where, $order);
         }
     }
 

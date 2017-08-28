@@ -180,15 +180,15 @@ class Cliente extends Base\Persona
                 if ($sccli->save()) {
                     return $subcuenta;
                 }
-                
+
                 $this->miniLog->alert('Imposible asociar la subcuenta para el cliente ' . $this->codcliente);
                 return false;
             }
-            
+
             $this->miniLog->alert('Imposible crear la subcuenta para el cliente ' . $this->codcliente);
             return false;
         }
-        
+
         $this->miniLog->alert($this->i18n->trans('account-not-found'));
         $this->miniLog->alert($this->i18n->trans('accounting-plan-imported?'));
         return false;
@@ -234,11 +234,11 @@ class Cliente extends Base\Persona
         }
 
         if (!preg_match('/^[A-Z0-9]{1,6}$/i', $this->codcliente)) {
-            $this->miniLog->alert('Código de cliente no válido: ' . $this->codcliente);
+            $this->miniLog->alert('Código de cliente no válido: ' . $this->codcliente, ['fieldname' => 'codcliente']);
         } elseif (empty($this->nombre) || strlen($this->nombre) > 100) {
-            $this->miniLog->alert('Nombre de cliente no válido: ' . $this->nombre);
+            $this->miniLog->alert('Nombre de cliente no válido: ' . $this->nombre, ['fieldname' => 'nombre']);
         } elseif (empty($this->razonsocial) || strlen($this->razonsocial) > 100) {
-            $this->miniLog->alert('Razón social del cliente no válida: ' . $this->razonsocial);
+            $this->miniLog->alert('Razón social del cliente no válida: ' . $this->razonsocial, ['fieldname' => 'razonsocial']);
         } else {
             $status = true;
         }
@@ -281,5 +281,5 @@ class Cliente extends Base\Persona
         }
 
         return $clilist;
-    }
+    }    
 }

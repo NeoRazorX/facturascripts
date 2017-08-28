@@ -177,7 +177,7 @@ class AppController extends App
             'debugBarRender' => false,
             'fsc' => $this->controller,
             'i18n' => $this->i18n,
-            'log' => $this->miniLog->read(),
+            'log' => $this->miniLog,
             'menuManager' => $this->menuManager,
             'sql' => $this->miniLog->read(['sql']),
             'template' => $template

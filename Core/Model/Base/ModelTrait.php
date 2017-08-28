@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\Cache;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DefaultItems;
@@ -32,7 +33,8 @@ use FacturaScripts\Core\Base\Translator;
  */
 trait ModelTrait
 {
-
+    use Base\Utils;
+    
     /**
      * Lista de campos de la tabla.
      * @var array
@@ -113,7 +115,7 @@ trait ModelTrait
                 self::$checkedTables = [];
             }
 
-            self::$modelName = __CLASS__;
+            self::$modelName = get_class($this);
         }
 
         if ($this->tableName() !== '' && !in_array($this->tableName(), self::$checkedTables, false) && $this->checkTable($this->tableName())) {
@@ -142,6 +144,17 @@ trait ModelTrait
     }
 
     /**
+     * Devuelve el nombre de la clase del modelo
+     * @return string
+     */
+    public function modelClassName()
+    {
+        $result = explode('\\', $this->modelName());
+        $index = count($result) - 1;
+        return $result[$index];
+    }
+    
+    /**
      * Devuelve el nombre del modelo.
      * @return string
      */
@@ -157,27 +170,43 @@ trait ModelTrait
     abstract public function primaryColumn();
 
     /**
+     * Devuelve el valor actual de la columna principal del modelo
+     * @return mixed
+     */
+    public function primaryColumnValue()
+    {
+        return $this->{$this->primaryColumn()};
+    }
+    
+    /**
      * Devuelve el nombdre de la tabla que usa este modelo.
      * @return string
      */
     abstract public function tableName();
-
+    
+    /**
+     * Comprueba un array de datos para que tenga la estructura correcta del modelo
+     * @param array $data
+     */
+    public function checkArrayData(&$data)
+    {
+    }
+    
     /**
      * Asigna a las propiedades del modelo los valores del array $data
      *
      * @param array $data
      */
     public function loadFromData(array $data = [])
-    {
+    {        
         foreach ($data as $key => $value) {
-            $this->{$key} = $value;
-            if ($value === null) {
-                continue;
-            }
-
             foreach (self::$fields as $field) {
                 if ($field['name'] === $key) {
-                    $type = strstr($field['type'], '(');
+                    // Comprobamos si es un varchar (con longitud establecida) u otro tipo de dato
+                    $type = (strpos($field['type'], '(') === FALSE)
+                        ? $field['type']
+                        : strstr($field['type'], '('); 
+                                        
                     switch ($type) {
                         case 'tinyint':
                         case 'boolean':
@@ -186,17 +215,23 @@ trait ModelTrait
 
                         case 'integer':
                         case 'int':
-                            $this->{$key} = (int) $value;
+                            $this->{$key} = empty($value) ? 0 : (int) $value;
                             break;
 
                         case 'double':
                         case 'float':
-                            $this->{$key} = (float) $value;
+                            $this->{$key} = empty($value) ? 0 : (float) $value;
                             break;
 
                         case 'date':
-                            $this->{$key} = date('d-m-Y', strtotime($value));
+                            $this->{$key} = empty($value) ? NULL : date('d-m-Y', strtotime($value));
                             break;
+                        
+                        default:
+                            if (empty($value)) {
+                                $value = ($field['is_nullable'] === 'NO') ? '' : NULL;
+                            }
+                            $this->{$key} = $value;
                     }
                     break;
                 }
@@ -259,12 +294,12 @@ trait ModelTrait
      */
     public function exists()
     {
-        if ($this->{$this->primaryColumn()} === null) {
+        if ($this->primaryColumnValue() === null) {
             return false;
         }
 
         $sql = 'SELECT 1 FROM ' . $this->tableName()
-            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
+            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->primaryColumnValue()) . ';';
         return (bool) $this->dataBase->select($sql);
     }
 
@@ -305,7 +340,7 @@ trait ModelTrait
             $this->cleanCache();
         }
         $sql = 'DELETE FROM ' . $this->tableName()
-            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
+            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->primaryColumnValue()) . ';';
         return $this->dataBase->exec($sql);
     }
 
@@ -564,7 +599,7 @@ trait ModelTrait
             }
         }
 
-        $sql .= ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->{$this->primaryColumn()}) . ';';
+        $sql .= ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->primaryColumnValue()) . ';';
         return $this->dataBase->exec($sql);
     }
 
@@ -586,7 +621,7 @@ trait ModelTrait
         $sql = 'INSERT INTO ' . $this->tableName()
             . ' (' . implode(',', $insertFields) . ') VALUES (' . implode(',', $insertValues) . ');';
         if ($this->dataBase->exec($sql)) {
-            if ($this->{$this->primaryColumn()} === null) {
+            if ($this->primaryColumnValue() === null) {
                 $this->{$this->primaryColumn()} = $this->dataBase->lastval();
             }
 
@@ -620,11 +655,24 @@ trait ModelTrait
      * Devuelve la url donde ver/modificar los datos
      * @return string
      */
-    public function url()
+    public function url($type = 'auto')
     {
-        $value = $this->{$this->primaryColumn()};
-        $model = $this->modelName();
-        $result = empty($value) ? 'index.php?page=List' . $model : 'index.php?page=Edit' . $model . '&cod=' . $value;
+        $value = $this->primaryColumnValue();
+        $model = $this->modelClassName();
+        $result = 'index.php?page=';
+        switch ($type) {
+            case 'list':
+                $result .= 'List' . $model;
+                break;
+            
+            case 'edit':
+                $result .= 'Edit' . $model . '&code=' . $value;
+                break;
+
+            default:
+                $result .= empty($value) ? 'List' . $model : 'Edit' . $model . '&code=' . $value;
+                break;
+        }
         return $result;
     }
 }

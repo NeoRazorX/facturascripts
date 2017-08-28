@@ -53,7 +53,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         parent::__construct();
 
         $this->description = '';
-        $this->display = 'none';
+        $this->display = 'left';
         $this->widget = new WidgetItem();
     }
 
@@ -67,7 +67,11 @@ class ColumnItem extends VisualItem implements VisualItemInterface
 
         $column_atributes = $column->attributes();
         $this->description = (string) $column_atributes->description;
-        $this->display = (string) $column_atributes->display;
+        
+        if (!empty($column_atributes->display)) {
+            $this->display = (string) $column_atributes->display;
+        }
+        
         $this->widget->loadFromXMLColumn($column);
     }
 
@@ -130,30 +134,123 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      */
     public function getEditHTML($value)
     {
-        $columnClass = ($this->numColumns === 0) ? ' col' : (' col-md-' . $this->numColumns);
+        $columnClass = $this->getColumnClass();
         $input = $this->widget->getEditHTML($value);
         $header = $this->getHeaderHTML($this->title);
-        $hint = empty($this->widget->hint) ? '' : ' title="' . $this->i18n->trans($this->widget->hint) . '"';
-        $description = empty($this->description) ? '' : '<small class="form-text text-muted">' . $this->i18n->trans($this->description) . '</small>';
+        $hint = $this->getColumnHint();
+        $required = $this->getColumnRequired();
+        $description = $this->getColumnDescription();
 
-        switch ($this->widget->type) {
+        switch ($this->widget->type) {            
             case "checkbox":
-                $html = '<div class="form-row ' .  $columnClass . ' align-items-center"><div class="form-check">'
-                    . '<label class="form-check-label"' . $hint . '>'
-                    . $input . '&nbsp;' . $header
-                    . '</label>'
-                    . $description
-                    . '</div></div>';
+                $html = '<div class="form-row align-items-center' . $columnClass . '">'
+                        . $this->checkboxHTMLColumn($header, $input, $hint, $description)
+                        . $required
+                        . '</div>';
                 break;
 
+            case "radio":
+                $html = '<div class="' . $columnClass . '">'
+                        . '<label>' . $header . '</label>'
+                        . $this->radioHTMLColumn($input, $hint, $value)
+                        . $required
+                        . '</div>';                
+                break;
+            
             default:
-                $html = '<div class="' . $columnClass . '"><div class="form-group">'
-                    . '<label for="' . $this->widget->fieldName . '"' . $hint . '>' . $header . '</label>'
-                    . $input
-                    . $description
-                    . '</div></div>';
+                $html = $this->standardHTMLColumn($header, $input, $hint, $description, $columnClass, $required);
                 break;
         }
         return $html;
+    }
+    
+    /**
+     * Devuelve el código HTML para el visionado de un campo no especial
+     * 
+     * @param string $header
+     * @param string $input
+     * @param string $hint
+     * @param string $description
+     * @param string $columnClass
+     * @return string
+     */
+    private function standardHTMLColumn($header, $input, $hint, $description, $columnClass, $required)
+    {
+        return '<div class="form-group' . $columnClass . '">'
+            . '<label for="' . $this->widget->fieldName . '"' . $hint . '>' . $header . '</label>'
+            . $input
+            . $description
+            . $required
+            . '</div>';
+    }
+    
+    /**
+     * Devuelve el código HTML para el visionado de un campo checkbox
+     * 
+     * @param string $header
+     * @param string $input
+     * @param string $hint
+     * @param string $description
+     * @return string
+     */
+    private function checkboxHTMLColumn($header, $input, $hint, $description)
+    {
+        return '<div class="form-check col">'
+            . '<label class="form-check-label"' . $hint . '>'
+            . $input . '&nbsp;' . $header
+            . '</label>'
+            . $description
+            . '</div>';        
+    }
+    
+    /**
+     * Devuelve el código HTML para el visionado de una lista de opciones
+     * 
+     * @param string $input
+     * @param string $hint
+     * @param string $value
+     * @return string
+     */
+    private function radioHTMLColumn($input, $hint, $value)
+    {
+        $html = '';
+        $index = 0;
+        $template_var = ['"sufix%', '"value%', '"checked%'];
+        foreach ($this->widget->values as $optionValue) {
+            $checked = ($optionValue['value'] == $value) ? ' checked="checked"' : '';
+            $index++;
+            $values = [($index . '"'), $optionValue['value'], $checked];
+            $html .= '<div class="form-check"><label class="form-check-label"' . $hint . '>'
+                    . str_replace($template_var, $values, $input)
+                    . '&nbsp;' . $optionValue['title']
+                    . '</label></div>';
+        }
+        return $html;
+    }
+    
+    private function getColumnClass()
+    {
+        return ($this->numColumns > 0)
+            ? (' col-md-' . $this->numColumns)
+            : ' col';
+    }
+    
+    private function getColumnHint()
+    {
+        return $this->widget->getHintHTML($this->i18n->trans($this->widget->hint));
+    }
+    
+    private function getColumnRequired()
+    {
+        return $this->widget->required 
+            ? '<div class="invalid-feedback">' . $this->i18n->trans('Por favor, introduzca un valor para el campo') . '</div>'
+            : '';        
+    }
+    
+    private function getColumnDescription()
+    {
+        return empty($this->description) 
+            ? '' 
+            : '<small class="form-text text-muted">' . $this->i18n->trans($this->description) . '</small>';
     }
 }

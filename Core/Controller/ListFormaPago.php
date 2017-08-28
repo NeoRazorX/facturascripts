@@ -42,6 +42,8 @@ class ListFormaPago extends ExtendedController\ListController
         $this->addFilterSelect('vencimiento', 'formaspago');
         $this->addFilterCheckbox('domiciliado', 'Domiciliado');
         $this->addFilterCheckbox('imprimir', 'Imprimir');
+        
+        $this->model = new Model\FormaPago();
     }
 
     public function privateCore(&$response, $user)
@@ -51,10 +53,9 @@ class ListFormaPago extends ExtendedController\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\FormaPago();
-        $this->count = $model->count($where);
+        $this->count = $this->model->count($where);
         if ($this->count > 0) {
-            $this->cursor = $model->all($where, $order);
+            $this->cursor = $this->model->all($where, $order);
         }
     }
 

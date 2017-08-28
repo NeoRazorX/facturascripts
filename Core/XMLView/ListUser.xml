@@ -24,13 +24,13 @@
 
 <view>
     <columns>
-        <column title="Nick" display="left" order="100">
+        <column title="Nick" order="100">
             <widget type="text" fieldname="nick" onclick="EditUser" />
         </column>
-        <column title="Email" display="left" order="110">
+        <column title="Email" order="110">
             <widget type="text" fieldname="email" />
         </column>
-        <column title="Última IP" display="left" order="120">
+        <column title="Última IP" order="120">
             <widget type="text" fieldname="lastip" />
         </column>
         <column title="Última actividad" display="right" order="130">

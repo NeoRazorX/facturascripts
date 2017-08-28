@@ -40,9 +40,11 @@ class ListCliente extends ExtendedController\ListController
 
         $this->addFilterSelect('provincia', 'clientes', '', 'codprovincia');
         $this->addFilterSelect('ciudad', 'clientes');
-        $this->addFilterSelect('grupo', 'clientes', '', 'codgrupo');  
-        
+        $this->addFilterSelect('grupo', 'clientes', '', 'codgrupo');
+
         $this->addFilterCheckbox('debaja', 'De baja');
+
+        $this->model = new Model\Cliente();
     }
 
     public function privateCore(&$response, $user)
@@ -52,13 +54,12 @@ class ListCliente extends ExtendedController\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Cliente();
-        $this->count = $model->count($where);
+        $this->count = $this->model->count($where);
         if ($this->count > 0) {
-            $this->cursor = $model->all($where, $order);
+            $this->cursor = $this->model->all($where, $order);
         }
     }
-    
+
     protected function getWhere()
     {
         $result = parent::getWhere();
@@ -76,7 +77,7 @@ class ListCliente extends ExtendedController\ListController
         $pagedata['title'] = 'Clientes';
         $pagedata['icon'] = 'fa-users';
         $pagedata['menu'] = 'ventas';
-        
+
         return $pagedata;
     }
 }

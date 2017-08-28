@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * Esta clase almacena los principales datos de la empresa.
@@ -30,7 +29,6 @@ class Empresa
 
     use Base\ModelTrait;
     use Base\ContactInformation;
-    use Utils;
 
     /**
      * Clave primaria. Integer.

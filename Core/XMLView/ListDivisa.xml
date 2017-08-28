@@ -24,18 +24,18 @@
 
 <view>
     <columns>
-        <column title="Código" display="left" order="100">
+        <column title="Código" order="100">
             <widget type="text" fieldname="coddivisa" onclick="EditDivisa" />
         </column>
-        <column title="Descripcion" display="left" order="110">
+        <column title="Descripcion" order="110">
             <widget type="text" fieldname="descripcion" />
         </column>
-        <column title="ISO" display="left" order="120"
+        <column title="ISO" order="120"
                 titleurl="https://es.wikipedia.org/wiki/ISO_4217" 
                 description="El estándar internacional ISO 4217 fue creado por la ISO con el objetivo de definir códigos de tres letras para todas las divisas del mundo.">
             <widget type="text" fieldname="codiso" />
         </column>
-        <column title="Fecha" display="left" order="130">
+        <column title="Fecha" order="130">
             <widget type="text" fieldname="fecha" />
         </column>
         <column title="Tasa Ventas" display="right" order="140"

@@ -41,6 +41,8 @@ class ListAgenciaTransporte extends ExtendedController\ListController
         $this->addOrderBy('nombre');
 
         $this->addFilterCheckbox('activo', 'Activo', '', TRUE);
+        
+        $this->model = new Model\AgenciaTransporte();
     }
 
     public function privateCore(&$response, $user)
@@ -50,10 +52,9 @@ class ListAgenciaTransporte extends ExtendedController\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\AgenciaTransporte();
-        $this->count = $model->count($where);
+        $this->count = $this->model->count($where);
         if ($this->count > 0) {
-            $this->cursor = $model->all($where, $order);
+            $this->cursor = $this->model->all($where, $order);
         }
     }
 

@@ -2,6 +2,7 @@
 
 {% block css %}
     {{ parent() }}
+    
     <style type="text/css">
         .card-header {
             padding: .5rem 1.25rem;
@@ -28,27 +29,73 @@
         input[required] {
             background: aliceblue;
         }
+        
+        input:invalid,
+        input:required:invalid {
+            border: 1px solid red;
+        }
     </style>
 {% endblock %}
 
 
 {% block javascript %}
 {{ parent() }}
+
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(document).ready(function() {
+        $('[data-toggle="popover"]').popover({
+            delay: { "show": 1000, "hide": 100 }
+        });
+        
+        $('#main_row :text:first').focus();
     });
+    
+    function insertRecord() {
+        document.insert_form.submit(); 
+    }
+
+    function deleteRecord() {
+        bootbox.confirm({
+            title: "{{ i18n.trans('Confirm delete?') }}",
+            message: "{{ i18n.trans('This cannot be undone. Are you sure you wish to continue?') }}",
+            buttons: {
+                cancel: {
+                    label: '<i class="fa fa-times"></i> {{ i18n.trans('Cancel') }}'
+                },
+                confirm: {
+                    label: '<i class="fa fa-check"></i> {{ i18n.trans('Confirm') }}',
+                    className: 'btn-danger'
+                }
+            },
+            callback: function (result) {
+                if (result) {
+                    document.delete_form.submit(); 
+                }
+            }
+        });           
+    }
 </script>
 {% endblock %}
 
-{% block body %}
-{{ parent() }}
+{% block messages %}
+<div class="container-fluid">
+    <div id="messages" class="row">
+        <div class="col-12">            
+            {{ parent() }}
+        </div>
+    </div>
+</div>
+{% endblock %}
 
+{% block body %}
 <!-- Calculate texts according to language -->
-{% set go_back = i18n.trans('Todos') %}
-{% set save = i18n.trans('Guardar') %}
-{% set refresh = i18n.trans('Refrescar la página') %}
-{% set print, print_title = i18n.trans('Imprimir'), i18n.trans('Imprimir datos del registro') %}
-{% set remove, remove_title = i18n.trans('Eliminar'), i18n.trans('Eliminar el registro') %}
+{% set go_back = i18n.trans('back') %}
+{% set save, save_title = i18n.trans('save'), i18n.trans('save data') %}
+{% set undo, undo_title = i18n.trans('undo'), i18n.trans('restore data') %}
+{% set refresh_title = i18n.trans('refresh') %}
+{% set print, print_title = i18n.trans('print'), i18n.trans('print data') %}
+{% set remove, remove_title = i18n.trans('delete'), i18n.trans('delete record') %}
+{% set insert_title = i18n.trans('New') %}
 
 {% set panel_header = fsc.getPanelHeader() %}
 {% set panel_footer = fsc.getPanelFooter() %}
@@ -56,22 +103,26 @@
 {% set title = fsc.getPageData()['title'] %}
 {% set title = i18n.trans(title) %}
 
+{% from 'Master/Utils.html' import popoverTitle as popoverTitle %}
+
 <!-- Main Body -->
 <div class="container-fluid">
+    {{ parent() }}
+
     <!-- Header Row -->
     <div id="header" class="row">
         <div class="col-3 d-print-none">
             <div class="btn-group">
-                <a href="#" class="btn btn-sm btn-light">
+                <a href="{{ fsc.model.url('list') }}" class="btn btn-sm btn-light">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i>
                     <span class="hidden-xs hidden-sm">&nbsp;{{ go_back }} </span>
                 </a>
-                <a href="{{ fsc.url() }}" class="btn btn-sm btn-light" title="{{ refresh }}">
+                <a href="{{ fsc.model.url('edit') }}" class="btn btn-sm btn-light" {{ popoverTitle(refresh_title, 'bottom') }}>
                     <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
             </div>
             <div class="btn-group">
-                <a href="#" id="b_print" class="btn btn-sm btn-secondary" onclick="window.print();" title="{{ print_title }}">
+                <a id="b_print" class="btn btn-sm btn-secondary" onclick="window.print();" href="#" {{ popoverTitle(print_title, 'bottom') }}>
                     <i class="fa fa-print" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;{{ print }}</span>
                 </a>
@@ -87,20 +138,39 @@
         </div>
 
         <div class="col-3 text-right d-print-none">
-            <a class="btn btn-sm btn-success" href="#" title='{{ i18n.trans("Nuevo") }} {{ title }}'>
+            <form action="{{ fsc.model.url('edit') }}" method=post name="insert_form">
+                <input type="hidden" name="action" value="insert"> 
+            </form>             
+
+            <form action="{{ fsc.model.url('list') }}" method=post name="delete_form">
+                <input type="hidden" name="action" value="delete"> 
+                <input type="hidden" name="code" value="{{ fsc.model.primaryColumnValue() }}"> 
+            </form>             
+            
+            <a id="b_new" class="btn btn-sm btn-success" onclick="insertRecord();" href="#" {{ popoverTitle((insert_title ~ ' ' ~ title), 'bottom') }}>
                 <i class="fa fa-plus" aria-hidden="true"></i>
             </a>
-            <a id="b_eliminar" class="btn btn-sm btn-danger" href="#" title="{{ remove_title }}">
+            
+            <a id="b_remove" class="btn btn-sm btn-danger" onclick="deleteRecord();" href="#" {{ popoverTitle(remove_title, 'bottom') }}">
                 <i class="fa fa-trash" aria-hidden="true"></i>
                 <span class="hidden-xs">&nbsp;{{ remove }}</span>
             </a>
         </div>
     </div>
 
+    <!-- Info Row -->
+    <div id="info" class="row">
+        <div class="col-12">
+        {% from 'Master/Utils.html' import message as show_message %}
+        {{ show_message(log, ['notice'], 'success') }}    
+        </div>
+    </div>
+    
     <!-- Data Row -->
     <div id="data" class="row">
         <div class="col-12">
             <form name="mainform" action="" method="post" class="form" role="form">
+                <input type="hidden" name="action" value="save"> 
                 <div class="card">
                     <div class="card-header">
                         <span class="card-title">{{ panel_header }}</span>
@@ -129,7 +199,7 @@
                         </div>
 
                         <!-- Main Form -->
-                        <div class="row">
+                        <div id="main_row" class="row">
                             {% for group in fsc.getGroupColumns() %}
                             <div class="{{ group.numColumns == 0 ? 'col' : 'col-md-' ~ group.numColumns }}">
                                 <div class="form-row">
@@ -137,10 +207,10 @@
                                     <legend>{{ group.getHeaderHTML(group.title)|raw }}</legend>
                                     {% endif %}
                                     {% for column in group.columns %}
-                                    {% if column.display != 'none' %}
-                                    {% set value = attribute(fsc.model, column.widget.fieldName) %}
-                                    {{ column.getEditHTML(value)|raw }}
-                                    {% endif %}
+                                        {% if column.display != 'none' %}
+                                        {% set value = attribute(fsc.model, column.widget.fieldName) %}
+                                        {{ column.getEditHTML(value)|raw }}
+                                        {% endif %}
                                     {% endfor %}
                                 </div>
                             </div>
@@ -150,7 +220,10 @@
 
                     <div class="card-footer text-right">
                         <small class="pull-left">{{ panel_footer }}</small>
-                        <button class="btn btn-sm btn-primary" type="submit" onclick="">
+                        <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
+                            <i class="fa fa-undo" aria-hidden="true"></i>&nbsp; {{ undo }}
+                        </button>
+                        <button class="btn btn-sm btn-primary" type="submit" {{ popoverTitle(save_title, 'bottom') }}>
                             <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
                         </button>
                     </div>

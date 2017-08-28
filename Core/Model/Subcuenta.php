@@ -30,7 +30,6 @@ class Subcuenta
 {
 
     use Base\ModelTrait;
-    use Utils;
 
     /**
      * Clave primaria.
@@ -254,7 +253,7 @@ class Subcuenta
                     if ($newSc->save()) {
                         return $newSc;
                     }
-                    
+
                     return false;
                 }
 
@@ -291,7 +290,7 @@ class Subcuenta
         if (!empty($data)) {
             return new Subcuenta($data[0]);
         }
-        
+
         return false;
     }
 

@@ -38,6 +38,7 @@ class ListAsiento extends ExtendedController\ListController
         
         /// forzamos el orden por defecto como el cuarto, que es fecha desc
         $this->selectedOrderBy = array_keys($this->orderby)[3];
+        $this->model = new Model\Asiento();
     }
 
     public function privateCore(&$response, $user)
@@ -47,10 +48,9 @@ class ListAsiento extends ExtendedController\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Asiento();
-        $this->count = $model->count($where);
+        $this->count = $this->model->count($where);
         if ($this->count > 0) {
-            $this->cursor = $model->all($where, $order);
+            $this->cursor = $this->model->all($where, $order);
         }
     }
     

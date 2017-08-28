@@ -36,6 +36,8 @@ class ListArticulo extends ExtendedController\ListController
         $this->addOrderBy('referencia', 'reference');
         $this->addOrderBy('descripcion', 'description');
         $this->addOrderBy('pvp', 'price');
+
+        $this->model = new Model\Articulo();
     }
 
     public function privateCore(&$response, $user)
@@ -45,10 +47,9 @@ class ListArticulo extends ExtendedController\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Articulo();
-        $this->count = $model->count($where);
+        $this->count = $this->model->count($where);
         if ($this->count > 0) {
-            $this->cursor = $model->all($where, $order);
+            $this->cursor = $this->model->all($where, $order);
         }
     }
     

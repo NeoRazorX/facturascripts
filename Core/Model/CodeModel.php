@@ -71,22 +71,24 @@ class CodeModel
     public static function all($tableName, $fieldCode, $fieldDescription, $addEmpty = FALSE)
     {
         $result = [];
-        if ($addEmpty) {
-            $result[] = new CodeModel(['code' => NULL, 'description' => '']);
-        }
 
         if (self::$dataBase === null) {
             self::$dataBase = new DataBase();
         }
         
-        $sql = 'SELECT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM ' . $tableName . ' ORDER BY 2 ASC';
-        $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $result[] = new CodeModel($d);
+        if (self::$dataBase->tableExists($tableName)) {        
+            if ($addEmpty) {
+                $result[] = new CodeModel(['code' => NULL, 'description' => '']);
+            }
+            
+            $sql = 'SELECT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM ' . $tableName . ' ORDER BY 2 ASC';
+            $data = self::$dataBase->select($sql);
+            if (!empty($data)) {
+                foreach ($data as $d) {
+                    $result[] = new CodeModel($d);
+                }
             }
         }
-
         return $result;
     }
 }
