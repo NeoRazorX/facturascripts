@@ -155,7 +155,7 @@ trait Utils
      */
     public function str2bool($val)
     {
-        return ($val === 't' || $val === '1');
+        return in_array(strtolower($val), ['true', 't', '1']);
     }
 
     /**

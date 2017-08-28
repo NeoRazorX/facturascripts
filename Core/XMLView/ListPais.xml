@@ -24,17 +24,17 @@
 
 <view>
     <columns>
-        <column title="Código Alfa-3" display="left" order="100"
+        <column title="Código Alfa-3" order="100"
                 titleurl="https://es.wikipedia.org/wiki/ISO_3166-1" 
                 description="Identificación oficial para los nombres de países y otras dependencias administrativas">
             <widget type="text" fieldname="codpais" onclick="EditPais" />
         </column>
-        <column title="Código Alfa-2" display="left" order="110"
+        <column title="Código Alfa-2" order="110"
                 titleurl="https://es.wikipedia.org/wiki/ISO_3166-1#C.C3.B3digos_ISO_3166-1"
                 description="Identificación oficial para los nombres de países y otras dependencias administrativas">
             <widget type="text" fieldname="codiso" />
         </column>
-        <column title="Nombre" display="left" order="120">
+        <column title="Nombre" order="120">
             <widget type="text" fieldname="nombre" />
         </column>
         <column title="Validar Prov." display="center" order="130">

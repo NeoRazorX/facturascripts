@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * Usuario de FacturaScripts.
@@ -31,7 +30,6 @@ class User
     use Base\ModelTrait {
         get as private getTrait;
     }
-    use Utils;
 
     /**
      * Clave primaria. Varchar (50).
@@ -214,5 +212,5 @@ class User
         $this->miniLog->info($this->i18n->trans('created-default-admin-account'));
         return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled) VALUES ('admin','"
             . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE);";
-    }
+    }    
 }

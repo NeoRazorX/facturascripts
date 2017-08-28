@@ -39,6 +39,8 @@ class ListProveedor extends ExtendedController\ListController
         $this->addOrderBy('codproveedor', 'code');
 
         $this->addFilterCheckbox('debaja', 'De baja');
+        
+        $this->model = new Model\Proveedor();        
     }
 
     public function privateCore(&$response, $user)
@@ -48,10 +50,9 @@ class ListProveedor extends ExtendedController\ListController
         // Load data with estructure data
         $where = $this->getWhere();
         $order = $this->getOrderBy($this->selectedOrderBy);
-        $model = new Model\Proveedor();
-        $this->count = $model->count($where);
+        $this->count = $this->model->count($where);
         if ($this->count > 0) {
-            $this->cursor = $model->all($where, $order);
+            $this->cursor = $this->model->all($where, $order);
         }
     }
 

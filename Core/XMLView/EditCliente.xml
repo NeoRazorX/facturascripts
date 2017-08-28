@@ -25,21 +25,21 @@
 <view>
     <columns>
         <group numcolumns="12">
-            <column title="Código" display="left" numcolumns="1" order="100">                
+            <column title="Código" numcolumns="2" order="100">                
                 <widget type="text" fieldname="codcliente" onclick="" icon="fa-user" required="true" />
             </column>
             
-            <column title="Nombre" display="left" numcolumns="4" order="110"
+            <column title="Nombre" numcolumns="3" order="110"
                     description="Nombre por el que se conoce al cliente. Para uso interno.">
-                <widget type="text" fieldname="nombre" required="true" />
+                <widget type="text" fieldname="nombre" required="true" hint="Nombre comercial del cliente" />
             </column>
             
-            <column title="Razón Social" display="left" numcolumns="4" order="120"
+            <column title="Razón Social" numcolumns="3" order="120"
                     description="Nombre oficial del cliente, para las facturas y otros documentos.">
-                <widget type="text" fieldname="razonsocial" />
+                <widget type="text" fieldname="razonsocial" hint="Nombre fiscal o legalmente registrado del cliente" />
             </column>
             
-            <column title="Id. fiscal" display="left" numcolumns="1" order="130">
+            <column title="Id. fiscal" numcolumns="2" order="130">
                 <widget type="select" fieldname="tipoidfiscal">
                     <values title="CIF/NIF">CIF/NIF</values>
                     <values title="Pasaporte">PASAPORTE</values>
@@ -51,61 +51,84 @@
                 </widget>
             </column>
             
-            <column title="CIF/NIF" display="left" numcolumns="2" order="140">
+            <column title="CIF/NIF" numcolumns="2" order="140">
                 <widget type="text" fieldname="cifnif" required="true" />
             </column>                                    
-        </group>
-        
-        <group title="Condiciones comerciales" numcolumns="4">
-            <column title="Grupo" display="left" numcolumns="12" order="100">
-                <widget type="select" fieldname="codgrupo">
-                    <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
-                </widget>
-            </column>
-            
-            <column title="Es una persona física (no una empresa)" display="left" order="110">
+
+            <column title="Es una persona física (no una empresa)" numcolumns="4" order="200">
                 <widget type="checkbox" fieldname="personafisica" />
             </column>
         </group>
         
-        <group title="Datos de contacto" numcolumns="4">
-            <column title="Telefono" display="left" numcolumns="4" order="100">
-                <widget type="text" fieldname="telefono1" />
-            </column>
-            
-            <column title="Telefono2" display="left" numcolumns="4" order="110">
-                <widget type="text" fieldname="telefono2" />
-            </column>
-            
-            <column title="Fax" display="left" numcolumns="4" order="120">
-                <widget type="text" fieldname="fax" />
-            </column>
-            
-            <column title="eMail" display="left" numcolumns="4" order="200">
-                <widget type="text" fieldname="email" />
+        <group title="Condiciones comerciales" numcolumns="4">
+            <column title="Grupo" numcolumns="6" titleurl="?page=ListGrupoCliente" order="100">
+                <widget type="select" fieldname="codgrupo">
+                    <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
+                </widget>
             </column>
 
-            <column title="Web" display="left" order="210">
-                <widget type="text" fieldname="web" />
+            <column title="Forma de Pago" numcolumns="6" titleurl="?page=ListFormaPago" order="120">
+                <widget type="select" fieldname="codpago">
+                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+
+            <column title="Días de pago" description="Ejemplo: 1,15,31" numcolumns="6" order="130">
+                <widget type="text" fieldname="diaspago" />
+            </column>
+
+            <column title="Empleado asignado" numcolumns="6" titleurl="?page=ListUser" order="140">
+                <widget type="select" fieldname="codagente">
+                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            
+            <column title="Régimen IVA" order="150">
+                <widget type="radio" fieldname="regimeniva">
+                    <values title="General">General</values>
+                    <values title="Exento">Exento</values>                    
+                </widget>
+            </column>
+        </group>
+        
+        <group title="Datos de contacto" numcolumns="4">
+            <column title="Telefono" numcolumns="4" order="100">
+                <widget type="tel" fieldname="telefono1" />
+            </column>
+            
+            <column title="Telefono2" numcolumns="4" order="110">
+                <widget type="tel" fieldname="telefono2" />
+            </column>
+            
+            <column title="Fax" numcolumns="4" order="120">
+                <widget type="tel" fieldname="fax" />
+            </column>
+            
+            <column title="eMail" numcolumns="12" order="200">
+                <widget type="email" fieldname="email" />
+            </column>
+
+            <column title="Web" numcolumns="12" order="210">
+                <widget type="url" fieldname="web" />
             </column>
         </group>        
 
         <group title="Otros datos" numcolumns="4">
-            <column title="Fec. Alta" display="left" numcolumns="4" order="80">
-                <widget type="datepicker" fieldname="fechaalta" />
+            <column title="Fec. Alta" numcolumns="4" order="80">
+                <widget type="datepicker" fieldname="fechaalta" readonly="true" />
             </column>
 
-            <column title="Fec. Baja" display="left" numcolumns="4" order="90">
+            <column title="Fec. Baja" numcolumns="4" order="90">
                 <widget type="datepicker" fieldname="fechabaja" />
             </column>
 
-            <column title="De baja" display="left" numcolumns="4" order="100">
+            <column title="De baja" numcolumns="4" order="100">
                 <widget type="checkbox" fieldname="debaja" />
-            </column>
+            </column>            
         </group>
                         
         <group>
-            <column title="Observaciones" display="left" order="170">
+            <column title="Observaciones" order="170">
                 <widget type="textarea" fieldname="observaciones" />
             </column>
         </group>                        

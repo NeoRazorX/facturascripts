@@ -52,12 +52,18 @@ class GroupItem extends VisualItem implements VisualItemInterface
     public function loadFromXMLColumns($group)
     {
         $this->columns = [];
+        $count = 1;
         foreach ($group->column as $column) {
             $columnItem = new ColumnItem();
             $columnItem->loadFromXML($column);
-            $key = str_pad($columnItem->order, 3, '0', STR_PAD_LEFT) . '_' . $columnItem->widget->fieldName;
+
+            $order = str_pad($columnItem->order, 3, '0', STR_PAD_LEFT);
+            $position = str_pad($count, 2, '0', STR_PAD_LEFT);
+            $key = $order . $position;
+
             $this->columns[$key] = $columnItem;
             unset($columnItem);
+            $count++;
         }
         ksort($this->columns, SORT_STRING);
     }

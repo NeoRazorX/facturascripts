@@ -24,16 +24,16 @@
 
 <view>
     <columns>
-        <column title="Código" display="left" order="100">
+        <column title="Código" order="100">
             <widget type="text" fieldname="codtrans" onclick="EditAgenciaTransporte" />
         </column>
-        <column title="Nombre" display="left" order="110">
+        <column title="Nombre" order="110">
             <widget type="text" fieldname="nombre" />
         </column>
-        <column title="Teléfono" display="left" order="120">
+        <column title="Teléfono" order="120">
             <widget type="text" fieldname="telefono" />
         </column>
-        <column title="Web" display="left" order="130">
+        <column title="Web" order="130">
             <widget type="text" fieldname="web" />
         </column>
         <column title="Activo" display="center" order="140">
