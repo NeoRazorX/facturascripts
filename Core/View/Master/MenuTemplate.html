@@ -69,12 +69,13 @@
         </nav>
         <br/>
         {% block messages %}
-            {% from 'Master/Utils.html' import message as show_message %}
+            {% from 'Macro/Utils.html' import message as show_message %}
             {{ show_message(log, ['error', 'critical', 'alert', 'emergency'], 'danger') }}
+            {{ show_message(log, ['warning'], 'warning') }}
+            {{ show_message(log, ['notice'], 'success') }}
+            {{ show_message(log, ['info'], 'info') }}
         {% endblock %}
-        
-        {% block body %}
-        {% endblock %}
+        {% block body %}{% endblock %}
         {{ debugBarRender.render()|raw }}
     </body>
 </html>
