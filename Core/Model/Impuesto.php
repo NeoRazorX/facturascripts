@@ -89,16 +89,6 @@ class Impuesto
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        $result = empty($this->codimpuesto) ? 'index.php?page=ListImpuesto' : 'index.php?page=EditImpuesto&cod=' . $this->codimpuesto;
-        return $result;
-    }
-
-    /**
      * Devuelve TRUE si el impuesto es el predeterminado del usuario
      * @return bool
      */

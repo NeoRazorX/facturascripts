@@ -96,16 +96,6 @@ class FormaPago
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        $result = empty($this->codpago) ? 'index.php?page=ListFormaPago' : 'index.php?page=EditFormaPago&cod=' . $this->codpago;
-        return $result;
-    }
-
-    /**
      * Devuelve TRUE si esta es la forma de pago predeterminada de la empresa
      * @return bool
      */

@@ -86,18 +86,6 @@ class CuentaBancoCliente
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        if (empty($this->codcliente)) {
-            return '#';
-        }
-        return 'index.php?page=VentasCliente&cod=' . $this->codcliente . '#cuentasb';
-    }
-
-    /**
      * Almacena los datos del modelo en la base de datos.
      * @return bool
      */

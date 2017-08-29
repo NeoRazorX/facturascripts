@@ -91,18 +91,6 @@ class Epigrafe
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        if ($this->idepigrafe === null) {
-            return 'index.php?page=ContabilidadEpigrafes';
-        }
-        return 'index.php?page=ContabilidadEpigrafes&epi=' . $this->idepigrafe;
-    }
-
-    /**
      * Devuelve el codepigrade del epigrafe padre o false si no lo hay
      * @return bool
      */

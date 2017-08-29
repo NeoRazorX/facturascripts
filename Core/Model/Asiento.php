@@ -131,18 +131,6 @@ class Asiento
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        if ($this->idasiento === null) {
-            return 'index.php?page=ContabilidadAsientos';
-        }
-        return 'index.php?page=ContabilidadAsiento&id=' . $this->idasiento;
-    }
-
-    /**
      * TODO
      * @return bool|FacturaCliente|FacturaProveedor
      */

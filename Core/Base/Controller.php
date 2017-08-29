@@ -175,15 +175,6 @@ class Controller
     }
 
     /**
-     * Devuelve la url del controlador actual.
-     * @return string
-     */
-    public function url()
-    {
-        return 'index.php?page=' . $this->className;
-    }
-
-    /**
      * Ejecuta la lógica pública del controlador.
      * @param Response $response
      */

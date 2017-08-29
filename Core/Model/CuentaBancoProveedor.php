@@ -79,18 +79,6 @@ class CuentaBancoProveedor
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        if (empty($this->codproveedor)) {
-            return '#';
-        }
-        return 'index.php?page=ComprasProveedor&cod=' . $this->codproveedor . '#cuentasb';
-    }
-
-    /**
      * Almacena los datos del modelo en la base de datos.
      * @return bool
      */

@@ -79,18 +79,6 @@ class AlbaranCliente
     }
 
     /**
-     * Devuelve la url donde se pueden ver/modificar los datos de los albaranes
-     * @return string
-     */
-    public function url()
-    {
-        if ($this->idalbaran === null) {
-            return 'index.php?page=VentasAlbaranes';
-        }
-        return 'index.php?page=VentasAlbaran&id=' . $this->idalbaran;
-    }
-
-    /**
      * Devuelve la url donde se pueden ver/modificar los datos de la factura
      * @return string
      */
