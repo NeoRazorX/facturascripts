@@ -65,6 +65,8 @@ class ListGrupoEpigrafes extends ExtendedController\ListController
         $pagedata['title'] = 'Grupos de Epígrafes';
         $pagedata['icon'] = 'fa-bars';
         $pagedata['menu'] = 'contabilidad';
+        $pagedata['submenu'] = 'cuentas';
+        
         return $pagedata;
     }
 }

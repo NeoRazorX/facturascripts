@@ -84,13 +84,17 @@ class MenuItem
      * Devuelve el html para el icono del item
      * @return string
      */
-    private function getHTMLIcon()
+    private function getHTMLIcon($forceIcon = false)
     {
-        $result = '<i class="fa " aria-hidden="true" style="margin-right: 19px"></i> ';
-        if (!empty($this->icon)) {
-            $result = '<i class="fa ' . $this->icon . '" aria-hidden="true" style="margin-right: 5px"></i> ';
+        if ($this->icon === null) {
+            if ($forceIcon) {
+                return '<i class="fa fa-folder-open-o" aria-hidden="true"></i>&nbsp; ';
+            }
+
+            return '&nbsp; ';
         }
-        return $result;
+
+        return '<i class="fa ' . $this->icon . '" aria-hidden="true"></i>&nbsp; ';
     }
 
     /**
@@ -100,6 +104,7 @@ class MenuItem
      */
     public function getHTML($level = 0)
     {
+        /// primer nivel del menú
         if ($level == 0) {
             $liClass = 'nav-item';
             if ($this->active) {
@@ -124,12 +129,23 @@ class MenuItem
             return $html;
         }
 
+        /// siguientes niveles del menú
+        if (!empty($this->menu)) {
+            $html = '<div class="dropdown-divider"></div><h6 class="dropdown-header">' . $this->getHTMLIcon(TRUE) . $this->title . '</h6>';
+            foreach ($this->menu as $menuItem) {
+                $html .= $menuItem->getHTML($level + 1);
+            }
+
+            return $html;
+        }
+
+        /// resto de elementos sin submenús
         $liClass = 'dropdown-item';
         if ($this->active) {
             $liClass .= ' active';
         }
 
-        $html = '<a class="' . $liClass . '" href="' . $this->url . '">' . $this->getHTMLIcon() . $this->title . '</a>';
+        $html = '<a class="' . $liClass . '" href="' . $this->url . '">' . $this->getHTMLIcon(TRUE) . $this->title . '</a>';
         return $html;
     }
 }
