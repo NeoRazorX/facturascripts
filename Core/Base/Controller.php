@@ -182,7 +182,7 @@ class Controller
     {
         return 'index.php?page=' . $this->className;
     }
-
+    
     /**
      * Ejecuta la lógica pública del controlador.
      * @param Response $response

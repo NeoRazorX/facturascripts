@@ -113,18 +113,6 @@ class Balance
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        if ($this->codbalance === null) {
-            return 'index.php?page=EditarBalances';
-        }
-        return 'index.php?page=EditarBalances&cod=' . $this->codbalance;
-    }
-
-    /**
      * Almacena los datos del modelo en la base de datos.
      * @return bool
      */

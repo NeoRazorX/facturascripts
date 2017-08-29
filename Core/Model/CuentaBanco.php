@@ -64,13 +64,4 @@ class CuentaBanco
         }
         return TRUE;
     }
-
-    /**
-     * Devuelve la URL donde ver/modificar los datos de esta cuenta bancaria
-     * @return string
-     */
-    public function url()
-    {
-        return 'index.php?page=admin_empresa#cuentasb';
-    }
 }

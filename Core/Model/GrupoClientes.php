@@ -57,19 +57,6 @@ class GrupoClientes
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        if ($this->codgrupo === null) {
-            return 'index.php?page=VentasClientes#grupos';
-        }
-
-        return 'index.php?page=VentasGrupo&cod=' . urlencode($this->codgrupo);
-    }
-
-    /**
      * Devuelve un nuevo código para un nuevo grupo de clientes
      * @return string
      */

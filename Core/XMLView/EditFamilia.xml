@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Definición inicial para el controlador EditFamilia
+ *
+ * @author Artex Trading sa <jcuello@artextrading.com>
+-->
+
+<view>
+    <columns>
+        <group numcolumns="12">
+            <column title="Code" numcolumns="2" order="100"
+                    description="Code for internal family use.">
+                <widget type="text" fieldname="codfamilia" onclick="" icon="fa-object-group" required="true" />
+            </column>
+            
+            <column title="Description" numcolumns="6" order="110">
+                <widget type="text" fieldname="descripcion" required="true" />
+            </column>
+            
+            <column title="Parent" numcolumns="4" order="120" description="Indicates if the family is grouped at a higher level.">
+                <widget type="select" fieldname="madre" required="true">
+                    <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+        </group>                        
+    </columns>    
+</view>
+

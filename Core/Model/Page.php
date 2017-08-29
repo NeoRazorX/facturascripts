@@ -104,7 +104,7 @@ class Page
     {
         return 'index.php?page=' . $this->name;
     }
-
+    
     /**
      * TODO
      * @return bool

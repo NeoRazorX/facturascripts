@@ -338,19 +338,6 @@ class Articulo
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        if ($this->referencia === null) {
-            return 'index.php?page=VentasArticulos';
-        }
-
-        return 'index.php?page=VentasArticulo&ref=' . urlencode($this->referencia);
-    }
-
-    /**
      * Devuelve la referencia codificada para poder ser usada en imágenes.
      * Evitamos así errores con caracteres especiales como / y \.
      *

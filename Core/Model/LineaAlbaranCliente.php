@@ -162,15 +162,6 @@ class LineaAlbaranCliente
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        return 'index.php?page=VentasAlbaran&id=' . $this->idalbaran;
-    }
-
-    /**
      * TODO
      * @return bool
      */

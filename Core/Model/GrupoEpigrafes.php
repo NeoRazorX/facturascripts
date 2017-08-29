@@ -63,18 +63,6 @@ class GrupoEpigrafes
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        if ($this->idgrupo === null) {
-            return 'index.php?page=ContabilidadEpigrafes';
-        }
-        return 'index.php?page=ContabilidadEpigrafes&grupo=' . $this->idgrupo;
-    }
-
-    /**
      * TODO
      * @return array
      */

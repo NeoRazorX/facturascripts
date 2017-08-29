@@ -46,13 +46,6 @@ class ListPais extends ExtendedController\ListController
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-
-        $where = $this->getWhere();
-        $order = $this->getOrderBy($this->selectedOrderBy);
-        $this->count = $this->model->count($where);
-        if ($this->count > 0) {
-            $this->cursor = $this->model->all($where, $order);
-        }
     }
 
     protected function getWhere()

@@ -48,14 +48,6 @@ class ListAgenciaTransporte extends ExtendedController\ListController
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-
-        // Load data with estructure data
-        $where = $this->getWhere();
-        $order = $this->getOrderBy($this->selectedOrderBy);
-        $this->count = $this->model->count($where);
-        if ($this->count > 0) {
-            $this->cursor = $this->model->all($where, $order);
-        }
     }
 
     protected function getWhere()

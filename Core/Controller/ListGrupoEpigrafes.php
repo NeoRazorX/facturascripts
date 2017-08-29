@@ -23,30 +23,29 @@ use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la lista de Agentes
+ * Controlador para la lista de grupos de epígrafes contables
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListAgente extends ExtendedController\ListController
+class ListGrupoEpigrafes extends ExtendedController\ListController
 {
 
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('codagente', 'Código');
-        $this->addOrderBy('nombre');
-        $this->addOrderBy('apellidos');
-        $this->addOrderBy('provincia');
+        $this->addOrderBy('codejercicio||codgrupo', 'code');
+        $this->addOrderBy('codejercicio||descripcion', 'description');
+                
+        $this->addFilterSelect('codejercicio', 'ejercicios', '', 'nombre');
 
-        $this->addFilterSelect('provincia', 'agentes');
-        $this->model = new Model\Agente();
+        $this->model = new Model\GrupoEpigrafes();
     }
 
     public function privateCore(&$response, $user)
     {
-        parent::privateCore($response, $user);
+        parent::privateCore($response, $user);        
     }
 
     protected function getWhere()
@@ -54,7 +53,7 @@ class ListAgente extends ExtendedController\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "nombre|apellidos|codagente";
+            $fields = "descripcion|codgrupo|codejercicio";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
@@ -63,9 +62,9 @@ class ListAgente extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Agentes';
-        $pagedata['icon'] = 'fa-user-circle-o';
-        $pagedata['menu'] = 'admin';
+        $pagedata['title'] = 'Grupos de Epígrafes';
+        $pagedata['icon'] = 'fa-bars';
+        $pagedata['menu'] = 'contabilidad';
         return $pagedata;
     }
 }

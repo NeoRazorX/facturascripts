@@ -53,15 +53,6 @@ class Atributo
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        return 'index.php?page=VentasAtributos&cod=' . urlencode($this->codatributo);
-    }
-
-    /**
      * TODO
      * @return array
      */

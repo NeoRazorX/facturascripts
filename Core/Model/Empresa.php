@@ -182,16 +182,6 @@ class Empresa
     }
 
     /**
-     * Devuelve la url donde ver/modificar los datos
-     * @return string
-     */
-    public function url()
-    {
-        $result = empty($this->id) ? 'index.php?page=ListEmpresa' : 'index.php?page=EditEmpresa&cod=' . $this->id;
-        return $result;
-    }
-
-    /**
      * Comprueba los datos de la empresa, devuelve TRUE si es correcto
      * @return bool
      */

@@ -18,54 +18,37 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la lista de Agentes
+ * Controlador para la edición de un registro del modelo Familia
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListAgente extends ExtendedController\ListController
+class EditFamilia extends ExtendedController\EditController
 {
-
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('codagente', 'Código');
-        $this->addOrderBy('nombre');
-        $this->addOrderBy('apellidos');
-        $this->addOrderBy('provincia');
-
-        $this->addFilterSelect('provincia', 'agentes');
-        $this->model = new Model\Agente();
+        
+        // Establecemos el modelo de datos
+        $this->model = new Model\Familia();
     }
-
+    
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
     }
-
-    protected function getWhere()
-    {
-        $result = parent::getWhere();
-
-        if ($this->query != '') {
-            $fields = "nombre|apellidos|codagente";
-            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
-        }
-        return $result;
-    }
-
+        
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Agentes';
-        $pagedata['icon'] = 'fa-user-circle-o';
-        $pagedata['menu'] = 'admin';
+        $pagedata['title'] = 'Familias';
+        $pagedata['icon'] = 'fa-object-group';
+        $pagedata['showonmenu'] = FALSE;
+        
         return $pagedata;
-    }
+    }    
 }

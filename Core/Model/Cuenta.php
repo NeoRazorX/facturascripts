@@ -83,18 +83,6 @@ class Cuenta
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        if ($this->idcuenta === null) {
-            return 'index.php?page=ContabilidadCuentas';
-        }
-        return 'index.php?page=ContabilidadCuenta&id=' . $this->idcuenta;
-    }
-
-    /**
      * TODO
      * @return array
      */

@@ -79,18 +79,6 @@ class AlbaranProveedor
     }
 
     /**
-     * Devuelve la url donde ver/modificar los datos de albaranes
-     * @return string
-     */
-    public function url()
-    {
-        if ($this->idalbaran === null) {
-            return 'index.php?page=ComprasAlbaranes';
-        }
-        return 'index.php?page=ComprasAlbaran&id=' . $this->idalbaran;
-    }
-
-    /**
      * Devuelve la url donde ver/modificar los datos de la factura
      * @return string
      */

@@ -60,15 +60,6 @@ class AtributoValor
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        return 'index.php?page=VentasAtributos&cod=' . $this->codatributo;
-    }
-
-    /**
      * TODO
      * @return string
      */

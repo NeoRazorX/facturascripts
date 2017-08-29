@@ -1,7 +1,8 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2015         Pablo Peralta
+ * Copyright (C) 2015-2017    Carlos Garcia Gomez  neorazorx@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +23,7 @@ namespace FacturaScripts\Core\Model;
  * Una familia de artículos.
  *
  * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class Familia
 {
@@ -46,11 +48,12 @@ class Familia
      */
     public $madre;
 
+    
     /**
      * Nivel
      * @var string
      */
-    public $nivel;
+    public $nivel;         
 
     public function tableName()
     {
@@ -63,57 +66,6 @@ class Familia
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
-     * @return string
-     */
-    public function url()
-    {
-        if ($this->codfamilia === null) {
-            return 'index.php?page=VentasFamilias';
-        }
-        return 'index.php?page=VentasFamilia&cod=' . urlencode($this->codfamilia);
-    }
-
-    /**
-     * Devuelve la descripción, acortada a len
-     *
-     * @param int $len
-     *
-     * @return string
-     */
-    public function getDescripcion($len = 12)
-    {
-        if (mb_strlen($this->descripcion) > $len) {
-            return substr($this->descripcion, 0, $len) . '...';
-        }
-        return $this->descripcion;
-    }
-
-    /**
-     * Devuelve si es la família por defecto
-     * @deprecated since version 50
-     * @return bool
-     */
-    public function isDefault()
-    {
-        return false;
-    }
-
-    /**
-     * Devuelve todos los artículos de la família
-     *
-     * @param int $offset
-     * @param int $limit
-     *
-     * @return array
-     */
-    public function getArticulos($offset = 0, $limit = FS_ITEM_LIMIT)
-    {
-        $articulo = new Articulo();
-        return $articulo->allFromFamilia($this->codfamilia, $offset, $limit);
-    }
-
-    /**
      * Comprueba los datos de la familia, devuelve TRUE si son correctos
      * @return bool
      */
@@ -123,60 +75,19 @@ class Familia
 
         $this->codfamilia = self::noHtml($this->codfamilia);
         $this->descripcion = self::noHtml($this->descripcion);
+        $this->madre = self::noHtml($this->madre);
 
         if (empty($this->codfamilia) || strlen($this->codfamilia) > 8) {
             $this->miniLog->alert('Código de familia no válido. Deben ser entre 1 y 8 caracteres.');
         } elseif (empty($this->descripcion) || strlen($this->descripcion) > 100) {
             $this->miniLog->alert('Descripción de familia no válida.');
+        } elseif ($this->madre === $this->codfamilia) {
+            $this->miniLog->alert('La familia padre no puede ser la misma que la hija.');            
         } else {
             $status = true;
         }
 
         return $status;
-    }
-
-    /**
-     * Elimina la familia de la base de datos
-     * @return bool
-     */
-    public function delete()
-    {
-        $this->cleanCache();
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE codfamilia = ' . $this->var2str($this->codfamilia) . ';'
-            . 'UPDATE ' . $this->tableName() . ' SET madre = ' . $this->var2str($this->madre)
-            . ' WHERE madre = ' . $this->var2str($this->codfamilia) . ';';
-
-        return $this->dataBase->exec($sql);
-    }
-
-    /**
-     * Devuelve un array con todas las familias
-     * @return array
-     */
-    public function all()
-    {
-        /// lee la lista de la caché
-        $famlist = $this->cache->get('m_familia_all');
-        if (!$famlist) {
-            /// si la lista no está en caché, leemos de la base de datos
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' ORDER BY lower(descripcion) ASC;';
-            $data = $this->dataBase->select($sql);
-            if (!empty($data)) {
-                foreach ($data as $d) {
-                    if ($d['madre'] === null) {
-                        $famlist[] = new Familia($d);
-                        foreach ($this->auxAll($data, $d['codfamilia'], '· ') as $value) {
-                            $famlist[] = new Familia($value);
-                        }
-                    }
-                }
-            }
-
-            /// guardamos la lista en caché
-            $this->cache->set('m_familia_all', $famlist);
-        }
-
-        return $famlist;
     }
 
     /**
@@ -232,30 +143,6 @@ class Familia
     }
 
     /**
-     * TODO
-     *
-     * @param string $query
-     *
-     * @return array
-     */
-    public function search($query)
-    {
-        $famlist = [];
-        $query = self::noHtml(mb_strtolower($query, 'UTF8'));
-
-        $sql = 'SELECT * FROM ' . $this->tableName()
-            . " WHERE lower(descripcion) LIKE '%" . $query . "%' ORDER BY descripcion ASC;";
-        $familias = $this->dataBase->select($sql);
-        if (!empty($familias)) {
-            foreach ($familias as $f) {
-                $famlist[] = new Familia($f);
-            }
-        }
-
-        return $famlist;
-    }
-
-    /**
      * Aplicamos correcciones a la tabla.
      */
     public function fixDb()
@@ -286,14 +173,6 @@ class Familia
     {
         $this->cleanCache();
         return 'INSERT INTO ' . $this->tableName() . " (codfamilia,descripcion) VALUES ('VARI','VARIOS');";
-    }
-
-    /**
-     * Limpia la caché
-     */
-    private function cleanCache()
-    {
-        $this->cache->delete('m_familia_all');
     }
 
     /**

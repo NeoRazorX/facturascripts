@@ -23,25 +23,21 @@ use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la lista de Agentes
+ * Controlador para la lista de Familias
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListAgente extends ExtendedController\ListController
+class ListFabricante extends ExtendedController\ListController
 {
-
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('codagente', 'Código');
+        $this->addOrderBy('codfabricante', 'Código');
         $this->addOrderBy('nombre');
-        $this->addOrderBy('apellidos');
-        $this->addOrderBy('provincia');
 
-        $this->addFilterSelect('provincia', 'agentes');
-        $this->model = new Model\Agente();
+        $this->model = new Model\Fabricante();
     }
 
     public function privateCore(&$response, $user)
@@ -54,7 +50,7 @@ class ListAgente extends ExtendedController\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "nombre|apellidos|codagente";
+            $fields = "nombre|codfabricante";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
@@ -63,9 +59,9 @@ class ListAgente extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Agentes';
-        $pagedata['icon'] = 'fa-user-circle-o';
-        $pagedata['menu'] = 'admin';
+        $pagedata['title'] = 'Fabricantes';
+        $pagedata['icon'] = 'fa-folder-open';
+        $pagedata['menu'] = 'almacen';
         return $pagedata;
     }
 }
