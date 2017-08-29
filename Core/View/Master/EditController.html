@@ -138,7 +138,7 @@
         </div>
 
         <div class="col-3 text-right d-print-none">
-            <form action="{{ fsc.model.url('edit') }}" method=post name="insert_form">
+            <form action="{{ fsc.model.url('new') }}" method=post name="insert_form">
                 <input type="hidden" name="action" value="insert"> 
             </form>             
 
@@ -155,14 +155,6 @@
                 <i class="fa fa-trash" aria-hidden="true"></i>
                 <span class="hidden-xs">&nbsp;{{ remove }}</span>
             </a>
-        </div>
-    </div>
-
-    <!-- Info Row -->
-    <div id="info" class="row">
-        <div class="col-12">
-        {% from 'Macro/Utils.html' import message as show_message %}
-        {{ show_message(log, ['notice'], 'success') }}    
         </div>
     </div>
     

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Definición inicial para el controlador EditFamilia
+ * Definición inicial para el controlador EditGrupoEpigrafes
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
 -->
@@ -25,18 +25,21 @@
 <view>
     <columns>
         <group numcolumns="12">
-            <column title="Code" numcolumns="2" order="100"
-                    description="Code for internal family use.">
-                <widget type="text" fieldname="codfamilia" onclick="" icon="fa-object-group" required="true" />
+            <column title="Id" numcolumns="2" order="100" display="none">
+                <widget type="text" fieldname="idgrupo" />
+            </column>
+
+            <column title="Code" numcolumns="2" order="105">
+                <widget type="text" fieldname="codgrupo" onclick="" icon="fa-bars" required="true" />
             </column>
             
             <column title="Description" numcolumns="6" order="110">
                 <widget type="text" fieldname="descripcion" required="true" />
             </column>
             
-            <column title="Parent" numcolumns="4" order="120" description="Indicates if the family is grouped at a higher level.">
-                <widget type="select" fieldname="madre" required="true">
-                    <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
+            <column title="Ejercicio" numcolumns="4" order="120">
+                <widget type="select" fieldname="codejercicio">
+                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
                 </widget>
             </column>
         </group>                        

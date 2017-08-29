@@ -71,7 +71,7 @@
                 {% endif %}
             </div>
             <div class="btn-group">
-                <form action="{{ fsc.model.url('edit') }}" method=post name="insert_form">
+                <form action="{{ fsc.model.url('new') }}" method=post name="insert_form">
                     <input type="hidden" name="action" value="insert"> 
                 </form>             
                 
@@ -104,13 +104,6 @@
             </h2>
         </div>
     </div>
-
-    <!-- Info Row -->
-    <div id="info" class="row">
-        <div class="col-12">
-        {{ show_message(log, ['notice'], 'success') }}    
-        </div>
-    </div>    
 </div>
 
 <!-- Main Data -->

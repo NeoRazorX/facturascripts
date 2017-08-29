@@ -669,6 +669,10 @@ trait ModelTrait
                 $result .= 'Edit' . $model . '&code=' . $value;
                 break;
 
+            case 'new':
+                $result .= 'Edit' . $model;
+                break;
+            
             default:
                 $result .= empty($value) ? 'List' . $model : 'Edit' . $model . '&code=' . $value;
                 break;

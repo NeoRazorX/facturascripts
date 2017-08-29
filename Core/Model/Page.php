@@ -97,6 +97,15 @@ class Page
     }
 
     /**
+     * Devuelve la url donde ver/modificar estos datos
+     * @return string
+     */
+    public function url()
+    {
+        return 'index.php?page=' . $this->name;
+    }
+    
+    /**
      * TODO
      * @return bool
      */
