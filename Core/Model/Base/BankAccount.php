@@ -77,6 +77,7 @@ trait BankAccount
             for ($i = 0; $i < strlen($iban); $i += 4) {
                 $txt .= substr($iban, $i, 4) . ' ';
             }
+
             return $txt;
         }
 
@@ -101,6 +102,7 @@ trait BankAccount
     {
         $ibanOK = (empty($this->iban) || $this->verificarIBAN($this->iban));
         $cccOK = (empty($this->ccc) || $this->verificarCCC($this->ccc));
+
         return ($ibanOK && $cccOK);
     }
 
@@ -153,6 +155,7 @@ trait BankAccount
                 $result = 1;
                 break;
         }
+
         return strval($result);
     }
 
@@ -172,6 +175,7 @@ trait BankAccount
 
         $dc1 = $this->calcularDC($banco, [4, 8, 5, 10, 9, 7, 3, 6]);
         $dc2 = $this->calcularDC($cuenta, [1, 2, 4, 8, 5, 10, 9, 7, 3, 6]);
+
         return $banco . $dc1 . $dc2 . $cuenta;
     }
 
@@ -189,6 +193,7 @@ trait BankAccount
         $entidad = substr($ccc, 0, 4);
         $oficina = substr($ccc, 4, 4);
         $cuenta = substr($ccc, 10, 10);
+
         return ($ccc == $this->calcularCCC($entidad, $oficina, $cuenta));
     }
 
@@ -205,6 +210,7 @@ trait BankAccount
 
         $codpais = substr($iban, 0, 2);
         $ccc = substr($iban, -20);
+
         return ($iban == $this->calcularIBAN($ccc, $codpais));
     }
 }

@@ -55,6 +55,7 @@ class ListDivisa extends ExtendedController\ListController
             $fields = "descripcion|coddivisa";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
+
         return $result;
     }
 
@@ -64,6 +65,7 @@ class ListDivisa extends ExtendedController\ListController
         $pagedata['title'] = 'Divisas';
         $pagedata['icon'] = 'fa-money';
         $pagedata['menu'] = 'admin';
+
         return $pagedata;
     }
 }

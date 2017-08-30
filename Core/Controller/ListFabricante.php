@@ -53,6 +53,7 @@ class ListFabricante extends ExtendedController\ListController
             $fields = "nombre|codfabricante";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
+
         return $result;
     }
 
@@ -62,6 +63,7 @@ class ListFabricante extends ExtendedController\ListController
         $pagedata['title'] = 'Fabricantes';
         $pagedata['icon'] = 'fa-folder-open';
         $pagedata['menu'] = 'almacen';
+
         return $pagedata;
     }
 }

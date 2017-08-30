@@ -73,7 +73,7 @@ class EditController extends Base\Controller
         // Comprobamos si hay operaciones por realizar
         if ($this->request->isMethod('POST')) {
             $this->setActionForm();
-        }                
+        }
     }
 
     /**
@@ -82,7 +82,7 @@ class EditController extends Base\Controller
     private function setActionForm()
     {
         $data = $this->request->request->all();
-        if (isset($data['action'])) {        
+        if (isset($data['action'])) {
             switch ($data['action']) {
                 case 'save':
                     $this->model->checkArrayData($data);

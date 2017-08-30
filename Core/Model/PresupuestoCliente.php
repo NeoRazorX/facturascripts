@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -34,19 +34,19 @@ class PresupuestoCliente
 
     /**
      * Clave primaria.
-     * @var type 
+     * @var type
      */
     public $idpresupuesto;
 
     /**
      * ID del pedido relacionado, si lo hay.
-     * @var type 
+     * @var type
      */
     public $idpedido;
 
     /**
      * Fecha en la que termina la validéz del presupuesto.
-     * @var type 
+     * @var type
      */
     public $finoferta;
 
@@ -62,7 +62,7 @@ class PresupuestoCliente
 
     /**
      * Si este presupuesto es la versión de otro, aquí se almacena el idpresupuesto del original.
-     * @var type 
+     * @var type
      */
     public $idoriginal;
 
@@ -98,6 +98,7 @@ class PresupuestoCliente
     public function getLineas()
     {
         $lineaModel = new LineaPresupuestoCliente();
+
         return $lineaModel->all(new DataBaseWhere('idpresupuesto', $this->idpresupuesto));
     }
 
@@ -155,9 +156,9 @@ class PresupuestoCliente
         if ($this->idpedido) {
             $this->status = 1;
             $this->editable = FALSE;
-        } else if ($this->status == 0) {
+        } elseif ($this->status == 0) {
             $this->editable = TRUE;
-        } else if ($this->status == 2) {
+        } elseif ($this->status == 2) {
             $this->editable = FALSE;
         }
 
@@ -166,6 +167,7 @@ class PresupuestoCliente
         }
 
         $this->miniLog->critical("Error grave: El total está mal calculado. ¡Informa del error!");
+
         return FALSE;
     }
 
@@ -198,16 +200,16 @@ class PresupuestoCliente
         if (!$this->floatcmp($this->neto, $neto, FS_NF0, TRUE)) {
             $this->miniLog->critical("Valor neto de " . FS_PRESUPUESTO . " incorrecto. Valor correcto: " . $neto);
             $status = FALSE;
-        } else if (!$this->floatcmp($this->totaliva, $iva, FS_NF0, TRUE)) {
+        } elseif (!$this->floatcmp($this->totaliva, $iva, FS_NF0, TRUE)) {
             $this->miniLog->critical("Valor totaliva de " . FS_PRESUPUESTO . " incorrecto. Valor correcto: " . $iva);
             $status = FALSE;
-        } else if (!$this->floatcmp($this->totalirpf, $irpf, FS_NF0, TRUE)) {
+        } elseif (!$this->floatcmp($this->totalirpf, $irpf, FS_NF0, TRUE)) {
             $this->miniLog->critical("Valor totalirpf de " . FS_PRESUPUESTO . " incorrecto. Valor correcto: " . $irpf);
             $status = FALSE;
-        } else if (!$this->floatcmp($this->totalrecargo, $recargo, FS_NF0, TRUE)) {
+        } elseif (!$this->floatcmp($this->totalrecargo, $recargo, FS_NF0, TRUE)) {
             $this->miniLog->critical("Valor totalrecargo de " . FS_PRESUPUESTO . " incorrecto. Valor correcto: " . $recargo);
             $status = FALSE;
-        } else if (!$this->floatcmp($this->total, $total, FS_NF0, TRUE)) {
+        } elseif (!$this->floatcmp($this->total, $total, FS_NF0, TRUE)) {
             $this->miniLog->critical("Valor total de " . FS_PRESUPUESTO . " incorrecto. Valor correcto: " . $total);
             $status = FALSE;
         }
@@ -223,6 +225,7 @@ class PresupuestoCliente
             }
 
             $this->newCodigo();
+
             return $this->saveInsert();
         }
 
@@ -244,7 +247,7 @@ class PresupuestoCliente
         if (is_numeric($query)) {
             $consulta .= "codigo LIKE '%" . $query . "%' OR numero2 LIKE '%" . $query . "%' OR observaciones LIKE '%" . $query . "%'
             OR total BETWEEN '" . ($query - .01) . "' AND '" . ($query + .01) . "'";
-        } else if (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query)) {
+        } elseif (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query)) {
             /// es una fecha
             $consulta .= "fecha = " . $this->var2str($query) . " OR observaciones LIKE '%" . $query . "%'";
         } else {

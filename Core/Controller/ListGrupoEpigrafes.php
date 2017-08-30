@@ -45,7 +45,7 @@ class ListGrupoEpigrafes extends ExtendedController\ListController
 
     public function privateCore(&$response, $user)
     {
-        parent::privateCore($response, $user);        
+        parent::privateCore($response, $user);
     }
 
     protected function getWhere()
@@ -56,6 +56,7 @@ class ListGrupoEpigrafes extends ExtendedController\ListController
             $fields = "descripcion|codgrupo|codejercicio";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
+
         return $result;
     }
 

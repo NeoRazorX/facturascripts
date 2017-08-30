@@ -42,7 +42,7 @@ class ListSerie extends ExtendedController\ListController
         $this->addFilterSelect('ejercicio', 'series', '', 'codejercicio');
         $this->addFilterCheckbox('siniva', 'Sin Impuesto', 'siniva');
         
-        $this->model = new Model\Serie();        
+        $this->model = new Model\Serie();
     }
 
     public function privateCore(&$response, $user)
@@ -58,6 +58,7 @@ class ListSerie extends ExtendedController\ListController
             $fields = "descripcion|codserie|codcuenta";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
+
         return $result;
     }
 
@@ -67,6 +68,7 @@ class ListSerie extends ExtendedController\ListController
         $pagedata['title'] = 'Series';
         $pagedata['icon'] = 'fa-file-text';
         $pagedata['menu'] = 'contabilidad';
+
         return $pagedata;
     }
 }

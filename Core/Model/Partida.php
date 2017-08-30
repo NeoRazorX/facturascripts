@@ -249,6 +249,7 @@ class Partida
     public function getSubcuenta()
     {
         $subcuenta = new Subcuenta();
+
         return $subcuenta->get($this->idsubcuenta);
     }
 
@@ -262,6 +263,7 @@ class Partida
         if ($subc) {
             return $subc->url();
         }
+
         return '#';
     }
 
@@ -275,6 +277,7 @@ class Partida
             return false;
         }
         $subc = new Subcuenta();
+
         return $subc->get($this->idcontrapartida);
     }
 
@@ -288,6 +291,7 @@ class Partida
         if ($subc) {
             return $subc->url();
         }
+
         return '#';
     }
 
@@ -315,6 +319,7 @@ class Partida
 
             return true;
         }
+
         return false;
     }
 
@@ -428,6 +433,7 @@ class Partida
         if (!empty($data)) {
             return $data;
         }
+
         return [];
     }
 
@@ -448,6 +454,7 @@ class Partida
         if (!empty($ordenadas)) {
             return count($ordenadas);
         }
+
         return 0;
     }
 

@@ -174,18 +174,18 @@ class WidgetItem
     }
 
     /**
-     * Devuelve el código HTML para la visualización de un popover 
+     * Devuelve el código HTML para la visualización de un popover
      * con el texto indicado.
-     * 
+     *
      * @param string $hint
      * @return string
      */
     public function getHintHTML($hint)
     {
-        return empty($hint) 
+        return empty($hint)
             ? ''
             : ' data-toggle="popover" data-placement="auto" data-trigger="hover" data-content="' . $hint . '" ';
-    }    
+    }
     
     /**
      * Genera el código CSS para el style del widget en base a los options
@@ -337,7 +337,7 @@ class WidgetItem
 
     /**
      * Devuelve el código HTML para controles no especiales
-     * 
+     *
      * @param string $fieldName
      * @param string $value
      * @param string $specialClass
@@ -345,13 +345,13 @@ class WidgetItem
      */
     private function standardHTMLWidget($fieldName, $value, $specialClass)
     {
-        return '<input id=' . $fieldName . ' type="' . $this->type . '" class="form-control" name=' . $fieldName 
+        return '<input id=' . $fieldName . ' type="' . $this->type . '" class="form-control" name=' . $fieldName
                 . ' value="' . $value . '"' . $specialClass . '>';
     }
     
     /**
      * Devuelve el código HTML para controles tipo Select
-     * 
+     *
      * @param string $fieldName
      * @param string $value
      * @param string $specialClass
@@ -367,5 +367,5 @@ class WidgetItem
         $html .= '</select>';
         
         return $html;
-    }    
+    }
 }

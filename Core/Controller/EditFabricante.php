@@ -50,5 +50,5 @@ class EditFabricante extends ExtendedController\EditController
         $pagedata['showonmenu'] = FALSE;
         
         return $pagedata;
-    }    
+    }
 }

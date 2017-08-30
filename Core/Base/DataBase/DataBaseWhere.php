@@ -51,12 +51,12 @@ class DataBaseWhere
 
     /**
      * Valor por el que se filtra
-     * @var variant 
+     * @var variant
      */
     private $value;
 
     /**
-     * Operador lógico que se aplicará a la condición 
+     * Operador lógico que se aplicará a la condición
      * @var string
      */
     private $operation;
@@ -78,6 +78,7 @@ class DataBaseWhere
     private function format2Date($addTime = FALSE)
     {
         $time = $addTime ? ' H:i:s' : '';
+
         return "'" . date($this->dataBase->dateStyle() . $time, strtotime($this->value)) . "'";
     }
 
@@ -125,6 +126,7 @@ class DataBaseWhere
             default:
                 $result = "'" . $this->dataBase->escapeString($this->value) . "'";
         }
+
         return $result;
     }
 
@@ -165,6 +167,7 @@ class DataBaseWhere
                 $result = ' ' . $this->operation . ' ' . $result;
             }
         }
+
         return $result;
     }
 
@@ -185,6 +188,7 @@ class DataBaseWhere
         if ($result != '') {
             $result = ' WHERE ' . $result;
         }
+
         return $result;
     }
 }

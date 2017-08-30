@@ -89,6 +89,7 @@ class Cuenta
     public function getSubcuentas()
     {
         $subcuenta = new Subcuenta();
+
         return $subcuenta->allFromCuenta($this->idcuenta);
     }
 
@@ -99,6 +100,7 @@ class Cuenta
     public function getEjercicio()
     {
         $eje = new Ejercicio();
+
         return $eje->get($this->codejercicio);
     }
 
@@ -119,6 +121,7 @@ class Cuenta
         if (!empty($data)) {
             return new Cuenta($data[0]);
         }
+
         return false;
     }
 
@@ -139,6 +142,7 @@ class Cuenta
         if (!empty($data)) {
             return new Cuenta($data[0]);
         }
+
         return false;
     }
 
@@ -154,6 +158,7 @@ class Cuenta
             return true;
         }
         $this->miniLog->alert('Faltan datos en la cuenta');
+
         return false;
     }
 
@@ -303,6 +308,7 @@ class Cuenta
 
             return $subc0;
         }
+
         return false;
     }
 

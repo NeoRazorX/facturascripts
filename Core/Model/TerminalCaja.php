@@ -126,6 +126,7 @@ class TerminalCaja
         if ($this->dataBase->select($sql)) {
             return false;
         }
+
         return true;
     }
 
@@ -516,6 +517,7 @@ class TerminalCaja
         if (FS_POS_DIVISA === 'right') {
             return number_format($precio, FS_NF0, FS_NF1, FS_NF2) . ' ' . $coddivisa;
         }
+
         return $coddivisa . ' ' . number_format($precio, FS_NF0, FS_NF1, FS_NF2);
     }
 
@@ -552,6 +554,7 @@ class TerminalCaja
         for ($i = 0; $i < $numberOfSpaces; $i++) {
             $result .= "$symbol";
         }
+
         return $result;
     }
 }

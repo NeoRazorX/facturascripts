@@ -151,6 +151,7 @@ class ArticuloCombinacion
         if (!empty($data)) {
             return new ArticuloCombinacion($data[0]);
         }
+
         return false;
     }
 
@@ -164,6 +165,7 @@ class ArticuloCombinacion
     public function deleteFromRef($ref)
     {
         $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref) . ';';
+
         return $this->dataBase->exec($sql);
     }
 
@@ -300,6 +302,7 @@ class ArticuloCombinacion
         if ($this->codigo === null) {
             $this->codigo = $this->getNewCodigo();
         }
+
         return $this->saveInsertTrait();
     }
 
@@ -329,6 +332,7 @@ class ArticuloCombinacion
         if (!empty($cod)) {
             return 1 + (int) $cod[0]['cod'];
         }
+
         return 1;
     }
 }

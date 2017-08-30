@@ -34,6 +34,7 @@ class Dashboard extends Base\Controller
         $pageData = parent::getPageData();
         $pageData['menu'] = 'informes';
         $pageData['icon'] = 'fa-dashboard';
+
         return $pageData;
     }
 }

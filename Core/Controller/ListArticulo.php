@@ -53,6 +53,7 @@ class ListArticulo extends ExtendedController\ListController
             $fields = "referencia|descripcion";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
+
         return $result;
     }
 

@@ -135,6 +135,7 @@ class Epigrafe
     public function getCuentas()
     {
         $cuenta = new Cuenta();
+
         return $cuenta->fullFromEpigrafe($this->idepigrafe);
     }
 
@@ -155,6 +156,7 @@ class Epigrafe
         if (!empty($data)) {
             return new Epigrafe($data[0]);
         }
+
         return false;
     }
 
@@ -170,6 +172,7 @@ class Epigrafe
             return true;
         }
         $this->miniLog->alert('Faltan datos en el epígrafe.');
+
         return false;
     }
 

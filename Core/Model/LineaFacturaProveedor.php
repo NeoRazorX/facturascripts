@@ -125,6 +125,7 @@ class LineaFacturaProveedor
         if ($this->codigo === null) {
             $this->fill();
         }
+
         return $this->codigo;
     }
 
@@ -137,6 +138,7 @@ class LineaFacturaProveedor
         if ($this->fecha === null) {
             $this->fill();
         }
+
         return $this->fecha;
     }
 
@@ -167,6 +169,7 @@ class LineaFacturaProveedor
         if ($this->albaran_codigo === null) {
             $this->fill();
         }
+
         return $this->albaran_codigo;
     }
 
@@ -179,6 +182,7 @@ class LineaFacturaProveedor
         if ($this->idalbaran === null) {
             return 'index.php?page=ComprasAlbaranes';
         }
+
         return 'index.php?page=ComprasAlbaran&id=' . $this->idalbaran;
     }
 
@@ -191,6 +195,7 @@ class LineaFacturaProveedor
         if ($this->albaran_numero === null) {
             $this->fill();
         }
+
         return $this->albaran_numero;
     }
 
@@ -207,13 +212,16 @@ class LineaFacturaProveedor
         if (!$this->floatcmp($this->pvptotal, $total, FS_NF0, true)) {
             $this->miniLog->alert('Error en el valor de pvptotal de la línea ' . $this->referencia
                 . ' de la factura. Valor correcto: ' . $total);
+
             return false;
         }
         if (!$this->floatcmp($this->pvpsindto, $totalsindto, FS_NF0, true)) {
             $this->miniLog->alert('Error en el valor de pvpsindto de la línea ' . $this->referencia
                 . ' de la factura. Valor correcto: ' . $totalsindto);
+
             return false;
         }
+
         return true;
     }
 

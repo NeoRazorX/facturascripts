@@ -78,7 +78,7 @@ class MenuManager
     }
 
     /**
-     * 
+     *
      * @param Model\Page $pageModel
      * @param array $pageData
      * @return boolean
@@ -117,7 +117,7 @@ class MenuManager
     }
 
     /**
-     * 
+     *
      * @param Model\Page $pageModel
      */
     private function setActiveMenu($pageModel)
@@ -132,7 +132,7 @@ class MenuManager
     }
 
     /**
-     * 
+     *
      * @param MenuItem[] $menu
      * @param Model\Page $pageModel
      */

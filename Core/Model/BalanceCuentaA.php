@@ -107,6 +107,7 @@ class BalanceCuentaA
         if (!empty($data)) {
             return (float) $data[0]['haber'] - (float) $data[0]['debe'];
         }
+
         return 0;
     }
 

@@ -126,6 +126,7 @@ class MenuItem
             }
 
             $html .= '</div></li>';
+
             return $html;
         }
 
@@ -146,6 +147,7 @@ class MenuItem
         }
 
         $html = '<a class="' . $liClass . '" href="' . $this->url . '">' . $this->getHTMLIcon(TRUE) . $this->title . '</a>';
+
         return $html;
     }
 }

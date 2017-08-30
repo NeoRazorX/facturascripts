@@ -100,6 +100,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             $columnItem->widget->loadFromJSONColumn($data);
             $result[] = $columnItem;
         }
+
         return $result;
     }
 
@@ -114,6 +115,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         if (!empty($this->description)) {
             $html .= '<span title="' . $this->i18n->trans($this->description) . '"></span>';
         }
+
         return $html;
     }
 
@@ -141,7 +143,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         $required = $this->getColumnRequired();
         $description = $this->getColumnDescription();
 
-        switch ($this->widget->type) {            
+        switch ($this->widget->type) {
             case "checkbox":
                 $html = '<div class="form-row align-items-center' . $columnClass . '">'
                         . $this->checkboxHTMLColumn($header, $input, $hint, $description)
@@ -154,19 +156,20 @@ class ColumnItem extends VisualItem implements VisualItemInterface
                         . '<label>' . $header . '</label>'
                         . $this->radioHTMLColumn($input, $hint, $value)
                         . $required
-                        . '</div>';                
+                        . '</div>';
                 break;
             
             default:
                 $html = $this->standardHTMLColumn($header, $input, $hint, $description, $columnClass, $required);
                 break;
         }
+
         return $html;
     }
     
     /**
      * Devuelve el código HTML para el visionado de un campo no especial
-     * 
+     *
      * @param string $header
      * @param string $input
      * @param string $hint
@@ -186,7 +189,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     
     /**
      * Devuelve el código HTML para el visionado de un campo checkbox
-     * 
+     *
      * @param string $header
      * @param string $input
      * @param string $hint
@@ -200,12 +203,12 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             . $input . '&nbsp;' . $header
             . '</label>'
             . $description
-            . '</div>';        
+            . '</div>';
     }
     
     /**
      * Devuelve el código HTML para el visionado de una lista de opciones
-     * 
+     *
      * @param string $input
      * @param string $hint
      * @param string $value
@@ -225,6 +228,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
                     . '&nbsp;' . $optionValue['title']
                     . '</label></div>';
         }
+
         return $html;
     }
     
@@ -242,15 +246,15 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     
     private function getColumnRequired()
     {
-        return $this->widget->required 
+        return $this->widget->required
             ? '<div class="invalid-feedback">' . $this->i18n->trans('Por favor, introduzca un valor para el campo') . '</div>'
-            : '';        
+            : '';
     }
     
     private function getColumnDescription()
     {
-        return empty($this->description) 
-            ? '' 
+        return empty($this->description)
+            ? ''
             : '<small class="form-text text-muted">' . $this->i18n->trans($this->description) . '</small>';
     }
 }

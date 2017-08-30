@@ -54,6 +54,7 @@ class ListImpuesto extends ExtendedController\ListController
             $fields = "descripcion|codimpuesto";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
+
         return $result;
     }
 
@@ -63,6 +64,7 @@ class ListImpuesto extends ExtendedController\ListController
         $pagedata['title'] = 'Impuestos';
         $pagedata['icon'] = 'fa-plus-square-o';
         $pagedata['menu'] = 'contabilidad';
+
         return $pagedata;
     }
 }

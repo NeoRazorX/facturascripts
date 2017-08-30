@@ -87,6 +87,7 @@ class AlbaranCliente
         if ($this->idfactura === null) {
             return '#';
         }
+
         return 'index.php?page=VentasFactura&id=' . $this->idfactura;
     }
 
@@ -97,6 +98,7 @@ class AlbaranCliente
     public function getLineas()
     {
         $lineaModel = new LineaAlbaranCliente();
+
         return $lineaModel->all(new DataBaseWhere('idalbaran', $this->idalbaran));
     }
 
@@ -116,6 +118,7 @@ class AlbaranCliente
         if (!empty($albaran)) {
             return new AlbaranCliente($albaran[0]);
         }
+
         return false;
     }
 
@@ -159,6 +162,7 @@ class AlbaranCliente
         }
 
         $this->miniLog->alert('Error grave: El total está mal calculado. ¡Avisa al informático!');
+
         return false;
     }
 
@@ -292,6 +296,7 @@ class AlbaranCliente
             }
 
             $this->newCodigo();
+
             return $this->saveInsert();
         }
 

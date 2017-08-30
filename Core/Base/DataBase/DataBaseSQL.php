@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
- * Interface para gestionar las sentencias SQL necesarias 
+ * Interface para gestionar las sentencias SQL necesarias
  * por el motor de base de datos
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>

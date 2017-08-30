@@ -40,7 +40,7 @@ class ListProveedor extends ExtendedController\ListController
 
         $this->addFilterCheckbox('debaja', 'De baja');
         
-        $this->model = new Model\Proveedor();        
+        $this->model = new Model\Proveedor();
     }
 
     public function privateCore(&$response, $user)
@@ -56,6 +56,7 @@ class ListProveedor extends ExtendedController\ListController
             $fields = "nombre|razonsocial|codproveedor";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
+
         return $result;
     }
 

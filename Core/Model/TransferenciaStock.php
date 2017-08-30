@@ -96,8 +96,10 @@ class TransferenciaStock
     {
         if ($this->codalmadestino === $this->codalmaorigen) {
             $this->miniLog->alert('El almacén de orígen y de destino no puede ser el mismo.');
+
             return false;
         }
+
         return true;
     }
 }

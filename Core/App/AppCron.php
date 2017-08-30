@@ -40,6 +40,7 @@ class AppCron extends App
         }
 
         $this->response->setContent('DB-ERROR');
+
         return false;
     }
 }

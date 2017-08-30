@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-
 /**
  * Esta clase almacena los principales datos de la empresa.
  *
@@ -207,11 +206,13 @@ class Empresa
         $lenName = strlen($this->nombre);
         if (($lenName == 0) || ($lenName > 99)) {
             $this->miniLog->alert($this->i18n->trans('company-name-invalid'));
+
             return FALSE;
         }
 
         if ($lenName < strlen($this->nombrecorto)) {
             $this->miniLog->alert($this->i18n->trans('company-short-name-smaller-name'));
+
             return FALSE;
         }
 
@@ -225,6 +226,7 @@ class Empresa
     public function install()
     {
         $num = mt_rand(1, 9999);
+
         return 'INSERT INTO ' . $this->tableName() . ' (stockpedidos,contintegrada,recequivalencia,codserie,'
             . 'codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,'
             . 'ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,nombrecorto,lema,horario)'

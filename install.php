@@ -246,6 +246,7 @@ function saveInstall()
         }
         fwrite($file, "\n");
         fclose($file);
+
         return true;
     }
 
@@ -288,6 +289,7 @@ function installerMain()
     if (empty($errors) && filter_input(INPUT_POST, 'db_type')) {
         if (dbConnect($errors, $i18n) && createFolders() && saveInstall()) {
             header('Location: index.php');
+
             return 0;
         }
     }

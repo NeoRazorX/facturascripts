@@ -69,6 +69,7 @@ class GrupoEpigrafes
     public function getEpigrafes()
     {
         $epigrafe = new Epigrafe();
+
         return $epigrafe->allFromGrupo($this->idgrupo);
     }
 
@@ -89,6 +90,7 @@ class GrupoEpigrafes
         if (!empty($grupo)) {
             return new GrupoEpigrafes($grupo[0]);
         }
+
         return false;
     }
 
@@ -104,6 +106,7 @@ class GrupoEpigrafes
             return true;
         }
         $this->miniLog->alert('Faltan datos en el grupo de epígrafes.');
+
         return false;
     }
 

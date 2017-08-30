@@ -224,16 +224,19 @@ class AppController extends App
                     $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, time() + FS_COOKIES_EXPIRE));
                     $this->response->headers->setCookie(new Cookie('fsLogkey', $logKey, time() + FS_COOKIES_EXPIRE));
                     $this->miniLog->debug('Login OK. User: ' . $nick);
+
                     return $user;
                 }
 
                 $this->ipFilter->setAttempt($this->request->getClientIp());
                 $this->miniLog->alert('login-password-fail');
+
                 return false;
             }
 
             $this->ipFilter->setAttempt($this->request->getClientIp());
             $this->miniLog->alert('login-user-not-found');
+
             return false;
         }
 
@@ -243,14 +246,17 @@ class AppController extends App
             if ($cookieUser) {
                 if ($cookieUser->verifyLogkey($this->request->cookies->get('fsLogkey'))) {
                     $this->miniLog->debug('Login OK (cookie). User: ' . $cookieNick);
+
                     return $cookieUser;
                 }
 
                 $this->miniLog->alert('login-cookie-fail');
+
                 return false;
             }
 
             $this->miniLog->alert('login-user-not-found');
+
             return false;
         }
 

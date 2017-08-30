@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
- * Clase que recopila las sentencias SQL necesarias 
+ * Clase que recopila las sentencias SQL necesarias
  * por el motor de base de datos
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
@@ -82,6 +82,7 @@ class PostgresqlSQL implements DataBaseSQL
             . " WHERE tc.table_name = '" . $tableName . "'"
             . " AND tc.constraint_type IN ('PRIMARY KEY','FOREIGN KEY','UNIQUE')"
             . ' ORDER BY 1 DESC, 2 ASC;';
+
         return $sql;
     }
 
@@ -182,6 +183,7 @@ class PostgresqlSQL implements DataBaseSQL
 
         $sql = 'CREATE TABLE ' . $tableName . ' (' . substr($fields, 2)
             . $this->sqlTableConstraints($constraints) . ');';
+
         return $sql;
     }
 
@@ -217,6 +219,7 @@ class PostgresqlSQL implements DataBaseSQL
     {
         $sql = 'ALTER TABLE ' . $tableName
             . ' ALTER COLUMN ' . $colData['nombre'] . ' TYPE ' . $colData['tipo'];
+
         return $sql . ';';
     }
 
@@ -242,6 +245,7 @@ class PostgresqlSQL implements DataBaseSQL
     public function sqlAlterConstraintNull($tableName, $colData)
     {
         $action = ($colData['nulo'] === 'YES') ? ' DROP ' : ' SET ';
+
         return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['nombre'] . $action . 'NOT NULL;';
     }
 

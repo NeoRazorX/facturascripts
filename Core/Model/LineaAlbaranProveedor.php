@@ -84,6 +84,7 @@ class LineaAlbaranProveedor
         if ($this->codigo === null) {
             $this->fill();
         }
+
         return $this->codigo;
     }
 
@@ -96,6 +97,7 @@ class LineaAlbaranProveedor
         if ($this->fecha === null) {
             $this->fill();
         }
+
         return $this->fecha;
     }
 
@@ -130,13 +132,16 @@ class LineaAlbaranProveedor
         if (!$this->floatcmp($this->pvptotal, $total, FS_NF0, true)) {
             $this->miniLog->alert('Error en el valor de pvptotal de la línea ' . $this->referencia
                 . ' del ' . FS_ALBARAN . '. Valor correcto: ' . $total);
+
             return false;
         }
         if (!$this->floatcmp($this->pvpsindto, $totalsindto, FS_NF0, true)) {
             $this->miniLog->alert('Error en el valor de pvpsindto de la línea ' . $this->referencia
                 . ' del ' . FS_ALBARAN . '. Valor correcto: ' . $totalsindto);
+
             return false;
         }
+
         return true;
     }
 
@@ -225,6 +230,7 @@ class LineaAlbaranProveedor
         if (!empty($lineas)) {
             return (int) $lineas[0]['total'];
         }
+
         return 0;
     }
 

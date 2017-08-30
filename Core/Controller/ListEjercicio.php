@@ -60,6 +60,7 @@ class ListEjercicio extends ExtendedController\ListController
             $fields = "nombre|codejercicio";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
+
         return $result;
     }
 
@@ -69,6 +70,7 @@ class ListEjercicio extends ExtendedController\ListController
         $pagedata['title'] = 'Ejercicios';
         $pagedata['icon'] = 'fa-calendar';
         $pagedata['menu'] = 'contabilidad';
+
         return $pagedata;
     }
 }

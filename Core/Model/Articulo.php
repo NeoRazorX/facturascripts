@@ -304,6 +304,7 @@ class Articulo
         if (mb_strlen($this->descripcion, 'UTF8') > $len) {
             return mb_substr($this->descripcion, 0, $len) . '...';
         }
+
         return $this->descripcion;
     }
 
@@ -325,6 +326,7 @@ class Articulo
         if ($this->secompra && FS_COST_IS_AVERAGE) {
             return $this->costemedio;
         }
+
         return $this->preciocoste;
     }
 
@@ -375,6 +377,7 @@ class Articulo
         }
 
         $this->exists = false;
+
         return $ref;
     }
 
@@ -388,6 +391,7 @@ class Articulo
             return false;
         }
         $fam = new Familia();
+
         return $fam->get($this->codfamilia);
     }
 
@@ -401,6 +405,7 @@ class Articulo
             return false;
         }
         $fab = new Fabricante();
+
         return $fab->get($this->codfabricante);
     }
 
@@ -414,6 +419,7 @@ class Articulo
             return [];
         }
         $stock = new Stock();
+
         return $stock->all([new DataBaseWhere('referencia', $this->referencia)]);
     }
 
@@ -424,6 +430,7 @@ class Articulo
     public function getImpuesto()
     {
         $imp = new Impuesto();
+
         return $imp->get($this->codimpuesto);
     }
 
@@ -479,6 +486,7 @@ class Articulo
         if (file_exists(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.jpg')) {
             return 'images/articulos/' . $this->imageRef() . '-1.jpg';
         }
+
         return false;
     }
 
@@ -810,8 +818,10 @@ class Articulo
             $this->setImagen(false);
 
             $this->exists = false;
+
             return true;
         }
+
         return false;
     }
 

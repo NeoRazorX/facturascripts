@@ -181,7 +181,7 @@ trait DocumentoCompra
     {
         if ($this->observaciones == '') {
             return '-';
-        } else if (strlen($this->observaciones) < 60) {
+        } elseif (strlen($this->observaciones) < 60) {
             return $this->observaciones;
         }
 

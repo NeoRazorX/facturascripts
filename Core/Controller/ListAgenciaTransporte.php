@@ -58,6 +58,7 @@ class ListAgenciaTransporte extends ExtendedController\ListController
             $fields = "nombre|codtrans";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
+
         return $result;
     }
 
@@ -67,6 +68,7 @@ class ListAgenciaTransporte extends ExtendedController\ListController
         $pagedata['title'] = 'Transportistas';
         $pagedata['icon'] = 'fa-truck';
         $pagedata['menu'] = 'admin';
+
         return $pagedata;
     }
 }

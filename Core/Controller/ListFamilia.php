@@ -55,6 +55,7 @@ class ListFamilia extends ExtendedController\ListController
             $fields = "descripcion|codfamilia|madre";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
+
         return $result;
     }
 
@@ -64,6 +65,7 @@ class ListFamilia extends ExtendedController\ListController
         $pagedata['title'] = 'Familias';
         $pagedata['icon'] = 'fa-object-group';
         $pagedata['menu'] = 'almacen';
+
         return $pagedata;
     }
 }

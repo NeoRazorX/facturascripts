@@ -57,6 +57,7 @@ class ListAgente extends ExtendedController\ListController
             $fields = "nombre|apellidos|codagente";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
+
         return $result;
     }
 
@@ -66,6 +67,7 @@ class ListAgente extends ExtendedController\ListController
         $pagedata['title'] = 'Agentes';
         $pagedata['icon'] = 'fa-user-circle-o';
         $pagedata['menu'] = 'admin';
+
         return $pagedata;
     }
 }

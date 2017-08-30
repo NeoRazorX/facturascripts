@@ -49,6 +49,7 @@ class EditPais extends ExtendedController\EditController
         $pagedata['title'] = 'País';
         $pagedata['icon'] = 'fa-globe';
         $pagedata['showonmenu'] = FALSE;
+
         return $pagedata;
     }
 }

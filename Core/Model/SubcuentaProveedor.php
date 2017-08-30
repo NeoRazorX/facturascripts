@@ -75,6 +75,7 @@ class SubcuentaProveedor
     public function getSubcuenta()
     {
         $subcuentaModel = new Subcuenta();
+
         return $subcuentaModel->get($this->idsubcuenta);
     }
 }

@@ -30,7 +30,7 @@ class crm_contacto
 
     /**
      * Clave primaria.
-     * @var type 
+     * @var type
      */
     public $codcontacto;
     public $nif;
@@ -104,7 +104,7 @@ class crm_contacto
     {
         if ($this->observaciones == '') {
             return '-';
-        } else if (strlen($this->observaciones) < 60) {
+        } elseif (strlen($this->observaciones) < 60) {
             return $this->observaciones;
         }
 

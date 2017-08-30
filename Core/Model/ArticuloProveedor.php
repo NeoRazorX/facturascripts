@@ -162,8 +162,10 @@ class ArticuloProveedor
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             self::$nombres[$this->codproveedor] = $data[0]['razonsocial'];
+
             return $data[0]['razonsocial'];
         }
+
         return '-';
     }
 
@@ -226,6 +228,7 @@ class ArticuloProveedor
             return false;
         }
         $art0 = new Articulo();
+
         return $art0->get($this->referencia);
     }
 
@@ -264,6 +267,7 @@ class ArticuloProveedor
         if (!empty($data)) {
             return new ArticuloProveedor($data[0]);
         }
+
         return false;
     }
 
@@ -282,6 +286,7 @@ class ArticuloProveedor
         if ($this->refproveedor === null || empty($this->refproveedor) || strlen($this->refproveedor) > 25) {
             $this->miniLog->alert('La referencia de proveedor debe contener entre 1 y 25 caracteres.');
         }
+
         return $this->saveTrait();
     }
 
@@ -323,6 +328,7 @@ class ArticuloProveedor
         if (!empty($data)) {
             return new ArticuloProveedor($data[0]);
         }
+
         return false;
     }
 

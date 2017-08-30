@@ -59,6 +59,7 @@ class Atributo
     public function valores()
     {
         $valor0 = new AtributoValor();
+
         return $valor0->allFromAtributo($this->codatributo);
     }
 

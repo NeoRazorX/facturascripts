@@ -50,6 +50,7 @@ class ListUser extends ExtendedController\ListController
         $pagedata['title'] = 'Usuarios';
         $pagedata['icon'] = 'fa-users';
         $pagedata['menu'] = 'admin';
+
         return $pagedata;
     }
 }

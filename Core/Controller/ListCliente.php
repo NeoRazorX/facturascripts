@@ -60,6 +60,7 @@ class ListCliente extends ExtendedController\ListController
             $fields = "nombre|razonsocial|codcliente";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
+
         return $result;
     }
 

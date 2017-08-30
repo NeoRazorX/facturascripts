@@ -244,6 +244,7 @@ class ListController extends Base\Controller
         }
 
         $orderby = explode('_', $orderKey);
+
         return [$orderby[0] => $orderby[1]];
     }
 
@@ -362,6 +363,7 @@ class ListController extends Base\Controller
                 }
             }
         }
+
         return $result;
     }
 
@@ -395,6 +397,7 @@ class ListController extends Base\Controller
         if ($result < 0) {
             $result = 0;
         }
+
         return $result;
     }
 
@@ -409,6 +412,7 @@ class ListController extends Base\Controller
         if ($result > $this->count) {
             $result = $this->count;
         }
+
         return $result;
     }
 

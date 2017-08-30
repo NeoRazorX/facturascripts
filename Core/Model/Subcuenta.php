@@ -152,6 +152,7 @@ class Subcuenta
                 return $div->tasaconv;
             }
         }
+
         return 1.0;
     }
 
@@ -162,6 +163,7 @@ class Subcuenta
     public function getCuenta()
     {
         $cuenta = new Cuenta();
+
         return $cuenta->get($this->idcuenta);
     }
 
@@ -172,6 +174,7 @@ class Subcuenta
     public function getEjercicio()
     {
         $eje = new Ejercicio();
+
         return $eje->get($this->codejercicio);
     }
 
@@ -185,6 +188,7 @@ class Subcuenta
     public function getPartidas($offset = 0)
     {
         $part = new Partida();
+
         return $part->allFromSubcuenta($this->idsubcuenta, $offset);
     }
 
@@ -195,6 +199,7 @@ class Subcuenta
     public function getPartidasFull()
     {
         $part = new Partida();
+
         return $part->fullFromSubcuenta($this->idsubcuenta);
     }
 
@@ -205,6 +210,7 @@ class Subcuenta
     public function countPartidas()
     {
         $part = new Partida();
+
         return $part->countFromSubcuenta($this->idsubcuenta);
     }
 
@@ -215,6 +221,7 @@ class Subcuenta
     public function getTotales()
     {
         $part = new Partida();
+
         return $part->totalesFromSubcuenta($this->idsubcuenta);
     }
 
@@ -261,10 +268,12 @@ class Subcuenta
                     . ' en el ejercicio ' . $codejercicio
                     . ' <a href="index.php?page=ContabilidadEjercicio&cod=' . $codejercicio
                     . '">¿Has importado el plan contable?</a>');
+
                 return false;
             }
 
             $this->miniLog->alert('No se ha encontrado ninguna subcuenta equivalente a ' . $cod . ' para copiar.');
+
             return false;
         }
 
@@ -337,6 +346,7 @@ class Subcuenta
             return true;
         }
         $this->miniLog->alert('Faltan datos en la subcuenta.');
+
         return false;
     }
 

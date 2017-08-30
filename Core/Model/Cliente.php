@@ -120,6 +120,7 @@ class Cliente extends Base\Persona
     public function getDirecciones()
     {
         $dirModel = new DireccionCliente();
+
         return $dirModel->all([new DataBaseWhere('codcliente', $this->codcliente)]);
     }
 
@@ -182,15 +183,18 @@ class Cliente extends Base\Persona
                 }
 
                 $this->miniLog->alert('Imposible asociar la subcuenta para el cliente ' . $this->codcliente);
+
                 return false;
             }
 
             $this->miniLog->alert('Imposible crear la subcuenta para el cliente ' . $this->codcliente);
+
             return false;
         }
 
         $this->miniLog->alert($this->i18n->trans('account-not-found'));
         $this->miniLog->alert($this->i18n->trans('accounting-plan-imported?'));
+
         return false;
     }
 
@@ -281,5 +285,5 @@ class Cliente extends Base\Persona
         }
 
         return $clilist;
-    }    
+    }
 }

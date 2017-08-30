@@ -301,6 +301,7 @@ trait DocumentoVenta
         if (strlen($this->observaciones) < 60) {
             return $this->observaciones;
         }
+
         return substr($this->observaciones, 0, 50) . '...';
     }
     

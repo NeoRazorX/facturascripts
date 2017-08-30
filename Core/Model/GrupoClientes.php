@@ -80,6 +80,7 @@ class GrupoClientes
     public function test()
     {
         $this->nombre = self::noHtml($this->nombre);
+
         return TRUE;
     }
 

@@ -134,6 +134,7 @@ class PageOption
             . ' ,filters = ' . $this->var2str($filters)
             . ' ,rows = ' . $this->var2str($rows)
             . ' WHERE id = ' . $this->id . ';';
+
         return $this->dataBase->exec($sql);
     }
 
@@ -160,6 +161,7 @@ class PageOption
 
         if ($this->dataBase->exec($sql)) {
             $this->id = $this->dataBase->lastval();
+
             return true;
         }
 
@@ -179,6 +181,7 @@ class PageOption
             $groupItem->loadFromXMLColumns($columns);
             $this->columns[] = $groupItem;
             unset($groupItem);
+
             return;
         }
 
@@ -284,6 +287,7 @@ class PageOption
                 break;
             }
         }
+
         return $result;
     }
 

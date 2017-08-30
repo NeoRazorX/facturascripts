@@ -141,6 +141,7 @@ trait ModelTrait
         if (method_exists(__CLASS__, 'cleanCache')) {
             $this->cleanCache();
         }
+
         return '';
     }
 
@@ -152,6 +153,7 @@ trait ModelTrait
     {
         $result = explode('\\', $this->modelName());
         $index = count($result) - 1;
+
         return $result[$index];
     }
 
@@ -263,10 +265,12 @@ trait ModelTrait
         $data = $this->getRecord($cod);
         if (!empty($data)) {
             $this->loadFromData($data[0]);
+
             return true;
         }
 
         $this->clear();
+
         return false;
     }
 
@@ -282,6 +286,7 @@ trait ModelTrait
         $data = $this->getRecord($cod);
         if (!empty($data)) {
             $class = $this->modelName();
+
             return new $class($data[0]);
         }
 
@@ -300,6 +305,7 @@ trait ModelTrait
 
         $sql = 'SELECT 1 FROM ' . $this->tableName()
             . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->primaryColumnValue()) . ';';
+
         return (bool) $this->dataBase->select($sql);
     }
 
@@ -341,6 +347,7 @@ trait ModelTrait
         }
         $sql = 'DELETE FROM ' . $this->tableName()
             . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->primaryColumnValue()) . ';';
+
         return $this->dataBase->exec($sql);
     }
 
@@ -358,6 +365,7 @@ trait ModelTrait
         if (empty($data)) {
             return 0;
         }
+
         return $data[0]['total'];
     }
 
@@ -405,6 +413,7 @@ trait ModelTrait
             if ($val) {
                 return 'TRUE';
             }
+
             return 'FALSE';
         }
 
@@ -578,6 +587,7 @@ trait ModelTrait
     {
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($cod) . ';';
+
         return $this->dataBase->select($sql);
     }
 
@@ -600,6 +610,7 @@ trait ModelTrait
         }
 
         $sql .= ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->primaryColumnValue()) . ';';
+
         return $this->dataBase->exec($sql);
     }
 
@@ -648,6 +659,7 @@ trait ModelTrait
                 $coma = ', ';
             }
         }
+
         return $result;
     }
 
@@ -677,6 +689,7 @@ trait ModelTrait
                 $result .= empty($value) ? 'List' . $model : 'Edit' . $model . '&code=' . $value;
                 break;
         }
+
         return $result;
     }
 }

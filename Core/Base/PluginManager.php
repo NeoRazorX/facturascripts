@@ -31,7 +31,7 @@ class PluginManager
 
     /**
      * Previene de bucles infinitos desplegando controladores.
-     * @var boolean 
+     * @var boolean
      */
     private static $deployedControllers;
 
@@ -240,6 +240,7 @@ class PluginManager
     {
         if (!file_exists($folder) && !@mkdir($folder, 0775, true)) {
             self::$minilog->critical(self::$i18n->trans('cant-create-folder', [$folder]));
+
             return false;
         }
 

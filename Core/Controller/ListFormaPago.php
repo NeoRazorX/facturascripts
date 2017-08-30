@@ -59,6 +59,7 @@ class ListFormaPago extends ExtendedController\ListController
             $fields = "descripcion|codpago|codcuenta";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
+
         return $result;
     }
 
@@ -68,6 +69,7 @@ class ListFormaPago extends ExtendedController\ListController
         $pagedata['title'] = 'Formas de Pago';
         $pagedata['icon'] = 'fa-credit-card';
         $pagedata['menu'] = 'contabilidad';
+
         return $pagedata;
     }
 }

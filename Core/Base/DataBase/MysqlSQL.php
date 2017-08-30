@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
- * Clase que recopila las sentencias SQL necesarias 
+ * Clase que recopila las sentencias SQL necesarias
  * por el motor de base de datos
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
@@ -46,11 +46,12 @@ class MysqlSQL implements DataBaseSQL
                 $contraints = $this->getConstraints($colData);
                 break;
         }
+
         return ' ' . $type . $contraints;
     }
 
     /**
-     * 
+     *
      * @param array $colData
      * @return string
      */
@@ -83,6 +84,7 @@ class MysqlSQL implements DataBaseSQL
     {
         $search = ['::character varying', 'without time zone', 'now()', 'CURRENT_TIMESTAMP', 'CURRENT_DATE'];
         $replace = ['', '', "'00:00'", "'" . date('Y-m-d') . " 00:00:00'", date("'Y-m-d'")];
+
         return str_replace($search, $replace, $sql);
     }
 
@@ -130,6 +132,7 @@ class MysqlSQL implements DataBaseSQL
             . ' FROM information_schema.table_constraints '
             . ' WHERE table_schema = schema()'
             . " AND table_name = '" . $tableName . "';";
+
         return $sql;
     }
 
@@ -159,6 +162,7 @@ class MysqlSQL implements DataBaseSQL
             . ' WHERE t1.table_schema = SCHEMA()'
             . " AND t1.table_name = '" . $tableName . "'"
             . ' ORDER BY type DESC, name ASC;';
+
         return $sql;
     }
 
@@ -203,6 +207,7 @@ class MysqlSQL implements DataBaseSQL
         }
 
         $sql = $this->fixPostgresql(substr($fields, 2));
+
         return 'CREATE TABLE ' . $tableName . ' (' . $sql
             . $this->sqlTableConstraints($constraints) . ') '
             . 'ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;';
@@ -249,6 +254,7 @@ class MysqlSQL implements DataBaseSQL
         if ($colData['tipo'] != 'serial') {
             $result = $this->sqlAlterModifyColumn($tableName, $colData);
         }
+
         return $result;
     }
 
@@ -284,6 +290,7 @@ class MysqlSQL implements DataBaseSQL
             default:
                 $sql = '';
         }
+
         return $sql;
     }
 

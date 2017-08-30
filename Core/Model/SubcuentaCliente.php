@@ -75,6 +75,7 @@ class SubcuentaCliente
     public function getSubcuenta()
     {
         $subc = new Subcuenta();
+
         return $subc->get($this->idsubcuenta);
     }
 }

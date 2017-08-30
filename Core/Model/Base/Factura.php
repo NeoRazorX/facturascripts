@@ -69,6 +69,7 @@ trait Factura
     public function getAsiento()
     {
         $asiento = new Asiento();
+
         return $asiento->get($this->idasiento);
     }
 
@@ -79,6 +80,7 @@ trait Factura
     public function getAsientoPago()
     {
         $asiento = new Asiento();
+
         return $asiento->get($this->idasientop);
     }
 
@@ -144,13 +146,14 @@ trait Factura
                          */
                         $diferencia = round(($this->neto - $tNeto) * 100);
                         usort(
-                            $lineasi, function($a, $b) {
+                            $lineasi, function ($a, $b) {
                             if ($a->totallinea === $b->totallinea) {
                                 return 0;
                             }
                             if ($a->totallinea < 0) {
                                 return ($a->totallinea < $b->totallinea) ? -1 : 1;
                             }
+
                             return ($a->totallinea < $b->totallinea) ? 1 : -1;
                         }
                         );
@@ -175,13 +178,14 @@ trait Factura
                          */
                         $diferencia = round(($this->totaliva - $tIva) * 100);
                         usort(
-                            $lineasi, function($a, $b) {
+                            $lineasi, function ($a, $b) {
                             if ($a->totaliva === $b->totaliva) {
                                 return 0;
                             }
                             if ($a->totallinea < 0) {
                                 return ($a->totaliva < $b->totaliva) ? -1 : 1;
                             }
+
                             return ($a->totaliva < $b->totaliva) ? 1 : -1;
                         }
                         );
@@ -206,6 +210,7 @@ trait Factura
                 }
             }
         }
+
         return $lineasi;
     }
 }

@@ -60,6 +60,7 @@ class Rol
     public function test()
     {
         $this->descripcion = self::noHtml($this->descripcion);
+
         return true;
     }
 }

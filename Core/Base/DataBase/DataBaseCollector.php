@@ -64,6 +64,7 @@ class DataBaseCollector extends DataCollector implements Renderable, AssetProvid
             ];
             $totalExecTime += 0;
         }
+
         return [
             'nb_statements' => count($queries),
             'accumulated_duration' => $totalExecTime,
@@ -112,6 +113,7 @@ class DataBaseCollector extends DataCollector implements Renderable, AssetProvid
     public function getAssets()
     {
         $basePath = '../../../../../../';
+
         return [
             'css' => $basePath . 'Core/View/CSS/phpdebugbar.custom-widget.css',
             'js' => $basePath . 'Core/View/JS/phpdebugbar.custom-widget.js'

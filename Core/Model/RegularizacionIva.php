@@ -88,8 +88,10 @@ class RegularizacionIva
     {
         if ($this->idasiento !== null) {
             $partida = new Partida();
+
             return $partida->allFromAsiento($this->idasiento);
         }
+
         return false;
     }
 
@@ -113,6 +115,7 @@ class RegularizacionIva
         if (!empty($data)) {
             return new RegularizacionIva($data[0]);
         }
+
         return false;
     }
 
@@ -135,6 +138,7 @@ class RegularizacionIva
 
             return true;
         }
+
         return false;
     }
 }

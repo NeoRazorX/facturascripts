@@ -54,6 +54,7 @@ class ListAsiento extends ExtendedController\ListController
             $fields = "numero|concepto";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
+
         return $result;
     }
 

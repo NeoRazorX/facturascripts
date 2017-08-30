@@ -119,6 +119,7 @@ class AtributoValor
         $sql = 'UPDATE atributos_valores SET valor = ' . $this->var2str($this->valor)
             . ', codatributo = ' . $this->var2str($this->codatributo)
             . '  WHERE id = ' . $this->var2str($this->id) . ';';
+
         return $this->dataBase->exec($sql);
     }
 

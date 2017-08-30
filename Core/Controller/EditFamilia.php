@@ -50,5 +50,5 @@ class EditFamilia extends ExtendedController\EditController
         $pagedata['showonmenu'] = FALSE;
         
         return $pagedata;
-    }    
+    }
 }

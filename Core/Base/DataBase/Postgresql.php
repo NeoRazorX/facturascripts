@@ -37,13 +37,13 @@ class Postgresql implements DataBaseEngine
 
     /**
      * Enlace al conjunto de sentencias SQL de la base de datos conectada
-     * @var DataBaseSQL; 
+     * @var DataBaseSQL;
      */
     private $utilsSQL;
 
     /**
      * Ultimo mensaje de error
-     * @var string 
+     * @var string
      */
     private $lastErrorMsg;
 
@@ -92,6 +92,7 @@ class Postgresql implements DataBaseEngine
     {
         if (!function_exists('pg_connect')) {
             $error = 'No tienes instalada la extensión de PHP para PostgreSQL.';
+
             return null;
         }
 
@@ -100,6 +101,7 @@ class Postgresql implements DataBaseEngine
         $result = pg_connect($string);
         if (!$result) {
             $error = pg_last_error();
+
             return null;
         }
 
@@ -126,6 +128,7 @@ class Postgresql implements DataBaseEngine
     public function errorMessage($link)
     {
         $error = pg_last_error($link);
+
         return ($error != '') ? $error : $this->lastErrorMsg;
     }
 
@@ -178,6 +181,7 @@ class Postgresql implements DataBaseEngine
                 $result = false;
                 break;
         }
+
         return $result;
     }
 

@@ -186,12 +186,14 @@ class Ejercicio
             if ($showError) {
                 $this->miniLog->alert($this->i18n->trans('date-out-of-rage-selected-better'));
             }
+
             return $this->fechafin;
         }
 
         if ($showError) {
             $this->miniLog->alert($this->i18n->trans('date-out-of-rage-selected-better'));
         }
+
         return $this->fechainicio;
     }
 

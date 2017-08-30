@@ -78,6 +78,7 @@ class FacturaCliente
         if ($this->pagada) {
             return false;
         }
+
         return (strtotime($this->vencimiento) < strtotime(date('d-m-Y')));
     }
 
@@ -172,6 +173,7 @@ class FacturaCliente
     public function getLineas()
     {
         $lineaModel = new LineaFacturaCliente();
+
         return $lineaModel->all(new DataBaseWhere('idfactura', $this->idfactura));
     }
 
@@ -285,6 +287,7 @@ class FacturaCliente
             return true;
         }
         $this->miniLog->alert('Error grave: El total está mal calculado. ¡Informa del error!');
+
         return false;
     }
 
@@ -455,6 +458,7 @@ class FacturaCliente
             }
 
             $this->newCodigo();
+
             return $this->saveInsert();
         }
 
@@ -519,8 +523,10 @@ class FacturaCliente
             }
 
             $this->miniLog->info(ucfirst(FS_FACTURA) . ' de venta ' . $this->codigo . ' eliminada correctamente.');
+
             return true;
         }
+
         return false;
     }
 

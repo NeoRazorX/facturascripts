@@ -53,7 +53,7 @@ class Familia
      * Nivel
      * @var string
      */
-    public $nivel;         
+    public $nivel;
 
     public function tableName()
     {
@@ -82,7 +82,7 @@ class Familia
         } elseif (empty($this->descripcion) || strlen($this->descripcion) > 100) {
             $this->miniLog->alert('Descripción de familia no válida.');
         } elseif ($this->madre === $this->codfamilia) {
-            $this->miniLog->alert('La familia padre no puede ser la misma que la hija.');            
+            $this->miniLog->alert('La familia padre no puede ser la misma que la hija.');
         } else {
             $status = true;
         }

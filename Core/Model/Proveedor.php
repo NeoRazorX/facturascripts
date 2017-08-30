@@ -100,6 +100,7 @@ class Proveedor extends Base\Persona
     public function getDirecciones()
     {
         $dirModel = new DireccionProveedor();
+
         return $dirModel->all([new DataBaseWhere('codproveedor', $this->codproveedor)]);
     }
 
@@ -171,15 +172,18 @@ class Proveedor extends Base\Persona
                 }
                 
                 $this->miniLog->alert('Imposible asociar la subcuenta para el proveedor '. $this->codproveedor);
+
                 return false;
             }
             
             $this->miniLog->alert('Imposible crear la subcuenta para el proveedor ' . $this->codproveedor);
+
             return false;
         }
 
         $this->miniLog->alert($this->i18n->trans('account-not-found'));
         $this->miniLog->alert($this->i18n->trans('accounting-plan-imported?'));
+
         return false;
     }
 

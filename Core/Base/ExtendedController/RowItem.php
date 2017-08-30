@@ -84,6 +84,7 @@ class RowItem implements VisualItemInterface
                 break;
             }
         }
+
         return $result;
     }
 

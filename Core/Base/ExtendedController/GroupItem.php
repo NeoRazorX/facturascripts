@@ -115,6 +115,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
     public function getHeaderHTML($value)
     {
         $html = $this->getIconHTML() . parent::getHeaderHTML($value);
+
         return $html;
     }
 }

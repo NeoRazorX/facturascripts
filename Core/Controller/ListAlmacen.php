@@ -57,6 +57,7 @@ class ListAlmacen extends ExtendedController\ListController
             $fields = "nombre|codalmacen|contacto";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
+
         return $result;
     }
 
@@ -66,6 +67,7 @@ class ListAlmacen extends ExtendedController\ListController
         $pagedata['title'] = 'Almacenes';
         $pagedata['icon'] = 'fa-building';
         $pagedata['menu'] = 'almacen';
+
         return $pagedata;
     }
 }

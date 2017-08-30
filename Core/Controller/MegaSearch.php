@@ -33,6 +33,7 @@ class MegaSearch extends Base\Controller
     {
         $pageData = parent::getPageData();
         $pageData['showonmenu'] = FALSE;
+
         return $pageData;
     }
 }

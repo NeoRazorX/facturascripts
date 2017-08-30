@@ -121,6 +121,7 @@ class LineaIvaFacturaCliente
         $this->miniLog->alert('Error en el valor de totallinea de la línea de IVA del impuesto ' .
             $this->codimpuesto . ' de la factura. Valor correcto: ' .
             round($this->neto + $this->totaliva + $this->totalrecargo, FS_NF0));
+
         return false;
     }
 

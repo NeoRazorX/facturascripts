@@ -145,6 +145,7 @@ class Caja
         if ($this->fecha_fin === null) {
             return '-';
         }
+
         return $this->fecha_fin;
     }
 

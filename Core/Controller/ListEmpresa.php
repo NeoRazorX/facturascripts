@@ -54,6 +54,7 @@ class ListEmpresa extends ExtendedController\ListController
             $fields = "nombre|nombrecorto|id";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
+
         return $result;
     }
 
@@ -63,6 +64,7 @@ class ListEmpresa extends ExtendedController\ListController
         $pagedata['title'] = 'Empresas';
         $pagedata['icon'] = 'fa fa-building-o';
         $pagedata['menu'] = 'admin';
+
         return $pagedata;
     }
 }

@@ -158,6 +158,7 @@ class Agente
 
         if (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 50)) {
             $this->miniLog->alert($this->i18n->trans('agent-name-between-1-50'));
+
             return false;
         }
 

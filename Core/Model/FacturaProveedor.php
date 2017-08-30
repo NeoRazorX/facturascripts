@@ -136,6 +136,7 @@ class FacturaProveedor
         if ($this->codproveedor === null) {
             return 'index.php?page=ComprasProveedores';
         }
+
         return 'index.php?page=ComprasProveedor&cod=' . $this->codproveedor;
     }
 
@@ -146,6 +147,7 @@ class FacturaProveedor
     public function getLineas()
     {
         $lineaModel = new LineaFacturaProveedor();
+
         return $lineaModel->all(new DataBaseWhere('idfactura', $this->idfactura));
     }
 
@@ -236,6 +238,7 @@ class FacturaProveedor
             return true;
         }
         $this->miniLog->alert('Error grave: El total está mal calculado. ¡Informa del error!');
+
         return false;
     }
 
@@ -385,6 +388,7 @@ class FacturaProveedor
             }
 
             $this->newCodigo();
+
             return $this->saveInsert();
         }
 
@@ -447,8 +451,10 @@ class FacturaProveedor
             }
 
             $this->miniLog->info(ucfirst(FS_FACTURA) . ' de compra ' . $this->codigo . ' eliminada correctamente.');
+
             return true;
         }
+
         return false;
     }
 

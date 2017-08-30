@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-
 /**
  * Usuario de FacturaScripts.
  *
@@ -168,6 +167,7 @@ class User
         $this->lastactivity = date('d-m-Y H:i:s');
         $this->lastip = $ipAddress;
         $this->logkey = static::randomString(99);
+
         return $this->logkey;
     }
 
@@ -194,6 +194,7 @@ class User
 
         if (!preg_match("/^[A-Z0-9_\+\.\-]{3,50}$/i", $this->nick)) {
             $this->miniLog->alert($this->i18n->trans('invalid-user-nick', [$this->nick]));
+
             return false;
         }
 
@@ -210,7 +211,8 @@ class User
         new Page();
 
         $this->miniLog->info($this->i18n->trans('created-default-admin-account'));
+
         return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled) VALUES ('admin','"
             . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE);";
-    }    
+    }
 }

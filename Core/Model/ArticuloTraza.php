@@ -121,6 +121,7 @@ class ArticuloTraza
                 return $linea->url();
             }
         }
+
         return '#';
     }
 
@@ -144,6 +145,7 @@ class ArticuloTraza
                 return $linea->url();
             }
         }
+
         return '#';
     }
 
@@ -161,6 +163,7 @@ class ArticuloTraza
         if (!empty($data)) {
             return new ArticuloTraza($data[0]);
         }
+
         return false;
     }
 

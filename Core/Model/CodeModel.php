@@ -76,7 +76,7 @@ class CodeModel
             self::$dataBase = new DataBase();
         }
         
-        if (self::$dataBase->tableExists($tableName)) {        
+        if (self::$dataBase->tableExists($tableName)) {
             if ($addEmpty) {
                 $result[] = new CodeModel(['code' => NULL, 'description' => '']);
             }
@@ -89,6 +89,7 @@ class CodeModel
                 }
             }
         }
+
         return $result;
     }
 }

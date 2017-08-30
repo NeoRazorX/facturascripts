@@ -38,7 +38,7 @@ class Mysql implements DataBaseEngine
 
     /**
      * Enlace al conjunto de sentencias SQL de la base de datos conectada
-     * @var DataBaseSQL; 
+     * @var DataBaseSQL;
      */
     private $utilsSQL;
 
@@ -50,7 +50,7 @@ class Mysql implements DataBaseEngine
 
     /**
      * Ultimo mensaje de error
-     * @var string 
+     * @var string
      */
     private $lastErrorMsg;
 
@@ -118,6 +118,7 @@ class Mysql implements DataBaseEngine
     {
         if (!class_exists('mysqli')) {
             $error = 'No tienes instalada la extensión de PHP para MySQL.';
+
             return null;
         }
 
@@ -125,6 +126,7 @@ class Mysql implements DataBaseEngine
         if ($result->connect_errno) {
             $error = $result->connect_error;
             $this->lastErrorMsg = $error;
+
             return null;
         }
 
@@ -147,6 +149,7 @@ class Mysql implements DataBaseEngine
     public function close($link)
     {
         $this->rollbackTransactions();
+
         return $link->close();
     }
 
@@ -171,6 +174,7 @@ class Mysql implements DataBaseEngine
         if ($result) {
             $this->transactions[] = $link;
         }
+
         return $result;
     }
 
@@ -185,6 +189,7 @@ class Mysql implements DataBaseEngine
         if ($result && in_array($link, $this->transactions, false)) {
             $this->unsetTransaction($link);
         }
+
         return $result;
     }
 
@@ -199,6 +204,7 @@ class Mysql implements DataBaseEngine
         if (in_array($link, $this->transactions, false)) {
             $this->unsetTransaction($link);
         }
+
         return $result;
     }
 
@@ -307,6 +313,7 @@ class Mysql implements DataBaseEngine
         if ($result) {
             $result = (0 === strpos($dbType, 'varchar(')) || (0 === strpos($dbType, 'char('));
         }
+
         return $result;
     }
 
@@ -353,6 +360,7 @@ class Mysql implements DataBaseEngine
                 }
             }
         }
+
         return $tables;
     }
 

@@ -121,6 +121,7 @@ class ArticuloPropiedad
         if (!empty($data)) {
             return $data[0]['text'];
         }
+
         return false;
     }
 
@@ -140,6 +141,7 @@ class ArticuloPropiedad
         if (!empty($data)) {
             return $data[0]['referencia'];
         }
+
         return false;
     }
 

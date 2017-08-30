@@ -138,12 +138,15 @@ class Asiento
     {
         if ($this->tipodocumento === 'Factura de cliente') {
             $fac = new FacturaCliente();
+
             return $fac->getByCodigo($this->documento);
         }
         if ($this->tipodocumento === 'Factura de proveedor') {
             $fac = new FacturaProveedor();
+
             return $fac->getByCodigo($this->documento);
         }
+
         return false;
     }
 
@@ -157,6 +160,7 @@ class Asiento
         if ($fac) {
             return $fac->url();
         }
+
         return '#';
     }
 
@@ -171,6 +175,7 @@ class Asiento
         if ($eje0) {
             return $eje0->url();
         }
+
         return '#';
     }
 
@@ -203,6 +208,7 @@ class Asiento
     public function getPartidas()
     {
         $partida = new Partida();
+
         return $partida->allFromAsiento($this->idasiento);
     }
 
@@ -242,8 +248,10 @@ class Asiento
 
         if (strlen($this->concepto) > 255) {
             $this->miniLog->alert('Concepto del asiento demasiado largo.');
+
             return false;
         }
+
         return true;
     }
 
@@ -416,6 +424,7 @@ class Asiento
         if ($status) {
             return $this->fullTest();
         }
+
         return false;
     }
 
@@ -468,6 +477,7 @@ class Asiento
         }
 
         $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idasiento = ' . $this->var2str($this->idasiento) . ';';
+
         return $this->dataBase->exec($sql);
     }
 
@@ -622,6 +632,7 @@ class Asiento
     private function saveInsert()
     {
         $this->newNumero();
+
         return $this->saveInsertTrait();
     }
 }

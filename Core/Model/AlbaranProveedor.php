@@ -87,6 +87,7 @@ class AlbaranProveedor
         if ($this->idfactura === null) {
             return '#';
         }
+
         return 'index.php?page=ComprasFactura&id=' . $this->idfactura;
     }
 
@@ -99,6 +100,7 @@ class AlbaranProveedor
         if ($this->codagente === null) {
             return 'index.php?page=AdminAgentes';
         }
+
         return 'index.php?page=AdminAgente&cod=' . $this->codagente;
     }
 
@@ -111,6 +113,7 @@ class AlbaranProveedor
         if ($this->codproveedor === null) {
             return 'index.php?page=ComprasProveedores';
         }
+
         return 'index.php?page=ComprasProveedor&cod=' . $this->codproveedor;
     }
 
@@ -121,6 +124,7 @@ class AlbaranProveedor
     public function getLineas()
     {
         $lineaModel = new LineaAlbaranProveedor();
+
         return $lineaModel->all(new DataBaseWhere('idalbaran', $this->idalbaran));
     }
 
@@ -167,6 +171,7 @@ class AlbaranProveedor
         }
 
         $this->miniLog->alert('Error grave: El total está mal calculado. ¡Avisa al informático!');
+
         return false;
     }
 
@@ -300,6 +305,7 @@ class AlbaranProveedor
             }
 
             $this->newCodigo();
+
             return $this->saveInsert();
         }
 
@@ -327,8 +333,10 @@ class AlbaranProveedor
             }
 
             $this->miniLog->info(ucfirst(FS_ALBARAN) . ' de compra ' . $this->codigo . ' eliminado correctamente.');
+
             return true;
         }
+
         return false;
     }
 

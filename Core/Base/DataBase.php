@@ -144,6 +144,7 @@ class DataBase
                 $result[] = self::$engine->columnFromData($data);
             }
         }
+
         return $result;
     }
 
@@ -162,6 +163,7 @@ class DataBase
         }
 
         $data = $this->select($sql);
+
         return $data ? array_values($data) : [];
     }
 
@@ -179,6 +181,7 @@ class DataBase
                 $result[] = ['name' => $row['Key_name']];
             }
         }
+
         return $result;
     }
 
@@ -279,6 +282,7 @@ class DataBase
     {
         self::$miniLog->error(self::$engine->errorMessage(self::$link));
         self::$miniLog->sql('Rollback Transaction');
+
         return self::$engine->rollback(self::$link);
     }
 
@@ -317,10 +321,12 @@ class DataBase
         $result = self::$engine->select(self::$link, $sql);
         if (empty($result)) {
             self::$miniLog->sql(self::$engine->errorMessage(self::$link));
+
             return [];
         }
 
         self::$totalSelects++;
+
         return $result;
     }
 
@@ -364,6 +370,7 @@ class DataBase
     public function lastval()
     {
         $aux = $this->select(self::$engine->getSQL()->sqlLastValue());
+
         return $aux ? $aux[0]['num'] : false;
     }
 

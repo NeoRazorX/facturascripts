@@ -100,6 +100,7 @@ class FileCache
              */
             return $raw ? $content : unserialize($content);
         }
+
         return null;
     }
 
@@ -120,6 +121,7 @@ class FileCache
             return @rename($temp_file_name, $dest_file_name);
         }
         @unlink($temp_file_name);
+
         return false;
     }
 

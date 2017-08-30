@@ -131,6 +131,7 @@ trait LineaDocumento
         if ($this->cantidad === 0) {
             return 0;
         }
+
         return $this->pvptotal * (100 + $this->iva) / 100 / $this->cantidad;
     }
 
@@ -152,6 +153,7 @@ trait LineaDocumento
         if ($this->referencia === null || $this->referencia === '') {
             return 'index.php?page=VentasArticulos';
         }
+
         return 'index.php?page=VentasArticulo&ref=' . urlencode($this->referencia);
     }
 }

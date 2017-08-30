@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-
 /**
  * Una tarifa para los artículos.
  *
@@ -104,6 +103,7 @@ class Tarifa
         if ($this->aplicar_a === 'pvp') {
             return (0 - $this->incporcentual);
         }
+
         return $this->incporcentual;
     }
 
@@ -129,6 +129,7 @@ class Tarifa
         if ($this->aplicar_a === 'pvp') {
             return (0 - $this->inclineal);
         }
+
         return $this->inclineal;
     }
 

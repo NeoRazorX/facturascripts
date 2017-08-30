@@ -64,6 +64,7 @@ class ClientePropiedad
     {
         $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE name = ' .
             $this->var2str($this->name) . ' AND codcliente = ' . $this->var2str($this->codcliente) . ';';
+
         return $this->dataBase->exec($sql);
     }
 
