@@ -8,7 +8,7 @@
 <tabla>
     <columna>
         <nombre>codproveedor</nombre>
-        <tipo>character varying(6)</tipo>
+        <tipo>character varying(10)</tipo>
         <nulo>NO</nulo>
     </columna>
     <columna>
