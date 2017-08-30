@@ -65,7 +65,7 @@ class ListAlmacen extends ExtendedController\ListController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'Almacenes';
         $pagedata['icon'] = 'fa-building';
-        $pagedata['menu'] = 'admin';
+        $pagedata['menu'] = 'almacen';
         return $pagedata;
     }
 }

@@ -81,7 +81,6 @@ class Fabricante
      */
     public function install()
     {
-        $this->cleanCache();
         return 'INSERT INTO ' . $this->tableName() . " (codfabricante,nombre) VALUES ('OEM','OEM');";
     }
 }

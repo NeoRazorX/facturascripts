@@ -61,7 +61,7 @@ class ListArticulo extends ExtendedController\ListController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'Articulos';
         $pagedata['icon'] = 'fa-cubes';
-        $pagedata['menu'] = 'ventas';
+        $pagedata['menu'] = 'almacen';
         
         return $pagedata;
     }

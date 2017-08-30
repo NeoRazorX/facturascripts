@@ -171,7 +171,6 @@ class Familia
      */
     public function install()
     {
-        $this->cleanCache();
         return 'INSERT INTO ' . $this->tableName() . " (codfamilia,descripcion) VALUES ('VARI','VARIOS');";
     }
 
