@@ -228,7 +228,7 @@ abstract class Persona
 
     /**
      * Devuelve un array con los regimenes de iva disponibles.
-     * @return array
+     * @return RegimenIVA
      */
     public function regimenesIVA()
     {

@@ -103,7 +103,7 @@ class Articulo
 
     /**
      * Fecha de actualización del pvp.
-    * @var string
+     * @var string
      */
     public $factualizado;
 
@@ -279,7 +279,7 @@ class Articulo
 
         return '';
     }
-    
+
     /**
      * Resetea los valores de todas las propiedades modelo.
      */

@@ -23,29 +23,29 @@ use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la lista de grupos de epígrafes contables
+ * Controlador para la lista de epigrafes
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListGrupoEpigrafes extends ExtendedController\ListController
+class ListEpigrafe extends ExtendedController\ListController
 {
-
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('codgrupo||codejercicio', 'code');
         $this->addOrderBy('descripcion||codejercicio', 'description');
-                
-        $this->addFilterSelect('codejercicio', 'ejercicios', '', 'nombre');
+        $this->addOrderBy('codepigrafe||codejercicio', 'code');
 
-        $this->model = new Model\GrupoEpigrafes();
+        $this->addFilterSelect('codgrupo', 'co_gruposepigrafes', '', 'descripcion');
+        $this->addFilterSelect('codejercicio', 'ejercicios', '', 'nombre');
+        
+        $this->model = new Model\Epigrafe();
     }
 
     public function privateCore(&$response, $user)
     {
-        parent::privateCore($response, $user);        
+        parent::privateCore($response, $user);
     }
 
     protected function getWhere()
@@ -53,7 +53,7 @@ class ListGrupoEpigrafes extends ExtendedController\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "descripcion|codgrupo|codejercicio";
+            $fields = "descripcion|codepigrafe|codejercicio|codgrupo";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
@@ -62,9 +62,10 @@ class ListGrupoEpigrafes extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Grupos de Epígrafes';
-        $pagedata['icon'] = 'fa-bars';
+        $pagedata['title'] = 'Epigrafes';
+        $pagedata['icon'] = 'fa-columns';
         $pagedata['menu'] = 'contabilidad';
+
         return $pagedata;
     }
 }

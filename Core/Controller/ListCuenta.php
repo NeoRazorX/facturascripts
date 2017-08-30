@@ -23,29 +23,29 @@ use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la lista de grupos de epígrafes contables
+ * Controlador para la lista de cuentas
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListGrupoEpigrafes extends ExtendedController\ListController
+class ListCuenta extends ExtendedController\ListController
 {
-
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('codgrupo||codejercicio', 'code');
         $this->addOrderBy('descripcion||codejercicio', 'description');
-                
-        $this->addFilterSelect('codejercicio', 'ejercicios', '', 'nombre');
+        $this->addOrderBy('codcuenta||codejercicio', 'code');
 
-        $this->model = new Model\GrupoEpigrafes();
+        $this->addFilterSelect('codepigrafe', 'co_epigrafes', '', 'descripcion');
+        $this->addFilterSelect('codejercicio', 'ejercicios', '', 'nombre');
+        
+        $this->model = new Model\Cuenta();
     }
 
     public function privateCore(&$response, $user)
     {
-        parent::privateCore($response, $user);        
+        parent::privateCore($response, $user);
     }
 
     protected function getWhere()
@@ -53,7 +53,7 @@ class ListGrupoEpigrafes extends ExtendedController\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "descripcion|codgrupo|codejercicio";
+            $fields = "descripcion|codcuenta|codejercicio|codepigrafe";
             $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
         return $result;
@@ -62,9 +62,10 @@ class ListGrupoEpigrafes extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Grupos de Epígrafes';
-        $pagedata['icon'] = 'fa-bars';
+        $pagedata['title'] = 'Cuentas';
+        $pagedata['icon'] = 'fa-th-list';
         $pagedata['menu'] = 'contabilidad';
+
         return $pagedata;
     }
 }

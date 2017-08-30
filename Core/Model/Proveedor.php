@@ -169,11 +169,11 @@ class Proveedor extends Base\Persona
                 if ($scpro->save()) {
                     return $subcuenta;
                 }
-                
-                $this->miniLog->alert('Imposible asociar la subcuenta para el proveedor '. $this->codproveedor);
+
+                $this->miniLog->alert('Imposible asociar la subcuenta para el proveedor ' . $this->codproveedor);
                 return false;
             }
-            
+
             $this->miniLog->alert('Imposible crear la subcuenta para el proveedor ' . $this->codproveedor);
             return false;
         }
