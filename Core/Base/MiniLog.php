@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -25,9 +26,9 @@ namespace FacturaScripts\Core\Base;
  */
 class MiniLog
 {
-
     /**
      * TODO
+     *
      * @var array
      */
     private static $dataLog;
@@ -46,9 +47,9 @@ class MiniLog
      * System is unusable.
      *
      * @param string $message
-     * @param array $context
+     * @param array  $context
      */
-    public function emergency($message, array $context = array())
+    public function emergency($message, array $context = [])
     {
         $this->log('emergency', $message, $context);
     }
@@ -60,9 +61,9 @@ class MiniLog
      * trigger the SMS alerts and wake you up.
      *
      * @param string $message
-     * @param array $context
+     * @param array  $context
      */
-    public function alert($message, array $context = array())
+    public function alert($message, array $context = [])
     {
         $this->log('alert', $message, $context);
     }
@@ -73,9 +74,9 @@ class MiniLog
      * Example: Application component unavailable, unexpected exception.
      *
      * @param string $message
-     * @param array $context
+     * @param array  $context
      */
-    public function critical($message, array $context = array())
+    public function critical($message, array $context = [])
     {
         $this->log('critical', $message, $context);
     }
@@ -85,9 +86,9 @@ class MiniLog
      * be logged and monitored.
      *
      * @param string $message
-     * @param array $context
+     * @param array  $context
      */
-    public function error($message, array $context = array())
+    public function error($message, array $context = [])
     {
         $this->log('error', $message, $context);
     }
@@ -99,9 +100,9 @@ class MiniLog
      * that are not necessarily wrong.
      *
      * @param string $message
-     * @param array $context
+     * @param array  $context
      */
-    public function warning($message, array $context = array())
+    public function warning($message, array $context = [])
     {
         $this->log('warning', $message, $context);
     }
@@ -110,9 +111,9 @@ class MiniLog
      * Normal but significant events.
      *
      * @param string $message
-     * @param array $context
+     * @param array  $context
      */
-    public function notice($message, array $context = array())
+    public function notice($message, array $context = [])
     {
         $this->log('notice', $message, $context);
     }
@@ -123,9 +124,9 @@ class MiniLog
      * Example: User logs in, SQL logs.
      *
      * @param string $message
-     * @param array $context
+     * @param array  $context
      */
-    public function info($message, array $context = array())
+    public function info($message, array $context = [])
     {
         $this->log('info', $message, $context);
     }
@@ -134,9 +135,9 @@ class MiniLog
      * Detailed debug information.
      *
      * @param string $message
-     * @param array $context
+     * @param array  $context
      */
-    public function debug($message, array $context = array())
+    public function debug($message, array $context = [])
     {
         $this->log('debug', $message, $context);
     }
@@ -145,9 +146,9 @@ class MiniLog
      * SQL history.
      *
      * @param string $message
-     * @param array $context
+     * @param array  $context
      */
-    public function sql($message, array $context = array())
+    public function sql($message, array $context = [])
     {
         $this->log('sql', $message, $context);
     }
@@ -157,15 +158,15 @@ class MiniLog
      *
      * @param string $level
      * @param string $message
-     * @param array $context
+     * @param array  $context
      */
-    public function log($level, $message, array $context = array())
+    public function log($level, $message, array $context = [])
     {
         self::$dataLog[] = [
             'time' => time(),
             'level' => $level,
             'message' => $message,
-            'context' => $context
+            'context' => $context,
         ];
     }
 
@@ -173,6 +174,7 @@ class MiniLog
      * Returns specified level messages or all.
      *
      * @param array $levels
+     *
      * @return array
      */
     public function read(array $levels = ['info', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency'])

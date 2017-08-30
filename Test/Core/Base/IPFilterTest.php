@@ -7,7 +7,6 @@ namespace FacturaScripts\Core\Base;
  */
 class IPFilterTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var IPFilter
      */
@@ -29,11 +28,10 @@ class IPFilterTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\IPFilter::setAttempt
+     * @covers \FacturaScripts\Core\Base\IPFilter::setAttempt
      */
     public function testSetAttempt()
     {
@@ -46,7 +44,7 @@ class IPFilterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\IPFilter::isBanned
+     * @covers \FacturaScripts\Core\Base\IPFilter::isBanned
      */
     public function testIsBanned()
     {

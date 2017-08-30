@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base;
@@ -33,35 +34,39 @@ use FacturaScripts\Core\Base\Translator;
  */
 trait ModelTrait
 {
-
     use Base\Utils;
 
     /**
      * Lista de campos de la tabla.
+     *
      * @var array
      */
     protected static $fields;
 
     /**
      * Nombre del modelo. De la clase que inicia este trait.
+     *
      * @var string
      */
     private static $modelName;
 
     /**
      * Lista de tablas ya comprobadas.
+     *
      * @var array|null
      */
     private static $checkedTables;
 
     /**
      * Proporciona acceso directo a la base de datos.
+     *
      * @var DataBase
      */
     protected $dataBase;
 
     /**
      * Permite conectar e interactuar con el sistema de caché.
+     *
      * @var Cache
      */
     protected $cache;
@@ -69,24 +74,28 @@ trait ModelTrait
     /**
      * Clase que se utiliza para definir algunos valores por defecto:
      * codejercicio, codserie, coddivisa, etc...
+     *
      * @var DefaultItems
      */
     protected $defaultItems;
 
     /**
      * Traductor multi-idioma.
+     *
      * @var Translator
      */
     protected $i18n;
 
     /**
      * Gestiona el log de todos los controladores, modelos y base de datos.
+     *
      * @var MiniLog
      */
     protected $miniLog;
 
     /**
      * Constructor por defecto.
+     *
      * @param array $data
      */
     public function __construct($data = [])
@@ -134,6 +143,7 @@ trait ModelTrait
      * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
      * que se ejecutará tras la creación de la tabla. útil para insertar valores
      * por defecto.
+     *
      * @return string
      */
     public function install()
@@ -147,6 +157,7 @@ trait ModelTrait
 
     /**
      * Devuelve el nombre de la clase del modelo
+     *
      * @return string
      */
     public function modelClassName()
@@ -159,6 +170,7 @@ trait ModelTrait
 
     /**
      * Devuelve el nombre del modelo.
+     *
      * @return string
      */
     public function modelName()
@@ -168,12 +180,14 @@ trait ModelTrait
 
     /**
      * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
      * @return string
      */
     abstract public function primaryColumn();
 
     /**
      * Devuelve el valor actual de la columna principal del modelo
+     *
      * @return mixed
      */
     public function primaryColumnValue()
@@ -183,17 +197,18 @@ trait ModelTrait
 
     /**
      * Devuelve el nombdre de la tabla que usa este modelo.
+     *
      * @return string
      */
     abstract public function tableName();
 
     /**
      * Comprueba un array de datos para que tenga la estructura correcta del modelo
+     *
      * @param array $data
      */
     public function checkArrayData(&$data)
     {
-        
     }
 
     /**
@@ -295,6 +310,7 @@ trait ModelTrait
 
     /**
      * Devuelve true si los datos del modelo se encuentran almacenados en la base de datos.
+     *
      * @return bool
      */
     public function exists()
@@ -312,6 +328,7 @@ trait ModelTrait
     /**
      * Devuelve true si no hay errores en los valores de las propiedades del modelo.
      * Se ejecuta dentro del método save.
+     *
      * @return bool
      */
     public function test()
@@ -321,6 +338,7 @@ trait ModelTrait
 
     /**
      * Almacena los datos del modelo en la base de datos.
+     *
      * @return bool
      */
     public function save()
@@ -338,6 +356,7 @@ trait ModelTrait
 
     /**
      * Elimina los datos del modelo de la base de datos.
+     *
      * @return bool
      */
     public function delete()
@@ -372,8 +391,8 @@ trait ModelTrait
     /**
      * Devuelve todos los modelos que se correspondan con los filtros seleccionados.
      *
-     * @param array $where filtros a aplicar a los registros del modelo. (Array de DataBaseWhere)
-     * @param array $order campos a utilizar en la ordenación. Por ejemplo ['codigo' => 'ASC']
+     * @param array   $where  filtros a aplicar a los registros del modelo. (Array de DataBaseWhere)
+     * @param array   $order  campos a utilizar en la ordenación. Por ejemplo ['codigo' => 'ASC']
      * @param integer $offset
      * @param integer $limit
      *
@@ -430,7 +449,9 @@ trait ModelTrait
 
     /**
      * Devuelve el siguiente código para el campo informado o de la primary key del modelo
+     *
      * @param string $field
+     *
      * @return int
      */
     public function newCode($field = '')
@@ -521,8 +542,8 @@ trait ModelTrait
      * Obtiene las columnas y restricciones del fichero xml para una tabla
      *
      * @param string $tableName
-     * @param array $columns
-     * @param array $constraints
+     * @param array  $columns
+     * @param array  $constraints
      *
      * @return bool
      */
@@ -551,7 +572,7 @@ trait ModelTrait
                             $columns[$key]['defecto'] = (string) $col->defecto;
                         }
 
-                        $key++;
+                        ++$key;
                     }
 
                     /// debe de haber columnas, sino es un fallo
@@ -563,7 +584,7 @@ trait ModelTrait
                     foreach ($xml->restriccion as $col) {
                         $constraints[$key]['nombre'] = (string) $col->nombre;
                         $constraints[$key]['consulta'] = (string) $col->consulta;
-                        $key++;
+                        ++$key;
                     }
                 }
             } else {
@@ -593,6 +614,7 @@ trait ModelTrait
 
     /**
      * Actualiza los datos del modelo en la base de datos.
+     *
      * @return bool
      */
     private function saveUpdate()
@@ -616,6 +638,7 @@ trait ModelTrait
 
     /**
      * Inserta los datos del modelo en la base de datos.
+     *
      * @return bool
      */
     private function saveInsert()
@@ -665,6 +688,9 @@ trait ModelTrait
 
     /**
      * Devuelve la url donde ver/modificar los datos
+     *
+     * @param mixed $type
+     *
      * @return string
      */
     public function url($type = 'auto')
@@ -684,7 +710,7 @@ trait ModelTrait
             case 'new':
                 $result .= 'Edit' . $model;
                 break;
-            
+
             default:
                 $result .= empty($value) ? 'List' . $model : 'Edit' . $model . '&code=' . $value;
                 break;

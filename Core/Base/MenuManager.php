@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Model;
@@ -28,9 +29,9 @@ use FacturaScripts\Core\Model;
  */
 class MenuManager
 {
-
     /**
      * Contiene la estructura del menú para el usuario.
+     *
      * @var MenuItem[]
      */
     private static $menu;
@@ -49,6 +50,7 @@ class MenuManager
 
     /**
      * Usuario para quien se ha creado el menú.
+     *
      * @var Model\User|false
      */
     private static $user = false;
@@ -69,6 +71,7 @@ class MenuManager
 
     /**
      * Asigna el usuario para cargar su menú.
+     *
      * @param Model\User|false $user
      */
     public function setUser($user)
@@ -80,7 +83,8 @@ class MenuManager
     /**
      *
      * @param Model\Page $pageModel
-     * @param array $pageData
+     * @param array      $pageData
+     *
      * @return boolean
      */
     private function pageNeedSave($pageModel, $pageData)
@@ -91,6 +95,7 @@ class MenuManager
     /**
      * Actualiza los datos en el modelo Model\Page en base los datos
      * del getPageData() del controlador
+     *
      * @param array $pageData
      */
     public function selectPage($pageData)
@@ -148,6 +153,7 @@ class MenuManager
 
     /**
      * Carga la estructura de menú para el usuario
+     *
      * @return \FacturaScripts\Core\Base\MenuItem
      */
     private function loadUserMenu()
@@ -190,6 +196,7 @@ class MenuManager
 
     /**
      * Carga la lista de páginas para el usuario
+     *
      * @return Model\Page[]
      */
     private function loadPages()
@@ -199,7 +206,7 @@ class MenuManager
             'lower(menu)' => 'ASC',
             'lower(submenu)' => 'ASC',
             'orden' => 'ASC',
-            'title' => 'ASC'
+            'title' => 'ASC',
         ];
 
         $pages = self::$pageModel->all($where, $order);
@@ -225,6 +232,7 @@ class MenuManager
 
     /**
      * Devuelve el menú del usuario, el conjunto de páginas a las que tiene acceso.
+     *
      * @return array
      */
     public function getMenu()

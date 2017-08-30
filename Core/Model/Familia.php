@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -27,30 +28,32 @@ namespace FacturaScripts\Core\Model;
  */
 class Familia
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria.
+     *
      * @var string
      */
     public $codfamilia;
 
     /**
      * Descripción de la fanília
+     *
      * @var string
      */
     public $descripcion;
 
     /**
      * Código de la familia madre.
+     *
      * @var string
      */
     public $madre;
 
-    
     /**
      * Nivel
+     *
      * @var string
      */
     public $nivel;
@@ -67,6 +70,7 @@ class Familia
 
     /**
      * Comprueba los datos de la familia, devuelve TRUE si son correctos
+     *
      * @return bool
      */
     public function test()
@@ -92,6 +96,7 @@ class Familia
 
     /**
      * TODO
+     *
      * @return array
      */
     public function madres()
@@ -102,7 +107,7 @@ class Familia
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
-                $famlist[] = new Familia($d);
+                $famlist[] = new self($d);
             }
         }
 
@@ -135,7 +140,7 @@ class Familia
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
-                $famlist[] = new Familia($d);
+                $famlist[] = new self($d);
             }
         }
 
@@ -167,6 +172,7 @@ class Familia
      * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
      * que se ejecutará tras la creación de la tabla. útil para insertar valores
      * por defecto.
+     *
      * @return string
      */
     public function install()
@@ -177,7 +183,7 @@ class Familia
     /**
      * Completa los datos de la lista de familias con el nivel
      *
-     * @param array $familias
+     * @param array  $familias
      * @param string $madre
      * @param string $nivel
      *

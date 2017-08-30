@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,23 +26,25 @@ namespace FacturaScripts\Core\Model;
  */
 class GrupoClientes
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria
+     *
      * @var
      */
     public $codgrupo;
 
     /**
      * Nombre del grupo
+     *
      * @var
      */
     public $nombre;
 
     /**
      * Código de la tarifa asociada, si la hay
+     *
      * @var
      */
     public $codtarifa;
@@ -58,6 +61,7 @@ class GrupoClientes
 
     /**
      * Devuelve un nuevo código para un nuevo grupo de clientes
+     *
      * @return string
      */
     public function getNewCodigo()
@@ -100,7 +104,7 @@ class GrupoClientes
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
-                $glist[] = new GrupoClientes($d);
+                $glist[] = new self($d);
             }
         }
 
@@ -111,6 +115,7 @@ class GrupoClientes
      * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
      * que se ejecutará tras la creación de la tabla. útil para insertar valores
      * por defecto.
+     *
      * @return string
      */
     public function install()

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use Exception;
@@ -24,49 +25,56 @@ use Exception;
  * Gestor de plugins de FacturaScripts.
  *
  * @package FacturaScripts\Core\Base
+ *
  * @author Carlos García Gómez
  */
 class PluginManager
 {
-
     /**
      * Previene de bucles infinitos desplegando controladores.
+     *
      * @var boolean
      */
     private static $deployedControllers;
 
     /**
      * Lista de plugins activos.
+     *
      * @var array
      */
     private static $enabledPlugins;
 
     /**
      * Carpeta de trabajo de FacturaScripts.
+     *
      * @var string
      */
     private static $folder;
 
     /**
      * Traductor del sistema.
+     *
      * @var Translator
      */
     private static $i18n;
 
     /**
      * Gestiona el log de toda la aplicación.
+     *
      * @var MiniLog
      */
     private static $minilog;
 
     /**
      * Ruta del archivo plugin.list
+     *
      * @var string
      */
     private static $pluginListFile;
 
     /**
      * PluginManager constructor.
+     *
      * @param string $folder
      */
     public function __construct($folder = '')
@@ -84,6 +92,7 @@ class PluginManager
 
     /**
      * Devuelve un array con la lista de plugins del archivo plugin.list
+     *
      * @return array
      */
     private function loadFromFile()
@@ -102,6 +111,7 @@ class PluginManager
 
     /**
      * Devuelve la carpeta de trabajo de FacturaScripts.
+     *
      * @return string
      */
     public function folder()
@@ -111,6 +121,7 @@ class PluginManager
 
     /**
      * Devuelve la lista de plugins activos.
+     *
      * @return array
      */
     public function enabledPlugins()
@@ -120,6 +131,7 @@ class PluginManager
 
     /**
      * Activa el plugin indicado.
+     *
      * @param string $pluginName
      */
     public function enable($pluginName)
@@ -132,6 +144,7 @@ class PluginManager
 
     /**
      * Desactiva el plugin indicado.
+     *
      * @param string $pluginName
      */
     public function disable($pluginName)
@@ -149,6 +162,7 @@ class PluginManager
      * Despliega todos los archivos necesarios en la carpeta Dinamic para poder
      * usar controladores y modelos de plugins con el autoloader, pero siguiendo
      * el sistema de prioridades de FacturaScripts.
+     *
      * @param bool $clean
      */
     public function deploy($clean = true)
@@ -190,7 +204,7 @@ class PluginManager
         foreach (scandir(self::$folder . '/Dinamic/Controller', SCANDIR_SORT_ASCENDING) as $fileName) {
             if ($fileName != '.' && $fileName != '..' && substr($fileName, -3) == 'php') {
                 $controllerName = substr($fileName, 0, -4);
-                $controllerNamespace = "FacturaScripts\\Dinamic\\Controller\\" . $controllerName;
+                $controllerNamespace = 'FacturaScripts\\Dinamic\\Controller\\' . $controllerName;
 
                 if (!class_exists($controllerNamespace)) {
                     /// forzamos la carga del archivo porque en este punto el autoloader no lo encontrará
@@ -209,7 +223,9 @@ class PluginManager
 
     /**
      * Elimina la carpeta $folder y sus archivos.
+     *
      * @param string $folder
+     *
      * @return boolean
      */
     private function cleanFolder($folder)
@@ -249,6 +265,7 @@ class PluginManager
 
     /**
      * Enlazamos los archivos
+     *
      * @param string $folder
      * @param string $place
      * @param string $pluginName
@@ -260,7 +277,7 @@ class PluginManager
             $namespace = "\FacturaScripts\Core\\";
         } else {
             $path = self::$folder . '/Plugins/' . $pluginName . '/' . $folder;
-            $namespace = "\FacturaScripts\Plugins\\" . $pluginName . "\\";
+            $namespace = "\FacturaScripts\Plugins\\" . $pluginName . '\\';
         }
 
         // Añadimos los archivos que no son '.' ni '..'
@@ -281,6 +298,7 @@ class PluginManager
 
     /**
      * Enlaza las classes de forma dinamica
+     *
      * @param string $fileName
      * @param string $folder
      * @param string $namespace
@@ -303,6 +321,7 @@ class PluginManager
 
     /**
      * Enlaza los XML de forma dinamica
+     *
      * @param string $fileName
      * @param string $folder
      * @param string $filePath

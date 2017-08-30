@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -35,7 +36,7 @@ class ListAsiento extends ExtendedController\ListController
 
         $this->addOrderBy('numero', 'number');
         $this->addOrderBy('fecha', 'date');
-        
+
         /// forzamos el orden por defecto como el cuarto, que es fecha desc
         $this->selectedOrderBy = array_keys($this->orderby)[3];
         $this->model = new Model\Asiento();
@@ -45,14 +46,14 @@ class ListAsiento extends ExtendedController\ListController
     {
         parent::privateCore($response, $user);
     }
-    
+
     protected function getWhere()
     {
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "numero|concepto";
-            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
+            $fields = 'numero|concepto';
+            $result[] = new DataBaseWhere($fields, $this->query, 'LIKE');
         }
 
         return $result;
@@ -64,7 +65,7 @@ class ListAsiento extends ExtendedController\ListController
         $pagedata['title'] = 'Asientos';
         $pagedata['icon'] = 'fa-balance-scale';
         $pagedata['menu'] = 'contabilidad';
-        
+
         return $pagedata;
     }
 }

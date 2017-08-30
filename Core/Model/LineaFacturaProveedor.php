@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,60 +26,68 @@ namespace FacturaScripts\Core\Model;
  */
 class LineaFacturaProveedor
 {
-
     use Base\LineaDocumento;
     use Base\ModelTrait;
 
     /**
      * TODO
+     *
      * @var array
      */
     private static $facturas;
 
     /**
      * TODO
+     *
      * @var array
      */
     private static $albaranes;
 
     /**
      * ID de la linea del albarán relacionado, si lo hay.
+     *
      * @var int
      */
     public $idlineaalbaran;
 
     /**
      * ID de la factura de esta línea.
+     *
      * @var int
      */
     public $idfactura;
 
     /**
      * ID del albarán relacionado con la factura, si lo hay.
+     *
      * @var int
      */
     public $idalbaran;
 
     /**
      * TODO
+     *
      * @var string
      */
     private $codigo;
 
     /**
      * TODO
+     *
      * @var string
      */
     private $fecha;
 
     /**
      * TODO
+     *
      * @var string
      */
     private $albaran_codigo;
 
     /**
      * TODO
+     *
      * @var int
      */
     private $albaran_numero;
@@ -118,6 +127,7 @@ class LineaFacturaProveedor
 
     /**
      * TODO
+     *
      * @return null|string
      */
     public function showCodigo()
@@ -131,6 +141,7 @@ class LineaFacturaProveedor
 
     /**
      * TODO
+     *
      * @return string
      */
     public function showFecha()
@@ -144,6 +155,7 @@ class LineaFacturaProveedor
 
     /**
      * TODO
+     *
      * @return string
      */
     public function showNombre()
@@ -162,6 +174,7 @@ class LineaFacturaProveedor
 
     /**
      * TODO
+     *
      * @return null|string
      */
     public function albaranCodigo()
@@ -175,6 +188,7 @@ class LineaFacturaProveedor
 
     /**
      * TODO
+     *
      * @return string
      */
     public function albaranUrl()
@@ -188,6 +202,7 @@ class LineaFacturaProveedor
 
     /**
      * TODO
+     *
      * @return int|null
      */
     public function albaranNumero()
@@ -201,6 +216,7 @@ class LineaFacturaProveedor
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function test()
@@ -229,7 +245,7 @@ class LineaFacturaProveedor
      * TODO
      *
      * @param string $query
-     * @param int $offset
+     * @param int    $offset
      *
      * @return array
      */
@@ -250,7 +266,7 @@ class LineaFacturaProveedor
         $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $l) {
-                $linealist[] = new LineaFacturaProveedor($l);
+                $linealist[] = new self($l);
             }
         }
 

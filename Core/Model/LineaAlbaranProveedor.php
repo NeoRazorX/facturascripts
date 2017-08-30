@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,42 +26,47 @@ namespace FacturaScripts\Core\Model;
  */
 class LineaAlbaranProveedor
 {
-
     use Base\LineaDocumento;
     use Base\ModelTrait;
 
     /**
      * TODO
+     *
      * @var array
      */
     private static $albaranes;
 
     /**
      * ID de la línea del pedido relacionada, si la hay.
+     *
      * @var int
      */
     public $idlineapedido;
 
     /**
      * ID del albarán de esta línea.
+     *
      * @var int
      */
     public $idalbaran;
 
     /**
      * ID del pedido relacionado con el albarán, si lo hay.
+     *
      * @var int
      */
     public $idpedido;
 
     /**
      * TODO
+     *
      * @var string
      */
     private $codigo;
 
     /**
      * TODO
+     *
      * @var string
      */
     private $fecha;
@@ -77,6 +83,7 @@ class LineaAlbaranProveedor
 
     /**
      * TODO
+     *
      * @return null|string
      */
     public function showCodigo()
@@ -90,6 +97,7 @@ class LineaAlbaranProveedor
 
     /**
      * TODO
+     *
      * @return string
      */
     public function showFecha()
@@ -103,6 +111,7 @@ class LineaAlbaranProveedor
 
     /**
      * TODO
+     *
      * @return string
      */
     public function showNombre()
@@ -121,6 +130,7 @@ class LineaAlbaranProveedor
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function test()
@@ -157,7 +167,7 @@ class LineaAlbaranProveedor
      * TODO
      *
      * @param string $query
-     * @param int $offset
+     * @param int    $offset
      *
      * @return array
      */
@@ -178,7 +188,7 @@ class LineaAlbaranProveedor
         $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $l) {
-                $linealist[] = new LineaAlbaranProveedor($l);
+                $linealist[] = new self($l);
             }
         }
 
@@ -190,7 +200,7 @@ class LineaAlbaranProveedor
      *
      * @param string $codproveedor
      * @param string $query
-     * @param int $offset
+     * @param int    $offset
      *
      * @return array
      */
@@ -212,7 +222,7 @@ class LineaAlbaranProveedor
         $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $l) {
-                $linealist[] = new LineaAlbaranProveedor($l);
+                $linealist[] = new self($l);
             }
         }
 
@@ -221,6 +231,7 @@ class LineaAlbaranProveedor
 
     /**
      * TODO
+     *
      * @return int
      */
     public function countByArticulo()

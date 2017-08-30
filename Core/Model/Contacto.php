@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,11 +26,11 @@ namespace FacturaScripts\Core\Model;
  */
 class crm_contacto
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria.
+     *
      * @var type
      */
     public $codcontacto;
@@ -95,9 +96,9 @@ class crm_contacto
 
     public function estados()
     {
-        return array(
-            'nuevo', 'potencial', 'cliente', 'no interesado'
-        );
+        return [
+            'nuevo', 'potencial', 'cliente', 'no interesado',
+        ];
     }
 
     public function observaciones_resume()

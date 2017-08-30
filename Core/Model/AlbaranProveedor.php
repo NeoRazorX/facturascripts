@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,7 +30,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class AlbaranProveedor
 {
-
     use Base\DocumentoCompra;
     use Base\ModelTrait {
         clear as clearTrait;
@@ -37,18 +37,21 @@ class AlbaranProveedor
 
     /**
      * Clave primaria. Integer
+     *
      * @var int
      */
     public $idalbaran;
 
     /**
      * ID de la factura relacionada, si la hay.
+     *
      * @var int
      */
     public $idfactura;
 
     /**
      * TRUE => está pendiente de factura.
+     *
      * @var bool
      */
     public $ptefactura;
@@ -80,6 +83,7 @@ class AlbaranProveedor
 
     /**
      * Devuelve la url donde ver/modificar los datos de la factura
+     *
      * @return string
      */
     public function facturaUrl()
@@ -93,6 +97,7 @@ class AlbaranProveedor
 
     /**
      * Devuelve la url donde ver/modificar los datos de agentes
+     *
      * @return string
      */
     public function agenteUrl()
@@ -106,6 +111,7 @@ class AlbaranProveedor
 
     /**
      * Devuelve la url donde ver/modificar los datos de proveedores
+     *
      * @return string
      */
     public function proveedorUrl()
@@ -119,6 +125,7 @@ class AlbaranProveedor
 
     /**
      * Devuelve las líneas asociadas al albarán
+     *
      * @return array
      */
     public function getLineas()
@@ -141,6 +148,7 @@ class AlbaranProveedor
 
     /**
      * Comprueba los datos del albarán, devuelve TRUE si está correcto
+     *
      * @return bool
      */
     public function test()
@@ -314,6 +322,7 @@ class AlbaranProveedor
 
     /**
      * Elimina el albarán de la base de datos
+     *
      * @return bool
      */
     public function delete()
@@ -343,7 +352,7 @@ class AlbaranProveedor
     /**
      * Devuelve un array con los albaranes que coinciden con $query
      *
-     * @param string $query
+     * @param string  $query
      * @param integer $offset
      *
      * @return array
@@ -366,7 +375,7 @@ class AlbaranProveedor
         $data = $this->dataBase->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $a) {
-                $alblist[] = new AlbaranProveedor($a);
+                $alblist[] = new self($a);
             }
         }
 
@@ -405,7 +414,7 @@ class AlbaranProveedor
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $a) {
-                $albalist[] = new AlbaranProveedor($a);
+                $albalist[] = new self($a);
             }
         }
 
@@ -429,6 +438,7 @@ class AlbaranProveedor
      * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
      * que se ejecutará tras la creación de la tabla. útil para insertar valores
      * por defecto.
+     *
      * @return string
      */
     public function install()

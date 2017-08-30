@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,25 +26,27 @@ namespace FacturaScripts\Core\Model;
  */
 class Pais
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria. Varchar(3).
+     *
      * @var string Código alfa-3 del país.
-     * http://es.wikipedia.org/wiki/ISO_3166-1
+     *             http://es.wikipedia.org/wiki/ISO_3166-1
      */
     public $codpais;
 
     /**
      * Código alfa-2 del país.
      * http://es.wikipedia.org/wiki/ISO_3166-1
+     *
      * @var string
      */
     public $codiso;
 
     /**
      * Nombre del pais.
+     *
      * @var string
      */
     public $nombre;
@@ -60,15 +63,17 @@ class Pais
 
     /**
      * Devuelve TRUE si el pais es el predeterminado de la empresa
+     *
      * @return bool
      */
     public function isDefault()
     {
-        return ($this->codpais === $this->defaultItems->codPais());
+        return $this->codpais === $this->defaultItems->codPais();
     }
 
     /**
      * Comprueba los datos del pais, devuelve TRUE si son correctos
+     *
      * @return bool
      */
     public function test()
@@ -93,6 +98,7 @@ class Pais
 
     /**
      * Crea la consulta necesaria para crear los paises en la base de datos.
+     *
      * @return string
      */
     public function install()

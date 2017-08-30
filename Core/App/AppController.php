@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
 use DebugBar\Bridge\Twig;
@@ -38,27 +39,30 @@ use Twig_Loader_Filesystem;
  */
 class AppController extends App
 {
-
     /**
      * Controlador cargado.
+     *
      * @var Controller
      */
     private $controller;
 
     /**
      * PHDebugBar.
+     *
      * @var StandardDebugBar
      */
     private $debugBar;
 
     /**
      * Para gestionar el menú del usuario
+     *
      * @var MenuManager
      */
     private $menuManager;
 
     /**
      * AppController constructor.
+     *
      * @param string $folder
      */
     public function __construct($folder = '')
@@ -70,6 +74,7 @@ class AppController extends App
 
     /**
      * Selecciona y ejecuta el controlador pertinente.
+     *
      * @return boolean
      */
     public function run()
@@ -97,6 +102,7 @@ class AppController extends App
 
     /**
      * Carga y procesa el controlador $pageName.
+     *
      * @param string $pageName nombre del controlador
      */
     private function loadController($pageName)
@@ -154,7 +160,9 @@ class AppController extends App
     /**
      * Crea el HTML con la plantilla seleccionada. Aunque los datos no se volcarán
      * hasta ejecutar render()
-     * @param string $template archivo html a utilizar
+     *
+     * @param string $template       archivo html a utilizar
+     * @param mixed  $controllerName
      */
     private function renderHtml($template, $controllerName = '')
     {
@@ -180,7 +188,7 @@ class AppController extends App
             'log' => $this->miniLog,
             'menuManager' => $this->menuManager,
             'sql' => $this->miniLog->read(['sql']),
-            'template' => $template
+            'template' => $template,
         ];
 
         if (FS_DEBUG) {
@@ -208,6 +216,7 @@ class AppController extends App
 
     /**
      * TODO
+     *
      * @return User|false
      */
     private function userAuth()

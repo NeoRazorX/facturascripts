@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -25,15 +26,16 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 class GroupItem extends VisualItem implements VisualItemInterface
 {
-
     /**
      * Icono que se usa como valor o acompañante del título de grupo
+     *
      * @var string
      */
     public $icon;
 
     /**
      * Definición de columnas que incluye el grupo
+     *
      * @var array
      */
     public $columns;
@@ -63,13 +65,14 @@ class GroupItem extends VisualItem implements VisualItemInterface
 
             $this->columns[$key] = $columnItem;
             unset($columnItem);
-            $count++;
+            ++$count;
         }
         ksort($this->columns, SORT_STRING);
     }
 
     /**
      * Carga la estructura de atributos en base a un archivo XML
+     *
      * @param SimpleXMLElement $group
      */
     public function loadFromXML($group)
@@ -83,6 +86,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
 
     /**
      * Carga la estructura de atributos en base a la base de datos
+     *
      * @param SimpleXMLElement $group
      */
     public function loadFromJSON($group)
@@ -93,6 +97,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
 
     /**
      * Obtiene el código html para visualizar un icono
+     *
      * @return string
      */
     private function getIconHTML()
@@ -110,6 +115,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
 
     /**
      * Genera el código html para visualizar la cabecera del elemento visual
+     *
      * @param string $value
      */
     public function getHeaderHTML($value)

@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,30 +27,33 @@ namespace FacturaScripts\Core\Model;
  */
 class LineaPresupuestoCliente
 {
-
     use Base\LineaDocumento;
     use Base\ModelTrait;
 
     /**
      * ID del presupuesto.
+     *
      * @var integer
      */
     public $idpresupuesto;
 
     /**
      * Posición de la linea en el documento. Cuanto más alto más abajo.
+     *
      * @var type
      */
     public $orden;
 
     /**
      * False -> no se muestra la columna cantidad al imprimir.
+     *
      * @var type
      */
     public $mostrar_cantidad;
 
     /**
      * False -> no se muestran las columnas precio, descuento, impuestos y total al imprimir.
+     *
      * @var type
      */
     public $mostrar_precio;
@@ -159,11 +163,11 @@ class LineaPresupuestoCliente
         $totalsindto = $this->pvpunitario * $this->cantidad;
 
         if (!$this->floatcmp($this->pvptotal, $total, FS_NF0, TRUE)) {
-            $this->miniLog->critical("Error en el valor de pvptotal de la línea " . $this->referencia . " del " . FS_PRESUPUESTO . ". Valor correcto: " . $total);
+            $this->miniLog->critical('Error en el valor de pvptotal de la línea ' . $this->referencia . ' del ' . FS_PRESUPUESTO . '. Valor correcto: ' . $total);
 
             return FALSE;
         } elseif (!$this->floatcmp($this->pvpsindto, $totalsindto, FS_NF0, TRUE)) {
-            $this->miniLog->critical("Error en el valor de pvpsindto de la línea " . $this->referencia . " del " . FS_PRESUPUESTO . ". Valor correcto: " . $totalsindto);
+            $this->miniLog->critical('Error en el valor de pvpsindto de la línea ' . $this->referencia . ' del ' . FS_PRESUPUESTO . '. Valor correcto: ' . $totalsindto);
 
             return FALSE;
         }
@@ -173,28 +177,30 @@ class LineaPresupuestoCliente
 
     /**
      * Busca todas las coincidencias de $query en las líneas.
-     * @param string $query
+     *
+     * @param string  $query
      * @param integer $offset
+     *
      * @return \LineaPresupuestoCliente
      */
     public function search($query = '', $offset = 0)
     {
-        $linealist = array();
+        $linealist = [];
         $query = mb_strtolower($this->no_html($query), 'UTF8');
 
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE ";
+        $sql = 'SELECT * FROM ' . $this->table_name . ' WHERE ';
         if (is_numeric($query)) {
             $sql .= "referencia LIKE '%" . $query . "%' OR descripcion LIKE '%" . $query . "%'";
         } else {
             $buscar = str_replace(' ', '%', $query);
             $sql .= "lower(referencia) LIKE '%" . $buscar . "%' OR lower(descripcion) LIKE '%" . $buscar . "%'";
         }
-        $sql .= " ORDER BY idpresupuesto DESC, idlinea ASC";
+        $sql .= ' ORDER BY idpresupuesto DESC, idlinea ASC';
 
         $data = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
         if ($data) {
             foreach ($data as $l) {
-                $linealist[] = new LineaPresupuestoCliente($l);
+                $linealist[] = new self($l);
             }
         }
 
@@ -203,20 +209,22 @@ class LineaPresupuestoCliente
 
     /**
      * Busca todas las coincidencias de $query en las líneas del cliente $codcliente
-     * @param string $codcliente
-     * @param string $ref
-     * @param string $obs
+     *
+     * @param string  $codcliente
+     * @param string  $ref
+     * @param string  $obs
      * @param integer $offset
+     *
      * @return \LineaPresupuestoCliente
      */
     public function search_from_cliente2($codcliente, $ref = '', $obs = '', $offset = 0)
     {
-        $linealist = array();
+        $linealist = [];
         $ref = mb_strtolower($this->no_html($ref), 'UTF8');
         $obs = mb_strtolower($this->no_html($obs), 'UTF8');
 
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE idpresupuesto IN
-         (SELECT idpresupuesto FROM presupuestoscli WHERE codcliente = " . $this->var2str($codcliente) . "
+        $sql = 'SELECT * FROM ' . $this->table_name . ' WHERE idpresupuesto IN
+         (SELECT idpresupuesto FROM presupuestoscli WHERE codcliente = ' . $this->var2str($codcliente) . "
          AND lower(observaciones) LIKE '" . $obs . "%') AND ";
         if (is_numeric($ref)) {
             $sql .= "(referencia LIKE '%" . $ref . "%' OR descripcion LIKE '%" . $ref . "%')";
@@ -224,12 +232,12 @@ class LineaPresupuestoCliente
             $buscar = str_replace(' ', '%', $ref);
             $sql .= "(lower(referencia) LIKE '%" . $ref . "%' OR lower(descripcion) LIKE '%" . $ref . "%')";
         }
-        $sql .= " ORDER BY idpresupuesto DESC, idlinea ASC";
+        $sql .= ' ORDER BY idpresupuesto DESC, idlinea ASC';
 
         $data = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
         if ($data) {
             foreach ($data as $l) {
-                $linealist[] = new LineaPresupuestoCliente($l);
+                $linealist[] = new self($l);
             }
         }
 

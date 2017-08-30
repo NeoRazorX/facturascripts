@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,53 +26,60 @@ namespace FacturaScripts\Core\Model;
  */
 class Ejercicio
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria. Varchar(4).
+     *
      * @var string
      */
     public $codejercicio;
 
     /**
      * Nombre del ejercicio
+     *
      * @var string
      */
     public $nombre;
 
     /**
      * Fecha de inicio del ejercicio
+     *
      * @var string con formato fecha
      */
     public $fechainicio;
 
     /**
      * Fecha de fin del ejercicio
+     *
      * @var string con formato fecha
      */
     public $fechafin;
 
     /**
      * Estado del ejercicio: ABIERTO|CERRADO
+     *
      * @var string
      */
     public $estado;
 
     /**
      * ID del asiento de cierre del ejercicio.
+     *
      * @var int
      */
     public $idasientocierre;
 
     /**
      * ID del asiento de pérdidas y ganancias.
+     *
      * @var int
      */
     public $idasientopyg;
 
     /**
      * ID del asiento de apertura.
+     *
      * @var int
      */
     public $idasientoapertura;
@@ -79,12 +87,14 @@ class Ejercicio
     /**
      * Identifica el plan contable utilizado. Esto solamente es necesario
      * para dar compatibilidad con Eneboo. En FacturaScripts no se utiliza.
+     *
      * @var string
      */
     public $plancontable;
 
     /**
      * Longitud de caracteres de las subcuentas asignadas.
+     *
      * @var int
      */
     public $longsubcuenta;
@@ -118,15 +128,17 @@ class Ejercicio
 
     /**
      * Devuelve el estado del ejercicio ABIERTO->true | CERRADO->false
+     *
      * @return bool
      */
     public function abierto()
     {
-        return ($this->estado === 'ABIERTO');
+        return $this->estado === 'ABIERTO';
     }
 
     /**
      * Devuelve el valos del año del ejercicio
+     *
      * @return string en formato año
      */
     public function year()
@@ -159,18 +171,19 @@ class Ejercicio
 
     /**
      * Devuelve TRUE si este es el ejercicio predeterminado de la empresa
+     *
      * @return bool
      */
     public function isDefault()
     {
-        return ($this->codejercicio === $this->defaultItems->codEjercicio());
+        return $this->codejercicio === $this->defaultItems->codEjercicio();
     }
 
     /**
      * Devuelve la fecha más próxima a $fecha que esté dentro del intervalo de este ejercicio
      *
      * @param string $fecha
-     * @param bool $showError
+     * @param bool   $showError
      *
      * @return string
      */
@@ -202,8 +215,8 @@ class Ejercicio
      * Si no existe, lo crea.
      *
      * @param string $fecha
-     * @param bool $soloAbierto
-     * @param bool $crear
+     * @param bool   $soloAbierto
+     * @param bool   $crear
      *
      * @return bool|ejercicio
      */
@@ -214,12 +227,12 @@ class Ejercicio
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
-            $eje = new Ejercicio($data[0]);
+            $eje = new self($data[0]);
             if ($eje->abierto() || !$soloAbierto) {
                 return $eje;
             }
         } elseif ($crear) {
-            $eje = new Ejercicio();
+            $eje = new self();
             $eje->codejercicio = $eje->newCodigo(date('Y', strtotime($fecha)));
             $eje->nombre = date('Y', strtotime($fecha));
             $eje->fechainicio = date('1-1-Y', strtotime($fecha));
@@ -237,6 +250,7 @@ class Ejercicio
 
     /**
      * Comprueba los datos del ejercicio, devuelve TRUE si son correctos
+     *
      * @return bool
      */
     public function test()
@@ -264,6 +278,7 @@ class Ejercicio
 
     /**
      * Crea la consulta necesaria para dotar de datos a un ejercicio en la base de datos.
+     *
      * @return string
      */
     public function install()

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -27,7 +28,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class Proveedor extends Base\Persona
 {
-
     use Base\ModelTrait {
         __construct as private traitConstruct;
         clear as private traitClear;
@@ -36,6 +36,7 @@ class Proveedor extends Base\Persona
     /**
      * TRUE -> el proveedor es un acreedor, es decir, no le compramos mercancia,
      * le compramos servicios, etc.
+     *
      * @var bool
      */
     public $acreedor;
@@ -87,7 +88,7 @@ class Proveedor extends Base\Persona
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
-            return new Proveedor($data[0]);
+            return new self($data[0]);
         }
 
         return false;
@@ -95,6 +96,7 @@ class Proveedor extends Base\Persona
 
     /**
      * Devuelve las direcciones asociadas al proveedor.
+     *
      * @return DireccionProveedor[]
      */
     public function getDirecciones()
@@ -106,6 +108,7 @@ class Proveedor extends Base\Persona
 
     /**
      * Devuelve las subcuentas asociadas al proveedor, una para cada ejercicio.
+     *
      * @return Subcuenta[]
      */
     public function getSubcuentas()
@@ -170,12 +173,12 @@ class Proveedor extends Base\Persona
                 if ($scpro->save()) {
                     return $subcuenta;
                 }
-                
-                $this->miniLog->alert('Imposible asociar la subcuenta para el proveedor '. $this->codproveedor);
+
+                $this->miniLog->alert('Imposible asociar la subcuenta para el proveedor ' . $this->codproveedor);
 
                 return false;
             }
-            
+
             $this->miniLog->alert('Imposible crear la subcuenta para el proveedor ' . $this->codproveedor);
 
             return false;
@@ -189,6 +192,7 @@ class Proveedor extends Base\Persona
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function test()
@@ -223,7 +227,7 @@ class Proveedor extends Base\Persona
      * TODO
      *
      * @param string $query
-     * @param int $offset
+     * @param int    $offset
      *
      * @return array
      */
@@ -249,7 +253,7 @@ class Proveedor extends Base\Persona
         $data = $this->dataBase->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $d) {
-                $prolist[] = new Proveedor($d);
+                $prolist[] = new self($d);
             }
         }
 

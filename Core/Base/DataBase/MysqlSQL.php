@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
@@ -27,18 +28,19 @@ namespace FacturaScripts\Core\Base\DataBase;
  */
 class MysqlSQL implements DataBaseSQL
 {
-
     /**
      * Genera el SQL con el tipo de campo y las constraints DEFAULT y NULL
+     *
      * @param array $colData
+     *
      * @return string
      */
     private function getTypeAndConstraints($colData)
     {
         $type = stripos('integer,serial', $colData['tipo']) === FALSE ? strtolower($colData['tipo']) : FS_DB_INTEGER;
         switch (TRUE) {
-            case ($type == 'serial'):
-            case (stripos($colData['defecto'], 'nextval(') !== FALSE):
+            case $type == 'serial':
+            case stripos($colData['defecto'], 'nextval(') !== FALSE:
                 $contraints = ' NOT NULL AUTO_INCREMENT';
                 break;
 
@@ -53,6 +55,7 @@ class MysqlSQL implements DataBaseSQL
     /**
      *
      * @param array $colData
+     *
      * @return string
      */
     private function getConstraints($colData)
@@ -77,7 +80,9 @@ class MysqlSQL implements DataBaseSQL
 
     /**
      * Elimina código problemático de postgresql.
+     *
      * @param string $sql
+     *
      * @return string
      */
     private function fixPostgresql($sql)
@@ -90,7 +95,9 @@ class MysqlSQL implements DataBaseSQL
 
     /**
      * Devuelve el SQL necesario para convertir la columna a entero.
+     *
      * @param string $colName
+     *
      * @return string
      */
     public function sql2Int($colName)
@@ -102,6 +109,7 @@ class MysqlSQL implements DataBaseSQL
      * Devuleve el SQL para averiguar
      * el último ID asignado al hacer un INSERT
      * en la base de datos.
+     *
      * @return string
      */
     public function sqlLastValue()
@@ -112,7 +120,9 @@ class MysqlSQL implements DataBaseSQL
     /**
      * Devuelve el SQL para averiguar
      * la lista de las columnas de una tabla.
+     *
      * @param string $tableName
+     *
      * @return string
      */
     public function sqlColumns($tableName)
@@ -123,7 +133,9 @@ class MysqlSQL implements DataBaseSQL
     /**
      * Devuelve el SQL para averiguar
      * la lista de restricciones de una tabla.
+     *
      * @param string $tableName
+     *
      * @return string
      */
     public function sqlConstraints($tableName)
@@ -139,7 +151,9 @@ class MysqlSQL implements DataBaseSQL
     /**
      * Devuelve el SQL para averiguar
      * la lista de restricciones avanzadas de una tabla.
+     *
      * @param string $tableName
+     *
      * @return string
      */
     public function sqlConstraintsExtended($tableName)
@@ -168,7 +182,9 @@ class MysqlSQL implements DataBaseSQL
 
     /**
      * Genera el SQL para establecer las restricciones proporcionadas.
+     *
      * @param array $xmlCons
+     *
      * @return string
      */
     public function sqlTableConstraints($xmlCons)
@@ -184,7 +200,9 @@ class MysqlSQL implements DataBaseSQL
     /**
      * Devuelve el SQL para averiguar
      * la lista de indices de una tabla.
+     *
      * @param string $tableName
+     *
      * @return string
      */
     public function sqlIndexes($tableName)
@@ -194,9 +212,11 @@ class MysqlSQL implements DataBaseSQL
 
     /**
      * Devuelve la sentencia SQL necesaria para crear una tabla con la estructura proporcionada.
+     *
      * @param string $tableName
-     * @param array $columns
-     * @param array $constraints
+     * @param array  $columns
+     * @param array  $constraints
+     *
      * @return string
      */
     public function sqlCreateTable($tableName, $columns, $constraints)
@@ -215,8 +235,10 @@ class MysqlSQL implements DataBaseSQL
 
     /**
      * Sentencia SQL para añadir una columna a una tabla
+     *
      * @param string $tableName
-     * @param array $colData
+     * @param array  $colData
+     *
      * @return string
      */
     public function sqlAlterAddColumn($tableName, $colData)
@@ -229,8 +251,10 @@ class MysqlSQL implements DataBaseSQL
 
     /**
      * Sentencia SQL para modificar una columna de una tabla
+     *
      * @param string $tableName
-     * @param array $colData
+     * @param array  $colData
+     *
      * @return string
      */
     public function sqlAlterModifyColumn($tableName, $colData)
@@ -244,8 +268,10 @@ class MysqlSQL implements DataBaseSQL
 
     /**
      * Sentencia SQL para modificar una constraint de una tabla
+     *
      * @param string $tableName
-     * @param array $colData
+     * @param array  $colData
+     *
      * @return string
      */
     public function sqlAlterConstraintDefault($tableName, $colData)
@@ -260,8 +286,10 @@ class MysqlSQL implements DataBaseSQL
 
     /**
      * Sentencia SQL para modificar una constraint NULL de un campo de una tabla
+     *
      * @param string $tableName
-     * @param array $colData
+     * @param array  $colData
+     *
      * @return string
      */
     public function sqlAlterConstraintNull($tableName, $colData)
@@ -271,8 +299,10 @@ class MysqlSQL implements DataBaseSQL
 
     /**
      * Sentencia SQL para eliminar una constraint de una tabla
+     *
      * @param string $tableName
-     * @param array $colData
+     * @param array  $colData
+     *
      * @return string
      */
     public function sqlDropConstraint($tableName, $colData)
@@ -296,9 +326,11 @@ class MysqlSQL implements DataBaseSQL
 
     /**
      * Sentencia SQL para añadir una constraint a una tabla
+     *
      * @param string $tableName
      * @param string $constraintName
      * @param string $sql
+     *
      * @return string
      */
     public function sqlAddConstraint($tableName, $constraintName, $sql)
@@ -310,7 +342,9 @@ class MysqlSQL implements DataBaseSQL
 
     /**
      * Sentencia SQL para comprobar una secuencia
+     *
      * @param string $seqName
+     *
      * @return string
      */
     public function sqlSequenceExists($seqName)

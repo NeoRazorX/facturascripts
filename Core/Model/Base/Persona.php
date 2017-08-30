@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DefaultItems;
@@ -29,51 +30,58 @@ use FacturaScripts\Core\Lib\RegimenIVA;
  */
 abstract class Persona
 {
-
     /**
      * Identificador fiscal del cliente.
+     *
      * @var string
      */
     public $cifnif;
 
     /**
      * Empleado/agente asignado al cliente.
+     *
      * @var string
      */
     public $codagente;
 
     /**
      * Código identificador del cliente.
+     *
      * @var string
      */
     public $codcliente;
 
     /**
      * Divisa predeterminada para este cliente.
+     *
      * @var string
      */
     public $coddivisa;
 
     /**
      * Forma de pago predeterminada para este cliente.
+     *
      * @var string
      */
     public $codpago;
 
     /**
      * Código identificador del proveedor.
+     *
      * @var string
      */
     public $codproveedor;
 
     /**
      * Serie predeterminada para este cliente.
+     *
      * @var string
      */
     public $codserie;
 
     /**
      * TRUE -> el cliente ya no nos compra o no queremos nada con él.
+     *
      * @var boolean
      */
     public $debaja;
@@ -86,18 +94,21 @@ abstract class Persona
 
     /**
      * TODO
+     *
      * @var string
      */
     public $email;
 
     /**
      * Fecha en la que se dió de alta al cliente.
+     *
      * @var string
      */
     public $fechaalta;
 
     /**
      * Fecha en la que se dió de baja al cliente.
+     *
      * @var string
      */
     public $fechabaja;
@@ -110,12 +121,14 @@ abstract class Persona
 
     /**
      * Nombre por el que conocemos al cliente, no necesariamente el oficial.
+     *
      * @var string
      */
     public $nombre;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $observaciones;
@@ -123,12 +136,14 @@ abstract class Persona
     /**
      * TRUE  -> el cliente es una persona física.
      * FALSE -> el cliente es una persona jurídica (empresa).
+     *
      * @var boolean
      */
     public $personafisica;
 
     /**
      * Razón social del cliente, es decir, el nombre oficial. El que aparece en las facturas.
+     *
      * @var string
      */
     public $razonsocial;
@@ -136,6 +151,7 @@ abstract class Persona
     /**
      * Régimen de fiscalidad del proveedor. Por ahora solo están implementados
      * general y exento.
+     *
      * @var string
      */
     public $regimeniva;
@@ -148,12 +164,14 @@ abstract class Persona
 
     /**
      * TODO
+     *
      * @var string
      */
     public $telefono1;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $telefono2;
@@ -161,12 +179,14 @@ abstract class Persona
     /**
      * Tipo de identificador fiscal del cliente.
      * Ejemplos: CIF, NIF, CUIT...
+     *
      * @var string
      */
     public $tipoidfiscal;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $web;
@@ -213,6 +233,7 @@ abstract class Persona
 
     /**
      * Acorta el texto de observaciones
+     *
      * @return string
      */
     public function observacionesResume()
@@ -229,6 +250,7 @@ abstract class Persona
 
     /**
      * Devuelve un array con los regimenes de iva disponibles.
+     *
      * @return array
      */
     public function regimenesIVA()

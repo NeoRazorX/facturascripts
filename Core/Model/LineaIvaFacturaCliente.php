@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,59 +27,67 @@ namespace FacturaScripts\Core\Model;
  */
 class LineaIvaFacturaCliente
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria.
+     *
      * @var int
      */
     public $idlinea;
 
     /**
      * ID de la factura relacionada.
+     *
      * @var int
      */
     public $idfactura;
 
     /**
      * neto + totaliva + totalrecargo
+     *
      * @var float
      */
     public $totallinea;
 
     /**
      * Total de recargo de equivalencia para ese impuesto.
+     *
      * @var float
      */
     public $totalrecargo;
 
     /**
      * % de recargo de equivalencia del impuesto.
+     *
      * @var float
      */
     public $recargo;
 
     /**
      * Total de IVA para ese impuesto.
+     *
      * @var float
      */
     public $totaliva;
 
     /**
      * % de IVA del impuesto.
+     *
      * @var float
      */
     public $iva;
 
     /**
      * Código del impuesto relacionado.
+     *
      * @var string
      */
     public $codimpuesto;
 
     /**
      * Neto o base imponible para ese impuesto.
+     *
      * @var float
      */
     public $neto;
@@ -111,6 +120,7 @@ class LineaIvaFacturaCliente
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function test()
@@ -128,7 +138,7 @@ class LineaIvaFacturaCliente
     /**
      * TODO
      *
-     * @param int $idfactura
+     * @param int   $idfactura
      * @param float $neto
      * @param float $totaliva
      * @param float $totalrecargo
@@ -186,7 +196,7 @@ class LineaIvaFacturaCliente
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $lin) {
-                $linealist[] = new LineaIvaFacturaCliente($lin);
+                $linealist[] = new self($lin);
             }
         }
 

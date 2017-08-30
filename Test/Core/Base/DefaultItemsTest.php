@@ -7,7 +7,6 @@ namespace FacturaScripts\Core\Base;
  */
 class DefaultItemsTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var DefaultItems
      */
@@ -19,7 +18,7 @@ class DefaultItemsTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->object = new DefaultItems;
+        $this->object = new DefaultItems();
     }
 
     /**
@@ -28,11 +27,10 @@ class DefaultItemsTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\DefaultItems::codEjercicio
+     * @covers \FacturaScripts\Core\Base\DefaultItems::codEjercicio
      */
     public function testCodEjercicio()
     {
@@ -42,7 +40,7 @@ class DefaultItemsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\DefaultItems::codAlmacen
+     * @covers \FacturaScripts\Core\Base\DefaultItems::codAlmacen
      */
     public function testCodAlmacen()
     {
@@ -52,7 +50,7 @@ class DefaultItemsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\DefaultItems::codDivisa
+     * @covers \FacturaScripts\Core\Base\DefaultItems::codDivisa
      */
     public function testCodDivisa()
     {
@@ -62,7 +60,7 @@ class DefaultItemsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\DefaultItems::codPago
+     * @covers \FacturaScripts\Core\Base\DefaultItems::codPago
      */
     public function testCodPago()
     {
@@ -72,7 +70,7 @@ class DefaultItemsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\DefaultItems::codImpuesto
+     * @covers \FacturaScripts\Core\Base\DefaultItems::codImpuesto
      */
     public function testCodImpuesto()
     {
@@ -82,7 +80,7 @@ class DefaultItemsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\DefaultItems::codPais
+     * @covers \FacturaScripts\Core\Base\DefaultItems::codPais
      */
     public function testCodPais()
     {
@@ -92,7 +90,7 @@ class DefaultItemsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\DefaultItems::codSerie
+     * @covers \FacturaScripts\Core\Base\DefaultItems::codSerie
      */
     public function testCodSerie()
     {
@@ -102,7 +100,7 @@ class DefaultItemsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\DefaultItems::defaultPage
+     * @covers \FacturaScripts\Core\Base\DefaultItems::defaultPage
      */
     public function testDefaultPage()
     {
@@ -112,7 +110,7 @@ class DefaultItemsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\DefaultItems::showingPage
+     * @covers \FacturaScripts\Core\Base\DefaultItems::showingPage
      */
     public function testShowingPage()
     {

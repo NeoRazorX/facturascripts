@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -27,7 +28,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class Cliente extends Base\Persona
 {
-
     use Base\ModelTrait {
         __construct as private traitConstruct;
         clear as private traitClear;
@@ -35,12 +35,14 @@ class Cliente extends Base\Persona
 
     /**
      * Grupo al que pertenece el cliente.
+     *
      * @var string
      */
     public $codgrupo;
 
     /**
      * TRUE -> al cliente se le aplica recargo de equivalencia.
+     *
      * @var boolean
      */
     public $recargo;
@@ -48,6 +50,7 @@ class Cliente extends Base\Persona
     /**
      * Dias de pago preferidos a la hora de calcular el vencimiento de las facturas.
      * Días separados por comas: 1,15,31
+     *
      * @var string
      */
     public $diaspago;
@@ -107,7 +110,7 @@ class Cliente extends Base\Persona
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
-            return new Cliente($data[0]);
+            return new self($data[0]);
         }
 
         return false;
@@ -115,6 +118,7 @@ class Cliente extends Base\Persona
 
     /**
      * Devuelve un array con las direcciones asociadas al cliente.
+     *
      * @return DireccionCliente[]
      */
     public function getDirecciones()
@@ -127,6 +131,7 @@ class Cliente extends Base\Persona
     /**
      * Devuelve un array con todas las subcuentas asociadas al cliente.
      * Una para cada ejercicio.
+     *
      * @return Subcuenta[]
      */
     public function getSubcuentas()
@@ -200,6 +205,7 @@ class Cliente extends Base\Persona
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function test()
@@ -254,7 +260,7 @@ class Cliente extends Base\Persona
      * TODO
      *
      * @param string $query
-     * @param int $offset
+     * @param int    $offset
      *
      * @return array
      */
@@ -280,7 +286,7 @@ class Cliente extends Base\Persona
         $data = $this->dataBase->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $d) {
-                $clilist[] = new Cliente($d);
+                $clilist[] = new self($d);
             }
         }
 

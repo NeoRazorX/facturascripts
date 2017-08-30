@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,12 +26,12 @@ namespace FacturaScripts\Core\Model;
  */
 class CuentaBanco
 {
-
     use Base\ModelTrait;
     use Base\BankAccount;
 
     /**
      * Clave primaria. Varchar (6).
+     *
      * @var string
      */
     public $codcuenta;
@@ -38,6 +39,7 @@ class CuentaBanco
 
     /**
      * Código de la subcuenta de contabilidad
+     *
      * @var string
      */
     public $codsubcuenta;
@@ -54,12 +56,13 @@ class CuentaBanco
 
     /**
      * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     *
      * @return boolean
      */
     public function test()
     {
         if (!$this->testBankAccount()) {
-            $this->miniLog->alert("Error grave: Los datos bancarios son incorrectos");
+            $this->miniLog->alert('Error grave: Los datos bancarios son incorrectos');
 
             return FALSE;
         }

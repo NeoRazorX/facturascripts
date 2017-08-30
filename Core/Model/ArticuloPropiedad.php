@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,23 +27,25 @@ namespace FacturaScripts\Core\Model;
  */
 class ArticuloPropiedad
 {
-
     use Base\ModelTrait;
 
     /**
      * Nombre de la propiedad
+     *
      * @var string
      */
     public $name;
 
     /**
      * Referencia
+     *
      * @var string
      */
     public $referencia;
 
     /**
      * Texto de la propiedad
+     *
      * @var string
      */
     public $text;
@@ -83,7 +86,7 @@ class ArticuloPropiedad
      * Guarda en la base de datos los pares name => text de propiedades de un artículo
      *
      * @param string $ref
-     * @param array $values
+     * @param array  $values
      *
      * @return bool
      */
@@ -92,7 +95,7 @@ class ArticuloPropiedad
         $done = true;
 
         foreach ($values as $key => $value) {
-            $aux = new ArticuloPropiedad();
+            $aux = new self();
             $aux->name = $key;
             $aux->referencia = $ref;
             $aux->text = $value;

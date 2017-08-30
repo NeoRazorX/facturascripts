@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 use DebugBar\DataCollector\AssetProvider;
@@ -29,7 +30,6 @@ use DebugBar\DataCollector\Renderable;
  */
 class DataBaseCollector extends DataCollector implements Renderable, AssetProvider
 {
-
     /**
      * Array con las consultas realizadas
      *
@@ -60,7 +60,7 @@ class DataBaseCollector extends DataCollector implements Renderable, AssetProvid
             $queries[] = [
                 'sql' => $q['message'],
                 'duration' => 0,
-                'duration_str' => 0
+                'duration_str' => 0,
             ];
             $totalExecTime += 0;
         }
@@ -68,7 +68,7 @@ class DataBaseCollector extends DataCollector implements Renderable, AssetProvid
         return [
             'nb_statements' => count($queries),
             'accumulated_duration' => $totalExecTime,
-            'statements' => $queries
+            'statements' => $queries,
         ];
     }
 
@@ -93,15 +93,15 @@ class DataBaseCollector extends DataCollector implements Renderable, AssetProvid
         return [
             'database' => [
                 'icon' => 'database',
-                "tooltip" => "Database",
+                'tooltip' => 'Database',
                 'widget' => 'PhpDebugBar.Widgets.SQLQueriesWidget',
                 'map' => 'db',
-                'default' => '[]'
+                'default' => '[]',
             ],
             'database:badge' => [
                 'map' => 'db.nb_statements',
-                'default' => 0
-            ]
+                'default' => 0,
+            ],
         ];
     }
 
@@ -116,7 +116,7 @@ class DataBaseCollector extends DataCollector implements Renderable, AssetProvid
 
         return [
             'css' => $basePath . 'Core/View/CSS/phpdebugbar.custom-widget.css',
-            'js' => $basePath . 'Core/View/JS/phpdebugbar.custom-widget.js'
+            'js' => $basePath . 'Core/View/JS/phpdebugbar.custom-widget.js',
         ];
     }
 }

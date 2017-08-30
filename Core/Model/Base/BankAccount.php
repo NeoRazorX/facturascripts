@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 /**
@@ -27,28 +28,32 @@ namespace FacturaScripts\Core\Model\Base;
  */
 trait BankAccount
 {
-
     /**
      * Cuenta bancaria
+     *
      * @var string
      */
     public $ccc;
 
     /**
      * Cuenta bancaria formato internacional
+     *
      * @var string
      */
     public $iban;
 
     /**
      * Identificativo bancario internacional del banco y entidad
+     *
      * @var string
      */
     public $swift;
 
     /**
      * Devuelve el CCC con o sin espacios.
+     *
      * @param boolean $espacios
+     *
      * @return string
      */
     public function getCcc($espacios = FALSE)
@@ -66,7 +71,9 @@ trait BankAccount
 
     /**
      * Devuelve el IBAN con o sin espacios.
+     *
      * @param boolean $espacios
+     *
      * @return string
      */
     public function getIban($espacios = FALSE)
@@ -96,6 +103,7 @@ trait BankAccount
 
     /**
      * Comprueba los datos bancarios informados
+     *
      * @return boolean
      */
     public function testBankAccount()
@@ -103,13 +111,15 @@ trait BankAccount
         $ibanOK = (empty($this->iban) || $this->verificarIBAN($this->iban));
         $cccOK = (empty($this->ccc) || $this->verificarCCC($this->ccc));
 
-        return ($ibanOK && $cccOK);
+        return $ibanOK && $cccOK;
     }
 
     /**
      * Calcula el IBAN a partir de la cuenta bancaria
+     *
      * @param string $ccc
      * @param string $codpais
+     *
      * @return string
      */
     private function calcularIBAN($ccc, $codpais = '')
@@ -118,7 +128,7 @@ trait BankAccount
         $pesos = ['A' => '10', 'B' => '11', 'C' => '12', 'D' => '13', 'E' => '14', 'F' => '15',
             'G' => '16', 'H' => '17', 'I' => '18', 'J' => '19', 'K' => '20', 'L' => '21', 'M' => '22',
             'N' => '23', 'O' => '24', 'P' => '25', 'Q' => '26', 'R' => '27', 'S' => '28', 'T' => '29',
-            'U' => '30', 'V' => '31', 'W' => '32', 'X' => '33', 'Y' => '34', 'Z' => '35'
+            'U' => '30', 'V' => '31', 'W' => '32', 'X' => '33', 'Y' => '34', 'Z' => '35',
         ];
 
         $dividendo = $ccc . $pesos[substr($pais, 0, 1)] . $pesos[substr($pais, 1, 1)] . '00';
@@ -133,14 +143,16 @@ trait BankAccount
 
     /**
      * Calcula el DC para la cadena en base 11 con los pesos indicados
+     *
      * @param string $cadena
-     * @param array $pesos
+     * @param array  $pesos
+     *
      * @return string
      */
     private function calcularDC($cadena, $pesos)
     {
         $totPeso = 0;
-        for ($i = 0; $i < strlen($cadena); $i++) {
+        for ($i = 0; $i < strlen($cadena); ++$i) {
             $val = intval(substr($cadena, $i, 1));
             $totPeso += ($pesos[$i] * $val);
         }
@@ -161,9 +173,11 @@ trait BankAccount
 
     /**
      * Calcula la cuenta bancaria para una entidad, banco y cuenta
+     *
      * @param string $entidad
      * @param string $oficina
      * @param string $cuenta
+     *
      * @return string
      */
     private function calcularCCC($entidad, $oficina, $cuenta)
@@ -181,7 +195,9 @@ trait BankAccount
 
     /**
      * Comprueba si los DC de una cuenta bancaria son correctos
+     *
      * @param string $ccc
+     *
      * @return boolean
      */
     public function verificarCCC($ccc)
@@ -194,12 +210,14 @@ trait BankAccount
         $oficina = substr($ccc, 4, 4);
         $cuenta = substr($ccc, 10, 10);
 
-        return ($ccc == $this->calcularCCC($entidad, $oficina, $cuenta));
+        return $ccc == $this->calcularCCC($entidad, $oficina, $cuenta);
     }
 
     /**
      * Comprueba si los DC de un IBAN son correctos
+     *
      * @param string $iban
+     *
      * @return boolean
      */
     public function verificarIBAN($iban)
@@ -211,6 +229,6 @@ trait BankAccount
         $codpais = substr($iban, 0, 2);
         $ccc = substr($iban, -20);
 
-        return ($iban == $this->calcularIBAN($ccc, $codpais));
+        return $iban == $this->calcularIBAN($ccc, $codpais);
     }
 }

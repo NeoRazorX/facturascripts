@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,173 +27,200 @@ namespace FacturaScripts\Core\Model;
  */
 class Partida
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria.
+     *
      * @var int
      */
     public $idpartida;
 
     /**
      * ID del asiento relacionado.
+     *
      * @var int
      */
     public $idasiento;
 
     /**
      * ID de la subcuenta relacionada.
+     *
      * @var int
      */
     public $idsubcuenta;
 
     /**
      * Código, que no ID, de la subcuenta relacionada.
+     *
      * @var string
      */
     public $codsubcuenta;
 
     /**
      * TODO
+     *
      * @var int
      */
     public $idconcepto;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $concepto;
 
     /**
      * TODO
+     *
      * @var int
      */
     public $idcontrapartida;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $codcontrapartida;
 
     /**
      * TODO
+     *
      * @var
      */
     public $punteada;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $tasaconv;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $coddivisa;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $haberme;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $debeme;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $recargo;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $iva;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $baseimponible;
 
     /**
      * TODO
+     *
      * @var
      */
     public $factura;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $codserie;
 
     /**
      * TODO
+     *
      * @var
      */
     public $tipodocumento;
 
     /**
      * TODO
+     *
      * @var
      */
     public $documento;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $cifnif;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $haber;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $debe;
 
     /**
      * TODO
+     *
      * @var int
      */
     public $numero;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $fecha;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $saldo;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $sum_debe;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $sum_haber;
@@ -244,6 +272,7 @@ class Partida
 
     /**
      * TODO
+     *
      * @return bool|mixed
      */
     public function getSubcuenta()
@@ -255,6 +284,7 @@ class Partida
 
     /**
      * TODO
+     *
      * @return string
      */
     public function subcuentaUrl()
@@ -269,6 +299,7 @@ class Partida
 
     /**
      * TODO
+     *
      * @return bool|mixed
      */
     public function getContrapartida()
@@ -283,6 +314,7 @@ class Partida
 
     /**
      * TODO
+     *
      * @return string
      */
     public function contrapartidaUrl()
@@ -306,6 +338,7 @@ class Partida
 
     /**
      * Elimina los datos del registro de la base de datos
+     *
      * @return bool
      */
     public function delete()
@@ -340,7 +373,7 @@ class Partida
 
         $ordenadas = $this->dataBase->select($sql);
         if (!empty($ordenadas)) {
-            $partida = new Partida();
+            $partida = new self();
             $i = 0;
             $saldo = 0;
             $sumDebe = 0;
@@ -360,7 +393,7 @@ class Partida
                         $plist[] = $aux;
                     }
                 }
-                $i++;
+                ++$i;
             }
         }
 
@@ -385,7 +418,7 @@ class Partida
         $sumDebe = 0;
         $sumHaber = 0;
 
-        $partida = new Partida();
+        $partida = new self();
         $offset = 0;
         $data = $this->dataBase->selectLimit($sql, 100, $offset);
         while (!empty($data)) {
@@ -403,7 +436,7 @@ class Partida
                     $plist[] = $aux;
                 }
 
-                $offset++;
+                ++$offset;
             }
 
             $data = $this->dataBase->selectLimit($sql, 100, $offset);
@@ -416,8 +449,8 @@ class Partida
      * TODO
      *
      * @param string $eje
-     * @param int $offset
-     * @param int $limit
+     * @param int    $offset
+     * @param int    $limit
      *
      * @return array
      */
@@ -508,10 +541,10 @@ class Partida
     /**
      * TODO
      *
-     * @param int $idsubc
+     * @param int    $idsubc
      * @param string $fechaini
      * @param string $fechafin
-     * @param bool $excluir
+     * @param bool   $excluir
      *
      * @return array
      */

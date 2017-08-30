@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,24 +26,26 @@ namespace FacturaScripts\Core\Model;
  */
 class DireccionProveedor
 {
-
     use Base\ModelTrait;
     use Base\Direccion;
 
     /**
      * Clave primaria.
+     *
      * @var integer
      */
     public $id;
 
     /**
      * Código del proveedor asociado.
+     *
      * @var string
      */
     public $codproveedor;
 
     /**
      * TRUE -> dirección principal
+     *
      * @var boolean
      */
     public $direccionppal;
@@ -77,6 +80,7 @@ class DireccionProveedor
 
     /**
      * Almacena los datos del modelo en la base de datos.
+     *
      * @return bool
      */
     public function save()

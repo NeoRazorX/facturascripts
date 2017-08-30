@@ -7,7 +7,6 @@ namespace FacturaScripts\Core\App;
  */
 class AppControllerTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var AppController
      */
@@ -28,7 +27,6 @@ class AppControllerTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        
     }
 
     public function testConnect()
@@ -37,7 +35,7 @@ class AppControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\App\AppController::run
+     * @covers \FacturaScripts\Core\App\AppController::run
      */
     public function testRun()
     {

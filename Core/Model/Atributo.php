@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,19 +26,20 @@ namespace FacturaScripts\Core\Model;
  */
 class Atributo
 {
-
     use Base\ModelTrait {
         save as private saveTrait;
     }
 
     /**
      * Clave primaria.
+     *
      * @var string
      */
     public $codatributo;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $nombre;
@@ -54,6 +56,7 @@ class Atributo
 
     /**
      * TODO
+     *
      * @return array
      */
     public function valores()
@@ -67,7 +70,7 @@ class Atributo
      * TODO
      *
      * @param string $nombre
-     * @param bool $minusculas
+     * @param bool   $minusculas
      *
      * @return Atributo|bool
      */
@@ -82,7 +85,7 @@ class Atributo
         $data = $this->dataBase->select($sql);
 
         if (!empty($data)) {
-            return new Atributo($data[0]);
+            return new self($data[0]);
         }
 
         return false;
@@ -90,6 +93,7 @@ class Atributo
 
     /**
      * Almacena los datos del modelo en la base de datos.
+     *
      * @return bool
      */
     public function save()

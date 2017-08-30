@@ -16,10 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * El cuarto nivel de un plan contable. Está relacionada con una única cuenta.
@@ -28,83 +28,95 @@ use FacturaScripts\Core\Base\Utils;
  */
 class Subcuenta
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria.
+     *
      * @var int
      */
     public $idsubcuenta;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $codsubcuenta;
 
     /**
      * ID de la cuenta a la que pertenece.
+     *
      * @var int
      */
     public $idcuenta;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $codcuenta;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $codejercicio;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $coddivisa;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $codimpuesto;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $descripcion;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $haber;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $debe;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $saldo;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $recargo;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $iva;
@@ -141,6 +153,7 @@ class Subcuenta
 
     /**
      * TODO
+     *
      * @return int
      */
     public function tasaconv()
@@ -158,6 +171,7 @@ class Subcuenta
 
     /**
      * TODO
+     *
      * @return bool|mixed
      */
     public function getCuenta()
@@ -169,6 +183,7 @@ class Subcuenta
 
     /**
      * TODO
+     *
      * @return bool|mixed
      */
     public function getEjercicio()
@@ -194,6 +209,7 @@ class Subcuenta
 
     /**
      * TODO
+     *
      * @return array
      */
     public function getPartidasFull()
@@ -205,6 +221,7 @@ class Subcuenta
 
     /**
      * TODO
+     *
      * @return int
      */
     public function countPartidas()
@@ -216,6 +233,7 @@ class Subcuenta
 
     /**
      * TODO
+     *
      * @return array
      */
     public function getTotales()
@@ -230,7 +248,7 @@ class Subcuenta
      *
      * @param string $cod
      * @param string $codejercicio
-     * @param bool $crear
+     * @param bool   $crear
      *
      * @return bool|Subcuenta
      */
@@ -247,7 +265,7 @@ class Subcuenta
                 $cuentaModel = new Cuenta();
                 $newC = $cuentaModel->getByCodigo($oldSc->codcuenta, $codejercicio);
                 if ($newC) {
-                    $newSc = new Subcuenta();
+                    $newSc = new self();
                     $newSc->codcuenta = $newC->codcuenta;
                     $newSc->coddivisa = $oldSc->coddivisa;
                     $newSc->codejercicio = $codejercicio;
@@ -284,7 +302,7 @@ class Subcuenta
      * Devuelve la primera subcuenta del ejercicio $codeje cuya cuenta madre
      * está marcada como cuenta especial $id.
      *
-     * @param int $idcuesp
+     * @param int    $idcuesp
      * @param string $codeje
      *
      * @return Subcuenta|bool
@@ -297,7 +315,7 @@ class Subcuenta
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
-            return new Subcuenta($data[0]);
+            return new self($data[0]);
         }
 
         return false;
@@ -305,6 +323,7 @@ class Subcuenta
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function tieneSaldo()
@@ -314,6 +333,7 @@ class Subcuenta
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function test()
@@ -354,7 +374,7 @@ class Subcuenta
      * Devuelve las subcuentas del ejercicio $codeje cuya cuenta madre
      * está marcada como cuenta especial $id.
      *
-     * @param int $idcuesp
+     * @param int    $idcuesp
      * @param string $codeje
      *
      * @return array
@@ -369,7 +389,7 @@ class Subcuenta
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
-                $cuentas[] = new Subcuenta($d);
+                $cuentas[] = new self($d);
             }
         }
 
@@ -395,7 +415,7 @@ class Subcuenta
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $s) {
-                $sublist[] = new Subcuenta($s);
+                $sublist[] = new self($s);
             }
         }
 
@@ -424,7 +444,7 @@ class Subcuenta
             $data = $this->dataBase->select($sql);
             if (!empty($data)) {
                 foreach ($data as $s) {
-                    $sublist[] = new Subcuenta($s);
+                    $sublist[] = new self($s);
                 }
             }
 

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -27,37 +28,41 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class Articulo
 {
-
     use Base\ModelTrait {
         clear as clearTrait;
     }
 
     /**
      * TODO
+     *
      * @var array
      */
     private static $impuestos;
 
     /**
      * TODO
+     *
      * @var array
      */
     private static $search_tags;
 
     /**
      * TODO
+     *
      * @var
      */
     private static $cleaned_cache;
 
     /**
      * TODO
+     *
      * @var array
      */
     private static $column_list;
 
     /**
      * Clave primaria. Varchar (18).
+     *
      * @var string
      */
     public $referencia;
@@ -65,30 +70,35 @@ class Articulo
     /**
      * Define el tipo de artículo, así se pueden establecer distinciones
      * según un tipo u otro. Varchar (10)
+     *
      * @var string
      */
     public $tipo;
 
     /**
      * Código de la familia a la que pertenece. En la clase familia.
+     *
      * @var string
      */
     public $codfamilia;
 
     /**
      * Descripción del artículo. Tipo text, sin límite de caracteres.
+     *
      * @var string
      */
     public $descripcion;
 
     /**
      * Código del fabricante al que pertenece. En la clase fabricante.
+     *
      * @var string
      */
     public $codfabricante;
 
     /**
      * Precio del artículo, sin impuestos.
+     *
      * @var float
      */
     public $pvp;
@@ -97,18 +107,21 @@ class Articulo
      * Almacena el valor del pvp antes de hacer el cambio.
      * Este valor no se almacena en la base de datos, es decir,
      * no se recuerda.
+     *
      * @var float
      */
     public $pvp_ant;
 
     /**
      * Fecha de actualización del pvp.
-    * @var string
+     *
+     * @var string
      */
     public $factualizado;
 
     /**
      * Coste medio al comprar el artículo. Calculado.
+     *
      * @var float
      */
     public $costemedio;
@@ -117,36 +130,42 @@ class Articulo
      * Precio de coste editado manualmente.
      * No necesariamente es el precio de compra, puede incluir
      * también otros costes.
+     *
      * @var float
      */
     public $preciocoste;
 
     /**
      * Impuesto asignado. Clase impuesto.
+     *
      * @var string
      */
     public $codimpuesto;
 
     /**
      * TRUE => el artículos está bloqueado / obsoleto.
+     *
      * @var bool
      */
     public $bloqueado;
 
     /**
      * TRUE => el artículo se compra
+     *
      * @var bool
      */
     public $secompra;
 
     /**
      * TRUE => el artículo se vende
+     *
      * @var bool
      */
     public $sevende;
 
     /**
      * TRUE -> se mostrará sincronizará con la tienda online.
+     *
      * @var bool
      */
     public $publico;
@@ -154,30 +173,35 @@ class Articulo
     /**
      * Código de equivalencia. Varchar (18).
      * Dos artículos o más son equivalentes si tienen el mismo código de equivalencia.
+     *
      * @var string
      */
     public $equivalencia;
 
     /**
      * Partnumber del producto. Máximo 38 caracteres.
+     *
      * @var string
      */
     public $partnumber;
 
     /**
      * Stock físico. La suma de las cantidades de esta referencia que en la tabla stocks.
+     *
      * @var float
      */
     public $stockfis;
 
     /**
      * El stock mínimo que debe haber
+     *
      * @var float
      */
     public $stockmin;
 
     /**
      * El stock máximo que debe haber
+     *
      * @var float
      */
     public $stockmax;
@@ -188,6 +212,7 @@ class Articulo
      * implique la ausencia de control de stock. Pero es una cagada de
      * FacturaLux -> Abanq -> Eneboo, y por motivos de compatibilidad
      * se mantiene.
+     *
      * @var bool
      */
     public $controlstock;
@@ -195,54 +220,63 @@ class Articulo
     /**
      * TRUE -> no controlar el stock.
      * Activarlo implica poner a TRUE $controlstock;
+     *
      * @var bool
      */
     public $nostock;
 
     /**
      * Código de barras.
+     *
      * @var string
      */
     public $codbarras;
 
     /**
      * Observaciones del artículo
+     *
      * @var string
      */
     public $observaciones;
 
     /**
      * Código de la subcuenta para compras.
+     *
      * @var string
      */
     public $codsubcuentacom;
 
     /**
      * Código para la subcuenta de compras, pero con IRPF.
+     *
      * @var string
      */
     public $codsubcuentairpfcom;
 
     /**
      * Control de trazabilidad.
+     *
      * @var bool
      */
     public $trazabilidad;
 
     /**
      * % IVA del impuesto asignado.
+     *
      * @var float
      */
     private $iva;
 
     /**
      * Ruta a la imagen
+     *
      * @var string
      */
     private $imagen;
 
     /**
      * TODO
+     *
      * @var bool
      */
     private $exists;
@@ -261,6 +295,7 @@ class Articulo
      * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
      * que se ejecutará tras la creación de la tabla. útil para insertar valores
      * por defecto.
+     *
      * @return string
      */
     public function install()
@@ -279,7 +314,7 @@ class Articulo
 
         return '';
     }
-    
+
     /**
      * Resetea los valores de todas las propiedades modelo.
      */
@@ -310,6 +345,7 @@ class Articulo
 
     /**
      * Devuelve el PVP con IVA
+     *
      * @return float
      */
     public function pvpIva()
@@ -319,6 +355,7 @@ class Articulo
 
     /**
      * Devuelve el precio de coste, ya esté configurado como calculado o editable.
+     *
      * @return float
      */
     public function preciocoste()
@@ -332,6 +369,7 @@ class Articulo
 
     /**
      * Devuelve el precio de coste con IVA
+     *
      * @return float
      */
     public function preciocosteIva()
@@ -383,6 +421,7 @@ class Articulo
 
     /**
      * Devuelve la familia del artículo.
+     *
      * @return bool|Familia
      */
     public function getFamilia()
@@ -397,6 +436,7 @@ class Articulo
 
     /**
      * Devuelve el fabricante del artículo.
+     *
      * @return bool|Fabricante
      */
     public function getFabricante()
@@ -411,6 +451,7 @@ class Articulo
 
     /**
      * Devuelve el stock del artículo
+     *
      * @return array
      */
     public function getStock()
@@ -425,6 +466,7 @@ class Articulo
 
     /**
      * Devuelve el impuesto del artículo
+     *
      * @return bool|Impuesto
      */
     public function getImpuesto()
@@ -476,6 +518,7 @@ class Articulo
 
     /**
      * Devuelve la url relativa de la imagen del artículo.
+     *
      * @return string|false
      */
     public function imagenUrl()
@@ -494,7 +537,7 @@ class Articulo
      * Asigna una imagen a un artículo.
      *
      * @param string $img
-     * @param bool $png
+     * @param bool   $png
      */
     public function setImagen($img, $png = true)
     {
@@ -613,7 +656,7 @@ class Articulo
      * Modifica el stock del artículo en un almacén concreto.
      * Ya se encarga de ejecutar save() si es necesario.
      *
-     * @param string $codalmacen
+     * @param string  $codalmacen
      * @param integer $cantidad
      *
      * @return bool
@@ -673,10 +716,10 @@ class Articulo
      * Suma la cantidad especificada al stock del artículo en el almacén especificado.
      * Ya se encarga de ejecutar save() si es necesario.
      *
-     * @param string $codalmacen
+     * @param string  $codalmacen
      * @param integer $cantidad
-     * @param bool $recalculaCoste
-     * @param string $codcombinacion
+     * @param bool    $recalculaCoste
+     * @param string  $codcombinacion
      *
      * @return bool
      */
@@ -763,6 +806,7 @@ class Articulo
 
     /**
      * Devuelve TRUE  si los datos del artículo son correctos.
+     *
      * @return bool
      */
     public function test()
@@ -806,6 +850,7 @@ class Articulo
 
     /**
      * Elimina el artículo de la base de datos.
+     *
      * @return bool
      */
     public function delete()
@@ -827,6 +872,7 @@ class Articulo
 
     /**
      * TODO
+     *
      * @return mixed
      */
     public function getSearchTags()
@@ -841,12 +887,12 @@ class Articulo
     /**
      * Devuelve un array con los artículos encontrados en base a la búsqueda.
      *
-     * @param string $query
+     * @param string  $query
      * @param integer $offset
-     * @param string $codfamilia
-     * @param bool $conStock
-     * @param string $codfabricante
-     * @param bool $bloqueados
+     * @param string  $codfamilia
+     * @param bool    $conStock
+     * @param string  $codfabricante
+     * @param bool    $bloqueados
      *
      * @return Articulo
      */
@@ -938,7 +984,7 @@ class Articulo
             $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
             if (!empty($data)) {
                 foreach ($data as $a) {
-                    $artilist[] = new Articulo($a);
+                    $artilist[] = new self($a);
                 }
             }
         }
@@ -950,8 +996,8 @@ class Articulo
      * Devuelve un array con los artículos que tengan $cod como código de barras.
      *
      * @param string $cod
-     * @param int $offset
-     * @param int $limit
+     * @param int    $offset
+     * @param int    $limit
      *
      * @return array
      */
@@ -965,7 +1011,7 @@ class Articulo
         $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
             foreach ($data as $d) {
-                $artilist[] = new Articulo($d);
+                $artilist[] = new self($d);
             }
         }
 
@@ -1010,7 +1056,7 @@ class Articulo
             . ' AND codfabricante NOT IN (SELECT codfabricante FROM fabricantes);',
             /// desvinculamos de familias que no existan
             'UPDATE ' . $this->tableName() . ' SET codfamilia = null WHERE codfamilia IS NOT NULL'
-            . ' AND codfamilia NOT IN (SELECT codfamilia FROM familias);'
+            . ' AND codfamilia NOT IN (SELECT codfamilia FROM familias);',
         ];
         foreach ($fixes as $sql) {
             $this->dataBase->exec($sql);
@@ -1039,7 +1085,7 @@ class Articulo
                 if ($value['tag'] === $tag) {
                     $encontrado = true;
                     if (time() + 5400 > $value['expires'] + 300) {
-                        self::$search_tags[$i]['count'] ++;
+                        ++self::$search_tags[$i]['count'];
                         self::$search_tags[$i]['expires'] = time() + (self::$search_tags[$i]['count'] * 5400);
                         $actualizar = true;
                     }

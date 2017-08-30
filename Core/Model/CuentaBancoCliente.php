@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Model;
  */
 class CuentaBancoCliente
 {
-
     use Base\ModelTrait {
         save as private saveTrait;
     }
@@ -34,30 +34,35 @@ class CuentaBancoCliente
 
     /**
      * Clave primaria. Varchar(6).
+     *
      * @var int
      */
     public $codcuenta;
 
     /**
      * Código del cliente.
+     *
      * @var string
      */
     public $codcliente;
 
     /**
      * Identificación descriptiva para humanos
+     *
      * @var string
      */
     public $descripcion;
 
     /**
      * ¿Es la cuenta principal del cliente?
+     *
      * @var boolean
      */
     public $principal;
 
     /**
      * Fecha en la que se firmó el mandato para autorizar la domiciliación de recibos.
+     *
      * @var string
      */
     public $fmandato;
@@ -87,6 +92,7 @@ class CuentaBancoCliente
 
     /**
      * Almacena los datos del modelo en la base de datos.
+     *
      * @return bool
      */
     public function save()
@@ -116,13 +122,14 @@ class CuentaBancoCliente
 
     /**
      * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     *
      * @return boolean
      */
     public function test()
     {
         $this->descripcion = self::noHtml($this->descripcion);
         if (!$this->testBankAccount()) {
-            $this->miniLog->alert("Error grave: Los datos bancarios son incorrectos");
+            $this->miniLog->alert('Error grave: Los datos bancarios son incorrectos');
 
             return FALSE;
         }

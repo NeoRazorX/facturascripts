@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
@@ -29,27 +30,30 @@ use mysqli;
  */
 class Mysql implements DataBaseEngine
 {
-
     /**
      * El enlace con las utilidades comunes entre motores de base de datos.
+     *
      * @var DataBaseUtils
      */
     private $utils;
 
     /**
      * Enlace al conjunto de sentencias SQL de la base de datos conectada
+     *
      * @var DataBaseSQL;
      */
     private $utilsSQL;
 
     /**
      * Relacion de Transacciones abiertas.
+     *
      * @var array
      */
     private $transactions;
 
     /**
      * Ultimo mensaje de error
+     *
      * @var string
      */
     private $lastErrorMsg;
@@ -85,6 +89,7 @@ class Mysql implements DataBaseEngine
 
     /**
      * Borra de la lista la transaccion indicada
+     *
      * @param mysqli $link
      */
     private function unsetTransaction($link)
@@ -95,13 +100,15 @@ class Mysql implements DataBaseEngine
                 array_splice($this->transactions, $count, 1);
                 break;
             }
-            $count++;
+            ++$count;
         }
     }
 
     /**
      * Devuelve el motor de base de datos y la versión.
+     *
      * @param mysqli $link
+     *
      * @return string
      */
     public function version($link)
@@ -111,7 +118,9 @@ class Mysql implements DataBaseEngine
 
     /**
      * Conecta a la base de datos.
+     *
      * @param string $error
+     *
      * @return null|mysqli
      */
     public function connect(&$error)
@@ -143,7 +152,9 @@ class Mysql implements DataBaseEngine
 
     /**
      * Desconecta de la base de datos.
+     *
      * @param mysqli $link
+     *
      * @return bool
      */
     public function close($link)
@@ -155,7 +166,9 @@ class Mysql implements DataBaseEngine
 
     /**
      * Devuelve el error de la ultima sentencia ejecutada
+     *
      * @param mysqli $link
+     *
      * @return string
      */
     public function errorMessage($link)
@@ -165,7 +178,9 @@ class Mysql implements DataBaseEngine
 
     /**
      * Inicia una transacción SQL.
+     *
      * @param mysqli $link
+     *
      * @return bool
      */
     public function beginTransaction($link)
@@ -180,7 +195,9 @@ class Mysql implements DataBaseEngine
 
     /**
      * Guarda los cambios de una transacción SQL.
+     *
      * @param mysqli $link
+     *
      * @return bool
      */
     public function commit($link)
@@ -195,7 +212,9 @@ class Mysql implements DataBaseEngine
 
     /**
      * TODO
+     *
      * @param mysqli $link
+     *
      * @return bool
      */
     public function rollback($link)
@@ -210,7 +229,9 @@ class Mysql implements DataBaseEngine
 
     /**
      * Indica si la conexión está en transacción
+     *
      * @param mysqli $link
+     *
      * @return bool
      */
     public function inTransaction($link)
@@ -221,8 +242,10 @@ class Mysql implements DataBaseEngine
     /**
      * Ejecuta una sentencia SQL de tipo select, y devuelve un array con los resultados,
      * o array vacío en caso de fallo.
+     *
      * @param mysqli $link
      * @param string $sql
+     *
      * @return array
      */
     public function select($link, $sql)
@@ -248,8 +271,10 @@ class Mysql implements DataBaseEngine
     /**
      * Ejecuta sentencias SQL sobre la base de datos
      * (inserts, updates o deletes)
+     *
      * @param mysqli $link
      * @param string $sql
+     *
      * @return bool
      */
     public function exec($link, $sql)
@@ -271,8 +296,10 @@ class Mysql implements DataBaseEngine
 
     /**
      * Escapa las comillas de la cadena de texto.
+     *
      * @param mysqli $link
      * @param string $str
+     *
      * @return string
      */
     public function escapeString($link, $str)
@@ -282,6 +309,7 @@ class Mysql implements DataBaseEngine
 
     /**
      * Devuelve el estilo de fecha del motor de base de datos.
+     *
      * @return string
      */
     public function dateStyle()
@@ -291,8 +319,10 @@ class Mysql implements DataBaseEngine
 
     /**
      * Compara los tipos de datos de una columna numerica.
+     *
      * @param string $dbType
      * @param string $xmlType
+     *
      * @return bool
      */
     private function compareDataTypeNumeric($dbType, $xmlType)
@@ -303,8 +333,10 @@ class Mysql implements DataBaseEngine
 
     /**
      * Compara los tipos de datos de una columna alfanumerica.
+     *
      * @param string $dbType
      * @param string $xmlType
+     *
      * @return bool
      */
     private function compareDataTypeChar($dbType, $xmlType)
@@ -319,8 +351,10 @@ class Mysql implements DataBaseEngine
 
     /**
      * Compara los tipos de datos de una columna. Devuelve TRUE si son iguales.
+     *
      * @param string $dbType
      * @param string $xmlType
+     *
      * @return bool
      */
     public function compareDataTypes($dbType, $xmlType)
@@ -345,7 +379,9 @@ class Mysql implements DataBaseEngine
 
     /**
      * Devuelve un array con los nombres de las tablas de la base de datos.
+     *
      * @param mysqli $link
+     *
      * @return array
      */
     public function listTables($link)
@@ -369,10 +405,12 @@ class Mysql implements DataBaseEngine
      * comprueba si se refiere a una secuencia, y si es así
      * comprueba la existencia de la secuencia. Si no la encuentra
      * la crea.
+     *
      * @param mysqli $link
      * @param string $tableName
      * @param string $default
      * @param string $colname
+     *
      * @return bool
      */
     public function checkSequence($link, $tableName, $default, $colname)
@@ -382,9 +420,11 @@ class Mysql implements DataBaseEngine
 
     /**
      * Realiza comprobaciones extra a la tabla.
+     *
      * @param mysqli $link
      * @param string $tableName
      * @param string $error
+     *
      * @return bool
      */
     public function checkTableAux($link, $tableName, &$error)
@@ -406,7 +446,9 @@ class Mysql implements DataBaseEngine
 
     /**
      * Convierte los datos leidos del sqlColumns a estructura de trabajo
+     *
      * @param array $colData
+     *
      * @return array
      */
     public function columnFromData($colData)
@@ -422,6 +464,7 @@ class Mysql implements DataBaseEngine
 
     /**
      * Devuelve el enlace a la clase de Utilidades del engine
+     *
      * @return DataBaseUtils
      */
     public function getUtils()
@@ -431,6 +474,7 @@ class Mysql implements DataBaseEngine
 
     /**
      * Devuelve el enlace a la clase de SQL del engine
+     *
      * @return DataBaseSQL
      */
     public function getSQL()

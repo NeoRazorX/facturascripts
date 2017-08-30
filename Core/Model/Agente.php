@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -28,72 +29,82 @@ namespace FacturaScripts\Core\Model;
  */
 class Agente
 {
-
     use Base\ModelTrait;
     use Base\ContactInformation;
 
     /**
      * Clave primaria. Varchar (10).
+     *
      * @var int
      */
     public $codagente;
 
     /**
      * Identificador fiscal (CIF/NIF).
+     *
      * @var string
      */
     public $dnicif;
 
     /**
      * Nombre del agente o empleado.
+     *
      * @var string
      */
     public $nombre;
 
     /**
      * Apellidos del agente o empleado.
+     *
      * @var string
      */
     public $apellidos;
 
     /**
      * Nº de la seguridad social.
+     *
      * @var string
      */
     public $seg_social;
 
     /**
      * cargo en la empresa.
+     *
      * @var string
      */
     public $cargo;
 
     /**
      * Cuenta bancaria
+     *
      * @var string
      */
     public $banco;
 
     /**
      * Fecha de nacimiento.
+     *
      * @var string
      */
     public $f_nacimiento;
 
     /**
      * Fecha de alta en la empresa.
+     *
      * @var string
      */
     public $f_alta;
 
     /**
      * Fecha de baja en la empresa.
+     *
      * @var string
      */
     public $f_baja;
 
     /**
      * Porcentaje de comisión del agente. Se utiliza en presupuestos, pedidos, albaranes y facturas.
+     *
      * @var float
      */
     public $porcomision;
@@ -130,6 +141,7 @@ class Agente
 
     /**
      * Devuelve nombre + apellidos del agente.
+     *
      * @return string
      */
     public function fullName()
@@ -139,6 +151,7 @@ class Agente
 
     /**
      * Comprueba los datos del empleado/agente, devuelve TRUE si son correctos
+     *
      * @return bool
      */
     public function test()
@@ -171,6 +184,7 @@ class Agente
 
     /**
      * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
+     *
      * @return string
      */
     public function install()

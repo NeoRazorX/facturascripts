@@ -7,7 +7,6 @@ namespace FacturaScripts\Core\App;
  */
 class AppCronTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var AppCron
      */
@@ -28,7 +27,6 @@ class AppCronTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        
     }
 
     public function testConnect()
@@ -37,7 +35,7 @@ class AppCronTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\App\AppCron::run
+     * @covers \FacturaScripts\Core\App\AppCron::run
      */
     public function testRun()
     {

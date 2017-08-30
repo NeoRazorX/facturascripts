@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,30 +27,33 @@ namespace FacturaScripts\Core\Model;
  */
 class Almacen
 {
-
     use Base\ModelTrait;
     use Base\ContactInformation;
 
     /**
      * Clave primaria. Varchar (4).
+     *
      * @var string
      */
     public $codalmacen;
 
     /**
      * Nombre del almacen.
+     *
      * @var string
      */
     public $nombre;
 
     /**
      * Persona de contacto del almacen.
+     *
      * @var string
      */
     public $contacto;
 
     /**
      * Todavía sin uso.
+     *
      * @var string
      */
     public $observaciones;
@@ -66,15 +70,17 @@ class Almacen
 
     /**
      * Devuelve TRUE si este es almacén predeterminado de la empresa.
+     *
      * @return bool
      */
     public function isDefault()
     {
-        return ($this->codalmacen === $this->defaultItems->codAlmacen());
+        return $this->codalmacen === $this->defaultItems->codAlmacen();
     }
 
     /**
      * Comprueba los datos del almacén, devuelve TRUE si son correctos
+     *
      * @return bool
      */
     public function test()
@@ -104,6 +110,7 @@ class Almacen
 
     /**
      * Crea la consulta necesaria para crear un nuevo almacen en la base de datos.
+     *
      * @return string
      */
     public function install()

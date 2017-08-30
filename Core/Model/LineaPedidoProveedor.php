@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,12 +27,12 @@ namespace FacturaScripts\Core\Model;
  */
 class LineaPedidoProveedor
 {
-
     use Base\LineaDocumento;
     use Base\ModelTrait;
 
     /**
      * ID del pedido.
+     *
      * @var integer
      */
     public $idpedido;
@@ -120,11 +121,11 @@ class LineaPedidoProveedor
         $totalsindto = $this->pvpunitario * $this->cantidad;
 
         if (!$this->floatcmp($this->pvptotal, $total, FS_NF0, TRUE)) {
-            $this->miniLog->critical("Error en el valor de pvptotal de la línea " . $this->referencia . " del " . FS_PEDIDO . ". Valor correcto: " . $total);
+            $this->miniLog->critical('Error en el valor de pvptotal de la línea ' . $this->referencia . ' del ' . FS_PEDIDO . '. Valor correcto: ' . $total);
 
             return FALSE;
         } elseif (!$this->floatcmp($this->pvpsindto, $totalsindto, FS_NF0, TRUE)) {
-            $this->miniLog->critical("Error en el valor de pvpsindto de la línea " . $this->referencia . " del " . FS_PEDIDO . ". Valor correcto: " . $totalsindto);
+            $this->miniLog->critical('Error en el valor de pvpsindto de la línea ' . $this->referencia . ' del ' . FS_PEDIDO . '. Valor correcto: ' . $totalsindto);
 
             return FALSE;
         }
@@ -134,28 +135,30 @@ class LineaPedidoProveedor
 
     /**
      * Busca todas las coincidencias de $query en las líneas.
-     * @param string $query
+     *
+     * @param string  $query
      * @param integer $offset
+     *
      * @return \LineaPedidoProveedor
      */
     public function search($query = '', $offset = 0)
     {
-        $linealist = array();
+        $linealist = [];
         $query = mb_strtolower($this->no_html($query), 'UTF8');
 
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE ";
+        $sql = 'SELECT * FROM ' . $this->table_name . ' WHERE ';
         if (is_numeric($query)) {
             $sql .= "referencia LIKE '%" . $query . "%' OR descripcion LIKE '%" . $query . "%'";
         } else {
             $buscar = str_replace(' ', '%', $query);
             $sql .= "lower(referencia) LIKE '%" . $buscar . "%' OR lower(descripcion) LIKE '%" . $buscar . "%'";
         }
-        $sql .= " ORDER BY idpedido DESC, idlinea ASC";
+        $sql .= ' ORDER BY idpedido DESC, idlinea ASC';
 
         $data = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
         if ($data) {
             foreach ($data as $l) {
-                $linealist[] = new LineaPedidoProveedor($l);
+                $linealist[] = new self($l);
             }
         }
 

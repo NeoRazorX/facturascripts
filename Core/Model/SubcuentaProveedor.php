@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,35 +26,39 @@ namespace FacturaScripts\Core\Model;
  */
 class SubcuentaProveedor
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria
+     *
      * @var int
      */
     public $id;
 
     /**
      * ID de la subcuenta
+     *
      * @var int
      */
     public $idsubcuenta;
 
     /**
      * Código del proveedor
+     *
      * @var string
      */
     public $codproveedor;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $codsubcuenta;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $codejercicio;
@@ -70,6 +75,7 @@ class SubcuentaProveedor
 
     /**
      * TODO
+     *
      * @return Subcuenta|false
      */
     public function getSubcuenta()

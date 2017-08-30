@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,17 +26,18 @@ namespace FacturaScripts\Core\Model;
  */
 class ConceptoPartida
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria.
+     *
      * @var string
      */
     public $idconceptopar;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $concepto;
@@ -52,6 +54,7 @@ class ConceptoPartida
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function test()
@@ -63,6 +66,7 @@ class ConceptoPartida
 
     /**
      * Almacena los datos del modelo en la base de datos.
+     *
      * @return bool
      */
     public function save()

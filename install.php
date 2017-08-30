@@ -101,7 +101,7 @@ function dbConnect(&$errors, &$i18n)
         'port' => filter_input(INPUT_POST, 'db_port'),
         'user' => filter_input(INPUT_POST, 'db_user'),
         'pass' => filter_input(INPUT_POST, 'db_pass'),
-        'name' => filter_input(INPUT_POST, 'db_name')
+        'name' => filter_input(INPUT_POST, 'db_name'),
     ];
 
     switch (filter_input(INPUT_POST, 'db_type')) {
@@ -295,12 +295,12 @@ function installerMain()
     }
 
     /// empaquetamos las variables a pasar el motor de plantillas
-    $templateVars = array(
+    $templateVars = [
         'errors' => $errors,
         'i18n' => $i18n,
         'languages' => getLanguages($i18n),
-        'license' => file_get_contents(__DIR__ . '/COPYING')
-    );
+        'license' => file_get_contents(__DIR__ . '/COPYING'),
+    ];
     renderHTML($templateVars);
 }
 installerMain();

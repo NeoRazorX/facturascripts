@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -30,7 +31,6 @@ use FacturaScripts\Core\Model;
  */
 class ListAgente extends ExtendedController\ListController
 {
-
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
@@ -54,8 +54,8 @@ class ListAgente extends ExtendedController\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "nombre|apellidos|codagente";
-            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
+            $fields = 'nombre|apellidos|codagente';
+            $result[] = new DataBaseWhere($fields, $this->query, 'LIKE');
         }
 
         return $result;

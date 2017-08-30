@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,48 +26,54 @@ namespace FacturaScripts\Core\Model;
  */
 class LineaTransferenciaStock
 {
-
     use Base\ModelTrait;
 
     /// clave primaria. integer
     /**
      * TODO
+     *
      * @var int
      */
     public $idlinea;
 
     /**
      * TODO
+     *
      * @var int
      */
     public $idtrans;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $referencia;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $cantidad;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $descripcion;
 
     /**
      * TODO
+     *
      * @var string
      */
     private $fecha;
 
     /**
      * TODO
+     *
      * @var string
      */
     private $hora;
@@ -97,6 +104,7 @@ class LineaTransferenciaStock
 
     /**
      * TODO
+     *
      * @return string
      */
     public function fecha()
@@ -106,6 +114,7 @@ class LineaTransferenciaStock
 
     /**
      * TODO
+     *
      * @return string
      */
     public function hora()
@@ -148,7 +157,7 @@ class LineaTransferenciaStock
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
-                $list[] = new LineaTransferenciaStock($d);
+                $list[] = new self($d);
             }
         }
 
@@ -159,6 +168,7 @@ class LineaTransferenciaStock
      * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
      * que se ejecutará tras la creación de la tabla. útil para insertar valores
      * por defecto.
+     *
      * @return string
      */
     public function install()

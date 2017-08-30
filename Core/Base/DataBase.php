@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseEngine;
@@ -34,39 +35,44 @@ define('FS_CHECK_DB_TYPES', '1');
  */
 class DataBase
 {
-
     /**
      * El enlace con la base de datos.
+     *
      * @var resource
      */
     private static $link;
 
     /**
      * Enlace al motor de base de datos seleccionado en la configuración
+     *
      * @var DataBaseEngine
      */
     private static $engine;
 
     /**
      * Gestiona el log de todos los controladores, modelos y base de datos.
+     *
      * @var MiniLog
      */
     private static $miniLog;
 
     /**
      * Nº de selects ejecutados.
+     *
      * @var integer
      */
     private static $totalSelects;
 
     /**
      * Nº de transacciones ejecutadas.
+     *
      * @var integer
      */
     private static $totalTransactions;
 
     /**
      * Lista de tablas de la base de datos
+     *
      * @var array
      */
     private static $tables;
@@ -101,6 +107,7 @@ class DataBase
 
     /**
      * Devuelve el número de selects ejecutados
+     *
      * @return integer
      */
     public function getTotalSelects()
@@ -110,6 +117,7 @@ class DataBase
 
     /**
      * Devuele le número de transacciones realizadas
+     *
      * @return integer
      */
     public function getTotalTransactions()
@@ -119,6 +127,7 @@ class DataBase
 
     /**
      * Devuelve un array con los nombres de las tablas de la base de datos.
+     *
      * @return array
      */
     public function getTables()
@@ -132,7 +141,9 @@ class DataBase
 
     /**
      * Devuelve un array con las columnas de una tabla dada.
+     *
      * @param string $tableName
+     *
      * @return array
      */
     public function getColumns($tableName)
@@ -150,8 +161,10 @@ class DataBase
 
     /**
      * Devuelve una array con las restricciones de una tabla.
+     *
      * @param string $tableName
-     * @param bool $extended
+     * @param bool   $extended
+     *
      * @return array
      */
     public function getConstraints($tableName, $extended = false)
@@ -169,7 +182,9 @@ class DataBase
 
     /**
      * Devuelve una array con los indices de una tabla dada.
+     *
      * @param string $tableName
+     *
      * @return array
      */
     public function getIndexes($tableName)
@@ -187,6 +202,7 @@ class DataBase
 
     /**
      * Devuelve TRUE si se está conestado a la base de datos.
+     *
      * @return bool
      */
     public function connected()
@@ -196,6 +212,7 @@ class DataBase
 
     /**
      * Conecta a la base de datos.
+     *
      * @return bool
      */
     public function connect()
@@ -216,6 +233,7 @@ class DataBase
 
     /**
      * Desconecta de la base de datos.
+     *
      * @return bool
      */
     public function close()
@@ -237,6 +255,7 @@ class DataBase
 
     /**
      * Indica hay una transacción abierta
+     *
      * @return bool
      */
     public function inTransaction()
@@ -246,6 +265,7 @@ class DataBase
 
     /**
      * Inicia una transaccion en la base de datos
+     *
      * @return bool
      */
     public function beginTransaction()
@@ -261,6 +281,7 @@ class DataBase
 
     /**
      * Graba las sentencias ejecutadas en la base de datos
+     *
      * @return bool
      */
     public function commit()
@@ -268,7 +289,7 @@ class DataBase
         $result = self::$engine->commit(self::$link);
         if ($result) {
             self::$miniLog->sql('Commit Transaction');
-            self::$totalTransactions++;
+            ++self::$totalTransactions;
         }
 
         return $result;
@@ -276,6 +297,7 @@ class DataBase
 
     /**
      * Deshace las sentencias ejecutadas en la base de datos
+     *
      * @return bool
      */
     public function rollback()
@@ -289,7 +311,9 @@ class DataBase
     /**
      * Ejecuta una sentencia SQL de tipo select, y devuelve un array con los resultados,
      * o false en caso de fallo.
+     *
      * @param string $sql
+     *
      * @return array
      */
     public function select($sql)
@@ -302,9 +326,11 @@ class DataBase
      * y devuelve un array con los resultados o array vació en caso de fallo.
      * Limit es el número de elementos que quieres que devuelva.
      * Offset es el número de resultado desde el que quieres que empiece.
-     * @param string $sql
+     *
+     * @param string  $sql
      * @param integer $limit
      * @param integer $offset
+     *
      * @return array
      */
     public function selectLimit($sql, $limit = FS_ITEM_LIMIT, $offset = 0)
@@ -325,7 +351,7 @@ class DataBase
             return [];
         }
 
-        self::$totalSelects++;
+        ++self::$totalSelects;
 
         return $result;
     }
@@ -336,7 +362,9 @@ class DataBase
      * Si no hay transacción abierta se inicia una, se ejecutan las consultas
      * Si la transaccion la ha abierto en la llamada la cierra confirmando o descartando
      * según haya ido bien o haya dado algún error
+     *
      * @param string $sql
+     *
      * @return bool
      */
     public function exec($sql)
@@ -365,6 +393,7 @@ class DataBase
     /**
      * Devuelve el último ID asignado al hacer un INSERT
      * en la base de datos.
+     *
      * @return integer|bool
      */
     public function lastval()
@@ -376,6 +405,7 @@ class DataBase
 
     /**
      * Devuelve el motor de base de datos usado y la versión.
+     *
      * @return string
      */
     public function version()
@@ -389,8 +419,10 @@ class DataBase
 
     /**
      * Devuelve TRUE si la tabla existe, FALSE en caso contrario.
+     *
      * @param string $tableName
-     * @param array $list
+     * @param array  $list
+     *
      * @return bool
      */
     public function tableExists($tableName, array $list = [])
@@ -404,7 +436,9 @@ class DataBase
 
     /**
      * Realiza comprobaciones extra a la tabla.
+     *
      * @param string $tableName
+     *
      * @return bool
      */
     public function checkTableAux($tableName)
@@ -420,9 +454,11 @@ class DataBase
 
     /**
      * Crea la tabla con la estructura indicada.
+     *
      * @param string $tableName
-     * @param array $xmlCols
-     * @param array $xmlCons
+     * @param array  $xmlCols
+     * @param array  $xmlCons
+     *
      * @return bool
      */
     public function generateTable($tableName, $xmlCols, $xmlCons)
@@ -432,10 +468,12 @@ class DataBase
 
     /**
      * Compara dos arrays de restricciones, devuelve una sentencia SQL en caso de encontrar diferencias.
+     *
      * @param string $tableName
-     * @param array $xmlCons
-     * @param array $dbCons
-     * @param bool $deleteOnly
+     * @param array  $xmlCons
+     * @param array  $dbCons
+     * @param bool   $deleteOnly
+     *
      * @return bool
      */
     public function compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly = false)
@@ -445,9 +483,11 @@ class DataBase
 
     /**
      * Compara dos arrays de columnas, devuelve una sentencia sql en caso de encontrar diferencias.
+     *
      * @param string $tableName
-     * @param array $xmlCols
-     * @param array $dbCols
+     * @param array  $xmlCols
+     * @param array  $dbCols
+     *
      * @return string
      */
     public function compareColumns($tableName, $xmlCols, $dbCols)
@@ -457,7 +497,9 @@ class DataBase
 
     /**
      * Escapa las comillas de la cadena de texto.
+     *
      * @param string $str
+     *
      * @return string
      */
     public function escapeString($str)
@@ -471,6 +513,7 @@ class DataBase
 
     /**
      * Devuelve el estilo de fecha del motor de base de datos.
+     *
      * @return string
      */
     public function dateStyle()
@@ -480,7 +523,9 @@ class DataBase
 
     /**
      * Devuelve el SQL necesario para convertir la columna a entero.
+     *
      * @param string $colName
+     *
      * @return string
      */
     public function sql2Int($colName)

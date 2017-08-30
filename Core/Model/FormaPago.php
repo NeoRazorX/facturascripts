@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,35 +26,39 @@ namespace FacturaScripts\Core\Model;
  */
 class FormaPago
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria. Varchar (10).
+     *
      * @var string
      */
     public $codpago;
 
     /**
      * Descripción de la forma de pago
+     *
      * @var string
      */
     public $descripcion;
 
     /**
      * Pagados -> marca las facturas generadas como pagadas.
+     *
      * @var string
      */
     public $genrecibos;
 
     /**
      * Código de la cuenta bancaria asociada.
+     *
      * @var string
      */
     public $codcuenta;
 
     /**
      * Para indicar si hay que mostrar la cuenta bancaria del cliente.
+     *
      * @var bool
      */
     public $domiciliado;
@@ -61,12 +66,14 @@ class FormaPago
     /**
      * TRUE (por defecto) -> mostrar los datos en documentos de venta,
      * incluida la cuenta bancaria asociada.
+     *
      * @var bool
      */
     public $imprimir;
 
     /**
      * Sirve para generar la fecha de vencimiento de las facturas.
+     *
      * @var string
      */
     public $vencimiento;
@@ -97,15 +104,17 @@ class FormaPago
 
     /**
      * Devuelve TRUE si esta es la forma de pago predeterminada de la empresa
+     *
      * @return bool
      */
     public function isDefault()
     {
-        return ($this->codpago === $this->defaultItems->codPago());
+        return $this->codpago === $this->defaultItems->codPago();
     }
 
     /**
      * Comprueba la validez de los datos de la forma de pago.
+     *
      * @return bool
      */
     public function test()
@@ -129,7 +138,7 @@ class FormaPago
      * Si se proporciona $diasDePago se usarán para la nueva fecha.
      *
      * @param string $fechaInicio
-     * @param string $diasDePago dias de pago específicos para el cliente (separados por comas).
+     * @param string $diasDePago  dias de pago específicos para el cliente (separados por comas).
      *
      * @return string
      */
@@ -164,6 +173,7 @@ class FormaPago
 
     /**
      * Crea la consulta necesaria para crear una nueva forma de pago en la base de datos.
+     *
      * @return string
      */
     public function install()
@@ -179,7 +189,7 @@ class FormaPago
     /**
      * Función recursiva auxiliar para calcularVencimiento()
      *
-     * @param string $fechaInicio
+     * @param string  $fechaInicio
      * @param integer $diaDePago
      *
      * @return string

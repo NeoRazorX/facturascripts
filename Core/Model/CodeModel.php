@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -62,10 +63,11 @@ class CodeModel
     /**
      * Carga una lista de CodeModel (código y descripción) para la tabla indicada
      *
-     * @param string $tableName
-     * @param string $fieldCode
-     * @param string $fieldDescription
+     * @param string  $tableName
+     * @param string  $fieldCode
+     * @param string  $fieldDescription
      * @param boolean $addEmpty
+     *
      * @return array Model\CodeModel
      */
     public static function all($tableName, $fieldCode, $fieldDescription, $addEmpty = FALSE)
@@ -75,17 +77,17 @@ class CodeModel
         if (self::$dataBase === null) {
             self::$dataBase = new DataBase();
         }
-        
+
         if (self::$dataBase->tableExists($tableName)) {
             if ($addEmpty) {
-                $result[] = new CodeModel(['code' => NULL, 'description' => '']);
+                $result[] = new self(['code' => NULL, 'description' => '']);
             }
-            
+
             $sql = 'SELECT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM ' . $tableName . ' ORDER BY 2 ASC';
             $data = self::$dataBase->select($sql);
             if (!empty($data)) {
                 foreach ($data as $d) {
-                    $result[] = new CodeModel($d);
+                    $result[] = new self($d);
                 }
             }
         }

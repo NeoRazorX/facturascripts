@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base;
@@ -29,63 +30,72 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class App
 {
-
     /**
      * Gestor de acceso a cache.
+     *
      * @var Base\Cache
      */
     protected $cache;
 
     /**
      * Gestor de acceso a la base de datos.
+     *
      * @var Base\DataBase
      */
     protected $dataBase;
 
     /**
      * Carpeta de trabajo de FacturaScripts.
+     *
      * @var string
      */
     protected $folder;
 
     /**
      * Motor de traducción.
+     *
      * @var Base\Translator
      */
     protected $i18n;
 
     /**
      * Filtro de IPs.
+     *
      * @var Base\IPFilter
      */
     protected $ipFilter;
 
     /**
      * Gestor del log de la app.
+     *
      * @var Base\MiniLog
      */
     protected $miniLog;
 
     /**
      * Gestor de plugins.
+     *
      * @var Base\PluginManager
      */
     protected $pluginManager;
 
     /**
      * Permite acceder a los datos de la petición HTTP.
+     *
      * @var Request
      */
     protected $request;
 
     /**
      * Objeto respuesta HTTP.
+     *
      * @var Response
      */
     protected $response;
 
     /**
      * Inicializa la app.
+     *
      * @param string $folder Carpeta de trabajo de FacturaScripts
      */
     public function __construct($folder = '')
@@ -108,6 +118,7 @@ abstract class App
 
     /**
      * Conecta a la base de datos.
+     *
      * @return bool
      */
     public function connect()
@@ -125,6 +136,7 @@ abstract class App
 
     /**
      * TODO
+     *
      * @return bool
      */
     abstract public function run();
@@ -139,6 +151,7 @@ abstract class App
 
     /**
      * Devuelve TRUE si la IP del cliente ha sido baneada.
+     *
      * @return bool
      */
     protected function isIPBanned()

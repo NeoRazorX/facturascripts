@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
 /**
@@ -25,9 +26,9 @@ namespace FacturaScripts\Core\App;
  */
 class AppCron extends App
 {
-
     /**
      * Ejecuta el cron.
+     *
      * @return boolean
      */
     public function run()
