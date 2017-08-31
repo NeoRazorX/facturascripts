@@ -9,6 +9,7 @@
         {% block css %}
         <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="Core/View/CSS/submenu.css" />
         <link rel="stylesheet" href="Core/View/CSS/datepicker.css" />
         {% endblock %}
         {% block javascript %}
@@ -37,7 +38,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
+                <ul class="nav navbar-nav mr-auto">
                     {% for menuItem in menuManager.getMenu() %}
                     {{ menuItem.getHTML()|raw }}
                     {% endfor %}

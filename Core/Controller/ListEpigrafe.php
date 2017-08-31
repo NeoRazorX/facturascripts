@@ -65,6 +65,7 @@ class ListEpigrafe extends ExtendedController\ListController
         $pagedata['title'] = 'Epigrafes';
         $pagedata['icon'] = 'fa-columns';
         $pagedata['menu'] = 'contabilidad';
+        $pagedata['submenu'] = 'cuentas';
 
         return $pagedata;
     }
