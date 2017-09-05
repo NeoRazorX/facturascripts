@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -40,17 +39,6 @@ class ListFormaPago extends ExtendedController\ListController
         parent::privateCore($response, $user);
     }
 
-    protected function getWhere()
-    {
-        $result = parent::getWhere();
-
-        if ($this->query != '') {
-            $fields = "descripcion|codpago|codcuenta";
-            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
-        }
-        return $result;
-    }
-
     public function getPageData()
     {
         $pagedata = parent::getPageData();
@@ -64,13 +52,14 @@ class ListFormaPago extends ExtendedController\ListController
     {
         $className = $this->getClassName();
         $index = $this->addView('FacturaScripts\Core\Model\FormaPago', $className);
-        
+        $this->addSearchFields($index, ['descripcion', 'codpago', 'codcuenta']);
+
         $this->addOrderBy($index, 'codpago', 'code');
         $this->addOrderBy($index, 'descripcion', 'description');
 
         $this->addFilterSelect($index, 'generación', 'formaspago', '', 'genrecibos');
         $this->addFilterSelect($index, 'vencimiento', 'formaspago');
         $this->addFilterCheckbox($index, 'domiciliado', 'Domiciliado');
-        $this->addFilterCheckbox($index, 'imprimir', 'Imprimir');        
+        $this->addFilterCheckbox($index, 'imprimir', 'Imprimir');
     }
 }

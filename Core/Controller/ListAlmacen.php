@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -40,17 +39,6 @@ class ListAlmacen extends ExtendedController\ListController
         parent::privateCore($response, $user);
     }
 
-    protected function getWhere()
-    {
-        $result = parent::getWhere();
-
-        if ($this->query != '') {
-            $fields = "nombre|codalmacen|contacto";
-            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
-        }
-        return $result;
-    }
-
     public function getPageData()
     {
         $pagedata = parent::getPageData();
@@ -64,11 +52,9 @@ class ListAlmacen extends ExtendedController\ListController
     {
         $className = $this->getClassName();
         $index = $this->addView('FacturaScripts\Core\Model\Almacen', $className);
-        
+        $this->addSearchFields($index, ['nombre', 'codalmacen', 'contacto']);
+
         $this->addOrderBy($index, 'codalmacen', 'Código');
         $this->addOrderBy($index, 'nombre');
-
-        $this->addFilterSelect($index, 'provincia', 'almacenes');
-        $this->addFilterSelect($index, 'país', 'paises', '', 'codpais');
     }
 }

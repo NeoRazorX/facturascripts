@@ -57,9 +57,17 @@ class DataView
 
     /**
      * Configuración de filtros predefinidos por usuario
+     * 
      * @var array
      */
     private $filters;
+    
+    /**
+     * Lista de campos donde buscar cuando se aplica una búsqueda
+     * 
+     * @var array
+     */
+    private $searchIn;
 
     /**
      * Lista de campos disponibles en el order by
@@ -103,7 +111,9 @@ class DataView
         $this->cursor = NULL;
         $this->orderby = [];
         $this->filters = [];
+        $this->searchIn = [];
         $this->count = 0;
+        $this->selectedOrderBy = '';
         
         // Carga configuración de la vista para el usuario
         $this->pageOption = new Model\PageOption();
@@ -130,6 +140,16 @@ class DataView
         return $this->filters;
     }
     
+    /**
+     * Devuelve la lista de campos para la búsqueda en formato para WhereDatabase
+     * 
+     * @return string
+     */
+    public function getSearchIn()
+    {
+        return implode("|", $this->searchIn);
+    }
+        
     /**
      * Devuelve la lista de order by definidos
      * 
@@ -194,17 +214,31 @@ class DataView
     {
         $keys = array_keys($this->orderby);
         if (empty($orderKey) || !in_array($orderKey, $keys)) {
-            $this->selectedOrderBy = $keys[0];
+            if (empty($this->selectedOrderBy)) {
+                $this->selectedOrderBy = $keys[0];        // Forzamos el primer elemento cuando no hay valor por defecto
+            }
         } else {
             $this->selectedOrderBy = $orderKey;
         }
     }
     
     /**
+     * Añade a la lista de campos para la búsqueda los campos informados
+     * 
+     * @param array $fields
+     */
+    public function addSearchIn($fields)
+    {
+        if (is_array($fields)) {
+            $this->searchIn += $fields;
+        }
+    }
+    
+    /**
      * Añade un campo a la lista de Order By
      * @param string $field
-     * @param int $default    (0 = None, 1 = ASC, 2 = DESC)
      * @param string $label
+     * @param int $default    (0 = None, 1 = ASC, 2 = DESC)
      */
     public function addOrderBy($field, $label = '', $default = 0)
     {

@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -40,17 +39,6 @@ class ListDivisa extends ExtendedController\ListController
         parent::privateCore($response, $user);
     }
 
-    protected function getWhere()
-    {
-        $result = parent::getWhere();
-
-        if ($this->query != '') {
-            $fields = "descripcion|coddivisa";
-            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
-        }
-        return $result;
-    }
-
     public function getPageData()
     {
         $pagedata = parent::getPageData();
@@ -64,6 +52,7 @@ class ListDivisa extends ExtendedController\ListController
     {
         $className = $this->getClassName();
         $index = $this->addView('FacturaScripts\Core\Model\Divisa', $className);
+        $this->addSearchFields($index, ['descripcion', 'coddivisa']);
 
         $this->addOrderBy($index, 'coddivisa', 'code');
         $this->addOrderBy($index, 'descripcion', 'description', 1);

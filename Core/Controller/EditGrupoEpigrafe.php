@@ -18,58 +18,37 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la lista de epigrafes
+ * Controlador para la edición de un registro del modelo de un grupo de epígrafe
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListEpigrafe extends ExtendedController\ListController
+class EditGrupoEpigrafe extends ExtendedController\EditController
 {
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
+        
+        // Establecemos el modelo de datos
+        $this->model = new Model\GrupoEpigrafes();
     }
-
+    
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
     }
-
-    protected function getWhere()
-    {
-        $result = parent::getWhere();
-
-        if ($this->query != '') {
-            $fields = "descripcion|codepigrafe|codejercicio|codgrupo";
-            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
-        }
-        return $result;
-    }
-
+        
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Epigrafes';
-        $pagedata['icon'] = 'fa-columns';
-        $pagedata['menu'] = 'contabilidad';
-        $pagedata['submenu'] = 'cuentas';
-
+        $pagedata['title'] = 'Grupos de Epígrafes';
+        $pagedata['icon'] = 'fa-bars';
+        $pagedata['showonmenu'] = FALSE;
+        
         return $pagedata;
-    }
-
-    protected function createViews()
-    {
-        $className = $this->getClassName();
-        $index = $this->addView('FacturaScripts\Core\Model\Epigrafe', $className);
-
-        $this->addOrderBy($index, 'descripcion||codejercicio', 'description');
-        $this->addOrderBy($index, 'codepigrafe||codejercicio', 'code');
-
-        $this->addFilterSelect($index, 'codgrupo', 'co_gruposepigrafes', '', 'descripcion');
-        $this->addFilterSelect($index, 'codejercicio', 'ejercicios', '', 'nombre');
-    }
+    }    
 }

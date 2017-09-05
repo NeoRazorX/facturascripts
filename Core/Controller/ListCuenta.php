@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -29,6 +28,7 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListCuenta extends ExtendedController\ListController
 {
+
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
@@ -36,30 +36,40 @@ class ListCuenta extends ExtendedController\ListController
 
     public function privateCore(&$response, $user)
     {
-        parent::privateCore($response, $user);        
+        parent::privateCore($response, $user);
     }
 
     protected function createViews()
     {
+        /* Cuentas */
         $className = $this->getClassName();
-        $index = $this->addView('FacturaScripts\Core\Model\Cuenta', $className);
-        
+        $index = $this->addView('FacturaScripts\Core\Model\Cuenta', $className, 'Cuentas');
+        $this->addSearchFields($index, ['descripcion', 'codcuenta', 'codejercicio', 'codepigrafe']);
+
         $this->addOrderBy($index, 'codcuenta||codejercicio', 'code');
         $this->addOrderBy($index, 'descripcion||codejercicio', 'description');
 
         $this->addFilterSelect($index, 'codepigrafe', 'co_epigrafes', '', 'descripcion');
-        $this->addFilterSelect($index, 'codejercicio', 'ejercicios', '', 'nombre');        
-    }
-    
-    protected function getWhere()
-    {
-        $result = parent::getWhere();
+        $this->addFilterSelect($index, 'codejercicio', 'ejercicios', '', 'nombre');
 
-        if ($this->query != '') {
-            $fields = "descripcion|codcuenta|codejercicio|codepigrafe";
-            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
-        }
-        return $result;
+        /* Epigrafes */
+        $index = $this->addView('FacturaScripts\Core\Model\Epigrafe', 'ListEpigrafe', 'Epigrafes');
+        $this->addSearchFields($index, ['descripcion', 'codepigrafe', 'codejercicio']);
+
+        $this->addOrderBy($index, 'descripcion||codejercicio', 'description');
+        $this->addOrderBy($index, 'codepigrafe||codejercicio', 'code');
+
+        $this->addFilterSelect($index, 'codgrupo', 'co_gruposepigrafes', '', 'descripcion');
+        $this->addFilterSelect($index, 'codejercicio', 'ejercicios', '', 'nombre');
+
+        /* Grupo Epígrafes */
+        $index = $this->addView('FacturaScripts\Core\Model\GrupoEpigrafes', 'ListGrupoEpigrafe', 'Grupo Epígrafes');
+        $this->addSearchFields($index, ['descripcion', 'codgrupo', 'codejercicio']);
+
+        $this->addOrderBy($index, 'codgrupo||codejercicio', 'code');
+        $this->addOrderBy($index, 'descripcion||codejercicio', 'description');
+
+        $this->addFilterSelect($index, 'codejercicio', 'ejercicios', '', 'nombre');
     }
 
     public function getPageData()
@@ -68,7 +78,6 @@ class ListCuenta extends ExtendedController\ListController
         $pagedata['title'] = 'Cuentas';
         $pagedata['icon'] = 'fa-th-list';
         $pagedata['menu'] = 'contabilidad';
-        $pagedata['submenu'] = 'cuentas';
 
         return $pagedata;
     }

@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -29,6 +28,7 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListFamilia extends ExtendedController\ListController
 {
+
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
@@ -37,17 +37,6 @@ class ListFamilia extends ExtendedController\ListController
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-    }
-
-    protected function getWhere()
-    {
-        $result = parent::getWhere();
-
-        if ($this->query != '') {
-            $fields = "descripcion|codfamilia|madre";
-            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
-        }
-        return $result;
     }
 
     public function getPageData()
@@ -63,6 +52,7 @@ class ListFamilia extends ExtendedController\ListController
     {
         $className = $this->getClassName();
         $index = $this->addView('FacturaScripts\Core\Model\Familia', $className);
+        $this->addSearchFields($index, ['descripcion', 'codfamilia', 'madre']);
 
         $this->addOrderBy($index, 'codfamilia', 'Code');
         $this->addOrderBy($index, 'descripcion', 'description');

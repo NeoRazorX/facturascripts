@@ -103,23 +103,31 @@ abstract class ListController extends Base\Controller
             $this->setActionForm();
         }
 
-        // Establecemos el orderby seleccionado
-        $orderKey = $this->request->get('order', '');
-        $this->views[$this->active]->setSelectedOrderBy($orderKey);
-        
-        // Cargamos datos
+        // Lanzamos cada una de las vistas
         foreach ($this->views as $key => $dataView) {
-            $where = ($this->active === $key) ? $this->getWhere() : [];            
+            $where = [];   
+            $orderKey = '';
+            
+            // Si estamos procesando la vista seleccionada, calculamos el orden y los filtros
+            if ($this->active === $key) {
+                $orderKey = $this->request->get('order', '');
+                $where = $this->getWhere();
+            }
+            
+            // Establecemos el orderby seleccionado
+            $this->views[$key]->setSelectedOrderBy($orderKey);
+            
+            // Cargamos los datos según filtro y orden
             $dataView->loadData($where, $this->getOffSet($key), self::FS_ITEM_LIMIT);
         }        
     }
     
-    public function addView($modelName, $viewName, $viewTitle = 'search')
+    protected function addView($modelName, $viewName, $viewTitle = 'search')
     {
         $this->views[] = new DataView($viewTitle, $modelName, $viewName, $this->user->nick);
         return (count($this->views) - 1);
     }
-    
+        
     /**
      * Establece la clausula WHERE según los filtros definidos
      * @return array
@@ -127,15 +135,19 @@ abstract class ListController extends Base\Controller
     protected function getWhere()
     {
         $result = [];
-        $filters = $this->views[$this->active]->getFilters();
+
+        if ($this->query != '') {
+            $fields = $this->views[$this->active]->getSearchIn();
+            $result[] = new DataBase\DataBaseWhere($fields, $this->query, "LIKE");
+        }
         
-        foreach (array_values($filters) as $value) {
+        $filters = $this->views[$this->active]->getFilters();
+        foreach ($filters as $key => $value) {
             if ($value['value']) {
                 switch ($value['type']) {
                     case 'datepicker':
                     case 'select':
-                        $field = $value['options']['field'];
-                        $result[] = new DataBase\DataBaseWhere($field, $value['value']);
+                        $result[] = new DataBase\DataBaseWhere($key, $value['value']);
                         break;
 
                     case 'checkbox':
@@ -144,7 +156,7 @@ abstract class ListController extends Base\Controller
                         $result[] = new DataBase\DataBaseWhere($field, $value);
                         break;
                 }
-            }
+            }            
         }
 
         return $result;
@@ -173,6 +185,12 @@ abstract class ListController extends Base\Controller
         }
     }
     
+    
+    protected function addSearchFields($indexView, $fields)
+    {
+        $this->views[$indexView]->addSearchIn($fields);
+    }
+
     /**
      * Añade un campo a la lista de Order By de una vista
      * 
@@ -190,7 +208,7 @@ abstract class ListController extends Base\Controller
      * Add a filter type data table selection
      * Añade un filtro de tipo selección en tabla
      * @param int $indexView
-     * @param string $key      (Filter identifier)
+     * @param string $key      (Filter field name identifier)
      * @param string $table    (Table name)
      * @param string $where    (Where condition for table)
      * @param string $field    (Field of the table with the data to show)
@@ -229,25 +247,29 @@ abstract class ListController extends Base\Controller
 
     /**
      * Carga una lista de datos desde una tabla
-     * @param string $field : Field name to load
-     * @param string $table : Table name from load
-     * @param string $where : Where filter
+     * @param string $field : Field name with real value
+     * @param array $options : Array with configuration values [field = Field description, table = table name, where = SQL Where clausule]
      * @return array
      */
-    public function optionlist($field, $table, $where)
+    public function optionlist($field, $options)
     {
         $result = [];
-        if ($this->dataBase->tableExists($table)) {
-            $sql = "SELECT DISTINCT " . $field
-                . " FROM " . $table
-                . " WHERE COALESCE(" . $field . ", '')" . " <> ''" . $where
-                . " ORDER BY 1 ASC;";
+        if ($this->dataBase->tableExists($options['table'])) {
+            $fieldList = $field;
+            if ($field !== $options['field']) {
+                $fieldList = $fieldList . ', ' . $options['field'];
+            }
+            
+            $sql = "SELECT DISTINCT " . $fieldList
+                . " FROM " . $options['table']
+                . " WHERE COALESCE(" . $options['field'] . ", '')" . " <> ''" . $where
+                . " ORDER BY " . $options['field'] . " ASC;";
 
             $data = $this->dataBase->select($sql);
             foreach ($data as $item) {
-                $value = $item[$field];
+                $value = $item[$options['field']];
                 if ($value != "") {
-                    $result[mb_strtolower($value, "UTF8")] = $value;
+                    $result[mb_strtolower($item[$field], "UTF8")] = $value;
                 }
             }
         }

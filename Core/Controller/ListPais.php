@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -40,17 +39,6 @@ class ListPais extends ExtendedController\ListController
         parent::privateCore($response, $user);
     }
 
-    protected function getWhere()
-    {
-        $result = parent::getWhere();
-        if ($this->query != '') {
-            $fields = "nombre|codiso|codpais";
-            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
-        }
-
-        return $result;
-    }
-
     public function getPageData()
     {
         $pagedata = parent::getPageData();
@@ -64,7 +52,8 @@ class ListPais extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $index = $this->addView('FacturaScripts\Core\Model\Pais', $className);        
+        $index = $this->addView('FacturaScripts\Core\Model\Pais', $className);
+        $this->addSearchFields($index, ['nombre', 'codiso', 'codpais']);
 
         $this->addFilterCheckbox($index, 'validarprov', 'validate-states');
         $this->addOrderBy($index, 'codpais', 'code');

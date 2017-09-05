@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -40,17 +39,6 @@ class ListEjercicio extends ExtendedController\ListController
         parent::privateCore($response, $user);
     }
 
-    protected function getWhere()
-    {
-        $result = parent::getWhere();
-
-        if ($this->query != '') {
-            $fields = "nombre|codejercicio";
-            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
-        }
-        return $result;
-    }
-
     public function getPageData()
     {
         $pagedata = parent::getPageData();
@@ -64,11 +52,12 @@ class ListEjercicio extends ExtendedController\ListController
     {
         $className = $this->getClassName();
         $index = $this->addView('FacturaScripts\Core\Model\Ejercicio', $className);
+        $this->addSearchFields($index, ['nombre', 'codejercicio']);
 
         $this->addOrderBy($index, 'fechainicio', 'start-date', 2);
         $this->addOrderBy($index, 'codejercicio', 'code');
         $this->addOrderBy($index, 'nombre', 'name');
-        
+
         $this->addFilterSelect($index, 'estado', 'ejercicios');
     }
 }
