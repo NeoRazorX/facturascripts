@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la lista de empresas
@@ -34,11 +33,6 @@ class ListEmpresa extends ExtendedController\ListController
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('id', 'Código');
-        $this->addOrderBy('nombre');
-        
-        $this->model = new Model\Empresa();
     }
 
     public function privateCore(&$response, $user)
@@ -64,5 +58,14 @@ class ListEmpresa extends ExtendedController\ListController
         $pagedata['icon'] = 'fa fa-building-o';
         $pagedata['menu'] = 'admin';
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        $className = $this->getClassName();
+        $index = $this->addView('FacturaScripts\Core\Model\Empresa', $className);
+
+        $this->addOrderBy($index, 'id', 'code');
+        $this->addOrderBy($index, 'nombre', 'name');
     }
 }

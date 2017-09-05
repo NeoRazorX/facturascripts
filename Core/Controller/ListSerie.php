@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la lista de series de facturación
@@ -34,15 +33,6 @@ class ListSerie extends ExtendedController\ListController
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('codserie', 'Código');
-        $this->addOrderBy('descripcion');
-        $this->addOrderBy('codejercicio', 'Ejercicio');
-
-        $this->addFilterSelect('ejercicio', 'series', '', 'codejercicio');
-        $this->addFilterCheckbox('siniva', 'Sin Impuesto', 'siniva');
-        
-        $this->model = new Model\Serie();        
     }
 
     public function privateCore(&$response, $user)
@@ -68,5 +58,18 @@ class ListSerie extends ExtendedController\ListController
         $pagedata['icon'] = 'fa-file-text';
         $pagedata['menu'] = 'contabilidad';
         return $pagedata;
+    }
+
+    protected function createViews()
+    {        
+        $className = $this->getClassName();
+        $index = $this->addView('FacturaScripts\Core\Model\Serie', $className);
+
+        $this->addOrderBy($index, 'codserie', 'code');
+        $this->addOrderBy($index, 'descripcion', 'description');
+        $this->addOrderBy($index, 'codejercicio', 'Ejercicio');
+
+        $this->addFilterSelect($index, 'ejercicio', 'series', '', 'codejercicio');
+        $this->addFilterCheckbox($index, 'siniva', 'Sin Impuesto', 'siniva');
     }
 }

@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la lista de grupos de epígrafes contables
@@ -34,13 +33,6 @@ class ListGrupoEpigrafes extends ExtendedController\ListController
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('codgrupo||codejercicio', 'code');
-        $this->addOrderBy('descripcion||codejercicio', 'description');
-                
-        $this->addFilterSelect('codejercicio', 'ejercicios', '', 'nombre');
-
-        $this->model = new Model\GrupoEpigrafes();
     }
 
     public function privateCore(&$response, $user)
@@ -68,5 +60,16 @@ class ListGrupoEpigrafes extends ExtendedController\ListController
         $pagedata['submenu'] = 'cuentas';
         
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        $className = $this->getClassName();
+        $index = $this->addView('FacturaScripts\Core\Model\GrupoEpigrafes', $className);
+
+        $this->addOrderBy($index, 'codgrupo||codejercicio', 'code');
+        $this->addOrderBy($index, 'descripcion||codejercicio', 'description');
+                
+        $this->addFilterSelect($index, 'codejercicio', 'ejercicios', '', 'nombre');
     }
 }

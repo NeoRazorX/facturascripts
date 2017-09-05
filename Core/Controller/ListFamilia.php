@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la lista de Familias
@@ -33,13 +32,6 @@ class ListFamilia extends ExtendedController\ListController
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('codfamilia', 'Código');
-        $this->addOrderBy('descripcion');
-        $this->addOrderBy('madre');
-
-        $this->addFilterSelect('madre', 'familias');
-        $this->model = new Model\Familia();
     }
 
     public function privateCore(&$response, $user)
@@ -65,5 +57,17 @@ class ListFamilia extends ExtendedController\ListController
         $pagedata['icon'] = 'fa-object-group';
         $pagedata['menu'] = 'almacen';
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        $className = $this->getClassName();
+        $index = $this->addView('FacturaScripts\Core\Model\Familia', $className);
+
+        $this->addOrderBy($index, 'codfamilia', 'Code');
+        $this->addOrderBy($index, 'descripcion', 'description');
+        $this->addOrderBy($index, 'madre', 'parent');
+
+        $this->addFilterSelect($index, 'madre', 'familias');
     }
 }

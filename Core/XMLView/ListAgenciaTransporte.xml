@@ -37,7 +37,7 @@
             <widget type="text" fieldname="web" />
         </column>
         <column title="Activo" display="center" order="140">
-            <widget type="check" fieldname="activo" />
+            <widget type="checkbox" fieldname="activo" />
         </column>
     </columns>
     

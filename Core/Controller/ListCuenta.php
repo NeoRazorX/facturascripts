@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la lista de cuentas
@@ -33,21 +32,25 @@ class ListCuenta extends ExtendedController\ListController
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('descripcion||codejercicio', 'description');
-        $this->addOrderBy('codcuenta||codejercicio', 'code');
-
-        $this->addFilterSelect('codepigrafe', 'co_epigrafes', '', 'descripcion');
-        $this->addFilterSelect('codejercicio', 'ejercicios', '', 'nombre');
-        
-        $this->model = new Model\Cuenta();
     }
 
     public function privateCore(&$response, $user)
     {
-        parent::privateCore($response, $user);
+        parent::privateCore($response, $user);        
     }
 
+    protected function createViews()
+    {
+        $className = $this->getClassName();
+        $index = $this->addView('FacturaScripts\Core\Model\Cuenta', $className);
+        
+        $this->addOrderBy($index, 'codcuenta||codejercicio', 'code');
+        $this->addOrderBy($index, 'descripcion||codejercicio', 'description');
+
+        $this->addFilterSelect($index, 'codepigrafe', 'co_epigrafes', '', 'descripcion');
+        $this->addFilterSelect($index, 'codejercicio', 'ejercicios', '', 'nombre');        
+    }
+    
     protected function getWhere()
     {
         $result = parent::getWhere();

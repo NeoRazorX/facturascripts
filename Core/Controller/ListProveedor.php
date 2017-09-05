@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Description of ListProveedor
@@ -33,14 +32,6 @@ class ListProveedor extends ExtendedController\ListController
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('nombre', 'name');
-        $this->addOrderBy('fecha', 'date');
-        $this->addOrderBy('codproveedor', 'code');
-
-        $this->addFilterCheckbox('debaja', 'De baja');
-        
-        $this->model = new Model\Proveedor();        
     }
 
     public function privateCore(&$response, $user)
@@ -67,5 +58,17 @@ class ListProveedor extends ExtendedController\ListController
         $pagedata['menu'] = 'compras';
 
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        $className = $this->getClassName();
+        $index = $this->addView('FacturaScripts\Core\Model\Proveedor', $className);
+        
+        $this->addOrderBy($index, 'codproveedor', 'code');
+        $this->addOrderBy($index, 'nombre', 'name', 1);
+        $this->addOrderBy($index, 'fecha', 'date');
+
+        $this->addFilterCheckbox($index, 'debaja', 'De baja');
     }
 }

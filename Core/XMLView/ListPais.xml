@@ -38,7 +38,7 @@
             <widget type="text" fieldname="nombre" />
         </column>
         <column title="Validar Prov." display="center" order="130">
-            <widget type="check" fieldname="validarprov" />
+            <widget type="checkbox" fieldname="validarprov" />
         </column>
         <column title="Bandera" display="none" order="140">
             <widget type="text" fieldname="bandera" />

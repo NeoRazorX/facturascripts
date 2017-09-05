@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la lista de epigrafes
@@ -33,14 +32,6 @@ class ListEpigrafe extends ExtendedController\ListController
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('descripcion||codejercicio', 'description');
-        $this->addOrderBy('codepigrafe||codejercicio', 'code');
-
-        $this->addFilterSelect('codgrupo', 'co_gruposepigrafes', '', 'descripcion');
-        $this->addFilterSelect('codejercicio', 'ejercicios', '', 'nombre');
-        
-        $this->model = new Model\Epigrafe();
     }
 
     public function privateCore(&$response, $user)
@@ -68,5 +59,17 @@ class ListEpigrafe extends ExtendedController\ListController
         $pagedata['submenu'] = 'cuentas';
 
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        $className = $this->getClassName();
+        $index = $this->addView('FacturaScripts\Core\Model\Epigrafe', $className);
+
+        $this->addOrderBy($index, 'descripcion||codejercicio', 'description');
+        $this->addOrderBy($index, 'codepigrafe||codejercicio', 'code');
+
+        $this->addFilterSelect($index, 'codgrupo', 'co_gruposepigrafes', '', 'descripcion');
+        $this->addFilterSelect($index, 'codejercicio', 'ejercicios', '', 'nombre');
     }
 }

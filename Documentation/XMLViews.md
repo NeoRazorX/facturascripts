@@ -95,7 +95,7 @@ es el valor cuando se aplicará el formato.
 Ejemplo:
 
 ```XML
-    <widget type="check" fieldname="pendiente">
+    <widget type="checkbox" fieldname="pendiente">
         <option color="red">0</option>
     </widget>
 

@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la lista de Agentes
@@ -34,14 +33,6 @@ class ListAlmacen extends ExtendedController\ListController
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('codalmacen', 'Código');
-        $this->addOrderBy('nombre');
-
-        $this->addFilterSelect('provincia', 'almacenes');
-        $this->addFilterSelect('país', 'paises', '', 'codpais');
-
-        $this->model = new Model\Almacen();
     }
 
     public function privateCore(&$response, $user)
@@ -67,5 +58,17 @@ class ListAlmacen extends ExtendedController\ListController
         $pagedata['icon'] = 'fa-building';
         $pagedata['menu'] = 'almacen';
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        $className = $this->getClassName();
+        $index = $this->addView('FacturaScripts\Core\Model\Almacen', $className);
+        
+        $this->addOrderBy($index, 'codalmacen', 'Código');
+        $this->addOrderBy($index, 'nombre');
+
+        $this->addFilterSelect($index, 'provincia', 'almacenes');
+        $this->addFilterSelect($index, 'país', 'paises', '', 'codpais');
     }
 }

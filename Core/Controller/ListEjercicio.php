@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la lista de ejercicios contables
@@ -34,17 +33,6 @@ class ListEjercicio extends ExtendedController\ListController
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('fechainicio', 'start-date');
-        $this->addOrderBy('codejercicio', 'code');
-        $this->addOrderBy('nombre', 'name');
-        
-        /// forzamos el orden por defecto como el segundo, que es fechainicio desc
-        $this->selectedOrderBy = array_keys($this->orderby)[1];
-        
-        $this->addFilterSelect('estado', 'ejercicios');
-
-        $this->model = new Model\Ejercicio();
     }
 
     public function privateCore(&$response, $user)
@@ -70,5 +58,17 @@ class ListEjercicio extends ExtendedController\ListController
         $pagedata['icon'] = 'fa-calendar';
         $pagedata['menu'] = 'contabilidad';
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        $className = $this->getClassName();
+        $index = $this->addView('FacturaScripts\Core\Model\Ejercicio', $className);
+
+        $this->addOrderBy($index, 'fechainicio', 'start-date', 2);
+        $this->addOrderBy($index, 'codejercicio', 'code');
+        $this->addOrderBy($index, 'nombre', 'name');
+        
+        $this->addFilterSelect($index, 'estado', 'ejercicios');
     }
 }

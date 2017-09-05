@@ -37,7 +37,7 @@
             <widget type="text" fieldname="recargo" />
         </column>
         <column title="Sin Impuesto" display="center" order="140">
-            <widget type="check" fieldname="siniva">
+            <widget type="checkbox" fieldname="siniva">
                 <option color="red">0</option>
             </widget>
         </column>

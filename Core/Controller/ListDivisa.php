@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la lista de divisas utilizadas
@@ -34,12 +33,6 @@ class ListDivisa extends ExtendedController\ListController
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('coddivisa', 'Código');
-        $this->addOrderBy('descripcion');
-        $this->addOrderBy('codiso');
-
-        $this->model = new Model\Divisa();
     }
 
     public function privateCore(&$response, $user)
@@ -65,5 +58,15 @@ class ListDivisa extends ExtendedController\ListController
         $pagedata['icon'] = 'fa-money';
         $pagedata['menu'] = 'admin';
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        $className = $this->getClassName();
+        $index = $this->addView('FacturaScripts\Core\Model\Divisa', $className);
+
+        $this->addOrderBy($index, 'coddivisa', 'code');
+        $this->addOrderBy($index, 'descripcion', 'description', 1);
+        $this->addOrderBy($index, 'codiso');
     }
 }
