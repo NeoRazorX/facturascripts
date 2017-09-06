@@ -31,12 +31,6 @@ abstract class ListController extends Base\Controller
 {
 
     /**
-     * Constantes para paginación
-     */
-    const FS_ITEM_LIMIT = 50;
-    const FS_PAGE_MARGIN = 5;
-
-    /**
      * Lista de vistas mostradas por el controlador
      * 
      * @var Array of DataView 
@@ -118,14 +112,45 @@ abstract class ListController extends Base\Controller
             $this->views[$key]->setSelectedOrderBy($orderKey);
             
             // Cargamos los datos según filtro y orden
-            $dataView->loadData($where, $this->getOffSet($key), self::FS_ITEM_LIMIT);
+            $dataView->loadData($where, $this->getOffSet($key), Base\Pagination::FS_ITEM_LIMIT);
         }        
     }
     
-    protected function addView($modelName, $viewName, $viewTitle = 'search')
+    /**
+     * Aplica la acción solicitada por el usuario
+     */
+    private function setActionForm()
     {
-        $this->views[] = new DataView($viewTitle, $modelName, $viewName, $this->user->nick);
-        return (count($this->views) - 1);
+        $data = $this->request->request->all();
+        if (!isset($data['active']) || !isset($data['action'])) {
+            return;
+        }
+        
+        switch ($data['action']) {
+            case 'delete':
+                /// Se llama a función para que las clases hijas puedan operar, si lo necesitan
+                $this->deleteAction($this->views[$data['active']], $data);
+                break;
+
+            default:
+                break;
+        }
+    }
+    
+    /**
+     * Acción de borrado de datos
+     * 
+     * @param DataView $view     Vista sobre la que se realiza la acción
+     * @param array $data        Datos pasados por POST
+     * @return boolean
+     */
+    protected function deleteAction($view, $data)
+    {
+        if ($view->delete($data['code'])) {
+            $this->miniLog->notice($this->i18n->trans('Record deleted correctly!'));
+            return TRUE;
+        }
+        return FALSE;
     }
         
     /**
@@ -163,36 +188,34 @@ abstract class ListController extends Base\Controller
     }
     
     /**
-     * Aplica la acción solicitada por el usuario
+     * Crea y añade una vista al controlador.
+     * Devuelve el indice de la vista dentro del array de vistas.
+     * 
+     * @param string $modelName
+     * @param string $viewName
+     * @param string $viewTitle
+     * @return int
      */
-    private function setActionForm()
+    protected function addView($modelName, $viewName, $viewTitle = 'search')
     {
-        $data = $this->request->request->all();
-        if (!isset($data['active']) || !isset($data['action'])) {
-            return;
-        }
-        
-        switch ($data['action']) {
-            case 'delete':
-                if ($this->views[$data['active']]->delete($data['code'])) {
-                    $this->miniLog->notice($this->i18n->trans('Record deleted correctly!'));
-                }
+        $this->views[] = new DataView($viewTitle, $modelName, $viewName, $this->user->nick);
+        return (count($this->views) - 1);
+    }    
 
-                break;
-
-            default:
-                break;
-        }
-    }
-    
-    
+    /**
+     * Añade una lista de campos (separados por |) a lista de campos de búsqueda
+     * para el filtrado de datos.
+     * 
+     * @param int $indexView
+     * @param string $fields
+     */
     protected function addSearchFields($indexView, $fields)
     {
         $this->views[$indexView]->addSearchIn($fields);
     }
 
     /**
-     * Añade un campo a la lista de Order By de una vista
+     * Añade un campo a la lista de Order By de una vista.
      * 
      * @param int $indexView
      * @param string $field
@@ -206,7 +229,8 @@ abstract class ListController extends Base\Controller
 
     /**
      * Add a filter type data table selection
-     * Añade un filtro de tipo selección en tabla
+     * Añade un filtro de tipo selección en tabla.
+     * 
      * @param int $indexView
      * @param string $key      (Filter field name identifier)
      * @param string $table    (Table name)
@@ -220,7 +244,8 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Añade un filtro del tipo condición boleana
+     * Añade un filtro del tipo condición boleana.
+     * 
      * @param int $indexView
      * @param string  $key     (Filter identifier)
      * @param string  $label   (Human reader description)
@@ -234,6 +259,8 @@ abstract class ListController extends Base\Controller
     }
 
     /**
+     * Añade un filtro del tipo fecha.
+     * 
      * @param int $indexView
      * @param string  $key     (Filter identifier)
      * @param string  $label   (Human reader description)
@@ -246,7 +273,8 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Carga una lista de datos desde una tabla
+     * Carga una lista de datos desde una tabla.
+     * 
      * @param string $field : Field name with real value
      * @param array $options : Array with configuration values [field = Field description, table = table name, where = SQL Where clausule]
      * @return array
@@ -262,7 +290,7 @@ abstract class ListController extends Base\Controller
             
             $sql = "SELECT DISTINCT " . $fieldList
                 . " FROM " . $options['table']
-                . " WHERE COALESCE(" . $options['field'] . ", '')" . " <> ''" . $where
+                . " WHERE COALESCE(" . $options['field'] . ", '')" . " <> ''" . $options['$where']
                 . " ORDER BY " . $options['field'] . " ASC;";
 
             $data = $this->dataBase->select($sql);
@@ -277,62 +305,11 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Devuelve un item de paginación
-     * @param string $url
-     * @param int $page
-     * @param int $offset
-     * @param string $icon
-     * @param boolean $active
-     * @return array
-     */
-    private function addPaginationItem($url, $page, $offset, $icon = FALSE, $active = FALSE)
-    {
-        return [
-            'url' => $url . "&offset=" . $offset,
-            'icon' => $icon,
-            'page' => $page,
-            'active' => $active
-        ];
-    }
-
-    /**
-     * Devuelve el offset para el primer elemento del margen especificado
-     * para la paginación
+     * Devuelve el valor de offset para la vista indicada.
      * 
      * @param int $indexView
      * @return int
      */
-    private function getRecordMin($indexView)
-    {
-        $result = 0;
-        if ($indexView === $this->active) {
-            $result = $this->offset - (self::FS_ITEM_LIMIT * self::FS_PAGE_MARGIN);
-            if ($result < 0) {
-                $result = 0;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * Devuelve el offset para el último elemento del margen especificado
-     * para la paginación
-     * 
-     * @param int $indexView
-     * @return int
-     */
-    private function getRecordMax($indexView)
-    {
-        $result = $this->views[$indexView]->count;
-        if ($indexView === $this->active) {
-            $result = $this->offset + (self::FS_ITEM_LIMIT * (self::FS_PAGE_MARGIN + 1));
-            if ($result > $this->views[$indexView]->count) {
-                $result = $this->views[$indexView]->count;
-            }
-        }
-        return $result;
-    }
-
     private function getOffSet($indexView)
     {
         return ($indexView === $this->active)
@@ -342,11 +319,12 @@ abstract class ListController extends Base\Controller
     
     /**
      * Construye un string con los parámetros pasados en la url
+     * de la llamada al controlador.
      * 
-     * @param string $indexView
+     * @param int $indexView
      * @return string
      */
-    protected function getParams($indexView)
+    private function getParams($indexView)
     {
         $result = "";
         if ($indexView === $this->active) {        
@@ -366,73 +344,33 @@ abstract class ListController extends Base\Controller
     }
     
     /**
-     * Calcula el navegador entre páginas.
-     * Permite saltar a:
-     *      primera,
-     *      mitad anterior,
-     *      pageMargin x páginas anteriores
-     *      página actual
-     *      pageMargin x páginas posteriores
-     *      mitad posterior
-     *      última
-     *
+     * Crea un array con los "saltos" disponibles para paginar los datos
+     * del modelo de la vista indicada.
+     * 
      * @param int $indexView
      * @return array
-     *      url    => link a la página
-     *      icon   => icono específico de bootstrap en vez de núm. página
-     *      page   => número de página
-     *      active => Indica si es el indicador activo
      */
     public function pagination($indexView)
     {
-        $result = [];
-        $url = $this->views[$indexView]->getURL('list') . $this->getParams($indexView);
-
-        $recordMin = $this->getRecordMin($indexView);
-        $recordMax = $this->getRecordMax($indexView);
         $offset = $this->getOffSet($indexView);
-        $index = 0;
-
-        // Añadimos la primera página, si no está incluida en el margen de páginas
-        if ($offset > (self::FS_ITEM_LIMIT * self::FS_PAGE_MARGIN)) {
-            $result[$index] = $this->addPaginationItem($url, 1, 0, "fa-step-backward");
-            $index++;
+        $count = $this->views[$indexView]->count;
+        $url =  $this->views[$indexView]->getURL('list') . $this->getParams($indexView);
+        
+        $paginationObj = new Base\Pagination();
+        $result = $paginationObj->getPages($url, $count, $offset);
+        unset($paginationObj);
+        
+        return $result;
+    }
+    
+    public function getStringURLs($type)
+    {
+        $result = '';
+        $sep = '';
+        foreach ($this->views as $view) {
+            $result .= $sep . "'" . $view->getURL($type) . "'";
+            $sep = ',';
         }
-
-        // Añadimos la página de en medio entre la primera y la página seleccionada,
-        // si la página seleccionada es mayor que el margen de páginas
-        $recordMiddleLeft = ($recordMin > self::FS_ITEM_LIMIT) ? ($offset / 2) : $recordMin;
-        if ($recordMiddleLeft < $recordMin) {
-            $page = floor($recordMiddleLeft / self::FS_ITEM_LIMIT);
-            $result[$index] = $this->addPaginationItem($url, ($page + 1), ($page * self::FS_ITEM_LIMIT), "fa-backward");
-            $index++;
-        }
-
-        // Añadimos la página seleccionada y el margen de páginas a su izquierda y su derecha
-        for ($record = $recordMin; $record < $recordMax; $record += self::FS_ITEM_LIMIT) {
-            if (($record >= $recordMin && $record <= $offset) || ($record <= $recordMax && $record >= $offset)) {
-                $page = ($record / self::FS_ITEM_LIMIT) + 1;
-                $result[$index] = $this->addPaginationItem($url, $page, $record, FALSE, ($record == $offset));
-                $index++;
-            }
-        }
-
-        // Añadimos la página de en medio entre la página seleccionada y la última,
-        // si la página seleccionada es más pequeña que el márgen entre páginas
-        $recordMiddleRight = $offset + (($this->views[$indexView]->count - $offset) / 2);
-        if ($recordMiddleRight > $recordMax) {
-            $page = floor($recordMiddleRight / self::FS_ITEM_LIMIT);
-            $result[$index] = $this->addPaginationItem($url, ($page + 1), ($page * self::FS_ITEM_LIMIT), "fa-forward");
-            $index++;
-        }
-
-        // Añadimos la última página, si no está incluida en el margen de páginas
-        if ($recordMax < $this->views[$indexView]->count) {
-            $pageMax = floor($this->views[$indexView]->count / self::FS_ITEM_LIMIT);
-            $result[$index] = $this->addPaginationItem($url, ($pageMax + 1), ($pageMax * self::FS_ITEM_LIMIT), "fa-step-forward");
-        }
-
-        /// si solamente hay una página, no merece la pena mostrar un único botón
-        return (count($result) > 1) ? $result : [];
+        return $result;
     }
 }

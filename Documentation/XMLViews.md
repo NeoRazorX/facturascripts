@@ -16,7 +16,7 @@ Tanto las etiquetas _\<group\>_, _\<column\>_ como _\<widget\>_ disponen de un c
 el contexto en que se ejecutan, es decir si es una vista _List_ o una vista _Edit_.
 Es posible indicar el número de columnas que ocupará _\<column\>_ y/o el grupo _\<group\>_ dentro de la rejilla bootstrap (por defecto el máximo disponible).
 
-Ejemplo ListController:
+Ejemplo vista para ListController:
     
 ```XML
     <columns>
@@ -42,7 +42,7 @@ Ejemplo ListController:
     </rows>
 ```
 
-Ejemplo EditController:
+Ejemplo de vista para EditController:
     
 ```XML
     <columns>

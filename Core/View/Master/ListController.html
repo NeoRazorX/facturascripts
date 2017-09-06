@@ -17,12 +17,27 @@
         $('[data-toggle="popover"]').popover({
             delay: { "show": 1000, "hide": 100 }
         });
-
-        document.f_custom_search0.query.focus();
-        document.f_custom_search0.query.select();
+        
+        var index = selectedTab();
+        self.setFormFocus(index);
     });
 
+    function setFormFocus(index) {
+        var formName = '#form_search' + index + ' :text:first';
+        $(formName).focus().select();
+
+        console.log('Cambiando el foco a ' + index);
+        console.log(formName);
+    }
+    
+    function selectedTab() {
+        return $('#mainTabContent > div.tab-pane.active').data('tabindex');
+    }
+
     function insertRecord() {
+        var url = [{{ fsc.getStringURLs('new')|raw }}];
+        var index = selectedTab();
+        document.insert_form.action = url[index];
         document.insert_form.submit(); 
     }    
 </script>
@@ -81,7 +96,7 @@
                 {% endif %}
             </div>
             <div class="btn-group">
-                <form action="{{ fsc.views[0].getURL('new') }}" method=post name="insert_form">
+                <form action="#" method=post name="insert_form">
                     <input type="hidden" name="action" value="insert"> 
                 </form>             
                 
@@ -126,7 +141,9 @@
         {% set indexView = loop.index - 1 %}
         <li class="nav-item">
             {% set active = (indexView == fsc.active) ? 'active' : '' %}
-            <a href="#search{{ indexView }}" class="nav-link {{ active }}" id="search{{ indexView }}-tab" data-toggle="tab" role="tab" aria-controls="search{{ indexView }}" aria-expanded="true">
+            <a href="#search{{ indexView }}" class="nav-link {{ active }}" id="search{{ indexView }}-tab" onclick="setFormFocus({{ indexView }});"
+               data-toggle="tab" role="tab" 
+               aria-controls="search{{ indexView }}" aria-expanded="true">
                 <i class="fa fa-search" aria-hidden="true"></i>
                 <span class="hidden-xs">&nbsp;{{ i18n.trans(view.title) }}</span>
                 <span class="badge badge-secondary">{{ view.count }}</span>
@@ -150,16 +167,16 @@
         {% for view in fsc.views %}        
         {% set indexView = loop.index - 1 %}
         {% set active = (indexView == fsc.active) ? 'active' : '' %}
-        <div class="tab-pane {{ active }}" id="search{{ indexView }}" role="tabpanel" aria-labelledby="search{{ indexView }}-tab">
+        <div class="tab-pane {{ active }}" id="search{{ indexView }}" role="tabpanel" aria-labelledby="search{{ indexView }}-tab" data-tabindex="{{ indexView }}">
             <!-- Filters Row -->
-            <form name="f_custom_search{{ indexView }}" action="{{ list_url }}" method="post" class="form">
+            <form name="f_custom_search{{ indexView }}" id="form_search{{ indexView }}" action="{{ list_url }}" method="post" class="form">
                 <div class="container-fluid d-print-none" style="margin-top: 15px; margin-bottom: 10px;">
                     <div class="row">
                         <!-- Main filter -->
                         <div class="col-md-2">
                             <div class="input-group">
                                 <input type="hidden" name="active" value="{{ indexView }}"> 
-                                <input class="form-control" type="text" name="query" value="{% if indexView == fsc.active %}{{ fsc.query }}{% endif %}" autocomplete="off" placeholder="Buscar">
+                                <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{% if indexView == fsc.active %}{{ fsc.query }}{% endif %}" autocomplete="off" placeholder="Buscar">
                                 <span class="input-group-btn hidden-sm">
                                     <button class="btn btn-primary" type="submit">
                                         <i class="fa fa-search" aria-hidden="true"></i>
