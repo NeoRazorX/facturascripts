@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -27,77 +28,88 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class Stock
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria.
+     *
      * @var int
      */
     public $idstock;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $codalmacen;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $referencia;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $nombre;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $cantidad;
 
     /**
      * TODO
+     *
      * @var
      */
     public $reservada;
 
     /**
      * TODO
+     *
      * @var
      */
     public $disponible;
 
     /**
      * TODO
+     *
      * @var
      */
     public $pterecibir;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $stockmin;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $stockmax;
 
     /**
      * TODO
+     *
      * @var
      */
     public $cantidadultreg;
 
     /**
      * TODO
+     *
      * @var
      */
     public $ubicacion;
@@ -133,6 +145,7 @@ class Stock
 
     /**
      * TODO
+     *
      * @return mixed
      */
     public function getNombre()
@@ -183,7 +196,7 @@ class Stock
      * TODO
      *
      * @param string $ref
-     * @param bool $codalmacen
+     * @param bool   $codalmacen
      *
      * @return Stock|false
      */
@@ -214,7 +227,7 @@ class Stock
      * TODO
      *
      * @param string $ref
-     * @param bool $codalmacen
+     * @param bool   $codalmacen
      *
      * @return float|int
      */
@@ -257,6 +270,7 @@ class Stock
 
     /**
      * TODO
+     *
      * @return int
      */
     public function countByArticulo()

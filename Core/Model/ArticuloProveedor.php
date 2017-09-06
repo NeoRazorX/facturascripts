@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,97 +26,111 @@ namespace FacturaScripts\Core\Model;
  */
 class ArticuloProveedor
 {
-
     use Base\ModelTrait {
         save as private saveTrait;
     }
 
     /**
      * TODO
+     *
      * @var array
      */
     private static $impuestos;
 
     /**
      * TODO
+     *
      * @var array
      */
     private static $nombres;
 
     /**
      * Clave primaria.
+     *
      * @var int
      */
     public $id;
 
     /**
      * Referencia del artículo en nuestro catálogo. Puede no estar actualmente.
+     *
      * @var string
      */
     public $referencia;
 
     /**
      * Código del proveedor asociado.
+     *
      * @var string
      */
     public $codproveedor;
 
     /**
      * Referencia del artículo para el proveedor.
+     *
      * @var string
      */
     public $refproveedor;
 
     /**
      * Descripción del artículo
+     *
      * @var string
      */
     public $descripcion;
 
     /**
      * Precio neto al que nos ofrece el proveedor este producto.
+     *
      * @var float
      */
     public $precio;
 
     /**
      * Descuento sobre el precio que nos hace el proveedor.
+     *
      * @var float
      */
     public $dto;
 
     /**
      * Impuesto asignado. Clase impuesto.
+     *
      * @var string
      */
     public $codimpuesto;
 
     /**
      * Stock del artículo en el almacén del proveedor.
+     *
      * @var float
      */
     public $stock;
 
     /**
      * TRUE -> el artículo no ofrece stock.
+     *
      * @var bool
      */
     public $nostock;
 
     /**
      * Código de barras del artículo
+     *
      * @var string
      */
     public $codbarras;
 
     /**
      * Part Number
+     *
      * @var string
      */
     public $partnumber;
 
     /**
      * % IVA del impuesto asignado.
+     *
      * @var float
      */
     private $iva;
@@ -151,6 +166,7 @@ class ArticuloProveedor
 
     /**
      * TODO
+     *
      * @return string
      */
     public function nombreProveedor()
@@ -162,13 +178,16 @@ class ArticuloProveedor
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             self::$nombres[$this->codproveedor] = $data[0]['razonsocial'];
+
             return $data[0]['razonsocial'];
         }
+
         return '-';
     }
 
     /**
      * TODO
+     *
      * @return string
      */
     public function urlProveedor()
@@ -218,6 +237,7 @@ class ArticuloProveedor
 
     /**
      * TODO
+     *
      * @return bool|mixed
      */
     public function getArticulo()
@@ -226,11 +246,13 @@ class ArticuloProveedor
             return false;
         }
         $art0 = new Articulo();
+
         return $art0->get($this->referencia);
     }
 
     /**
      * Devuelve el precio final, aplicando descuento e impuesto.
+     *
      * @return float
      */
     public function totalIva()
@@ -262,13 +284,15 @@ class ArticuloProveedor
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
-            return new ArticuloProveedor($data[0]);
+            return new self($data[0]);
         }
+
         return false;
     }
 
     /**
      * Almacena los datos del modelo en la base de datos.
+     *
      * @return bool
      */
     public function save()
@@ -282,6 +306,7 @@ class ArticuloProveedor
         if ($this->refproveedor === null || empty($this->refproveedor) || strlen($this->refproveedor) > 25) {
             $this->miniLog->alert('La referencia de proveedor debe contener entre 1 y 25 caracteres.');
         }
+
         return $this->saveTrait();
     }
 
@@ -300,7 +325,7 @@ class ArticuloProveedor
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
-                $alist[] = new ArticuloProveedor($d);
+                $alist[] = new self($d);
             }
         }
 
@@ -321,8 +346,9 @@ class ArticuloProveedor
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
-            return new ArticuloProveedor($data[0]);
+            return new self($data[0]);
         }
+
         return false;
     }
 
@@ -341,7 +367,7 @@ class ArticuloProveedor
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
-                $alist[] = new ArticuloProveedor($d);
+                $alist[] = new self($d);
             }
         }
 
@@ -355,7 +381,7 @@ class ArticuloProveedor
     {
         $fixes = [
             'DELETE FROM articulosprov WHERE codproveedor NOT IN (SELECT codproveedor FROM proveedores);',
-            'UPDATE articulosprov SET refproveedor = referencia WHERE refproveedor IS NULL;'
+            'UPDATE articulosprov SET refproveedor = referencia WHERE refproveedor IS NULL;',
         ];
         foreach ($fixes as $sql) {
             $this->dataBase->exec($sql);

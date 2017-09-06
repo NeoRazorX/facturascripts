@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -27,63 +28,72 @@ namespace FacturaScripts\Core\Base;
  */
 class DefaultItems
 {
-
     /**
      * Página por defecto
+     *
      * @var string
      */
     private static $defaultPage;
 
     /**
      * Página que se está mostrando
+     *
      * @var string
      */
     private static $showingPage;
 
     /**
      * Código de ejercicio
+     *
      * @var string
      */
     private static $codEjercicio;
 
     /**
      * Código de almacén
+     *
      * @var string
      */
     private static $codAlmacen;
 
     /**
      * Código de divisa
+     *
      * @var string
      */
     private static $codDivisa;
 
     /**
      * Código de forma de pago
+     *
      * @var string
      */
     private static $codPago;
 
     /**
      * Código de impuesto
+     *
      * @var string
      */
     private static $codImpuesto;
 
     /**
      * Código de país
+     *
      * @var string
      */
     private static $codPais;
 
     /**
      * Código de serie
+     *
      * @var string
      */
     private static $codSerie;
 
     /**
      * Devuelve el código de ejercicio por defecto
+     *
      * @return string|null
      */
     public function codEjercicio()
@@ -93,6 +103,7 @@ class DefaultItems
 
     /**
      * Asigna el código de ejercicio por defecto
+     *
      * @param string $cod
      */
     public function setCodEjercicio($cod)
@@ -102,6 +113,7 @@ class DefaultItems
 
     /**
      * Devuelve el código de almacén por defecto
+     *
      * @return string|null
      */
     public function codAlmacen()
@@ -111,6 +123,7 @@ class DefaultItems
 
     /**
      * Asigna el código de almacén por defecto
+     *
      * @param string $cod
      */
     public function setCodAlmacen($cod)
@@ -120,6 +133,7 @@ class DefaultItems
 
     /**
      * Devuelve el código de la divisa por defecto
+     *
      * @return string|null
      */
     public function codDivisa()
@@ -129,6 +143,7 @@ class DefaultItems
 
     /**
      * Asigna el código de la divisa por defecto
+     *
      * @param string $cod
      */
     public function setCodDivisa($cod)
@@ -138,6 +153,7 @@ class DefaultItems
 
     /**
      * Devuelve el código de la forma de pago por defecto
+     *
      * @return string|null
      */
     public function codPago()
@@ -147,6 +163,7 @@ class DefaultItems
 
     /**
      * Asigna el código de la forma de pago por defecto
+     *
      * @param string $cod
      */
     public function setCodPago($cod)
@@ -156,6 +173,7 @@ class DefaultItems
 
     /**
      * Devuelve el código del impuesto por defecto
+     *
      * @return string|null
      */
     public function codImpuesto()
@@ -165,6 +183,7 @@ class DefaultItems
 
     /**
      * Asigna el código del impuesto por defecto
+     *
      * @param string $cod
      */
     public function setCodImpuesto($cod)
@@ -174,6 +193,7 @@ class DefaultItems
 
     /**
      * Devuelve el código de país por defecto
+     *
      * @return string|null
      */
     public function codPais()
@@ -183,6 +203,7 @@ class DefaultItems
 
     /**
      * Asigna el código de país por defecto
+     *
      * @param string $cod
      */
     public function setCodPais($cod)
@@ -192,6 +213,7 @@ class DefaultItems
 
     /**
      * Devuelve el código de la serie por defecto
+     *
      * @return string|null
      */
     public function codSerie()
@@ -201,6 +223,7 @@ class DefaultItems
 
     /**
      * Asigna el código de la serie por defecto
+     *
      * @param string $cod
      */
     public function setCodSerie($cod)
@@ -210,6 +233,7 @@ class DefaultItems
 
     /**
      * Devuelve la página por defecto
+     *
      * @return string|null
      */
     public function defaultPage()
@@ -219,6 +243,7 @@ class DefaultItems
 
     /**
      * Asigna la página por defecto
+     *
      * @param string $name
      */
     public function setDefaultPage($name)
@@ -228,6 +253,7 @@ class DefaultItems
 
     /**
      * Devuelve la página que se está mostrando
+     *
      * @return string|null
      */
     public function showingPage()
@@ -237,6 +263,7 @@ class DefaultItems
 
     /**
      * Asigna la página que se está mostrando
+     *
      * @param string $name
      */
     public function setShowingPage($name)

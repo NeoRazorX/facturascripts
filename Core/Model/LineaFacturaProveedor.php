@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,60 +26,68 @@ namespace FacturaScripts\Core\Model;
  */
 class LineaFacturaProveedor
 {
-
     use Base\LineaDocumento;
     use Base\ModelTrait;
 
     /**
      * TODO
+     *
      * @var array
      */
     private static $facturas;
 
     /**
      * TODO
+     *
      * @var array
      */
     private static $albaranes;
 
     /**
      * ID de la linea del albarán relacionado, si lo hay.
+     *
      * @var int
      */
     public $idlineaalbaran;
 
     /**
      * ID de la factura de esta línea.
+     *
      * @var int
      */
     public $idfactura;
 
     /**
      * ID del albarán relacionado con la factura, si lo hay.
+     *
      * @var int
      */
     public $idalbaran;
 
     /**
      * TODO
+     *
      * @var string
      */
     private $codigo;
 
     /**
      * TODO
+     *
      * @var string
      */
     private $fecha;
 
     /**
      * TODO
+     *
      * @var string
      */
     private $albaran_codigo;
 
     /**
      * TODO
+     *
      * @var int
      */
     private $albaran_numero;
@@ -118,6 +127,7 @@ class LineaFacturaProveedor
 
     /**
      * TODO
+     *
      * @return null|string
      */
     public function showCodigo()
@@ -125,11 +135,13 @@ class LineaFacturaProveedor
         if ($this->codigo === null) {
             $this->fill();
         }
+
         return $this->codigo;
     }
 
     /**
      * TODO
+     *
      * @return string
      */
     public function showFecha()
@@ -137,11 +149,13 @@ class LineaFacturaProveedor
         if ($this->fecha === null) {
             $this->fill();
         }
+
         return $this->fecha;
     }
 
     /**
      * TODO
+     *
      * @return string
      */
     public function showNombre()
@@ -160,6 +174,7 @@ class LineaFacturaProveedor
 
     /**
      * TODO
+     *
      * @return null|string
      */
     public function albaranCodigo()
@@ -167,11 +182,13 @@ class LineaFacturaProveedor
         if ($this->albaran_codigo === null) {
             $this->fill();
         }
+
         return $this->albaran_codigo;
     }
 
     /**
      * TODO
+     *
      * @return string
      */
     public function albaranUrl()
@@ -179,11 +196,13 @@ class LineaFacturaProveedor
         if ($this->idalbaran === null) {
             return 'index.php?page=ComprasAlbaranes';
         }
+
         return 'index.php?page=ComprasAlbaran&id=' . $this->idalbaran;
     }
 
     /**
      * TODO
+     *
      * @return int|null
      */
     public function albaranNumero()
@@ -191,11 +210,13 @@ class LineaFacturaProveedor
         if ($this->albaran_numero === null) {
             $this->fill();
         }
+
         return $this->albaran_numero;
     }
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function test()
@@ -207,13 +228,16 @@ class LineaFacturaProveedor
         if (!$this->floatcmp($this->pvptotal, $total, FS_NF0, true)) {
             $this->miniLog->alert('Error en el valor de pvptotal de la línea ' . $this->referencia
                 . ' de la factura. Valor correcto: ' . $total);
+
             return false;
         }
         if (!$this->floatcmp($this->pvpsindto, $totalsindto, FS_NF0, true)) {
             $this->miniLog->alert('Error en el valor de pvpsindto de la línea ' . $this->referencia
                 . ' de la factura. Valor correcto: ' . $totalsindto);
+
             return false;
         }
+
         return true;
     }
 
@@ -221,7 +245,7 @@ class LineaFacturaProveedor
      * TODO
      *
      * @param string $query
-     * @param int $offset
+     * @param int    $offset
      *
      * @return array
      */
@@ -242,7 +266,7 @@ class LineaFacturaProveedor
         $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $l) {
-                $linealist[] = new LineaFacturaProveedor($l);
+                $linealist[] = new self($l);
             }
         }
 

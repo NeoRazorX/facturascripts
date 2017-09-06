@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -27,17 +28,18 @@ namespace FacturaScripts\Core\Model;
  */
 class Rol
 {
-
     use Base\ModelTrait;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $codrol;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $descripcion;
@@ -55,11 +57,13 @@ class Rol
     /**
      * Devuelve true si no hay errores en los valores de las propiedades del modelo.
      * Se ejecuta dentro del método save.
+     *
      * @return bool
      */
     public function test()
     {
         $this->descripcion = self::noHtml($this->descripcion);
+
         return true;
     }
 }

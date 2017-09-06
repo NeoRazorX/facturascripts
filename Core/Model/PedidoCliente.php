@@ -13,10 +13,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -26,7 +27,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class PedidoCliente
 {
-
     use Base\DocumentoVenta;
     use Base\ModelTrait {
         clear as clearTrait;
@@ -34,12 +34,14 @@ class PedidoCliente
 
     /**
      * Clave primaria.
+     *
      * @var integer
      */
     public $idpedido;
 
     /**
      * ID del albarán relacionado.
+     *
      * @var integer
      */
     public $idalbaran;
@@ -49,20 +51,23 @@ class PedidoCliente
      * 0 -> pendiente. (editable)
      * 1 -> aprobado. (hay un idalbaran y no es editable)
      * 2 -> rechazado. (no hay idalbaran y no es editable)
-     * @var type 
+     *
+     * @var type
      */
     public $status;
     public $editable;
 
     /**
      * Fecha de salida prevista del material.
-     * @var type 
+     *
+     * @var type
      */
     public $fechasalida;
 
     /**
      * Si este presupuesto es la versión de otro, aquí se almacena el idpresupuesto del original.
-     * @var type 
+     *
+     * @var type
      */
     public $idoriginal;
 
@@ -82,8 +87,8 @@ class PedidoCliente
         $this->codpago = $this->default_items->codpago();
         $this->codserie = $this->default_items->codserie();
         $this->codalmacen = $this->default_items->codalmacen();
-        $this->fecha = Date('d-m-Y');
-        $this->hora = Date('H:i:s');
+        $this->fecha = date('d-m-Y');
+        $this->hora = date('H:i:s');
         $this->tasaconv = 1.0;
         $this->status = 0;
         $this->editable = TRUE;
@@ -93,29 +98,31 @@ class PedidoCliente
 
     /**
      * Devuelve las líneas del pedido.
+     *
      * @return \LineaPedidoCliente
      */
     public function getLineas()
     {
         $lineaModel = new LineaPedidoCliente();
+
         return $lineaModel->all(new DataBaseWhere('idpedido', $this->idpedido));
     }
 
     public function get_versiones()
     {
-        $versiones = array();
+        $versiones = [];
 
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE idoriginal = " . $this->var2str($this->idpedido);
+        $sql = 'SELECT * FROM ' . $this->table_name . ' WHERE idoriginal = ' . $this->var2str($this->idpedido);
         if ($this->idoriginal) {
-            $sql .= " OR idoriginal = " . $this->var2str($this->idoriginal);
-            $sql .= " OR idpedido = " . $this->var2str($this->idoriginal);
+            $sql .= ' OR idoriginal = ' . $this->var2str($this->idoriginal);
+            $sql .= ' OR idpedido = ' . $this->var2str($this->idoriginal);
         }
-        $sql .= "ORDER BY fecha DESC, hora DESC;";
+        $sql .= 'ORDER BY fecha DESC, hora DESC;';
 
         $data = $this->db->select($sql);
         if ($data) {
             foreach ($data as $d) {
-                $versiones[] = new PedidoCliente($d);
+                $versiones[] = new self($d);
             }
         }
 
@@ -133,6 +140,7 @@ class PedidoCliente
 
     /**
      * Comprueba los datos del pedido, devuelve TRUE si está todo correcto
+     *
      * @return boolean
      */
     public function test()
@@ -164,9 +172,9 @@ class PedidoCliente
         if ($this->idalbaran) {
             $this->status = 1;
             $this->editable = FALSE;
-        } else if ($this->status == 0) {
+        } elseif ($this->status == 0) {
             $this->editable = TRUE;
-        } else if ($this->status == 2) {
+        } elseif ($this->status == 2) {
             $this->editable = FALSE;
         }
 
@@ -174,7 +182,8 @@ class PedidoCliente
             return TRUE;
         }
 
-        $this->miniLog->critical("Error grave: El total está mal calculado. ¡Informa del error!");
+        $this->miniLog->critical('Error grave: El total está mal calculado. ¡Informa del error!');
+
         return FALSE;
     }
 
@@ -205,19 +214,19 @@ class PedidoCliente
         $total = $neto + $iva - $irpf + $recargo;
 
         if (!$this->floatcmp($this->neto, $neto, FS_NF0, TRUE)) {
-            $this->miniLog->critical("Valor neto de " . FS_PEDIDO . " incorrecto. Valor correcto: " . $neto);
+            $this->miniLog->critical('Valor neto de ' . FS_PEDIDO . ' incorrecto. Valor correcto: ' . $neto);
             $status = FALSE;
-        } else if (!$this->floatcmp($this->totaliva, $iva, FS_NF0, TRUE)) {
-            $this->miniLog->critical("Valor totaliva de " . FS_PEDIDO . " incorrecto. Valor correcto: " . $iva);
+        } elseif (!$this->floatcmp($this->totaliva, $iva, FS_NF0, TRUE)) {
+            $this->miniLog->critical('Valor totaliva de ' . FS_PEDIDO . ' incorrecto. Valor correcto: ' . $iva);
             $status = FALSE;
-        } else if (!$this->floatcmp($this->totalirpf, $irpf, FS_NF0, TRUE)) {
-            $this->miniLog->critical("Valor totalirpf de " . FS_PEDIDO . " incorrecto. Valor correcto: " . $irpf);
+        } elseif (!$this->floatcmp($this->totalirpf, $irpf, FS_NF0, TRUE)) {
+            $this->miniLog->critical('Valor totalirpf de ' . FS_PEDIDO . ' incorrecto. Valor correcto: ' . $irpf);
             $status = FALSE;
-        } else if (!$this->floatcmp($this->totalrecargo, $recargo, FS_NF0, TRUE)) {
-            $this->miniLog->critical("Valor totalrecargo de " . FS_PEDIDO . " incorrecto. Valor correcto: " . $recargo);
+        } elseif (!$this->floatcmp($this->totalrecargo, $recargo, FS_NF0, TRUE)) {
+            $this->miniLog->critical('Valor totalrecargo de ' . FS_PEDIDO . ' incorrecto. Valor correcto: ' . $recargo);
             $status = FALSE;
-        } else if (!$this->floatcmp($this->total, $total, FS_NF0, TRUE)) {
-            $this->miniLog->critical("Valor total de " . FS_PEDIDO . " incorrecto. Valor correcto: " . $total);
+        } elseif (!$this->floatcmp($this->total, $total, FS_NF0, TRUE)) {
+            $this->miniLog->critical('Valor total de ' . FS_PEDIDO . ' incorrecto. Valor correcto: ' . $total);
             $status = FALSE;
         }
 
@@ -243,6 +252,7 @@ class PedidoCliente
             }
 
             $this->newCodigo();
+
             return $this->saveInsert();
         }
 
@@ -252,16 +262,18 @@ class PedidoCliente
     /**
      * Elimina el pedido de la base de datos.
      * Devuelve FALSE en caso de fallo.
+     *
      * @return boolean
      */
     public function delete()
     {
-        if ($this->db->exec("DELETE FROM " . $this->table_name . " WHERE idpedido = " . $this->var2str($this->idpedido) . ";")) {
+        if ($this->db->exec('DELETE FROM ' . $this->table_name . ' WHERE idpedido = ' . $this->var2str($this->idpedido) . ';')) {
             /// modificamos el presupuesto relacionado
-            $this->db->exec("UPDATE presupuestoscli SET idpedido = NULL, editable = TRUE,"
-                . " status = 0 WHERE idpedido = " . $this->var2str($this->idpedido) . ";");
+            $this->db->exec('UPDATE presupuestoscli SET idpedido = NULL, editable = TRUE,'
+                . ' status = 0 WHERE idpedido = ' . $this->var2str($this->idpedido) . ';');
 
-            $this->new_message(ucfirst(FS_PEDIDO) . ' de venta ' . $this->codigo . " eliminado correctamente.");
+            $this->new_message(ucfirst(FS_PEDIDO) . ' de venta ' . $this->codigo . ' eliminado correctamente.');
+
             return TRUE;
         }
 
@@ -270,32 +282,34 @@ class PedidoCliente
 
     /**
      * Devuelve un array con todos los pedidos que coinciden con $query
-     * @param type $query
+     *
+     * @param type    $query
      * @param integer $offset
+     *
      * @return \PedidoCliente
      */
     public function search($query, $offset = 0)
     {
-        $pedilist = array();
+        $pedilist = [];
         $query = mb_strtolower($this->no_html($query), 'UTF8');
 
-        $consulta = "SELECT * FROM " . $this->table_name . " WHERE ";
+        $consulta = 'SELECT * FROM ' . $this->table_name . ' WHERE ';
         if (is_numeric($query)) {
             $consulta .= "codigo LIKE '%" . $query . "%' OR numero2 LIKE '%" . $query . "%' OR observaciones LIKE '%" . $query . "%'
             OR total BETWEEN '" . ($query - .01) . "' AND '" . ($query + .01) . "'";
-        } else if (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query)) {
+        } elseif (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query)) {
             /// es una fecha
-            $consulta .= "fecha = " . $this->var2str($query) . " OR observaciones LIKE '%" . $query . "%'";
+            $consulta .= 'fecha = ' . $this->var2str($query) . " OR observaciones LIKE '%" . $query . "%'";
         } else {
             $consulta .= "lower(codigo) LIKE '%" . $query . "%' OR lower(numero2) LIKE '%" . $query . "%' "
                 . "OR lower(observaciones) LIKE '%" . str_replace(' ', '%', $query) . "%'";
         }
-        $consulta .= " ORDER BY fecha DESC, codigo DESC";
+        $consulta .= ' ORDER BY fecha DESC, codigo DESC';
 
         $data = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);
         if ($data) {
             foreach ($data as $p) {
-                $pedilist[] = new PedidoCliente($p);
+                $pedilist[] = new self($p);
             }
         }
 
@@ -304,31 +318,33 @@ class PedidoCliente
 
     /**
      * Devuelve un array con todos los pedidos que coincicen con $query del cliente $codcliente
+     *
      * @param type $codcliente
      * @param type $desde
      * @param type $hasta
      * @param type $serie
      * @param type $obs
+     *
      * @return \PedidoCliente
      */
     public function search_from_cliente($codcliente, $desde, $hasta, $serie, $obs = '')
     {
-        $pedilist = array();
+        $pedilist = [];
 
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE codcliente = " . $this->var2str($codcliente) .
-            " AND idalbaran AND fecha BETWEEN " . $this->var2str($desde) . " AND " . $this->var2str($hasta) .
-            " AND codserie = " . $this->var2str($serie);
+        $sql = 'SELECT * FROM ' . $this->table_name . ' WHERE codcliente = ' . $this->var2str($codcliente) .
+            ' AND idalbaran AND fecha BETWEEN ' . $this->var2str($desde) . ' AND ' . $this->var2str($hasta) .
+            ' AND codserie = ' . $this->var2str($serie);
 
         if ($obs != '') {
-            $sql .= " AND lower(observaciones) = " . $this->var2str(strtolower($obs));
+            $sql .= ' AND lower(observaciones) = ' . $this->var2str(strtolower($obs));
         }
 
-        $sql .= " ORDER BY fecha DESC, codigo DESC;";
+        $sql .= ' ORDER BY fecha DESC, codigo DESC;';
 
         $data = $this->db->select($sql);
         if ($data) {
             foreach ($data as $p) {
-                $pedilist[] = new PedidoCliente($p);
+                $pedilist[] = new self($p);
             }
         }
 
@@ -338,15 +354,15 @@ class PedidoCliente
     public function cron_job()
     {
         /// marcamos como aprobados los presupuestos con idpedido
-        $this->db->exec("UPDATE " . $this->table_name . " SET status = '1', editable = FALSE"
+        $this->db->exec('UPDATE ' . $this->table_name . " SET status = '1', editable = FALSE"
             . " WHERE status != '1' AND idalbaran IS NOT NULL;");
 
         /// devolvemos al estado pendiente a los pedidos con estado 1 a los que se haya borrado el albarán
-        $this->db->exec("UPDATE " . $this->table_name . " SET status = '0', idalbaran = NULL, editable = TRUE "
+        $this->db->exec('UPDATE ' . $this->table_name . " SET status = '0', idalbaran = NULL, editable = TRUE "
             . "WHERE status = '1' AND idalbaran NOT IN (SELECT idalbaran FROM albaranescli);");
 
         /// marcamos como rechazados todos los presupuestos no editables y sin pedido asociado
         $this->db->exec("UPDATE pedidoscli SET status = '2' WHERE idalbaran IS NULL AND"
-            . " editable = false;");
+            . ' editable = false;');
     }
 }

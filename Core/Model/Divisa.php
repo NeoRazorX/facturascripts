@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,41 +26,46 @@ namespace FacturaScripts\Core\Model;
  */
 class Divisa
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria. Varchar (3).
+     *
      * @var string
      */
     public $coddivisa;
 
     /**
      * Descripción de la divisa
+     *
      * @var string
      */
     public $descripcion;
 
     /**
      * Tasa de conversión respecto al euro.
+     *
      * @var float
      */
     public $tasaconv;
 
     /**
      * Tasa de conversión respecto al euro (para compras).
+     *
      * @var float
      */
     public $tasaconvcompra;
 
     /**
      * código ISO 4217 en número: http://en.wikipedia.org/wiki/ISO_4217
+     *
      * @var string
      */
     public $codiso;
 
     /**
      * Símbolo que representa a la divisa
+     *
      * @var string
      */
     public $simbolo;
@@ -89,15 +95,17 @@ class Divisa
 
     /**
      * Devuelve TRUE si esta es la divisa predeterminada de la empresa
+     *
      * @return bool
      */
     public function isDefault()
     {
-        return ($this->coddivisa === $this->defaultItems->codDivisa());
+        return $this->coddivisa === $this->defaultItems->codDivisa();
     }
 
     /**
      * Comprueba los datos de la divisa, devuelve TRUE si son correctos
+     *
      * @return bool
      */
     public function test()
@@ -124,6 +132,7 @@ class Divisa
 
     /**
      * Crea la consulta necesaria para crear una nueva divisa en la base de datos.
+     *
      * @return string
      */
     public function install()

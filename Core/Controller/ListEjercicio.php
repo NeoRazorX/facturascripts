@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -30,7 +31,6 @@ use FacturaScripts\Core\Model;
  */
 class ListEjercicio extends ExtendedController\ListController
 {
-
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
@@ -38,10 +38,10 @@ class ListEjercicio extends ExtendedController\ListController
         $this->addOrderBy('fechainicio', 'start-date');
         $this->addOrderBy('codejercicio', 'code');
         $this->addOrderBy('nombre', 'name');
-        
+
         /// forzamos el orden por defecto como el segundo, que es fechainicio desc
         $this->selectedOrderBy = array_keys($this->orderby)[1];
-        
+
         $this->addFilterSelect('estado', 'ejercicios');
 
         $this->model = new Model\Ejercicio();
@@ -57,9 +57,10 @@ class ListEjercicio extends ExtendedController\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "nombre|codejercicio";
-            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
+            $fields = 'nombre|codejercicio';
+            $result[] = new DataBaseWhere($fields, $this->query, 'LIKE');
         }
+
         return $result;
     }
 
@@ -69,6 +70,7 @@ class ListEjercicio extends ExtendedController\ListController
         $pagedata['title'] = 'Ejercicios';
         $pagedata['icon'] = 'fa-calendar';
         $pagedata['menu'] = 'contabilidad';
+
         return $pagedata;
     }
 }

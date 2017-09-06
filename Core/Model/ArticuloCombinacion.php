@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -35,13 +36,13 @@ namespace FacturaScripts\Core\Model;
  */
 class ArticuloCombinacion
 {
-
     use Base\ModelTrait {
         saveInsert as private saveInsertTrait;
     }
 
     /**
      * Clave primaria. Identificador de este par atributo-valor, no de la combinación.
+     *
      * @var
      */
     public $id;
@@ -49,6 +50,7 @@ class ArticuloCombinacion
     /**
      * Identificador de la combinación.
      * Ten en cuenta que la combinación es la suma de todos los pares atributo-valor.
+     *
      * @var
      */
     public $codigo;
@@ -56,54 +58,63 @@ class ArticuloCombinacion
     /**
      * Segundo identificador para la combinación, para facilitar la sincronización
      * con woocommerce o prestashop.
+     *
      * @var
      */
     public $codigo2;
 
     /**
      * Referencia del artículos relacionado.
+     *
      * @var
      */
     public $referencia;
 
     /**
      * ID del valor del atributo.
+     *
      * @var
      */
     public $idvalor;
 
     /**
      * Nombre del atributo.
+     *
      * @var
      */
     public $nombreatributo;
 
     /**
      * Valor del atributo.
+     *
      * @var
      */
     public $valor;
 
     /**
      * Referencia de la propia combinación.
+     *
      * @var
      */
     public $refcombinacion;
 
     /**
      * Código de barras de la combinación.
+     *
      * @var
      */
     public $codbarras;
 
     /**
      * Impacto en el precio del artículo.
+     *
      * @var
      */
     public $impactoprecio;
 
     /**
      * Stock físico de la combinación.
+     *
      * @var
      */
     public $stockfis;
@@ -138,6 +149,7 @@ class ArticuloCombinacion
 
     /**
      * Devuelve la combinación de artículo con codigo = $cod
+     *
      * @deprecated since version 110
      *
      * @param string $cod
@@ -149,8 +161,9 @@ class ArticuloCombinacion
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codigo = ' . $this->var2str($cod) . ';';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
-            return new ArticuloCombinacion($data[0]);
+            return new self($data[0]);
         }
+
         return false;
     }
 
@@ -164,6 +177,7 @@ class ArticuloCombinacion
     public function deleteFromRef($ref)
     {
         $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref) . ';';
+
         return $this->dataBase->exec($sql);
     }
 
@@ -183,7 +197,7 @@ class ArticuloCombinacion
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
-                $lista[] = new ArticuloCombinacion($d);
+                $lista[] = new self($d);
             }
         }
 
@@ -207,7 +221,7 @@ class ArticuloCombinacion
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
-                $lista[] = new ArticuloCombinacion($d);
+                $lista[] = new self($d);
             }
         }
 
@@ -231,7 +245,7 @@ class ArticuloCombinacion
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
-                $lista[] = new ArticuloCombinacion($d);
+                $lista[] = new self($d);
             }
         }
 
@@ -255,9 +269,9 @@ class ArticuloCombinacion
         if (!empty($data)) {
             foreach ($data as $d) {
                 if (isset($lista[$d['codigo']])) {
-                    $lista[$d['codigo']][] = new ArticuloCombinacion($d);
+                    $lista[$d['codigo']][] = new self($d);
                 } else {
-                    $lista[$d['codigo']] = [new ArticuloCombinacion($d)];
+                    $lista[$d['codigo']] = [new self($d)];
                 }
             }
         }
@@ -284,7 +298,7 @@ class ArticuloCombinacion
         $data = $this->dataBase->selectLimit($sql, 200);
         if (!empty($data)) {
             foreach ($data as $d) {
-                $artilist[] = new ArticuloCombinacion($d);
+                $artilist[] = new self($d);
             }
         }
 
@@ -293,6 +307,7 @@ class ArticuloCombinacion
 
     /**
      * Inserta los datos del modelo en la base de datos.
+     *
      * @return bool
      */
     private function saveInsert()
@@ -300,6 +315,7 @@ class ArticuloCombinacion
         if ($this->codigo === null) {
             $this->codigo = $this->getNewCodigo();
         }
+
         return $this->saveInsertTrait();
     }
 
@@ -307,6 +323,7 @@ class ArticuloCombinacion
      * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
      * que se ejecutará tras la creación de la tabla. útil para insertar valores
      * por defecto.
+     *
      * @return string
      */
     public function install()
@@ -320,6 +337,7 @@ class ArticuloCombinacion
 
     /**
      * Devuelve un nuevo código para una combinación de artículo
+     *
      * @return int
      */
     private function getNewCodigo()
@@ -329,6 +347,7 @@ class ArticuloCombinacion
         if (!empty($cod)) {
             return 1 + (int) $cod[0]['cod'];
         }
+
         return 1;
     }
 }

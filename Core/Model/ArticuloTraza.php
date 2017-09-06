@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -28,17 +29,18 @@ namespace FacturaScripts\Core\Model;
  */
 class ArticuloTraza
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria
+     *
      * @var int
      */
     public $id;
 
     /**
      * Referencia del artículo
+     *
      * @var string
      */
     public $referencia;
@@ -46,48 +48,56 @@ class ArticuloTraza
     /**
      * Numero de serie
      * Clave primaria.
+     *
      * @var string
      */
     public $numserie;
 
     /**
      * Número o identificador del lote
+     *
      * @var
      */
     public $lote;
 
     /**
      * Id linea albaran venta
+     *
      * @var int
      */
     public $idlalbventa;
 
     /**
      * id linea factura venta
+     *
      * @var int
      */
     public $idlfacventa;
 
     /**
      * Id linea albaran compra
+     *
      * @var int
      */
     public $idlalbcompra;
 
     /**
      * Id linea factura compra
+     *
      * @var int
      */
     public $idlfaccompra;
 
     /**
      * Fecha de entrada del artículo
+     *
      * @var |DateTime
      */
     public $fecha_entrada;
 
     /**
      * Fecha de salida del artículo
+     *
      * @var |DateTime
      */
     public $fecha_salida;
@@ -104,6 +114,7 @@ class ArticuloTraza
 
     /**
      * Devuelve la url del albarán o la factura de compra.
+     *
      * @return string
      */
     public function documentoCompraUrl()
@@ -121,11 +132,13 @@ class ArticuloTraza
                 return $linea->url();
             }
         }
+
         return '#';
     }
 
     /**
      * Devuelve la url del albarán o factura de venta.
+     *
      * @return string
      */
     public function documentoVentaUrl()
@@ -144,6 +157,7 @@ class ArticuloTraza
                 return $linea->url();
             }
         }
+
         return '#';
     }
 
@@ -159,8 +173,9 @@ class ArticuloTraza
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE numserie = ' . $this->var2str($numserie) . ';';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
-            return new ArticuloTraza($data[0]);
+            return new self($data[0]);
         }
+
         return false;
     }
 
@@ -168,7 +183,7 @@ class ArticuloTraza
      * Devuelve todas las trazas de un artículo.
      *
      * @param string $ref
-     * @param bool $sololibre
+     * @param bool   $sololibre
      *
      * @return array
      */
@@ -185,7 +200,7 @@ class ArticuloTraza
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
-                $lista[] = new ArticuloTraza($d);
+                $lista[] = new self($d);
             }
         }
 
@@ -209,7 +224,7 @@ class ArticuloTraza
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
-                $lista[] = new ArticuloTraza($d);
+                $lista[] = new self($d);
             }
         }
 
@@ -220,6 +235,7 @@ class ArticuloTraza
      * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
      * que se ejecutará tras la creación de la tabla. útil para insertar valores
      * por defecto.
+     *
      * @return string
      */
     public function install()

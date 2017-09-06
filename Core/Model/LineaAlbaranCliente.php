@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,60 +26,68 @@ namespace FacturaScripts\Core\Model;
  */
 class LineaAlbaranCliente
 {
-
     use Base\LineaDocumento;
     use Base\ModelTrait;
 
     /**
      * TODO
+     *
      * @var array
      */
     private static $albaranes;
 
     /**
      * ID de la línea del pedido relacionado, si es que lo hay.
+     *
      * @var int
      */
     public $idlineapedido;
 
     /**
      * ID del albaran de esta línea.
+     *
      * @var int
      */
     public $idalbaran;
 
     /**
      * ID del pedido relacionado con el albarán relacionado.
+     *
      * @var int
      */
     public $idpedido;
 
     /**
      * Posición de la linea en el documento. Cuanto más alto más abajo.
+     *
      * @var int
      */
     public $orden;
 
     /**
      * False -> no se muestra la columna cantidad al imprimir.
+     *
      * @var bool
      */
     public $mostrar_cantidad;
 
     /**
      * False -> no se muestran las columnas precio, descuento, impuestos y total al imprimir.
+     *
      * @var bool
      */
     public $mostrar_precio;
 
     /**
      * TODO
+     *
      * @var string
      */
     private $codigo;
 
     /**
      * TODO
+     *
      * @var string
      */
     private $fecha;
@@ -121,6 +130,7 @@ class LineaAlbaranCliente
 
     /**
      * TODO
+     *
      * @return string
      */
     public function showCodigo()
@@ -128,11 +138,13 @@ class LineaAlbaranCliente
         if ($this->codigo === null) {
             $this->fill();
         }
+
         return $this->codigo;
     }
 
     /**
      * TODO
+     *
      * @return string
      */
     public function showFecha()
@@ -140,11 +152,13 @@ class LineaAlbaranCliente
         if ($this->fecha === null) {
             $this->fill();
         }
+
         return $this->fecha;
     }
 
     /**
      * TODO
+     *
      * @return string
      */
     public function showNombrecliente()
@@ -163,6 +177,7 @@ class LineaAlbaranCliente
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function test()
@@ -174,13 +189,16 @@ class LineaAlbaranCliente
         if (!$this->floatcmp($this->pvptotal, $total, FS_NF0, true)) {
             $this->miniLog->alert('Error en el valor de pvptotal de la línea ' . $this->referencia
                 . ' del ' . FS_ALBARAN . '. Valor correcto: ' . $total);
+
             return false;
         }
         if (!$this->floatcmp($this->pvpsindto, $totalsindto, FS_NF0, true)) {
             $this->miniLog->alert('Error en el valor de pvpsindto de la línea ' . $this->referencia
                 . ' del ' . FS_ALBARAN . '. Valor correcto: ' . $totalsindto);
+
             return false;
         }
+
         return true;
     }
 
@@ -208,7 +226,7 @@ class LineaAlbaranCliente
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $lin) {
-                $linealist[] = new LineaAlbaranCliente($lin);
+                $linealist[] = new self($lin);
             }
         }
 
@@ -219,8 +237,8 @@ class LineaAlbaranCliente
      * TODO
      *
      * @param string $ref
-     * @param int $offset
-     * @param int $limit
+     * @param int    $offset
+     * @param int    $limit
      *
      * @return array
      */
@@ -233,7 +251,7 @@ class LineaAlbaranCliente
         $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
             foreach ($data as $l) {
-                $linealist[] = new LineaAlbaranCliente($l);
+                $linealist[] = new self($l);
             }
         }
 
@@ -244,7 +262,7 @@ class LineaAlbaranCliente
      * TODO
      *
      * @param string $query
-     * @param int $offset
+     * @param int    $offset
      *
      * @return array
      */
@@ -265,7 +283,7 @@ class LineaAlbaranCliente
         $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $l) {
-                $linealist[] = new LineaAlbaranCliente($l);
+                $linealist[] = new self($l);
             }
         }
 
@@ -277,7 +295,7 @@ class LineaAlbaranCliente
      *
      * @param string $codcliente
      * @param string $query
-     * @param int $offset
+     * @param int    $offset
      *
      * @return array
      */
@@ -299,7 +317,7 @@ class LineaAlbaranCliente
         $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $l) {
-                $linealist[] = new LineaAlbaranCliente($l);
+                $linealist[] = new self($l);
             }
         }
 
@@ -312,7 +330,7 @@ class LineaAlbaranCliente
      * @param string $codcliente
      * @param string $ref
      * @param string $obs
-     * @param int $offset
+     * @param int    $offset
      *
      * @return array
      */
@@ -336,7 +354,7 @@ class LineaAlbaranCliente
         $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $l) {
-                $linealist[] = new LineaAlbaranCliente($l);
+                $linealist[] = new self($l);
             }
         }
 
@@ -347,7 +365,7 @@ class LineaAlbaranCliente
      * TODO
      *
      * @param string $codcliente
-     * @param int $offset
+     * @param int    $offset
      *
      * @return array
      */
@@ -362,7 +380,7 @@ class LineaAlbaranCliente
         $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $l) {
-                $linealist[] = new LineaAlbaranCliente($l);
+                $linealist[] = new self($l);
             }
         }
 
@@ -371,6 +389,7 @@ class LineaAlbaranCliente
 
     /**
      * TODO
+     *
      * @return int
      */
     public function countByArticulo()
@@ -380,6 +399,7 @@ class LineaAlbaranCliente
         if (!empty($lineas)) {
             return (int) $lineas[0]['total'];
         }
+
         return 0;
     }
 

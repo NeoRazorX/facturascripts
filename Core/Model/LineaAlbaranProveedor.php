@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,42 +26,47 @@ namespace FacturaScripts\Core\Model;
  */
 class LineaAlbaranProveedor
 {
-
     use Base\LineaDocumento;
     use Base\ModelTrait;
 
     /**
      * TODO
+     *
      * @var array
      */
     private static $albaranes;
 
     /**
      * ID de la línea del pedido relacionada, si la hay.
+     *
      * @var int
      */
     public $idlineapedido;
 
     /**
      * ID del albarán de esta línea.
+     *
      * @var int
      */
     public $idalbaran;
 
     /**
      * ID del pedido relacionado con el albarán, si lo hay.
+     *
      * @var int
      */
     public $idpedido;
 
     /**
      * TODO
+     *
      * @var string
      */
     private $codigo;
 
     /**
      * TODO
+     *
      * @var string
      */
     private $fecha;
@@ -77,6 +83,7 @@ class LineaAlbaranProveedor
 
     /**
      * TODO
+     *
      * @return null|string
      */
     public function showCodigo()
@@ -84,11 +91,13 @@ class LineaAlbaranProveedor
         if ($this->codigo === null) {
             $this->fill();
         }
+
         return $this->codigo;
     }
 
     /**
      * TODO
+     *
      * @return string
      */
     public function showFecha()
@@ -96,11 +105,13 @@ class LineaAlbaranProveedor
         if ($this->fecha === null) {
             $this->fill();
         }
+
         return $this->fecha;
     }
 
     /**
      * TODO
+     *
      * @return string
      */
     public function showNombre()
@@ -119,6 +130,7 @@ class LineaAlbaranProveedor
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function test()
@@ -130,13 +142,16 @@ class LineaAlbaranProveedor
         if (!$this->floatcmp($this->pvptotal, $total, FS_NF0, true)) {
             $this->miniLog->alert('Error en el valor de pvptotal de la línea ' . $this->referencia
                 . ' del ' . FS_ALBARAN . '. Valor correcto: ' . $total);
+
             return false;
         }
         if (!$this->floatcmp($this->pvpsindto, $totalsindto, FS_NF0, true)) {
             $this->miniLog->alert('Error en el valor de pvpsindto de la línea ' . $this->referencia
                 . ' del ' . FS_ALBARAN . '. Valor correcto: ' . $totalsindto);
+
             return false;
         }
+
         return true;
     }
 
@@ -152,7 +167,7 @@ class LineaAlbaranProveedor
      * TODO
      *
      * @param string $query
-     * @param int $offset
+     * @param int    $offset
      *
      * @return array
      */
@@ -173,7 +188,7 @@ class LineaAlbaranProveedor
         $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $l) {
-                $linealist[] = new LineaAlbaranProveedor($l);
+                $linealist[] = new self($l);
             }
         }
 
@@ -185,7 +200,7 @@ class LineaAlbaranProveedor
      *
      * @param string $codproveedor
      * @param string $query
-     * @param int $offset
+     * @param int    $offset
      *
      * @return array
      */
@@ -207,7 +222,7 @@ class LineaAlbaranProveedor
         $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $l) {
-                $linealist[] = new LineaAlbaranProveedor($l);
+                $linealist[] = new self($l);
             }
         }
 
@@ -216,6 +231,7 @@ class LineaAlbaranProveedor
 
     /**
      * TODO
+     *
      * @return int
      */
     public function countByArticulo()
@@ -225,6 +241,7 @@ class LineaAlbaranProveedor
         if (!empty($lineas)) {
             return (int) $lineas[0]['total'];
         }
+
         return 0;
     }
 

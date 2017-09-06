@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -29,7 +30,6 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class PageOption
 {
-
     use Base\ModelTrait {
         clear as clearTrait;
         loadFromData as loadFromDataTrait;
@@ -39,18 +39,21 @@ class PageOption
 
     /**
      * Nombre de la página (controlador).
+     *
      * @var string
      */
     public $name;
 
     /**
      * Identificador del Usuario.
+     *
      * @var string
      */
     public $nick;
 
     /**
      * Definición para tratamiento especial de filas
+     *
      * @var array
      */
     public $rows;
@@ -58,12 +61,14 @@ class PageOption
     /**
      * Definición de las columnas. Se denomina columns pero contiene
      * siempre GroupItem, el cual contiene las columnas.
+     *
      * @var array
      */
     public $columns;
 
     /**
      * Definición de filtros personalizados
+     *
      * @var array
      */
     public $filters;
@@ -134,6 +139,7 @@ class PageOption
             . ' ,filters = ' . $this->var2str($filters)
             . ' ,rows = ' . $this->var2str($rows)
             . ' WHERE id = ' . $this->id . ';';
+
         return $this->dataBase->exec($sql);
     }
 
@@ -148,18 +154,19 @@ class PageOption
         $filters = json_encode($this->filters);
         $rows = json_encode($this->rows);
 
-        $sql = "INSERT INTO " . $this->tableName()
-            . " (id, name, nick, columns, filters, rows) VALUES ("
-            . "nextval('fs_pages_options_id_seq')" . ","
-            . $this->var2str($this->name) . ","
-            . $this->var2str($this->nick) . ","
-            . $this->var2str($columns) . ","
-            . $this->var2str($filters) . ","
+        $sql = 'INSERT INTO ' . $this->tableName()
+            . ' (id, name, nick, columns, filters, rows) VALUES ('
+            . "nextval('fs_pages_options_id_seq')" . ','
+            . $this->var2str($this->name) . ','
+            . $this->var2str($this->nick) . ','
+            . $this->var2str($columns) . ','
+            . $this->var2str($filters) . ','
             . $this->var2str($rows)
-            . ");";
+            . ');';
 
         if ($this->dataBase->exec($sql)) {
             $this->id = $this->dataBase->lastval();
+
             return true;
         }
 
@@ -179,6 +186,7 @@ class PageOption
             $groupItem->loadFromXMLColumns($columns);
             $this->columns[] = $groupItem;
             unset($groupItem);
+
             return;
         }
 
@@ -268,6 +276,7 @@ class PageOption
      * Obtiene la columna para el nombre de campo informado
      *
      * @param string $fieldName
+     *
      * @return ColumnItem
      */
     public function columnForField($fieldName)
@@ -284,6 +293,7 @@ class PageOption
                 break;
             }
         }
+
         return $result;
     }
 

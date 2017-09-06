@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -52,9 +53,10 @@ class ListFamilia extends ExtendedController\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "descripcion|codfamilia|madre";
-            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
+            $fields = 'descripcion|codfamilia|madre';
+            $result[] = new DataBaseWhere($fields, $this->query, 'LIKE');
         }
+
         return $result;
     }
 
@@ -64,6 +66,7 @@ class ListFamilia extends ExtendedController\ListController
         $pagedata['title'] = 'Familias';
         $pagedata['icon'] = 'fa-object-group';
         $pagedata['menu'] = 'almacen';
+
         return $pagedata;
     }
 }

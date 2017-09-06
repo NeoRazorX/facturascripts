@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
@@ -28,61 +29,69 @@ use FacturaScripts\Core\Model;
  */
 class AdminHome extends Base\Controller
 {
-
     /**
      * TODO
+     *
      * @var Model\Agente
      */
     public $agente;
 
     /**
      * TODO
+     *
      * @var Model\Almacen
      */
     public $almacen;
 
     /**
      * TODO
+     *
      * @var Model\Divisa
      */
     public $divisa;
 
     /**
      * TODO
+     *
      * @var Model\Ejercicio
      */
     public $ejercicio;
 
     /**
      * TODO
+     *
      * @var Model\FormaPago
      */
     public $formaPago;
 
     /**
      * TODO
+     *
      * @var Model\Pais
      */
     public $pais;
 
     /**
      * TODO
+     *
      * @var Model\Serie
      */
     public $serie;
 
     /**
      * TODO
+     *
      * @var Model\AgenciasTransporte
      */
     public $agenciaTrans;
 
     /**
      * AdminHome constructor.
-     * @param Base\Cache $cache
+     *
+     * @param Base\Cache      $cache
      * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
-     * @param string $className
+     * @param Base\MiniLog    $miniLog
+     * @param string          $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {

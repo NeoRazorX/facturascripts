@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,17 +26,18 @@ namespace FacturaScripts\Core\Model;
  */
 class Epigrafe
 {
-
     use Base\ModelTrait;
 
     /**
      * TODO
+     *
      * @var array
      */
     private static $grupos;
 
     /**
      * Clave primaria.
+     *
      * @var int
      */
     public $idepigrafe;
@@ -46,36 +48,42 @@ class Epigrafe
      * En la otra tenemos epígrafes (con hijos), cuentas y subcuentas: multi-nivel.
      * FacturaScripts usa un híbrido: grupos, epígrafes (con hijos), cuentas
      * y subcuentas.
+     *
      * @var int
      */
     public $idpadre;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $codepigrafe;
 
     /**
      * TODO
+     *
      * @var int
      */
     public $idgrupo;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $codejercicio;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $descripcion;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $codgrupo;
@@ -92,6 +100,7 @@ class Epigrafe
 
     /**
      * Devuelve el codepigrade del epigrafe padre o false si no lo hay
+     *
      * @return bool
      */
     public function codpadre()
@@ -110,6 +119,7 @@ class Epigrafe
 
     /**
      * TODO
+     *
      * @return array
      */
     public function hijos()
@@ -121,7 +131,7 @@ class Epigrafe
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $ep) {
-                $epilist[] = new Epigrafe($ep);
+                $epilist[] = new self($ep);
             }
         }
 
@@ -130,11 +140,13 @@ class Epigrafe
 
     /**
      * TODO
+     *
      * @return array
      */
     public function getCuentas()
     {
         $cuenta = new Cuenta();
+
         return $cuenta->fullFromEpigrafe($this->idepigrafe);
     }
 
@@ -153,13 +165,15 @@ class Epigrafe
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
-            return new Epigrafe($data[0]);
+            return new self($data[0]);
         }
+
         return false;
     }
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function test()
@@ -170,6 +184,7 @@ class Epigrafe
             return true;
         }
         $this->miniLog->alert('Faltan datos en el epígrafe.');
+
         return false;
     }
 
@@ -189,7 +204,7 @@ class Epigrafe
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $epi) {
-                $epilist[] = new Epigrafe($epi);
+                $epilist[] = new self($epi);
             }
         }
 
@@ -212,7 +227,7 @@ class Epigrafe
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $ep) {
-                $epilist[] = new Epigrafe($ep);
+                $epilist[] = new self($ep);
             }
         }
 
@@ -235,7 +250,7 @@ class Epigrafe
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $ep) {
-                $epilist[] = new Epigrafe($ep);
+                $epilist[] = new self($ep);
             }
         }
 
@@ -256,6 +271,7 @@ class Epigrafe
      * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
      * que se ejecutará tras la creación de la tabla. útil para insertar valores
      * por defecto.
+     *
      * @return string
      */
     public function install()

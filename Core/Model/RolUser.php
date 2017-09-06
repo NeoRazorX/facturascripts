@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -27,23 +28,25 @@ namespace FacturaScripts\Core\Model;
  */
 class RolUser
 {
-
     use Base\ModelTrait;
 
     /**
      * TODO
+     *
      * @var int
      */
     public $id;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $codrol;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $nick;

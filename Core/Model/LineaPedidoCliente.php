@@ -13,57 +13,63 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
  * Línea de pedido de cliente.
- * 
+ *
  * @author Carlos García Gómez <neorazorx@gmail.com>
  */
 class LineaPedidoCliente
 {
-
     use Base\LineaDocumento;
     use Base\ModelTrait;
 
     /**
      * ID de la linea relacionada en el presupuesto relacionado,
      * si lo hay.
+     *
      * @var integer
      */
     public $idlineapresupuesto;
 
     /**
      * ID del pedido.
+     *
      * @var integer
      */
     public $idpedido;
 
     /**
      * ID del presupuesto relacionado, si lo hay.
+     *
      * @var integer
      */
     public $idpresupuesto;
 
     /**
      * Posición de la linea en el documento. Cuanto más alto más abajo.
-     * @var type 
+     *
+     * @var type
      */
     public $orden;
 
     /**
      * False -> no se muestra la columna cantidad al imprimir.
-     * @var type 
+     *
+     * @var type
      */
     public $mostrar_cantidad;
 
     /**
      * False -> no se muestran las columnas precio, descuento, impuestos y total al imprimir.
-     * @var type 
+     *
+     * @var type
      */
     public $mostrar_precio;
     private static $pedidos;
@@ -174,10 +180,12 @@ class LineaPedidoCliente
         $totalsindto = $this->pvpunitario * $this->cantidad;
 
         if (!$this->floatcmp($this->pvptotal, $total, FS_NF0, TRUE)) {
-            $this->miniLog->critical("Error en el valor de pvptotal de la línea " . $this->referencia . " del " . FS_PEDIDO . ". Valor correcto: " . $total);
+            $this->miniLog->critical('Error en el valor de pvptotal de la línea ' . $this->referencia . ' del ' . FS_PEDIDO . '. Valor correcto: ' . $total);
+
             return FALSE;
-        } else if (!$this->floatcmp($this->pvpsindto, $totalsindto, FS_NF0, TRUE)) {
-            $this->miniLog->critical("Error en el valor de pvpsindto de la línea " . $this->referencia . " del " . FS_PEDIDO . ". Valor correcto: " . $totalsindto);
+        } elseif (!$this->floatcmp($this->pvpsindto, $totalsindto, FS_NF0, TRUE)) {
+            $this->miniLog->critical('Error en el valor de pvpsindto de la línea ' . $this->referencia . ' del ' . FS_PEDIDO . '. Valor correcto: ' . $totalsindto);
+
             return FALSE;
         }
 
@@ -186,28 +194,30 @@ class LineaPedidoCliente
 
     /**
      * Busca todas las coincidencias de $query en las líneas.
-     * @param string $query
+     *
+     * @param string  $query
      * @param integer $offset
+     *
      * @return \LineaPedidoCliente
      */
     public function search($query = '', $offset = 0)
     {
-        $linealist = array();
+        $linealist = [];
         $query = mb_strtolower($this->no_html($query), 'UTF8');
 
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE ";
+        $sql = 'SELECT * FROM ' . $this->table_name . ' WHERE ';
         if (is_numeric($query)) {
             $sql .= "referencia LIKE '%" . $query . "%' OR descripcion LIKE '%" . $query . "%'";
         } else {
             $buscar = str_replace(' ', '%', $query);
             $sql .= "lower(referencia) LIKE '%" . $buscar . "%' OR lower(descripcion) LIKE '%" . $buscar . "%'";
         }
-        $sql .= " ORDER BY idpedido DESC, idlinea ASC";
+        $sql .= ' ORDER BY idpedido DESC, idlinea ASC';
 
         $data = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
         if ($data) {
             foreach ($data as $l) {
-                $linealist[] = new LineaPedidoCliente($l);
+                $linealist[] = new self($l);
             }
         }
 

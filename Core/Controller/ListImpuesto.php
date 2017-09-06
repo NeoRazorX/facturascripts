@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -30,14 +31,13 @@ use FacturaScripts\Core\Model;
  */
 class ListImpuesto extends ExtendedController\ListController
 {
-
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         $this->addOrderBy('codimpuesto', 'Código');
         $this->addOrderBy('descripcion');
-        
+
         $this->model = new Model\Impuesto();
     }
 
@@ -51,9 +51,10 @@ class ListImpuesto extends ExtendedController\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "descripcion|codimpuesto";
-            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
+            $fields = 'descripcion|codimpuesto';
+            $result[] = new DataBaseWhere($fields, $this->query, 'LIKE');
         }
+
         return $result;
     }
 
@@ -63,6 +64,7 @@ class ListImpuesto extends ExtendedController\ListController
         $pagedata['title'] = 'Impuestos';
         $pagedata['icon'] = 'fa-plus-square-o';
         $pagedata['menu'] = 'contabilidad';
+
         return $pagedata;
     }
 }

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
@@ -28,15 +29,16 @@ namespace FacturaScripts\Core\Base\DataBase;
  */
 class DataBaseUtils
 {
-
     /**
      * Enlace al motor de base de datos seleccionado en la configuración
+     *
      * @var DataBaseEngine
      */
     private $engine;
 
     /**
      * Construye y prepara la clase para su uso
+     *
      * @param DataBaseEngine $engine
      */
     public function __construct($engine)
@@ -46,9 +48,11 @@ class DataBaseUtils
 
     /**
      * Busca una columna con un valor por su nombre en un array
-     * @param array $items
+     *
+     * @param array  $items
      * @param string $index
      * @param string $value
+     *
      * @return array
      */
     private function searchInArray($items, $index, $value)
@@ -67,8 +71,10 @@ class DataBaseUtils
     /**
      * Compara los tipos de datos de una columna.
      * Devuelve TRUE si son iguales.
+     *
      * @param string $dbType
      * @param string $xmlType
+     *
      * @return bool
      */
     public function compareDataTypes($dbType, $xmlType)
@@ -91,9 +97,11 @@ class DataBaseUtils
 
     /**
      * Compara dos arrays de columnas, devuelve una sentencia sql en caso de encontrar diferencias.
+     *
      * @param string $tableName
-     * @param array $xmlCols
-     * @param array $dbCols
+     * @param array  $xmlCols
+     * @param array  $dbCols
+     *
      * @return string
      */
     public function compareColumns($tableName, $xmlCols, $dbCols)
@@ -132,10 +140,12 @@ class DataBaseUtils
 
     /**
      * Compara dos arrays de restricciones, devuelve una sentencia SQL en caso de encontrar diferencias.
+     *
      * @param string $tableName
-     * @param array $xmlCons
-     * @param array $dbCons
-     * @param bool $deleteOnly
+     * @param array  $xmlCons
+     * @param array  $dbCons
+     * @param bool   $deleteOnly
+     *
      * @return string
      */
     public function compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly = false)
@@ -169,9 +179,11 @@ class DataBaseUtils
 
     /**
      * Devuelve la sentencia SQL necesaria para crear una tabla con la estructura proporcionada.
+     *
      * @param string $tableName
-     * @param array $xmlCols
-     * @param array $xmlCons
+     * @param array  $xmlCols
+     * @param array  $xmlCons
+     *
      * @return string
      */
     public function generateTable($tableName, $xmlCols, $xmlCons)

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Model;
  */
 class AtributoValor
 {
-
     use Base\ModelTrait {
         save as private saveTrait;
         saveInsert as private saveInsertTrait;
@@ -33,18 +33,21 @@ class AtributoValor
 
     /**
      * Clave primaria
+     *
      * @var int
      */
     public $id;
 
     /**
      * Código del atributo relacionado.
+     *
      * @var string
      */
     public $codatributo;
 
     /**
      * TODO
+     *
      * @var
      */
     public $valor;
@@ -61,6 +64,7 @@ class AtributoValor
 
     /**
      * TODO
+     *
      * @return string
      */
     public function getNombre()
@@ -78,6 +82,7 @@ class AtributoValor
 
     /**
      * Almacena los datos del modelo en la base de datos.
+     *
      * @return bool
      */
     public function save()
@@ -103,7 +108,7 @@ class AtributoValor
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
-                $lista[] = new AtributoValor($d);
+                $lista[] = new self($d);
             }
         }
 
@@ -112,6 +117,7 @@ class AtributoValor
 
     /**
      * Actualiza los datos del modelo en la base de datos.
+     *
      * @return bool
      */
     private function saveUpdate()
@@ -119,11 +125,13 @@ class AtributoValor
         $sql = 'UPDATE atributos_valores SET valor = ' . $this->var2str($this->valor)
             . ', codatributo = ' . $this->var2str($this->codatributo)
             . '  WHERE id = ' . $this->var2str($this->id) . ';';
+
         return $this->dataBase->exec($sql);
     }
 
     /**
      * Inserta los datos del modelo en la base de datos.
+     *
      * @return bool
      */
     private function saveInsert()

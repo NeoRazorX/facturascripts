@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -24,21 +25,23 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 interface VisualItemInterface
 {
-
     /**
      * Carga la estructura de atributos en base a un archivo XML
+     *
      * @param SimpleXMLElement $items
      */
     public function loadFromXML($items);
 
     /**
      * Carga la estructura de atributos en base a la base de datos
+     *
      * @param SimpleXMLElement $items
      */
     public function loadFromJSON($items);
 
     /**
      * Genera el código html para visualizar la cabecera del elemento visual
+     *
      * @param string $value
      */
     public function getHeaderHTML($value);

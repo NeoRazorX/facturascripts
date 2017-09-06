@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,30 +26,33 @@ namespace FacturaScripts\Core\Model;
  */
 class Page
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria. Varchar (30).
      * Nombre de la página (controlador).
+     *
      * @var string
      */
     public $name;
 
     /**
      * Título de la página.
+     *
      * @var string
      */
     public $title;
 
     /**
      * Título de la opción de menú donde se visualiza
+     *
      * @var string
      */
     public $menu;
 
     /**
      * Título de la subopción de menú donde se visualiza (si usa 2 nivel)
+     *
      * @var string
      */
     public $submenu;
@@ -56,18 +60,21 @@ class Page
     /**
      * Indica si se visualiza en el menú
      * FALSE -> ocultar en el menú.
+     *
      * @var bool
      */
     public $showonmenu;
 
     /**
      * Posición donde se coloca en el menú
+     *
      * @var int
      */
     public $orden;
 
     /**
      * Icono de la página
+     *
      * @var string
      */
     public $icon;
@@ -98,28 +105,31 @@ class Page
 
     /**
      * Devuelve la url donde ver/modificar estos datos
+     *
      * @return string
      */
     public function url()
     {
         return 'index.php?page=' . $this->name;
     }
-    
+
     /**
      * TODO
+     *
      * @return bool
      */
     public function isDefault()
     {
-        return ($this->name === $this->defaultItems->defaultPage());
+        return $this->name === $this->defaultItems->defaultPage();
     }
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function showing()
     {
-        return ($this->name === $this->defaultItems->showingPage());
+        return $this->name === $this->defaultItems->showingPage();
     }
 }

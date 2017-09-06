@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
- * Clase que recopila las sentencias SQL necesarias 
+ * Clase que recopila las sentencias SQL necesarias
  * por el motor de base de datos
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
@@ -27,11 +28,12 @@ namespace FacturaScripts\Core\Base\DataBase;
  */
 class PostgresqlSQL implements DataBaseSQL
 {
-
     /**
      * Devuelve el SQL necesario para convertir
      * la columna a entero.
+     *
      * @param string $colName
+     *
      * @return string
      */
     public function sql2Int($colName)
@@ -43,6 +45,7 @@ class PostgresqlSQL implements DataBaseSQL
      * Devuleve el SQL para averiguar
      * el último ID asignado al hacer un INSERT
      * en la base de datos.
+     *
      * @return string
      */
     public function sqlLastValue()
@@ -53,7 +56,9 @@ class PostgresqlSQL implements DataBaseSQL
     /**
      * Devuelve el SQL para averiguar
      * la lista de las columnas de una tabla.
+     *
      * @param string $tableName
+     *
      * @return string
      */
     public function sqlColumns($tableName)
@@ -72,7 +77,9 @@ class PostgresqlSQL implements DataBaseSQL
     /**
      * Devuelve el SQL para averiguar
      * la lista de restricciones de una tabla.
+     *
      * @param string $tableName
+     *
      * @return string
      */
     public function sqlConstraints($tableName)
@@ -82,13 +89,16 @@ class PostgresqlSQL implements DataBaseSQL
             . " WHERE tc.table_name = '" . $tableName . "'"
             . " AND tc.constraint_type IN ('PRIMARY KEY','FOREIGN KEY','UNIQUE')"
             . ' ORDER BY 1 DESC, 2 ASC;';
+
         return $sql;
     }
 
     /**
      * Devuelve el SQL para averiguar
      * la lista de restricciones avanzadas de una tabla.
+     *
      * @param string $tableName
+     *
      * @return string
      */
     public function sqlConstraintsExtended($tableName)
@@ -120,7 +130,9 @@ class PostgresqlSQL implements DataBaseSQL
 
     /**
      * Genera el SQL para establecer las restricciones proporcionadas.
+     *
      * @param array $xmlCons
+     *
      * @return string
      */
     public function sqlTableConstraints($xmlCons)
@@ -145,7 +157,9 @@ class PostgresqlSQL implements DataBaseSQL
     /**
      * Devuelve el SQL para averiguar
      * la lista de indices de una tabla.
+     *
      * @param string $tableName
+     *
      * @return string
      */
     public function sqlIndexes($tableName)
@@ -155,9 +169,11 @@ class PostgresqlSQL implements DataBaseSQL
 
     /**
      * Devuelve la sentencia SQL necesaria para crear una tabla con la estructura proporcionada.
+     *
      * @param string $tableName
-     * @param array $columns
-     * @param array $constraints
+     * @param array  $columns
+     * @param array  $constraints
+     *
      * @return string
      */
     public function sqlCreateTable($tableName, $columns, $constraints)
@@ -182,13 +198,16 @@ class PostgresqlSQL implements DataBaseSQL
 
         $sql = 'CREATE TABLE ' . $tableName . ' (' . substr($fields, 2)
             . $this->sqlTableConstraints($constraints) . ');';
+
         return $sql;
     }
 
     /**
      * Sentencia SQL para añadir una columna a una tabla
+     *
      * @param string $tableName
-     * @param array $colData
+     * @param array  $colData
+     *
      * @return string
      */
     public function sqlAlterAddColumn($tableName, $colData)
@@ -209,21 +228,26 @@ class PostgresqlSQL implements DataBaseSQL
 
     /**
      * Sentencia SQL para modificar una columna a una tabla
+     *
      * @param string $tableName
-     * @param array $colData
+     * @param array  $colData
+     *
      * @return string
      */
     public function sqlAlterModifyColumn($tableName, $colData)
     {
         $sql = 'ALTER TABLE ' . $tableName
             . ' ALTER COLUMN ' . $colData['nombre'] . ' TYPE ' . $colData['tipo'];
+
         return $sql . ';';
     }
 
     /**
      * Sentencia SQL para modificar un valor por defecto de un campo de una tabla
+     *
      * @param string $tableName
-     * @param array $colData
+     * @param array  $colData
+     *
      * @return string
      */
     public function sqlAlterConstraintDefault($tableName, $colData)
@@ -235,20 +259,25 @@ class PostgresqlSQL implements DataBaseSQL
 
     /**
      * Sentencia SQL para modificar una constraint null de un campo de una tabla
+     *
      * @param string $tableName
-     * @param array $colData
+     * @param array  $colData
+     *
      * @return string
      */
     public function sqlAlterConstraintNull($tableName, $colData)
     {
         $action = ($colData['nulo'] === 'YES') ? ' DROP ' : ' SET ';
+
         return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['nombre'] . $action . 'NOT NULL;';
     }
 
     /**
      * Sentencia SQL para eliminar una constraint a una tabla
+     *
      * @param string $tableName
-     * @param array $colData
+     * @param array  $colData
+     *
      * @return string
      */
     public function sqlDropConstraint($tableName, $colData)
@@ -258,9 +287,11 @@ class PostgresqlSQL implements DataBaseSQL
 
     /**
      * Sentencia SQL para añadir una constraint a una tabla
+     *
      * @param string $tableName
      * @param string $constraintName
      * @param string $sql
+     *
      * @return string
      */
     public function sqlAddConstraint($tableName, $constraintName, $sql)
@@ -270,7 +301,9 @@ class PostgresqlSQL implements DataBaseSQL
 
     /**
      * Sentencia SQL para comprobar una secuencia
+     *
      * @param string $seqName
+     *
      * @return string
      */
     public function sqlSequenceExists($seqName)

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -27,21 +28,23 @@ use FacturaScripts\Core\Base;
  */
 class VisualItem
 {
-
     /**
      * Motor de traducción.
+     *
      * @var Base\Translator
      */
     protected $i18n;
 
     /**
      * Etiqueta o título del grupo
+     *
      * @var string
      */
     public $title;
 
     /**
      * URL de salto si hacen click en $title
+     *
      * @var string
      */
     public $titleURL;
@@ -49,12 +52,14 @@ class VisualItem
     /**
      * Número de columnas que ocupa en su visualización
      * ([1, 2, 4, 6, 8, 10, 12])
+     *
      * @var int
      */
     public $numColumns;
 
     /**
      * Posición en la que se visualizá ( de menor a mayor )
+     *
      * @var int
      */
     public $order;
@@ -73,6 +78,7 @@ class VisualItem
 
     /**
      * Carga
+     *
      * @param type $items
      */
     public function loadFromXML($items)

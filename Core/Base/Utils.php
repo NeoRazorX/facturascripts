@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -25,11 +26,12 @@ namespace FacturaScripts\Core\Base;
  */
 trait Utils
 {
-
     /**
      * Convierte una variable con contenido binario a texto.
      * Lo hace en base64.
+     *
      * @param mixed $val
+     *
      * @return string
      */
     public static function bin2str($val)
@@ -44,7 +46,9 @@ trait Utils
     /**
      * Convierte un texto a binario.
      * Lo hace con base64.
+     *
      * @param string $val
+     *
      * @return null|string
      */
     public static function str2bin($val)
@@ -59,7 +63,9 @@ trait Utils
     /**
      * Devuelve el valor entero de la variable $s,
      * o NULL si es NULL. La función intval() del php devuelve 0 si es NULL.
+     *
      * @param string $str
+     *
      * @return integer
      */
     public static function intval($str)
@@ -74,27 +80,31 @@ trait Utils
     /**
      * Compara dos números en coma flotante con una precisión de $precision,
      * devuelve TRUE si son iguales, FALSE en caso contrario.
+     *
      * @param double $f1
      * @param double $f2
-     * @param int $precision
-     * @param bool $round
+     * @param int    $precision
+     * @param bool   $round
+     *
      * @return bool
      */
     public static function floatcmp($f1, $f2, $precision = 10, $round = false)
     {
         if ($round || !function_exists('bccomp')) {
-            return(abs($f1 - $f2) < 6 / pow(10, $precision + 1));
+            return abs($f1 - $f2) < 6 / 10**($precision + 1);
         }
 
-        return(bccomp((string) $f1, (string) $f2, $precision) === 0);
+        return bccomp((string) $f1, (string) $f2, $precision) === 0;
     }
 
     /**
      * Devuelve un array con todas las fechas entre $first y $last.
+     *
      * @param string $first
      * @param string $last
      * @param string $step
      * @param string $format
+     *
      * @return array
      */
     public static function dateRange($first, $last, $step = '+1 day', $format = 'd-m-Y')
@@ -113,7 +123,9 @@ trait Utils
 
     /**
      * Devuelve una cadena de texto aleatorio de longitud $length
+     *
      * @param integer $length
+     *
      * @return string
      */
     public static function randomString($length = 10)
@@ -160,6 +172,7 @@ trait Utils
 
     /**
      * TODO
+     *
      * @param boolean $val
      *
      * @return string
