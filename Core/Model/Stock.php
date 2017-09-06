@@ -203,7 +203,7 @@ class Stock
     public function getByReferencia($ref, $codalmacen = false)
     {
         $where = [new DataBaseWhere('referencia', $ref)];
-        if($codalmacen) {
+        if ($codalmacen) {
             $where[] = new DataBaseWhere('codalmacen', $codalmacen);
         }
 

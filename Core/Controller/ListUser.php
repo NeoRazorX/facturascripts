@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Description of AdminUsers
@@ -32,11 +31,6 @@ class ListUser extends ExtendedController\ListController
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('nick');
-        $this->addOrderBy('email');
-
-        $this->model = new Model\User();
     }
 
     public function privateCore(&$response, $user)
@@ -52,5 +46,15 @@ class ListUser extends ExtendedController\ListController
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        $className = $this->getClassName();
+        $index = $this->addView('FacturaScripts\Core\Model\User', $className);
+        $this->addSearchFields($index, ['nick', 'email']);
+
+        $this->addOrderBy($index, 'nick');
+        $this->addOrderBy($index, 'email');
     }
 }

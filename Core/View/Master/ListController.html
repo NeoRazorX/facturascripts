@@ -1,5 +1,15 @@
 {% extends "Master/MenuTemplate.html" %}
 
+{% block css %}
+    {{ parent() }}
+    
+    <style type="text/css">
+        .table th {
+            border-top: none;
+        }
+    </style>
+{% endblock %}
+
 {% block javascript %}
 {{ parent() }}
 <script type="text/javascript">    
@@ -7,12 +17,27 @@
         $('[data-toggle="popover"]').popover({
             delay: { "show": 1000, "hide": 100 }
         });
-
-        document.f_custom_search.query.focus();
-        document.f_custom_search.query.select();
+        
+        var index = selectedTab();
+        self.setFormFocus(index);
     });
 
+    function setFormFocus(index) {
+        var formName = '#form_search' + index + ' :text:first';
+        $(formName).focus().select();
+
+        console.log('Cambiando el foco a ' + index);
+        console.log(formName);
+    }
+    
+    function selectedTab() {
+        return $('#mainTabContent > div.tab-pane.active').data('tabindex');
+    }
+
     function insertRecord() {
+        var url = [{{ fsc.getStringURLs('new')|raw }}];
+        var index = selectedTab();
+        document.insert_form.action = url[index];
         document.insert_form.submit(); 
     }    
 </script>
@@ -35,7 +60,7 @@
 {% set options, options_title = i18n.trans('Opciones'), i18n.trans('Opciones de configuración') %}
 {% set print, print_title = i18n.trans('Imprimir'), i18n.trans('Imprimir lista de registros') %}
 {% set new_record, new_record_title = i18n.trans('Nuevo'), i18n.trans('Crear un nuevo registro') %}
-{% set search, search_title = i18n.trans('Buscar'), i18n.trans('Filtra los registros que contienen el valor indicado') %}
+{% set search_title = i18n.trans('Filtra los registros que contienen el valor indicado') %}
 {% set any = i18n.trans('Cualquier') %}
 {% set panel_header = i18n.trans('Datos generales') %}
 {% set title = fsc.getPageData()['title'] %}
@@ -43,7 +68,7 @@
 {% set no_data = i18n.trans('No hay registros con esas condiciones. Pulse el botón Nuevo para dar de alta.') %}
 
 <!-- Calculate common values -->
-{% set list_url = fsc.model.url('list') %}
+{% set list_url = fsc.views[0].getURL('list') %}
 
 <!-- Macros Template Imports -->
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
@@ -71,7 +96,7 @@
                 {% endif %}
             </div>
             <div class="btn-group">
-                <form action="{{ fsc.model.url('new') }}" method=post name="insert_form">
+                <form action="#" method=post name="insert_form">
                     <input type="hidden" name="action" value="insert"> 
                 </form>             
                 
@@ -106,17 +131,26 @@
     </div>
 </div>
 
+<br>
+
 <!-- Main Data -->
 <div id="tab_options" role="tabpanel">
     <!-- Tabs declaration -->
-    <ul class="nav nav-tabs d-print-none">
+    <ul class="nav nav-tabs d-print-none" id="mainTabs" role="tablist">
+        {% for view in fsc.views %}
+        {% set indexView = loop.index - 1 %}
         <li class="nav-item">
-            <a href="#search" class="nav-link active" {{ popoverTitle(search_title, 'bottom') }}>
+            {% set active = (indexView == fsc.active) ? 'active' : '' %}
+            <a href="#search{{ indexView }}" class="nav-link {{ active }}" id="search{{ indexView }}-tab" onclick="setFormFocus({{ indexView }});"
+               data-toggle="tab" role="tab" 
+               aria-controls="search{{ indexView }}" aria-expanded="true">
                 <i class="fa fa-search" aria-hidden="true"></i>
-                <span class="hidden-xs">&nbsp;{{ search }}</span>
-                <span class="badge badge-secondary">{{ fsc.count }}</span>
+                <span class="hidden-xs">&nbsp;{{ i18n.trans(view.title) }}</span>
+                <span class="badge badge-secondary">{{ view.count }}</span>
             </a>
         </li>
+        {% endfor %}
+        
         {#    TODO: Aplicar extensiones
         {% for value in fsc.extensions %}
         {% if value.type == 'tab' %}
@@ -129,16 +163,20 @@
     </ul>
 
     <!-- Main Tab -->
-    <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active" id="search">
+    <div class="tab-content" id="mainTabContent">
+        {% for view in fsc.views %}        
+        {% set indexView = loop.index - 1 %}
+        {% set active = (indexView == fsc.active) ? 'active' : '' %}
+        <div class="tab-pane {{ active }}" id="search{{ indexView }}" role="tabpanel" aria-labelledby="search{{ indexView }}-tab" data-tabindex="{{ indexView }}">
             <!-- Filters Row -->
-            <form name="f_custom_search" action="{{ list_url }}" method="post" class="form">
+            <form name="f_custom_search{{ indexView }}" id="form_search{{ indexView }}" action="{{ list_url }}" method="post" class="form">
                 <div class="container-fluid d-print-none" style="margin-top: 15px; margin-bottom: 10px;">
                     <div class="row">
                         <!-- Main filter -->
                         <div class="col-md-2">
                             <div class="input-group">
-                                <input class="form-control" type="text" name="query" value="{{ fsc.query }}" autocomplete="off" placeholder="Buscar">
+                                <input type="hidden" name="active" value="{{ indexView }}"> 
+                                <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{% if indexView == fsc.active %}{{ fsc.query }}{% endif %}" autocomplete="off" placeholder="Buscar">
                                 <span class="input-group-btn hidden-sm">
                                     <button class="btn btn-primary" type="submit">
                                         <i class="fa fa-search" aria-hidden="true"></i>
@@ -148,17 +186,17 @@
                         </div>
 
                         <!-- Aditionals filters -->
-                        {% for key1, filter in fsc.filters %}
+                        {% for key1, filter in view.getFilters() %}
                         {% if filter.type == 'select' %}
-                        <div class="col">
+                        <div class="col-2">
                             <select name="{{ key1 }}" class="form-control" onchange="this.form.submit()">
                                 <option value="">{{ any }} {{ key1 }}</option>
                                 <option value="">------</option>
-                                {% for key2, data in fsc.optionlist(filter.options.field, filter.options.table, filter.options.where) %}
-                                {% if data == filter.value %}
-                                <option value="{{ data }}" selected="">{{ data }}</option>
+                                {% for key2, data in fsc.optionlist(key1, filter.options) %}
+                                {% if (indexView == fsc.active) and (data == filter.value) %}
+                                <option value="{{ key2 }}" selected="">{{ data }}</option>
                                 {% else %}
-                                <option value="{{ data }}">{{ data }}</option>
+                                <option value="{{ key2 }}">{{ data }}</option>
                                 {% endif %}
                                 {% endfor %}
                             </select>
@@ -169,7 +207,7 @@
                         <div class="col">
                             <div class="checkbox-inline">
                                 <label>
-                                    {% if filter.value %}
+                                    {% if (indexView == fsc.active) and filter.value %}
                                     <input type="checkbox" name="{{ key1 }}" value="TRUE" checked="" onchange="this.form.submit()"/>
                                     {% else %}
                                     <input type="checkbox" name="{{ key1 }}" value="TRUE" onchange="this.form.submit()"/>
@@ -182,7 +220,7 @@
 
                         {% if filter.type == 'datepicker' %}
                         <div class="col">
-                            <input type="text" name="{{ key1 }}" value="{{ filter.value }}" class="form-control datepicker"
+                            <input type="text" name="{{ key1 }}" value="{% if indexView == fsc.active %}{{ filter.value }}{% endif %}" class="form-control datepicker"
                                    placeholder="{{ filter.options.label }}" autocomplete="off" onchange="this.form.submit()"/>                            
                         </div>
                         {% endif %}                        
@@ -191,16 +229,17 @@
                         <!-- Order by selector -->
                         <div class="col">
                             <div class="btn-group float-md-right">
-                                <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuOrder" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    <i class="fa {{ fsc.orderby[fsc.selectedOrderBy]['icon'] }}" aria-hidden="true"></i>
-                                    &nbsp; {{ i18n.trans(fsc.orderby[fsc.selectedOrderBy]['label']) }}
+                                {% set orderbylist = view.getOrderBy() %}
+                                <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuOrder{{ indexView }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    <i class="fa {{ orderbylist[view.selectedOrderBy]['icon'] }}" aria-hidden="true"></i>
+                                    &nbsp; {{ i18n.trans(orderbylist[view.selectedOrderBy]['label']) }}
                                     <span class="caret"></span>
                                 </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuOrder">
-                                    {% for key, orderby in fsc.orderby %}
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuOrder{{ indexView }}">
+                                    {% for key, orderby in orderbylist %}
                                     <a class="dropdown-item" href="{{ list_url }}&order={{ key }}">
                                         <i class="fa {{ orderby['icon'] }}" aria-hidden="true"></i>&nbsp; {{ i18n.trans(orderby['label']) }} &nbsp;
-                                        {% if fsc.selectedOrderBy == key %}
+                                        {% if view.selectedOrderBy == key %}
                                         <i class="fa fa-check" aria-hidden="true"></i>
                                         {% endif %}
                                     </a>
@@ -218,22 +257,22 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            {% for column in fsc.getColumns() %}
+                            {% for column in view.getColumns() %}
                             {% if column.display != 'none' %}
                             <th class="text-{{ column.display }}">{{ column.getHeaderHTML(column.title)|raw }}</th>
                             {% endif %}
                             {% endfor %}
                         </tr>
                     </thead>
-                    {% for data in fsc.cursor %}
-                    {% set row = fsc.getRow('status') %}
+                    {% for data in view.getCursor() %}
+                    {% set row = view.getRow('status') %}
                     {% if row is empty %}
                     <tr class="table-light">
-                        {% else %}
-                        {% set status = attribute(data, row.fieldName) %}
+                    {% else %}
+                    {% set status = attribute(data, row.fieldName) %}
                     <tr class="{{ row.getStatus(status) }}">
-                        {% endif %}
-                        {% for column in fsc.getColumns() %}
+                    {% endif %}
+                        {% for column in view.getColumns() %}
                         {% if column.display != 'none' %}
                         {% set value = attribute(data, column.widget.fieldName) %}
                         <td class="text-{{ column.display }}">{{ column.getListHTML(value)|raw }}</td>
@@ -252,33 +291,40 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-sm-12 text-center">
-                        <div class="btn-group">
-                            {% for item in fsc.pagination() %}
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center">
+                            {% for item in fsc.pagination(indexView) %}
                                 {% if item.active %}
-                                <a href="#" class="btn btn-light active">{{ item.page }}</a>
+                                <li class="page-item active">
+                                    <span class="page-link">{{ item.page }}<span class="sr-only">(current)</span></span>
+                                </li>
                                 {% else %}
-                                <a href="{{ item.url }}" class="btn btn-light">
-                                    {% if item.icon %}
-                                    <i class="fa {{ item.icon }}" aria-hidden="true"></i>
-                                    {% else %}
-                                    <span>{{ item.page }}</span>
-                                    {% endif %}
-                                </a>
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ item.url }}">
+                                        {% if item.icon %}
+                                        <i class="fa {{ item.icon }}" aria-hidden="true"></i>
+                                        {% else %}
+                                        <span>{{ item.page }}</span>
+                                        {% endif %}
+                                    </a>
+                                </li>    
                                 {% endif %}
                             {% endfor %}
-                        </div>
+                            </ul>
+                        </nav>
                         <br/>
                         <br/>
                     </div>
                 </div>
             </div>
         </div>
-
+        {% endfor %}
+        
         <!-- Aditionals Tabs -->
         {#  TODO: Aplicar extensiones
         {% for extension in fsc.extensions %}
         {% if extension.type == 'tab' %}
-        <div role="tabpanel" class="tab-pane" id="ext_{{ extension.name }}">
+        <div role="tabpanel" class="tab-panel" id="ext_{{ extension.name }}">
             <iframe src="index.php?page={{ extension.from }}{{ extension.params }}"
                     width="100%" height="2000" frameborder="0"></iframe>
         </div>

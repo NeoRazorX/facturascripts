@@ -19,9 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la lista de divisas utilizadas
@@ -34,29 +32,11 @@ class ListDivisa extends ExtendedController\ListController
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('coddivisa', 'Código');
-        $this->addOrderBy('descripcion');
-        $this->addOrderBy('codiso');
-
-        $this->model = new Model\Divisa();
     }
 
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-    }
-
-    protected function getWhere()
-    {
-        $result = parent::getWhere();
-
-        if ($this->query != '') {
-            $fields = 'descripcion|coddivisa';
-            $result[] = new DataBaseWhere($fields, $this->query, 'LIKE');
-        }
-
-        return $result;
     }
 
     public function getPageData()
@@ -67,5 +47,16 @@ class ListDivisa extends ExtendedController\ListController
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        $className = $this->getClassName();
+        $index = $this->addView('FacturaScripts\Core\Model\Divisa', $className);
+        $this->addSearchFields($index, ['descripcion', 'coddivisa']);
+
+        $this->addOrderBy($index, 'coddivisa', 'code');
+        $this->addOrderBy($index, 'descripcion', 'description', 1);
+        $this->addOrderBy($index, 'codiso');
     }
 }

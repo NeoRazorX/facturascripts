@@ -19,9 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la lista de paises
@@ -34,29 +32,11 @@ class ListPais extends ExtendedController\ListController
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addFilterCheckbox('validarprov', 'validate-states');
-        $this->addOrderBy('codpais', 'code');
-        $this->addOrderBy('nombre');
-        $this->addOrderBy('codiso');
-
-        $this->model = new Model\Pais();
     }
 
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-    }
-
-    protected function getWhere()
-    {
-        $result = parent::getWhere();
-        if ($this->query != '') {
-            $fields = 'nombre|codiso|codpais';
-            $result[] = new DataBaseWhere($fields, $this->query, 'LIKE');
-        }
-
-        return $result;
     }
 
     public function getPageData()
@@ -67,5 +47,17 @@ class ListPais extends ExtendedController\ListController
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        $className = $this->getClassName();
+        $index = $this->addView('FacturaScripts\Core\Model\Pais', $className);
+        $this->addSearchFields($index, ['nombre', 'codiso', 'codpais']);
+
+        $this->addFilterCheckbox($index, 'validarprov', 'validate-states');
+        $this->addOrderBy($index, 'codpais', 'code');
+        $this->addOrderBy($index, 'nombre', 'name');
+        $this->addOrderBy($index, 'codiso');
     }
 }
