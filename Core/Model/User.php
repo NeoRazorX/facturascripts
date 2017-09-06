@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Model;
 
+namespace FacturaScripts\Core\Model;
 
 /**
  * Usuario de FacturaScripts.
@@ -26,61 +26,69 @@ namespace FacturaScripts\Core\Model;
  */
 class User
 {
-
     use Base\ModelTrait {
         get as private getTrait;
     }
 
     /**
      * Clave primaria. Varchar (50).
+     *
      * @var string
      */
     public $nick;
 
     /**
      * Email del usuario.
+     *
      * @var string
      */
     public $email;
 
     /**
      * TRUE -> el usuario es un administrador.
+     *
      * @var bool
      */
     public $admin;
 
     /**
      * TRUE -> el usuario esta activo.
+     *
      * @var bool
      */
     public $enabled;
 
     /**
      * Código del idioma seleccionado para este usuario.
+     *
      * @var string
      */
     public $langcode;
 
     /**
      * Página de inicio.
+     *
      * @var string
      */
     public $homepage;
 
     /**
      * Fecha y hora de la última actividad del usuario.
+     *
      * @var string
      */
     public $lastactivity;
 
     /**
      * Última IP usada.
+     *
      * @var string
      */
     public $lastip;
 
     /**
      * Contraseña, cifrada con password_hash()
+     *
      * @var string
      */
     private $password;
@@ -90,6 +98,7 @@ class User
      * sirve para no tener que guardar la contraseña.
      * Se regenera cada vez que el cliente inicia sesión. Así se
      * impide que dos personas accedan con el mismo usuario.
+     *
      * @var string
      */
     private $logkey;
@@ -168,6 +177,7 @@ class User
         $this->lastactivity = date('d-m-Y H:i:s');
         $this->lastip = $ipAddress;
         $this->logkey = static::randomString(99);
+
         return $this->logkey;
     }
 
@@ -180,12 +190,13 @@ class User
      */
     public function verifyLogkey($value)
     {
-        return ($this->logkey === $value);
+        return $this->logkey === $value;
     }
 
     /**
      * Devuelve true si no hay errores en los valores de las propiedades del modelo.
      * Se ejecuta dentro del método save.
+     *
      * @return bool
      */
     public function test()
@@ -194,6 +205,7 @@ class User
 
         if (!preg_match("/^[A-Z0-9_\+\.\-]{3,50}$/i", $this->nick)) {
             $this->miniLog->alert($this->i18n->trans('invalid-user-nick', [$this->nick]));
+
             return false;
         }
 
@@ -202,6 +214,7 @@ class User
 
     /**
      * Inserta valores por defecto a la tabla, en el proceso de creación de la misma.
+     *
      * @return string
      */
     public function install()
@@ -210,7 +223,8 @@ class User
         new Page();
 
         $this->miniLog->info($this->i18n->trans('created-default-admin-account'));
+
         return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled) VALUES ('admin','"
             . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE);";
-    }    
+    }
 }

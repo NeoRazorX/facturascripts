@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
@@ -28,22 +29,24 @@ use Exception;
  */
 class Postgresql implements DataBaseEngine
 {
-
     /**
      * El enlace con las utilidades comunes entre motores de base de datos.
+     *
      * @var DataBaseUtils
      */
     private $utils;
 
     /**
      * Enlace al conjunto de sentencias SQL de la base de datos conectada
-     * @var DataBaseSQL; 
+     *
+     * @var DataBaseSQL;
      */
     private $utilsSQL;
 
     /**
      * Ultimo mensaje de error
-     * @var string 
+     *
+     * @var string
      */
     private $lastErrorMsg;
 
@@ -59,7 +62,9 @@ class Postgresql implements DataBaseEngine
 
     /**
      * Devuelve el motor de base de datos y la versión.
+     *
      * @param resource $link
+     *
      * @return string
      */
     public function version($link)
@@ -69,7 +74,9 @@ class Postgresql implements DataBaseEngine
 
     /**
      * Convierte los datos leidos del sqlColumns a estructura de trabajo
+     *
      * @param array $colData
+     *
      * @return array
      */
     public function columnFromData($colData)
@@ -85,13 +92,16 @@ class Postgresql implements DataBaseEngine
 
     /**
      * Conecta a la base de datos.
+     *
      * @param string $error
+     *
      * @return bool|null
      */
     public function connect(&$error)
     {
         if (!function_exists('pg_connect')) {
             $error = 'No tienes instalada la extensión de PHP para PostgreSQL.';
+
             return null;
         }
 
@@ -100,6 +110,7 @@ class Postgresql implements DataBaseEngine
         $result = pg_connect($string);
         if (!$result) {
             $error = pg_last_error();
+
             return null;
         }
 
@@ -110,7 +121,9 @@ class Postgresql implements DataBaseEngine
 
     /**
      * Desconecta de la base de datos.
+     *
      * @param resource $link
+     *
      * @return bool
      */
     public function close($link)
@@ -120,18 +133,23 @@ class Postgresql implements DataBaseEngine
 
     /**
      * Devuelve el error de la ultima sentencia ejecutada
+     *
      * @param resource $link
+     *
      * @return string
      */
     public function errorMessage($link)
     {
         $error = pg_last_error($link);
+
         return ($error != '') ? $error : $this->lastErrorMsg;
     }
 
     /**
      * Inicia una transacción SQL.
+     *
      * @param resource $link
+     *
      * @return bool
      */
     public function beginTransaction($link)
@@ -141,7 +159,9 @@ class Postgresql implements DataBaseEngine
 
     /**
      * Guarda los cambios de una transacción SQL.
+     *
      * @param resource $link
+     *
      * @return bool
      */
     public function commit($link)
@@ -151,7 +171,9 @@ class Postgresql implements DataBaseEngine
 
     /**
      * Deshace los cambios de una transacción SQL.
+     *
      * @param resource $link
+     *
      * @return bool
      */
     public function rollback($link)
@@ -161,7 +183,9 @@ class Postgresql implements DataBaseEngine
 
     /**
      * Indica si la conexión está en transacción
+     *
      * @param resource $link
+     *
      * @return bool
      */
     public function inTransaction($link)
@@ -178,15 +202,18 @@ class Postgresql implements DataBaseEngine
                 $result = false;
                 break;
         }
+
         return $result;
     }
 
     /**
      * Ejecuta una sentencia SQL y devuelve un array con los resultados en
      * caso de $selectRows = true, o array vacío en caso de fallo.
+     *
      * @param resource $link
-     * @param string $sql
-     * @param bool $selectRows
+     * @param string   $sql
+     * @param bool     $selectRows
+     *
      * @return array
      */
     private function runSql($link, $sql, $selectRows = true)
@@ -210,8 +237,10 @@ class Postgresql implements DataBaseEngine
 
     /**
      * Ejecuta una sentencia SQL de tipo select
+     *
      * @param resource $link
-     * @param string $sql
+     * @param string   $sql
+     *
      * @return resource
      */
     public function select($link, $sql)
@@ -222,8 +251,10 @@ class Postgresql implements DataBaseEngine
     /**
      * Ejecuta sentencias SQL sobre la base de datos
      * (inserts, updates o deletes).
+     *
      * @param resource $link
-     * @param string $sql
+     * @param string   $sql
+     *
      * @return bool
      */
     public function exec($link, $sql)
@@ -233,8 +264,10 @@ class Postgresql implements DataBaseEngine
 
     /**
      * Escapa las comillas de la cadena de texto.
+     *
      * @param resource $link
-     * @param string $str
+     * @param string   $str
+     *
      * @return string
      */
     public function escapeString($link, $str)
@@ -244,6 +277,7 @@ class Postgresql implements DataBaseEngine
 
     /**
      * Devuelve el estilo de fecha del motor de base de datos.
+     *
      * @return string
      */
     public function dateStyle()
@@ -253,18 +287,22 @@ class Postgresql implements DataBaseEngine
 
     /**
      * Compara los tipos de datos de una columna. Devuelve TRUE si son iguales.
+     *
      * @param string $dbType
      * @param string $xmlType
+     *
      * @return bool
      */
     public function compareDataTypes($dbType, $xmlType)
     {
-        return ($dbType === $xmlType);
+        return $dbType === $xmlType;
     }
 
     /**
      * Devuelve un array con los nombres de las tablas de la base de datos.
+     *
      * @param resource $link
+     *
      * @return array
      */
     public function listTables($link)
@@ -290,10 +328,11 @@ class Postgresql implements DataBaseEngine
      * comprueba si se refiere a una secuencia, y si es así
      * comprueba la existencia de la secuencia. Si no la encuentra
      * la crea.
+     *
      * @param resource $link
-     * @param string $tableName
-     * @param string $default
-     * @param string $colname
+     * @param string   $tableName
+     * @param string   $default
+     * @param string   $colname
      */
     public function checkSequence($link, $tableName, $default, $colname)
     {
@@ -309,9 +348,11 @@ class Postgresql implements DataBaseEngine
 
     /**
      * Realiza comprobaciones extra a la tabla.
+     *
      * @param resource $link
-     * @param string $tableName
-     * @param string $error
+     * @param string   $tableName
+     * @param string   $error
+     *
      * @return bool
      */
     public function checkTableAux($link, $tableName, &$error)
@@ -321,6 +362,7 @@ class Postgresql implements DataBaseEngine
 
     /**
      * Devuelve el enlace a la clase de Utilidades del engine
+     *
      * @return DataBaseUtils
      */
     public function getUtils()
@@ -330,6 +372,7 @@ class Postgresql implements DataBaseEngine
 
     /**
      * Devuelve el enlace a la clase de SQL del engine
+     *
      * @return DataBaseSQL
      */
     public function getSQL()

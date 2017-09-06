@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
@@ -27,36 +28,40 @@ namespace FacturaScripts\Core\Base\DataBase;
  */
 class DataBaseWhere
 {
-
     const MATCH_DATE = "/^([\d]{1,2})-([\d]{1,2})-([\d]{4})$/i";
     const MATCH_DATETIME = "/^([\d]{1,2})-([\d]{1,2})-([\d]{4}) ([\d]{1,2}):([\d]{1,2}):([\d]{1,2})$/i";
 
     /**
      * Enlace con la base de datos activa
+     *
      * @var \FacturaScripts\Core\Base\DataBase
      */
     private $dataBase;
 
     /**
      * Lista de campos, separados por '|' a los que se aplica el filtro
+     *
      * @var string
      */
     private $fields;
 
     /**
      * Operador aritmético que se aplica
+     *
      * @var string
      */
     private $operator;
 
     /**
      * Valor por el que se filtra
-     * @var variant 
+     *
+     * @var variant
      */
     private $value;
 
     /**
-     * Operador lógico que se aplicará a la condición 
+     * Operador lógico que se aplicará a la condición
+     *
      * @var string
      */
     private $operation;
@@ -72,23 +77,26 @@ class DataBaseWhere
 
     /**
      * Formatea el valor fecha al formato de la base de datos
+     *
      * @param boolean $addTime
+     *
      * @return string
      */
     private function format2Date($addTime = FALSE)
     {
         $time = $addTime ? ' H:i:s' : '';
+
         return "'" . date($this->dataBase->dateStyle() . $time, strtotime($this->value)) . "'";
     }
 
     private function getValueFromOperator()
     {
         switch ($this->operator) {
-            case "LIKE":
+            case 'LIKE':
                 $result = "LOWER('%" . $this->dataBase->escapeString($this->value) . "%')";
                 break;
 
-            case "IS":
+            case 'IS':
                 $result = $this->value;
                 break;
 
@@ -102,34 +110,36 @@ class DataBaseWhere
     private function getValueFromType()
     {
         switch (gettype($this->value)) {
-            case "boolean":
-                $result = $this->value ? "TRUE" : "FALSE";
+            case 'boolean':
+                $result = $this->value ? 'TRUE' : 'FALSE';
                 break;
 
-            case "integer":
-            case "double":
-            case "float":
+            case 'integer':
+            case 'double':
+            case 'float':
                 $result = $this->dataBase->escapeString($this->value);
                 break;
 
             /// DATE
-            case (preg_match(self::MATCH_DATE, $this->value) > 0):
+            case preg_match(self::MATCH_DATE, $this->value) > 0:
                 $result = $this->format2Date();
                 break;
 
             /// DATETIME
-            case (preg_match(self::MATCH_DATETIME, $this->value) > 0):
+            case preg_match(self::MATCH_DATETIME, $this->value) > 0:
                 $result = $this->format2Date(TRUE);
                 break;
 
             default:
                 $result = "'" . $this->dataBase->escapeString($this->value) . "'";
         }
+
         return $result;
     }
 
     /**
      * Devuelve el valor del filtro formateado según el tipo
+     *
      * @return string
      */
     private function getValue()
@@ -139,7 +149,9 @@ class DataBaseWhere
 
     /**
      * Devuelve un string para aplicar en la clausula WHERE
+     *
      * @param boolean $applyOperation
+     *
      * @return string
      */
     public function getSQLWhereItem($applyOperation = FALSE)
@@ -165,12 +177,15 @@ class DataBaseWhere
                 $result = ' ' . $this->operation . ' ' . $result;
             }
         }
+
         return $result;
     }
 
     /**
      * Dado un array de DataBaseWhere devuelve la clausula WHERE completa
+     *
      * @param array $whereItems
+     *
      * @return string
      */
     public static function getSQLWhere(array $whereItems)
@@ -185,6 +200,7 @@ class DataBaseWhere
         if ($result != '') {
             $result = ' WHERE ' . $result;
         }
+
         return $result;
     }
 }

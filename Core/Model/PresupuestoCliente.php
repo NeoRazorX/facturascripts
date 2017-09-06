@@ -13,10 +13,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -26,7 +27,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class PresupuestoCliente
 {
-
     use Base\DocumentoVenta;
     use Base\ModelTrait {
         clear as clearTrait;
@@ -34,19 +34,22 @@ class PresupuestoCliente
 
     /**
      * Clave primaria.
-     * @var type 
+     *
+     * @var type
      */
     public $idpresupuesto;
 
     /**
      * ID del pedido relacionado, si lo hay.
-     * @var type 
+     *
+     * @var type
      */
     public $idpedido;
 
     /**
      * Fecha en la que termina la validéz del presupuesto.
-     * @var type 
+     *
+     * @var type
      */
     public $finoferta;
 
@@ -55,6 +58,7 @@ class PresupuestoCliente
      * 0 -> pendiente. (editable)
      * 1 -> aprobado. (hay un idpedido y no es editable)
      * 2 -> rechazado. (no hay idpedido y no es editable)
+     *
      * @var integer
      */
     public $status;
@@ -62,7 +66,8 @@ class PresupuestoCliente
 
     /**
      * Si este presupuesto es la versión de otro, aquí se almacena el idpresupuesto del original.
-     * @var type 
+     *
+     * @var type
      */
     public $idoriginal;
 
@@ -82,9 +87,9 @@ class PresupuestoCliente
         $this->codpago = $this->default_items->codpago();
         $this->codserie = $this->default_items->codserie();
         $this->codalmacen = $this->default_items->codalmacen();
-        $this->fecha = Date('d-m-Y');
-        $this->finoferta = date("d-m-Y", strtotime(Date('d-m-Y') . " +1month"));
-        $this->hora = Date('H:i:s');
+        $this->fecha = date('d-m-Y');
+        $this->finoferta = date('d-m-Y', strtotime(date('d-m-Y') . ' +1month'));
+        $this->hora = date('H:i:s');
         $this->tasaconv = 1.0;
         $this->status = 0;
         $this->editable = TRUE;
@@ -92,30 +97,31 @@ class PresupuestoCliente
 
     public function finoferta()
     {
-        return (strtotime(Date('d-m-Y')) > strtotime($this->finoferta));
+        return strtotime(date('d-m-Y')) > strtotime($this->finoferta);
     }
 
     public function getLineas()
     {
         $lineaModel = new LineaPresupuestoCliente();
+
         return $lineaModel->all(new DataBaseWhere('idpresupuesto', $this->idpresupuesto));
     }
 
     public function getVersiones()
     {
-        $versiones = array();
+        $versiones = [];
 
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE idoriginal = " . $this->var2str($this->idpresupuesto);
+        $sql = 'SELECT * FROM ' . $this->table_name . ' WHERE idoriginal = ' . $this->var2str($this->idpresupuesto);
         if ($this->idoriginal) {
-            $sql .= " OR idoriginal = " . $this->var2str($this->idoriginal);
-            $sql .= " OR idpresupuesto = " . $this->var2str($this->idoriginal);
+            $sql .= ' OR idoriginal = ' . $this->var2str($this->idoriginal);
+            $sql .= ' OR idpresupuesto = ' . $this->var2str($this->idoriginal);
         }
-        $sql .= "ORDER BY fecha DESC, hora DESC;";
+        $sql .= 'ORDER BY fecha DESC, hora DESC;';
 
         $data = $this->db->select($sql);
         if ($data) {
             foreach ($data as $d) {
-                $versiones[] = new PresupuestoCliente($d);
+                $versiones[] = new self($d);
             }
         }
 
@@ -124,6 +130,7 @@ class PresupuestoCliente
 
     /**
      * Comprueba los datos del presupuesto, devuelve TRUE si está todo correcto
+     *
      * @return boolean
      */
     public function test()
@@ -155,9 +162,9 @@ class PresupuestoCliente
         if ($this->idpedido) {
             $this->status = 1;
             $this->editable = FALSE;
-        } else if ($this->status == 0) {
+        } elseif ($this->status == 0) {
             $this->editable = TRUE;
-        } else if ($this->status == 2) {
+        } elseif ($this->status == 2) {
             $this->editable = FALSE;
         }
 
@@ -165,7 +172,8 @@ class PresupuestoCliente
             return TRUE;
         }
 
-        $this->miniLog->critical("Error grave: El total está mal calculado. ¡Informa del error!");
+        $this->miniLog->critical('Error grave: El total está mal calculado. ¡Informa del error!');
+
         return FALSE;
     }
 
@@ -196,19 +204,19 @@ class PresupuestoCliente
         $total = $neto + $iva - $irpf + $recargo;
 
         if (!$this->floatcmp($this->neto, $neto, FS_NF0, TRUE)) {
-            $this->miniLog->critical("Valor neto de " . FS_PRESUPUESTO . " incorrecto. Valor correcto: " . $neto);
+            $this->miniLog->critical('Valor neto de ' . FS_PRESUPUESTO . ' incorrecto. Valor correcto: ' . $neto);
             $status = FALSE;
-        } else if (!$this->floatcmp($this->totaliva, $iva, FS_NF0, TRUE)) {
-            $this->miniLog->critical("Valor totaliva de " . FS_PRESUPUESTO . " incorrecto. Valor correcto: " . $iva);
+        } elseif (!$this->floatcmp($this->totaliva, $iva, FS_NF0, TRUE)) {
+            $this->miniLog->critical('Valor totaliva de ' . FS_PRESUPUESTO . ' incorrecto. Valor correcto: ' . $iva);
             $status = FALSE;
-        } else if (!$this->floatcmp($this->totalirpf, $irpf, FS_NF0, TRUE)) {
-            $this->miniLog->critical("Valor totalirpf de " . FS_PRESUPUESTO . " incorrecto. Valor correcto: " . $irpf);
+        } elseif (!$this->floatcmp($this->totalirpf, $irpf, FS_NF0, TRUE)) {
+            $this->miniLog->critical('Valor totalirpf de ' . FS_PRESUPUESTO . ' incorrecto. Valor correcto: ' . $irpf);
             $status = FALSE;
-        } else if (!$this->floatcmp($this->totalrecargo, $recargo, FS_NF0, TRUE)) {
-            $this->miniLog->critical("Valor totalrecargo de " . FS_PRESUPUESTO . " incorrecto. Valor correcto: " . $recargo);
+        } elseif (!$this->floatcmp($this->totalrecargo, $recargo, FS_NF0, TRUE)) {
+            $this->miniLog->critical('Valor totalrecargo de ' . FS_PRESUPUESTO . ' incorrecto. Valor correcto: ' . $recargo);
             $status = FALSE;
-        } else if (!$this->floatcmp($this->total, $total, FS_NF0, TRUE)) {
-            $this->miniLog->critical("Valor total de " . FS_PRESUPUESTO . " incorrecto. Valor correcto: " . $total);
+        } elseif (!$this->floatcmp($this->total, $total, FS_NF0, TRUE)) {
+            $this->miniLog->critical('Valor total de ' . FS_PRESUPUESTO . ' incorrecto. Valor correcto: ' . $total);
             $status = FALSE;
         }
 
@@ -223,6 +231,7 @@ class PresupuestoCliente
             }
 
             $this->newCodigo();
+
             return $this->saveInsert();
         }
 
@@ -231,32 +240,34 @@ class PresupuestoCliente
 
     /**
      * Devuelve un array con los presupuestos que coinciden con $query
-     * @param type $query
+     *
+     * @param type    $query
      * @param integer $offset
+     *
      * @return \PresupuestoCliente
      */
     public function search($query, $offset = 0)
     {
-        $preslist = array();
+        $preslist = [];
         $query = mb_strtolower($this->no_html($query), 'UTF8');
 
-        $consulta = "SELECT * FROM " . $this->table_name . " WHERE ";
+        $consulta = 'SELECT * FROM ' . $this->table_name . ' WHERE ';
         if (is_numeric($query)) {
             $consulta .= "codigo LIKE '%" . $query . "%' OR numero2 LIKE '%" . $query . "%' OR observaciones LIKE '%" . $query . "%'
             OR total BETWEEN '" . ($query - .01) . "' AND '" . ($query + .01) . "'";
-        } else if (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query)) {
+        } elseif (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query)) {
             /// es una fecha
-            $consulta .= "fecha = " . $this->var2str($query) . " OR observaciones LIKE '%" . $query . "%'";
+            $consulta .= 'fecha = ' . $this->var2str($query) . " OR observaciones LIKE '%" . $query . "%'";
         } else {
             $consulta .= "lower(codigo) LIKE '%" . $query . "%' OR lower(numero2) LIKE '%" . $query . "%' "
                 . "OR lower(observaciones) LIKE '%" . str_replace(' ', '%', $query) . "%'";
         }
-        $consulta .= " ORDER BY fecha DESC, codigo DESC";
+        $consulta .= ' ORDER BY fecha DESC, codigo DESC';
 
         $data = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);
         if ($data) {
             foreach ($data as $p) {
-                $preslist[] = new PresupuestoCliente($p);
+                $preslist[] = new self($p);
             }
         }
 
@@ -265,31 +276,33 @@ class PresupuestoCliente
 
     /**
      * Devuelve un array con los presupuestos del cliente $codcliente que coinciden con $query
+     *
      * @param type $codcliente
      * @param type $desde
      * @param type $hasta
      * @param type $serie
      * @param type $obs
+     *
      * @return PresupuestoCliente[]
      */
     public function search_from_cliente($codcliente, $desde, $hasta, $serie, $obs = '')
     {
-        $pedilist = array();
+        $pedilist = [];
 
-        $sql = "SELECT * FROM " . $this->table_name . " WHERE codcliente = " . $this->var2str($codcliente) .
-            " AND idpedido AND fecha BETWEEN " . $this->var2str($desde) . " AND " . $this->var2str($hasta) .
-            " AND codserie = " . $this->var2str($serie);
+        $sql = 'SELECT * FROM ' . $this->table_name . ' WHERE codcliente = ' . $this->var2str($codcliente) .
+            ' AND idpedido AND fecha BETWEEN ' . $this->var2str($desde) . ' AND ' . $this->var2str($hasta) .
+            ' AND codserie = ' . $this->var2str($serie);
 
         if ($obs != '') {
-            $sql .= " AND lower(observaciones) = " . $this->var2str(strtolower($obs));
+            $sql .= ' AND lower(observaciones) = ' . $this->var2str(strtolower($obs));
         }
 
-        $sql .= " ORDER BY fecha DESC, codigo DESC;";
+        $sql .= ' ORDER BY fecha DESC, codigo DESC;';
 
         $data = $this->db->select($sql);
         if ($data) {
             foreach ($data as $p) {
-                $preslist[] = new PresupuestoCliente($p);
+                $preslist[] = new self($p);
             }
         }
 
@@ -299,19 +312,19 @@ class PresupuestoCliente
     public function cron_job()
     {
         /// marcamos como aprobados los presupuestos con idpedido
-        $this->db->exec("UPDATE " . $this->table_name . " SET status = '1', editable = FALSE"
+        $this->db->exec('UPDATE ' . $this->table_name . " SET status = '1', editable = FALSE"
             . " WHERE status != '1' AND idpedido IS NOT NULL;");
 
         /// devolvemos al estado pendiente a los presupuestos con estado 1 a los que se haya borrado el pedido
-        $this->db->exec("UPDATE " . $this->table_name . " SET status = '0', idpedido = NULL, editable = TRUE"
+        $this->db->exec('UPDATE ' . $this->table_name . " SET status = '0', idpedido = NULL, editable = TRUE"
             . " WHERE status = '1' AND idpedido NOT IN (SELECT idpedido FROM pedidoscli);");
 
         /// marcamos como rechazados todos los presupuestos con finoferta ya pasada
         $this->db->exec("UPDATE presupuestoscli SET status = '2' WHERE finoferta IS NOT NULL AND"
-            . " finoferta < " . $this->var2str(Date('d-m-Y')) . " AND idpedido IS NULL;");
+            . ' finoferta < ' . $this->var2str(date('d-m-Y')) . ' AND idpedido IS NULL;');
 
         /// marcamos como rechazados todos los presupuestos no editables y sin pedido asociado
         $this->db->exec("UPDATE presupuestoscli SET status = '2' WHERE idpedido IS NULL AND"
-            . " editable = false;");
+            . ' editable = false;');
     }
 }

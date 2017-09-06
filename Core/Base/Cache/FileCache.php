@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\Cache;
 
 use FacturaScripts\Core\Base\MiniLog;
@@ -27,15 +28,17 @@ use FacturaScripts\Core\Base\Translator;
  *
  * @author Emilio Cobos (emiliocobos.net) <ecoal95@gmail.com> and github contributors
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ *
  * @version 1.0.1
+ *
  * @link http://emiliocobos.net/php-cache/
  *
  */
 class FileCache
 {
-
     /**
      * Configuración de la cache.
+     *
      * @var array
      */
     private static $config;
@@ -54,14 +57,15 @@ class FileCache
 
     /**
      * FileCache constructor.
+     *
      * @param string $folder
      */
     public function __construct($folder = '')
     {
-        self::$config = array(
+        self::$config = [
             'cache_path' => $folder . '/Cache/FileCache',
             'expires' => 180,
-        );
+        ];
 
         $this->i18n = new Translator($folder);
         $this->minilog = new MiniLog();
@@ -74,7 +78,9 @@ class FileCache
 
     /**
      * Get a route to the file associated to that key.
+     *
      * @param string $key
+     *
      * @return string the filename of the php file
      */
     private function getRoute($key)
@@ -84,9 +90,11 @@ class FileCache
 
     /**
      * Get the data associated with a key.
+     *
      * @param string $key
-     * @param bool $raw
-     * @param null $custom_time
+     * @param bool   $raw
+     * @param null   $custom_time
+     *
      * @return mixed the content you put in, or null if expired or not found
      */
     public function get($key, $raw = false, $custom_time = null)
@@ -100,14 +108,17 @@ class FileCache
              */
             return $raw ? $content : unserialize($content);
         }
+
         return null;
     }
 
     /**
      * Put content into the cache.
+     *
      * @param string $key
-     * @param mixed $content the the content you want to store
-     * @param bool $raw whether if you want to store raw data or not. If it is true, $content *must* be a string
+     * @param mixed  $content the the content you want to store
+     * @param bool   $raw     whether if you want to store raw data or not. If it is true, $content *must* be a string
+     *
      * @return bool whether if the operation was successful or not
      */
     public function set($key, $content, $raw = false)
@@ -120,12 +131,15 @@ class FileCache
             return @rename($temp_file_name, $dest_file_name);
         }
         @unlink($temp_file_name);
+
         return false;
     }
 
     /**
      * Delete data from cache.
+     *
      * @param string $key
+     *
      * @return bool true if the data was removed successfully
      */
     public function delete($key)
@@ -140,6 +154,7 @@ class FileCache
 
     /**
      * Flush all cache.
+     *
      * @return bool always true
      */
     public function clear()
@@ -155,14 +170,16 @@ class FileCache
 
     /**
      * Check if a file has expired or not.
+     *
      * @param string $file the rout to the file
-     * @param int $time the number of minutes it was set to expire
+     * @param int    $time the number of minutes it was set to expire
+     *
      * @return bool if the file has expired or not
      */
     private function fileExpired($file, $time = null)
     {
         if (file_exists($file)) {
-            return (time() > (filemtime($file) + 60 * ($time ?: self::$config['expires'])));
+            return time() > (filemtime($file) + 60 * ($time ?: self::$config['expires']));
         }
 
         return true;

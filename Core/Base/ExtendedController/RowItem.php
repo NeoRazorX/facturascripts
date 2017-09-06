@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -25,21 +26,23 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 class RowItem implements VisualItemInterface
 {
-
     /**
      * Tipo de row que se visualiza
+     *
      * @var string
      */
     public $type;
 
     /**
      * Nombre del campo que al que se aplica las opciones
+     *
      * @var string
      */
     public $fieldName;
 
     /**
      * Opciones para configurar la fila
+     *
      * @var array
      */
     public $options;
@@ -84,6 +87,7 @@ class RowItem implements VisualItemInterface
                 break;
             }
         }
+
         return $result;
     }
 

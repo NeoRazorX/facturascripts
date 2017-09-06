@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
@@ -26,52 +27,60 @@ namespace FacturaScripts\Core\Base\DataBase;
  */
 interface DataBaseEngine
 {
-
     /**
      * Devuelve el enlace a la clase de Utilidades del engine
+     *
      * @return DataBaseUtils
      */
     public function getUtils();
 
     /**
      * Devuelve el enlace a la clase de SQL del engine
+     *
      * @return DataBaseSQL
      */
     public function getSQL();
 
     /**
      * Convierte los datos leidos del sqlColumns a estructura de trabajo
+     *
      * @param array $colData
      */
     public function columnFromData($colData);
 
     /**
      * Información sobre el motor de base de datos
+     *
      * @param mysqli|resource $link
+     *
      * @return string
      */
     public function version($link);
 
     /**
      * Conecta con la base de datos
+     *
      * @param string $error
      */
     public function connect(&$error);
 
     /**
      * Cierra la conexión con la base de datos
+     *
      * @param mysqli|resource $link
      */
     public function close($link);
 
     /**
      * Último mensaje de error generado un operación con la BD
+     *
      * @param mysqli|resource $link
      */
     public function errorMessage($link);
 
     /**
      * Inicia una transacción sobre la conexión
+     *
      * @param mysqli|resource $link
      */
     public function beginTransaction($link);
@@ -79,6 +88,7 @@ interface DataBaseEngine
     /**
      * Confirma las operaciones realizadas sobre la conexión
      * desde el beginTransaction
+     *
      * @param mysqli|resource $link
      */
     public function commit($link);
@@ -86,20 +96,24 @@ interface DataBaseEngine
     /**
      * Deshace las operaciones realizadas sobre la conexión
      * desde el beginTransaction
+     *
      * @param mysqli|resource $link
      */
     public function rollback($link);
 
     /**
      * Indica si la conexión tiene una transacción abierta
+     *
      * @param mysqli|resource $link
      */
     public function inTransaction($link);
 
     /**
      * Ejecuta una sentencia de datos sobre la conexión
+     *
      * @param mysqli|resource $link
-     * @param string $sql
+     * @param string          $sql
+     *
      * @return array
      */
     public function select($link, $sql);
@@ -107,13 +121,15 @@ interface DataBaseEngine
     /**
      * Ejecuta una sentencia DDL sobre la conexión.
      * Si no hay transacción abierta crea una y la finaliza
+     *
      * @param mysqli|resource $link
-     * @param string $sql
+     * @param string          $sql
      */
     public function exec($link, $sql);
 
     /**
      * Compara las columnas indicadas en los arrays
+     *
      * @param string $dbType
      * @param string $xmlType
      */
@@ -121,14 +137,16 @@ interface DataBaseEngine
 
     /**
      * Lista de tablas existentes en la conexión
+     *
      * @param mysqli|resource $link
      */
     public function listTables($link);
 
     /**
      * Escapa la cadena indicada
+     *
      * @param mysqli|resource $link
-     * @param string $str
+     * @param string          $str
      */
     public function escapeString($link, $str);
 
@@ -139,18 +157,20 @@ interface DataBaseEngine
 
     /**
      * Comprueba la existencia de una secuencia
+     *
      * @param mysqli|resource $link
-     * @param string $tableName
-     * @param string $default
-     * @param string $colname
+     * @param string          $tableName
+     * @param string          $default
+     * @param string          $colname
      */
     public function checkSequence($link, $tableName, $default, $colname);
 
     /**
      * Comprobación adicional a la existencia de una tabla
+     *
      * @param mysqli|resource $link
-     * @param string $tableName
-     * @param string $error
+     * @param string          $tableName
+     * @param string          $error
      */
     public function checkTableAux($link, $tableName, &$error);
 }

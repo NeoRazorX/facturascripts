@@ -19,7 +19,7 @@
 
 /// comprobamos que se haya instalado y haya configuración
 if (!file_exists(__DIR__ . '/config.php')) {
-    die("ERROR - NO_CONFIG -");
+    die('ERROR - NO_CONFIG -');
 }
 
 require_once __DIR__ . '/vendor/autoload.php';

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,29 +26,32 @@ namespace FacturaScripts\Core\Model;
  */
 class BalanceCuentaA
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria.
+     *
      * @var
      */
     public $id;
 
     /**
      * TODO
+     *
      * @var
      */
     public $codbalance;
 
     /**
      * TODO
+     *
      * @var
      */
     public $codcuenta;
 
     /**
      * TODO
+     *
      * @var
      */
     public $desccuenta;
@@ -66,8 +70,8 @@ class BalanceCuentaA
      * Devuelve el saldo del balance de un ejercicio.
      *
      * @param ejercicio $ejercicio
-     * @param bool $desde
-     * @param bool $hasta
+     * @param bool      $desde
+     * @param bool      $hasta
      *
      * @return float|int
      */
@@ -107,6 +111,7 @@ class BalanceCuentaA
         if (!empty($data)) {
             return (float) $data[0]['haber'] - (float) $data[0]['debe'];
         }
+
         return 0;
     }
 
@@ -126,7 +131,7 @@ class BalanceCuentaA
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $b) {
-                $balist[] = new BalanceCuentaA($b);
+                $balist[] = new self($b);
             }
         }
 
@@ -149,7 +154,7 @@ class BalanceCuentaA
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $b) {
-                $balist[] = new BalanceCuentaA($b);
+                $balist[] = new self($b);
             }
         }
 

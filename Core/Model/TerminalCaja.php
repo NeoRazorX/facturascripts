@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,65 +27,74 @@ namespace FacturaScripts\Core\Model;
  */
 class TerminalCaja
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria.
+     *
      * @var int
      */
     public $id;
 
     /**
      * Código del almacén a usar en los tickets.
+     *
      * @var string
      */
     public $codalmacen;
 
     /**
      * Código de la serie a utilizar en los tickets.
+     *
      * @var string
      */
     public $codserie;
 
     /**
      * Código del cliente predeterminado para los tickets.
+     *
      * @var string
      */
     public $codcliente;
 
     /**
      * Buffer con los ticket pendientes para imprimir.
+     *
      * @var
      */
     public $tickets;
 
     /**
      * Número de caracteres que caben en una línea del papel del ticket.
+     *
      * @var int
      */
     public $anchopapel;
 
     /**
      * Comando ESC/POS para cortar el papel.
+     *
      * @var string
      */
     public $comandocorte;
 
     /**
      * Comando ESC/POS para abrir el cajón portamonedas conectado a la impresora.
+     *
      * @var string
      */
     public $comandoapertura;
 
     /**
      * Número de impresiones para cada ticket.
+     *
      * @var int
      */
     public $num_tickets;
 
     /**
      * Desactivar los comandos ESC/POS para comprobaciones de la impresora de tickets.
+     *
      * @var string
      */
     public $sin_comandos;
@@ -118,6 +128,7 @@ class TerminalCaja
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function disponible()
@@ -126,6 +137,7 @@ class TerminalCaja
         if ($this->dataBase->select($sql)) {
             return false;
         }
+
         return true;
     }
 
@@ -195,7 +207,7 @@ class TerminalCaja
      * TODO
      *
      * @param string $word
-     * @param int $ancho
+     * @param int    $ancho
      *
      * @return string
      */
@@ -240,6 +252,7 @@ class TerminalCaja
 
     /**
      * TODO
+     *
      * @return array
      */
     public function disponibles()
@@ -252,7 +265,7 @@ class TerminalCaja
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
-                $tlist[] = new TerminalCaja($d);
+                $tlist[] = new self($d);
             }
         }
 
@@ -263,9 +276,9 @@ class TerminalCaja
      * A partir de una factura añade un ticket a la cola de impresión de este terminal.
      *
      * @param FacturaCliente $factura
-     * @param Empresa $empresa
-     * @param bool $imprimirDescripciones
-     * @param bool $imprimirObservaciones
+     * @param Empresa        $empresa
+     * @param bool           $imprimirDescripciones
+     * @param bool           $imprimirObservaciones
      */
     public function imprimirTicket(&$factura, &$empresa, $imprimirDescripciones = true, $imprimirObservaciones = false)
     {
@@ -325,7 +338,7 @@ class TerminalCaja
         }
 
         $lineaiguales = '';
-        for ($i = 0; $i < $this->anchopapel; $i++) {
+        for ($i = 0; $i < $this->anchopapel; ++$i) {
             $lineaiguales .= '=';
         }
         $this->addLinea($lineaiguales . "\n");
@@ -360,9 +373,9 @@ class TerminalCaja
      * A partir de una factura añade un ticket regalo a la cola de impresión de este terminal.
      *
      * @param FacturaCliente $factura
-     * @param Empresa $empresa
-     * @param bool $imprimirDescripciones
-     * @param bool $imprimirObservaciones
+     * @param Empresa        $empresa
+     * @param bool           $imprimirDescripciones
+     * @param bool           $imprimirObservaciones
      */
     public function imprimirTicketRegalo(&$factura, &$empresa, $imprimirDescripciones = true, $imprimirObservaciones = false)
     {
@@ -418,9 +431,8 @@ class TerminalCaja
             $this->addLinea($linea);
         }
 
-
         $lineaiguales = '';
-        for ($i = 0; $i < $this->anchopapel; $i++) {
+        for ($i = 0; $i < $this->anchopapel; ++$i) {
             $lineaiguales .= '=';
         }
         $this->addLinea($lineaiguales);
@@ -506,7 +518,7 @@ class TerminalCaja
     /**
      * TODO
      *
-     * @param float $precio
+     * @param float  $precio
      * @param string $coddivisa
      *
      * @return string
@@ -516,6 +528,7 @@ class TerminalCaja
         if (FS_POS_DIVISA === 'right') {
             return number_format($precio, FS_NF0, FS_NF1, FS_NF2) . ' ' . $coddivisa;
         }
+
         return $coddivisa . ' ' . number_format($precio, FS_NF0, FS_NF1, FS_NF2);
     }
 
@@ -536,7 +549,7 @@ class TerminalCaja
      * TODO
      *
      * @param string $word
-     * @param int $ancho
+     * @param int    $ancho
      *
      * @return string
      */
@@ -549,9 +562,10 @@ class TerminalCaja
         $lastPosition = $middle + $middleWord;
         $numberOfSpaces = $middle - $middleWord;
         $result = sprintf("%'{$symbol}{$lastPosition}s", $word);
-        for ($i = 0; $i < $numberOfSpaces; $i++) {
+        for ($i = 0; $i < $numberOfSpaces; ++$i) {
             $result .= "$symbol";
         }
+
         return $result;
     }
 }

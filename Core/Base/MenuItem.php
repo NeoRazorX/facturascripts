@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -26,45 +27,51 @@ namespace FacturaScripts\Core\Base;
  */
 class MenuItem
 {
-
     /**
      * Nombre identificativo del elemento.
+     *
      * @var string
      */
     public $name;
 
     /**
      * Título de la opción de menú.
+     *
      * @var string
      */
     public $title;
 
     /**
      * URL para el href de la opción de menú.
+     *
      * @var string
      */
     public $url;
 
     /**
      * Icono de la fuente Fontawesome de la opción de menú.
+     *
      * @var string
      */
     public $icon;
 
     /**
      * Indica si está activado o no.
+     *
      * @var bool
      */
     public $active;
 
     /**
      * Lista de opciones de menú para el item.
+     *
      * @var MenuItem[]
      */
     public $menu;
 
     /**
      * Contruye y rellena los valores principales del Item
+     *
      * @param string $name
      * @param string $title
      * @param string $url
@@ -82,6 +89,9 @@ class MenuItem
 
     /**
      * Devuelve el html para el icono del item
+     *
+     * @param mixed $forceIcon
+     *
      * @return string
      */
     private function getHTMLIcon($forceIcon = false)
@@ -99,7 +109,9 @@ class MenuItem
 
     /**
      * Devuelve el html para el menú / submenú
+     *
      * @param int $level
+     *
      * @return string
      */
     public function getHTML($level = 0)
@@ -126,6 +138,7 @@ class MenuItem
             }
 
             $html .= '</div></li>';
+
             return $html;
         }
 
@@ -146,6 +159,7 @@ class MenuItem
         }
 
         $html = '<a class="' . $liClass . '" href="' . $this->url . '">' . $this->getHTMLIcon(TRUE) . $this->title . '</a>';
+
         return $html;
     }
 }

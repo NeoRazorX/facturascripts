@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 /**
@@ -26,69 +27,79 @@ namespace FacturaScripts\Core\Model\Base;
  */
 trait ContactInformation
 {
-
     /**
      * Teléfono de contacto.
+     *
      * @var string
      */
     public $telefono;
 
     /**
      * Número de fax del contacto.
+     *
      * @var string
      */
     public $fax;
 
     /**
      * Email de contacto.
+     *
      * @var string
      */
     public $email;
 
     /**
      * Página web del contacto.
+     *
      * @var string
      */
     public $web;
 
     /**
      * Dirección del contacto.
+     *
      * @var string
      */
     public $direccion;
 
     /**
      * Código postal del contacto.
+     *
      * @var string
      */
     public $codpostal;
 
     /**
      * Apartado de correos del contacto.
+     *
      * @var string
      */
     public $apartado;
 
     /**
      * Ciudad del contacto.
+     *
      * @var string
      */
     public $ciudad;
 
     /**
      * Nombre de la población del contacto.
+     *
      * @var string
      */
     public $poblacion;
 
     /**
      * Provincia del contacto.
+     *
      * @var string
      */
     public $provincia;
 
     /**
      * Código que representa al páis donde está el contacto.
+     *
      * @var string
      */
     public $codpais;

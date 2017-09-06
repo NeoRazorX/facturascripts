@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -27,23 +28,25 @@ namespace FacturaScripts\Core\Model;
  */
 class Cuenta
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria.
+     *
      * @var int
      */
     public $idcuenta;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $codcuenta;
 
     /**
      * Código del ejercicio de esta cuenta.
+     *
      * @var string
      */
     public $codejercicio;
@@ -56,18 +59,21 @@ class Cuenta
 
     /**
      * TODO
+     *
      * @var string
      */
     public $codepigrafe;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $descripcion;
 
     /**
      * TODO
+     *
      * @var int
      */
     public $idcuentaesp;
@@ -84,21 +90,25 @@ class Cuenta
 
     /**
      * TODO
+     *
      * @return array
      */
     public function getSubcuentas()
     {
         $subcuenta = new Subcuenta();
+
         return $subcuenta->allFromCuenta($this->idcuenta);
     }
 
     /**
      * TODO
+     *
      * @return bool|mixed
      */
     public function getEjercicio()
     {
         $eje = new Ejercicio();
+
         return $eje->get($this->codejercicio);
     }
 
@@ -117,15 +127,16 @@ class Cuenta
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
-            return new Cuenta($data[0]);
+            return new self($data[0]);
         }
+
         return false;
     }
 
     /**
      * Obtiene la primera cuenta especial seleccionada.
      *
-     * @param int $idcuesp
+     * @param int    $idcuesp
      * @param string $codejercicio
      *
      * @return bool|Cuenta
@@ -137,13 +148,15 @@ class Cuenta
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
-            return new Cuenta($data[0]);
+            return new self($data[0]);
         }
+
         return false;
     }
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function test()
@@ -154,6 +167,7 @@ class Cuenta
             return true;
         }
         $this->miniLog->alert('Faltan datos en la cuenta');
+
         return false;
     }
 
@@ -173,7 +187,7 @@ class Cuenta
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $c) {
-                $cuenlist[] = new Cuenta($c);
+                $cuenlist[] = new self($c);
             }
         }
 
@@ -184,7 +198,7 @@ class Cuenta
      * TODO
      *
      * @param string $codejercicio
-     * @param int $offset
+     * @param int    $offset
      *
      * @return array
      */
@@ -197,7 +211,7 @@ class Cuenta
         $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $c) {
-                $cuenlist[] = new Cuenta($c);
+                $cuenlist[] = new self($c);
             }
         }
 
@@ -220,7 +234,7 @@ class Cuenta
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $c) {
-                $cuenlist[] = new Cuenta($c);
+                $cuenlist[] = new self($c);
             }
         }
 
@@ -230,7 +244,7 @@ class Cuenta
     /**
      * TODO
      *
-     * @param int $idcuesp
+     * @param int    $idcuesp
      * @param string $codejercicio
      *
      * @return array
@@ -244,7 +258,7 @@ class Cuenta
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $cue) {
-                $cuenlist[] = new Cuenta($cue);
+                $cuenlist[] = new self($cue);
             }
         }
 
@@ -255,7 +269,7 @@ class Cuenta
      * TODO
      *
      * @param string $query
-     * @param int $offset
+     * @param int    $offset
      *
      * @return array
      */
@@ -270,7 +284,7 @@ class Cuenta
         $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $c) {
-                $cuenlist[] = new Cuenta($c);
+                $cuenlist[] = new self($c);
             }
         }
 
@@ -303,6 +317,7 @@ class Cuenta
 
             return $subc0;
         }
+
         return false;
     }
 
@@ -310,6 +325,7 @@ class Cuenta
      * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
      * que se ejecutará tras la creación de la tabla. útil para insertar valores
      * por defecto.
+     *
      * @return string
      */
     public function install()

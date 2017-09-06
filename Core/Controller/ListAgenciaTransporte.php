@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -32,7 +33,6 @@ use FacturaScripts\Core\Model;
  */
 class ListAgenciaTransporte extends ExtendedController\ListController
 {
-
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
@@ -41,7 +41,7 @@ class ListAgenciaTransporte extends ExtendedController\ListController
         $this->addOrderBy('nombre');
 
         $this->addFilterCheckbox('activo', 'Activo', '', TRUE);
-        
+
         $this->model = new Model\AgenciaTransporte();
     }
 
@@ -55,9 +55,10 @@ class ListAgenciaTransporte extends ExtendedController\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "nombre|codtrans";
-            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
+            $fields = 'nombre|codtrans';
+            $result[] = new DataBaseWhere($fields, $this->query, 'LIKE');
         }
+
         return $result;
     }
 
@@ -67,6 +68,7 @@ class ListAgenciaTransporte extends ExtendedController\ListController
         $pagedata['title'] = 'Transportistas';
         $pagedata['icon'] = 'fa-truck';
         $pagedata['menu'] = 'admin';
+
         return $pagedata;
     }
 }

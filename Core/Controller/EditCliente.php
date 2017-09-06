@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -32,28 +33,28 @@ class EditCliente extends ExtendedController\EditController
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-        
+
         // Establecemos el modelo de datos
         $this->model = new Model\Cliente();
     }
-    
+
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
     }
-    
+
     public function getPanelFooter()
     {
         return $this->i18n->trans('Fecha de alta: ') . $this->model->fechaalta;
     }
-    
+
     public function getPageData()
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'Cliente';
         $pagedata['icon'] = 'fa-users';
         $pagedata['showonmenu'] = FALSE;
-        
+
         return $pagedata;
-    }    
+    }
 }

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,29 +26,32 @@ namespace FacturaScripts\Core\Model;
  */
 class GrupoEpigrafes
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria
+     *
      * @var int
      */
     public $idgrupo;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $codgrupo;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $codejercicio;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $descripcion;
@@ -64,11 +68,13 @@ class GrupoEpigrafes
 
     /**
      * TODO
+     *
      * @return array
      */
     public function getEpigrafes()
     {
         $epigrafe = new Epigrafe();
+
         return $epigrafe->allFromGrupo($this->idgrupo);
     }
 
@@ -87,13 +93,15 @@ class GrupoEpigrafes
 
         $grupo = $this->dataBase->select($sql);
         if (!empty($grupo)) {
-            return new GrupoEpigrafes($grupo[0]);
+            return new self($grupo[0]);
         }
+
         return false;
     }
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function test()
@@ -104,6 +112,7 @@ class GrupoEpigrafes
             return true;
         }
         $this->miniLog->alert('Faltan datos en el grupo de epígrafes.');
+
         return false;
     }
 
@@ -123,7 +132,7 @@ class GrupoEpigrafes
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $ep) {
-                $epilist[] = new GrupoEpigrafes($ep);
+                $epilist[] = new self($ep);
             }
         }
 

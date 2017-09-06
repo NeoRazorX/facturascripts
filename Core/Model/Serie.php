@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,41 +27,46 @@ namespace FacturaScripts\Core\Model;
  */
 class Serie
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria. Varchar (2).
+     *
      * @var string
      */
     public $codserie;
 
     /**
      * Descripción de la serie de facturación
+     *
      * @var string
      */
     public $descripcion;
 
     /**
      * TRUE -> las facturas asociadas no encluyen IVA.
+     *
      * @var bool
      */
     public $siniva;
 
     /**
      * % de retención IRPF de las facturas asociadas.
+     *
      * @var float
      */
     public $irpf;
 
     /**
      * ejercicio para el que asignamos la numeración inicial de la serie.
+     *
      * @var string
      */
     public $codejercicio;
 
     /**
      * numeración inicial para las facturas de esta serie.
+     *
      * @var int
      */
     public $numfactura;
@@ -90,15 +96,17 @@ class Serie
 
     /**
      * Devuelve TRUE si la serie es la predeterminada de la empresa
+     *
      * @return bool
      */
     public function isDefault()
     {
-        return ($this->codserie === $this->defaultItems->codSerie());
+        return $this->codserie === $this->defaultItems->codSerie();
     }
 
     /**
      * Comprueba los datos de la serie, devuelve TRUE si son correctos
+     *
      * @return bool
      */
     public function test()
@@ -125,6 +133,7 @@ class Serie
 
     /**
      * Crea la consulta necesaria para crear una nueva serie en la base de datos.
+     *
      * @return string
      */
     public function install()

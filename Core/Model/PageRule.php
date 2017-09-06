@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,35 +27,39 @@ namespace FacturaScripts\Core\Model;
  */
 class PageRule
 {
-
     use Base\ModelTrait;
 
     /**
      * TODO
+     *
      * @var int
      */
     public $id;
 
     /**
      * Nick del usuario.
+     *
      * @var string
      */
     public $nick;
 
     /**
      * Nombre de la página (nombre del controlador).
+     *
      * @var string
      */
     public $pagename;
 
     /**
      * Otorga permisos al usuario a eliminar elementos en la página.
+     *
      * @var bool
      */
     public $allowdelete;
 
     /**
      * Otorga permisis al usuario a actualizar elementos en la página.
+     *
      * @var bool
      */
     public $allowupdate;

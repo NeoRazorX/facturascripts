@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -30,7 +31,6 @@ use FacturaScripts\Core\Model;
  */
 class ListSerie extends ExtendedController\ListController
 {
-
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
@@ -41,8 +41,8 @@ class ListSerie extends ExtendedController\ListController
 
         $this->addFilterSelect('ejercicio', 'series', '', 'codejercicio');
         $this->addFilterCheckbox('siniva', 'Sin Impuesto', 'siniva');
-        
-        $this->model = new Model\Serie();        
+
+        $this->model = new Model\Serie();
     }
 
     public function privateCore(&$response, $user)
@@ -55,9 +55,10 @@ class ListSerie extends ExtendedController\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "descripcion|codserie|codcuenta";
-            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
+            $fields = 'descripcion|codserie|codcuenta';
+            $result[] = new DataBaseWhere($fields, $this->query, 'LIKE');
         }
+
         return $result;
     }
 
@@ -67,6 +68,7 @@ class ListSerie extends ExtendedController\ListController
         $pagedata['title'] = 'Series';
         $pagedata['icon'] = 'fa-file-text';
         $pagedata['menu'] = 'contabilidad';
+
         return $pagedata;
     }
 }

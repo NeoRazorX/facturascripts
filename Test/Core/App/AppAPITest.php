@@ -1,4 +1,5 @@
 <?php
+
 namespace FacturaScripts\Core\App;
 
 /**
@@ -6,7 +7,6 @@ namespace FacturaScripts\Core\App;
  */
 class AppAPITest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var AppAPI
      */
@@ -27,7 +27,6 @@ class AppAPITest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        
     }
 
     public function testConnect()
@@ -36,7 +35,7 @@ class AppAPITest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\App\AppAPI::run
+     * @covers \FacturaScripts\Core\App\AppAPI::run
      */
     public function testRun()
     {

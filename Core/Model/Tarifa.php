@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Model;
 
+namespace FacturaScripts\Core\Model;
 
 /**
  * Una tarifa para los artículos.
@@ -26,47 +26,53 @@ namespace FacturaScripts\Core\Model;
  */
 class Tarifa
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria.
+     *
      * @var string
      */
     public $codtarifa;
 
     /**
      * Nombre de la tarifa.
+     *
      * @var string
      */
     public $nombre;
 
     /**
      * Fórmula a aplicar
+     *
      * @var
      */
     public $aplicar_a;
 
     /**
      * no vender por debajo de coste
+     *
      * @var bool
      */
     public $mincoste;
 
     /**
      * no vender por encima de pvp
+     *
      * @var bool
      */
     public $maxpvp;
 
     /**
      * Incremento porcentual o descuento
+     *
      * @var float
      */
     private $incporcentual;
 
     /**
      * Incremento lineal o descuento lineal
+     *
      * @var float
      */
     private $inclineal;
@@ -97,13 +103,15 @@ class Tarifa
 
     /**
      * TODO
+     *
      * @return double
      */
     public function x()
     {
         if ($this->aplicar_a === 'pvp') {
-            return (0 - $this->incporcentual);
+            return 0 - $this->incporcentual;
         }
+
         return $this->incporcentual;
     }
 
@@ -122,13 +130,15 @@ class Tarifa
 
     /**
      * TODO
+     *
      * @return double
      */
     public function y()
     {
         if ($this->aplicar_a === 'pvp') {
-            return (0 - $this->inclineal);
+            return 0 - $this->inclineal;
         }
+
         return $this->inclineal;
     }
 
@@ -147,6 +157,7 @@ class Tarifa
 
     /**
      * Devuelve un texto explicativo de lo que hace la tarifa
+     *
      * @return string
      */
     public function diff()
@@ -227,6 +238,7 @@ class Tarifa
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function test()

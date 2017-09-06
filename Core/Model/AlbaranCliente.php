@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,7 +30,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class AlbaranCliente
 {
-
     use Base\DocumentoVenta;
     use Base\ModelTrait {
         clear as clearTrait;
@@ -37,18 +37,21 @@ class AlbaranCliente
 
     /**
      * Clave primaria. Integer.
+     *
      * @var int
      */
     public $idalbaran;
 
     /**
      * ID de la factura relacionada, si la hay.
+     *
      * @var int
      */
     public $idfactura;
 
     /**
      * TRUE => está pendiente de factura.
+     *
      * @var bool
      */
     public $ptefactura;
@@ -80,6 +83,7 @@ class AlbaranCliente
 
     /**
      * Devuelve la url donde se pueden ver/modificar los datos de la factura
+     *
      * @return string
      */
     public function facturaUrl()
@@ -87,16 +91,19 @@ class AlbaranCliente
         if ($this->idfactura === null) {
             return '#';
         }
+
         return 'index.php?page=VentasFactura&id=' . $this->idfactura;
     }
 
     /**
      * Devuelve las líneas del albarán.
+     *
      * @return array
      */
     public function getLineas()
     {
         $lineaModel = new LineaAlbaranCliente();
+
         return $lineaModel->all(new DataBaseWhere('idalbaran', $this->idalbaran));
     }
 
@@ -114,13 +121,15 @@ class AlbaranCliente
             . ' WHERE upper(codigo) = ' . strtoupper($this->var2str($cod)) . ';';
         $albaran = $this->dataBase->select($sql);
         if (!empty($albaran)) {
-            return new AlbaranCliente($albaran[0]);
+            return new self($albaran[0]);
         }
+
         return false;
     }
 
     /**
      * Comprueba los datos del albarán, devuelve TRUE si son correctos
+     *
      * @return bool
      */
     public function test()
@@ -159,6 +168,7 @@ class AlbaranCliente
         }
 
         $this->miniLog->alert('Error grave: El total está mal calculado. ¡Avisa al informático!');
+
         return false;
     }
 
@@ -292,6 +302,7 @@ class AlbaranCliente
             }
 
             $this->newCodigo();
+
             return $this->saveInsert();
         }
 
@@ -302,7 +313,7 @@ class AlbaranCliente
      * Devuelve un array con todos los albaranes que coinciden con $query
      *
      * @param string $query
-     * @param int $offset
+     * @param int    $offset
      *
      * @return array
      */
@@ -324,7 +335,7 @@ class AlbaranCliente
         $data = $this->dataBase->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $a) {
-                $alblist[] = new AlbaranCliente($a);
+                $alblist[] = new self($a);
             }
         }
 
@@ -367,7 +378,7 @@ class AlbaranCliente
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $a) {
-                $albalist[] = new AlbaranCliente($a);
+                $albalist[] = new self($a);
             }
         }
 

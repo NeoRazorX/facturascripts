@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,79 +26,90 @@ namespace FacturaScripts\Core\Model;
  */
 class Asiento
 {
-
     use Base\ModelTrait {
         saveInsert as private saveInsertTrait;
     }
 
     /**
      * Clave primaria.
+     *
      * @var int
      */
     public $idasiento;
 
     /**
      * Número de asiento. Se modificará al renumerar.
+     *
      * @var string
      */
     public $numero;
 
     /**
      * TODO
+     *
      * @var int
      */
     public $idconcepto;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $concepto;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $fecha;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $codejercicio;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $codplanasiento;
 
     /**
      * TODO
+     *
      * @var
      */
     public $editable;
 
     /**
      * TODO
+     *
      * @var
      */
     public $documento;
 
     /**
      * TODO
+     *
      * @var
      */
     public $tipodocumento;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $importe;
 
     /**
      * TODO
+     *
      * @var string
      */
     private $coddivisa;
@@ -132,23 +144,28 @@ class Asiento
 
     /**
      * TODO
+     *
      * @return bool|FacturaCliente|FacturaProveedor
      */
     public function getFactura()
     {
         if ($this->tipodocumento === 'Factura de cliente') {
             $fac = new FacturaCliente();
+
             return $fac->getByCodigo($this->documento);
         }
         if ($this->tipodocumento === 'Factura de proveedor') {
             $fac = new FacturaProveedor();
+
             return $fac->getByCodigo($this->documento);
         }
+
         return false;
     }
 
     /**
      * TODO
+     *
      * @return string
      */
     public function facturaUrl()
@@ -157,11 +174,13 @@ class Asiento
         if ($fac) {
             return $fac->url();
         }
+
         return '#';
     }
 
     /**
      * TODO
+     *
      * @return string
      */
     public function ejercicioUrl()
@@ -171,6 +190,7 @@ class Asiento
         if ($eje0) {
             return $eje0->url();
         }
+
         return '#';
     }
 
@@ -178,6 +198,7 @@ class Asiento
      * Devuelve el código de la divisa.
      * Lo que pasa es que ese dato se almacena en las partidas, por eso
      * hay que usar esta función.
+     *
      * @return Divisa|null
      */
     public function codDivisa()
@@ -198,11 +219,13 @@ class Asiento
 
     /**
      * TODO
+     *
      * @return array
      */
     public function getPartidas()
     {
         $partida = new Partida();
+
         return $partida->allFromAsiento($this->idasiento);
     }
 
@@ -233,6 +256,7 @@ class Asiento
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function test()
@@ -242,8 +266,10 @@ class Asiento
 
         if (strlen($this->concepto) > 255) {
             $this->miniLog->alert('Concepto del asiento demasiado largo.');
+
             return false;
         }
+
         return true;
     }
 
@@ -338,6 +364,7 @@ class Asiento
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function fix()
@@ -416,11 +443,13 @@ class Asiento
         if ($status) {
             return $this->fullTest();
         }
+
         return false;
     }
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function delete()
@@ -468,6 +497,7 @@ class Asiento
         }
 
         $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idasiento = ' . $this->var2str($this->idasiento) . ';';
+
         return $this->dataBase->exec($sql);
     }
 
@@ -475,7 +505,7 @@ class Asiento
      * TODO
      *
      * @param string $query
-     * @param int $offset
+     * @param int    $offset
      *
      * @return array
      */
@@ -503,7 +533,7 @@ class Asiento
         $data = $this->dataBase->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $a) {
-                $alist[] = new Asiento($a);
+                $alist[] = new self($a);
             }
         }
 
@@ -512,6 +542,7 @@ class Asiento
 
     /**
      * TODO
+     *
      * @return array
      */
     public function descuadrados()
@@ -539,6 +570,7 @@ class Asiento
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function renumerar()
@@ -562,7 +594,7 @@ class Asiento
                             . ' WHERE idasiento = ' . $this->var2str($col['idasiento']) . ';';
                     }
 
-                    $numero++;
+                    ++$numero;
                 }
                 $posicion += 1000;
 
@@ -613,15 +645,18 @@ class Asiento
         echo "\nRenumerando asientos...";
         $this->renumerar();
     }
+
     /// renumera todos los asientos. Devuelve FALSE en caso de error
 
     /**
      * Inserta los datos del modelo en la base de datos.
+     *
      * @return bool
      */
     private function saveInsert()
     {
         $this->newNumero();
+
         return $this->saveInsertTrait();
     }
 }

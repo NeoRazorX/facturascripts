@@ -4,6 +4,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 /**
@@ -13,72 +14,83 @@ namespace FacturaScripts\Core\Model\Base;
  */
 trait Factura
 {
-
     /**
      * Clave primaria.
+     *
      * @var int
      */
     public $idfactura;
 
     /**
      * ID del asiento relacionado, si lo hay.
+     *
      * @var int
      */
     public $idasiento;
 
     /**
      * ID del asiento de pago relacionado, si lo hay.
+     *
      * @var int
      */
     public $idasientop;
 
     /**
      * ID de la factura que rectifica.
+     *
      * @var int
      */
     public $idfacturarect;
 
     /**
      * Código de la factura que rectifica.
+     *
      * @var string
      */
     public $codigorect;
 
     /**
      * TRUE => pagada
+     *
      * @var bool
      */
     public $pagada;
 
     /**
      * TRUE => anulada
+     *
      * @var bool
      */
     public $anulada;
 
     /**
      * Fecha de vencimiento de la factura.
+     *
      * @var string
      */
     public $vencimiento;
 
     /**
      * Devuelve el asiento asociado
+     *
      * @return bool|Asiento
      */
     public function getAsiento()
     {
         $asiento = new Asiento();
+
         return $asiento->get($this->idasiento);
     }
 
     /**
      * Devuelve el asiento de pago asociado
+     *
      * @return bool|mixed
      */
     public function getAsientoPago()
     {
         $asiento = new Asiento();
+
         return $asiento->get($this->idasientop);
     }
 
@@ -99,7 +111,7 @@ trait Factura
                             $lineasi[$i]->totaliva += ($l->pvptotal * $l->iva) / 100;
                             $lineasi[$i]->totalrecargo += ($l->pvptotal * $l->recargo) / 100;
                         }
-                        $i++;
+                        ++$i;
                     }
                     if (!$encontrada) {
                         $lineasi[$i] = new $lineaIvaClass();
@@ -144,13 +156,14 @@ trait Factura
                          */
                         $diferencia = round(($this->neto - $tNeto) * 100);
                         usort(
-                            $lineasi, function($a, $b) {
+                            $lineasi, function ($a, $b) {
                             if ($a->totallinea === $b->totallinea) {
                                 return 0;
                             }
                             if ($a->totallinea < 0) {
                                 return ($a->totallinea < $b->totallinea) ? -1 : 1;
                             }
+
                             return ($a->totallinea < $b->totallinea) ? 1 : -1;
                         }
                         );
@@ -158,10 +171,10 @@ trait Factura
                         foreach ($lineasi as $i => $value) {
                             if ($diferencia > 0) {
                                 $lineasi[$i]->neto += .01;
-                                $diferencia--;
+                                --$diferencia;
                             } elseif ($diferencia < 0) {
                                 $lineasi[$i]->neto -= .01;
-                                $diferencia++;
+                                ++$diferencia;
                             } else {
                                 break;
                             }
@@ -175,13 +188,14 @@ trait Factura
                          */
                         $diferencia = round(($this->totaliva - $tIva) * 100);
                         usort(
-                            $lineasi, function($a, $b) {
+                            $lineasi, function ($a, $b) {
                             if ($a->totaliva === $b->totaliva) {
                                 return 0;
                             }
                             if ($a->totallinea < 0) {
                                 return ($a->totaliva < $b->totaliva) ? -1 : 1;
                             }
+
                             return ($a->totaliva < $b->totaliva) ? 1 : -1;
                         }
                         );
@@ -189,10 +203,10 @@ trait Factura
                         foreach ($lineasi as $i => $value) {
                             if ($diferencia > 0) {
                                 $lineasi[$i]->totaliva += .01;
-                                $diferencia--;
+                                --$diferencia;
                             } elseif ($diferencia < 0) {
                                 $lineasi[$i]->totaliva -= .01;
-                                $diferencia++;
+                                ++$diferencia;
                             } else {
                                 break;
                             }
@@ -206,6 +220,7 @@ trait Factura
                 }
             }
         }
+
         return $lineasi;
     }
 }

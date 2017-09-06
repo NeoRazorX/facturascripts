@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -27,7 +28,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class FacturaProveedor
 {
-
     use Base\DocumentoCompra;
     use Base\Factura;
     use Base\ModelTrait {
@@ -129,6 +129,7 @@ class FacturaProveedor
 
     /**
      * Devuelve la url donde ver/modificar estos datos del proveedor
+     *
      * @return string
      */
     public function proveedorUrl()
@@ -136,22 +137,26 @@ class FacturaProveedor
         if ($this->codproveedor === null) {
             return 'index.php?page=ComprasProveedores';
         }
+
         return 'index.php?page=ComprasProveedor&cod=' . $this->codproveedor;
     }
 
     /**
      * Devuelve las líneas de la factura.
+     *
      * @return array
      */
     public function getLineas()
     {
         $lineaModel = new LineaFacturaProveedor();
+
         return $lineaModel->all(new DataBaseWhere('idfactura', $this->idfactura));
     }
 
     /**
      * Devuelve las líneas de IVA de la factura.
      * Si no hay, las crea.
+     *
      * @return array
      */
     public function getLineasIva()
@@ -185,7 +190,7 @@ class FacturaProveedor
                      */
                 } elseif ((int) $d['numero'] === $num) {
                     /// el número es correcto, avanzamos
-                    $num++;
+                    ++$num;
                 } else {
                     /// Hemos encontrado un hueco
                     $encontrado = true;
@@ -211,6 +216,7 @@ class FacturaProveedor
 
     /**
      * Comprueba los datos de la factura, devuelve TRUE si está correcto
+     *
      * @return bool
      */
     public function test()
@@ -236,6 +242,7 @@ class FacturaProveedor
             return true;
         }
         $this->miniLog->alert('Error grave: El total está mal calculado. ¡Informa del error!');
+
         return false;
     }
 
@@ -385,6 +392,7 @@ class FacturaProveedor
             }
 
             $this->newCodigo();
+
             return $this->saveInsert();
         }
 
@@ -393,6 +401,7 @@ class FacturaProveedor
 
     /**
      * Elimina la factura de la base de datos.
+     *
      * @return bool
      */
     public function delete()
@@ -447,8 +456,10 @@ class FacturaProveedor
             }
 
             $this->miniLog->info(ucfirst(FS_FACTURA) . ' de compra ' . $this->codigo . ' eliminada correctamente.');
+
             return true;
         }
+
         return false;
     }
 
@@ -456,7 +467,7 @@ class FacturaProveedor
      * Devuelve un array con las facturas coincidentes con $query
      *
      * @param string $query
-     * @param int $offset
+     * @param int    $offset
      *
      * @return array
      */
@@ -478,7 +489,7 @@ class FacturaProveedor
         $data = $this->dataBase->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $f) {
-                $faclist[] = new FacturaProveedor($f);
+                $faclist[] = new self($f);
             }
         }
 

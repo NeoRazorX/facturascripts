@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -30,14 +31,13 @@ use FacturaScripts\Core\Model;
  */
 class ListGrupoEpigrafes extends ExtendedController\ListController
 {
-
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         $this->addOrderBy('codejercicio||codgrupo', 'code');
         $this->addOrderBy('codejercicio||descripcion', 'description');
-                
+
         $this->addFilterSelect('codejercicio', 'ejercicios', '', 'nombre');
 
         $this->model = new Model\GrupoEpigrafes();
@@ -45,7 +45,7 @@ class ListGrupoEpigrafes extends ExtendedController\ListController
 
     public function privateCore(&$response, $user)
     {
-        parent::privateCore($response, $user);        
+        parent::privateCore($response, $user);
     }
 
     protected function getWhere()
@@ -53,9 +53,10 @@ class ListGrupoEpigrafes extends ExtendedController\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "descripcion|codgrupo|codejercicio";
-            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
+            $fields = 'descripcion|codgrupo|codejercicio';
+            $result[] = new DataBaseWhere($fields, $this->query, 'LIKE');
         }
+
         return $result;
     }
 
@@ -66,7 +67,7 @@ class ListGrupoEpigrafes extends ExtendedController\ListController
         $pagedata['icon'] = 'fa-bars';
         $pagedata['menu'] = 'contabilidad';
         $pagedata['submenu'] = 'cuentas';
-        
+
         return $pagedata;
     }
 }

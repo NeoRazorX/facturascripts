@@ -1,4 +1,5 @@
 <?php
+
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -6,7 +7,6 @@ namespace FacturaScripts\Core\Base;
  */
 class MiniLogTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var MiniLog
      */
@@ -18,7 +18,7 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->object = new MiniLog;
+        $this->object = new MiniLog();
     }
 
     /**
@@ -27,11 +27,10 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\MiniLog::emergency
+     * @covers \FacturaScripts\Core\Base\MiniLog::emergency
      */
     public function testEmergency()
     {
@@ -47,7 +46,7 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\MiniLog::alert
+     * @covers \FacturaScripts\Core\Base\MiniLog::alert
      */
     public function testAlert()
     {
@@ -63,7 +62,7 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\MiniLog::critical
+     * @covers \FacturaScripts\Core\Base\MiniLog::critical
      */
     public function testCritical()
     {
@@ -79,7 +78,7 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\MiniLog::error
+     * @covers \FacturaScripts\Core\Base\MiniLog::error
      */
     public function testError()
     {
@@ -95,7 +94,7 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\MiniLog::warning
+     * @covers \FacturaScripts\Core\Base\MiniLog::warning
      */
     public function testWarning()
     {
@@ -111,7 +110,7 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\MiniLog::notice
+     * @covers \FacturaScripts\Core\Base\MiniLog::notice
      */
     public function testNotice()
     {
@@ -127,7 +126,7 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\MiniLog::info
+     * @covers \FacturaScripts\Core\Base\MiniLog::info
      */
     public function testInfo()
     {
@@ -143,7 +142,7 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\MiniLog::debug
+     * @covers \FacturaScripts\Core\Base\MiniLog::debug
      */
     public function testDebug()
     {
@@ -159,7 +158,7 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\MiniLog::sql
+     * @covers \FacturaScripts\Core\Base\MiniLog::sql
      */
     public function testSql()
     {
@@ -175,19 +174,17 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\MiniLog::log
+     * @covers \FacturaScripts\Core\Base\MiniLog::log
      */
     public function testLog()
     {
-        
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\MiniLog::read
+     * @covers \FacturaScripts\Core\Base\MiniLog::read
      */
     public function testRead()
     {
-        
     }
 
     public function testClear()

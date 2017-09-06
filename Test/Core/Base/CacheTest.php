@@ -1,4 +1,5 @@
 <?php
+
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -6,7 +7,6 @@ namespace FacturaScripts\Core\Base;
  */
 class CacheTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var Cache
      */
@@ -28,11 +28,10 @@ class CacheTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\Cache::get
+     * @covers \FacturaScripts\Core\Base\Cache::get
      */
     public function testGet()
     {
@@ -42,7 +41,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\Cache::delete
+     * @covers \FacturaScripts\Core\Base\Cache::delete
      */
     public function testDelete()
     {
@@ -52,7 +51,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers FacturaScripts\Core\Base\Cache::clear
+     * @covers \FacturaScripts\Core\Base\Cache::clear
      */
     public function testClear()
     {

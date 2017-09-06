@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,7 +30,6 @@ use FacturaScripts\Core\Model;
  */
 class ListProveedor extends ExtendedController\ListController
 {
-
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
@@ -39,8 +39,8 @@ class ListProveedor extends ExtendedController\ListController
         $this->addOrderBy('codproveedor', 'code');
 
         $this->addFilterCheckbox('debaja', 'De baja');
-        
-        $this->model = new Model\Proveedor();        
+
+        $this->model = new Model\Proveedor();
     }
 
     public function privateCore(&$response, $user)
@@ -53,9 +53,10 @@ class ListProveedor extends ExtendedController\ListController
         $result = parent::getWhere();
 
         if ($this->query != '') {
-            $fields = "nombre|razonsocial|codproveedor";
-            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
+            $fields = 'nombre|razonsocial|codproveedor';
+            $result[] = new DataBaseWhere($fields, $this->query, 'LIKE');
         }
+
         return $result;
     }
 

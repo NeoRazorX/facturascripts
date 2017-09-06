@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,41 +27,46 @@ namespace FacturaScripts\Core\Model;
  */
 class Impuesto
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria. varchar(10).
+     *
      * @var string
      */
     public $codimpuesto;
 
     /**
      * Código de la subcuenta para ventas.
+     *
      * @var string
      */
     public $codsubcuentarep;
 
     /**
      * Código de la subcuenta para compras.
+     *
      * @var string
      */
     public $codsubcuentasop;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $descripcion;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $iva;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $recargo;
@@ -90,15 +96,17 @@ class Impuesto
 
     /**
      * Devuelve TRUE si el impuesto es el predeterminado del usuario
+     *
      * @return bool
      */
     public function isDefault()
     {
-        return ($this->codimpuesto === $this->defaultItems->codImpuesto());
+        return $this->codimpuesto === $this->defaultItems->codImpuesto();
     }
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function test()
@@ -123,6 +131,7 @@ class Impuesto
      * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
      * que se ejecutará tras la creación de la tabla. útil para insertar valores
      * por defecto.
+     *
      * @return string
      */
     public function install()
