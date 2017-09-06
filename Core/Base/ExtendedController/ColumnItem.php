@@ -88,7 +88,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
 
     /**
      * Carga un grupo de columnas en base a la base de datos
-     * @param type $columns
+     * @param array $columns
      * @return array
      */
     public function columnsFromJSON($columns)

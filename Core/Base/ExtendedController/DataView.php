@@ -193,7 +193,7 @@ class DataView
     
     /**
      * Devuelve el Order By indicado en formato array
-     * @param type $orderKey
+     * @param string $orderKey
      */
     public function getSQLOrderBy($orderKey = '')
     {
@@ -215,7 +215,7 @@ class DataView
         $keys = array_keys($this->orderby);
         if (empty($orderKey) || !in_array($orderKey, $keys)) {
             if (empty($this->selectedOrderBy)) {
-                $this->selectedOrderBy = $keys[0];        // Forzamos el primer elemento cuando no hay valor por defecto
+                $this->selectedOrderBy = $keys[0]; // Forzamos el primer elemento cuando no hay valor por defecto
             }
         } else {
             $this->selectedOrderBy = $orderKey;

@@ -71,10 +71,6 @@ class VisualItem
         $this->i18n = new Base\Translator();
     }
 
-    /**
-     * Carga
-     * @param type $items
-     */
     public function loadFromXML($items)
     {
         $items_atributes = $items->attributes();

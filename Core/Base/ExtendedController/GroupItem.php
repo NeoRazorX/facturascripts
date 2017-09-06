@@ -88,7 +88,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
     public function loadFromJSON($group)
     {
         parent::loadFromJSON($group);
-        $this->options = (array) $group['columns'];
+        $this->columns = (array) $group['columns'];
     }
 
     /**

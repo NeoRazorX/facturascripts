@@ -25,7 +25,7 @@ método tiene una visibilidad de _protected_ de manera que los plugins pueden ir
 y añadir nuevas vistas, o modificar las existentes.
 
 La manera de añadir una vista es mediante el método _**addView**_ incluido en el propio controlador. Para la
-correcta llamada al método debemos informar mediante cadenas de texto del modelo (Nombre completo), 
+correcta llamada al método debemos informar mediante cadenas de texto: el modelo (Nombre completo), 
 nombre de la vista XML y del título para la pestaña que visualiza el controlador. Si se omite este último 
 parámetro, el controlador asignará un texto por defecto. El método nos devolverá el índice que se le ha 
 asignado a la nueva vista, el cuál deberemos guardarnos para procesos posteriores.
@@ -59,8 +59,9 @@ Consideraciones:
 Ejemplo de adición de ordenación (siguiendo el ejemplo anterior) con ordenación por código descendente
 
 ```PHP
-    $this->addOrderBy($index, 'descripcion||codejercicio', 'description');
+    $this->addOrderBy($index, 'descripcion', 'description');
     $this->addOrderBy($index, 'codepigrafe||codejercicio', 'code', 2);
+    $this->addOrderBy($index, 'codejercicio');
 ```
 
 #### Adición de filtros

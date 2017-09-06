@@ -55,6 +55,6 @@ class ListAsiento extends ExtendedController\ListController
         $this->addSearchFields($index, ['CAST(numero AS VARCHAR)', 'concepto']);
 
         $this->addOrderBy($index, 'numero', 'number');
-        $this->addOrderBy($index, 'fecha', 'date', 2);   /// forzamos el orden por defecto fecha desc
+        $this->addOrderBy($index, 'fecha', 'date', 2); /// forzamos el orden por defecto fecha desc
     }
 }
