@@ -20,9 +20,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la lista de agencias de transportes
@@ -36,30 +34,11 @@ class ListAgenciaTransporte extends ExtendedController\ListController
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('codtrans', 'Código');
-        $this->addOrderBy('nombre');
-
-        $this->addFilterCheckbox('activo', 'Activo', '', TRUE);
-
-        $this->model = new Model\AgenciaTransporte();
     }
 
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-    }
-
-    protected function getWhere()
-    {
-        $result = parent::getWhere();
-
-        if ($this->query != '') {
-            $fields = 'nombre|codtrans';
-            $result[] = new DataBaseWhere($fields, $this->query, 'LIKE');
-        }
-
-        return $result;
     }
 
     public function getPageData()
@@ -70,5 +49,17 @@ class ListAgenciaTransporte extends ExtendedController\ListController
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        $className = $this->getClassName();
+        $index = $this->addView('FacturaScripts\Core\Model\AgenciaTransporte', $className);
+        $this->addSearchFields($index, ['nombre', 'codtrans']);
+
+        $this->addOrderBy($index, 'codtrans', 'Código');
+        $this->addOrderBy($index, 'nombre');
+
+        $this->addFilterCheckbox($index, 'activo', 'Activo', '', TRUE);
     }
 }

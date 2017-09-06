@@ -19,9 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la lista de clientes
@@ -31,38 +29,15 @@ use FacturaScripts\Core\Model;
  */
 class ListCliente extends ExtendedController\ListController
 {
+
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('nombre', 'name');
-        $this->addOrderBy('fecha', 'date');
-        $this->addOrderBy('codcliente', 'code');
-
-        $this->addFilterSelect('provincia', 'clientes', '', 'codprovincia');
-        $this->addFilterSelect('ciudad', 'clientes');
-        $this->addFilterSelect('grupo', 'clientes', '', 'codgrupo');
-
-        $this->addFilterCheckbox('debaja', 'De baja');
-
-        $this->model = new Model\Cliente();
     }
 
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-    }
-
-    protected function getWhere()
-    {
-        $result = parent::getWhere();
-
-        if ($this->query != '') {
-            $fields = 'nombre|razonsocial|codcliente';
-            $result[] = new DataBaseWhere($fields, $this->query, 'LIKE');
-        }
-
-        return $result;
     }
 
     public function getPageData()
@@ -73,5 +48,20 @@ class ListCliente extends ExtendedController\ListController
         $pagedata['menu'] = 'ventas';
 
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        $className = $this->getClassName();
+        $index = $this->addView('FacturaScripts\Core\Model\Cliente', $className);
+        $this->addSearchFields($index, ['nombre', 'razonsocial', 'codcliente']);
+
+        $this->addOrderBy($index, 'codcliente', 'code');
+        $this->addOrderBy($index, 'nombre', 'name', 1);
+        $this->addOrderBy($index, 'fecha', 'date');
+
+        $this->addFilterSelect($index, 'codgrupo', 'gruposclientes', '', 'nombre');
+    
+        $this->addFilterCheckbox($index, 'debaja', 'De baja');
     }
 }

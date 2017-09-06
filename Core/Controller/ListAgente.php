@@ -19,9 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la lista de Agentes
@@ -34,31 +32,11 @@ class ListAgente extends ExtendedController\ListController
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('codagente', 'Código');
-        $this->addOrderBy('nombre');
-        $this->addOrderBy('apellidos');
-        $this->addOrderBy('provincia');
-
-        $this->addFilterSelect('provincia', 'agentes');
-        $this->model = new Model\Agente();
     }
 
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-    }
-
-    protected function getWhere()
-    {
-        $result = parent::getWhere();
-
-        if ($this->query != '') {
-            $fields = 'nombre|apellidos|codagente';
-            $result[] = new DataBaseWhere($fields, $this->query, 'LIKE');
-        }
-
-        return $result;
     }
 
     public function getPageData()
@@ -69,5 +47,16 @@ class ListAgente extends ExtendedController\ListController
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        $className = $this->getClassName();
+        $index = $this->addView('FacturaScripts\Core\Model\Agente', $className);
+        $this->addSearchFields($index, ['nombre', 'apellidos', 'codagente']);
+
+        $this->addOrderBy($index, 'codagente', 'code');
+        $this->addOrderBy($index, 'nombre||apellidos', 'name');
+        $this->addOrderBy($index, 'provincia');
     }
 }

@@ -17,27 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Definición inicial para el controlador ListAgenciaTransporte
+ * Definición inicial para el controlador ListGrupoEpigrafe
  *
  * @author Artex Trading sa <jcuello@artextrading.com>  
 -->
 
 <view>
     <columns>
-        <column title="Código" order="100">
-            <widget type="text" fieldname="codtrans" onclick="EditAgenciaTransporte" />
+        <column title="Id" order="100">
+            <widget type="text" fieldname="idgrupo" onclick="EditGrupoEpigrafe" />
         </column>
-        <column title="Nombre" order="110">
-            <widget type="text" fieldname="nombre" />
+        <column title="Ejercicio" order="110">
+            <widget type="text" fieldname="codejercicio" />
         </column>
-        <column title="Teléfono" order="120">
-            <widget type="text" fieldname="telefono" />
+        <column title="Group" display="center" order="120">
+            <widget type="text" fieldname="codgrupo" />
         </column>
-        <column title="Web" order="130">
-            <widget type="text" fieldname="web" />
-        </column>
-        <column title="Activo" display="center" order="140">
-            <widget type="checkbox" fieldname="activo" />
+        <column title="Description" order="130">
+            <widget type="text" fieldname="descripcion" />
         </column>
     </columns>
     

@@ -19,9 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Description of ListArticulo
@@ -30,32 +28,15 @@ use FacturaScripts\Core\Model;
  */
 class ListArticulo extends ExtendedController\ListController
 {
+
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('referencia', 'reference');
-        $this->addOrderBy('descripcion', 'description');
-        $this->addOrderBy('pvp', 'price');
-
-        $this->model = new Model\Articulo();
     }
 
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-    }
-
-    protected function getWhere()
-    {
-        $result = parent::getWhere();
-
-        if ($this->query != '') {
-            $fields = 'referencia|descripcion';
-            $result[] = new DataBaseWhere($fields, $this->query, 'LIKE');
-        }
-
-        return $result;
     }
 
     public function getPageData()
@@ -66,5 +47,16 @@ class ListArticulo extends ExtendedController\ListController
         $pagedata['menu'] = 'almacen';
 
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        $className = $this->getClassName();
+        $index = $this->addView('FacturaScripts\Core\Model\Articulo', $className);
+        $this->addSearchFields($index, ['referencia', 'descripcion']);
+
+        $this->addOrderBy($index, 'referencia', 'reference');
+        $this->addOrderBy($index, 'descripcion', 'description');
+        $this->addOrderBy($index, 'pvp', 'price');
     }
 }

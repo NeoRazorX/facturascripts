@@ -19,9 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la lista de empresas
@@ -34,28 +32,11 @@ class ListEmpresa extends ExtendedController\ListController
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('id', 'Código');
-        $this->addOrderBy('nombre');
-
-        $this->model = new Model\Empresa();
     }
 
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-    }
-
-    protected function getWhere()
-    {
-        $result = parent::getWhere();
-
-        if ($this->query != '') {
-            $fields = 'nombre|nombrecorto|id';
-            $result[] = new DataBaseWhere($fields, $this->query, 'LIKE');
-        }
-
-        return $result;
     }
 
     public function getPageData()
@@ -66,5 +47,15 @@ class ListEmpresa extends ExtendedController\ListController
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        $className = $this->getClassName();
+        $index = $this->addView('FacturaScripts\Core\Model\Empresa', $className);
+        $this->addSearchFields($index, ['nombre', 'nombrecorto', 'CAST(id AS VARCHAR)']);
+
+        $this->addOrderBy($index, 'id', 'code');
+        $this->addOrderBy($index, 'nombre', 'name');
     }
 }

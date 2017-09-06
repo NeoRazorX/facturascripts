@@ -19,9 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la lista de Formas de Pago
@@ -34,33 +32,11 @@ class ListFormaPago extends ExtendedController\ListController
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('codpago', 'Código');
-        $this->addOrderBy('descripcion');
-
-        $this->addFilterSelect('generación', 'formaspago', '', 'genrecibos');
-        $this->addFilterSelect('vencimiento', 'formaspago');
-        $this->addFilterCheckbox('domiciliado', 'Domiciliado');
-        $this->addFilterCheckbox('imprimir', 'Imprimir');
-
-        $this->model = new Model\FormaPago();
     }
 
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-    }
-
-    protected function getWhere()
-    {
-        $result = parent::getWhere();
-
-        if ($this->query != '') {
-            $fields = 'descripcion|codpago|codcuenta';
-            $result[] = new DataBaseWhere($fields, $this->query, 'LIKE');
-        }
-
-        return $result;
     }
 
     public function getPageData()
@@ -71,5 +47,20 @@ class ListFormaPago extends ExtendedController\ListController
         $pagedata['menu'] = 'contabilidad';
 
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        $className = $this->getClassName();
+        $index = $this->addView('FacturaScripts\Core\Model\FormaPago', $className);
+        $this->addSearchFields($index, ['descripcion', 'codpago', 'codcuenta']);
+
+        $this->addOrderBy($index, 'codpago', 'code');
+        $this->addOrderBy($index, 'descripcion', 'description');
+
+        $this->addFilterSelect($index, 'generación', 'formaspago', '', 'genrecibos');
+        $this->addFilterSelect($index, 'vencimiento', 'formaspago');
+        $this->addFilterCheckbox($index, 'domiciliado', 'Domiciliado');
+        $this->addFilterCheckbox($index, 'imprimir', 'Imprimir');
     }
 }

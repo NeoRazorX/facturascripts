@@ -19,9 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la lista de Familias
@@ -31,14 +29,10 @@ use FacturaScripts\Core\Model;
  */
 class ListFabricante extends ExtendedController\ListController
 {
+
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('codfabricante', 'Código');
-        $this->addOrderBy('nombre');
-
-        $this->model = new Model\Fabricante();
     }
 
     public function privateCore(&$response, $user)
@@ -46,25 +40,23 @@ class ListFabricante extends ExtendedController\ListController
         parent::privateCore($response, $user);
     }
 
-    protected function getWhere()
-    {
-        $result = parent::getWhere();
-
-        if ($this->query != '') {
-            $fields = 'nombre|codfabricante';
-            $result[] = new DataBaseWhere($fields, $this->query, 'LIKE');
-        }
-
-        return $result;
-    }
-
     public function getPageData()
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'Fabricantes';
-        $pagedata['icon'] = 'fa-folder-open';
+        $pagedata['icon'] = 'fa-columns';
         $pagedata['menu'] = 'almacen';
 
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        $className = $this->getClassName();
+        $index = $this->addView('FacturaScripts\Core\Model\Fabricante', $className);
+        $this->addSearchFields($index, ['nombre', 'codfabricante']);
+
+        $this->addOrderBy($index, 'codfabricante', 'code');
+        $this->addOrderBy($index, 'nombre', 'name');
     }
 }

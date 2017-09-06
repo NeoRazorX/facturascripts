@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
@@ -29,54 +28,28 @@ use FacturaScripts\Core\Base\DataBase;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListController extends Base\Controller
+abstract class ListController extends Base\Controller
 {
     /**
-     * Constantes para ordenación y paginación
+     * Lista de vistas mostradas por el controlador
+     * 
+     * @var Array of DataView 
      */
-    const ICONO_ASC = 'fa-sort-amount-asc';
-    const ICONO_DESC = 'fa-sort-amount-desc';
-    const FS_ITEM_LIMIT = 50;
-    const FS_PAGE_MARGIN = 5;
+    public $views;
 
     /**
-     * Modelo principal de datos
-     *
-     * @var mixed
+     * Indica cual es la vista activa
+     * 
+     * @var int 
      */
-    public $model;
-
+    public $active;
+    
     /**
-     * Cursor con los datos a mostrar
-     *
-     * @var array
+     * Primer registro a seleccionar de la base de datos
+     * @var int
      */
-    public $cursor;
-
-    /**
-     * Configuración de columnas y filtros
-     *
-     * @var Model\PageOption
-     */
-    private $pageOption;
-    public $filters;
-
-    /**
-     * Lista de campos disponibles en el order by
-     * Ejemplo: orderby[key] = ["label" => "Etiqueta", "icon" => ICONO_ASC]
-     *          key = field_asc | field_desc
-     *
-     * @var array
-     */
-    public $orderby;
-
-    /**
-     * Elemento seleccionado en el lista de order by
-     *
-     * @var string
-     */
-    public $selectedOrderBy;
-
+    protected $offset;
+    
     /**
      * Esta variable contiene el texto enviado como parámetro query
      * usado para el filtrado de datos del modelo
@@ -84,21 +57,12 @@ class ListController extends Base\Controller
      * @var string|false
      */
     public $query;
-
+        
     /**
-     * Primer registro a seleccionar de la base de datos
-     *
-     * @var int
+     * Procedimiento encargado de insertar las vistas a visualizar
      */
-    protected $offset;
-
-    /**
-     * Número total de registros leídos
-     *
-     * @var int
-     */
-    public $count;
-
+    abstract protected function createViews();
+    
     /**
      * Inicia todos los objetos y propiedades.
      *
@@ -113,14 +77,10 @@ class ListController extends Base\Controller
 
         $this->setTemplate('Master/ListController');
 
-        $offset = $this->request->get('offset');
-        $this->offset = $offset ? $offset : 0;
-        $this->query = $this->request->get('query');
-        $this->count = 0;
-        $this->orderby = [];
-        $this->filters = [];
-
-        $this->pageOption = new Model\PageOption();
+        $this->views = [];
+        $this->active = intval($this->request->get('active', 0));
+        $this->offset = intval($this->request->get('offset', 0));
+        $this->query = $this->request->get('query', '');        
     }
 
     /**
@@ -131,27 +91,32 @@ class ListController extends Base\Controller
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-
-        // Cargamos configuración de columnas y filtros
-        $className = $this->getClassName();
-        $this->pageOption->getForUser($className, $user->nick);
-
-        // Establecemos el orderby seleccionado
-        $orderKey = $this->request->get('order', $this->selectedOrderBy);
-        $this->selectedOrderBy = empty($orderKey) ? (string) array_keys($this->orderby)[0] : $this->getSelectedOrder($orderKey);
-
+        
+        // Creamos las vistas a visualizar
+        $this->createViews();
+                        
         // Comprobamos si hay operaciones por realizar
         if ($this->request->isMethod('POST')) {
             $this->setActionForm();
         }
 
-        // Cargamos datos
-        $where = $this->getWhere();
-        $order = $this->getOrderBy($this->selectedOrderBy);
-        $this->count = $this->model->count($where);
-        if ($this->count > 0) {
-            $this->cursor = $this->model->all($where, $order);
-        }
+        // Lanzamos cada una de las vistas
+        foreach ($this->views as $key => $dataView) {
+            $where = [];   
+            $orderKey = '';
+            
+            // Si estamos procesando la vista seleccionada, calculamos el orden y los filtros
+            if ($this->active === $key) {
+                $orderKey = $this->request->get('order', '');
+                $where = $this->getWhere();
+            }
+            
+            // Establecemos el orderby seleccionado
+            $this->views[$key]->setSelectedOrderBy($orderKey);
+            
+            // Cargamos los datos según filtro y orden
+            $dataView->loadData($where, $this->getOffSet($key), Base\Pagination::FS_ITEM_LIMIT);
+        }        
     }
 
     /**
@@ -160,63 +125,37 @@ class ListController extends Base\Controller
     private function setActionForm()
     {
         $data = $this->request->request->all();
-        if (isset($data['action'])) {
-            switch ($data['action']) {
-                case 'delete':
-                    $this->model->loadFromCode($data['code']);
-                    if ($this->model->delete()) {
-                        $this->miniLog->notice($this->i18n->trans('Record deleted correctly!'));
-                    }
-
-                    break;
-
-                default:
-                    break;
-            }
+        if (!isset($data['active']) || !isset($data['action'])) {
+            return;
         }
-    }
-
-    /**
-     * Lista de columnas y su configuración
-     * (Array of ColumnItem)
-     *
-     * @return array
-     */
-    public function getColumns()
-    {
-        return $this->pageOption->columns[0]->columns;
-    }
-
-    public function getRow($key)
-    {
-        return empty($this->pageOption->rows) ? NULL : $this->pageOption->rows[$key];
-    }
-
-    /**
-     * Devuelve la key del campo seleccionado en el order by
-     *
-     * @param string $orderKey
-     *
-     * @return string
-     */
-    private function getSelectedOrder($orderKey)
-    {
-        $result = '';
-        $keys = array_keys($this->orderby);
-        foreach ($keys as $item) {
-            if ($item == $orderKey) {
-                $result = $item;
+        
+        switch ($data['action']) {
+            case 'delete':
+                /// Se llama a función para que las clases hijas puedan operar, si lo necesitan
+                $this->deleteAction($this->views[$data['active']], $data);
                 break;
-            }
-        }
 
-        if ($result == '') {
-            $result = $keys[0];
+            default:
+                break;
         }
-
-        return $result;
     }
-
+    
+    /**
+     * Acción de borrado de datos
+     * 
+     * @param DataView $view     Vista sobre la que se realiza la acción
+     * @param array $data        Datos pasados por POST
+     * @return boolean
+     */
+    protected function deleteAction($view, $data)
+    {
+        if ($view->delete($data['code'])) {
+            $this->miniLog->notice($this->i18n->trans('Record deleted correctly!'));
+            return TRUE;
+        }
+        return FALSE;
+    }
+        
     /**
      * Establece la clausula WHERE según los filtros definidos
      *
@@ -226,13 +165,18 @@ class ListController extends Base\Controller
     {
         $result = [];
 
-        foreach (array_values($this->filters) as $value) {
+        if ($this->query != '') {
+            $fields = $this->views[$this->active]->getSearchIn();
+            $result[] = new DataBase\DataBaseWhere($fields, $this->query, "LIKE");
+        }
+        
+        $filters = $this->views[$this->active]->getFilters();
+        foreach ($filters as $key => $value) {
             if ($value['value']) {
                 switch ($value['type']) {
                     case 'datepicker':
                     case 'select':
-                        $field = $value['options']['field'];
-                        $result[] = new DataBase\DataBaseWhere($field, $value['value']);
+                        $result[] = new DataBase\DataBaseWhere($key, $value['value']);
                         break;
 
                     case 'checkbox':
@@ -241,148 +185,123 @@ class ListController extends Base\Controller
                         $result[] = new DataBase\DataBaseWhere($field, $value);
                         break;
                 }
-            }
+            }            
         }
 
         return $result;
     }
+    
+    /**
+     * Crea y añade una vista al controlador.
+     * Devuelve el indice de la vista dentro del array de vistas.
+     * 
+     * @param string $modelName
+     * @param string $viewName
+     * @param string $viewTitle
+     * @return int
+     */
+    protected function addView($modelName, $viewName, $viewTitle = 'search')
+    {
+        $this->views[] = new DataView($viewTitle, $modelName, $viewName, $this->user->nick);
+        return (count($this->views) - 1);
+    }    
 
     /**
-     * Devuelve el Order By indicado en formato array
-     *
-     * @param type $orderKey
+     * Añade una lista de campos (separados por |) a lista de campos de búsqueda
+     * para el filtrado de datos.
+     * 
+     * @param int $indexView
+     * @param string $fields
      */
-    protected function getOrderBy($orderKey = '')
+    protected function addSearchFields($indexView, $fields)
     {
-        if ($orderKey == '') {
-            $orderKey = array_keys($this->orderby)[0];
-        }
-
-        $orderby = explode('_', $orderKey);
-
-        return [$orderby[0] => $orderby[1]];
+        $this->views[$indexView]->addSearchIn($fields);
     }
 
     /**
-     * Construye un string con los parámetros pasados en la url
-     *
-     * @return string
-     */
-    protected function getParams()
-    {
-        $result = '';
-        if (!empty($this->query)) {
-            $result = '&query=' . $this->query;
-        }
-
-        foreach ($this->filters as $key => $value) {
-            if ($value['value'] != '') {
-                $result .= '&' . $key . '=' . $value['value'];
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Añade un campo a la lista de Order By
-     *
+     * Añade un campo a la lista de Order By de una vista.
+     * 
+     * @param int $indexView
      * @param string $field
      * @param string $label
+     * @param int $default    (0 = None, 1 = ASC, 2 = DESC)
      */
-    protected function addOrderBy($field, $label = '')
+    protected function addOrderBy($indexView, $field, $label = '', $default = 0)
     {
-        $key1 = strtolower($field) . '_asc';
-        $key2 = strtolower($field) . '_desc';
-
-        if (empty($label)) {
-            $label = ucfirst($field);
-        }
-
-        $this->orderby[$key1] = ['icon' => self::ICONO_ASC, 'label' => $label];
-        $this->orderby[$key2] = ['icon' => self::ICONO_DESC, 'label' => $label];
-    }
-
-    /**
-     * Define una nueva opción de filtrado para los datos
-     *
-     * @param string $type    (opción: 'select', 'checkbox')
-     * @param string $key     (identificador del filtro)
-     * @param array  $options (opciones necesarias para aplicar el filtro)
-     */
-    private function addFilter($type, $key, $options)
-    {
-        if (empty($options['field'])) {
-            $options['field'] = $key;
-        }
-
-        $value = $this->request->get($key);
-        $this->filters[$key] = ['type' => $type, 'value' => $value, 'options' => $options];
+        $this->views[$indexView]->addOrderBy($field, $label, $default); 
     }
 
     /**
      * Add a filter type data table selection
-     * Añade un filtro de tipo selección en tabla
-     *
-     * @param string $key   (Filter identifier)
-     * @param string $table (Table name)
-     * @param string $where (Where condition for table)
-     * @param string $field (Field of the table with the data to show)
+     * Añade un filtro de tipo selección en tabla.
+     * 
+     * @param int $indexView
+     * @param string $key      (Filter field name identifier)
+     * @param string $table    (Table name)
+     * @param string $where    (Where condition for table)
+     * @param string $field    (Field of the table with the data to show)
      */
-    protected function addFilterSelect($key, $table, $where = '', $field = '')
+    protected function addFilterSelect($indexView, $key, $table, $where = '', $field = '')
     {
-        $options = ['field' => $field, 'table' => $table, 'where' => $where];
-        $this->addFilter('select', $key, $options);
+        $value = $this->request->get($key);
+        $this->views[$indexView]->addFilterSelect($key, $value, $table, $where, $field);
     }
 
     /**
-     * Añade un filtro del tipo condición boleana
-     *
+     * Añade un filtro del tipo condición boleana.
+     * 
+     * @param int $indexView
      * @param string  $key     (Filter identifier)
      * @param string  $label   (Human reader description)
      * @param string  $field   (Field of the table to apply filter)
      * @param boolean $inverse (If you need to invert the selected value)
      */
-    protected function addFilterCheckbox($key, $label, $field = '', $inverse = FALSE)
+    protected function addFilterCheckbox($indexView, $key, $label, $field = '', $inverse = FALSE)
     {
-        $options = ['label' => $label, 'field' => $field, 'inverse' => $inverse];
-        $this->addFilter('checkbox', $key, $options);
+        $value = $this->request->get($key);
+        $this->views[$indexView]->addFilterCheckBox($key, $value, $label, $field, $inverse);
     }
 
     /**
-     * @param string $key
-     * @param string $label
-     * @param mixed  $field
+     * Añade un filtro del tipo fecha.
+     * 
+     * @param int $indexView
+     * @param string  $key     (Filter identifier)
+     * @param string  $label   (Human reader description)
+     * @param string  $field   (Field of the table to apply filter)
      */
-    protected function addFilterDatePicker($key, $label, $field = '')
+    protected function addFilterDatePicker($indexView, $key, $label, $field = '')
     {
-        $options = ['label' => $label, 'field' => $field];
-        $this->addFilter('datepicker', $key, $options);
+        $value = $this->request->get($key);
+        $this->views[$indexView]->addFilterDatePicker($key, $value, $label, $field);
     }
 
     /**
-     * Carga una lista de datos desde una tabla
-     *
-     * @param string $field : Field name to load
-     * @param string $table : Table name from load
-     * @param string $where : Where filter
-     *
+     * Carga una lista de datos desde una tabla.
+     * 
+     * @param string $field : Field name with real value
+     * @param array $options : Array with configuration values [field = Field description, table = table name, where = SQL Where clausule]
      * @return array
      */
-    public function optionlist($field, $table, $where)
+    public function optionlist($field, $options)
     {
         $result = [];
-        if ($this->dataBase->tableExists($table)) {
-            $sql = 'SELECT DISTINCT ' . $field
-                . ' FROM ' . $table
-                . ' WHERE COALESCE(' . $field . ", '')" . " <> ''" . $where
-                . ' ORDER BY 1 ASC;';
+        if ($this->dataBase->tableExists($options['table'])) {
+            $fieldList = $field;
+            if ($field !== $options['field']) {
+                $fieldList = $fieldList . ', ' . $options['field'];
+            }
+            
+            $sql = "SELECT DISTINCT " . $fieldList
+                . " FROM " . $options['table']
+                . " WHERE COALESCE(" . $options['field'] . ", '')" . " <> ''" . $options['$where']
+                . " ORDER BY " . $options['field'] . " ASC;";
 
             $data = $this->dataBase->select($sql);
             foreach ($data as $item) {
-                $value = $item[$field];
-                if ($value != '') {
-                    $result[mb_strtolower($value, 'UTF8')] = $value;
+                $value = $item[$options['field']];
+                if ($value != "") {
+                    $result[mb_strtolower($item[$field], "UTF8")] = $value;
                 }
             }
         }
@@ -391,124 +310,72 @@ class ListController extends Base\Controller
     }
 
     /**
-     * Devuelve un item de paginación
-     *
-     * @param string  $url
-     * @param int     $page
-     * @param int     $offset
-     * @param string  $icon
-     * @param boolean $active
-     *
-     * @return array
-     */
-    private function addPaginationItem($url, $page, $offset, $icon = FALSE, $active = FALSE)
-    {
-        return [
-            'url' => $url . '&offset=' . $offset,
-            'icon' => $icon,
-            'page' => $page,
-            'active' => $active,
-        ];
-    }
-
-    /**
-     * Devuelve el offset para el primer elemento del margen especificado
-     * para la paginación
-     *
+     * Devuelve el valor de offset para la vista indicada.
+     * 
+     * @param int $indexView
      * @return int
      */
-    private function getRecordMin()
+    private function getOffSet($indexView)
     {
-        $result = $this->offset - (self::FS_ITEM_LIMIT * self::FS_PAGE_MARGIN);
-        if ($result < 0) {
-            $result = 0;
-        }
-
-        return $result;
+        return ($indexView === $this->active)
+            ? $this->offset
+            : 0;
     }
-
+    
     /**
-     * Devuelve el offset para el último elemento del margen especificado
-     * para la paginación
-     *
-     * @return int
+     * Construye un string con los parámetros pasados en la url
+     * de la llamada al controlador.
+     * 
+     * @param int $indexView
+     * @return string
      */
-    private function getRecordMax()
+    private function getParams($indexView)
     {
-        $result = $this->offset + (self::FS_ITEM_LIMIT * (self::FS_PAGE_MARGIN + 1));
-        if ($result > $this->count) {
-            $result = $this->count;
-        }
+        $result = "";
+        if ($indexView === $this->active) {        
+            if (!empty($this->query)) {
+                $result = "&query=" . $this->query;
+            }
 
-        return $result;
-    }
-
-    /**
-     * Calcula el navegador entre páginas.
-     * Permite saltar a:
-     *      primera,
-     *      mitad anterior,
-     *      pageMargin x páginas anteriores
-     *      página actual
-     *      pageMargin x páginas posteriores
-     *      mitad posterior
-     *      última
-     *
-     * @return array
-     *               url    => link a la página
-     *               icon   => icono específico de bootstrap en vez de núm. página
-     *               page   => número de página
-     *               active => Indica si es el indicador activo
-     */
-    public function pagination()
-    {
-        $result = [];
-        $url = $this->url() . $this->getParams();
-
-        $recordMin = $this->getRecordMin();
-        $recordMax = $this->getRecordMax();
-        $index = 0;
-
-        // Añadimos la primera página, si no está incluida en el margen de páginas
-        if ($this->offset > (self::FS_ITEM_LIMIT * self::FS_PAGE_MARGIN)) {
-            $result[$index] = $this->addPaginationItem($url, 1, 0, 'fa-backward');
-            ++$index;
-        }
-
-        // Añadimos la página de en medio entre la primera y la página seleccionada,
-        // si la página seleccionada es mayor que el margen de páginas
-        $recordMiddleLeft = ($recordMin > self::FS_ITEM_LIMIT) ? ($this->offset / 2) : $recordMin;
-        if ($recordMiddleLeft < $recordMin) {
-            $page = floor($recordMiddleLeft / self::FS_ITEM_LIMIT);
-            $result[$index] = $this->addPaginationItem($url, ($page + 1), ($page * self::FS_ITEM_LIMIT), 'fa-backward');
-            ++$index;
-        }
-
-        // Añadimos la página seleccionada y el margen de páginas a su izquierda y su derecha
-        for ($record = $recordMin; $record < $recordMax; $record += self::FS_ITEM_LIMIT) {
-            if (($record >= $recordMin && $record <= $this->offset) || ($record <= $recordMax && $record >= $this->offset)) {
-                $page = ($record / self::FS_ITEM_LIMIT) + 1;
-                $result[$index] = $this->addPaginationItem($url, $page, $record, FALSE, ($record == $this->offset));
-                ++$index;
+            $filters = $this->views[$this->active]->getFilters();        
+            foreach ($filters as $key => $value) {
+                if ($value['value'] != "") {
+                    $result .= "&" . $key . "=" . $value['value'];
+                }
             }
         }
-
-        // Añadimos la página de en medio entre la página seleccionada y la última,
-        // si la página seleccionada es más pequeña que el márgen entre páginas
-        $recordMiddleRight = $this->offset + (($this->count - $this->offset) / 2);
-        if ($recordMiddleRight > $recordMax) {
-            $page = floor($recordMiddleRight / self::FS_ITEM_LIMIT);
-            $result[$index] = $this->addPaginationItem($url, ($page + 1), ($page * self::FS_ITEM_LIMIT), 'fa-forward');
-            ++$index;
+        
+        return $result;
+    }
+    
+    /**
+     * Crea un array con los "saltos" disponibles para paginar los datos
+     * del modelo de la vista indicada.
+     * 
+     * @param int $indexView
+     * @return array
+     */
+    public function pagination($indexView)
+    {
+        $offset = $this->getOffSet($indexView);
+        $count = $this->views[$indexView]->count;
+        $url = $this->views[$indexView]->getURL('list') . $this->getParams($indexView);
+        
+        $paginationObj = new Base\Pagination();
+        $result = $paginationObj->getPages($url, $count, $offset);
+        unset($paginationObj);
+        
+        return $result;
+    }
+    
+    public function getStringURLs($type)
+    {
+        $result = '';
+        $sep = '';
+        foreach ($this->views as $view) {
+            $result .= $sep . "'" . $view->getURL($type) . "'";
+            $sep = ',';
         }
-
-        // Añadimos la última página, si no está incluida en el margen de páginas
-        if ($recordMax < $this->count) {
-            $pageMax = floor($this->count / self::FS_ITEM_LIMIT);
-            $result[$index] = $this->addPaginationItem($url, ($pageMax + 1), ($pageMax * self::FS_ITEM_LIMIT), 'fa-forward');
-        }
-
-        /// si solamente hay una página, no merece la pena mostrar un único botón
-        return (count($result) > 1) ? $result : [];
+        return $result;
     }
 }

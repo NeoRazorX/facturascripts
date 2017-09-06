@@ -19,9 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Description of ListAsiento
@@ -30,33 +28,15 @@ use FacturaScripts\Core\Model;
  */
 class ListAsiento extends ExtendedController\ListController
 {
+
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('numero', 'number');
-        $this->addOrderBy('fecha', 'date');
-
-        /// forzamos el orden por defecto como el cuarto, que es fecha desc
-        $this->selectedOrderBy = array_keys($this->orderby)[3];
-        $this->model = new Model\Asiento();
     }
 
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-    }
-
-    protected function getWhere()
-    {
-        $result = parent::getWhere();
-
-        if ($this->query != '') {
-            $fields = 'numero|concepto';
-            $result[] = new DataBaseWhere($fields, $this->query, 'LIKE');
-        }
-
-        return $result;
     }
 
     public function getPageData()
@@ -67,5 +47,15 @@ class ListAsiento extends ExtendedController\ListController
         $pagedata['menu'] = 'contabilidad';
 
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        $className = $this->getClassName();
+        $index = $this->addView('FacturaScripts\Core\Model\Asiento', $className);
+        $this->addSearchFields($index, ['CAST(numero AS VARCHAR)', 'concepto']);
+
+        $this->addOrderBy($index, 'numero', 'number');
+        $this->addOrderBy($index, 'fecha', 'date', 2); /// forzamos el orden por defecto fecha desc
     }
 }

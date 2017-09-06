@@ -19,9 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la lista de Agentes
@@ -34,31 +32,11 @@ class ListAlmacen extends ExtendedController\ListController
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        $this->addOrderBy('codalmacen', 'Código');
-        $this->addOrderBy('nombre');
-
-        $this->addFilterSelect('provincia', 'almacenes');
-        $this->addFilterSelect('país', 'paises', '', 'codpais');
-
-        $this->model = new Model\Almacen();
     }
 
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-    }
-
-    protected function getWhere()
-    {
-        $result = parent::getWhere();
-
-        if ($this->query != '') {
-            $fields = 'nombre|codalmacen|contacto';
-            $result[] = new DataBaseWhere($fields, $this->query, 'LIKE');
-        }
-
-        return $result;
     }
 
     public function getPageData()
@@ -69,5 +47,15 @@ class ListAlmacen extends ExtendedController\ListController
         $pagedata['menu'] = 'almacen';
 
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        $className = $this->getClassName();
+        $index = $this->addView('FacturaScripts\Core\Model\Almacen', $className);
+        $this->addSearchFields($index, ['nombre', 'codalmacen', 'contacto']);
+
+        $this->addOrderBy($index, 'codalmacen', 'Código');
+        $this->addOrderBy($index, 'nombre');
     }
 }

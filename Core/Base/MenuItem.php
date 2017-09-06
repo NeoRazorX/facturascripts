@@ -94,72 +94,46 @@ class MenuItem
      *
      * @return string
      */
-    private function getHTMLIcon($forceIcon = false)
+    private function getHTMLIcon()
     {
-        if ($this->icon === null) {
-            if ($forceIcon) {
-                return '<i class="fa fa-folder-open-o" aria-hidden="true"></i>&nbsp; ';
-            }
-
-            return '&nbsp; ';
-        }
-
-        return '<i class="fa ' . $this->icon . '" aria-hidden="true"></i>&nbsp; ';
+        return empty($this->icon)
+            ? '<i class="fa fa-fw" aria-hidden="true"></i> '
+            : '<i class="fa ' . $this->icon . ' fa-fw" aria-hidden="true"></i> ';
     }
 
+    private function getMenuId($parent)
+    {
+        return empty($parent)
+            ? 'menu-' . $this->title
+            : $parent . $this->title;
+    }
+    
     /**
      * Devuelve el html para el menú / submenú
-     *
-     * @param int $level
-     *
+     * @param string $parent
      * @return string
      */
-    public function getHTML($level = 0)
-    {
-        /// primer nivel del menú
-        if ($level == 0) {
-            $liClass = 'nav-item';
-            if ($this->active) {
-                $liClass .= ' active';
-            }
-
-            if (empty($this->menu)) {
-                return '<li class="text-capitalize ' . $liClass . '"><a class="nav-link" href="' . $this->url . '">'
-                    . $this->getHTMLIcon() . $this->title . "</a></li>\n";
-            }
-
-            $html = '<li class="text-capitalize ' . $liClass . ' dropdown">'
-                . '<a class="nav-link dropdown-toggle" href="' . $this->url . '" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
-                . $this->getHTMLIcon() . $this->title . '</a>'
-                . '<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">';
-
-            foreach ($this->menu as $menuItem) {
-                $html .= $menuItem->getHTML($level + 1);
-            }
-
-            $html .= '</div></li>';
-
-            return $html;
+    public function getHTML($parent = '')
+    {          
+        $active = $this->active ? ' active' : '';
+        $menuId = $this->getMenuId($parent);
+        
+        $html = empty($parent)
+            ? '<li class="text-capitalize nav-item dropdown' . $active . '">'
+                    . '<a class="nav-link dropdown-toggle" href="#" id="' . $menuId . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&nbsp; ' . $this->title . '</a>'
+                    . '<ul class="dropdown-menu" aria-labelledby="' . $menuId . '">'
+            
+            : '<li class="dropdown-submenu">'
+                    . '<a class="dropdown-item" href="#" id="' . $menuId . '"><i class="fa fa-folder-open fa-fw" aria-hidden="true"></i>&nbsp; ' . $this->title . '</a>'
+                    . '<ul class="dropdown-menu" aria-labelledby="' . $menuId . '">';
+            
+        foreach ($this->menu as $menuItem) {
+            $html .= empty($menuItem->menu)
+                ? '<li><a class="dropdown-item" href="' . $menuItem->url . '">' . $menuItem->getHTMLIcon() . '&nbsp; ' . $menuItem->title . '</a></li>'
+                : $menuItem->getHTML($menuId);
         }
-
-        /// siguientes niveles del menú
-        if (!empty($this->menu)) {
-            $html = '<div class="dropdown-divider"></div><h6 class="dropdown-header">' . $this->getHTMLIcon(TRUE) . $this->title . '</h6>';
-            foreach ($this->menu as $menuItem) {
-                $html .= $menuItem->getHTML($level + 1);
-            }
-
-            return $html;
-        }
-
-        /// resto de elementos sin submenús
-        $liClass = 'dropdown-item';
-        if ($this->active) {
-            $liClass .= ' active';
-        }
-
-        $html = '<a class="' . $liClass . '" href="' . $this->url . '">' . $this->getHTMLIcon(TRUE) . $this->title . '</a>';
-
+        
+        $html .= '</ul>';
         return $html;
     }
 }

@@ -40,10 +40,10 @@
             <widget type="text" fieldname="genrecibos" />
         </column>
         <column title="Domiciliado" display="center" order="140">
-            <widget type="check" fieldname="domiciliado" />
+            <widget type="checkbox" fieldname="domiciliado" />
         </column>
         <column title="Imprimir" display="center" order="150">
-            <widget type="check" fieldname="imprimir" />
+            <widget type="checkbox" fieldname="imprimir" />
         </column>
     </columns>
     
