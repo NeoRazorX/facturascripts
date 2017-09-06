@@ -19,6 +19,9 @@
 
 namespace FacturaScripts\Core\Base\ExtendedController;
 
+use FacturaScripts\Core\Base\DivisaTools;
+use FacturaScripts\Core\Base\NumberTools;
+
 /**
  * Description of WidgetItem
  *
@@ -88,6 +91,18 @@ class WidgetItem
      * @var array
      */
     public $values;
+    
+    /**
+     *
+     * @var DivisaTools
+     */
+    private static $divisaTools;
+    
+    /**
+     *
+     * @var NumberTools
+     */
+    private static $numberTools;
 
     /**
      * Constructor de la clase. Si se informa un array se cargan los datos
@@ -95,6 +110,11 @@ class WidgetItem
      */
     public function __construct()
     {
+        if(!isset(self::$divisaTools)) {
+            self::$divisaTools = new DivisaTools();
+            self::$numberTools = new NumberTools();
+        }
+        
         $this->type = 'text';
         $this->fieldName = '';
         $this->hint = '';
@@ -241,6 +261,10 @@ class WidgetItem
             case 'text':
                 $style = $this->getTextOptionsHTML($value);
                 $html = (empty($this->onClick)) ? '<span' . $style . '>' . $value . '</span>' : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $value . '</a>';
+                break;
+            
+            case 'number':
+                $html = self::$numberTools->format($value);
                 break;
 
             case 'checkbox':
