@@ -25,12 +25,24 @@ namespace FacturaScripts\Core\Base;
  */
 class NumberTools
 {
-    const NF0 = 2;
     const NF1 = ',';
     const NF2 = ' ';
 
-    public function format($number, $decimal = self::NF0)
+    private static $decimals;
+
+    public function __construct()
     {
-        return number_format($number, $decimal, self::NF1, self::NF2);
+        if (!isset(self::$decimals)) {
+            self::$decimals = 0;
+        }
+    }
+
+    public function format($number, $decimals = '')
+    {
+        if($decimals == '') {
+            $decimals = self::$decimals;
+        }
+        
+        return number_format($number, $decimals, self::NF1, self::NF2);
     }
 }

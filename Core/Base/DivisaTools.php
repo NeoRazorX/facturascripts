@@ -31,10 +31,10 @@ class DivisaTools
     const NF2 = ' ';
     const POSITION = 'right';
 
-    public function format($number, $decimal = self::NF0)
+    public function format($number, $decimals = self::NF0)
     {
         $symbol = '€';
-        $txt = number_format($number, $decimal, self::NF1, self::NF2);
+        $txt = number_format($number, $decimals, self::NF1, self::NF2);
 
         if (self::POSITION == 'right') {
             return $txt . ' ' . $symbol;

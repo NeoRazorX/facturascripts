@@ -111,31 +111,34 @@ class GrupoEpigrafes
         if (strlen($this->codejercicio) > 0 && strlen($this->codgrupo) > 0 && strlen($this->descripcion) > 0) {
             return true;
         }
+        
         $this->miniLog->alert('Faltan datos en el grupo de epígrafes.');
-
         return false;
     }
-
-    /**
-     * TODO
-     *
-     * @param string $codejercicio
-     *
-     * @return array
-     */
-    public function allFromEjercicio($codejercicio)
+    
+    public function url($type = 'auto')
     {
-        $epilist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($codejercicio)
-            . ' ORDER BY codgrupo ASC;';
+        $value = $this->primaryColumnValue();
+        $model = $this->modelClassName();
+        $result = 'index.php?page=';
+        switch ($type) {
+            case 'list':
+                $result .= 'ListCuenta#search2';
+                break;
 
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $ep) {
-                $epilist[] = new self($ep);
-            }
+            case 'edit':
+                $result .= 'Edit' . $model . '&code=' . $value;
+                break;
+
+            case 'new':
+                $result .= 'Edit' . $model;
+                break;
+
+            default:
+                $result .= empty($value) ? 'ListCuenta#search2' : 'Edit' . $model . '&code=' . $value;
+                break;
         }
 
-        return $epilist;
+        return $result;
     }
 }

@@ -63,7 +63,7 @@ class ListCuenta extends ExtendedController\ListController
         $this->addFilterSelect($index, 'codejercicio', 'ejercicios', '', 'nombre');
 
         /* Grupo Epígrafes */
-        $index = $this->addView('FacturaScripts\Core\Model\GrupoEpigrafes', 'ListGrupoEpigrafe', 'Grupo Epígrafes');
+        $index = $this->addView('FacturaScripts\Core\Model\GrupoEpigrafes', 'ListGrupoEpigrafes', 'Grupo Epígrafes');
         $this->addSearchFields($index, ['descripcion', 'codgrupo', 'codejercicio']);
 
         $this->addOrderBy($index, 'codgrupo||codejercicio', 'code');

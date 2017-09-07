@@ -18,8 +18,17 @@
             delay: { "show": 1000, "hide": 100 }
         });
         
+        if(window.location.hash) {
+            $('#mainTabs a[href="'+window.location.hash+'"]').tab('show');
+        }
+        
         var index = selectedTab();
         self.setFormFocus(index);
+        
+        $('#mainTabs').on('shown.bs.tab', function (e) {
+            var index2 = selectedTab();
+            self.setFormFocus(index2);
+        });
     });
 
     function setFormFocus(index) {

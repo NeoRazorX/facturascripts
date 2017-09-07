@@ -30,4 +30,9 @@ class IDFiscal
     {
         return 'CIF/NIF';
     }
+
+    public function all()
+    {
+        return ['CIF/NIF', 'Pasaporte', 'DNI', 'NIF', 'CIF', 'VAT', 'CUIT'];
+    }
 }
