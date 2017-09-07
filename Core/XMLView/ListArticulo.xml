@@ -39,8 +39,8 @@
         <column title="Familia" display="left" order="140">
             <widget type="text" fieldname="codfamilia" />
         </column>
-        <column title="PVP" display="left" order="150">
-            <widget type="text" fieldname="pvp" />
+        <column title="PVP" display="right" order="150">
+            <widget type="money" fieldname="pvp" />
         </column>
         <column title="Stock" display="right" order="160">
             <widget type="number" fieldname="stockfis" />

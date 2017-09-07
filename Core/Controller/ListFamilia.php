@@ -53,13 +53,13 @@ class ListFamilia extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $index = $this->addView('FacturaScripts\Core\Model\Familia', $className);
-        $this->addSearchFields($index, ['descripcion', 'codfamilia', 'madre']);
+        $this->addView('FacturaScripts\Core\Model\Familia', $className);
+        $this->addSearchFields($className, ['descripcion', 'codfamilia', 'madre']);
 
-        $this->addOrderBy($index, 'codfamilia', 'Code');
-        $this->addOrderBy($index, 'descripcion', 'description');
-        $this->addOrderBy($index, 'madre', 'parent');
+        $this->addOrderBy($className, 'codfamilia', 'Code');
+        $this->addOrderBy($className, 'descripcion', 'description');
+        $this->addOrderBy($className, 'madre', 'parent');
 
-        $this->addFilterSelect($index, 'madre', 'familias');
+        $this->addFilterSelect($className, 'madre', 'familias');
     }
 }

@@ -52,11 +52,11 @@ class ListAgente extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $index = $this->addView('FacturaScripts\Core\Model\Agente', $className);
-        $this->addSearchFields($index, ['nombre', 'apellidos', 'codagente']);
+        $this->addView('FacturaScripts\Core\Model\Agente', $className);
+        $this->addSearchFields($className, ['nombre', 'apellidos', 'codagente']);
 
-        $this->addOrderBy($index, 'codagente', 'code');
-        $this->addOrderBy($index, 'nombre||apellidos', 'name');
-        $this->addOrderBy($index, 'provincia');
+        $this->addOrderBy($className, 'codagente', 'code');
+        $this->addOrderBy($className, 'nombre||apellidos', 'name');
+        $this->addOrderBy($className, 'provincia');
     }
 }

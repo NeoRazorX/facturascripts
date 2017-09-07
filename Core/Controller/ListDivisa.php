@@ -52,11 +52,11 @@ class ListDivisa extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $index = $this->addView('FacturaScripts\Core\Model\Divisa', $className);
-        $this->addSearchFields($index, ['descripcion', 'coddivisa']);
+        $this->addView('FacturaScripts\Core\Model\Divisa', $className);
+        $this->addSearchFields($className, ['descripcion', 'coddivisa']);
 
-        $this->addOrderBy($index, 'coddivisa', 'code');
-        $this->addOrderBy($index, 'descripcion', 'description', 1);
-        $this->addOrderBy($index, 'codiso');
+        $this->addOrderBy($className, 'coddivisa', 'code');
+        $this->addOrderBy($className, 'descripcion', 'description', 1);
+        $this->addOrderBy($className, 'codiso');
     }
 }

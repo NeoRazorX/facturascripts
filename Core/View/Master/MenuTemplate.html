@@ -11,6 +11,7 @@
         <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css" />
         <link rel="stylesheet" href="Core/View/CSS/submenu.css" />
         <link rel="stylesheet" href="Core/View/CSS/datepicker.css" />
+        <link rel="stylesheet" href="Core/View/CSS/custom.css" />
         {% endblock %}
         {% block javascript %}
         <script src="node_modules/jquery/dist/jquery.min.js"></script>
@@ -18,11 +19,7 @@
         <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
         <script src="node_modules/bootbox.js/bootbox.min.js"></script>
         <script src="Core/View/JS/datepicker.js"></script>
-        <script type="text/javascript">
-            $(document).ready(function () {
-                $(".datepicker").datepicker();
-            });
-        </script>
+        <script src="Core/View/JS/custom.js"></script>
         {% endblock %}
         {{ debugBarRender.renderHead()|raw }}
     </head>

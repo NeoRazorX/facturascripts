@@ -52,14 +52,14 @@ class ListSerie extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $index = $this->addView('FacturaScripts\Core\Model\Serie', $className);
-        $this->addSearchFields($index, ['descripcion', 'codserie', 'codcuenta']);
+        $this->addView('FacturaScripts\Core\Model\Serie', $className);
+        $this->addSearchFields($className, ['descripcion', 'codserie', 'codcuenta']);
 
-        $this->addOrderBy($index, 'codserie', 'code');
-        $this->addOrderBy($index, 'descripcion', 'description');
-        $this->addOrderBy($index, 'codejercicio', 'Ejercicio');
+        $this->addOrderBy($className, 'codserie', 'code');
+        $this->addOrderBy($className, 'descripcion', 'description');
+        $this->addOrderBy($className, 'codejercicio', 'Ejercicio');
 
-        $this->addFilterSelect($index, 'ejercicio', 'series', '', 'codejercicio');
-        $this->addFilterCheckbox($index, 'siniva', 'Sin Impuesto', 'siniva');
+        $this->addFilterSelect($className, 'ejercicio', 'series', '', 'codejercicio');
+        $this->addFilterCheckbox($className, 'siniva', 'Sin Impuesto', 'siniva');
     }
 }

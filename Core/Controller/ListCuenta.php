@@ -42,34 +42,33 @@ class ListCuenta extends ExtendedController\ListController
     protected function createViews()
     {
         /* Cuentas */
-        $className = $this->getClassName();
-        $index = $this->addView('FacturaScripts\Core\Model\Cuenta', $className, 'Cuentas');
-        $this->addSearchFields($index, ['descripcion', 'codcuenta', 'codejercicio', 'codepigrafe']);
+        $this->addView('FacturaScripts\Core\Model\Cuenta', 'ListCuenta', 'Cuentas');
+        $this->addSearchFields('ListCuenta', ['descripcion', 'codcuenta', 'codejercicio', 'codepigrafe']);
 
-        $this->addOrderBy($index, 'codcuenta||codejercicio', 'code');
-        $this->addOrderBy($index, 'descripcion||codejercicio', 'description');
+        $this->addOrderBy('ListCuenta', 'codcuenta||codejercicio', 'code');
+        $this->addOrderBy('ListCuenta', 'descripcion||codejercicio', 'description');
 
-        $this->addFilterSelect($index, 'codepigrafe', 'co_epigrafes', '', 'descripcion');
-        $this->addFilterSelect($index, 'codejercicio', 'ejercicios', '', 'nombre');
+        $this->addFilterSelect('ListCuenta', 'codepigrafe', 'co_epigrafes', '', 'descripcion');
+        $this->addFilterSelect('ListCuenta', 'codejercicio', 'ejercicios', '', 'nombre');
 
         /* Epigrafes */
-        $index = $this->addView('FacturaScripts\Core\Model\Epigrafe', 'ListEpigrafe', 'Epigrafes');
-        $this->addSearchFields($index, ['descripcion', 'codepigrafe', 'codejercicio']);
+        $this->addView('FacturaScripts\Core\Model\Epigrafe', 'ListEpigrafe', 'Epigrafes');
+        $this->addSearchFields('ListEpigrafe', ['descripcion', 'codepigrafe', 'codejercicio']);
 
-        $this->addOrderBy($index, 'descripcion||codejercicio', 'description');
-        $this->addOrderBy($index, 'codepigrafe||codejercicio', 'code');
+        $this->addOrderBy('ListEpigrafe', 'descripcion||codejercicio', 'description');
+        $this->addOrderBy('ListEpigrafe', 'codepigrafe||codejercicio', 'code');
 
-        $this->addFilterSelect($index, 'codgrupo', 'co_gruposepigrafes', '', 'descripcion');
-        $this->addFilterSelect($index, 'codejercicio', 'ejercicios', '', 'nombre');
+        $this->addFilterSelect('ListEpigrafe', 'codgrupo', 'co_gruposepigrafes', '', 'descripcion');
+        $this->addFilterSelect('ListEpigrafe', 'codejercicio', 'ejercicios', '', 'nombre');
 
         /* Grupo Epígrafes */
-        $index = $this->addView('FacturaScripts\Core\Model\GrupoEpigrafes', 'ListGrupoEpigrafes', 'Grupo Epígrafes');
-        $this->addSearchFields($index, ['descripcion', 'codgrupo', 'codejercicio']);
+        $this->addView('FacturaScripts\Core\Model\GrupoEpigrafes', 'ListGrupoEpigrafes', 'Grupo Epígrafes');
+        $this->addSearchFields('ListGrupoEpigrafes', ['descripcion', 'codgrupo', 'codejercicio']);
 
-        $this->addOrderBy($index, 'codgrupo||codejercicio', 'code');
-        $this->addOrderBy($index, 'descripcion||codejercicio', 'description');
+        $this->addOrderBy('ListGrupoEpigrafes', 'codgrupo||codejercicio', 'code');
+        $this->addOrderBy('ListGrupoEpigrafes', 'descripcion||codejercicio', 'description');
 
-        $this->addFilterSelect($index, 'codejercicio', 'ejercicios', '', 'nombre');
+        $this->addFilterSelect('ListGrupoEpigrafes', 'codejercicio', 'ejercicios', '', 'nombre');
     }
 
     public function getPageData()

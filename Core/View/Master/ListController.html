@@ -1,49 +1,14 @@
 {% extends "Master/MenuTemplate.html" %}
 
-{% block css %}
-    {{ parent() }}
-    
-    <style type="text/css">
-        .table th {
-            border-top: none;
-        }
-    </style>
-{% endblock %}
-
 {% block javascript %}
 {{ parent() }}
-<script type="text/javascript">    
+<script type="text/javascript">
     $(document).ready(function () {
-        // Aplica el tiempo de delay para los mensajes de ayuda
-        $('[data-toggle="popover"]').popover({
-            delay: { "show": 1000, "hide": 100 }
-        });
-        
         // Se situa en el tab, si lo solicitan en la url
         if(window.location.hash) {
             $('#mainTabs a[href="'+window.location.hash+'"]').tab('show');
         }
-        
-        // Situa el foco cuando se cambia de tab
-        $('#mainTabs').on('shown.bs.tab', function (e) {
-            self.setFormFocus(selectedTab());
-        });
-        
-        // Situa el foco al cargar la página
-        var index = selectedTab();
-        self.setFormFocus(index);
     });
-
-    // Situa el foco sobre el campo de búsqueda del tab indicado
-    function setFormFocus(index) {
-        var formName = '#form_search' + index + ' :text:first';
-        $(formName).focus().select();
-    }
-    
-    // Devuelve cual es el tab seleccionado
-    function selectedTab() {
-        return $('#mainTabContent > div.tab-pane.active').data('tabindex');
-    }
 
     // Calcula el controlador a llamar para insertar registros
     function insertRecord() {
@@ -51,14 +16,14 @@
         var index = selectedTab();
         document.insert_form.action = url[index];
         document.insert_form.submit(); 
-    }    
+    }
 </script>
 {% endblock %}
 
 {% block messages %}
 <div class="container-fluid">
     <div id="messages" class="row">
-        <div class="col-12">            
+        <div class="col-12">
             {{ parent() }}
         </div>
     </div>
@@ -80,7 +45,7 @@
 {% set no_data = i18n.trans('No hay registros con esas condiciones. Pulse el botón Nuevo para dar de alta.') %}
 
 <!-- Calculate common values -->
-{% set list_url = fsc.views[0].getURL('list') %}
+{% set list_url = fsc.views[fsc.active].getURL('list') %}
 
 <!-- Macros Template Imports -->
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
@@ -110,13 +75,13 @@
             <div class="btn-group">
                 <form action="#" method=post name="insert_form">
                     <input type="hidden" name="action" value="insert"> 
-                </form>             
+                </form>
                 
                 <a id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord();" href="#" {{ popoverTitle(new_record_title, 'bottom') }}>
                     <i class="fa fa-plus" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;{{ new_record }}</span>
                 </a>
-                                
+                
                 <a href="#" id="b_options" class="btn btn-sm btn-secondary" {{ popoverTitle(options_title, 'bottom') }}>
                     <i class="fa fa-wrench" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;{{ options }}</span>
@@ -144,16 +109,14 @@
 </div>
 
 <!-- Main Data -->
-<div id="tab_options" role="tabpanel">
+<div>
     <!-- Tabs declaration -->
     <ul class="nav nav-tabs d-print-none" id="mainTabs" role="tablist">
-        {% for view in fsc.views %}
-        {% set indexView = loop.index - 1 %}
+        {% for indexView, view in fsc.views %}
         <li class="nav-item">
             {% set active = (indexView == fsc.active) ? 'active' : '' %}
-            <a href="#{{ view.getModelID() }}" class="nav-link {{ active }}" id="{{ view.getModelID() }}-tab" onclick="setFormFocus({{ indexView }});"
-               data-toggle="tab" role="tab" 
-               aria-controls="{{ view.getModelID() }}" aria-expanded="true">
+            <a href="#{{ view.getModelID() }}" class="nav-link {{ active }}" id="{{ view.getModelID() }}-tab"
+               data-toggle="tab" role="tab" aria-controls="{{ view.getModelID() }}">
                 <i class="fa fa-search" aria-hidden="true"></i>
                 <span class="hidden-xs">&nbsp;{{ i18n.trans(view.title) }}</span>
                 <span class="badge badge-secondary">{{ view.count }}</span>
@@ -174,10 +137,9 @@
 
     <!-- Main Tab -->
     <div class="tab-content" id="mainTabContent">
-        {% for view in fsc.views %}        
-        {% set indexView = loop.index - 1 %}
+        {% for indexView, view in fsc.views %}
         {% set active = (indexView == fsc.active) ? 'active' : '' %}
-        <div class="tab-pane {{ active }}" id="{{ view.getModelID() }}" role="tabpanel" aria-labelledby="{{ view.getModelID() }}-tab" data-tabindex="{{ indexView }}">
+        <div class="tab-pane {{ active }}" id="{{ view.getModelID() }}" role="tabpanel">
             <!-- Filters Row -->
             <form name="f_custom_search{{ indexView }}" id="form_search{{ indexView }}" action="{{ list_url }}" method="post" class="form">
                 <div class="container-fluid d-print-none" style="margin-top: 15px; margin-bottom: 10px;">
@@ -231,9 +193,9 @@
                         {% if filter.type == 'datepicker' %}
                         <div class="col">
                             <input type="text" name="{{ key1 }}" value="{% if indexView == fsc.active %}{{ filter.value }}{% endif %}" class="form-control datepicker"
-                                   placeholder="{{ filter.options.label }}" autocomplete="off" onchange="this.form.submit()"/>                            
+                                   placeholder="{{ filter.options.label }}" autocomplete="off" onchange="this.form.submit()"/>
                         </div>
-                        {% endif %}                        
+                        {% endif %}
                         {% endfor %}
 
                         <!-- Order by selector -->

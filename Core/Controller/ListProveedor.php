@@ -51,13 +51,13 @@ class ListProveedor extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $index = $this->addView('FacturaScripts\Core\Model\Proveedor', $className);
-        $this->addSearchFields($index, ['nombre', 'razonsocial', 'codproveedor']);
+        $this->addView('FacturaScripts\Core\Model\Proveedor', $className);
+        $this->addSearchFields($className, ['nombre', 'razonsocial', 'codproveedor']);
 
-        $this->addOrderBy($index, 'codproveedor', 'code');
-        $this->addOrderBy($index, 'nombre', 'name', 1);
-        $this->addOrderBy($index, 'fecha', 'date');
+        $this->addOrderBy($className, 'codproveedor', 'code');
+        $this->addOrderBy($className, 'nombre', 'name', 1);
+        $this->addOrderBy($className, 'fecha', 'date');
 
-        $this->addFilterCheckbox($index, 'debaja', 'De baja');
+        $this->addFilterCheckbox($className, 'debaja', 'De baja');
     }
 }

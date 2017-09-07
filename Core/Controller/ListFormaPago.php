@@ -52,15 +52,15 @@ class ListFormaPago extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $index = $this->addView('FacturaScripts\Core\Model\FormaPago', $className);
-        $this->addSearchFields($index, ['descripcion', 'codpago', 'codcuenta']);
+        $this->addView('FacturaScripts\Core\Model\FormaPago', $className);
+        $this->addSearchFields($className, ['descripcion', 'codpago', 'codcuenta']);
 
-        $this->addOrderBy($index, 'codpago', 'code');
-        $this->addOrderBy($index, 'descripcion', 'description');
+        $this->addOrderBy($className, 'codpago', 'code');
+        $this->addOrderBy($className, 'descripcion', 'description');
 
-        $this->addFilterSelect($index, 'generación', 'formaspago', '', 'genrecibos');
-        $this->addFilterSelect($index, 'vencimiento', 'formaspago');
-        $this->addFilterCheckbox($index, 'domiciliado', 'Domiciliado');
-        $this->addFilterCheckbox($index, 'imprimir', 'Imprimir');
+        $this->addFilterSelect($className, 'generación', 'formaspago', '', 'genrecibos');
+        $this->addFilterSelect($className, 'vencimiento', 'formaspago');
+        $this->addFilterCheckbox($className, 'domiciliado', 'Domiciliado');
+        $this->addFilterCheckbox($className, 'imprimir', 'Imprimir');
     }
 }

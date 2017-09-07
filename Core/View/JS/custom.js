@@ -1,4 +1,4 @@
-/*!
+/*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
@@ -16,6 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.table th {
-    border-top: none;
-}
+$(document).ready(function () {
+    $(".datepicker").datepicker();
+    
+    // Aplica el tiempo de delay para los mensajes de ayuda
+    $('[data-toggle="popover"]').popover({
+        delay: {"show": 1000, "hide": 100}
+    });
+});

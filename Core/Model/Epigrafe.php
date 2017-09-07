@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class Epigrafe
 {
+
     use Base\ModelTrait;
 
     /**
@@ -280,7 +280,7 @@ class Epigrafe
         //$grupo = new GrupoEpigrafes();
         return '';
     }
-    
+
     public function url($type = 'auto')
     {
         $value = $this->primaryColumnValue();
@@ -288,7 +288,7 @@ class Epigrafe
         $result = 'index.php?page=';
         switch ($type) {
             case 'list':
-                $result .= 'ListCuenta#search1';
+                $result .= 'ListCuenta&active=' . $model . '#' . $model;
                 break;
 
             case 'edit':
@@ -300,7 +300,7 @@ class Epigrafe
                 break;
 
             default:
-                $result .= empty($value) ? 'ListCuenta#search1' : 'Edit' . $model . '&code=' . $value;
+                $result .= empty($value) ? 'ListCuenta&active=' . $model . '#' . $model : 'Edit' . $model . '&code=' . $value;
                 break;
         }
 

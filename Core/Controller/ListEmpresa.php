@@ -52,10 +52,10 @@ class ListEmpresa extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $index = $this->addView('FacturaScripts\Core\Model\Empresa', $className);
-        $this->addSearchFields($index, ['nombre', 'nombrecorto', 'CAST(id AS VARCHAR)']);
+        $this->addView('FacturaScripts\Core\Model\Empresa', $className);
+        $this->addSearchFields($className, ['nombre', 'nombrecorto', 'CAST(id AS VARCHAR)']);
 
-        $this->addOrderBy($index, 'id', 'code');
-        $this->addOrderBy($index, 'nombre', 'name');
+        $this->addOrderBy($className, 'id', 'code');
+        $this->addOrderBy($className, 'nombre', 'name');
     }
 }

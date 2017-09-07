@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class GrupoEpigrafes
 {
+
     use Base\ModelTrait;
 
     /**
@@ -111,11 +111,11 @@ class GrupoEpigrafes
         if (strlen($this->codejercicio) > 0 && strlen($this->codgrupo) > 0 && strlen($this->descripcion) > 0) {
             return true;
         }
-        
+
         $this->miniLog->alert('Faltan datos en el grupo de epígrafes.');
         return false;
     }
-    
+
     public function url($type = 'auto')
     {
         $value = $this->primaryColumnValue();
@@ -123,7 +123,7 @@ class GrupoEpigrafes
         $result = 'index.php?page=';
         switch ($type) {
             case 'list':
-                $result .= 'ListCuenta#search2';
+                $result .= 'ListCuenta&active=' . $model . '#' . $model;
                 break;
 
             case 'edit':
@@ -135,7 +135,7 @@ class GrupoEpigrafes
                 break;
 
             default:
-                $result .= empty($value) ? 'ListCuenta#search2' : 'Edit' . $model . '&code=' . $value;
+                $result .= empty($value) ? 'ListCuenta&active=' . $model . '#' . $model : 'Edit' . $model . '&code=' . $value;
                 break;
         }
 

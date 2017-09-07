@@ -287,7 +287,7 @@ class DataView
         if (empty($options['field'])) {
             $options['field'] = $key;
         }
-
+        
         $this->filters[$key] = ['type' => $type, 'value' => $value, 'options' => $options];
     }
 

@@ -40,11 +40,11 @@
         </column>
         <column title="Tasa Ventas" display="right" order="140"
                 description="Cambio que se aplica en las VENTAS respecto a la moneda de la empresa">
-            <widget type="text" fieldname="tasaconv" />
+            <widget type="number" fieldname="tasaconv" />
         </column>
         <column title="Tasa Compras" display="right" order="150"
                 description="Cambio que se aplica en las COMPRAS respecto a la moneda de la empresa">
-            <widget type="text" fieldname="tasaconvcompra" />
+            <widget type="number" fieldname="tasaconvcompra" />
         </column>
         <column title="Símbolo" display="center" order="160">
             <widget type="text" fieldname="simbolo" />

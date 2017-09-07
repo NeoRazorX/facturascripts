@@ -54,12 +54,12 @@ class ListAgenciaTransporte extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $index = $this->addView('FacturaScripts\Core\Model\AgenciaTransporte', $className);
-        $this->addSearchFields($index, ['nombre', 'codtrans']);
+        $this->addView('FacturaScripts\Core\Model\AgenciaTransporte', $className);
+        $this->addSearchFields($className, ['nombre', 'codtrans']);
 
-        $this->addOrderBy($index, 'codtrans', 'Código');
-        $this->addOrderBy($index, 'nombre');
+        $this->addOrderBy($className, 'codtrans', 'Código');
+        $this->addOrderBy($className, 'nombre');
 
-        $this->addFilterCheckbox($index, 'activo', 'Activo', '', TRUE);
+        $this->addFilterCheckbox($className, 'activo', 'Activo', '', TRUE);
     }
 }

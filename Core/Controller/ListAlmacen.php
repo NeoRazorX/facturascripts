@@ -52,10 +52,10 @@ class ListAlmacen extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $index = $this->addView('FacturaScripts\Core\Model\Almacen', $className);
-        $this->addSearchFields($index, ['nombre', 'codalmacen', 'contacto']);
+        $this->addView('FacturaScripts\Core\Model\Almacen', $className);
+        $this->addSearchFields($className, ['nombre', 'codalmacen', 'contacto']);
 
-        $this->addOrderBy($index, 'codalmacen', 'Código');
-        $this->addOrderBy($index, 'nombre');
+        $this->addOrderBy($className, 'codalmacen', 'Código');
+        $this->addOrderBy($className, 'nombre');
     }
 }

@@ -52,13 +52,13 @@ class ListEjercicio extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $index = $this->addView('FacturaScripts\Core\Model\Ejercicio', $className);
-        $this->addSearchFields($index, ['nombre', 'codejercicio']);
+        $this->addView('FacturaScripts\Core\Model\Ejercicio', $className);
+        $this->addSearchFields($className, ['nombre', 'codejercicio']);
 
-        $this->addOrderBy($index, 'fechainicio', 'start-date', 2);
-        $this->addOrderBy($index, 'codejercicio', 'code');
-        $this->addOrderBy($index, 'nombre', 'name');
+        $this->addOrderBy($className, 'fechainicio', 'start-date', 2);
+        $this->addOrderBy($className, 'codejercicio', 'code');
+        $this->addOrderBy($className, 'nombre', 'name');
 
-        $this->addFilterSelect($index, 'estado', 'ejercicios');
+        $this->addFilterSelect($className, 'estado', 'ejercicios');
     }
 }

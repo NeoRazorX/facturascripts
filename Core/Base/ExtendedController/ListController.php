@@ -78,7 +78,7 @@ abstract class ListController extends Base\Controller
         $this->setTemplate('Master/ListController');
 
         $this->views = [];
-        $this->active = intval($this->request->get('active', 0));
+        $this->active = $this->request->get('active', '');
         $this->offset = intval($this->request->get('offset', 0));
         $this->query = $this->request->get('query', '');        
     }
@@ -200,19 +200,21 @@ abstract class ListController extends Base\Controller
      * @param string $modelName
      * @param string $viewName
      * @param string $viewTitle
-     * @return int
      */
     protected function addView($modelName, $viewName, $viewTitle = 'search')
     {
-        $this->views[] = new DataView($viewTitle, $modelName, $viewName, $this->user->nick);
-        return (count($this->views) - 1);
+        $this->views[$viewName] = new DataView($viewTitle, $modelName, $viewName, $this->user->nick);
+        
+        if($this->active === '') {
+            $this->active = $viewName;
+        }
     }    
 
     /**
      * Añade una lista de campos (separados por |) a lista de campos de búsqueda
      * para el filtrado de datos.
      * 
-     * @param int $indexView
+     * @param string $indexView
      * @param string $fields
      */
     protected function addSearchFields($indexView, $fields)
@@ -223,7 +225,7 @@ abstract class ListController extends Base\Controller
     /**
      * Añade un campo a la lista de Order By de una vista.
      * 
-     * @param int $indexView
+     * @param string $indexView
      * @param string $field
      * @param string $label
      * @param int $default    (0 = None, 1 = ASC, 2 = DESC)
@@ -237,7 +239,7 @@ abstract class ListController extends Base\Controller
      * Add a filter type data table selection
      * Añade un filtro de tipo selección en tabla.
      * 
-     * @param int $indexView
+     * @param string $indexView
      * @param string $key      (Filter field name identifier)
      * @param string $table    (Table name)
      * @param string $where    (Where condition for table)
@@ -252,7 +254,7 @@ abstract class ListController extends Base\Controller
     /**
      * Añade un filtro del tipo condición boleana.
      * 
-     * @param int $indexView
+     * @param string $indexView
      * @param string  $key     (Filter identifier)
      * @param string  $label   (Human reader description)
      * @param string  $field   (Field of the table to apply filter)
@@ -267,7 +269,7 @@ abstract class ListController extends Base\Controller
     /**
      * Añade un filtro del tipo fecha.
      * 
-     * @param int $indexView
+     * @param string $indexView
      * @param string  $key     (Filter identifier)
      * @param string  $label   (Human reader description)
      * @param string  $field   (Field of the table to apply filter)
@@ -296,7 +298,7 @@ abstract class ListController extends Base\Controller
             
             $sql = "SELECT DISTINCT " . $fieldList
                 . " FROM " . $options['table']
-                . " WHERE COALESCE(" . $options['field'] . ", '')" . " <> ''" . $options['$where']
+                . " WHERE COALESCE(" . $options['field'] . ", '')" . " <> ''" . $options['where']
                 . " ORDER BY " . $options['field'] . " ASC;";
 
             $data = $this->dataBase->select($sql);
@@ -314,7 +316,7 @@ abstract class ListController extends Base\Controller
     /**
      * Devuelve el valor de offset para la vista indicada.
      * 
-     * @param int $indexView
+     * @param string $indexView
      * @return int
      */
     private function getOffSet($indexView)
@@ -328,7 +330,7 @@ abstract class ListController extends Base\Controller
      * Construye un string con los parámetros pasados en la url
      * de la llamada al controlador.
      * 
-     * @param int $indexView
+     * @param string $indexView
      * @return string
      */
     private function getParams($indexView)
@@ -354,7 +356,7 @@ abstract class ListController extends Base\Controller
      * Crea un array con los "saltos" disponibles para paginar los datos
      * del modelo de la vista indicada.
      * 
-     * @param int $indexView
+     * @param string $indexView
      * @return array
      */
     public function pagination($indexView)

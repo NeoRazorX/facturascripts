@@ -53,22 +53,21 @@ class ListCliente extends ExtendedController\ListController
     protected function createViews()
     {
         /* Clientes */
-        $className = $this->getClassName();
-        $index = $this->addView('FacturaScripts\Core\Model\Cliente', $className, 'Clientes');
-        $this->addSearchFields($index, ['nombre', 'razonsocial', 'codcliente']);
+        $this->addView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'Clientes');
+        $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente']);
 
-        $this->addOrderBy($index, 'codcliente', 'code');
-        $this->addOrderBy($index, 'nombre', 'name', 1);
-        $this->addOrderBy($index, 'fecha', 'date');
+        $this->addOrderBy('ListCliente', 'codcliente', 'code');
+        $this->addOrderBy('ListCliente', 'nombre', 'name', 1);
+        $this->addOrderBy('ListCliente', 'fecha', 'date');
 
-        $this->addFilterSelect($index, 'codgrupo', 'gruposclientes', '', 'nombre');
-        $this->addFilterCheckbox($index, 'debaja', 'De baja');
+        $this->addFilterSelect('ListCliente', 'codgrupo', 'gruposclientes', '', 'nombre');
+        $this->addFilterCheckbox('ListCliente', 'debaja', 'De baja');
         
         /* Grupos */
-        $index2 = $this->addView('FacturaScripts\Core\Model\GrupoClientes', 'ListGrupoClientes', 'Grupos');
-        $this->addSearchFields($index2, ['nombre', 'codgrupo']);
+        $this->addView('FacturaScripts\Core\Model\GrupoClientes', 'ListGrupoClientes', 'Grupos');
+        $this->addSearchFields('ListGrupoClientes', ['nombre', 'codgrupo']);
         
-        $this->addOrderBy($index2, 'codgrupo', 'code');
-        $this->addOrderBy($index2, 'nombre', 'name', 1);
+        $this->addOrderBy('ListGrupoClientes', 'codgrupo', 'code');
+        $this->addOrderBy('ListGrupoClientes', 'nombre', 'name', 1);
     }
 }

@@ -52,12 +52,12 @@ class ListPais extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $index = $this->addView('FacturaScripts\Core\Model\Pais', $className);
-        $this->addSearchFields($index, ['nombre', 'codiso', 'codpais']);
+        $this->addView('FacturaScripts\Core\Model\Pais', $className);
+        $this->addSearchFields($className, ['nombre', 'codiso', 'codpais']);
 
-        $this->addFilterCheckbox($index, 'validarprov', 'validate-states');
-        $this->addOrderBy($index, 'codpais', 'code');
-        $this->addOrderBy($index, 'nombre', 'name');
-        $this->addOrderBy($index, 'codiso');
+        $this->addFilterCheckbox($className, 'validarprov', 'validate-states');
+        $this->addOrderBy($className, 'codpais', 'code');
+        $this->addOrderBy($className, 'nombre', 'name');
+        $this->addOrderBy($className, 'codiso');
     }
 }

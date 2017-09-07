@@ -52,11 +52,11 @@ class ListArticulo extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $index = $this->addView('FacturaScripts\Core\Model\Articulo', $className);
-        $this->addSearchFields($index, ['referencia', 'descripcion']);
+        $this->addView('FacturaScripts\Core\Model\Articulo', $className);
+        $this->addSearchFields($className, ['referencia', 'descripcion']);
 
-        $this->addOrderBy($index, 'referencia', 'reference');
-        $this->addOrderBy($index, 'descripcion', 'description');
-        $this->addOrderBy($index, 'pvp', 'price');
+        $this->addOrderBy($className, 'referencia', 'reference');
+        $this->addOrderBy($className, 'descripcion', 'description');
+        $this->addOrderBy($className, 'pvp', 'price');
     }
 }

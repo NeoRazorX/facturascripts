@@ -51,10 +51,10 @@ class ListUser extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $index = $this->addView('FacturaScripts\Core\Model\User', $className);
-        $this->addSearchFields($index, ['nick', 'email']);
+        $this->addView('FacturaScripts\Core\Model\User', $className);
+        $this->addSearchFields($className, ['nick', 'email']);
 
-        $this->addOrderBy($index, 'nick');
-        $this->addOrderBy($index, 'email');
+        $this->addOrderBy($className, 'nick');
+        $this->addOrderBy($className, 'email');
     }
 }
