@@ -81,6 +81,18 @@ class Pagination
      */
     private function addPaginationItem($url, $page, $offset, $icon = FALSE, $active = FALSE)
     {
+        /// ¿La url lleva #?
+        if (strpos($url, '#') !== false) {
+            $auxUrl = explode('#', $url);
+            
+            return [
+                'url' => $auxUrl[0] . "&offset=" . $offset . '#' . $auxUrl[1],
+                'icon' => $icon,
+                'page' => $page,
+                'active' => $active
+            ];
+        }
+
         return [
             'url' => $url . "&offset=" . $offset,
             'icon' => $icon,

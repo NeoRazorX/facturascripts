@@ -280,4 +280,30 @@ class Epigrafe
         //$grupo = new GrupoEpigrafes();
         return '';
     }
+    
+    public function url($type = 'auto')
+    {
+        $value = $this->primaryColumnValue();
+        $model = $this->modelClassName();
+        $result = 'index.php?page=';
+        switch ($type) {
+            case 'list':
+                $result .= 'ListCuenta#search1';
+                break;
+
+            case 'edit':
+                $result .= 'Edit' . $model . '&code=' . $value;
+                break;
+
+            case 'new':
+                $result .= 'Edit' . $model;
+                break;
+
+            default:
+                $result .= empty($value) ? 'ListCuenta#search1' : 'Edit' . $model . '&code=' . $value;
+                break;
+        }
+
+        return $result;
+    }
 }
