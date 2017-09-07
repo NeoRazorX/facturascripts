@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -29,15 +30,16 @@ use FacturaScripts\Core\Model;
  */
 class EditController extends Base\Controller
 {
-
     /**
      * Modelo con los datos a mostrar
+     *
      * @var mixed
      */
     public $model;
-    
+
     /**
      * Configuración de columnas y filtros
+     *
      * @var Model\PageOption
      */
     private $pageOption;
@@ -46,12 +48,14 @@ class EditController extends Base\Controller
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->setTemplate("Master/EditController");
+        $this->setTemplate('Master/EditController');
         $this->pageOption = new Model\PageOption();
     }
 
     /**
      * Ejecuta la lógica privada del controlador.
+     *
+     * @param mixed $user
      */
     public function privateCore(&$response, $user)
     {
@@ -69,11 +73,11 @@ class EditController extends Base\Controller
         $fieldName = $this->model->primaryColumn();
         $column = $this->pageOption->columnForField($fieldName);
         $column->widget->readOnly = (!empty($this->model->{$fieldName}));
-        
+
         // Comprobamos si hay operaciones por realizar
         if ($this->request->isMethod('POST')) {
             $this->setActionForm();
-        }                
+        }
     }
 
     /**
@@ -82,7 +86,7 @@ class EditController extends Base\Controller
     private function setActionForm()
     {
         $data = $this->request->request->all();
-        if (isset($data['action'])) {        
+        if (isset($data['action'])) {
             switch ($data['action']) {
                 case 'save':
                     $this->model->checkArrayData($data);
@@ -100,10 +104,9 @@ class EditController extends Base\Controller
         }
     }
     
-    
     /**
      * Ejecuta la modificación de los datos
-     * 
+     *
      * @param array $data
      * @return boolean
      */
@@ -115,17 +118,17 @@ class EditController extends Base\Controller
         }
         return FALSE;
     }
-    
+
     /**
      * Prepara la inserción de un nuevo registro
-     * 
+     *
      * @param array $data
      */
     protected function insertAction($data)
     {
-        $this->model->{$this->model->primaryColumn()} = $this->model->newCode();        
+        $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
     }
-    
+
     /**
      * Devuelve el texto para la cabecera del panel principal de datos
      *
@@ -150,6 +153,7 @@ class EditController extends Base\Controller
      * Si existe, devuelve el tipo de row especificado
      *
      * @param string $key
+     *
      * @return RowItem
      */
     public function getRow($key)

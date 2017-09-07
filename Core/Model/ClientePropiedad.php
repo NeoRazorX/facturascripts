@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,23 +26,25 @@ namespace FacturaScripts\Core\Model;
  */
 class ClientePropiedad
 {
-
     use Base\ModelTrait;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $name;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $codcliente;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $text;
@@ -58,12 +61,14 @@ class ClientePropiedad
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function delete()
     {
         $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE name = ' .
             $this->var2str($this->name) . ' AND codcliente = ' . $this->var2str($this->codcliente) . ';';
+
         return $this->dataBase->exec($sql);
     }
 
@@ -93,7 +98,7 @@ class ClientePropiedad
      * TODO
      *
      * @param string $cod
-     * @param array $values
+     * @param array  $values
      *
      * @return bool
      */
@@ -102,7 +107,7 @@ class ClientePropiedad
         $done = true;
 
         foreach ($values as $key => $value) {
-            $aux = new ClientePropiedad();
+            $aux = new self();
             $aux->name = $key;
             $aux->codcliente = $cod;
             $aux->text = $value;

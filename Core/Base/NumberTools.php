@@ -16,23 +16,33 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-namespace FacturaScripts\Core\Lib;
+namespace FacturaScripts\Core\Base;
 
 /**
- * Description of RegimenIVA
+ * Description of NumberTools
  *
  * @author carlos
  */
-class RegimenIVA
+class NumberTools
 {
-    public function defaultValue()
+    const NF1 = ',';
+    const NF2 = ' ';
+
+    private static $decimals;
+
+    public function __construct()
     {
-        return 'General';
+        if (!isset(self::$decimals)) {
+            self::$decimals = 0;
+        }
     }
 
-    public function all()
+    public function format($number, $decimals = '')
     {
-        return ['General', 'Exento'];
+        if($decimals == '') {
+            $decimals = self::$decimals;
+        }
+        
+        return number_format($number, $decimals, self::NF1, self::NF2);
     }
 }

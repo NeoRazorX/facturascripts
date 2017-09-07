@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,30 +26,33 @@ namespace FacturaScripts\Core\Model;
  */
 class DireccionCliente
 {
-
     use Base\ModelTrait;
     use Base\Direccion;
 
     /**
      * Clave primaria.
+     *
      * @var integer
      */
     public $id;
 
     /**
      * Código del cliente asociado.
+     *
      * @var string
      */
     public $codcliente;
 
     /**
      * TRUE -> esta dirección es la principal para envíos.
+     *
      * @var
      */
     public $domenvio;
 
     /**
      * TRUE -> esta dirección es la principal para facturación.
+     *
      * @var
      */
     public $domfacturacion;
@@ -84,6 +88,7 @@ class DireccionCliente
 
     /**
      * Almacena los datos del modelo en la base de datos.
+     *
      * @return bool
      */
     public function save()

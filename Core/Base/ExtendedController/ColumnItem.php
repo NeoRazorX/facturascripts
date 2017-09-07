@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -25,9 +26,9 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 class ColumnItem extends VisualItem implements VisualItemInterface
 {
-
     /**
      * Texto adicional que explica el campo al usuario
+     *
      * @var string
      */
     public $description;
@@ -35,12 +36,14 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     /**
      * Configuración del estado y alineamiento de la visualización
      * (left|right|center|none)
+     *
      * @var string
      */
     public $display;
 
     /**
      * Configuración del objeto de visualización del campo
+     *
      * @var WidgetItem
      */
     public $widget;
@@ -59,6 +62,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
 
     /**
      * Carga la estructura de atributos en base a un archivo XML
+     *
      * @param SimpleXMLElement $column
      */
     public function loadFromXML($column)
@@ -67,16 +71,17 @@ class ColumnItem extends VisualItem implements VisualItemInterface
 
         $column_atributes = $column->attributes();
         $this->description = (string) $column_atributes->description;
-        
+
         if (!empty($column_atributes->display)) {
             $this->display = (string) $column_atributes->display;
         }
-        
+
         $this->widget->loadFromXMLColumn($column);
     }
 
     /**
      * Carga la estructura de atributos en base a la base de datos
+     *
      * @param SimpleXMLElement $column
      */
     public function loadFromJSON($column)
@@ -88,23 +93,27 @@ class ColumnItem extends VisualItem implements VisualItemInterface
 
     /**
      * Carga un grupo de columnas en base a la base de datos
-     * @param array $columns
+     *
+     * @param type $columns
+     *
      * @return array
      */
     public function columnsFromJSON($columns)
     {
         $result = [];
         foreach ($columns as $data) {
-            $columnItem = new ColumnItem();
+            $columnItem = new self();
             $columnItem->loadFromJSON($data);
             $columnItem->widget->loadFromJSONColumn($data);
             $result[] = $columnItem;
         }
+
         return $result;
     }
 
     /**
      * Genera el código html para visualizar la cabecera del elemento visual
+     *
      * @param string $value
      */
     public function getHeaderHTML($value)
@@ -114,12 +123,14 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         if (!empty($this->description)) {
             $html .= '<span title="' . $this->i18n->trans($this->description) . '"></span>';
         }
+
         return $html;
     }
 
     /**
      * Genera el código html para visualizar el dato del modelo
      * para controladores List
+     *
      * @param string $value
      */
     public function getListHTML($value)
@@ -130,6 +141,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     /**
      * Genera el código html para visualizar el dato del modelo
      * para controladores Edit
+     *
      * @param string $value
      */
     public function getEditHTML($value)
@@ -141,37 +153,40 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         $required = $this->getColumnRequired();
         $description = $this->getColumnDescription();
 
-        switch ($this->widget->type) {            
-            case "checkbox":
+        switch ($this->widget->type) {
+            case 'checkbox':
                 $html = '<div class="form-row align-items-center' . $columnClass . '">'
                         . $this->checkboxHTMLColumn($header, $input, $hint, $description)
                         . $required
                         . '</div>';
                 break;
 
-            case "radio":
+            case 'radio':
                 $html = '<div class="' . $columnClass . '">'
                         . '<label>' . $header . '</label>'
                         . $this->radioHTMLColumn($input, $hint, $value)
                         . $required
-                        . '</div>';                
+                        . '</div>';
                 break;
-            
+
             default:
                 $html = $this->standardHTMLColumn($header, $input, $hint, $description, $columnClass, $required);
                 break;
         }
+
         return $html;
     }
-    
+
     /**
      * Devuelve el código HTML para el visionado de un campo no especial
-     * 
+     *
      * @param string $header
      * @param string $input
      * @param string $hint
      * @param string $description
      * @param string $columnClass
+     * @param mixed  $required
+     *
      * @return string
      */
     private function standardHTMLColumn($header, $input, $hint, $description, $columnClass, $required)
@@ -183,14 +198,15 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             . $required
             . '</div>';
     }
-    
+
     /**
      * Devuelve el código HTML para el visionado de un campo checkbox
-     * 
+     *
      * @param string $header
      * @param string $input
      * @param string $hint
      * @param string $description
+     *
      * @return string
      */
     private function checkboxHTMLColumn($header, $input, $hint, $description)
@@ -200,15 +216,16 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             . $input . '&nbsp;' . $header
             . '</label>'
             . $description
-            . '</div>';        
+            . '</div>';
     }
-    
+
     /**
      * Devuelve el código HTML para el visionado de una lista de opciones
-     * 
+     *
      * @param string $input
      * @param string $hint
      * @param string $value
+     *
      * @return string
      */
     private function radioHTMLColumn($input, $hint, $value)
@@ -218,39 +235,40 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         $template_var = ['"sufix%', '"value%', '"checked%'];
         foreach ($this->widget->values as $optionValue) {
             $checked = ($optionValue['value'] == $value) ? ' checked="checked"' : '';
-            $index++;
+            ++$index;
             $values = [($index . '"'), $optionValue['value'], $checked];
             $html .= '<div class="form-check"><label class="form-check-label"' . $hint . '>'
                     . str_replace($template_var, $values, $input)
                     . '&nbsp;' . $optionValue['title']
                     . '</label></div>';
         }
+
         return $html;
     }
-    
+
     private function getColumnClass()
     {
         return ($this->numColumns > 0)
             ? (' col-md-' . $this->numColumns)
             : ' col';
     }
-    
+
     private function getColumnHint()
     {
         return $this->widget->getHintHTML($this->i18n->trans($this->widget->hint));
     }
-    
+
     private function getColumnRequired()
     {
-        return $this->widget->required 
+        return $this->widget->required
             ? '<div class="invalid-feedback">' . $this->i18n->trans('Por favor, introduzca un valor para el campo') . '</div>'
-            : '';        
+            : '';
     }
-    
+
     private function getColumnDescription()
     {
-        return empty($this->description) 
-            ? '' 
+        return empty($this->description)
+            ? ''
             : '<small class="form-text text-muted">' . $this->i18n->trans($this->description) . '</small>';
     }
 }

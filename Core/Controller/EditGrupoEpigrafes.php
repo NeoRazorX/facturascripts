@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -27,28 +28,28 @@ use FacturaScripts\Core\Model;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class EditGrupoEpigrafe extends ExtendedController\EditController
+class EditGrupoEpigrafes extends ExtendedController\EditController
 {
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-        
+
         // Establecemos el modelo de datos
         $this->model = new Model\GrupoEpigrafes();
     }
-    
+
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
     }
-        
+
     public function getPageData()
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'Grupos de Epígrafes';
         $pagedata['icon'] = 'fa-bars';
         $pagedata['showonmenu'] = FALSE;
-        
+
         return $pagedata;
-    }    
+    }
 }

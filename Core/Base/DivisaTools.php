@@ -16,25 +16,25 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 /**
  * Description of DivisaTools
  *
- * @author carlos
+ * @author Carlos García Gómez
  */
 class DivisaTools
 {
-
     const NF0 = 2;
     const NF1 = ',';
     const NF2 = ' ';
     const POSITION = 'right';
 
-    public function format($number, $decimal = self::NF0)
+    public function format($number, $decimals = self::NF0)
     {
         $symbol = '€';
-        $txt = number_format($number, $number, self::NF1, self::NF2);
+        $txt = number_format($number, $decimals, self::NF1, self::NF2);
 
         if (self::POSITION == 'right') {
             return $txt . ' ' . $symbol;

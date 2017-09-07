@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 /**
@@ -25,87 +26,100 @@ namespace FacturaScripts\Core\Model\Base;
  */
 trait LineaDocumento
 {
-
     /**
      * Clave primaria.
+     *
      * @var int
      */
     public $idlinea;
 
     /**
      * Referencia del artículo.
+     *
      * @var string
      */
     public $referencia;
 
     /**
      * Código de la combinación seleccionada, en el caso de los artículos con atributos.
+     *
      * @var
      */
     public $codcombinacion;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $descripcion;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $cantidad;
 
     /**
      * % de descuento.
+     *
      * @var float
      */
     public $dtopor;
 
     /**
      * Código del impuesto relacionado.
+     *
      * @var string
      */
     public $codimpuesto;
 
     /**
      * % del impuesto relacionado.
+     *
      * @var float
      */
     public $iva;
 
     /**
      * Importe neto de la línea, sin impuestos.
+     *
      * @var float
      */
     public $pvptotal;
 
     /**
      * Importe neto sin descuentos.
+     *
      * @var float
      */
     public $pvpsindto;
 
     /**
      * Precio del artículo, una unidad.
+     *
      * @var float
      */
     public $pvpunitario;
 
     /**
      * % de IRPF de la línea.
+     *
      * @var float
      */
     public $irpf;
 
     /**
      * % de recargo de equivalencia de la línea.
+     *
      * @var float
      */
     public $recargo;
 
     /**
      * TODO
+     *
      * @return float|int
      */
     public function pvpIva()
@@ -115,6 +129,7 @@ trait LineaDocumento
 
     /**
      * TODO
+     *
      * @return float|int
      */
     public function totalIva()
@@ -124,6 +139,7 @@ trait LineaDocumento
 
     /**
      * TODO
+     *
      * @return float|int
      */
     public function totalIva2()
@@ -131,11 +147,13 @@ trait LineaDocumento
         if ($this->cantidad === 0) {
             return 0;
         }
+
         return $this->pvptotal * (100 + $this->iva) / 100 / $this->cantidad;
     }
 
     /**
      * TODO
+     *
      * @return string
      */
     public function getDescripcion()
@@ -145,6 +163,7 @@ trait LineaDocumento
 
     /**
      * TODO
+     *
      * @return string
      */
     public function articuloUrl()
@@ -152,6 +171,7 @@ trait LineaDocumento
         if ($this->referencia === null || $this->referencia === '') {
             return 'index.php?page=VentasArticulos';
         }
+
         return 'index.php?page=VentasArticulo&ref=' . urlencode($this->referencia);
     }
 }

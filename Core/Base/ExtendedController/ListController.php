@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -29,7 +30,6 @@ use FacturaScripts\Core\Base\DataBase;
  */
 abstract class ListController extends Base\Controller
 {
-
     /**
      * Lista de vistas mostradas por el controlador
      * 
@@ -53,6 +53,7 @@ abstract class ListController extends Base\Controller
     /**
      * Esta variable contiene el texto enviado como parámetro query
      * usado para el filtrado de datos del modelo
+     *
      * @var string|false
      */
     public $query;
@@ -65,16 +66,16 @@ abstract class ListController extends Base\Controller
     /**
      * Inicia todos los objetos y propiedades.
      *
-     * @param Cache $cache
+     * @param Cache      $cache
      * @param Translator $i18n
-     * @param MiniLog $miniLog
-     * @param string $className
+     * @param MiniLog    $miniLog
+     * @param string     $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->setTemplate("Master/ListController");
+        $this->setTemplate('Master/ListController');
 
         $this->views = [];
         $this->active = intval($this->request->get('active', 0));
@@ -84,6 +85,8 @@ abstract class ListController extends Base\Controller
 
     /**
      * Ejecuta la lógica privada del controlador.
+     *
+     * @param mixed $user
      */
     public function privateCore(&$response, $user)
     {
@@ -115,7 +118,7 @@ abstract class ListController extends Base\Controller
             $dataView->loadData($where, $this->getOffSet($key), Base\Pagination::FS_ITEM_LIMIT);
         }        
     }
-    
+
     /**
      * Aplica la acción solicitada por el usuario
      */
@@ -155,6 +158,7 @@ abstract class ListController extends Base\Controller
         
     /**
      * Establece la clausula WHERE según los filtros definidos
+     *
      * @return array
      */
     protected function getWhere()
@@ -301,6 +305,7 @@ abstract class ListController extends Base\Controller
                 }
             }
         }
+
         return $result;
     }
 

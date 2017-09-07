@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -26,7 +27,6 @@ namespace FacturaScripts\Core\Base;
  */
 class IPFilter
 {
-
     /**
      * Número máximo de intentos de acceso.
      */
@@ -39,18 +39,21 @@ class IPFilter
 
     /**
      * Ruta del archivo con la lista.
+     *
      * @var string
      */
     private $filePath;
 
     /**
      * Contiene las direcciones IP.
+     *
      * @var array
      */
     private $ipList;
 
     /**
      * IPFilter constructor.
+     *
      * @param string $folder
      */
     public function __construct($folder = '')
@@ -74,6 +77,7 @@ class IPFilter
 
     /**
      * Carga las direcciones IP en el array $ipList
+     *
      * @param array $line
      */
     private function readIp($line)
@@ -83,14 +87,16 @@ class IPFilter
             $this->ipList[] = [
                 'ip' => $line[0],
                 'count' => (int) $line[1],
-                'expire' => (int) $line[2]
+                'expire' => (int) $line[2],
             ];
         }
     }
 
     /**
      * Devuelve true si los intentos de acceso desde la dirección IP sobrepasa el límite MAX_ATTEMPTS.
+     *
      * @param string $ip
+     *
      * @return bool
      */
     public function isBanned($ip)
@@ -109,6 +115,7 @@ class IPFilter
 
     /**
      * Añade o incrementa el contador de intentos de la dirección IP proporcionada.
+     *
      * @param string $ip
      */
     public function setAttempt($ip)
@@ -116,7 +123,7 @@ class IPFilter
         $found = false;
         foreach ($this->ipList as $key => $line) {
             if ($line['ip'] === $ip) {
-                $this->ipList[$key]['count']++;
+                ++$this->ipList[$key]['count'];
                 $this->ipList[$key]['expire'] = time() + self::BAN_SECONDS;
                 $found = true;
                 break;
@@ -127,7 +134,7 @@ class IPFilter
             $this->ipList[] = [
                 'ip' => $ip,
                 'count' => 1,
-                'expire' => time() + self::BAN_SECONDS
+                'expire' => time() + self::BAN_SECONDS,
             ];
         }
 

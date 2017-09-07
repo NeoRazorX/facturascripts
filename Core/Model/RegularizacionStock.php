@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,59 +26,67 @@ namespace FacturaScripts\Core\Model;
  */
 class RegularizacionStock
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria.
+     *
      * @var int
      */
     public $id;
 
     /**
      * ID del stock, en el modelo stock.
+     *
      * @var int
      */
     public $idstock;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $cantidadini;
 
     /**
      * TODO
+     *
      * @var float
      */
     public $cantidadfin;
 
     /**
      * Código del almacén destino.
+     *
      * @var string
      */
     public $codalmacendest;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $fecha;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $hora;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $motivo;
 
     /**
      * Nick del usuario que ha realizado la regularización.
+     *
      * @var string
      */
     public $nick;
@@ -112,6 +121,7 @@ class RegularizacionStock
      * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
      * que se ejecutará tras la creación de la tabla. útil para insertar valores
      * por defecto.
+     *
      * @return string
      */
     public function install()

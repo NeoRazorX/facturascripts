@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,17 +27,18 @@ namespace FacturaScripts\Core\Model;
  */
 class Fabricante
 {
-
     use Base\ModelTrait;
 
     /**
      * Clave primaria.
+     *
      * @var string
      */
     public $codfabricante;
 
     /**
      * TODO
+     *
      * @var string
      */
     public $nombre;
@@ -53,6 +55,7 @@ class Fabricante
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function test()
@@ -77,6 +80,7 @@ class Fabricante
      * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
      * que se ejecutará tras la creación de la tabla. útil para insertar valores
      * por defecto.
+     *
      * @return string
      */
     public function install()

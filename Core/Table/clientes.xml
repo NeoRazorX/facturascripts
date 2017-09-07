@@ -23,7 +23,7 @@
     </columna>
     <columna>
         <nombre>codcliente</nombre>
-        <tipo>character varying(6)</tipo>
+        <tipo>character varying(10)</tipo>
         <nulo>NO</nulo>
     </columna>
     <columna>
@@ -33,12 +33,12 @@
     </columna>
     <columna>
         <nombre>codcuentadom</nombre>
-        <tipo>character varying(6)</tipo>
+        <tipo>character varying(10)</tipo>
         <nulo>YES</nulo>
     </columna>
     <columna>
         <nombre>codcuentarem</nombre>
-        <tipo>character varying(6)</tipo>
+        <tipo>character varying(10)</tipo>
         <nulo>YES</nulo>
     </columna>
     <columna>
@@ -63,7 +63,7 @@
     </columna>
     <columna>
         <nombre>codserie</nombre>
-        <tipo>character varying(2)</tipo>
+        <tipo>character varying(4)</tipo>
         <nulo>YES</nulo>
     </columna>
     <columna>
@@ -189,7 +189,7 @@
     </columna>
     <columna>
         <nombre>codproveedor</nombre>
-        <tipo>character varying(6)</tipo>
+        <tipo>character varying(10)</tipo>
         <nulo>YES</nulo>
     </columna>
     <restriccion>

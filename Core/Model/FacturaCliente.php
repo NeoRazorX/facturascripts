@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -27,7 +28,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class FacturaCliente
 {
-
     use Base\DocumentoVenta;
     use Base\Factura;
     use Base\ModelTrait {
@@ -38,6 +38,7 @@ class FacturaCliente
      * Identificador opcional para la impresión. Todavía sin uso.
      * Se puede usar para identificar una forma de impresión y usar siempre
      * esa en esta factura.
+     *
      * @var int
      */
     public $idimprenta;
@@ -71,6 +72,7 @@ class FacturaCliente
 
     /**
      * Devuelve true su está vencida, sino false
+     *
      * @return bool
      */
     public function vencida()
@@ -78,7 +80,8 @@ class FacturaCliente
         if ($this->pagada) {
             return false;
         }
-        return (strtotime($this->vencimiento) < strtotime(date('d-m-Y')));
+
+        return strtotime($this->vencimiento) < strtotime(date('d-m-Y'));
     }
 
     /**
@@ -167,17 +170,20 @@ class FacturaCliente
 
     /**
      * Devulve las líneas de la factura.
+     *
      * @return array
      */
     public function getLineas()
     {
         $lineaModel = new LineaFacturaCliente();
+
         return $lineaModel->all(new DataBaseWhere('idfactura', $this->idfactura));
     }
 
     /**
      * Devuelve las líneas de IVA de la factura.
      * Si no hay, las crea.
+     *
      * @return array
      */
     public function getLineasIva()
@@ -221,7 +227,7 @@ class FacturaCliente
                      */
                 } elseif ((int) $d['numero'] === $num) {
                     /// el número es correcto, avanzamos
-                    $num++;
+                    ++$num;
                 } else {
                     /// Hemos encontrado un hueco y debemos usar el número y la fecha.
                     $encontrado = true;
@@ -252,6 +258,7 @@ class FacturaCliente
 
     /**
      * Comprueba los datos de la factura, devuelve TRUE si está correcto
+     *
      * @return bool
      */
     public function test()
@@ -285,6 +292,7 @@ class FacturaCliente
             return true;
         }
         $this->miniLog->alert('Error grave: El total está mal calculado. ¡Informa del error!');
+
         return false;
     }
 
@@ -455,6 +463,7 @@ class FacturaCliente
             }
 
             $this->newCodigo();
+
             return $this->saveInsert();
         }
 
@@ -463,6 +472,7 @@ class FacturaCliente
 
     /**
      * Elimina una factura y actualiza los registros relacionados con ella.
+     *
      * @return bool
      */
     public function delete()
@@ -519,8 +529,10 @@ class FacturaCliente
             }
 
             $this->miniLog->info(ucfirst(FS_FACTURA) . ' de venta ' . $this->codigo . ' eliminada correctamente.');
+
             return true;
         }
+
         return false;
     }
 
@@ -528,7 +540,7 @@ class FacturaCliente
      * Devuelve un array con las facturas que coinciden con $query
      *
      * @param string $query
-     * @param int $offset
+     * @param int    $offset
      *
      * @return array
      */
@@ -550,7 +562,7 @@ class FacturaCliente
         $data = $this->dataBase->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $f) {
-                $faclist[] = new FacturaCliente($f);
+                $faclist[] = new self($f);
             }
         }
 
@@ -584,7 +596,7 @@ class FacturaCliente
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $f) {
-                $faclist[] = new FacturaCliente($f);
+                $faclist[] = new self($f);
             }
         }
 
@@ -593,6 +605,7 @@ class FacturaCliente
 
     /**
      * Devuelve un array con los huecos en la numeración.
+     *
      * @return mixed
      */
     public function huecos()

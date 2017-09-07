@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Model;
@@ -30,15 +31,16 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Controller
 {
-
     /**
      * Gestor de acceso a cache.
+     *
      * @var Cache
      */
     protected $cache;
 
     /**
      * Proporciona acceso directo a la base de datos.
+     *
      * @var DataBase
      */
     protected $dataBase;
@@ -46,60 +48,70 @@ class Controller
     /**
      * Nombre de la clase del controlador (aunque se herede de esta clase, el nombre
      * de la clase final lo tendremos aquí).
+     *
      * @var string __CLASS__
      */
     private $className;
 
     /**
      * Gestor de eventos.
+     *
      * @var EventDispatcher
      */
     protected $dispatcher;
 
     /**
      * Empresa seleccionada.
+     *
      * @var Model\Empresa|false
      */
     public $empresa;
 
     /**
      * Motor de traducción.
+     *
      * @var Translator
      */
     protected $i18n;
 
     /**
      * Gestor de log de la app.
+     *
      * @var MiniLog
      */
     protected $miniLog;
 
     /**
      * Request sobre la que podemos hacer consultas.
+     *
      * @var Request
      */
     public $request;
 
     /**
      * Objeto respuesta HTTP.
+     *
      * @var Response
      */
     protected $response;
 
     /**
      * Nombre del archivo html para el motor de plantillas.
+     *
      * @var string nombre_archivo.html
      */
     private $template;
 
     /**
      * Título de la página.
+     *
      * @var string título de la página.
      */
     public $title;
 
     /**
      * Usuario que ha iniciado sesión.
+     *
      * @var Model\User|null
      */
     public $user;
@@ -107,10 +119,10 @@ class Controller
     /**
      * Inicia todos los objetos y propiedades.
      *
-     * @param Cache $cache
+     * @param Cache      $cache
      * @param Translator $i18n
-     * @param MiniLog $miniLog
-     * @param string $className
+     * @param MiniLog    $miniLog
+     * @param string     $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
@@ -136,6 +148,7 @@ class Controller
 
     /**
      * Devuelve el nombre del controlador
+     *
      * @return string
      */
     protected function getClassName()
@@ -145,6 +158,7 @@ class Controller
 
     /**
      * Devuelve el template HTML a utilizar para este controlador.
+     *
      * @return string
      */
     public function getTemplate()
@@ -154,6 +168,7 @@ class Controller
 
     /**
      * Establece el template HTML a utilizar para este controlador.
+     *
      * @param string $template
      */
     public function setTemplate($template)
@@ -170,21 +185,23 @@ class Controller
             'menu' => 'new',
             'submenu' => NULL,
             'showonmenu' => TRUE,
-            'orden' => 100
+            'orden' => 100,
         ];
     }
 
     /**
      * Devuelve la url del controlador actual.
+     *
      * @return string
      */
     public function url()
     {
         return 'index.php?page=' . $this->className;
     }
-    
+
     /**
      * Ejecuta la lógica pública del controlador.
+     *
      * @param Response $response
      */
     public function publicCore(&$response)
@@ -196,7 +213,8 @@ class Controller
 
     /**
      * Ejecuta la lógica privada del controlador.
-     * @param Response $response
+     *
+     * @param Response        $response
      * @param Model\User|null $user
      */
     public function privateCore(&$response, $user)

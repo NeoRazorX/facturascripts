@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,79 +26,90 @@ namespace FacturaScripts\Core\Model;
  */
 class Balance
 {
-
     use Base\ModelTrait {
         save as private saveTrait;
     }
 
     /**
      * Clave primaria.
+     *
      * @var
      */
     public $codbalance;
 
     /**
      * TODO
+     *
      * @var
      */
     public $descripcion4ba;
 
     /**
      * TODO
+     *
      * @var
      */
     public $descripcion4;
 
     /**
      * TODO
+     *
      * @var
      */
     public $nivel4;
 
     /**
      * TODO
+     *
      * @var
      */
     public $descripcion3;
 
     /**
      * TODO
+     *
      * @var
      */
     public $orden3;
 
     /**
      * TODO
+     *
      * @var
      */
     public $nivel3;
 
     /**
      * TODO
+     *
      * @var
      */
     public $descripcion2;
 
     /**
      * TODO
+     *
      * @var
      */
     public $nivel2;
 
     /**
      * TODO
+     *
      * @var
      */
     public $descripcion1;
 
     /**
      * TODO
+     *
      * @var
      */
     public $nivel1;
 
     /**
      * TODO
+     *
      * @var
      */
     public $naturaleza;
@@ -114,6 +126,7 @@ class Balance
 
     /**
      * Almacena los datos del modelo en la base de datos.
+     *
      * @return bool
      */
     public function save()

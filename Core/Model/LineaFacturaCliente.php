@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,84 +26,96 @@ namespace FacturaScripts\Core\Model;
  */
 class LineaFacturaCliente
 {
-
     use Base\LineaDocumento;
     use Base\ModelTrait;
 
     /**
      * TODO
+     *
      * @var array
      */
     private static $facturas;
 
     /**
      * TODO
+     *
      * @var array
      */
     private static $albaranes;
 
     /**
      * ID de la linea del albarán relacionado, si lo hay.
+     *
      * @var int
      */
     public $idlineaalbaran;
 
     /**
      * ID de la factura de esta línea.
+     *
      * @var int
      */
     public $idfactura;
 
     /**
      * ID del albarán relacionado con esta factura, si lo hay.
+     *
      * @var int
      */
     public $idalbaran;
 
     /**
      * Posición de la linea en el documento. Cuanto más alto más abajo.
+     *
      * @var int
      */
     public $orden;
 
     /**
      * False -> no se muestra la columna cantidad al imprimir.
+     *
      * @var bool
      */
     public $mostrar_cantidad;
 
     /**
      * False -> no se muestran las columnas precio, descuento, impuestos y total al imprimir.
+     *
      * @var bool
      */
     public $mostrar_precio;
 
     /**
      * TODO
+     *
      * @var string
      */
     private $codigo;
 
     /**
      * TODO
+     *
      * @var string
      */
     private $fecha;
 
     /**
      * TODO
+     *
      * @var string
      */
     private $albaran_codigo;
 
     /**
      * TODO
+     *
      * @var int
      */
     private $albaran_numero;
 
     /**
      * TODO
+     *
      * @var string
      */
     private $albaran_fecha;
@@ -145,6 +158,7 @@ class LineaFacturaCliente
 
     /**
      * TODO
+     *
      * @return string
      */
     public function showCodigo()
@@ -152,11 +166,13 @@ class LineaFacturaCliente
         if ($this->codigo === null) {
             $this->fill();
         }
+
         return $this->codigo;
     }
 
     /**
      * TODO
+     *
      * @return string
      */
     public function showFecha()
@@ -164,11 +180,13 @@ class LineaFacturaCliente
         if ($this->fecha === null) {
             $this->fill();
         }
+
         return $this->fecha;
     }
 
     /**
      * TODO
+     *
      * @return string
      */
     public function showNombrecliente()
@@ -187,6 +205,7 @@ class LineaFacturaCliente
 
     /**
      * TODO
+     *
      * @return string
      */
     public function albaranCodigo()
@@ -194,11 +213,13 @@ class LineaFacturaCliente
         if ($this->albaran_codigo === null) {
             $this->fill();
         }
+
         return $this->albaran_codigo;
     }
 
     /**
      * TODO
+     *
      * @return string
      */
     public function albaranUrl()
@@ -206,11 +227,13 @@ class LineaFacturaCliente
         if ($this->idalbaran === null) {
             return 'index.php?page=VentasAlbaranes';
         }
+
         return 'index.php?page=VentasAlbaran&id=' . $this->idalbaran;
     }
 
     /**
      * TODO
+     *
      * @return int
      */
     public function albaranNumero()
@@ -218,11 +241,13 @@ class LineaFacturaCliente
         if ($this->albaran_numero === null) {
             $this->fill();
         }
+
         return $this->albaran_numero;
     }
 
     /**
      * TODO
+     *
      * @return string
      */
     public function albaranFecha()
@@ -230,11 +255,13 @@ class LineaFacturaCliente
         if ($this->albaran_fecha === null) {
             $this->fill();
         }
+
         return $this->albaran_fecha;
     }
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function test()
@@ -246,13 +273,16 @@ class LineaFacturaCliente
         if (!$this->floatcmp($this->pvptotal, $total, FS_NF0, true)) {
             $this->miniLog->alert('Error en el valor de pvptotal de la línea ' . $this->referencia
                 . ' de la factura. Valor correcto: ' . $total);
+
             return false;
         }
         if (!$this->floatcmp($this->pvpsindto, $totalsindto, FS_NF0, true)) {
             $this->miniLog->alert('Error en el valor de pvpsindto de la línea ' . $this->referencia
                 . ' de la factura. Valor correcto: ' . $totalsindto);
+
             return false;
         }
+
         return true;
     }
 
@@ -260,7 +290,7 @@ class LineaFacturaCliente
      * TODO
      *
      * @param string $query
-     * @param int $offset
+     * @param int    $offset
      *
      * @return array
      */
@@ -281,7 +311,7 @@ class LineaFacturaCliente
         $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $l) {
-                $linealist[] = new LineaFacturaCliente($l);
+                $linealist[] = new self($l);
             }
         }
 
@@ -293,7 +323,7 @@ class LineaFacturaCliente
      *
      * @param string $codcliente
      * @param string $query
-     * @param int $offset
+     * @param int    $offset
      *
      * @return array
      */
@@ -315,7 +345,7 @@ class LineaFacturaCliente
         $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $l) {
-                $linealist[] = new LineaFacturaCliente($l);
+                $linealist[] = new self($l);
             }
         }
 
@@ -328,7 +358,7 @@ class LineaFacturaCliente
      * @param string $codcliente
      * @param string $ref
      * @param string $obs
-     * @param int $offset
+     * @param int    $offset
      *
      * @return array
      */
@@ -352,7 +382,7 @@ class LineaFacturaCliente
         $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $l) {
-                $linealist[] = new LineaFacturaCliente($l);
+                $linealist[] = new self($l);
             }
         }
 
@@ -390,6 +420,7 @@ class LineaFacturaCliente
      * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
      * que se ejecutará tras la creación de la tabla. útil para insertar valores
      * por defecto.
+     *
      * @return string
      */
     public function install()

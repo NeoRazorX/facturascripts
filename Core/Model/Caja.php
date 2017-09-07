@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,23 +26,25 @@ namespace FacturaScripts\Core\Model;
  */
 class Caja
 {
-
     use Base\ModelTrait;
 
     /**
      * UN array con todos los agentes utilizados, para agilizar la carga.
+     *
      * @var array
      */
     private static $agentes;
 
     /**
      * Clave primaria.
+     *
      * @var
      */
     public $id;
 
     /**
      * Identificador del terminal. En la tabla cajas_terminales.
+     *
      * @var
      */
     public $fs_id;
@@ -49,48 +52,56 @@ class Caja
     /**
      * Codigo del agente que abre y usa la caja.
      * El agente asociado al usuario.
+     *
      * @var
      */
     public $codagente;
 
     /**
      * Fecha de apertura (inicio) de la caja.
+     *
      * @var
      */
     public $fecha_inicial;
 
     /**
      * TODO
+     *
      * @var
      */
     public $dinero_inicial;
 
     /**
      * TODO
+     *
      * @var
      */
     public $fecha_fin;
 
     /**
      * TODO
+     *
      * @var
      */
     public $dinero_fin;
 
     /**
      * Numero de tickets emitidos en esta caja.
+     *
      * @var
      */
     public $tickets;
 
     /**
      * Ultima IP del usuario de la caja.
+     *
      * @var
      */
     public $ip;
 
     /**
      * El objeto agente asignado.
+     *
      * @var
      */
     public $agente;
@@ -129,6 +140,7 @@ class Caja
 
     /**
      * TODO
+     *
      * @return bool
      */
     public function abierta()
@@ -138,6 +150,7 @@ class Caja
 
     /**
      * TODO
+     *
      * @return string
      */
     public function showFechaFin()
@@ -145,24 +158,26 @@ class Caja
         if ($this->fecha_fin === null) {
             return '-';
         }
+
         return $this->fecha_fin;
     }
 
     /**
      * TODO
+     *
      * @return mixed
      */
     public function diferencia()
     {
-        return ($this->dinero_fin - $this->dinero_inicial);
+        return $this->dinero_fin - $this->dinero_inicial;
     }
 
     /**
      * TODO
      *
      * @param string $codagente
-     * @param int $offset
-     * @param int $limit
+     * @param int    $offset
+     * @param int    $limit
      *
      * @return array
      */
@@ -175,7 +190,7 @@ class Caja
         $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
             foreach ($data as $c) {
-                $cajalist[] = new Caja($c);
+                $cajalist[] = new self($c);
             }
         }
 

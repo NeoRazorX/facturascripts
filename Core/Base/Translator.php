@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use Symfony\Component\Translation\Loader\JsonFileLoader;
@@ -28,27 +29,30 @@ use Symfony\Component\Translation\Translator as symfonyTranslator;
  */
 class Translator
 {
-
     /**
      * Carpeta de trabajo de FacturaScripts.
+     *
      * @var string
      */
     private static $folder;
 
     /**
      * Idioma por defecto.
+     *
      * @var string
      */
     private static $lang;
 
     /**
      * El traductor de symfony.
+     *
      * @var symfonyTranslator
      */
     private static $translator;
 
     /**
      * Translator constructor.
+     *
      * @param string $folder
      * @param string $lang
      */
@@ -66,8 +70,10 @@ class Translator
 
     /**
      * Traduce el texto al idioma predeterminado.
+     *
      * @param string $txt
-     * @param array $parameters
+     * @param array  $parameters
+     *
      * @return string
      */
     public function trans($txt, array $parameters = [])

@@ -16,19 +16,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\Cache\FileCache;
 
 /**
  * Class Cache
+ *
  * @package FacturaScripts\Core\Base
  */
 class Cache
 {
-
     /**
      * El motor utilizado para la cache.
+     *
      * @var FileCache
      */
     private static $engine;
@@ -47,7 +49,9 @@ class Cache
 
     /**
      * Devuelve el contenido asociado a esa $key que hay en la cache.
+     *
      * @param string $key
+     *
      * @return mixed
      */
     public function get($key)
@@ -57,8 +61,10 @@ class Cache
 
     /**
      * Guarda en la cache el contenido y lo asocia a $key
+     *
      * @param string $key
-     * @param mixed $content
+     * @param mixed  $content
+     *
      * @return bool
      */
     public function set($key, $content)
@@ -68,7 +74,9 @@ class Cache
 
     /**
      * Elimina de la cache el contenido asociado a la $key
+     *
      * @param string $key
+     *
      * @return bool
      */
     public function delete($key)
@@ -78,6 +86,7 @@ class Cache
 
     /**
      * Limpia el contenido de la cache al completo.
+     *
      * @return bool
      */
     public function clear()
