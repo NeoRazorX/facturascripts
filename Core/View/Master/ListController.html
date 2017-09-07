@@ -14,23 +14,27 @@
 {{ parent() }}
 <script type="text/javascript">    
     $(document).ready(function () {
+        // Aplica el tiempo de delay para los mensajes de ayuda
         $('[data-toggle="popover"]').popover({
             delay: { "show": 1000, "hide": 100 }
         });
         
+        // Se situa en el tab, si lo solicitan en la url
         if(window.location.hash) {
             $('#mainTabs a[href="'+window.location.hash+'"]').tab('show');
         }
         
+        // Situa el foco cuando se cambia de tab
         $('#mainTabs').on('shown.bs.tab', function (e) {
-            var index2 = selectedTab();
-            self.setFormFocus(index2);
+            self.setFormFocus(selectedTab());
         });
         
+        // Situa el foco al cargar la página
         var index = selectedTab();
         self.setFormFocus(index);
     });
 
+    // Situa el foco sobre el campo de búsqueda del tab indicado
     function setFormFocus(index) {
         var formName = '#form_search' + index + ' :text:first';
         $(formName).focus().select();
@@ -39,10 +43,12 @@
         console.log(formName);
     }
     
+    // Devuelve cual es el tab seleccionado
     function selectedTab() {
         return $('#mainTabContent > div.tab-pane.active').data('tabindex');
     }
 
+    // Calcula el controlador a llamar para insertar registros
     function insertRecord() {
         var url = [{{ fsc.getStringURLs('new')|raw }}];
         var index = selectedTab();
@@ -148,9 +154,9 @@
         {% set indexView = loop.index - 1 %}
         <li class="nav-item">
             {% set active = (indexView == fsc.active) ? 'active' : '' %}
-            <a href="#search{{ indexView }}" class="nav-link {{ active }}" id="search{{ indexView }}-tab" onclick="setFormFocus({{ indexView }});"
+            <a href="#{{ view.getModelID() }}" class="nav-link {{ active }}" id="{{ view.getModelID() }}-tab" onclick="setFormFocus({{ indexView }});"
                data-toggle="tab" role="tab" 
-               aria-controls="search{{ indexView }}" aria-expanded="true">
+               aria-controls="{{ view.getModelID() }}" aria-expanded="true">
                 <i class="fa fa-search" aria-hidden="true"></i>
                 <span class="hidden-xs">&nbsp;{{ i18n.trans(view.title) }}</span>
                 <span class="badge badge-secondary">{{ view.count }}</span>
@@ -174,7 +180,7 @@
         {% for view in fsc.views %}        
         {% set indexView = loop.index - 1 %}
         {% set active = (indexView == fsc.active) ? 'active' : '' %}
-        <div class="tab-pane {{ active }}" id="search{{ indexView }}" role="tabpanel" aria-labelledby="search{{ indexView }}-tab" data-tabindex="{{ indexView }}">
+        <div class="tab-pane {{ active }}" id="{{ view.title }}" role="tabpanel" aria-labelledby="{{ view.title }}-tab" data-tabindex="{{ indexView }}">
             <!-- Filters Row -->
             <form name="f_custom_search{{ indexView }}" id="form_search{{ indexView }}" action="{{ list_url }}" method="post" class="form">
                 <div class="container-fluid d-print-none" style="margin-top: 15px; margin-bottom: 10px;">

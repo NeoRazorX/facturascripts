@@ -218,6 +218,33 @@ class WidgetItem
     }
 
     /**
+     * Indica si se cumple la condición para aplicar un Option Text
+     * 
+     * @param string $optionValue
+     * @param string $valueItem
+     * @return boolean
+     */
+    private function canApplyOptions($optionValue, $valueItem)
+    {
+        switch (substr($optionValue, 0, 1)) {
+            case '<':
+                $value = substr($valueItem, 1);
+                $result = ($optionValue < $value);
+                break;
+
+            case '>':
+                $value = substr($valueItem, 1);
+                $result = ($optionValue > $value);
+                break;
+            
+            default:
+                $result = ($optionValue == $valueItem);
+                break;
+        }
+        return $result;
+    }
+    
+    /**
      * Genera el código CSS para el style del widget en base a los options
      *
      * @param string $valueItem
@@ -228,7 +255,7 @@ class WidgetItem
     {
         $html = '';
         foreach ($this->options as $option) {
-            if ($option['value'] == $valueItem) {
+            if ($this->canApplyOptions($option['value'], $valueItem)) {
                 $html = ' style="';
                 foreach ($option as $key => $value) {
                     if ($key != 'value') {
@@ -244,6 +271,35 @@ class WidgetItem
     }
 
     /**
+     * Aplica el formato a tipos: texto, numérico y moneda
+     * 
+     * @param string $value
+     * @return string
+     */
+    private function getListStandardHTML($value)
+    {
+        $style = $this->getTextOptionsHTML($value);
+
+        switch ($this->type) {
+            case 'text':
+                $html = (empty($this->onClick)) 
+                    ? '<span' . $style . '>' . $value . '</span>' 
+                    : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $value . '</a>';
+                break;
+
+            case 'number':
+                $html = '<span' . $style . '>' . self::$numberTools->format($value) . '</span>';
+                break;
+
+            case 'money':
+                $html = '<span' . $style . '>' . self::$divisaTools->format($value) . '</span>';
+                break;                    
+        }
+        
+        return $html;
+    }
+    
+    /**
      * Genera el código html para la visualización de los datos en el
      * controlador List
      *
@@ -253,18 +309,16 @@ class WidgetItem
      */
     public function getListHTML($value)
     {
-        if (empty($value)) {
+        // Verificamos el valor, en vez de usar empty() para que deje pasar 0 y false
+        if (is_null($value) || ($value == '')) {
             return '';
         }
 
         switch ($this->type) {
             case 'text':
-                $style = $this->getTextOptionsHTML($value);
-                $html = (empty($this->onClick)) ? '<span' . $style . '>' . $value . '</span>' : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $value . '</a>';
-                break;
-            
             case 'number':
-                $html = self::$numberTools->format($value);
+            case 'money':
+                $html = $this->getListStandardHTML($value);
                 break;
 
             case 'checkbox':
@@ -279,7 +333,7 @@ class WidgetItem
                 break;
 
             default:
-                $html = $value;
+                $html = '<span>' . $value . '</span>';
         }
 
         return $html;

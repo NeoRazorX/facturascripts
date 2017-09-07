@@ -91,19 +91,42 @@ class EditController extends Base\Controller
                 case 'save':
                     $this->model->checkArrayData($data);
                     $this->model->loadFromData($data);
-                    if ($this->model->save()) {
-                        $this->miniLog->notice($this->i18n->trans('Record updated correctly!'));
-                    }
+                    $this->editAction($data);
                     break;
 
                 case 'insert':
-                    $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
+                    $this->insertAction($data);
                     break;
 
                 default:
                     break;
             }
         }
+    }
+    
+    /**
+     * Ejecuta la modificación de los datos
+     *
+     * @param array $data
+     * @return boolean
+     */
+    protected function editAction($data)
+    {
+        if ($this->model->save()) {
+            $this->miniLog->notice($this->i18n->trans('Record updated correctly!'));
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    /**
+     * Prepara la inserción de un nuevo registro
+     *
+     * @param array $data
+     */
+    protected function insertAction($data)
+    {
+        $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
     }
 
     /**
