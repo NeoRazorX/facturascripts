@@ -38,9 +38,6 @@
     function setFormFocus(index) {
         var formName = '#form_search' + index + ' :text:first';
         $(formName).focus().select();
-
-        console.log('Cambiando el foco a ' + index);
-        console.log(formName);
     }
     
     // Devuelve cual es el tab seleccionado
@@ -180,7 +177,7 @@
         {% for view in fsc.views %}        
         {% set indexView = loop.index - 1 %}
         {% set active = (indexView == fsc.active) ? 'active' : '' %}
-        <div class="tab-pane {{ active }}" id="{{ view.title }}" role="tabpanel" aria-labelledby="{{ view.title }}-tab" data-tabindex="{{ indexView }}">
+        <div class="tab-pane {{ active }}" id="{{ view.getModelID() }}" role="tabpanel" aria-labelledby="{{ view.getModelID() }}-tab" data-tabindex="{{ indexView }}">
             <!-- Filters Row -->
             <form name="f_custom_search{{ indexView }}" id="form_search{{ indexView }}" action="{{ list_url }}" method="post" class="form">
                 <div class="container-fluid d-print-none" style="margin-top: 15px; margin-bottom: 10px;">
