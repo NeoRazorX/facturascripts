@@ -123,7 +123,7 @@ class GrupoEpigrafes
         $result = 'index.php?page=';
         switch ($type) {
             case 'list':
-                $result .= 'ListCuenta&active=' . $model . '#' . $model;
+                $result .= 'ListCuenta&active=List' . $model;
                 break;
 
             case 'edit':
@@ -135,7 +135,7 @@ class GrupoEpigrafes
                 break;
 
             default:
-                $result .= empty($value) ? 'ListCuenta&active=' . $model . '#' . $model : 'Edit' . $model . '&code=' . $value;
+                $result .= empty($value) ? 'ListCuenta&active=List' . $model : 'Edit' . $model . '&code=' . $value;
                 break;
         }
 

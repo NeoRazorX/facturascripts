@@ -4,10 +4,11 @@
 {{ parent() }}
 <script type="text/javascript">
     $(document).ready(function () {
-        // Se situa en el tab, si lo solicitan en la url
-        if(window.location.hash) {
-            $('#mainTabs a[href="'+window.location.hash+'"]').tab('show');
-        }
+        // Situa el foco cuando se cambia de tab
+        $('#mainTabs').on('shown.bs.tab', function (e) {
+            var formName = '#formSearchList' + e.target.hash.substring(1) + ' :text:first';
+            $(formName).focus().select();
+        });
     });
 
     // Calcula el controlador a llamar para insertar registros
@@ -15,7 +16,7 @@
         var url = [{{ fsc.getStringURLs('new')|raw }}];
         var index = selectedTab();
         document.insert_form.action = url[index];
-        document.insert_form.submit(); 
+        document.insert_form.submit();
     }
 </script>
 {% endblock %}
@@ -115,8 +116,7 @@
         {% for indexView, view in fsc.views %}
         <li class="nav-item">
             {% set active = (indexView == fsc.active) ? 'active' : '' %}
-            <a href="#{{ view.getModelID() }}" class="nav-link {{ active }}" id="{{ view.getModelID() }}-tab"
-               data-toggle="tab" role="tab" aria-controls="{{ view.getModelID() }}">
+            <a href="#{{ view.getModelID() }}" class="nav-link {{ active }}" id="{{ view.getModelID() }}-tab" data-toggle="tab" role="tab" aria-controls="{{ view.getModelID() }}">
                 <i class="fa fa-search" aria-hidden="true"></i>
                 <span class="hidden-xs">&nbsp;{{ i18n.trans(view.title) }}</span>
                 <span class="badge badge-secondary">{{ view.count }}</span>
@@ -141,14 +141,14 @@
         {% set active = (indexView == fsc.active) ? 'active' : '' %}
         <div class="tab-pane {{ active }}" id="{{ view.getModelID() }}" role="tabpanel">
             <!-- Filters Row -->
-            <form name="f_custom_search{{ indexView }}" id="form_search{{ indexView }}" action="{{ list_url }}" method="post" class="form">
+            <form name="f_search{{ indexView }}" id="formSearch{{ indexView }}" action="{{ list_url }}" method="post" class="form">
                 <div class="container-fluid d-print-none" style="margin-top: 15px; margin-bottom: 10px;">
                     <div class="row">
                         <!-- Main filter -->
                         <div class="col-md-2">
                             <div class="input-group">
                                 <input type="hidden" name="active" value="{{ indexView }}"> 
-                                <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{% if indexView == fsc.active %}{{ fsc.query }}{% endif %}" autocomplete="off" placeholder="Buscar">
+                                <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{% if indexView == fsc.active %}{{ fsc.query }}{% endif %}" autocomplete="off" placeholder="Buscar" autofocus=""/>
                                 <span class="input-group-btn hidden-sm">
                                     <button class="btn btn-primary" type="submit">
                                         <i class="fa fa-search" aria-hidden="true"></i>
@@ -262,28 +262,22 @@
             <!-- Footer Navigation -->
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-sm-12 text-center">
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination justify-content-center">
+                    <div class="col-12 text-center">
+                        <div class="btn-group">
                             {% for item in fsc.pagination(indexView) %}
                                 {% if item.active %}
-                                <li class="page-item active">
-                                    <span class="page-link">{{ item.page }}<span class="sr-only">(current)</span></span>
-                                </li>
+                                <a class="btn btn-primary">{{ item.page }}</a>
                                 {% else %}
-                                <li class="page-item">
-                                    <a class="page-link" href="{{ item.url }}">
-                                        {% if item.icon %}
-                                        <i class="fa {{ item.icon }}" aria-hidden="true"></i>
-                                        {% else %}
-                                        <span>{{ item.page }}</span>
-                                        {% endif %}
-                                    </a>
-                                </li>    
+                                <a class="btn btn-light" href="{{ item.url }}">
+                                    {% if item.icon %}
+                                    <i class="fa {{ item.icon }}" aria-hidden="true"></i>
+                                    {% else %}
+                                    <span>{{ item.page }}</span>
+                                    {% endif %}
+                                </a>
                                 {% endif %}
                             {% endfor %}
-                            </ul>
-                        </nav>
+                        </div>
                         <br/>
                         <br/>
                     </div>
