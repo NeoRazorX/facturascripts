@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Lib\NewCodigoDoc;
+
 /**
  * Description of DocumentoCompra
  *
@@ -217,5 +219,10 @@ trait DocumentoCompra
         $newCodigoDoc = new NewCodigoDoc();
         $this->numero = $newCodigoDoc->getNumero($this->tableName(), $this->codejercicio, $this->codserie);
         $this->codigo = $newCodigoDoc->getCodigo($this->tableName(), $this->numero);
+    }
+    
+    public function fullTest()
+    {
+        
     }
 }

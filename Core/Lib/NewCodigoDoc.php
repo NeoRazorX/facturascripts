@@ -16,8 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-namespace FacturaScripts\Core\Model\Base;
+namespace FacturaScripts\Core\Lib;
 
 /**
  * Description of NewCodigoDoc
@@ -26,11 +25,37 @@ namespace FacturaScripts\Core\Model\Base;
  */
 class NewCodigoDoc
 {
+    private static $option;
+
+    public function __construct()
+    {
+        if (!isset(self::$option)) {
+            self::$option = 'new';
+        }
+    }
+
+    public function getOption()
+    {
+        return self::$option;
+    }
+
+    public function setOption($value)
+    {
+        self::$option = $value;
+    }
+
+    public function options()
+    {
+        return ['new', 'eneboo'];
+    }
+
     public function getNumero($tableName, $codejercicio, $codserie)
     {
+        
     }
 
     public function getCodigo($tableName, $numero)
     {
+        
     }
 }

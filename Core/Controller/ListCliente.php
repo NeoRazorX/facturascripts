@@ -52,8 +52,9 @@ class ListCliente extends ExtendedController\ListController
 
     protected function createViews()
     {
+        /* Clientes */
         $className = $this->getClassName();
-        $index = $this->addView('FacturaScripts\Core\Model\Cliente', $className);
+        $index = $this->addView('FacturaScripts\Core\Model\Cliente', $className, 'Clientes');
         $this->addSearchFields($index, ['nombre', 'razonsocial', 'codcliente']);
 
         $this->addOrderBy($index, 'codcliente', 'code');
@@ -61,7 +62,13 @@ class ListCliente extends ExtendedController\ListController
         $this->addOrderBy($index, 'fecha', 'date');
 
         $this->addFilterSelect($index, 'codgrupo', 'gruposclientes', '', 'nombre');
-    
         $this->addFilterCheckbox($index, 'debaja', 'De baja');
+        
+        /* Grupos */
+        $index2 = $this->addView('FacturaScripts\Core\Model\GrupoClientes', 'ListGrupoClientes', 'Grupos');
+        $this->addSearchFields($index2, ['nombre', 'codgrupo']);
+        
+        $this->addOrderBy($index2, 'codgrupo', 'code');
+        $this->addOrderBy($index2, 'nombre', 'name', 1);
     }
 }
