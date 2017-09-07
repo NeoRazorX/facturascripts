@@ -42,6 +42,13 @@ class WidgetItem
      * @var string
      */
     public $type;
+        
+    /**
+     * Numero de decimales para tipos numéricos
+     * 
+     * @var int 
+     */
+    public $decimal;
 
     /**
      * Información adicional para el usuario
@@ -116,6 +123,7 @@ class WidgetItem
         }
         
         $this->type = 'text';
+        $this->decimal = 0;
         $this->fieldName = '';
         $this->hint = '';
         $this->readOnly = FALSE;
@@ -174,6 +182,7 @@ class WidgetItem
         $widget_atributes = $column->widget->attributes();
         $this->fieldName = (string) $widget_atributes->fieldname;
         $this->type = (string) $widget_atributes->type;
+        $this->decimal = (int) intval($widget_atributes->decimal);
         $this->hint = (string) $widget_atributes->hint;
         $this->readOnly = (bool) boolval($widget_atributes->readonly);
         $this->required = (bool) boolval($widget_atributes->required);
@@ -193,6 +202,7 @@ class WidgetItem
     {
         $this->fieldName = (string) $column['widget']['fieldName'];
         $this->type = (string) $column['widget']['type'];
+        $this->decimal = (int) intval($column['widget']['decimal']);
         $this->hint = (string) $column['widget']['hint'];
         $this->readOnly = (bool) boolval($column['widget']['readonly']);
         $this->required = (bool) boolval($column['widget']['required']);
@@ -228,13 +238,13 @@ class WidgetItem
     {
         switch (substr($optionValue, 0, 1)) {
             case '<':
-                $value = substr($valueItem, 1);
-                $result = ($optionValue < $value);
+                $optionValue = substr($optionValue, 1);
+                $result = (floatval($valueItem) < floatval($optionValue));
                 break;
 
             case '>':
-                $value = substr($valueItem, 1);
-                $result = ($optionValue > $value);
+                $optionValue = substr($optionValue, 1);
+                $result = (floatval($valueItem) > floatval($optionValue));
                 break;
             
             default:
@@ -288,11 +298,15 @@ class WidgetItem
                 break;
 
             case 'number':
-                $html = '<span' . $style . '>' . self::$numberTools->format($value) . '</span>';
+                $html = '<span' . $style . '>' . self::$numberTools->format($value, $this->decimal) . '</span>';
                 break;
 
             case 'money':
-                $html = '<span' . $style . '>' . self::$divisaTools->format($value) . '</span>';
+                $html = empty($this->decimal) 
+                    ? self::$divisaTools->format($value)
+                    : self::$divisaTools->format($value, $this->decimal);
+
+                $html = '<span' . $style . '>' . $html . '</span>';
                 break;                    
         }
         
