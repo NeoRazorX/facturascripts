@@ -187,63 +187,6 @@ class PedidoCliente
         return FALSE;
     }
 
-    public function full_test($duplicados = TRUE)
-    {
-        $status = TRUE;
-
-        /// comprobamos las líneas
-        $neto = 0;
-        $iva = 0;
-        $irpf = 0;
-        $recargo = 0;
-        foreach ($this->getLineas() as $l) {
-            if (!$l->test()) {
-                $status = FALSE;
-            }
-
-            $neto += $l->pvptotal;
-            $iva += $l->pvptotal * $l->iva / 100;
-            $irpf += $l->pvptotal * $l->irpf / 100;
-            $recargo += $l->pvptotal * $l->recargo / 100;
-        }
-
-        $neto = round($neto, FS_NF0);
-        $iva = round($iva, FS_NF0);
-        $irpf = round($irpf, FS_NF0);
-        $recargo = round($recargo, FS_NF0);
-        $total = $neto + $iva - $irpf + $recargo;
-
-        if (!$this->floatcmp($this->neto, $neto, FS_NF0, TRUE)) {
-            $this->miniLog->critical('Valor neto de ' . FS_PEDIDO . ' incorrecto. Valor correcto: ' . $neto);
-            $status = FALSE;
-        } elseif (!$this->floatcmp($this->totaliva, $iva, FS_NF0, TRUE)) {
-            $this->miniLog->critical('Valor totaliva de ' . FS_PEDIDO . ' incorrecto. Valor correcto: ' . $iva);
-            $status = FALSE;
-        } elseif (!$this->floatcmp($this->totalirpf, $irpf, FS_NF0, TRUE)) {
-            $this->miniLog->critical('Valor totalirpf de ' . FS_PEDIDO . ' incorrecto. Valor correcto: ' . $irpf);
-            $status = FALSE;
-        } elseif (!$this->floatcmp($this->totalrecargo, $recargo, FS_NF0, TRUE)) {
-            $this->miniLog->critical('Valor totalrecargo de ' . FS_PEDIDO . ' incorrecto. Valor correcto: ' . $recargo);
-            $status = FALSE;
-        } elseif (!$this->floatcmp($this->total, $total, FS_NF0, TRUE)) {
-            $this->miniLog->critical('Valor total de ' . FS_PEDIDO . ' incorrecto. Valor correcto: ' . $total);
-            $status = FALSE;
-        }
-
-        if ($this->idalbaran) {
-            $alb0 = new AlbaranCliente();
-            $albaran = $alb0->get($this->idalbaran);
-            if (!$albaran) {
-                $this->idalbaran = NULL;
-                $this->status = 0;
-                $this->editable = TRUE;
-                $this->save();
-            }
-        }
-
-        return $status;
-    }
-
     public function save()
     {
         if ($this->test()) {
