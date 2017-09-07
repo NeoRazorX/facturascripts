@@ -192,6 +192,16 @@ class DataView
     }
     
     /**
+     * Devuelve el identificador del modelo
+     * 
+     * @return string
+     */
+    public function getModelID()
+    {
+        return $this->model->modelClassName();
+    }
+    
+    /**
      * Devuelve el Order By indicado en formato array
      * @param string $orderKey
      */
