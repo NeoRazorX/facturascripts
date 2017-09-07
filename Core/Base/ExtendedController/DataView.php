@@ -31,8 +31,8 @@ class DataView
     /**
      * Constantes para ordenación
      */
-    const ICONO_ASC = 'fa-sort-amount-asc';
-    const ICONO_DESC = 'fa-sort-amount-desc';
+    const ICON_ASC = 'fa-sort-amount-asc';
+    const ICON_DESC = 'fa-sort-amount-desc';
     
     /**
      * Modelo principal de datos.
@@ -71,7 +71,7 @@ class DataView
 
     /**
      * Lista de campos disponibles en el order by
-     * Ejemplo: orderby[key] = ["label" => "Etiqueta", "icon" => ICONO_ASC]
+     * Ejemplo: orderby[key] = ["label" => "Etiqueta", "icon" => ICON_ASC]
      *          key = field_asc | field_desc
      * @var array
      */
@@ -248,8 +248,8 @@ class DataView
             $label = ucfirst($field);
         }
 
-        $this->orderby[$key1] = ['icon' => self::ICONO_ASC, 'label' => $label];
-        $this->orderby[$key2] = ['icon' => self::ICONO_DESC, 'label' => $label];
+        $this->orderby[$key1] = ['icon' => self::ICON_ASC, 'label' => $label];
+        $this->orderby[$key2] = ['icon' => self::ICON_DESC, 'label' => $label];
         
         switch ($default) {
             case 1:

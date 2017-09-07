@@ -6,7 +6,7 @@ imagen de la aplicación y plugins creando un entorno uniforme para el usuario l
 y adaptación a **Facturascripts**.
 
 Para el uso de este controlador es necesario crear las vistas en formato XML, tal y como se describe en el
-documento XMLViews, incluido en la documentación de **Facturascripts**.
+documento [XMLViews](https://github.com/ArtexTrading/facturascripts/blob/master/Documentation/XMLViews.md), incluido en la documentación de **Facturascripts**.
 
 ## Cómo usar el controlador
 Para utilizar _ListController_ debemos crearnos una nueva clase PHP que herede o extienda de ListController, 
@@ -33,6 +33,7 @@ asignado a la nueva vista, el cuál deberemos guardarnos para procesos posterior
 Una vez añadida la vista, debemos configurarla indicando los campos de búsqueda y la ordenación mediante 
 los métodos _**addSearchFields**_ y _**addOrderBy**_.
 
+
 #### addSearchFields
 Al añadir los campos de búsqueda debemos indicar el índice de la vista al que añadimos los campos y un 
 array con los nombre de los campos.
@@ -43,6 +44,7 @@ Ejemplo de creación y adición de campos para búsqueda
     $index = $this->addView('FacturaScripts\Core\Model\Epigrafe', 'ListEpigrafe', 'Epigrafes');
     $this->addSearchFields($index, ['descripcion', 'codepigrafe', 'codejercicio']);
 ```
+
 
 #### addOrderBy
 Podemos añadir todos los campos de ordenación, no confundir con los campos de búsqueda, realizando distintas
@@ -63,6 +65,7 @@ Ejemplo de adición de ordenación (siguiendo el ejemplo anterior) con ordenaci�
     $this->addOrderBy($index, 'codepigrafe||codejercicio', 'code', 2);
     $this->addOrderBy($index, 'codejercicio');
 ```
+
 
 #### Adición de filtros
 El controlador _ListController_ integra un sistema de filtrado de datos que permite personalizar de manera sencilla
@@ -94,14 +97,26 @@ Ejemplos de filtros
     $this->addFilterDatePicker($index, 'fecha', 'Fec. Alta');
 ```
 
+
 ### getPageData
 Este método es el encargado de devolver un array con los datos para la instalación y configuración del controlador
 dentro del entorno de **Facturascripts**. Como norma hay que llamar al _parent_ del controlador para inicializar los
 valores por defecto y asegurar un correcto funcionamiento de nuestro controlador en el entorno de Facturascripts.
 
-Los valores necesarios a configurar son:
+Los valores que se pueden configurar son:
 * title : Título de la vista
 * icon : Icono de la fuente de texto _fontawesome_
 * menu : Nombre del menú donde se introducirá el controlador
 * submenu : (opcional) Segundo nivel del menú donde se introduciría el controlador
 * orden : Podemos alterar el orden natural del sistema de menú para colocar nuestro controlador más arriba o abajo
+
+```PHP
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'Agentes';
+        $pagedata['icon'] = 'fa-user-circle-o';
+        $pagedata['menu'] = 'admin';
+        return $pagedata;
+    }
+```
