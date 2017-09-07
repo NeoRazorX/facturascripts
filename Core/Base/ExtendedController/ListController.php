@@ -181,8 +181,10 @@ abstract class ListController extends Base\Controller
 
                     case 'checkbox':
                         $field = $value['options']['field'];
-                        $value = $value['options']['inverse'] ? !$value['value'] : $value['value'];
-                        $result[] = new DataBase\DataBaseWhere($field, $value);
+                        $checked =  ($value['options']['inverse']) 
+                            ? (boolean) !$value['value'] 
+                            : (boolean) $value['value'];
+                        $result[] = new DataBase\DataBaseWhere($field, $checked);
                         break;
                 }
             }            

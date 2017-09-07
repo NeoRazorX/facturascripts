@@ -90,7 +90,12 @@ Si no se informa toma como valor _0_ aplicando el sistema de tamaño automático
 Complemento visual que se utiliza para la visualización y/o edición del campo/columna. 
 En las vistas List, se puede completar la clusula html _style_ que se aplicará a la columna mediante una listas de _\<option\>_, 
 donde cada atributo de la etiqueta _\<option\>_ se corresponde con su equivalente CSS que se desea aplicar y el valor de la etiqueta
-es el valor cuando se aplicará el formato.
+es el valor cuando se aplicará el formato. Para decidir si se aplica el formato o no se aplicará los siguientes criterios al valor
+introducido en la etiqueta _\<option\>_:
+
+* Si el valor empieza por '>' (&gt;): Se aplicará si el valor del campo del modelo es mayor que el valor indicado después del operador.
+* Si el valor empieza por '<' (&lt;): Se aplicará si el valor del campo del modelo es menor que el valor indicado después del operador.
+* En cualquier otro caso se realizará una comprobación de igualdad.
 
 Ejemplo:
 
@@ -103,18 +108,28 @@ Ejemplo:
         <option color="red" font-weight="bold">ABIERTO</option>
         <option color="blue">CERRADO</option>
     </widget>
+
+    <widget type="number" fieldname="cantidad">
+        <option color="red">&lt;0</option>
+    </widget>
+
+    <widget type="money" fieldname="importe">
+        <option color="red">&gt;30000</option>
+    </widget>
 ```
 
 * **type** : (obligatorio) Indica el tipo de widget a utilizar.
-    * text : Campos varchar o de texto.
+    * text: Campos varchar o de texto.
+    * number: Campos de tipo numérico.
+    * money: Campos de tipo float para importes.
     * checkbox: Valores booleanos que se visualizan mediante el icono de un check (true) o un guión (false) respectivamente.
     * select: Lista de valores establecidos por un conjunto de etiquetas _\<values\>_ descritas dentro del grupo _\<widget\>_.
 Los valores podrán ser fijos, incluyendo tantos _\<values\>_ como necesitemos e indicando el atributo _title_ y asignando un valor,
 como dinámicos o calculados en base al contenido de los registros de una tabla de la base de datos.
 Para este caso se utilizará una sóla etiqueta _\<values\>_ indicando los atributos:
-    * _source_: Indica el nombre de la tabla origen de los datos
-    * _fieldcode_: Indica el campo que contiene el valor a grabar en el campo de la columna
-    * _fieldtitle_: Indica el campo que contiene el valor que se visualizará en pantalla
+        * _source_: Indica el nombre de la tabla origen de los datos
+        * _fieldcode_: Indica el campo que contiene el valor a grabar en el campo de la columna
+        * _fieldtitle_: Indica el campo que contiene el valor que se visualizará en pantalla
 
         ```XML
             <widget type="select" fieldname="documentacion">
