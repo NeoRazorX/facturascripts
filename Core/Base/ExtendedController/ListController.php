@@ -40,7 +40,7 @@ abstract class ListController extends Base\Controller
     /**
      * Indica cual es la vista activa
      * 
-     * @var int 
+     * @var string 
      */
     public $active;
     
@@ -106,7 +106,7 @@ abstract class ListController extends Base\Controller
             $orderKey = '';
             
             // Si estamos procesando la vista seleccionada, calculamos el orden y los filtros
-            if ($this->active === $key) {
+            if ($this->active == $key) {
                 $orderKey = $this->request->get('order', '');
                 $where = $this->getWhere();
             }
@@ -205,7 +205,7 @@ abstract class ListController extends Base\Controller
     {
         $this->views[$viewName] = new DataView($viewTitle, $modelName, $viewName, $this->user->nick);
         
-        if($this->active === '') {
+        if($this->active == '') {
             $this->active = $viewName;
         }
     }    
@@ -321,7 +321,7 @@ abstract class ListController extends Base\Controller
      */
     private function getOffSet($indexView)
     {
-        return ($indexView === $this->active)
+        return ($indexView == $this->active)
             ? $this->offset
             : 0;
     }
@@ -336,7 +336,7 @@ abstract class ListController extends Base\Controller
     private function getParams($indexView)
     {
         $result = "";
-        if ($indexView === $this->active) {        
+        if ($indexView == $this->active) {        
             if (!empty($this->query)) {
                 $result = "&query=" . $this->query;
             }
