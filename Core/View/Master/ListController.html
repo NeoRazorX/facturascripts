@@ -33,12 +33,13 @@
 
 {% block body %}
 <!-- Calculate texts according to language -->
-{% set refresh = i18n.trans('Refrescar la página') %}
-{% set defaultT, defaultF = i18n.trans('marcar como página de inicio'), i18n.trans('Marcada como página de inicio (pulsa de nuevo para desmarcar)') %}
-{% set options, options_title = i18n.trans('Opciones'), i18n.trans('Opciones de configuración') %}
-{% set print, print_title = i18n.trans('Imprimir'), i18n.trans('Imprimir lista de registros') %}
-{% set new_record, new_record_title = i18n.trans('Nuevo'), i18n.trans('Crear un nuevo registro') %}
-{% set search_title = i18n.trans('Filtra los registros que contienen el valor indicado') %}
+{% set refresh = i18n.trans('Refresh Page') %}
+{% set defaultT, defaultF = i18n.trans('mark as homepage'), i18n.trans('Marked as home page (press again to unmark)') %}
+{% set options, options_title = i18n.trans('Options'), i18n.trans('Setup Options') %}
+{% set print, print_title = i18n.trans('Print'), i18n.trans('Print list of records') %}
+{% set exportXLS, exportCSV = i18n.trans('spreadsheet (XLS)'), i18n.trans('Structured data (CSV)') %}
+{% set new_record, new_record_title = i18n.trans('New'), i18n.trans('Create a new record') %}
+{% set search_title = i18n.trans('Filters records containing the indicated value') %}
 {% set any = i18n.trans('Cualquier') %}
 {% set panel_header = i18n.trans('Datos generales') %}
 {% set title = fsc.getPageData()['title'] %}
@@ -59,7 +60,7 @@
     <!-- Header Row -->
     <div class="row">
         <div class="col-sm-7 col-6">
-            <div class="btn-group hidden-xs">
+            <div class="btn-group hidden-xs" aria-label="Button group with navigation actions">
                 <a class="btn btn-sm btn-light" href="{{ list_url }}" {{ popoverTitle(refresh, 'bottom') }}>
                     <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
@@ -73,25 +74,44 @@
                 </a>
                 {% endif %}
             </div>
-            <div class="btn-group">
+            <div class="btn-group" role="group" aria-label="Button group with generic actions">
                 <form action="#" method=post name="insert_form">
                     <input type="hidden" name="action" value="insert"> 
                 </form>
                 
-                <a id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord();" href="#" {{ popoverTitle(new_record_title, 'bottom') }}>
+                <a id="b_new_record" role="button" class="btn btn-sm btn-success" onclick="insertRecord();" href="#" {{ popoverTitle(new_record_title, 'bottom') }}>
                     <i class="fa fa-plus" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;{{ new_record }}</span>
                 </a>
                 
-                <a href="#" id="b_options" class="btn btn-sm btn-secondary" {{ popoverTitle(options_title, 'bottom') }}>
+                <a href="#" id="b_options" role="button" class="btn btn-sm btn-secondary" {{ popoverTitle(options_title, 'bottom') }}>
                     <i class="fa fa-wrench" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;{{ options }}</span>
                 </a>
-                
-                <a href="#" id="b_print" class="btn btn-sm btn-secondary" onclick="window.print();" {{ popoverTitle(print_title, 'bottom') }}>
-                    <i class="fa fa-print" aria-hidden="true"></i>
-                    <span class="hidden-xs">&nbsp;{{ print }}</span>
-                </a>
+
+                <div class="btn-group" role="group">
+                    <button id="b_print" type="button" class="btn btn-sm btn-secondary" onclick="window.print();" {{ popoverTitle(print_title, 'bottom') }}>
+                        <i class="fa fa-print" aria-hidden="true"></i>&nbsp;{{ print }}
+                    </button>
+                    <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="sr-only">Print and Export Options</span>
+                    </button>    
+                    <div class="dropdown-menu">
+                        <a href="#" class="dropdown-item" onclick="window.print();">
+                            <i class="fa fa-print" aria-hidden="true"></i>
+                            <span class="hidden-xs">&nbsp;{{ print }}</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item">
+                            <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                            <span class="hidden-xs">&nbsp;{{ exportXLS }}</span>
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fa fa-file-archive-o" aria-hidden="true"></i>
+                            <span class="hidden-xs">&nbsp;{{ exportCSV }}</span>
+                        </a>
+                    </div>    
+                </div>
                 {#    TODO: Aplicar extensiones
                 {% for value in fsc.extensions %}
                 {% if value.type == 'button' %}

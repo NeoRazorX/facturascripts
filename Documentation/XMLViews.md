@@ -97,22 +97,33 @@ introducido en la etiqueta _\<option\>_:
 * Si el valor empieza por '<' (&lt;): Se aplicará si el valor del campo del modelo es menor que el valor indicado después del operador.
 * En cualquier otro caso se realizará una comprobación de igualdad.
 
-Ejemplo:
+Ejemplos:
 
+_pintar de color rojo cuando el valor del campo **pendiente es cero**_
 ```XML
     <widget type="checkbox" fieldname="pendiente">
         <option color="red">0</option>
     </widget>
+```
 
+_pintar de color rojo y negrita cuando el valor del campo **estado es ABIERTO**_
+_pintar de color azul cuando el valor del campo **estado es CERRADO**_
+```XML
     <widget type="text" fieldname="estado">
         <option color="red" font-weight="bold">ABIERTO</option>
         <option color="blue">CERRADO</option>
     </widget>
+```
 
+_pintar de color rojo cuando el valor del campo **cantidad es menor de uno**_
+```XML
     <widget type="number" fieldname="cantidad">
         <option color="red">&lt;0</option>
     </widget>
+```
 
+_pintar de color rojo cuando el valor del campo **importe es mayor de treinta mil**_
+```XML
     <widget type="money" fieldname="importe">
         <option color="red">&gt;30000</option>
     </widget>
@@ -120,8 +131,8 @@ Ejemplo:
 
 * **type** : (obligatorio) Indica el tipo de widget a utilizar.
     * text: Campos varchar o de texto.
-    * number: Campos de tipo numérico.
-    * money: Campos de tipo float para importes.
+    * number: Campos de tipo numérico. Para este tipo se puede indicar el atributo _decimal_ para configurar la precisión a visualizar.
+    * money: Campos de tipo float para importes. Para este tipo se puede indicar el atributo _decimal_ para configurar la precisión a visualizar en vez de los de la moneda.
     * checkbox: Valores booleanos que se visualizan mediante el icono de un check (true) o un guión (false) respectivamente.
     * select: Lista de valores establecidos por un conjunto de etiquetas _\<values\>_ descritas dentro del grupo _\<widget\>_.
 Los valores podrán ser fijos, incluyendo tantos _\<values\>_ como necesitemos e indicando el atributo _title_ y asignando un valor,
@@ -179,6 +190,11 @@ mediante el atributo _type_ indicar la acción que realiza, teniendo cada tipo u
 
 * **status** : Permite colorear las filas en base al valor de un campo del registro. Requiere de uno o varios registros _\<option\>_ indicando la
 configuración bootstrap para paneles que deseamos para la fila.
+
+Ejemplo:
+
+_pinta la fila de color "info" si el campo **estado es Pendiente**_
+_pinta la fila de color "warning" si el campo **estado es Parcial**_
 ```XML
     <rows>
         <row type="status" fieldname="estado">
@@ -189,6 +205,9 @@ configuración bootstrap para paneles que deseamos para la fila.
 ```
 * **\<header\>** : Permite definir una lista de botones estadísticos y relacionales con otros modelos que dan información al usuario y le permite
 consultar al hacer click.
+
+Ejemplo:
+
 ```XML
     <rows>
         <row type="header">
@@ -199,6 +218,9 @@ consultar al hacer click.
 ```
 
 * **\<footer\>** : Permite añadir información adicional a visualizar al usuario en el pie de la vista.
+
+Ejemplo:
+
 ```XML
     <rows>
         <row type="footer">
