@@ -29,16 +29,6 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListDivisa extends ExtendedController\ListController
 {
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
-    {
-        parent::__construct($cache, $i18n, $miniLog, $className);
-    }
-
-    public function privateCore(&$response, $user)
-    {
-        parent::privateCore($response, $user);
-    }
-
     public function getPageData()
     {
         $pagedata = parent::getPageData();
