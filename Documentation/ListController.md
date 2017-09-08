@@ -27,28 +27,27 @@ y añadir nuevas vistas, o modificar las existentes.
 La manera de añadir una vista es mediante el método _**addView**_ incluido en el propio controlador. Para la
 correcta llamada al método debemos informar mediante cadenas de texto: el modelo (Nombre completo), 
 nombre de la vista XML y del título para la pestaña que visualiza el controlador. Si se omite este último 
-parámetro, el controlador asignará un texto por defecto. El método nos devolverá el índice que se le ha 
-asignado a la nueva vista, el cuál deberemos guardarnos para procesos posteriores.
+parámetro, el controlador asignará un texto por defecto.
 
 Una vez añadida la vista, debemos configurarla indicando los campos de búsqueda y la ordenación mediante 
 los métodos _**addSearchFields**_ y _**addOrderBy**_.
 
 
 #### addSearchFields
-Al añadir los campos de búsqueda debemos indicar el índice de la vista al que añadimos los campos y un 
+Al añadir los campos de búsqueda debemos indicar el nombre de la vista al que añadimos los campos y un 
 array con los nombre de los campos.
 
 Ejemplo de creación y adición de campos para búsqueda
 
 ```PHP
-    $index = $this->addView('FacturaScripts\Core\Model\Epigrafe', 'ListEpigrafe', 'Epigrafes');
-    $this->addSearchFields($index, ['descripcion', 'codepigrafe', 'codejercicio']);
+    $this->addView('FacturaScripts\Core\Model\Epigrafe', 'ListEpigrafe', 'Epigrafes');
+    $this->addSearchFields('ListEpigrafe', ['descripcion', 'codepigrafe', 'codejercicio']);
 ```
 
 
 #### addOrderBy
 Podemos añadir todos los campos de ordenación, no confundir con los campos de búsqueda, realizando distintas
-llamadas al método _addOrderBy_ e indicando el índice de la vista a la que añadimos la ordenación, la expresión
+llamadas al método _addOrderBy_ e indicando el nombre de la vista a la que añadimos la ordenación, la expresión
 de ordenación (cualquier expresión aceptada por la clausula ORDER BY de SQL), texto a visualizar al usuario y el
 indicativo de orden por defecto.
 
@@ -61,16 +60,16 @@ Consideraciones:
 Ejemplo de adición de ordenación (siguiendo el ejemplo anterior) con ordenación por código descendente
 
 ```PHP
-    $this->addOrderBy($index, 'descripcion', 'description');
-    $this->addOrderBy($index, 'codepigrafe||codejercicio', 'code', 2);
-    $this->addOrderBy($index, 'codejercicio');
+    $this->addOrderBy('ListEpigrafe', 'descripcion', 'description');
+    $this->addOrderBy('ListEpigrafe', 'codepigrafe||codejercicio', 'code', 2);
+    $this->addOrderBy('ListEpigrafe', 'codejercicio');
 ```
 
 
 #### Adición de filtros
 El controlador _ListController_ integra un sistema de filtrado de datos que permite personalizar de manera sencilla
 las opciones de filtrado que se presentan al usuario. Cada tipo de filtro requiere de una parametrización propia para 
-su funcionamiento como el indice de la vista a la que lo añadimos, y entre los tipos de filtros disponibles están:
+su funcionamiento como el nombre de la vista a la que lo añadimos, y entre los tipos de filtros disponibles están:
 
 * **addFilterSelect** : Filtro tipo selección de una lista de valores.
      * key : Es el nombre interno del filtro y debe coincidir con el nombre del campo del modelo que se está visualizando y por el que se quiere filtrar.
@@ -92,9 +91,9 @@ su funcionamiento como el indice de la vista a la que lo añadimos, y entre los 
 Ejemplos de filtros
 
 ```PHP
-    $this->addFilterSelect($index, 'codepigrafe', 'co_epigrafes', '', 'descripcion');
-    $this->addFilterCheckbox($index, 'debaja', 'De baja');
-    $this->addFilterDatePicker($index, 'fecha', 'Fec. Alta');
+    $this->addFilterSelect('ListEpigrafe', 'codepigrafe', 'co_epigrafes', '', 'descripcion');
+    $this->addFilterCheckbox('ListCliente', 'debaja', 'De baja');
+    $this->addFilterDatePicker(ListArticulo, 'fecha', 'Fec. Alta');
 ```
 
 
