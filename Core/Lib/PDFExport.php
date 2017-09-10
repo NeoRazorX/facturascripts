@@ -17,34 +17,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Controller;
+namespace FacturaScripts\Core\Lib;
 
-use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Base\ExportInterface;
 
 /**
- * Description of ListAsiento
+ * Description of PDF
  *
  * @author carlos
  */
-class ListAsiento extends ExtendedController\ListController
+class PDFExport implements ExportInterface
 {
-    public function getPageData()
+    public function newDoc($model)
     {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Asientos';
-        $pagedata['icon'] = 'fa-balance-scale';
-        $pagedata['menu'] = 'contabilidad';
-
-        return $pagedata;
+        $pdf = new \Cezpdf('a4', 'portrait');
+        $pdf->ezText('Hola mundo');
+        return $pdf->ezStream(array('Content-Disposition' => 'list.pdf'));
     }
 
-    protected function createViews()
+    public function newListDoc($cursor)
     {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\Asiento', $className);
-        $this->addSearchFields($className, ['CAST(numero AS VARCHAR)', 'concepto']);
-
-        $this->addOrderBy($className, 'numero', 'number');
-        $this->addOrderBy($className, 'fecha', 'date', 2); /// forzamos el orden por defecto fecha desc
+        $pdf = new \Cezpdf('a4', 'portrait');
+        $pdf->ezText('Hola mundo');
+        return $pdf->ezStream(array('Content-Disposition' => 'list.pdf'));
     }
 }

@@ -66,16 +66,17 @@ class GrupoClientes
      */
     public function getNewCodigo()
     {
-        $sql = 'SELECT codgrupo FROM ' . $this->tableName() . " WHERE codgrupo REGEXP '^\d+$'"
-            . ' ORDER BY CAST(`codgrupo` AS DECIMAL) DESC';
-        if (strtolower(FS_DB_TYPE) === 'postgresql') {
-            $sql = 'SELECT codgrupo FROM ' . $this->tableName() . " WHERE codgrupo ~ '^\d+$'"
-                . ' ORDER BY codgrupo::INTEGER DESC';
+        if (strtolower(FS_DB_TYPE) == 'postgresql') {
+            $sql = "SELECT codgrupo from " . $this->tableName() . " where codgrupo ~ '^\d+$'"
+                . " ORDER BY codgrupo::integer DESC";
+        } else {
+            $sql = "SELECT codgrupo from " . $this->tableName() . " where codgrupo REGEXP '^[0-9]+$'"
+                . " ORDER BY CAST(`codgrupo` AS decimal) DESC";
         }
 
-        $data = $this->dataBase->selectLimit($sql, 1);
-        if (!empty($data)) {
-            return sprintf('%06s', 1 + (int) $data[0]['codgrupo']);
+        $data = $this->dataBase->selectLimit($sql, 1, 0);
+        if ($data) {
+            return sprintf('%06s', (1 + intval($data[0]['codgrupo'])));
         }
 
         return '000001';
@@ -86,29 +87,6 @@ class GrupoClientes
         $this->nombre = self::noHtml($this->nombre);
 
         return TRUE;
-    }
-
-    /**
-     * Devuelve todos los grupos con la tarifa $cod
-     *
-     * @param string $cod
-     *
-     * @return array
-     */
-    public function allWithTarifa($cod)
-    {
-        $glist = [];
-
-        $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE codtarifa = ' . $this->var2str($cod) . ' ORDER BY codgrupo ASC;';
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $glist[] = new self($d);
-            }
-        }
-
-        return $glist;
     }
 
     /**
@@ -124,5 +102,31 @@ class GrupoClientes
         //new Tarifa();
 
         return '';
+    }
+    
+    public function url($type = 'auto')
+    {
+        $value = $this->primaryColumnValue();
+        $model = $this->modelClassName();
+        $result = 'index.php?page=';
+        switch ($type) {
+            case 'list':
+                $result .= 'ListCliente&active=List' . $model;
+                break;
+
+            case 'edit':
+                $result .= 'Edit' . $model . '&code=' . $value;
+                break;
+
+            case 'new':
+                $result .= 'Edit' . $model;
+                break;
+
+            default:
+                $result .= empty($value) ? 'ListCliente&active=List' . $model : 'Edit' . $model . '&code=' . $value;
+                break;
+        }
+
+        return $result;
     }
 }

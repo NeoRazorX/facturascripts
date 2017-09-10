@@ -574,7 +574,7 @@ class Articulo
      */
     public function setPvp($pvp)
     {
-        $pvp = bround($pvp, FS_NF0_ART);
+        $pvp = round($pvp, FS_NF0_ART);
 
         if (!$this->floatcmp($this->pvp, $pvp, FS_NF0_ART + 2)) {
             $this->pvp_ant = $this->pvp;
@@ -750,7 +750,7 @@ class Articulo
         } else {
             $stock = new Stock();
             $encontrado = false;
-            $stocks = $stock->allFromArticulo($this->referencia);
+            $stocks = $stock->all([new DataBaseWhere('referencia', $this->referencia)]);
             foreach ($stocks as $sto) {
                 if ($sto instanceof Stock && $sto->codalmacen === $codalmacen) {
                     $sto->sumCantidad($cantidad);

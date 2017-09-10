@@ -331,7 +331,7 @@ class Cuenta
     public function install()
     {
         /// forzamos la creación de la tabla epigrafes
-        //$epi = new Epigrafe();
+        new Epigrafe();
 
         return '';
     }
