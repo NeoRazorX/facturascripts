@@ -98,7 +98,7 @@ class Controller
     /**
      * Nombre del archivo html para el motor de plantillas.
      *
-     * @var string nombre_archivo.html
+     * @var string|false nombre_archivo.html
      */
     private $template;
 
@@ -159,7 +159,7 @@ class Controller
     /**
      * Devuelve el template HTML a utilizar para este controlador.
      *
-     * @return string
+     * @return string|false
      */
     public function getTemplate()
     {
@@ -169,11 +169,17 @@ class Controller
     /**
      * Establece el template HTML a utilizar para este controlador.
      *
-     * @param string $template
+     * @param string|false $template
      */
     public function setTemplate($template)
     {
+        if($template === false) {
+            $this->template = false;
+            return true;
+        }
+        
         $this->template = $template . '.html';
+        return true;
     }
 
     public function getPageData()

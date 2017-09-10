@@ -3,21 +3,22 @@
 {% block javascript %}
 {{ parent() }}
 <script type="text/javascript">
+    var tabActive = '{{ fsc.active }}';
+    function insertRecord() {
+        /// completar
+    }
+    function doAction(action) {
+        var url = '{{ fsc.url() }}';
+        window.location.href = url + '&active=' + tabActive + '&action=' + action;
+    }
     $(document).ready(function () {
         // Situa el foco cuando se cambia de tab
         $('#mainTabs').on('shown.bs.tab', function (e) {
+            tabActive = 'List' + e.target.hash.substring(1);
             var formName = '#formSearchList' + e.target.hash.substring(1) + ' :text:first';
             $(formName).focus().select();
         });
     });
-
-    // Calcula el controlador a llamar para insertar registros
-    function insertRecord() {
-        var url = [{{ fsc.getStringURLs('new')|raw }}];
-        var index = selectedTab();
-        document.insert_form.action = url[index];
-        document.insert_form.submit();
-    }
 </script>
 {% endblock %}
 
@@ -57,6 +58,11 @@
 <div class="container-fluid d-print-none">
  {{ parent() }}
  
+    <div class="d-none">
+        <form action="#" method=post name="insert_form">
+            <input type="hidden" name="action" value="insert"/>
+        </form>
+    </div>
     <!-- Header Row -->
     <div class="row">
         <div class="col-sm-7 col-6">
@@ -74,44 +80,32 @@
                 </a>
                 {% endif %}
             </div>
-            <div class="btn-group" role="group" aria-label="Button group with generic actions">
-                <form action="#" method=post name="insert_form">
-                    <input type="hidden" name="action" value="insert"> 
-                </form>
-                
-                <a id="b_new_record" role="button" class="btn btn-sm btn-success" onclick="insertRecord();" href="#" {{ popoverTitle(new_record_title, 'bottom') }}>
+            
+            <div class="btn-group">
+                <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord();" {{ popoverTitle(new_record_title, 'bottom') }}>
                     <i class="fa fa-plus" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;{{ new_record }}</span>
                 </a>
-                
-                <a href="#" id="b_options" role="button" class="btn btn-sm btn-secondary" {{ popoverTitle(options_title, 'bottom') }}>
+                <a href="#" id="b_options" class="btn btn-sm btn-secondary" {{ popoverTitle(options_title, 'bottom') }}>
                     <i class="fa fa-wrench" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;{{ options }}</span>
                 </a>
-
-                <div class="btn-group" role="group">
-                    <button id="b_print" type="button" class="btn btn-sm btn-secondary" onclick="window.print();" {{ popoverTitle(print_title, 'bottom') }}>
+                <div class="btn-group">
+                    <a href="#" onclick="doAction('export&option={{ fsc.exportManager.defaultOption() }}')" id="b_print" class="btn btn-sm btn-secondary" {{ popoverTitle(print_title, 'bottom') }}>
                         <i class="fa fa-print" aria-hidden="true"></i>
                         <span class="hidden-xs">&nbsp;{{ print }}</span>
-                    </button>
+                    </a>
                     <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="sr-only">Print and Export Options</span>
                     </button>    
                     <div class="dropdown-menu">
-                        <a href="#" class="dropdown-item" onclick="window.print();">
-                            <i class="fa fa-print" aria-hidden="true"></i>
-                            <span class="hidden-xs">&nbsp;{{ print }}</span>
+                        {% for key, option in fsc.exportManager.options() %}
+                        <a href="#" onclick="doAction('export&option={{ key }}')" class="dropdown-item">
+                            <i class="fa {{ option.icon }}" aria-hidden="true"></i>
+                            <span class="hidden-xs">&nbsp;{{ i18n.trans(option.description) }}</span>
                         </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item">
-                            <i class="fa fa-file-excel-o" aria-hidden="true"></i>
-                            <span class="hidden-xs">&nbsp;{{ exportXLS }}</span>
-                        </a>
-                        <a href="#" class="dropdown-item">
-                            <i class="fa fa-file-archive-o" aria-hidden="true"></i>
-                            <span class="hidden-xs">&nbsp;{{ exportCSV }}</span>
-                        </a>
-                    </div>    
+                        {% endfor %}
+                    </div>
                 </div>
                 {#    TODO: Aplicar extensiones
                 {% for value in fsc.extensions %}

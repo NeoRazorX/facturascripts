@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -30,6 +29,13 @@ use FacturaScripts\Core\Model;
  */
 class EditController extends Base\Controller
 {
+
+    /**
+     *
+     * @var Base\ExportManager 
+     */
+    public $exportManager;
+
     /**
      * Modelo con los datos a mostrar
      *
@@ -49,6 +55,7 @@ class EditController extends Base\Controller
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         $this->setTemplate('Master/EditController');
+        $this->exportManager = new Base\ExportManager();
         $this->pageOption = new Model\PageOption();
     }
 
@@ -75,7 +82,7 @@ class EditController extends Base\Controller
         $column->widget->readOnly = (!empty($this->model->{$fieldName}));
 
         // Comprobamos si hay operaciones por realizar
-        if ($this->request->isMethod('POST')) {
+        if ($this->request->get('action', false)) {
             $this->setActionForm();
         }
     }
@@ -85,25 +92,28 @@ class EditController extends Base\Controller
      */
     private function setActionForm()
     {
-        $data = $this->request->request->all();
-        if (isset($data['action'])) {
-            switch ($data['action']) {
-                case 'save':
-                    $this->model->checkArrayData($data);
-                    $this->model->loadFromData($data);
-                    $this->editAction($data);
-                    break;
+        switch ($this->request->get('action')) {
+            case 'save':
+                $data = $this->request->request->all();
+                $this->model->checkArrayData($data);
+                $this->model->loadFromData($data);
+                $this->editAction($data);
+                break;
 
-                case 'insert':
-                    $this->insertAction($data);
-                    break;
+            case 'insert':
+                $data = $this->request->request->all();
+                $this->insertAction($data);
+                break;
+            
+            case 'export':
+                $this->setTemplate(false);
+                $this->response->setContent($this->exportManager->generateDoc($this->model, $this->request->get('option')));
 
-                default:
-                    break;
-            }
+            default:
+                break;
         }
     }
-    
+
     /**
      * Ejecuta la modificación de los datos
      *

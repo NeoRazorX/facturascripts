@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -30,12 +29,6 @@ use FacturaScripts\Core\Base\DataBase;
  */
 abstract class ListController extends Base\Controller
 {
-    /**
-     * Lista de vistas mostradas por el controlador
-     * 
-     * @var Array of DataView 
-     */
-    public $views;
 
     /**
      * Indica cual es la vista activa
@@ -43,13 +36,19 @@ abstract class ListController extends Base\Controller
      * @var string 
      */
     public $active;
-    
+
+    /**
+     *
+     * @var Base\ExportManager
+     */
+    public $exportManager;
+
     /**
      * Primer registro a seleccionar de la base de datos
      * @var int
      */
     protected $offset;
-    
+
     /**
      * Esta variable contiene el texto enviado como parámetro query
      * usado para el filtrado de datos del modelo
@@ -57,12 +56,19 @@ abstract class ListController extends Base\Controller
      * @var string|false
      */
     public $query;
-        
+
+    /**
+     * Lista de vistas mostradas por el controlador
+     * 
+     * @var DataView[]
+     */
+    public $views;
+
     /**
      * Procedimiento encargado de insertar las vistas a visualizar
      */
     abstract protected function createViews();
-    
+
     /**
      * Inicia todos los objetos y propiedades.
      *
@@ -77,10 +83,11 @@ abstract class ListController extends Base\Controller
 
         $this->setTemplate('Master/ListController');
 
-        $this->views = [];
         $this->active = $this->request->get('active', '');
+        $this->exportManager = new Base\ExportManager();
         $this->offset = intval($this->request->get('offset', 0));
-        $this->query = $this->request->get('query', '');        
+        $this->query = $this->request->get('query', '');
+        $this->views = [];
     }
 
     /**
@@ -91,32 +98,32 @@ abstract class ListController extends Base\Controller
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-        
+
         // Creamos las vistas a visualizar
         $this->createViews();
-                        
+
         // Comprobamos si hay operaciones por realizar
-        if ($this->request->isMethod('POST')) {
+        if ($this->request->get('action', false)) {
             $this->setActionForm();
         }
 
         // Lanzamos cada una de las vistas
         foreach ($this->views as $key => $dataView) {
-            $where = [];   
+            $where = [];
             $orderKey = '';
-            
+
             // Si estamos procesando la vista seleccionada, calculamos el orden y los filtros
             if ($this->active == $key) {
                 $orderKey = $this->request->get('order', '');
                 $where = $this->getWhere();
             }
-            
+
             // Establecemos el orderby seleccionado
             $this->views[$key]->setSelectedOrderBy($orderKey);
-            
+
             // Cargamos los datos según filtro y orden
             $dataView->loadData($where, $this->getOffSet($key), Base\Pagination::FS_ITEM_LIMIT);
-        }        
+        }
     }
 
     /**
@@ -124,38 +131,37 @@ abstract class ListController extends Base\Controller
      */
     private function setActionForm()
     {
-        $data = $this->request->request->all();
-        if (!isset($data['active']) || !isset($data['action'])) {
-            return;
-        }
-        
-        switch ($data['action']) {
+        switch ($this->request->get('action')) {
             case 'delete':
-                /// Se llama a función para que las clases hijas puedan operar, si lo necesitan
-                $this->deleteAction($this->views[$data['active']], $data);
+                /// Se llama a la función para que las clases hijas puedan operar, si lo necesitan
+                $this->deleteAction($this->views[$this->active]);
+                break;
+
+            case 'export':
+                $this->setTemplate(false);
+                $this->response->setContent($this->exportManager->generateList($this->views[$this->active]->getCursor(), $this->request->get('option')));
                 break;
 
             default:
                 break;
         }
     }
-    
+
     /**
      * Acción de borrado de datos
      * 
      * @param DataView $view     Vista sobre la que se realiza la acción
-     * @param array $data        Datos pasados por POST
      * @return boolean
      */
-    protected function deleteAction($view, $data)
+    protected function deleteAction($view)
     {
-        if ($view->delete($data['code'])) {
+        if ($view->delete($this->request->get('code'))) {
             $this->miniLog->notice($this->i18n->trans('Record deleted correctly!'));
             return TRUE;
         }
         return FALSE;
     }
-        
+
     /**
      * Establece la clausula WHERE según los filtros definidos
      *
@@ -169,7 +175,7 @@ abstract class ListController extends Base\Controller
             $fields = $this->views[$this->active]->getSearchIn();
             $result[] = new DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }
-        
+
         $filters = $this->views[$this->active]->getFilters();
         foreach ($filters as $key => $value) {
             if ($value['value']) {
@@ -181,18 +187,16 @@ abstract class ListController extends Base\Controller
 
                     case 'checkbox':
                         $field = $value['options']['field'];
-                        $checked =  ($value['options']['inverse']) 
-                            ? (boolean) !$value['value'] 
-                            : (boolean) $value['value'];
+                        $checked = ($value['options']['inverse']) ? (boolean) !$value['value'] : (boolean) $value['value'];
                         $result[] = new DataBase\DataBaseWhere($field, $checked);
                         break;
                 }
-            }            
+            }
         }
 
         return $result;
     }
-    
+
     /**
      * Crea y añade una vista al controlador.
      * Devuelve el indice de la vista dentro del array de vistas.
@@ -204,11 +208,11 @@ abstract class ListController extends Base\Controller
     protected function addView($modelName, $viewName, $viewTitle = 'search')
     {
         $this->views[$viewName] = new DataView($viewTitle, $modelName, $viewName, $this->user->nick);
-        
-        if($this->active == '') {
+
+        if ($this->active == '') {
             $this->active = $viewName;
         }
-    }    
+    }
 
     /**
      * Añade una lista de campos (separados por |) a lista de campos de búsqueda
@@ -232,7 +236,7 @@ abstract class ListController extends Base\Controller
      */
     protected function addOrderBy($indexView, $field, $label = '', $default = 0)
     {
-        $this->views[$indexView]->addOrderBy($field, $label, $default); 
+        $this->views[$indexView]->addOrderBy($field, $label, $default);
     }
 
     /**
@@ -295,7 +299,7 @@ abstract class ListController extends Base\Controller
             if ($field !== $options['field']) {
                 $fieldList = $fieldList . ', ' . $options['field'];
             }
-            
+
             $sql = "SELECT DISTINCT " . $fieldList
                 . " FROM " . $options['table']
                 . " WHERE COALESCE(" . $options['field'] . ", '')" . " <> ''" . $options['where']
@@ -321,11 +325,9 @@ abstract class ListController extends Base\Controller
      */
     private function getOffSet($indexView)
     {
-        return ($indexView == $this->active)
-            ? $this->offset
-            : 0;
+        return ($indexView == $this->active) ? $this->offset : 0;
     }
-    
+
     /**
      * Construye un string con los parámetros pasados en la url
      * de la llamada al controlador.
@@ -336,22 +338,22 @@ abstract class ListController extends Base\Controller
     private function getParams($indexView)
     {
         $result = "";
-        if ($indexView == $this->active) {        
+        if ($indexView == $this->active) {
             if (!empty($this->query)) {
                 $result = "&query=" . $this->query;
             }
 
-            $filters = $this->views[$this->active]->getFilters();        
+            $filters = $this->views[$this->active]->getFilters();
             foreach ($filters as $key => $value) {
                 if ($value['value'] != "") {
                     $result .= "&" . $key . "=" . $value['value'];
                 }
             }
         }
-        
+
         return $result;
     }
-    
+
     /**
      * Crea un array con los "saltos" disponibles para paginar los datos
      * del modelo de la vista indicada.
@@ -364,14 +366,14 @@ abstract class ListController extends Base\Controller
         $offset = $this->getOffSet($indexView);
         $count = $this->views[$indexView]->count;
         $url = $this->views[$indexView]->getURL('list') . $this->getParams($indexView);
-        
+
         $paginationObj = new Base\Pagination();
         $result = $paginationObj->getPages($url, $count, $offset);
         unset($paginationObj);
-        
+
         return $result;
     }
-    
+
     public function getStringURLs($type)
     {
         $result = '';

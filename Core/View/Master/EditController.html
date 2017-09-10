@@ -43,10 +43,6 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $('[data-toggle="popover"]').popover({
-            delay: { "show": 1000, "hide": 100 }
-        });
-        
         $('#main_row :text:first').focus();
     });
     
@@ -122,10 +118,21 @@
                 </a>
             </div>
             <div class="btn-group">
-                <a id="b_print" class="btn btn-sm btn-secondary" onclick="window.print();" href="#" {{ popoverTitle(print_title, 'bottom') }}>
-                    <i class="fa fa-print" aria-hidden="true"></i>
+                <a href="{{ fsc.model.url('edit') }}&action=export&option={{ fsc.exportManager.defaultOption() }}" id="b_print" class="btn btn-sm btn-secondary" {{ popoverTitle(print_title, 'bottom') }}>
+                   <i class="fa fa-print" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;{{ print }}</span>
                 </a>
+                <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="sr-only">Print and Export Options</span>
+                </button>    
+                <div class="dropdown-menu">
+                    {% for key, option in fsc.exportManager.options() %}
+                    <a href="{{ fsc.model.url('edit') }}&action=export&option={{ key }}" class="dropdown-item">
+                        <i class="fa {{ option.icon }}" aria-hidden="true"></i>
+                        <span class="hidden-xs">&nbsp;{{ i18n.trans(option.description) }}</span>
+                    </a>
+                    {% endfor %}
+                </div>
             </div>
         </div>
 

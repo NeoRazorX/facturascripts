@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -26,17 +25,36 @@ namespace FacturaScripts\Core\Base;
  */
 class ExportManager
 {
+
+    public function defaultOption()
+    {
+        return 'PDF';
+    }
+
     public function options()
     {
         return [
-            'pdf' => 'print',
-            'xls' => 'spreadsheet-xls',
-            'csv' => 'structured data-csv'
+            'PDF' => ['description' => 'print', 'icon' => 'fa-print'],
+            'XLS' => ['description' => 'spreadsheet-xls', 'icon' => 'fa-file-excel-o'],
+            'CSV' => ['description' => 'structured data-csv', 'icon' => 'fa-file-archive-o']
         ];
     }
-    
-    public function generate($cursor, $option)
+
+    public function generateDoc($model, $option)
     {
         /// llamar a la clase apropiada para generar el archivo en función de la opción elegida
+        $className = "FacturaScripts\\Core\\Lib\\" . $option . 'Export';
+        $docClass = new $className();
+
+        return $docClass->newDoc($model);
+    }
+
+    public function generateList($cursor, $option)
+    {
+        /// llamar a la clase apropiada para generar el archivo en función de la opción elegida
+        $className = "FacturaScripts\\Core\\Lib\\" . $option . 'Export';
+        $docClass = new $className();
+
+        return $docClass->newListDoc($cursor);
     }
 }
