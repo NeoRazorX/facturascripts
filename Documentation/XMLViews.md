@@ -10,7 +10,7 @@ El elemento raíz del archivo XML será _\<view\>_ y se podrán incluir los sigu
 
 ## COLUMNS
 Permite definir mediante la etiqueta _\<column\>_ cada uno de los campos que se visualizarán en la vista pudiendo, en las vistas _Edit_, agrupar las
-columnas mediante la etiqueta _\<group\>_. Las columnsa, se complementan con la etiqueta obligatoria _\<widget\>_, que sirve para personalizar el tipo de objeto que se usa en la visualización/edición del dato.
+columnas mediante la etiqueta _\<group\>_. Las columnas, se complementan con la etiqueta obligatoria _\<widget\>_, que sirve para personalizar el tipo de objeto que se usa en la visualización/edición del dato.
 
 Tanto las etiquetas _\<group\>_, _\<column\>_ como _\<widget\>_ disponen de un conjunto de atributos que permiten la personalización y que varían según
 el contexto en que se ejecutan, es decir si es una vista _List_ o una vista _Edit_.
@@ -20,13 +20,13 @@ Ejemplo vista para ListController:
     
 ```XML
     <columns>
-        <column title="Código" display="left" order="100">
+        <column name="code" display="left" order="100">
             <widget type="text" fieldname="codigo" onclick="EditMyModel" />
         </column>
-        <column title="Descripcion" display="left" order="105">
+        <column name="description" display="left" order="105">
             <widget type="text" fieldname="descripcion" />
         </column>
-        <column title="Estado" display="center" order="110">
+        <column name="state" display="center" order="110">
             <widget type="text" fieldname="estado">
                 <option color="red" font-weight="bold">ABIERTO</option>
                 <option color="blue">CERRADO</option>
@@ -46,16 +46,16 @@ Ejemplo de vista para EditController:
     
 ```XML
     <columns>
-        <group numcolumns="8" title="Identificación internacional" icon="fa-globe">
-            <column title="Código" display="left" numcolumns="4" order="100">
+        <group name="data" numcolumns="8" title="Identificación internacional" icon="fa-globe">
+            <column name="code" display="left" numcolumns="4" order="100">
                 <widget type="text" fieldname="codigo" onclick="EditMyModel" />
             </column>
-            <column title="Descripcion" display="left" numcolumns="8" order="105">
+            <column name="description" display="left" numcolumns="8" order="105">
                 <widget type="text" fieldname="descripcion" />
             </column>
         </group>
-        <group numcolumns="4">
-            <column title="Estado" display="center" order="100">
+        <group name="state" numcolumns="4">
+            <column name="state" display="center" order="100">
                 <widget type="text" fieldname="estado">
                     <option color="red" font-weight="bold">ABIERTO</option>
                     <option color="blue">CERRADO</option>
@@ -69,7 +69,9 @@ Ejemplo de vista para EditController:
 ### column
 Entendemos que es cada uno de los campos del modelo que componen la vista y con los que el usuario puede interactuar.
 
-* **title** : Etiqueta descriptiva del campo
+* **name**: Identificador interno de la columna. Es obligatorio su uso. Como norma se recomienda el uso de identificadores en minúsculas y en inglés.
+
+* **title** : Etiqueta descriptiva del campo, en caso de no informarse se asume el valor de name.
 
 * **titleurl** : URL destino si el usuario hace click sobre el título de la columna.
 
@@ -174,7 +176,9 @@ Se indican las distintas opciones mediante sistema de etiquetas _\<values\>_ des
 Crea una rejilla bootstrap donde incluirá cada una de las columnas _\<column\>_ declaradas dentro del grupo. Se puede personalizar el grupo
 mediante los siguientes atributos:
 
-* **title** : Etiqueta descriptiva del grupo.
+* **name** : Identificador interno del grupo. Es obligatorio su uso. Como norma se recomienda el uso de identificadores en minúsculas y en inglés.
+
+* **title** : Etiqueta descriptiva del grupo. Para los grupos **no se usará** el valor name en caso de no informarse un title.
 
 * **titleurl** : URL destino si el usuario hace click sobre el título del grupo.
 

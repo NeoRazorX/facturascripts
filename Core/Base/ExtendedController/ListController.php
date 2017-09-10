@@ -181,7 +181,7 @@ abstract class ListController extends Base\Controller
 
                     case 'checkbox':
                         $field = $value['options']['field'];
-                        $checked =  ($value['options']['inverse']) 
+                        $checked = ($value['options']['inverse']) 
                             ? (boolean) !$value['value'] 
                             : (boolean) $value['value'];
                         $result[] = new DataBase\DataBaseWhere($field, $checked);
@@ -205,7 +205,7 @@ abstract class ListController extends Base\Controller
     {
         $this->views[$viewName] = new DataView($viewTitle, $modelName, $viewName, $this->user->nick);
         
-        if($this->active == '') {
+        if ($this->active == '') {
             $this->active = $viewName;
         }
     }    

@@ -167,7 +167,8 @@ class DataView
      */
     public function getColumns()
     {
-        return $this->pageOption->columns[0]->columns;
+        $key = array_keys($this->pageOption->columns)[0];
+        return $this->pageOption->columns[$key]->columns;
     }
 
     /**
