@@ -17,15 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base;
+namespace FacturaScripts\Core\Lib;
+
+use FacturaScripts\Core\Base\ExportInterface;
 
 /**
- * Description of ExportInterface
+ * Description of XLSExport
  *
  * @author carlos
  */
-interface ExportInterface
+class XLSExport implements ExportInterface
 {
-    public function newDoc($model);
-    public function newListDoc($cursor, $columns);
+    public function newDoc($model)
+    {
+        ;
+    }
+    
+    public function newListDoc($cursor, $columns)
+    {
+        ;
+    }
 }
