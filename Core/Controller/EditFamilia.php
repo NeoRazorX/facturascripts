@@ -38,11 +38,6 @@ class EditFamilia extends ExtendedController\EditController
         $this->model = new Model\Familia();
     }
 
-    public function privateCore(&$response, $user)
-    {
-        parent::privateCore($response, $user);
-    }
-
     public function getPageData()
     {
         $pagedata = parent::getPageData();

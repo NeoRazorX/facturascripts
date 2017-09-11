@@ -38,11 +38,6 @@ class EditCliente extends ExtendedController\EditController
         $this->model = new Model\Cliente();
     }
 
-    public function privateCore(&$response, $user)
-    {
-        parent::privateCore($response, $user);
-    }
-
     public function getPanelFooter()
     {
         return $this->i18n->trans('Fecha de alta: ') . $this->model->fechaalta;
@@ -51,7 +46,7 @@ class EditCliente extends ExtendedController\EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Cliente';
+        $pagedata['title'] = 'customers';
         $pagedata['icon'] = 'fa-users';
         $pagedata['showonmenu'] = FALSE;
 
