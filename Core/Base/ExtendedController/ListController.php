@@ -384,9 +384,9 @@ abstract class ListController extends Base\Controller
     {
         $result = '';
         $sep = '';
-        foreach ($this->views as $view) {
-            $result .= $sep . "'" . $view->getURL($type) . "'";
-            $sep = ',';
+        foreach ($this->views as $key => $view) {
+            $result .= $sep . $key . ': "' . $view->getURL($type) . '"';
+            $sep = ', ';
         }
         return $result;
     }

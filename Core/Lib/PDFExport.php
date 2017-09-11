@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\ExportInterface;
@@ -28,18 +27,21 @@ use FacturaScripts\Core\Base\ExportInterface;
  */
 class PDFExport implements ExportInterface
 {
+
     use \FacturaScripts\Core\Base\Utils;
-    
+
     public function newDoc($model)
     {
         $tableData = [];
-        foreach( (array) $model as $key => $value)  {
-            if(is_string($value)) {
+        foreach ((array) $model as $key => $value) {
+            if (is_string($value)) {
                 $tableData[] = ['key' => $key, 'value' => $this->fixHtml($value)];
             }
         }
-        
+
         $pdf = new \Cezpdf('a4', 'portrait');
+        $pdf->addInfo('Creator', 'FacturaScripts');
+        $pdf->addInfo('Producer', 'FacturaScripts');
         $pdf->ezTable($tableData);
         return $pdf->ezStream(array('Content-Disposition' => 'doc.pdf'));
     }
@@ -49,29 +51,33 @@ class PDFExport implements ExportInterface
         $orientation = 'portrait';
         $tableCols = [];
         $tableData = [];
-        
-        /// obtenemos las columnas
-        foreach($columns as $col) {
-            $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
-        }
-        
-        if(count($tableCols) > 5) {
-            $orientation = 'landscape';
-        }
-        
-        /// obtenemos los datos
-        foreach($cursor as $key => $row) {
-            foreach($tableCols as $col) {
-                $value = $row->{$col};
-                if(is_string($value)) {
-                    $value = $this->fixHtml($value);
+
+        if (!empty($cursor)) {
+            /// obtenemos las columnas
+            foreach ($columns as $col) {
+                $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
+            }
+
+            if (count($tableCols) > 5) {
+                $orientation = 'landscape';
+            }
+
+            /// obtenemos los datos
+            foreach ($cursor as $key => $row) {
+                foreach ($tableCols as $col) {
+                    $value = $row->{$col};
+                    if (is_string($value)) {
+                        $value = $this->fixHtml($value);
+                    }
+
+                    $tableData[$key][$col] = $value;
                 }
-                
-                $tableData[$key][$col] = $value;
             }
         }
-        
+
         $pdf = new \Cezpdf('a4', $orientation);
+        $pdf->addInfo('Creator', 'FacturaScripts');
+        $pdf->addInfo('Producer', 'FacturaScripts');
         $pdf->ezTable($tableData, $tableCols);
         return $pdf->ezStream(array('Content-Disposition' => 'list.pdf'));
     }
