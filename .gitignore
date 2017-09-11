@@ -16,3 +16,4 @@ plugin.list
 package-lock.json
 *.cache
 *.lock
+.vscode

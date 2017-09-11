@@ -83,7 +83,7 @@ class Translator
 
     /**
      * Carga los archivos de traducción siguiendo el sistema de prioridades
-     * de FacturaScripts. En esta caso hay que proporcionar al traductor las rutas
+     * de FacturaScripts. En este caso hay que proporcionar al traductor las rutas
      * en orden inverso.
      */
     private function locateFiles()
