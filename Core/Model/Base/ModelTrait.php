@@ -528,6 +528,7 @@ trait ModelTrait
             }
             if ($sql !== '' && !$this->dataBase->exec($sql)) {
                 $this->miniLog->critical('Error al comprobar la tabla ' . $tableName);
+                $this->cache->clear();
                 $done = false;
             }
         } else {
