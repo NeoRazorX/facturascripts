@@ -60,7 +60,7 @@ abstract class ListController extends Base\Controller
     /**
      * Lista de vistas mostradas por el controlador
      *
-     * @var DataView[]
+     * @var ListView[]
      */
     public $views;
 
@@ -93,6 +93,7 @@ abstract class ListController extends Base\Controller
     /**
      * Ejecuta la lógica privada del controlador.
      *
+     * @param mixed $response
      * @param mixed $user
      */
     public function privateCore(&$response, $user)
@@ -108,7 +109,7 @@ abstract class ListController extends Base\Controller
         }
 
         // Lanzamos cada una de las vistas
-        foreach ($this->views as $key => $dataView) {
+        foreach ($this->views as $key => $listView) {
             $where = [];
             $orderKey = '';
 
@@ -122,7 +123,7 @@ abstract class ListController extends Base\Controller
             $this->views[$key]->setSelectedOrderBy($orderKey);
 
             // Cargamos los datos según filtro y orden
-            $dataView->loadData($where, $this->getOffSet($key), Base\Pagination::FS_ITEM_LIMIT);
+            $listView->loadData($where, $this->getOffSet($key), Base\Pagination::FS_ITEM_LIMIT);
         }
     }
 
@@ -150,7 +151,7 @@ abstract class ListController extends Base\Controller
     /**
      * Acción de borrado de datos
      *
-     * @param DataView $view     Vista sobre la que se realiza la acción
+     * @param ListView $view     Vista sobre la que se realiza la acción
      * @return boolean
      */
     protected function deleteAction($view)
@@ -207,7 +208,7 @@ abstract class ListController extends Base\Controller
      */
     protected function addView($modelName, $viewName, $viewTitle = 'search')
     {
-        $this->views[$viewName] = new DataView($viewTitle, $modelName, $viewName, $this->user->nick);
+        $this->views[$viewName] = new ListView($viewTitle, $modelName, $viewName, $this->user->nick);
         if ($this->active == '') {
             $this->active = $viewName;
         }

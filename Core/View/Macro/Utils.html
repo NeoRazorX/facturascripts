@@ -22,3 +22,37 @@
 {% macro popoverTitle(msg, position = 'auto') %}
 {% if msg|length > 0 %}data-toggle="popover" data-placement="{{ position }}" data-trigger="hover" data-content="{{ msg }}"{% endif %}
 {% endmacro %}
+
+<!--
+    Devuelve el código html para la gestión de impresión y exportación de datos
+-->
+{% macro exportData(fsc, i18n, type = 'list') %}
+    {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+    {% set print, print_title = i18n.trans('print'), i18n.trans('Print list of records') %}
+    
+    <div class="btn-group">
+        {% if type == 'list' %}
+        <a href="#" onclick="doAction('export&option={{ fsc.exportManager.defaultOption() }}')" id="b_print" class="btn btn-sm btn-secondary" {{ popoverTitle(print_title, 'bottom') }}>
+        {% else %}
+        <a href="{{ fsc.model.url('edit') }}&action=export&option={{ fsc.exportManager.defaultOption() }}" id="b_print" class="btn btn-sm btn-secondary" {{ popoverTitle(print_title, 'bottom') }}>
+        {% endif %}
+           <i class="fa fa-print" aria-hidden="true"></i>
+            <span class="hidden-xs">&nbsp;{{ print }}</span>
+        </a>
+        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="sr-only">Print and Export Options</span>
+        </button>    
+        <div class="dropdown-menu">
+            {% for key, option in fsc.exportManager.options() %}
+            {% if type == 'list' %}
+            <a href="#" onclick="doAction('export&option={{ key }}')" class="dropdown-item">
+            {% else %}
+            <a href="{{ fsc.model.url('edit') }}&action=export&option={{ key }}" class="dropdown-item">
+            {% endif %}            
+                <i class="fa {{ option.icon }}" aria-hidden="true"></i>
+                <span class="hidden-xs">&nbsp;{{ i18n.trans(option.description) }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+{% endmacro %}

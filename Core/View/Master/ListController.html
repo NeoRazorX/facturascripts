@@ -37,8 +37,6 @@
 {% set refresh = i18n.trans('Refresh Page') %}
 {% set defaultT, defaultF = i18n.trans('mark as homepage'), i18n.trans('Marked as home page (press again to unmark)') %}
 {% set options, options_title = i18n.trans('Options'), i18n.trans('Setup Options') %}
-{% set print, print_title = i18n.trans('Print'), i18n.trans('Print list of records') %}
-{% set exportXLS, exportCSV = i18n.trans('spreadsheet (XLS)'), i18n.trans('Structured data (CSV)') %}
 {% set new_record, new_record_title = i18n.trans('New'), i18n.trans('Create a new record') %}
 {% set search_title = i18n.trans('Filters records containing the indicated value') %}
 {% set any = i18n.trans('Cualquier') %}
@@ -53,13 +51,14 @@
 <!-- Macros Template Imports -->
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 {% from 'Macro/Utils.html' import message as show_message %}
+{% from 'Macro/Utils.html' import exportData as exportData %}
 
 <!-- Page Header -->
 <div class="container-fluid d-print-none">
  {{ parent() }}
  
     <div class="d-none">
-        <form action="#" method=post name="insert_form">
+        <form action="#" method="post" name="insert_form">
             <input type="hidden" name="action" value="insert"/>
         </form>
     </div>
@@ -90,30 +89,9 @@
                     <i class="fa fa-wrench" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;{{ options }}</span>
                 </a>
-                <div class="btn-group">
-                    <a href="#" onclick="doAction('export&option={{ fsc.exportManager.defaultOption() }}')" id="b_print" class="btn btn-sm btn-secondary" {{ popoverTitle(print_title, 'bottom') }}>
-                        <i class="fa fa-print" aria-hidden="true"></i>
-                        <span class="hidden-xs">&nbsp;{{ print }}</span>
-                    </a>
-                    <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="sr-only">Print and Export Options</span>
-                    </button>    
-                    <div class="dropdown-menu">
-                        {% for key, option in fsc.exportManager.options() %}
-                        <a href="#" onclick="doAction('export&option={{ key }}')" class="dropdown-item">
-                            <i class="fa {{ option.icon }}" aria-hidden="true"></i>
-                            <span class="hidden-xs">&nbsp;{{ i18n.trans(option.description) }}</span>
-                        </a>
-                        {% endfor %}
-                    </div>
-                </div>
-                {#    TODO: Aplicar extensiones
-                {% for value in fsc.extensions %}
-                {% if value.type == 'button' %}
-                <a href="index.php?page={{ value.from }}{{ value.params }}" class="btn btn-sm btn-light">{{ value.text }}</a>
-                {% endif %}
-                {% endfor %}
-                #}
+                
+                <!-- Añadimos opciones de impresión y exportación -->
+                {{ exportData(fsc, i18n) }}
             </div>
         </div>
         <div class="col-sm-5 col-6 text-right">

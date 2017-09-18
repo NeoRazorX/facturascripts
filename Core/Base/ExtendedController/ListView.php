@@ -21,12 +21,12 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Model as Model;
 
 /**
- * Description of DataView
+ * Definición de vista para uso en ListController
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class DataView
+class ListView
 {
     /**
      * Constantes para ordenación
