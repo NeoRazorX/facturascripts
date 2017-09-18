@@ -35,7 +35,7 @@ class EditFamilia extends ExtendedController\EditController
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         // Establecemos el modelo de datos
-        $this->model = new Model\Familia();
+        $this->modelName = 'FacturaScripts\Core\Model\Familia';
     }
 
     public function getPageData()
