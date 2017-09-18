@@ -38,11 +38,6 @@ class EditGrupoEpigrafes extends ExtendedController\EditController
         $this->model = new Model\GrupoEpigrafes();
     }
 
-    public function privateCore(&$response, $user)
-    {
-        parent::privateCore($response, $user);
-    }
-
     public function getPageData()
     {
         $pagedata = parent::getPageData();

@@ -35,6 +35,7 @@ if (!file_exists(__DIR__ . '/vendor')) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+
 use FacturaScripts\Core\Base\Translator;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -82,6 +83,24 @@ function getLanguages(&$i18n)
 
     return $languages;
 }
+
+    /**
+    * Timezones list with GMT offset
+    * 
+    * @return array
+    * @link http://stackoverflow.com/a/9328760
+    */
+    function get_timezone_list()
+    {
+        $zones_array = array();
+        $timestamp = time();
+        foreach (timezone_identifiers_list() as $key => $zone) {
+            date_default_timezone_set($zone);
+            $zones_array[$key]['zone'] = $zone;
+            $zones_array[$key]['diff_from_GMT'] = 'UTC/GMT ' . date('P', $timestamp);
+        }
+        return $zones_array;
+    }
 
 /**
  * Se intenta realizar la conexión a la base de datos,
@@ -235,6 +254,7 @@ function saveInstall()
         fwrite($file, "define('FS_COOKIES_EXPIRE', 604800);\n");
         fwrite($file, "define('FS_DEBUG', true);\n");
         fwrite($file, "define('FS_LANG', '" . filter_input(INPUT_POST, 'fs_lang') . "');\n");
+        fwrite($file, "define('FS_TIMEZONE', '" . filter_input(INPUT_POST, 'fs_timezone') . "');\n");
         fwrite($file, "define('FS_DB_TYPE', '" . filter_input(INPUT_POST, 'db_type') . "');\n");
         fwrite($file, "define('FS_DB_HOST', '" . filter_input(INPUT_POST, 'db_host') . "');\n");
         fwrite($file, "define('FS_DB_PORT', '" . filter_input(INPUT_POST, 'db_port') . "');\n");
@@ -293,12 +313,13 @@ function installerMain()
             return 0;
         }
     }
-
+    
     /// empaquetamos las variables a pasar el motor de plantillas
     $templateVars = [
         'errors' => $errors,
         'i18n' => $i18n,
         'languages' => getLanguages($i18n),
+        'timezone' => get_timezone_list(),
         'license' => file_get_contents(__DIR__ . '/COPYING'),
     ];
     renderHTML($templateVars);

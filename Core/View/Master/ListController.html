@@ -5,7 +5,9 @@
 <script type="text/javascript">
     var tabActive = '{{ fsc.active }}';
     function insertRecord() {
-        /// completar
+        var url = { {{ fsc.getStringURLs('new')|raw }} };
+        document.insert_form.action = url[tabActive];
+        document.insert_form.submit();
     }
     function doAction(action) {
         var url = '{{ fsc.url() }}';
@@ -34,16 +36,16 @@
 
 {% block body %}
 <!-- Calculate texts according to language -->
-{% set refresh = i18n.trans('Refresh Page') %}
-{% set defaultT, defaultF = i18n.trans('mark as homepage'), i18n.trans('Marked as home page (press again to unmark)') %}
-{% set options, options_title = i18n.trans('Options'), i18n.trans('Setup Options') %}
-{% set new_record, new_record_title = i18n.trans('New'), i18n.trans('Create a new record') %}
-{% set search_title = i18n.trans('Filters records containing the indicated value') %}
-{% set any = i18n.trans('Cualquier') %}
-{% set panel_header = i18n.trans('Datos generales') %}
-{% set title = fsc.getPageData()['title'] %}
-{% set title = i18n.trans(title) %}
-{% set no_data = i18n.trans('No hay registros con esas condiciones. Pulse el botón Nuevo para dar de alta.') %}
+{% set refresh = i18n.trans('refresh-page') %}
+{% set defaultT, defaultF = i18n.trans('mark-as-homepage'), i18n.trans('marked-as-homepage') %}
+{% set options, options_title = i18n.trans('options'), i18n.trans('setup-options') %}
+{% set print, print_title = i18n.trans('print'), i18n.trans('print-list-of-records') %}
+{% set new_record, new_record_title = i18n.trans('new'), i18n.trans('create-new-record') %}
+{% set search_title = i18n.trans('filter-records-containing-indicated-value') %}
+{% set any = i18n.trans('any') %}
+{% set panel_header = i18n.trans('common-data') %}
+{% set title = i18n.trans(fsc.getPageData()['title']) %}
+{% set no_data = i18n.trans('no-data') %}
 
 <!-- Calculate common values -->
 {% set list_url = fsc.views[fsc.active].getURL('list') %}
@@ -56,7 +58,7 @@
 <!-- Page Header -->
 <div class="container-fluid d-print-none">
  {{ parent() }}
- 
+
     <div class="d-none">
         <form action="#" method="post" name="insert_form">
             <input type="hidden" name="action" value="insert"/>
@@ -79,9 +81,9 @@
                 </a>
                 {% endif %}
             </div>
-            
+
             <div class="btn-group">
-                <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord();" {{ popoverTitle(new_record_title, 'bottom') }}>
+                <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord()" {{ popoverTitle(new_record_title, 'bottom') }}>
                     <i class="fa fa-plus" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;{{ new_record }}</span>
                 </a>
@@ -89,7 +91,7 @@
                     <i class="fa fa-wrench" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;{{ options }}</span>
                 </a>
-                
+
                 <!-- Añadimos opciones de impresión y exportación -->
                 {{ exportData(fsc, i18n) }}
             </div>
@@ -116,16 +118,6 @@
             </a>
         </li>
         {% endfor %}
-        
-        {#    TODO: Aplicar extensiones
-        {% for value in fsc.extensions %}
-        {% if value.type == 'tab' %}
-        <li class="nav-item">
-            <a href="#ext_{{ value.name }}" aria-controls="ext_{{ value.name }}" role="tab" data-toggle="tab">{{ value.text }}</a>
-        </li>
-        {% endif %}
-        {% endfor %}
-        #}
     </ul>
 
     <!-- Main Tab -->
@@ -140,7 +132,7 @@
                         <!-- Main filter -->
                         <div class="col-md-2">
                             <div class="input-group">
-                                <input type="hidden" name="active" value="{{ indexView }}"> 
+                                <input type="hidden" name="active" value="{{ indexView }}">
                                 <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{% if indexView == fsc.active %}{{ fsc.query }}{% endif %}" autocomplete="off" placeholder="Buscar" autofocus=""/>
                                 <span class="input-group-btn hidden-sm">
                                     <button class="btn btn-primary" type="submit">
@@ -278,18 +270,6 @@
             </div>
         </div>
         {% endfor %}
-        
-        <!-- Aditionals Tabs -->
-        {#  TODO: Aplicar extensiones
-        {% for extension in fsc.extensions %}
-        {% if extension.type == 'tab' %}
-        <div role="tabpanel" class="tab-panel" id="ext_{{ extension.name }}">
-            <iframe src="index.php?page={{ extension.from }}{{ extension.params }}"
-                    width="100%" height="2000" frameborder="0"></iframe>
-        </div>
-        {% endif %}
-        {% endfor %}
-        #}
     </div>
 </div>
 {% endblock %}

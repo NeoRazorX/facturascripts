@@ -103,11 +103,6 @@ abstract class ListController extends Base\Controller
         // Creamos las vistas a visualizar
         $this->createViews();
 
-        // Comprobamos si hay operaciones por realizar
-        if ($this->request->get('action', false)) {
-            $this->setActionForm();
-        }
-
         // Lanzamos cada una de las vistas
         foreach ($this->views as $key => $listView) {
             $where = [];
@@ -125,6 +120,11 @@ abstract class ListController extends Base\Controller
             // Cargamos los datos según filtro y orden
             $listView->loadData($where, $this->getOffSet($key), Base\Pagination::FS_ITEM_LIMIT);
         }
+
+        // Comprobamos si hay operaciones por realizar
+        if ($this->request->get('action', false)) {
+            $this->setActionForm();
+        }
     }
 
     /**
@@ -140,7 +140,13 @@ abstract class ListController extends Base\Controller
 
             case 'export':
                 $this->setTemplate(false);
-                $this->response->setContent($this->exportManager->generateList($this->views[$this->active]->getCursor(), $this->request->get('option')));
+                $this->response->setContent(
+                    $this->exportManager->generateList(
+                        $this->views[$this->active]->getCursor(),
+                        $this->views[$this->active]->getColumns(),
+                        $this->request->get('option')
+                    )
+                );
                 break;
 
             default:
@@ -378,9 +384,9 @@ abstract class ListController extends Base\Controller
     {
         $result = '';
         $sep = '';
-        foreach ($this->views as $view) {
-            $result .= $sep . "'" . $view->getURL($type) . "'";
-            $sep = ',';
+        foreach ($this->views as $key => $view) {
+            $result .= $sep . $key . ': "' . $view->getURL($type) . '"';
+            $sep = ', ';
         }
         return $result;
     }

@@ -17,15 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base;
+namespace FacturaScripts\Core\Base\Cache;
 
 /**
- * Description of ExportInterface
+ * Description of AdaptorInterface
  *
  * @author carlos
  */
-interface ExportInterface
+interface AdaptorInterface
 {
-    public function newDoc($model);
-    public function newListDoc($cursor, $columns);
+    public function get($key);
+
+    public function set($key, $content);
+
+    public function delete($key);
+
+    public function clear();
 }

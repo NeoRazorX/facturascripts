@@ -34,7 +34,7 @@ use FacturaScripts\Core\Base\Translator;
  * @link http://emiliocobos.net/php-cache/
  *
  */
-class FileCache
+class FileCache implements AdaptorInterface
 {
     /**
      * Configuración de la cache.

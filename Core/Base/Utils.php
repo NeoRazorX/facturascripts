@@ -155,6 +155,13 @@ trait Utils
 
         return trim($newt);
     }
+    
+    public function fixHtml($txt)
+    {
+        $original = ['&lt;', '&gt;', '&quot;', '&#39;'];
+        $final = ['<', '>', "'", "'"];
+        return trim(str_replace($original, $final, $txt));
+    }
 
     /**
      * PostgreSQL guarda los valores TRUE como 't', MySQL como 1.
