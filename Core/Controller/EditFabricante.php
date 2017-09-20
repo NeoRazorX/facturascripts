@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la edición de un registro del modelo Fabricante
@@ -35,7 +34,7 @@ class EditFabricante extends ExtendedController\EditController
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         // Establecemos el modelo de datos
-        $this->model = new Model\Fabricante();
+        $this->modelName = 'FacturaScripts\Core\Model\Fabricante';
     }
 
     public function getPageData()

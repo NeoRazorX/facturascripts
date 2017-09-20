@@ -204,7 +204,7 @@ class WidgetItem
         $this->type = (string) $column['widget']['type'];
         $this->decimal = (int) intval($column['widget']['decimal']);
         $this->hint = (string) $column['widget']['hint'];
-        $this->readOnly = (bool) boolval($column['widget']['readonly']);
+        $this->readOnly = (bool) boolval($column['widget']['readOnly']);
         $this->required = (bool) boolval($column['widget']['required']);
         $this->icon = (string) $column['widget']['icon'];
         $this->onClick = (string) $column['widget']['onClick'];

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Definición inicial para el controlador EditFabricante
+ *
+ * @author Artex Trading sa <jcuello@artextrading.com>
+-->
+
+<view>
+    <columns>
+        <group name="numericformat" numcolumns="12">
+            <column name="decimals" numcolumns="2" order="100">
+                <widget type="number" fieldname="decimals" required="true" />
+            </column>
+            
+            <column name="product_decimals" numcolumns="2" order="110">
+                <widget type="number" fieldname="product_decimals" required="true" />
+            </column>            
+
+            <column name="decimal_separator" numcolumns="2" order="120">
+                <widget type="text" fieldname="decimal_separator" required="true" />
+            </column>            
+
+            <column name="thousands_separator" numcolumns="2" order="120">
+                <widget type="text" fieldname="thousands_separator" required="true" />
+            </column>            
+        </group>
+
+        <group name="dateformat" numcolumns="12">
+            <column name="short" numcolumns="4" order="100">
+                <widget type="text" fieldname="short" required="true" />
+            </column>
+
+            <column name="long" numcolumns="4" order="100">
+                <widget type="text" fieldname="long" required="true" />
+            </column>
+
+            <column name="maxtoday" numcolumns="4" order="100">
+                <widget type="number" fieldname="maxtoday" required="true" />
+            </column>
+    </columns>    
+</view>

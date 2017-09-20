@@ -24,23 +24,23 @@
 
 <view>
     <columns>
-        <column title="Código Alfa-3" order="100"
+        <column name="code" title="Code Alfa-3" order="100"
                 titleurl="https://es.wikipedia.org/wiki/ISO_3166-1" 
                 description="Identificación oficial para los nombres de países y otras dependencias administrativas">
             <widget type="text" fieldname="codpais" onclick="EditPais" />
         </column>
-        <column title="Código Alfa-2" order="110"
+        <column name="code2" title="Code Alfa-2" order="110"
                 titleurl="https://es.wikipedia.org/wiki/ISO_3166-1#C.C3.B3digos_ISO_3166-1"
                 description="Identificación oficial para los nombres de países y otras dependencias administrativas">
             <widget type="text" fieldname="codiso" />
         </column>
-        <column title="Nombre" order="120">
+        <column name="name" order="120">
             <widget type="text" fieldname="nombre" />
         </column>
-        <column title="Validar Prov." display="center" order="130">
+        <column name="validate provider" title="validate prov." display="center" order="130">
             <widget type="checkbox" fieldname="validarprov" />
         </column>
-        <column title="Bandera" display="none" order="140">
+        <column name="flag" display="none" order="140">
             <widget type="text" fieldname="bandera" />
         </column>
     </columns>

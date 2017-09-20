@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la edición de un registro del modelo Cliente
@@ -35,12 +34,13 @@ class EditCliente extends ExtendedController\EditController
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         // Establecemos el modelo de datos
-        $this->model = new Model\Cliente();
+        $this->modelName = 'FacturaScripts\Core\Model\Cliente';
     }
 
     public function getPanelFooter()
     {
-        return $this->i18n->trans('Fecha de alta: ') . $this->model->fechaalta;
+        $model = $this->getModel();
+        return $this->i18n->trans('Fecha de alta: ') . $model->fechaalta;
     }
 
     public function getPageData()

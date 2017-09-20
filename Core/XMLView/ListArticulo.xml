@@ -24,25 +24,25 @@
 
 <view>
     <columns>
-        <column title="Referencia" display="left" order="100">
+        <column name="reference" display="left" order="100">
             <widget type="text" fieldname="referencia" onclick="EditArticulo" />
         </column>
-        <column title="Descripción" display="left" order="110">
+        <column name="description" display="left" order="110">
             <widget type="text" fieldname="descripcion" />
         </column>
-        <column title="Partnumber" display="left" order="120">
+        <column name="partnumber" display="left" order="120">
             <widget type="text" fieldname="partnumber" />
         </column>
-        <column title="Fabricante" display="left" order="130">
+        <column name="manufacturer" display="left" order="130">
             <widget type="text" fieldname="codfabricante" />
         </column>
-        <column title="Familia" display="left" order="140">
+        <column name="family" display="left" order="140">
             <widget type="text" fieldname="codfamilia" />
         </column>
-        <column title="PVP" display="right" order="150">
+        <column name="price" title="PVP" display="right" order="150">
             <widget type="money" fieldname="pvp" />
         </column>
-        <column title="Stock" display="right" order="160">
+        <column name="stock" display="right" order="160">
             <widget type="number" fieldname="stockfis" />
         </column>
     </columns>

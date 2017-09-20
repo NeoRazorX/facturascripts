@@ -47,10 +47,6 @@
         <consulta>UNIQUE (name, nick)</consulta>
     </restriccion>
     <restriccion>
-        <nombre>ca_fs_pagesoptions_pages</nombre>
-        <consulta>FOREIGN KEY (name) REFERENCES fs_pages (name) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-    <restriccion>
         <nombre>ca_fs_pagesoptions_users</nombre>
         <consulta>FOREIGN KEY (nick) REFERENCES fs_users (nick) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
     </restriccion>

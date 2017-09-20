@@ -45,7 +45,6 @@
 {% set any = i18n.trans('any') %}
 {% set panel_header = i18n.trans('common-data') %}
 {% set title = i18n.trans(fsc.getPageData()['title']) %}
-{% set no_data = i18n.trans('no-data') %}
 
 <!-- Calculate common values -->
 {% set list_url = fsc.views[fsc.active].getURL('list') %}
@@ -53,13 +52,15 @@
 <!-- Macros Template Imports -->
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 {% from 'Macro/Utils.html' import message as show_message %}
+{% from 'Macro/Utils.html' import exportData as exportData %}
+{% from 'Macro/BaseController.html' import columnsForListView as columnsForListView %}
 
 <!-- Page Header -->
 <div class="container-fluid d-print-none">
  {{ parent() }}
- 
+
     <div class="d-none">
-        <form action="#" method=post name="insert_form">
+        <form action="#" method="post" name="insert_form">
             <input type="hidden" name="action" value="insert"/>
         </form>
     </div>
@@ -80,7 +81,7 @@
                 </a>
                 {% endif %}
             </div>
-            
+
             <div class="btn-group">
                 <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord()" {{ popoverTitle(new_record_title, 'bottom') }}>
                     <i class="fa fa-plus" aria-hidden="true"></i>
@@ -90,30 +91,9 @@
                     <i class="fa fa-wrench" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;{{ options }}</span>
                 </a>
-                <div class="btn-group">
-                    <a href="#" onclick="doAction('export&option={{ fsc.exportManager.defaultOption() }}')" id="b_print" class="btn btn-sm btn-secondary" {{ popoverTitle(print_title, 'bottom') }}>
-                        <i class="fa fa-print" aria-hidden="true"></i>
-                        <span class="hidden-xs">&nbsp;{{ print }}</span>
-                    </a>
-                    <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="sr-only">Print and Export Options</span>
-                    </button>    
-                    <div class="dropdown-menu">
-                        {% for key, option in fsc.exportManager.options() %}
-                        <a href="#" onclick="doAction('export&option={{ key }}')" class="dropdown-item">
-                            <i class="fa {{ option.icon }}" aria-hidden="true"></i>
-                            <span class="hidden-xs">&nbsp;{{ i18n.trans(option.description) }}</span>
-                        </a>
-                        {% endfor %}
-                    </div>
-                </div>
-                {#    TODO: Aplicar extensiones
-                {% for value in fsc.extensions %}
-                {% if value.type == 'button' %}
-                <a href="index.php?page={{ value.from }}{{ value.params }}" class="btn btn-sm btn-light">{{ value.text }}</a>
-                {% endif %}
-                {% endfor %}
-                #}
+
+                <!-- Añadimos opciones de impresión y exportación -->
+                {{ exportData(fsc, i18n) }}
             </div>
         </div>
         <div class="col-sm-5 col-6 text-right">
@@ -131,23 +111,14 @@
         {% for indexView, view in fsc.views %}
         <li class="nav-item">
             {% set active = (indexView == fsc.active) ? 'active' : '' %}
-            <a href="#{{ view.getModelID() }}" class="nav-link {{ active }}" id="{{ view.getModelID() }}-tab" data-toggle="tab" role="tab" aria-controls="{{ view.getModelID() }}">
+            {% set modelID = view.getModelID() %}
+            <a href="#{{ modelID }}" class="nav-link {{ active }}" id="{{ modelID }}-tab" data-toggle="tab" role="tab" aria-controls="{{ modelID }}">
                 <i class="fa fa-search" aria-hidden="true"></i>
                 <span class="hidden-xs">&nbsp;{{ i18n.trans(view.title) }}</span>
                 <span class="badge badge-secondary">{{ view.count }}</span>
             </a>
         </li>
         {% endfor %}
-        
-        {#    TODO: Aplicar extensiones
-        {% for value in fsc.extensions %}
-        {% if value.type == 'tab' %}
-        <li class="nav-item">
-            <a href="#ext_{{ value.name }}" aria-controls="ext_{{ value.name }}" role="tab" data-toggle="tab">{{ value.text }}</a>
-        </li>
-        {% endif %}
-        {% endfor %}
-        #}
     </ul>
 
     <!-- Main Tab -->
@@ -162,7 +133,7 @@
                         <!-- Main filter -->
                         <div class="col-md-2">
                             <div class="input-group">
-                                <input type="hidden" name="active" value="{{ indexView }}"> 
+                                <input type="hidden" name="active" value="{{ indexView }}">
                                 <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{% if indexView == fsc.active %}{{ fsc.query }}{% endif %}" autocomplete="off" placeholder="Buscar" autofocus=""/>
                                 <span class="input-group-btn hidden-sm">
                                     <button class="btn btn-primary" type="submit">
@@ -241,37 +212,7 @@
             <!-- Data Row -->
             <div class="table-responsive">
                 <!-- Data Table -->
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            {% for column in view.getColumns() %}
-                            {% if column.display != 'none' %}
-                            <th class="text-{{ column.display }}">{{ column.getHeaderHTML(column.title)|raw }}</th>
-                            {% endif %}
-                            {% endfor %}
-                        </tr>
-                    </thead>
-                    {% for data in view.getCursor() %}
-                    {% set row = view.getRow('status') %}
-                    {% if row is empty %}
-                    <tr class="table-light">
-                    {% else %}
-                    {% set status = attribute(data, row.fieldName) %}
-                    <tr class="{{ row.getStatus(status) }}">
-                    {% endif %}
-                        {% for column in view.getColumns() %}
-                        {% if column.display != 'none' %}
-                        {% set value = attribute(data, column.widget.fieldName) %}
-                        <td class="text-{{ column.display }}">{{ column.getListHTML(value)|raw }}</td>
-                        {% endif %}
-                        {% endfor %}
-                    </tr>
-                    {% else %}
-                    <tr class="table-warning">
-                        <td colspan="12"><b>{{ no_data }}</b></td>
-                    </tr>
-                    {% endfor %}
-                </table>
+                {{ columnsForListView(i18n, view) }}
             </div>
 
             <!-- Footer Navigation -->
@@ -300,18 +241,6 @@
             </div>
         </div>
         {% endfor %}
-        
-        <!-- Aditionals Tabs -->
-        {#  TODO: Aplicar extensiones
-        {% for extension in fsc.extensions %}
-        {% if extension.type == 'tab' %}
-        <div role="tabpanel" class="tab-panel" id="ext_{{ extension.name }}">
-            <iframe src="index.php?page={{ extension.from }}{{ extension.params }}"
-                    width="100%" height="2000" frameborder="0"></iframe>
-        </div>
-        {% endif %}
-        {% endfor %}
-        #}
     </div>
 </div>
 {% endblock %}

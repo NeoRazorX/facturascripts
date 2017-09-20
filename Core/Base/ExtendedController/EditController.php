@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para edición de datos
@@ -29,7 +28,7 @@ use FacturaScripts\Core\Model;
  */
 class EditController extends Base\Controller
 {
-
+    
     /**
      *
      * @var Base\ExportManager 
@@ -37,49 +36,53 @@ class EditController extends Base\Controller
     public $exportManager;
 
     /**
-     * Modelo con los datos a mostrar
+     * Vista mostrada por el controlador
      *
-     * @var mixed
+     * @var EditView
      */
-    public $model;
+    public $view;
 
     /**
-     * Configuración de columnas y filtros
-     *
-     * @var Model\PageOption
+     * Nombre del modelo de datos
+     * 
+     * @var string
      */
-    private $pageOption;
-
+    protected $modelName;
+    
+    /**
+     * Inicia todos los objetos y propiedades.
+     *
+     * @param Cache      $cache
+     * @param Translator $i18n
+     * @param MiniLog    $miniLog
+     * @param string     $className
+     */    
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->setTemplate('Master/EditController');
+        $this->setTemplate('Master/EditController');        
         $this->exportManager = new Base\ExportManager();
-        $this->pageOption = new Model\PageOption();
     }
 
     /**
      * Ejecuta la lógica privada del controlador.
      *
+     * @param mixed $response
      * @param mixed $user
      */
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-
-        // Cargamos configuración de columnas y filtros
-        $className = $this->getClassName();
-        $this->pageOption->getForUser($className, $user->nick);
+       
+        // Creamos la vista a visualizar
+        $viewName = $this->getClassName();
+        $title = $this->getPageData()['title'];
+        $this->view = new EditView($title, $this->modelName, $viewName, $user->nick);
 
         // Cargamos datos del modelo
         $value = $this->request->get('code');
-        $this->model->loadFromCode($value);
-
-        // Bloqueamos el campo Primary Key si no es una alta
-        $fieldName = $this->model->primaryColumn();
-        $column = $this->pageOption->columnForField($fieldName);
-        $column->widget->readOnly = (!empty($this->model->{$fieldName}));
+        $this->view->setCode($value);
 
         // Comprobamos si hay operaciones por realizar
         if ($this->request->get('action', false)) {
@@ -95,8 +98,7 @@ class EditController extends Base\Controller
         switch ($this->request->get('action')) {
             case 'save':
                 $data = $this->request->request->all();
-                $this->model->checkArrayData($data);
-                $this->model->loadFromData($data);
+                $this->view->loadFromData($data);
                 $this->editAction($data);
                 break;
 
@@ -107,8 +109,10 @@ class EditController extends Base\Controller
             
             case 'export':
                 $this->setTemplate(false);
-                $this->response->setContent($this->exportManager->generateDoc($this->model, $this->request->get('option')));
-
+                $document = $this->view->export($this->exportManager, $this->request->get('option'));
+                $this->response->setContent($document);
+                break;
+            
             default:
                 break;
         }
@@ -122,7 +126,7 @@ class EditController extends Base\Controller
      */
     protected function editAction($data)
     {
-        if ($this->model->save()) {
+        if ($this->view->save()) {
             $this->miniLog->notice($this->i18n->trans('Record updated correctly!'));
             return TRUE;
         }
@@ -136,7 +140,7 @@ class EditController extends Base\Controller
      */
     protected function insertAction($data)
     {
-        $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
+        $this->view->setNewCode();
     }
 
     /**
@@ -146,7 +150,7 @@ class EditController extends Base\Controller
      */
     public function getPanelHeader()
     {
-        return $this->i18n->trans('Datos generales');
+        return $this->i18n->trans('general-data');
     }
 
     /**
@@ -156,28 +160,16 @@ class EditController extends Base\Controller
      */
     public function getPanelFooter()
     {
-        return '';
+        return $this->i18n->trans($this->view->getPanelFooter());
     }
-
+    
     /**
-     * Si existe, devuelve el tipo de row especificado
-     *
-     * @param string $key
-     *
-     * @return RowItem
+     * Puntero al modelo de datos
+     * 
+     * @return mixed
      */
-    public function getRow($key)
+    public function getModel()
     {
-        return empty($this->pageOption->rows) ? NULL : $this->pageOption->rows[$key];
-    }
-
-    /**
-     * Devuelve la configuración de columnas
-     *
-     * @return array
-     */
-    public function getGroupColumns()
-    {
-        return $this->pageOption->columns;
+        return $this->view->getModel();
     }
 }

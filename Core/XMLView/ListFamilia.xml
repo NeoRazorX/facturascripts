@@ -24,13 +24,13 @@
 
 <view>
     <columns>
-        <column title="Code" description="Code for internal family use." order="100">
+        <column name="code" description="Code for internal family use." order="100">
             <widget type="text" fieldname="codfamilia" onclick="EditFamilia" />
         </column>
-        <column title="Description" order="110">
+        <column name="description" order="110">
             <widget type="text" fieldname="descripcion" />
         </column>
-        <column title="Parent" description="Indicates if the family is grouped at a higher level." order="200">
+        <column name="parent" description="Indicates if the family is grouped at a higher level." order="200">
             <widget type="text" fieldname="madre" />
         </column>
     </columns>
