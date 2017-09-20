@@ -1,0 +1,140 @@
+{% extends "Master/MenuTemplate.html" %}
+
+{% block css %}
+    {{ parent() }}
+    
+    <style type="text/css">
+        .card-header {
+            padding: .5rem 1.25rem;
+            font-size: 120%;
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+{% endblock %}
+
+{% block messages %}
+<div class="container-fluid">
+    <div id="messages" class="row">
+        <div class="col-12">
+            {{ parent() }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block body %}
+<!-- Calculate texts according to language -->
+{% set go_back = i18n.trans('back') %}
+{% set save, save_title = i18n.trans('save'), i18n.trans('save data') %}
+{% set undo, undo_title = i18n.trans('undo'), i18n.trans('restore data') %}
+{% set refresh_title = i18n.trans('refresh') %}
+
+{% set panel_header = fsc.getPanelHeader() %}
+{% set panel_footer = fsc.getPanelFooter() %}
+
+{% set title = fsc.getPageData()['title'] %}
+{% set title = i18n.trans(title) %}
+
+<!-- Visual macros -->
+{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+{% from 'Macro/Utils.html' import exportData as exportData %}
+{% from 'Macro/BaseController.html' import columnsForListView as columnsForListView %}
+{% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
+
+<!-- Main Body -->
+<div class="container-fluid">
+    {{ parent() }}
+    
+    <!-- Header Row -->
+    <div id="header" class="row">
+        <div class="col-3 d-print-none">
+            <div class="btn-group">
+                <a href="{{ fsc.model.url('list') }}" class="btn btn-sm btn-light">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                    <span class="hidden-xs hidden-sm">&nbsp;{{ go_back }} </span>
+                </a>
+                <a href="{{ fsc.model.url('edit') }}" class="btn btn-sm btn-light" {{ popoverTitle(refresh_title, 'bottom') }}>
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                </a>
+            </div>
+            
+            <!-- Añadimos opciones de impresión y exportación -->
+            {{ exportData(fsc, i18n, 'edit') }}
+        </div>
+
+        <div class="col-6 text-center"
+            <div class="page-header">
+                <h2>
+                    <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    <p>&nbsp;</p>
+
+    <!-- Data Row -->
+    <div id="data" class="row">
+        <!-- Left Panel -->
+        <div class="col-sm-auto ml-3">
+            <div class="card bg-light">                
+                <div class="card-header">
+                    <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i>
+                    <span class="card-title">&nbsp;{{ panel_header }}</span>
+                </div>
+                <div class="card-body">
+                    <div class="list-group" id="myList" role="tablist">
+                    {% for indexView, view in fsc.views %}
+                        {% set active = (indexView == fsc.active) ? 'active' : '' %}                    
+                        <a class="list-group-item list-group-item-action {{ active }}" data-toggle="list" href="#{{ indexView }}" role="tab">{{ view.title }}</a>
+                    {% endfor %}                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="col mr-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="tab-content">
+                    {% for indexView, view in fsc.views %}
+                        {% set active = (indexView == fsc.active) ? 'active' : '' %}                    
+                        <div class="tab-pane {{ active }}" id="{{ indexView }}" role="tabpanel">                                                        
+                            {% if view.viewType == 'list' %}
+                            {{ columnsForListView(i18n, view) }}
+                            {% endif %}
+                            
+                            {% if view.viewType == 'edit' %}
+                            <form name="{{ indexView }}form" action="" method="post" class="form" role="form">
+                                <input type="hidden" name="action" value="save"> 
+                                <div class="row">
+                                {{ columnsForEditView(i18n, view) }}
+                                </div>
+                                <div class="text-right">
+                                    <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
+                                        <i class="fa fa-undo" aria-hidden="true"></i>&nbsp; {{ undo }}
+                                    </button>
+                                    <button class="btn btn-sm btn-primary" type="submit" {{ popoverTitle(save_title, 'bottom') }}>
+                                        <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
+                                    </button>
+                                </div>
+                            </form>
+                            {% endif %}                            
+
+                            {% if view.viewType == 'html' %}
+                            uppsss ... tu pides mucho
+                            {% endif %}                            
+                        </div>
+                    {% endfor %}                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>    
+{% endblock %}

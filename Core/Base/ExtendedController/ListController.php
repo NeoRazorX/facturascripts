@@ -140,16 +140,9 @@ abstract class ListController extends Base\Controller
 
             case 'export':
                 $this->setTemplate(false);
-                $this->response->setContent(
-                    $this->exportManager->generateList(
-                        $this->views[$this->active]->getCursor(),
-                        $this->views[$this->active]->getColumns(),
-                        $this->request->get('option')
-                    )
-                );
-                break;
-
-            default:
+                $view = $this->views[$this->active];
+                $document = $view->export($this->exportManager, $this->request->get('option'));
+                $this->response->setContent($document);
                 break;
         }
     }
@@ -206,7 +199,6 @@ abstract class ListController extends Base\Controller
 
     /**
      * Crea y añade una vista al controlador.
-     * Devuelve el indice de la vista dentro del array de vistas.
      *
      * @param string $modelName
      * @param string $viewName
@@ -215,7 +207,7 @@ abstract class ListController extends Base\Controller
     protected function addView($modelName, $viewName, $viewTitle = 'search')
     {
         $this->views[$viewName] = new ListView($viewTitle, $modelName, $viewName, $this->user->nick);
-        if ($this->active == '') {
+        if (empty($this->active)) {
             $this->active = $viewName;
         }
     }

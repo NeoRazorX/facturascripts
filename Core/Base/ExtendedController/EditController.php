@@ -36,7 +36,7 @@ class EditController extends Base\Controller
     public $exportManager;
 
     /**
-     * Lista de vistas mostradas por el controlador
+     * Vista mostrada por el controlador
      *
      * @var EditView
      */
@@ -109,7 +109,7 @@ class EditController extends Base\Controller
             
             case 'export':
                 $this->setTemplate(false);
-                $document = $this->exportManager->generateDoc($this->view->model, $this->request->get('option'));
+                $document = $this->view->export($this->exportManager, $this->request->get('option'));
                 $this->response->setContent($document);
                 break;
             
@@ -150,7 +150,7 @@ class EditController extends Base\Controller
      */
     public function getPanelHeader()
     {
-        return $this->i18n->trans('General data');
+        return $this->i18n->trans('general-data');
     }
 
     /**
@@ -162,26 +162,14 @@ class EditController extends Base\Controller
     {
         return $this->i18n->trans($this->view->getPanelFooter());
     }
-
+    
     /**
-     * Si existe, devuelve el tipo de row especificado
-     *
-     * @param string $key
-     *
-     * @return RowItem
+     * Puntero al modelo de datos
+     * 
+     * @return mixed
      */
-    public function getRow($key)
+    public function getModel()
     {
-        return $this->view->getRow($key);
-    }
-
-    /**
-     * Devuelve la configuración de columnas
-     *
-     * @return array
-     */
-    public function getGroupColumns()
-    {
-        return $this->view->getGroupColumns();
+        return $this->view->getModel();
     }
 }

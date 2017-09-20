@@ -22,25 +22,19 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controlador para la edición de un registro del modelo Cliente
+ * Description of PanelSettings
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class EditCliente extends ExtendedController\EditController
+class PanelCliente extends ExtendedController\PanelController
 {
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
-    {
-        parent::__construct($cache, $i18n, $miniLog, $className);
 
-        // Establecemos el modelo de datos
-        $this->modelName = 'FacturaScripts\Core\Model\Cliente';
-    }
-
-    public function getPanelFooter()
+    protected function createViews()
     {
-        $model = $this->getModel();
-        return $this->i18n->trans('Fecha de alta: ') . $model->fechaalta;
+        $this->addEditView('FacturaScripts\Core\Model\Cliente', 'EditCliente', 'Cliente');
+        $this->addEditView('FacturaScripts\Core\Model\Fabricante', 'EditFabricante', 'Fabricante');
+        $this->addEditView('FacturaScripts\Core\Model\Pais', 'EditPais', 'Pais');
+        $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'Lista de Clientes');
     }
 
     public function getPageData()
@@ -51,5 +45,10 @@ class EditCliente extends ExtendedController\EditController
         $pagedata['showonmenu'] = FALSE;
 
         return $pagedata;
+    }
+    
+    public function getPanelHeader()
+    {
+        return $this->i18n->trans('options');
     }
 }

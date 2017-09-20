@@ -98,8 +98,13 @@
 {% set title = fsc.getPageData()['title'] %}
 {% set title = i18n.trans(title) %}
 
+<!-- Visual macros -->
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 {% from 'Macro/Utils.html' import exportData as exportData %}
+{% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
+
+<!-- Aux Objects -->
+{% set model = fsc.view.getModel() %}
 
 <!-- Main Body -->
 <div class="container-fluid">
@@ -109,11 +114,11 @@
     <div id="header" class="row">
         <div class="col-3 d-print-none">
             <div class="btn-group">
-                <a href="{{ fsc.view.model.url('list') }}" class="btn btn-sm btn-light">
+                <a href="{{ model.url('list') }}" class="btn btn-sm btn-light">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i>
                     <span class="hidden-xs hidden-sm">&nbsp;{{ go_back }} </span>
                 </a>
-                <a href="{{ fsc.view.model.url('edit') }}" class="btn btn-sm btn-light" {{ popoverTitle(refresh_title, 'bottom') }}>
+                <a href="{{ model.url('edit') }}" class="btn btn-sm btn-light" {{ popoverTitle(refresh_title, 'bottom') }}>
                     <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
             </div>
@@ -131,13 +136,13 @@
         </div>
 
         <div class="col-3 text-right d-print-none">
-            <form action="{{ fsc.view.model.url('new') }}" method=post name="insert_form">
+            <form action="{{ model.url('new') }}" method=post name="insert_form">
                 <input type="hidden" name="action" value="insert"> 
             </form>             
 
-            <form action="{{ fsc.view.model.url('list') }}" method=post name="delete_form">
+            <form action="{{ model.url('list') }}" method=post name="delete_form">
                 <input type="hidden" name="action" value="delete"> 
-                <input type="hidden" name="code" value="{{ fsc.view.model.primaryColumnValue() }}"> 
+                <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"> 
             </form>             
             
             <a id="b_new" class="btn btn-sm btn-success" onclick="insertRecord();" href="#" {{ popoverTitle((insert_title ~ ' ' ~ title), 'bottom') }}>
@@ -167,7 +172,7 @@
                             <div class="col-12">
                                 <div class="btn-toolbar pull-right" role="toolbar">
                                     <div class="btn-group btn-group-lg" role="group">
-                                        {% set header = fsc.getRow('header') %}
+                                        {% set header = fsc.view.getRow('header') %}
                                         {% if header is not empty %}
                                         {% for button in header.options %}
                                         <button type="button" class="btn btn-default" onclick="{{ button.onclick }}">
@@ -185,21 +190,7 @@
 
                         <!-- Main Form -->
                         <div id="main_row" class="row">
-                            {% for group in fsc.getGroupColumns() %}
-                            <div class="{{ group.numColumns == 0 ? 'col' : 'col-md-' ~ group.numColumns }}">
-                                <div class="form-row">
-                                    {% if group.title is not empty %}
-                                    <legend>{{ group.getHeaderHTML(group.title)|raw }}</legend>
-                                    {% endif %}
-                                    {% for column in group.columns %}
-                                        {% if column.display != 'none' %}
-                                        {% set value = attribute(fsc.view.model, column.widget.fieldName) %}
-                                        {{ column.getEditHTML(value)|raw }}
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            {% endfor %}
+                            {{ columnsForEditView(i18n, fsc.view) }}
                         </div>
                     </div>
 
@@ -220,7 +211,7 @@
     <!-- Footer Row -->
     <div id="footer" class="row">
         <div class="col-10">
-            {% set footer = fsc.getRow('footer') %}
+            {% set footer = fsc.view.getRow('footer') %}
             {% if footer is not empty %}
             <div class="panel-group">
                 {% for panel in footer.options %}

@@ -45,7 +45,6 @@
 {% set any = i18n.trans('any') %}
 {% set panel_header = i18n.trans('common-data') %}
 {% set title = i18n.trans(fsc.getPageData()['title']) %}
-{% set no_data = i18n.trans('no-data') %}
 
 <!-- Calculate common values -->
 {% set list_url = fsc.views[fsc.active].getURL('list') %}
@@ -54,6 +53,7 @@
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 {% from 'Macro/Utils.html' import message as show_message %}
 {% from 'Macro/Utils.html' import exportData as exportData %}
+{% from 'Macro/BaseController.html' import columnsForListView as columnsForListView %}
 
 <!-- Page Header -->
 <div class="container-fluid d-print-none">
@@ -111,7 +111,8 @@
         {% for indexView, view in fsc.views %}
         <li class="nav-item">
             {% set active = (indexView == fsc.active) ? 'active' : '' %}
-            <a href="#{{ view.getModelID() }}" class="nav-link {{ active }}" id="{{ view.getModelID() }}-tab" data-toggle="tab" role="tab" aria-controls="{{ view.getModelID() }}">
+            {% set modelID = view.getModelID() %}
+            <a href="#{{ modelID }}" class="nav-link {{ active }}" id="{{ modelID }}-tab" data-toggle="tab" role="tab" aria-controls="{{ modelID }}">
                 <i class="fa fa-search" aria-hidden="true"></i>
                 <span class="hidden-xs">&nbsp;{{ i18n.trans(view.title) }}</span>
                 <span class="badge badge-secondary">{{ view.count }}</span>
@@ -211,37 +212,7 @@
             <!-- Data Row -->
             <div class="table-responsive">
                 <!-- Data Table -->
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            {% for column in view.getColumns() %}
-                            {% if column.display != 'none' %}
-                            <th class="text-{{ column.display }}">{{ column.getHeaderHTML(column.title)|raw }}</th>
-                            {% endif %}
-                            {% endfor %}
-                        </tr>
-                    </thead>
-                    {% for data in view.getCursor() %}
-                    {% set row = view.getRow('status') %}
-                    {% if row is empty %}
-                    <tr class="table-light">
-                    {% else %}
-                    {% set status = attribute(data, row.fieldName) %}
-                    <tr class="{{ row.getStatus(status) }}">
-                    {% endif %}
-                        {% for column in view.getColumns() %}
-                        {% if column.display != 'none' %}
-                        {% set value = attribute(data, column.widget.fieldName) %}
-                        <td class="text-{{ column.display }}">{{ column.getListHTML(value)|raw }}</td>
-                        {% endif %}
-                        {% endfor %}
-                    </tr>
-                    {% else %}
-                    <tr class="table-warning">
-                        <td colspan="12"><b>{{ no_data }}</b></td>
-                    </tr>
-                    {% endfor %}
-                </table>
+                {{ columnsForListView(i18n, view) }}
             </div>
 
             <!-- Footer Navigation -->

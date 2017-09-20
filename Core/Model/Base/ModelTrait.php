@@ -163,9 +163,7 @@ trait ModelTrait
     public function modelClassName()
     {
         $result = explode('\\', $this->modelName());
-        $index = count($result) - 1;
-
-        return $result[$index];
+        return end($result);
     }
 
     /**
