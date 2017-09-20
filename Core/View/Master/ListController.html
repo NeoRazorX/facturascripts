@@ -129,7 +129,7 @@
             <!-- Filters Row -->
             <form name="f_search{{ indexView }}" id="formSearch{{ indexView }}" action="{{ list_url }}" method="post" class="form">
                 <div class="container-fluid d-print-none" style="margin-top: 15px; margin-bottom: 10px;">
-                    <div class="row">
+                    <div class="row align-items-center">
                         <!-- Main filter -->
                         <div class="col-md-2">
                             <div class="input-group">
@@ -163,12 +163,12 @@
 
                         {% if filter.type == 'checkbox' %}
                         <div class="col">
-                            <div class="checkbox-inline">
-                                <label>
+                            <div class="form-check mb-2 mb-sm-0">
+                                <label class="form-check-label">
                                     {% if (indexView == fsc.active) and filter.value %}
-                                    <input type="checkbox" name="{{ key1 }}" value="TRUE" checked="" onchange="this.form.submit()"/>
+                                    <input class="form-check-input" type="checkbox" name="{{ key1 }}" value="TRUE" checked="" onchange="this.form.submit()"/>
                                     {% else %}
-                                    <input type="checkbox" name="{{ key1 }}" value="TRUE" onchange="this.form.submit()"/>
+                                    <input class="form-check-input" type="checkbox" name="{{ key1 }}" value="TRUE" onchange="this.form.submit()"/>
                                     {% endif %}
                                     {{ filter.options.label }}
                                 </label>
