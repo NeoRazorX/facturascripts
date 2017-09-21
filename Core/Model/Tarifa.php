@@ -26,7 +26,9 @@ namespace FacturaScripts\Core\Model;
  */
 class Tarifa
 {
-    use Base\ModelTrait;
+    use Base\ModelTrait {
+        clear as clearTrait;
+    }
 
     /**
      * Clave primaria.
@@ -92,8 +94,7 @@ class Tarifa
      */
     public function clear()
     {
-        $this->codtarifa = null;
-        $this->nombre = null;
+        $this->clearTrait();        
         $this->incporcentual = 0;
         $this->inclineal = 0;
         $this->aplicar_a = 'pvp';
@@ -101,6 +102,13 @@ class Tarifa
         $this->maxpvp = true;
     }
 
+    private function applyFormula($value)
+    {
+        return ($this->aplicar_a === 'pvp')
+            ? (0 - $value)
+            : $value;
+    }
+    
     /**
      * TODO
      *
@@ -108,11 +116,7 @@ class Tarifa
      */
     public function x()
     {
-        if ($this->aplicar_a === 'pvp') {
-            return 0 - $this->incporcentual;
-        }
-
-        return $this->incporcentual;
+        return $this->applyFormula($this->incporcentual);
     }
 
     /**
@@ -122,10 +126,7 @@ class Tarifa
      */
     public function setX($dto)
     {
-        $this->incporcentual = $dto;
-        if ($this->aplicar_a === 'pvp') {
-            $this->incporcentual = 0 - $dto;
-        }
+        $this->incporcentual = $this->applyFormula($dto);
     }
 
     /**
@@ -135,11 +136,7 @@ class Tarifa
      */
     public function y()
     {
-        if ($this->aplicar_a === 'pvp') {
-            return 0 - $this->inclineal;
-        }
-
-        return $this->inclineal;
+        return $this->applyFormula($this->inclineal);
     }
 
     /**
@@ -149,10 +146,7 @@ class Tarifa
      */
     public function setY($inc)
     {
-        $this->inclineal = $inc;
-        if ($this->aplicar_a === 'pvp') {
-            $this->inclineal = 0 - $inc;
-        }
+        $this->inclineal = $this->applyFormula($inc);
     }
 
     /**

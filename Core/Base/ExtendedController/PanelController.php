@@ -53,8 +53,16 @@ abstract class PanelController extends Base\Controller
      * Procedimiento encargado de insertar las vistas a visualizar
      */
     abstract protected function createViews();
-        
+
     /**
+     * Procedimiento encargado de cargar los datos a visualizar
+     * 
+     * @param string $keyView
+     * @param BaseView $view
+     */
+    abstract protected function loadData($keyView, $view);
+
+        /**
      * Inicia todos los objetos y propiedades.
      *
      * @param Cache      $cache
@@ -84,18 +92,7 @@ abstract class PanelController extends Base\Controller
 
         // Creamos las vistas a visualizar
         $this->createViews();
-        
-        // Lanzamos cada una de las vistas
-        foreach ($this->views as $key => $view) {
-            switch ($view->viewType) {
-                case 'list':
-                    break;
-
-                case 'edit':
-                    break;                
-            }
-        }
-        
+                
         // Comprobamos si hay operaciones por realizar
         if ($this->request->get('action', false)) {
             $this->setActionForm();
@@ -107,10 +104,25 @@ abstract class PanelController extends Base\Controller
      */
     private function setActionForm()
     {
+        if (empty($this->active)) {
+            return;
+        }
+        
+        $view = $this->views[$this->active];
+        $data = $this->request->request->all();
+
         switch ($this->request->get('action')) {
+            case 'save':
+                $view->loadFromData($data);
+                $this->editAction($view, $data);
+                break;
+
+            case 'insert':
+                $this->insertAction($view, $data);
+                break;
+            
             case 'export':
                 $this->setTemplate(false);
-                $view = $this->views[$this->active];
                 $document = $view->export($this->exportManager, $this->request->get('option'));                                
                 $this->response->setContent($document);
                 break;
@@ -118,29 +130,45 @@ abstract class PanelController extends Base\Controller
     }
     
     /**
-     * Crea y añade una vista al controlador.
+     * Ejecuta la modificación de los datos
      *
-     * @param string $modelName
-     * @param string $viewName
-     * @param string $viewTitle
+     * @param EditView $view
+     * @param array $data
+     * @return boolean
      */
-    private function addView($viewType, $modelName, $viewName, $viewTitle)
+    protected function editAction($view, $data)
     {
-        switch ($viewType) {
-            case 'list':
-                $this->views[$viewName] = new ListView($viewTitle, $modelName, $viewName, $this->user->nick);
-                break;
-
-            case 'edit':
-                $this->views[$viewName] = new EditView($viewTitle, $modelName, $viewName, $this->user->nick);
-                break;
-            
-            default:
-                break;
+        if ($view->save()) {
+            $this->miniLog->notice($this->i18n->trans('Record updated correctly!'));
+            return TRUE;
         }
-        
+        return FALSE;
+    }
+
+    /**
+     * Prepara la inserción de un nuevo registro
+     *
+     * @param EditView $view
+     * @param array $data
+     */
+    protected function insertAction($view, $data)
+    {
+        $view->setNewCode();
+    }
+    
+    /**
+     * Añade una vista al controlador y carga sus datos.
+     *
+     * @param string $keyView
+     * @param BaseView $view
+     */
+    private function addView($keyView, $view)
+    {
+        $this->views[$keyView] = $view;
+        $this->loadData($keyView, $view);
+            
         if (empty($this->active)) {
-            $this->active = $viewName;
+            $this->active = $keyView;
         }
     }
     
@@ -153,7 +181,8 @@ abstract class PanelController extends Base\Controller
      */
     protected function addListView($modelName, $viewName, $viewTitle)
     {
-        $this->addView('list', $modelName, $viewName, $viewTitle);
+        $view = new ListView($viewTitle, $modelName, $viewName, $this->user->nick);
+        $this->addView($viewName, $view);
     }
 
     /**
@@ -165,7 +194,8 @@ abstract class PanelController extends Base\Controller
      */
     protected function addEditView($modelName, $viewName, $viewTitle)
     {
-        $this->addView('edit', $modelName, $viewName, $viewTitle);
+        $view = new EditView($viewTitle, $modelName, $viewName, $this->user->nick);
+        $this->addView($viewName, $view);
     }
     
     public function viewClass($keyView)

@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la edición de un registro del modelo Tarifa
@@ -36,8 +35,7 @@ class EditTarifa extends ExtendedController\EditController
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         // Establecemos el modelo de datos
-        $this->model = new Model\Tarifa();
-        
+        $this->modelName = 'FacturaScripts\Core\Model\Tarifa';
     }
 
     public function getPageData()

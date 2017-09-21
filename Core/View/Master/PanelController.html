@@ -39,6 +39,10 @@
 {% set title = fsc.getPageData()['title'] %}
 {% set title = i18n.trans(title) %}
 
+<!-- Calculate common values -->
+{% set list_url = fsc.views[fsc.active].getURL('list') %}
+{% set edit_url = fsc.views[fsc.active].getURL('edit') %}
+
 <!-- Visual macros -->
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 {% from 'Macro/Utils.html' import exportData as exportData %}
@@ -52,12 +56,12 @@
     <!-- Header Row -->
     <div id="header" class="row">
         <div class="col-3 d-print-none">
-            <div class="btn-group">
-                <a href="{{ fsc.model.url('list') }}" class="btn btn-sm btn-light">
+            <div class="btn-group" aria-label="Button group with navigation actions">
+                <a href="{{ list_url }}" class="btn btn-sm btn-light">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i>
                     <span class="hidden-xs hidden-sm">&nbsp;{{ go_back }} </span>
                 </a>
-                <a href="{{ fsc.model.url('edit') }}" class="btn btn-sm btn-light" {{ popoverTitle(refresh_title, 'bottom') }}>
+                <a href="{{ edit_url }}" class="btn btn-sm btn-light" {{ popoverTitle(refresh_title, 'bottom') }}>
                     <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
             </div>
@@ -80,7 +84,7 @@
     <!-- Data Row -->
     <div id="data" class="row">
         <!-- Left Panel -->
-        <div class="col-sm-auto ml-3">
+        <div class="col-sm-auto ml-3 mb-2">
             <div class="card bg-light">                
                 <div class="card-header">
                     <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i>
@@ -96,7 +100,7 @@
                 </div>
             </div>
         </div>
-
+        
         <!-- Right Panel -->
         <div class="col mr-3">
             <div class="card">

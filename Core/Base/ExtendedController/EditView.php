@@ -42,21 +42,6 @@ class EditView extends BaseView
     }
 
     /**
-     * Establece y carga los datos del modelo en base a su PK
-     *
-     * @param string $code
-     */
-    public function setCode($code)
-    {
-        $this->model->loadFromCode($code);
-
-        // Bloqueamos el campo Primary Key si no es una alta
-        $fieldName = $this->model->primaryColumn();
-        $column = $this->pageOption->columnForField($fieldName);
-        $column->widget->readOnly = (!empty($this->model->{$fieldName}));
-    }
-
-    /**
      * Calcula y establece un nuevo código para la PK del modelo
      */
     public function setNewCode()
@@ -99,11 +84,26 @@ class EditView extends BaseView
      *
      * @return array
      */
-    public function getGroupColumns()
+    public function getColumns()
     {
         return $this->pageOption->columns;
     }
 
+    /**
+     * Establece y carga los datos del modelo en base a su PK
+     *
+     * @param string $code
+     */
+    public function loadData($code)
+    {
+        $this->model->loadFromCode($code);
+
+        // Bloqueamos el campo Primary Key si no es una alta
+        $fieldName = $this->model->primaryColumn();
+        $column = $this->pageOption->columnForField($fieldName);
+        $column->widget->readOnly = (!empty($this->model->{$fieldName}));
+    }
+    
     /**
      * Verifica la estructura y carga en el modelo los datos informados en un array
      *
@@ -112,7 +112,7 @@ class EditView extends BaseView
     public function loadFromData(&$data)
     {
         $this->model->checkArrayData($data);
-        $this->model->loadFromData($data);
+        $this->model->loadFromData($data, ['action']);
     }
 
     /**
