@@ -16,12 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
-
 
 /**
  * Description of PanelSettings
@@ -36,7 +34,7 @@ abstract class PanelCliente extends ExtendedController\PanelController
         $this->addEditView('FacturaScripts\Core\Model\Cliente', 'EditCliente', 'Cliente');
         $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'Mismo Grupo');
     }
-    
+
     protected function loadData($keyView, $view)
     {
         switch ($keyView) {
@@ -45,11 +43,11 @@ abstract class PanelCliente extends ExtendedController\PanelController
                 $view->loadData($value);
                 break;
 
-            case 'ListCliente':                
+            case 'ListCliente':
                 $model = $this->views['EditCliente']->getModel();
-                
+
                 if (!empty($model->codgrupo)) {
-                    $where[] = new DataBase\DataBaseWhere('codgrupo', $model->codgrupo);
+                    $where = [new DataBase\DataBaseWhere('codgrupo', $model->codgrupo)];
                     $view->loadData($where);
                 }
                 break;
@@ -65,7 +63,7 @@ abstract class PanelCliente extends ExtendedController\PanelController
 
         return $pagedata;
     }
-    
+
     public function getPanelHeader()
     {
         return $this->i18n->trans('options');

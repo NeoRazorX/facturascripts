@@ -35,10 +35,10 @@ abstract class PanelController extends Base\Controller
      * @var string
      */
     public $active;
-    
+
     /**
      *
-     * @var Base\ExportManager 
+     * @var Base\ExportManager
      */
     public $exportManager;
 
@@ -48,7 +48,7 @@ abstract class PanelController extends Base\Controller
      * @var BaseView[]
      */
     public $views;
-    
+
     /**
      * Procedimiento encargado de insertar las vistas a visualizar
      */
@@ -56,13 +56,13 @@ abstract class PanelController extends Base\Controller
 
     /**
      * Procedimiento encargado de cargar los datos a visualizar
-     * 
+     *
      * @param string $keyView
      * @param BaseView $view
      */
     abstract protected function loadData($keyView, $view);
 
-        /**
+    /**
      * Inicia todos los objetos y propiedades.
      *
      * @param Cache      $cache
@@ -78,8 +78,8 @@ abstract class PanelController extends Base\Controller
         $this->active = $this->request->get('active', '');
         $this->exportManager = new Base\ExportManager();
         $this->views = [];
-    }   
-    
+    }
+
     /**
      * Ejecuta la lógica privada del controlador.
      *
@@ -92,13 +92,13 @@ abstract class PanelController extends Base\Controller
 
         // Creamos las vistas a visualizar
         $this->createViews();
-                
+
         // Comprobamos si hay operaciones por realizar
         if ($this->request->get('action', false)) {
             $this->setActionForm();
         }
     }
-    
+
     /**
      * Aplica la acción solicitada por el usuario
      */
@@ -107,28 +107,28 @@ abstract class PanelController extends Base\Controller
         if (empty($this->active)) {
             return;
         }
-        
+
         $view = $this->views[$this->active];
         $data = $this->request->request->all();
 
         switch ($this->request->get('action')) {
             case 'save':
-                $view->loadFromData($data);
-                $this->editAction($view, $data);
+                EditView($view)->loadFromData($data);
+                $this->editAction(EditView($view), $data);
                 break;
 
             case 'insert':
-                $this->insertAction($view, $data);
+                $this->insertAction(EditView($view), $data);
                 break;
-            
+
             case 'export':
                 $this->setTemplate(false);
-                $document = $view->export($this->exportManager, $this->request->get('option'));                                
+                $document = $view->export($this->exportManager, $this->request->get('option'));
                 $this->response->setContent($document);
                 break;
         }
     }
-    
+
     /**
      * Ejecuta la modificación de los datos
      *
@@ -155,7 +155,7 @@ abstract class PanelController extends Base\Controller
     {
         $view->setNewCode();
     }
-    
+
     /**
      * Añade una vista al controlador y carga sus datos.
      *
@@ -166,12 +166,12 @@ abstract class PanelController extends Base\Controller
     {
         $this->views[$keyView] = $view;
         $this->loadData($keyView, $view);
-            
+
         if (empty($this->active)) {
             $this->active = $keyView;
         }
     }
-    
+
     /**
      * Añade una vista tipo List al controlador.
      *
@@ -197,7 +197,7 @@ abstract class PanelController extends Base\Controller
         $view = new EditView($viewTitle, $modelName, $viewName, $this->user->nick);
         $this->addView($viewName, $view);
     }
-    
+
     public function viewClass($keyView)
     {
         $result = explode('\\', get_class($this->views[$keyView]));

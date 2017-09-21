@@ -289,7 +289,7 @@ class DataBase
         $result = self::$engine->commit(self::$link);
         if ($result) {
             self::$miniLog->sql('Commit Transaction');
-            ++self::$totalTransactions;
+            self::$totalTransactions++;
         }
 
         return $result;
@@ -351,7 +351,7 @@ class DataBase
             return [];
         }
 
-        ++self::$totalSelects;
+        self::$totalSelects++;
 
         return $result;
     }

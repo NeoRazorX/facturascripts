@@ -4,7 +4,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 namespace FacturaScripts\Core\Model\Base;
 
 /**
@@ -14,6 +13,7 @@ namespace FacturaScripts\Core\Model\Base;
  */
 trait Factura
 {
+
     /**
      * Clave primaria.
      *
@@ -156,7 +156,7 @@ trait Factura
                          */
                         $diferencia = round(($this->neto - $tNeto) * 100);
                         usort(
-                            $lineasi, function ($a, $b) {
+                            $lineasi, function($a, $b) {
                             if ($a->totallinea === $b->totallinea) {
                                 return 0;
                             }
@@ -188,7 +188,7 @@ trait Factura
                          */
                         $diferencia = round(($this->totaliva - $tIva) * 100);
                         usort(
-                            $lineasi, function ($a, $b) {
+                            $lineasi, function($a, $b) {
                             if ($a->totaliva === $b->totaliva) {
                                 return 0;
                             }

@@ -86,6 +86,16 @@ abstract class BaseView
     }
 
     /**
+     * Devuelve el puntero al modelo de datos
+     *
+     * @return mixed
+     */
+    public function getModel()
+    {
+        return $this->model;
+    }
+    
+    /**
      * Si existe, devuelve el tipo de row especificado
      *
      * @param string $key

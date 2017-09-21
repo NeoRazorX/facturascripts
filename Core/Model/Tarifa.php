@@ -102,6 +102,9 @@ class Tarifa
         $this->maxpvp = true;
     }
 
+    /**
+     * @param double $value
+     */
     private function applyFormula($value)
     {
         return ($this->aplicar_a === 'pvp')

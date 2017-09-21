@@ -50,16 +50,6 @@ class EditView extends BaseView
     }
 
     /**
-     * Devuelve el puntero al modelo de datos
-     *
-     * @return mixed
-     */
-    public function getModel()
-    {
-        return $this->model;
-    }
-
-    /**
      * Devuelve el texto para la cabecera del panel de datos
      *
      * @return string
