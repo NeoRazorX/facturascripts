@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base\DivisaTools;
@@ -29,6 +28,7 @@ use FacturaScripts\Core\Base\NumberTools;
  */
 class WidgetItem
 {
+
     /**
      * Nombre del campo con los datos que visualiza el widget
      *
@@ -42,11 +42,11 @@ class WidgetItem
      * @var string
      */
     public $type;
-        
+
     /**
      * Numero de decimales para tipos numéricos
-     * 
-     * @var int 
+     *
+     * @var int
      */
     public $decimal;
 
@@ -98,13 +98,13 @@ class WidgetItem
      * @var array
      */
     public $values;
-    
+
     /**
      *
      * @var DivisaTools
      */
     private static $divisaTools;
-    
+
     /**
      *
      * @var NumberTools
@@ -117,11 +117,11 @@ class WidgetItem
      */
     public function __construct()
     {
-        if(!isset(self::$divisaTools)) {
+        if (!isset(self::$divisaTools)) {
             self::$divisaTools = new DivisaTools();
             self::$numberTools = new NumberTools();
         }
-        
+
         $this->type = 'text';
         $this->decimal = 0;
         $this->fieldName = '';
@@ -222,14 +222,12 @@ class WidgetItem
      */
     public function getHintHTML($hint)
     {
-        return empty($hint)
-            ? ''
-            : ' data-toggle="popover" data-placement="auto" data-trigger="hover" data-content="' . $hint . '" ';
+        return empty($hint) ? '' : ' data-toggle="popover" data-placement="auto" data-trigger="hover" data-content="' . $hint . '" ';
     }
 
     /**
      * Indica si se cumple la condición para aplicar un Option Text
-     * 
+     *
      * @param string $optionValue
      * @param string $valueItem
      * @return boolean
@@ -246,14 +244,14 @@ class WidgetItem
                 $optionValue = substr($optionValue, 1);
                 $result = (floatval($valueItem) > floatval($optionValue));
                 break;
-            
+
             default:
                 $result = ($optionValue == $valueItem);
                 break;
         }
         return $result;
     }
-    
+
     /**
      * Genera el código CSS para el style del widget en base a los options
      *
@@ -282,7 +280,7 @@ class WidgetItem
 
     /**
      * Aplica el formato a tipos: texto, numérico y moneda
-     * 
+     *
      * @param string $value
      * @return string
      */
@@ -292,9 +290,7 @@ class WidgetItem
 
         switch ($this->type) {
             case 'text':
-                $html = (empty($this->onClick)) 
-                    ? '<span' . $style . '>' . $value . '</span>' 
-                    : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $value . '</a>';
+                $html = (empty($this->onClick)) ? '<span' . $style . '>' . $value . '</span>' : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $value . '</a>';
                 break;
 
             case 'number':
@@ -302,17 +298,15 @@ class WidgetItem
                 break;
 
             case 'money':
-                $html = empty($this->decimal) 
-                    ? self::$divisaTools->format($value)
-                    : self::$divisaTools->format($value, $this->decimal);
+                $html = empty($this->decimal) ? self::$divisaTools->format($value) : self::$divisaTools->format($value, $this->decimal);
 
                 $html = '<span' . $style . '>' . $html . '</span>';
-                break;                    
+                break;
         }
-        
+
         return $html;
     }
-    
+
     /**
      * Genera el código html para la visualización de los datos en el
      * controlador List
@@ -452,7 +446,7 @@ class WidgetItem
     private function standardHTMLWidget($fieldName, $value, $specialClass)
     {
         return '<input id=' . $fieldName . ' type="' . $this->type . '" class="form-control" name=' . $fieldName
-                . ' value="' . $value . '"' . $specialClass . '>';
+            . ' value="' . $value . '"' . $specialClass . '>';
     }
 
     /**

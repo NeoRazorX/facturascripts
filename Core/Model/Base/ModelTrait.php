@@ -239,8 +239,9 @@ trait ModelTrait
                             break;
 
                         case 'double':
+                        case 'double precision':
                         case 'float':
-                            $this->{$key} = empty($value) ? 0 : (float) $value;
+                            $this->{$key} = empty($value) ? 0.00 : (float) $value;
                             break;
 
                         case 'date':

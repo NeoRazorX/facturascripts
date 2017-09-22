@@ -152,6 +152,10 @@ class ListView extends BaseView
      */
     public function getSQLOrderBy($orderKey = '')
     {
+        if (empty($this->orderby)) {
+            return [];
+        }
+            
         if ($orderKey == '') {
             $orderKey = array_keys($this->orderby)[0];
         }

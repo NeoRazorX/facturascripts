@@ -84,7 +84,7 @@ En las vistas Edit se muestra como un label inferior a la zona de edición del c
 * **order** : Posición que ocupa la columna. Sirve para indicar el orden en que se visualizan. Si no se informa toma el valor _100_
 Cuando no se informa una ordenación específica, se ordena por la posición secuencial en el archivo XML, siempre dentro de su grupo.
 
-* **numcolumns : Fuerza el tamaño de la columna al valor indicado, usando el sistema de grid de Bootstrap siendo mínimo 1 y máximo 12.
+* **numcolumns** : Fuerza el tamaño de la columna al valor indicado, usando el sistema de grid de Bootstrap siendo mínimo 1 y máximo 12.
 Si no se informa toma como valor _0_ aplicando el sistema de tamaño automático de Bootstrap.
 
 
@@ -185,6 +185,10 @@ mediante los siguientes atributos:
 * **icon** : Si se indica se visualizará el icono a la izquierda del título.
 
 * **order** : Posición que ocupa el grupo. Sirve para indicar el orden en que se visualizara.
+
+* **numcolumns** : Fuerza el tamaño al valor indicado, usando el sistema de grid de Bootstrap siendo mínimo 1 y máximo 12.
+Si no se informa toma como valor _0_ aplicando el sistema de tamaño automático de Bootstrap. Es importante recordar que
+un grupo tiene siempre 12 columnas disponibles en su _interior_, independientemente del tamaño que tenga definido el grupo.
 
 
 ## ROWS

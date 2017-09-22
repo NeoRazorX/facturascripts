@@ -4,7 +4,7 @@
 {% macro columnsForEditView(i18n, view) %}
     {% set model = view.getModel() %}
 
-    {% for group in view.getGroupColumns() %}
+    {% for group in view.getColumns() %}
     <div class="{{ group.numColumns == 0 ? 'col' : 'col-md-' ~ group.numColumns }}">
         <div class="form-row">
             {% if group.title is not empty %}

@@ -82,7 +82,7 @@ class EditController extends Base\Controller
 
         // Cargamos datos del modelo
         $value = $this->request->get('code');
-        $this->view->setCode($value);
+        $this->view->loadData($value);
 
         // Comprobamos si hay operaciones por realizar
         if ($this->request->get('action', false)) {

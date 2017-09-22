@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DefaultItems;
@@ -30,6 +29,7 @@ use FacturaScripts\Core\Lib\RegimenIVA;
  */
 abstract class Persona
 {
+
     /**
      * Identificador fiscal del cliente.
      *
@@ -251,7 +251,7 @@ abstract class Persona
     /**
      * Devuelve un array con los regimenes de iva disponibles.
      *
-     * @return array
+     * @return RegimenIVA
      */
     public function regimenesIVA()
     {

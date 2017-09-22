@@ -55,7 +55,7 @@
                 <widget type="text" fieldname="cifnif" required="true" />
             </column>                                    
 
-            <column name="fiscal mode" title="Es una persona física (no una empresa)" numcolumns="4" order="200">
+            <column name="fiscal mode" title="Es una persona física (no una empresa)" order="200">
                 <widget type="checkbox" fieldname="personafisica" />
             </column>
         </group>
@@ -77,7 +77,7 @@
                 <widget type="text" fieldname="diaspago" />
             </column>
 
-            <column name="employee" title="Empleado asignado" numcolumns="6" titleurl="?page=ListUser" order="140">
+            <column name="employee" numcolumns="6" titleurl="?page=ListUser" order="140">
                 <widget type="select" fieldname="codagente">
                     <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
                 </widget>

@@ -42,8 +42,8 @@
             </column>            
             <column name="maxpvp" title="Don't sell above pvp" numcolumns="4" order="140">
                 <widget type="checkbox" fieldname="maxpvp" />
-            </column>  
+            </column>
         </group>
-    </columns>    
+    </columns>
 </view>
 
