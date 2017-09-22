@@ -24,29 +24,26 @@
 
 <view>
     <columns>
-        <column title="Código" order="100">
+        <column name="code" order="100">
             <widget type="text" fieldname="codpago" onclick="EditPago" />
         </column>
-        <column title="Descripción" order="110">
+        <column name="description" order="110">
             <widget type="text" fieldname="descripcion" />
         </column>
-        <column title="Cod. Cuenta" titleurl="?page=ListEmpresa" order="115">
+        <column name="account code" titleurl="?page=ListEmpresa" order="115">
             <widget type="text" fieldname="codcuenta" />
         </column>
-        <column title="Vencimiento" display="center" order="120">
+        <column name="expiration" display="center" order="120">
             <widget type="text" fieldname="vencimiento" />
         </column>
-        <column title="Gen. Recibos" display="center" order="130">
+        <column name="generate receipt" display="center" order="130">
             <widget type="text" fieldname="genrecibos" />
         </column>
-        <column title="Domiciliado" display="center" order="140">
+        <column name="domiciled" display="center" order="140">
             <widget type="checkbox" fieldname="domiciliado" />
         </column>
-        <column title="Imprimir" display="center" order="150">
+        <column name="print" display="center" order="150">
             <widget type="checkbox" fieldname="imprimir" />
         </column>
     </columns>
-    
-    <filters>        
-    </filters>    
 </view>

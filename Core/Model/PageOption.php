@@ -110,17 +110,23 @@ class PageOption
      */
     public function loadFromData($data)
     {
-        $this->loadFromDataTrait($data);
+        $this->loadFromDataTrait($data, ['columns', 'filters', 'rows']);
 
-        $columns = json_decode($data['columns'], true);
-        $groupItem = new ExtendedController\GroupItem();
-        $groupItem->loadFromJSON($columns);
-        $this->columns[] = $groupItem;
+        $groups = json_decode($data['columns'], true);
+        foreach ($groups as $item) {
+            $groupItem = new ExtendedController\GroupItem();
+            $groupItem->loadFromJSON($item);
+
+            $this->columns[$groupItem->name] = $groupItem;
+            unset($groupItem);
+        }
 
         $rows = json_decode($data['rows'], true);
-        $rowItem = new ExtendedController\RowItem();
-        $rowItem->loadFromJSON($rows);
-        $this->rows[] = $rowItem;
+        if (!empty($rows)) {
+            $rowItem = new ExtendedController\RowItem();
+            $rowItem->loadFromJSON($rows);
+            $this->rows[] = $rowItem;
+        }
     }
 
     /**
@@ -184,7 +190,7 @@ class PageOption
         if (empty($columns->group)) {
             $groupItem = new ExtendedController\GroupItem();
             $groupItem->loadFromXMLColumns($columns);
-            $this->columns[] = $groupItem;
+            $this->columns[$groupItem->name] = $groupItem;
             unset($groupItem);
 
             return;
@@ -194,7 +200,7 @@ class PageOption
         foreach ($columns->group as $group) {
             $groupItem = new ExtendedController\GroupItem();
             $groupItem->loadFromXML($group);
-            $this->columns[] = $groupItem;
+            $this->columns[$groupItem->name] = $groupItem;
             unset($groupItem);
         }
     }
@@ -207,6 +213,10 @@ class PageOption
      */
     private function getXMLRows($rows)
     {
+        if (empty($rows)) {
+            return;
+        }
+        
         foreach ($rows->row as $row) {
             $rowItem = new ExtendedController\RowItem();
             $rowItem->loadFromXML($row);
@@ -216,29 +226,27 @@ class PageOption
     }
 
     /**
-     * Instala la configuración inicial de un controlador
+     * Añade a la configuración de un controlador
      *
      * @param string $name
      */
     public function installXML($name)
     {
-        $this->id = null;
-        $this->name = $name;
-        $this->columns = [];
-        $this->filters = [];
-        $this->rows = [];
+        if ($this->name != $name) {
+            $this->miniLog->critical('error-install-name-xmlview');
+            return;
+        }
+        
         $file = "Core/XMLView/{$name}.xml";
         $xml = simplexml_load_file($file);
 
         if ($xml === false) {
             $this->miniLog->critical('error-processing-xmlview');
-        } else {
-            $this->getXMLGroupsColumns($xml->columns);
-
-            if (!empty($xml->rows)) {
-                $this->getXMLRows($xml->rows);
-            }
+            return;
         }
+
+        $this->getXMLGroupsColumns($xml->columns);
+        $this->getXMLRows($xml->rows);
     }
 
     /**
@@ -256,16 +264,13 @@ class PageOption
 
         $orderby = ['nick' => 'ASC'];
 
-        $data = $this->all($where, $orderby, 0, 1);
-        if (empty($data)) {
+        // Load data from database, if not exist install xmlview
+        if (!$this->loadFromCode('', $where, $orderby)) {
+            $this->name = $name;
+            $this->columns = [];
+            $this->filters = [];
+            $this->rows = [];
             $this->installXML($name);
-        } else {
-            $pageOption = $data[0];
-            $this->id = $pageOption->id;
-            $this->name = $pageOption->name;
-            $this->nick = $pageOption->nick;
-            $this->columns = $pageOption->columns;
-            $this->filters = $pageOption->filters;
         }
 
         // Aplicamos sobre los widgets Select enlazados a base de datos los valores de los registros.

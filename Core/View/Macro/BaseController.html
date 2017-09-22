@@ -1,0 +1,59 @@
+<!--
+    Genera el código para la vista Edit según las columnas indicadas
+-->
+{% macro columnsForEditView(i18n, view) %}
+    {% set model = view.getModel() %}
+
+    {% for group in view.getGroupColumns() %}
+    <div class="{{ group.numColumns == 0 ? 'col' : 'col-md-' ~ group.numColumns }}">
+        <div class="form-row">
+            {% if group.title is not empty %}
+            <legend>{{ group.getHeaderHTML(group.title)|raw }}</legend>
+            {% endif %}
+            {% for column in group.columns %}
+                {% if column.display != 'none' %}
+                {% set value = attribute(model, column.widget.fieldName) %}
+                {{ column.getEditHTML(value)|raw }}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+{% endmacro %}
+
+{% macro columnsForListView(i18n, view) %}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                {% for column in view.getColumns() %}
+                {% if column.display != 'none' %}
+                <th class="text-{{ column.display }}">{{ column.getHeaderHTML(column.title)|raw }}</th>
+                {% endif %}
+                {% endfor %}
+            </tr>
+        </thead>
+        {% for data in view.getCursor() %}
+            {# Set background status #}
+            {% set row = view.getRow('status') %}
+            {% if row is empty %}
+            <tr class="table-light">
+            {% else %}
+            {% set status = attribute(data, row.fieldName) %}
+            <tr class="{{ row.getStatus(status) }}">
+            {% endif %}
+            
+            {# Print data columns for row #}
+            {% for column in view.getColumns() %}
+                {% if column.display != 'none' %}
+                {% set value = attribute(data, column.widget.fieldName) %}
+                <td class="text-{{ column.display }}">{{ column.getListHTML(value)|raw }}</td>
+                {% endif %}
+            {% endfor %}
+            </tr>
+            {% else %}
+            <tr class="table-warning">
+                <td colspan="12"><b>{{ i18n.trans('no-data') }}</b></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endmacro %}

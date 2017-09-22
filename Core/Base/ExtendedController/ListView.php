@@ -18,53 +18,38 @@
  */
 namespace FacturaScripts\Core\Base\ExtendedController;
 
-use FacturaScripts\Core\Model as Model;
-
 /**
- * Description of DataView
+ * Definición de vista para uso en ListController
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class DataView
+class ListView extends BaseView
 {
+
     /**
      * Constantes para ordenación
      */
     const ICON_ASC = 'fa-sort-amount-asc';
     const ICON_DESC = 'fa-sort-amount-desc';
-    
-    /**
-     * Modelo principal de datos.
-     * Necesario para llamadas a los métodos del modelo.
-     * 
-     * @var mixed
-     */
-    private $model;
-    
+
     /**
      * Cursor con los datos del modelo a mostrar
-     * 
+     *
      * @var array
      */
     private $cursor;
-        
-    /**
-     * Configuración de columnas por usuario
-     * @var Model\PageOption
-     */
-    private $pageOption;    
 
     /**
      * Configuración de filtros predefinidos por usuario
-     * 
+     *
      * @var array
      */
     private $filters;
-    
+
     /**
      * Lista de campos donde buscar cuando se aplica una búsqueda
-     * 
+     *
      * @var array
      */
     private $searchIn;
@@ -82,23 +67,16 @@ class DataView
      * @var string
      */
     public $selectedOrderBy;
-    
+
     /**
      * Número total de registros leídos
      * @var int
      */
     public $count;
-    
-    /**
-     * Título identificativo de la vista
-     * 
-     * @var string
-     */
-    public $title;
-    
+
     /**
      * Constructor e inicializador de la clase
-     * 
+     *
      * @param string $title
      * @param string $modelName
      * @param string $viewName
@@ -106,60 +84,57 @@ class DataView
      */
     public function __construct($title, $modelName, $viewName, $userNick)
     {
-        $this->title = $title;
-        $this->model = new $modelName;
+        parent::__construct($title, $modelName, $viewName, $userNick);
+        $this->viewType = 'list';
+
         $this->cursor = NULL;
         $this->orderby = [];
         $this->filters = [];
         $this->searchIn = [];
         $this->count = 0;
         $this->selectedOrderBy = '';
-        
-        // Carga configuración de la vista para el usuario
-        $this->pageOption = new Model\PageOption();
-        $this->pageOption->getForUser($viewName, $userNick);        
     }
-        
+
     /**
      * Devuelve la lista de datos leidos en formato Model
-     * 
+     *
      * @return array
      */
     public function getCursor()
     {
         return $this->cursor;
     }
-    
+
     /**
      * Devuelve la lista de filtros definidos
-     * 
+     *
      * @return array
      */
     public function getFilters()
     {
         return $this->filters;
     }
-    
+
     /**
      * Devuelve la lista de campos para la búsqueda en formato para WhereDatabase
-     * 
+     *
      * @return string
      */
     public function getSearchIn()
     {
         return implode("|", $this->searchIn);
     }
-        
+
     /**
      * Devuelve la lista de order by definidos
-     * 
+     *
      * @return array
      */
     public function getOrderBy()
     {
         return $this->orderby;
     }
-    
+
     /**
      * Lista de columnas y su configuración
      * (Array of ColumnItem)
@@ -167,40 +142,10 @@ class DataView
      */
     public function getColumns()
     {
-        return $this->pageOption->columns[0]->columns;
+        $key = array_keys($this->pageOption->columns)[0];
+        return $this->pageOption->columns[$key]->columns;
     }
 
-    /**
-     * 
-     * @param string $key
-     * @return array
-     */
-    public function getRow($key)
-    {
-        return empty($this->pageOption->rows) ? NULL : $this->pageOption->rows[$key];
-    }
-        
-    /**
-     * Devuelve la url del modelo del tipo solicitado
-     * 
-     * @param string $type      (edit / list / auto)
-     * @return string
-     */
-    public function getURL($type)
-    {
-        return $this->model->url($type);
-    }
-    
-    /**
-     * Devuelve el identificador del modelo
-     * 
-     * @return string
-     */
-    public function getModelID()
-    {
-        return $this->model->modelClassName();
-    }
-    
     /**
      * Devuelve el Order By indicado en formato array
      * @param string $orderKey
@@ -214,7 +159,7 @@ class DataView
         $orderby = explode('_', $orderKey);
         return [$orderby[0] => $orderby[1]];
     }
-    
+
     /**
      * Comprueba y establece el valor seleccionado en el order by
      * @param string $orderKey
@@ -231,10 +176,10 @@ class DataView
             $this->selectedOrderBy = $orderKey;
         }
     }
-    
+
     /**
      * Añade a la lista de campos para la búsqueda los campos informados
-     * 
+     *
      * @param array $fields
      */
     public function addSearchIn($fields)
@@ -243,7 +188,7 @@ class DataView
             $this->searchIn += $fields;
         }
     }
-    
+
     /**
      * Añade un campo a la lista de Order By
      * @param string $field
@@ -260,12 +205,12 @@ class DataView
 
         $this->orderby[$key1] = ['icon' => self::ICON_ASC, 'label' => $label];
         $this->orderby[$key2] = ['icon' => self::ICON_DESC, 'label' => $label];
-        
+
         switch ($default) {
             case 1:
                 $this->setSelectedOrderBy($key1);
                 break;
-            
+
             case 2:
                 $this->setSelectedOrderBy($key2);
                 break;
@@ -273,8 +218,8 @@ class DataView
             default:
                 break;
         }
-    } 
-    
+    }
+
     /**
      * Define una nueva opción de filtrado para los datos
      * @param string $type    (option: 'select', 'checkbox')
@@ -287,7 +232,7 @@ class DataView
         if (empty($options['field'])) {
             $options['field'] = $key;
         }
-        
+
         $this->filters[$key] = ['type' => $type, 'value' => $value, 'options' => $options];
     }
 
@@ -329,22 +274,27 @@ class DataView
         $options = ['label' => $label, 'field' => $field];
         $this->addFilter('datepicker', $key, $value, $options);
     }
-    
+
     public function loadData($where, $offset = 0, $limit = 50)
     {
         $order = $this->getSQLOrderBy($this->selectedOrderBy);
         $this->count = $this->model->count($where);
         if ($this->count > 0) {
             $this->cursor = $this->model->all($where, $order, $offset, $limit);
-        }        
+        }
     }
-    
+
     public function delete($code)
     {
         if ($this->model->loadFromCode($code)) {
             return $this->model->delete();
         }
-        
+
         return FALSE;
+    }
+
+    public function export(&$exportManager, $action)
+    {
+        return $exportManager->generateList($this->cursor, $this->getColumns(), $action);        
     }
 }

@@ -22,28 +22,33 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controlador para la edición de un registro del modelo de un grupo de epígrafe
+ * Description of PanelSettings
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class EditGrupoEpigrafes extends ExtendedController\EditController
+class PanelCliente extends ExtendedController\PanelController
 {
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
-    {
-        parent::__construct($cache, $i18n, $miniLog, $className);
 
-        // Establecemos el modelo de datos
-        $this->modelName = 'FacturaScripts\Core\Model\GrupoEpigrafes';
+    protected function createViews()
+    {
+        $this->addEditView('FacturaScripts\Core\Model\Cliente', 'EditCliente', 'Cliente');
+        $this->addEditView('FacturaScripts\Core\Model\Fabricante', 'EditFabricante', 'Fabricante');
+        $this->addEditView('FacturaScripts\Core\Model\Pais', 'EditPais', 'Pais');
+        $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'Lista de Clientes');
     }
 
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Grupos de Epígrafes';
-        $pagedata['icon'] = 'fa-bars';
+        $pagedata['title'] = 'customers';
+        $pagedata['icon'] = 'fa-users';
         $pagedata['showonmenu'] = FALSE;
 
         return $pagedata;
+    }
+    
+    public function getPanelHeader()
+    {
+        return $this->i18n->trans('options');
     }
 }

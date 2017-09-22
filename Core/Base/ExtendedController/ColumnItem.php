@@ -68,7 +68,11 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     public function loadFromXML($column)
     {
         parent::loadFromXML($column);
-
+        
+        if (empty($this->title)) {
+            $this->title = $this->name;
+        }
+        
         $column_atributes = $column->attributes();
         $this->description = (string) $column_atributes->description;
 
@@ -82,13 +86,14 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     /**
      * Carga la estructura de atributos en base a la base de datos
      *
-     * @param SimpleXMLElement $column
+     * @param array $column
      */
     public function loadFromJSON($column)
     {
         parent::loadFromJSON($column);
         $this->description = (string) $column['description'];
         $this->display = (string) $column['display'];
+        $this->widget->loadFromJSONColumn($column);
     }
 
     /**

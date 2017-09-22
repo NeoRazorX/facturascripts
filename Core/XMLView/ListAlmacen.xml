@@ -24,37 +24,37 @@
 
 <view>
     <columns>
-        <column title="Código" order="100">
+        <column name="code" order="100">
             <widget type="text" fieldname="codalmacen" onclick="EditAlmacen" />
         </column>
-        <column title="Nombre" order="100">
+        <column name="name" order="100">
             <widget type="text" fieldname="nombre" />
         </column>
-        <column title="Contacto" order="100">
+        <column name="contact" order="100">
             <widget type="text" fieldname="contacto" />
         </column>
-        <column title="Dirección" order="100">
+        <column name="address" order="100">
             <widget type="text" fieldname="direccion" />
         </column>
-        <column title="Apartado" display="none" order="100">
+        <column name="postal mail" display="none" order="100">
             <widget type="text" fieldname="apartado" />
         </column>
-        <column title="Poblacion" order="100">
+        <column name="town" order="100">
             <widget type="text" fieldname="poblacion" />
         </column>
-        <column title="Cod. Postal" display="none" order="100">
+        <column name="postal code" display="none" order="100">
             <widget type="text" fieldname="codpostal" />
         </column>
-        <column title="Provincia" display="center" order="100">
+        <column name="province" display="center" order="100">
             <widget type="text" fieldname="provincia" />
         </column>
-        <column title="Teléfono" order="100">
+        <column name="phone" order="100">
             <widget type="text" fieldname="telefono" />
         </column>
-        <column title="Fax" order="100">
+        <column name="fax" order="100">
             <widget type="text" fieldname="fax" />
         </column>
-        <column title="Valoración" display="center" order="100">
+        <column name="valuation type" display="center" order="100">
             <widget type="text" fieldname="tipovaloracion" />
         </column>
     </columns>
