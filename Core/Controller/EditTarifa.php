@@ -36,14 +36,14 @@ class EditTarifa extends ExtendedController\EditController
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         // Establecemos el modelo de datos
-        $this->model = new Model\Tarifa();
+        $this->modelName = 'FacturaScripts\Core\Model\Tarifa';
         
     }
 
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Tarifas';
+        $pagedata['title'] = 'Rates';
         $pagedata['icon'] = 'fa-money';
         $pagedata['showonmenu'] = FALSE;
 

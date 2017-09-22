@@ -24,35 +24,26 @@
 
 <view>
     <columns>
-        <group numcolumns="12">
-            <column title="Code rate" numcolumns="2" order="100"
+        <group name="data" numcolumns="12" title="Rates">
+            <column name="codtarifa" title="Code rate" numcolumns="2" order="100"
                     description="Code for internal tarifa use.">
                 <widget type="text" fieldname="codtarifa" onclick="" icon="fa-money" required="true" />
             </column>            
-            <column title="Name" numcolumns="4" order="110">
+            <column name="nombre" title="Name" numcolumns="4" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>            
-            <column title="Formula to apply" numcolumns="2" order="120">
+            <column name="aplicar_a" title="Formula to apply" numcolumns="2" order="120">
                 <widget type="text" fieldname="aplicar_a" required="false" />
             </column>
         </group>
-        <group numcolumns="12">            
-            <column title="Don't sell below cost" numcolumns="4" order="130">
+        <group name="check" numcolumns="12" title="Check">            
+            <column name="mincoste" title="Don't sell below cost" numcolumns="4" order="130">
                 <widget type="checkbox" fieldname="mincoste" />
             </column>            
-            <column title="Don't sell above pvp" numcolumns="4" order="140">
+            <column name="maxpvp" title="Don't sell above pvp" numcolumns="4" order="140">
                 <widget type="checkbox" fieldname="maxpvp" />
             </column>  
         </group>
-        
-        <!-- <group numcolumns="12">         
-            <column title="Percent increase or discount" numcolumns="4" order="150">
-                <widget type="number" fieldname="incporcentual" required="true" />
-            </column>            
-            <column title="Linear increment or linear discount" numcolumns="4" order="160">
-                <widget type="number" fieldname="inclineal" required="true" />
-            </column>            
-        </group>                         -->
     </columns>    
 </view>
 
