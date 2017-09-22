@@ -24,37 +24,23 @@
 
 <view>
     <columns>
-        <group name="data" numcolumns="6">
-            <column name="code" title="code-rate" numcolumns="3" order="100">
-                <widget type="text" fieldname="codtarifa" icon="fa-money" required="true" />
-            </column>
-
-            <column name="name" numcolumns="9" order="110">
+        <group name="data" numcolumns="12" title="Rates">
+            <column name="codtarifa" title="Code rate" numcolumns="2" order="100"
+                    description="Code for internal tarifa use.">
+                <widget type="text" fieldname="codtarifa" onclick="" icon="fa-money" required="true" />
+            </column>            
+            <column name="nombre" title="Name" numcolumns="4" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
+            </column>            
+            <column name="aplicar_a" title="Formula to apply" numcolumns="2" order="120">
+                <widget type="text" fieldname="aplicar_a" required="false" />
             </column>
         </group>
-
-        <group name="calculation" numcolumns="6">
-            <column name="formula" title="formula-to-apply" numcolumns="4" order="200">
-                <widget type="select" fieldname="aplicar_a" required="false">
-                    <values title="Precio de venta - X% - Y">pvp</values>
-                    <values title="Precio de coste + X% + Y">coste</values>
-                </widget>
-            </column>
-
-            <column name="incpct" title="variation" numcolumns="3" order="250">
-                <widget type="number" fieldname="incporcentual" icon="X%" required="true" />
-            </column>
-
-            <column name="inclineal" title="variation" numcolumns="3" order="260">
-                <widget type="number" fieldname="inclineal" icon="Y" required="true" />
-            </column>
-            
-            <column name="mincost" title="Don't sell below cost" numcolumns="3" order="270">
+        <group name="check" numcolumns="12" title="Check">            
+            <column name="mincoste" title="Don't sell below cost" numcolumns="4" order="130">
                 <widget type="checkbox" fieldname="mincoste" />
-            </column>
-
-            <column name="maxprice" title="Don't sell above pvp" numcolumns="3" order="280">
+            </column>            
+            <column name="maxpvp" title="Don't sell above pvp" numcolumns="4" order="140">
                 <widget type="checkbox" fieldname="maxpvp" />
             </column>
         </group>
