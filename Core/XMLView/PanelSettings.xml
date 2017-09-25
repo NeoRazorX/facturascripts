@@ -31,15 +31,15 @@
             
             <column name="product_decimals" numcolumns="2" order="110">
                 <widget type="number" fieldname="product_decimals" required="true" />
-            </column>            
+            </column>
 
             <column name="decimal_separator" numcolumns="2" order="120">
                 <widget type="text" fieldname="decimal_separator" required="true" />
-            </column>            
+            </column>
 
             <column name="thousands_separator" numcolumns="2" order="120">
                 <widget type="text" fieldname="thousands_separator" required="true" />
-            </column>            
+            </column>
         </group>
 
         <group name="dateformat" numcolumns="12">
@@ -54,5 +54,5 @@
             <column name="maxtoday" numcolumns="4" order="100">
                 <widget type="number" fieldname="maxtoday" required="true" />
             </column>
-    </columns>    
+    </columns>
 </view>

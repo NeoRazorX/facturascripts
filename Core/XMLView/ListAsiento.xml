@@ -40,7 +40,6 @@
             <widget type="text" fieldname="fecha" />
         </column>
     </columns>
-    
-    <filters>        
-    </filters>    
+    <filters>
+    </filters>
 </view>

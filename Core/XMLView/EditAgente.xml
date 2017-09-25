@@ -61,6 +61,6 @@
                 <widget type="text" fieldname="codpostal" />
             </column>
         </group>
-    </columns>    
+    </columns>
 </view>
 

@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?php
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
@@ -15,24 +15,35 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+namespace FacturaScripts\Core\Controller;
+
+use FacturaScripts\Core\Base\ExtendedController;
+
+/**
+ * Controlador para la edición de un registro del modelo Empresa
  *
- *
- * Definición inicial para el controlador EditFabricante
- *
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
--->
+ */
+class EditEmpresa extends ExtendedController\EditController
+{
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    {
+        parent::__construct($cache, $i18n, $miniLog, $className);
 
-<view>
-    <columns>
-        <group name="data" numcolumns="12">
-            <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codfabricante" onclick="" icon="fa-object-group" required="true" />
-            </column>
-            
-            <column name="name" numcolumns="10" order="110">
-                <widget type="text" fieldname="nombre" required="true" />
-            </column>
-        </group>
-    </columns>
-</view>
+        // Establecemos el modelo de datos
+        $this->modelName = 'FacturaScripts\Core\Model\Empresa';
+    }
 
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'corporation';
+        $pagedata['icon'] = 'fa-home';
+        $pagedata['showonmenu'] = FALSE;
+
+        return $pagedata;
+    }
+}

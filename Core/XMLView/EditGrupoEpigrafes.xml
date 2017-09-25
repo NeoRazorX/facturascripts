@@ -42,7 +42,7 @@
                     <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
                 </widget>
             </column>
-        </group>                        
-    </columns>    
+        </group>
+    </columns>
 </view>
 

@@ -28,18 +28,18 @@
             <column name="codtarifa" title="Code rate" numcolumns="2" order="100"
                     description="Code for internal tarifa use.">
                 <widget type="text" fieldname="codtarifa" onclick="" icon="fa-money" required="true" />
-            </column>            
+            </column>
             <column name="nombre" title="Name" numcolumns="4" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
-            </column>            
+            </column>
             <column name="aplicar_a" title="Formula to apply" numcolumns="2" order="120">
                 <widget type="text" fieldname="aplicar_a" required="false" />
             </column>
         </group>
-        <group name="check" numcolumns="12" title="Check">            
+        <group name="check" numcolumns="12" title="Check">
             <column name="mincoste" title="Don't sell below cost" numcolumns="4" order="130">
                 <widget type="checkbox" fieldname="mincoste" />
-            </column>            
+            </column>
             <column name="maxpvp" title="Don't sell above pvp" numcolumns="4" order="140">
                 <widget type="checkbox" fieldname="maxpvp" />
             </column>

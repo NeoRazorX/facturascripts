@@ -51,7 +51,6 @@
             <widget type="number" fieldname="numfactura" />
         </column>
     </columns>
-    
-    <filters>        
-    </filters>    
+    <filters>
+    </filters>
 </view>

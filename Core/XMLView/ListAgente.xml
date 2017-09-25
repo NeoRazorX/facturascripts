@@ -70,7 +70,6 @@
             <widget type="text" fieldname="banco" />
         </column>
     </columns>
-    
-    <filters>        
+    <filters>
     </filters>
 </view>

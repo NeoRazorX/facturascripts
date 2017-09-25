@@ -25,7 +25,7 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" numcolumns="2" order="100">                
+            <column name="code" numcolumns="2" order="100">
                 <widget type="text" fieldname="codcliente" onclick="" icon="fa-user" required="true" />
             </column>
             
@@ -53,7 +53,7 @@
             
             <column name="fiscal number" title="CIF/NIF" numcolumns="2" order="140">
                 <widget type="text" fieldname="cifnif" required="true" />
-            </column>                                    
+            </column>
 
             <column name="fiscal mode" title="Es una persona física (no una empresa)" order="200">
                 <widget type="checkbox" fieldname="personafisica" />
@@ -86,7 +86,7 @@
             <column name="vat type" title="Régimen IVA" order="150">
                 <widget type="radio" fieldname="regimeniva">
                     <values title="General">General</values>
-                    <values title="Exento">Exento</values>                    
+                    <values title="Exento">Exento</values>
                 </widget>
             </column>
         </group>
@@ -111,7 +111,7 @@
             <column name="url" numcolumns="12" order="210">
                 <widget type="url" fieldname="web" />
             </column>
-        </group>        
+        </group>
 
         <group name="other" title="Other data" numcolumns="4">
             <column name="create date" numcolumns="4" order="80">
@@ -124,14 +124,14 @@
 
             <column name="blocked" numcolumns="4" order="100">
                 <widget type="checkbox" fieldname="debaja" />
-            </column>            
+            </column>
         </group>
-                        
+        
         <group name="notes">
             <column name="notes" order="170">
                 <widget type="textarea" fieldname="observaciones" />
             </column>
-        </group>                        
-    </columns>    
+        </group>
+    </columns>
 </view>
 
