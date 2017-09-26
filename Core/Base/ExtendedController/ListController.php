@@ -144,10 +144,26 @@ abstract class ListController extends Base\Controller
                 $document = $view->export($this->exportManager, $this->request->get('option'));
                 $this->response->setContent($document);
                 break;
-            
+
             case 'json':
                 $this->setTemplate(false);
-                $this->response->setContent(json_encode($this->views[$this->active]->getCursor()));
+                $jCol = [];
+                $cols = [];
+                foreach ($this->views[$this->active]->getColumns() as $col) {
+                    if ($col->display != 'none' && $col->widget->type == 'text' && count($cols) < 4) {
+                        $cols[] = $col->widget->fieldName;
+                        $jCol[] = $col->widget->fieldName;
+                    }
+                }
+                $json = [$jCol];
+                foreach ($this->views[$this->active]->getCursor() as $item) {
+                    $jItem = ['url' => $item->url()];
+                    foreach ($cols as $col) {
+                        $jItem[$col] = $item->{$col};
+                    }
+                    $json[] = $jItem;
+                }
+                $this->response->setContent(json_encode($json));
                 break;
         }
     }
