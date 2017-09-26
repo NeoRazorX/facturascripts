@@ -144,6 +144,11 @@ abstract class ListController extends Base\Controller
                 $document = $view->export($this->exportManager, $this->request->get('option'));
                 $this->response->setContent($document);
                 break;
+            
+            case 'json':
+                $this->setTemplate(false);
+                $this->response->setContent(json_encode($this->views[$this->active]->getCursor()));
+                break;
         }
     }
 

@@ -1,13 +1,45 @@
 {% extends "Master/MenuTemplate.html" %}
 
 {% block body %}
+{% for key, section in fsc.sections %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.getJSON('{{ section.search|raw }}', function (json) {
+            var items = [];
+            $.each(json, function (key, val) {
+                var tableTR = '';
+                $.each(this, function (key2, val2) {
+                    tableTR += '<td>' + val2 + '</td>';
+                });
+                items.push("<tr>" + tableTR + "</tr>");
+            });
+
+            if (items.length > 0) {
+                $("#v-pills-tab").append("<a class='nav-link' id='v-pills-{{ key }}-tab' data-toggle='pill' href='#v-pills-{{ key }}' role='tab' aria-controls='v-pills-{{ key }}' aria-expanded='true'>\n\
+                    <i class='fa {{ section.icon }}'></i> {{ section.title }}\n\
+                </a>");
+                var tableHTML = '';
+                $.each(items, function (key3, val3) {
+                    tableHTML += val3;
+                });
+                $("#v-pills-tabContent").append("<div class='tab-pane fade' id='v-pills-{{ key }}' role='tabpanel' aria-labelledby='v-pills-{{ key }}-tab'>\n\
+                    <div class='table-responsive'>\n\
+                    <table class='table table-hover'>" + tableHTML + "</table>\n\
+                    </div>\n\
+                    </div>");
+            }
+        });
+    });
+</script>
+{% endfor %}
+
 <div class="container-fluid">
-    <form action="{{ fsc.url() }}" method="post" class="form">
-        <div class="row">
-            <div class="col-sm-4">
+    <div class="row">
+        <div class="col-3">
+            <form action="{{ fsc.url() }}" method="post" class="form">
                 <div class="form-group">
                     <div class="input-group">
-                        <input type="text" name="query" class="form-control"/>
+                        <input type="text" name="query" value="{{ fsc.query }}" class="form-control"/>
                         <span class="input-group-btn">
                             <button type="submit" class="btn btn-info">
                                 <i class="fa fa-search" aria-hidden="true"></i>
@@ -15,8 +47,49 @@
                         </span>
                     </div>
                 </div>
+            </form>
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
+                {% if fsc.results['pages'] is not empty  %}
+                <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-paginas" role="tab" aria-controls="v-pills-paginas" aria-expanded="true">
+                    <i class="fa fa-mouse-pointer"></i> {{ i18n.trans('pages') }}
+                </a>
+                {% endif %}
             </div>
         </div>
-    </form>
+        <div class="col-9">
+            <div class="tab-content" id="v-pills-tabContent">
+                {% if fsc.results['pages'] is not empty  %}
+                <div class="tab-pane fade show active" id="v-pills-paginas" role="tabpanel" aria-labelledby="v-pills-paginas-tab">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>{{ i18n.trans('menu') }}</th>
+                                    <th>{{ i18n.trans('submenu') }}</th>
+                                    <th></th>
+                                    <th>{{ i18n.trans('page') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for page in fsc.results['pages'] %}
+                                <tr class="clickableRow" data-href='{{ page.url() }}'>
+                                    <td>{{ page.menu }}</td>
+                                    <td>{{ page.submenu }}</td>
+                                    <td class="text-right">
+                                        {% if page.icon %}
+                                        <i class="fa {{ page.icon }}"></i>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ page.title }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

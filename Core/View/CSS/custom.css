@@ -19,3 +19,7 @@
 .table th {
     border-top: none;
 }
+
+.clickable, .clickableRow:hover {
+    cursor: pointer;
+}

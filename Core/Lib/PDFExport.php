@@ -55,7 +55,9 @@ class PDFExport implements ExportInterface
         if (!empty($cursor)) {
             /// obtenemos las columnas
             foreach ($columns as $col) {
-                $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
+                if ($col->display != 'none') {
+                    $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
+                }
             }
 
             if (count($tableCols) > 5) {
