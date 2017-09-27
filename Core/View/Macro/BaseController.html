@@ -1,9 +1,7 @@
 <!--
     Genera el código para la vista Edit según las columnas indicadas
 -->
-{% macro columnsForEditView(i18n, view) %}
-    {% set model = view.getModel() %}
-
+{% macro columnsForEditView(context, view) %}
     {% for group in view.getColumns() %}
     <div class="{{ group.numColumns == 0 ? 'col' : 'col-md-' ~ group.numColumns }}">
         <div class="form-row">
@@ -12,7 +10,7 @@
             {% endif %}
             {% for column in group.columns %}
                 {% if column.display != 'none' %}
-                {% set value = attribute(model, column.widget.fieldName) %}
+                {% set value = context.fsc.getFieldValue(view, column.widget.fieldName) %}
                 {{ column.getEditHTML(value)|raw }}
                 {% endif %}
             {% endfor %}
@@ -21,6 +19,9 @@
     {% endfor %}
 {% endmacro %}
 
+<!--
+    Genera el código para la vista List según las columnas indicadas
+-->
 {% macro columnsForListView(i18n, view) %}
     <table class="table table-hover">
         <thead>

@@ -70,14 +70,14 @@ class Tarifa
      *
      * @var float
      */
-    private $incporcentual;
+    public $incporcentual;
 
     /**
      * Incremento lineal o descuento lineal
      *
      * @var float
      */
-    private $inclineal;
+    public $inclineal;
 
     public function tableName()
     {

@@ -27,33 +27,30 @@
 {% endblock %}
 
 {% block body %}
-<!-- Calculate texts according to language -->
+{# -- Calculate texts according to language -- #}
 {% set go_back = i18n.trans('back') %}
 {% set save, save_title = i18n.trans('save'), i18n.trans('save data') %}
 {% set undo, undo_title = i18n.trans('undo'), i18n.trans('restore data') %}
 {% set refresh_title = i18n.trans('refresh') %}
 
-{% set panel_header = fsc.getPanelHeader() %}
-{% set panel_footer = fsc.getPanelFooter() %}
-
 {% set title = fsc.getPageData()['title'] %}
 {% set title = i18n.trans(title) %}
 
-<!-- Calculate common values -->
+{# -- Calculate common values -- #}
 {% set list_url = fsc.views[fsc.active].getURL('list') %}
 {% set edit_url = fsc.views[fsc.active].getURL('edit') %}
 
-<!-- Visual macros -->
+{# -- Visual macros -- #}
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 {% from 'Macro/Utils.html' import exportData as exportData %}
 {% from 'Macro/BaseController.html' import columnsForListView as columnsForListView %}
 {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
 
-<!-- Main Body -->
+{# -- Main Body -- #}
 <div class="container-fluid">
     {{ parent() }}
     
-    <!-- Header Row -->
+    {# -- Header Row -- #}
     <div id="header" class="row">
         <div class="col-3 d-print-none">
             <div class="btn-group" aria-label="Button group with navigation actions">
@@ -66,7 +63,7 @@
                 </a>
             </div>
             
-            <!-- Añadimos opciones de impresión y exportación -->
+            {# -- Añadimos opciones de impresión y exportación -- #}
             {{ exportData(fsc, i18n, 'edit') }}
         </div>
 
@@ -81,43 +78,39 @@
 
     <p>&nbsp;</p>
 
-    <!-- Data Row -->
+    {# -- Data Row -- #}
     <div id="data" class="row">
-        <!-- Left Panel -->
+        {# -- Left Panel -- #}
         <div class="col-sm-auto ml-3 mb-2">
-            <div class="card bg-light">                
-                <div class="card-header">
-                    <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i>
-                    <span class="card-title">&nbsp;{{ panel_header }}</span>
-                </div>
-                <div class="card-body">
-                    <div class="list-group" id="myList" role="tablist">
-                    {% for indexView, view in fsc.views %}
-                        {% set active = (indexView == fsc.active) ? 'active' : '' %}                    
-                        <a class="list-group-item list-group-item-action {{ active }}" data-toggle="list" href="#{{ indexView }}" role="tab">{{ view.title }}</a>
-                    {% endfor %}                        
-                    </div>
-                </div>
+            <div class="nav flex-column nav-pills" id="optionsindex" role="tablist">
+            {% for indexView, view in fsc.views %}
+                {% set active = (indexView == fsc.active) ? ' active' : '' %}                    
+                <a class="nav-link{{ active }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
+                    <i class="fa {{ fsc.icons[indexView] }}" aria-hidden="true"></i>
+                    &nbsp;{{ view.title }}
+                </a>
+            {% endfor %}                        
             </div>
         </div>
         
-        <!-- Right Panel -->
+        {# -- Right Panel -- #}
         <div class="col mr-3">
             <div class="card">
                 <div class="card-body">
-                    <div class="tab-content">
+                    <div class="tab-content" id="optionsindex-tabContent">                        
                     {% for indexView, view in fsc.views %}
-                        {% set active = (indexView == fsc.active) ? 'active' : '' %}                    
-                        <div class="tab-pane {{ active }}" id="{{ indexView }}" role="tabpanel">                                                        
-                            {% if view.viewType == 'list' %}
-                            {{ columnsForListView(i18n, view) }}
+                        {% set active = (indexView == fsc.active) ? ' show active' : '' %}                    
+                        <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">                                                        
+                            {% set viewType = fsc.viewClass(view) %}
+                            {% if viewType == 'ListView' %}
+                                {{ columnsForListView(i18n, view) }}
                             {% endif %}
                             
-                            {% if view.viewType == 'edit' %}
+                            {% if viewType == 'EditView' %}
                             <form name="{{ indexView }}form" action="" method="post" class="form" role="form">
                                 <input type="hidden" name="action" value="save"> 
                                 <div class="row">
-                                {{ columnsForEditView(i18n, view) }}
+                                {{ columnsForEditView(_context, view) }}
                                 </div>
                                 <div class="text-right">
                                     <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
@@ -130,8 +123,10 @@
                             </form>
                             {% endif %}                            
 
-                            {% if view.viewType == 'html' %}
-                            uppsss ... tu pides mucho
+                            {% if viewType == 'HtmlView' %}
+                            <div class="row">
+                            {% include view.fileName ignore missing %}
+                            </div>
                             {% endif %}                            
                         </div>
                     {% endfor %}                        

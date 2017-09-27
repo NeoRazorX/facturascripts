@@ -138,11 +138,16 @@ _pintar de color rojo cuando el valor del campo **importe es mayor de treinta mi
     * checkbox: Valores booleanos que se visualizan mediante el icono de un check (true) o un guión (false) respectivamente.
     * select: Lista de valores establecidos por un conjunto de etiquetas _\<values\>_ descritas dentro del grupo _\<widget\>_.
 Los valores podrán ser fijos, incluyendo tantos _\<values\>_ como necesitemos e indicando el atributo _title_ y asignando un valor,
-como dinámicos o calculados en base al contenido de los registros de una tabla de la base de datos.
-Para este caso se utilizará una sóla etiqueta _\<values\>_ indicando los atributos:
+como dinámicos, ya sea calculados en base al contenido de los registros de una tabla de la base de datos o mediante la definición de un rango.
+Para el caso de valores de una tabla se utilizará una sóla etiqueta _\<values\>_ indicando los atributos:
         * _source_: Indica el nombre de la tabla origen de los datos
         * _fieldcode_: Indica el campo que contiene el valor a grabar en el campo de la columna
         * _fieldtitle_: Indica el campo que contiene el valor que se visualizará en pantalla
+
+Para el caso de valores por definición de rango una sóla etiqueta _\<values\>_ indicando los atributos:
+        * _start_: Indica el valor inicial (numérico o alfabético)
+        * _end_: Indica el valor final (numérico o alfabético)
+        * _step_: Indica el valor del incremento (numérico)
 
         ```XML
             <widget type="select" fieldname="documentacion">
@@ -154,7 +159,12 @@ Para este caso se utilizará una sóla etiqueta _\<values\>_ indicando los atrib
             <widget type="select" fieldname="codgrupo">
                 <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
             </widget>
+
+            <widget type="select" fieldname="codgrupo">
+                <values start="0" end="6" step="1"></values>
+            </widget>
         ```
+
     * radio: Lista de valores donde podemos seleccionar una de ellas.
 Se indican las distintas opciones mediante sistema de etiquetas _\<values\>_ descritas dentro del grupo _\<widget\>_, al estilo del tipo _select_.
 

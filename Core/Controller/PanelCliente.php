@@ -26,7 +26,7 @@ use FacturaScripts\Core\Base\DataBase;
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-abstract class PanelCliente extends ExtendedController\PanelController
+class PanelCliente extends ExtendedController\PanelController
 {
 
     protected function createViews()
