@@ -320,8 +320,8 @@ class ListView extends BaseView
         return FALSE;
     }
 
-    public function export(&$exportManager, $action)
+    public function export(&$exportManager, &$response, $action)
     {
-        return $exportManager->generateList($action, $this->model, $this->where, $this->order, $this->offset, $this->getColumns());
+        return $exportManager->generateList($response, $action, $this->model, $this->where, $this->order, $this->offset, $this->getColumns());
     }
 }

@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\ExportInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of PDF
@@ -45,7 +46,7 @@ class PDFExport implements ExportInterface
         $pdf->addInfo('Creator', 'FacturaScripts');
         $pdf->addInfo('Producer', 'FacturaScripts');
         $pdf->ezTable($tableData);
-        return $pdf->ezStream(array('Content-Disposition' => 'doc.pdf'));
+        return $pdf->ezStream(array('Content-Disposition' => 'doc_'.$model->tableName().'.pdf'));
     }
 
     public function newListDoc($model, $where, $order, $offset, $columns)
@@ -78,7 +79,7 @@ class PDFExport implements ExportInterface
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
 
-        return $pdf->ezStream(array('Content-Disposition' => 'list.pdf'));
+        return $pdf->ezStream(array('Content-Disposition' => 'list_'.$model->tableName().'.pdf'));
     }
 
     private function getTableData($cursor, $tableCols)
@@ -98,5 +99,14 @@ class PDFExport implements ExportInterface
         }
 
         return $tableData;
+    }
+    
+    /**
+     * 
+     * @param Response $response
+     */
+    public function setHeaders(&$response)
+    {
+        $response->headers->set('Content-type' , 'application/pdf');
     }
 }

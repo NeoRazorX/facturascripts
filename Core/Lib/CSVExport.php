@@ -37,4 +37,9 @@ class CSVExport implements ExportInterface
     {
         ;
     }
+    
+    public function setHeaders(&$response)
+    {
+        ;
+    }
 }
