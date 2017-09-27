@@ -102,8 +102,7 @@ class ListView extends BaseView
      */
     public function __construct($title, $modelName, $viewName, $userNick)
     {
-        parent::__construct($title, $modelName, $viewName, $userNick);
-        $this->viewType = 'list';
+        parent::__construct($title, $modelName);
 
         $this->cursor = NULL;
         $this->orderby = [];
@@ -111,6 +110,9 @@ class ListView extends BaseView
         $this->searchIn = [];
         $this->count = 0;
         $this->selectedOrderBy = '';
+        
+        // Carga configuración de la vista para el usuario
+        $this->pageOption->getForUser($viewName, $userNick);        
     }
 
     /**

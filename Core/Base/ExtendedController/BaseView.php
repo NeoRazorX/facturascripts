@@ -46,13 +46,6 @@ abstract class BaseView
     protected $pageOption;
 
     /**
-     * Indicativo del tipo de vista
-     *
-     * @var string
-     */
-    public $viewType;
-
-    /**
      * Título identificativo de la vista
      *
      * @var string
@@ -73,18 +66,12 @@ abstract class BaseView
      *
      * @param string $title
      * @param string $modelName
-     * @param string $viewName
-     * @param string $userNick
      */
-    public function __construct($title, $modelName, $viewName, $userNick)
+    public function __construct($title, $modelName)
     {
-        $this->viewType = 'base';
         $this->title = $title;
         $this->model = empty($modelName) ? NULL : new $modelName;
-
-        // Carga configuración de la vista para el usuario
         $this->pageOption = new Model\PageOption();
-        $this->pageOption->getForUser($viewName, $userNick);
     }
 
     /**

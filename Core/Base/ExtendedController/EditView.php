@@ -19,14 +19,14 @@
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Definición de vista para uso en ListController
+ * Definición de vista para uso en ExtendedControllers
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class EditView extends BaseView
 {
-
+    
     /**
      * Constructor e inicializador de la clase
      *
@@ -37,8 +37,10 @@ class EditView extends BaseView
      */
     public function __construct($title, $modelName, $viewName, $userNick)
     {
-        parent::__construct($title, $modelName, $viewName, $userNick);
-        $this->viewType = 'edit';
+        parent::__construct($title, $modelName);
+        
+        // Carga configuración de la vista para el usuario
+        $this->pageOption->getForUser($viewName, $userNick);        
     }
 
     /**
@@ -49,6 +51,17 @@ class EditView extends BaseView
         $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
     }
 
+    /**
+     * Devuelve el valor del campo indicado en el modelo de datos cargado
+     * 
+     * @param string $field
+     * @return mixed
+     */
+    public function getFieldValue($field)
+    {
+        return $this->model->{$field};
+    }
+    
     /**
      * Devuelve el texto para la cabecera del panel de datos
      *
@@ -91,7 +104,9 @@ class EditView extends BaseView
         // Bloqueamos el campo Primary Key si no es una alta
         $fieldName = $this->model->primaryColumn();
         $column = $this->pageOption->columnForField($fieldName);
-        $column->widget->readOnly = (!empty($this->model->{$fieldName}));
+        if (!empty($column)) {
+            $column->widget->readOnly = (!empty($this->model->{$fieldName}));
+        }
     }
     
     /**

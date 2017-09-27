@@ -14,7 +14,19 @@
         <tipo>character varying(50)</tipo>
         <nulo>NO</nulo>
     </columna>
-                
+
+    <columna>
+        <nombre>icon</nombre>
+        <tipo>character varying(20)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+
+    <columna>
+        <nombre>description</nombre>
+        <tipo>text</tipo>
+        <nulo>YES</nulo>
+    </columna>
+                                
     <columna>
         <nombre>properties</nombre>
         <tipo>text</tipo>

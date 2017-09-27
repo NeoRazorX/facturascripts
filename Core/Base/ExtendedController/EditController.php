@@ -119,6 +119,18 @@ class EditController extends Base\Controller
     }
 
     /**
+     * Devuelve el valor de un campo para el modelo de datos cargado
+     * 
+     * @param EditView $view
+     * @param string $field
+     * @return mixed
+     */
+    public function getFieldValue($view, $field)
+    {
+        return $view->getFieldValue($field);
+    }
+    
+    /**
      * Ejecuta la modificación de los datos
      *
      * @param array $data
