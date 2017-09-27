@@ -39,11 +39,30 @@ class PanelSettings extends ExtendedController\PanelController
         return $pagedata;
     }
 
-    public function getPanelHeader()
+    /**
+     * Devuelve la url para el tipo indicado
+     * 
+     * @param string $type
+     * @return string
+     */
+    public function getURL($type)
     {
-        return $this->i18n->trans('options');
+        $result = 'index.php';
+        switch ($type) {
+            case 'list':
+                $result .= '?page=AdminHome';
+                break;
+
+            case 'edit':
+                $result .= '?page=PanelSettings';
+                break;
+        }
+
+        return $result;
     }
 
+    
+    
     public function getFieldValue($view, $field)
     {        
         $properties = parent::getFieldValue($view, 'properties');

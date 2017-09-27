@@ -14,6 +14,14 @@
 
 {% block javascript %}
     {{ parent() }}
+<script type="text/javascript">
+    var tabActive = '{{ fsc.active }}';
+    $(document).ready(function () {
+        $('#mainTabs').on('shown.bs.tab', function (e) {
+            tabActive = e.target.hash.substring(1);
+        });
+    });
+</script>
 {% endblock %}
 
 {% block messages %}
@@ -37,8 +45,8 @@
 {% set title = i18n.trans(title) %}
 
 {# -- Calculate common values -- #}
-{% set list_url = fsc.views[fsc.active].getURL('list') %}
-{% set edit_url = fsc.views[fsc.active].getURL('edit') %}
+{% set list_url = fsc.getURL('list') %}
+{% set edit_url = fsc.getURL('edit') %}
 
 {# -- Visual macros -- #}
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
@@ -107,8 +115,9 @@
                             {% endif %}
                             
                             {% if viewType == 'EditView' %}
-                            <form name="{{ indexView }}form" action="" method="post" class="form" role="form">
+                            <form name="{{ indexView }}form" action="#" method="post" class="form" role="form">
                                 <input type="hidden" name="action" value="save"> 
+                                <input type="hidden" name="active" value="{{ indexView }}">
                                 <div class="row">
                                 {{ columnsForEditView(_context, view) }}
                                 </div>

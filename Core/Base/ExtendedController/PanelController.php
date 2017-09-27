@@ -137,11 +137,30 @@ abstract class PanelController extends Base\Controller
         }
     }
 
+    /**
+     * Devuelve el valor para un campo del modelo de datos de la vista
+     * 
+     * @param EditView $view
+     * @param string $field
+     * @return mixed
+     */
     public function getFieldValue($view, $field)
     {
         return $view->getFieldValue($field);
     }
 
+    /**
+     * Devuelve la url para el tipo indicado
+     * 
+     * @param string $type
+     * @return string
+     */
+    public function getURL($type)
+    {
+        $view = $this->views[$this->active];
+        return $view->getURL($type);
+    }
+        
     /**
      * Ejecuta la modificación de los datos
      *
