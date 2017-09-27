@@ -50,6 +50,13 @@ abstract class PanelController extends Base\Controller
     public $views;
 
     /**
+     * Lista de iconos para cada una de las vistas
+     *
+     * @var array
+     */
+    public $icons;
+
+    /**
      * Procedimiento encargado de insertar las vistas a visualizar
      */
     abstract protected function createViews();
@@ -78,6 +85,7 @@ abstract class PanelController extends Base\Controller
         $this->active = $this->request->get('active', '');
         $this->exportManager = new Base\ExportManager();
         $this->views = [];
+        $this->icons = [];
     }
 
     /**
@@ -113,12 +121,12 @@ abstract class PanelController extends Base\Controller
 
         switch ($this->request->get('action')) {
             case 'save':
-                EditView($view)->loadFromData($data);
-                $this->editAction(EditView($view), $data);
+                $view->loadFromData($data);
+                $this->editAction($view, $data);
                 break;
 
             case 'insert':
-                $this->insertAction(EditView($view), $data);
+                $this->insertAction($view, $data);
                 break;
 
             case 'export':
@@ -129,6 +137,30 @@ abstract class PanelController extends Base\Controller
         }
     }
 
+    /**
+     * Devuelve el valor para un campo del modelo de datos de la vista
+     * 
+     * @param EditView $view
+     * @param string $field
+     * @return mixed
+     */
+    public function getFieldValue($view, $field)
+    {
+        return $view->getFieldValue($field);
+    }
+
+    /**
+     * Devuelve la url para el tipo indicado
+     * 
+     * @param string $type
+     * @return string
+     */
+    public function getURL($type)
+    {
+        $view = $this->views[$this->active];
+        return $view->getURL($type);
+    }
+        
     /**
      * Ejecuta la modificación de los datos
      *
@@ -162,9 +194,10 @@ abstract class PanelController extends Base\Controller
      * @param string $keyView
      * @param BaseView $view
      */
-    private function addView($keyView, $view)
+    private function addView($keyView, $view, $icon)
     {
         $this->views[$keyView] = $view;
+        $this->icons[$keyView] = $icon;
         $this->loadData($keyView, $view);
 
         if (empty($this->active)) {
@@ -178,11 +211,12 @@ abstract class PanelController extends Base\Controller
      * @param string $modelName
      * @param string $viewName
      * @param string $viewTitle
+     * @param string $viewIcon
      */
-    protected function addListView($modelName, $viewName, $viewTitle)
+    protected function addListView($modelName, $viewName, $viewTitle, $viewIcon = 'fa-bars')
     {
         $view = new ListView($viewTitle, $modelName, $viewName, $this->user->nick);
-        $this->addView($viewName, $view);
+        $this->addView($viewName, $view, $viewIcon);
     }
 
     /**
@@ -191,21 +225,38 @@ abstract class PanelController extends Base\Controller
      * @param string $modelName
      * @param string $viewName
      * @param string $viewTitle
+     * @param string $viewIcon
      */
-    protected function addEditView($modelName, $viewName, $viewTitle)
+    protected function addEditView($modelName, $viewName, $viewTitle, $viewIcon = 'fa-list-alt')
     {
         $view = new EditView($viewTitle, $modelName, $viewName, $this->user->nick);
-        $this->addView($viewName, $view);
+        $this->addView($viewName, $view, $viewIcon);
     }
 
-    public function viewClass($keyView)
+    /**
+     * Añade una vista tipo Html al controlador.
+     *
+     * @param string $fileName
+     * @param string $modelName
+     * @param string $viewName
+     * @param string $viewTitle
+     * @param string $viewIcon
+     */
+    protected function addHtmlView($fileName, $modelName, $viewName, $viewTitle, $viewIcon = 'fa-html5')
     {
-        $result = explode('\\', get_class($this->views[$keyView]));
+        $view = new HtmlView($viewTitle, $modelName, $fileName);
+        $this->addView($viewName, $view, $viewIcon);
+    }
+
+    /**
+     * Devuelve la clase de la vista
+     *
+     * @param string $view
+     * @return string
+     */
+    public function viewClass($view)
+    {
+        $result = explode('\\', get_class($view));
         return end($result);
-    }
-
-    public function getPanelHeader()
-    {
-        return $this->i18n->trans('panel-text');
     }
 }

@@ -143,14 +143,31 @@ class WidgetItem
     {
         $this->values = [];
         foreach ($rows as $codeModel) {
-            $values = [];
-            $values['value'] = $codeModel->code;
-            $values['title'] = $codeModel->description;
-            $this->values[] = $values;
-            unset($values);
+            $item = [];
+            $item['value'] = $codeModel->code;
+            $item['title'] = $codeModel->description;
+            $this->values[] = $item;
+            unset($item);
         }
     }
 
+    /**
+     * Carga la lista de valores según un array de valores
+     * 
+     * @param array $values
+     */
+    public function setValuesFromArray(&$values)
+    {
+        $this->values = [];
+        foreach ($values as $value) {
+            $item = [];
+            $item['value'] = $value;
+            $item['title'] = $value;
+            $this->values[] = $item;
+            unset($item);
+        }        
+    }
+    
     /**
      * Carga el diccionario de atributos de un grupo de opciones o valores
      * del widget

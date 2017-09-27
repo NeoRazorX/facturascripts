@@ -273,8 +273,8 @@ class PageOption
             $this->installXML($name);
         }
 
-        // Aplicamos sobre los widgets Select enlazados a base de datos los valores de los registros.
-        $this->searchSelectValues();
+        // Aplicamos sobre los widgets Select dinámicos sus valores
+        $this->dynamicSelectValues();
     }
 
     /**
@@ -303,21 +303,31 @@ class PageOption
     }
 
     /**
-     * Carga la lista de valores para un widget de tipo select relacionado
+     * Carga la lista de valores para un widget de tipo select dinámico
      * con un modelo de la base de datos
      */
-    private function searchSelectValues()
+    private function dynamicSelectValues()
     {
         foreach ($this->columns as $group) {
             foreach ($group->columns as $column) {
-                if (($column->widget->type === 'select') && array_key_exists('source', $column->widget->values[0])) {
-                    $tableName = $column->widget->values[0]['source'];
-                    $fieldCode = $column->widget->values[0]['fieldcode'];
-                    $fieldDesc = $column->widget->values[0]['fieldtitle'];
-                    $allowEmpty = !$column->widget->required;
-                    $rows = CodeModel::all($tableName, $fieldCode, $fieldDesc, $allowEmpty);
-                    $column->widget->setValuesFromCodeModel($rows);
-                    unset($rows);
+                if ($column->widget->type === 'select') {
+                    if (array_key_exists('source', $column->widget->values[0])) {
+                        $tableName = $column->widget->values[0]['source'];
+                        $fieldCode = $column->widget->values[0]['fieldcode'];
+                        $fieldDesc = $column->widget->values[0]['fieldtitle'];
+                        $allowEmpty = !$column->widget->required;
+                        $rows = CodeModel::all($tableName, $fieldCode, $fieldDesc, $allowEmpty);
+                        $column->widget->setValuesFromCodeModel($rows);
+                        unset($rows);
+                    }
+                    
+                    if (array_key_exists('start', $column->widget->values[0])) {
+                        $start = $column->widget->values[0]['start'];
+                        $end = $column->widget->values[0]['end'];
+                        $step = $column->widget->values[0]['step'];
+                        $values = range($start, $end, $step);
+                        $column->widget->setValuesFromArray($values);
+                    }
                 }
             }
         }
