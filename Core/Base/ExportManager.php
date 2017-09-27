@@ -49,12 +49,12 @@ class ExportManager
         return $docClass->newDoc($model);
     }
 
-    public function generateList($cursor, $columns, $option)
+    public function generateList($option, $model, $where, $order, $offset, $columns)
     {
         /// llamar a la clase apropiada para generar el archivo en función de la opción elegida
         $className = "FacturaScripts\\Core\\Lib\\" . $option . 'Export';
         $docClass = new $className();
 
-        return $docClass->newListDoc($cursor, $columns);
+        return $docClass->newListDoc($model, $where, $order, $offset, $columns);
     }
 }

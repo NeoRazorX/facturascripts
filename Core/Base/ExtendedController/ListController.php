@@ -146,24 +146,7 @@ abstract class ListController extends Base\Controller
                 break;
 
             case 'json':
-                $this->setTemplate(false);
-                $jCol = [];
-                $cols = [];
-                foreach ($this->views[$this->active]->getColumns() as $col) {
-                    if ($col->display != 'none' && $col->widget->type == 'text' && count($cols) < 4) {
-                        $cols[] = $col->widget->fieldName;
-                        $jCol[] = $col->widget->fieldName;
-                    }
-                }
-                $json = [$jCol];
-                foreach ($this->views[$this->active]->getCursor() as $item) {
-                    $jItem = ['url' => $item->url()];
-                    foreach ($cols as $col) {
-                        $jItem[$col] = $item->{$col};
-                    }
-                    $json[] = $jItem;
-                }
-                $this->response->setContent(json_encode($json));
+                $this->jsonAction();
                 break;
         }
     }
@@ -181,6 +164,29 @@ abstract class ListController extends Base\Controller
             return TRUE;
         }
         return FALSE;
+    }
+
+    protected function jsonAction()
+    {
+        $this->setTemplate(false);
+        $cols = [];
+        foreach ($this->views[$this->active]->getColumns() as $col) {
+            if ($col->display != 'none' && $col->widget->type == 'text' && count($cols) < 4) {
+                $cols[] = $col->widget->fieldName;
+            }
+        }
+        $json = [];
+        foreach ($this->views[$this->active]->getCursor() as $item) {
+            $jItem = ['url' => $item->url()];
+            foreach ($cols as $col) {
+                $jItem[$col] = $item->{$col};
+            }
+            $json[] = $jItem;
+        }
+        if (!empty($json)) {
+            \array_unshift($json, $cols);
+        }
+        $this->response->setContent(json_encode($json));
     }
 
     /**

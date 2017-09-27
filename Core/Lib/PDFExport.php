@@ -30,6 +30,8 @@ class PDFExport implements ExportInterface
 
     use \FacturaScripts\Core\Base\Utils;
 
+    const LIST_LIMIT = 1000;
+
     public function newDoc($model)
     {
         $tableData = [];
@@ -46,41 +48,55 @@ class PDFExport implements ExportInterface
         return $pdf->ezStream(array('Content-Disposition' => 'doc.pdf'));
     }
 
-    public function newListDoc($cursor, $columns)
+    public function newListDoc($model, $where, $order, $offset, $columns)
     {
         $orientation = 'portrait';
         $tableCols = [];
-        $tableData = [];
 
-        if (!empty($cursor)) {
-            /// obtenemos las columnas
-            foreach ($columns as $col) {
-                if ($col->display != 'none') {
-                    $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
-                }
+        /// obtenemos las columnas
+        foreach ($columns as $col) {
+            if ($col->display != 'none') {
+                $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
             }
+        }
 
-            if (count($tableCols) > 5) {
-                $orientation = 'landscape';
-            }
-
-            /// obtenemos los datos
-            foreach ($cursor as $key => $row) {
-                foreach ($tableCols as $col) {
-                    $value = $row->{$col};
-                    if (is_string($value)) {
-                        $value = $this->fixHtml($value);
-                    }
-
-                    $tableData[$key][$col] = $value;
-                }
-            }
+        if (count($tableCols) > 5) {
+            $orientation = 'landscape';
         }
 
         $pdf = new \Cezpdf('a4', $orientation);
         $pdf->addInfo('Creator', 'FacturaScripts');
         $pdf->addInfo('Producer', 'FacturaScripts');
-        $pdf->ezTable($tableData, $tableCols);
+
+        $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
+        while (!empty($cursor)) {
+            $tableData = $this->getTableData($cursor, $tableCols);
+            $pdf->ezTable($tableData, $tableCols);
+
+            /// avanzamos en los resultados
+            $offset += self::LIST_LIMIT;
+            $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
+        }
+
         return $pdf->ezStream(array('Content-Disposition' => 'list.pdf'));
+    }
+
+    private function getTableData($cursor, $tableCols)
+    {
+        $tableData = [];
+
+        /// obtenemos los datos
+        foreach ($cursor as $key => $row) {
+            foreach ($tableCols as $col) {
+                $value = $row->{$col};
+                if (is_string($value)) {
+                    $value = $this->fixHtml($value);
+                }
+
+                $tableData[$key][$col] = $value;
+            }
+        }
+
+        return $tableData;
     }
 }

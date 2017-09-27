@@ -33,7 +33,7 @@ class XLSExport implements ExportInterface
         ;
     }
     
-    public function newListDoc($cursor, $columns)
+    public function newListDoc($model, $where, $order, $offset, $columns)
     {
         ;
     }

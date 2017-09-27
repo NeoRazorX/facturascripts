@@ -75,6 +75,24 @@ class ListView extends BaseView
     public $count;
 
     /**
+     * Almacena el offset para el cursor
+     * @var integer 
+     */
+    private $offset;
+
+    /**
+     * Almacena el order para el cursor
+     * @var string 
+     */
+    private $order;
+
+    /**
+     * Almacena los parámetros del where del cursor
+     * @var array 
+     */
+    private $where;
+
+    /**
      * Constructor e inicializador de la clase
      *
      * @param string $title
@@ -155,7 +173,7 @@ class ListView extends BaseView
         if (empty($this->orderby)) {
             return [];
         }
-            
+
         if ($orderKey == '') {
             $orderKey = array_keys($this->orderby)[0];
         }
@@ -286,6 +304,11 @@ class ListView extends BaseView
         if ($this->count > 0) {
             $this->cursor = $this->model->all($where, $order, $offset, $limit);
         }
+
+        /// nos guardamos los valores where y offset para la exportación
+        $this->offset = $offset;
+        $this->order = $order;
+        $this->where = $where;
     }
 
     public function delete($code)
@@ -299,6 +322,6 @@ class ListView extends BaseView
 
     public function export(&$exportManager, $action)
     {
-        return $exportManager->generateList($this->cursor, $this->getColumns(), $action);        
+        return $exportManager->generateList($action, $this->model, $this->where, $this->order, $this->offset, $this->getColumns());
     }
 }
