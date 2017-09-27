@@ -537,7 +537,7 @@ trait ModelTrait
                 $done = false;
             }
         } else {
-            $this->miniLog->critical('Error con el xml.');
+            $this->miniLog->critical('error-on-xml-file');
             $done = false;
         }
 

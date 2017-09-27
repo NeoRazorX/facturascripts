@@ -58,7 +58,6 @@
             <widget type="text" fieldname="tipovaloracion" />
         </column>
     </columns>
-    
-    <filters>        
-    </filters>    
+    <filters>
+    </filters>
 </view>

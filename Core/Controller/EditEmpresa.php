@@ -22,29 +22,28 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Description of ListAsiento
+ * Controlador para la edición de un registro del modelo Empresa
  *
- * @author carlos
+ * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class ListAsiento extends ExtendedController\ListController
+class EditEmpresa extends ExtendedController\EditController
 {
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    {
+        parent::__construct($cache, $i18n, $miniLog, $className);
+
+        // Establecemos el modelo de datos
+        $this->modelName = 'FacturaScripts\Core\Model\Empresa';
+    }
+
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Asientos';
-        $pagedata['icon'] = 'fa-balance-scale';
-        $pagedata['menu'] = 'contabilidad';
+        $pagedata['title'] = 'corporation';
+        $pagedata['icon'] = 'fa-home';
+        $pagedata['showonmenu'] = FALSE;
 
         return $pagedata;
-    }
-
-    protected function createViews()
-    {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\Asiento', $className);
-        $this->addSearchFields($className, ['numero', 'concepto']);
-
-        $this->addOrderBy($className, 'numero', 'number');
-        $this->addOrderBy($className, 'fecha', 'date', 2); /// forzamos el orden por defecto fecha desc
     }
 }

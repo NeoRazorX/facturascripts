@@ -30,6 +30,9 @@
         <column name="name" order="110">
             <widget type="text" fieldname="nombre" />
         </column>
+        <column name="surname" order="110">
+            <widget type="text" fieldname="apellidos" />
+        </column>
         <column name="position" title="Cargo" order="120">
             <widget type="text" fieldname="cargo" />
         </column>
@@ -70,7 +73,6 @@
             <widget type="text" fieldname="banco" />
         </column>
     </columns>
-    
-    <filters>        
+    <filters>
     </filters>
 </view>

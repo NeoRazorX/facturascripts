@@ -31,8 +31,8 @@
             
             <column name="name" numcolumns="10" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
-            </column>            
-        </group>                        
-    </columns>    
+            </column>
+        </group>
+    </columns>
 </view>
 

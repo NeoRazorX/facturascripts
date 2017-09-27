@@ -37,7 +37,6 @@
             <widget type="text" fieldname="descripcion" />
         </column>
     </columns>
-    
-    <filters>        
-    </filters>    
+    <filters>
+    </filters>
 </view>

@@ -37,7 +37,6 @@
             <widget type="number" decimal="2" fieldname="recargo" />
         </column>
     </columns>
-    
-    <filters>        
-    </filters>    
+    <filters>
+    </filters>
 </view>

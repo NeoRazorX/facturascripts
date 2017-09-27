@@ -32,7 +32,7 @@ class ListCliente extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Clientes';
+        $pagedata['title'] = 'customers';
         $pagedata['icon'] = 'fa-users';
         $pagedata['menu'] = 'ventas';
 
