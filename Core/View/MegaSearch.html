@@ -102,7 +102,6 @@
                             <thead>
                                 <tr>
                                     <th>{{ i18n.trans('menu') }}</th>
-                                    <th>{{ i18n.trans('submenu') }}</th>
                                     <th></th>
                                     <th>{{ i18n.trans('page') }}</th>
                                 </tr>
@@ -110,8 +109,9 @@
                             <tbody>
                                 {% for page in fsc.results['pages'] %}
                                 <tr class="clickableRow" data-href='{{ page.url() }}'>
-                                    <td>{{ page.menu }}</td>
-                                    <td>{{ page.submenu }}</td>
+                                    <td class="text-capitalize">
+                                        {{ page.menu }}{% if page.submenu %} - {{ page.submenu }}{% endif %}
+                                    </td>
                                     <td class="text-right">
                                         {% if page.icon %}
                                         <i class="fa {{ page.icon }}"></i>
