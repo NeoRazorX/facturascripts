@@ -27,23 +27,24 @@ use FacturaScripts\Core\Base\ExportInterface;
  */
 class XLSExport implements ExportInterface
 {
+
     use \FacturaScripts\Core\Base\Utils;
-    
+
     const LIST_LIMIT = 1000;
 
     public function newDoc($model)
     {
         $writer = new \XLSXWriter();
         $writer->setAuthor('FacturaScripts');
-        
+
         $tableData = [];
         foreach ((array) $model as $key => $value) {
             if (is_string($value)) {
                 $tableData[] = ['key' => $key, 'value' => $this->fixHtml($value)];
             }
         }
-        
-        $writer->writeSheet($tableData);
+
+        $writer->writeSheet($tableData, '', ['key' => 'string', 'value' => 'string']);
         return $writer->writeToString();
     }
 
@@ -54,22 +55,24 @@ class XLSExport implements ExportInterface
 
         /// obtenemos las columnas
         $tableCols = [];
+        $sheetHeaders = [];
         foreach ($columns as $col) {
             if ($col->display != 'none') {
                 $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
+                $sheetHeaders[$col->widget->fieldName] = 'string';
             }
         }
-        
+
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         while (!empty($cursor)) {
             $tableData = $this->getTableData($cursor, $tableCols);
-            $writer->writeSheet($tableData);
+            $writer->writeSheet($tableData, '', $sheetHeaders);
 
             /// avanzamos en los resultados
             $offset += self::LIST_LIMIT;
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
-        
+
         return $writer->writeToString();
     }
 
@@ -91,7 +94,7 @@ class XLSExport implements ExportInterface
 
         return $tableData;
     }
-    
+
     public function setHeaders(&$response)
     {
         $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
