@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 class ColumnItem extends VisualItem implements VisualItemInterface
 {
+
     /**
      * Texto adicional que explica el campo al usuario
      *
@@ -69,6 +69,10 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     {
         parent::loadFromXML($column);
 
+        if (empty($this->title)) {
+            $this->title = $this->name;
+        }
+
         $column_atributes = $column->attributes();
         $this->description = (string) $column_atributes->description;
 
@@ -82,13 +86,14 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     /**
      * Carga la estructura de atributos en base a la base de datos
      *
-     * @param SimpleXMLElement $column
+     * @param array $column
      */
     public function loadFromJSON($column)
     {
         parent::loadFromJSON($column);
         $this->description = (string) $column['description'];
         $this->display = (string) $column['display'];
+        $this->widget->loadFromJSONColumn($column);
     }
 
     /**
@@ -156,17 +161,17 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         switch ($this->widget->type) {
             case 'checkbox':
                 $html = '<div class="form-row align-items-center' . $columnClass . '">'
-                        . $this->checkboxHTMLColumn($header, $input, $hint, $description)
-                        . $required
-                        . '</div>';
+                    . $this->checkboxHTMLColumn($header, $input, $hint, $description)
+                    . $required
+                    . '</div>';
                 break;
 
             case 'radio':
                 $html = '<div class="' . $columnClass . '">'
-                        . '<label>' . $header . '</label>'
-                        . $this->radioHTMLColumn($input, $hint, $value)
-                        . $required
-                        . '</div>';
+                    . '<label>' . $header . '</label>'
+                    . $this->radioHTMLColumn($input, $hint, $value)
+                    . $required
+                    . '</div>';
                 break;
 
             default:
@@ -185,7 +190,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      * @param string $hint
      * @param string $description
      * @param string $columnClass
-     * @param mixed  $required
+     * @param mixed $required
      *
      * @return string
      */
@@ -238,9 +243,9 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             ++$index;
             $values = [($index . '"'), $optionValue['value'], $checked];
             $html .= '<div class="form-check"><label class="form-check-label"' . $hint . '>'
-                    . str_replace($template_var, $values, $input)
-                    . '&nbsp;' . $optionValue['title']
-                    . '</label></div>';
+                . str_replace($template_var, $values, $input)
+                . '&nbsp;' . $optionValue['title']
+                . '</label></div>';
         }
 
         return $html;
@@ -248,9 +253,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
 
     private function getColumnClass()
     {
-        return ($this->numColumns > 0)
-            ? (' col-md-' . $this->numColumns)
-            : ' col';
+        return ($this->numColumns > 0) ? (' col-md-' . $this->numColumns) : ' col';
     }
 
     private function getColumnHint()
@@ -260,15 +263,11 @@ class ColumnItem extends VisualItem implements VisualItemInterface
 
     private function getColumnRequired()
     {
-        return $this->widget->required
-            ? '<div class="invalid-feedback">' . $this->i18n->trans('Por favor, introduzca un valor para el campo') . '</div>'
-            : '';
+        return $this->widget->required ? '<div class="invalid-feedback">' . $this->i18n->trans('Por favor, introduzca un valor para el campo') . '</div>' : '';
     }
 
     private function getColumnDescription()
     {
-        return empty($this->description)
-            ? ''
-            : '<small class="form-text text-muted">' . $this->i18n->trans($this->description) . '</small>';
+        return empty($this->description) ? '' : '<small class="form-text text-muted">' . $this->i18n->trans($this->description) . '</small>';
     }
 }

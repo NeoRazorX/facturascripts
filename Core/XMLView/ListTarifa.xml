@@ -24,11 +24,35 @@
 
 <view>
     <columns>
-        <column title="Código" order="100">
+        <column name="code" order="100">
             <widget type="text" fieldname="codtarifa" onclick="EditTarifa" />
         </column>
-        <column title="Nombre" order="110">
+        
+        <column name="name" order="110">
             <widget type="text" fieldname="nombre" />
+        </column>
+        
+        <column name="formula" title="formula-to-apply" order="120">
+            <widget type="select" fieldname="aplicar_a">
+                <values title="Precio de venta - X% - Y">pvp</values>
+                <values title="Precio de coste + X% + Y">coste</values>
+            </widget>
+        </column>
+
+        <column name="incpct" title="variation" order="130">
+            <widget type="number" decimal="2" fieldname="incporcentual" />
+        </column>
+
+        <column name="inclineal" title="variation" order="140">
+            <widget type="money" fieldname="inclineal" />
+        </column>
+
+        <column name="mincost" title="Don't sell below cost" order="150">
+            <widget type="checkbox" fieldname="mincoste" />
+        </column>
+
+        <column name="maxprice" title="Don't sell above pvp" order="160">
+            <widget type="checkbox" fieldname="maxpvp" />
         </column>
     </columns>
 </view>

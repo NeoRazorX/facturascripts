@@ -24,23 +24,22 @@
 
 <view>
     <columns>
-        <column title="Número" display="left" order="90">
+        <column name="number" display="left" order="90">
             <widget type="text" fieldname="numero" onclick="EditAsiento" />
         </column>
-        <column title="Ejercicio" display="left" order="100">
+        <column name="fiscal exercise" display="left" order="100">
             <widget type="text" fieldname="codejercicio" />
         </column>
-        <column title="Concepto" display="left" order="100">
+        <column name="accounting concept" display="left" order="100">
             <widget type="text" fieldname="concepto" />
         </column>
-        <column title="Importe" display="right" order="100">
+        <column name="amount" display="right" order="100">
             <widget type="money" fieldname="importe" />
         </column>
-        <column title="Fecha" display="right" order="100">
+        <column name="date" display="right" order="100">
             <widget type="text" fieldname="fecha" />
         </column>
     </columns>
-    
-    <filters>        
-    </filters>    
+    <filters>
+    </filters>
 </view>

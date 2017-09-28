@@ -163,9 +163,7 @@ trait ModelTrait
     public function modelClassName()
     {
         $result = explode('\\', $this->modelName());
-        $index = count($result) - 1;
-
-        return $result[$index];
+        return end($result);
     }
 
     /**
@@ -215,10 +213,15 @@ trait ModelTrait
      * Asigna a las propiedades del modelo los valores del array $data
      *
      * @param array $data
+     * @param array $exclude
      */
-    public function loadFromData(array $data = [])
+    public function loadFromData(array $data = [], array $exclude = [])
     {
         foreach ($data as $key => $value) {
+            if (in_array($key, $exclude)) {
+                continue;
+            }
+            
             foreach (self::$fields as $field) {
                 if ($field['name'] === $key) {
                     // Comprobamos si es un varchar (con longitud establecida) u otro tipo de dato
@@ -236,8 +239,9 @@ trait ModelTrait
                             break;
 
                         case 'double':
+                        case 'double precision':
                         case 'float':
-                            $this->{$key} = empty($value) ? 0 : (float) $value;
+                            $this->{$key} = empty($value) ? 0.00 : (float) $value;
                             break;
 
                         case 'date':
@@ -268,25 +272,26 @@ trait ModelTrait
 
     /**
      * Rellena la clase con los valores del registro
-     * cuya columna primaria corresponda al valor $cod, o vacio si no existe.
+     * cuya columna primaria corresponda al valor $cod, o según la condición
+     * where indicada, si no se informa valor en $cod. 
+     * Inicializa los valores de la clase si no existe ningún registro que
+     * cumpla las condiciones anteriores.
      * Devuelve True si existe el registro y False en caso contrario.
      *
      * @param string $cod
      *
      * @return boolean
      */
-    public function loadFromCode($cod)
+    public function loadFromCode($cod, $where = NULL, $orderby = [])
     {
-        $data = $this->getRecord($cod);
-        if (!empty($data)) {
-            $this->loadFromData($data[0]);
-
-            return true;
+        $data = $this->getRecord($cod, $where, $orderby);
+        if (empty($data)) {
+            $this->clear();
+            return false;
         }
 
-        $this->clear();
-
-        return false;
+        $this->loadFromData($data[0]);
+        return true;
     }
 
     /**
@@ -532,7 +537,7 @@ trait ModelTrait
                 $done = false;
             }
         } else {
-            $this->miniLog->critical('Error con el xml.');
+            $this->miniLog->critical('error-on-xml-file');
             $done = false;
         }
 
@@ -599,18 +604,21 @@ trait ModelTrait
     }
 
     /**
-     * Lee el registro cuya columna primaria corresponda al valor $cod
+     * Lee el registro cuya columna primaria corresponda al valor $cod 
+     * o el primero que cumple la condición indicada
      *
      * @param string $cod
      *
      * @return array
      */
-    private function getRecord($cod)
+    private function getRecord($cod, $where = NULL, $orderby = [])
     {
-        $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($cod) . ';';
-
-        return $this->dataBase->select($sql);
+        $sqlWhere = empty($where) 
+            ? ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($cod)
+            : DataBase\DataBaseWhere::getSQLWhere($where);
+        
+        $sql = 'SELECT * FROM ' . $this->tableName() . $sqlWhere . $this->getOrderBy($orderby);        
+        return $this->dataBase->selectLimit($sql, 1);
     }
 
     /**

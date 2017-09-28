@@ -85,18 +85,20 @@
                                     </select>
                                 </div>
                             </div>
-
                             <div class="col-sm-3">
                                 <div class="form-group">
                                     {{ i18n.trans('select-timezone') }}:
                                     <select name="fs_timezone" class="form-control">
-                                        {% for t in timezone %}
-                                        <option value="{{ t['zone'] }}">{{ t['diff_from_GMT']}} - {{ t['zone'] }}</option>
+                                        {% for tz in timezone %}
+                                        {% if tz['zone'] == 'Europe/Madrid' %}
+                                        <option value="{{ tz['zone'] }}" selected="">{{ tz['diff_from_GMT']}} - {{ tz['zone'] }}</option>
+                                        {% else %}
+                                        <option value="{{ tz['zone'] }}">{{ tz['diff_from_GMT']}} - {{ tz['zone'] }}</option>
+                                        {% endif %}
                                         {% endfor %}
                                     </select>
                                 </div>
                             </div>
-                            
                         </div>
                         <div class="row">
                             <div class="col-sm-3">

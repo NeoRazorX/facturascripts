@@ -23,4 +23,23 @@ $(document).ready(function () {
     $('[data-toggle="popover"]').popover({
         delay: {"show": 1000, "hide": 100}
     });
+    
+    $(".clickableRow").mousedown(function (event) {
+        if (event.which === 1) {
+            var href = $(this).attr("data-href");
+            var target = $(this).attr("data-target");
+            if (typeof href !== typeof undefined && href !== false) {
+                if (typeof target !== typeof undefined && target === "_blank") {
+                    window.open($(this).attr("data-href"));
+                } else {
+                    parent.document.location = $(this).attr("data-href");
+                }
+            }
+        }
+    });
+    
+    $(".cancelClickable").mousedown(function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    });
 });

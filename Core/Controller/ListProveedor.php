@@ -31,7 +31,7 @@ class ListProveedor extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Proveedores';
+        $pagedata['title'] = 'suppliers';
         $pagedata['icon'] = 'fa-users';
         $pagedata['menu'] = 'compras';
 

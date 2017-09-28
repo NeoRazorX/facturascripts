@@ -25,6 +25,7 @@ namespace FacturaScripts\Core\Base;
  */
 class NumberTools
 {
+
     const NF1 = ',';
     const NF2 = ' ';
 
@@ -39,10 +40,10 @@ class NumberTools
 
     public function format($number, $decimals = '')
     {
-        if($decimals == '') {
+        if ($decimals == '') {
             $decimals = self::$decimals;
         }
-        
+
         return number_format($number, $decimals, self::NF1, self::NF2);
     }
 }

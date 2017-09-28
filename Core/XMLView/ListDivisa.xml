@@ -24,40 +24,37 @@
 
 <view>
     <columns>
-        <column title="Código" order="100">
+        <column name="code" order="100">
             <widget type="text" fieldname="coddivisa" onclick="EditDivisa" />
         </column>
-        <column title="Descripcion" order="110">
+        <column name="description" order="110">
             <widget type="text" fieldname="descripcion" />
         </column>
-        <column title="ISO" order="120"
+        <column name="iso" order="120"
                 titleurl="https://es.wikipedia.org/wiki/ISO_4217" 
                 description="El estándar internacional ISO 4217 fue creado por la ISO con el objetivo de definir códigos de tres letras para todas las divisas del mundo.">
             <widget type="text" fieldname="codiso" />
         </column>
-        <column title="Fecha" order="130">
+        <column name="date" order="130">
             <widget type="text" fieldname="fecha" />
         </column>
-        <column title="Tasa Ventas" display="right" order="140"
+        <column name="sales rate" display="right" order="140"
                 description="Cambio que se aplica en las VENTAS respecto a la moneda de la empresa">
             <widget type="number" decimal="4" fieldname="tasaconv">
                 <option color="red">&lt;1</option>
             </widget>
         </column>
-        <column title="Tasa Compras" display="right" order="150"
+        <column name="purchase rate" display="right" order="150"
                 description="Cambio que se aplica en las COMPRAS respecto a la moneda de la empresa">
             <widget type="number" decimal="4" fieldname="tasaconvcompra">
-                <option color="red">&lt;1</option>
+                <option color="red">&gt;1</option>
             </widget>
         </column>
-        <column title="Símbolo" display="center" order="160">
+        <column name="symbol" display="center" order="160">
             <widget type="text" fieldname="simbolo" />
         </column>
-        <column title="Bandera" display="none" order="170">
+        <column name="flag" display="none" order="170">
             <widget type="text" fieldname="bandera" />
         </column>
     </columns>
-    
-    <filters>        
-    </filters>    
 </view>

@@ -36,6 +36,13 @@ class VisualItem
     protected $i18n;
 
     /**
+     * Identificador de la columna
+     * 
+     * @var string 
+     */
+    public $name;
+    
+    /**
      * Etiqueta o título del grupo
      *
      * @var string
@@ -69,6 +76,7 @@ class VisualItem
      */
     public function __construct()
     {
+        $this->name = 'unnamed';
         $this->title = '';
         $this->titleURL = '';
         $this->numColumns = 0;
@@ -79,6 +87,9 @@ class VisualItem
     public function loadFromXML($items)
     {
         $items_atributes = $items->attributes();
+        if (!empty($items_atributes->name)) {
+            $this->name = (string) $items_atributes->name;
+        }
         $this->title = (string) $items_atributes->title;
         $this->titleURL = (string) $items_atributes->titleurl;
 
@@ -93,6 +104,7 @@ class VisualItem
 
     public function loadFromJSON($items)
     {
+        $this->name = (string) $items['name'];
         $this->title = (string) $items['title'];
         $this->titleURL = (string) $items['titleURL'];
         $this->numColumns = (int) $items['numColumns'];

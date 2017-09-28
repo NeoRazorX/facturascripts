@@ -10,7 +10,7 @@ El elemento raíz del archivo XML será _\<view\>_ y se podrán incluir los sigu
 
 ## COLUMNS
 Permite definir mediante la etiqueta _\<column\>_ cada uno de los campos que se visualizarán en la vista pudiendo, en las vistas _Edit_, agrupar las
-columnas mediante la etiqueta _\<group\>_. Las columnsa, se complementan con la etiqueta obligatoria _\<widget\>_, que sirve para personalizar el tipo de objeto que se usa en la visualización/edición del dato.
+columnas mediante la etiqueta _\<group\>_. Las columnas, se complementan con la etiqueta obligatoria _\<widget\>_, que sirve para personalizar el tipo de objeto que se usa en la visualización/edición del dato.
 
 Tanto las etiquetas _\<group\>_, _\<column\>_ como _\<widget\>_ disponen de un conjunto de atributos que permiten la personalización y que varían según
 el contexto en que se ejecutan, es decir si es una vista _List_ o una vista _Edit_.
@@ -20,13 +20,13 @@ Ejemplo vista para ListController:
     
 ```XML
     <columns>
-        <column title="Código" display="left" order="100">
+        <column name="code" display="left" order="100">
             <widget type="text" fieldname="codigo" onclick="EditMyModel" />
         </column>
-        <column title="Descripcion" display="left" order="105">
+        <column name="description" display="left" order="105">
             <widget type="text" fieldname="descripcion" />
         </column>
-        <column title="Estado" display="center" order="110">
+        <column name="state" display="center" order="110">
             <widget type="text" fieldname="estado">
                 <option color="red" font-weight="bold">ABIERTO</option>
                 <option color="blue">CERRADO</option>
@@ -46,16 +46,16 @@ Ejemplo de vista para EditController:
     
 ```XML
     <columns>
-        <group numcolumns="8" title="Identificación internacional" icon="fa-globe">
-            <column title="Código" display="left" numcolumns="4" order="100">
+        <group name="data" numcolumns="8" title="Identificación internacional" icon="fa-globe">
+            <column name="code" display="left" numcolumns="4" order="100">
                 <widget type="text" fieldname="codigo" onclick="EditMyModel" />
             </column>
-            <column title="Descripcion" display="left" numcolumns="8" order="105">
+            <column name="description" display="left" numcolumns="8" order="105">
                 <widget type="text" fieldname="descripcion" />
             </column>
         </group>
-        <group numcolumns="4">
-            <column title="Estado" display="center" order="100">
+        <group name="state" numcolumns="4">
+            <column name="state" display="center" order="100">
                 <widget type="text" fieldname="estado">
                     <option color="red" font-weight="bold">ABIERTO</option>
                     <option color="blue">CERRADO</option>
@@ -69,7 +69,9 @@ Ejemplo de vista para EditController:
 ### column
 Entendemos que es cada uno de los campos del modelo que componen la vista y con los que el usuario puede interactuar.
 
-* **title** : Etiqueta descriptiva del campo
+* **name**: Identificador interno de la columna. Es obligatorio su uso. Como norma se recomienda el uso de identificadores en minúsculas y en inglés.
+
+* **title** : Etiqueta descriptiva del campo, en caso de no informarse se asume el valor de name.
 
 * **titleurl** : URL destino si el usuario hace click sobre el título de la columna.
 
@@ -82,7 +84,7 @@ En las vistas Edit se muestra como un label inferior a la zona de edición del c
 * **order** : Posición que ocupa la columna. Sirve para indicar el orden en que se visualizan. Si no se informa toma el valor _100_
 Cuando no se informa una ordenación específica, se ordena por la posición secuencial en el archivo XML, siempre dentro de su grupo.
 
-* **numcolumns : Fuerza el tamaño de la columna al valor indicado, usando el sistema de grid de Bootstrap siendo mínimo 1 y máximo 12.
+* **numcolumns** : Fuerza el tamaño de la columna al valor indicado, usando el sistema de grid de Bootstrap siendo mínimo 1 y máximo 12.
 Si no se informa toma como valor _0_ aplicando el sistema de tamaño automático de Bootstrap.
 
 
@@ -136,11 +138,16 @@ _pintar de color rojo cuando el valor del campo **importe es mayor de treinta mi
     * checkbox: Valores booleanos que se visualizan mediante el icono de un check (true) o un guión (false) respectivamente.
     * select: Lista de valores establecidos por un conjunto de etiquetas _\<values\>_ descritas dentro del grupo _\<widget\>_.
 Los valores podrán ser fijos, incluyendo tantos _\<values\>_ como necesitemos e indicando el atributo _title_ y asignando un valor,
-como dinámicos o calculados en base al contenido de los registros de una tabla de la base de datos.
-Para este caso se utilizará una sóla etiqueta _\<values\>_ indicando los atributos:
+como dinámicos, ya sea calculados en base al contenido de los registros de una tabla de la base de datos o mediante la definición de un rango.
+Para el caso de valores de una tabla se utilizará una sóla etiqueta _\<values\>_ indicando los atributos:
         * _source_: Indica el nombre de la tabla origen de los datos
         * _fieldcode_: Indica el campo que contiene el valor a grabar en el campo de la columna
         * _fieldtitle_: Indica el campo que contiene el valor que se visualizará en pantalla
+
+Para el caso de valores por definición de rango una sóla etiqueta _\<values\>_ indicando los atributos:
+        * _start_: Indica el valor inicial (numérico o alfabético)
+        * _end_: Indica el valor final (numérico o alfabético)
+        * _step_: Indica el valor del incremento (numérico)
 
         ```XML
             <widget type="select" fieldname="documentacion">
@@ -152,7 +159,12 @@ Para este caso se utilizará una sóla etiqueta _\<values\>_ indicando los atrib
             <widget type="select" fieldname="codgrupo">
                 <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
             </widget>
+
+            <widget type="select" fieldname="codgrupo">
+                <values start="0" end="6" step="1"></values>
+            </widget>
         ```
+
     * radio: Lista de valores donde podemos seleccionar una de ellas.
 Se indican las distintas opciones mediante sistema de etiquetas _\<values\>_ descritas dentro del grupo _\<widget\>_, al estilo del tipo _select_.
 
@@ -174,13 +186,19 @@ Se indican las distintas opciones mediante sistema de etiquetas _\<values\>_ des
 Crea una rejilla bootstrap donde incluirá cada una de las columnas _\<column\>_ declaradas dentro del grupo. Se puede personalizar el grupo
 mediante los siguientes atributos:
 
-* **title** : Etiqueta descriptiva del grupo.
+* **name** : Identificador interno del grupo. Es obligatorio su uso. Como norma se recomienda el uso de identificadores en minúsculas y en inglés.
+
+* **title** : Etiqueta descriptiva del grupo. Para los grupos **no se usará** el valor name en caso de no informarse un title.
 
 * **titleurl** : URL destino si el usuario hace click sobre el título del grupo.
 
 * **icon** : Si se indica se visualizará el icono a la izquierda del título.
 
 * **order** : Posición que ocupa el grupo. Sirve para indicar el orden en que se visualizara.
+
+* **numcolumns** : Fuerza el tamaño al valor indicado, usando el sistema de grid de Bootstrap siendo mínimo 1 y máximo 12.
+Si no se informa toma como valor _0_ aplicando el sistema de tamaño automático de Bootstrap. Es importante recordar que
+un grupo tiene siempre 12 columnas disponibles en su _interior_, independientemente del tamaño que tenga definido el grupo.
 
 
 ## ROWS
