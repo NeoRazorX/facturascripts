@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\App;
 
 use Symfony\Component\HttpFoundation\Response;
@@ -28,6 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AppAPI extends App
 {
+
     /**
      * Ejecuta la API.
      *
@@ -39,15 +39,69 @@ class AppAPI extends App
         if (!$this->dataBase->connected()) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->response->setContent('DB-ERROR');
+            return false;
         } elseif ($this->isIPBanned()) {
             $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
             $this->response->setContent('IP-BANNED');
-        } else {
-            /// implementar aquí
-            /// todo OK, para los tests
-            return true;
+            return false;
         }
 
+        return $this->selectVersion();
+    }
+
+    private function selectVersion()
+    {
+        $version = $this->request->get('v', '');
+        if ($version == '3') {
+            return $this->selectMap();
+        }
+
+        $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
+        $this->response->setContent('API-VERSION-NOT-FOUND');
+        return true;
+    }
+
+    private function selectMap()
+    {
+        $mapName = $this->request->get('map', '');
+
+        if (file_exists($this->folder . '/Core/API/' . $mapName . '.json')) {
+            $map = json_decode(file_get_contents($this->folder . '/Core/API/' . $mapName . '.json'));
+
+            if (!isset($map->model) || !isset($map->function)) {
+                $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
+                $this->response->setContent('API-MAP-ERROR');
+                return false;
+            }
+
+            $modelName = "FacturaScripts\\Dinamic\\Model\\" . $map->model;
+            $modelFunction = $map->function;
+
+            try {
+                $model = new $modelName();
+                $param1 = $this->request->get('param1', '');
+
+                if ($modelFunction == 'get' && $param1 != '') {
+                    $data = $model->{$modelFunction}($param1);
+                } else if ($modelFunction == 'all' && $param1 != '') {
+                    $data = $model->{$modelFunction}([], [], $param1);
+                } else if($modelFunction == 'all') {
+                    $data = $model->{$modelFunction}();
+                } else {
+                    $data = false;
+                }
+
+                $this->response->setContent(json_encode($data));
+                return true;
+            } catch (Exception $ex) {
+                $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+                $this->response->setContent('API-ERROR');
+                return false;
+            }
+        }
+
+        $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
+        $this->response->setContent('API-MAP-NOT-FOUND');
         return false;
     }
 }
