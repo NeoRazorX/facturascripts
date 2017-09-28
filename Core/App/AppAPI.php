@@ -63,7 +63,12 @@ class AppAPI extends App
 
     private function selectMap()
     {
-        $map = $this->getAPIMap($this->request->get('map', ''));
+        $mapName = $this->request->get('map', '');
+        if ($mapName == '') {
+            return $this->getAPIOptions();
+        }
+
+        $map = $this->getAPIMap($mapName);
         if (!isset($map->model) || !isset($map->function)) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->response->setContent('API-MAP-ERROR');
@@ -107,6 +112,24 @@ class AppAPI extends App
             return json_decode(file_get_contents($path));
         }
 
-        return json_decode([]);
+        return json_decode("{}");
+    }
+
+    private function getAPIOptions()
+    {
+        $options = ['version' => '3', 'routes' => []];
+        $path = $this->folder . '/Dinamic/API';
+        if (!file_exists($this->folder . '/Dinamic/API')) {
+            $path = $this->folder . '/Core/API';
+        }
+
+        foreach (scandir($this->folder . '/Core/API') as $fName) {
+            if (substr($fName, -5) == '.json') {
+                $options['routes'][] = substr($fName, 0, -5);
+            }
+        }
+
+        $this->response->setContent(json_encode($options));
+        return TRUE;
     }
 }
