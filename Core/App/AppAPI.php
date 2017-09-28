@@ -63,45 +63,50 @@ class AppAPI extends App
 
     private function selectMap()
     {
-        $mapName = $this->request->get('map', '');
-
-        if (file_exists($this->folder . '/Core/API/' . $mapName . '.json')) {
-            $map = json_decode(file_get_contents($this->folder . '/Core/API/' . $mapName . '.json'));
-
-            if (!isset($map->model) || !isset($map->function)) {
-                $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
-                $this->response->setContent('API-MAP-ERROR');
-                return false;
-            }
-
-            $modelName = "FacturaScripts\\Dinamic\\Model\\" . $map->model;
-            $modelFunction = $map->function;
-
-            try {
-                $model = new $modelName();
-                $param1 = $this->request->get('param1', '');
-
-                if ($modelFunction == 'get' && $param1 != '') {
-                    $data = $model->{$modelFunction}($param1);
-                } else if ($modelFunction == 'all' && $param1 != '') {
-                    $data = $model->{$modelFunction}([], [], $param1);
-                } else if($modelFunction == 'all') {
-                    $data = $model->{$modelFunction}();
-                } else {
-                    $data = false;
-                }
-
-                $this->response->setContent(json_encode($data));
-                return true;
-            } catch (Exception $ex) {
-                $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-                $this->response->setContent('API-ERROR');
-                return false;
-            }
+        $map = $this->getAPIMap($this->request->get('map', ''));
+        if (!isset($map->model) || !isset($map->function)) {
+            $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+            $this->response->setContent('API-MAP-ERROR');
+            return false;
         }
 
-        $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
-        $this->response->setContent('API-MAP-NOT-FOUND');
-        return false;
+        $modelName = "FacturaScripts\\Dinamic\\Model\\" . $map->model;
+        $modelFunction = $map->function;
+
+        try {
+            $model = new $modelName();
+            $param1 = $this->request->get('param1', '');
+
+            if ($modelFunction == 'get' && $param1 != '') {
+                $data = $model->{$modelFunction}($param1);
+            } else if ($modelFunction == 'all' && $param1 != '') {
+                $data = $model->{$modelFunction}([], [], $param1);
+            } else if ($modelFunction == 'all') {
+                $data = $model->{$modelFunction}();
+            } else {
+                $data = false;
+            }
+
+            $this->response->setContent(json_encode($data));
+            return true;
+        } catch (Exception $ex) {
+            $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+            $this->response->setContent('API-ERROR');
+            return false;
+        }
+    }
+
+    private function getAPIMap($mapName)
+    {
+        $path = $this->folder . '/Dinamic/API/' . $mapName . '.json';
+        if (!file_exists($path)) {
+            $path = $this->folder . '/Core/API/' . $mapName . '.json';
+        }
+
+        if (file_exists($path)) {
+            return json_decode(file_get_contents($path));
+        }
+
+        return json_decode([]);
     }
 }
