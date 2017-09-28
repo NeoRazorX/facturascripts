@@ -57,10 +57,8 @@ class XLSExport implements ExportInterface
         $tableCols = [];
         $sheetHeaders = [];
         foreach ($columns as $col) {
-            if ($col->display != 'none') {
-                $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
-                $sheetHeaders[$col->widget->fieldName] = 'string';
-            }
+            $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
+            $sheetHeaders[$col->widget->fieldName] = 'string';
         }
 
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
