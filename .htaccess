@@ -15,8 +15,8 @@ Options -Indexes
 <IfModule mod_rewrite.c>
    RewriteEngine On
 
-   RewriteRule ^api/(.*)/(.*)/(.*)$ api.php?v=$1&map=$2&param1=$3&%{QUERY_STRING} [L]
-   RewriteRule ^api/(.*)/(.*)$ api.php?v=$1&map=$2&%{QUERY_STRING} [L]
+   RewriteRule ^api/(.*)/(.*)/(.*)$ api.php?v=$1&resource=$2&cod=$3&%{QUERY_STRING} [L]
+   RewriteRule ^api/(.*)/(.*)$ api.php?v=$1&resource=$2&%{QUERY_STRING} [L]
    RewriteRule ^api/(.*)$ api.php?v=$1&%{QUERY_STRING} [L]
    RewriteRule ^api$ api.php?%{QUERY_STRING} [L]
 </IfModule>

@@ -35,14 +35,16 @@ class AppAPI extends App
      */
     public function run()
     {
-        $this->response->headers->set('Content-Type', 'text/plain');
+        $this->response->headers->set('Access-Control-Allow-Origin', '*');
+        $this->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+        $this->response->headers->set('Content-Type', 'application/json');
         if (!$this->dataBase->connected()) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-            $this->response->setContent('DB-ERROR');
+            $this->response->setContent(json_encode(['error' => 'DB-ERROR']));
             return false;
         } elseif ($this->isIPBanned()) {
             $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
-            $this->response->setContent('IP-BANNED');
+            $this->response->setContent(json_encode(['error' => 'IP-BANNED']));
             return false;
         }
 
@@ -53,83 +55,116 @@ class AppAPI extends App
     {
         $version = $this->request->get('v', '');
         if ($version == '3') {
-            return $this->selectMap();
+            return $this->selectResource();
         }
 
         $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
-        $this->response->setContent('API-VERSION-NOT-FOUND');
+        $this->response->setContent(json_encode(['error' => 'API-VERSION-NOT-FOUND']));
         return true;
     }
 
-    private function selectMap()
+    private function selectResource()
     {
-        $mapName = $this->request->get('map', '');
-        if ($mapName == '') {
-            return $this->getAPIOptions();
+        $map = $this->getResourcesMap();
+
+        $resourceName = $this->request->get('resource', '');
+        if ($resourceName == '') {
+            $this->exposeResources($map);
+            return true;
         }
 
-        $map = $this->getAPIMap($mapName);
-        if (!isset($map->model) || !isset($map->function)) {
-            $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-            $this->response->setContent('API-MAP-ERROR');
-            return false;
+        $modelName = "FacturaScripts\\Dinamic\\Model\\" . $map[$resourceName];
+        $cod = $this->request->get('cod', '');
+
+        if ($cod == '') {
+            return $this->processResource($modelName);
         }
 
-        $modelName = "FacturaScripts\\Dinamic\\Model\\" . $map->model;
-        $modelFunction = $map->function;
+        return $this->processResourceParam($modelName, $cod);
+    }
 
+    private function processResource($modelName)
+    {
         try {
             $model = new $modelName();
-            $param1 = $this->request->get('param1', '');
+            $where = [];
+            $order = [];
+            $offset = (int) $this->request->get('offset', 0);
+            $limit = (int) $this->request->get('limit', 50);
 
-            if ($modelFunction == 'get' && $param1 != '') {
-                $data = $model->{$modelFunction}($param1);
-            } else if ($modelFunction == 'all' && $param1 != '') {
-                $data = $model->{$modelFunction}([], [], $param1);
-            } else if ($modelFunction == 'all') {
-                $data = $model->{$modelFunction}();
-            } else {
-                $data = false;
+            switch ($this->request->getMethod()) {
+                default:
+                    $data = $model->all($where, $order, $offset, $limit);
+                    break;
             }
 
             $this->response->setContent(json_encode($data));
             return true;
         } catch (Exception $ex) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-            $this->response->setContent('API-ERROR');
+            $this->response->setContent(json_encode(['error' => 'API-ERROR']));
             return false;
         }
     }
 
-    private function getAPIMap($mapName)
+    private function processResourceParam($modelName, $cod)
     {
-        $path = $this->folder . '/Dinamic/API/' . $mapName . '.json';
-        if (!file_exists($path)) {
-            $path = $this->folder . '/Core/API/' . $mapName . '.json';
-        }
+        try {
+            $model = new $modelName();
 
-        if (file_exists($path)) {
-            return json_decode(file_get_contents($path));
-        }
+            switch ($this->request->getMethod()) {
+                case 'DELETE':
+                    $object = $model->get($cod);
+                    $data = $object->delete();
+                    break;
+                
+                default:
+                    $data = $model->get($cod);
+                    break;
+            }
 
-        return json_decode("{}");
+            $this->response->setContent(json_encode($data));
+            return true;
+        } catch (Exception $ex) {
+            $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+            $this->response->setContent(json_encode(['error' => 'API-ERROR']));
+            return false;
+        }
     }
 
-    private function getAPIOptions()
+    private function getResourcesMap()
     {
-        $options = ['version' => '3', 'routes' => []];
-        $path = $this->folder . '/Dinamic/API';
-        if (!file_exists($this->folder . '/Dinamic/API')) {
-            $path = $this->folder . '/Core/API';
-        }
+        $resources = [];
+        foreach (scandir($this->folder . '/Dinamic/Model') as $fName) {
+            if (substr($fName, -4) == '.php') {
+                $modelName = substr($fName, 0, -4);
 
-        foreach (scandir($this->folder . '/Core/API') as $fName) {
-            if (substr($fName, -5) == '.json') {
-                $options['routes'][] = substr($fName, 0, -5);
+                /// convertimos en plural
+                if (substr($modelName, -1) == 's') {
+                    $plural = strtolower($modelName);
+                } else if (substr($modelName, -3) == 'ser' || substr($modelName, -4) == 'tion') {
+                    $plural = strtolower($modelName) . 's';
+                } else if (in_array(substr($modelName, -1), ['a', 'e', 'i', 'o', 'u', 'k'])) {
+                    $plural = strtolower($modelName) . 's';
+                } else {
+                    $plural = strtolower($modelName) . 'es';
+                }
+
+                $resources[$plural] = $modelName;
             }
         }
 
-        $this->response->setContent(json_encode($options));
-        return TRUE;
+        return $resources;
+    }
+
+    private function exposeResources(&$map)
+    {
+        $json = ['resources' => []];
+
+        foreach (array_keys($map) as $key) {
+            $json['resources'][] = $key;
+        }
+
+        $this->response->setContent(json_encode($json));
     }
 }
