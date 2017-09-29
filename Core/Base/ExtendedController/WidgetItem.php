@@ -402,7 +402,7 @@ class WidgetItem
 
     /**
      * Genera el código html para la visualización y edición de los datos
-     * en el controlador Edit
+     * en el controlador List / Edit
      *
      * @param string $value
      *

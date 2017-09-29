@@ -104,7 +104,7 @@ class ListView extends BaseView
     {
         parent::__construct($title, $modelName);
 
-        $this->cursor = NULL;
+        $this->cursor = [];
         $this->orderby = [];
         $this->filters = [];
         $this->searchIn = [];

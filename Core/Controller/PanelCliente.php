@@ -63,9 +63,4 @@ class PanelCliente extends ExtendedController\PanelController
 
         return $pagedata;
     }
-
-    public function getPanelHeader()
-    {
-        return $this->i18n->trans('options');
-    }
 }
