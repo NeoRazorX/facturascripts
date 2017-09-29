@@ -109,7 +109,7 @@ class EditController extends Base\Controller
             
             case 'export':
                 $this->setTemplate(false);
-                $document = $this->view->export($this->exportManager, $this->request->get('option'));
+                $document = $this->view->export($this->exportManager, $this->response, $this->request->get('option'));
                 $this->response->setContent($document);
                 break;
             

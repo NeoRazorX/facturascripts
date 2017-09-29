@@ -16,35 +16,36 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Base\ExtendedController;
 
-use DOMDocument;
+namespace FacturaScripts\Core\Controller;
+
+use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Definición de la vista para uso en ExtendedControllers
+ * Controlador para la lista de Subcuentas
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class HtmlView extends BaseView
+class ListSubcuenta extends ExtendedController\ListController
 {
-    public $fileName;
-    
-    /**
-     * Constructor e inicializador de la clase
-     *
-     * @param string $title
-     * @param string $modelName
-     * @param string $fileName
-     */
-    public function __construct($title, $modelName, $fileName)
+    public function getPageData()
     {
-        parent::__construct($title, $modelName);
-        $this->fileName = $fileName;
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'Subcuentas';
+        $pagedata['icon'] = 'fa-th-list';
+        $pagedata['menu'] = 'contabilidad';
+
+        return $pagedata;
     }
-    
-    public function export(&$exportManager, &$response, $action)
+
+    protected function createViews()
     {
-        return null;
+        $className = $this->getClassName();
+        $this->addView('FacturaScripts\Core\Model\Subcuenta', $className);
+        $this->addSearchFields($className, ['codsubcuenta', 'descripcion']);
+
+        $this->addOrderBy($className, 'codsubcuenta', 'code');
+        $this->addOrderBy($className, 'descripcion', 'description');
     }
 }

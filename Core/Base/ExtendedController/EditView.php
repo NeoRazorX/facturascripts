@@ -130,8 +130,8 @@ class EditView extends BaseView
         return $this->model->save();
     }
     
-    public function export(&$exportManager, $action)
+    public function export(&$exportManager, &$response, $action)
     {
-        return $exportManager->generateDoc($this->model, $action);   
+        return $exportManager->generateDoc($response, $action, $this->model);
     }
 }

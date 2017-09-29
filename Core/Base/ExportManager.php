@@ -40,20 +40,22 @@ class ExportManager
         ];
     }
 
-    public function generateDoc($model, $option)
+    public function generateDoc(&$response, $option, $model)
     {
         /// llamar a la clase apropiada para generar el archivo en función de la opción elegida
         $className = "FacturaScripts\\Core\\Lib\\" . $option . 'Export';
         $docClass = new $className();
+        $docClass->setHeaders($response);
 
         return $docClass->newDoc($model);
     }
 
-    public function generateList($option, $model, $where, $order, $offset, $columns)
+    public function generateList(&$response, $option, $model, $where, $order, $offset, $columns)
     {
         /// llamar a la clase apropiada para generar el archivo en función de la opción elegida
         $className = "FacturaScripts\\Core\\Lib\\" . $option . 'Export';
         $docClass = new $className();
+        $docClass->setHeaders($response);
 
         return $docClass->newListDoc($model, $where, $order, $offset, $columns);
     }

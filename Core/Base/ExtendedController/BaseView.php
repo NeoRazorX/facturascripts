@@ -18,7 +18,8 @@
  */
 namespace FacturaScripts\Core\Base\ExtendedController;
 
-use FacturaScripts\Core\Model as Model;
+use FacturaScripts\Core\Model;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Definición base para vistas de uso en ExtendedControllers
@@ -55,9 +56,10 @@ abstract class BaseView
      * Método para la exportación de los datos de la vista
      * 
      * @param Base\ExportManager $exportManager
+     * @param Response $exportManager
      * @param string $action
      */
-    abstract public function export(&$exportManager, $action);
+    abstract public function export(&$exportManager, &$response, $action);
     
     /**
      * Constructor e inicializador de la clase
