@@ -63,6 +63,8 @@
                     </div>");
                 $('#v-pills-tab a:first').tab('show');
                 reloadClickableRow();
+                
+                $("#no-data-msg").hide();
             }
         });
     });
@@ -84,6 +86,9 @@
                     </div>
                 </div>
             </form>
+            {% if fsc.results['pages'] is empty  %}
+            <div id="no-data-msg" class="alert alert-warning">{{ i18n.trans('no-data') }}</div>
+            {% endif %}
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
                 {% if fsc.results['pages'] is not empty  %}
                 <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-paginas" role="tab" aria-controls="v-pills-paginas" aria-expanded="true">
