@@ -490,23 +490,19 @@ class ModelDataGenerator
                 break;
             }
 
-            /*
             /// añadimos direcciones
             $num_dirs = mt_rand(0, 3);
             while ($num_dirs > 0) {
-                $dir = new direccion_cliente();
+                $dir = new Model\DireccionCliente();
                 $dir->codcliente = $cliente->codcliente;
                 $dir->codpais = (mt_rand(0, 2) === 0) ? $this->paises[0]->codpais : $this->empresa->codpais;
-
                 $dir->provincia = $this->provincia();
                 $dir->ciudad = $this->ciudad();
                 $dir->direccion = $this->direccion();
                 $dir->codpostal = mt_rand(1234, 99999);
                 $dir->apartado = (mt_rand(0, 3) == 0) ? mt_rand(1234, 99999) : NULL;
-
                 $dir->domenvio = (mt_rand(0, 1) === 1);
                 $dir->domfacturacion = (mt_rand(0, 1) === 1);
-
                 $dir->descripcion = 'Dirección #' . $num_dirs;
                 if (!$dir->save()) {
                     break;
@@ -514,11 +510,11 @@ class ModelDataGenerator
 
                 $num_dirs--;
             }
-
+            
             /// Añadimos cuentas bancarias
             $num_cuentas = mt_rand(0, 3);
             while ($num_cuentas > 0) {
-                $cuenta = new cuenta_banco_cliente();
+                $cuenta = new Model\CuentaBancoCliente();
                 $cuenta->codcliente = $cliente->codcliente;
                 $cuenta->descripcion = 'Banco ' . mt_rand(1, 999);
 
@@ -528,7 +524,6 @@ class ModelDataGenerator
                     . mt_rand(1000, 9999) : '';
 
                 $cuenta->swift = ($opcion != 0) ? $this->random_string(8) : '';
-
                 $cuenta->fmandato = (mt_rand(0, 1) == 0) ? date('d-m-Y', strtotime($cliente->fechaalta . ' +' . mt_rand(1, 30) . ' days')) : NULL;
 
                 if (!$cuenta->save()) {
@@ -537,8 +532,6 @@ class ModelDataGenerator
 
                 $num_cuentas--;
             }
-             * 
-             */
         }
 
         return $num;
