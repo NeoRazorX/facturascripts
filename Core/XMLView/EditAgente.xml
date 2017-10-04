@@ -35,7 +35,7 @@
                 <widget type="text" fieldname="apellidos" />
             </column>
             <column name="cifnif" numcolumns="2" order="110">
-                <widget type="text" fieldname="cifnif" />
+                <widget type="text" fieldname="dnicif" />
             </column>
             <column name="phone" numcolumns="2" order="110">
                 <widget type="text" fieldname="telefono" />

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
@@ -29,61 +28,6 @@ use FacturaScripts\Core\Model;
  */
 class AdminHome extends Base\Controller
 {
-    /**
-     * TODO
-     *
-     * @var Model\Agente
-     */
-    public $agente;
-
-    /**
-     * TODO
-     *
-     * @var Model\Almacen
-     */
-    public $almacen;
-
-    /**
-     * TODO
-     *
-     * @var Model\Divisa
-     */
-    public $divisa;
-
-    /**
-     * TODO
-     *
-     * @var Model\Ejercicio
-     */
-    public $ejercicio;
-
-    /**
-     * TODO
-     *
-     * @var Model\FormaPago
-     */
-    public $formaPago;
-
-    /**
-     * TODO
-     *
-     * @var Model\Pais
-     */
-    public $pais;
-
-    /**
-     * TODO
-     *
-     * @var Model\Serie
-     */
-    public $serie;
-
-    /**
-     * TODO
-     *
-     * @var Model\AgenciasTransporte
-     */
-    public $agenciaTrans;
 
     /**
      * AdminHome constructor.
@@ -97,27 +41,29 @@ class AdminHome extends Base\Controller
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
+        /// comprobamos el .htaccess
+        $this->checkHtaccess();
+
         /// por ahora desplegamos siempre el contenido de Dinamic, para las pruebas
         $pluginManager = new Base\PluginManager();
         $pluginManager->deploy(true);
-
-        $this->agente = new Model\Agente();
-        $this->almacen = new Model\Almacen();
-        $this->divisa = new Model\Divisa();
-        $this->ejercicio = new Model\Ejercicio();
-        $this->formaPago = new Model\FormaPago();
-        $this->pais = new Model\Pais();
-        $this->serie = new Model\Serie();
-        $this->agenciaTrans = new Model\AgenciaTransporte();
     }
 
     public function getPageData()
     {
         $pageData = parent::getPageData();
         $pageData['menu'] = 'admin';
-        $pageData['title'] = 'Panel de control';
-        $pageData['orden'] = '999';
+        $pageData['title'] = 'control-panel';
+        $pageData['icon'] = 'fa-wrench';
 
         return $pageData;
+    }
+
+    private function checkHtaccess()
+    {
+        if (!file_exists(FS_FOLDER . '/.htaccess')) {
+            $txt = file_get_contents(FS_FOLDER . '/htaccess-sample');
+            file_put_contents('.htaccess', $txt);
+        }
     }
 }

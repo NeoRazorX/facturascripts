@@ -96,7 +96,7 @@ class PanelSettings extends ExtendedController\PanelController
         }
 
         $title2 = $this->i18n->trans('about');
-        $this->addHtmlView('About.html', NULL, 'about', $title2);
+        $this->addHtmlView('Block/About.html', NULL, 'about', $title2);
     }
 
     protected function loadData($keyView, $view)
