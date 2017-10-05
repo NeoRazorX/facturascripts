@@ -53,15 +53,15 @@ class ModelDataGenerator
         $this->db = new DataBase();
         $this->empresa = $empresa;
         $this->ejercicio = new Model\Ejercicio();
-        $this->_loaddata($this->agentes, new Model\Agente(), TRUE);
-        $this->_loaddata($this->almacenes, new Model\Almacen(), TRUE);
-        $this->_loaddata($this->divisas, new Model\Divisa(), TRUE);
-        $this->_loaddata($this->formas_pago, new Model\FormaPago(), TRUE);
-        $this->_loaddata($this->grupos, new Model\GrupoClientes(), FALSE);
-        $this->_loaddata($this->impuestos, new Model\Impuesto(), TRUE);
-        $this->_loaddata($this->paises, new Model\Pais(), TRUE);
-        $this->_loaddata($this->series, new Model\Serie(), TRUE);
-        $this->_loaddata($this->users, new Model\User(), FALSE);
+        $this->loadData($this->agentes, new Model\Agente(), TRUE);
+        $this->loadData($this->almacenes, new Model\Almacen(), TRUE);
+        $this->loadData($this->divisas, new Model\Divisa(), TRUE);
+        $this->loadData($this->formas_pago, new Model\FormaPago(), TRUE);
+        $this->loadData($this->grupos, new Model\GrupoClientes(), FALSE);
+        $this->loadData($this->impuestos, new Model\Impuesto(), TRUE);
+        $this->loadData($this->paises, new Model\Pais(), TRUE);
+        $this->loadData($this->series, new Model\Serie(), TRUE);
+        $this->loadData($this->users, new Model\User(), FALSE);
     }
 
     /**
@@ -70,7 +70,7 @@ class ModelDataGenerator
      * @param fs_model $modelo   -> modelo de cada uno de los items del array
      * @param boolean $shuffle   -> ordenar aleatoriamente la lista
      */
-    private function _loaddata(&$variable, $modelo, $shuffle)
+    private function loadData(&$variable, $modelo, $shuffle)
     {
         $variable = $modelo->all();
         if ($shuffle) {
@@ -402,7 +402,7 @@ class ModelDataGenerator
      * @param type $max
      * @return int
      */
-    public function grupos_clientes($max = 50)
+    public function gruposClientes($max = 50)
     {
         $nombres = array('Profesionales', 'Profesional', 'Grandes compradores', 'Preferentes', 'Basico', 'Premium', 'Variado', 'Reservado', 'Técnico', 'Elemental');
         $nombres2 = array('VIP', 'PRO', 'NEO', 'XL', 'XXL', '50 aniversario', 'C', 'Z');
@@ -592,11 +592,10 @@ class ModelDataGenerator
             if ($proveedor->save()) {
                 $num++;
 
-                /*
                 /// añadimos direcciones
                 $num_dirs = mt_rand(0, 3);
                 while ($num_dirs) {
-                    $dir = new direccion_proveedor();
+                    $dir = new Model\DireccionProveedor();
                     $dir->codproveedor = $proveedor->codproveedor;
                     $dir->codpais = $this->empresa->codpais;
 
@@ -625,7 +624,7 @@ class ModelDataGenerator
                 /// Añadimos cuentas bancarias
                 $num_cuentas = mt_rand(0, 3);
                 while ($num_cuentas > 0) {
-                    $cuenta = new cuenta_banco_proveedor();
+                    $cuenta = new Model\CuentaBancoProveedor();
                     $cuenta->codproveedor = $proveedor->codproveedor;
                     $cuenta->descripcion = 'Banco ' . mt_rand(1, 999);
                     $cuenta->iban = 'ES' . mt_rand(10, 99) . ' ' . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' '
@@ -642,8 +641,6 @@ class ModelDataGenerator
                     $cuenta->save();
                     $num_cuentas--;
                 }
-                 * 
-                 */
             } else {
                 break;
             }

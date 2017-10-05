@@ -8,6 +8,7 @@
 /Plugins/
 /vendor/
 .DS_Store
+.htaccess
 composer.lock
 config.php
 generateDoc.sh
