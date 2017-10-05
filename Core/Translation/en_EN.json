@@ -13,6 +13,8 @@
     "hello-world-text": "This is a prototype of FacturaScripts built with some of the components of symfony.",
     "installer": "FacturaScripts 2018 (Alpha) installer",
     "installer-p": "Welcome to the FacturaScripts installer. Fill in the fields required to connect to the database.",
+    "installer-requirements": "Requirements for a correct FacturaScripts installation:",
+    "installer-requirements-errors": "Requirements must be installed to complete FacturaScripts installation.",
     "license": "License",
     "mysql-socket": "MySQL Socket",
     "mysql-socket-p": "This field is only required in some MySQL hostings.",

@@ -290,19 +290,81 @@ function renderHTML(&$templateVars)
 }
 
 /**
+ * Revisa las funciones y extensiones de php necesarias para el funcionamiento de FacturaScripts
+ * @param type $requirements array
+ * @param type $requirementsErrors integer
+ */
+function checkRequirements(&$requirements, &$requirementsErrors)
+{
+    $array_functions = array('mb_substr');
+    
+    $array_extensions = array('SimpleXML','openSSL','Zip');
+
+    foreach($array_functions as $f) {
+        list($status, $error) = verifyFunction($f);
+        $requirementsErrors += $error;
+        $requirements[$f] = $status;
+    }
+    
+    foreach($array_extensions as $f) {
+        list($status, $error) = verifyExtension($f);
+        $requirementsErrors += $error;
+        $requirements[$f] = $status;
+    }
+}
+
+/**
+ * Revisa si una funcion existe en PHP
+ * @param type $function
+ * @return type array
+ */
+function verifyFunction($function)
+{
+    $error = 0;
+    $status = 'fa-check text-success';  
+    if(!function_exists($function)){
+        $error = 1;
+        $status = 'fa-ban text-danger';
+    }
+    return array($status, $error);
+}
+
+
+/**
+ * Revisa si una extensión esta presente en la instalación de PHP
+ * @param type $extension
+ * @return array
+ */
+function verifyExtension($extension)
+{
+    $error = 0;
+    $status = 'fa-check text-success';  
+    if(!extension_loaded($extension)){
+        $error = 1;
+        $status = 'fa-ban text-danger';
+    }
+    return array($status, $error);
+}
+
+/**
  * Función principal del instalador
  *
  * @return int
  */
 function installerMain()
 {
+
+    $requirements = [];
     $errors = [];
+    $requirementsErrors =  0;
 
     if (filter_input(INPUT_POST, 'fs_lang')) {
         $i18n = new Translator(__DIR__, filter_input(INPUT_POST, 'fs_lang'));
     } else {
         $i18n = new Translator(__DIR__);
     }
+    
+    checkRequirements($requirements, $requirementsErrors);
 
     searchErrors($errors, $i18n);
 
@@ -316,6 +378,8 @@ function installerMain()
     
     /// empaquetamos las variables a pasar el motor de plantillas
     $templateVars = [
+        'requirements' => $requirements,
+        'requirementsErrors' => $requirementsErrors,
         'errors' => $errors,
         'i18n' => $i18n,
         'languages' => getLanguages($i18n),

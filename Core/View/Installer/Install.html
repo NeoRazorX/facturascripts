@@ -43,7 +43,15 @@
                     <p class="help-block">{{ i18n.trans('installer-p') }}</p>
                 </div>
             </div>
+            <h5>
+                {{ i18n.trans('installer-requirements') }}
+            </h5>
             <div class="row">
+                {% for extension, status in requirements %}
+                <div class="col-sm-3">
+                    <div class="alert alert-info">{{ extension }}: <i class="fa {{ status }} pull-right"></i></div>
+                </div>
+                {% endfor %}
                 <div class="col-sm-12">
                     {% for msg in errors %}
                     <div class="alert alert-danger">{{ msg }}</div>
@@ -163,9 +171,15 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12 text-right">
+                        {% if requirementsErrors %}
+                        <div class='alert alert-warning text-center'>
+                            {{ i18n.trans('installer-requirements-errors') }}
+                        </div>
+                        {% else %}
                         <button type="submit" class="btn btn-primary">
                             <i class="fa fa-check" aria-hidden="true"></i> {{ i18n.trans('accept') }}
                         </button>
+                        {% endif %}
                     </div>
                 </div>
             </form>
