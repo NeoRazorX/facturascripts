@@ -34,11 +34,13 @@ class EditAgente extends ExtendedController\EditController
     {
     
         parent::__construct($cache,$i18n,$miniLog,$className);
-        $this->model=new Model\Agente();
+        $this->modelName='FacturaScripts\Core\Model\Agente';
     }
     public function getPanelFooter()
     {
-        return $this->i18n->trans('Fecha de alta: '). $this->model->f_alta;
+        $model = $this->getModel();
+       
+        return $this->i18n->trans('Fecha de alta: '). $model->f_alta;
                 
     }
     public function getPageData()
