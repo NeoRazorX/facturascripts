@@ -32,6 +32,12 @@
             <a href="{{ fsc.url() }}&gen=proveedores" class="btn btn-block btn-info">
                 <i class="fa fa-users" aria-hidden="true"></i>&nbsp; {{ i18n.trans('suppliers') }}
             </a>
+            <a href="{{ fsc.url() }}&gen=pedidosprov" class="btn btn-block btn-info">
+                <i class="fa fa-list" aria-hidden="true"></i>&nbsp; {{ i18n.trans('supplier-orders') }}
+            </a>
+            <a href="{{ fsc.url() }}&gen=albaranesprov" class="btn btn-block btn-info">
+                <i class="fa fa-list" aria-hidden="true"></i>&nbsp; {{ i18n.trans('supplier-albaranes') }}
+            </a>
         </div>
         <div class="col-4">
             <a href="{{ fsc.url() }}&gen=grupos" class="btn btn-block btn-info">
@@ -39,6 +45,15 @@
             </a>
             <a href="{{ fsc.url() }}&gen=clientes" class="btn btn-block btn-info">
                 <i class="fa fa-users" aria-hidden="true"></i>&nbsp; {{ i18n.trans('customers') }}
+            </a>
+            <a href="{{ fsc.url() }}&gen=presupuestoscli" class="btn btn-block btn-info">
+                <i class="fa fa-list" aria-hidden="true"></i>&nbsp; {{ i18n.trans('customer-presupuestos') }}
+            </a>
+            <a href="{{ fsc.url() }}&gen=pedidoscli" class="btn btn-block btn-info">
+                <i class="fa fa-list" aria-hidden="true"></i>&nbsp; {{ i18n.trans('customer-orders') }}
+            </a>
+            <a href="{{ fsc.url() }}&gen=albaranescli" class="btn btn-block btn-info">
+                <i class="fa fa-list" aria-hidden="true"></i>&nbsp; {{ i18n.trans('customer-albaranes') }}
             </a>
         </div>
     </div>

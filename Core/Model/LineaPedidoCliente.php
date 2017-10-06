@@ -27,8 +27,7 @@ namespace FacturaScripts\Core\Model;
  */
 class LineaPedidoCliente
 {
-    use Base\LineaDocumento;
-    use Base\ModelTrait;
+    use Base\LineaDocumentoVenta;
 
     /**
      * ID de la linea relacionada en el presupuesto relacionado,
@@ -52,175 +51,16 @@ class LineaPedidoCliente
      */
     public $idpresupuesto;
 
-    /**
-     * Posición de la linea en el documento. Cuanto más alto más abajo.
-     *
-     * @var type
-     */
-    public $orden;
-
-    /**
-     * False -> no se muestra la columna cantidad al imprimir.
-     *
-     * @var type
-     */
-    public $mostrar_cantidad;
-
-    /**
-     * False -> no se muestran las columnas precio, descuento, impuestos y total al imprimir.
-     *
-     * @var type
-     */
-    public $mostrar_precio;
-    private static $pedidos;
-
     public function tableName()
     {
         return 'lineaspedidoscli';
     }
 
-    public function primaryColumn()
-    {
-        return 'idlinea';
-    }
-
     public function clear()
     {
-        $this->idlinea = NULL;
+        $this->clearLinea();
         $this->idlineapresupuesto = NULL;
         $this->idpedido = NULL;
         $this->idpresupuesto = NULL;
-        $this->cantidad = 0;
-        $this->codimpuesto = NULL;
-        $this->descripcion = '';
-        $this->dtopor = 0;
-        $this->irpf = 0;
-        $this->iva = 0;
-        $this->pvpsindto = 0;
-        $this->pvptotal = 0;
-        $this->pvpunitario = 0;
-        $this->recargo = 0;
-        $this->referencia = NULL;
-        $this->codcombinacion = NULL;
-        $this->orden = 0;
-        $this->mostrar_cantidad = TRUE;
-        $this->mostrar_precio = TRUE;
-    }
-
-    public function show_codigo()
-    {
-        $codigo = 'desconocido';
-
-        $encontrado = FALSE;
-        foreach (self::$pedidos as $p) {
-            if ($p->idpedido == $this->idpedido) {
-                $codigo = $p->codigo;
-                $encontrado = TRUE;
-                break;
-            }
-        }
-
-        if (!$encontrado) {
-            $pre = new PedidoCliente();
-            self::$pedidos[] = $pre->get($this->idpedido);
-            $codigo = self::$pedidos[count(self::$pedidos) - 1]->codigo;
-        }
-
-        return $codigo;
-    }
-
-    public function show_fecha()
-    {
-        $fecha = 'desconocida';
-
-        $encontrado = FALSE;
-        foreach (self::$pedidos as $p) {
-            if ($p->idpedido == $this->idpedido) {
-                $fecha = $p->fecha;
-                $encontrado = TRUE;
-                break;
-            }
-        }
-
-        if (!$encontrado) {
-            $pre = new PedidoCliente();
-            self::$pedidos[] = $pre->get($this->idpedido);
-            $fecha = self::$pedidos[count(self::$pedidos) - 1]->fecha;
-        }
-
-        return $fecha;
-    }
-
-    public function show_nombrecliente()
-    {
-        $nombre = 'desconocido';
-
-        $encontrado = FALSE;
-        foreach (self::$pedidos as $p) {
-            if ($p->idpedido == $this->idpedido) {
-                $nombre = $p->nombrecliente;
-                $encontrado = TRUE;
-                break;
-            }
-        }
-
-        if (!$encontrado) {
-            $pre = new PedidoCliente();
-            self::$pedidos[] = $pre->get($this->idpedido);
-            $nombre = self::$pedidos[count(self::$pedidos) - 1]->nombrecliente;
-        }
-
-        return $nombre;
-    }
-
-    public function test()
-    {
-        $this->descripcion = $this->no_html($this->descripcion);
-        $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
-        $totalsindto = $this->pvpunitario * $this->cantidad;
-
-        if (!$this->floatcmp($this->pvptotal, $total, FS_NF0, TRUE)) {
-            $this->miniLog->critical('Error en el valor de pvptotal de la línea ' . $this->referencia . ' del ' . FS_PEDIDO . '. Valor correcto: ' . $total);
-
-            return FALSE;
-        } elseif (!$this->floatcmp($this->pvpsindto, $totalsindto, FS_NF0, TRUE)) {
-            $this->miniLog->critical('Error en el valor de pvpsindto de la línea ' . $this->referencia . ' del ' . FS_PEDIDO . '. Valor correcto: ' . $totalsindto);
-
-            return FALSE;
-        }
-
-        return TRUE;
-    }
-
-    /**
-     * Busca todas las coincidencias de $query en las líneas.
-     *
-     * @param string  $query
-     * @param integer $offset
-     *
-     * @return \LineaPedidoCliente
-     */
-    public function search($query = '', $offset = 0)
-    {
-        $linealist = [];
-        $query = mb_strtolower($this->no_html($query), 'UTF8');
-
-        $sql = 'SELECT * FROM ' . $this->table_name . ' WHERE ';
-        if (is_numeric($query)) {
-            $sql .= "referencia LIKE '%" . $query . "%' OR descripcion LIKE '%" . $query . "%'";
-        } else {
-            $buscar = str_replace(' ', '%', $query);
-            $sql .= "lower(referencia) LIKE '%" . $buscar . "%' OR lower(descripcion) LIKE '%" . $buscar . "%'";
-        }
-        $sql .= ' ORDER BY idpedido DESC, idlinea ASC';
-
-        $data = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
-            foreach ($data as $l) {
-                $linealist[] = new self($l);
-            }
-        }
-
-        return $linealist;
     }
 }

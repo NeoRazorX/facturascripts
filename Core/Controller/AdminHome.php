@@ -47,6 +47,8 @@ class AdminHome extends Base\Controller
         /// por ahora desplegamos siempre el contenido de Dinamic, para las pruebas
         $pluginManager = new Base\PluginManager();
         $pluginManager->deploy(true);
+        
+        $this->cache->clear();
     }
 
     public function getPageData()

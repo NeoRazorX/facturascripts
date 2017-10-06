@@ -51,11 +51,12 @@ class NewCodigoDoc
 
     public function getNumero($tableName, $codejercicio, $codserie)
     {
-        
+        return mt_rand(1, 99999999);
     }
 
-    public function getCodigo($tableName, $numero)
+    public function getCodigo($tableName, $numero, $codserie, $codejercicio)
     {
-        
+        /// provisional
+        return $codejercicio.$codserie.$numero;
     }
 }

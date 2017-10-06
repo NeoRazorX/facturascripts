@@ -16,43 +16,18 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model\Base;
 
 /**
- * Description of LineaDocumento
+ * Description of LineaDocumentoCompra
  *
  * @author Carlos García Gómez
  */
-trait LineaDocumento
+trait LineaDocumentoCompra
 {
-    /**
-     * Clave primaria.
-     *
-     * @var int
-     */
-    public $idlinea;
-
-    /**
-     * Referencia del artículo.
-     *
-     * @var string
-     */
-    public $referencia;
-
-    /**
-     * Código de la combinación seleccionada, en el caso de los artículos con atributos.
-     *
-     * @var
-     */
-    public $codcombinacion;
-
-    /**
-     * TODO
-     *
-     * @var string
-     */
-    public $descripcion;
+    use ModelTrait {
+        clear as private clearTrait;
+    }
 
     /**
      * TODO
@@ -62,11 +37,11 @@ trait LineaDocumento
     public $cantidad;
 
     /**
-     * % de descuento.
+     * Código de la combinación seleccionada, en el caso de los artículos con atributos.
      *
-     * @var float
+     * @var string
      */
-    public $dtopor;
+    public $codcombinacion;
 
     /**
      * Código del impuesto relacionado.
@@ -76,11 +51,39 @@ trait LineaDocumento
     public $codimpuesto;
 
     /**
+     * TODO
+     *
+     * @var string
+     */
+    public $descripcion;
+
+    /**
      * % del impuesto relacionado.
      *
      * @var float
      */
     public $iva;
+
+    /**
+     * % de descuento.
+     *
+     * @var float
+     */
+    public $dtopor;
+
+    /**
+     * Clave primaria.
+     *
+     * @var int
+     */
+    public $idlinea;
+
+    /**
+     * % de IRPF de la línea.
+     *
+     * @var float
+     */
+    public $irpf;
 
     /**
      * Importe neto de la línea, sin impuestos.
@@ -104,18 +107,41 @@ trait LineaDocumento
     public $pvpunitario;
 
     /**
-     * % de IRPF de la línea.
-     *
-     * @var float
-     */
-    public $irpf;
-
-    /**
      * % de recargo de equivalencia de la línea.
      *
      * @var float
      */
     public $recargo;
+
+    /**
+     * Referencia del artículo.
+     *
+     * @var string
+     */
+    public $referencia;
+
+    public function primaryColumn()
+    {
+        return 'idlinea';
+    }
+
+    private function clearLinea()
+    {
+        $this->clearTrait();
+        $this->cantidad = 0.0;
+        $this->codcombinacion = null;
+        $this->codimpuesto = NULL;
+        $this->descripcion = '';
+        $this->dtopor = 0.0;
+        $this->idlinea = null;
+        $this->irpf = 0.0;
+        $this->iva = 0.0;
+        $this->pvpsindto = 0.0;
+        $this->pvptotal = 0.0;
+        $this->pvpunitario = 0.0;
+        $this->recargo = 0.0;
+        $this->referencia = null;
+    }
 
     /**
      * TODO
@@ -156,22 +182,25 @@ trait LineaDocumento
      *
      * @return string
      */
-    public function getDescripcion()
+    public function descripcion()
     {
         return nl2br($this->descripcion);
     }
 
-    /**
-     * TODO
-     *
-     * @return string
-     */
-    public function articuloUrl()
+    public function test()
     {
-        if ($this->referencia === null || $this->referencia === '') {
-            return 'index.php?page=VentasArticulos';
+        $this->descripcion = $this->noHtml($this->descripcion);
+        $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
+        $totalsindto = $this->pvpunitario * $this->cantidad;
+
+        if (!$this->floatcmp($this->pvptotal, $total, FS_NF0, TRUE)) {
+            $this->miniLog->alert("Error en el valor de pvptotal de la línea " . $this->referencia . " del documento. Valor correcto: " . $total);
+            return FALSE;
+        } else if (!$this->floatcmp($this->pvpsindto, $totalsindto, FS_NF0, TRUE)) {
+            $this->miniLog->alert("Error en el valor de pvpsindto de la línea " . $this->referencia . " del documento. Valor correcto: " . $totalsindto);
+            return FALSE;
         }
 
-        return 'index.php?page=VentasArticulo&ref=' . urlencode($this->referencia);
+        return TRUE;
     }
 }

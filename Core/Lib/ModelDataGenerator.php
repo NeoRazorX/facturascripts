@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model;
 
+define('FS_NF0', 2);
 define('FS_NF0_ART', 2);
 
 /**
@@ -177,7 +178,7 @@ class ModelDataGenerator
 
         if (mt_rand(0, 9) == 0) {
             $cantidad = mt_rand($min, $max2);
-        } else if ($cantidad < $max1 AND mt_rand(0, 4) == 0) {
+        } else if ($cantidad < $max1 && mt_rand(0, 4) == 0) {
             $cantidad += round(mt_rand(1, 5) / mt_rand(1, 10), mt_rand(0, 3));
             $cantidad = min(array($max1, $cantidad));
         }
@@ -200,7 +201,7 @@ class ModelDataGenerator
 
         if (mt_rand(0, 9) == 0) {
             $precio = mt_rand($min, $max2);
-        } else if ($precio < $max1 AND mt_rand(0, 2) == 0) {
+        } else if ($precio < $max1 && mt_rand(0, 2) == 0) {
             $precio += round(mt_rand(1, 5) / mt_rand(1, 10), FS_NF0_ART);
             $precio = min(array($max1, $precio));
         }
@@ -478,7 +479,7 @@ class ModelDataGenerator
                 $cliente->codagente = NULL;
             }
 
-            if (mt_rand(0, 2) > 0 AND $this->grupos) {
+            if (mt_rand(0, 2) > 0 && $this->grupos) {
                 shuffle($this->grupos);
                 $cliente->codgrupo = $this->grupos[0]->codgrupo;
             } else {
@@ -803,18 +804,18 @@ class ModelDataGenerator
      * @param type $max
      * @return int
      */
-    public function albaranescli($max = 25)
+    public function albaranesCliente($max = 25)
     {
         $num = 0;
-        $clientes = $this->random_clientes();
+        $clientes = $this->randomClientes();
 
         $recargo = FALSE;
-        if ($clientes[0]->recargo OR mt_rand(0, 4) == 0) {
+        if ($clientes[0]->recargo || mt_rand(0, 4) == 0) {
             $recargo = TRUE;
         }
 
         while ($num < $max) {
-            $alb = new albaran_cliente();
+            $alb = new Model\AlbaranCliente();
             $alb->fecha = mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, date('Y'));
             $alb->hora = mt_rand(10, 20) . ':' . mt_rand(10, 59) . ':' . mt_rand(10, 59);
             $alb->codpago = $this->formas_pago[0]->codpago;
@@ -853,18 +854,18 @@ class ModelDataGenerator
                 $alb->codagente = NULL;
             }
 
-            $eje = $this->ejercicio->get_by_fecha($alb->fecha);
+            $eje = $this->ejercicio->getByFecha($alb->fecha);
             if ($eje) {
                 $alb->codejercicio = $eje->codejercicio;
 
                 $regimeniva = 'Exento';
-                if (mt_rand(0, 14) > 0 AND isset($clientes[$num])) {
+                if (mt_rand(0, 14) > 0 && isset($clientes[$num])) {
                     $alb->codcliente = $clientes[$num]->codcliente;
                     $alb->nombrecliente = $clientes[$num]->razonsocial;
                     $alb->cifnif = $clientes[$num]->cifnif;
                     $regimeniva = $clientes[$num]->regimeniva;
 
-                    foreach ($clientes[$num]->get_direcciones() as $dir) {
+                    foreach ($clientes[$num]->getDirecciones() as $dir) {
                         if ($dir->domfacturacion) {
                             $alb->codpais = $dir->codpais;
                             $alb->provincia = $dir->provincia;
@@ -874,7 +875,7 @@ class ModelDataGenerator
                             $alb->apartado = $dir->apartado;
                         }
 
-                        if ($dir->domenvio AND mt_rand(0, 2) == 0) {
+                        if ($dir->domenvio && mt_rand(0, 2) == 0) {
                             $alb->envio_nombre = $this->nombre();
                             $alb->envio_apellidos = $this->apellidos();
                             $alb->envio_codpais = $dir->codpais;
@@ -892,7 +893,7 @@ class ModelDataGenerator
                 }
 
                 if ($alb->save()) {
-                    $articulos = $this->random_articulos();
+                    $articulos = $this->randomArticulos();
 
                     /// una de cada 15 veces usamos cantidades negativas
                     $modcantidad = 1;
@@ -902,7 +903,7 @@ class ModelDataGenerator
 
                     $numlineas = $this->cantidad(0, 10, 200);
                     while ($numlineas > 0) {
-                        $lin = new linea_albaran_cliente();
+                        $lin = new Model\LineaAlbaranCliente();
                         $lin->idalbaran = $alb->idalbaran;
                         $lin->cantidad = $modcantidad * $this->cantidad(1, 3, 19);
                         $lin->descripcion = $this->descripcion();
@@ -910,7 +911,7 @@ class ModelDataGenerator
                         $lin->codimpuesto = $this->impuestos[0]->codimpuesto;
                         $lin->iva = $this->impuestos[0]->iva;
 
-                        if ($recargo AND mt_rand(0, 2) == 0) {
+                        if ($recargo && mt_rand(0, 2) == 0) {
                             $lin->recargo = $this->impuestos[0]->recargo;
                         }
 
@@ -920,7 +921,7 @@ class ModelDataGenerator
                                 $lin->descripcion = $articulos[$numlineas]->descripcion;
                                 $lin->pvpunitario = $articulos[$numlineas]->pvp;
                                 $lin->codimpuesto = $articulos[$numlineas]->codimpuesto;
-                                $lin->iva = $articulos[$numlineas]->get_iva();
+                                $lin->iva = $articulos[$numlineas]->getIva();
                                 $lin->recargo = 0;
                             }
                         }
@@ -944,7 +945,7 @@ class ModelDataGenerator
                         if ($lin->save()) {
                             if (isset($articulos[$numlineas])) {
                                 /// descontamos del stock
-                                $articulos[$numlineas]->sum_stock($alb->codalmacen, 0 - $lin->cantidad);
+                                $articulos[$numlineas]->sumStock($alb->codalmacen, 0 - $lin->cantidad);
                             }
 
                             $alb->neto += $lin->pvptotal;
@@ -982,10 +983,10 @@ class ModelDataGenerator
      * @param type $max
      * @return int
      */
-    public function albaranesprov($max = 25)
+    public function albaranesProveedor($max = 25)
     {
         $num = 0;
-        $proveedores = $this->random_proveedores();
+        $proveedores = $this->randomProveedores();
 
         $recargo = FALSE;
         if (mt_rand(0, 4) == 0) {
@@ -993,19 +994,19 @@ class ModelDataGenerator
         }
 
         while ($num < $max) {
-            $alb = new albaran_proveedor();
+            $alb = new Model\AlbaranProveedor();
             $alb->fecha = mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, date('Y'));
             $alb->hora = mt_rand(10, 20) . ':' . mt_rand(10, 59) . ':' . mt_rand(10, 59);
             $alb->codpago = $this->formas_pago[0]->codpago;
 
             if (mt_rand(0, 2) == 0) {
                 $alb->coddivisa = $this->divisas[0]->coddivisa;
-                $alb->tasaconv = $this->divisas[0]->tasaconv_compra;
+                $alb->tasaconv = $this->divisas[0]->tasaconvcompra;
             } else {
                 foreach ($this->divisas as $div) {
                     if ($div->coddivisa == $this->empresa->coddivisa) {
                         $alb->coddivisa = $div->coddivisa;
-                        $alb->tasaconv = $div->tasaconv_compra;
+                        $alb->tasaconv = $div->tasaconvcompra;
                         break;
                     }
                 }
@@ -1032,12 +1033,12 @@ class ModelDataGenerator
                 $alb->codagente = NULL;
             }
 
-            $eje = $this->ejercicio->get_by_fecha($alb->fecha);
+            $eje = $this->ejercicio->getByFecha($alb->fecha);
             if ($eje) {
                 $alb->codejercicio = $eje->codejercicio;
 
                 $regimeniva = 'Exento';
-                if (mt_rand(0, 14) > 0 AND isset($proveedores[$num])) {
+                if (mt_rand(0, 14) > 0 && isset($proveedores[$num])) {
                     $alb->codproveedor = $proveedores[$num]->codproveedor;
                     $alb->nombre = $proveedores[$num]->razonsocial;
                     $alb->cifnif = $proveedores[$num]->cifnif;
@@ -1049,7 +1050,7 @@ class ModelDataGenerator
                 }
 
                 if ($alb->save()) {
-                    $articulos = $this->random_articulos();
+                    $articulos = $this->randomArticulos();
 
                     /// una de cada 15 veces usamos cantidades negativas
                     $modcantidad = 1;
@@ -1059,7 +1060,7 @@ class ModelDataGenerator
 
                     $numlineas = $this->cantidad(0, 10, 400);
                     while ($numlineas > 0) {
-                        $lin = new linea_albaran_proveedor();
+                        $lin = new Model\LineaAlbaranProveedor();
                         $lin->idalbaran = $alb->idalbaran;
                         $lin->cantidad = $modcantidad * $this->cantidad(1, 3, 19);
                         $lin->descripcion = $this->descripcion();
@@ -1067,7 +1068,7 @@ class ModelDataGenerator
                         $lin->codimpuesto = $this->impuestos[0]->codimpuesto;
                         $lin->iva = $this->impuestos[0]->iva;
 
-                        if ($recargo AND mt_rand(0, 2) == 0) {
+                        if ($recargo && mt_rand(0, 2) == 0) {
                             $lin->recargo = $this->impuestos[0]->recargo;
                         }
 
@@ -1077,7 +1078,7 @@ class ModelDataGenerator
                                 $lin->descripcion = $articulos[$numlineas]->descripcion;
                                 $lin->pvpunitario = $articulos[$numlineas]->pvp;
                                 $lin->codimpuesto = $articulos[$numlineas]->codimpuesto;
-                                $lin->iva = $articulos[$numlineas]->get_iva();
+                                $lin->iva = $articulos[$numlineas]->getIva();
                                 $lin->recargo = 0;
                             }
                         }
@@ -1101,7 +1102,7 @@ class ModelDataGenerator
                         if ($lin->save()) {
                             if (isset($articulos[$numlineas])) {
                                 /// sumamos al stock
-                                $articulos[$numlineas]->sum_stock($alb->codalmacen, $lin->cantidad, TRUE);
+                                $articulos[$numlineas]->sumStock($alb->codalmacen, $lin->cantidad, TRUE);
                             }
 
                             $alb->neto += $lin->pvptotal;
@@ -1139,18 +1140,18 @@ class ModelDataGenerator
      * @param type $max
      * @return int
      */
-    public function pedidoscli($max = 25)
+    public function pedidosCliente($max = 25)
     {
         $num = 0;
-        $clientes = $this->random_clientes();
+        $clientes = $this->randomClientes();
 
         $recargo = FALSE;
-        if ($clientes[0]->recargo OR mt_rand(0, 4) == 0) {
+        if ($clientes[0]->recargo || mt_rand(0, 4) == 0) {
             $recargo = TRUE;
         }
 
         while ($num < $max) {
-            $ped = new pedido_cliente();
+            $ped = new Model\PedidoCliente();
             $ped->fecha = mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, date('Y'));
             $ped->hora = mt_rand(10, 20) . ':' . mt_rand(10, 59) . ':' . mt_rand(10, 59);
             $ped->codpago = $this->formas_pago[0]->codpago;
@@ -1193,18 +1194,18 @@ class ModelDataGenerator
                 $ped->status = 2;
             }
 
-            $eje = $this->ejercicio->get_by_fecha($ped->fecha);
+            $eje = $this->ejercicio->getByFecha($ped->fecha);
             if ($eje) {
                 $ped->codejercicio = $eje->codejercicio;
 
                 $regimeniva = 'Exento';
-                if (mt_rand(0, 14) > 0 AND isset($clientes[$num])) {
+                if (mt_rand(0, 14) > 0 && isset($clientes[$num])) {
                     $ped->codcliente = $clientes[$num]->codcliente;
                     $ped->nombrecliente = $clientes[$num]->razonsocial;
                     $ped->cifnif = $clientes[$num]->cifnif;
                     $regimeniva = $clientes[$num]->regimeniva;
 
-                    foreach ($clientes[$num]->get_direcciones() as $dir) {
+                    foreach ($clientes[$num]->getDirecciones() as $dir) {
                         if ($dir->domfacturacion) {
                             $ped->codpais = $dir->codpais;
                             $ped->provincia = $dir->provincia;
@@ -1214,7 +1215,7 @@ class ModelDataGenerator
                             $ped->apartado = $dir->apartado;
                         }
 
-                        if ($dir->domenvio AND mt_rand(0, 2) == 0) {
+                        if ($dir->domenvio && mt_rand(0, 2) == 0) {
                             $ped->envio_nombre = $this->nombre();
                             $ped->envio_apellidos = $this->apellidos();
                             $ped->envio_codpais = $dir->codpais;
@@ -1235,11 +1236,11 @@ class ModelDataGenerator
                 }
 
                 if ($ped->save()) {
-                    $articulos = $this->random_articulos();
+                    $articulos = $this->randomArticulos();
 
                     $numlineas = $this->cantidad(0, 10, 200);
                     while ($numlineas > 0) {
-                        $lin = new linea_pedido_cliente();
+                        $lin = new Model\LineaPedidoCliente();
                         $lin->idpedido = $ped->idpedido;
                         $lin->cantidad = $this->cantidad(1, 3, 19);
                         $lin->descripcion = $this->descripcion();
@@ -1247,7 +1248,7 @@ class ModelDataGenerator
                         $lin->codimpuesto = $this->impuestos[0]->codimpuesto;
                         $lin->iva = $this->impuestos[0]->iva;
 
-                        if ($recargo AND mt_rand(0, 2) == 0) {
+                        if ($recargo && mt_rand(0, 2) == 0) {
                             $lin->recargo = $this->impuestos[0]->recargo;
                         }
 
@@ -1257,7 +1258,7 @@ class ModelDataGenerator
                                 $lin->descripcion = $articulos[$numlineas]->descripcion;
                                 $lin->pvpunitario = $articulos[$numlineas]->pvp;
                                 $lin->codimpuesto = $articulos[$numlineas]->codimpuesto;
-                                $lin->iva = $articulos[$numlineas]->get_iva();
+                                $lin->iva = $articulos[$numlineas]->getIva();
                                 $lin->recargo = 0;
                             }
                         }
@@ -1314,10 +1315,10 @@ class ModelDataGenerator
      * @param type $max
      * @return int
      */
-    public function pedidosprov($max = 25)
+    public function pedidosProveedor($max = 25)
     {
         $num = 0;
-        $proveedores = $this->random_proveedores();
+        $proveedores = $this->randomProveedores();
 
         $recargo = FALSE;
         if (mt_rand(0, 4) == 0) {
@@ -1325,19 +1326,19 @@ class ModelDataGenerator
         }
 
         while ($num < $max) {
-            $ped = new pedido_proveedor();
+            $ped = new Model\PedidoProveedor();
             $ped->fecha = mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, date('Y'));
             $ped->hora = mt_rand(10, 20) . ':' . mt_rand(10, 59) . ':' . mt_rand(10, 59);
             $ped->codpago = $this->formas_pago[0]->codpago;
 
             if (mt_rand(0, 2) == 0) {
                 $ped->coddivisa = $this->divisas[0]->coddivisa;
-                $ped->tasaconv = $this->divisas[0]->tasaconv_compra;
+                $ped->tasaconv = $this->divisas[0]->tasaconvcompra;
             } else {
                 foreach ($this->divisas as $div) {
                     if ($div->coddivisa == $this->empresa->coddivisa) {
                         $ped->coddivisa = $div->coddivisa;
-                        $ped->tasaconv = $div->tasaconv_compra;
+                        $ped->tasaconv = $div->tasaconvcompra;
                         break;
                     }
                 }
@@ -1364,12 +1365,12 @@ class ModelDataGenerator
                 $ped->codagente = NULL;
             }
 
-            $eje = $this->ejercicio->get_by_fecha($ped->fecha);
+            $eje = $this->ejercicio->getByFecha($ped->fecha);
             if ($eje) {
                 $ped->codejercicio = $eje->codejercicio;
 
                 $regimeniva = 'Exento';
-                if (mt_rand(0, 14) > 0 AND isset($proveedores[$num])) {
+                if (mt_rand(0, 14) > 0 && isset($proveedores[$num])) {
                     $ped->codproveedor = $proveedores[$num]->codproveedor;
                     $ped->nombre = $proveedores[$num]->razonsocial;
                     $ped->cifnif = $proveedores[$num]->cifnif;
@@ -1381,11 +1382,11 @@ class ModelDataGenerator
                 }
 
                 if ($ped->save()) {
-                    $articulos = $this->random_articulos();
+                    $articulos = $this->randomArticulos();
 
                     $numlineas = $this->cantidad(0, 10, 400);
                     while ($numlineas > 0) {
-                        $lin = new linea_pedido_proveedor();
+                        $lin = new Model\LineaPedidoProveedor();
                         $lin->idpedido = $ped->idpedido;
                         $lin->cantidad = $this->cantidad(1, 3, 19);
                         $lin->descripcion = $this->descripcion();
@@ -1393,7 +1394,7 @@ class ModelDataGenerator
                         $lin->codimpuesto = $this->impuestos[0]->codimpuesto;
                         $lin->iva = $this->impuestos[0]->iva;
 
-                        if ($recargo AND mt_rand(0, 2) == 0) {
+                        if ($recargo && mt_rand(0, 2) == 0) {
                             $lin->recargo = $this->impuestos[0]->recargo;
                         }
 
@@ -1403,7 +1404,7 @@ class ModelDataGenerator
                                 $lin->descripcion = $articulos[$numlineas]->descripcion;
                                 $lin->pvpunitario = $articulos[$numlineas]->pvp;
                                 $lin->codimpuesto = $articulos[$numlineas]->codimpuesto;
-                                $lin->iva = $articulos[$numlineas]->get_iva();
+                                $lin->iva = $articulos[$numlineas]->getIVA();
                                 $lin->recargo = 0;
                             }
                         }
@@ -1460,18 +1461,18 @@ class ModelDataGenerator
      * @param type $max
      * @return int
      */
-    public function presupuestoscli($max = 25)
+    public function presupuestosCliente($max = 25)
     {
         $num = 0;
-        $clientes = $this->random_clientes();
+        $clientes = $this->randomClientes();
 
         $recargo = FALSE;
-        if ($clientes[0]->recargo OR mt_rand(0, 4) == 0) {
+        if ($clientes[0]->recargo || mt_rand(0, 4) == 0) {
             $recargo = TRUE;
         }
 
         while ($num < $max) {
-            $presu = new presupuesto_cliente();
+            $presu = new Model\PresupuestoCliente();
             $presu->fecha = mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, date('Y'));
             $presu->hora = mt_rand(10, 20) . ':' . mt_rand(10, 59) . ':' . mt_rand(10, 59);
             $presu->codpago = $this->formas_pago[0]->codpago;
@@ -1510,19 +1511,19 @@ class ModelDataGenerator
                 $presu->codagente = NULL;
             }
 
-            $eje = $this->ejercicio->get_by_fecha($presu->fecha);
+            $eje = $this->ejercicio->getByFecha($presu->fecha);
             if ($eje) {
                 $presu->codejercicio = $eje->codejercicio;
                 $presu->finoferta = date('d-m-Y', strtotime($presu->fecha . ' +' . mt_rand(1, 18) . ' months'));
 
                 $regimeniva = 'Exento';
-                if (mt_rand(0, 14) > 0 AND isset($clientes[$num])) {
+                if (mt_rand(0, 14) > 0 && isset($clientes[$num])) {
                     $presu->codcliente = $clientes[$num]->codcliente;
                     $presu->nombrecliente = $clientes[$num]->razonsocial;
                     $presu->cifnif = $clientes[$num]->cifnif;
                     $regimeniva = $clientes[$num]->regimeniva;
 
-                    foreach ($clientes[$num]->get_direcciones() as $dir) {
+                    foreach ($clientes[$num]->getDirecciones() as $dir) {
                         if ($dir->domfacturacion) {
                             $presu->codpais = $dir->codpais;
                             $presu->provincia = $dir->provincia;
@@ -1532,7 +1533,7 @@ class ModelDataGenerator
                             $presu->apartado = $dir->apartado;
                         }
 
-                        if ($dir->domenvio AND mt_rand(0, 2) == 0) {
+                        if ($dir->domenvio && mt_rand(0, 2) == 0) {
                             $presu->envio_nombre = $this->nombre();
                             $presu->envio_apellidos = $this->apellidos();
                             $presu->envio_codpais = $dir->codpais;
@@ -1550,11 +1551,11 @@ class ModelDataGenerator
                 }
 
                 if ($presu->save()) {
-                    $articulos = $this->random_articulos();
+                    $articulos = $this->randomArticulos();
 
                     $numlineas = $this->cantidad(0, 10, 200);
                     while ($numlineas > 0) {
-                        $lin = new linea_presupuesto_cliente();
+                        $lin = new Model\LineaPresupuestoCliente();
                         $lin->idpresupuesto = $presu->idpresupuesto;
                         $lin->cantidad = $this->cantidad(1, 3, 19);
                         $lin->descripcion = $this->descripcion();
@@ -1562,7 +1563,7 @@ class ModelDataGenerator
                         $lin->codimpuesto = $this->impuestos[0]->codimpuesto;
                         $lin->iva = $this->impuestos[0]->iva;
 
-                        if ($recargo AND mt_rand(0, 2) == 0) {
+                        if ($recargo && mt_rand(0, 2) == 0) {
                             $lin->recargo = $this->impuestos[0]->recargo;
                         }
 
@@ -1572,7 +1573,7 @@ class ModelDataGenerator
                                 $lin->descripcion = $articulos[$numlineas]->descripcion;
                                 $lin->pvpunitario = $articulos[$numlineas]->pvp;
                                 $lin->codimpuesto = $articulos[$numlineas]->codimpuesto;
-                                $lin->iva = $articulos[$numlineas]->get_iva();
+                                $lin->iva = $articulos[$numlineas]->getIva();
                                 $lin->recargo = 0;
                             }
                         }
@@ -1624,170 +1625,6 @@ class ModelDataGenerator
     }
 
     /**
-     * Genera $max servicios aleatorios.
-     * Devuelve el número de servicios generados.
-     * @param type $max
-     * @return int
-     */
-    public function servicioscli($max = 25)
-    {
-        $num = 0;
-        $clientes = $this->random_clientes();
-
-        $estado0 = new estado_servicio();
-        $estados = $estado0->all();
-        shuffle($estados);
-
-        $recargo = FALSE;
-        if ($clientes[0]->recargo OR mt_rand(0, 4) == 0) {
-            $recargo = TRUE;
-        }
-
-        while ($num < $max) {
-            $serv = new servicio_cliente();
-            $serv->fecha = mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, date('Y'));
-            $serv->hora = mt_rand(10, 20) . ':' . mt_rand(10, 59) . ':' . mt_rand(10, 59);
-            $serv->codalmacen = $this->empresa->codalmacen;
-            $serv->codpago = $this->empresa->codpago;
-            $serv->codserie = $this->empresa->codserie;
-
-            foreach ($this->divisas as $div) {
-                if ($div->coddivisa == $this->empresa->coddivisa) {
-                    $serv->coddivisa = $div->coddivisa;
-                    $serv->tasaconv = $div->tasaconv;
-                    break;
-                }
-            }
-
-            if (mt_rand(0, 2) == 0) {
-                $serv->codagente = $this->agentes[0]->codagente;
-                $serv->codalmacen = $this->almacenes[0]->codalmacen;
-                $serv->codpago = $this->formas_pago[0]->codpago;
-                $serv->coddivisa = $this->divisas[0]->coddivisa;
-                $serv->tasaconv = $this->divisas[0]->tasaconv;
-
-                if ($this->series[0]->codserie != 'R') {
-                    $serv->codserie = $this->series[0]->codserie;
-                    $serv->irpf = $this->series[0]->irpf;
-                }
-
-                $serv->observaciones = $this->observaciones($serv->fecha);
-                $serv->numero2 = mt_rand(10, 99999);
-            }
-
-            $serv->material = $this->observaciones();
-            $serv->material_estado = $this->observaciones();
-            $serv->accesorios = $this->observaciones();
-            $serv->descripcion = $this->observaciones();
-            $serv->solucion = $this->observaciones();
-
-            $eje = $this->ejercicio->get_by_fecha($serv->fecha);
-            if ($eje) {
-                $serv->codejercicio = $eje->codejercicio;
-                $serv->fechainicio = Date('d-m-Y H:i', strtotime($serv->fecha . ' +' . mt_rand(1, 18) . ' days'));
-                $serv->fechafin = date('Y-m-d H:i', strtotime($serv->fechainicio . ' +' . mt_rand(10, 59) . ' minutes'));
-                $serv->idestado = $estados[0]->id;
-                $serv->garantia = ( mt_rand(0, 1) == 1 );
-                $serv->prioridad = mt_rand(1, 4);
-
-                $regimeniva = 'Exento';
-                if (mt_rand(0, 14) > 0 AND isset($clientes[$num])) {
-                    $serv->codcliente = $clientes[$num]->codcliente;
-                    $serv->nombrecliente = $clientes[$num]->razonsocial;
-                    $serv->cifnif = $clientes[$num]->cifnif;
-                    $regimeniva = $clientes[$num]->regimeniva;
-
-                    foreach ($clientes[$num]->get_direcciones() as $dir) {
-                        $serv->codpais = $dir->codpais;
-                        $serv->provincia = $dir->provincia;
-                        $serv->ciudad = $dir->ciudad;
-                        $serv->direccion = $dir->direccion;
-                        $serv->codpostal = $dir->codpostal;
-                        if ($dir->domfacturacion) {
-                            break;
-                        }
-                    }
-                } else {
-                    /// de vez en cuando creamos uno sin cliente asociado
-                    $serv->nombrecliente = $this->empresa();
-                    $serv->cifnif = '';
-                }
-
-                if ($serv->save()) {
-                    $articulos = $this->random_articulos();
-
-                    $numlineas = $this->cantidad(0, 10, 200);
-                    while ($numlineas > 0) {
-                        $lin = new linea_servicio_cliente();
-                        $lin->idservicio = $serv->idservicio;
-                        $lin->cantidad = $this->cantidad(1, 3, 19);
-                        $lin->descripcion = $this->descripcion();
-                        $lin->pvpunitario = $this->precio(1, 49, 699);
-                        $lin->codimpuesto = $this->impuestos[0]->codimpuesto;
-                        $lin->iva = $this->impuestos[0]->iva;
-
-                        if ($recargo AND mt_rand(0, 2) == 0) {
-                            $lin->recargo = $this->impuestos[0]->recargo;
-                        }
-
-                        if (isset($articulos[$numlineas])) {
-                            if ($articulos[$numlineas]->sevende) {
-                                $lin->referencia = $articulos[$numlineas]->referencia;
-                                $lin->descripcion = $articulos[$numlineas]->descripcion;
-                                $lin->pvpunitario = $articulos[$numlineas]->pvp;
-                                $lin->codimpuesto = $articulos[$numlineas]->codimpuesto;
-                                $lin->iva = $articulos[$numlineas]->get_iva();
-                                $lin->recargo = 0;
-                            }
-                        }
-
-                        $lin->irpf = $serv->irpf;
-
-                        if ($regimeniva == 'Exento') {
-                            $lin->codimpuesto = NULL;
-                            $lin->iva = 0;
-                            $lin->recargo = 0;
-                            $serv->irpf = $lin->irpf = 0;
-                        }
-
-                        if (mt_rand(0, 4) == 0) {
-                            $lin->dtopor = $this->cantidad(0, 33, 100);
-                        }
-
-                        $lin->pvpsindto = ($lin->pvpunitario * $lin->cantidad);
-                        $lin->pvptotal = $lin->pvpunitario * $lin->cantidad * (100 - $lin->dtopor) / 100;
-
-                        if ($lin->save()) {
-                            $serv->neto += $lin->pvptotal;
-                            $serv->totaliva += ($lin->pvptotal * $lin->iva / 100);
-                            $serv->totalirpf += ($lin->pvptotal * $lin->irpf / 100);
-                            $serv->totalrecargo += ($lin->pvptotal * $lin->recargo / 100);
-                        }
-
-                        $numlineas--;
-                    }
-
-                    /// redondeamos
-                    $serv->neto = round($serv->neto, FS_NF0);
-                    $serv->totaliva = round($serv->totaliva, FS_NF0);
-                    $serv->totalirpf = round($serv->totalirpf, FS_NF0);
-                    $serv->totalrecargo = round($serv->totalrecargo, FS_NF0);
-                    $serv->total = $serv->neto + $serv->totaliva - $serv->totalirpf + $serv->totalrecargo;
-                    $serv->save();
-
-                    $num++;
-                } else {
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
-
-        return $num;
-    }
-
-    /**
      * Devuelve unas observaciones aleatorias.
      * @param type $fecha
      * @return string
@@ -1810,7 +1647,7 @@ class ModelDataGenerator
         /// randomizamos (es posible que me haya inventado esta palabra)
         shuffle($observaciones);
 
-        if ($fecha AND mt_rand(0, 2) == 0) {
+        if ($fecha && mt_rand(0, 2) == 0) {
             $semana = date("D", strtotime($fecha));
             $semanaArray = array(
                 "Mon" => "lunes", "Tue" => "martes", "Wed" => "miércoles", "Thu" => "jueves",
@@ -1848,7 +1685,7 @@ class ModelDataGenerator
      * @param type $recursivo
      * @return \cliente
      */
-    protected function random_clientes($recursivo = TRUE)
+    protected function randomClientes($recursivo = TRUE)
     {
         $lista = array();
 
@@ -1857,14 +1694,14 @@ class ModelDataGenerator
             $sql = "SELECT * FROM clientes ORDER BY RAND()";
         }
 
-        $data = $this->db->select_limit($sql, 100, 0);
+        $data = $this->db->selectLimit($sql, 100, 0);
         if ($data) {
             foreach ($data as $d) {
-                $lista[] = new cliente($d);
+                $lista[] = new Model\Cliente($d);
             }
         } else if ($recursivo) {
             $this->clientes();
-            $lista = $this->random_clientes(FALSE);
+            $lista = $this->randomClientes(FALSE);
         }
 
         return $lista;
@@ -1875,7 +1712,7 @@ class ModelDataGenerator
      * @param type $recursivo
      * @return \proveedor
      */
-    protected function random_proveedores($recursivo = TRUE)
+    protected function randomProveedores($recursivo = TRUE)
     {
         $lista = array();
 
@@ -1884,14 +1721,14 @@ class ModelDataGenerator
             $sql = "SELECT * FROM proveedores ORDER BY RAND()";
         }
 
-        $data = $this->db->select_limit($sql, 100, 0);
+        $data = $this->db->selectLimit($sql, 100, 0);
         if ($data) {
             foreach ($data as $d) {
-                $lista[] = new proveedor($d);
+                $lista[] = new Model\Proveedor($d);
             }
         } else if ($recursivo) {
             $this->proveedores();
-            return $this->random_proveedores(FALSE);
+            return $this->randomProveedores(FALSE);
         }
 
         return $lista;
@@ -1902,7 +1739,7 @@ class ModelDataGenerator
      * @param type $recursivo
      * @return \agente
      */
-    protected function random_agentes($recursivo = TRUE)
+    protected function randomAgentes($recursivo = TRUE)
     {
         $lista = array();
 
@@ -1911,14 +1748,14 @@ class ModelDataGenerator
             $sql = "SELECT * FROM agentes ORDER BY RAND()";
         }
 
-        $data = $this->db->select_limit($sql, 100, 0);
+        $data = $this->db->selectLimit($sql, 100, 0);
         if ($data) {
             foreach ($data as $d) {
-                $lista[] = new agente($d);
+                $lista[] = new Model\Agente($d);
             }
         } else if ($recursivo) {
             $this->agentes();
-            return $this->random_agentes(FALSE);
+            return $this->randomAgentes(FALSE);
         }
 
         return $lista;
@@ -1929,7 +1766,7 @@ class ModelDataGenerator
      * @param type $recursivo
      * @return \articulo
      */
-    protected function random_articulos($recursivo = TRUE)
+    protected function randomArticulos($recursivo = TRUE)
     {
         $lista = array();
 
@@ -1938,14 +1775,14 @@ class ModelDataGenerator
             $sql = "SELECT * FROM articulos ORDER BY RAND()";
         }
 
-        $data = $this->db->select_limit($sql, 100, 0);
+        $data = $this->db->selectLimit($sql, 100, 0);
         if ($data) {
             foreach ($data as $d) {
-                $lista[] = new articulo($d);
+                $lista[] = new Model\Articulo($d);
             }
         } else if ($recursivo) {
             $this->articulos();
-            return $this->random_articulos(FALSE);
+            return $this->randomArticulos(FALSE);
         }
 
         return $lista;
