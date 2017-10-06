@@ -22,6 +22,7 @@
     "plugin-disabled": "Plugin disabled successfully.",
     "preferences": "Preferences",
     "select-language": "Select language",
+    "select-timezone": "Select Timezone",
     "template-not-found": "Template not found",
     "to-do-list": "List of things to do",
     "user-unsaved": "Failed to save user information",

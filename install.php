@@ -329,7 +329,6 @@ function verifyFunction($function)
     return array($status, $error);
 }
 
-
 /**
  * Revisa si una extensión esta presente en la instalación de PHP
  * @param type $extension

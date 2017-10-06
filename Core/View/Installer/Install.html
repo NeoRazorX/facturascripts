@@ -25,6 +25,7 @@
                         $('#db_user').val('postgres');
                     }
                 });
+                document.fs_install.fs_timezone.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
             });
         </script>
     </head>
@@ -75,7 +76,7 @@
                     <br/>
                 </div>
             </div>
-            <form action="install.php" method="post" class="form">
+            <form name="fs_install" action="install.php" method="post" class="form">
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="preferencias">
                         <div class="row">
@@ -93,16 +94,12 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-6">
                                 <div class="form-group">
                                     {{ i18n.trans('select-timezone') }}:
                                     <select name="fs_timezone" class="form-control">
                                         {% for tz in timezone %}
-                                        {% if tz['zone'] == 'Europe/Madrid' %}
-                                        <option value="{{ tz['zone'] }}" selected="">{{ tz['diff_from_GMT']}} - {{ tz['zone'] }}</option>
-                                        {% else %}
-                                        <option value="{{ tz['zone'] }}">{{ tz['diff_from_GMT']}} - {{ tz['zone'] }}</option>
-                                        {% endif %}
+                                        <option value="{{ tz['zone'] }}">{{ tz['zone'] }} - {{ tz['diff_from_GMT']}}</option>
                                         {% endfor %}
                                     </select>
                                 </div>

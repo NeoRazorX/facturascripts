@@ -22,6 +22,7 @@
     "plugin-disabled": "Plugin desactivat correctament.",
     "preferences": "Preferències",
     "select-language": "Seleccionar o idioma",
+    "select-timezone": "Seleccionar una zona horària",
     "template-not-found": "Template no trobat",
     "to-do-list": "llista de coses per fer",
     "user-unsaved": "No s'ha pogut desar la informació de l'usuari",

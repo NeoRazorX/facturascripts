@@ -20,6 +20,7 @@
     "mysql-socket-p": "Este campo só é necesario nalgúns hostings MySQL.",
     "preferences": "Preferencias",
     "select-language": "Seleccionar o idioma",
+    "select-timezone": "Selecciona una zona horaria",
     "plugin-enabled": "Extensión activada correctamente.",
     "plugin-disabled": "Extensión desactivada correctamente.",
     "template-not-found": "Template non atopou",
