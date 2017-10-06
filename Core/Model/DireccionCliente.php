@@ -85,6 +85,11 @@ class DireccionCliente
         $this->descripcion = 'Principal';
         $this->fecha = date('d-m-Y');
     }
+    
+    public function test()
+    {
+        return $this->testDireccion();
+    }
 
     /**
      * Almacena los datos del modelo en la base de datos.

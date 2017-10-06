@@ -115,8 +115,8 @@ class DataBaseCollector extends DataCollector implements Renderable, AssetProvid
         $basePath = '../../../../../../';
 
         return [
-            'css' => $basePath . 'Core/View/CSS/phpdebugbar.custom-widget.css',
-            'js' => $basePath . 'Core/View/JS/phpdebugbar.custom-widget.js',
+            'css' => $basePath . 'Core/Assets/CSS/phpdebugbar.custom-widget.css',
+            'js' => $basePath . 'Core/Assets/JS/phpdebugbar.custom-widget.js',
         ];
     }
 }

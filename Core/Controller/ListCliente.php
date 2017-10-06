@@ -43,7 +43,7 @@ class ListCliente extends ExtendedController\ListController
     {
         /* Clientes */
         $this->addView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'Clientes');
-        $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente']);
+        $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente', 'email']);
 
         $this->addOrderBy('ListCliente', 'codcliente', 'code');
         $this->addOrderBy('ListCliente', 'nombre', 'name', 1);

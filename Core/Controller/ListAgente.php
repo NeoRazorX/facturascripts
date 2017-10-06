@@ -43,7 +43,7 @@ class ListAgente extends ExtendedController\ListController
     {
         $className = $this->getClassName();
         $this->addView('FacturaScripts\Core\Model\Agente', $className);
-        $this->addSearchFields($className, ['nombre', 'apellidos', 'codagente']);
+        $this->addSearchFields($className, ['nombre', 'apellidos', 'codagente', 'email']);
 
         $this->addOrderBy($className, 'codagente', 'code');
         $this->addOrderBy($className, 'nombre||apellidos', 'name');

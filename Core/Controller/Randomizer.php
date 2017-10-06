@@ -63,7 +63,7 @@ class Randomizer extends Base\Controller
                 break;
             
             case 'grupos':
-                $num = $ModelDataGenerator->grupos_clientes();
+                $num = $ModelDataGenerator->gruposClientes();
                 $this->miniLog->info($num.' grupos de clientes generados.');
                 break;
             
