@@ -46,21 +46,23 @@ class PDFExport implements ExportInterface
         $pdf->addInfo('Creator', 'FacturaScripts');
         $pdf->addInfo('Producer', 'FacturaScripts');
         $pdf->ezTable($tableData);
-        return $pdf->ezStream(array('Content-Disposition' => 'doc_'.$model->tableName().'.pdf'));
+        return $pdf->ezStream(['Content-Disposition' => 'doc_'.$model->tableName().'.pdf']);
     }
 
     public function newListDoc($model, $where, $order, $offset, $columns)
     {
         $orientation = 'portrait';
         $tableCols = [];
+        $tableOptions = ['cols' => []];
 
         /// obtenemos las columnas
         foreach ($columns as $col) {
             if ($col->display != 'none') {
                 $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
+                $tableOptions['cols'][$col->widget->fieldName] = ['justification' => $col->display];
             }
         }
-
+        
         if (count($tableCols) > 5) {
             $orientation = 'landscape';
         }
@@ -72,14 +74,14 @@ class PDFExport implements ExportInterface
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         while (!empty($cursor)) {
             $tableData = $this->getTableData($cursor, $tableCols);
-            $pdf->ezTable($tableData, $tableCols);
+            $pdf->ezTable($tableData, $tableCols, '', $tableOptions);
 
             /// avanzamos en los resultados
             $offset += self::LIST_LIMIT;
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
 
-        return $pdf->ezStream(array('Content-Disposition' => 'list_'.$model->tableName().'.pdf'));
+        return $pdf->ezStream(['Content-Disposition' => 'list_'.$model->tableName().'.pdf']);
     }
 
     private function getTableData($cursor, $tableCols)
