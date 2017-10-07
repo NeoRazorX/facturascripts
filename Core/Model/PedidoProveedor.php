@@ -28,9 +28,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 class PedidoProveedor
 {
     use Base\DocumentoCompra;
-    use Base\ModelTrait {
-        clear as clearTrait;
-    }
 
     /**
      * Clave primaria.
@@ -72,20 +69,13 @@ class PedidoProveedor
 
     public function clear()
     {
-        $this->clearTrait();
-        $this->codpago = $this->default_items->codpago();
-        $this->codserie = $this->default_items->codserie();
-        $this->codalmacen = $this->default_items->codalmacen();
-        $this->fecha = date('d-m-Y');
-        $this->hora = date('H:i:s');
-        $this->tasaconv = 1.0;
+        $this->clearDocumentoCompra();
         $this->editable = TRUE;
     }
 
     public function getLineas()
     {
         $lineaModel = new LineaPedidoProveedor();
-
         return $lineaModel->all(new DataBaseWhere('idpedido', $this->idpedido));
     }
 
@@ -110,12 +100,6 @@ class PedidoProveedor
         return $versiones;
     }
 
-    public function newCodigo()
-    {
-        $this->numero = fs_documento_new_numero($this->db, $this->table_name, $this->codejercicio, $this->codserie, 'npedidoprov');
-        $this->codigo = fs_documento_new_codigo(FS_PEDIDO, $this->codejercicio, $this->codserie, $this->numero, 'C');
-    }
-
     /**
      * Comprueba los daros del pedido, devuelve TRUE si está todo correcto
      *
@@ -123,28 +107,12 @@ class PedidoProveedor
      */
     public function test()
     {
-        $this->nombre = $this->no_html($this->nombre);
-        if ($this->nombre == '') {
-            $this->nombre = '-';
-        }
-
-        $this->numproveedor = $this->no_html($this->numproveedor);
-        $this->observaciones = $this->no_html($this->observaciones);
-
-        /**
-         * Usamos el euro como divisa puente a la hora de sumar, comparar
-         * o convertir cantidades en varias divisas. Por este motivo necesimos
-         * muchos decimales.
-         */
-        $this->totaleuros = round($this->total / $this->tasaconv, 5);
-
-        if ($this->floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, TRUE)) {
-            return TRUE;
-        }
-
-        $this->miniLog->critical('Error grave: El total está mal calculado. ¡Informa del error!');
-
-        return FALSE;
+        return $this->testTrait();
+    }
+    
+    public function fullTest()
+    {
+        return $this->fullTestTrait('order');
     }
 
     public function save()
@@ -155,53 +123,16 @@ class PedidoProveedor
             }
 
             $this->newCodigo();
-
             return $this->saveInsert();
         }
 
         return FALSE;
     }
 
-    /**
-     * Devuelve un array con los pedidos que coinciden con $query
-     *
-     * @param type    $query
-     * @param integer $offset
-     *
-     * @return \PedidoProveedor
-     */
-    public function search($query, $offset = 0)
-    {
-        $pedilist = [];
-        $query = mb_strtolower($this->no_html($query), 'UTF8');
-
-        $consulta = 'SELECT * FROM ' . $this->table_name . ' WHERE ';
-        if (is_numeric($query)) {
-            $consulta .= "codigo LIKE '%" . $query . "%' OR numproveedor LIKE '%" . $query . "%' OR observaciones LIKE '%" . $query . "%'
-            OR total BETWEEN '" . ($query - .01) . "' AND '" . ($query + .01) . "'";
-        } elseif (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query)) {
-            /// es una fecha
-            $consulta .= 'fecha = ' . $this->var2str($query) . " OR observaciones LIKE '%" . $query . "%'";
-        } else {
-            $consulta .= "lower(codigo) LIKE '%" . $query . "%' OR lower(numproveedor) LIKE '%" . $query . "%' "
-                . "OR lower(observaciones) LIKE '%" . str_replace(' ', '%', $query) . "%'";
-        }
-        $consulta .= ' ORDER BY fecha DESC, codigo DESC';
-
-        $data = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);
-        if ($data) {
-            foreach ($data as $p) {
-                $pedilist[] = new self($p);
-            }
-        }
-
-        return $pedilist;
-    }
-
     public function cron_job()
     {
-        $sql = 'UPDATE ' . $this->table_name . ' SET idalbaran = NULL, editable = TRUE'
-            . ' WHERE idalbaran IS NOT NULL AND NOT EXISTS(SELECT 1 FROM albaranesprov t1 WHERE t1.idalbaran = ' . $this->table_name . '.idalbaran);';
+        $sql = 'UPDATE ' . $this->tableName() . ' SET idalbaran = NULL, editable = TRUE'
+            . ' WHERE idalbaran IS NOT NULL AND NOT EXISTS(SELECT 1 FROM albaranesprov t1 WHERE t1.idalbaran = ' . $this->tableName() . '.idalbaran);';
         $this->db->exec($sql);
     }
 }

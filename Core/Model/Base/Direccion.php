@@ -77,7 +77,7 @@ trait Direccion
      */
     public $fecha;
 
-    public function test()
+    public function testDireccion()
     {
         $this->apartado = self::noHtml($this->apartado);
         $this->ciudad = self::noHtml($this->ciudad);

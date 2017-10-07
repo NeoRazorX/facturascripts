@@ -93,6 +93,18 @@ class AppAPI extends App
             $limit = (int) $this->request->get('limit', 50);
 
             switch ($this->request->getMethod()) {
+                case 'POST':
+                    $data = [];
+                    break;
+
+                case 'PUT':
+                    $data = [];
+                    break;
+
+                case 'DELETE':
+                    $data = [];
+                    break;
+
                 default:
                     $data = $model->all($where, $order, $offset, $limit);
                     break;
@@ -113,11 +125,19 @@ class AppAPI extends App
             $model = new $modelName();
 
             switch ($this->request->getMethod()) {
+                case 'POST':
+                    $data = [];
+                    break;
+
+                case 'PUT':
+                    $data = [];
+                    break;
+
                 case 'DELETE':
                     $object = $model->get($cod);
                     $data = $object->delete();
                     break;
-                
+
                 default:
                     $data = $model->get($cod);
                     break;

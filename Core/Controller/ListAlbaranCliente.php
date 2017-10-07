@@ -33,7 +33,7 @@ class ListAlbaranCliente extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'albaranes';
-        $pagedata['icon'] = 'fa-th-list';
+        $pagedata['icon'] = 'fa-files-o';
         $pagedata['menu'] = 'ventas';
 
         return $pagedata;

@@ -33,7 +33,7 @@ class ListFacturaCliente extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'invoices';
-        $pagedata['icon'] = 'fa-th-list';
+        $pagedata['icon'] = 'fa-files-o';
         $pagedata['menu'] = 'ventas';
 
         return $pagedata;

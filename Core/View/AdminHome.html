@@ -1,90 +1,15 @@
 {% extends "Master/MenuTemplate.html" %}
 
 {% block body %}
-<div class="container">
+<div class="container-fluid">
     <div class="row">
         <div class="col-sm-12">
             <h1>
-                {{ i18n.trans('hello-world') }}
+                <i class="fa fa-whrench" aria-hidden="true"></i> {{ i18n.trans('control-panel') }}
                 <a href="{{ fsc.url() }}" class="btn btn-sm btn-secondary">
                     <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
             </h1>
-            <p class="help-block">{{ i18n.trans('hello-world-text') }}</p>
-            <hr/>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-6">
-            <input type="text" name="fecha" value="01-01-2017" class="form-control datepicker"/>
-        </div>
-        <div class="col-sm-6">
-            <button type="button" class="btn btn-primary" onclick='bootbox.alert("Hello world!");'>Hello world</button>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <hr/>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-6">
-            <h3>Agentes:</h3>
-            <ul>
-                {% for agente in fsc.agente.all() %}
-                <li>{{ agente.fullName()|raw }}</li>
-                {% endfor %}
-            </ul>
-            <h3>Almacenes:</h3>
-            <ul>
-                {% for almacen in fsc.almacen.all() %}
-                <li>{{ almacen.nombre }}</li>
-                {% endfor %}
-            </ul>
-            <h3>Divisas:</h3>
-            <ul>
-                {% for divisa in fsc.divisa.all() %}
-                <li>{{ divisa.descripcion }}</li>
-                {% endfor %}
-            </ul>
-            <h3>Ejercicios:</h3>
-            <ul>
-                {% for ejercicio in fsc.ejercicio.all() %}
-                <li>{{ ejercicio.nombre }}</li>
-                {% endfor %}
-            </ul>
-            <h3>Empresas:</h3>
-            <ul>
-                {% for empresa in fsc.empresa.all() %}
-                <li>{{ empresa.nombre }}</li>
-                {% endfor %}
-            </ul>
-            <h3>Formas de pago:</h3>
-            <ul>
-                {% for formaPago in fsc.formaPago.all() %}
-                <li>{{ formaPago.descripcion }}</li>
-                {% endfor %}
-            </ul>
-            <h3>Series:</h3>
-            <ul>
-                {% for serie in fsc.serie.all() %}
-                <li>{{ serie.descripcion }}</li>
-                {% endfor %}
-            </ul>
-            <h3>Agencias de transporte:</h3>
-            <ul>
-                {% for agenciaTrans in fsc.agenciaTrans.all() %}
-                <li>{{ agenciaTrans.nombre }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        <div class="col-sm-6">
-            <h3>Paises:</h3>
-            <ul>
-                {% for pais in fsc.pais.all() %}
-                <li>{{ pais.nombre }}</li>
-                {% endfor %}
-            </ul>
         </div>
     </div>
 </div>

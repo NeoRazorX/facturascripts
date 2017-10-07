@@ -728,7 +728,10 @@ class Articulo
         $result = false;
 
         if ($recalculaCoste) {
-            $this->costemedio = $this->getCostemedio();
+            /**
+             * TODO: completar
+             */
+            $this->costemedio = 1;
         }
 
         if ($this->nostock) {

@@ -74,7 +74,7 @@ class CuentaBancoCliente
 
     public function primaryColumn()
     {
-        return 'cocuenta';
+        return 'codcuenta';
     }
 
     /**

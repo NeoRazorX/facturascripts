@@ -16,13 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model;
 
+define('FS_NF0', 2);
 define('FS_NF0_ART', 2);
+define('FS_STOCK_NEGATIVO', true);
 
 /**
  * Clase con todo tipo de funciones para generar datos aleatorios.
@@ -31,6 +32,7 @@ define('FS_NF0_ART', 2);
  */
 class ModelDataGenerator
 {
+
     protected $agentes;
     protected $almacenes;
     protected $db;
@@ -42,6 +44,7 @@ class ModelDataGenerator
     protected $impuestos;
     protected $paises;
     protected $series;
+    protected $tools;
     protected $users;
 
     /**
@@ -53,159 +56,17 @@ class ModelDataGenerator
         $this->db = new DataBase();
         $this->empresa = $empresa;
         $this->ejercicio = new Model\Ejercicio();
-        $this->_loaddata($this->agentes, new Model\Agente(), TRUE);
-        $this->_loaddata($this->almacenes, new Model\Almacen(), TRUE);
-        $this->_loaddata($this->divisas, new Model\Divisa(), TRUE);
-        $this->_loaddata($this->formas_pago, new Model\FormaPago(), TRUE);
-        $this->_loaddata($this->grupos, new Model\GrupoClientes(), FALSE);
-        $this->_loaddata($this->impuestos, new Model\Impuesto(), TRUE);
-        $this->_loaddata($this->paises, new Model\Pais(), TRUE);
-        $this->_loaddata($this->series, new Model\Serie(), TRUE);
-        $this->_loaddata($this->users, new Model\User(), FALSE);
-    }
-
-    /**
-     * Metodo de apoyo para el constructor de modelos e inicializacion de datos
-     * @param array $variable    -> destino de los datos
-     * @param fs_model $modelo   -> modelo de cada uno de los items del array
-     * @param boolean $shuffle   -> ordenar aleatoriamente la lista
-     */
-    private function _loaddata(&$variable, $modelo, $shuffle)
-    {
-        $variable = $modelo->all();
-        if ($shuffle) {
-            shuffle($variable);
-        }
-    }
-
-    /**
-     * Acorta un string hasta $len y sustituye caracteres especiales.
-     * Devuelve el string acortado.
-     * @param string $txt
-     * @param int $len
-     * @return string
-     */
-    protected function txt2codigo($txt, $len = 8)
-    {
-        $result = str_replace(array(' ', '-', '_', '&', 'ó', ':', 'ñ', '"', "'", '*'), array('', '', '', '', 'O', '', 'N', '', '', '-'), strtoupper($txt));
-
-        if (strlen($result) > $len) {
-            $result = substr($result, 0, $len - 1) . mt_rand(0, 9);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Devuelve una descripción de producto aleatoria.
-     * @return string
-     */
-    protected function descripcion()
-    {
-        $prefijos = array(
-            'Jet', 'Jex', 'Max', 'Pro', 'FX', 'Neo', 'Maxi', 'Extreme', 'Sub',
-            'Ultra', 'Minga', 'Hiper', 'Giga', 'Mega', 'Super', 'Fusion', 'Broken'
-        );
-        shuffle($prefijos);
-
-        $nombres = array(
-            'Motor', 'Engine', 'Generator', 'Tool', 'Oviode', 'Box', 'Proton', 'Neutro',
-            'Radeon', 'GeForce', 'nForce', 'Labtech', 'Station', 'Arco', 'Arkam'
-        );
-        shuffle($nombres);
-
-        $sufijos = array(
-            'II', '3', 'XL', 'XXL', 'SE', 'GT', 'GTX', 'Pro', 'NX', 'XP', 'OS', 'Nitro'
-        );
-        shuffle($sufijos);
-
-        $descripciones1 = array(
-            'Una alcachofa', 'Un motor', 'Una targeta gráfica (GPU)', 'Un procesador',
-            'Un coche', 'Un dispositivo tecnológico', 'Un magnetofón', 'Un palo',
-            'un cubo de basura', "Un objeto pequeño d'or", '"La hostia"'
-        );
-        shuffle($descripciones1);
-
-        $descripciones2 = array(
-            '64 núcleos', 'chasis de fibra de carbono', '8 cilindros en V', 'frenos de berilio',
-            '16 ejes', 'pantalla Super AMOLED', '1024 stream processors', 'un núcleo híbrido',
-            '32 pistones digitales', 'tecnología digitrónica 4.1', 'cuernos metálicos', 'un palo',
-            'memoria HBM', 'taladro matricial', 'Wifi 4G', 'faros de xenon', 'un ambientador de pino',
-            'un posavasos', 'malignas intenciones', 'la virginidad intacta', 'malware', 'linux',
-            'Windows Vista', 'propiedades psicotrópicas', 'spyware', 'reproductor 4k'
-        );
-        shuffle($descripciones2);
-
-        $texto = $prefijos[0] . ' ' . $nombres[0] . ' ' . $sufijos[0];
-
-        switch (mt_rand(0, 4)) {
-            case 0:
-                break;
-
-            case 1:
-                $texto .= ': ' . $descripciones1[0] . ' con ' . $descripciones2[0] . '.';
-                break;
-
-            case 2:
-                $texto .= ': ' . $descripciones1[0] . ' con ' . $descripciones2[0] . ', ' . $descripciones2[1] . ', ' . $descripciones2[2] . ' y ' . $descripciones2[3] . '.';
-                break;
-
-            case 3:
-                $texto .= ': ' . $descripciones1[0] . " con:\n- " . $descripciones2[0] . "\n- " . $descripciones2[1] . "\n- " . $descripciones2[2] . "\n- " . $descripciones2[3] . '.';
-                break;
-
-            default:
-                $texto .= ': ' . $descripciones1[0] . ' con ' . $descripciones2[0] . ', ' . $descripciones2[1] . ' y ' . $descripciones2[2] . '.';
-                break;
-        }
-
-        return $texto;
-    }
-
-    /**
-     * Devuelve un número aleatorio entre $min y $max1.
-     * 1 de cada 10 veces lo devuelve entre $min y $max2.
-     * 1 de cada 5 veces lo devuelve con decimales.
-     * @param type $min
-     * @param type $max1
-     * @param type $max2
-     * @return type
-     */
-    protected function cantidad($min, $max1, $max2)
-    {
-        $cantidad = mt_rand($min, $max1);
-
-        if (mt_rand(0, 9) == 0) {
-            $cantidad = mt_rand($min, $max2);
-        } else if ($cantidad < $max1 AND mt_rand(0, 4) == 0) {
-            $cantidad += round(mt_rand(1, 5) / mt_rand(1, 10), mt_rand(0, 3));
-            $cantidad = min(array($max1, $cantidad));
-        }
-
-        return $cantidad;
-    }
-
-    /**
-     * Devuelve un número aleatorio entre $min y $max1.
-     * 1 de cada 10 veces lo devuelve entre $min y $max2.
-     * 1 de cada 3 veces lo devuelve con decimales.
-     * @param type $min
-     * @param type $max1
-     * @param type $max2
-     * @return type
-     */
-    protected function precio($min, $max1, $max2)
-    {
-        $precio = mt_rand($min, $max1);
-
-        if (mt_rand(0, 9) == 0) {
-            $precio = mt_rand($min, $max2);
-        } else if ($precio < $max1 AND mt_rand(0, 2) == 0) {
-            $precio += round(mt_rand(1, 5) / mt_rand(1, 10), FS_NF0_ART);
-            $precio = min(array($max1, $precio));
-        }
-
-        return $precio;
+        $this->tools = new DataGeneratorTools();
+        
+        $this->tools->loadData($this->agentes, new Model\Agente(), TRUE);
+        $this->tools->loadData($this->almacenes, new Model\Almacen(), TRUE);
+        $this->tools->loadData($this->divisas, new Model\Divisa(), TRUE);
+        $this->tools->loadData($this->formas_pago, new Model\FormaPago(), TRUE);
+        $this->tools->loadData($this->grupos, new Model\GrupoClientes(), FALSE);
+        $this->tools->loadData($this->impuestos, new Model\Impuesto(), TRUE);
+        $this->tools->loadData($this->paises, new Model\Pais(), TRUE);
+        $this->tools->loadData($this->series, new Model\Serie(), TRUE);
+        $this->tools->loadData($this->users, new Model\User(), FALSE);
     }
 
     /**
@@ -218,8 +79,8 @@ class ModelDataGenerator
     {
         $fabri = new Model\Fabricante();
         for ($num = 0; $num < $max; ++$num) {
-            $fabri->nombre = $this->empresa();
-            $fabri->codfabricante = $this->txt2codigo($fabri->nombre);
+            $fabri->nombre = $this->tools->empresa();
+            $fabri->codfabricante = $this->tools->txt2codigo($fabri->nombre);
             if (!$fabri->save()) {
                 break;
             }
@@ -240,8 +101,8 @@ class ModelDataGenerator
         $codfamilia = NULL;
 
         for ($num = 0; $num < $max; ++$num) {
-            $fam->descripcion = $this->empresa();
-            $fam->codfamilia = $this->txt2codigo($fam->descripcion);
+            $fam->descripcion = $this->tools->empresa();
+            $fam->codfamilia = $this->tools->txt2codigo($fam->descripcion);
             $fam->madre = (mt_rand(0, 4) == 0) ? $codfamilia : NULL;
             if (!$fam->save())
                 break;
@@ -277,10 +138,10 @@ class ModelDataGenerator
             }
 
             $art = new Model\Articulo();
-            $art->descripcion = $this->descripcion();
+            $art->descripcion = $this->tools->descripcion();
             $art->codimpuesto = $this->impuestos[0]->codimpuesto;
-            $art->setPvpIva($this->precio(1, 49, 699));
-            $art->costemedio = $art->preciocoste = $this->cantidad(0, $art->pvp, $art->pvp + 1);
+            $art->setPvpIva($this->tools->precio(1, 49, 699));
+            $art->costemedio = $art->preciocoste = $this->tools->cantidad(0, $art->pvp, $art->pvp + 1);
             $art->stockmin = mt_rand(0, 10);
             $art->stockmax = mt_rand($art->stockmin + 1, $art->stockmin + 1000);
 
@@ -292,14 +153,14 @@ class ModelDataGenerator
                 case 1:
                     $aux = explode(':', $art->descripcion);
                     if ($aux) {
-                        $art->referencia = $this->txt2codigo($aux[0], 18);
+                        $art->referencia = $this->tools->txt2codigo($aux[0], 18);
                     } else {
                         $art->referencia = $art->getNewReferencia();
                     }
                     break;
 
                 default:
-                    $art->referencia = $this->random_string(10);
+                    $art->referencia = $this->tools->randomString(10);
             }
 
             if (mt_rand(0, 9) > 0) {
@@ -334,7 +195,7 @@ class ModelDataGenerator
     /**
      * Genera $max agentes (empleados) aleatorios.
      * Devuelve el número de agentes generados.
-     * @param type $max
+     * @param int $max
      * @return int
      */
     public function agentes($max = 50)
@@ -354,11 +215,11 @@ class ModelDataGenerator
                 $agente->dnicif = mt_rand(0, 99999999);
             }
 
-            $agente->nombre = $this->nombre();
-            $agente->apellidos = $this->apellidos();
-            $agente->provincia = $this->provincia();
-            $agente->ciudad = $this->ciudad();
-            $agente->direccion = $this->direccion();
+            $agente->nombre = $this->tools->nombre();
+            $agente->apellidos = $this->tools->apellidos();
+            $agente->provincia = $this->tools->provincia();
+            $agente->ciudad = $this->tools->ciudad();
+            $agente->direccion = $this->tools->direccion();
             $agente->codpostal = mt_rand(11111, 99999);
 
             if (mt_rand(0, 1) == 0) {
@@ -366,11 +227,11 @@ class ModelDataGenerator
             }
 
             if (mt_rand(0, 2) > 0) {
-                $agente->email = $this->email();
+                $agente->email = $this->tools->email();
             }
 
             if (mt_rand(0, 2) > 0) {
-                $cargos = array('Gerente', 'CEO', 'Compras', 'Comercial', 'Técnico', 'Freelance', 'Becario', 'Becario Senior');
+                $cargos = ['Gerente', 'CEO', 'Compras', 'Comercial', 'Técnico', 'Freelance', 'Becario', 'Becario Senior'];
                 shuffle($cargos);
                 $agente->cargo = $cargos[0];
             }
@@ -385,7 +246,7 @@ class ModelDataGenerator
             }
 
             if (mt_rand(0, 5) == 0) {
-                $agente->porcomision = $this->cantidad(0, 5, 20);
+                $agente->porcomision = $this->tools->cantidad(0, 5, 20);
             }
 
             if (!$agente->save()) {
@@ -399,13 +260,16 @@ class ModelDataGenerator
     /**
      * Genera $max grupos de clientes aleatorios.
      * Devuelve el número de grupos de clientes generados.
-     * @param type $max
+     * @param int $max
      * @return int
      */
-    public function grupos_clientes($max = 50)
+    public function gruposClientes($max = 50)
     {
-        $nombres = array('Profesionales', 'Profesional', 'Grandes compradores', 'Preferentes', 'Basico', 'Premium', 'Variado', 'Reservado', 'Técnico', 'Elemental');
-        $nombres2 = array('VIP', 'PRO', 'NEO', 'XL', 'XXL', '50 aniversario', 'C', 'Z');
+        $nombres = [
+            'Profesionales', 'Profesional', 'Grandes compradores', 'Preferentes',
+            'Basico', 'Premium', 'Variado', 'Reservado', 'Técnico', 'Elemental'
+        ];
+        $nombres2 = ['VIP', 'PRO', 'NEO', 'XL', 'XXL', '50 aniversario', 'C', 'Z'];
 
         $max_nombres = count($nombres) - 1;
         $max_nombres2 = count($nombres2) - 1;
@@ -426,7 +290,7 @@ class ModelDataGenerator
     /**
      * Genera $max clientes aleatorios.
      * Devuelve el número de clientes generados.
-     * @param type $max
+     * @param int $max
      * @return int
      */
     public function clientes($max = 50)
@@ -444,16 +308,16 @@ class ModelDataGenerator
 
             switch (mt_rand(0, 2)) {
                 case 0:
-                    $cliente->nombre = $cliente->razonsocial = $this->empresa();
+                    $cliente->nombre = $cliente->razonsocial = $this->tools->empresa();
                     $cliente->personafisica = FALSE;
                     break;
                 case 1:
-                    $cliente->nombre = $this->nombre() . ' ' . $this->apellidos();
-                    $cliente->razonsocial = $this->empresa();
+                    $cliente->nombre = $this->tools->nombre() . ' ' . $this->tools->apellidos();
+                    $cliente->razonsocial = $this->tools->empresa();
                     $cliente->personafisica = FALSE;
                     break;
                 default:
-                    $cliente->nombre = $cliente->razonsocial = $this->nombre() . ' ' . $this->apellidos();
+                    $cliente->nombre = $cliente->razonsocial = $this->tools->nombre() . ' ' . $this->tools->apellidos();
             }
 
             switch (mt_rand(0, 2)) {
@@ -468,7 +332,7 @@ class ModelDataGenerator
                     $cliente->telefono2 = mt_rand(555555555, 999999999);
             }
 
-            $cliente->email = (mt_rand(0, 2) > 0) ? $this->email() : NULL;
+            $cliente->email = (mt_rand(0, 2) > 0) ? $this->tools->email() : NULL;
             $cliente->regimeniva = (mt_rand(0, 9) === 0) ? 'Exento' : 'General';
 
             if (mt_rand(0, 2) > 0) {
@@ -478,7 +342,7 @@ class ModelDataGenerator
                 $cliente->codagente = NULL;
             }
 
-            if (mt_rand(0, 2) > 0 AND $this->grupos) {
+            if (mt_rand(0, 2) > 0 && $this->grupos) {
                 shuffle($this->grupos);
                 $cliente->codgrupo = $this->grupos[0]->codgrupo;
             } else {
@@ -490,23 +354,19 @@ class ModelDataGenerator
                 break;
             }
 
-            /*
             /// añadimos direcciones
             $num_dirs = mt_rand(0, 3);
             while ($num_dirs > 0) {
-                $dir = new direccion_cliente();
+                $dir = new Model\DireccionCliente();
                 $dir->codcliente = $cliente->codcliente;
                 $dir->codpais = (mt_rand(0, 2) === 0) ? $this->paises[0]->codpais : $this->empresa->codpais;
-
-                $dir->provincia = $this->provincia();
-                $dir->ciudad = $this->ciudad();
-                $dir->direccion = $this->direccion();
+                $dir->provincia = $this->tools->provincia();
+                $dir->ciudad = $this->tools->ciudad();
+                $dir->direccion = $this->tools->direccion();
                 $dir->codpostal = mt_rand(1234, 99999);
                 $dir->apartado = (mt_rand(0, 3) == 0) ? mt_rand(1234, 99999) : NULL;
-
                 $dir->domenvio = (mt_rand(0, 1) === 1);
                 $dir->domfacturacion = (mt_rand(0, 1) === 1);
-
                 $dir->descripcion = 'Dirección #' . $num_dirs;
                 if (!$dir->save()) {
                     break;
@@ -518,7 +378,7 @@ class ModelDataGenerator
             /// Añadimos cuentas bancarias
             $num_cuentas = mt_rand(0, 3);
             while ($num_cuentas > 0) {
-                $cuenta = new cuenta_banco_cliente();
+                $cuenta = new Model\CuentaBancoCliente();
                 $cuenta->codcliente = $cliente->codcliente;
                 $cuenta->descripcion = 'Banco ' . mt_rand(1, 999);
 
@@ -527,8 +387,7 @@ class ModelDataGenerator
                     . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' '
                     . mt_rand(1000, 9999) : '';
 
-                $cuenta->swift = ($opcion != 0) ? $this->random_string(8) : '';
-
+                $cuenta->swift = ($opcion != 0) ? $this->tools->randomString(8) : '';
                 $cuenta->fmandato = (mt_rand(0, 1) == 0) ? date('d-m-Y', strtotime($cliente->fechaalta . ' +' . mt_rand(1, 30) . ' days')) : NULL;
 
                 if (!$cuenta->save()) {
@@ -537,8 +396,6 @@ class ModelDataGenerator
 
                 $num_cuentas--;
             }
-             * 
-             */
         }
 
         return $num;
@@ -547,7 +404,7 @@ class ModelDataGenerator
     /**
      * Genera $max proveedores aleatorios.
      * Devuelve el número de proveedores generados.
-     * @param type $max
+     * @param int $max
      * @return int
      */
     public function proveedores($max = 50)
@@ -562,13 +419,13 @@ class ModelDataGenerator
             }
 
             $opcion = mt_rand(0, 4);
-            $proveedor->nombre = $proveedor->razonsocial = $this->empresa();
+            $proveedor->nombre = $proveedor->razonsocial = $this->tools->empresa();
             $proveedor->personafisica = FALSE;
             if ($opcion == 0) {
-                $proveedor->nombre = $this->nombre() . ' ' . $this->apellidos();
+                $proveedor->nombre = $this->tools->nombre() . ' ' . $this->tools->apellidos();
                 $proveedor->personafisica = TRUE;
             } else if ($opcion == 1) {
-                $proveedor->nombre = $proveedor->razonsocial = $this->empresa();
+                $proveedor->nombre = $proveedor->razonsocial = $this->tools->empresa();
                 $proveedor->acreedor = TRUE;
             }
 
@@ -583,7 +440,7 @@ class ModelDataGenerator
             }
 
             if (mt_rand(0, 2) > 0) {
-                $proveedor->email = $this->email();
+                $proveedor->email = $this->tools->email();
             }
 
             if (mt_rand(0, 9) == 0) {
@@ -599,11 +456,10 @@ class ModelDataGenerator
             if ($proveedor->save()) {
                 $num++;
 
-                /*
                 /// añadimos direcciones
                 $num_dirs = mt_rand(0, 3);
                 while ($num_dirs) {
-                    $dir = new direccion_proveedor();
+                    $dir = new Model\DireccionProveedor();
                     $dir->codproveedor = $proveedor->codproveedor;
                     $dir->codpais = $this->empresa->codpais;
 
@@ -611,9 +467,9 @@ class ModelDataGenerator
                         $dir->codpais = $this->paises[0]->codpais;
                     }
 
-                    $dir->provincia = $this->provincia();
-                    $dir->ciudad = $this->ciudad();
-                    $dir->direccion = $this->direccion();
+                    $dir->provincia = $this->tools->provincia();
+                    $dir->ciudad = $this->tools->ciudad();
+                    $dir->direccion = $this->tools->direccion();
                     $dir->codpostal = mt_rand(1234, 99999);
 
                     if (mt_rand(0, 3) == 0) {
@@ -632,12 +488,12 @@ class ModelDataGenerator
                 /// Añadimos cuentas bancarias
                 $num_cuentas = mt_rand(0, 3);
                 while ($num_cuentas > 0) {
-                    $cuenta = new cuenta_banco_proveedor();
+                    $cuenta = new Model\CuentaBancoProveedor();
                     $cuenta->codproveedor = $proveedor->codproveedor;
                     $cuenta->descripcion = 'Banco ' . mt_rand(1, 999);
                     $cuenta->iban = 'ES' . mt_rand(10, 99) . ' ' . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' '
                         . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999);
-                    $cuenta->swift = $this->random_string(8);
+                    $cuenta->swift = $this->tools->randomString(8);
 
                     $opcion = mt_rand(0, 2);
                     if ($opcion == 0) {
@@ -649,8 +505,6 @@ class ModelDataGenerator
                     $cuenta->save();
                     $num_cuentas--;
                 }
-                 * 
-                 */
             } else {
                 break;
             }
@@ -659,321 +513,215 @@ class ModelDataGenerator
         return $num;
     }
 
-    /**
-     * Devuelve un nombre aleatorio.
-     * @return string
-     */
-    protected function nombre()
+    private function randomizeDocument(&$doc)
     {
-        $nombres = array(
-            'Carlos', 'Pepe', 'Wilson', 'Petra', 'Madonna', 'Justin',
-            'Emiliana', 'Jo', 'Penélope', 'Mia', 'Wynona', 'Antonio',
-            'Joe', 'Cristiano', 'Mohamed', 'John', 'Ali', 'Pastor',
-            'Barak', 'Sadam', 'Donald', 'Jorge', 'Joel', 'Pedro', 'Mariano',
-            'Albert', 'Alberto', 'Gorka', 'Cecilia', 'Carmena', 'Pichita',
-            'Alicia', 'Laura', 'Riola', 'Wilson', 'Jaume', 'David',
-            "D'Ambrosio", '"El nota"', '"El puto amo"'
-        );
-
-        shuffle($nombres);
-        return $nombres[0];
-    }
-
-    /**
-     * Devuelve dos apellidos aleatorios.
-     * @return type
-     */
-    protected function apellidos()
-    {
-        $apellidos = array(
-            'García', 'Gómez', 'Ronaldo', 'Suarez', 'Wilson', 'Pacheco',
-            'Escobar', 'Mendoza', 'Pérez', 'Cruz', 'Lee', 'Smith', 'Humilde',
-            'Hijo de Dios', 'Petrov', 'Maximiliano', 'Nieve', 'Snow', 'Trump',
-            'Obama', 'Ali', 'Stark', 'Sanz', 'Rajoy', 'Sánchez', 'Iglesias',
-            'Rivera', 'Tumor', 'Lanister', 'Suarez', 'Aznar', 'Botella',
-            'Errejón', "D'Ambrosio", 'Ñostromo'
-        );
-
-        shuffle($apellidos);
-        return $apellidos[0] . ' ' . $apellidos[1];
-    }
-
-    /**
-     * Devuelve un nombre comercial aleatorio.
-     * @return type
-     */
-    protected function empresa()
-    {
-        $nombres = array(
-            'Tech', 'Motor', 'Pasión', 'Future', 'Max', 'Massive', 'Industrial',
-            'Plastic', 'Pro', 'Micro', 'System', 'Light', 'Magic', 'Fake', 'Techno',
-            'Miracle', 'NX', 'Smoke', 'Steam', 'Power', 'FX', 'Fusion', 'Bastion',
-            'Investments', 'Solutions', 'Neo', 'Ming', 'Tube', 'Pear', 'Apple',
-            'Dolphin', 'Chrome', 'Cat', 'Hat', 'Linux', 'Soft', 'Mobile', 'Phone',
-            'XL', 'Open', 'Thunder', 'Zero', 'Scorpio', 'Zelda', '10', 'V', 'Q',
-            'X', 'Arch', 'Arco', 'Broken', 'Arkam', 'RX', "d'Art", 'Peña', '"La cosa"'
-        );
-
-        $separador = array(
-            '-', ' & ', ' ', '_', '', '/', '*'
-        );
-
-        $tipo = array(
-            'S.L.', 'S.A.', 'Inc.', 'LTD', 'Corp.'
-        );
-
-        shuffle($nombres);
-        shuffle($separador);
-        shuffle($tipo);
-        return $nombres[0] . $separador[0] . $nombres[1] . ' ' . $tipo[0];
-    }
-
-    /**
-     * Devuelve un email aleatorio.
-     * @return type
-     */
-    protected function email()
-    {
-        $nicks = array(
-            'neo', 'carlos', 'moko', 'snake', 'pikachu', 'pliskin', 'ocelot', 'samurai',
-            'ninja', 'penetrator', 'info', 'compras', 'ventas', 'administracion', 'contacto',
-            'contact', 'invoices', 'mail'
-        );
-
-        shuffle($nicks);
-        return $nicks[0] . '.' . mt_rand(2, 9999) . '@facturascripts.com';
-    }
-
-    /**
-     * Devuelve una provincia aleatoria.
-     * @return string
-     */
-    protected function provincia()
-    {
-        $nombres = array(
-            'A Coruña', 'Alava', 'Albacete', 'Alicante', 'Almería', 'Asturias', 'Ávila', 'Badajoz', 'Barcelona',
-            'Burgos', 'Cáceres', 'Cádiz', 'Cantabria', 'Castellón', 'Ceuta', 'Ciudad Real', 'Córdoba', 'Cuenca',
-            'Girona', 'Granada', 'Guadalajara', 'Guipuzcoa', 'Huelva', 'Huesca', 'Jaen', 'León', 'Lleida', 'La Rioja',
-            'Lugo', 'Madrid', 'Málaga', 'Melilla', 'Murcia', 'Navarra', 'Ourense', 'Palencia', 'Las Palmas', 'Pontevedra',
-            'Salamanca', 'Segovia', 'Sevilla', 'Soria', 'Tarragona', 'Tenerife', 'Teruel', 'Toledo', 'Valencia',
-            'Valladolid', 'Vizcaya', 'Zamora', 'Zaragoza'
-        );
-
-        shuffle($nombres);
-        return $nombres[0];
-    }
-
-    /**
-     * Devuelve una ciudad aleatoria.
-     * @return string
-     */
-    protected function ciudad()
-    {
-        $nombres = array(
-            'A Coruña', 'Alava', 'Albacete', 'Alicante', 'Almería', 'Asturias', 'Ávila', 'Badajoz', 'Barcelona',
-            'Burgos', 'Cáceres', 'Cádiz', 'Cantabria', 'Castellón', 'Ceuta', 'Ciudad Real', 'Córdoba', 'Cuenca',
-            'Girona', 'Granada', 'Guadalajara', 'Guipuzcoa', 'Huelva', 'Huesca', 'Jaen', 'León', 'Lleida', 'La Rioja',
-            'Lugo', 'Madrid', 'Málaga', 'Melilla', 'Murcia', 'Navarra', 'Ourense', 'Palencia', 'Las Palmas', 'Pontevedra',
-            'Salamanca', 'Segovia', 'Sevilla', 'Soria', 'Tarragona', 'Tenerife', 'Teruel', 'Toledo', 'Valencia',
-            'Valladolid', 'Vizcaya', 'Zamora', 'Zaragoza', 'Torrevieja', 'Elche'
-        );
-
-        shuffle($nombres);
-        return $nombres[0];
-    }
-
-    /**
-     * Devuelve una dirección aleatoria.
-     * @return type
-     */
-    protected function direccion()
-    {
-        $tipos = array(
-            'Calle', 'Avenida', 'Polígono', 'Carretera'
-        );
-        $nombres = array(
-            'Infante', 'Principal', 'Falsa', '58', '74',
-            'Pacheco', 'Baleares', 'Del Pacífico', 'Rue',
-            "d'Ambrosio", 'Bañez', '"La calle"'
-        );
-
-        shuffle($tipos);
-        shuffle($nombres);
+        $doc->fecha = mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, date('Y'));
+        $doc->hora = mt_rand(10, 20) . ':' . mt_rand(10, 59) . ':' . mt_rand(10, 59);
+        $doc->codpago = $this->formas_pago[0]->codpago;
 
         if (mt_rand(0, 2) == 0) {
-            return $tipos[0] . ' ' . $nombres[0] . ', nº' . mt_rand(1, 199) . ', puerta ' . mt_rand(1, 99);
+            $doc->coddivisa = $this->divisas[0]->coddivisa;
+            $doc->tasaconv = $this->divisas[0]->tasaconv;
         } else {
-            return $tipos[0] . ' ' . $nombres[0] . ', ' . mt_rand(1, 99);
+            foreach ($this->divisas as $div) {
+                if ($div->coddivisa == $this->empresa->coddivisa) {
+                    $doc->coddivisa = $div->coddivisa;
+                    $doc->tasaconv = $div->tasaconv;
+                    break;
+                }
+            }
         }
+
+        $doc->codalmacen = $this->empresa->codalmacen;
+        if (mt_rand(0, 2) == 0) {
+            $doc->codalmacen = $this->almacenes[0]->codalmacen;
+        }
+
+        $doc->codserie = $this->empresa->codserie;
+        if (mt_rand(0, 2) == 0) {
+            if ($this->series[0]->codserie != 'R') {
+                $doc->codserie = $this->series[0]->codserie;
+                $doc->irpf = $this->series[0]->irpf;
+            }
+
+            $doc->observaciones = $this->tools->observaciones($doc->fecha);
+        }
+
+        if (isset($doc->numero2) && mt_rand(0, 4) == 0) {
+            $doc->numero2 = mt_rand(10, 99999);
+        } else if (isset($doc->numproveedor) && mt_rand(0, 4) == 0) {
+            $alb->numproveedor = mt_rand(10, 99999);
+        }
+
+        if (isset($doc->status) && mt_rand(0, 5) == 0) {
+            $doc->status = 2;
+        }
+
+        $doc->codagente = $this->agentes[0]->codagente;
+        if (mt_rand(0, 4) == 0) {
+            $doc->codagente = NULL;
+        }
+    }
+
+    private function randomizeDocumentCompra(&$doc, $eje, $proveedores, $num)
+    {
+        $doc->codejercicio = $eje->codejercicio;
+
+        $regimeniva = 'Exento';
+        if (mt_rand(0, 14) > 0 && isset($proveedores[$num])) {
+            $doc->codproveedor = $proveedores[$num]->codproveedor;
+            $doc->nombre = $proveedores[$num]->razonsocial;
+            $doc->cifnif = $proveedores[$num]->cifnif;
+            $regimeniva = $proveedores[$num]->regimeniva;
+        } else {
+            /// de vez en cuando generamos un sin proveedor, para ver si todo peta ;-)
+            $doc->nombre = $this->tools->empresa();
+            $doc->cifnif = mt_rand(1111111, 9999999999) . 'Z';
+        }
+
+        return $regimeniva;
+    }
+
+    private function randomizeDocumentVenta(&$doc, $eje, $clientes, $num)
+    {
+        $doc->codejercicio = $eje->codejercicio;
+
+        $regimeniva = 'Exento';
+        if (mt_rand(0, 14) > 0 && isset($clientes[$num])) {
+            $doc->codcliente = $clientes[$num]->codcliente;
+            $doc->nombrecliente = $clientes[$num]->razonsocial;
+            $doc->cifnif = $clientes[$num]->cifnif;
+            $regimeniva = $clientes[$num]->regimeniva;
+
+            foreach ($clientes[$num]->getDirecciones() as $dir) {
+                if ($dir->domfacturacion) {
+                    $doc->codpais = $dir->codpais;
+                    $doc->provincia = $dir->provincia;
+                    $doc->ciudad = $dir->ciudad;
+                    $doc->direccion = $dir->direccion;
+                    $doc->codpostal = $dir->codpostal;
+                    $doc->apartado = $dir->apartado;
+                }
+
+                if ($dir->domenvio && mt_rand(0, 2) == 0) {
+                    $doc->envio_nombre = $this->tools->nombre();
+                    $doc->envio_apellidos = $this->tools->apellidos();
+                    $doc->envio_codpais = $dir->codpais;
+                    $doc->envio_provincia = $dir->provincia;
+                    $doc->envio_ciudad = $dir->ciudad;
+                    $doc->envio_codpostal = $dir->codpostal;
+                    $doc->envio_direccion = $dir->direccion;
+                    $doc->envio_apartado = $dir->apartado;
+                }
+            }
+        } else {
+            /// de vez en cuando creamos uno sin cliente asociado para ver si todo peta ;-)
+            $doc->nombrecliente = $this->tools->nombre() . ' ' . $this->tools->apellidos();
+            $doc->cifnif = mt_rand(1111, 999999999) . 'J';
+        }
+
+        return $regimeniva;
+    }
+
+    private function randomLineas(&$doc, $iddoc = 'idalbaran', $lineaClass = 'FacturaScripts\Dinamic\Model\LineaAlbaranCliente', $regimeniva, $recargo, $modStock = 0)
+    {
+        $articulos = $this->randomArticulos();
+
+        /// una de cada 15 veces usamos cantidades negativas
+        $modcantidad = 1;
+        if (mt_rand(0, 4) == 0) {
+            $modcantidad = -1;
+        }
+
+        $numlineas = $this->tools->cantidad(0, 10, 200);
+        while ($numlineas > 0) {
+            $lin = new $lineaClass();
+            $lin->{$iddoc} = $doc->{$iddoc};
+            $lin->cantidad = $modcantidad * $this->tools->cantidad(1, 3, 19);
+            $lin->descripcion = $this->tools->descripcion();
+            $lin->pvpunitario = $this->tools->precio(1, 49, 699);
+            $lin->codimpuesto = $this->impuestos[0]->codimpuesto;
+            $lin->iva = $this->impuestos[0]->iva;
+
+            if ($recargo && mt_rand(0, 2) == 0) {
+                $lin->recargo = $this->impuestos[0]->recargo;
+            }
+
+            if (isset($articulos[$numlineas]) && $articulos[$numlineas]->sevende) {
+                $lin->referencia = $articulos[$numlineas]->referencia;
+                $lin->descripcion = $articulos[$numlineas]->descripcion;
+                $lin->pvpunitario = $articulos[$numlineas]->pvp;
+                $lin->codimpuesto = $articulos[$numlineas]->codimpuesto;
+                $lin->iva = $articulos[$numlineas]->getIva();
+                $lin->recargo = 0;
+            }
+
+            $lin->irpf = $doc->irpf;
+
+            if ($regimeniva == 'Exento') {
+                $lin->codimpuesto = NULL;
+                $lin->iva = 0;
+                $lin->recargo = 0;
+                $doc->irpf = $lin->irpf = 0;
+            }
+
+            if (mt_rand(0, 4) == 0) {
+                $lin->dtopor = $this->tools->cantidad(0, 33, 100);
+            }
+
+            $lin->pvpsindto = $lin->pvpunitario * $lin->cantidad;
+            $lin->pvptotal = $lin->pvpunitario * $lin->cantidad * (100 - $lin->dtopor) / 100;
+
+            if ($lin->save()) {
+                if (isset($articulos[$numlineas])) {
+                    /// descontamos del stock
+                    $articulos[$numlineas]->sumStock($doc->codalmacen, $lin->cantidad * $modStock);
+                }
+
+                $doc->neto += $lin->pvptotal;
+                $doc->totaliva += ($lin->pvptotal * $lin->iva / 100);
+                $doc->totalirpf += ($lin->pvptotal * $lin->irpf / 100);
+                $doc->totalrecargo += ($lin->pvptotal * $lin->recargo / 100);
+            }
+
+            $numlineas--;
+        }
+
+        /// redondeamos
+        $doc->neto = round($doc->neto, FS_NF0);
+        $doc->totaliva = round($doc->totaliva, FS_NF0);
+        $doc->totalirpf = round($doc->totalirpf, FS_NF0);
+        $doc->totalrecargo = round($doc->totalrecargo, FS_NF0);
+        $doc->total = $doc->neto + $doc->totaliva - $doc->totalirpf + $doc->totalrecargo;
+        $doc->save();
     }
 
     /**
      * Genera $max albaranes de venta aleatorios.
      * Devuelve el número de albaranes generados.
-     * @param type $max
+     * @param int $max
      * @return int
      */
-    public function albaranescli($max = 25)
+    public function albaranesCliente($max = 25)
     {
         $num = 0;
-        $clientes = $this->random_clientes();
+        $clientes = $this->randomClientes();
 
         $recargo = FALSE;
-        if ($clientes[0]->recargo OR mt_rand(0, 4) == 0) {
+        if ($clientes[0]->recargo || mt_rand(0, 4) == 0) {
             $recargo = TRUE;
         }
 
         while ($num < $max) {
-            $alb = new albaran_cliente();
-            $alb->fecha = mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, date('Y'));
-            $alb->hora = mt_rand(10, 20) . ':' . mt_rand(10, 59) . ':' . mt_rand(10, 59);
-            $alb->codpago = $this->formas_pago[0]->codpago;
+            $alb = new Model\AlbaranCliente();
+            $this->randomizeDocument($alb);
 
-            if (mt_rand(0, 2) == 0) {
-                $alb->coddivisa = $this->divisas[0]->coddivisa;
-                $alb->tasaconv = $this->divisas[0]->tasaconv;
-            } else {
-                foreach ($this->divisas as $div) {
-                    if ($div->coddivisa == $this->empresa->coddivisa) {
-                        $alb->coddivisa = $div->coddivisa;
-                        $alb->tasaconv = $div->tasaconv;
-                        break;
-                    }
-                }
-            }
-
-            $alb->codalmacen = $this->empresa->codalmacen;
-            if (mt_rand(0, 2) == 0) {
-                $alb->codalmacen = $this->almacenes[0]->codalmacen;
-            }
-
-            $alb->codserie = $this->empresa->codserie;
-            if (mt_rand(0, 2) == 0) {
-                if ($this->series[0]->codserie != 'R') {
-                    $alb->codserie = $this->series[0]->codserie;
-                    $alb->irpf = $this->series[0]->irpf;
-                }
-
-                $alb->observaciones = $this->observaciones($alb->fecha);
-                $alb->numero2 = mt_rand(10, 99999);
-            }
-
-            $alb->codagente = $this->agentes[0]->codagente;
-            if (mt_rand(0, 4) == 0) {
-                $alb->codagente = NULL;
-            }
-
-            $eje = $this->ejercicio->get_by_fecha($alb->fecha);
+            $eje = $this->ejercicio->getByFecha($alb->fecha);
             if ($eje) {
-                $alb->codejercicio = $eje->codejercicio;
-
-                $regimeniva = 'Exento';
-                if (mt_rand(0, 14) > 0 AND isset($clientes[$num])) {
-                    $alb->codcliente = $clientes[$num]->codcliente;
-                    $alb->nombrecliente = $clientes[$num]->razonsocial;
-                    $alb->cifnif = $clientes[$num]->cifnif;
-                    $regimeniva = $clientes[$num]->regimeniva;
-
-                    foreach ($clientes[$num]->get_direcciones() as $dir) {
-                        if ($dir->domfacturacion) {
-                            $alb->codpais = $dir->codpais;
-                            $alb->provincia = $dir->provincia;
-                            $alb->ciudad = $dir->ciudad;
-                            $alb->direccion = $dir->direccion;
-                            $alb->codpostal = $dir->codpostal;
-                            $alb->apartado = $dir->apartado;
-                        }
-
-                        if ($dir->domenvio AND mt_rand(0, 2) == 0) {
-                            $alb->envio_nombre = $this->nombre();
-                            $alb->envio_apellidos = $this->apellidos();
-                            $alb->envio_codpais = $dir->codpais;
-                            $alb->envio_provincia = $dir->provincia;
-                            $alb->envio_ciudad = $dir->ciudad;
-                            $alb->envio_codpostal = $dir->codpostal;
-                            $alb->envio_direccion = $dir->direccion;
-                            $alb->envio_apartado = $dir->apartado;
-                        }
-                    }
-                } else {
-                    /// de vez en cuando creamos uno sin cliente asociado para ver si todo peta ;-)
-                    $alb->nombrecliente = $this->nombre() . ' ' . $this->apellidos();
-                    $alb->cifnif = mt_rand(1111, 999999999) . 'J';
-                }
+                $regimeniva = $this->randomizeDocumentVenta($alb, $eje, $clientes, $num);
 
                 if ($alb->save()) {
-                    $articulos = $this->random_articulos();
-
-                    /// una de cada 15 veces usamos cantidades negativas
-                    $modcantidad = 1;
-                    if (mt_rand(0, 4) == 0) {
-                        $modcantidad = -1;
-                    }
-
-                    $numlineas = $this->cantidad(0, 10, 200);
-                    while ($numlineas > 0) {
-                        $lin = new linea_albaran_cliente();
-                        $lin->idalbaran = $alb->idalbaran;
-                        $lin->cantidad = $modcantidad * $this->cantidad(1, 3, 19);
-                        $lin->descripcion = $this->descripcion();
-                        $lin->pvpunitario = $this->precio(1, 49, 699);
-                        $lin->codimpuesto = $this->impuestos[0]->codimpuesto;
-                        $lin->iva = $this->impuestos[0]->iva;
-
-                        if ($recargo AND mt_rand(0, 2) == 0) {
-                            $lin->recargo = $this->impuestos[0]->recargo;
-                        }
-
-                        if (isset($articulos[$numlineas])) {
-                            if ($articulos[$numlineas]->sevende) {
-                                $lin->referencia = $articulos[$numlineas]->referencia;
-                                $lin->descripcion = $articulos[$numlineas]->descripcion;
-                                $lin->pvpunitario = $articulos[$numlineas]->pvp;
-                                $lin->codimpuesto = $articulos[$numlineas]->codimpuesto;
-                                $lin->iva = $articulos[$numlineas]->get_iva();
-                                $lin->recargo = 0;
-                            }
-                        }
-
-                        $lin->irpf = $alb->irpf;
-
-                        if ($regimeniva == 'Exento') {
-                            $lin->codimpuesto = NULL;
-                            $lin->iva = 0;
-                            $lin->recargo = 0;
-                            $alb->irpf = $lin->irpf = 0;
-                        }
-
-                        if (mt_rand(0, 4) == 0) {
-                            $lin->dtopor = $this->cantidad(0, 33, 100);
-                        }
-
-                        $lin->pvpsindto = ($lin->pvpunitario * $lin->cantidad);
-                        $lin->pvptotal = $lin->pvpunitario * $lin->cantidad * (100 - $lin->dtopor) / 100;
-
-                        if ($lin->save()) {
-                            if (isset($articulos[$numlineas])) {
-                                /// descontamos del stock
-                                $articulos[$numlineas]->sum_stock($alb->codalmacen, 0 - $lin->cantidad);
-                            }
-
-                            $alb->neto += $lin->pvptotal;
-                            $alb->totaliva += ($lin->pvptotal * $lin->iva / 100);
-                            $alb->totalirpf += ($lin->pvptotal * $lin->irpf / 100);
-                            $alb->totalrecargo += ($lin->pvptotal * $lin->recargo / 100);
-                        }
-
-                        $numlineas--;
-                    }
-
-                    /// redondeamos
-                    $alb->neto = round($alb->neto, FS_NF0);
-                    $alb->totaliva = round($alb->totaliva, FS_NF0);
-                    $alb->totalirpf = round($alb->totalirpf, FS_NF0);
-                    $alb->totalrecargo = round($alb->totalrecargo, FS_NF0);
-                    $alb->total = $alb->neto + $alb->totaliva - $alb->totalirpf + $alb->totalrecargo;
-                    $alb->save();
-
+                    $this->randomLineas($alb, 'idalbaran', 'FacturaScripts\Dinamic\Model\LineaAlbaranCliente', $regimeniva, $recargo, -1);
                     $num++;
                 } else {
                     break;
@@ -989,13 +737,13 @@ class ModelDataGenerator
     /**
      * Genera $max albaranes de compra aleatorios.
      * Devuelve el número de albaranes generados.
-     * @param type $max
+     * @param int $max
      * @return int
      */
-    public function albaranesprov($max = 25)
+    public function albaranesProveedor($max = 25)
     {
         $num = 0;
-        $proveedores = $this->random_proveedores();
+        $proveedores = $this->randomProveedores();
 
         $recargo = FALSE;
         if (mt_rand(0, 4) == 0) {
@@ -1003,134 +751,15 @@ class ModelDataGenerator
         }
 
         while ($num < $max) {
-            $alb = new albaran_proveedor();
-            $alb->fecha = mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, date('Y'));
-            $alb->hora = mt_rand(10, 20) . ':' . mt_rand(10, 59) . ':' . mt_rand(10, 59);
-            $alb->codpago = $this->formas_pago[0]->codpago;
+            $alb = new Model\AlbaranProveedor();
+            $this->randomizeDocument($alb);
 
-            if (mt_rand(0, 2) == 0) {
-                $alb->coddivisa = $this->divisas[0]->coddivisa;
-                $alb->tasaconv = $this->divisas[0]->tasaconv_compra;
-            } else {
-                foreach ($this->divisas as $div) {
-                    if ($div->coddivisa == $this->empresa->coddivisa) {
-                        $alb->coddivisa = $div->coddivisa;
-                        $alb->tasaconv = $div->tasaconv_compra;
-                        break;
-                    }
-                }
-            }
-
-            $alb->codalmacen = $this->empresa->codalmacen;
-            if (mt_rand(0, 2) == 0) {
-                $alb->codalmacen = $this->almacenes[0]->codalmacen;
-            }
-
-            $alb->codserie = $this->empresa->codserie;
-            if (mt_rand(0, 2) == 0) {
-                if ($this->series[0]->codserie != 'R') {
-                    $alb->codserie = $this->series[0]->codserie;
-                    $alb->irpf = $this->series[0]->irpf;
-                }
-
-                $alb->observaciones = $this->observaciones($alb->fecha);
-                $alb->numproveedor = mt_rand(10, 99999);
-            }
-
-            $alb->codagente = $this->agentes[0]->codagente;
-            if (mt_rand(0, 4) == 0) {
-                $alb->codagente = NULL;
-            }
-
-            $eje = $this->ejercicio->get_by_fecha($alb->fecha);
+            $eje = $this->ejercicio->getByFecha($alb->fecha);
             if ($eje) {
-                $alb->codejercicio = $eje->codejercicio;
-
-                $regimeniva = 'Exento';
-                if (mt_rand(0, 14) > 0 AND isset($proveedores[$num])) {
-                    $alb->codproveedor = $proveedores[$num]->codproveedor;
-                    $alb->nombre = $proveedores[$num]->razonsocial;
-                    $alb->cifnif = $proveedores[$num]->cifnif;
-                    $regimeniva = $proveedores[$num]->regimeniva;
-                } else {
-                    /// de vez en cuando generamos un sin proveedor, para ver si todo peta ;-)
-                    $alb->nombre = $this->empresa();
-                    $alb->cifnif = mt_rand(1111111, 9999999999) . 'Z';
-                }
+                $regimeniva = $this->randomizeDocumentCompra($alb, $eje, $proveedores, $num);
 
                 if ($alb->save()) {
-                    $articulos = $this->random_articulos();
-
-                    /// una de cada 15 veces usamos cantidades negativas
-                    $modcantidad = 1;
-                    if (mt_rand(0, 14) == 0) {
-                        $modcantidad = -1;
-                    }
-
-                    $numlineas = $this->cantidad(0, 10, 400);
-                    while ($numlineas > 0) {
-                        $lin = new linea_albaran_proveedor();
-                        $lin->idalbaran = $alb->idalbaran;
-                        $lin->cantidad = $modcantidad * $this->cantidad(1, 3, 19);
-                        $lin->descripcion = $this->descripcion();
-                        $lin->pvpunitario = $this->precio(1, 49, 699);
-                        $lin->codimpuesto = $this->impuestos[0]->codimpuesto;
-                        $lin->iva = $this->impuestos[0]->iva;
-
-                        if ($recargo AND mt_rand(0, 2) == 0) {
-                            $lin->recargo = $this->impuestos[0]->recargo;
-                        }
-
-                        if (isset($articulos[$numlineas])) {
-                            if ($articulos[$numlineas]->sevende) {
-                                $lin->referencia = $articulos[$numlineas]->referencia;
-                                $lin->descripcion = $articulos[$numlineas]->descripcion;
-                                $lin->pvpunitario = $articulos[$numlineas]->pvp;
-                                $lin->codimpuesto = $articulos[$numlineas]->codimpuesto;
-                                $lin->iva = $articulos[$numlineas]->get_iva();
-                                $lin->recargo = 0;
-                            }
-                        }
-
-                        $lin->irpf = $alb->irpf;
-
-                        if ($regimeniva == 'Exento') {
-                            $lin->codimpuesto = NULL;
-                            $lin->iva = 0;
-                            $lin->recargo = 0;
-                            $alb->irpf = $lin->irpf = 0;
-                        }
-
-                        if (mt_rand(0, 4) == 0) {
-                            $lin->dtopor = $this->cantidad(0, 33, 100);
-                        }
-
-                        $lin->pvpsindto = ($lin->pvpunitario * $lin->cantidad);
-                        $lin->pvptotal = $lin->pvpunitario * $lin->cantidad * (100 - $lin->dtopor) / 100;
-
-                        if ($lin->save()) {
-                            if (isset($articulos[$numlineas])) {
-                                /// sumamos al stock
-                                $articulos[$numlineas]->sum_stock($alb->codalmacen, $lin->cantidad, TRUE);
-                            }
-
-                            $alb->neto += $lin->pvptotal;
-                            $alb->totaliva += ($lin->pvptotal * $lin->iva / 100);
-                            $alb->totalirpf += ($lin->pvptotal * $lin->irpf / 100);
-                            $alb->totalrecargo += ($lin->pvptotal * $lin->recargo / 100);
-                        }
-
-                        $numlineas--;
-                    }
-
-                    /// redondeamos
-                    $alb->neto = round($alb->neto, FS_NF0);
-                    $alb->totaliva = round($alb->totaliva, FS_NF0);
-                    $alb->totalirpf = round($alb->totalirpf, FS_NF0);
-                    $alb->totalrecargo = round($alb->totalrecargo, FS_NF0);
-                    $alb->total = $alb->neto + $alb->totaliva - $alb->totalirpf + $alb->totalrecargo;
-                    $alb->save();
-
+                    $this->randomLineas($alb, 'idalbaran', 'FacturaScripts\Dinamic\Model\LineaAlbaranProveedor', $regimeniva, $recargo, 1);
                     $num++;
                 } else {
                     break;
@@ -1146,166 +775,32 @@ class ModelDataGenerator
     /**
      * Genera $max pedidos de venta aleatorios.
      * Devuelve el número de pedidos generados.
-     * @param type $max
+     * @param int $max
      * @return int
      */
-    public function pedidoscli($max = 25)
+    public function pedidosCliente($max = 25)
     {
         $num = 0;
-        $clientes = $this->random_clientes();
+        $clientes = $this->randomClientes();
 
         $recargo = FALSE;
-        if ($clientes[0]->recargo OR mt_rand(0, 4) == 0) {
+        if ($clientes[0]->recargo || mt_rand(0, 4) == 0) {
             $recargo = TRUE;
         }
 
         while ($num < $max) {
-            $ped = new pedido_cliente();
-            $ped->fecha = mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, date('Y'));
-            $ped->hora = mt_rand(10, 20) . ':' . mt_rand(10, 59) . ':' . mt_rand(10, 59);
-            $ped->codpago = $this->formas_pago[0]->codpago;
+            $ped = new Model\PedidoCliente();
+            $this->randomizeDocument($ped);
 
-            if (mt_rand(0, 2) == 0) {
-                $ped->coddivisa = $this->divisas[0]->coddivisa;
-                $ped->tasaconv = $this->divisas[0]->tasaconv;
-            } else {
-                foreach ($this->divisas as $div) {
-                    if ($div->coddivisa == $this->empresa->coddivisa) {
-                        $ped->coddivisa = $div->coddivisa;
-                        $ped->tasaconv = $div->tasaconv;
-                        break;
-                    }
-                }
-            }
-
-            $ped->codalmacen = $this->empresa->codalmacen;
-            if (mt_rand(0, 2) == 0) {
-                $ped->codalmacen = $this->almacenes[0]->codalmacen;
-            }
-
-            $ped->codserie = $this->empresa->codserie;
-            if (mt_rand(0, 2) == 0) {
-                if ($this->series[0]->codserie != 'R') {
-                    $ped->codserie = $this->series[0]->codserie;
-                    $ped->irpf = $this->series[0]->irpf;
-                }
-
-                $ped->observaciones = $this->observaciones($ped->fecha);
-                $ped->numero2 = mt_rand(10, 99999);
-            }
-
-            $ped->codagente = $this->agentes[0]->codagente;
-            if (mt_rand(0, 4) == 0) {
-                $ped->codagente = NULL;
-            }
-
-            if (mt_rand(0, 5) == 0) {
-                $ped->status = 2;
-            }
-
-            $eje = $this->ejercicio->get_by_fecha($ped->fecha);
+            $eje = $this->ejercicio->getByFecha($ped->fecha);
             if ($eje) {
-                $ped->codejercicio = $eje->codejercicio;
-
-                $regimeniva = 'Exento';
-                if (mt_rand(0, 14) > 0 AND isset($clientes[$num])) {
-                    $ped->codcliente = $clientes[$num]->codcliente;
-                    $ped->nombrecliente = $clientes[$num]->razonsocial;
-                    $ped->cifnif = $clientes[$num]->cifnif;
-                    $regimeniva = $clientes[$num]->regimeniva;
-
-                    foreach ($clientes[$num]->get_direcciones() as $dir) {
-                        if ($dir->domfacturacion) {
-                            $ped->codpais = $dir->codpais;
-                            $ped->provincia = $dir->provincia;
-                            $ped->ciudad = $dir->ciudad;
-                            $ped->direccion = $dir->direccion;
-                            $ped->codpostal = $dir->codpostal;
-                            $ped->apartado = $dir->apartado;
-                        }
-
-                        if ($dir->domenvio AND mt_rand(0, 2) == 0) {
-                            $ped->envio_nombre = $this->nombre();
-                            $ped->envio_apellidos = $this->apellidos();
-                            $ped->envio_codpais = $dir->codpais;
-                            $ped->envio_provincia = $dir->provincia;
-                            $ped->envio_ciudad = $dir->ciudad;
-                            $ped->envio_direccion = $dir->direccion;
-                            $ped->envio_apartado = $dir->apartado;
-                        }
-                    }
-                } else {
-                    /// de vez en cuando creamos uno sin cliente, por joder ;-)
-                    $ped->nombrecliente = $this->nombre() . ' ' . $this->apellidos();
-                    $ped->cifnif = mt_rand(1, 99999999);
-                }
-
+                $regimeniva = $this->randomizeDocumentVenta($ped, $eje, $clientes, $num);
                 if (mt_rand(0, 3) == 0) {
                     $ped->fechasalida = date('d-m-Y', strtotime($ped->fecha . ' +' . mt_rand(1, 3) . ' months'));
                 }
 
                 if ($ped->save()) {
-                    $articulos = $this->random_articulos();
-
-                    $numlineas = $this->cantidad(0, 10, 200);
-                    while ($numlineas > 0) {
-                        $lin = new linea_pedido_cliente();
-                        $lin->idpedido = $ped->idpedido;
-                        $lin->cantidad = $this->cantidad(1, 3, 19);
-                        $lin->descripcion = $this->descripcion();
-                        $lin->pvpunitario = $this->precio(1, 49, 699);
-                        $lin->codimpuesto = $this->impuestos[0]->codimpuesto;
-                        $lin->iva = $this->impuestos[0]->iva;
-
-                        if ($recargo AND mt_rand(0, 2) == 0) {
-                            $lin->recargo = $this->impuestos[0]->recargo;
-                        }
-
-                        if (isset($articulos[$numlineas])) {
-                            if ($articulos[$numlineas]->sevende) {
-                                $lin->referencia = $articulos[$numlineas]->referencia;
-                                $lin->descripcion = $articulos[$numlineas]->descripcion;
-                                $lin->pvpunitario = $articulos[$numlineas]->pvp;
-                                $lin->codimpuesto = $articulos[$numlineas]->codimpuesto;
-                                $lin->iva = $articulos[$numlineas]->get_iva();
-                                $lin->recargo = 0;
-                            }
-                        }
-
-                        $lin->irpf = $ped->irpf;
-
-                        if ($regimeniva == 'Exento') {
-                            $lin->codimpuesto = NULL;
-                            $lin->iva = 0;
-                            $lin->recargo = 0;
-                            $ped->irpf = $lin->irpf = 0;
-                        }
-
-                        if (mt_rand(0, 4) == 0) {
-                            $lin->dtopor = $this->cantidad(0, 33, 100);
-                        }
-
-                        $lin->pvpsindto = ($lin->pvpunitario * $lin->cantidad);
-                        $lin->pvptotal = $lin->pvpunitario * $lin->cantidad * (100 - $lin->dtopor) / 100;
-
-                        if ($lin->save()) {
-                            $ped->neto += $lin->pvptotal;
-                            $ped->totaliva += ($lin->pvptotal * $lin->iva / 100);
-                            $ped->totalirpf += ($lin->pvptotal * $lin->irpf / 100);
-                            $ped->totalrecargo += ($lin->pvptotal * $lin->recargo / 100);
-                        }
-
-                        $numlineas--;
-                    }
-
-                    /// redondeamos
-                    $ped->neto = round($ped->neto, FS_NF0);
-                    $ped->totaliva = round($ped->totaliva, FS_NF0);
-                    $ped->totalirpf = round($ped->totalirpf, FS_NF0);
-                    $ped->totalrecargo = round($ped->totalrecargo, FS_NF0);
-                    $ped->total = $ped->neto + $ped->totaliva - $ped->totalirpf + $ped->totalrecargo;
-                    $ped->save();
-
+                    $this->randomLineas($ped, 'idpedido', 'FacturaScripts\Dinamic\Model\LineaPedidoCliente', $regimeniva, $recargo);
                     $num++;
                 } else {
                     break;
@@ -1321,13 +816,13 @@ class ModelDataGenerator
     /**
      * Genera $max pedidos de compra aleatorios.
      * Devuelve el número de pedidos generados.
-     * @param type $max
+     * @param int $max
      * @return int
      */
-    public function pedidosprov($max = 25)
+    public function pedidosProveedor($max = 25)
     {
         $num = 0;
-        $proveedores = $this->random_proveedores();
+        $proveedores = $this->randomProveedores();
 
         $recargo = FALSE;
         if (mt_rand(0, 4) == 0) {
@@ -1335,123 +830,15 @@ class ModelDataGenerator
         }
 
         while ($num < $max) {
-            $ped = new pedido_proveedor();
-            $ped->fecha = mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, date('Y'));
-            $ped->hora = mt_rand(10, 20) . ':' . mt_rand(10, 59) . ':' . mt_rand(10, 59);
-            $ped->codpago = $this->formas_pago[0]->codpago;
+            $ped = new Model\PedidoProveedor();
+            $this->randomizeDocument($ped);
 
-            if (mt_rand(0, 2) == 0) {
-                $ped->coddivisa = $this->divisas[0]->coddivisa;
-                $ped->tasaconv = $this->divisas[0]->tasaconv_compra;
-            } else {
-                foreach ($this->divisas as $div) {
-                    if ($div->coddivisa == $this->empresa->coddivisa) {
-                        $ped->coddivisa = $div->coddivisa;
-                        $ped->tasaconv = $div->tasaconv_compra;
-                        break;
-                    }
-                }
-            }
-
-            $ped->codalmacen = $this->empresa->codalmacen;
-            if (mt_rand(0, 2) == 0) {
-                $ped->codalmacen = $this->almacenes[0]->codalmacen;
-            }
-
-            $ped->codserie = $this->empresa->codserie;
-            if (mt_rand(0, 2) == 0) {
-                if ($this->series[0]->codserie != 'R') {
-                    $ped->codserie = $this->series[0]->codserie;
-                    $ped->irpf = $this->series[0]->irpf;
-                }
-
-                $ped->observaciones = $this->observaciones($ped->fecha);
-                $ped->numproveedor = mt_rand(10, 99999);
-            }
-
-            $ped->codagente = $this->agentes[0]->codagente;
-            if (mt_rand(0, 4) == 0) {
-                $ped->codagente = NULL;
-            }
-
-            $eje = $this->ejercicio->get_by_fecha($ped->fecha);
+            $eje = $this->ejercicio->getByFecha($ped->fecha);
             if ($eje) {
-                $ped->codejercicio = $eje->codejercicio;
-
-                $regimeniva = 'Exento';
-                if (mt_rand(0, 14) > 0 AND isset($proveedores[$num])) {
-                    $ped->codproveedor = $proveedores[$num]->codproveedor;
-                    $ped->nombre = $proveedores[$num]->razonsocial;
-                    $ped->cifnif = $proveedores[$num]->cifnif;
-                    $regimeniva = $proveedores[$num]->regimeniva;
-                } else {
-                    /// de vez encuendo generamos un pedido son proveedor, para ver si peta todo ;-)
-                    $ped->nombre = $this->nombre();
-                    $ped->cifnif = mt_rand(111111, 999999999) . 'X';
-                }
+                $regimeniva = $this->randomizeDocumentCompra($ped, $eje, $proveedores, $num);
 
                 if ($ped->save()) {
-                    $articulos = $this->random_articulos();
-
-                    $numlineas = $this->cantidad(0, 10, 400);
-                    while ($numlineas > 0) {
-                        $lin = new linea_pedido_proveedor();
-                        $lin->idpedido = $ped->idpedido;
-                        $lin->cantidad = $this->cantidad(1, 3, 19);
-                        $lin->descripcion = $this->descripcion();
-                        $lin->pvpunitario = $this->precio(1, 49, 699);
-                        $lin->codimpuesto = $this->impuestos[0]->codimpuesto;
-                        $lin->iva = $this->impuestos[0]->iva;
-
-                        if ($recargo AND mt_rand(0, 2) == 0) {
-                            $lin->recargo = $this->impuestos[0]->recargo;
-                        }
-
-                        if (isset($articulos[$numlineas])) {
-                            if ($articulos[$numlineas]->sevende) {
-                                $lin->referencia = $articulos[$numlineas]->referencia;
-                                $lin->descripcion = $articulos[$numlineas]->descripcion;
-                                $lin->pvpunitario = $articulos[$numlineas]->pvp;
-                                $lin->codimpuesto = $articulos[$numlineas]->codimpuesto;
-                                $lin->iva = $articulos[$numlineas]->get_iva();
-                                $lin->recargo = 0;
-                            }
-                        }
-
-                        $lin->irpf = $ped->irpf;
-
-                        if ($regimeniva == 'Exento') {
-                            $lin->codimpuesto = NULL;
-                            $lin->iva = 0;
-                            $lin->recargo = 0;
-                            $ped->irpf = $lin->irpf = 0;
-                        }
-
-                        if (mt_rand(0, 4) == 0) {
-                            $lin->dtopor = $this->cantidad(0, 33, 100);
-                        }
-
-                        $lin->pvpsindto = ($lin->pvpunitario * $lin->cantidad);
-                        $lin->pvptotal = $lin->pvpunitario * $lin->cantidad * (100 - $lin->dtopor) / 100;
-
-                        if ($lin->save()) {
-                            $ped->neto += $lin->pvptotal;
-                            $ped->totaliva += ($lin->pvptotal * $lin->iva / 100);
-                            $ped->totalirpf += ($lin->pvptotal * $lin->irpf / 100);
-                            $ped->totalrecargo += ($lin->pvptotal * $lin->recargo / 100);
-                        }
-
-                        $numlineas--;
-                    }
-
-                    /// redondeamos
-                    $ped->neto = round($ped->neto, FS_NF0);
-                    $ped->totaliva = round($ped->totaliva, FS_NF0);
-                    $ped->totalirpf = round($ped->totalirpf, FS_NF0);
-                    $ped->totalrecargo = round($ped->totalrecargo, FS_NF0);
-                    $ped->total = $ped->neto + $ped->totaliva - $ped->totalirpf + $ped->totalrecargo;
-                    $ped->save();
-
+                    $this->randomLineas($ped, 'idpedido', 'FacturaScripts\Dinamic\Model\LineaPedidoProveedor', $regimeniva, $recargo);
                     $num++;
                 } else {
                     break;
@@ -1467,160 +854,30 @@ class ModelDataGenerator
     /**
      * Genera $max presupuestos de venta aleatorios.
      * Devuelve el número de presupuestos generados.
-     * @param type $max
+     * @param int $max
      * @return int
      */
-    public function presupuestoscli($max = 25)
+    public function presupuestosCliente($max = 25)
     {
         $num = 0;
-        $clientes = $this->random_clientes();
+        $clientes = $this->randomClientes();
 
         $recargo = FALSE;
-        if ($clientes[0]->recargo OR mt_rand(0, 4) == 0) {
+        if ($clientes[0]->recargo || mt_rand(0, 4) == 0) {
             $recargo = TRUE;
         }
 
         while ($num < $max) {
-            $presu = new presupuesto_cliente();
-            $presu->fecha = mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, date('Y'));
-            $presu->hora = mt_rand(10, 20) . ':' . mt_rand(10, 59) . ':' . mt_rand(10, 59);
-            $presu->codpago = $this->formas_pago[0]->codpago;
+            $presu = new Model\PresupuestoCliente();
+            $this->randomizeDocument($presu);
 
-            if (mt_rand(0, 2) == 0) {
-                $presu->coddivisa = $this->divisas[0]->coddivisa;
-                $presu->tasaconv = $this->divisas[0]->tasaconv;
-            } else {
-                foreach ($this->divisas as $div) {
-                    if ($div->coddivisa == $this->empresa->coddivisa) {
-                        $presu->coddivisa = $div->coddivisa;
-                        $presu->tasaconv = $div->tasaconv;
-                        break;
-                    }
-                }
-            }
-
-            $presu->codalmacen = $this->empresa->codalmacen;
-            if (mt_rand(0, 2) == 0) {
-                $presu->codalmacen = $this->almacenes[0]->codalmacen;
-            }
-
-            $presu->codserie = $this->empresa->codserie;
-            if (mt_rand(0, 2) == 0) {
-                if ($this->series[0]->codserie != 'R') {
-                    $presu->codserie = $this->series[0]->codserie;
-                    $presu->irpf = $this->series[0]->irpf;
-                }
-
-                $presu->observaciones = $this->observaciones($presu->fecha);
-                $presu->numero2 = mt_rand(10, 99999);
-            }
-
-            $presu->codagente = $this->agentes[0]->codagente;
-            if (mt_rand(0, 4) == 0) {
-                $presu->codagente = NULL;
-            }
-
-            $eje = $this->ejercicio->get_by_fecha($presu->fecha);
+            $eje = $this->ejercicio->getByFecha($presu->fecha);
             if ($eje) {
-                $presu->codejercicio = $eje->codejercicio;
+                $regimeniva = $this->randomizeDocumentVenta($presu, $eje, $clientes, $num);
                 $presu->finoferta = date('d-m-Y', strtotime($presu->fecha . ' +' . mt_rand(1, 18) . ' months'));
 
-                $regimeniva = 'Exento';
-                if (mt_rand(0, 14) > 0 AND isset($clientes[$num])) {
-                    $presu->codcliente = $clientes[$num]->codcliente;
-                    $presu->nombrecliente = $clientes[$num]->razonsocial;
-                    $presu->cifnif = $clientes[$num]->cifnif;
-                    $regimeniva = $clientes[$num]->regimeniva;
-
-                    foreach ($clientes[$num]->get_direcciones() as $dir) {
-                        if ($dir->domfacturacion) {
-                            $presu->codpais = $dir->codpais;
-                            $presu->provincia = $dir->provincia;
-                            $presu->ciudad = $dir->ciudad;
-                            $presu->direccion = $dir->direccion;
-                            $presu->codpostal = $dir->codpostal;
-                            $presu->apartado = $dir->apartado;
-                        }
-
-                        if ($dir->domenvio AND mt_rand(0, 2) == 0) {
-                            $presu->envio_nombre = $this->nombre();
-                            $presu->envio_apellidos = $this->apellidos();
-                            $presu->envio_codpais = $dir->codpais;
-                            $presu->envio_provincia = $dir->provincia;
-                            $presu->envio_ciudad = $dir->ciudad;
-                            $presu->envio_codpostal = $dir->codpostal;
-                            $presu->envio_direccion = $dir->direccion;
-                            $presu->envio_apartado = $dir->apartado;
-                        }
-                    }
-                } else {
-                    /// de vez en cuando creamos uno sin cliente, por joder ;-)
-                    $presu->nombrecliente = $this->empresa();
-                    $presu->cifnif = '';
-                }
-
                 if ($presu->save()) {
-                    $articulos = $this->random_articulos();
-
-                    $numlineas = $this->cantidad(0, 10, 200);
-                    while ($numlineas > 0) {
-                        $lin = new linea_presupuesto_cliente();
-                        $lin->idpresupuesto = $presu->idpresupuesto;
-                        $lin->cantidad = $this->cantidad(1, 3, 19);
-                        $lin->descripcion = $this->descripcion();
-                        $lin->pvpunitario = $this->precio(1, 49, 699);
-                        $lin->codimpuesto = $this->impuestos[0]->codimpuesto;
-                        $lin->iva = $this->impuestos[0]->iva;
-
-                        if ($recargo AND mt_rand(0, 2) == 0) {
-                            $lin->recargo = $this->impuestos[0]->recargo;
-                        }
-
-                        if (isset($articulos[$numlineas])) {
-                            if ($articulos[$numlineas]->sevende) {
-                                $lin->referencia = $articulos[$numlineas]->referencia;
-                                $lin->descripcion = $articulos[$numlineas]->descripcion;
-                                $lin->pvpunitario = $articulos[$numlineas]->pvp;
-                                $lin->codimpuesto = $articulos[$numlineas]->codimpuesto;
-                                $lin->iva = $articulos[$numlineas]->get_iva();
-                                $lin->recargo = 0;
-                            }
-                        }
-
-                        $lin->irpf = $presu->irpf;
-
-                        if ($regimeniva == 'Exento') {
-                            $lin->codimpuesto = NULL;
-                            $lin->iva = 0;
-                            $lin->recargo = 0;
-                            $presu->irpf = $lin->irpf = 0;
-                        }
-
-                        if (mt_rand(0, 4) == 0) {
-                            $lin->dtopor = $this->cantidad(0, 33, 100);
-                        }
-
-                        $lin->pvpsindto = ($lin->pvpunitario * $lin->cantidad);
-                        $lin->pvptotal = $lin->pvpunitario * $lin->cantidad * (100 - $lin->dtopor) / 100;
-
-                        if ($lin->save()) {
-                            $presu->neto += $lin->pvptotal;
-                            $presu->totaliva += ($lin->pvptotal * $lin->iva / 100);
-                            $presu->totalirpf += ($lin->pvptotal * $lin->irpf / 100);
-                            $presu->totalrecargo += ($lin->pvptotal * $lin->recargo / 100);
-                        }
-
-                        $numlineas--;
-                    }
-
-                    /// redondeamos
-                    $presu->neto = round($presu->neto, FS_NF0);
-                    $presu->totaliva = round($presu->totaliva, FS_NF0);
-                    $presu->totalirpf = round($presu->totalirpf, FS_NF0);
-                    $presu->totalrecargo = round($presu->totalrecargo, FS_NF0);
-                    $presu->total = $presu->neto + $presu->totaliva - $presu->totalirpf + $presu->totalrecargo;
-                    $presu->save();
-
+                    $this->randomLineas($presu, 'idpresupuesto', 'FacturaScripts\Dinamic\Model\LineaPresupuestoCliente', $regimeniva, $recargo);
                     $num++;
                 } else {
                     break;
@@ -1631,250 +888,30 @@ class ModelDataGenerator
         }
 
         return $num;
-    }
-
-    /**
-     * Genera $max servicios aleatorios.
-     * Devuelve el número de servicios generados.
-     * @param type $max
-     * @return int
-     */
-    public function servicioscli($max = 25)
-    {
-        $num = 0;
-        $clientes = $this->random_clientes();
-
-        $estado0 = new estado_servicio();
-        $estados = $estado0->all();
-        shuffle($estados);
-
-        $recargo = FALSE;
-        if ($clientes[0]->recargo OR mt_rand(0, 4) == 0) {
-            $recargo = TRUE;
-        }
-
-        while ($num < $max) {
-            $serv = new servicio_cliente();
-            $serv->fecha = mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, date('Y'));
-            $serv->hora = mt_rand(10, 20) . ':' . mt_rand(10, 59) . ':' . mt_rand(10, 59);
-            $serv->codalmacen = $this->empresa->codalmacen;
-            $serv->codpago = $this->empresa->codpago;
-            $serv->codserie = $this->empresa->codserie;
-
-            foreach ($this->divisas as $div) {
-                if ($div->coddivisa == $this->empresa->coddivisa) {
-                    $serv->coddivisa = $div->coddivisa;
-                    $serv->tasaconv = $div->tasaconv;
-                    break;
-                }
-            }
-
-            if (mt_rand(0, 2) == 0) {
-                $serv->codagente = $this->agentes[0]->codagente;
-                $serv->codalmacen = $this->almacenes[0]->codalmacen;
-                $serv->codpago = $this->formas_pago[0]->codpago;
-                $serv->coddivisa = $this->divisas[0]->coddivisa;
-                $serv->tasaconv = $this->divisas[0]->tasaconv;
-
-                if ($this->series[0]->codserie != 'R') {
-                    $serv->codserie = $this->series[0]->codserie;
-                    $serv->irpf = $this->series[0]->irpf;
-                }
-
-                $serv->observaciones = $this->observaciones($serv->fecha);
-                $serv->numero2 = mt_rand(10, 99999);
-            }
-
-            $serv->material = $this->observaciones();
-            $serv->material_estado = $this->observaciones();
-            $serv->accesorios = $this->observaciones();
-            $serv->descripcion = $this->observaciones();
-            $serv->solucion = $this->observaciones();
-
-            $eje = $this->ejercicio->get_by_fecha($serv->fecha);
-            if ($eje) {
-                $serv->codejercicio = $eje->codejercicio;
-                $serv->fechainicio = Date('d-m-Y H:i', strtotime($serv->fecha . ' +' . mt_rand(1, 18) . ' days'));
-                $serv->fechafin = date('Y-m-d H:i', strtotime($serv->fechainicio . ' +' . mt_rand(10, 59) . ' minutes'));
-                $serv->idestado = $estados[0]->id;
-                $serv->garantia = ( mt_rand(0, 1) == 1 );
-                $serv->prioridad = mt_rand(1, 4);
-
-                $regimeniva = 'Exento';
-                if (mt_rand(0, 14) > 0 AND isset($clientes[$num])) {
-                    $serv->codcliente = $clientes[$num]->codcliente;
-                    $serv->nombrecliente = $clientes[$num]->razonsocial;
-                    $serv->cifnif = $clientes[$num]->cifnif;
-                    $regimeniva = $clientes[$num]->regimeniva;
-
-                    foreach ($clientes[$num]->get_direcciones() as $dir) {
-                        $serv->codpais = $dir->codpais;
-                        $serv->provincia = $dir->provincia;
-                        $serv->ciudad = $dir->ciudad;
-                        $serv->direccion = $dir->direccion;
-                        $serv->codpostal = $dir->codpostal;
-                        if ($dir->domfacturacion) {
-                            break;
-                        }
-                    }
-                } else {
-                    /// de vez en cuando creamos uno sin cliente asociado
-                    $serv->nombrecliente = $this->empresa();
-                    $serv->cifnif = '';
-                }
-
-                if ($serv->save()) {
-                    $articulos = $this->random_articulos();
-
-                    $numlineas = $this->cantidad(0, 10, 200);
-                    while ($numlineas > 0) {
-                        $lin = new linea_servicio_cliente();
-                        $lin->idservicio = $serv->idservicio;
-                        $lin->cantidad = $this->cantidad(1, 3, 19);
-                        $lin->descripcion = $this->descripcion();
-                        $lin->pvpunitario = $this->precio(1, 49, 699);
-                        $lin->codimpuesto = $this->impuestos[0]->codimpuesto;
-                        $lin->iva = $this->impuestos[0]->iva;
-
-                        if ($recargo AND mt_rand(0, 2) == 0) {
-                            $lin->recargo = $this->impuestos[0]->recargo;
-                        }
-
-                        if (isset($articulos[$numlineas])) {
-                            if ($articulos[$numlineas]->sevende) {
-                                $lin->referencia = $articulos[$numlineas]->referencia;
-                                $lin->descripcion = $articulos[$numlineas]->descripcion;
-                                $lin->pvpunitario = $articulos[$numlineas]->pvp;
-                                $lin->codimpuesto = $articulos[$numlineas]->codimpuesto;
-                                $lin->iva = $articulos[$numlineas]->get_iva();
-                                $lin->recargo = 0;
-                            }
-                        }
-
-                        $lin->irpf = $serv->irpf;
-
-                        if ($regimeniva == 'Exento') {
-                            $lin->codimpuesto = NULL;
-                            $lin->iva = 0;
-                            $lin->recargo = 0;
-                            $serv->irpf = $lin->irpf = 0;
-                        }
-
-                        if (mt_rand(0, 4) == 0) {
-                            $lin->dtopor = $this->cantidad(0, 33, 100);
-                        }
-
-                        $lin->pvpsindto = ($lin->pvpunitario * $lin->cantidad);
-                        $lin->pvptotal = $lin->pvpunitario * $lin->cantidad * (100 - $lin->dtopor) / 100;
-
-                        if ($lin->save()) {
-                            $serv->neto += $lin->pvptotal;
-                            $serv->totaliva += ($lin->pvptotal * $lin->iva / 100);
-                            $serv->totalirpf += ($lin->pvptotal * $lin->irpf / 100);
-                            $serv->totalrecargo += ($lin->pvptotal * $lin->recargo / 100);
-                        }
-
-                        $numlineas--;
-                    }
-
-                    /// redondeamos
-                    $serv->neto = round($serv->neto, FS_NF0);
-                    $serv->totaliva = round($serv->totaliva, FS_NF0);
-                    $serv->totalirpf = round($serv->totalirpf, FS_NF0);
-                    $serv->totalrecargo = round($serv->totalrecargo, FS_NF0);
-                    $serv->total = $serv->neto + $serv->totaliva - $serv->totalirpf + $serv->totalrecargo;
-                    $serv->save();
-
-                    $num++;
-                } else {
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
-
-        return $num;
-    }
-
-    /**
-     * Devuelve unas observaciones aleatorias.
-     * @param type $fecha
-     * @return string
-     */
-    protected function observaciones($fecha = FALSE)
-    {
-        $observaciones = array(
-            'Pagado', 'Faltan piezas', 'No se corresponde con lo solicitado.',
-            'Muy caro', 'Muy barato', 'Mala calidad',
-            'La parte contratante de la primera parte será la parte contratante de la primera parte.'
-        );
-
-        /// añadimos muchos blas como otra opción
-        $bla = 'Bla';
-        while (mt_rand(0, 29) > 0) {
-            $bla .= ', bla';
-        }
-        $observaciones[] = $bla . '.';
-
-        /// randomizamos (es posible que me haya inventado esta palabra)
-        shuffle($observaciones);
-
-        if ($fecha AND mt_rand(0, 2) == 0) {
-            $semana = date("D", strtotime($fecha));
-            $semanaArray = array(
-                "Mon" => "lunes", "Tue" => "martes", "Wed" => "miércoles", "Thu" => "jueves",
-                "Fri" => "viernes", "Sat" => "sábado", "Sun" => "domingo",
-            );
-            $title = urlencode(sprintf('{{Plantilla:Frase-%s}}', $semanaArray[$semana]));
-            $sock = @fopen("http://es.wikiquote.org/w/api.php?action=parse&format=php&text=$title", "r");
-            if (!$sock) {
-                return $observaciones[0];
-            } else {
-                # Hacemos la peticion al servidor
-                $array__ = unserialize(stream_get_contents($sock));
-                $texto_final = strip_tags($array__["parse"]["text"]["*"]);
-                $texto_final = str_replace("\n\n\n\n", "\n", $texto_final);
-
-                return $texto_final;
-            }
-        } else {
-            return $observaciones[0];
-        }
-    }
-
-    /**
-     * Devuelve un string aleatorio de longitud $length
-     * @param type $length la longitud del string
-     * @return type la cadena aleatoria
-     */
-    protected function random_string($length = 30)
-    {
-        return mb_substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
     }
 
     /**
      * Devuelve un array con clientes aleatorios.
-     * @param type $recursivo
+     * @param boolean $recursivo
      * @return \cliente
      */
-    protected function random_clientes($recursivo = TRUE)
+    protected function randomClientes($recursivo = TRUE)
     {
-        $lista = array();
+        $lista = [];
 
         $sql = "SELECT * FROM clientes ORDER BY random()";
         if (strtolower(FS_DB_TYPE) == 'mysql') {
             $sql = "SELECT * FROM clientes ORDER BY RAND()";
         }
 
-        $data = $this->db->select_limit($sql, 100, 0);
+        $data = $this->db->selectLimit($sql, 100, 0);
         if ($data) {
             foreach ($data as $d) {
-                $lista[] = new cliente($d);
+                $lista[] = new Model\Cliente($d);
             }
         } else if ($recursivo) {
             $this->clientes();
-            $lista = $this->random_clientes(FALSE);
+            $lista = $this->randomClientes(FALSE);
         }
 
         return $lista;
@@ -1882,26 +919,26 @@ class ModelDataGenerator
 
     /**
      * Devuelve un array con proveedores aleatorios.
-     * @param type $recursivo
+     * @param boolean $recursivo
      * @return \proveedor
      */
-    protected function random_proveedores($recursivo = TRUE)
+    protected function randomProveedores($recursivo = TRUE)
     {
-        $lista = array();
+        $lista = [];
 
         $sql = "SELECT * FROM proveedores ORDER BY random()";
         if (strtolower(FS_DB_TYPE) == 'mysql') {
             $sql = "SELECT * FROM proveedores ORDER BY RAND()";
         }
 
-        $data = $this->db->select_limit($sql, 100, 0);
+        $data = $this->db->selectLimit($sql, 100, 0);
         if ($data) {
             foreach ($data as $d) {
-                $lista[] = new proveedor($d);
+                $lista[] = new Model\Proveedor($d);
             }
         } else if ($recursivo) {
             $this->proveedores();
-            return $this->random_proveedores(FALSE);
+            return $this->randomProveedores(FALSE);
         }
 
         return $lista;
@@ -1909,26 +946,26 @@ class ModelDataGenerator
 
     /**
      * Devuelve un array con empleados aleatorios.
-     * @param type $recursivo
+     * @param boolean $recursivo
      * @return \agente
      */
-    protected function random_agentes($recursivo = TRUE)
+    protected function randomAgentes($recursivo = TRUE)
     {
-        $lista = array();
+        $lista = [];
 
         $sql = "SELECT * FROM agentes ORDER BY random()";
         if (strtolower(FS_DB_TYPE) == 'mysql') {
             $sql = "SELECT * FROM agentes ORDER BY RAND()";
         }
 
-        $data = $this->db->select_limit($sql, 100, 0);
+        $data = $this->db->selectLimit($sql, 100, 0);
         if ($data) {
             foreach ($data as $d) {
-                $lista[] = new agente($d);
+                $lista[] = new Model\Agente($d);
             }
         } else if ($recursivo) {
             $this->agentes();
-            return $this->random_agentes(FALSE);
+            return $this->randomAgentes(FALSE);
         }
 
         return $lista;
@@ -1936,26 +973,26 @@ class ModelDataGenerator
 
     /**
      * Devuelve un array con artículos aleatorios.
-     * @param type $recursivo
+     * @param boolean $recursivo
      * @return \articulo
      */
-    protected function random_articulos($recursivo = TRUE)
+    protected function randomArticulos($recursivo = TRUE)
     {
-        $lista = array();
+        $lista = [];
 
         $sql = "SELECT * FROM articulos ORDER BY random()";
         if (strtolower(FS_DB_TYPE) == 'mysql') {
             $sql = "SELECT * FROM articulos ORDER BY RAND()";
         }
 
-        $data = $this->db->select_limit($sql, 100, 0);
+        $data = $this->db->selectLimit($sql, 100, 0);
         if ($data) {
             foreach ($data as $d) {
-                $lista[] = new articulo($d);
+                $lista[] = new Model\Articulo($d);
             }
         } else if ($recursivo) {
             $this->articulos();
-            return $this->random_articulos(FALSE);
+            return $this->randomArticulos(FALSE);
         }
 
         return $lista;
