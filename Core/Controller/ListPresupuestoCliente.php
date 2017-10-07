@@ -33,7 +33,7 @@ class ListPresupuestoCliente extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'presupuestos';
-        $pagedata['icon'] = 'fa-th-list';
+        $pagedata['icon'] = 'fa-files-o';
         $pagedata['menu'] = 'ventas';
 
         return $pagedata;

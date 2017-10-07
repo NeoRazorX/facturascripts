@@ -32,7 +32,7 @@ class ListUser extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'Usuarios';
-        $pagedata['icon'] = 'fa-users';
+        $pagedata['icon'] = 'fa-id-badge';
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
