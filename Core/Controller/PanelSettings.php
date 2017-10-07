@@ -57,13 +57,13 @@ class PanelSettings extends ExtendedController\PanelController
     /**
      * Devuelve el valor para la propiedad de configuración
      * 
-     * @param ExtendedController\BaseView $view
+     * @param mixed $model
      * @param string $field
      * @return mixed
      */
-    public function getFieldValue($view, $field)
+    public function getFieldValue($model, $field)
     {        
-        $properties = parent::getFieldValue($view, 'properties');
+        $properties = parent::getFieldValue($model, 'properties');
         return $properties[$field];
     }
     
@@ -121,8 +121,7 @@ class PanelSettings extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
-        $model = $view->getModel();
-        if (empty($model)) {
+        if (empty($view->getModel())) {
             return;
         }
 

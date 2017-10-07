@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,8 +25,14 @@ namespace FacturaScripts\Core\Model;
  */
 class DireccionCliente
 {
-    use Base\ModelTrait;
-    use Base\Direccion;
+
+    use Base\ModelTrait,
+        Base\Direccion {
+
+        Base\Direccion::test insteadof Base\ModelTrait;
+        save as private traitSave;
+        clear as private traitClear;
+    }
 
     /**
      * Clave primaria.
@@ -72,14 +77,8 @@ class DireccionCliente
      */
     public function clear()
     {
-        $this->id = null;
-        $this->codcliente = null;
-        $this->codpais = null;
-        $this->apartado = null;
-        $this->provincia = null;
-        $this->ciudad = null;
-        $this->codpostal = null;
-        $this->direccion = null;
+        $this->traitClear();
+
         $this->domenvio = true;
         $this->domfacturacion = true;
         $this->descripcion = 'Principal';
@@ -100,17 +99,26 @@ class DireccionCliente
             if ($this->exists()) {
                 /// ¿Desmarcamos las demás direcciones principales?
                 $sql = '';
+                $where = 'WHERE codcliente = ' . $this->var2str($this->codcliente);
                 if ($this->domenvio) {
-                    $sql .= 'UPDATE ' . $this->tableName() . ' SET domenvio = false'
-                        . ' WHERE codcliente = ' . $this->var2str($this->codcliente) . ';';
+                    $sql .= 'UPDATE ' . $this->tableName() . ' SET domenvio = false ' . $where . ' AND domenvio = TRUE;';
                 }
                 if ($this->domfacturacion) {
-                    $sql .= 'UPDATE ' . $this->tableName() . ' SET domfacturacion = false'
-                        . ' WHERE codcliente = ' . $this->var2str($this->codcliente) . ';';
+                    $sql .= 'UPDATE ' . $this->tableName() . ' SET domfacturacion = false ' . $where . ' AND domfacturacion = TRUE;';
                 }
-                $this->dataBase->exec($sql);
 
-                return $this->saveUpdate();
+                // Sólo actualizamos el registro de dirección
+                if (empty($sql)) {
+                    return $this->saveUpdate();
+                }
+                
+                // Actualizamos el registro de dirección y activamos como dirección principal
+                $this->dataBase->beginTransaction();
+                $allOK = $this->dataBase->exec($sql);
+                if ($allOK) {
+                    $allOK = $this->saveUpdate() ? $this->dataBase->commit() : $this->dataBase->rollback();
+                }
+                return $allOK;
             }
 
             return $this->saveInsert();

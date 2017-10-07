@@ -1,5 +1,5 @@
-<?php
-/**
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
@@ -15,35 +15,23 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-namespace FacturaScripts\Core\Controller;
-
-use FacturaScripts\Core\Base\ExtendedController;
-
-/**
- * Controlador para la edición de un registro del modelo Familia
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ *
+ * Definición inicial para el controlador EditGrupoClientes
+ *
  * @author Artex Trading sa <jcuello@artextrading.com>
- */
-class EditFamilia extends ExtendedController\EditController
-{
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
-    {
-        parent::__construct($cache, $i18n, $miniLog, $className);
+-->
 
-        // Establecemos el modelo de datos
-        $this->modelName = 'FacturaScripts\Core\Model\Familia';
-    }
-
-    public function getPageData()
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'families';
-        $pagedata['icon'] = 'fa-object-group';
-        $pagedata['showonmenu'] = FALSE;
-
-        return $pagedata;
-    }
-}
+<view>
+    <columns>
+        <group name="data" numcolumns="12">
+            <column name="code" numcolumns="2" order="100">
+                <widget type="text" fieldname="codgrupo" icon="fa-folder-open" required="true" />
+            </column>
+            
+            <column name="description" numcolumns="10" order="110">
+                <widget type="text" fieldname="nombre" required="true" />
+            </column>            
+        </group>
+    </columns>
+</view>

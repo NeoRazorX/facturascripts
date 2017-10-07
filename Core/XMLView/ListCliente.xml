@@ -46,7 +46,7 @@
             <widget type="text" fieldname="telefono2" />
         </column>
         <column name="group" order="170">
-            <widget type="text" fieldname="codgrupo" onclick="EditGrupoCliente" />
+            <widget type="text" fieldname="codgrupo" onclick="EditGrupoClientes" />
         </column>
         <column name="notes" order="175">
             <widget type="text" fieldname="observaciones" />

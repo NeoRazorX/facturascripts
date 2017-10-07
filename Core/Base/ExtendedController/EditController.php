@@ -121,13 +121,13 @@ class EditController extends Base\Controller
     /**
      * Devuelve el valor de un campo para el modelo de datos cargado
      * 
-     * @param EditView $view
+     * @param mixed $model
      * @param string $field
      * @return mixed
      */
-    public function getFieldValue($view, $field)
+    public function getFieldValue($model, $field)
     {
-        return $view->getFieldValue($field);
+        return $model->{$field};
     }
     
     /**
@@ -183,5 +183,16 @@ class EditController extends Base\Controller
     public function getModel()
     {
         return $this->view->getModel();
+    }
+    
+    /**
+     * Devuelve la url para el tipo indicado
+     * 
+     * @param string $type
+     * @return string
+     */
+    public function getURL($type)
+    {
+        return $this->view->getURL($type);
     }
 }

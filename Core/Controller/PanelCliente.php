@@ -32,9 +32,16 @@ class PanelCliente extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('FacturaScripts\Core\Model\Cliente', 'EditCliente', 'Cliente');
+        $this->addEditListView('FacturaScripts\Core\Model\DireccionCliente', 'EditDireccionCliente', 'Direcciones', 'fa-road');
         $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'Mismo Grupo');
     }
 
+    private function getClientFieldValue($fieldName)
+    {
+        $model = $this->views['EditCliente']->getModel();
+        return $model->{$fieldName};
+    }    
+    
     protected function loadData($keyView, $view)
     {
         switch ($keyView) {
@@ -43,11 +50,16 @@ class PanelCliente extends ExtendedController\PanelController
                 $view->loadData($value);
                 break;
 
+            case 'EditDireccionCliente':
+                $where = [new DataBase\DataBaseWhere('codcliente', $this->getClientFieldValue('codcliente'))];
+                $view->loadData($where);                
+                break;
+            
             case 'ListCliente':
-                $model = $this->views['EditCliente']->getModel();
+                $codgroup = $this->getClientFieldValue('codgrupo');
 
-                if (!empty($model->codgrupo)) {
-                    $where = [new DataBase\DataBaseWhere('codgrupo', $model->codgrupo)];
+                if (!empty($codgroup)) {
+                    $where = [new DataBase\DataBaseWhere('codgrupo', $codgroup)];
                     $view->loadData($where);
                 }
                 break;

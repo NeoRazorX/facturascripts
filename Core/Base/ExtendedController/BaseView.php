@@ -53,6 +53,12 @@ abstract class BaseView
     public $title;
 
     /**
+     * Número total de registros leídos
+     * @var int
+     */
+    public $count;
+    
+    /**
      * Método para la exportación de los datos de la vista
      * 
      * @param Base\ExportManager $exportManager
@@ -69,6 +75,7 @@ abstract class BaseView
      */
     public function __construct($title, $modelName)
     {
+        $this->count = 0;
         $this->title = $title;
         $this->model = empty($modelName) ? NULL : new $modelName;
         $this->pageOption = new Model\PageOption();

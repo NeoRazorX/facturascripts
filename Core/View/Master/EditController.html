@@ -190,7 +190,8 @@
 
                         <!-- Main Form -->
                         <div id="main_row" class="row">
-                            {{ columnsForEditView(_context, fsc.view) }}
+                            {% set model = fsc.view.getModel() %}                            
+                            {{ columnsForEditView(_context, fsc.view, model, FALSE) }}
                         </div>
                     </div>
 

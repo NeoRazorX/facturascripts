@@ -69,12 +69,6 @@ class ListView extends BaseView
     public $selectedOrderBy;
 
     /**
-     * Número total de registros leídos
-     * @var int
-     */
-    public $count;
-
-    /**
      * Almacena el offset para el cursor
      * @var integer 
      */
