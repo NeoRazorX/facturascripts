@@ -64,7 +64,11 @@ class PanelSettings extends ExtendedController\PanelController
     public function getFieldValue($model, $field)
     {        
         $properties = parent::getFieldValue($model, 'properties');
-        return $properties[$field];
+        if (array_key_exists($field, $properties)) {            
+            return $properties[$field];
+        }
+        
+        return $model->{$field};
     }
     
     /**
