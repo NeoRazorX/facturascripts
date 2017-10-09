@@ -50,17 +50,6 @@ class EditView extends BaseView
     {
         $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
     }
-
-    /**
-     * Devuelve el valor del campo indicado en el modelo de datos cargado
-     * 
-     * @param string $field
-     * @return mixed
-     */
-    public function getFieldValue($field)
-    {
-        return $this->model->{$field};
-    }
     
     /**
      * Devuelve el texto para la cabecera del panel de datos
@@ -101,8 +90,10 @@ class EditView extends BaseView
     {
         $this->model->loadFromCode($code);
 
-        // Bloqueamos el campo Primary Key si no es una alta
         $fieldName = $this->model->primaryColumn();
+        $this->count = empty($this->model->{$fieldName}) ? 0 : 1;
+
+        // Bloqueamos el campo Primary Key si no es una alta
         $column = $this->pageOption->columnForField($fieldName);
         if (!empty($column)) {
             $column->widget->readOnly = (!empty($this->model->{$fieldName}));
@@ -113,6 +104,7 @@ class EditView extends BaseView
      * Verifica la estructura y carga en el modelo los datos informados en un array
      *
      * @param array $data
+     * @param mixed $model
      */
     public function loadFromData(&$data)
     {
@@ -125,7 +117,7 @@ class EditView extends BaseView
      *
      * @return boolean
      */
-    public function save()
+    public function save($code = NULL)
     {
         return $this->model->save();
     }

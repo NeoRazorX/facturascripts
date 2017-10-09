@@ -140,15 +140,15 @@ abstract class PanelController extends Base\Controller
     /**
      * Devuelve el valor para un campo del modelo de datos de la vista
      * 
-     * @param EditView $view
+     * @param mixed $model
      * @param string $field
      * @return mixed
      */
-    public function getFieldValue($view, $field)
+    public function getFieldValue($model, $field)
     {
-        return $view->getFieldValue($field);
+        return $model->{$field};
     }
-
+    
     /**
      * Devuelve la url para el tipo indicado
      * 
@@ -157,7 +157,7 @@ abstract class PanelController extends Base\Controller
      */
     public function getURL($type)
     {
-        $view = $this->views[$this->active];
+        $view = array_values($this->views)[0];        
         return $view->getURL($type);
     }
         
@@ -170,7 +170,7 @@ abstract class PanelController extends Base\Controller
      */
     protected function editAction($view, $data)
     {
-        if ($view->save()) {
+        if ($view->save($data['primarykey'])) {
             $this->miniLog->notice($this->i18n->trans('Record updated correctly!'));
             return TRUE;
         }
@@ -205,6 +205,20 @@ abstract class PanelController extends Base\Controller
         }
     }
 
+    /**
+     * Añade una vista tipo EditList al controlador.
+     *
+     * @param string $modelName
+     * @param string $viewName
+     * @param string $viewTitle
+     * @param string $viewIcon
+     */
+    protected function addEditListView($modelName, $viewName, $viewTitle, $viewIcon = 'fa-bars')
+    {
+        $view = new EditListView($viewTitle, $modelName, $viewName, $this->user->nick);
+        $this->addView($viewName, $view, $viewIcon);
+    }
+    
     /**
      * Añade una vista tipo List al controlador.
      *

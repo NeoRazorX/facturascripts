@@ -69,12 +69,6 @@ class ListView extends BaseView
     public $selectedOrderBy;
 
     /**
-     * Número total de registros leídos
-     * @var int
-     */
-    public $count;
-
-    /**
      * Almacena el offset para el cursor
      * @var integer 
      */
@@ -104,7 +98,7 @@ class ListView extends BaseView
     {
         parent::__construct($title, $modelName);
 
-        $this->cursor = NULL;
+        $this->cursor = [];
         $this->orderby = [];
         $this->filters = [];
         $this->searchIn = [];
