@@ -29,7 +29,6 @@ class DireccionCliente
     use Base\ModelTrait,
         Base\Direccion {
 
-        Base\Direccion::test insteadof Base\ModelTrait;
         save as private traitSave;
         clear as private traitClear;
     }
