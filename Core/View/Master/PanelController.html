@@ -3,42 +3,12 @@
 {% block css %}
     {{ parent() }}
     
-    <style type="text/css">
-        .card-header {
-            padding: .5rem 1.25rem;
-            font-size: 120%;
-            font-weight: bold;
-        }
-        
-        .cust-text {
-            margin-left: 35px;
-            overflow: hidden;
-            font-size: 80%;
-        }
-
-        legend {
-            font-size: 120%;
-            font-weight: bold;
-        }
-
-        label {
-            font-weight: 500;
-        }
-
-        select[required],
-        input[required] {
-            background: aliceblue;
-        }
-        
-        input:invalid,
-        input:required:invalid {
-            border: 1px solid red;
-        }
-    </style>
+    <link rel="stylesheet" href="Core/Assets/CSS/extendedcontroller.css" />
 {% endblock %}
 
 {% block javascript %}
     {{ parent() }}
+    
 <script type="text/javascript">
     var tabActive = '{{ fsc.active }}';
     $(document).ready(function () {
@@ -46,6 +16,29 @@
             tabActive = e.target.hash.substring(1);
         });
     });
+    
+    function deleteRecord(formName) {
+        bootbox.confirm({
+            title: "{{ i18n.trans('confirm-delete') }}",
+            message: "{{ i18n.trans('This cannot be undone. Are you sure you wish to continue?') }}",
+            buttons: {
+                cancel: {
+                    label: '<i class="fa fa-times"></i> {{ i18n.trans('Cancel') }}'
+                },
+                confirm: {
+                    label: '<i class="fa fa-check"></i> {{ i18n.trans('Confirm') }}',
+                    className: 'btn-danger'
+                }
+            },
+            callback: function (result) {
+                if (result) {
+                    var form = document.forms[formName];
+                    form.action.value = 'delete';
+                    form.submit();
+                }
+            }
+        });           
+    }    
 </script>
 {% endblock %}
 

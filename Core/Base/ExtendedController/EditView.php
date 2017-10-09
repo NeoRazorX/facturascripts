@@ -99,29 +99,7 @@ class EditView extends BaseView
             $column->widget->readOnly = (!empty($this->model->{$fieldName}));
         }
     }
-    
-    /**
-     * Verifica la estructura y carga en el modelo los datos informados en un array
-     *
-     * @param array $data
-     * @param mixed $model
-     */
-    public function loadFromData(&$data)
-    {
-        $this->model->checkArrayData($data);
-        $this->model->loadFromData($data, ['action']);
-    }
-
-    /**
-     * Persiste los datos del modelo en la base de datos
-     *
-     * @return boolean
-     */
-    public function save($code = NULL)
-    {
-        return $this->model->save();
-    }
-    
+        
     public function export(&$exportManager, &$response, $action)
     {
         return $exportManager->generateDoc($response, $action, $this->model);

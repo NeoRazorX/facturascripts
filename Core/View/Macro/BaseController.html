@@ -43,14 +43,17 @@
     (con o sin formulario)
 -->
 {% macro columnsForEditView(context, view, model, withForm) %}
-    {% if withForm == TRUE %}
-    <form name="{{ context.indexView }}form" action="#" method="post" class="form" role="form">
-        <input type="hidden" name="action" value="save"> 
+    {% set keyValue = context.fsc.getFieldValue(model, model.primaryColumn()) %}
+    {% set formName = context.indexView ~ '-' ~ keyValue %}
+    
+    {% if withForm == TRUE %}    
+    <form name="{{ formName }}" action="#" method="post" class="form" role="form">
+        <input type="hidden" name="action" value="save">
         <input type="hidden" name="active" value="{{ context.indexView }}">
-        <input type="hidden" name="primarykey" value="{{ context.fsc.getFieldValue(model, model.primaryColumn()) }}">
         <div class="row">
     {% endif %}
     
+    <input type="hidden" name="primarykey" value="{{ keyValue }}">
     {% for group in view.getColumns() %}
     <div class="{{ group.numColumns == 0 ? 'col' : 'col-md-' ~ group.numColumns }}">
         <div class="form-row">
@@ -69,16 +72,26 @@
     
     {% if withForm == TRUE %}
     {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+    {% set remove, remove_title = context.i18n.trans('delete'), context.i18n.trans('delete record') %}
     {% set save, save_title = context.i18n.trans('save'), context.i18n.trans('save data') %}
     {% set undo, undo_title = context.i18n.trans('undo'), context.i18n.trans('restore data') %}
         </div>
-        <div class="text-right">
-            <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
-                <i class="fa fa-undo" aria-hidden="true"></i>&nbsp; {{ undo }}
-            </button>
-            <button class="btn btn-sm btn-primary" type="submit" {{ popoverTitle(save_title, 'bottom') }}>
-                <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
-            </button>
+        <div class="row">
+            <div class="col-6">
+                <a id="b_remove" class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}">
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                    <span class="hidden-xs">&nbsp;{{ remove }}</span>
+                </a>
+            </div>
+            
+            <div class="col-6 text-right">
+                <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
+                    <i class="fa fa-undo" aria-hidden="true"></i>&nbsp; {{ undo }}
+                </button>
+                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" {{ popoverTitle(save_title, 'bottom') }}>
+                    <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
+                </button>                
+            </div>
         </div>
     </form>
     {% endif %}
@@ -90,7 +103,7 @@
 {% macro columnsForEditListView(context, view) %}
     {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
 
-    {% for model in view.getCursor() %}
+    {% for model in view.getCursor() %}    
         {{ columnsForEditView(context, view, model, TRUE) }}
         {% if not loop.last %}<hr style="height:5px" />{% endif %}
     {% endfor %}

@@ -307,15 +307,6 @@ class ListView extends BaseView
         $this->where = $where;
     }
 
-    public function delete($code)
-    {
-        if ($this->model->loadFromCode($code)) {
-            return $this->model->delete();
-        }
-
-        return FALSE;
-    }
-
     public function export(&$exportManager, &$response, $action)
     {
         return $exportManager->generateList($response, $action, $this->model, $this->where, $this->order, $this->offset, $this->getColumns());

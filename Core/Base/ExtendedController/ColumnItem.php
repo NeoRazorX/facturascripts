@@ -145,19 +145,6 @@ class ColumnItem extends VisualItem implements VisualItemInterface
 
     /**
      * Genera el código html para visualizar el dato del modelo
-     * para controladores EditList
-     *
-     * @param string $value
-     */
-    public function getEditListHTML($value)
-    {
-        $data = $this->getColumnData(['ColumnHint', 'ColumnRequired']);
-        $input = $this->widget->getEditHTML($value);
-        return $input;
-    }
-
-    /**
-     * Genera el código html para visualizar el dato del modelo
      * para controladores Edit
      *
      * @param string $value

@@ -103,53 +103,7 @@ class EditListView extends BaseView
         $this->offset = $offset;
         $this->where = $where;
     }
-    
-    private function getModelFromCursor($code)
-    {
-        $result = NULL;
-        if (!empty($code)) {        
-            $pkField = $this->model->primaryColumn();
-            foreach ($this->cursor as $model) {
-                $value = $model->{$pkField};
-                if ($value == $code) {
-                    $result = $model;
-                    break;
-                }
-            }
-        }        
         
-        return $result;
-    }
-    
-    
-    /**
-     * Verifica la estructura y carga en el modelo los datos informados en un array
-     *
-     * @param array $data
-     */
-    public function loadFromData(&$data)
-    {
-        $model = $this->getModelFromCursor($data['primarykey']);
-        if (!empty($model)) {
-            $model->checkArrayData($data);
-            $model->loadFromData($data, ['action', 'active', 'primarykey']);
-        }        
-    }
-    
-    /**
-     * Persiste los datos del modelo en la base de datos
-     *
-     * @return boolean
-     */
-    public function save($code)
-    {
-        $model = $this->getModelFromCursor($code);
-        if (!empty($model)) {        
-            return $model->save();
-        }
-        return FALSE;
-    }
-    
     public function export(&$exportManager, &$response, $action)
     {
         return $exportManager->generateList(
