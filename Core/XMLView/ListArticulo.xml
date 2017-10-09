@@ -43,7 +43,14 @@
             <widget type="money" fieldname="pvp" />
         </column>
         <column name="stock" display="right" order="160">
-            <widget type="number" fieldname="stockfis" />
+            <widget type="number" fieldname="stockfis">
+                <option color="red">&lt;0</option>
+            </widget>
         </column>
     </columns>
+    <rows>
+        <row type="status" fieldname="stockfis">
+            <option color="table-warning">&lt;0</option>
+        </row>
+    </rows>
 </view>
