@@ -419,19 +419,22 @@ class WidgetItem
     }
 
     /**
-     * Genera el código html para clases especiales como:
+     * Genera el código html para atributos especiales como:
      * sólo lectura
      * valor obligatorio
      *
      * @return string
      */
-    private function specialClass()
+    private function specialAttributes()
     {
         $hint = $this->getHintHTML($this->hint);
         $readOnly = (empty($this->readOnly)) ? '' : ' readonly="readonly"';
         $required = (empty($this->required)) ? '' : ' required="required"';
+        $step = (empty($this->step)) ? '' : ' step="' . $this->step . '"';
+        $min = (empty($this->step)) ? '' : ' min="' . $this->min . '"';
+        $max = (empty($this->step)) ? '' : ' max="' . $this->max . '"';
 
-        return $hint . $readOnly . $required;
+        return $step . $min . $max . $hint . $readOnly . $required;
     }
 
     /**
@@ -444,46 +447,37 @@ class WidgetItem
      */
     public function getEditHTML($value)
     {
-        $specialClass = $this->specialClass();
+        $specialAttributes = $this->specialAttributes();
         $fieldName = '"' . $this->fieldName . '"';
         $html = $this->getIconHTML();
 
         switch ($this->type) {
-            case 'text':
-                $html .= $this->standardHTMLWidget($fieldName, $value, $specialClass);
-                break;
-
-            case 'datepicker':
-                $html .= '<input id=' . $fieldName . ' class="form-control datepicker" type="text" name='
-                    . $fieldName . ' value="' . $value . '"' . $specialClass . '>';
-                break;
-
             case 'checkbox':
                 $checked = in_array(strtolower($value), ['true', 't', '1']) ? ' checked ' : '';
                 $html .= '<input id=' . $fieldName . ' class="form-check-input" type="checkbox" name='
-                    . $fieldName . ' value="true"' . $specialClass . $checked . '>';
+                    . $fieldName . ' value="true"' . $specialAttributes . $checked . '>';
                 break;
 
             case 'radio':
                 $html .= '<input id=' . $fieldName . 'sufix% class="form-check-input" type="radio" name='
-                    . $fieldName . ' value=""value%"' . $specialClass . '"checked%>';
+                    . $fieldName . ' value=""value%"' . $specialAttributes . '"checked%>';
                 break;
 
             case 'textarea':
                 $html .= '<textarea id=' . $fieldName . ' class="form-control" name=' . $fieldName . ' rows="3"'
-                    . $specialClass . '>' . $value . '</textarea>';
+                    . $specialAttributes . '>' . $value . '</textarea>';
                 break;
 
             case 'select':
-                $html .= $this->selectHTMLWidget($fieldName, $value, $specialClass);
+                $html .= $this->selectHTMLWidget($fieldName, $value, $specialAttributes);
                 break;
 
-            case 'number':
-                $html .= $this->numberHTMLWidget($fieldName, $value, $specialClass);
+            case 'datepicker':
+                $html .= $this->standardHTMLWidget($fieldName, $value, $specialAttributes, ' datepicker');
                 break;
 
             default:
-                $html .= $this->standardHTMLWidget($fieldName, $value, $specialClass);
+                $html .= $this->standardHTMLWidget($fieldName, $value, $specialAttributes);
         }
 
         if (!empty($this->icon)) {
@@ -495,44 +489,17 @@ class WidgetItem
 
     /**
      * Devuelve el código HTML para controles no especiales
-     *
      * @param string $fieldName
-     * @param string $value
-     * @param string $specialClass
-     *
-     * @return string
-     */
-    private function standardHTMLWidget($fieldName, $value, $specialClass)
-    {
-        return '<input id=' . $fieldName . ' type="' . $this->type . '" class="form-control" name=' . $fieldName
-            . ' value="' . $value . '"' . $specialClass . ' />';
-    }
-
-    /**
-     * Devuelve el código HTML para controles number teniendo en cuenta step max y min
-     * Basado en standardHTMLWidget
+     * @param mixed $value
+     * @param string $specialAttributes
+     * @param string $extraClass
      * 
-     * @param string $fieldName
-     * @param string $value
-     * @param string $specialClass
-     *
      * @return string
      */
-    private function numberHTMLWidget($fieldName, $value, $specialClass)
+    private function standardHTMLWidget($fieldName, $value, $specialAttributes, $extraClass = '')
     {
-        $html = '<input id=' . $fieldName . ' type="' . $this->type . '"';
-        if ($this->step != '') {
-            $html .= ' step="' . $this->step . '"';
-        }
-        if ($this->min != '') {
-            $html .= ' min="' . $this->min . '"';
-        }
-        if ($this->max != '') {
-            $html .= ' max="' . $this->max . '"';
-        }
-        $html .= ' class="form-control" name=' . $fieldName . ' value="' . $value . '"' . $specialClass . ' />';
-
-        return $html;
+        return '<input id=' . $fieldName . ' type="' . $this->type . '" class="form-control' . $extraClass
+            . '" name=' . $fieldName . ' value="' . $value . '"' . $specialAttributes . ' />';
     }
 
     /**
@@ -540,13 +507,13 @@ class WidgetItem
      *
      * @param string $fieldName
      * @param string $value
-     * @param string $specialClass
+     * @param string $specialAttributes
      *
      * @return string
      */
-    private function selectHTMLWidget($fieldName, $value, $specialClass)
+    private function selectHTMLWidget($fieldName, $value, $specialAttributes)
     {
-        $html = '<select id=' . $fieldName . ' class="form-control" name=' . $fieldName . $specialClass . '>';
+        $html = '<select id=' . $fieldName . ' class="form-control" name=' . $fieldName . $specialAttributes . '>';
         foreach ($this->values as $selectValue) {
             $selected = ($selectValue['value'] == $value) ? ' selected="selected" ' : '';
             $html .= '<option value="' . $selectValue['value'] . '"' . $selected . '>' . $selectValue['title'] . '</option>';
