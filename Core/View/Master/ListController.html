@@ -126,14 +126,15 @@
         {% set active = (indexView == fsc.active) ? 'active' : '' %}
         <div class="tab-pane {{ active }}" id="{{ view.getModelID() }}" role="tabpanel">
             <!-- Filters Row -->
-            <form name="f_search{{ indexView }}" id="formSearch{{ indexView }}" action="{{ list_url }}" method="post" class="form">
+            <form name="f_search{{ indexView }}" id="formSearch{{ indexView }}" action="{{ fsc.url() }}" method="post" class="form">
                 <div class="container-fluid d-print-none" style="margin-top: 15px; margin-bottom: 10px;">
                     <div class="row align-items-center">
                         <!-- Main filter -->
                         <div class="col-md-2">
                             <div class="input-group">
                                 <input type="hidden" name="active" value="{{ indexView }}">
-                                <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{% if indexView == fsc.active %}{{ fsc.query }}{% endif %}" autocomplete="off" placeholder="Buscar" autofocus=""/>
+                                {% set query_value = (indexView == fsc.active) ? fsc.query : '' %}
+                                <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{{ query_value }}" autocomplete="off" placeholder="Buscar" autofocus=""/>
                                 <span class="input-group-btn hidden-sm">
                                     <button class="btn btn-primary" type="submit">
                                         <i class="fa fa-search" aria-hidden="true"></i>
