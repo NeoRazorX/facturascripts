@@ -36,13 +36,13 @@
         <column name="address" order="100">
             <widget type="text" fieldname="direccion" />
         </column>
-        <column name="postal mail" display="none" order="100">
+        <column name="postal-mail" display="none" order="100">
             <widget type="text" fieldname="apartado" />
         </column>
         <column name="town" order="100">
             <widget type="text" fieldname="poblacion" />
         </column>
-        <column name="postal code" display="none" order="100">
+        <column name="postal-code" display="none" order="100">
             <widget type="text" fieldname="codpostal" />
         </column>
         <column name="province" display="center" order="100">
@@ -54,7 +54,7 @@
         <column name="fax" order="100">
             <widget type="text" fieldname="fax" />
         </column>
-        <column name="valuation type" display="center" order="100">
+        <column name="valuation-type" display="center" order="100">
             <widget type="text" fieldname="tipovaloracion" />
         </column>
     </columns>

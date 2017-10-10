@@ -22,34 +22,31 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controlador para la edición de un registro del modelo Cliente
+ * Controlador para la lista de presupuestos de cliente
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class EditCliente extends ExtendedController\EditController
+class ListPresupuestoCliente extends ExtendedController\ListController
 {
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
-    {
-        parent::__construct($cache, $i18n, $miniLog, $className);
-
-        // Establecemos el modelo de datos
-        $this->modelName = 'FacturaScripts\Core\Model\Cliente';
-    }
-
-    public function getPanelFooter()
-    {
-        $model = $this->getModel();
-        return $this->i18n->trans('Fecha de alta: ') . $model->fechaalta;
-    }
-
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'customers';
-        $pagedata['icon'] = 'fa-users';
-        $pagedata['showonmenu'] = FALSE;
+        $pagedata['title'] = 'presupuestos';
+        $pagedata['icon'] = 'fa-files-o';
+        $pagedata['menu'] = 'ventas';
 
         return $pagedata;
+    }
+
+    protected function createViews()
+    {
+        $className = $this->getClassName();
+        $this->addView('FacturaScripts\Core\Model\PresupuestoCliente', $className);
+        $this->addSearchFields($className, ['codigo', 'numero2', 'observaciones']);
+
+        $this->addOrderBy($className, 'codigo', 'code');
+        $this->addOrderBy($className, 'fecha', 'date');
+        $this->addOrderBy($className, 'total', 'amount');
     }
 }

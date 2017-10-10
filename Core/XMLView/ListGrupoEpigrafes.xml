@@ -27,7 +27,7 @@
         <column name="id" order="100">
             <widget type="text" fieldname="idgrupo" onclick="EditGrupoEpigrafes" />
         </column>
-        <column name="fiscal exercise" order="110">
+        <column name="fiscal-exercise" order="110">
             <widget type="text" fieldname="codejercicio" />
         </column>
         <column name="group" display="center" order="120">

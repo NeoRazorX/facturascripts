@@ -16,32 +16,37 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la edición de un registro del modelo Agente
+ * Description of EditAgente
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Raul
+ * Clase edit Agente basada en la funcionalidad de Editcliente
  */
 class EditAgente extends ExtendedController\EditController
 {
+
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-
-        // Establecemos el modelo de datos
         $this->modelName = 'FacturaScripts\Core\Model\Agente';
+    }
+
+    public function getPanelFooter()
+    {
+        $model = $this->getModel();
+        return $this->i18n->trans('Fecha de alta: ') . $model->f_alta;
     }
 
     public function getPageData()
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'agent';
-        $pagedata['icon'] = 'fa-user';
+        $pagedata['icon'] = 'fa-id-badge';
         $pagedata['showonmenu'] = FALSE;
 
         return $pagedata;

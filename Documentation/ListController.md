@@ -1,9 +1,5 @@
 # Controlador ListController
-Siguiendo con el modelo MVC, _ListController_ es un **controlador universal** para vistas que desean 
-visualizar los datos de un modelo en formato "lista" o mediante un diseño de filas y columnas. 
-Al usar este controlador simplificamos el tratamiento de filtros y ordenación, así como unificamos la 
-imagen de la aplicación y plugins creando un entorno uniforme para el usuario lo que acelera el aprendizaje 
-y adaptación a **Facturascripts**.
+
 
 Para el uso de este controlador es necesario crear las vistas en formato XML, tal y como se describe en el
 documento [XMLViews](https://github.com/ArtexTrading/facturascripts/blob/master/Documentation/XMLViews.md), incluido en la documentación de **Facturascripts**.

@@ -28,13 +28,13 @@
 -->
 {% macro exportData(fsc, i18n, type = 'list') %}
     {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
-    {% set print, print_title = i18n.trans('print'), i18n.trans('Print list of records') %}
+    {% set print, print_title = i18n.trans('print'), i18n.trans('print-data-records') %}
     
     <div class="btn-group">
         {% if type == 'list' %}
         <a href="#" onclick="doAction('export&option={{ fsc.exportManager.defaultOption() }}')" id="b_print" class="btn btn-sm btn-secondary" {{ popoverTitle(print_title, 'bottom') }}>
         {% else %}
-        <a href="{{ fsc.model.url('edit') }}&action=export&option={{ fsc.exportManager.defaultOption() }}" id="b_print" class="btn btn-sm btn-secondary" {{ popoverTitle(print_title, 'bottom') }}>
+        <a href="{{ fsc.getURL('edit') }}&action=export&option={{ fsc.exportManager.defaultOption() }}" id="b_print" class="btn btn-sm btn-secondary" {{ popoverTitle(print_title, 'bottom') }}>
         {% endif %}
            <i class="fa fa-print" aria-hidden="true"></i>
             <span class="hidden-xs">&nbsp;{{ print }}</span>
@@ -47,7 +47,7 @@
             {% if type == 'list' %}
             <a href="#" onclick="doAction('export&option={{ key }}')" class="dropdown-item">
             {% else %}
-            <a href="{{ fsc.model.url('edit') }}&action=export&option={{ key }}" class="dropdown-item">
+            <a href="{{ fsc.getURL('edit') }}&action=export&option={{ key }}" class="dropdown-item">
             {% endif %}            
                 <i class="fa {{ option.icon }}" aria-hidden="true"></i>
                 <span class="hidden-xs">&nbsp;{{ i18n.trans(option.description) }}</span>

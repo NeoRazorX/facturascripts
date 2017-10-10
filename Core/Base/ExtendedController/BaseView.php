@@ -31,8 +31,8 @@ abstract class BaseView
 {
 
     /**
-     * Modelo con los datos a mostrar
-     * o necesario para llamadas a los métodos del modelo
+     * Modelo necesario para llamadas a los métodos del modelo
+     * o en el caso del EditController contiene los datos visualizados.
      *
      * @var mixed
      */
@@ -53,6 +53,12 @@ abstract class BaseView
     public $title;
 
     /**
+     * Número total de registros leídos
+     * @var int
+     */
+    public $count;
+    
+    /**
      * Método para la exportación de los datos de la vista
      * 
      * @param Base\ExportManager $exportManager
@@ -69,11 +75,52 @@ abstract class BaseView
      */
     public function __construct($title, $modelName)
     {
+        $this->count = 0;
         $this->title = $title;
         $this->model = empty($modelName) ? NULL : new $modelName;
         $this->pageOption = new Model\PageOption();
     }
 
+    /**
+     * Verifica la estructura y carga en el modelo los datos informados en un array
+     *
+     * @param array $data
+     */
+    public function loadFromData(&$data)
+    {
+        if ($data['primarykey'] != $this->model->primaryColumnValue()) {
+            $this->model->loadFromCode($data['primarykey']);
+        }
+        
+        $this->model->checkArrayData($data);
+        $this->model->loadFromData($data, ['action', 'active', 'primarykey']);
+    }
+
+    /**
+     * Persiste los datos del modelo en la base de datos
+     *
+     * @return boolean
+     */
+    public function save()
+    {
+        return $this->model->save();
+    }
+     
+    /**
+     * Elimina el registro con el código indicado de la base de datos
+     * 
+     * @param string $code
+     * @return boolean
+     */
+    public function delete($code)
+    {
+        if ($this->model->loadFromCode($code)) {
+            return $this->model->delete();
+        }
+
+        return FALSE;
+    }
+    
     /**
      * Devuelve el puntero al modelo de datos
      *

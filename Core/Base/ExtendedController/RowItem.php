@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 class RowItem implements VisualItemInterface
 {
+
     /**
      * Tipo de row que se visualiza
      *
@@ -80,15 +80,17 @@ class RowItem implements VisualItemInterface
 
     public function getStatus($value)
     {
-        $result = '';
         foreach ($this->options as $option) {
-            if ($option['value'] == $value) {
-                $result = $option['color'];
-                break;
+            if (substr($option['value'], 0, 1) == '>' && $value > floatval(substr($option['value'], 1))) {
+                return $option['color'];
+            } else if (substr($option['value'], 0, 1) == '<' && $value < floatval(substr($option['value'], 1))) {
+                return $option['color'];
+            } else if ($option['value'] == $value) {
+                return $option['color'];
             }
         }
 
-        return $result;
+        return 'table-light';
     }
 
     public function getHeaderHTML($value)

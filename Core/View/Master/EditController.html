@@ -3,49 +3,14 @@
 {% block css %}
     {{ parent() }}
     
-    <style type="text/css">
-        .card-header {
-            padding: .5rem 1.25rem;
-            font-size: 120%;
-            font-weight: bold;
-        }
-        
-        .cust-text {
-            margin-left: 35px;
-            overflow: hidden;
-            font-size: 80%;
-        }
-
-        legend {
-            font-size: 120%;
-            font-weight: bold;
-        }
-
-        label {
-            font-weight: 500;
-        }
-
-        select[required],
-        input[required] {
-            background: aliceblue;
-        }
-        
-        input:invalid,
-        input:required:invalid {
-            border: 1px solid red;
-        }
-    </style>
+    <link rel="stylesheet" href="Core/Assets/CSS/extendedcontroller.css" />
 {% endblock %}
 
 
 {% block javascript %}
 {{ parent() }}
 
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('#main_row :text:first').focus();
-    });
-    
+<script type="text/javascript">    
     function insertRecord() {
         document.insert_form.submit(); 
     }
@@ -70,6 +35,10 @@
             }
         });           
     }
+    
+    $(document).ready(function() {
+        $('#main_row :text:first').focus();
+    });
 </script>
 {% endblock %}
 
@@ -190,7 +159,8 @@
 
                         <!-- Main Form -->
                         <div id="main_row" class="row">
-                            {{ columnsForEditView(_context, fsc.view) }}
+                            {% set model = fsc.view.getModel() %}                            
+                            {{ columnsForEditView(_context, fsc.view, model, FALSE) }}
                         </div>
                     </div>
 

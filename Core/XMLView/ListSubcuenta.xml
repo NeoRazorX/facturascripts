@@ -27,7 +27,7 @@
         <column name="id" order="100">
             <widget type="text" fieldname="idsubcuenta" onclick="EditSubcuenta" />
         </column>
-        <column name="fiscal exercise" order="110">
+        <column name="fiscal-exercise" order="110">
             <widget type="text" fieldname="codejercicio" />
         </column>
         <column name="account" order="120">

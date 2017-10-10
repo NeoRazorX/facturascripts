@@ -33,7 +33,7 @@ class ListAlbaranCliente extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'albaranes';
-        $pagedata['icon'] = 'fa-th-list';
+        $pagedata['icon'] = 'fa-files-o';
         $pagedata['menu'] = 'ventas';
 
         return $pagedata;
@@ -47,5 +47,6 @@ class ListAlbaranCliente extends ExtendedController\ListController
 
         $this->addOrderBy($className, 'codigo', 'code');
         $this->addOrderBy($className, 'fecha', 'date');
+        $this->addOrderBy($className, 'total', 'amount');
     }
 }

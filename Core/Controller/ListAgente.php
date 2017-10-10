@@ -33,7 +33,7 @@ class ListAgente extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'Agentes';
-        $pagedata['icon'] = 'fa-user-circle-o';
+        $pagedata['icon'] = 'fa-id-badge';
         $pagedata['menu'] = 'admin';
 
         return $pagedata;

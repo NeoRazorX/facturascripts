@@ -2,8 +2,10 @@
 
 {% block javascript %}
 {{ parent() }}
+
 <script type="text/javascript">
     var tabActive = '{{ fsc.active }}';
+
     function insertRecord() {
         var url = { {{ fsc.getStringURLs('new')|raw }} };
         document.insert_form.action = url[tabActive];
@@ -57,8 +59,7 @@
 
 <!-- Page Header -->
 <div class="container-fluid d-print-none">
- {{ parent() }}
-
+    {{ parent() }}
     <div class="d-none">
         <form action="#" method="post" name="insert_form">
             <input type="hidden" name="action" value="insert"/>
@@ -81,7 +82,6 @@
                 </a>
                 {% endif %}
             </div>
-
             <div class="btn-group">
                 <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord()" {{ popoverTitle(new_record_title, 'bottom') }}>
                     <i class="fa fa-plus" aria-hidden="true"></i>
@@ -91,7 +91,6 @@
                     <i class="fa fa-wrench" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;{{ options }}</span>
                 </a>
-
                 <!-- Añadimos opciones de impresión y exportación -->
                 {{ exportData(fsc, i18n) }}
             </div>
@@ -127,14 +126,15 @@
         {% set active = (indexView == fsc.active) ? 'active' : '' %}
         <div class="tab-pane {{ active }}" id="{{ view.getModelID() }}" role="tabpanel">
             <!-- Filters Row -->
-            <form name="f_search{{ indexView }}" id="formSearch{{ indexView }}" action="{{ list_url }}" method="post" class="form">
+            <form name="f_search{{ indexView }}" id="formSearch{{ indexView }}" action="{{ fsc.url() }}" method="post" class="form">
                 <div class="container-fluid d-print-none" style="margin-top: 15px; margin-bottom: 10px;">
                     <div class="row align-items-center">
                         <!-- Main filter -->
                         <div class="col-md-2">
                             <div class="input-group">
                                 <input type="hidden" name="active" value="{{ indexView }}">
-                                <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{% if indexView == fsc.active %}{{ fsc.query }}{% endif %}" autocomplete="off" placeholder="Buscar" autofocus=""/>
+                                {% set query_value = (indexView == fsc.active) ? fsc.query : '' %}
+                                <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{{ query_value }}" autocomplete="off" placeholder="Buscar" autofocus=""/>
                                 <span class="input-group-btn hidden-sm">
                                     <button class="btn btn-primary" type="submit">
                                         <i class="fa fa-search" aria-hidden="true"></i>
@@ -142,7 +142,6 @@
                                 </span>
                             </div>
                         </div>
-
                         <!-- Aditionals filters -->
                         {% for key1, filter in view.getFilters() %}
                         {% if filter.type == 'select' %}
@@ -212,7 +211,7 @@
             <!-- Data Row -->
             <div class="table-responsive">
                 <!-- Data Table -->
-                {{ columnsForListView(i18n, view) }}
+                {{ columnsForListView(_context, view) }}
             </div>
 
             <!-- Footer Navigation -->
