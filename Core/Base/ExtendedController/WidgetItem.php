@@ -165,9 +165,9 @@ class WidgetItem
             $item['title'] = $value;
             $this->values[] = $item;
             unset($item);
-        }        
+        }
     }
-    
+
     /**
      * Carga el diccionario de atributos de un grupo de opciones o valores
      * del widget
@@ -307,7 +307,8 @@ class WidgetItem
 
         switch ($this->type) {
             case 'text':
-                $html = (empty($this->onClick)) ? '<span' . $style . '>' . $value . '</span>' : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $value . '</a>';
+                $txt = $this->getTextResume($value);
+                $html = (empty($this->onClick)) ? '<span' . $style . '>' . $txt . '</span>' : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $txt . '</a>';
                 break;
 
             case 'number':
@@ -315,13 +316,21 @@ class WidgetItem
                 break;
 
             case 'money':
-                $html = empty($this->decimal) ? self::$divisaTools->format($value) : self::$divisaTools->format($value, $this->decimal);
-
-                $html = '<span' . $style . '>' . $html . '</span>';
+                $aux = empty($this->decimal) ? self::$divisaTools->format($value) : self::$divisaTools->format($value, $this->decimal);
+                $html = '<span' . $style . '>' . $aux . '</span>';
                 break;
         }
 
         return $html;
+    }
+
+    private function getTextResume($txt)
+    {
+        if (mb_strlen($txt) < 60) {
+            return $txt;
+        }
+
+        return mb_substr($txt, 0, 57) . '...';
     }
 
     /**
