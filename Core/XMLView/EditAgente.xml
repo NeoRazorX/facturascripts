@@ -17,50 +17,53 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Definición inicial para el controlador EditAgente
+ * Definición inicial para el controlador EditCliente
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Nazca Networks <comercial@nazcanetworks.com>
 -->
-
 <view>
     <columns>
-        <group name="data" numcolumns="12">
-            <column name="code" numcolumns="2" order="100">
+        <group name="inicio" numcolums="12" title="Datos agente">
+            <column name="code" title="Código" numcolums="2" order="100">
                 <widget type="text" fieldname="codagente" onclick="" icon="fa-user" required="true" />
             </column>
-            <column name="name" numcolumns="4" order="110">
-                <widget type="text" fieldname="nombre" required="true" />
+            <column name="name" title="Nombre" numcolumns="3" order="110"
+                    description="Nombre del Agente">
+                <widget type="text" fieldname="nombre" required="true" hint="Nombre del Agente" />
             </column>
-            <column name="surname" numcolumns="6" order="110">
-                <widget type="text" fieldname="apellidos" />
+            
+            <column name="apellidos" title="Apellidos" numcolumns="4" order="120"
+                    description="Apellidos del agente">
+                <widget type="text" fieldname="apellidos" hint="Apellidos del agente" />
             </column>
             <column name="cifnif" numcolumns="2" order="110">
                 <widget type="text" fieldname="dnicif" />
             </column>
-            <column name="phone" numcolumns="2" order="110">
+            <column name="tel" title="Teléfono" numcolumns="2" order="130">
                 <widget type="text" fieldname="telefono" />
             </column>
-            <column name="email" numcolumns="4" order="110">
+            <column name="email" title="Correo electrónico" numcolumns="2" order="140">
                 <widget type="text" fieldname="email" />
             </column>
-            <column name="position" numcolumns="4" order="110">
+        </group>
+        <group name="prof_data" title="Datos profesionales" numcolums="12">
+            <column name="ceo" title="Cargo" numcolumns="2" order="100">
                 <widget type="text" fieldname="cargo" />
             </column>
-        </group>
-        <group name="address" title="address" numcolumns="12">
-            <column name="state" numcolumns="3" order="110">
-                <widget type="text" fieldname="provincia" />
+            <column name="comision" title="Comisión" numcolumns="1" order="110">
+                <widget type="number" step="0.05" min="0.00" max="100.00"  fieldname="porcomision" />
             </column>
-            <column name="city" numcolumns="3" order="110">
-                <widget type="text" fieldname="ciudad" />
+            <column name="nnss" title="Nº Seguridad Social" numcolumns="2" order="120">
+                <widget type="text" fieldname="seg_social" />
             </column>
-            <column name="address" numcolumns="4" order="110">
-                <widget type="text" fieldname="direccion" />
+            <column name="ccc" title="Cuenta Bancaria" numcolumns="3" order="130">
+                <widget type="text" fieldname="banco" />
             </column>
-            <column name="postalcode" numcolumns="2" order="110">
-                <widget type="text" fieldname="codpostal" />
+            <column name="fecnac" title="Fecha Nacimiento" numcolumns="2" order="130">
+                <widget type="date" fieldname="f_nacimiento" />
             </column>
+            
+            
         </group>
     </columns>
 </view>
-

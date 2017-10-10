@@ -115,6 +115,12 @@ class WidgetItem
      * Constructor de la clase. Si se informa un array se cargan los datos
      * informados en el nuevo objeto
      */
+    
+    
+   
+    public $step;
+    public $max;
+    public $min;
     public function __construct()
     {
         if (!isset(self::$divisaTools)) {
@@ -132,6 +138,10 @@ class WidgetItem
         $this->onClick = '';
         $this->options = [];
         $this->values = [];
+        
+        $this->step="";
+        $this->max="";
+        $this->min="";
     }
 
     /**
@@ -205,7 +215,11 @@ class WidgetItem
         $this->required = (bool) boolval($widget_atributes->required);
         $this->icon = (string) $widget_atributes->icon;
         $this->onClick = (string) $widget_atributes->onclick;
-
+        
+        $this->step=(string) $widget_atributes->step;
+        $this->min=(string) $widget_atributes->min;
+        $this->max=(string) $widget_atributes->max;
+        /* Fin Añado propiedades para tipo number */
         $this->getAttributesGroup($this->options, $column->widget->option);
         $this->getAttributesGroup($this->values, $column->widget->values);
     }
@@ -422,7 +436,7 @@ class WidgetItem
         $specialClass = $this->specialClass();
         $fieldName = '"' . $this->fieldName . '"';
         $html = $this->getIconHTML();
-
+      
         switch ($this->type) {
             case 'text':
                 $html .= $this->standardHTMLWidget($fieldName, $value, $specialClass);
@@ -448,7 +462,9 @@ class WidgetItem
             case 'select':
                 $html .= $this->selectHTMLWidget($fieldName, $value, $specialClass);
                 break;
-
+            case 'number':
+                $html.=$this->numberHTMLWidget($fieldName,$value, $specialClass,$step,$max,$min);
+                 break;
             default:
                 $html .= $this->standardHTMLWidget($fieldName, $value, $specialClass);
         }
@@ -474,7 +490,29 @@ class WidgetItem
         return '<input id=' . $fieldName . ' type="' . $this->type . '" class="form-control" name=' . $fieldName
             . ' value="' . $value . '"' . $specialClass . '>';
     }
-
+    /**
+     * Devuelve el código HTML para controles number teniendo en cuenta step max y min
+     * Basado en standardHTMLWidget
+     * 
+     * * @param string $fieldName
+     * @param string $value
+     * @param string $specialClass
+     * @param number $step
+     * @param number $max
+     * @param number $min
+     *
+     * @return string
+     */
+    private function numberHTMLWidget($fieldName,$value,$specialClass,$step,$max,$min)
+    {
+       
+        
+        return '<input id=' . $fieldName . ' type="' . $this->type . '"'.($step==""?"":' step="'.$step.'"').
+                ($min==""?"":' min="'.$min.'"').
+                ($max==""?"":' max="'.$max.'"').
+                'class="form-control" name=' . $fieldName
+            . ' value="' . $value . '"' . $specialClass . '>';
+    }
     /**
      * Devuelve el código HTML para controles tipo Select
      *
