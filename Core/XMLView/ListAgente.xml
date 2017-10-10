@@ -54,7 +54,7 @@
         <column name="phone" order="180">
             <widget type="text" fieldname="telefono" />
         </column>
-        <column name="mail" order="190">
+        <column name="email" order="190">
             <widget type="text" fieldname="email" />
         </column>
         <column name="creation date" display="none" order="200">

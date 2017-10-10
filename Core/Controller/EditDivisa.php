@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -29,18 +28,20 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class EditDivisa extends ExtendedController\EditController
 {
-    public function __construct(&$cache,&$i18n,&$miniLog,&$className)
+
+    public function __construct(&$cache, &$i18n, &$miniLog, &$className)
     {
-        parent::__construct($cache,$i18n,$miniLog,$className);
-        $this->modelName = 'FacturaScripts\Core\Model\Familia';
+        parent::__construct($cache, $i18n, $miniLog, $className);
+        $this->modelName = 'FacturaScripts\Core\Model\Divisa';
     }
+
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = ' Divisas';
-        $pagedata['icon'] = 'fa-object-group';
-        $pagedata['showmenu'] = FALSE;
-        
+        $pagedata['title'] = 'Divisas';
+        $pagedata['icon'] = 'fa-money';
+        $pagedata['showonmenu'] = FALSE;
+
         return $pagedata;
     }
 }

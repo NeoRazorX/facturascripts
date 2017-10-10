@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
@@ -17,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
+
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Model;
+
 /**
  * Description of EditAgente
  *
@@ -29,28 +29,26 @@ use FacturaScripts\Core\Model;
  */
 class EditAgente extends ExtendedController\EditController
 {
-      public function __construct(&$cache, &$i18n, &$miniLog, $className)
-    
+
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
-    
-        parent::__construct($cache,$i18n,$miniLog,$className);
-        $this->modelName='FacturaScripts\Core\Model\Agente';
+        parent::__construct($cache, $i18n, $miniLog, $className);
+        $this->modelName = 'FacturaScripts\Core\Model\Agente';
     }
+
     public function getPanelFooter()
     {
         $model = $this->getModel();
-       
-        return $this->i18n->trans('Fecha de alta: '). $model->f_alta;
-                
+        return $this->i18n->trans('Fecha de alta: ') . $model->f_alta;
     }
+
     public function getPageData()
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'agent';
         $pagedata['icon'] = 'fa-id-badge';
         $pagedata['showonmenu'] = FALSE;
-        
+
         return $pagedata;
     }
-    
 }
