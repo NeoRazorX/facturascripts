@@ -35,14 +35,19 @@
         </thead>
         {% for data in view.getCursor() %}
             {# Set background status #}
-            {% set row = view.getRow('status') %}
-            {% if row is empty %}
-            <tr class="table-light">
-            {% else %}
-            {% set status = attribute(data, row.fieldName) %}
-            <tr class="{{ row.getStatus(status) }}">
+            {% set rowClass = 'table-light' %}
+            {% set rowStatus = view.getRow('status') %}
+            {% if rowStatus is not empty %}
+            {% set status = attribute(data, rowStatus.fieldName) %}
+            {% set rowClass = rowStatus.getStatus(status) %}
             {% endif %}
             
+            {% set rowDataHref = view.getClickEvent(data) %}
+            {% if rowDataHref is not empty %}
+            {% set rowClass = rowClass ~ ' clickableRow' %}
+            {% endif %}
+            
+            <tr class="{{ rowClass }}" data-href="{{ rowDataHref }}">
             {# Print data columns for row #}
             {% for column in view.getColumns() %}
                 {% if column.display != 'none' %}

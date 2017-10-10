@@ -90,7 +90,7 @@ class RowItem implements VisualItemInterface
             }
         }
 
-        return '';
+        return 'table-light';
     }
 
     public function getHeaderHTML($value)
