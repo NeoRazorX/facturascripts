@@ -3,17 +3,12 @@
 {% block css %}
     {{ parent() }}
     
-    <style type="text/css">
-        .card-header {
-            padding: .5rem 1.25rem;
-            font-size: 120%;
-            font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" href="Core/Assets/CSS/extendedcontroller.css" />
 {% endblock %}
 
 {% block javascript %}
     {{ parent() }}
+    
 <script type="text/javascript">
     var tabActive = '{{ fsc.active }}';
     $(document).ready(function () {
@@ -21,6 +16,29 @@
             tabActive = e.target.hash.substring(1);
         });
     });
+    
+    function deleteRecord(formName) {
+        bootbox.confirm({
+            title: "{{ i18n.trans('confirm-delete') }}",
+            message: "{{ i18n.trans('This cannot be undone. Are you sure you wish to continue?') }}",
+            buttons: {
+                cancel: {
+                    label: '<i class="fa fa-times"></i> {{ i18n.trans('Cancel') }}'
+                },
+                confirm: {
+                    label: '<i class="fa fa-check"></i> {{ i18n.trans('Confirm') }}',
+                    className: 'btn-danger'
+                }
+            },
+            callback: function (result) {
+                if (result) {
+                    var form = document.forms[formName];
+                    form.action.value = 'delete';
+                    form.submit();
+                }
+            }
+        });           
+    }    
 </script>
 {% endblock %}
 
@@ -37,8 +55,6 @@
 {% block body %}
 {# -- Calculate texts according to language -- #}
 {% set go_back = i18n.trans('back') %}
-{% set save, save_title = i18n.trans('save'), i18n.trans('save data') %}
-{% set undo, undo_title = i18n.trans('undo'), i18n.trans('restore data') %}
 {% set refresh_title = i18n.trans('refresh') %}
 
 {% set title = fsc.getPageData()['title'] %}
@@ -52,6 +68,7 @@
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 {% from 'Macro/Utils.html' import exportData as exportData %}
 {% from 'Macro/BaseController.html' import columnsForListView as columnsForListView %}
+{% from 'Macro/BaseController.html' import columnsForEditListView as columnsForEditListView %}
 {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
 
 {# -- Main Body -- #}
@@ -75,7 +92,7 @@
             {{ exportData(fsc, i18n, 'edit') }}
         </div>
 
-        <div class="col-6 text-center"
+        <div class="col-6 text-center">
             <div class="page-header">
                 <h2>
                     <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
@@ -111,27 +128,18 @@
                         <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">                                                        
                             {% set viewType = fsc.viewClass(view) %}
                             {% if viewType == 'ListView' %}
-                                {{ columnsForListView(i18n, view) }}
+                                {{ columnsForListView(_context, view) }}
                             {% endif %}
                             
                             {% if viewType == 'EditView' %}
-                            <form name="{{ indexView }}form" action="#" method="post" class="form" role="form">
-                                <input type="hidden" name="action" value="save"> 
-                                <input type="hidden" name="active" value="{{ indexView }}">
-                                <div class="row">
-                                {{ columnsForEditView(_context, view) }}
-                                </div>
-                                <div class="text-right">
-                                    <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
-                                        <i class="fa fa-undo" aria-hidden="true"></i>&nbsp; {{ undo }}
-                                    </button>
-                                    <button class="btn btn-sm btn-primary" type="submit" {{ popoverTitle(save_title, 'bottom') }}>
-                                        <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
-                                    </button>
-                                </div>
-                            </form>
+                                {% set model = view.getModel() %}
+                                {{ columnsForEditView(_context, view, model, TRUE) }}
                             {% endif %}                            
 
+                            {% if viewType == 'EditListView' %}
+                                {{ columnsForEditListView(_context, view) }}
+                            {% endif %}
+                            
                             {% if viewType == 'HtmlView' %}
                             <div class="row">
                             {% include view.fileName ignore missing %}

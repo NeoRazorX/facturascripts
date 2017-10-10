@@ -2,17 +2,16 @@
 
 {% block javascript %}
 {{ parent() }}
+
 <script type="text/javascript">
     var tabActive = '{{ fsc.active }}';
+
     function insertRecord() {
         var url = { {{ fsc.getStringURLs('new')|raw }} };
         document.insert_form.action = url[tabActive];
         document.insert_form.submit();
     }
-    function doAction(action) {
-        var url = '{{ fsc.url() }}';
-        window.location.href = url + '&active=' + tabActive + '&action=' + action;
-    }
+
     $(document).ready(function () {
         // Situa el foco cuando se cambia de tab
         $('#mainTabs').on('shown.bs.tab', function (e) {
@@ -212,7 +211,7 @@
             <!-- Data Row -->
             <div class="table-responsive">
                 <!-- Data Table -->
-                {{ columnsForListView(i18n, view) }}
+                {{ columnsForListView(_context, view) }}
             </div>
 
             <!-- Footer Navigation -->

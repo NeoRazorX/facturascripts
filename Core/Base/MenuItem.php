@@ -125,7 +125,13 @@ class MenuItem
             . '<ul class="dropdown-menu" aria-labelledby="' . $menuId . '">';
 
         foreach ($this->menu as $menuItem) {
-            $html .= empty($menuItem->menu) ? '<li><a class="dropdown-item" href="' . $menuItem->url . '">' . $menuItem->getHTMLIcon() . '&nbsp; ' . $menuItem->title . '</a></li>' : $menuItem->getHTML($menuId);
+            $extraClass = '';
+            if ($menuItem->active) {
+                $extraClass = 'active';
+            }
+
+            $html .= empty($menuItem->menu) ? '<li><a class="dropdown-item ' . $extraClass . '" href="' . $menuItem->url . '">'
+                . $menuItem->getHTMLIcon() . '&nbsp; ' . $menuItem->title . '</a></li>' : $menuItem->getHTML($menuId);
         }
 
         $html .= '</ul>';

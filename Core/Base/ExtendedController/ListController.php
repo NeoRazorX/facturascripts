@@ -103,7 +103,13 @@ abstract class ListController extends Base\Controller
         // Creamos las vistas a visualizar
         $this->createViews();
 
-        // Lanzamos cada una de las vistas
+        // Guardamos si hay operaciones por realizar
+        $action = $this->request->get('action', '');
+        
+        // Operaciones sobre los datos antes de leerlos
+        $this->execPreviousAction($action);
+        
+        // Lanzamos la carga de datos para cada una de las vistas
         foreach ($this->views as $key => $listView) {
             $where = [];
             $orderKey = '';
@@ -120,41 +126,50 @@ abstract class ListController extends Base\Controller
             // Cargamos los datos según filtro y orden
             $listView->loadData($where, $this->getOffSet($key), Base\Pagination::FS_ITEM_LIMIT);
         }
+        
+        // Operaciones generales con los datos cargados
+        $this->execAfterAction($action);
+    }
 
-        // Comprobamos si hay operaciones por realizar
-        if ($this->request->get('action', false)) {
-            $this->setActionForm();
+    /**
+     * Ejecuta las acciones que alteran los datos antes de leerlos
+     * 
+     * @param string $action
+     */
+    private function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'delete':
+                $this->deleteAction($this->views[$this->active]);
+                break;
         }
     }
 
     /**
-     * Aplica la acción solicitada por el usuario
+     * Ejecuta las acciones del controlador
+     * 
+     * @param string $action
      */
-    private function setActionForm()
+    private function execAfterAction($action)
     {
-        switch ($this->request->get('action')) {
-            case 'delete':
-                /// Se llama a la función para que las clases hijas puedan operar, si lo necesitan
-                $this->deleteAction($this->views[$this->active]);
-                break;
-
+        switch ($action) {
             case 'export':
                 $this->setTemplate(false);
                 $view = $this->views[$this->active];
-                $document = $view->export($this->exportManager, $this->request->get('option'));
+                $document = $view->export($this->exportManager, $this->response, $this->request->get('option'));
                 $this->response->setContent($document);
                 break;
 
             case 'json':
-                $this->jsonAction();
+                $this->jsonAction($this->views[$this->active]);
                 break;
         }
-    }
-
+    }   
+    
     /**
      * Acción de borrado de datos
      *
-     * @param ListView $view     Vista sobre la que se realiza la acción
+     * @param BaseView $view     Vista sobre la que se realiza la acción
      * @return boolean
      */
     protected function deleteAction($view)
@@ -166,17 +181,17 @@ abstract class ListController extends Base\Controller
         return FALSE;
     }
 
-    protected function jsonAction()
+    protected function jsonAction($view)
     {
         $this->setTemplate(false);
         $cols = [];
-        foreach ($this->views[$this->active]->getColumns() as $col) {
+        foreach ($view->getColumns() as $col) {
             if ($col->display != 'none' && $col->widget->type == 'text' && count($cols) < 4) {
                 $cols[] = $col->widget->fieldName;
             }
         }
         $json = [];
-        foreach ($this->views[$this->active]->getCursor() as $item) {
+        foreach ($view->getCursor() as $item) {
             $jItem = ['url' => $item->url()];
             foreach ($cols as $col) {
                 $jItem[$col] = $item->{$col};

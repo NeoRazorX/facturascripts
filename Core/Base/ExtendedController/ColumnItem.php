@@ -151,31 +151,21 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      */
     public function getEditHTML($value)
     {
-        $columnClass = $this->getColumnClass();
-        $input = $this->widget->getEditHTML($value);
         $header = $this->getHeaderHTML($this->title);
-        $hint = $this->getColumnHint();
-        $required = $this->getColumnRequired();
-        $description = $this->getColumnDescription();
+        $input = $this->widget->getEditHTML($value);
+        $data = $this->getColumnData(['ColumnClass', 'ColumnHint', 'ColumnRequired', 'ColumnDescription']);
 
         switch ($this->widget->type) {
             case 'checkbox':
-                $html = '<div class="form-row align-items-center' . $columnClass . '">'
-                    . $this->checkboxHTMLColumn($header, $input, $hint, $description)
-                    . $required
-                    . '</div>';
+                $html = $this->checkboxHTMLColumn($header, $input, $data);
                 break;
 
             case 'radio':
-                $html = '<div class="' . $columnClass . '">'
-                    . '<label>' . $header . '</label>'
-                    . $this->radioHTMLColumn($input, $hint, $value)
-                    . $required
-                    . '</div>';
+                $html = $this->radioHTMLColumn($header, $input, $data, $value);
                 break;
 
             default:
-                $html = $this->standardHTMLColumn($header, $input, $hint, $description, $columnClass, $required);
+                $html = $this->standardHTMLColumn($header, $input, $data);
                 break;
         }
 
@@ -187,20 +177,18 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      *
      * @param string $header
      * @param string $input
-     * @param string $hint
-     * @param string $description
-     * @param string $columnClass
-     * @param mixed $required
+     * @param array $data
      *
      * @return string
      */
-    private function standardHTMLColumn($header, $input, $hint, $description, $columnClass, $required)
+    private function standardHTMLColumn($header, $input, $data)
     {
-        return '<div class="form-group' . $columnClass . '">'
-            . '<label for="' . $this->widget->fieldName . '"' . $hint . '>' . $header . '</label>'
-            . $input
-            . $description
-            . $required
+        $label = ($header != NULL)
+            ? '<label for="' . $this->widget->fieldName . '"' . $data['ColumnHint'] . '>' . $header . '</label>'
+            : '';
+        
+        return '<div class="form-group' . $data['ColumnClass'] . '">'
+            . $label . $input . $data['ColumnDescription'] . $data['ColumnRequired']
             . '</div>';
     }
 
@@ -209,46 +197,68 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      *
      * @param string $header
      * @param string $input
-     * @param string $hint
-     * @param string $description
+     * @param array $data
      *
      * @return string
      */
-    private function checkboxHTMLColumn($header, $input, $hint, $description)
+    private function checkboxHTMLColumn($header, $input, $data)
     {
-        return '<div class="form-check col">'
-            . '<label class="form-check-label"' . $hint . '>'
-            . $input . '&nbsp;' . $header
-            . '</label>'
-            . $description
+        $label = ($header != NULL)
+            ? '<label class="form-check-label"' . $data['ColumnHint'] . '>' . $input . '&nbsp;' . $header . '</label>'
+            : '';
+        
+        $result = '<div class="form-row align-items-center' . $data['ColumnClass'] . '">'
+            . '<div class="form-check col">' . $label . $data['ColumnDescription'] . '</div>'
+            . $data['ColumnRequired']
             . '</div>';
+
+        return $result;
     }
 
     /**
      * Devuelve el código HTML para el visionado de una lista de opciones
      *
+     * @param string $header
      * @param string $input
-     * @param string $hint
+     * @param array $data
      * @param string $value
      *
      * @return string
      */
-    private function radioHTMLColumn($input, $hint, $value)
+    private function radioHTMLColumn($header, $input, $data, $value)
     {
         $html = '';
         $index = 0;
         $template_var = ['"sufix%', '"value%', '"checked%'];
+
+        $result = '<div class="' . $data['ColumnClass'] . '">'
+            . '<label>' . $header . '</label>';
+                        
         foreach ($this->widget->values as $optionValue) {
             $checked = ($optionValue['value'] == $value) ? ' checked="checked"' : '';
             ++$index;
             $values = [($index . '"'), $optionValue['value'], $checked];
-            $html .= '<div class="form-check"><label class="form-check-label"' . $hint . '>'
+            $html .= '<div class="form-check">'
+                . '<label class="form-check-label"' . $data['ColumnHint'] . '>'
                 . str_replace($template_var, $values, $input)
                 . '&nbsp;' . $optionValue['title']
-                . '</label></div>';
+                . '</label>'
+                . '</div>';
+        }
+                        
+        $result .= $html . $data['ColumnRequired'] . '</div>';
+        return $result;
+    }
+
+    private function getColumnData($properties)
+    {
+        $result = [];
+        foreach ($properties as $value) {
+            $function = 'get' . $value;
+            $result[$value] = $this->$function();
         }
 
-        return $html;
+        return $result;
     }
 
     private function getColumnClass()

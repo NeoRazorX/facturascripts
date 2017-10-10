@@ -43,7 +43,7 @@ class HtmlView extends BaseView
         $this->fileName = $fileName;
     }
     
-    public function export(&$exportManager, $action)
+    public function export(&$exportManager, &$response, $action)
     {
         return null;
     }

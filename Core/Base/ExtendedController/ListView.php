@@ -69,12 +69,6 @@ class ListView extends BaseView
     public $selectedOrderBy;
 
     /**
-     * Número total de registros leídos
-     * @var int
-     */
-    public $count;
-
-    /**
      * Almacena el offset para el cursor
      * @var integer 
      */
@@ -104,15 +98,26 @@ class ListView extends BaseView
     {
         parent::__construct($title, $modelName);
 
-        $this->cursor = NULL;
+        $this->cursor = [];
         $this->orderby = [];
         $this->filters = [];
         $this->searchIn = [];
         $this->count = 0;
         $this->selectedOrderBy = '';
-        
+
         // Carga configuración de la vista para el usuario
-        $this->pageOption->getForUser($viewName, $userNick);        
+        $this->pageOption->getForUser($viewName, $userNick);
+    }
+
+    public function getClickEvent($data)
+    {
+        foreach ($this->getColumns() as $col) {
+            if (isset($col->widget->onClick)) {
+                return '?page=' . $col->widget->onClick . '&code=' . $data->{$col->widget->fieldName};
+            }
+        }
+
+        return '';
     }
 
     /**
@@ -313,17 +318,8 @@ class ListView extends BaseView
         $this->where = $where;
     }
 
-    public function delete($code)
+    public function export(&$exportManager, &$response, $action)
     {
-        if ($this->model->loadFromCode($code)) {
-            return $this->model->delete();
-        }
-
-        return FALSE;
-    }
-
-    public function export(&$exportManager, $action)
-    {
-        return $exportManager->generateList($action, $this->model, $this->where, $this->order, $this->offset, $this->getColumns());
+        return $exportManager->generateList($response, $action, $this->model, $this->where, $this->order, $this->offset, $this->getColumns());
     }
 }

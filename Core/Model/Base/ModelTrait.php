@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base;
@@ -34,6 +33,7 @@ use FacturaScripts\Core\Base\Translator;
  */
 trait ModelTrait
 {
+
     use Base\Utils;
 
     /**
@@ -207,6 +207,7 @@ trait ModelTrait
      */
     public function checkArrayData(&$data)
     {
+        
     }
 
     /**
@@ -221,7 +222,7 @@ trait ModelTrait
             if (in_array($key, $exclude)) {
                 continue;
             }
-            
+
             foreach (self::$fields as $field) {
                 if ($field['name'] === $key) {
                     // Comprobamos si es un varchar (con longitud establecida) u otro tipo de dato
@@ -613,11 +614,9 @@ trait ModelTrait
      */
     private function getRecord($cod, $where = NULL, $orderby = [])
     {
-        $sqlWhere = empty($where) 
-            ? ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($cod)
-            : DataBase\DataBaseWhere::getSQLWhere($where);
-        
-        $sql = 'SELECT * FROM ' . $this->tableName() . $sqlWhere . $this->getOrderBy($orderby);        
+        $sqlWhere = empty($where) ? ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($cod) : DataBase\DataBaseWhere::getSQLWhere($where);
+
+        $sql = 'SELECT * FROM ' . $this->tableName() . $sqlWhere . $this->getOrderBy($orderby);
         return $this->dataBase->selectLimit($sql, 1);
     }
 
@@ -655,7 +654,7 @@ trait ModelTrait
         $insertFields = [];
         $insertValues = [];
         foreach (self::$fields as $field) {
-            if ($this->{$field['name']} !== null) {
+            if (isset($this->{$field['name']})) {
                 $insertFields[] = $field['name'];
                 $insertValues[] = $this->var2str($this->{$field['name']});
             }

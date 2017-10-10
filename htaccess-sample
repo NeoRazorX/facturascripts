@@ -1,0 +1,22 @@
+Options -Indexes
+
+<IfModule mod_php5.c>
+   php_value max_input_vars 5000
+   php_value post_max_size 99M
+   php_value upload_max_filesize 99M
+</IfModule>
+
+<IfModule mod_php7.c>
+   php_value max_input_vars 5000
+   php_value post_max_size 99M
+   php_value upload_max_filesize 99M
+</IfModule>
+
+<IfModule mod_rewrite.c>
+   RewriteEngine On
+
+   RewriteRule ^api/(.*)/(.*)/(.*)$ api.php?v=$1&resource=$2&cod=$3&%{QUERY_STRING} [L]
+   RewriteRule ^api/(.*)/(.*)$ api.php?v=$1&resource=$2&%{QUERY_STRING} [L]
+   RewriteRule ^api/(.*)$ api.php?v=$1&%{QUERY_STRING} [L]
+   RewriteRule ^api$ api.php?%{QUERY_STRING} [L]
+</IfModule>

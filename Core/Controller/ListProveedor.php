@@ -42,7 +42,7 @@ class ListProveedor extends ExtendedController\ListController
     {
         $className = $this->getClassName();
         $this->addView('FacturaScripts\Core\Model\Proveedor', $className);
-        $this->addSearchFields($className, ['nombre', 'razonsocial', 'codproveedor']);
+        $this->addSearchFields($className, ['nombre', 'razonsocial', 'codproveedor', 'email']);
 
         $this->addOrderBy($className, 'codproveedor', 'code');
         $this->addOrderBy($className, 'nombre', 'name', 1);

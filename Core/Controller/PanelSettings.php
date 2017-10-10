@@ -20,14 +20,6 @@ class PanelSettings extends ExtendedController\PanelController
 
     const KEYSETTINGS = 'Settings';
 
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
-    {
-        parent::__construct($cache, $i18n, $miniLog, $className);
-
-        // Establecemos el modelo de datos
-        $this->model = new Model\Settings();
-    }
-
     public function getPageData()
     {
         $pagedata = parent::getPageData();
@@ -62,23 +54,49 @@ class PanelSettings extends ExtendedController\PanelController
     }
 
     
-    
-    public function getFieldValue($view, $field)
+    /**
+     * Devuelve el valor para la propiedad de configuración
+     * 
+     * @param mixed $model
+     * @param string $field
+     * @return mixed
+     */
+    public function getFieldValue($model, $field)
     {        
-        $properties = parent::getFieldValue($view, 'properties');
-        return $properties[$field];
+        $properties = parent::getFieldValue($model, 'properties');
+        if (array_key_exists($field, $properties)) {            
+            return $properties[$field];
+        }
+        
+        return $model->{$field};
     }
     
+    /**
+     * Devuelve el id de la vista con el valor de la constante KEYSSETTINGS
+     * como prefijo
+     * 
+     * @param string $key
+     * @return string
+     */
     private function getViewNameFromKey($key)
     {
         return self::KEYSETTINGS . ucfirst($key);
     }
 
+    /**
+     * Devuelve el id de la vista
+     * 
+     * @param string $viewName
+     * @return string
+     */
     private function getKeyFromViewName($viewName)
     {
         return strtolower(substr($viewName, strlen(self::KEYSETTINGS)));
     }
 
+    /**
+     * Procedimiento para insertar vistas en el controlador
+     */
     protected function createViews()
     {
         $modelName = 'FacturaScripts\Core\Model\Settings';
@@ -96,13 +114,18 @@ class PanelSettings extends ExtendedController\PanelController
         }
 
         $title2 = $this->i18n->trans('about');
-        $this->addHtmlView('About.html', NULL, 'about', $title2);
+        $this->addHtmlView('Block/About.html', NULL, 'about', $title2);
     }
 
+    /**
+     * Procedimiento para cargar los datos de cada una de las vistas
+     * 
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
     protected function loadData($keyView, $view)
     {
-        $model = $view->getModel();
-        if (empty($model)) {
+        if (empty($view->getModel())) {
             return;
         }
 

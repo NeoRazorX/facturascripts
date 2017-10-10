@@ -30,14 +30,17 @@
         <column name="description" order="110">
             <widget type="text" fieldname="descripcion" />
         </column>
-        <column name="account code" titleurl="?page=ListEmpresa" order="115">
-            <widget type="text" fieldname="codcuenta" />
-        </column>
         <column name="expiration" display="center" order="120">
             <widget type="text" fieldname="vencimiento" />
         </column>
+        <column name="account code" titleurl="?page=ListEmpresa" order="125">
+            <widget type="text" fieldname="codcuenta" />
+        </column>
         <column name="generate receipt" display="center" order="130">
-            <widget type="text" fieldname="genrecibos" />
+            <widget type="text" fieldname="genrecibos">
+                <option color="green">Pagados</option>
+                <option color="brown">Emitidos</option>
+            </widget>
         </column>
         <column name="domiciled" display="center" order="140">
             <widget type="checkbox" fieldname="domiciliado" />

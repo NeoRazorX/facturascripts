@@ -9,17 +9,19 @@
         {% block css %}
         <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css" />
-        <link rel="stylesheet" href="Core/View/CSS/submenu.css" />
-        <link rel="stylesheet" href="Core/View/CSS/datepicker.css" />
-        <link rel="stylesheet" href="Core/View/CSS/custom.css" />
+        <link rel="stylesheet" href="Core/Assets/CSS/submenu.css" />
+        <link rel="stylesheet" href="Core/Assets/CSS/datepicker.css" />
+        <link rel="stylesheet" href="Core/Assets/CSS/custom.css" />
+        <link rel="shortcut icon" href="Core/Assets/Images/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="Core/Assets/Images/apple-icon-180x180.png" />
         {% endblock %}
         {% block javascript %}
         <script src="node_modules/jquery/dist/jquery.min.js"></script>
         <script src="node_modules/popper.js/dist/umd/popper.min.js"></script>
         <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
         <script src="node_modules/bootbox.js/bootbox.min.js"></script>
-        <script src="Core/View/JS/datepicker.js"></script>
-        <script src="Core/View/JS/custom.js"></script>
+        <script src="Core/Assets/JS/datepicker.js"></script>
+        <script src="Core/Assets/JS/custom.js"></script>
         {% endblock %}
         {{ debugBarRender.renderHead()|raw }}
     </head>

@@ -1,8 +1,20 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model\Base;
 
@@ -94,133 +106,51 @@ trait Factura
         return $asiento->get($this->idasientop);
     }
 
-    public function getLineasIvaTrait($lineas, $lineaIvaClass = 'LineaIvaFacturaCliente')
+    private function getLineasIvaTrait($className, $dueTotales = 1)
     {
-        $lineaIva = new $lineaIvaClass();
-        $lineasi = $lineaIva->allFromFactura($this->idfactura);
-        /// si no hay lineas de IVA las generamos
-        if (!empty($lineasi)) {
-            if (!empty($lineas)) {
-                foreach ($lineas as $l) {
-                    $i = 0;
-                    $encontrada = false;
-                    while ($i < count($lineasi)) {
-                        if ($l->iva === $lineasi[$i]->iva && $l->recargo === $lineasi[$i]->recargo) {
-                            $encontrada = true;
-                            $lineasi[$i]->neto += $l->pvptotal;
-                            $lineasi[$i]->totaliva += ($l->pvptotal * $l->iva) / 100;
-                            $lineasi[$i]->totalrecargo += ($l->pvptotal * $l->recargo) / 100;
-                        }
-                        ++$i;
-                    }
-                    if (!$encontrada) {
-                        $lineasi[$i] = new $lineaIvaClass();
-                        $lineasi[$i]->idfactura = $this->idfactura;
-                        $lineasi[$i]->codimpuesto = $l->codimpuesto;
-                        $lineasi[$i]->iva = $l->iva;
-                        $lineasi[$i]->recargo = $l->recargo;
-                        $lineasi[$i]->neto = $l->pvptotal;
-                        $lineasi[$i]->totaliva = ($l->pvptotal * $l->iva) / 100;
-                        $lineasi[$i]->totalrecargo = ($l->pvptotal * $l->recargo) / 100;
-                    }
+        $linea_iva = new $className();
+        $lineas = $this->getLineas();
+        $lineasi = $linea_iva->allFromFactura($this->idfactura);
+        /// si no hay lineas de IVA, las generamos
+        if (empty($lineasi) && !empty($lineas)) {
+            /// necesitamos los totales por impuesto
+            $subtotales = [];
+            foreach ($this->get_lineas() as $lin) {
+                $codimpuesto = ($lin->codimpuesto === null ) ? 0 : $lin->codimpuesto;
+                if (!array_key_exists($codimpuesto, $subtotales)) {
+                    $subtotales[$codimpuesto] = array(
+                        'neto' => 0,
+                        'iva' => 0,
+                        'ivapor' => $lin->iva,
+                        'recargo' => 0,
+                        'recargopor' => $lin->recargo
+                    );
                 }
-
-                /// redondeamos y guardamos
-                if (count($lineasi) === 1) {
-                    $lineasi[0]->neto = round($lineasi[0]->neto, FS_NF0);
-                    $lineasi[0]->totaliva = round($lineasi[0]->totaliva, FS_NF0);
-                    $lineasi[0]->totaliva = round($lineasi[0]->totaliva, FS_NF0);
-                    $lineasi[0]->totallinea = $lineasi[0]->neto + $lineasi[0]->totaliva + $lineasi[0]->totalrecargo;
-                    $lineasi[0]->save();
-                } else {
-                    /*
-                     * Como el neto y el iva se redondean en la factura, al dividirlo
-                     * en líneas de iva podemos encontrarnos con un descuadre que
-                     * hay que calcular y solucionar.
-                     */
-                    $tNeto = 0;
-                    $tIva = 0;
-                    foreach ($lineasi as $li) {
-                        $li->neto = bround($li->neto, FS_NF0);
-                        $li->totaliva = bround($li->totaliva, FS_NF0);
-                        $li->totallinea = $li->neto + $li->totaliva;
-
-                        $tNeto += $li->neto;
-                        $tIva += $li->totaliva;
-                    }
-
-                    if (!$this->floatcmp($this->neto, $tNeto)) {
-                        /*
-                         * Sumamos o restamos un céntimo a los netos más altos
-                         * hasta que desaparezca el descuadre
-                         */
-                        $diferencia = round(($this->neto - $tNeto) * 100);
-                        usort(
-                            $lineasi, function($a, $b) {
-                            if ($a->totallinea === $b->totallinea) {
-                                return 0;
-                            }
-                            if ($a->totallinea < 0) {
-                                return ($a->totallinea < $b->totallinea) ? -1 : 1;
-                            }
-
-                            return ($a->totallinea < $b->totallinea) ? 1 : -1;
-                        }
-                        );
-
-                        foreach ($lineasi as $i => $value) {
-                            if ($diferencia > 0) {
-                                $lineasi[$i]->neto += .01;
-                                --$diferencia;
-                            } elseif ($diferencia < 0) {
-                                $lineasi[$i]->neto -= .01;
-                                ++$diferencia;
-                            } else {
-                                break;
-                            }
-                        }
-                    }
-
-                    if (!$this->floatcmp($this->totaliva, $tIva)) {
-                        /*
-                         * Sumamos o restamos un céntimo a los importes más altos
-                         * hasta que desaparezca el descuadre
-                         */
-                        $diferencia = round(($this->totaliva - $tIva) * 100);
-                        usort(
-                            $lineasi, function($a, $b) {
-                            if ($a->totaliva === $b->totaliva) {
-                                return 0;
-                            }
-                            if ($a->totallinea < 0) {
-                                return ($a->totaliva < $b->totaliva) ? -1 : 1;
-                            }
-
-                            return ($a->totaliva < $b->totaliva) ? 1 : -1;
-                        }
-                        );
-
-                        foreach ($lineasi as $i => $value) {
-                            if ($diferencia > 0) {
-                                $lineasi[$i]->totaliva += .01;
-                                --$diferencia;
-                            } elseif ($diferencia < 0) {
-                                $lineasi[$i]->totaliva -= .01;
-                                ++$diferencia;
-                            } else {
-                                break;
-                            }
-                        }
-                    }
-
-                    foreach ($lineasi as $i => $value) {
-                        $lineasi[$i]->totallinea = $value->neto + $value->totaliva + $value->totalrecargo;
-                        $lineasi[$i]->save();
-                    }
-                }
+                // Acumulamos por tipos de IVAs
+                $subtotales[$codimpuesto]['neto'] += $lin->pvptotal * $dueTotales;
+                $subtotales[$codimpuesto]['iva'] += $lin->pvptotal * $dueTotales * ($lin->iva / 100);
+                $subtotales[$codimpuesto]['recargo'] += $lin->pvptotal * $dueTotales * ($lin->recargo / 100);
+            }
+            /// redondeamos
+            foreach ($subtotales as $codimp => $subt) {
+                $subtotales[$codimp]['neto'] = round($subt['neto'], FS_NF0);
+                $subtotales[$codimp]['iva'] = round($subt['iva'], FS_NF0);
+                $subtotales[$codimp]['recargo'] = round($subt['recargo'], FS_NF0);
+            }
+            /// ahora creamos las líneas de iva
+            foreach ($subtotales as $codimp => $subt) {
+                $lineasi[$codimp] = new $class_name();
+                $lineasi[$codimp]->idfactura = $this->idfactura;
+                $lineasi[$codimp]->codimpuesto = $codimp;
+                $lineasi[$codimp]->iva = $subt['ivapor'];
+                $lineasi[$codimp]->recargo = $subt['recargopor'];
+                $lineasi[$codimp]->neto = $subt['neto'];
+                $lineasi[$codimp]->totaliva = $subt['iva'];
+                $lineasi[$codimp]->totalrecargo = $subt['recargo'];
+                $lineasi[$codimp]->totallinea = $subt['neto'] + $subt['iva'] + $subt['recargo'];
+                $lineasi[$codimp]->save();
             }
         }
-
         return $lineasi;
     }
 }

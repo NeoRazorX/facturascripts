@@ -64,7 +64,7 @@ class ListCuenta extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'Cuentas';
-        $pagedata['icon'] = 'fa-th-list';
+        $pagedata['icon'] = 'fa-book';
         $pagedata['menu'] = 'contabilidad';
 
         return $pagedata;

@@ -36,24 +36,8 @@
                     description="Apellidos del agente">
                 <widget type="text" fieldname="apellidos" hint="Apellidos del agente" />
             </column>
-            
-            
-            <column name="cifnif" title="CIF/NIF" numcolumns="2" order="140">
-                <widget type="text" fieldname="dnicif" required="true" />
-            </column>   
-        </group>
-        <group name="address" title="Dirección y Datos de contacto" numcolumns="12">
-            <column name="adressdato" title="Dirección" numcolumns="4" order="100">
-                <widget type="text" fieldname="direccion" />
-            </column>
-            <column name="zip" title="CP" numcolumns="2" order="110">
-                <widget type="text" fieldname="codpostal" />
-            </column>
-            <column name="city" title="Población" numcolumns="3" order="110">
-                <widget type="text" fieldname="ciudad" />
-            </column>
-            <column name="county" title="Provincia" numcolumns="3" order="120">
-                <widget type="text" fieldname="provincia" />
+            <column name="cifnif" numcolumns="2" order="110">
+                <widget type="text" fieldname="dnicif" />
             </column>
             <column name="tel" title="Teléfono" numcolumns="2" order="130">
                 <widget type="text" fieldname="telefono" />

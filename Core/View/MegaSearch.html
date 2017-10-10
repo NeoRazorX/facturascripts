@@ -63,6 +63,8 @@
                     </div>");
                 $('#v-pills-tab a:first').tab('show');
                 reloadClickableRow();
+                
+                $("#no-data-msg").hide();
             }
         });
     });
@@ -75,7 +77,7 @@
             <form action="{{ fsc.url() }}" method="post" class="form">
                 <div class="form-group">
                     <div class="input-group">
-                        <input type="text" name="query" value="{{ fsc.query }}" class="form-control"/>
+                        <input type="text" name="query" value="{{ fsc.query }}" class="form-control" autocomplete="off" autofocus=""/>
                         <span class="input-group-btn">
                             <button type="submit" class="btn btn-info">
                                 <i class="fa fa-search" aria-hidden="true"></i>
@@ -84,6 +86,9 @@
                     </div>
                 </div>
             </form>
+            {% if fsc.results['pages'] is empty  %}
+            <div id="no-data-msg" class="alert alert-warning">{{ i18n.trans('no-data') }}</div>
+            {% endif %}
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
                 {% if fsc.results['pages'] is not empty  %}
                 <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-paginas" role="tab" aria-controls="v-pills-paginas" aria-expanded="true">
@@ -102,7 +107,6 @@
                             <thead>
                                 <tr>
                                     <th>{{ i18n.trans('menu') }}</th>
-                                    <th>{{ i18n.trans('submenu') }}</th>
                                     <th></th>
                                     <th>{{ i18n.trans('page') }}</th>
                                 </tr>
@@ -110,8 +114,9 @@
                             <tbody>
                                 {% for page in fsc.results['pages'] %}
                                 <tr class="clickableRow" data-href='{{ page.url() }}'>
-                                    <td>{{ page.menu }}</td>
-                                    <td>{{ page.submenu }}</td>
+                                    <td class="text-capitalize">
+                                        {{ page.menu }}{% if page.submenu %} - {{ page.submenu }}{% endif %}
+                                    </td>
                                     <td class="text-right">
                                         {% if page.icon %}
                                         <i class="fa {{ page.icon }}"></i>

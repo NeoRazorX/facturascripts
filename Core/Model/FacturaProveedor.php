@@ -30,9 +30,6 @@ class FacturaProveedor
 {
     use Base\DocumentoCompra;
     use Base\Factura;
-    use Base\ModelTrait {
-        clear as clearTrait;
-    }
 
     public function tableName()
     {
@@ -49,14 +46,8 @@ class FacturaProveedor
      */
     public function clear()
     {
-        $this->clearTrait();
+        $this->clearDocumentoCompra();
         $this->anulada = false;
-        $this->codalmacen = $this->defaultItems->codAlmacen();
-        $this->codpago = $this->defaultItems->codPago();
-        $this->codserie = $this->defaultItems->codSerie();
-        $this->fecha = date('d-m-Y');
-        $this->hora = date('H:i:s');
-        $this->tasaconv = 1.0;
     }
 
     /**
@@ -128,20 +119,6 @@ class FacturaProveedor
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos del proveedor
-     *
-     * @return string
-     */
-    public function proveedorUrl()
-    {
-        if ($this->codproveedor === null) {
-            return 'index.php?page=ComprasProveedores';
-        }
-
-        return 'index.php?page=ComprasProveedor&cod=' . $this->codproveedor;
-    }
-
-    /**
      * Devuelve las líneas de la factura.
      *
      * @return array
@@ -149,7 +126,6 @@ class FacturaProveedor
     public function getLineas()
     {
         $lineaModel = new LineaFacturaProveedor();
-
         return $lineaModel->all(new DataBaseWhere('idfactura', $this->idfactura));
     }
 
@@ -171,29 +147,12 @@ class FacturaProveedor
      */
     public function test()
     {
-        $this->nombre = self::noHtml($this->nombre);
-        if ($this->nombre === '') {
-            $this->nombre = '-';
-        }
-
-        $this->numproveedor = self::noHtml($this->numproveedor);
-        $this->observaciones = self::noHtml($this->observaciones);
-
-        /**
-         * Usamos el euro como divisa puente a la hora de sumar, comparar
-         * o convertir cantidades en varias divisas. Por este motivo necesimos
-         * muchos decimales.
-         */
-        $this->totaleuros = round($this->total / $this->tasaconv, 5);
-
-        if ($this->floatcmp(
-                $this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true
-            )) {
-            return true;
-        }
-        $this->miniLog->alert('Error grave: El total está mal calculado. ¡Informa del error!');
-
-        return false;
+        return $this->testTrait();
+    }
+    
+    public function fullTest()
+    {
+        return $this->fullTestTrait('invoice');
     }
 
     public function save()
@@ -204,7 +163,6 @@ class FacturaProveedor
             }
 
             $this->newCodigo();
-
             return $this->saveInsert();
         }
 
@@ -273,38 +231,5 @@ class FacturaProveedor
         }
 
         return false;
-    }
-
-    /**
-     * Devuelve un array con las facturas coincidentes con $query
-     *
-     * @param string $query
-     * @param int    $offset
-     *
-     * @return array
-     */
-    public function search($query, $offset = 0)
-    {
-        $faclist = [];
-        $query = mb_strtolower(self::noHtml($query), 'UTF8');
-
-        $consulta = 'SELECT * FROM ' . $this->tableName() . ' WHERE ';
-        if (is_numeric($query)) {
-            $consulta .= "codigo LIKE '%" . $query . "%' OR numproveedor LIKE '%" . $query
-                . "%' OR observaciones LIKE '%" . $query . "%'";
-        } else {
-            $consulta .= "lower(codigo) LIKE '%" . $query . "%' OR lower(numproveedor) LIKE '%" . $query . "%' "
-                . "OR lower(observaciones) LIKE '%" . str_replace(' ', '%', $query) . "%'";
-        }
-        $consulta .= ' ORDER BY fecha DESC, codigo DESC';
-
-        $data = $this->dataBase->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
-        if (!empty($data)) {
-            foreach ($data as $f) {
-                $faclist[] = new self($f);
-            }
-        }
-
-        return $faclist;
     }
 }

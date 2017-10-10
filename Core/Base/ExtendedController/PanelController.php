@@ -101,32 +101,76 @@ abstract class PanelController extends Base\Controller
         // Creamos las vistas a visualizar
         $this->createViews();
 
-        // Comprobamos si hay operaciones por realizar
-        if ($this->request->get('action', false)) {
-            $this->setActionForm();
+        // Guardamos si hay operaciones por realizar
+        $view = empty($this->active) ? NULL : $this->views[$this->active];
+        $action = empty($view) ? '' : $this->request->get('action', '');
+
+        // Operaciones sobre los datos antes de leerlos
+        $this->execPreviousAction($view, $action);
+
+        // Lanzamos la carga de datos para cada una de las vistas
+        foreach ($this->views as $keyView => $dataView) {
+            $this->loadData($keyView, $dataView);
+        }
+
+        // Operaciones generales con los datos cargados
+        $this->execAfterAction($view, $action);
+    }
+
+    /**
+     * Devuelve el valor para un campo del modelo de datos de la vista
+     *
+     * @param mixed $model
+     * @param string $field
+     * @return mixed
+     */
+    public function getFieldValue($model, $field)
+    {
+        return $model->{$field};
+    }
+
+    /**
+     * Devuelve la url para el tipo indicado
+     *
+     * @param string $type
+     * @return string
+     */
+    public function getURL($type)
+    {
+        $view = array_values($this->views)[0];
+        return $view->getURL($type);
+    }
+
+    /**
+     * Ejecuta las acciones que alteran los datos antes de leerlos
+     *
+     * @param string $action
+     */
+    private function execPreviousAction($view, $action)
+    {
+        switch ($action) {
+            case 'save':
+                $data = $this->request->request->all();
+                $view->loadFromData($data);
+                $this->editAction($view);
+                break;
+            
+            case 'delete':
+                $this->deleteAction($view);
+                break;
         }
     }
 
     /**
-     * Aplica la acción solicitada por el usuario
+     * Ejecuta las acciones del controlador
+     *
+     * @param string $action
      */
-    private function setActionForm()
+    private function execAfterAction($view, $action)
     {
-        if (empty($this->active)) {
-            return;
-        }
-
-        $view = $this->views[$this->active];
-        $data = $this->request->request->all();
-
-        switch ($this->request->get('action')) {
-            case 'save':
-                $view->loadFromData($data);
-                $this->editAction($view, $data);
-                break;
-
+        switch ($action) {
             case 'insert':
-                $this->insertAction($view, $data);
+                $this->insertAction($view);
                 break;
 
             case 'export':
@@ -138,37 +182,12 @@ abstract class PanelController extends Base\Controller
     }
 
     /**
-     * Devuelve el valor para un campo del modelo de datos de la vista
-     * 
-     * @param EditView $view
-     * @param string $field
-     * @return mixed
-     */
-    public function getFieldValue($view, $field)
-    {
-        return $view->getFieldValue($field);
-    }
-
-    /**
-     * Devuelve la url para el tipo indicado
-     * 
-     * @param string $type
-     * @return string
-     */
-    public function getURL($type)
-    {
-        $view = $this->views[$this->active];
-        return $view->getURL($type);
-    }
-        
-    /**
      * Ejecuta la modificación de los datos
      *
      * @param EditView $view
-     * @param array $data
      * @return boolean
      */
-    protected function editAction($view, $data)
+    protected function editAction($view)
     {
         if ($view->save()) {
             $this->miniLog->notice($this->i18n->trans('Record updated correctly!'));
@@ -181,13 +200,27 @@ abstract class PanelController extends Base\Controller
      * Prepara la inserción de un nuevo registro
      *
      * @param EditView $view
-     * @param array $data
      */
-    protected function insertAction($view, $data)
+    protected function insertAction($view)
     {
         $view->setNewCode();
     }
 
+    /**
+     * Acción de borrado de datos
+     *
+     * @param  BaseView $view
+     * @return boolean
+     */
+    protected function deleteAction($view)
+    {
+        if ($view->delete($this->request->get('primarykey'))) {
+            $this->miniLog->notice($this->i18n->trans('Record deleted correctly!'));
+            return TRUE;
+        }
+        return FALSE;
+    }
+    
     /**
      * Añade una vista al controlador y carga sus datos.
      *
@@ -198,11 +231,24 @@ abstract class PanelController extends Base\Controller
     {
         $this->views[$keyView] = $view;
         $this->icons[$keyView] = $icon;
-        $this->loadData($keyView, $view);
 
         if (empty($this->active)) {
             $this->active = $keyView;
         }
+    }
+
+    /**
+     * Añade una vista tipo EditList al controlador.
+     *
+     * @param string $modelName
+     * @param string $viewName
+     * @param string $viewTitle
+     * @param string $viewIcon
+     */
+    protected function addEditListView($modelName, $viewName, $viewTitle, $viewIcon = 'fa-bars')
+    {
+        $view = new EditListView($viewTitle, $modelName, $viewName, $this->user->nick);
+        $this->addView($viewName, $view, $viewIcon);
     }
 
     /**

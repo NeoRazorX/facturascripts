@@ -28,10 +28,10 @@ use FacturaScripts\Core\Base;
  */
 class EditController extends Base\Controller
 {
-    
+
     /**
      *
-     * @var Base\ExportManager 
+     * @var Base\ExportManager
      */
     public $exportManager;
 
@@ -44,11 +44,11 @@ class EditController extends Base\Controller
 
     /**
      * Nombre del modelo de datos
-     * 
+     *
      * @var string
      */
     protected $modelName;
-    
+
     /**
      * Inicia todos los objetos y propiedades.
      *
@@ -56,12 +56,12 @@ class EditController extends Base\Controller
      * @param Translator $i18n
      * @param MiniLog    $miniLog
      * @param string     $className
-     */    
+     */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->setTemplate('Master/EditController');        
+        $this->setTemplate('Master/EditController');
         $this->exportManager = new Base\ExportManager();
     }
 
@@ -74,69 +74,80 @@ class EditController extends Base\Controller
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-       
+
         // Creamos la vista a visualizar
         $viewName = $this->getClassName();
         $title = $this->getPageData()['title'];
         $this->view = new EditView($title, $this->modelName, $viewName, $user->nick);
 
+        // Guardamos si hay operaciones por realizar
+        $action = $this->request->get('action', '');
+
+        // Operaciones sobre los datos antes de leerlos
+        $this->execPreviousAction($action);
+
         // Cargamos datos del modelo
         $value = $this->request->get('code');
         $this->view->loadData($value);
 
-        // Comprobamos si hay operaciones por realizar
-        if ($this->request->get('action', false)) {
-            $this->setActionForm();
+        // Operaciones generales con los datos cargados
+        $this->execAfterAction($action);
+    }
+
+    /**
+     * Ejecuta las acciones que alteran los datos antes de leerlos
+     *
+     * @param string $action
+     */
+    private function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'save':
+                $data = $this->request->request->all();
+                $this->view->loadFromData($data);
+                $this->editAction();
+                break;
         }
     }
 
     /**
-     * Aplica la acción solicitada por el usuario
+     * Ejecuta las acciones del controlador
+     *
+     * @param string $action
      */
-    private function setActionForm()
+    private function execAfterAction($action)
     {
-        switch ($this->request->get('action')) {
-            case 'save':
-                $data = $this->request->request->all();
-                $this->view->loadFromData($data);
-                $this->editAction($data);
+        switch ($action) {
+            case 'insert':
+                $this->insertAction();
                 break;
 
-            case 'insert':
-                $data = $this->request->request->all();
-                $this->insertAction($data);
-                break;
-            
             case 'export':
                 $this->setTemplate(false);
-                $document = $this->view->export($this->exportManager, $this->request->get('option'));
+                $document = $this->view->export($this->exportManager, $this->response, $this->request->get('option'));
                 $this->response->setContent($document);
-                break;
-            
-            default:
                 break;
         }
     }
 
     /**
      * Devuelve el valor de un campo para el modelo de datos cargado
-     * 
-     * @param EditView $view
+     *
+     * @param mixed $model
      * @param string $field
      * @return mixed
      */
-    public function getFieldValue($view, $field)
+    public function getFieldValue($model, $field)
     {
-        return $view->getFieldValue($field);
+        return $model->{$field};
     }
-    
+
     /**
      * Ejecuta la modificación de los datos
      *
-     * @param array $data
      * @return boolean
      */
-    protected function editAction($data)
+    protected function editAction()
     {
         if ($this->view->save()) {
             $this->miniLog->notice($this->i18n->trans('Record updated correctly!'));
@@ -147,10 +158,8 @@ class EditController extends Base\Controller
 
     /**
      * Prepara la inserción de un nuevo registro
-     *
-     * @param array $data
      */
-    protected function insertAction($data)
+    protected function insertAction()
     {
         $this->view->setNewCode();
     }
@@ -174,14 +183,25 @@ class EditController extends Base\Controller
     {
         return $this->i18n->trans($this->view->getPanelFooter());
     }
-    
+
     /**
      * Puntero al modelo de datos
-     * 
+     *
      * @return mixed
      */
     public function getModel()
     {
         return $this->view->getModel();
+    }
+
+    /**
+     * Devuelve la url para el tipo indicado
+     *
+     * @param string $type
+     * @return string
+     */
+    public function getURL($type)
+    {
+        return $this->view->getURL($type);
     }
 }
