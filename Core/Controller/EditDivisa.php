@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
@@ -19,38 +18,29 @@
  */
 
 namespace FacturaScripts\Core\Controller;
+
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
+
 /**
- * Description of EditAgente
+ * Controlador para la edición de un registro del modelo de Divisa
  *
- * @author Raul
- * Clase edit Agente basada en la funcionalidad de Editcliente
+ * @author Raúl Jiménez <comercial@nazcanetworks.com>
+ * 
  */
-class EditAgente extends ExtendedController\EditController
+class EditDivisa extends ExtendedController\EditController
 {
-      public function __construct(&$cache, &$i18n, &$miniLog, $className)
-    
+    public function __construct(&$cache,&$i18n,&$miniLog,&$className)
     {
-    
         parent::__construct($cache,$i18n,$miniLog,$className);
-        $this->modelName='FacturaScripts\Core\Model\Agente';
-    }
-    public function getPanelFooter()
-    {
-        $model = $this->getModel();
-       
-        return $this->i18n->trans('Fecha de alta: '). $model->f_alta;
-                
+        $this->modelName = 'FacturaScripts\Core\Model\Familia';
     }
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'agent';
-        $pagedata['icon'] = 'fa-id-badge';
-        $pagedata['showonmenu'] = FALSE;
+        $pagedata['title'] = ' Divisas';
+        $pagedata['icon'] = 'fa-object-group';
+        $pagedata['showmenu'] = FALSE;
         
         return $pagedata;
     }
-    
 }
