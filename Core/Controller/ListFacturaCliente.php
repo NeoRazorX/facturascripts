@@ -47,5 +47,6 @@ class ListFacturaCliente extends ExtendedController\ListController
 
         $this->addOrderBy($className, 'codigo', 'code');
         $this->addOrderBy($className, 'fecha', 'date');
+        $this->addOrderBy($className, 'total', 'amount');
     }
 }

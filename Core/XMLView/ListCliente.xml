@@ -54,10 +54,10 @@
         <column name="blocked" display="none" order="190">
             <widget type="checkbox" fieldname="debaja" />
         </column>
-        <column name="create date" display="none" order="200">
+        <column name="create-date" display="none" order="200">
             <widget type="text" fieldname="fechaalta" />
         </column>
-        <column name="block date" display="none" order="210">
+        <column name="block-date" display="none" order="210">
             <widget type="text" fieldname="fechabaja" />
         </column>
     </columns>

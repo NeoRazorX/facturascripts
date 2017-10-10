@@ -30,22 +30,18 @@
         <column name="description" order="110">
             <widget type="text" fieldname="descripcion" />
         </column>
-        <column name="iso" order="120"
-                titleurl="https://es.wikipedia.org/wiki/ISO_4217" 
-                description="El estándar internacional ISO 4217 fue creado por la ISO con el objetivo de definir códigos de tres letras para todas las divisas del mundo.">
+        <column name="iso" order="120" titleurl="https://es.wikipedia.org/wiki/ISO_4217">
             <widget type="text" fieldname="codiso" />
         </column>
         <column name="date" order="130">
             <widget type="text" fieldname="fecha" />
         </column>
-        <column name="sales rate" display="right" order="140"
-                description="Cambio que se aplica en las VENTAS respecto a la moneda de la empresa">
+        <column name="sales-rate" display="right" order="140">
             <widget type="number" decimal="4" fieldname="tasaconv">
                 <option color="red">&lt;1</option>
             </widget>
         </column>
-        <column name="purchase rate" display="right" order="150"
-                description="Cambio que se aplica en las COMPRAS respecto a la moneda de la empresa">
+        <column name="purchase-rate" display="right" order="150">
             <widget type="number" decimal="4" fieldname="tasaconvcompra">
                 <option color="red">&gt;1</option>
             </widget>

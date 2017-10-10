@@ -30,10 +30,10 @@
         <column name="description" order="110">
             <widget type="text" fieldname="descripcion" />
         </column>
-        <column name="vat" title="% VAT" display="right" order="120">
+        <column name="vat" title="%-vat" display="right" order="120">
             <widget type="number" decimal="2" fieldname="iva" />
         </column>
-        <column name="surcharge" title="% Surcharge" display="right" order="130">
+        <column name="surcharge" title="%-surcharge" display="right" order="130">
             <widget type="number" decimal="2" fieldname="recargo" />
         </column>
     </columns>
