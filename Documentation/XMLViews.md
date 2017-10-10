@@ -229,8 +229,8 @@ Ejemplo:
 ```XML
     <rows>
         <row type="header">
-            <option icon="fa-camera-retro" label="Fra. Pdtes:" calculateby="nombre_function" onclick="#url"></option>
-            <option icon="fa-camera" label="Pdte Cobro:" calculateby="nombre_function" onclick="#url"></option>
+            <option icon="fa-files-o" label="Alb. Pdtes:" calculateby="nombre_function" onclick="#url"></option>
+            <option icon="fa-files-o" label="Pdte Cobro:" calculateby="nombre_function" onclick="#url"></option>
         </row>        
     </rows>
 ```

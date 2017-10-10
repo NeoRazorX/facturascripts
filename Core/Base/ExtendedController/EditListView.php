@@ -24,9 +24,34 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class EditView extends BaseView
+class EditListView extends BaseView
 {
-    
+
+    /**
+     * Cursor con los datos del modelo a mostrar
+     *
+     * @var array
+     */
+    private $cursor;
+
+    /**
+     * Almacena el offset para el cursor
+     * @var integer 
+     */
+    private $offset;
+
+    /**
+     * Almacena el order para el cursor
+     * @var string 
+     */
+    private $order;
+
+    /**
+     * Almacena los parámetros del where del cursor
+     * @var array 
+     */
+    private $where;
+
     /**
      * Constructor e inicializador de la clase
      *
@@ -38,42 +63,28 @@ class EditView extends BaseView
     public function __construct($title, $modelName, $viewName, $userNick)
     {
         parent::__construct($title, $modelName);
-        
+
+        $this->order = [$this->model->primaryColumn() => 'ASC'];
+        $this->offset = 0;
+        $this->where = [];
+
         // Carga configuración de la vista para el usuario
-        $this->pageOption->getForUser($viewName, $userNick);        
+        $this->pageOption->getForUser($viewName, $userNick);
     }
 
     /**
-     * Calcula y establece un nuevo código para la PK del modelo
+     * Devuelve la lista de datos leidos en formato Model
+     *
+     * @return array
      */
-    public function setNewCode()
+    public function getCursor()
     {
-        $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
+        return $this->cursor;
     }
     
     /**
-     * Devuelve el texto para la cabecera del panel de datos
-     *
-     * @return string
-     */
-    public function getPanelHeader()
-    {
-        return $this->title;
-    }
-
-    /**
-     * Devuelve el texto para el pie del panel de datos
-     *
-     * @return string
-     */
-    public function getPanelFooter()
-    {
-        return '';
-    }
-
-    /**
-     * Devuelve la configuración de columnas
-     *
+     * Lista de columnas y su configuración
+     * (Array of ColumnItem)
      * @return array
      */
     public function getColumns()
@@ -81,27 +92,21 @@ class EditView extends BaseView
         return $this->pageOption->columns;
     }
 
-    /**
-     * Establece y carga los datos del modelo en base a su PK
-     *
-     * @param string $code
-     */
-    public function loadData($code)
+    public function loadData($where, $offset = 0, $limit = 0)
     {
-        $this->model->loadFromCode($code);
-
-        $fieldName = $this->model->primaryColumn();
-        $this->count = empty($this->model->{$fieldName}) ? 0 : 1;
-
-        // Bloqueamos el campo Primary Key si no es una alta
-        $column = $this->pageOption->columnForField($fieldName);
-        if (!empty($column)) {
-            $column->widget->readOnly = (!empty($this->model->{$fieldName}));
+        $this->count = $this->model->count($where);
+        if ($this->count > 0) {
+            $this->cursor = $this->model->all($where, $this->order, $offset, $limit);
         }
+
+        /// nos guardamos los valores where y offset para la exportación
+        $this->offset = $offset;
+        $this->where = $where;
     }
         
     public function export(&$exportManager, &$response, $action)
     {
-        return $exportManager->generateDoc($response, $action, $this->model);
+        return $exportManager->generateList(
+                $response, $action, $this->model, $this->where, $this->order, $this->offset, $this->getColumns());
     }
 }

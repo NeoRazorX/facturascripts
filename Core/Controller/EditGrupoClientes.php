@@ -22,26 +22,26 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controlador para la edición de un registro del modelo Familia
+ * Controlador para la edición de un registro del modelo Grupo Clientes
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class EditFamilia extends ExtendedController\EditController
+class EditGrupoClientes extends ExtendedController\EditController
 {
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         // Establecemos el modelo de datos
-        $this->modelName = 'FacturaScripts\Core\Model\Familia';
+        $this->modelName = 'FacturaScripts\Core\Model\GrupoClientes';
     }
 
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'families';
-        $pagedata['icon'] = 'fa-object-group';
+        $pagedata['title'] = 'customer-group';
+        $pagedata['icon'] = 'fa-folder-open';
         $pagedata['showonmenu'] = FALSE;
 
         return $pagedata;

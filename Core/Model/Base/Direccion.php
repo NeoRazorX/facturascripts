@@ -85,5 +85,6 @@ trait Direccion
         $this->descripcion = self::noHtml($this->descripcion);
         $this->direccion = self::noHtml($this->direccion);
         $this->provincia = self::noHtml($this->provincia);
+        return true;
     }
 }
