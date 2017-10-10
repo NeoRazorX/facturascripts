@@ -301,44 +301,28 @@ function checkRequirements(&$requirements, &$requirementsErrors)
     $array_extensions = array('SimpleXML','openSSL','Zip');
 
     foreach($array_functions as $f) {
-        list($status, $error) = verifyFunction($f);
+        list($status, $error) = verifyRequirement(function_exists($f));
         $requirementsErrors += $error;
         $requirements[$f] = $status;
     }
     
-    foreach($array_extensions as $f) {
-        list($status, $error) = verifyExtension($f);
+    foreach($array_extensions as $e) {
+        list($status, $error) = verifyRequirement(extension_loaded($e));
         $requirementsErrors += $error;
-        $requirements[$f] = $status;
+        $requirements[$e] = $status;
     }
 }
 
 /**
- * Revisa si una funcion existe en PHP
- * @param type $function
+ * Revisa si un requerimiento está presente
+ * @param type $exists
  * @return type array
  */
-function verifyFunction($function)
+function verifyRequirement($exists)
 {
     $error = 0;
     $status = 'fa-check text-success';  
-    if(!function_exists($function)){
-        $error = 1;
-        $status = 'fa-ban text-danger';
-    }
-    return array($status, $error);
-}
-
-/**
- * Revisa si una extensión esta presente en la instalación de PHP
- * @param type $extension
- * @return array
- */
-function verifyExtension($extension)
-{
-    $error = 0;
-    $status = 'fa-check text-success';  
-    if(!extension_loaded($extension)){
+    if(!$exists){
         $error = 1;
         $status = 'fa-ban text-danger';
     }
