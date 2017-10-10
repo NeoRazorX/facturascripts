@@ -117,10 +117,7 @@ class WidgetItem
      */
     
     
-    /**
-     * 05/10/2017 Raúl (nazcanetworks). 
-     * Añado propiedades para funcionalidades step,max y min
-     */
+   
     public $step;
     public $max;
     public $min;
@@ -219,9 +216,6 @@ class WidgetItem
         $this->icon = (string) $widget_atributes->icon;
         $this->onClick = (string) $widget_atributes->onclick;
         
-        /* 05/10/2017 Raúl Jiménez (Nazca Networks)
-         * Añado las propiedades para tipo number
-         */
         $this->step=(string) $widget_atributes->step;
         $this->min=(string) $widget_atributes->min;
         $this->max=(string) $widget_atributes->max;
@@ -433,9 +427,7 @@ class WidgetItem
         $specialClass = $this->specialClass();
         $fieldName = '"' . $this->fieldName . '"';
         $html = $this->getIconHTML();
-        $step=$this->step;
-        $max=$this->max;
-        $min=$this->min;
+      
         switch ($this->type) {
             case 'text':
                 $html .= $this->standardHTMLWidget($fieldName, $value, $specialClass);
@@ -502,7 +494,7 @@ class WidgetItem
      *
      * @return string
      */
-    private function numberHTMLWidget($fieldName,$value,$specialClass,$step="0.01",$max="9.99",$min="0.00")
+    private function numberHTMLWidget($fieldName,$value,$specialClass,$step,$max,$min)
     {
        
         
