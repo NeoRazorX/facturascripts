@@ -27,6 +27,7 @@ use FacturaScripts\Core\Lib\NewCodigoDoc;
  */
 trait DocumentoCompra
 {
+
     use ModelTrait {
         clear as clearTrait;
     }
@@ -227,11 +228,13 @@ trait DocumentoCompra
     {
         if ($this->observaciones == '') {
             return '-';
-        } elseif (strlen($this->observaciones) < 60) {
+        }
+
+        if (mb_strlen($this->observaciones) < 60) {
             return $this->observaciones;
         }
 
-        return substr($this->observaciones, 0, 50) . '...';
+        return mb_substr($this->observaciones, 0, 50) . '...';
     }
 
     private function newCodigo()

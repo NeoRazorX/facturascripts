@@ -73,6 +73,11 @@
             <widget type="text" fieldname="banco" />
         </column>
     </columns>
+    <rows>
+        <row type="status" fieldname="f_baja">
+            <option color="table-danger">&gt;0</option>
+        </row>
+    </rows>
     <filters>
     </filters>
 </view>

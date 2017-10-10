@@ -37,12 +37,20 @@
             <widget type="text" fieldname="observaciones" />
         </column>
         <column name="amount" order="130" display="right">
-            <widget type="money" fieldname="total" />
+            <widget type="money" fieldname="total">
+                <option color="red">&lt;0</option>
+            </widget>
         </column>
         <column name="date" order="130" display="right">
             <widget type="text" fieldname="fecha" />
         </column>
     </columns>
+    <rows>
+        <row type="status" fieldname="ptefactura">
+            <option color="table-warning">1</option>
+            <option color="table-success">0</option>
+        </row>
+    </rows>
     <filters>
     </filters>
 </view>

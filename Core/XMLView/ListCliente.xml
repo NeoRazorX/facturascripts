@@ -61,4 +61,9 @@
             <widget type="text" fieldname="fechabaja" />
         </column>
     </columns>
+    <rows>
+        <row type="status" fieldname="debaja">
+            <option color="table-danger">1</option>
+        </row>
+    </rows>
 </view>

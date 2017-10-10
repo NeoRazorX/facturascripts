@@ -104,9 +104,20 @@ class ListView extends BaseView
         $this->searchIn = [];
         $this->count = 0;
         $this->selectedOrderBy = '';
-        
+
         // Carga configuración de la vista para el usuario
-        $this->pageOption->getForUser($viewName, $userNick);        
+        $this->pageOption->getForUser($viewName, $userNick);
+    }
+
+    public function getClickEvent($data)
+    {
+        foreach ($this->getColumns() as $col) {
+            if (isset($col->widget->onClick)) {
+                return '?page=' . $col->widget->onClick . '&code=' . $data->{$col->widget->fieldName};
+            }
+        }
+
+        return '';
     }
 
     /**
