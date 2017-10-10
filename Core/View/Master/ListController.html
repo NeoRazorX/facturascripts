@@ -56,8 +56,7 @@
 
 <!-- Page Header -->
 <div class="container-fluid d-print-none">
- {{ parent() }}
-
+    {{ parent() }}
     <div class="d-none">
         <form action="#" method="post" name="insert_form">
             <input type="hidden" name="action" value="insert"/>
@@ -80,7 +79,6 @@
                 </a>
                 {% endif %}
             </div>
-
             <div class="btn-group">
                 <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord()" {{ popoverTitle(new_record_title, 'bottom') }}>
                     <i class="fa fa-plus" aria-hidden="true"></i>
@@ -90,7 +88,6 @@
                     <i class="fa fa-wrench" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;{{ options }}</span>
                 </a>
-
                 <!-- Añadimos opciones de impresión y exportación -->
                 {{ exportData(fsc, i18n) }}
             </div>
@@ -141,7 +138,6 @@
                                 </span>
                             </div>
                         </div>
-
                         <!-- Aditionals filters -->
                         {% for key1, filter in view.getFilters() %}
                         {% if filter.type == 'select' %}

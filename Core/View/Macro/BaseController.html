@@ -17,11 +17,10 @@
             {% set rowClass = 'table-light' %}
             {% set rowStatus = view.getRow('status') %}
             {% if rowStatus is not empty %}
-            {% set status = attribute(data, rowStatus.fieldName) %}
-            {% set rowClass = rowStatus.getStatus(status) %}
+            {% set rowClass = rowStatus.getStatus( attribute(model, rowStatus.fieldName) ) %}
             {% endif %}
 
-            {% set rowDataHref = view.getClickEvent(data) %}
+            {% set rowDataHref = view.getClickEvent(model) %}
             {% if rowDataHref is not empty %}
             {% set rowClass = rowClass ~ ' clickableRow' %}
             {% endif %}
