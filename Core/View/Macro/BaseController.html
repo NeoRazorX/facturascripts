@@ -10,6 +10,9 @@
                 <th class="text-{{ column.display }}">{{ column.getHeaderHTML(column.title)|raw }}</th>
                 {% endif %}
                 {% endfor %}
+                <th>
+                    <input type="checkbox" id="listDeleteCB"/>
+                </th>
             </tr>
         </thead>
         {% for model in view.getCursor() %}
@@ -26,17 +29,20 @@
             {% endif %}
 
             <tr class="{{ rowClass }}" data-href="{{ rowDataHref }}">
-            {# Print data columns for row #}
-            {% for column in view.getColumns() %}
+                {# Print data columns for row #}
+                {% for column in view.getColumns() %}
                 {% if column.display != 'none' %}
                 {% set value = attribute(model, column.widget.fieldName) %}
                 <td class="text-{{ column.display }}">{{ column.getListHTML(value)|raw }}</td>
                 {% endif %}
-            {% endfor %}
+                {% endfor %}
+                <td class="cancelClickable">
+                    <input type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}" class="listDelete"/>
+                </td>
             </tr>
             {% else %}
             <tr class="table-warning">
-                <td colspan="12"><b>{{ context.i18n.trans('no-data') }}</b></td>
+                <td colspan="20"><b>{{ context.i18n.trans('no-data') }}</b></td>
             </tr>
         {% endfor %}
     </table>
