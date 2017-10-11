@@ -185,8 +185,8 @@ abstract class ListController extends Base\Controller
         }
 
         /// borrado múltiple
+        $numDeletes = 0;
         foreach (explode(',', $code) as $cod) {
-            $numDeletes = 0;
             if ($view->delete($cod)) {
                 $numDeletes++;
             } else {
