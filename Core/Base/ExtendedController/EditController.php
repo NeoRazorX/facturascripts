@@ -150,7 +150,7 @@ class EditController extends Base\Controller
     protected function editAction()
     {
         if ($this->view->save()) {
-            $this->miniLog->notice($this->i18n->trans('Record updated correctly!'));
+            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
             return TRUE;
         }
         return FALSE;

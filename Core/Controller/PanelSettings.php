@@ -23,7 +23,7 @@ class PanelSettings extends ExtendedController\PanelController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'App Preferences';
+        $pagedata['title'] = 'app-preferences';
         $pagedata['icon'] = 'fa-cogs';
         $pagedata['menu'] = 'admin';
         $pagedata['orden'] = '999';

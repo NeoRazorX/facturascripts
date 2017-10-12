@@ -32,7 +32,7 @@ class ListPais extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Países';
+        $pagedata['title'] = 'countries';
         $pagedata['icon'] = 'fa-globe';
         $pagedata['menu'] = 'admin';
 
@@ -45,9 +45,9 @@ class ListPais extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\Pais', $className);
         $this->addSearchFields($className, ['nombre', 'codiso', 'codpais']);
 
-        $this->addFilterCheckbox($className, 'validarprov', 'validate-states');
-        $this->addOrderBy($className, 'codpais', 'code');
-        $this->addOrderBy($className, 'nombre', 'name');
-        $this->addOrderBy($className, 'codiso');
+        $this->addFilterCheckbox($className, 'validarprov', $this->i18n->trans('validate-states'));
+        $this->addOrderBy($className, 'codpais', $this->i18n->trans('code'));
+        $this->addOrderBy($className, 'nombre', $this->i18n->trans('name'));
+        $this->addOrderBy($className, 'codiso', $this->i18n->trans('codiso'));
     }
 }

@@ -32,7 +32,7 @@ class ListDivisa extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Divisas';
+        $pagedata['title'] = 'currency';
         $pagedata['icon'] = 'fa-money';
         $pagedata['menu'] = 'admin';
 
@@ -45,8 +45,8 @@ class ListDivisa extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\Divisa', $className);
         $this->addSearchFields($className, ['descripcion', 'coddivisa']);
 
-        $this->addOrderBy($className, 'coddivisa', 'code');
-        $this->addOrderBy($className, 'descripcion', 'description', 1);
-        $this->addOrderBy($className, 'codiso');
+        $this->addOrderBy($className, 'coddivisa', $this->i18n->trans('code'));
+        $this->addOrderBy($className, 'descripcion', $this->i18n->trans('description'), 1);
+        $this->addOrderBy($className, 'codiso', $this->i18n->trans('codiso'));
     }
 }

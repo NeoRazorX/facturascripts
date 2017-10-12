@@ -79,8 +79,10 @@ class MenuItem
      */
     public function __construct($name, $title, $url, $icon = null)
     {
-        $this->name = $name;
-        $this->title = $title;
+        $this->i18n = new Translator();
+
+        $this->name = $this->i18n->trans($name);
+        $this->title = $this->i18n->trans($title);
         $this->url = $url;
         $this->icon = $icon;
         $this->menu = [];

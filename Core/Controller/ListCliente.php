@@ -34,7 +34,7 @@ class ListCliente extends ExtendedController\ListController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'customers';
         $pagedata['icon'] = 'fa-users';
-        $pagedata['menu'] = 'ventas';
+        $pagedata['menu'] = 'sales';
 
         return $pagedata;
     }
@@ -42,21 +42,21 @@ class ListCliente extends ExtendedController\ListController
     protected function createViews()
     {
         /* Clientes */
-        $this->addView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'Clientes');
+        $this->addView('FacturaScripts\Core\Model\Cliente', 'ListCliente', $this->i18n->trans('customers'));
         $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente', 'email']);
 
-        $this->addOrderBy('ListCliente', 'codcliente', 'code');
-        $this->addOrderBy('ListCliente', 'nombre', 'name', 1);
-        $this->addOrderBy('ListCliente', 'fecha', 'date');
+        $this->addOrderBy('ListCliente', 'codcliente', $this->i18n->trans('code'));
+        $this->addOrderBy('ListCliente', 'nombre', $this->i18n->trans('name'), 1);
+        $this->addOrderBy('ListCliente', 'fecha', $this->i18n->trans('date'));
 
-        $this->addFilterSelect('ListCliente', 'codgrupo', 'gruposclientes', '', 'nombre');
-        $this->addFilterCheckbox('ListCliente', 'debaja', 'De baja');
+        $this->addFilterSelect('ListCliente', 'codgrupo', 'gruposclientes', '', $this->i18n->trans('nombre'));
+        $this->addFilterCheckbox('ListCliente', 'debaja', $this->i18n->trans('suspended'));
         
         /* Grupos */
-        $this->addView('FacturaScripts\Core\Model\GrupoClientes', 'ListGrupoClientes', 'Grupos');
+        $this->addView('FacturaScripts\Core\Model\GrupoClientes', 'ListGrupoClientes', $this->i18n->trans('groups'));
         $this->addSearchFields('ListGrupoClientes', ['nombre', 'codgrupo']);
         
-        $this->addOrderBy('ListGrupoClientes', 'codgrupo', 'code');
-        $this->addOrderBy('ListGrupoClientes', 'nombre', 'name', 1);
+        $this->addOrderBy('ListGrupoClientes', 'codgrupo', $this->i18n->trans('code'));
+        $this->addOrderBy('ListGrupoClientes', 'nombre', $this->i18n->trans('name'), 1);
     }
 }

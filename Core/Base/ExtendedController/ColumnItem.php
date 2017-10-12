@@ -273,7 +273,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
 
     private function getColumnRequired()
     {
-        return $this->widget->required ? '<div class="invalid-feedback">' . $this->i18n->trans('Por favor, introduzca un valor para el campo') . '</div>' : '';
+        return $this->widget->required ? '<div class="invalid-feedback">' . $this->i18n->trans('please-enter-value') . '</div>' : '';
     }
 
     private function getColumnDescription()

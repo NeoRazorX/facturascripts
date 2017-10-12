@@ -39,7 +39,7 @@ class EditAgente extends ExtendedController\EditController
     public function getPanelFooter()
     {
         $model = $this->getModel();
-        return $this->i18n->trans('Fecha de alta: ') . $model->f_alta;
+        return $this->i18n->trans('discharge-date') . ': ' . $model->f_alta;
     }
 
     public function getPageData()

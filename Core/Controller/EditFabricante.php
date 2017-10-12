@@ -40,7 +40,7 @@ class EditFabricante extends ExtendedController\EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Fabricantes';
+        $pagedata['title'] = 'manufacturers';
         $pagedata['icon'] = 'fa-folder-open';
         $pagedata['showonmenu'] = FALSE;
 

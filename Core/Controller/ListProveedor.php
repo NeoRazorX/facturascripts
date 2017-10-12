@@ -33,7 +33,7 @@ class ListProveedor extends ExtendedController\ListController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'suppliers';
         $pagedata['icon'] = 'fa-users';
-        $pagedata['menu'] = 'compras';
+        $pagedata['menu'] = 'purchases';
 
         return $pagedata;
     }
@@ -44,10 +44,10 @@ class ListProveedor extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\Proveedor', $className);
         $this->addSearchFields($className, ['nombre', 'razonsocial', 'codproveedor', 'email']);
 
-        $this->addOrderBy($className, 'codproveedor', 'code');
-        $this->addOrderBy($className, 'nombre', 'name', 1);
-        $this->addOrderBy($className, 'fecha', 'date');
+        $this->addOrderBy($className, 'codproveedor', $this->i18n->trans('code'));
+        $this->addOrderBy($className, 'nombre', $this->i18n->trans('name'), 1);
+        $this->addOrderBy($className, 'fecha', $this->i18n->trans('date'));
 
-        $this->addFilterCheckbox($className, 'debaja', 'De baja');
+        $this->addFilterCheckbox($className, 'debaja', $this->i18n->trans('suspended'));
     }
 }

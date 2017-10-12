@@ -32,9 +32,9 @@ class ListEjercicio extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Ejercicios';
+        $pagedata['title'] = 'exercises';
         $pagedata['icon'] = 'fa-calendar';
-        $pagedata['menu'] = 'contabilidad';
+        $pagedata['menu'] = 'accounting';
 
         return $pagedata;
     }
@@ -45,9 +45,9 @@ class ListEjercicio extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\Ejercicio', $className);
         $this->addSearchFields($className, ['nombre', 'codejercicio']);
 
-        $this->addOrderBy($className, 'fechainicio', 'start-date', 2);
-        $this->addOrderBy($className, 'codejercicio', 'code');
-        $this->addOrderBy($className, 'nombre', 'name');
+        $this->addOrderBy($className, 'fechainicio', $this->i18n->trans('start-date'), 2);
+        $this->addOrderBy($className, 'codejercicio', $this->i18n->trans('code'));
+        $this->addOrderBy($className, 'nombre', $this->i18n->trans('name'));
 
         $this->addFilterSelect($className, 'estado', 'ejercicios');
     }

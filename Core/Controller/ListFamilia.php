@@ -33,9 +33,9 @@ class ListFamilia extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Familias';
+        $pagedata['title'] = 'families';
         $pagedata['icon'] = 'fa-object-group';
-        $pagedata['menu'] = 'almacen';
+        $pagedata['menu'] = 'warehouse';
 
         return $pagedata;
     }
@@ -46,9 +46,9 @@ class ListFamilia extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\Familia', $className);
         $this->addSearchFields($className, ['descripcion', 'codfamilia', 'madre']);
 
-        $this->addOrderBy($className, 'codfamilia', 'Code');
-        $this->addOrderBy($className, 'descripcion', 'description');
-        $this->addOrderBy($className, 'madre', 'parent');
+        $this->addOrderBy($className, 'codfamilia', $this->i18n->trans('code'));
+        $this->addOrderBy($className, 'descripcion', $this->i18n->trans('description'));
+        $this->addOrderBy($className, 'madre', $this->i18n->trans('parent'));
 
         $this->addFilterSelect($className, 'madre', 'familias');
     }

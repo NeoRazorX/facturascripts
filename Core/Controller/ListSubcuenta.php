@@ -32,9 +32,9 @@ class ListSubcuenta extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Subcuentas';
+        $pagedata['title'] = 'subaccounts';
         $pagedata['icon'] = 'fa-th-list';
-        $pagedata['menu'] = 'contabilidad';
+        $pagedata['menu'] = 'accounting';
 
         return $pagedata;
     }
@@ -45,7 +45,7 @@ class ListSubcuenta extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\Subcuenta', $className);
         $this->addSearchFields($className, ['codsubcuenta', 'descripcion']);
 
-        $this->addOrderBy($className, 'codsubcuenta', 'code');
-        $this->addOrderBy($className, 'descripcion', 'description');
+        $this->addOrderBy($className, 'codsubcuenta', $this->i18n->trans('code'));
+        $this->addOrderBy($className, 'descripcion', $this->i18n->trans('description'));
     }
 }

@@ -32,9 +32,9 @@ class ListPresupuestoCliente extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'presupuestos';
+        $pagedata['title'] = 'estimations';
         $pagedata['icon'] = 'fa-files-o';
-        $pagedata['menu'] = 'ventas';
+        $pagedata['menu'] = 'sales';
 
         return $pagedata;
     }
@@ -45,8 +45,8 @@ class ListPresupuestoCliente extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\PresupuestoCliente', $className);
         $this->addSearchFields($className, ['codigo', 'numero2', 'observaciones']);
 
-        $this->addOrderBy($className, 'codigo', 'code');
-        $this->addOrderBy($className, 'fecha', 'date');
-        $this->addOrderBy($className, 'total', 'amount');
+        $this->addOrderBy($className, 'codigo', $this->i18n->trans('code'));
+        $this->addOrderBy($className, 'fecha', $this->i18n->trans('date'));
+        $this->addOrderBy($className, 'total', $this->i18n->trans('amount'));
     }
 }

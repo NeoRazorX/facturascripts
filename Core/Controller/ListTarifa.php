@@ -32,9 +32,9 @@ class ListTarifa extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Tarifas';
+        $pagedata['title'] = 'rates';
         $pagedata['icon'] = 'fa-money';
-        $pagedata['menu'] = 'ventas';
+        $pagedata['menu'] = 'sales';
 
         return $pagedata;
     }
@@ -45,7 +45,7 @@ class ListTarifa extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\Tarifa', $className);
         $this->addSearchFields($className, ['nombre', 'codtarfa']);
 
-        $this->addOrderBy($className, 'codtarifa', 'code');
-        $this->addOrderBy($className, 'nombre', 'name', 1);
+        $this->addOrderBy($className, 'codtarifa', $this->i18n->trans('code'));
+        $this->addOrderBy($className, 'nombre', $this->i18n->trans('name'), 1);
     }
 }

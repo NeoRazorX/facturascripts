@@ -31,9 +31,9 @@ class PanelCliente extends ExtendedController\PanelController
 
     protected function createViews()
     {
-        $this->addEditView('FacturaScripts\Core\Model\Cliente', 'EditCliente', 'Cliente');
-        $this->addEditListView('FacturaScripts\Core\Model\DireccionCliente', 'EditDireccionCliente', 'Direcciones', 'fa-road');
-        $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'Mismo Grupo');
+        $this->addEditView('FacturaScripts\Core\Model\Cliente', 'EditCliente', $this->i18n->trans('customer'));
+        $this->addEditListView('FacturaScripts\Core\Model\DireccionCliente', 'EditDireccionCliente', $this->i18n->trans('addresses'), 'fa-road');
+        $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', $this->i18n->trans('same-group'));
     }
 
     private function getClientFieldValue($fieldName)

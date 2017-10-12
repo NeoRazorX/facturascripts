@@ -32,9 +32,9 @@ class ListSerie extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Series';
+        $pagedata['title'] = 'series';
         $pagedata['icon'] = 'fa-file-text';
-        $pagedata['menu'] = 'contabilidad';
+        $pagedata['menu'] = 'accounting';
 
         return $pagedata;
     }
@@ -45,11 +45,11 @@ class ListSerie extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\Serie', $className);
         $this->addSearchFields($className, ['descripcion', 'codserie', 'codcuenta']);
 
-        $this->addOrderBy($className, 'codserie', 'code');
-        $this->addOrderBy($className, 'descripcion', 'description');
-        $this->addOrderBy($className, 'codejercicio', 'Ejercicio');
+        $this->addOrderBy($className, 'codserie', $this->i18n->trans('code'));
+        $this->addOrderBy($className, 'descripcion', $this->i18n->trans('description'));
+        $this->addOrderBy($className, 'codejercicio', $this->i18n->trans('exercise'));
 
         $this->addFilterSelect($className, 'ejercicio', 'series', '', 'codejercicio');
-        $this->addFilterCheckbox($className, 'siniva', 'Sin Impuesto', 'siniva');
+        $this->addFilterCheckbox($className, 'siniva', $this->i18n->trans('without-tax'), 'siniva');
     }
 }

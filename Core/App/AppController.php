@@ -259,12 +259,12 @@ class AppController extends App
                     return $cookieUser;
                 }
 
-                $this->miniLog->alert('login-cookie-fail');
+                $this->miniLog->alert($this->i18n->trans('login-cookie-fail'));
 
                 return false;
             }
 
-            $this->miniLog->alert('login-user-not-found');
+            $this->miniLog->alert($this->i18n->trans('login-user-not-found'));
 
             return false;
         }

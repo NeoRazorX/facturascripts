@@ -34,7 +34,7 @@ class ListAgenciaTransporte extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Transportistas';
+        $pagedata['title'] = 'carriers';
         $pagedata['icon'] = 'fa-truck';
         $pagedata['menu'] = 'admin';
 
@@ -47,9 +47,9 @@ class ListAgenciaTransporte extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\AgenciaTransporte', $className);
         $this->addSearchFields($className, ['nombre', 'codtrans']);
 
-        $this->addOrderBy($className, 'codtrans', 'Código');
+        $this->addOrderBy($className, 'codtrans', $this->i18n->trans('code'));
         $this->addOrderBy($className, 'nombre');
 
-        $this->addFilterCheckbox($className, 'activo', 'Activo', '', TRUE);
+        $this->addFilterCheckbox($className, 'activo', $this->i18n->trans('active'), '', TRUE);
     }
 }

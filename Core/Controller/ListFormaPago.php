@@ -32,9 +32,9 @@ class ListFormaPago extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Formas de Pago';
+        $pagedata['title'] = 'payment-methods';
         $pagedata['icon'] = 'fa-credit-card';
-        $pagedata['menu'] = 'contabilidad';
+        $pagedata['menu'] = 'accounting';
 
         return $pagedata;
     }
@@ -45,12 +45,12 @@ class ListFormaPago extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\FormaPago', $className);
         $this->addSearchFields($className, ['descripcion', 'codpago', 'codcuenta']);
 
-        $this->addOrderBy($className, 'codpago', 'code');
-        $this->addOrderBy($className, 'descripcion', 'description');
+        $this->addOrderBy($className, 'codpago', $this->i18n->trans('code'));
+        $this->addOrderBy($className, 'descripcion', $this->i18n->trans('description'));
 
         $this->addFilterSelect($className, 'generación', 'formaspago', '', 'genrecibos');
         $this->addFilterSelect($className, 'vencimiento', 'formaspago');
-        $this->addFilterCheckbox($className, 'domiciliado', 'Domiciliado');
-        $this->addFilterCheckbox($className, 'imprimir', 'Imprimir');
+        $this->addFilterCheckbox($className, 'domiciliado', $this->i18n->trans('Domicilied'));
+        $this->addFilterCheckbox($className, 'imprimir', $this->i18n->trans('print'));
     }
 }

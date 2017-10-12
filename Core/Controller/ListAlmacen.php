@@ -32,9 +32,9 @@ class ListAlmacen extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Almacenes';
+        $pagedata['title'] = 'warehouses';
         $pagedata['icon'] = 'fa-building';
-        $pagedata['menu'] = 'almacen';
+        $pagedata['menu'] = 'warehouse';
 
         return $pagedata;
     }
@@ -45,7 +45,7 @@ class ListAlmacen extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\Almacen', $className);
         $this->addSearchFields($className, ['nombre', 'codalmacen', 'contacto']);
 
-        $this->addOrderBy($className, 'codalmacen', 'Código');
-        $this->addOrderBy($className, 'nombre');
+        $this->addOrderBy($className, 'codalmacen', $this->i18n->trans('code'));
+        $this->addOrderBy($className, 'nombre', $this->i18n->trans('name'));
     }
 }

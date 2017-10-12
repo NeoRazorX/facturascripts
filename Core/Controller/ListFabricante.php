@@ -33,9 +33,9 @@ class ListFabricante extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Fabricantes';
+        $pagedata['title'] = 'manufacturers';
         $pagedata['icon'] = 'fa-columns';
-        $pagedata['menu'] = 'almacen';
+        $pagedata['menu'] = 'warehouse';
 
         return $pagedata;
     }
@@ -46,7 +46,7 @@ class ListFabricante extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\Fabricante', $className);
         $this->addSearchFields($className, ['nombre', 'codfabricante']);
 
-        $this->addOrderBy($className, 'codfabricante', 'code');
-        $this->addOrderBy($className, 'nombre', 'name');
+        $this->addOrderBy($className, 'codfabricante', $this->i18n->trans('code'));
+        $this->addOrderBy($className, 'nombre', $this->i18n->trans('name'));
     }
 }

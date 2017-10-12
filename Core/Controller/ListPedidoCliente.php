@@ -34,7 +34,7 @@ class ListPedidoCliente extends ExtendedController\ListController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'orders';
         $pagedata['icon'] = 'fa-files-o';
-        $pagedata['menu'] = 'ventas';
+        $pagedata['menu'] = 'sales';
 
         return $pagedata;
     }
@@ -45,8 +45,8 @@ class ListPedidoCliente extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\PedidoCliente', $className);
         $this->addSearchFields($className, ['codigo', 'numero2', 'observaciones']);
 
-        $this->addOrderBy($className, 'codigo', 'code');
-        $this->addOrderBy($className, 'fecha', 'date');
-        $this->addOrderBy($className, 'total', 'amount');
+        $this->addOrderBy($className, 'codigo', $this->i18n->trans('code'));
+        $this->addOrderBy($className, 'fecha', $this->i18n->trans('date'));
+        $this->addOrderBy($className, 'total', $this->i18n->trans('amount'));
     }
 }

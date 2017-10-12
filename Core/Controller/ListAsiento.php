@@ -31,9 +31,9 @@ class ListAsiento extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Asientos';
+        $pagedata['title'] = 'accounting-entries';
         $pagedata['icon'] = 'fa-balance-scale';
-        $pagedata['menu'] = 'contabilidad';
+        $pagedata['menu'] = 'accounting';
 
         return $pagedata;
     }
@@ -44,7 +44,7 @@ class ListAsiento extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\Asiento', $className);
         $this->addSearchFields($className, ['numero', 'concepto']);
 
-        $this->addOrderBy($className, 'numero', 'number');
-        $this->addOrderBy($className, 'fecha', 'date', 2); /// forzamos el orden por defecto fecha desc
+        $this->addOrderBy($className, 'numero', $this->i18n->trans('number'));
+        $this->addOrderBy($className, 'fecha', $this->i18n->trans('date'), 2); /// forzamos el orden por defecto fecha desc
     }
 }

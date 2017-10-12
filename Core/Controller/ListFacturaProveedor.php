@@ -34,7 +34,7 @@ class ListFacturaProveedor extends ExtendedController\ListController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'invoices';
         $pagedata['icon'] = 'fa-files-o';
-        $pagedata['menu'] = 'compras';
+        $pagedata['menu'] = 'purchases';
 
         return $pagedata;
     }
@@ -45,8 +45,8 @@ class ListFacturaProveedor extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\FacturaProveedor', $className);
         $this->addSearchFields($className, ['codigo', 'numproveedor', 'observaciones']);
 
-        $this->addOrderBy($className, 'codigo', 'code');
-        $this->addOrderBy($className, 'fecha', 'date');
-        $this->addOrderBy($className, 'total', 'amount');
+        $this->addOrderBy($className, 'codigo', $this->i18n->trans('code'));
+        $this->addOrderBy($className, 'fecha', $this->i18n->trans('date'));
+        $this->addOrderBy($className, 'total', $this->i18n->trans('amount'));
     }
 }

@@ -55,7 +55,7 @@
                 <widget type="text" fieldname="direccion" />
             </column>
 
-            <column name="postal-mail" numcolumns="2" display="left" order="160">
+            <column name="postalmail" numcolumns="2" display="left" order="160">
                 <widget type="text" fieldname="apartado" />
             </column>
 

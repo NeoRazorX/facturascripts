@@ -32,7 +32,7 @@ class ListAgente extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Agentes';
+        $pagedata['title'] = 'agents';
         $pagedata['icon'] = 'fa-id-badge';
         $pagedata['menu'] = 'admin';
 
@@ -45,8 +45,8 @@ class ListAgente extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\Agente', $className);
         $this->addSearchFields($className, ['nombre', 'apellidos', 'codagente', 'email']);
 
-        $this->addOrderBy($className, 'codagente', 'code');
-        $this->addOrderBy($className, 'nombre||apellidos', 'name');
-        $this->addOrderBy($className, 'provincia');
+        $this->addOrderBy($className, 'codagente', $this->i18n->trans('code'));
+        $this->addOrderBy($className, 'nombre||apellidos', $this->i18n->trans('name'));
+        $this->addOrderBy($className, 'provincia', $this->i18n->trans('province'));
     }
 }

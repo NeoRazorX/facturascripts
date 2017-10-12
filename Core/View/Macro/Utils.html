@@ -40,7 +40,7 @@
             <span class="hidden-xs">&nbsp;{{ print }}</span>
         </a>
         <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="sr-only">Print and Export Options</span>
+            <span class="sr-only">{{ i18n.trans('print-export-options') }}</span>
         </button>    
         <div class="dropdown-menu">
             {% for key, option in fsc.exportManager.options() %}

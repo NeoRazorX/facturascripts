@@ -37,7 +37,7 @@
                 <widget type="text" fieldname="descripcion" required="true" />
             </column>
             
-            <column name="fiscal exercise" numcolumns="4" order="120">
+            <column name="fiscal-exercise" numcolumns="4" order="120">
                 <widget type="select" fieldname="codejercicio">
                     <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
                 </widget>

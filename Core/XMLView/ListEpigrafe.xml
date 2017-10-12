@@ -30,7 +30,7 @@
         <column name="epigraph" order="110">
             <widget type="text" fieldname="codepigrafe" />
         </column>
-        <column name="fiscal exercise" order="120">
+        <column name="fiscal-exercise" order="120">
             <widget type="text" fieldname="codejercicio" />
         </column>
         <column name="group" order="130">

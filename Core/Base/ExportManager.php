@@ -36,7 +36,7 @@ class ExportManager
         return [
             'PDF' => ['description' => 'print', 'icon' => 'fa-print'],
             'XLS' => ['description' => 'spreadsheet-xls', 'icon' => 'fa-file-excel-o'],
-            'CSV' => ['description' => 'structured data-csv', 'icon' => 'fa-file-archive-o']
+            'CSV' => ['description' => 'structured-data-csv', 'icon' => 'fa-file-archive-o']
         ];
     }
 

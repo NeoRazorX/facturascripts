@@ -38,7 +38,7 @@ class EditDivisa extends ExtendedController\EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Divisas';
+        $pagedata['title'] = 'currency';
         $pagedata['icon'] = 'fa-money';
         $pagedata['showonmenu'] = FALSE;
 

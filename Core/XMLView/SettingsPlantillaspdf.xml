@@ -25,7 +25,7 @@
 <view>
     <columns>
         <group name="plantilla" title="Template" numcolumns="6" icon="fa-adjust fa-lg" order="100">
-            <column name="ppdf_plantilla" title="plantilla" numcolumns="3" order="100">
+            <column name="ppdf_plantilla" title="template" numcolumns="3" order="100">
                 <widget type="number" decimals="0" fieldname="ppdf_plantilla" required="true" icon="fa-bars" />
             </column>
 
@@ -42,7 +42,7 @@
             </column>
         </group>                                                        
         
-        <group name="fonts" title="Fonts preferences" numcolumns="6" icon="fa-font fa-lg" order="200">
+        <group name="fonts" title="font-preferences" numcolumns="6" icon="fa-font fa-lg" order="200">
             <column name="ppdf_font" title="font" numcolumns="3" order="100">
                 <widget type="select" fieldname="ppdf_font" required="true" icon="fa-font">
                     <values title="Arial">arial</values>
@@ -60,7 +60,7 @@
                 </widget>
             </column>
 
-            <column name="ppdf_margin_top" title="margin top" numcolumns="3" order="120">
+            <column name="ppdf_margin_top" title="margin-top" numcolumns="3" order="120">
                 <widget type="select" fieldname="ppdf_margin_top" required="true" icon="fa-sort-numeric-asc">
                     <values start="0" end="5" step="1"></values>                    
                 </widget>

@@ -56,10 +56,11 @@ class Translator
      * @param string $folder
      * @param string $lang
      */
-    public function __construct($folder = '', $lang = 'es_ES')
+    public function __construct($folder = '', $lang = 'en_EN')
     {
         if (self::$folder === null) {
             self::$folder = $folder;
+            // TODO Load lang from config.php
             self::$lang = $lang;
 
             self::$translator = new symfonyTranslator(self::$lang);

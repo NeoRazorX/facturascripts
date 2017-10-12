@@ -32,69 +32,69 @@ class Randomizer extends Base\Controller
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-        
+        $i18n = new Base\Translator();
         $ModelDataGenerator = new ModelDataGenerator($this->empresa);
         
         $option = $this->request->get('gen', '');
         switch($option) {
             case 'agentes':
                 $num = $ModelDataGenerator->agentes();
-                $this->miniLog->info($num.' agentes generados.');
+                $this->miniLog->info($num . $i18n->trans('generated-agents'));
                 break;
             
             case 'albaranescli':
                 $num = $ModelDataGenerator->albaranesCliente();
-                $this->miniLog->info($num.' albaranes de venta generados.');
+                $this->miniLog->info($num . $i18n->trans('generated-customer-delivery-notes'));
                 break;
             
             case 'albaranesprov':
                 $num = $ModelDataGenerator->albaranesProveedor();
-                $this->miniLog->info($num.' albaranes de compra generados.');
+                $this->miniLog->info($num . $i18n->trans('generated-supplier-delivery-notes'));
                 break;
             
             case 'articulos':
                 $num = $ModelDataGenerator->articulos();
-                $this->miniLog->info($num.' artículos generados.');
+                $this->miniLog->info($num . $i18n->trans('generated-products'));
                 break;
             
             case 'clientes':
                 $num = $ModelDataGenerator->clientes();
-                $this->miniLog->info($num.' clientes generados.');
+                $this->miniLog->info($num . $i18n->trans('generated-customers'));
                 break;
             
             case 'fabricantes':
                 $num = $ModelDataGenerator->fabricantes();
-                $this->miniLog->info($num.' fabricantes generados.');
+                $this->miniLog->info($num . $i18n->trans('generated-manufacturers'));
                 break;
             
             case 'familias':
                 $num = $ModelDataGenerator->familias();
-                $this->miniLog->info($num.' familias generadas.');
+                $this->miniLog->info($num . $i18n->trans('generated-families'));
                 break;
             
             case 'grupos':
                 $num = $ModelDataGenerator->gruposClientes();
-                $this->miniLog->info($num.' grupos de clientes generados.');
+                $this->miniLog->info($num . $i18n->trans('generated-customer-groups'));
                 break;
             
             case 'pedidoscli':
                 $num = $ModelDataGenerator->pedidosCliente();
-                $this->miniLog->info($num.' pedidos de cliente generados.');
+                $this->miniLog->info($num . $i18n->trans('generated-customer-orders'));
                 break;
             
             case 'pedidosprov':
                 $num = $ModelDataGenerator->pedidosProveedor();
-                $this->miniLog->info($num.' pedidos de proveedor generados.');
+                $this->miniLog->info($num . $i18n->trans('generated-supplier-orders'));
                 break;
             
             case 'presupuestoscli':
                 $num = $ModelDataGenerator->presupuestosCliente();
-                $this->miniLog->info($num.' presupuestos de cliente generados.');
+                $this->miniLog->info($num . $i18n->trans('generated-customer-estimations'));
                 break;
             
             case 'proveedores':
                 $num = $ModelDataGenerator->proveedores();
-                $this->miniLog->info($num.' proveedores generados.');
+                $this->miniLog->info($num . $i18n->trans('generated-supplier'));
                 break;
         }
     }
@@ -103,7 +103,7 @@ class Randomizer extends Base\Controller
     {
         $pageData = parent::getPageData();
         $pageData['menu'] = 'admin';
-        $pageData['title'] = 'Generar datos de prueba';
+        $pageData['title'] = 'generate-test-data';
         $pageData['icon'] = 'fa-magic';
 
         return $pageData;

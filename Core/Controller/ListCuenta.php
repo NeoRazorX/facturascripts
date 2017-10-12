@@ -31,31 +31,31 @@ class ListCuenta extends ExtendedController\ListController
     protected function createViews()
     {
         /* Cuentas */
-        $this->addView('FacturaScripts\Core\Model\Cuenta', 'ListCuenta', 'Cuentas');
+        $this->addView('FacturaScripts\Core\Model\Cuenta', 'ListCuenta', $this->i18n->trans('accounts'));
         $this->addSearchFields('ListCuenta', ['descripcion', 'codcuenta', 'codejercicio', 'codepigrafe']);
 
-        $this->addOrderBy('ListCuenta', 'codcuenta||codejercicio', 'code');
-        $this->addOrderBy('ListCuenta', 'descripcion||codejercicio', 'description');
+        $this->addOrderBy('ListCuenta', 'codcuenta||codejercicio', $this->i18n->trans('code'));
+        $this->addOrderBy('ListCuenta', 'descripcion||codejercicio', $this->i18n->trans('description'));
 
         $this->addFilterSelect('ListCuenta', 'codepigrafe', 'co_epigrafes', '', 'descripcion');
         $this->addFilterSelect('ListCuenta', 'codejercicio', 'ejercicios', '', 'nombre');
 
         /* Epigrafes */
-        $this->addView('FacturaScripts\Core\Model\Epigrafe', 'ListEpigrafe', 'Epigrafes');
+        $this->addView('FacturaScripts\Core\Model\Epigrafe', 'ListEpigrafe', $this->i18n->trans('epigraphs'));
         $this->addSearchFields('ListEpigrafe', ['descripcion', 'codepigrafe', 'codejercicio']);
 
-        $this->addOrderBy('ListEpigrafe', 'descripcion||codejercicio', 'description');
-        $this->addOrderBy('ListEpigrafe', 'codepigrafe||codejercicio', 'code');
+        $this->addOrderBy('ListEpigrafe', 'descripcion||codejercicio', $this->i18n->trans('description'));
+        $this->addOrderBy('ListEpigrafe', 'codepigrafe||codejercicio', $this->i18n->trans('code'));
 
-        $this->addFilterSelect('ListEpigrafe', 'codgrupo', 'co_gruposepigrafes', '', 'descripcion');
-        $this->addFilterSelect('ListEpigrafe', 'codejercicio', 'ejercicios', '', 'nombre');
+        $this->addFilterSelect('ListEpigrafe', 'codgrupo', 'co_gruposepigrafes', '', $this->i18n->trans('descripcion'));
+        $this->addFilterSelect('ListEpigrafe', 'codejercicio', 'ejercicios', '', $this->i18n->trans('nombre'));
 
         /* Grupo Epígrafes */
-        $this->addView('FacturaScripts\Core\Model\GrupoEpigrafes', 'ListGrupoEpigrafes', 'Grupo Epígrafes');
+        $this->addView('FacturaScripts\Core\Model\GrupoEpigrafes', 'ListGrupoEpigrafes', $this->i18n->trans('epigraphs-group'));
         $this->addSearchFields('ListGrupoEpigrafes', ['descripcion', 'codgrupo', 'codejercicio']);
 
-        $this->addOrderBy('ListGrupoEpigrafes', 'codgrupo||codejercicio', 'code');
-        $this->addOrderBy('ListGrupoEpigrafes', 'descripcion||codejercicio', 'description');
+        $this->addOrderBy('ListGrupoEpigrafes', 'codgrupo||codejercicio', $this->i18n->trans('code'));
+        $this->addOrderBy('ListGrupoEpigrafes', 'descripcion||codejercicio', $this->i18n->trans('description'));
 
         $this->addFilterSelect('ListGrupoEpigrafes', 'codejercicio', 'ejercicios', '', 'nombre');
     }
@@ -63,9 +63,9 @@ class ListCuenta extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Cuentas';
+        $pagedata['title'] = 'accounting-accounts';
         $pagedata['icon'] = 'fa-book';
-        $pagedata['menu'] = 'contabilidad';
+        $pagedata['menu'] = 'accounting';
 
         return $pagedata;
     }
