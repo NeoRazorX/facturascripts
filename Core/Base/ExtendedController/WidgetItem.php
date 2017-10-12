@@ -369,7 +369,7 @@ class WidgetItem
     public function getListHTML($value)
     {
         // Verificamos el valor, en vez de usar empty() para que deje pasar 0 y false
-        if (is_null($value) || ($value == '')) {
+        if ($value === null || $value === '') {
             return '';
         }
 

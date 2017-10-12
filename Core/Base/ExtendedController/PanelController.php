@@ -215,7 +215,7 @@ abstract class PanelController extends Base\Controller
     protected function deleteAction($view)
     {
         if ($view->delete($this->request->get('primarykey'))) {
-            $this->miniLog->notice($this->i18n->trans('Record deleted correctly!'));
+            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
             return TRUE;
         }
         return FALSE;

@@ -15,12 +15,33 @@
         var url = '{{ fsc.url() }}';
         window.location.href = url + '&active=' + tabActive + '&action=' + action;
     }
+    function deleteFromList() {
+        var deleteCodes = [];
+        $('.listDelete').each(function() {
+            if($(this).prop('checked')) {
+                deleteCodes.push($(this).val());
+            }
+        });
+        
+        if(deleteCodes.length) {
+            document.f_list_delete.active.value = tabActive;
+            document.f_list_delete.code.value = deleteCodes.join();
+            document.f_list_delete.submit();
+        }
+        
+        return false;
+    }
     $(document).ready(function () {
         // Situa el foco cuando se cambia de tab
         $('#mainTabs').on('shown.bs.tab', function (e) {
             tabActive = 'List' + e.target.hash.substring(1);
             var formName = '#formSearchList' + e.target.hash.substring(1) + ' :text:first';
             $(formName).focus().select();
+        });
+        // marca/desmarca todos los checkbox de eliminar del listado
+        $('#listDeleteCB').click(function() {
+            var checked = $(this).prop('checked');
+            $('.listDelete').prop('checked', checked);
         });
     });
 </script>
@@ -132,7 +153,7 @@
                         <!-- Main filter -->
                         <div class="col-md-2">
                             <div class="input-group">
-                                <input type="hidden" name="active" value="{{ indexView }}">
+                                <input type="hidden" name="active" value="{{ indexView }}"/>
                                 {% set query_value = (indexView == fsc.active) ? fsc.query : '' %}
                                 <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{{ query_value }}" autocomplete="off" placeholder="Buscar" autofocus=""/>
                                 <span class="input-group-btn hidden-sm">
@@ -217,7 +238,7 @@
             <!-- Footer Navigation -->
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-12 text-center">
+                    <div class="col-11 text-center">
                         <div class="btn-group">
                             {% for item in fsc.pagination(indexView) %}
                                 {% if item.active %}
@@ -236,10 +257,20 @@
                         <br/>
                         <br/>
                     </div>
+                    <div class="col-1 text-right">
+                        <a href="#" class="btn btn-danger" onclick="return deleteFromList();">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
         {% endfor %}
+        <form name="f_list_delete" action="{{ fsc.url() }}" method="post">
+            <input type="hidden" name="active" value=""/>
+            <input type="hidden" name="action" value="delete"/>
+            <input type="hidden" name="code" value=""/>
+        </form>
     </div>
 </div>
 {% endblock %}
