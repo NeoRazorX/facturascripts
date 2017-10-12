@@ -389,7 +389,7 @@
     "simplexml-not-found": "No se encuentra la extensión simplexml en tu instalación de PHP. Debes instalarla o activarla.",
     "socks5": "SOCKS5",
     "solutions": "Solutions",
-    "type-database-server": SQL server type",
+    "type-database-server": "SQL server type",
     "type-proxy": "Proxy type",
     "unknow-error": "Unknow error.",
     "unofficial-package-for-windows": "Si decides utilizar <b>un empaquetado distinto</b>, y este no incluye lo necesario, deberás buscar ayuda en los foros o el soporte de los creadores de ese empaquetado.",
@@ -786,7 +786,6 @@
     "commercial-terms": "Commercial terms",
     "fiscal-id": "Fiscal Id.",
     "vat-regime": "VAT Regime",
-
     "exempt": "Exempt",
     "shipping-address": "Shipping address",
     "billing-address": "Billing address",
