@@ -46,7 +46,7 @@ class ListFabricante extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\Fabricante', $className);
         $this->addSearchFields($className, ['nombre', 'codfabricante']);
 
-        $this->addOrderBy($className, 'codfabricante', $this->i18n->trans('code'));
-        $this->addOrderBy($className, 'nombre', $this->i18n->trans('name'));
+        $this->addOrderBy($className, 'codfabricante', 'code');
+        $this->addOrderBy($className, 'nombre', 'name');
     }
 }

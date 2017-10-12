@@ -247,7 +247,7 @@ abstract class PanelController extends Base\Controller
      */
     protected function addEditListView($modelName, $viewName, $viewTitle, $viewIcon = 'fa-bars')
     {
-        $view = new EditListView($viewTitle, $modelName, $viewName, $this->user->nick);
+        $view = new EditListView($this->i18n->trans($viewTitle), $modelName, $viewName, $this->user->nick);
         $this->addView($viewName, $view, $viewIcon);
     }
 
@@ -261,7 +261,7 @@ abstract class PanelController extends Base\Controller
      */
     protected function addListView($modelName, $viewName, $viewTitle, $viewIcon = 'fa-bars')
     {
-        $view = new ListView($viewTitle, $modelName, $viewName, $this->user->nick);
+        $view = new ListView($this->i18n->trans($viewTitle), $modelName, $viewName, $this->user->nick);
         $this->addView($viewName, $view, $viewIcon);
     }
 
@@ -275,7 +275,7 @@ abstract class PanelController extends Base\Controller
      */
     protected function addEditView($modelName, $viewName, $viewTitle, $viewIcon = 'fa-list-alt')
     {
-        $view = new EditView($viewTitle, $modelName, $viewName, $this->user->nick);
+        $view = new EditView($this->i18n->trans($viewTitle), $modelName, $viewName, $this->user->nick);
         $this->addView($viewName, $view, $viewIcon);
     }
 

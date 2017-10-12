@@ -45,7 +45,7 @@ class ListSubcuenta extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\Subcuenta', $className);
         $this->addSearchFields($className, ['codsubcuenta', 'descripcion']);
 
-        $this->addOrderBy($className, 'codsubcuenta', $this->i18n->trans('code'));
-        $this->addOrderBy($className, 'descripcion', $this->i18n->trans('description'));
+        $this->addOrderBy($className, 'codsubcuenta', 'code');
+        $this->addOrderBy($className, 'descripcion', 'description');
     }
 }

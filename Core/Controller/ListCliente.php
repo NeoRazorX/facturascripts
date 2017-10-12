@@ -42,21 +42,21 @@ class ListCliente extends ExtendedController\ListController
     protected function createViews()
     {
         /* Clientes */
-        $this->addView('FacturaScripts\Core\Model\Cliente', 'ListCliente', $this->i18n->trans('customers'));
+        $this->addView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'customers');
         $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente', 'email']);
 
-        $this->addOrderBy('ListCliente', 'codcliente', $this->i18n->trans('code'));
-        $this->addOrderBy('ListCliente', 'nombre', $this->i18n->trans('name'), 1);
-        $this->addOrderBy('ListCliente', 'fecha', $this->i18n->trans('date'));
+        $this->addOrderBy('ListCliente', 'codcliente', 'code');
+        $this->addOrderBy('ListCliente', 'nombre', 'name', 1);
+        $this->addOrderBy('ListCliente', 'fecha', 'date');
 
-        $this->addFilterSelect('ListCliente', 'codgrupo', 'gruposclientes', '', $this->i18n->trans('nombre'));
-        $this->addFilterCheckbox('ListCliente', 'debaja', $this->i18n->trans('suspended'));
+        $this->addFilterSelect('ListCliente', 'codgrupo', 'gruposclientes', '', 'nombre');
+        $this->addFilterCheckbox('ListCliente', 'debaja', 'suspended');
         
         /* Grupos */
-        $this->addView('FacturaScripts\Core\Model\GrupoClientes', 'ListGrupoClientes', $this->i18n->trans('groups'));
+        $this->addView('FacturaScripts\Core\Model\GrupoClientes', 'ListGrupoClientes', 'groups');
         $this->addSearchFields('ListGrupoClientes', ['nombre', 'codgrupo']);
         
-        $this->addOrderBy('ListGrupoClientes', 'codgrupo', $this->i18n->trans('code'));
-        $this->addOrderBy('ListGrupoClientes', 'nombre', $this->i18n->trans('name'), 1);
+        $this->addOrderBy('ListGrupoClientes', 'codgrupo', 'code');
+        $this->addOrderBy('ListGrupoClientes', 'nombre', 'name', 1);
     }
 }

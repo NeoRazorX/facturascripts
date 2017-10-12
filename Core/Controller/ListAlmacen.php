@@ -45,7 +45,7 @@ class ListAlmacen extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\Almacen', $className);
         $this->addSearchFields($className, ['nombre', 'codalmacen', 'contacto']);
 
-        $this->addOrderBy($className, 'codalmacen', $this->i18n->trans('code'));
-        $this->addOrderBy($className, 'nombre', $this->i18n->trans('name'));
+        $this->addOrderBy($className, 'codalmacen', 'code');
+        $this->addOrderBy($className, 'nombre', 'name');
     }
 }

@@ -790,5 +790,6 @@
     "shipping-address": "Dirección de envío",
     "billing-address": "Dirección de envío",
     "zip-code": "Código Postal",
-    "postalmail": "Apartado"
+    "postalmail": "Apartado",
+    "without-tax": "Sin IVA"
 }

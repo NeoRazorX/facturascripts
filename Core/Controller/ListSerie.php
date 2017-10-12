@@ -45,11 +45,11 @@ class ListSerie extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\Serie', $className);
         $this->addSearchFields($className, ['descripcion', 'codserie', 'codcuenta']);
 
-        $this->addOrderBy($className, 'codserie', $this->i18n->trans('code'));
-        $this->addOrderBy($className, 'descripcion', $this->i18n->trans('description'));
-        $this->addOrderBy($className, 'codejercicio', $this->i18n->trans('exercise'));
+        $this->addOrderBy($className, 'codserie', 'code');
+        $this->addOrderBy($className, 'descripcion', 'description');
+        $this->addOrderBy($className, 'codejercicio', 'exercise');
 
         $this->addFilterSelect($className, 'ejercicio', 'series', '', 'codejercicio');
-        $this->addFilterCheckbox($className, 'siniva', $this->i18n->trans('without-tax'), 'siniva');
+        $this->addFilterCheckbox($className, 'siniva', 'without-tax', 'siniva');
     }
 }

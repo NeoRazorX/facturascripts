@@ -45,7 +45,7 @@ class ListImpuesto extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\Impuesto', $className);
         $this->addSearchFields($className, ['descripcion', 'codimpuesto']);
 
-        $this->addOrderBy($className, 'codimpuesto', $this->i18n->trans('code'));
-        $this->addOrderBy($className, 'descripcion', $this->i18n->trans('description'));
+        $this->addOrderBy($className, 'codimpuesto', 'code');
+        $this->addOrderBy($className, 'descripcion', 'description');
     }
 }

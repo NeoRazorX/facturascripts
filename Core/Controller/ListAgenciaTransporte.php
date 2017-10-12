@@ -47,9 +47,9 @@ class ListAgenciaTransporte extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\AgenciaTransporte', $className);
         $this->addSearchFields($className, ['nombre', 'codtrans']);
 
-        $this->addOrderBy($className, 'codtrans', $this->i18n->trans('code'));
+        $this->addOrderBy($className, 'codtrans', 'code');
         $this->addOrderBy($className, 'nombre');
 
-        $this->addFilterCheckbox($className, 'activo', $this->i18n->trans('active'), '', TRUE);
+        $this->addFilterCheckbox($className, 'activo', 'active', '', TRUE);
     }
 }

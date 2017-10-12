@@ -44,9 +44,9 @@ class ListArticulo extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\Articulo', $className);
         $this->addSearchFields($className, ['referencia', 'descripcion']);
 
-        $this->addOrderBy($className, 'referencia', $this->i18n->trans('reference'));
-        $this->addOrderBy($className, 'descripcion', $this->i18n->trans('description'));
-        $this->addOrderBy($className, 'pvp', $this->i18n->trans('price'));
-        $this->addOrderBy($className, 'stockfis', $this->i18n->trans('stock'));
+        $this->addOrderBy($className, 'referencia', 'reference');
+        $this->addOrderBy($className, 'descripcion', 'description');
+        $this->addOrderBy($className, 'pvp', 'price');
+        $this->addOrderBy($className, 'stockfis', 'stock');
     }
 }

@@ -46,9 +46,9 @@ class ListFamilia extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\Familia', $className);
         $this->addSearchFields($className, ['descripcion', 'codfamilia', 'madre']);
 
-        $this->addOrderBy($className, 'codfamilia', $this->i18n->trans('code'));
-        $this->addOrderBy($className, 'descripcion', $this->i18n->trans('description'));
-        $this->addOrderBy($className, 'madre', $this->i18n->trans('parent'));
+        $this->addOrderBy($className, 'codfamilia', 'code');
+        $this->addOrderBy($className, 'descripcion', 'description');
+        $this->addOrderBy($className, 'madre', 'parent');
 
         $this->addFilterSelect($className, 'madre', 'familias');
     }

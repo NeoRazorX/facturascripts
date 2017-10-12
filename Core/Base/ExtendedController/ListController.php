@@ -85,7 +85,7 @@ abstract class ListController extends Base\Controller
 
         $this->active = $this->request->get('active', '');
         $this->exportManager = new Base\ExportManager();
-        $this->offset = intval($this->request->get('offset', 0));
+        $this->offset = (int) $this->request->get('offset', 0);
         $this->query = $this->request->get('query', '');
         $this->views = [];
     }
@@ -269,7 +269,7 @@ abstract class ListController extends Base\Controller
      */
     protected function addView($modelName, $viewName, $viewTitle = 'search')
     {
-        $this->views[$viewName] = new ListView($viewTitle, $modelName, $viewName, $this->user->nick);
+        $this->views[$viewName] = new ListView($this->i18n->trans($viewTitle), $modelName, $viewName, $this->user->nick);
         if (empty($this->active)) {
             $this->active = $viewName;
         }
@@ -280,7 +280,7 @@ abstract class ListController extends Base\Controller
      * para el filtrado de datos.
      *
      * @param string $indexView
-     * @param string $fields
+     * @param array $fields
      */
     protected function addSearchFields($indexView, $fields)
     {
@@ -297,7 +297,7 @@ abstract class ListController extends Base\Controller
      */
     protected function addOrderBy($indexView, $field, $label = '', $default = 0)
     {
-        $this->views[$indexView]->addOrderBy($field, $label, $default);
+        $this->views[$indexView]->addOrderBy($field, $this->i18n->trans($label), $default);
     }
 
     /**
@@ -313,7 +313,7 @@ abstract class ListController extends Base\Controller
     protected function addFilterSelect($indexView, $key, $table, $where = '', $field = '')
     {
         $value = $this->request->get($key);
-        $this->views[$indexView]->addFilterSelect($key, $value, $table, $where, $field);
+        $this->views[$indexView]->addFilterSelect($key, $value, $table, $where, $this->i18n->trans($field));
     }
 
     /**
@@ -328,7 +328,7 @@ abstract class ListController extends Base\Controller
     protected function addFilterCheckbox($indexView, $key, $label, $field = '', $inverse = FALSE)
     {
         $value = $this->request->get($key);
-        $this->views[$indexView]->addFilterCheckBox($key, $value, $label, $field, $inverse);
+        $this->views[$indexView]->addFilterCheckBox($key, $value, $this->i18n->trans($label), $field, $inverse);
     }
 
     /**
@@ -342,7 +342,7 @@ abstract class ListController extends Base\Controller
     protected function addFilterDatePicker($indexView, $key, $label, $field = '')
     {
         $value = $this->request->get($key);
-        $this->views[$indexView]->addFilterDatePicker($key, $value, $label, $field);
+        $this->views[$indexView]->addFilterDatePicker($key, $value, $this->i18n->trans($label), $field);
     }
 
     /**
