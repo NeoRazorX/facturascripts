@@ -105,10 +105,10 @@ abstract class ListController extends Base\Controller
 
         // Guardamos si hay operaciones por realizar
         $action = $this->request->get('action', '');
-        
+
         // Operaciones sobre los datos antes de leerlos
         $this->execPreviousAction($action);
-        
+
         // Lanzamos la carga de datos para cada una de las vistas
         foreach ($this->views as $key => $listView) {
             $where = [];
@@ -126,7 +126,7 @@ abstract class ListController extends Base\Controller
             // Cargamos los datos según filtro y orden
             $listView->loadData($where, $this->getOffSet($key), Base\Pagination::FS_ITEM_LIMIT);
         }
-        
+
         // Operaciones generales con los datos cargados
         $this->execAfterAction($action);
     }
@@ -164,8 +164,8 @@ abstract class ListController extends Base\Controller
                 $this->jsonAction($this->views[$this->active]);
                 break;
         }
-    }   
-    
+    }
+
     /**
      * Acción de borrado de datos
      *
@@ -174,10 +174,31 @@ abstract class ListController extends Base\Controller
      */
     protected function deleteAction($view)
     {
-        if ($view->delete($this->request->get('code'))) {
+        $code = $this->request->get('code');
+        if (strpos($code, ',') === false) {
+            if ($view->delete($code)) {
+                $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+                return TRUE;
+            }
+
+            return FALSE;
+        }
+
+        /// borrado múltiple
+        $numDeletes = 0;
+        foreach (explode(',', $code) as $cod) {
+            if ($view->delete($cod)) {
+                $numDeletes++;
+            } else {
+                $this->miniLog->warning($this->i18n->trans('record-deleted-error'));
+            }
+        }
+
+        if ($numDeletes > 0) {
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
             return TRUE;
         }
+        
         return FALSE;
     }
 

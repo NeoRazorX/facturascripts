@@ -223,39 +223,38 @@ trait ModelTrait
                 continue;
             }
 
-            foreach (self::$fields as $field) {
-                if ($field['name'] === $key) {
-                    // Comprobamos si es un varchar (con longitud establecida) u otro tipo de dato
-                    $type = (strpos($field['type'], '(') === FALSE) ? $field['type'] : substr($field['type'], 0, strpos($field['type'], '('));
+            if (isset(self::$fields[$key])) {
+                $field = self::$fields[$key];
 
-                    switch ($type) {
-                        case 'tinyint':
-                        case 'boolean':
-                            $this->{$key} = $this->str2bool($value);
-                            break;
+                // Comprobamos si es un varchar (con longitud establecida) u otro tipo de dato
+                $type = (strpos($field['type'], '(') === FALSE) ? $field['type'] : substr($field['type'], 0, strpos($field['type'], '('));
 
-                        case 'integer':
-                        case 'int':
-                            $this->{$key} = empty($value) ? 0 : (int) $value;
-                            break;
+                switch ($type) {
+                    case 'tinyint':
+                    case 'boolean':
+                        $this->{$key} = $this->str2bool($value);
+                        break;
 
-                        case 'double':
-                        case 'double precision':
-                        case 'float':
-                            $this->{$key} = empty($value) ? 0.00 : (float) $value;
-                            break;
+                    case 'integer':
+                    case 'int':
+                        $this->{$key} = empty($value) ? 0 : (int) $value;
+                        break;
 
-                        case 'date':
-                            $this->{$key} = empty($value) ? NULL : date('d-m-Y', strtotime($value));
-                            break;
+                    case 'double':
+                    case 'double precision':
+                    case 'float':
+                        $this->{$key} = empty($value) ? 0.00 : (float) $value;
+                        break;
 
-                        default:
-                            if (empty($value)) {
-                                $value = ($field['is_nullable'] === 'NO') ? '' : NULL;
-                            }
-                            $this->{$key} = $value;
-                    }
-                    break;
+                    case 'date':
+                        $this->{$key} = empty($value) ? NULL : date('d-m-Y', strtotime($value));
+                        break;
+
+                    default:
+                        if (empty($value)) {
+                            $value = ($field['is_nullable'] === 'NO') ? '' : NULL;
+                        }
+                        $this->{$key} = $value;
                 }
             }
         }
