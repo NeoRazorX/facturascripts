@@ -23,3 +23,12 @@
 .clickable, .clickableRow:hover {
     cursor: pointer;
 }
+
+.custom-checkbox-control {
+    position: relative;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    min-height: 1.2rem;
+    padding-left: 1.5rem;
+    margin-right: 1rem;
+}

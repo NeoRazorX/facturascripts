@@ -56,7 +56,7 @@ class Translator
      * @param string $folder
      * @param string $lang
      */
-    public function __construct($folder = '', $lang = 'en_EN')
+    public function __construct($folder = '', $lang = 'es_ES')
     {
         if (self::$folder === null) {
             self::$folder = $folder;

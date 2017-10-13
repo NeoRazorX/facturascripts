@@ -85,7 +85,7 @@
             <div class="btn-group">
                 <a href="{{ model.url('list') }}" class="btn btn-sm btn-light">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i>
-                    <span class="hidden-xs hidden-sm">&nbsp;{{ go_back }} </span>
+                    <span class="d-none d-md-inline-block">&nbsp;{{ go_back }} </span>
                 </a>
                 <a href="{{ model.url('edit') }}" class="btn btn-sm btn-light" {{ popoverTitle(refresh_title, 'bottom') }}>
                     <i class="fa fa-refresh" aria-hidden="true"></i>
@@ -120,7 +120,7 @@
             
             <a id="b_remove" class="btn btn-sm btn-danger" onclick="deleteRecord();" href="#" {{ popoverTitle(remove_title, 'bottom') }}">
                 <i class="fa fa-trash" aria-hidden="true"></i>
-                <span class="hidden-xs">&nbsp;{{ remove }}</span>
+                <span class="d-none d-sm-inline-block">&nbsp;{{ remove }}</span>
             </a>
         </div>
     </div>
