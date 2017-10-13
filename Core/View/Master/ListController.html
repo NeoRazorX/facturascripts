@@ -24,9 +24,26 @@
         });
         
         if(deleteCodes.length) {
-            document.f_list_delete.active.value = tabActive;
-            document.f_list_delete.code.value = deleteCodes.join();
-            document.f_list_delete.submit();
+            bootbox.confirm({
+                title: "{{ i18n.trans('warning')|raw }}",
+                message: "{{ i18n.trans('are-you-sure') }}",
+                closeButton: false,
+                buttons: {
+                    cancel: {
+                        label: '<i class="fa fa-times"></i> {{ i18n.trans("cancel") }}'
+                    },
+                    confirm: {
+                        label: '<i class="fa fa-check"></i> {{ i18n.trans("confirm") }}'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        document.f_list_delete.active.value = tabActive;
+                        document.f_list_delete.code.value = deleteCodes.join();
+                        document.f_list_delete.submit();
+                    }
+                }
+            });
         }
         
         return false;
