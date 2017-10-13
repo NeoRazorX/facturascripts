@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\App;
 
 use Symfony\Component\HttpFoundation\Response;
-
+use FacturaScripts\Core\Base\Security\ApiAuth;
 /**
  * Description of App
  *
@@ -27,6 +27,13 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AppAPI extends App
 {
+    
+    public function auth()
+    {
+        $config = array('request'=>$this->request,'response'=>$this->response,'server_key'=>FS_UUID);
+        $auth = new ApiAuth($config);
+        return $auth->startAuth();
+    }
 
     /**
      * Ejecuta la API.
@@ -47,7 +54,6 @@ class AppAPI extends App
             $this->response->setContent(json_encode(['error' => 'IP-BANNED']));
             return false;
         }
-
         return $this->selectVersion();
     }
 
