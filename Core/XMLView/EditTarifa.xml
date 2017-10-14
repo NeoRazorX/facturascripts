@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,23 +24,23 @@
 
 <view>
     <columns>
-        <group name="data" numcolumns="12" title="Rates">
-            <column name="codtarifa" title="Code rate" numcolumns="2" order="100"
-                    description="Code for internal tarifa use.">
+        <group name="data" numcolumns="12" title="rates">
+            <column name="codtarifa" title="code-rate" numcolumns="2" order="100"
+                    description="desc-rate-code">
                 <widget type="text" fieldname="codtarifa" onclick="" icon="fa-money" required="true" />
             </column>
-            <column name="nombre" title="Name" numcolumns="4" order="110">
+            <column name="nombre" title="name" numcolumns="4" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
-            <column name="aplicar_a" title="Formula to apply" numcolumns="2" order="120">
+            <column name="aplicar_a" title="formula-to-apply" numcolumns="2" order="120">
                 <widget type="text" fieldname="aplicar_a" required="false" />
             </column>
         </group>
-        <group name="check" numcolumns="12" title="Check">
-            <column name="mincoste" title="Don't sell below cost" numcolumns="4" order="130">
+        <group name="check" numcolumns="12" title="check">
+            <column name="mincoste" title="dont-sell-below-cost" numcolumns="4" order="130">
                 <widget type="checkbox" fieldname="mincoste" />
             </column>
-            <column name="maxpvp" title="Don't sell above pvp" numcolumns="4" order="140">
+            <column name="maxpvp" title="dont-sell-above-pvp" numcolumns="4" order="140">
                 <widget type="checkbox" fieldname="maxpvp" />
             </column>
         </group>
