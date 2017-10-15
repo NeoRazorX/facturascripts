@@ -38,7 +38,7 @@
     "check-no-check-types": "Нет проверки ставок",
     "checks-on-database": "Проверки в базе данных:",
     "clean-cache": "Очистить кэш",
-    "coma": "кома",
+    "comma": "кома",
     "control-panel": "панель управления",
     "controller-not-found-or-disabled-plugin": "Вы не можете найти драйвер или принадлежите к неактивному плагину",
     "currency-symbol": "Символ валюты:",

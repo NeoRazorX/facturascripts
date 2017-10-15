@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,7 +37,7 @@ class Empresa
     public $id;
 
     /**
-     * TODO
+     * Identificador único de empresa
      *
      * @var string
      */
@@ -173,15 +173,25 @@ class Empresa
     /**
      * Configuración de email de la empresa.
      *
-     * @var array de string
+     * @var string
      * ] */
     public $email_config;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'empresa';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'id';
@@ -227,19 +237,19 @@ class Empresa
         $this->web = self::noHtml($this->web);
 
         $lenName = strlen($this->nombre);
-        if (($lenName == 0) || ($lenName > 99)) {
+        if (($lenName === 0) || ($lenName > 99)) {
             $this->miniLog->alert($this->i18n->trans('company-name-invalid'));
 
-            return FALSE;
+            return false;
         }
 
         if ($lenName < strlen($this->nombrecorto)) {
             $this->miniLog->alert($this->i18n->trans('company-short-name-smaller-name'));
 
-            return FALSE;
+            return false;
         }
 
-        return TRUE;
+        return true;
     }
 
     /**

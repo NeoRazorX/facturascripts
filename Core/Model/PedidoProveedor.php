@@ -1,8 +1,8 @@
 <?php
-/*
+/**
  * This file is part of presupuestos_y_pedidos
- * Copyright (C) 2014-2017  Carlos Garcia Gomez       neorazorx@gmail.com
- * Copyright (C) 2014-2015  Francesc Pineda Segarra   shawe.ewahs@gmail.com
+ * Copyright (C) 2014-2017  Carlos Garcia Gomez       <carlos@facturascripts.com>
+ * Copyright (C) 2014-2015  Francesc Pineda Segarra   <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,65 +32,88 @@ class PedidoProveedor
     /**
      * Clave primaria.
      *
-     * @var type
+     * @var int
      */
     public $idpedido;
 
     /**
      * ID del albarán relacionado.
      *
-     * @var type
+     * @var int
      */
     public $idalbaran;
 
     /**
-     * Indica si se puede editar o no.
+     * True si es editable, sino false
      *
-     * @var type
+     * @var bool
      */
     public $editable;
 
     /**
      * Si este presupuesto es la versión de otro, aquí se almacena el idpresupuesto del original.
      *
-     * @var type
+     * @var int
      */
     public $idoriginal;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'pedidosprov';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'idpedido';
     }
 
+    /**
+     * Resetea los valores de todas las propiedades modelo.
+     */
     public function clear()
     {
         $this->clearDocumentoCompra();
-        $this->editable = TRUE;
+        $this->editable = true;
     }
 
+    /**
+     * Devuelve las líneas asociadas al pedido.
+     *
+     * @return array
+     */
     public function getLineas()
     {
         $lineaModel = new LineaPedidoProveedor();
         return $lineaModel->all(new DataBaseWhere('idpedido', $this->idpedido));
     }
 
-    public function get_versiones()
+    /**
+     * Devuelve las versiones de un pedido
+     *
+     * @return array
+     */
+    public function getVersiones()
     {
         $versiones = [];
 
-        $sql = 'SELECT * FROM ' . $this->table_name . ' WHERE idoriginal = ' . $this->var2str($this->idpedido);
+        $sql = 'SELECT * FROM ' . $this->tableName . ' WHERE idoriginal = ' . $this->var2str($this->idpedido);
         if ($this->idoriginal) {
             $sql .= ' OR idoriginal = ' . $this->var2str($this->idoriginal);
             $sql .= ' OR idpedido = ' . $this->var2str($this->idoriginal);
         }
         $sql .= 'ORDER BY fecha DESC, hora DESC;';
 
-        $data = $this->db->select($sql);
+        $data = $this->dataBase->select($sql);
         if ($data) {
             foreach ($data as $d) {
                 $versiones[] = new self($d);
@@ -101,7 +124,7 @@ class PedidoProveedor
     }
 
     /**
-     * Comprueba los daros del pedido, devuelve TRUE si está todo correcto
+     * Comprueba los daros del pedido, devuelve True si está correcto
      *
      * @return boolean
      */
@@ -109,30 +132,24 @@ class PedidoProveedor
     {
         return $this->testTrait();
     }
-    
+
+    /**
+     * Ejecuta un test completo de pruebas
+     *
+     * @return bool
+     */
     public function fullTest()
     {
         return $this->fullTestTrait('order');
     }
 
-    public function save()
-    {
-        if ($this->test()) {
-            if ($this->exists()) {
-                return $this->saveUpdate();
-            }
-
-            $this->newCodigo();
-            return $this->saveInsert();
-        }
-
-        return FALSE;
-    }
-
-    public function cron_job()
+    /**
+     * Ejecuta una tarea con cron
+     */
+    public function cronJob()
     {
         $sql = 'UPDATE ' . $this->tableName() . ' SET idalbaran = NULL, editable = TRUE'
             . ' WHERE idalbaran IS NOT NULL AND NOT EXISTS(SELECT 1 FROM albaranesprov t1 WHERE t1.idalbaran = ' . $this->tableName() . '.idalbaran);';
-        $this->db->exec($sql);
+        $this->dataBase->exec($sql);
     }
 }

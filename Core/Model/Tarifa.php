@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Model;
 /**
  * Una tarifa para los artículos.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Tarifa
 {
@@ -79,11 +79,21 @@ class Tarifa
      */
     public $inclineal;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'tarifas';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'codtarifa';
@@ -94,7 +104,7 @@ class Tarifa
      */
     public function clear()
     {
-        $this->clearTrait();        
+        $this->clearTrait();
         $this->incporcentual = 0;
         $this->inclineal = 0;
         $this->aplicar_a = 'pvp';
@@ -103,7 +113,11 @@ class Tarifa
     }
 
     /**
+     * Aplicar al PVP un incremento o decremento
+     *
      * @param double $value
+     *
+     * @return int
      */
     private function applyFormula($value)
     {
@@ -113,7 +127,7 @@ class Tarifa
     }
     
     /**
-     * TODO
+     * Devuelve un incremento porcentual
      *
      * @return double
      */
@@ -123,7 +137,7 @@ class Tarifa
     }
 
     /**
-     * TODO
+     * Asigna un incremento porcentual
      *
      * @param float $dto
      */
@@ -133,7 +147,7 @@ class Tarifa
     }
 
     /**
-     * TODO
+     * Devuelve un incremento lineal
      *
      * @return double
      */
@@ -143,7 +157,7 @@ class Tarifa
     }
 
     /**
-     * TODO
+     * Asigna un incremento lineal
      *
      * @param float $inc
      */
@@ -234,7 +248,7 @@ class Tarifa
     }
 
     /**
-     * TODO
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
      *
      * @return bool
      */
@@ -246,9 +260,9 @@ class Tarifa
         $this->nombre = self::noHtml($this->nombre);
 
         if (empty($this->codtarifa) || strlen($this->codtarifa) > 6) {
-            $this->miniLog->alert('Código de tarifa no válido. Debe tener entre 1 y 6 caracteres.');
+            $this->miniLog->alert($this->i18n->trans('rate-code-valid-length'));
         } elseif (empty($this->nombre) || strlen($this->nombre) > 50) {
-            $this->miniLog->alert('Nombre de tarifa no válido. Debe tener entre 1 y 50 caracteres.');
+            $this->miniLog->alert($this->i18n->trans('rate-name-valid-length'));
         } else {
             $status = true;
         }

@@ -1,8 +1,8 @@
 <?php
-/*
+/**
  * This file is part of presupuestos_y_pedidos
- * Copyright (C) 2014-2017    Carlos Garcia Gomez        neorazorx@gmail.com
- * Copyright (C) 2014         Francesc Pineda Segarra    shawe.ewahs@gmail.com
+ * Copyright (C) 2014-2017    Carlos Garcia Gomez        <carlos@facturascripts.com>
+ * Copyright (C) 2014         Francesc Pineda Segarra    <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -54,8 +54,9 @@ class PedidoCliente
     public $status;
     
     /**
+     * True si es editable, sino false
      *
-     * @var boolean
+     * @var bool
      */
     public $editable;
 
@@ -73,29 +74,42 @@ class PedidoCliente
      */
     public $idoriginal;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'pedidoscli';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'idpedido';
     }
 
+    /**
+     * Resetea los valores de todas las propiedades modelo.
+     */
     public function clear()
     {
         $this->clearDocumentoVenta();
         $this->status = 0;
-        $this->editable = TRUE;
-        $this->fechasalida = NULL;
-        $this->idoriginal = NULL;
+        $this->editable = true;
+        $this->fechasalida = null;
+        $this->idoriginal = null;
     }
 
     /**
-     * Devuelve las líneas del pedido.
+     * Devuelve las líneas asociadas al pedido.
      *
-     * @return \LineaPedidoCliente
+     * @return array
      */
     public function getLineas()
     {
@@ -103,6 +117,11 @@ class PedidoCliente
         return $lineaModel->all(new DataBaseWhere('idpedido', $this->idpedido));
     }
 
+    /**
+     * Devuelve las versiones de un pedido
+     *
+     * @return array
+     */
     public function getVersiones()
     {
         $versiones = [];
@@ -114,7 +133,7 @@ class PedidoCliente
         }
         $sql .= 'ORDER BY fecha DESC, hora DESC;';
 
-        $data = $this->db->select($sql);
+        $data = $this->dataBase->select($sql);
         if ($data) {
             foreach ($data as $d) {
                 $versiones[] = new self($d);
@@ -125,7 +144,7 @@ class PedidoCliente
     }
 
     /**
-     * Comprueba los datos del pedido, devuelve TRUE si está todo correcto
+     * Comprueba los datos del pedido, devuelve True si es correcto
      *
      * @return boolean
      */
@@ -134,63 +153,52 @@ class PedidoCliente
         /// comprobamos que editable se corresponda con el status
         if ($this->idalbaran) {
             $this->status = 1;
-            $this->editable = FALSE;
+            $this->editable = false;
         } elseif ($this->status == 0) {
-            $this->editable = TRUE;
+            $this->editable = true;
         } elseif ($this->status == 2) {
-            $this->editable = FALSE;
+            $this->editable = false;
         }
 
         return $this->testTrait();
     }
 
-    public function save()
-    {
-        if ($this->test()) {
-            if ($this->exists()) {
-                return $this->saveUpdate();
-            }
-
-            $this->newCodigo();
-            return $this->saveInsert();
-        }
-
-        return FALSE;
-    }
-
     /**
      * Elimina el pedido de la base de datos.
-     * Devuelve FALSE en caso de fallo.
+     * Devuelve False en caso de fallo.
      *
      * @return boolean
      */
     public function delete()
     {
-        if ($this->db->exec('DELETE FROM ' . $this->tableName() . ' WHERE idpedido = ' . $this->var2str($this->idpedido) . ';')) {
+        if ($this->dataBase->exec('DELETE FROM ' . $this->tableName() . ' WHERE idpedido = ' . $this->var2str($this->idpedido) . ';')) {
             /// modificamos el presupuesto relacionado
-            $this->db->exec('UPDATE presupuestoscli SET idpedido = NULL, editable = TRUE,'
+            $this->dataBase->exec('UPDATE presupuestoscli SET idpedido = NULL, editable = TRUE,'
                 . ' status = 0 WHERE idpedido = ' . $this->var2str($this->idpedido) . ';');
 
             $this->new_message(ucfirst(FS_PEDIDO) . ' de venta ' . $this->codigo . ' eliminado correctamente.');
 
-            return TRUE;
+            return true;
         }
 
-        return FALSE;
+        return false;
     }
 
+    /**
+     * Ejecuta una tarea con cron
+     */
     public function cronJob()
     {
         /// marcamos como aprobados los presupuestos con idpedido
-        $this->db->exec('UPDATE ' . $this->tableName() . " SET status = '1', editable = FALSE"
+        $this->dataBase->exec('UPDATE ' . $this->tableName() . " SET status = '1', editable = FALSE"
             . " WHERE status != '1' AND idalbaran IS NOT NULL;");
 
         /// devolvemos al estado pendiente a los pedidos con estado 1 a los que se haya borrado el albarán
-        $this->db->exec('UPDATE ' . $this->tableName() . " SET status = '0', idalbaran = NULL, editable = TRUE "
+        $this->dataBase->exec('UPDATE ' . $this->tableName() . " SET status = '0', idalbaran = NULL, editable = TRUE "
             . "WHERE status = '1' AND idalbaran NOT IN (SELECT idalbaran FROM albaranescli);");
 
         /// marcamos como rechazados todos los presupuestos no editables y sin pedido asociado
-        $this->db->exec("UPDATE pedidoscli SET status = '2' WHERE idalbaran IS NULL AND"
+        $this->dataBase->exec('UPDATE ' . $this->tableName() . " SET status = '2' WHERE idalbaran IS NULL AND"
             . ' editable = false;');
     }
 }

@@ -43,15 +43,15 @@
 
             <column name="decimal_separator" title="decimal" numcolumns="3" order="120">
                 <widget type="select" fieldname="decimal_separator" required="true" icon="fa-calculator">
-                    <values title=", (comma)">,</values>
-                    <values title=". (dot)">.</values>
+                    <values title="symbol-comma">,</values>
+                    <values title="symbol-dot">.</values>
                 </widget>
             </column>            
 
             <column name="thousands_separator" title="thousands" numcolumns="3" order="120">
                 <widget type="select" fieldname="thousands_separator" required="true" icon="fa-calculator">
-                    <values title=", (comma)">,</values>
-                    <values title=". (dot)">.</values>
+                    <values title="symbol-comma">,</values>
+                    <values title="symbol-dot">.</values>
                 </widget>
             </column>            
         </group>

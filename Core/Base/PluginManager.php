@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,7 +26,7 @@ use Exception;
  *
  * @package FacturaScripts\Core\Base
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class PluginManager
 {
@@ -104,6 +104,9 @@ class PluginManager
         return [];
     }
 
+    /**
+     * Guarda la lista de plugins en un archivo
+     */
     private function save()
     {
         file_put_contents(self::$pluginListFile, implode(',', self::$enabledPlugins));
@@ -188,21 +191,24 @@ class PluginManager
             }
         }
 
-        if (self::$deployedControllers === FALSE) {
+        if (self::$deployedControllers === false) {
             /// por último iniciamos los controlador para completar el menú
             $this->deployControllers();
         }
     }
 
+    /**
+     * Prepara los controladores de forma dinámica
+     */
     private function deployControllers()
     {
-        self::$deployedControllers = TRUE;
+        self::$deployedControllers = true;
         $cache = new Cache(self::$folder);
         $menuManager = new MenuManager();
         $menuManager->init();
 
         foreach (scandir(self::$folder . '/Dinamic/Controller', SCANDIR_SORT_ASCENDING) as $fileName) {
-            if ($fileName != '.' && $fileName != '..' && substr($fileName, -3) == 'php') {
+            if ($fileName !== '.' && $fileName !== '..' && substr($fileName, -3) === 'php') {
                 $controllerName = substr($fileName, 0, -4);
                 $controllerNamespace = 'FacturaScripts\\Dinamic\\Controller\\' . $controllerName;
 
@@ -250,7 +256,11 @@ class PluginManager
     }
 
     /**
+     * Crea la carpeta
+     *
      * @param string $folder
+     *
+     * @return bool
      */
     private function createFolder($folder)
     {
@@ -311,7 +321,7 @@ class PluginManager
                 . '/**' . "\n"
                 . ' * Clase cargada dinámicamente' . "\n"
                 . ' * @package FacturaScripts\\Dinamic\\Controller' . "\n"
-                . ' * @author Carlos García Gómez' . "\n"
+                . ' * @author Carlos García Gómez <carlos@facturascripts.com>' . "\n"
                 . ' */' . "\n"
                 . 'class ' . $className . ' extends ' . $namespace . $folder . '\\' . $className . "\n{\n}\n";
 

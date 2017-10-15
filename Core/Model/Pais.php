@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -51,18 +51,28 @@ class Pais
      */
     public $nombre;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'paises';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'codpais';
     }
 
     /**
-     * Devuelve TRUE si el pais es el predeterminado de la empresa
+     * Devuelve True si el pais es el predeterminado de la empresa
      *
      * @return bool
      */
@@ -72,7 +82,7 @@ class Pais
     }
 
     /**
-     * Comprueba los datos del pais, devuelve TRUE si son correctos
+     * Comprueba los datos del pais, devuelve True si son correctos
      *
      * @return bool
      */

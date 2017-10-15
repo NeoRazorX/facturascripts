@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 /**
  * Factura de un cliente.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class FacturaCliente
 {
@@ -40,11 +40,21 @@ class FacturaCliente
      */
     public $idimprenta;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'facturascli';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'idfactura';
@@ -78,7 +88,7 @@ class FacturaCliente
     /**
      * Establece la fecha y la hora, pero respetando la numeración, el ejercicio
      * y las regularizaciones de IVA.
-     * Devuelve TRUE si se asigna una fecha distinta a los solicitados.
+     * Devuelve True si se asigna una fecha distinta a los solicitados.
      *
      * @param string $fecha
      * @param string $hora
@@ -130,17 +140,13 @@ class FacturaCliente
             $ejercicio = $eje0->get($this->codejercicio);
             if ($ejercicio) {
                 if (!$ejercicio->abierto()) {
-                    $this->miniLog->alert(
-                        'El ejercicio ' . $ejercicio->nombre . ' está cerrado. No se puede modificar la fecha.'
-                    );
+                    $this->miniLog->alert($this->i18n->trans('closed-exercise-cant-change-date', [$ejercicio->nombre]));
                 } elseif ($fecha === $ejercicio->get_best_fecha($fecha)) {
                     $regiva0 = new RegularizacionIva();
                     if ($regiva0->getFechaInside($fecha)) {
-                        $this->miniLog->alert('No se puede asignar la fecha ' . $fecha . ' porque ya hay'
-                            . ' una regularización de ' . FS_IVA . ' para ese periodo.');
+                        $this->miniLog->alert($this->i18n->trans('cant-assign-date-already-regularized', [$fecha, FS_IVA]));
                     } elseif ($regiva0->getFechaInside($this->fecha)) {
-                        $this->miniLog->alert('La factura se encuentra dentro de una regularización de '
-                            . FS_IVA . '. No se puede modificar la fecha.');
+                        $this->miniLog->alert($this->i18n->trans('invoice-regularized-cant-change-date', [FS_IVA]));
                     } else {
                         $this->fecha = $fecha;
                         $this->hora = $hora;
@@ -160,7 +166,7 @@ class FacturaCliente
     }
 
     /**
-     * Devulve las líneas de la factura.
+     * Devuelve las líneas asociadas a la factura.
      *
      * @return array
      */
@@ -178,31 +184,17 @@ class FacturaCliente
      */
     public function getLineasIva()
     {
-        return $this->getLineasIvaTrait($this->getLineas());
+        return $this->getLineasIvaTrait('FacturaCliente');
     }
 
     /**
-     * Comprueba los datos de la factura, devuelve TRUE si está correcto
+     * Comprueba los datos de la factura, devuelve True si está correcto
      *
      * @return bool
      */
     public function test()
     {
         return $this->testTrait();
-    }
-
-    public function save()
-    {
-        if ($this->test()) {
-            if ($this->exists()) {
-                return $this->saveUpdate();
-            }
-
-            $this->newCodigo();
-            return $this->saveInsert();
-        }
-
-        return FALSE;
     }
 
     /**
@@ -220,18 +212,17 @@ class FacturaCliente
             if ($ejercicio->abierto()) {
                 $reg0 = new RegularizacionIva();
                 if ($reg0->getFechaInside($this->fecha)) {
-                    $this->miniLog->alert('La factura se encuentra dentro de una regularización de '
-                        . FS_IVA . '. No se puede eliminar.');
+                    $this->miniLog->alert($this->i18n->trans('invoice-regularized-cant-delete', [FS_IVA]));
                     $bloquear = true;
                 } else {
                     foreach ($this->getRectificativas() as $rect) {
-                        $this->miniLog->alert('La factura ya tiene una rectificativa. No se puede eliminar.');
+                        $this->miniLog->alert($this->i18n->trans('invoice-have-revtifying-cant-delete'));
                         $bloquear = true;
                         break;
                     }
                 }
             } else {
-                $this->miniLog->alert('El ejercicio ' . $ejercicio->nombre . ' está cerrado.');
+                $this->miniLog->alert($this->i18n->trans('closed-exercise', [$ejercicio->nombre]));
                 $bloquear = true;
             }
         }
@@ -263,7 +254,7 @@ class FacturaCliente
                 }
             }
 
-            $this->miniLog->info(ucfirst(FS_FACTURA) . ' de venta ' . $this->codigo . ' eliminada correctamente.');
+            $this->miniLog->info($this->i18n->trans('customer-invoice-deleted-successfully', [$this->codigo]));
 
             return true;
         }

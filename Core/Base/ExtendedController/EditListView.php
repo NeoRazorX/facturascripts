@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
+
+use FacturaScripts\Core\Base;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Definición de vista para uso en ExtendedControllers
@@ -36,19 +40,19 @@ class EditListView extends BaseView
 
     /**
      * Almacena el offset para el cursor
-     * @var integer 
+     * @var int
      */
     private $offset;
 
     /**
      * Almacena el order para el cursor
-     * @var string 
+     * @var string
      */
     private $order;
 
     /**
      * Almacena los parámetros del where del cursor
-     * @var array 
+     * @var string
      */
     private $where;
 
@@ -92,6 +96,13 @@ class EditListView extends BaseView
         return $this->pageOption->columns;
     }
 
+    /**
+     * Carga los datos
+     *
+     * @param string $where
+     * @param int $offset
+     * @param int $limit
+     */
     public function loadData($where, $offset = 0, $limit = 0)
     {
         $this->count = $this->model->count($where);
@@ -103,10 +114,20 @@ class EditListView extends BaseView
         $this->offset = $offset;
         $this->where = $where;
     }
-        
+
+    /**
+     * Método para la exportación de los datos de la vista
+     *
+     * @param Base\ExportManager $exportManager
+     * @param Response $response
+     * @param string $action
+     *
+     * @return mixed
+     */
     public function export(&$exportManager, &$response, $action)
     {
         return $exportManager->generateList(
-                $response, $action, $this->model, $this->where, $this->order, $this->offset, $this->getColumns());
+            $response, $action, $this->model, $this->where, $this->order, $this->offset, $this->getColumns()
+        );
     }
 }

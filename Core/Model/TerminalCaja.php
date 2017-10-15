@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Model;
  * Configuración de un terminal de TPV y de la impresora de tickets,
  * además almacena los tickets a imprimir.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class TerminalCaja
 {
@@ -60,7 +60,7 @@ class TerminalCaja
     /**
      * Buffer con los ticket pendientes para imprimir.
      *
-     * @var
+     * @var string
      */
     public $tickets;
 
@@ -99,11 +99,21 @@ class TerminalCaja
      */
     public $sin_comandos;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'cajas_terminales';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'id';
@@ -127,7 +137,7 @@ class TerminalCaja
     }
 
     /**
-     * TODO
+     * Devuelve si el terminal está o no disponible
      *
      * @return bool
      */
@@ -142,31 +152,31 @@ class TerminalCaja
     }
 
     /**
-     * TODO
+     * Añade una línea al tiquet
      *
      * @param string $linea
      */
     public function addLinea($linea)
     {
-        $this->tickets .= $linea;
+        $this->tickets .= $this->sanitize($linea);
     }
 
     /**
-     * TODO
+     * Añade una línea grande al tiquet
      *
      * @param string $linea
      */
     public function addLineaBig($linea)
     {
         if ($this->sin_comandos) {
-            $this->tickets .= $linea;
+            $this->tickets .= $this->sanitize($linea);
         } else {
-            $this->tickets .= chr(27) . chr(33) . chr(56) . $linea . chr(27) . chr(33) . chr(1);
+            $this->tickets .= chr(27) . chr(33) . chr(56) . $this->sanitize($linea) . chr(27) . chr(33) . chr(1);
         }
     }
 
     /**
-     * TODO
+     * Abre el cajón del terminal
      */
     public function abrirCajon()
     {
@@ -185,7 +195,7 @@ class TerminalCaja
     }
 
     /**
-     * TODO
+     * Corta el papel del ticket
      */
     public function cortarPapel()
     {
@@ -204,7 +214,7 @@ class TerminalCaja
     }
 
     /**
-     * TODO
+     * Centra el texto del ticket
      *
      * @param string $word
      * @param int    $ancho
@@ -251,7 +261,7 @@ class TerminalCaja
     }
 
     /**
-     * TODO
+     * Devuelve un listao de los terminales disponibles
      *
      * @return array
      */
@@ -283,38 +293,38 @@ class TerminalCaja
     public function imprimirTicket(&$factura, &$empresa, $imprimirDescripciones = true, $imprimirObservaciones = false)
     {
         $medio = $this->anchopapel / 2.5;
-        $this->addLineaBig($this->centerText($this->sanitize($empresa->nombre), $medio) . "\n");
+        $this->addLineaBig($this->centerText($empresa->nombre, $medio) . "\n");
 
         if ($empresa->lema !== '') {
-            $this->addLinea($this->centerText($this->sanitize($empresa->lema)) . "\n\n");
+            $this->addLinea($this->centerText($empresa->lema) . "\n\n");
         } else {
             $this->addLinea("\n");
         }
 
         $this->addLinea(
-            $this->centerText($this->sanitize($empresa->direccion) . ' - ' . $this->sanitize($empresa->ciudad)) . "\n"
+            $this->centerText($empresa->direccion . ' - ' . $empresa->ciudad) . "\n"
         );
         $this->addLinea($this->centerText(FS_CIFNIF . ': ' . $empresa->cifnif));
         $this->addLinea("\n\n");
 
         if ($empresa->horario !== '') {
-            $this->addLinea($this->centerText($this->sanitize($empresa->horario)) . "\n\n");
+            $this->addLinea($this->centerText($empresa->horario) . "\n\n");
         }
 
         $linea = "\n" . ucfirst(FS_FACTURA_SIMPLIFICADA) . ': ' . $factura->codigo . "\n";
         $linea .= $factura->fecha . ' ' . date('H:i', strtotime($factura->hora)) . "\n";
         $this->addLinea($linea);
-        $this->addLinea('Cliente: ' . $this->sanitize($factura->nombrecliente) . "\n");
-        $this->addLinea('Empleado: ' . $factura->codagente . "\n\n");
+        $this->addLinea($this->i18n->trans('customer') . ': ' . $factura->nombrecliente . "\n");
+        $this->addLinea($this->i18n->trans('employee') . ': ' . $factura->codagente . "\n\n");
 
         if ($imprimirObservaciones) {
-            $this->addLinea('Observaciones: ' . $this->sanitize($factura->observaciones) . "\n\n");
+            $this->addLinea($this->i18n->trans('observations') . ': ' . $factura->observaciones . "\n\n");
         }
 
         $width = $this->anchopapel - 15;
-        $this->addLinea(sprintf('%3s', 'Ud.') . ' ' .
-            sprintf('%-' . $width . 's', 'Articulo') . ' ' .
-            sprintf('%10s', 'TOTAL') . "\n");
+        $this->addLinea(sprintf('%3s', $this->i18n->trans('units_short')) . ' ' .
+            sprintf('%-' . $width . 's', $this->i18n->trans('product')) . ' ' .
+            sprintf('%10s', $this->i18n->trans('total-caps')) . "\n");
         $this->addLinea(
             sprintf('%3s', '---') . ' ' . sprintf(
                 '%-' . $width . 's', substr(
@@ -326,11 +336,11 @@ class TerminalCaja
         foreach ($factura->getLineas() as $col) {
             if ($imprimirDescripciones) {
                 $linea = sprintf('%3s', $col->cantidad) . ' ' . sprintf(
-                        '%-' . $width . 's', substr($this->sanitize($col->descripcion), 0, $width - 1)
+                        '%-' . $width . 's', substr($col->descripcion, 0, $width - 1)
                     ) . ' ' . sprintf('%10s', $this->showNumero($col->totalIva())) . "\n";
             } else {
                 $linea = sprintf('%3s', $col->cantidad) . ' ' . sprintf(
-                        '%-' . $width . 's', $this->sanitize($col->referencia)
+                        '%-' . $width . 's', $col->referencia
                     ) . ' ' . sprintf('%10s', $this->showNumero($col->totalIva())) . "\n";
             }
 
@@ -342,15 +352,15 @@ class TerminalCaja
             $lineaiguales .= '=';
         }
         $this->addLinea($lineaiguales . "\n");
-        $this->addLinea('TOTAL A PAGAR: ' . sprintf(
+        $this->addLinea($this->i18n->trans('total-pay-caps') . ': ' . sprintf(
                 '%' . ($this->anchopapel - 15) . 's', $this->showPrecio($factura->total, $factura->coddivisa)
             ) . "\n");
         $this->addLinea($lineaiguales . "\n");
 
         /// imprimimos los impuestos desglosados
         $this->addLinea(
-            'TIPO   BASE    ' . FS_IVA . '    RE' .
-            sprintf('%' . ($this->anchopapel - 24) . 's', 'TOTAL') .
+            $this->i18n->trans('ticket-footer', [FS_IVA]) .
+            sprintf('%' . ($this->anchopapel - 24) . 's', $this->i18n->trans('total-caps')) .
             "\n"
         );
         foreach ($factura->getLineasIva() as $imp) {
@@ -380,37 +390,37 @@ class TerminalCaja
     public function imprimirTicketRegalo(&$factura, &$empresa, $imprimirDescripciones = true, $imprimirObservaciones = false)
     {
         $medio = $this->anchopapel / 2.5;
-        $this->addLineaBig($this->centerText($this->sanitize($empresa->nombre), $medio) . "\n");
+        $this->addLineaBig($this->centerText($empresa->nombre, $medio) . "\n");
 
         if ($empresa->lema !== '') {
-            $this->addLinea($this->centerText($this->sanitize($empresa->lema)) . "\n\n");
+            $this->addLinea($this->centerText($empresa->lema) . "\n\n");
         } else {
             $this->addLinea("\n");
         }
 
-        $this->addLinea($this->centerText($this->sanitize($empresa->direccion) . ' - '
-                . $this->sanitize($empresa->ciudad)) . "\n");
+        $this->addLinea($this->centerText($empresa->direccion . ' - '
+                . $empresa->ciudad) . "\n");
         $this->addLinea($this->centerText(FS_CIFNIF . ': ' . $empresa->cifnif));
         $this->addLinea("\n\n");
 
         if ($empresa->horario !== '') {
-            $this->addLinea($this->centerText($this->sanitize($empresa->horario)) . "\n\n");
+            $this->addLinea($this->centerText($empresa->horario) . "\n\n");
         }
 
-        $linea = "\n" . ucfirst(FS_FACTURA_SIMPLIFICADA) . ': ' . $factura->codigo . "\n";
+        $linea = "\n" . ucfirst($this->i18n->trans('simplified-invoice')) . ': ' . $factura->codigo . "\n";
         $linea .= $factura->fecha . ' ' . date('H:i', strtotime($factura->hora)) . "\n";
         $this->addLinea($linea);
-        $this->addLinea('Cliente: ' . $this->sanitize($factura->nombrecliente) . "\n");
-        $this->addLinea('Empleado: ' . $factura->codagente . "\n\n");
+        $this->addLinea($this->i18n->trans('customer') . ': ' . $factura->nombrecliente . "\n");
+        $this->addLinea($this->i18n->trans('employee') . ': ' . $factura->codagente . "\n\n");
 
         if ($imprimirObservaciones) {
-            $this->addLinea('Observaciones: ' . $this->sanitize($factura->observaciones) . "\n\n");
+            $this->addLinea($this->i18n->trans('observations') . ': ' . $factura->observaciones . "\n\n");
         }
 
         $width = $this->anchopapel - 15;
-        $this->addLinea(sprintf('%3s', 'Ud.') . ' ' .
-            sprintf('%-' . $width . 's', 'Articulo') . ' ' .
-            sprintf('%10s', 'TOTAL') . "\n");
+        $this->addLinea(sprintf('%3s', $this->i18n->trans('units_short')) . ' ' .
+            sprintf('%-' . $width . 's', $this->i18n->trans('product')) . ' ' .
+            sprintf('%10s', $this->i18n->trans('total-caps')) . "\n");
         $this->addLinea(
             sprintf('%3s', '---') . ' ' . sprintf(
                 '%-' . $width . 's', substr('--------------------------------------------------------', 0, $width - 1)
@@ -420,11 +430,11 @@ class TerminalCaja
         foreach ($factura->getLineas() as $col) {
             if ($imprimirDescripciones) {
                 $linea = sprintf('%3s', $col->cantidad) . ' ' . sprintf(
-                        '%-' . $width . 's', substr($this->sanitize($col->descripcion), 0, $width - 1)
+                        '%-' . $width . 's', substr($col->descripcion, 0, $width - 1)
                     ) . ' ' . sprintf('%10s', '-') . "\n";
             } else {
                 $linea = sprintf('%3s', $col->cantidad) . ' ' . sprintf(
-                        '%-' . $width . 's', $this->sanitize($col->referencia)
+                        '%-' . $width . 's', $col->referencia
                     ) . ' ' . sprintf('%10s', '-') . "\n";
             }
 
@@ -436,14 +446,14 @@ class TerminalCaja
             $lineaiguales .= '=';
         }
         $this->addLinea($lineaiguales);
-        $this->addLinea($this->centerText('TICKET REGALO'));
+        $this->addLinea($this->centerText($this->i18n->trans('gift-ticket')));
         $lineaiguales .= "\n\n\n\n\n\n\n\n";
         $this->addLinea($lineaiguales);
         $this->cortarPapel();
     }
 
     /**
-     * TODO
+     * Sanea el texto a imprimir
      *
      * @param string $txt
      *
@@ -516,7 +526,7 @@ class TerminalCaja
     }
 
     /**
-     * TODO
+     * Muestra el precio formateado
      *
      * @param float  $precio
      * @param string $coddivisa
@@ -533,7 +543,7 @@ class TerminalCaja
     }
 
     /**
-     * TODO
+     * Muestra el número formateado
      *
      * @param int $num
      * @param int $decimales
@@ -546,7 +556,7 @@ class TerminalCaja
     }
 
     /**
-     * TODO
+     * Centra el texto
      *
      * @param string $word
      * @param int    $ancho

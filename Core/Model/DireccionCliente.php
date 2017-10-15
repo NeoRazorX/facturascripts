@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
  * Una dirección de un cliente. Puede tener varias.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class DireccionCliente
 {
@@ -50,22 +51,32 @@ class DireccionCliente
     /**
      * TRUE -> esta dirección es la principal para envíos.
      *
-     * @var
+     * @var bool
      */
     public $domenvio;
 
     /**
      * TRUE -> esta dirección es la principal para facturación.
      *
-     * @var
+     * @var bool
      */
     public $domfacturacion;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'dirclientes';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'id';
@@ -83,7 +94,12 @@ class DireccionCliente
         $this->descripcion = 'Principal';
         $this->fecha = date('d-m-Y');
     }
-    
+
+    /**
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     *
+     * @return bool
+     */
     public function test()
     {
         return $this->testDireccion();

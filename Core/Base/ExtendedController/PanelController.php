@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -145,7 +146,7 @@ abstract class PanelController extends Base\Controller
     /**
      * Ejecuta las acciones que alteran los datos antes de leerlos
      *
-     * @param EditView $view
+     * @param BaseView $view
      * @param string $action
      */
     private function execPreviousAction($view, $action)
@@ -166,7 +167,7 @@ abstract class PanelController extends Base\Controller
     /**
      * Ejecuta las acciones del controlador
      *
-     * @param EditView $view
+     * @param BaseView $view
      * @param string $action
      */
     private function execAfterAction($view, $action)
@@ -187,7 +188,7 @@ abstract class PanelController extends Base\Controller
     /**
      * Ejecuta la modificación de los datos
      *
-     * @param EditView $view
+     * @param BaseView $view
      * @return boolean
      */
     protected function editAction($view)
@@ -202,7 +203,7 @@ abstract class PanelController extends Base\Controller
     /**
      * Prepara la inserción de un nuevo registro
      *
-     * @param EditView $view
+     * @param BaseView $view
      */
     protected function insertAction($view)
     {

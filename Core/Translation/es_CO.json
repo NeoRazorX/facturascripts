@@ -38,7 +38,7 @@
     "check-no-check-types": "No comprobar los tipos",
     "checks-on-database": "Comprobaciones en la base de datos:",
     "clean-cache": "Limpiar la caché",
-    "coma": "coma",
+    "comma": "coma",
     "control-panel": "Panel de control",
     "controller-not-found-or-disabled-plugin": "No se encuentra el controlador o pertenece a un plugin inactivo",
     "currency-symbol": "Símbolo de moneda:",

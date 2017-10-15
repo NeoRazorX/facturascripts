@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -142,7 +142,7 @@ class Postgresql implements DataBaseEngine
     {
         $error = pg_last_error($link);
 
-        return ($error != '') ? $error : $this->lastErrorMsg;
+        return ($error !== '') ? $error : $this->lastErrorMsg;
     }
 
     /**
@@ -238,10 +238,10 @@ class Postgresql implements DataBaseEngine
     /**
      * Ejecuta una sentencia SQL de tipo select
      *
-     * @param resource $link
+     * @param \mysqli|resource $link
      * @param string   $sql
      *
-     * @return resource
+     * @return array
      */
     public function select($link, $sql)
     {
@@ -286,7 +286,7 @@ class Postgresql implements DataBaseEngine
     }
 
     /**
-     * Compara los tipos de datos de una columna. Devuelve TRUE si son iguales.
+     * Compara los tipos de datos de una columna. Devuelve True si son iguales.
      *
      * @param string $dbType
      * @param string $xmlType

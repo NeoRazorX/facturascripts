@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,14 +16,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\ExportInterface;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of XLSExport
  *
- * @author carlos
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class XLSExport implements ExportInterface
 {
@@ -32,6 +35,13 @@ class XLSExport implements ExportInterface
 
     const LIST_LIMIT = 1000;
 
+    /**
+     * Nuevo documento
+     *
+     * @param ModelTrait $model
+     *
+     * @return bool|string
+     */
     public function newDoc($model)
     {
         $writer = new \XLSXWriter();
@@ -48,6 +58,17 @@ class XLSExport implements ExportInterface
         return $writer->writeToString();
     }
 
+    /**
+     * Nueva lista de documentos
+     *
+     * @param ModelTrait $model
+     * @param string $where
+     * @param string $order
+     * @param int $offset
+     * @param array $columns
+     *
+     * @return bool|string
+     */
     public function newListDoc($model, $where, $order, $offset, $columns)
     {
         $writer = new \XLSXWriter();
@@ -74,6 +95,14 @@ class XLSExport implements ExportInterface
         return $writer->writeToString();
     }
 
+    /**
+     * Devuelvo los datos de la tabla
+     *
+     * @param array $cursor
+     * @param array $tableCols
+     *
+     * @return array
+     */
     private function getTableData($cursor, $tableCols)
     {
         $tableData = [];
@@ -93,6 +122,11 @@ class XLSExport implements ExportInterface
         return $tableData;
     }
 
+    /**
+     * Asigna la cabecera
+     *
+     * @param Response $response
+     */
     public function setHeaders(&$response)
     {
         $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');

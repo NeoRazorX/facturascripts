@@ -1,9 +1,10 @@
 <?php
-/*
+/**
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -20,6 +21,11 @@ class PanelSettings extends ExtendedController\PanelController
 
     const KEYSETTINGS = 'Settings';
 
+    /**
+     * Devuelve los datos básicos de la página
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pagedata = parent::getPageData();
@@ -33,7 +39,7 @@ class PanelSettings extends ExtendedController\PanelController
 
     /**
      * Devuelve la url para el tipo indicado
-     * 
+     *
      * @param string $type
      * @return string
      */
@@ -56,15 +62,15 @@ class PanelSettings extends ExtendedController\PanelController
     
     /**
      * Devuelve el valor para la propiedad de configuración
-     * 
+     *
      * @param mixed $model
      * @param string $field
      * @return mixed
      */
     public function getFieldValue($model, $field)
-    {        
+    {
         $properties = parent::getFieldValue($model, 'properties');
-        if (array_key_exists($field, $properties)) {            
+        if (array_key_exists($field, $properties)) {
             return $properties[$field];
         }
         
@@ -74,7 +80,7 @@ class PanelSettings extends ExtendedController\PanelController
     /**
      * Devuelve el id de la vista con el valor de la constante KEYSSETTINGS
      * como prefijo
-     * 
+     *
      * @param string $key
      * @return string
      */
@@ -85,7 +91,7 @@ class PanelSettings extends ExtendedController\PanelController
 
     /**
      * Devuelve el id de la vista
-     * 
+     *
      * @param string $viewName
      * @return string
      */
@@ -114,12 +120,12 @@ class PanelSettings extends ExtendedController\PanelController
         }
 
         $title2 = $this->i18n->trans('about');
-        $this->addHtmlView('Block/About.html', NULL, 'about', $title2);
+        $this->addHtmlView('Block/About.html', null, 'about', $title2);
     }
 
     /**
      * Procedimiento para cargar los datos de cada una de las vistas
-     * 
+     *
      * @param string $keyView
      * @param ExtendedController\EditView $view
      */

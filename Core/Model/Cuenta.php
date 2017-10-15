@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,7 @@ namespace FacturaScripts\Core\Model;
  * Está relacionada con un único ejercicio y epígrafe,
  * pero puede estar relacionada con muchas subcuentas.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Cuenta
 {
@@ -38,7 +38,7 @@ class Cuenta
     public $idcuenta;
 
     /**
-     * TODO
+     * Código de cuenta
      *
      * @var string
      */
@@ -52,44 +52,55 @@ class Cuenta
     public $codejercicio;
 
     /**
+     * Identificador del epígrafe
      *
      * @var int
      */
     public $idepigrafe;
 
     /**
-     * TODO
+     * Código del epígrafe
      *
      * @var string
      */
     public $codepigrafe;
 
     /**
-     * TODO
+     * Descripción de la cuenta.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * TODO
+     * Identificador de la cuenta especial
      *
      * @var int
      */
     public $idcuentaesp;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'co_cuentas';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'idcuenta';
     }
 
     /**
-     * TODO
+     * Devuelve todas las subucuentas de la cuenta
      *
      * @return array
      */
@@ -101,7 +112,7 @@ class Cuenta
     }
 
     /**
-     * TODO
+     * Devuelve el ejercicio
      *
      * @return bool|mixed
      */
@@ -113,7 +124,7 @@ class Cuenta
     }
 
     /**
-     * TODO
+     * Obtiene la primera cuenta seleccionada.
      *
      * @param string $cod
      * @param string $codejercicio
@@ -155,7 +166,7 @@ class Cuenta
     }
 
     /**
-     * TODO
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
      *
      * @return bool
      */
@@ -166,13 +177,13 @@ class Cuenta
         if (strlen($this->codcuenta) > 0 && strlen($this->descripcion) > 0) {
             return true;
         }
-        $this->miniLog->alert('Faltan datos en la cuenta');
+        $this->miniLog->alert($this->i18n->trans('account-data-missing'));
 
         return false;
     }
 
     /**
-     * TODO
+     * Devuelve todas las cuentas del epígrafe
      *
      * @param int $idepi
      *
@@ -195,7 +206,7 @@ class Cuenta
     }
 
     /**
-     * TODO
+     * Devuelve todas las cuentas del ejercicio para el offset indicado
      *
      * @param string $codejercicio
      * @param int    $offset
@@ -219,7 +230,7 @@ class Cuenta
     }
 
     /**
-     * TODO
+     * Devuelve todas las cuentas del ejercicio
      *
      * @param string $codejercicio
      *
@@ -242,7 +253,7 @@ class Cuenta
     }
 
     /**
-     * TODO
+     * Devuelve todas las cuentas especiales del ejercicio
      *
      * @param int    $idcuesp
      * @param string $codejercicio
@@ -266,7 +277,8 @@ class Cuenta
     }
 
     /**
-     * TODO
+     * Devuelve un array con las combinaciones que contienen $query en su descripción
+     * o que coincide con su código de cuenta.
      *
      * @param string $query
      * @param int    $offset
@@ -292,7 +304,7 @@ class Cuenta
     }
 
     /**
-     * TODO
+     * Devuelve una nueva cuenta para el ejercicio
      *
      * @param int $sumaCodigo
      *

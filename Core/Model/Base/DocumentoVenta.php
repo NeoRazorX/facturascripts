@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Lib\NewCodigoDoc;
@@ -23,7 +24,7 @@ use FacturaScripts\Core\Lib\NewCodigoDoc;
 /**
  * Description of DocumentoVenta
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 trait DocumentoVenta
 {
@@ -47,14 +48,14 @@ trait DocumentoVenta
     public $cifnif;
 
     /**
-     * Ciudad del cliente
+     * Ciudad del cliente.
      *
      * @var string
      */
     public $ciudad;
 
     /**
-     * Empleado que ha creado este albarán. Modelo agente.
+     * Empleado que ha creado este documento. Modelo agente.
      *
      * @var string
      */
@@ -131,7 +132,7 @@ trait DocumentoVenta
     public $codserie;
 
     /**
-     * Dirección del cliente
+     * Dirección del cliente.
      *
      * @var string
      */
@@ -280,7 +281,7 @@ trait DocumentoVenta
     public $porcomision;
 
     /**
-     * Provincia del cliente
+     * Provincia del cliente.
      *
      * @var string
      */
@@ -337,6 +338,9 @@ trait DocumentoVenta
      */
     public $observaciones;
 
+    /**
+     * Inicializa los valores del documento.
+     */
     private function clearDocumentoVenta()
     {
         $this->clearTrait();
@@ -374,6 +378,9 @@ trait DocumentoVenta
         return mb_substr($this->observaciones, 0, 50) . '...';
     }
 
+    /**
+     * Genera un nuevo código
+     */
     private function newCodigo()
     {
         $newCodigoDoc = new NewCodigoDoc();
@@ -381,22 +388,46 @@ trait DocumentoVenta
         $this->codigo = $newCodigoDoc->getCodigo($this->tableName(), $this->numero, $this->codserie, $this->codejercicio);
     }
 
+    /**
+     * Almacena los datos del modelo en la base de datos.
+     *
+     * @return bool
+     */
+    public function save()
+    {
+        if ($this->test()) {
+            if ($this->exists()) {
+                return $this->saveUpdate();
+            }
+
+            $this->newCodigo();
+            return $this->saveInsert();
+        }
+
+        return false;
+    }
+
+    /**
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     *
+     * @return bool
+     */
     private function testTrait()
     {
-        $this->nombrecliente = $this->noHtml($this->nombrecliente);
-        if ($this->nombrecliente == '') {
+        $this->nombrecliente = static::noHtml($this->nombrecliente);
+        if ($this->nombrecliente === '') {
             $this->nombrecliente = '-';
         }
-        $this->direccion = $this->noHtml($this->direccion);
-        $this->ciudad = $this->noHtml($this->ciudad);
-        $this->provincia = $this->noHtml($this->provincia);
-        $this->envio_nombre = $this->noHtml($this->envio_nombre);
-        $this->envio_apellidos = $this->noHtml($this->envio_apellidos);
-        $this->envio_direccion = $this->noHtml($this->envio_direccion);
-        $this->envio_ciudad = $this->noHtml($this->envio_ciudad);
-        $this->envio_provincia = $this->noHtml($this->envio_provincia);
-        $this->numero2 = $this->noHtml($this->numero2);
-        $this->observaciones = $this->noHtml($this->observaciones);
+        $this->direccion = static::noHtml($this->direccion);
+        $this->ciudad = static::noHtml($this->ciudad);
+        $this->provincia = static::noHtml($this->provincia);
+        $this->envio_nombre = static::noHtml($this->envio_nombre);
+        $this->envio_apellidos = static::noHtml($this->envio_apellidos);
+        $this->envio_direccion = static::noHtml($this->envio_direccion);
+        $this->envio_ciudad = static::noHtml($this->envio_ciudad);
+        $this->envio_provincia = static::noHtml($this->envio_provincia);
+        $this->numero2 = static::noHtml($this->numero2);
+        $this->observaciones = static::noHtml($this->observaciones);
 
         /**
          * Usamos el euro como divisa puente a la hora de sumar, comparar
@@ -404,26 +435,33 @@ trait DocumentoVenta
          * muchos decimales.
          */
         $this->totaleuros = round($this->total / $this->tasaconv, 5);
-        if ($this->floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, TRUE)) {
-            return TRUE;
+        if (static::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true)) {
+            return true;
         }
 
-        $this->miniLog->alert('bad-total-error');
-        return FALSE;
+        $this->miniLog->alert($this->i18n->trans('bad-total-error'));
+        return false;
     }
 
+    /**
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     *
+     * @param string $tipoDoc
+     *
+     * @return bool
+     */
     private function fullTestTrait($tipoDoc)
     {
-        $status = TRUE;
+        $status = true;
         $subtotales = [];
         $irpf = 0;
 
         /// calculamos también con el método anterior
         $neto_alt = 0;
         $iva_alt = 0;
-        foreach ($this->get_lineas() as $lin) {
+        foreach ($this->getLineas() as $lin) {
             if (!$lin->test()) {
-                $status = FALSE;
+                $status = false;
             }
             $codimpuesto = ($lin->codimpuesto === null ) ? 0 : $lin->codimpuesto;
             if (!array_key_exists($codimpuesto, $subtotales)) {
@@ -459,29 +497,29 @@ trait DocumentoVenta
         $total = $neto + $iva - $irpf + $recargo;
         $total_alt = $neto_alt + $iva_alt - $irpf + $recargo;
 
-        if (!$this->floatcmp($this->neto, $neto, FS_NF0, TRUE) && !$this->floatcmp($this->neto, $neto_alt, FS_NF0, TRUE)) {
-            $this->miniLog->alert("Valor neto de " . $tipoDoc . " " . $this->codigo . " incorrecto (" . $this->neto . "). Valor correcto: " . $neto);
-            $status = FALSE;
+        if (!static::floatcmp($this->neto, $neto, FS_NF0, true) && !static::floatcmp($this->neto, $neto_alt, FS_NF0, true)) {
+            $this->miniLog->alert($this->i18n->trans('neto-value-error', [$tipoDoc, $this->codigo, $this->neto, $neto]));
+            $status = false;
         }
 
-        if (!$this->floatcmp($this->totaliva, $iva, FS_NF0, TRUE) && !$this->floatcmp($this->totaliva, $iva_alt, FS_NF0, TRUE)) {
-            $this->miniLog->alert("Valor totaliva de " . $tipoDoc . " " . $this->codigo . " incorrecto (" . $this->totaliva . "). Valor correcto: " . $iva);
-            $status = FALSE;
+        if (!static::floatcmp($this->totaliva, $iva, FS_NF0, true) && !static::floatcmp($this->totaliva, $iva_alt, FS_NF0, true)) {
+            $this->miniLog->alert($this->i18n->trans('totaliva-value-error', [$tipoDoc, $this->codigo, $this->totaliva, $iva]));
+            $status = false;
         }
 
-        if (!$this->floatcmp($this->totalirpf, $irpf, FS_NF0, TRUE)) {
-            $this->miniLog->alert("Valor totalirpf de " . $tipoDoc . " " . $this->codigo . " incorrecto (" . $this->totalirpf . "). Valor correcto: " . $irpf);
-            $status = FALSE;
+        if (!static::floatcmp($this->totalirpf, $irpf, FS_NF0, true)) {
+            $this->miniLog->alert($this->i18n->trans('totaliva-value-error', [$tipoDoc, $this->codigo, $this->totalirpf, $irpf]));
+            $status = false;
         }
 
-        if (!$this->floatcmp($this->totalrecargo, $recargo, FS_NF0, TRUE)) {
-            $this->miniLog->alert("Valor totalrecargo de " . $tipoDoc . " " . $this->codigo . " incorrecto (" . $this->totalrecargo . "). Valor correcto: " . $recargo);
-            $status = FALSE;
+        if (!static::floatcmp($this->totalrecargo, $recargo, FS_NF0, true)) {
+            $this->miniLog->alert($this->i18n->trans('totalrecargp-value-error', [$tipoDoc, $this->codigo, $this->totalrecargo, $recargo]));
+            $status = false;
         }
 
-        if (!$this->floatcmp($this->total, $total, FS_NF0, TRUE) && !$this->floatcmp($this->total, $total_alt, FS_NF0, TRUE)) {
-            $this->miniLog->alert("Valor total de " . $tipoDoc . " " . $this->codigo . " incorrecto (" . $this->total . "). Valor correcto: " . $total);
-            $status = FALSE;
+        if (!static::floatcmp($this->total, $total, FS_NF0, true) && !static::floatcmp($this->total, $total_alt, FS_NF0, true)) {
+            $this->miniLog->alert($this->i18n->trans('total-value-error', [$tipoDoc, $this->codigo, $this->total, $total]));
+            $status = false;
         }
 
         return $status;

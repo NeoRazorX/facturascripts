@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 /**
  * Description of LineaDocumentoCompra
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 trait LineaDocumentoCompra
 {
@@ -30,7 +31,7 @@ trait LineaDocumentoCompra
     }
 
     /**
-     * TODO
+     * Cantidad
      *
      * @var float
      */
@@ -51,7 +52,7 @@ trait LineaDocumentoCompra
     public $codimpuesto;
 
     /**
-     * TODO
+     * Descripción de la línea.
      *
      * @var string
      */
@@ -120,17 +121,25 @@ trait LineaDocumentoCompra
      */
     public $referencia;
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'idlinea';
     }
 
+    /**
+     * Inicializa los valores de la línea.
+     */
     private function clearLinea()
     {
         $this->clearTrait();
         $this->cantidad = 0.0;
         $this->codcombinacion = null;
-        $this->codimpuesto = NULL;
+        $this->codimpuesto = null;
         $this->descripcion = '';
         $this->dtopor = 0.0;
         $this->idlinea = null;
@@ -144,7 +153,7 @@ trait LineaDocumentoCompra
     }
 
     /**
-     * TODO
+     * Devuelve el PVP con IVA
      *
      * @return float|int
      */
@@ -154,7 +163,7 @@ trait LineaDocumentoCompra
     }
 
     /**
-     * TODO
+     * Devuelve el PVP total (con IVA, IRPF y recargo)
      *
      * @return float|int
      */
@@ -164,7 +173,7 @@ trait LineaDocumentoCompra
     }
 
     /**
-     * TODO
+     * Devuelve el PVP total por producto (sin IRPF ni recargo)
      *
      * @return float|int
      */
@@ -178,7 +187,7 @@ trait LineaDocumentoCompra
     }
 
     /**
-     * TODO
+     * Devuelve la descripción
      *
      * @return string
      */
@@ -187,20 +196,26 @@ trait LineaDocumentoCompra
         return nl2br($this->descripcion);
     }
 
+    /**
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     *
+     * @return bool
+     */
     public function test()
     {
-        $this->descripcion = $this->noHtml($this->descripcion);
+        $this->descripcion = static::noHtml($this->descripcion);
         $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
         $totalsindto = $this->pvpunitario * $this->cantidad;
 
-        if (!$this->floatcmp($this->pvptotal, $total, FS_NF0, TRUE)) {
-            $this->miniLog->alert("Error en el valor de pvptotal de la línea " . $this->referencia . " del documento. Valor correcto: " . $total);
-            return FALSE;
-        } else if (!$this->floatcmp($this->pvpsindto, $totalsindto, FS_NF0, TRUE)) {
-            $this->miniLog->alert("Error en el valor de pvpsindto de la línea " . $this->referencia . " del documento. Valor correcto: " . $totalsindto);
-            return FALSE;
+        if (!static::floatcmp($this->pvptotal, $total, FS_NF0, true)) {
+            $this->miniLog->alert($this->i18n->trans('pvptotal-line-error', [$this->referencia, $total]));
+            return false;
+        }
+        if (!static::floatcmp($this->pvpsindto, $totalsindto, FS_NF0, true)) {
+            $this->miniLog->alert($this->i18n->trans('pvpsindto-line-error', [$this->referencia, $totalsindto]));
+            return false;
         }
 
-        return TRUE;
+        return true;
     }
 }

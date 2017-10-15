@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2016-2017    Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2016-2017    Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,67 +22,76 @@ namespace FacturaScripts\Core\Model;
 /**
  * Description of linea_transferencia_stock
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class LineaTransferenciaStock
 {
     use Base\ModelTrait;
 
-    /// clave primaria. integer
     /**
-     * TODO
+     * Clave primaria. integer
      *
      * @var int
      */
     public $idlinea;
 
     /**
-     * TODO
+     * Identificador de transferéncia
      *
      * @var int
      */
     public $idtrans;
 
     /**
-     * TODO
+     * Referencia
      *
      * @var string
      */
     public $referencia;
 
     /**
-     * TODO
+     * Cantidad
      *
      * @var float
      */
     public $cantidad;
 
     /**
-     * TODO
+     * Descripción de la transferencia.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * TODO
+     * Fecha
      *
      * @var string
      */
     private $fecha;
 
     /**
-     * TODO
+     * Hora
      *
      * @var string
      */
     private $hora;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'lineastranstocks';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'idlinea';
@@ -103,7 +112,7 @@ class LineaTransferenciaStock
     }
 
     /**
-     * TODO
+     * Devuelve la fecha
      *
      * @return string
      */
@@ -113,7 +122,7 @@ class LineaTransferenciaStock
     }
 
     /**
-     * TODO
+     * Devuelve la hora
      *
      * @return string
      */
@@ -123,7 +132,7 @@ class LineaTransferenciaStock
     }
 
     /**
-     * TODO
+     * Devuelve todas las líneas de transferéncia de stock
      *
      * @param string $ref
      * @param string $codalmaorigen

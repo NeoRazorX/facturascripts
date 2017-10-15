@@ -32,8 +32,8 @@
         </column>
         <column name="formula" title="formula-to-apply" order="120">
             <widget type="select" fieldname="aplicar_a">
-                <values title="Precio de venta - X% - Y">pvp</values>
-                <values title="Precio de coste + X% + Y">coste</values>
+                <values title="formula-sale-price">pvp</values>
+                <values title="formula-cost-price">coste</values>
             </widget>
         </column>
         <column name="incpct" title="variation" order="130">

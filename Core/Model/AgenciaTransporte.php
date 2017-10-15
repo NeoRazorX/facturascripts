@@ -2,7 +2,7 @@
 /**
  * This file is part of facturacion_base
  * Copyright (C) 2015         Pablo Peralta
- * Copyright (C) 2015-2017    Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2015-2017    Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Model;
 /**
  * Agencia de transporte de mercancías.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class AgenciaTransporte
@@ -52,11 +52,21 @@ class AgenciaTransporte
      */
     public $activo;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'agenciastrans';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'codtrans';

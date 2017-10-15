@@ -38,7 +38,7 @@
     "check-no-check-types": "Don't check the types",
     "checks-on-database": "Checks in the database",
     "clean-cache": "Clear the cache",
-    "coma": "coma",
+    "comma": "coma",
     "control-panel": "Control Panel",
     "controller-not-found-or-disabled-plugin": "Controller not found or belongs to an inactive plugin",
     "currency-symbol": "Currency symbol",

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2012-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2012-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 /**
  * Almacena los datos de un artículos.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Articulo
 {
@@ -33,28 +33,28 @@ class Articulo
     }
 
     /**
-     * TODO
+     * Array de impuestos
      *
      * @var array
      */
     private static $impuestos;
 
     /**
-     * TODO
+     * Array de búsquedas precargadas
      *
      * @var array
      */
     private static $search_tags;
 
     /**
-     * TODO
+     * Bool que indica si la caché está limpiada
      *
-     * @var
+     * @var null|bool
      */
     private static $cleaned_cache;
 
     /**
-     * TODO
+     * Lista de columnas
      *
      * @var array
      */
@@ -143,28 +143,28 @@ class Articulo
     public $codimpuesto;
 
     /**
-     * TRUE => el artículos está bloqueado / obsoleto.
+     * True => el artículos está bloqueado / obsoleto.
      *
      * @var bool
      */
     public $bloqueado;
 
     /**
-     * TRUE => el artículo se compra
+     * True => el artículo se compra
      *
      * @var bool
      */
     public $secompra;
 
     /**
-     * TRUE => el artículo se vende
+     * True => el artículo se vende
      *
      * @var bool
      */
     public $sevende;
 
     /**
-     * TRUE -> se mostrará sincronizará con la tienda online.
+     * True -> se mostrará sincronizará con la tienda online.
      *
      * @var bool
      */
@@ -207,8 +207,8 @@ class Articulo
     public $stockmax;
 
     /**
-     * TRUE -> permitir ventas sin stock.
-     * Si, sé que no tiene sentido que poner controlstock a TRUE
+     * True -> permitir ventas sin stock.
+     * Si, sé que no tiene sentido que poner controlstock a True
      * implique la ausencia de control de stock. Pero es una cagada de
      * FacturaLux -> Abanq -> Eneboo, y por motivos de compatibilidad
      * se mantiene.
@@ -218,8 +218,8 @@ class Articulo
     public $controlstock;
 
     /**
-     * TRUE -> no controlar el stock.
-     * Activarlo implica poner a TRUE $controlstock;
+     * True -> no controlar el stock.
+     * Activarlo implica poner a True $controlstock;
      *
      * @var bool
      */
@@ -275,17 +275,27 @@ class Articulo
     private $imagen;
 
     /**
-     * TODO
+     * El artículo existe o no
      *
      * @var bool
      */
     private $exists;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'articulos';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'referencia';
@@ -478,7 +488,7 @@ class Articulo
 
     /**
      * Devuelve el % de IVA del artículo.
-     * Si $reload es TRUE, vuelve a consultarlo en lugar de usar los datos cargados.
+     * Si $reload es True, vuelve a consultarlo en lugar de usar los datos cargados.
      *
      * @param bool $reload
      *
@@ -576,7 +586,7 @@ class Articulo
     {
         $pvp = round($pvp, FS_NF0_ART);
 
-        if (!$this->floatcmp($this->pvp, $pvp, FS_NF0_ART + 2)) {
+        if (!static::floatcmp($this->pvp, $pvp, FS_NF0_ART + 2)) {
             $this->pvp_ant = $this->pvp;
             $this->factualizado = date('d-m-Y');
             $this->pvp = $pvp;
@@ -615,7 +625,7 @@ class Articulo
 
                 $this->referencia = $ref;
             } else {
-                $this->miniLog->alert('Imposible modificar la referencia.');
+                $this->miniLog->alert($this->i18n->trans('cant-modify-reference'));
             }
         }
 
@@ -657,7 +667,7 @@ class Articulo
      * Ya se encarga de ejecutar save() si es necesario.
      *
      * @param string  $codalmacen
-     * @param integer $cantidad
+     * @param int $cantidad
      *
      * @return bool
      */
@@ -687,7 +697,7 @@ class Articulo
             }
 
             if ($result) {
-                /// $result es TRUE
+                /// $result es True
                 /// este código está muy optimizado para guardar solamente los cambios
 
                 $nuevoStock = $stock->totalFromArticulo($this->referencia);
@@ -701,11 +711,11 @@ class Articulo
                             . ' WHERE referencia = ' . $this->var2str($this->referencia) . ';';
                         $result = $this->dataBase->exec($sql);
                     } elseif (!$this->save()) {
-                        $this->miniLog->alert('¡Error al actualizar el stock del artículo!');
+                        $this->miniLog->alert($this->i18n->trans('error-updating-product-stock'));
                     }
                 }
             } else {
-                $this->miniLog->alert('Error al guardar el stock');
+                $this->miniLog->alert($this->i18n->trans('error-saving-stock'));
             }
         }
 
@@ -717,7 +727,7 @@ class Articulo
      * Ya se encarga de ejecutar save() si es necesario.
      *
      * @param string  $codalmacen
-     * @param integer $cantidad
+     * @param int $cantidad
      * @param bool    $recalculaCoste
      * @param string  $codcombinacion
      *
@@ -728,9 +738,7 @@ class Articulo
         $result = false;
 
         if ($recalculaCoste) {
-            /**
-             * TODO: completar
-             */
+            // TODO: Uncomplete
             $this->costemedio = 1;
         }
 
@@ -746,7 +754,7 @@ class Articulo
                         . '  WHERE referencia = ' . $this->var2str($this->referencia) . ';';
                     $result = $this->dataBase->exec($sql);
                 } elseif (!$this->save()) {
-                    $this->miniLog->alert('¡Error al actualizar el stock del artículo!');
+                    $this->miniLog->alert($this->i18n->trans('error-updating-product-stock'));
                     $result = false;
                 }
             }
@@ -784,7 +792,7 @@ class Articulo
                             . '  WHERE referencia = ' . $this->var2str($this->referencia) . ';';
                         $result = $this->dataBase->exec($sql);
                     } elseif (!$this->save()) {
-                        $this->miniLog->alert('¡Error al actualizar el stock del artículo!');
+                        $this->miniLog->alert($this->i18n->trans('error-updating-product-stock'));
                         $result = false;
                     }
 
@@ -800,7 +808,7 @@ class Articulo
                     }
                 }
             } else {
-                $this->miniLog->alert('¡Error al guardar el stock!');
+                $this->miniLog->alert($this->i18n->trans('error-saving-stock'));
             }
         }
 
@@ -808,7 +816,7 @@ class Articulo
     }
 
     /**
-     * Devuelve TRUE  si los datos del artículo son correctos.
+     * Devuelve True  si los datos del artículo son correctos.
      *
      * @return bool
      */
@@ -836,14 +844,9 @@ class Articulo
         }
 
         if ($this->referencia === null || empty($this->referencia) || strlen($this->referencia) > 18) {
-            $this->miniLog->alert(
-                'Referencia de artículo no válida: ' . $this->referencia . '. Debe tener entre 1 y 18 caracteres.'
-            );
+            $this->miniLog->alert($this->i18n->trans('product-reference-not-valid', [$this->referencia]));
         } elseif ($this->equivalencia !== null && strlen($this->equivalencia) > 25) {
-            $this->miniLog->alert(
-                'Código de equivalencia del artículos no válido: ' . $this->equivalencia
-                . '. Debe tener entre 1 y 25 caracteres.'
-            );
+            $this->miniLog->alert($this->i18n->trans('product-equivalence-not-valid', [$this->equivalencia]));
         } else {
             $status = true;
         }
@@ -874,9 +877,9 @@ class Articulo
     }
 
     /**
-     * TODO
+     * Obtiene las búsquedas precargadas
      *
-     * @return mixed
+     * @return array|mixed
      */
     public function getSearchTags()
     {
@@ -891,7 +894,7 @@ class Articulo
      * Devuelve un array con los artículos encontrados en base a la búsqueda.
      *
      * @param string  $query
-     * @param integer $offset
+     * @param int $offset
      * @param string  $codfamilia
      * @param bool    $conStock
      * @param string  $codfabricante
@@ -1022,7 +1025,7 @@ class Articulo
     }
 
     /**
-     * TODO
+     * Ejecuta una tarea con cron
      */
     public function cronJob()
     {
@@ -1068,7 +1071,7 @@ class Articulo
 
     /**
      * Comprueba y añade una cadena a la lista de búsquedas precargadas
-     * en memcache. Devuelve TRUE si la cadena ya está en la lista de
+     * en memcache. Devuelve True si la cadena ya está en la lista de
      * precargadas.
      *
      * @param string $tag
@@ -1109,7 +1112,7 @@ class Articulo
     }
 
     /**
-     * TODO
+     * Limpia la cache
      */
     private function cleanCache()
     {

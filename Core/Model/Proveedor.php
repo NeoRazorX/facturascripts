@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 /**
  * Un proveedor. Puede estar relacionado con varias direcciones o subcuentas.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Proveedor extends Base\Persona
 {
@@ -34,29 +34,47 @@ class Proveedor extends Base\Persona
     }
 
     /**
-     * TRUE -> el proveedor es un acreedor, es decir, no le compramos mercancia,
+     * True -> el proveedor es un acreedor, es decir, no le compramos mercancia,
      * le compramos servicios, etc.
      *
      * @var bool
      */
     public $acreedor;
 
+    /**
+     * Proveedor constructor.
+     *
+     * @param array $data
+     */
     public function __construct($data = [])
     {
         parent::__construct();
         $this->traitConstruct($data);
     }
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'proveedores';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'codproveedor';
     }
 
+    /**
+     * Resetea los valores de todas las propiedades modelo.
+     */
     public function clear()
     {
         $this->traitClear();
@@ -127,7 +145,7 @@ class Proveedor extends Base\Persona
 
     /**
      * Devuelve la subcuenta asignada al proveedor para el ejercicio $codeje,
-     * si no hay una subcuenta asignada, intenta crearla. Si falla devuelve FALSE.
+     * si no hay una subcuenta asignada, intenta crearla. Si falla devuelve False.
      *
      * @param string $codeje
      *
@@ -144,12 +162,12 @@ class Proveedor extends Base\Persona
         $cuentaModel = new Cuenta();
         $cpro = $cuentaModel->getCuentaesp('PROVEE', $codeje);
         if ($this->acreedor) {
-            $cpro = $cuenta->getCuentaesp('ACREED', $codeje);
+            $cpro = $cuentaModel->getCuentaesp('ACREED', $codeje);
             if (!$cpro) {
-                $cpro = $cuenta->getByCodigo('410', $codeje);
+                $cpro = $cuentaModel->getByCodigo('410', $codeje);
             }
             if (!$cpro) {
-                $cpro = $cuenta->getCuentaesp('PROVEE', $codeje);
+                $cpro = $cuentaModel->getCuentaesp('PROVEE', $codeje);
             }
         }
 
@@ -174,12 +192,12 @@ class Proveedor extends Base\Persona
                     return $subcuenta;
                 }
 
-                $this->miniLog->alert('Imposible asociar la subcuenta para el proveedor ' . $this->codproveedor);
+                $this->miniLog->alert($this->i18n->trans('cant-assing-subaccount-supplier', [$this->codproveedor]));
 
                 return false;
             }
 
-            $this->miniLog->alert('Imposible crear la subcuenta para el proveedor ' . $this->codproveedor);
+            $this->miniLog->alert($this->i18n->trans('cant-create-subaccount-supplier', [$this->codproveedor]));
 
             return false;
         }
@@ -191,7 +209,7 @@ class Proveedor extends Base\Persona
     }
 
     /**
-     * TODO
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
      *
      * @return bool
      */
@@ -211,11 +229,11 @@ class Proveedor extends Base\Persona
         $this->observaciones = self::noHtml($this->observaciones);
 
         if (!preg_match('/^[A-Z0-9]{1,6}$/i', $this->codproveedor)) {
-            $this->miniLog->alert('Código de proveedor no válido.');
+            $this->miniLog->alert($this->i18n->trans('not-valid-supplier-code'));
         } elseif (empty($this->nombre) || strlen($this->nombre) > 100) {
-            $this->miniLog->alert('Nombre de proveedor no válido.');
+            $this->miniLog->alert($this->i18n->trans('not-valid-supplier-name'));
         } elseif (empty($this->razonsocial) || strlen($this->razonsocial) > 100) {
-            $this->miniLog->alert('Razón social del proveedor no válida.');
+            $this->miniLog->alert($this->i18n->trans('not-valid-supplier-business-name'));
         } else {
             $status = true;
         }
@@ -224,7 +242,8 @@ class Proveedor extends Base\Persona
     }
 
     /**
-     * TODO
+     * Devuelve un array con las combinaciones que contienen $query en su nombre
+     * o razonsocial o codproveedor o cifnif o telefono1 o telefono2 o observaciones.
      *
      * @param string $query
      * @param int    $offset

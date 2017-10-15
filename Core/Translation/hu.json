@@ -38,7 +38,7 @@
     "check-no-check-types": "Nincs ellenőrzés árak",
     "checks-on-database": "Ellenőrzi az adatbázisban:",
     "clean-cache": "A gyorsítótár törlése",
-    "coma": "kóma",
+    "comma": "kóma",
     "control-panel": "Vezérlőpult",
     "controller-not-found-or-disabled-plugin": "Ha nem találja a vezető vagy kiadó egy inaktív bővítmény",
     "currency-symbol": "Pénznemszimbólum:",

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -29,6 +30,14 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class EditFabricante extends ExtendedController\EditController
 {
+    /**
+     * EditFabricante constructor.
+     *
+     * @param Base\Cache $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog $miniLog
+     * @param string $className
+     */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
@@ -37,12 +46,17 @@ class EditFabricante extends ExtendedController\EditController
         $this->modelName = 'FacturaScripts\Core\Model\Fabricante';
     }
 
+    /**
+     * Devuelve los datos básicos de la página
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'manufacturers';
         $pagedata['icon'] = 'fa-folder-open';
-        $pagedata['showonmenu'] = FALSE;
+        $pagedata['showonmenu'] = false;
 
         return $pagedata;
     }

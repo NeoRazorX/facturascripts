@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -64,7 +64,7 @@ class FormaPago
     public $domiciliado;
 
     /**
-     * TRUE (por defecto) -> mostrar los datos en documentos de venta,
+     * True (por defecto) -> mostrar los datos en documentos de venta,
      * incluida la cuenta bancaria asociada.
      *
      * @var bool
@@ -78,11 +78,21 @@ class FormaPago
      */
     public $vencimiento;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'formaspago';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'codpago';
@@ -103,7 +113,7 @@ class FormaPago
     }
 
     /**
-     * Devuelve TRUE si esta es la forma de pago predeterminada de la empresa
+     * Devuelve True si esta es la forma de pago predeterminada de la empresa
      *
      * @return bool
      */
@@ -180,17 +190,17 @@ class FormaPago
     {
         return 'INSERT INTO ' . $this->tableName()
             . ' (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)'
-            . " VALUES ('CONT','Al contado','Pagados',NULL,FALSE,'+0day')"
-            . ",('TRANS','Transferencia bancaria','Emitidos',NULL,FALSE,'+1month')"
-            . ",('TARJETA','Tarjeta de crédito','Pagados',NULL,FALSE,'+0day')"
-            . ",('PAYPAL','PayPal','Pagados',NULL,FALSE,'+0day');";
+            . " VALUES ('CONT','Al contado','Pagados',null,false,'+0day')"
+            . ",('TRANS','Transferencia bancaria','Emitidos',null,false,'+1month')"
+            . ",('TARJETA','Tarjeta de crédito','Pagados',null,false,'+0day')"
+            . ",('PAYPAL','PayPal','Pagados',null,false,'+0day');";
     }
 
     /**
      * Función recursiva auxiliar para calcularVencimiento()
      *
      * @param string  $fechaInicio
-     * @param integer $diaDePago
+     * @param int $diaDePago
      *
      * @return string
      */

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,14 +21,21 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Lib\ModelDataGenerator;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of Randomizer
  *
- * @author carlos
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Randomizer extends Base\Controller
 {
+    /**
+     * Ejecuta la lógica privada del controlador.
+     *
+     * @param Response $response
+     * @param \FacturaScripts\Core\Model\User|null $user
+     */
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
@@ -36,7 +43,7 @@ class Randomizer extends Base\Controller
         $ModelDataGenerator = new ModelDataGenerator($this->empresa);
         
         $option = $this->request->get('gen', '');
-        switch($option) {
+        switch ($option) {
             case 'agentes':
                 $num = $ModelDataGenerator->agentes();
                 $this->miniLog->info($num . $i18n->trans('generated-agents'));
@@ -98,7 +105,12 @@ class Randomizer extends Base\Controller
                 break;
         }
     }
-    
+
+    /**
+     * Devuelve los datos básicos de la página
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pageData = parent::getPageData();

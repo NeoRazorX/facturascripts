@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,16 +16,18 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\ExportInterface;
 use FacturaScripts\Core\Base\NumberTools;
+use FacturaScripts\Core\Model\Base\ModelTrait;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of PDF
  *
- * @author carlos
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class PDFExport implements ExportInterface
 {
@@ -34,13 +36,27 @@ class PDFExport implements ExportInterface
 
     const LIST_LIMIT = 1000;
 
+    /**
+     * Clase para formatear números
+     *
+     * @var NumberTools
+     */
     private $numberTools;
 
+    /**
+     * PDFExport constructor.
+     */
     public function __construct()
     {
         $this->numberTools = new NumberTools();
     }
 
+    /**
+     * Nuevo documento
+     *
+     * @param ModelTrait $model
+     * @return string
+     */
     public function newDoc($model)
     {
         $tableData = [];
@@ -57,6 +73,17 @@ class PDFExport implements ExportInterface
         return $pdf->ezStream(['Content-Disposition' => 'doc_' . $model->tableName() . '.pdf']);
     }
 
+    /**
+     * Nueva lista de documentos
+     *
+     * @param ModelTrait $model
+     * @param string $where
+     * @param string $order
+     * @param int $offset
+     * @param array $columns
+     *
+     * @return array
+     */
     public function newListDoc($model, $where, $order, $offset, $columns)
     {
         $orientation = 'portrait';
@@ -65,7 +92,7 @@ class PDFExport implements ExportInterface
 
         /// obtenemos las columnas
         foreach ($columns as $col) {
-            if ($col->display != 'none') {
+            if ($col->display !== 'none') {
                 $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
                 $tableOptions['cols'][$col->widget->fieldName] = [
                     'justification' => $col->display,
@@ -95,6 +122,15 @@ class PDFExport implements ExportInterface
         return $pdf->ezStream(['Content-Disposition' => 'list_' . $model->tableName() . '.pdf']);
     }
 
+    /**
+     * Devuelvo los datos de la tabla
+     *
+     * @param array $cursor
+     * @param array $tableCols
+     * @param array $tableOptions
+     *
+     * @return array
+     */
     private function getTableData($cursor, $tableCols, $tableOptions)
     {
         $tableData = [];
@@ -106,7 +142,7 @@ class PDFExport implements ExportInterface
 
                 if (in_array($tableOptions['cols'][$col]['col-type'], ['money', 'number'])) {
                     $value = $this->numberTools->format($value, 2);
-                } else if (is_string($value)) {
+                } elseif (is_string($value)) {
                     $value = $this->fixHtml($value);
                 }
 
@@ -118,7 +154,8 @@ class PDFExport implements ExportInterface
     }
 
     /**
-     * 
+     * Asigna la cabecera
+     *
      * @param Response $response
      */
     public function setHeaders(&$response)

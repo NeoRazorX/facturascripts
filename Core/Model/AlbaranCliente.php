@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -25,7 +26,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  * de un material que se le ha vendido. Implica la salida de ese material
  * del almacén de la empresa.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class AlbaranCliente
 {
@@ -47,17 +48,27 @@ class AlbaranCliente
     public $idfactura;
 
     /**
-     * TRUE => está pendiente de factura.
+     * True => está pendiente de factura.
      *
      * @var bool
      */
     public $ptefactura;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'albaranescli';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'idalbaran';
@@ -73,7 +84,7 @@ class AlbaranCliente
     }
 
     /**
-     * Devuelve las líneas del albarán.
+     * Devuelve las líneas asociadas al albarán.
      *
      * @return array
      */
@@ -84,7 +95,7 @@ class AlbaranCliente
     }
 
     /**
-     * Comprueba los datos del albarán, devuelve TRUE si son correctos
+     * Comprueba los datos del albarán, devuelve True si son correctos
      *
      * @return bool
      */
@@ -93,27 +104,13 @@ class AlbaranCliente
         return $this->testTrait();
     }
 
-    public function save()
-    {
-        if ($this->test()) {
-            if ($this->exists()) {
-                return $this->saveUpdate();
-            }
-
-            $this->newCodigo();
-            return $this->saveInsert();
-        }
-
-        return FALSE;
-    }
-
     /**
-     * TODO
+     * Ejecuta una tarea con cron
      */
     public function cronJob()
     {
         /**
-         * Ponemos a NULL todos los idfactura que no están en facturascli.
+         * Ponemos a Null todos los idfactura que no están en facturascli.
          * ¿Por qué? Porque muchos usuarios se dedican a tocar la base de datos.
          */
         $this->dataBase->exec('UPDATE ' . $this->tableName() . ' SET idfactura = NULL WHERE idfactura IS NOT NULL'

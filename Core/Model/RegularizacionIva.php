@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Model;
 /**
  * Una regularización de IVA.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class RegularizacionIva
 {
@@ -43,52 +43,62 @@ class RegularizacionIva
     public $idasiento;
 
     /**
-     * TODO
+     * Código de ejercicio
      *
      * @var string
      */
     public $codejercicio;
 
     /**
-     * TODO
+     * Fecha de asiento
      *
      * @var string
      */
     public $fechaasiento;
 
     /**
-     * TODO
+     * Fecha de fin
      *
      * @var string
      */
     public $fechafin;
 
     /**
-     * TODO
+     * Fecha de inicio
      *
      * @var string
      */
     public $fechainicio;
 
     /**
-     * TODO
+     * Período de la regularización
      *
      * @var
      */
     public $periodo;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'co_regiva';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'idregiva';
     }
 
     /**
-     * TODO
+     * Devuelve las partidas por asiento
      *
      * @return array|bool
      */
@@ -128,7 +138,7 @@ class RegularizacionIva
     }
 
     /**
-     * TODO
+     * Elimina la regularización de iva de la base de datos.
      *
      * @return bool
      */

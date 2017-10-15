@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Model;
 /**
  * Estructura para almacenar los datos de estado de una caja registradora (TPV).
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Caja
 {
@@ -38,14 +38,14 @@ class Caja
     /**
      * Clave primaria.
      *
-     * @var
+     * @var int
      */
     public $id;
 
     /**
      * Identificador del terminal. En la tabla cajas_terminales.
      *
-     * @var
+     * @var int
      */
     public $fs_id;
 
@@ -53,64 +53,74 @@ class Caja
      * Codigo del agente que abre y usa la caja.
      * El agente asociado al usuario.
      *
-     * @var
+     * @var string
      */
     public $codagente;
 
     /**
      * Fecha de apertura (inicio) de la caja.
      *
-     * @var
+     * @var string
      */
     public $fecha_inicial;
 
     /**
-     * TODO
+     * Dinero inicial en la caja
      *
-     * @var
+     * @var float
      */
     public $dinero_inicial;
 
     /**
-     * TODO
+     * Fecha de cierre (fin) de la caja.
      *
-     * @var
+     * @var string
      */
     public $fecha_fin;
 
     /**
-     * TODO
+     * Dinero final en la caja
      *
-     * @var
+     * @var float
      */
     public $dinero_fin;
 
     /**
      * Numero de tickets emitidos en esta caja.
      *
-     * @var
+     * @var int
      */
     public $tickets;
 
     /**
      * Ultima IP del usuario de la caja.
      *
-     * @var
+     * @var string
      */
     public $ip;
 
     /**
      * El objeto agente asignado.
      *
-     * @var
+     * @var Agente
      */
     public $agente;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'cajas';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'id';
@@ -139,7 +149,7 @@ class Caja
     }
 
     /**
-     * TODO
+     * Devuelve True si la caja está abierta, sino False
      *
      * @return bool
      */
@@ -149,7 +159,7 @@ class Caja
     }
 
     /**
-     * TODO
+     * Muestra la fecha de fin
      *
      * @return string
      */
@@ -163,7 +173,7 @@ class Caja
     }
 
     /**
-     * TODO
+     * Muestra la diferencia de dinero entre el cierre e inicio de caja
      *
      * @return mixed
      */
@@ -173,7 +183,7 @@ class Caja
     }
 
     /**
-     * TODO
+     * Devuelve todas las cajas usadas por el agente
      *
      * @param string $codagente
      * @param int    $offset

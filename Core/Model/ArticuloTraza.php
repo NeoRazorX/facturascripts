@@ -2,7 +2,7 @@
 /**
  * This file is part of facturacion_base
  * Copyright (C) 2016      Luismipr               <luismipr@gmail.com>.
- * Copyright (C) 2016-2017 Carlos García Gómez    <neorazorx@gmail.com>.
+ * Copyright (C) 2016-2017 Carlos García Gómez    <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,7 +25,7 @@ namespace FacturaScripts\Core\Model;
  * Números de serie, de lote y albaranes y facturas relacionadas.
  *
  * @author Luismipr              <luismipr@gmail.com>
- * @author Carlos García Gómez   <neorazorx@gmail.com>
+ * @author Carlos García Gómez   <carlos@facturascripts.com>
  */
 class ArticuloTraza
 {
@@ -56,7 +56,7 @@ class ArticuloTraza
     /**
      * Número o identificador del lote
      *
-     * @var
+     * @var string
      */
     public $lote;
 
@@ -102,11 +102,21 @@ class ArticuloTraza
      */
     public $fecha_salida;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'articulo_trazas';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'id';

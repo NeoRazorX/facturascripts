@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,14 +19,44 @@
 
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use Symfony\Component\HttpFoundation\Response;
+
 /**
  * Description of ExportInterface
  *
- * @author carlos
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 interface ExportInterface
 {
+    /**
+     * Asigna la cabecera
+     *
+     * @param Response $response
+     *
+     * @return mixed
+     */
     public function setHeaders(&$response);
+
+    /**
+     * Nuevo documento
+     *
+     * @param ModelTrait $model
+     *
+     * @return mixed
+     */
     public function newDoc($model);
+
+    /**
+     * Nueva lista de documentos
+     *
+     * @param ModelTrait $model
+     * @param string $where
+     * @param string $order
+     * @param int $offset
+     * @param array $columns
+     *
+     * @return mixed
+     */
     public function newListDoc($model, $where, $order, $offset, $columns);
 }

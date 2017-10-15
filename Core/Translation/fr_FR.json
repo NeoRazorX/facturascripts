@@ -61,7 +61,7 @@
     "check-no-check-types": "Ne pas vérifier les types",
     "checks-on-database": "Vérifications dans la base de données:",
     "clean-cache": "Vider le cache",
-    "coma": "virgule",
+    "comma": "virgule",
     "control-panel": "panneau d'administration",
     "controller-not-found-or-disabled-plugin": "Controleur non trouvé ou appartient à un plugin inactif",
     "currency-symbol": "Symbole de devise:",

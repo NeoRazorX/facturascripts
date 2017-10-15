@@ -20,13 +20,13 @@
     function deleteRecord(formName) {
         bootbox.confirm({
             title: "{{ i18n.trans('confirm-delete') }}",
-            message: "{{ i18n.trans('This cannot be undone. Are you sure you wish to continue?') }}",
+            message: "{{ i18n.trans('are-you-sure') }}",
             buttons: {
                 cancel: {
-                    label: "<i class='fa fa-times'></i> {{ i18n.trans('Cancel') }}"
+                    label: "<i class='fa fa-times'></i> {{ i18n.trans('cancel') }}"
                 },
                 confirm: {
-                    label: "<i class='fa fa-check'></i> {{ i18n.trans('Confirm') }}",
+                    label: "<i class='fa fa-check'></i> {{ i18n.trans('confirm') }}",
                     className: 'btn-danger'
                 }
             },
