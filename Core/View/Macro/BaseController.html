@@ -63,7 +63,6 @@
         <div class="row">
     {% endif %}
 
-    <input type="hidden" name="primarykey" value="{{ keyValue }}">
     {% for group in view.getColumns() %}
     <div class="{{ group.numColumns == 0 ? 'col' : 'col-md-' ~ group.numColumns }}">
         <div class="form-row">
@@ -71,9 +70,14 @@
             <legend>{{ group.getHeaderHTML(group.title)|raw }}</legend>
             {% endif %}
             {% for column in group.columns %}
-                {% if column.display != 'none' %}
-                {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
-                {{ column.getEditHTML(value)|raw }}
+                {% if column.display == 'none' %}
+                    {% if withForm == TRUE %}
+                        {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
+                        <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
+                    {% endif %}
+                {% else %}
+                    {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
+                    {{ column.getEditHTML(value)|raw }}
                 {% endif %}
             {% endfor %}
         </div>
@@ -82,16 +86,18 @@
 
     {% if withForm == TRUE %}
     {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
-    {% set remove, remove_title = context.i18n.trans('delete'), context.i18n.trans('delete record') %}
     {% set save, save_title = context.i18n.trans('save'), context.i18n.trans('save data') %}
     {% set undo, undo_title = context.i18n.trans('undo'), context.i18n.trans('restore data') %}
         </div>
         <div class="row">
             <div class="col-6">
+                {% if keyValue is not empty %}
+                {% set remove, remove_title = context.i18n.trans('delete'), context.i18n.trans('delete record') %}
                 <a id="b_remove" class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
                     <i class="fa fa-trash" aria-hidden="true"></i>
                     <span class="hidden-xs">&nbsp;{{ remove }}</span>
                 </a>
+                {% endif %}
             </div>
 
             <div class="col-6 text-right">
@@ -112,9 +118,21 @@
 -->
 {% macro columnsForEditListView(context, view) %}
     {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
+    {% set new_record, new_record_title = context.i18n.trans('new'), context.i18n.trans('create-new-record') %}
 
     {% for model in view.getCursor() %}
         {{ columnsForEditView(context, view, model, TRUE) }}
-        {% if not loop.last %}<hr style="height:5px" />{% endif %}
-    {% endfor %}
+        <hr style="height:5px" />
+    {% endfor %}    
+    
+    <div class="alert alert-success" role="alert">
+        <a class="alert-link" data-toggle="collapse" href="#new-{{ context.indexView }}" aria-expanded="true" aria-controls="new-{{ context.indexView }}">
+            <i class="fa fa-plus" aria-hidden="true"></i>&nbsp; {{ new_record_title }}...
+        </a>
+    </div>    
+
+    <div id="new-{{ context.indexView }}" class="collapse">
+        {% set newModel = view.newEmptyModel() %}
+        {{ columnsForEditView(context, view, newModel, TRUE) }}
+    </div>
 {% endmacro %}

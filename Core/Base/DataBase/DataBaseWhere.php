@@ -203,4 +203,26 @@ class DataBaseWhere
 
         return $result;
     }
+    
+    /**
+     * Dado un array de DataBaseWhere devuelve la lista de campos y sus valores
+     * que se aplicarán como filtro. (Sólo devuelve filtros con operador '='
+     *
+     * @param array $whereItems
+     *
+     * @return array
+     */
+    public static function getFieldsFilter(array $whereItems)
+    {
+        $result = [];
+        foreach ($whereItems as $item) {
+            if ($item->operator === '=') {
+                $fields = explode('|', $item->fields);
+                foreach ($fields as $field) {
+                    $result[$field] = $item->value;
+                }
+            }
+        }        
+        return $result;
+    }
 }
