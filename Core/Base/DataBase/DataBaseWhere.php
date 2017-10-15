@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Base\DataBase;
 
+use FacturaScripts\Core\Base\DataBase;
+
 /**
  * Estructura para definir una condición WHERE de uso en el
  * filtrado de datos desde los modelos
@@ -34,7 +36,7 @@ class DataBaseWhere
     /**
      * Enlace con la base de datos activa
      *
-     * @var \FacturaScripts\Core\Base\DataBase
+     * @var DataBase
      */
     private $dataBase;
 
@@ -80,7 +82,7 @@ class DataBaseWhere
         $this->value = $value;
         $this->operator = $operator;
         $this->operation = $operation;
-        $this->dataBase = new \FacturaScripts\Core\Base\DataBase();
+        $this->dataBase = new DataBase();
     }
 
     /**
@@ -240,7 +242,7 @@ class DataBaseWhere
                     $result[$field] = $item->value;
                 }
             }
-        }        
+        }
         return $result;
     }
 }

@@ -97,13 +97,6 @@ class EditListView extends BaseView
     }
 
     /**
-     * Carga los datos
-     *
-     * @param string $where
-     * @param int $offset
-     * @param int $limit
-     */
-    /**
      * Carga los datos en la propiedad cursor, según el filtro where indicado.
      * Añade un registro/modelo en blanco al final de los datos cargados.
      *
@@ -123,12 +116,17 @@ class EditListView extends BaseView
         $this->where = $where;
     }
 
+    /**
+     * Prepara los campos para un modelo vacío
+     *
+     * @return mixed
+     */
     public function newEmptyModel()
     {
         $class = $this->model->modelName();
         $result = new $class();
 
-        foreach (DataBase\DataBaseWhere::getFieldsFilter($this->where) as $field => $value) {
+        foreach (Base\DataBase\DataBaseWhere::getFieldsFilter($this->where) as $field => $value) {
             $result->{$field} = $value;
         }
 
