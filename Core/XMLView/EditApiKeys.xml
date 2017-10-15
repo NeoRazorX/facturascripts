@@ -19,6 +19,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <view>
+    <rows>
+        <row type="header">
+            <option icon="fa-key" label="Actualizar Token" onclick="generateToken()"></option>
+            <option icon="fa-key" label="Copiar Token" onclick="generateToken()"></option>
+            <option icon="fa-list" label="Ver Accesos" onclick="EditAPiKeysAccess"></option>
+        </row>
+        <row type="footer">
+            <option footer="Texto en el footer" color="success">Este es un ejemplo sin cabecera</option>
+        </row>
+    </rows>
     <columns>
         <group name="data" numcolumns="12">
             <column name="descripcion" numcolumns="3" order="60"

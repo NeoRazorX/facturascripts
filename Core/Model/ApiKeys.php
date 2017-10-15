@@ -26,7 +26,7 @@ namespace FacturaScripts\Core\Model;
  */
 class ApiKeys {
     use Base\ModelTrait;
-    
+
     public $id;
     public $apikey;
     public $descripcion;
@@ -43,7 +43,7 @@ class ApiKeys {
     {
         return 'id';
     }
-    
+
     /**
      * Resetea los valores de todas las propiedades modelo.
      */
@@ -56,6 +56,17 @@ class ApiKeys {
         $this->f_alta = \date('d-m-Y');
         $this->f_baja = null;
         $this->usuario_creacion = '';
+    }
+
+    public function getApiKey($apikey)
+    {
+        $sql = "SELECT * FROM ".$this->tableName().
+                " WHERE apikey = ".$this->var2str($apikey);
+        $data = $this->dataBase->select($sql);
+        if($data){
+            return new ApiKeys($data[0]);
+        }
+        return false;
     }
 
 }

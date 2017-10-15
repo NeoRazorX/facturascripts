@@ -20,11 +20,8 @@
 namespace FacturaScripts\Core\Base\Security;
 
 use FacturaScripts\Core\Base\Security\Tools;
-use FacturaScripts\Core\Base\Security\UserAuth;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 
+use FacturaScripts\Core\Model\ApiKeys;
 
 /**
  * Description of ApiAuth
@@ -39,94 +36,82 @@ class ApiAuth {
     public $fsOrigin;
     public $request;
     public $response;
-    
+
     public function __construct($config) {
-        extract($config);
-        $this->response = $response;
-        $this->request = $request;
-        $this->fsServerKey = $server_key;
+        $this->response = $config['response'];
+        $this->request = $config['request'];
     }
-    
-    public function checkCredentials() 
+
+    public function checkCredentials()
     {
-        // check credentials - e.g. make sure the password is valid
-        // no credential check is needed in this case
-        // return true to cause authentication success
-        $userAuth = new UserAuth();
-        $user = $userAuth->userLogin($this->request, $this->response);
+        // Revisamos si la apikey enviada existe
+        // y si existe si esta habilitada
+        // si existe y está habilitada creamos un token de autenticación
+        // de la sesion
+        // @todo crear un model ApiKeysLog para controlar el uso de cada ApiKey
+        $apiKeys = new ApiKeys();
+        $apikey = $apiKeys->getAPiKey($this->request->get('apikey'));
         $token = null;
-        if($user){
+        if($apikey && $apikey->enabled){
             $token = $this->createAuthenticatedToken();
-            $user->setApiKey($token);
-            $user->save();
         }
         return $token;
     }
-    
+
+    /**
+     * Se genera un token para agregar a la cabecera de todas las llamadas
+     * @return string
+     */
     private function createAuthenticatedToken()
     {
-        return Tools::Token();
-    }    
-    
+        return Tools::Token(64);
+    }
+
     /**
-     * Called on every request. Return whatever credentials you want to
-     * be passed to getUser(). Returning null will cause this authenticator
-     * to be skipped.
+     * Se Verifica siempre que haya un auth token
+     *
+     * @return string
      */
-    public function getCredentials() 
+    public function getCredentials()
     {
         if (!$token = $this->request->headers->get('X-AUTH-TOKEN')) {
             // No token?
             $token = $this->checkCredentials();
         }
-        
+
         // What you return here will be passed to getUser() as $credentials
         return $token;
     }
 
-    public function getUser() 
-    {
-        $apikey = $this->request->headers->get('X-AUTH-TOKEN');
-        if (null === $apikey) {
-            return;
-        }
-        // if null, authentication will fail
-        // if a User object, checkCredentials() is called
-        return $this->request->headers->get('fsNick');
-    }
-
-    public function onAuthenticationSuccess($token) 
+    /**
+     * Si existe el token se envia como respuesta al AppApi
+     * @param type $token
+     * @return array
+     */
+    public function onAuthenticationSuccess($token)
     {
         // on success, let the request continue
         $data = array(
             // you might translate this message
             'token' => $token
         );
-        return array($data,'');
+        return ['success'=>$data,'error'=>false];
     }
 
-    public function onAuthenticationFailure($token) 
+    public function onAuthenticationFailure($token)
     {
         $data = array(
-            'message' => 'AUTH-REQUIRED',
+            'error' => 'AUTH-REQUIRED',
             'token' => $token
         );
-        return array('',$data);
+        return ['success'=>false,'error'=>$data];
     }
+
 
     /**
-     * Called when authentication is needed, but it's not sent
+     * Iniciamos el proceso de revisión de la apikey enviada por el usuario
+     * @return array|boolean
      */
-    public function start(Request $request, AuthenticationException $authException = null) 
-    {
-        $data = array(
-            // you might translate this message
-            'message' => 'AUTH-REQUIRED',
-            'token' => $token
-        );
-        return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
-    }
-    
     public function startAuth()
     {
         $token = $this->getCredentials();

@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\Security\Tools;
 
 /**
@@ -33,8 +32,9 @@ class EditApiKeys extends ExtendedController\EditController
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
         $this->modelName = 'FacturaScripts\Core\Model\ApiKeys';
+        $this->setTemplate('EditApiKeys');
     }
-    
+
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
