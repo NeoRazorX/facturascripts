@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Base\ExtendedController;
 
+use FacturaScripts\Core\Base\DataBase;
+
 /**
  * Definición de vista para uso en ExtendedControllers
  *
@@ -92,18 +94,38 @@ class EditListView extends BaseView
         return $this->pageOption->columns;
     }
 
+    /**
+     * Carga los datos en la propiedad cursor, según el filtro where indicado.
+     * Añade un registro/modelo en blanco al final de los datos cargados. 
+     * 
+     * @param array $where
+     * @param int $offset
+     * @param int $limit
+     */
     public function loadData($where, $offset = 0, $limit = 0)
     {
         $this->count = $this->model->count($where);
         if ($this->count > 0) {
             $this->cursor = $this->model->all($where, $this->order, $offset, $limit);
         }
-
-        /// nos guardamos los valores where y offset para la exportación
+        
+        // nos guardamos los valores where y offset para la exportación
         $this->offset = $offset;
         $this->where = $where;
     }
+
+    public function newEmptyModel()
+    {
+        $class = $this->model->modelName();
+        $result = new $class();
         
+        foreach (DataBase\DataBaseWhere::getFieldsFilter($this->where) as $field => $value) {
+            $result->{$field} = $value;
+        }
+        
+        return $result;
+    }
+    
     public function export(&$exportManager, &$response, $action)
     {
         return $exportManager->generateList(

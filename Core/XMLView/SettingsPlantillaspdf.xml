@@ -25,6 +25,10 @@
 <view>
     <columns>
         <group name="plantilla" title="Template" numcolumns="6" icon="fa-adjust fa-lg" order="100">
+            <column name="name" display="none" order="0">
+                <widget type="text" fieldname="name" readonly="true" required="true" />
+            </column>
+            
             <column name="ppdf_plantilla" title="plantilla" numcolumns="3" order="100">
                 <widget type="number" decimals="0" fieldname="ppdf_plantilla" required="true" icon="fa-bars" />
             </column>
