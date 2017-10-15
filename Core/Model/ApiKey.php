@@ -24,7 +24,7 @@ namespace FacturaScripts\Core\Model;
  * que se generarán para sincronizar distintas aplicaciones
  * @author Joe Nilson <joenilson at gmail.com>
  */
-class ApiKeys {
+class ApiKey {
     use Base\ModelTrait;
 
     public $id;

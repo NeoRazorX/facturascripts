@@ -42,12 +42,12 @@ class AppAPI extends App
      */
     public function run()
     {
+        $this->response->headers->set('Access-Control-Allow-Origin', '*');
+        $this->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+        $this->response->headers->set('Content-Type', 'application/json');
         $auth = $this->auth();
         if($auth['success']){
             $this->response->headers->set('X-AUTH-TOKEN', $auth['success']['token']);
-            $this->response->headers->set('Access-Control-Allow-Origin', '*');
-            $this->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-            $this->response->headers->set('Content-Type', 'application/json');
             if (!$this->dataBase->connected()) {
                 $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
                 $this->response->setContent(json_encode(['error' => 'DB-ERROR']));

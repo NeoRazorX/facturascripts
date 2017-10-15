@@ -26,12 +26,12 @@ use FacturaScripts\Core\Base\ExtendedController;
  *
  * @author Joe Nilson <joenilson at gmail.com>
  */
-class ListApiKeys extends ExtendedController\ListController 
+class ListApiKey extends ExtendedController\ListController
 {
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'APIKeys';
+        $pagedata['title'] = 'APIKey';
         $pagedata['icon'] = 'fa-exchange';
         $pagedata['menu'] = 'admin';
 
@@ -41,7 +41,7 @@ class ListApiKeys extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\ApiKeys', $className);
+        $this->addView('FacturaScripts\Core\Model\ApiKey', $className);
         $this->addSearchFields($className, ['id', 'apikey', 'descripcion', 'enabled']);
 
         $this->addOrderBy($className, 'descripcion', 'Descripcion');

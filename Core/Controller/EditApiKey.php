@@ -22,17 +22,17 @@ use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\Security\Tools;
 
 /**
- * Description of EditApiKeys
+ * Description of EditApiKey
  *
  * @author Joe Nilson <joenilson at gmail.com>
  */
-class EditApiKeys extends ExtendedController\EditController
+class EditApiKey extends ExtendedController\EditController
 {
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
-        $this->modelName = 'FacturaScripts\Core\Model\ApiKeys';
-        $this->setTemplate('EditApiKeys');
+        $this->modelName = 'FacturaScripts\Core\Model\ApiKey';
+        $this->setTemplate('EditApiKey');
     }
 
     public function privateCore(&$response, $user)

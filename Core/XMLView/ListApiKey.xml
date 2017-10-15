@@ -25,7 +25,7 @@
 <view>
     <columns>
         <column name="id" order="100">
-            <widget type="integer" fieldname="id" onclick="EditApiKeys"/>
+            <widget type="integer" fieldname="id" onclick="EditApiKey"/>
         </column>
         <column name="descripcion" order="110">
             <widget type="text" fieldname="descripcion"/>
