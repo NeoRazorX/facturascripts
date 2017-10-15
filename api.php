@@ -35,5 +35,5 @@ $app->connect();
 $app->run();
 $app->render();
 
-/// desconectamos de todo
+/// cerramos la aplicación
 $app->close();
