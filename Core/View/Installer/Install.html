@@ -27,6 +27,12 @@
                         $('#db_user').val('postgres');
                     }
                 });
+
+                $('#fs_lang').on('change', function () {
+                    var lang = $( "#fs_lang option:selected" ).val();
+                    var url = location.pathname + '?fs_lang=' + lang;
+                    window.location.href = url;
+                });
             });
         </script>
     </head>
@@ -76,9 +82,9 @@
                             <div class="col-sm-3">
                                 <div class="form-group">
                                     {{ i18n.trans('select-language') }}:
-                                    <select name="fs_lang" class="form-control">
+                                    <select id="fs_lang" name="fs_lang" class="form-control">
                                         {% for langCode, langName in languages %}
-                                        {% if langCode == 'es_ES' %}
+                                        {% if langCode == i18n.getCodeLang() %}
                                         <option value="{{ langCode }}" selected="">{{ langName }}</option>
                                         {% else %}
                                         <option value="{{ langCode }}">{{ langName }}</option>
