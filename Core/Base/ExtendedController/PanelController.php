@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,6 +37,7 @@ abstract class PanelController extends Base\Controller
     public $active;
 
     /**
+     * Objeto para exportar datos
      *
      * @var Base\ExportManager
      */
@@ -72,9 +73,9 @@ abstract class PanelController extends Base\Controller
     /**
      * Inicia todos los objetos y propiedades.
      *
-     * @param Cache      $cache
-     * @param Translator $i18n
-     * @param MiniLog    $miniLog
+     * @param Base\Cache $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog    $miniLog
      * @param string     $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
@@ -102,7 +103,7 @@ abstract class PanelController extends Base\Controller
         $this->createViews();
 
         // Guardamos si hay operaciones por realizar
-        $view = empty($this->active) ? NULL : $this->views[$this->active];
+        $view = empty($this->active) ? null : $this->views[$this->active];
         $action = empty($view) ? '' : $this->request->get('action', '');
 
         // Operaciones sobre los datos antes de leerlos
@@ -144,6 +145,7 @@ abstract class PanelController extends Base\Controller
     /**
      * Ejecuta las acciones que alteran los datos antes de leerlos
      *
+     * @param EditView $view
      * @param string $action
      */
     private function execPreviousAction($view, $action)
@@ -164,6 +166,7 @@ abstract class PanelController extends Base\Controller
     /**
      * Ejecuta las acciones del controlador
      *
+     * @param EditView $view
      * @param string $action
      */
     private function execAfterAction($view, $action)
@@ -191,9 +194,9 @@ abstract class PanelController extends Base\Controller
     {
         if ($view->save()) {
             $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
-            return TRUE;
+            return true;
         }
-        return FALSE;
+        return false;
     }
 
     /**
@@ -216,9 +219,9 @@ abstract class PanelController extends Base\Controller
     {
         if ($view->delete($this->request->get('primarykey'))) {
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
-            return TRUE;
+            return true;
         }
-        return FALSE;
+        return false;
     }
     
     /**
@@ -226,6 +229,7 @@ abstract class PanelController extends Base\Controller
      *
      * @param string $keyView
      * @param BaseView $view
+     * @param string $icon
      */
     private function addView($keyView, $view, $icon)
     {
@@ -247,7 +251,7 @@ abstract class PanelController extends Base\Controller
      */
     protected function addEditListView($modelName, $viewName, $viewTitle, $viewIcon = 'fa-bars')
     {
-        $view = new EditListView($this->i18n->trans($viewTitle), $modelName, $viewName, $this->user->nick);
+        $view = new EditListView($viewTitle, $modelName, $viewName, $this->user->nick);
         $this->addView($viewName, $view, $viewIcon);
     }
 
@@ -261,7 +265,7 @@ abstract class PanelController extends Base\Controller
      */
     protected function addListView($modelName, $viewName, $viewTitle, $viewIcon = 'fa-bars')
     {
-        $view = new ListView($this->i18n->trans($viewTitle), $modelName, $viewName, $this->user->nick);
+        $view = new ListView($viewTitle, $modelName, $viewName, $this->user->nick);
         $this->addView($viewName, $view, $viewIcon);
     }
 
@@ -275,7 +279,7 @@ abstract class PanelController extends Base\Controller
      */
     protected function addEditView($modelName, $viewName, $viewTitle, $viewIcon = 'fa-list-alt')
     {
-        $view = new EditView($this->i18n->trans($viewTitle), $modelName, $viewName, $this->user->nick);
+        $view = new EditView($viewTitle, $modelName, $viewName, $this->user->nick);
         $this->addView($viewName, $view, $viewIcon);
     }
 

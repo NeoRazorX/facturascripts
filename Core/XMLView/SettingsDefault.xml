@@ -25,6 +25,10 @@
 <view>
     <columns>
         <group name="numericformat" title="numeric-formats" numcolumns="6" icon="fa-info-circle fa-lg">
+            <column name="name" display="none" order="0">
+                <widget type="text" fieldname="name" readonly="true" required="true" />
+            </column>
+
             <column name="decimals" numcolumns="3" order="100">
                 <widget type="select" fieldname="decimals" required="true" icon="fa-sort-numeric-asc">
                     <values start="0" end="6" step="1"></values>                    

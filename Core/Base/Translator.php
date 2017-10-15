@@ -111,7 +111,7 @@ class Translator
      *
      * @return string
      */
-    public function getCodeLang()
+    public function getLangCode()
     {
         return self::$lang;
     }

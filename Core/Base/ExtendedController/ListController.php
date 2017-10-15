@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -38,6 +38,7 @@ abstract class ListController extends Base\Controller
     public $active;
 
     /**
+     * Objeto para exportar datos
      *
      * @var Base\ExportManager
      */
@@ -72,9 +73,9 @@ abstract class ListController extends Base\Controller
     /**
      * Inicia todos los objetos y propiedades.
      *
-     * @param Cache      $cache
-     * @param Translator $i18n
-     * @param MiniLog    $miniLog
+     * @param Base\Cache      $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog    $miniLog
      * @param string     $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
@@ -115,7 +116,7 @@ abstract class ListController extends Base\Controller
             $orderKey = '';
 
             // Si estamos procesando la vista seleccionada, calculamos el orden y los filtros
-            if ($this->active == $key) {
+            if ($this->active === $key) {
                 $orderKey = $this->request->get('order', '');
                 $where = $this->getWhere();
             }
@@ -133,7 +134,7 @@ abstract class ListController extends Base\Controller
 
     /**
      * Ejecuta las acciones que alteran los datos antes de leerlos
-     * 
+     *
      * @param string $action
      */
     private function execPreviousAction($action)
@@ -147,7 +148,7 @@ abstract class ListController extends Base\Controller
 
     /**
      * Ejecuta las acciones del controlador
-     * 
+     *
      * @param string $action
      */
     private function execAfterAction($action)
@@ -178,10 +179,10 @@ abstract class ListController extends Base\Controller
         if (strpos($code, ',') === false) {
             if ($view->delete($code)) {
                 $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
-                return TRUE;
+                return true;
             }
 
-            return FALSE;
+            return false;
         }
 
         /// borrado múltiple
@@ -196,18 +197,23 @@ abstract class ListController extends Base\Controller
 
         if ($numDeletes > 0) {
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
-            return TRUE;
+            return true;
         }
         
-        return FALSE;
+        return false;
     }
 
+    /**
+     * Devuelve una respuesta JSON
+     *
+     * @param ListView $view
+     */
     protected function jsonAction($view)
     {
         $this->setTemplate(false);
         $cols = [];
         foreach ($view->getColumns() as $col) {
-            if ($col->display != 'none' && $col->widget->type == 'text' && count($cols) < 4) {
+            if ($col->display !== 'none' && $col->widget->type === 'text' && count($cols) < 4) {
                 $cols[] = $col->widget->fieldName;
             }
         }
@@ -234,7 +240,7 @@ abstract class ListController extends Base\Controller
     {
         $result = [];
 
-        if ($this->query != '') {
+        if ($this->query !== '') {
             $fields = $this->views[$this->active]->getSearchIn();
             $result[] = new DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }
@@ -250,7 +256,7 @@ abstract class ListController extends Base\Controller
 
                     case 'checkbox':
                         $field = $value['options']['field'];
-                        $checked = ($value['options']['inverse']) ? (boolean) !$value['value'] : (boolean) $value['value'];
+                        $checked = ($value['options']['inverse']) ? (bool) !$value['value'] : (bool) $value['value'];
                         $result[] = new DataBase\DataBaseWhere($field, $checked);
                         break;
                 }
@@ -269,7 +275,7 @@ abstract class ListController extends Base\Controller
      */
     protected function addView($modelName, $viewName, $viewTitle = 'search')
     {
-        $this->views[$viewName] = new ListView($this->i18n->trans($viewTitle), $modelName, $viewName, $this->user->nick);
+        $this->views[$viewName] = new ListView($viewTitle, $modelName, $viewName, $this->user->nick);
         if (empty($this->active)) {
             $this->active = $viewName;
         }
@@ -297,7 +303,7 @@ abstract class ListController extends Base\Controller
      */
     protected function addOrderBy($indexView, $field, $label = '', $default = 0)
     {
-        $this->views[$indexView]->addOrderBy($field, $this->i18n->trans($label), $default);
+        $this->views[$indexView]->addOrderBy($field, $label, $default);
     }
 
     /**
@@ -313,7 +319,7 @@ abstract class ListController extends Base\Controller
     protected function addFilterSelect($indexView, $key, $table, $where = '', $field = '')
     {
         $value = $this->request->get($key);
-        $this->views[$indexView]->addFilterSelect($key, $value, $table, $where, $this->i18n->trans($field));
+        $this->views[$indexView]->addFilterSelect($key, $value, $table, $where, $field);
     }
 
     /**
@@ -323,9 +329,9 @@ abstract class ListController extends Base\Controller
      * @param string  $key     (Filter identifier)
      * @param string  $label   (Human reader description)
      * @param string  $field   (Field of the table to apply filter)
-     * @param boolean $inverse (If you need to invert the selected value)
+     * @param bool $inverse (If you need to invert the selected value)
      */
-    protected function addFilterCheckbox($indexView, $key, $label, $field = '', $inverse = FALSE)
+    protected function addFilterCheckbox($indexView, $key, $label, $field = '', $inverse = false)
     {
         $value = $this->request->get($key);
         $this->views[$indexView]->addFilterCheckBox($key, $value, $this->i18n->trans($label), $field, $inverse);
@@ -361,16 +367,16 @@ abstract class ListController extends Base\Controller
                 $fieldList = $fieldList . ', ' . $options['field'];
             }
 
-            $sql = "SELECT DISTINCT " . $fieldList
-                . " FROM " . $options['table']
-                . " WHERE COALESCE(" . $options['field'] . ", '')" . " <> ''" . $options['where']
-                . " ORDER BY " . $options['field'] . " ASC;";
+            $sql = 'SELECT DISTINCT ' . $fieldList
+                . ' FROM ' . $options['table']
+                . ' WHERE COALESCE(' . $options['field'] . ", '')" . " <> ''" . $options['where']
+                . ' ORDER BY ' . $options['field'] . ' ASC;';
 
             $data = $this->dataBase->select($sql);
             foreach ($data as $item) {
                 $value = $item[$options['field']];
-                if ($value != "") {
-                    $result[mb_strtolower($item[$field], "UTF8")] = $value;
+                if ($value !== '') {
+                    $result[mb_strtolower($item[$field], 'UTF8')] = $value;
                 }
             }
         }
@@ -386,7 +392,7 @@ abstract class ListController extends Base\Controller
      */
     private function getOffSet($indexView)
     {
-        return ($indexView == $this->active) ? $this->offset : 0;
+        return ($indexView === $this->active) ? $this->offset : 0;
     }
 
     /**
@@ -398,16 +404,16 @@ abstract class ListController extends Base\Controller
      */
     private function getParams($indexView)
     {
-        $result = "";
-        if ($indexView == $this->active) {
+        $result = '';
+        if ($indexView === $this->active) {
             if (!empty($this->query)) {
-                $result = "&query=" . $this->query;
+                $result = '&query=' . $this->query;
             }
 
             $filters = $this->views[$this->active]->getFilters();
             foreach ($filters as $key => $value) {
-                if ($value['value'] != "") {
-                    $result .= "&" . $key . "=" . $value['value'];
+                if ($value['value'] !== '') {
+                    $result .= '&' . $key . '=' . $value['value'];
                 }
             }
         }
@@ -435,6 +441,13 @@ abstract class ListController extends Base\Controller
         return $result;
     }
 
+    /**
+     * Devuelve una array para JS de URLs para los elementos de una vista
+     *
+     * @param string $type
+     *
+     * @return string
+     */
     public function getStringURLs($type)
     {
         $result = '';

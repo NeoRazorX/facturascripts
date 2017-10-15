@@ -84,7 +84,7 @@
                                     {{ i18n.trans('select-language') }}:
                                     <select id="fs_lang" name="fs_lang" class="form-control">
                                         {% for langCode, langName in languages %}
-                                        {% if langCode == i18n.getCodeLang() %}
+                                        {% if langCode == i18n.getLangCode() %}
                                         <option value="{{ langCode }}" selected="">{{ langName }}</option>
                                         {% else %}
                                         <option value="{{ langCode }}">{{ langName }}</option>

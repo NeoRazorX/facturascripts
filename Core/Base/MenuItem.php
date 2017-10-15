@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -79,10 +79,10 @@ class MenuItem
      */
     public function __construct($name, $title, $url, $icon = null)
     {
-        $this->i18n = new Translator();
+        $i18n = new Translator();
 
-        $this->name = $this->i18n->trans($name);
-        $this->title = $this->i18n->trans($title);
+        $this->name = $i18n->trans($name);
+        $this->title = $i18n->trans($title);
         $this->url = $url;
         $this->icon = $icon;
         $this->menu = [];
@@ -101,7 +101,7 @@ class MenuItem
 
     /**
      * Devuelve el indintificador del menu
-     * 
+     *
      * @param string $parent
      * @return string
      */
