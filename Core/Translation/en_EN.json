@@ -944,5 +944,7 @@
     "formula-sale-price": "Sale price - X% - Y",
     "formula-cost-price": "Sale cost + X% + Y",
     "symbol-comma": ", (comma)",
-    "symbol-dot": ". (dot)"
+    "symbol-dot": ". (dot)",
+    "pages": "pages",
+    "logout": "Logout"
 }

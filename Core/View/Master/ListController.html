@@ -84,7 +84,7 @@
 {% set search_title = i18n.trans('filter-records-containing-indicated-value') %}
 {% set any = i18n.trans('any') %}
 {% set panel_header = i18n.trans('common-data') %}
-{% set title = i18n.trans(fsc.getPageData()['title']) %}
+{% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
 
 <!-- Calculate common values -->
 {% set list_url = fsc.views[fsc.active].getURL('list') %}
