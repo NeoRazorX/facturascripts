@@ -81,11 +81,17 @@ class RowItem implements VisualItemInterface
     public function getStatus($value)
     {
         foreach ($this->options as $option) {
-            if (substr($option['value'], 0, 1) == '>' && $value > floatval(substr($option['value'], 1))) {
+            if ($option['value'] == $value) {
                 return $option['color'];
-            } else if (substr($option['value'], 0, 1) == '<' && $value < floatval(substr($option['value'], 1))) {
+            }
+            
+            $operator = substr($option['value'], 0, 1);
+            $value2 = floatval(substr($option['value'], 1));
+            if ($operator == '>' && $value > $value2) {
                 return $option['color'];
-            } else if ($option['value'] == $value) {
+            }
+            
+            if ($operator == '<' && $value < $value2) {
                 return $option['color'];
             }
         }
