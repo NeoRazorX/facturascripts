@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <option icon="fa-list" label="Ver Accesos" onclick="EditAPiKeysAccess"></option>
         </row>
         <row type="footer">
-            <option color="info">Despues de Actualizar el token debe Guardar</option>
+            <option color="info"></option>
         </row>
     </rows>
     <columns>
@@ -46,6 +46,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </column>
             <column name="enabled" title="Habilitado" order="100">
                 <widget type="checkbox" fieldname="enabled" />
+            </column>
+            <column name="usuario_creacion" title="Creado por" order="110">
+                <widget type="text" fieldname="usuario_creacion" readonly="true" />
             </column>
         </group>
     </columns>

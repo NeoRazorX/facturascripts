@@ -40,7 +40,7 @@ class EditApiKeys extends ExtendedController\EditController
         parent::privateCore($response, $user);
         $model = $this->getModel();
         $model->apikey = (!$model->apikey)?Tools::Token(16):$model->apikey;
-
+        $model->usuario_creacion = (!$model->usuario_creacion)?$this->user->nick:$model->usuario_creacion;
         if(\filter_input(INPUT_POST, 'accion')){
             $funcion = \filter_input(INPUT_POST, 'accion');
             $this->$funcion($response);
@@ -49,8 +49,7 @@ class EditApiKeys extends ExtendedController\EditController
 
     public function getPanelFooter()
     {
-        $model = $this->getModel();
-        return $this->i18n->trans('Fecha de alta: ') . $model->f_alta;
+        return $this->i18n->trans('Despues de Actualizar el token debe Guardar');
     }
 
     public function getPageData()
