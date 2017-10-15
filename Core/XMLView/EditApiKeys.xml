@@ -21,12 +21,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <view>
     <rows>
         <row type="header">
-            <option icon="fa-key" label="Actualizar Token" onclick="generateToken()"></option>
-            <option icon="fa-key" label="Copiar Token" onclick="generateToken()"></option>
+            <option icon="fa-key" label="Actualizar Token" class="btn-danger" onclick="generateToken()"></option>
+            <option icon="fa-copy" label="Copiar Token" class="btn-info" onclick="copyValue(this.form.apikey)"></option>
             <option icon="fa-list" label="Ver Accesos" onclick="EditAPiKeysAccess"></option>
         </row>
         <row type="footer">
-            <option footer="Texto en el footer" color="success">Este es un ejemplo sin cabecera</option>
+            <option color="info">Despues de Actualizar el token debe Guardar</option>
         </row>
     </rows>
     <columns>

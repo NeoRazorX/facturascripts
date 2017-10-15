@@ -15,6 +15,15 @@
         document.insert_form.submit();
     }
 
+    function copyValue(formItem){
+        formItem.select();
+        document.execCommand('copy',false);
+        bootbox.alert({
+            message: "{{ i18n.trans('success-copy-clipboard-message') }}",
+
+        });
+    }
+
     function generateToken() {
         bootbox.confirm({
             title: "{{ i18n.trans('Confirm token generation?') }}",
@@ -29,15 +38,15 @@
                 }
             },
             callback: function (result) {
-                if($result) {
+                if(result) {
                     $.ajax({
                         type: 'POST',
                         url: '',
                         async: false,
-                        data: 'accion=generarToken',
+                        data: 'accion=generateToken',
                         success : function(datos) {
                             if(datos.success){
-                                document.insert_form.apikey = datos.token;
+                                document.mainform.apikey.value = datos.token;
                             }
                             else{
                                 bootbox.alert({
@@ -200,10 +209,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                         {% set header = fsc.view.getRow('header') %}
                                         {% if header is not empty %}
                                         {% for button in header.options %}
-                                        <button type="button" class="btn btn-default" onclick="{{ button.onclick }}">
+                                        <button type="button" class="btn btn-default {{ button.class }}" onclick="{{ button.onclick }}">
                                             <i class="fa {{ button.icon }} fa-lg pull-left"></i>
                                             <div class="cust-text">
-                                                {{ i18n.trans(button.label) }} xxxx.xx €
+                                                {{ i18n.trans(button.label) }}
                                             </div>
                                         </button>
                                         {% endfor %}

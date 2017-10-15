@@ -40,6 +40,11 @@ class EditApiKeys extends ExtendedController\EditController
         parent::privateCore($response, $user);
         $model = $this->getModel();
         $model->apikey = (!$model->apikey)?Tools::Token(16):$model->apikey;
+
+        if(\filter_input(INPUT_POST, 'accion')){
+            $funcion = \filter_input(INPUT_POST, 'accion');
+            $this->$funcion($response);
+        }
     }
 
     public function getPanelFooter()
@@ -56,5 +61,12 @@ class EditApiKeys extends ExtendedController\EditController
         $pagedata['showonmenu'] = FALSE;
 
         return $pagedata;
+    }
+
+    private function generateToken($response)
+    {
+        $this->setTemplate(false);
+        $response->headers->set('Content-Type', 'application/json');
+        return $response->setContent(json_encode(['success'=> true, 'token' => Tools::Token(16)]));
     }
 }
