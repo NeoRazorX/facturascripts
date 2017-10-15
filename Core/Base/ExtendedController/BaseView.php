@@ -98,12 +98,14 @@ abstract class BaseView
      */
     public function loadFromData(&$data)
     {
-        if ($data['primarykey'] !== $this->model->primaryColumnValue()) {
-            $this->model->loadFromCode($data['primarykey']);
+        $fieldKey = $this->model->primaryColumn();
+        $fieldValue = $data[$fieldKey];
+        if ($fieldValue != $this->model->primaryColumnValue()) {
+            $this->model->loadFromCode($fieldValue);
         }
         
         $this->model->checkArrayData($data);
-        $this->model->loadFromData($data, ['action', 'active', 'primarykey']);
+        $this->model->loadFromData($data, ['action', 'active']);
     }
 
     /**
