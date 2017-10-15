@@ -134,6 +134,8 @@ _pintar de color rojo cuando el valor del campo **importe es mayor de treinta mi
 * **type** : (obligatorio) Indica el tipo de widget a utilizar.
     * text: Campos varchar o de texto.
     * number: Campos de tipo numérico. Para este tipo se puede indicar el atributo _decimal_ para configurar la precisión a visualizar.
+El atributo _step_ para indicar el aumento o decremento al realizar un "paso" mediante el control de avance/retroceso. Los atributos _min_ y _max_ 
+para indicar los valores mínimo y máximo.
     * money: Campos de tipo float para importes. Para este tipo se puede indicar el atributo _decimal_ para configurar la precisión a visualizar en vez de los de la moneda.
     * checkbox: Valores booleanos que se visualizan mediante el icono de un check (true) o un guión (false) respectivamente.
     * select: Lista de valores establecidos por un conjunto de etiquetas _\<values\>_ descritas dentro del grupo _\<widget\>_.

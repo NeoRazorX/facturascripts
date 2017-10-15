@@ -98,7 +98,7 @@ class Settings
     {
         $properties = [];
         foreach ($data as $key => $value) {
-            if (!in_array($key, ['name', 'action', 'active', 'primarykey'])) {
+            if (!in_array($key, ['name', 'action', 'active'])) {
                 $properties[$key] = $value;
                 unset($data[$key]);
             }

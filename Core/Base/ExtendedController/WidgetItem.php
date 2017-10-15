@@ -253,6 +253,9 @@ class WidgetItem
         $this->hint = (string) $column['widget']['hint'];
         $this->readOnly = (bool) $column['widget']['readOnly'];
         $this->required = (bool) $column['widget']['required'];
+        $this->step = (string) $column['widget']['step'];
+        $this->min = (string) $column['widget']['min'];
+        $this->max = (string) $column['widget']['max'];
         $this->icon = (string) $column['widget']['icon'];
         $this->onClick = (string) $column['widget']['onClick'];
         $this->options = (array) $column['widget']['options'];
@@ -313,7 +316,7 @@ class WidgetItem
             if ($this->canApplyOptions($option['value'], $valueItem)) {
                 $html = ' style="';
                 foreach ($option as $key => $value) {
-                    if ($key !== 'value') {
+                    if ($key != 'value') {
                         $html .= $key . ':' . $value . '; ';
                     }
                 }
@@ -435,6 +438,7 @@ class WidgetItem
 
     /**
      * Genera el código html para atributos especiales como:
+     * hint
      * sólo lectura
      * valor obligatorio
      *
@@ -445,11 +449,24 @@ class WidgetItem
         $hint = $this->getHintHTML($this->hint);
         $readOnly = empty($this->readOnly) ? '' : ' readonly="readonly"';
         $required = empty($this->required) ? '' : ' required="required"';
-        $step = empty($this->step) ? '' : ' step="' . $this->step . '"';
-        $min = empty($this->step) ? '' : ' min="' . $this->min . '"';
-        $max = empty($this->step) ? '' : ' max="' . $this->max . '"';
 
-        return $step . $min . $max . $hint . $readOnly . $required;
+        return $hint . $readOnly . $required;
+    }
+
+    /**
+     * Genera el código html para atributos especiales de widgets numericos como:
+     * step
+     * valor mínimo
+     * valor máximo
+     *
+     * @return string
+     */
+    private function specialNumberAttributes()
+    {
+        $step = empty($this->step) ? '' : ' step="' . $this->step . '"';
+        $min = empty($this->min) ? '' : ' min="' . $this->min . '"';
+        $max = empty($this->max) ? '' : ' max="' . $this->max . '"';
+        return $step . $min . $max;
     }
 
     /**
@@ -490,6 +507,9 @@ class WidgetItem
             case 'datepicker':
                 $html .= $this->standardHTMLWidget($fieldName, $value, $specialAttributes, ' datepicker');
                 break;
+
+            case 'number':
+                $specialAttributes .= ' ' . $this->specialNumberAttributes();
 
             default:
                 $html .= $this->standardHTMLWidget($fieldName, $value, $specialAttributes);

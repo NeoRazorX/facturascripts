@@ -116,32 +116,24 @@ class DireccionCliente
         $this->fecha = date('d-m-Y');
 
         if ($this->test()) {
-            if ($this->exists()) {
-                /// ¿Desmarcamos las demás direcciones principales?
-                $sql = '';
-                $where = 'WHERE codcliente = ' . $this->var2str($this->codcliente);
-                if ($this->domenvio) {
-                    $sql .= 'UPDATE ' . $this->tableName() . ' SET domenvio = false ' . $where . ' AND domenvio = TRUE;';
-                }
-                if ($this->domfacturacion) {
-                    $sql .= 'UPDATE ' . $this->tableName() . ' SET domfacturacion = false ' . $where . ' AND domfacturacion = TRUE;';
-                }
-
-                // Sólo actualizamos el registro de dirección
-                if (empty($sql)) {
-                    return $this->saveUpdate();
-                }
-                
-                // Actualizamos el registro de dirección y activamos como dirección principal
-                $this->dataBase->beginTransaction();
-                $allOK = $this->dataBase->exec($sql);
-                if ($allOK) {
-                    $allOK = $this->saveUpdate() ? $this->dataBase->commit() : $this->dataBase->rollback();
-                }
-                return $allOK;
+            /// ¿Desmarcamos las demás direcciones principales?
+            $sql = '';
+            $where = 'WHERE codcliente = ' . $this->var2str($this->codcliente);
+            if ($this->domenvio) {
+                $sql .= 'UPDATE ' . $this->tableName() . ' SET domenvio = false ' . $where . ' AND domenvio = TRUE;';
+            }
+            if ($this->domfacturacion) {
+                $sql .= 'UPDATE ' . $this->tableName() . ' SET domfacturacion = false ' . $where . ' AND domfacturacion = TRUE;';
             }
 
-            return $this->saveInsert();
+            if (empty($sql)) {
+                return $this->saveData();
+            } else {
+                $this->dataBase->beginTransaction();
+                if ($this->dataBase->exec($sql)) {
+                    return $this->saveData() ? $this->dataBase->commit() : $this->dataBase->rollback();
+                }
+            }
         }
 
         return false;
