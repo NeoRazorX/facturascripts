@@ -101,8 +101,7 @@ class ApiAuth {
     public function onAuthenticationFailure($token)
     {
         $data = array(
-            'error' => 'AUTH-REQUIRED',
-            'token' => $token
+            'error' => 'AUTH-REQUIRED'
         );
         return ['success'=>false,'error'=>$data];
     }
