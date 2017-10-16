@@ -77,7 +77,7 @@ class PDFExport implements ExportInterface
      * Nueva lista de documentos
      *
      * @param $model
-     * @param string $where
+     * @param array $where
      * @param string $order
      * @param int $offset
      * @param array $columns

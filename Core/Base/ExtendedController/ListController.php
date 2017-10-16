@@ -241,7 +241,7 @@ abstract class ListController extends Base\Controller
     {
         $result = [];
 
-        if ($this->query !== '') {
+        if ($this->query !== '' && $this->query != false) {
             $fields = $this->views[$this->active]->getSearchIn();
             $result[] = new DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }
@@ -257,7 +257,7 @@ abstract class ListController extends Base\Controller
 
                     case 'checkbox':
                         $field = $value['options']['field'];
-                        $checked = ($value['options']['inverse']) ? (bool) !$value['value'] : (bool) $value['value'];
+                        $checked = (bool) (($value['options']['inverse']) ? !$value['value'] :  $value['value']);
                         $result[] = new DataBase\DataBaseWhere($field, $checked);
                         break;
                 }

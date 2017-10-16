@@ -52,7 +52,7 @@ class EditListView extends BaseView
 
     /**
      * Almacena los parámetros del where del cursor
-     * @var string
+     * @var array
      */
     private $where;
 

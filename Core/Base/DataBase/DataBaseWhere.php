@@ -72,7 +72,7 @@ class DataBaseWhere
      * DataBaseWhere constructor.
      *
      * @param string $fields
-     * @param string $value
+     * @param string|bool $value
      * @param string $operator
      * @param string $operation
      */

@@ -78,7 +78,7 @@ class ExportManager
      * @param Response $response
      * @param string $option
      * @param string $model
-     * @param string $where
+     * @param array $where
      * @param string $order
      * @param int $offset
      * @param array $columns

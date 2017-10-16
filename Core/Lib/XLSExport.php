@@ -62,8 +62,8 @@ class XLSExport implements ExportInterface
      * Nueva lista de documentos
      *
      * @param $model
-     * @param string $where
-     * @param string $order
+     * @param array $where
+     * @param array $order
      * @param int $offset
      * @param array $columns
      *
