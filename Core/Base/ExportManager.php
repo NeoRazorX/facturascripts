@@ -79,7 +79,7 @@ class ExportManager
      * @param string $option
      * @param string $model
      * @param array $where
-     * @param string $order
+     * @param array $order
      * @param int $offset
      * @param array $columns
      *

@@ -78,7 +78,7 @@ class PDFExport implements ExportInterface
      *
      * @param $model
      * @param array $where
-     * @param string $order
+     * @param array $order
      * @param int $offset
      * @param array $columns
      *

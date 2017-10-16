@@ -55,12 +55,12 @@ class ModelDataGenerator
     protected $divisas;
     /**
      * Contiene ejercicios generados
-     * @var Model\Ejercicio[]
+     * @var Model\Ejercicio
      */
     protected $ejercicio;
     /**
      * Contiene empresas generadas
-     * @var Model\Empresa[]
+     * @var Model\Empresa
      */
     protected $empresa;
     /**
@@ -394,7 +394,7 @@ class ModelDataGenerator
                 $cliente->codagente = null;
             }
 
-            if (mt_rand(0, 2) > 0 && $this->grupos) {
+            if (mt_rand(0, 2) > 0 && !empty($this->grupos)) {
                 shuffle($this->grupos);
                 $cliente->codgrupo = $this->grupos[0]->codgrupo;
             } else {
@@ -568,7 +568,7 @@ class ModelDataGenerator
     /**
      * Genera un documento aleatorio.
      *
-     * @param Model\Base\DocumentoCompra|Model\Base\DocumentoVenta $doc
+     * @param $doc
      */
     private function randomizeDocument(&$doc)
     {
@@ -703,11 +703,11 @@ class ModelDataGenerator
     /**
      * Genera líneas  aleatorias
      *
-     * @param Model\Base\DocumentoCompra|Model\Base\DocumentoVenta $doc
+     * @param $doc
      * @param string $iddoc
      * @param string $lineaClass
      * @param string $regimeniva
-     * @param float $recargo
+     * @param bool $recargo
      * @param int $modStock
      */
     private function randomLineas(&$doc, $iddoc = 'idalbaran', $lineaClass = 'FacturaScripts\Dinamic\Model\LineaAlbaranCliente', $regimeniva, $recargo, $modStock = 0)

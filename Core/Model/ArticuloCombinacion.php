@@ -323,7 +323,7 @@ class ArticuloCombinacion
     private function saveInsert()
     {
         if ($this->codigo === null) {
-            $this->codigo = $this->getNewCodigo();
+            $this->codigo = (string) $this->getNewCodigo();
         }
 
         return $this->saveInsertTrait();
