@@ -238,7 +238,7 @@ class Postgresql implements DataBaseEngine
     /**
      * Ejecuta una sentencia SQL de tipo select
      *
-     * @param \mysqli|resource $link
+     * @param resource $link
      * @param string   $sql
      *
      * @return array
