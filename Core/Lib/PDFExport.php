@@ -54,7 +54,7 @@ class PDFExport implements ExportInterface
     /**
      * Nuevo documento
      *
-     * @param ModelTrait $model
+     * @param $model
      * @return string
      */
     public function newDoc($model)
@@ -76,7 +76,7 @@ class PDFExport implements ExportInterface
     /**
      * Nueva lista de documentos
      *
-     * @param ModelTrait $model
+     * @param $model
      * @param string $where
      * @param string $order
      * @param int $offset

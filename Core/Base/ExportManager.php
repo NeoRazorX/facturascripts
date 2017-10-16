@@ -58,7 +58,7 @@ class ExportManager
      *
      * @param Response $response
      * @param string $option
-     * @param ModelTrait $model
+     * @param $model
      *
      * @return mixed
      */

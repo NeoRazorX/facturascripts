@@ -32,7 +32,7 @@ class DataGeneratorTools
     /**
      * Metodo de apoyo para el constructor de modelos e inicializacion de datos
      * @param array $variable    -> destino de los datos
-     * @param ModelTrait $modelo   -> modelo de cada uno de los items del array
+     * @param $modelo   -> modelo de cada uno de los items del array
      * @param bool $shuffle   -> ordenar aleatoriamente la lista
      */
     public function loadData(&$variable, $modelo, $shuffle)

@@ -38,7 +38,7 @@ class XLSExport implements ExportInterface
     /**
      * Nuevo documento
      *
-     * @param ModelTrait $model
+     * @param $model
      *
      * @return bool|string
      */
@@ -61,7 +61,7 @@ class XLSExport implements ExportInterface
     /**
      * Nueva lista de documentos
      *
-     * @param ModelTrait $model
+     * @param $model
      * @param string $where
      * @param string $order
      * @param int $offset

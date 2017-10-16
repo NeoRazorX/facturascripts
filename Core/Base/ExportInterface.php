@@ -41,7 +41,7 @@ interface ExportInterface
     /**
      * Nuevo documento
      *
-     * @param ModelTrait $model
+     * @param $model
      *
      * @return mixed
      */
@@ -50,7 +50,7 @@ interface ExportInterface
     /**
      * Nueva lista de documentos
      *
-     * @param ModelTrait $model
+     * @param $model
      * @param string $where
      * @param string $order
      * @param int $offset

@@ -117,7 +117,7 @@ class ListView extends BaseView
     /**
      * Devuelve el texto de un enlace para un modelo dado.
      *
-     * @param ModelTrait $data
+     * @param $data
      *
      * @return string
      */

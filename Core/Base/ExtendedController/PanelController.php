@@ -213,7 +213,7 @@ abstract class PanelController extends Base\Controller
     /**
      * Acción de borrado de datos
      *
-     * @param  BaseView $view
+     * @param BaseView $view
      * @return boolean
      */
     protected function deleteAction($view)
