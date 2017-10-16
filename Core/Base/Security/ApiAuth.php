@@ -42,7 +42,7 @@ class ApiAuth {
         $this->request = $config['request'];
     }
 
-    public function checkCredentials()
+    public function checkCredentials($key)
     {
         // Revisamos si la apikey enviada existe
         // y si existe si esta habilitada
@@ -50,10 +50,10 @@ class ApiAuth {
         // de la sesion
         // @todo crear un model ApiKeysLog para controlar el uso de cada ApiKey
         $apiKeys = new ApiKey();
-        $apikey = $apiKeys->getAPiKey($this->request->get('apikey'));
+        $apikey = $apiKeys->getAPiKey($key);
         $token = null;
         if($apikey && $apikey->enabled){
-            $token = $this->createAuthenticatedToken();
+            $token = $apikey->apikey;
         }
         return $token;
     }
@@ -74,12 +74,10 @@ class ApiAuth {
      */
     public function getCredentials()
     {
-        if (!$token = $this->request->headers->get('X-AUTH-TOKEN')) {
-            // No token?
-            $token = $this->checkCredentials();
+        $token = $this->checkCredentials($this->request->headers->get('X-AUTH-TOKEN'));
+        if(!$token){
+            $token = $this->checkCredentials($this->request->get('apikey'));
         }
-
-        // What you return here will be passed to getUser() as $credentials
         return $token;
     }
 
@@ -98,7 +96,7 @@ class ApiAuth {
         return ['success'=>$data,'error'=>false];
     }
 
-    public function onAuthenticationFailure($token)
+    public function onAuthenticationFailure()
     {
         $data = array(
             'error' => 'AUTH-REQUIRED'
@@ -117,7 +115,7 @@ class ApiAuth {
         if($token){
             return $this->onAuthenticationSuccess($token);
         }
-        return $this->onAuthenticationFailure($token);
+        return $this->onAuthenticationFailure();
     }
 
 }
