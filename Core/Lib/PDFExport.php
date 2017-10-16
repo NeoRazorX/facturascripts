@@ -92,7 +92,7 @@ class PDFExport implements ExportInterface
 
         /// obtenemos las columnas
         foreach ($columns as $col) {
-            if ($col->display !== 'none') {
+            if ($col->display != 'none') {
                 $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
                 $tableOptions['cols'][$col->widget->fieldName] = [
                     'justification' => $col->display,

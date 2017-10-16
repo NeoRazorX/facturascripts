@@ -389,25 +389,6 @@ trait DocumentoVenta
     }
 
     /**
-     * Almacena los datos del modelo en la base de datos.
-     *
-     * @return bool
-     */
-    public function save()
-    {
-        if ($this->test()) {
-            if ($this->exists()) {
-                return $this->saveUpdate();
-            }
-
-            $this->newCodigo();
-            return $this->saveInsert();
-        }
-
-        return false;
-    }
-
-    /**
      * Devuelve true si no hay errores en los valores de las propiedades del modelo.
      *
      * @return bool
@@ -415,7 +396,7 @@ trait DocumentoVenta
     private function testTrait()
     {
         $this->nombrecliente = static::noHtml($this->nombrecliente);
-        if ($this->nombrecliente === '') {
+        if ($this->nombrecliente == '') {
             $this->nombrecliente = '-';
         }
         $this->direccion = static::noHtml($this->direccion);

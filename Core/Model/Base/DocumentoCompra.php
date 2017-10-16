@@ -235,7 +235,7 @@ trait DocumentoCompra
      */
     public function observacionesResume()
     {
-        if ($this->observaciones === '') {
+        if ($this->observaciones == '') {
             return '-';
         }
 
@@ -264,7 +264,7 @@ trait DocumentoCompra
     private function testTrait()
     {
         $this->nombre = static::noHtml($this->nombre);
-        if ($this->nombre === '') {
+        if ($this->nombre == '') {
             $this->nombre = '-';
         }
         $this->numproveedor = static::noHtml($this->numproveedor);

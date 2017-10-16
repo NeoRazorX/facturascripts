@@ -65,7 +65,7 @@ class MegaSearch extends Base\Controller
         $this->results = ['pages' => []];
         $this->sections = [];
 
-        if ($this->query !== '') {
+        if ($this->query != '') {
             $this->pageSearch();
         }
     }

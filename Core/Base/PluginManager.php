@@ -208,7 +208,7 @@ class PluginManager
         $menuManager->init();
 
         foreach (scandir(self::$folder . '/Dinamic/Controller', SCANDIR_SORT_ASCENDING) as $fileName) {
-            if ($fileName !== '.' && $fileName !== '..' && substr($fileName, -3) === 'php') {
+            if ($fileName != '.' && $fileName != '..' && substr($fileName, -3) == 'php') {
                 $controllerName = substr($fileName, 0, -4);
                 $controllerNamespace = 'FacturaScripts\\Dinamic\\Controller\\' . $controllerName;
 

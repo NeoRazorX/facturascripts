@@ -133,7 +133,7 @@ class VisualItem
         $html = $this->i18n->trans($value);
 
         if (!empty($this->titleURL)) {
-            $target = ($this->titleURL[0] !== '?') ? "target='_blank'" : '';
+            $target = ($this->titleURL[0] != '?') ? "target='_blank'" : '';
             $html = '<a href="' . $this->titleURL . '" ' . $target . '>' . $html . '</a>';
         }
 

@@ -309,7 +309,7 @@ class ListView extends BaseView
      */
     public function addFilterCheckbox($key, $value, $label, $field = '', $inverse = false)
     {
-        $options = ['label' => $label, 'field' => $field, 'inverse' => $inverse];
+        $options = ['label' => $this->i18n->trans($label), 'field' => $field, 'inverse' => $inverse];
         $this->addFilter('checkbox', $key, $value, $options);
     }
 
@@ -323,7 +323,7 @@ class ListView extends BaseView
      */
     public function addFilterDatePicker($key, $value, $label, $field = '')
     {
-        $options = ['label' => $label, 'field' => $field];
+        $options = ['label' => $this->i18n->trans($label), 'field' => $field];
         $this->addFilter('datepicker', $key, $value, $options);
     }
 

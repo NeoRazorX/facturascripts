@@ -162,7 +162,7 @@ class FileCache implements AdaptorInterface
     public function clear()
     {
         foreach (scandir(self::$config['cache_path'], SCANDIR_SORT_ASCENDING) as $fileName) {
-            if (substr($fileName, -4) === '.php') {
+            if (substr($fileName, -4) == '.php') {
                 unlink(self::$config['cache_path'] . '/' . $fileName);
             }
         }

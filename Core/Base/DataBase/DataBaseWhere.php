@@ -181,14 +181,14 @@ class DataBaseWhere
         $value = $this->getValue();
         $fields = explode('|', $this->fields);
         foreach ($fields as $field) {
-            if ($this->operator === 'LIKE') {
+            if ($this->operator == 'LIKE') {
                 $field = 'LOWER(' . $field . ')';
             }
             $result .= $union . $field . ' ' . $this->operator . ' ' . $value;
             $union = ' OR ';
         }
 
-        if ($result !== '') {
+        if ($result != '') {
             if (count($fields) > 1) {
                 $result = '(' . $result . ')';
             }
@@ -217,7 +217,7 @@ class DataBaseWhere
             $join = true;
         }
 
-        if ($result !== '') {
+        if ($result != '') {
             $result = ' WHERE ' . $result;
         }
 

@@ -134,7 +134,7 @@ trait BankAccount
         $dividendo = $ccc . $pesos[$pais[0]] . $pesos[$pais[1]] . '00';
         $digitoControl = 98 - bcmod($dividendo, '97');
 
-        if (strlen($digitoControl) === 1) {
+        if (strlen($digitoControl) == 1) {
             $digitoControl = '0' . $digitoControl;
         }
 
@@ -159,11 +159,11 @@ trait BankAccount
 
         $result = 11 - bcmod($totPeso, '11');
         switch (TRUE) {
-            case $result === 11:
+            case $result == 11:
                 $result = 0;
                 break;
 
-            case $result === 10:
+            case $result == 10:
                 $result = 1;
                 break;
         }
@@ -183,7 +183,7 @@ trait BankAccount
     private function calcularCCC($entidad, $oficina, $cuenta)
     {
         $banco = $entidad . $oficina;
-        if ((strlen($banco) !== 8) || (strlen($cuenta) !== 10)) {
+        if ((strlen($banco) != 8) || (strlen($cuenta) != 10)) {
             return '';
         }
 
@@ -202,7 +202,7 @@ trait BankAccount
      */
     public function verificarCCC($ccc)
     {
-        if (strlen($ccc) !== 20) {
+        if (strlen($ccc) != 20) {
             return false;
         }
 
@@ -210,7 +210,7 @@ trait BankAccount
         $oficina = substr($ccc, 4, 4);
         $cuenta = substr($ccc, 10, 10);
 
-        return $ccc === $this->calcularCCC($entidad, $oficina, $cuenta);
+        return $ccc == $this->calcularCCC($entidad, $oficina, $cuenta);
     }
 
     /**
@@ -222,13 +222,13 @@ trait BankAccount
      */
     public function verificarIBAN($iban)
     {
-        if (strlen($iban) !== 24) {
+        if (strlen($iban) != 24) {
             return false;
         }
 
         $codpais = substr($iban, 0, 2);
         $ccc = substr($iban, -20);
 
-        return $iban === $this->calcularIBAN($ccc, $codpais);
+        return $iban == $this->calcularIBAN($ccc, $codpais);
     }
 }

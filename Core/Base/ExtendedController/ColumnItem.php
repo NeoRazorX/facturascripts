@@ -190,7 +190,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      */
     private function standardHTMLColumn($header, $input, $data)
     {
-        $label = ($header !== null)
+        $label = ($header != null)
             ? '<label for="' . $this->widget->fieldName . '" ' . $data['ColumnHint'] . '>' . $header . '</label>'
             : '';
         
@@ -210,7 +210,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      */
     private function checkboxHTMLColumn($header, $input, $data)
     {
-        $label = ($header !== null)
+        $label = ($header != null)
             ? '<label class="form-check-label" ' . $data['ColumnHint'] . '>' . $input . '&nbsp;' . $header . '</label>'
             : '';
         
@@ -242,7 +242,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             . '<label>' . $header . '</label>';
                         
         foreach ($this->widget->values as $optionValue) {
-            $checked = ($optionValue['value'] === $value) ? ' checked="checked"' : '';
+            $checked = ($optionValue['value'] == $value) ? ' checked="checked"' : '';
             ++$index;
             $values = [($index . '"'), $optionValue['value'], $checked];
             $html .= '<div class="form-check">'

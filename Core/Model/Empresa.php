@@ -237,7 +237,7 @@ class Empresa
         $this->web = self::noHtml($this->web);
 
         $lenName = strlen($this->nombre);
-        if (($lenName === 0) || ($lenName > 99)) {
+        if (($lenName == 0) || ($lenName > 99)) {
             $this->miniLog->alert($this->i18n->trans('company-name-invalid'));
 
             return false;

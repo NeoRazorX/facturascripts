@@ -254,7 +254,7 @@ class PageOption
      */
     public function installXML($name)
     {
-        if ($this->name !== $name) {
+        if ($this->name != $name) {
             $this->miniLog->critical($this->i18n->trans('error-install-name-xmlview'));
             return;
         }

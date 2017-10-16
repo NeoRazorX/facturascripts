@@ -60,7 +60,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
      */
     public static function sortColumns($column1, $column2)
     {
-        if ($column1->order === $column2->order) {
+        if ($column1->order == $column2->order) {
             return 0;
         }
         

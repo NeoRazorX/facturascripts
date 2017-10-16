@@ -39,69 +39,68 @@ class Randomizer extends Base\Controller
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-        $i18n = new Base\Translator();
         $ModelDataGenerator = new ModelDataGenerator($this->empresa);
         
         $option = $this->request->get('gen', '');
         switch ($option) {
             case 'agentes':
                 $num = $ModelDataGenerator->agentes();
-                $this->miniLog->info($num . $i18n->trans('generated-agents'));
+                $this->miniLog->info($num . $this->i18n->trans('generated-agents'));
                 break;
             
             case 'albaranescli':
                 $num = $ModelDataGenerator->albaranesCliente();
-                $this->miniLog->info($num . $i18n->trans('generated-customer-delivery-notes'));
+                $this->miniLog->info($num . $this->i18n->trans('generated-customer-delivery-notes'));
                 break;
             
             case 'albaranesprov':
                 $num = $ModelDataGenerator->albaranesProveedor();
-                $this->miniLog->info($num . $i18n->trans('generated-supplier-delivery-notes'));
+                $this->miniLog->info($num . $this->i18n->trans('generated-supplier-delivery-notes'));
                 break;
             
             case 'articulos':
                 $num = $ModelDataGenerator->articulos();
-                $this->miniLog->info($num . $i18n->trans('generated-products'));
+                $this->miniLog->info($num . $this->i18n->trans('generated-products'));
                 break;
             
             case 'clientes':
                 $num = $ModelDataGenerator->clientes();
-                $this->miniLog->info($num . $i18n->trans('generated-customers'));
+                $this->miniLog->info($num . $this->i18n->trans('generated-customers'));
                 break;
             
             case 'fabricantes':
                 $num = $ModelDataGenerator->fabricantes();
-                $this->miniLog->info($num . $i18n->trans('generated-manufacturers'));
+                $this->miniLog->info($num . $this->i18n->trans('generated-manufacturers'));
                 break;
             
             case 'familias':
                 $num = $ModelDataGenerator->familias();
-                $this->miniLog->info($num . $i18n->trans('generated-families'));
+                $this->miniLog->info($num . $this->i18n->trans('generated-families'));
                 break;
             
             case 'grupos':
                 $num = $ModelDataGenerator->gruposClientes();
-                $this->miniLog->info($num . $i18n->trans('generated-customer-groups'));
+                $this->miniLog->info($num . $this->i18n->trans('generated-customer-groups'));
                 break;
             
             case 'pedidoscli':
                 $num = $ModelDataGenerator->pedidosCliente();
-                $this->miniLog->info($num . $i18n->trans('generated-customer-orders'));
+                $this->miniLog->info($num . $this->i18n->trans('generated-customer-orders'));
                 break;
             
             case 'pedidosprov':
                 $num = $ModelDataGenerator->pedidosProveedor();
-                $this->miniLog->info($num . $i18n->trans('generated-supplier-orders'));
+                $this->miniLog->info($num . $this->i18n->trans('generated-supplier-orders'));
                 break;
             
             case 'presupuestoscli':
                 $num = $ModelDataGenerator->presupuestosCliente();
-                $this->miniLog->info($num . $i18n->trans('generated-customer-estimations'));
+                $this->miniLog->info($num . $this->i18n->trans('generated-customer-estimations'));
                 break;
             
             case 'proveedores':
                 $num = $ModelDataGenerator->proveedores();
-                $this->miniLog->info($num . $i18n->trans('generated-supplier'));
+                $this->miniLog->info($num . $this->i18n->trans('generated-supplier'));
                 break;
         }
     }

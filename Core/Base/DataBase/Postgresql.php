@@ -142,7 +142,7 @@ class Postgresql implements DataBaseEngine
     {
         $error = pg_last_error($link);
 
-        return ($error !== '') ? $error : $this->lastErrorMsg;
+        return ($error != '') ? $error : $this->lastErrorMsg;
     }
 
     /**

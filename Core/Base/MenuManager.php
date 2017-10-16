@@ -92,7 +92,7 @@ class MenuManager
      */
     private function pageNeedSave($pageModel, $pageData)
     {
-        return ($pageModel->menu !== $pageData['menu']) || ($pageModel->title !== $pageData['title']) || ($pageModel->icon !== $pageData['icon']) || ($pageModel->showonmenu !== $pageData['showonmenu']);
+        return ($pageModel->menu != $pageData['menu']) || ($pageModel->title != $pageData['title']) || ($pageModel->icon != $pageData['icon']) || ($pageModel->showonmenu != $pageData['showonmenu']);
     }
 
     /**
@@ -132,7 +132,7 @@ class MenuManager
     private function setActiveMenu($pageModel)
     {
         foreach (self::$menu as $key => $menuItem) {
-            if ($menuItem->name === $pageModel->menu) {
+            if ($menuItem->name == $pageModel->menu) {
                 self::$menu[$key]->active = true;
                 $this->setActiveMenuItem(self::$menu[$key]->menu, $pageModel);
                 break;
@@ -149,7 +149,7 @@ class MenuManager
     private function setActiveMenuItem(&$menu, $pageModel)
     {
         foreach ($menu as $key => $menuItem) {
-            if ($menuItem->name === $pageModel->name) {
+            if ($menuItem->name == $pageModel->name) {
                 $menu[$key]->active = true;
                 break;
             }
@@ -171,7 +171,7 @@ class MenuManager
         /// Cargamos la lista de paginas para el usuario
         $pages = $this->loadPages();
         foreach ($pages as $page) {
-            if ($page->menu === '') {
+            if ($page->menu == '') {
                 continue;
             }
 
@@ -187,7 +187,7 @@ class MenuManager
             if ($submenuValue !== $page->submenu) {
                 $submenuValue = $page->submenu;
                 $menuItem = &$result[$menuValue]->menu;
-                if ($submenuValue !== null) {
+                if ($submenuValue != null) {
                     $menuItem[$submenuValue] = new MenuItem($submenuValue, $submenuValue, '#');
                     $menuItem = &$menuItem[$submenuValue]->menu;
                 }
@@ -224,7 +224,7 @@ class MenuManager
         $pageRule_list = $pageRuleModel->all(['nick' => self::$user->nick]);
         foreach ($pages as $page) {
             foreach ($pageRule_list as $pageRule) {
-                if ($page->name === $pageRule->pagename) {
+                if ($page->name == $pageRule->pagename) {
                     $result[] = $page;
                     // TODO: Delete the added page from the rule set
                     break;

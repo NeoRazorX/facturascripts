@@ -335,7 +335,7 @@ abstract class ListController extends Base\Controller
     protected function addFilterCheckbox($indexView, $key, $label, $field = '', $inverse = false)
     {
         $value = $this->request->get($key);
-        $this->views[$indexView]->addFilterCheckBox($key, $value, $this->i18n->trans($label), $field, $inverse);
+        $this->views[$indexView]->addFilterCheckBox($key, $value, $label, $field, $inverse);
     }
 
     /**
@@ -349,7 +349,7 @@ abstract class ListController extends Base\Controller
     protected function addFilterDatePicker($indexView, $key, $label, $field = '')
     {
         $value = $this->request->get($key);
-        $this->views[$indexView]->addFilterDatePicker($key, $value, $this->i18n->trans($label), $field);
+        $this->views[$indexView]->addFilterDatePicker($key, $value, $label, $field);
     }
 
     /**

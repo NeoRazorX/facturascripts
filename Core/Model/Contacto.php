@@ -258,7 +258,7 @@ class Contacto
      */
     public function observacionesResume()
     {
-        if ($this->observaciones === '') {
+        if ($this->observaciones == '') {
             return '-';
         }
         if (strlen($this->observaciones) < 60) {

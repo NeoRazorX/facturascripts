@@ -180,7 +180,7 @@ class ModelDataGenerator
         $familias = $fam->all();
 
         for ($num = 0; $num < $max; ++$num) {
-            if (mt_rand(0, 2) === 0) {
+            if (mt_rand(0, 2) == 0) {
                 shuffle($fabricantes);
                 shuffle($familias);
 
@@ -223,18 +223,18 @@ class ModelDataGenerator
                 $art->codfamilia = null;
             }
 
-            $art->publico = (mt_rand(0, 3) === 0);
-            $art->bloqueado = (mt_rand(0, 9) === 0);
-            $art->nostock = (mt_rand(0, 9) === 0);
-            $art->secompra = (mt_rand(0, 9) !== 0);
-            $art->sevende = (mt_rand(0, 9) !== 0);
+            $art->publico = (mt_rand(0, 3) == 0);
+            $art->bloqueado = (mt_rand(0, 9) == 0);
+            $art->nostock = (mt_rand(0, 9) == 0);
+            $art->secompra = (mt_rand(0, 9) != 0);
+            $art->sevende = (mt_rand(0, 9) != 0);
 
             if (!$art->save()) {
                 break;
             }
 
             shuffle($this->almacenes);
-            if (mt_rand(0, 2) === 0) {
+            if (mt_rand(0, 2) == 0) {
                 $art->sumStock($this->almacenes[0]->codalmacen, mt_rand(0, 1000));
             } else {
                 $art->sumStock($this->almacenes[0]->codalmacen, mt_rand(0, 20));
@@ -257,11 +257,11 @@ class ModelDataGenerator
             $agente->f_nacimiento = date(mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(1970, 1997));
             $agente->f_alta = date(mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, 2016));
 
-            if (mt_rand(0, 24) === 0) {
+            if (mt_rand(0, 24) == 0) {
                 $agente->f_baja = date('d-m-Y');
             }
 
-            if (mt_rand(0, 9) === 0) {
+            if (mt_rand(0, 9) == 0) {
                 $agente->dnicif = '';
             } else {
                 $agente->dnicif = mt_rand(0, 99999999);
@@ -274,7 +274,7 @@ class ModelDataGenerator
             $agente->direccion = $this->tools->direccion();
             $agente->codpostal = mt_rand(11111, 99999);
 
-            if (mt_rand(0, 1) === 0) {
+            if (mt_rand(0, 1) == 0) {
                 $agente->telefono = mt_rand(555555555, 999999999);
             }
 
@@ -288,16 +288,16 @@ class ModelDataGenerator
                 $agente->cargo = $cargos[0];
             }
 
-            if (mt_rand(0, 1) === 0) {
+            if (mt_rand(0, 1) == 0) {
                 $agente->seg_social = mt_rand(111111, 9999999999);
             }
 
-            if (mt_rand(0, 5) === 0) {
+            if (mt_rand(0, 5) == 0) {
                 $agente->banco = 'ES' . mt_rand(10, 99) . ' ' . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' '
                     . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999);
             }
 
-            if (mt_rand(0, 5) === 0) {
+            if (mt_rand(0, 5) == 0) {
                 $agente->porcomision = $this->tools->cantidad(0, 5, 20);
             }
 
@@ -351,7 +351,7 @@ class ModelDataGenerator
             $cliente = new Model\Cliente();
             $cliente->fechaalta = date(mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, date('Y')));
 
-            if (mt_rand(0, 24) === 0) {
+            if (mt_rand(0, 24) == 0) {
                 $cliente->debaja = true;
                 $cliente->fechabaja = date('d-m-Y');
             }
@@ -440,7 +440,7 @@ class ModelDataGenerator
                     . mt_rand(1000, 9999) : '';
 
                 $cuenta->swift = ($opcion != 0) ? $this->tools->randomString(8) : '';
-                $cuenta->fmandato = (mt_rand(0, 1) === 0) ? date('d-m-Y', strtotime($cliente->fechaalta . ' +' . mt_rand(1, 30) . ' days')) : null;
+                $cuenta->fmandato = (mt_rand(0, 1) == 0) ? date('d-m-Y', strtotime($cliente->fechaalta . ' +' . mt_rand(1, 30) . ' days')) : null;
 
                 if (!$cuenta->save()) {
                     break;
@@ -466,7 +466,7 @@ class ModelDataGenerator
         while ($num < $max) {
             $proveedor = new Model\Proveedor();
             $proveedor->cifnif = mt_rand(0, 99999999);
-            if (mt_rand(0, 14) === 0) {
+            if (mt_rand(0, 14) == 0) {
                 $proveedor->cifnif = '';
             }
 
@@ -495,11 +495,11 @@ class ModelDataGenerator
                 $proveedor->email = $this->tools->email();
             }
 
-            if (mt_rand(0, 9) === 0) {
+            if (mt_rand(0, 9) == 0) {
                 $proveedor->regimeniva = 'Exento';
             }
 
-            if (mt_rand(0, 24) === 0) {
+            if (mt_rand(0, 24) == 0) {
                 $proveedor->debaja = true;
                 $proveedor->fechabaja = date('d-m-Y');
             }
@@ -515,7 +515,7 @@ class ModelDataGenerator
                     $dir->codproveedor = $proveedor->codproveedor;
                     $dir->codpais = $this->empresa->codpais;
 
-                    if (mt_rand(0, 2) === 0) {
+                    if (mt_rand(0, 2) == 0) {
                         $dir->codpais = $this->paises[0]->codpais;
                     }
 
@@ -524,11 +524,11 @@ class ModelDataGenerator
                     $dir->direccion = $this->tools->direccion();
                     $dir->codpostal = mt_rand(1234, 99999);
 
-                    if (mt_rand(0, 3) === 0) {
+                    if (mt_rand(0, 3) == 0) {
                         $dir->apartado = mt_rand(1234, 99999);
                     }
 
-                    if (mt_rand(0, 1) === 0) {
+                    if (mt_rand(0, 1) == 0) {
                         $dir->direccionppal = false;
                     }
 
@@ -548,9 +548,9 @@ class ModelDataGenerator
                     $cuenta->swift = $this->tools->randomString(8);
 
                     $opcion = mt_rand(0, 2);
-                    if ($opcion === 0) {
+                    if ($opcion == 0) {
                         $cuenta->swift = '';
-                    } elseif ($opcion === 1) {
+                    } elseif ($opcion == 1) {
                         $cuenta->iban = '';
                     }
 
@@ -576,12 +576,12 @@ class ModelDataGenerator
         $doc->hora = mt_rand(10, 20) . ':' . mt_rand(10, 59) . ':' . mt_rand(10, 59);
         $doc->codpago = $this->formas_pago[0]->codpago;
 
-        if (mt_rand(0, 2) === 0) {
+        if (mt_rand(0, 2) == 0) {
             $doc->coddivisa = $this->divisas[0]->coddivisa;
             $doc->tasaconv = $this->divisas[0]->tasaconv;
         } else {
             foreach ($this->divisas as $div) {
-                if ($div->coddivisa === $this->empresa->coddivisa) {
+                if ($div->coddivisa == $this->empresa->coddivisa) {
                     $doc->coddivisa = $div->coddivisa;
                     $doc->tasaconv = $div->tasaconv;
                     break;
@@ -590,13 +590,13 @@ class ModelDataGenerator
         }
 
         $doc->codalmacen = $this->empresa->codalmacen;
-        if (mt_rand(0, 2) === 0) {
+        if (mt_rand(0, 2) == 0) {
             $doc->codalmacen = $this->almacenes[0]->codalmacen;
         }
 
         $doc->codserie = $this->empresa->codserie;
-        if (mt_rand(0, 2) === 0) {
-            if ($this->series[0]->codserie !== 'R') {
+        if (mt_rand(0, 2) == 0) {
+            if ($this->series[0]->codserie != 'R') {
                 $doc->codserie = $this->series[0]->codserie;
                 $doc->irpf = $this->series[0]->irpf;
             }
@@ -604,18 +604,18 @@ class ModelDataGenerator
             $doc->observaciones = $this->tools->observaciones($doc->fecha);
         }
 
-        if (isset($doc->numero2) && mt_rand(0, 4) === 0) {
+        if (isset($doc->numero2) && mt_rand(0, 4) == 0) {
             $doc->numero2 = mt_rand(10, 99999);
-        } elseif (isset($doc->numproveedor) && mt_rand(0, 4) === 0) {
+        } elseif (isset($doc->numproveedor) && mt_rand(0, 4) == 0) {
             $doc->numproveedor = mt_rand(10, 99999);
         }
 
-        if (isset($doc->status) && mt_rand(0, 5) === 0) {
+        if (isset($doc->status) && mt_rand(0, 5) == 0) {
             $doc->status = 2;
         }
 
         $doc->codagente = $this->agentes[0]->codagente;
-        if (mt_rand(0, 4) === 0) {
+        if (mt_rand(0, 4) == 0) {
             $doc->codagente = null;
         }
     }
@@ -680,7 +680,7 @@ class ModelDataGenerator
                     $doc->apartado = $dir->apartado;
                 }
 
-                if ($dir->domenvio && mt_rand(0, 2) === 0) {
+                if ($dir->domenvio && mt_rand(0, 2) == 0) {
                     $doc->envio_nombre = $this->tools->nombre();
                     $doc->envio_apellidos = $this->tools->apellidos();
                     $doc->envio_codpais = $dir->codpais;
@@ -716,7 +716,7 @@ class ModelDataGenerator
 
         /// una de cada 15 veces usamos cantidades negativas
         $modcantidad = 1;
-        if (mt_rand(0, 4) === 0) {
+        if (mt_rand(0, 4) == 0) {
             $modcantidad = -1;
         }
 
@@ -730,7 +730,7 @@ class ModelDataGenerator
             $lin->codimpuesto = $this->impuestos[0]->codimpuesto;
             $lin->iva = $this->impuestos[0]->iva;
 
-            if ($recargo && mt_rand(0, 2) === 0) {
+            if ($recargo && mt_rand(0, 2) == 0) {
                 $lin->recargo = $this->impuestos[0]->recargo;
             }
 
@@ -745,14 +745,14 @@ class ModelDataGenerator
 
             $lin->irpf = $doc->irpf;
 
-            if ($regimeniva === 'Exento') {
+            if ($regimeniva == 'Exento') {
                 $lin->codimpuesto = null;
                 $lin->iva = 0;
                 $lin->recargo = 0;
                 $doc->irpf = $lin->irpf = 0;
             }
 
-            if (mt_rand(0, 4) === 0) {
+            if (mt_rand(0, 4) == 0) {
                 $lin->dtopor = $this->tools->cantidad(0, 33, 100);
             }
 
@@ -833,7 +833,7 @@ class ModelDataGenerator
         $proveedores = $this->randomProveedores();
 
         $recargo = false;
-        if (mt_rand(0, 4) === 0) {
+        if (mt_rand(0, 4) == 0) {
             $recargo = true;
         }
 
@@ -871,7 +871,7 @@ class ModelDataGenerator
         $clientes = $this->randomClientes();
 
         $recargo = false;
-        if ($clientes[0]->recargo || mt_rand(0, 4) === 0) {
+        if ($clientes[0]->recargo || mt_rand(0, 4) == 0) {
             $recargo = true;
         }
 
@@ -882,7 +882,7 @@ class ModelDataGenerator
             $eje = $this->ejercicio->getByFecha($ped->fecha);
             if ($eje) {
                 $regimeniva = $this->randomizeDocumentVenta($ped, $eje, $clientes, $num);
-                if (mt_rand(0, 3) === 0) {
+                if (mt_rand(0, 3) == 0) {
                     $ped->fechasalida = date('d-m-Y', strtotime($ped->fecha . ' +' . mt_rand(1, 3) . ' months'));
                 }
 
@@ -912,7 +912,7 @@ class ModelDataGenerator
         $proveedores = $this->randomProveedores();
 
         $recargo = false;
-        if (mt_rand(0, 4) === 0) {
+        if (mt_rand(0, 4) == 0) {
             $recargo = true;
         }
 
@@ -987,7 +987,7 @@ class ModelDataGenerator
         $lista = [];
 
         $sql = 'SELECT * FROM clientes ORDER BY ';
-        $sql .= strtolower(FS_DB_TYPE) === 'mysql' ? 'RAND()' : 'random()';
+        $sql .= strtolower(FS_DB_TYPE) == 'mysql' ? 'RAND()' : 'random()';
 
         $data = $this->db->selectLimit($sql, 100, 0);
         if (!empty($data)) {
@@ -1012,7 +1012,7 @@ class ModelDataGenerator
         $lista = [];
 
         $sql = 'SELECT * FROM proveedores ORDER BY ';
-        $sql .= strtolower(FS_DB_TYPE) === 'mysql' ? 'RAND()' : 'random()';
+        $sql .= strtolower(FS_DB_TYPE) == 'mysql' ? 'RAND()' : 'random()';
 
         $data = $this->db->selectLimit($sql, 100, 0);
         if (!empty($data)) {
@@ -1037,7 +1037,7 @@ class ModelDataGenerator
         $lista = [];
 
         $sql = 'SELECT * FROM agentes ORDER BY ';
-        $sql .= strtolower(FS_DB_TYPE) === 'mysql' ? 'RAND()' : 'random()';
+        $sql .= strtolower(FS_DB_TYPE) == 'mysql' ? 'RAND()' : 'random()';
 
         $data = $this->db->selectLimit($sql, 100, 0);
         if (!empty($data)) {
@@ -1062,7 +1062,7 @@ class ModelDataGenerator
         $lista = [];
 
         $sql = 'SELECT * FROM articulos ORDER BY ';
-        $sql .= strtolower(FS_DB_TYPE) === 'mysql' ? 'RAND()' : 'random()';
+        $sql .= strtolower(FS_DB_TYPE) == 'mysql' ? 'RAND()' : 'random()';
 
         $data = $this->db->selectLimit($sql, 100, 0);
         if (!empty($data)) {

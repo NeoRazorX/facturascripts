@@ -44,7 +44,7 @@ class DivisaTools
         $symbol = '€';
         $txt = number_format($number, $decimals, self::NF1, self::NF2);
 
-        if (self::POSITION === 'right') {
+        if (self::POSITION == 'right') {
             return $txt . ' ' . $symbol;
         }
 

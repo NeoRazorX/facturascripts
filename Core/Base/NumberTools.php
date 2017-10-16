@@ -57,7 +57,7 @@ class NumberTools
      */
     public function format($number, $decimals = '')
     {
-        if ($decimals === '') {
+        if ($decimals == '') {
             $decimals = self::$decimals;
         }
 

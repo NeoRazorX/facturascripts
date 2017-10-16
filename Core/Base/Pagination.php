@@ -127,8 +127,6 @@ class Pagination
      *      page   => número de página
      *      active => Indica si es el indicador activo
      */
-
-
     public function getPages($url, $count, $offset = 0)
     {
         $result = [];

@@ -140,9 +140,9 @@ class DataGeneratorTools
     {
         $cantidad = mt_rand($min, $max1);
 
-        if (mt_rand(0, 9) === 0) {
+        if (mt_rand(0, 9) == 0) {
             $cantidad = mt_rand($min, $max2);
-        } elseif ($cantidad < $max1 && mt_rand(0, 4) === 0) {
+        } elseif ($cantidad < $max1 && mt_rand(0, 4) == 0) {
             $cantidad += round(mt_rand(1, 5) / mt_rand(1, 10), mt_rand(0, 3));
             $cantidad = min([$max1, $cantidad]);
         }
@@ -163,9 +163,9 @@ class DataGeneratorTools
     {
         $precio = mt_rand($min, $max1);
 
-        if (mt_rand(0, 9) === 0) {
+        if (mt_rand(0, 9) == 0) {
             $precio = mt_rand($min, $max2);
-        } elseif ($precio < $max1 && mt_rand(0, 2) === 0) {
+        } elseif ($precio < $max1 && mt_rand(0, 2) == 0) {
             $precio += round(mt_rand(1, 5) / mt_rand(1, 10), FS_NF0_ART);
             $precio = min([$max1, $precio]);
         }
@@ -306,7 +306,7 @@ class DataGeneratorTools
         shuffle($tipos);
         shuffle($nombres);
 
-        if (mt_rand(0, 2) === 0) {
+        if (mt_rand(0, 2) == 0) {
             return $tipos[0] . ' ' . $nombres[0] . ', nº' . mt_rand(1, 199) . ', puerta ' . mt_rand(1, 99);
         }
 
@@ -336,7 +336,7 @@ class DataGeneratorTools
         /// randomizamos (es posible que me haya inventado esta palabra)
         shuffle($observaciones);
 
-        if ($fecha && mt_rand(0, 2) === 0) {
+        if ($fecha && mt_rand(0, 2) == 0) {
             $semana = date('D', strtotime($fecha));
             $semanaArray = [
                 'Mon' => 'lunes', 'Tue' => 'martes', 'Wed' => 'miércoles', 'Thu' => 'jueves',
