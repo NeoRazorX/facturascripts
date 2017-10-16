@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Base\Security;
 
 use FacturaScripts\Core\Base\Security\Tools;
 
-use FacturaScripts\Core\Model\ApiKeys;
+use FacturaScripts\Core\Model\ApiKey;
 
 /**
  * Description of ApiAuth
@@ -49,7 +49,7 @@ class ApiAuth {
         // si existe y está habilitada creamos un token de autenticación
         // de la sesion
         // @todo crear un model ApiKeysLog para controlar el uso de cada ApiKey
-        $apiKeys = new ApiKeys();
+        $apiKeys = new ApiKey();
         $apikey = $apiKeys->getAPiKey($this->request->get('apikey'));
         $token = null;
         if($apikey && $apikey->enabled){

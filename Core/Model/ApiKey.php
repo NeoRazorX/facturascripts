@@ -64,7 +64,7 @@ class ApiKey {
                 " WHERE apikey = ".$this->var2str($apikey);
         $data = $this->dataBase->select($sql);
         if($data){
-            return new ApiKeys($data[0]);
+            return new ApiKey($data[0]);
         }
         return false;
     }
