@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This file is part of FacturaScripts
+Copyright (C) 2017 Joe Nilson <joenilson at gmail.com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+
+<view>
+    <rows>
+        <row type="header">
+            <option icon="fa-key" label="Actualizar Token" class="btn-danger" onclick="generateToken()"></option>
+            <option icon="fa-copy" label="Copiar Token" class="btn-info" onclick="copyValue(this.form.apikey)"></option>
+            <option icon="fa-list" label="Ver Accesos" onclick="loadPage('EditAPiKeyAccess')"></option>
+        </row>
+        <row type="footer">
+            <option color="info"></option>
+        </row>
+    </rows>
+    <columns>
+        <group name="data" numcolumns="12">
+            <column name="descripcion" numcolumns="3" order="60"
+                    description="Descripción de la API">
+                <widget type="text" fieldname="descripcion" required="true" hint="Descripcion de la API" />
+            </column>
+            <column name="api key" numcolumns="3" order="70">
+                <widget type="text" fieldname="apikey" readonly="true" />
+            </column>
+            <column name="create date" numcolumns="2" order="80">
+                <widget type="datepicker" fieldname="f_alta" readonly="true" />
+            </column>
+            <column name="blocked date" numcolumns="2" order="90">
+                <widget type="datepicker" fieldname="f_baja" />
+            </column>
+            <column name="enabled" title="Habilitado" order="100">
+                <widget type="checkbox" fieldname="enabled" />
+            </column>
+            <column name="usuario_creacion" title="Creado por" order="110">
+                <widget type="text" fieldname="usuario_creacion" readonly="true" />
+            </column>
+        </group>
+    </columns>
+</view>

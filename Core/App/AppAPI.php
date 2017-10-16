@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\App;
 
 use Symfony\Component\HttpFoundation\Response;
-
+use FacturaScripts\Core\Base\Security\ApiAuth;
 /**
  * Description of App
  *
@@ -27,6 +27,13 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AppAPI extends App
 {
+
+    public function auth()
+    {
+        $config =['request'=>$this->request,'response'=>$this->response];
+        $auth = new ApiAuth($config);
+        return $auth->startAuth();
+    }
 
     /**
      * Ejecuta la API.
@@ -38,17 +45,23 @@ class AppAPI extends App
         $this->response->headers->set('Access-Control-Allow-Origin', '*');
         $this->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
         $this->response->headers->set('Content-Type', 'application/json');
-        if (!$this->dataBase->connected()) {
-            $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-            $this->response->setContent(json_encode(['error' => 'DB-ERROR']));
-            return false;
-        } elseif ($this->isIPBanned()) {
-            $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
-            $this->response->setContent(json_encode(['error' => 'IP-BANNED']));
-            return false;
+        $auth = $this->auth();
+        if($auth['success']){
+            $this->response->headers->set('X-AUTH-TOKEN', $auth['success']['token']);
+            if (!$this->dataBase->connected()) {
+                $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+                $this->response->setContent(json_encode(['error' => 'DB-ERROR']));
+                return false;
+            } elseif ($this->isIPBanned()) {
+                $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
+                $this->response->setContent(json_encode(['error' => 'IP-BANNED']));
+                return false;
+            }
+            return $this->selectVersion();
         }
-
-        return $this->selectVersion();
+        $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
+        $this->response->setContent(json_encode($auth['error']));
+        return false;
     }
 
     private function selectVersion()
@@ -164,8 +177,10 @@ class AppAPI extends App
                     $plural = strtolower($modelName);
                 } else if (substr($modelName, -3) == 'ser' || substr($modelName, -4) == 'tion') {
                     $plural = strtolower($modelName) . 's';
-                } else if (in_array(substr($modelName, -1), ['a', 'e', 'i', 'o', 'u', 'k'])) {
+                } else if (in_array(substr($modelName, -1), ['a', 'e', 'i', 'o', 'u', 'k', 'y'])) {
                     $plural = strtolower($modelName) . 's';
+                } else if (substr(strtolower($modelName), -5) == 'model') {
+                    $plural = strtolower($modelName) . 'os';
                 } else {
                     $plural = strtolower($modelName) . 'es';
                 }

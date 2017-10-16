@@ -290,19 +290,64 @@ function renderHTML(&$templateVars)
 }
 
 /**
+ * Revisa las funciones y extensiones de php necesarias para el funcionamiento de FacturaScripts
+ * @param type $requirements array
+ * @param type $requirementsErrors integer
+ */
+function checkRequirements(&$requirements, &$requirementsErrors)
+{
+    $array_functions = array('mb_substr');
+    
+    $array_extensions = array('SimpleXML','openSSL','Zip');
+
+    foreach($array_functions as $f) {
+        list($status, $error) = verifyRequirement(function_exists($f));
+        $requirementsErrors += $error;
+        $requirements[$f] = $status;
+    }
+    
+    foreach($array_extensions as $e) {
+        list($status, $error) = verifyRequirement(extension_loaded($e));
+        $requirementsErrors += $error;
+        $requirements[$e] = $status;
+    }
+}
+
+/**
+ * Revisa si un requerimiento está presente
+ * @param type $exists
+ * @return type array
+ */
+function verifyRequirement($exists)
+{
+    $error = 0;
+    $status = 'fa-check text-success';  
+    if(!$exists){
+        $error = 1;
+        $status = 'fa-ban text-danger';
+    }
+    return array($status, $error);
+}
+
+/**
  * Función principal del instalador
  *
  * @return int
  */
 function installerMain()
 {
+
+    $requirements = [];
     $errors = [];
+    $requirementsErrors =  0;
 
     if (filter_input(INPUT_POST, 'fs_lang')) {
         $i18n = new Translator(__DIR__, filter_input(INPUT_POST, 'fs_lang'));
     } else {
         $i18n = new Translator(__DIR__);
     }
+    
+    checkRequirements($requirements, $requirementsErrors);
 
     searchErrors($errors, $i18n);
 
@@ -316,6 +361,8 @@ function installerMain()
     
     /// empaquetamos las variables a pasar el motor de plantillas
     $templateVars = [
+        'requirements' => $requirements,
+        'requirementsErrors' => $requirementsErrors,
         'errors' => $errors,
         'i18n' => $i18n,
         'languages' => getLanguages($i18n),

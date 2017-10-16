@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : fs_api_keys_access.xml
+    Author     : Joe Nilson Zegarra Galvez
+    Description:
+        Estructura de la tabla fs_api_keys_access.
+-->
+<tabla>
+    <columna>
+        <nombre>id</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('fs_apikeys_access_id_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>idapikey</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>resource</nombre>
+        <tipo>character varying(150)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>allow_delete</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+        <defecto>false</defecto>
+    </columna>  
+    <columna>
+        <nombre>allow_get</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+        <defecto>false</defecto>
+    </columna>  
+    <columna>
+        <nombre>allow_post</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+        <defecto>false</defecto>
+    </columna>  
+    <columna>
+        <nombre>allow_put</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+        <defecto>false</defecto>
+    </columna>  
+    <restriccion>
+        <nombre>fs_api_keys_pkey</nombre>
+        <consulta>PRIMARY KEY (id)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>ca_fs_api_keys_access</nombre>
+        <consulta>FOREIGN KEY (idapikey) REFERENCES fs_api_keys (id) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>    
+</tabla>
