@@ -177,8 +177,10 @@ class AppAPI extends App
                     $plural = strtolower($modelName);
                 } else if (substr($modelName, -3) == 'ser' || substr($modelName, -4) == 'tion') {
                     $plural = strtolower($modelName) . 's';
-                } else if (in_array(substr($modelName, -1), ['a', 'e', 'i', 'o', 'u', 'k'])) {
+                } else if (in_array(substr($modelName, -1), ['a', 'e', 'i', 'o', 'u', 'k', 'y'])) {
                     $plural = strtolower($modelName) . 's';
+                } else if (substr(strtolower($modelName), -5) == 'model') {
+                    $plural = strtolower($modelName) . 'os';
                 } else {
                     $plural = strtolower($modelName) . 'es';
                 }

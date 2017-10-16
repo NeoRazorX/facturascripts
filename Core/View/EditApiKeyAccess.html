@@ -142,9 +142,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 {% from 'Macro/Utils.html' import exportData as exportData %}
 {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
+{% from 'Macro/BaseController.html' import columnsListForEditView as columnsListForEditView %}
 
 <!-- Aux Objects -->
 {% set model = fsc.view.getModel() %}
+{% set model2 = fsc.model2 %}
 
 <!-- Main Body -->
 <div class="container-fluid">
@@ -154,7 +156,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <div id="header" class="row">
         <div class="col-3 d-print-none">
             <div class="btn-group">
-                <a href="{{ model.url('list') }}" class="btn btn-sm btn-light">
+                <a href="{{ fsc.model2.url('edit') }}" class="btn btn-sm btn-light">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i>
                     <span class="hidden-xs hidden-sm">&nbsp;{{ go_back }} </span>
                 </a>
@@ -230,8 +232,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
                         <!-- Main Form -->
                         <div id="main_row" class="row">
-                            {% set model = fsc.view.getModel() %}
-                            {{ columnsForEditView(_context, fsc.view, model, FALSE) }}
+                            {% set modelList = fsc.resources %}
+                            {% for model in modelList %}
+                            {{ columnsListForEditView(_context, fsc.view, model, FALSE) }}
+                            {% endfor %}
                         </div>
                     </div>
 

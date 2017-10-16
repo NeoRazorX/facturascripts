@@ -22,15 +22,15 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Model\ApiKey;
 
 /**
- * Modelo para ApiKeyAccess, en esta tabla se guardan los accesos a cada tabla 
+ * Modelo para ApiKeyAccess, en esta tabla se guardan los accesos a cada tabla
  * del sistema asociados a un idapikey
- * las opciones actuales son DELETE / GET / POST / PUT 
+ * las opciones actuales son DELETE / GET / POST / PUT
  * @author Joe Nilson <joenilson at gmail.com>
  */
 class ApiKeyAccess {
-    
+
     use Base\ModelTrait;
-    
+
     public $id;
     public $idapikey;
     public $resource;
@@ -47,7 +47,7 @@ class ApiKeyAccess {
     {
         return 'id';
     }
-    
+
     /**
      * Resetea los valores de todas las propiedades modelo.
      */
@@ -60,5 +60,39 @@ class ApiKeyAccess {
         $this->allow_get = FALSE;
         $this->allow_post = FALSE;
         $this->allow_delete = FALSE;
+    }
+
+    /**
+     * Función para extraer un recurso y saber si está asignado o nó a una API Key
+     *
+     * @param integer $idApiKey
+     * @param string $resource
+     * @return boolean|\FacturaScripts\Core\Model\ApiKeyAccess
+     */
+    public function getByApiKeyResource($idApiKey, $resource)
+    {
+        $sql = "SELECT * FROM ".$this->tableName()." WHERE ".
+                " idapikey = ".$this->intval($idApiKey)." AND resource = ".$this->var2str($resource);
+        $data = $this->dataBase->select($sql);
+        if($data){
+            return new ApiKeyAccess($data[0]);
+        }
+        return false;
+    }
+
+    public function getByApiKey($idApiKey)
+    {
+        $sql = "SELECT * FROM ".$this->tableName()." WHERE ".
+                " idapikey = ".$this->intval($idApiKey)." ORDER BY resource ";
+        $data = $this->dataBase->select($sql);
+        $lista = [];
+        if($data){
+            foreach($data as $d) {
+                $item = new ApiKeyAccess($d);
+                $lista[] = $item;
+            }
+            return $lista;
+        }
+        return false;
     }
 }
