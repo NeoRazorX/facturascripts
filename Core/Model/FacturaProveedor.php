@@ -179,9 +179,7 @@ class FacturaProveedor
             if ($ejercicio->abierto()) {
                 $reg0 = new RegularizacionIva();
                 if ($reg0->getFechaInside($this->fecha)) {
-                    $this->miniLog->alert(
-                        $this->i18n->trans('invoice-regularized-cant-delete', [FS_IVA])
-                    );
+                    $this->miniLog->alert($this->i18n->trans('invoice-regularized-cant-delete', [FS_IVA]));
                     $bloquear = true;
                 } else {
                     foreach ($this->getRectificativas() as $rect) {

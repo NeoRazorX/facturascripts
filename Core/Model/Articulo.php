@@ -263,7 +263,7 @@ class Articulo
     /**
      * % IVA del impuesto asignado.
      *
-     * @var float|int
+     * @var float
      */
     private $iva;
 
@@ -391,15 +391,13 @@ class Articulo
      * Devuelve la referencia codificada para poder ser usada en imágenes.
      * Evitamos así errores con caracteres especiales como / y \.
      *
-     * @param bool $ref
+     * @param string|false $ref
      *
      * @return string
      */
     public function imageRef($ref = false)
     {
-        if (!$ref) {
-            $ref = $this->referencia;
-        }
+        $ref = $ref ? : $this->referencia;
 
         $ref = str_replace(['/', '\\'], '_', $ref);
 
@@ -436,12 +434,9 @@ class Articulo
      */
     public function getFamilia()
     {
-        if ($this->codfamilia === null) {
-            return false;
-        }
         $fam = new Familia();
 
-        return $fam->get($this->codfamilia);
+        return $this->codfamilia === null ? false : $fam->get($this->codfamilia);
     }
 
     /**
@@ -451,12 +446,9 @@ class Articulo
      */
     public function getFabricante()
     {
-        if ($this->codfabricante === null) {
-            return false;
-        }
         $fab = new Fabricante();
 
-        return $fab->get($this->codfabricante);
+        return $this->codfabricante === null ? false : $fab->get($this->codfabricante);
     }
 
     /**
@@ -466,12 +458,9 @@ class Articulo
      */
     public function getStock()
     {
-        if ($this->nostock) {
-            return [];
-        }
         $stock = new Stock();
 
-        return $stock->all([new DataBaseWhere('referencia', $this->referencia)]);
+        return $this->nostock ? [] : $stock->all([new DataBaseWhere('referencia', $this->referencia)]);
     }
 
     /**
@@ -533,11 +522,25 @@ class Articulo
      */
     public function imagenUrl()
     {
-        if (file_exists(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png')) {
-            return 'images/articulos/' . $this->imageRef() . '-1.png';
-        }
-        if (file_exists(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.jpg')) {
-            return 'images/articulos/' . $this->imageRef() . '-1.jpg';
+        return $this->checkImageExists();
+    }
+
+    /**
+     * Comprueba si la imagen existe, si existe devuelve su ruta, y sino existe devuelve False
+     *
+     * @return string|false
+     */
+    private function checkImageExists()
+    {
+        $images = [
+            FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png',
+            FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.jpg'
+        ];
+
+        foreach ($images as $image) {
+            if (file_exists($image)) {
+                return $image;
+            }
         }
 
         return false;
@@ -551,24 +554,18 @@ class Articulo
      */
     public function setImagen($img, $png = true)
     {
-        $this->imagen = null;
-
-        if (file_exists(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png')) {
-            unlink(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png');
-        } elseif (file_exists('images/articulos/' . $this->imageRef() . '-1.jpg')) {
-            unlink(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.jpg');
-        }
-
         if ($img) {
+            $this->imagen = null;
+
+            if ($oldImage = $this->checkImageExists()) {
+                unlink($oldImage);
+            }
+
             if (!file_exists(FS_MYDOCS . 'images/articulos')) {
                 @mkdir(FS_MYDOCS . 'images/articulos', 0777, true);
             }
 
-            if ($png) {
-                $file = @fopen(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png', 'ab');
-            } else {
-                $file = @fopen(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.jpg', 'ab');
-            }
+            $file = @fopen(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.' . ($png ? 'png' : 'jpg'), 'ab');
 
             if ($file) {
                 fwrite($file, $img);
@@ -613,14 +610,14 @@ class Articulo
     {
         $ref = trim($ref);
         if ($ref === null || empty($ref) || strlen($ref) > 18) {
-            $this->miniLog->alert('¡Referencia de artículo no válida! Debe tener entre 1 y 18 caracteres.');
+            $this->miniLog->alert($this->i18n->trans('product-reference-not-valid', [$this->referencia]));
         } elseif ($ref !== $this->referencia && !$this->referencia === null) {
             $sql = 'UPDATE ' . $this->tableName() . ' SET referencia = ' . $this->var2str($ref)
                 . ' WHERE referencia = ' . $this->var2str($this->referencia) . ';';
             if ($this->dataBase->exec($sql)) {
                 /// renombramos la imagen, si la hay
-                if (file_exists(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png')) {
-                    rename(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png', FS_MYDOCS . 'images/articulos/' . $this->imageRef($ref) . '-1.png');
+                if ($oldImage = $this->checkImageExists()) {
+                    rename($oldImage, FS_MYDOCS . 'images/articulos/' . $this->imageRef($ref) . '-1.png');
                 }
 
                 $this->referencia = $ref;

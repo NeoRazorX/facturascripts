@@ -150,7 +150,7 @@ class AlbaranProveedor
                 }
             }
 
-            $this->miniLog->info(ucfirst(FS_ALBARAN) . ' de compra ' . $this->codigo . ' eliminado correctamente.');
+            $this->miniLog->info($this->i18n->trans('supplier-delivery-note-deleted-successfully', [$this->codigo]));
 
             return true;
         }

@@ -323,9 +323,7 @@ class Asiento
             $this->miniLog->alert($this->i18n->trans('notchead-seat', [round($debe - $haber, FS_NF0 + 1)]));
             $status = false;
         } elseif (!static::floatcmp($this->importe, max([abs($debe), abs($haber)]), FS_NF0, true)) {
-            $this->miniLog->alert(
-                $this->i18n->trans('incorrect-seat-amount')
-            );
+            $this->miniLog->alert($this->i18n->trans('incorrect-seat-amount'));
             $status = false;
         }
 
@@ -334,7 +332,7 @@ class Asiento
         $eje0 = $ejercicio->get($this->codejercicio);
         if ($eje0) {
             if (strtotime($this->fecha) < strtotime($eje0->fechainicio) || strtotime($this->fecha) > strtotime($eje0->fechafin)) {
-                $this->miniLog->alert("La fecha de este asiento está fuera del rango del <a target='_blank' href='" . $eje0->url() . "'>ejercicio</a>.");
+                $this->miniLog->alert($this->i18n->trans('seat-date-not-in-exercise-range', [$eje0->url()]));
                 $status = false;
             }
         }
@@ -363,9 +361,7 @@ class Asiento
                     }
 
                     if (empty($aux)) {
-                        $this->miniLog->alert("Este asiento es un posible duplicado de
-                     <a href='index.php?page=ContabilidadAsiento&id=" . $as['idasiento'] . "'>este otro</a>.
-                     Si no lo es, para evitar este mensaje, simplemente modifica el concepto.");
+                        $this->miniLog->alert($this->i18n->trans('seat-possible duplicated', [$as['idasiento']]));
                         $status = false;
                     }
                 }

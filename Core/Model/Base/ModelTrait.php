@@ -130,7 +130,7 @@ trait ModelTrait
         }
 
         if ($this->tableName() !== '' && !in_array($this->tableName(), self::$checkedTables, false) && $this->checkTable($this->tableName())) {
-            $this->miniLog->debug('Table ' . $this->tableName() . ' checked.');
+            $this->miniLog->debug($this->i18n->trans('table-checked', [$this->tableName()]));
             self::$checkedTables[] = $this->tableName();
             $this->cache->set('fs_checked_tables', self::$checkedTables);
         }

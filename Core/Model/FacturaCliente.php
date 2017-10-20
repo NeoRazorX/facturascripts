@@ -111,8 +111,7 @@ class FacturaCliente
                     $fechaOld = $fecha;
                     $fecha = date('d-m-Y', strtotime($data[0]['fecha']));
 
-                    $this->miniLog->alert('Ya hay facturas posteriores a la fecha seleccionada (' . $fechaOld . ').'
-                        . ' Nueva fecha asignada: ' . $fecha);
+                    $this->miniLog->alert($this->i18n->trans('invoice-new-assigned-date', [$fechaOld, $fecha]));
                     $cambio = true;
                 }
             }
@@ -153,10 +152,10 @@ class FacturaCliente
                         $cambio = false;
                     }
                 } else {
-                    $this->miniLog->alert('La fecha está fuera del rango del ejercicio ' . $ejercicio->nombre);
+                    $this->miniLog->alert($this->i18n->trans('date-out-of-exercise-range', [$ejercicio->nombre]));
                 }
             } else {
-                $this->miniLog->alert('Ejercicio no encontrado.');
+                $this->miniLog->alert($this->i18n->trans('exercise-not-found'));
             }
         } elseif ($hora !== $this->hora) { /// factura existente y cambiamos hora
             $this->hora = $hora;
