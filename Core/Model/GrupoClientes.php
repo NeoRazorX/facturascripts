@@ -85,7 +85,7 @@ class GrupoClientes
         }
 
         $data = $this->dataBase->selectLimit($sql, 1, 0);
-        if ($data) {
+        if (!empty($data)) {
             return sprintf('%06s', (1 + (int) $data[0]['codgrupo']));
         }
 

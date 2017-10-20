@@ -324,7 +324,7 @@ class Stock
         $sql = 'SELECT * FROM ' . $this->tableName()
             . ' WHERE referencia = ' . $this->var2str($ref) . ' ORDER BY codalmacen ASC;';
         $data = $this->dataBase->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $s) {
                 $stocklist[] = new self($s);
             }
