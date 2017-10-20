@@ -53,7 +53,7 @@ class Serie
     /**
      * % de retención IRPF de las facturas asociadas.
      *
-     * @var float
+     * @var float|int
      */
     public $irpf;
 

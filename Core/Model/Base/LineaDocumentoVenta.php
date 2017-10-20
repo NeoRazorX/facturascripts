@@ -33,7 +33,7 @@ trait LineaDocumentoVenta
     /**
      * Cantidad
      *
-     * @var float
+     * @var float|int
      */
     public $cantidad;
 
@@ -61,7 +61,7 @@ trait LineaDocumentoVenta
     /**
      * % de descuento.
      *
-     * @var float
+     * @var float|int
      */
     public $dtopor;
 
@@ -75,14 +75,14 @@ trait LineaDocumentoVenta
     /**
      * % de IRPF de la línea.
      *
-     * @var float
+     * @var float|int
      */
     public $irpf;
 
     /**
      * % del impuesto relacionado.
      *
-     * @var float
+     * @var float|int
      */
     public $iva;
 
@@ -110,28 +110,28 @@ trait LineaDocumentoVenta
     /**
      * Importe neto de la línea, sin impuestos.
      *
-     * @var float
+     * @var float|int
      */
     public $pvptotal;
 
     /**
      * Importe neto sin descuentos.
      *
-     * @var float
+     * @var float|int
      */
     public $pvpsindto;
 
     /**
      * Precio del artículo, una unidad.
      *
-     * @var float
+     * @var float|int
      */
     public $pvpunitario;
 
     /**
      * % de recargo de equivalencia de la línea.
      *
-     * @var float
+     * @var float|int
      */
     public $recargo;
 

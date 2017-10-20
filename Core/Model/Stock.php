@@ -62,49 +62,49 @@ class Stock
     /**
      * Cantidad
      *
-     * @var float
+     * @var float|int
      */
     public $cantidad;
 
     /**
      * Reservada
      *
-     * @var float
+     * @var float|int
      */
     public $reservada;
 
     /**
      * Disponible
      *
-     * @var float
+     * @var float|int
      */
     public $disponible;
 
     /**
      * Pendiente de recibir
      *
-     * @var float
+     * @var float|int
      */
     public $pterecibir;
 
     /**
      * Stock mínimo
      *
-     * @var float
+     * @var float|int
      */
     public $stockmin;
 
     /**
      * Stock máximo
      *
-     * @var float
+     * @var float|int
      */
     public $stockmax;
 
     /**
      * Cantidad última regularización
      *
-     * @var float
+     * @var float|int
      */
     public $cantidadultreg;
 

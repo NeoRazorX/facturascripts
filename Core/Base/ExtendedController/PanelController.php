@@ -167,7 +167,7 @@ abstract class PanelController extends Base\Controller
     /**
      * Ejecuta las acciones del controlador
      *
-     * @param EditView $view
+     * @param BaseView $view
      * @param string $action
      */
     private function execAfterAction($view, $action)

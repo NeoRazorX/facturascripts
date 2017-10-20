@@ -67,7 +67,7 @@ class Caja
     /**
      * Dinero inicial en la caja
      *
-     * @var float
+     * @var float|int
      */
     public $dinero_inicial;
 
@@ -81,7 +81,7 @@ class Caja
     /**
      * Dinero final en la caja
      *
-     * @var float
+     * @var float|int
      */
     public $dinero_fin;
 

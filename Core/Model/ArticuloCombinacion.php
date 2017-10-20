@@ -108,14 +108,14 @@ class ArticuloCombinacion
     /**
      * Impacto en el precio del artículo.
      *
-     * @var float
+     * @var float|int
      */
     public $impactoprecio;
 
     /**
      * Stock físico de la combinación.
      *
-     * @var float
+     * @var float|int
      */
     public $stockfis;
 

@@ -45,14 +45,14 @@ class Divisa
     /**
      * Tasa de conversión respecto al euro.
      *
-     * @var float
+     * @var float|int
      */
     public $tasaconv;
 
     /**
      * Tasa de conversión respecto al euro (para compras).
      *
-     * @var float
+     * @var float|int
      */
     public $tasaconvcompra;
 

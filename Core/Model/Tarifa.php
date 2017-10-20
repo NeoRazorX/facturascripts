@@ -68,14 +68,14 @@ class Tarifa
     /**
      * Incremento porcentual o descuento
      *
-     * @var float
+     * @var float|int
      */
     public $incporcentual;
 
     /**
      * Incremento lineal o descuento lineal
      *
-     * @var float
+     * @var float|int
      */
     public $inclineal;
 

@@ -178,7 +178,7 @@ class Contacto
     /**
      * Potencial cliente
      *
-     * @var bool
+     * @var int
      */
     public $potencial;
 

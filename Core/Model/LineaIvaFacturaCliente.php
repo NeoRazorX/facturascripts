@@ -46,35 +46,35 @@ class LineaIvaFacturaCliente
     /**
      * neto + totaliva + totalrecargo
      *
-     * @var float
+     * @var float|int
      */
     public $totallinea;
 
     /**
      * Total de recargo de equivalencia para ese impuesto.
      *
-     * @var float
+     * @var float|int
      */
     public $totalrecargo;
 
     /**
      * % de recargo de equivalencia del impuesto.
      *
-     * @var float
+     * @var float|int
      */
     public $recargo;
 
     /**
      * Total de IVA para ese impuesto.
      *
-     * @var float
+     * @var float|int
      */
     public $totaliva;
 
     /**
      * % de IVA del impuesto.
      *
-     * @var float
+     * @var float|int
      */
     public $iva;
 
@@ -88,7 +88,7 @@ class LineaIvaFacturaCliente
     /**
      * Neto o base imponible para ese impuesto.
      *
-     * @var float
+     * @var float|int
      */
     public $neto;
 

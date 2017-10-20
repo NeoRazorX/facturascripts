@@ -52,7 +52,7 @@ class LineaTransferenciaStock
     /**
      * Cantidad
      *
-     * @var float
+     * @var float|int
      */
     public $cantidad;
 

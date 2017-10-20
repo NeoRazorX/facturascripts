@@ -45,14 +45,14 @@ class RegularizacionStock
     /**
      * Cantidad inicial
      *
-     * @var float
+     * @var float|int
      */
     public $cantidadini;
 
     /**
      * Cantidad final
      *
-     * @var float
+     * @var float|int
      */
     public $cantidadfin;
 

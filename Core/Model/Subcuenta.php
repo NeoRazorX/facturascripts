@@ -40,7 +40,7 @@ class Subcuenta
     /**
      * Código de subcuenta
      *
-     * @var float
+     * @var float|int
      */
     public $codsubcuenta;
 
@@ -89,35 +89,35 @@ class Subcuenta
     /**
      * Importe del Haber
      *
-     * @var float
+     * @var float|int
      */
     public $haber;
 
     /**
      * Importe del Debe
      *
-     * @var float
+     * @var float|int
      */
     public $debe;
 
     /**
      * Importe del Saldo
      *
-     * @var float
+     * @var float|int
      */
     public $saldo;
 
     /**
      * Importe del Recargo
      *
-     * @var float
+     * @var float|int
      */
     public $recargo;
 
     /**
      * Importe del Iva
      *
-     * @var float
+     * @var float|int
      */
     public $iva;
 

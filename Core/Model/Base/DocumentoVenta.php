@@ -233,14 +233,14 @@ trait DocumentoVenta
      * % de retención IRPF del albarán. Se obtiene de la serie.
      * Cada línea puede tener un % distinto.
      *
-     * @var float
+     * @var float|int
      */
     public $irpf;
 
     /**
      * Suma del pvptotal de líneas. Total del albarán antes de impuestos.
      *
-     * @var float
+     * @var float|int
      */
     public $neto;
 
@@ -276,7 +276,7 @@ trait DocumentoVenta
     /**
      * % de comisión del empleado.
      *
-     * @var float
+     * @var float|int
      */
     public $porcomision;
 
@@ -290,21 +290,21 @@ trait DocumentoVenta
     /**
      * Tasa de conversión a Euros de la divisa seleccionada.
      *
-     * @var float
+     * @var float|int
      */
     public $tasaconv;
 
     /**
      * Importe total del albarán, con impuestos.
      *
-     * @var float
+     * @var float|int
      */
     public $total;
 
     /**
      * Suma total del IVA de las líneas.
      *
-     * @var float
+     * @var float|int
      */
     public $totaliva;
 
@@ -313,21 +313,21 @@ trait DocumentoVenta
      * totaleuros = total/tasaconv
      * No hace falta rellenarlo, al hacer save() se calcula el valor.
      *
-     * @var float
+     * @var float|int
      */
     public $totaleuros;
 
     /**
      * Suma total de las retenciones IRPF de las líneas.
      *
-     * @var float
+     * @var float|int
      */
     public $totalirpf;
 
     /**
      * Suma total del recargo de equivalencia de las líneas.
      *
-     * @var float
+     * @var float|int
      */
     public $totalrecargo;
 

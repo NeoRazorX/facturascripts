@@ -60,14 +60,14 @@ class Impuesto
     /**
      * Valor del IVA
      *
-     * @var float
+     * @var float|int
      */
     public $iva;
 
     /**
      * Valor del Recargo
      *
-     * @var float
+     * @var float|int
      */
     public $recargo;
 

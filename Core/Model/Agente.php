@@ -105,7 +105,7 @@ class Agente
     /**
      * Porcentaje de comisión del agente. Se utiliza en presupuestos, pedidos, albaranes y facturas.
      *
-     * @var float
+     * @var float|int
      */
     public $porcomision;
 

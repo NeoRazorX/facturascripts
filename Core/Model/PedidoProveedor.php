@@ -106,7 +106,7 @@ class PedidoProveedor
     {
         $versiones = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName . ' WHERE idoriginal = ' . $this->var2str($this->idpedido);
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idoriginal = ' . $this->var2str($this->idpedido);
         if ($this->idoriginal) {
             $sql .= ' OR idoriginal = ' . $this->var2str($this->idoriginal);
             $sql .= ' OR idpedido = ' . $this->var2str($this->idoriginal);
@@ -114,7 +114,7 @@ class PedidoProveedor
         $sql .= 'ORDER BY fecha DESC, hora DESC;';
 
         $data = $this->dataBase->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $versiones[] = new self($d);
             }

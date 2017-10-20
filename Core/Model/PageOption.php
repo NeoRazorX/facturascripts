@@ -204,7 +204,7 @@ class PageOption
     /**
      * Carga la estructura de columnas desde el XML
      *
-     * @param \SimpleXMLElement[] $columns
+     * @param \SimpleXMLElement $columns
      */
     private function getXMLGroupsColumns($columns)
     {

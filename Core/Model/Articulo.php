@@ -99,7 +99,7 @@ class Articulo
     /**
      * Precio del artículo, sin impuestos.
      *
-     * @var float
+     * @var float|int
      */
     public $pvp;
 
@@ -108,7 +108,7 @@ class Articulo
      * Este valor no se almacena en la base de datos, es decir,
      * no se recuerda.
      *
-     * @var float
+     * @var float|int
      */
     public $pvp_ant;
 
@@ -122,7 +122,7 @@ class Articulo
     /**
      * Coste medio al comprar el artículo. Calculado.
      *
-     * @var float
+     * @var float|int
      */
     public $costemedio;
 
@@ -131,7 +131,7 @@ class Articulo
      * No necesariamente es el precio de compra, puede incluir
      * también otros costes.
      *
-     * @var float
+     * @var float|int
      */
     public $preciocoste;
 
@@ -188,21 +188,21 @@ class Articulo
     /**
      * Stock físico. La suma de las cantidades de esta referencia que en la tabla stocks.
      *
-     * @var float
+     * @var float|int
      */
     public $stockfis;
 
     /**
      * El stock mínimo que debe haber
      *
-     * @var float
+     * @var float|int
      */
     public $stockmin;
 
     /**
      * El stock máximo que debe haber
      *
-     * @var float
+     * @var float|int
      */
     public $stockmax;
 
@@ -263,7 +263,7 @@ class Articulo
     /**
      * % IVA del impuesto asignado.
      *
-     * @var float
+     * @var float|int
      */
     private $iva;
 

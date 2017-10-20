@@ -104,7 +104,7 @@ class Asiento
     /**
      * Importe del asiento
      *
-     * @var float
+     * @var float|int
      */
     public $importe;
 

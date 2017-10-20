@@ -95,7 +95,7 @@ class Partida
     /**
      * Valor de la tasa de conversión
      *
-     * @var float
+     * @var float|int
      */
     public $tasaconv;
 
@@ -109,35 +109,35 @@ class Partida
     /**
      * Haber de la partida
      *
-     * @var float
+     * @var float|int
      */
     public $haberme;
 
     /**
      * Debe de la partida
      *
-     * @var float
+     * @var float|int
      */
     public $debeme;
 
     /**
      * Importe del recargo
      *
-     * @var float
+     * @var float|int
      */
     public $recargo;
 
     /**
      * Importe del iva
      *
-     * @var float
+     * @var float|int
      */
     public $iva;
 
     /**
      * Importe de la base imponible
      *
-     * @var float
+     * @var float|int
      */
     public $baseimponible;
 
@@ -179,14 +179,14 @@ class Partida
     /**
      * Haber de la partida
      *
-     * @var float
+     * @var float|int
      */
     public $haber;
 
     /**
      * Debe de la partida
      *
-     * @var float
+     * @var float|int
      */
     public $debe;
 
@@ -207,21 +207,21 @@ class Partida
     /**
      * Saldo de la partida
      *
-     * @var float
+     * @var float|int
      */
     public $saldo;
 
     /**
      * Suma del debe
      *
-     * @var float
+     * @var float|int
      */
     public $sum_debe;
 
     /**
      * Suma del haber
      *
-     * @var float
+     * @var float|int
      */
     public $sum_haber;
 

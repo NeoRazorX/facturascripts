@@ -82,14 +82,14 @@ class ArticuloProveedor
     /**
      * Precio neto al que nos ofrece el proveedor este producto.
      *
-     * @var float
+     * @var float|int
      */
     public $precio;
 
     /**
      * Descuento sobre el precio que nos hace el proveedor.
      *
-     * @var float
+     * @var float|int
      */
     public $dto;
 
@@ -103,7 +103,7 @@ class ArticuloProveedor
     /**
      * Stock del artículo en el almacén del proveedor.
      *
-     * @var float
+     * @var float|int
      */
     public $stock;
 
@@ -131,7 +131,7 @@ class ArticuloProveedor
     /**
      * % IVA del impuesto asignado.
      *
-     * @var float
+     * @var float|int
      */
     private $iva;
 
