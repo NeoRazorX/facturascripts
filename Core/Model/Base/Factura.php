@@ -134,7 +134,7 @@ trait Factura
         if (empty($lineasi) && !empty($lineas)) {
             /// necesitamos los totales por impuesto
             $subtotales = [];
-            foreach ($this->getLineas() as $lin) {
+            foreach ($lineas as $lin) {
                 $codimpuesto = ($lin->codimpuesto === null ) ? 0 : $lin->codimpuesto;
                 if (!array_key_exists($codimpuesto, $subtotales)) {
                     $subtotales[$codimpuesto] = array(
@@ -172,4 +172,11 @@ trait Factura
         }
         return $lineasi;
     }
+
+    /**
+     * Devuelve las líneas asociadas al documento.
+     *
+     * @return LineaFacturaCliente[]|LineaFacturaProveedor[]
+     */
+    abstract public function getLineas();
 }

@@ -507,7 +507,7 @@ trait DocumentoVenta
     }
 
     /**
-     * Devuelve las líneas asociadas al pedido.
+     * Devuelve las líneas asociadas al documento.
      *
      * @return array
      */

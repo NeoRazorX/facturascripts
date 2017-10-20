@@ -263,7 +263,7 @@ class Articulo
     /**
      * % IVA del impuesto asignado.
      *
-     * @var float
+     * @var float|int
      */
     private $iva;
 
