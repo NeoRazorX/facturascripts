@@ -19,8 +19,6 @@
 
 namespace FacturaScripts\Core\Lib;
 
-use FacturaScripts\Core\Model\Base\ModelTrait;
-
 /**
  * Description of DataGeneratorTools
  *

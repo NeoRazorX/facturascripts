@@ -906,7 +906,7 @@
     "cant-assign-date-already-regularized": "You cann't assign the date 0 because there is already a regularization of 1 for that period.",
     "invoice-regularized-cant-change-date": "The invoice is within a regularization of 0. The date cann't be modified.",
     "invoice-regularized-cant-delete": "The invoice is within a regularization of 0. It cann't be deleted.",
-    "invoice-have-revtifying-cant-delete": "The invoice already has a corrigendum. Cann't be deleted.",
+    "invoice-have-rectifying-cant-delete": "The invoice already has a rectifying. Cann't be deleted.",
     "customer-invoice-deleted-successfully": "Invoice of sale 0 deleted successfully.",
     "exercise-not-found": "Exercise not found.",
     "supplier-invoice-deleted-successfully": "Purchase invoice 0 deleted successfully.",

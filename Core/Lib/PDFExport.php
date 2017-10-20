@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\ExportInterface;
 use FacturaScripts\Core\Base\NumberTools;
-use FacturaScripts\Core\Model\Base\ModelTrait;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

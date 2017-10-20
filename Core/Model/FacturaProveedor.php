@@ -183,7 +183,7 @@ class FacturaProveedor
                     $bloquear = true;
                 } else {
                     foreach ($this->getRectificativas() as $rect) {
-                        $this->miniLog->alert($this->i18n->trans('invoice-have-revtifying-cant-delete'));
+                        $this->miniLog->alert($this->i18n->trans('invoice-have-rectifying-cant-delete'));
                         $bloquear = true;
                         break;
                     }

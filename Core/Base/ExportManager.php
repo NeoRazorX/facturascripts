@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Model\Base\ModelTrait;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

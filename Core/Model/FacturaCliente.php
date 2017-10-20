@@ -78,11 +78,7 @@ class FacturaCliente
      */
     public function vencida()
     {
-        if ($this->pagada) {
-            return false;
-        }
-
-        return strtotime($this->vencimiento) < strtotime(date('d-m-Y'));
+        return ($this->pagada) ? false : strtotime($this->vencimiento) < strtotime(date('d-m-Y'));
     }
 
     /**
@@ -215,7 +211,7 @@ class FacturaCliente
                     $bloquear = true;
                 } else {
                     foreach ($this->getRectificativas() as $rect) {
-                        $this->miniLog->alert($this->i18n->trans('invoice-have-revtifying-cant-delete'));
+                        $this->miniLog->alert($this->i18n->trans('invoice-have-rectifying-cant-delete'));
                         $bloquear = true;
                         break;
                     }

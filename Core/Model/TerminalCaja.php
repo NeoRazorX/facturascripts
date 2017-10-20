@@ -189,7 +189,7 @@ class TerminalCaja
                     $this->tickets .= chr($a);
                 }
 
-                $this->tickets .= "\n";
+                $this->tickets .= PHP_EOL;
             }
         }
     }
@@ -208,7 +208,7 @@ class TerminalCaja
                     $this->tickets .= chr($a);
                 }
 
-                $this->tickets .= "\n";
+                $this->tickets .= PHP_EOL;
             }
         }
     }
@@ -242,7 +242,7 @@ class TerminalCaja
                 $nword = $nword . ' ' . $aux;
             } else {
                 if ($result !== '') {
-                    $result .= "\n";
+                    $result .= PHP_EOL;
                 }
 
                 $result .= $this->centerText2($nword, $ancho);
@@ -251,7 +251,7 @@ class TerminalCaja
         }
         if ($nword !== '') {
             if ($result !== '') {
-                $result .= "\n";
+                $result .= PHP_EOL;
             }
 
             $result .= $this->centerText2($nword, $ancho);
@@ -263,7 +263,7 @@ class TerminalCaja
     /**
      * Devuelve un listao de los terminales disponibles
      *
-     * @return self[]
+     * @return array
      */
     public function disponibles()
     {
@@ -293,55 +293,55 @@ class TerminalCaja
     public function imprimirTicket(&$factura, &$empresa, $imprimirDescripciones = true, $imprimirObservaciones = false)
     {
         $medio = $this->anchopapel / 2.5;
-        $this->addLineaBig($this->centerText($empresa->nombre, $medio) . "\n");
+        $this->addLineaBig($this->centerText($empresa->nombre, $medio) . PHP_EOL);
 
         if ($empresa->lema !== '') {
-            $this->addLinea($this->centerText($empresa->lema) . "\n\n");
+            $this->addLinea($this->centerText($empresa->lema) . PHP_EOL . PHP_EOL);
         } else {
-            $this->addLinea("\n");
+            $this->addLinea(PHP_EOL);
         }
 
         $this->addLinea(
-            $this->centerText($empresa->direccion . ' - ' . $empresa->ciudad) . "\n"
+            $this->centerText($empresa->direccion . ' - ' . $empresa->ciudad) . PHP_EOL
         );
-        $this->addLinea($this->centerText(FS_CIFNIF . ': ' . $empresa->cifnif));
-        $this->addLinea("\n\n");
+        $this->addLinea($this->centerText($this->i18n->trans('cifnif') . ': ' . $empresa->cifnif));
+        $this->addLinea(PHP_EOL . PHP_EOL);
 
         if ($empresa->horario !== '') {
-            $this->addLinea($this->centerText($empresa->horario) . "\n\n");
+            $this->addLinea($this->centerText($empresa->horario) . PHP_EOL . PHP_EOL);
         }
 
-        $linea = "\n" . ucfirst(FS_FACTURA_SIMPLIFICADA) . ': ' . $factura->codigo . "\n";
-        $linea .= $factura->fecha . ' ' . date('H:i', strtotime($factura->hora)) . "\n";
+        $linea = PHP_EOL . ucfirst($this->i18n->trans('simplified-invoice')) . ': ' . $factura->codigo . PHP_EOL;
+        $linea .= $factura->fecha . ' ' . date('H:i', strtotime($factura->hora)) . PHP_EOL;
         $this->addLinea($linea);
-        $this->addLinea($this->i18n->trans('customer') . ': ' . $factura->nombrecliente . "\n");
-        $this->addLinea($this->i18n->trans('employee') . ': ' . $factura->codagente . "\n\n");
+        $this->addLinea($this->i18n->trans('customer') . ': ' . $factura->nombrecliente . PHP_EOL);
+        $this->addLinea($this->i18n->trans('employee') . ': ' . $factura->codagente . PHP_EOL . PHP_EOL);
 
         if ($imprimirObservaciones) {
-            $this->addLinea($this->i18n->trans('observations') . ': ' . $factura->observaciones . "\n\n");
+            $this->addLinea($this->i18n->trans('observations') . ': ' . $factura->observaciones . PHP_EOL . PHP_EOL);
         }
 
         $width = $this->anchopapel - 15;
         $this->addLinea(sprintf('%3s', $this->i18n->trans('units_short')) . ' ' .
             sprintf('%-' . $width . 's', $this->i18n->trans('product')) . ' ' .
-            sprintf('%10s', $this->i18n->trans('total-caps')) . "\n");
+            sprintf('%10s', $this->i18n->trans('total-caps')) . PHP_EOL);
         $this->addLinea(
             sprintf('%3s', '---') . ' ' . sprintf(
                 '%-' . $width . 's', substr(
                     '--------------------------------------------------------', 0, $width - 1
                 )
             ) . ' ' .
-            sprintf('%10s', '----------') . "\n"
+            sprintf('%10s', '----------') . PHP_EOL
         );
         foreach ($factura->getLineas() as $col) {
             if ($imprimirDescripciones) {
                 $linea = sprintf('%3s', $col->cantidad) . ' ' . sprintf(
                         '%-' . $width . 's', substr($col->descripcion, 0, $width - 1)
-                    ) . ' ' . sprintf('%10s', $this->showNumero($col->totalIva())) . "\n";
+                    ) . ' ' . sprintf('%10s', $this->showNumero($col->totalIva())) . PHP_EOL;
             } else {
                 $linea = sprintf('%3s', $col->cantidad) . ' ' . sprintf(
                         '%-' . $width . 's', $col->referencia
-                    ) . ' ' . sprintf('%10s', $this->showNumero($col->totalIva())) . "\n";
+                    ) . ' ' . sprintf('%10s', $this->showNumero($col->totalIva())) . PHP_EOL;
             }
 
             $this->addLinea($linea);
@@ -351,17 +351,17 @@ class TerminalCaja
         for ($i = 0; $i < $this->anchopapel; ++$i) {
             $lineaiguales .= '=';
         }
-        $this->addLinea($lineaiguales . "\n");
+        $this->addLinea($lineaiguales . PHP_EOL);
         $this->addLinea($this->i18n->trans('total-pay-caps') . ': ' . sprintf(
                 '%' . ($this->anchopapel - 15) . 's', $this->showPrecio($factura->total, $factura->coddivisa)
-            ) . "\n");
-        $this->addLinea($lineaiguales . "\n");
+            ) . PHP_EOL);
+        $this->addLinea($lineaiguales . PHP_EOL);
 
         /// imprimimos los impuestos desglosados
         $this->addLinea(
             $this->i18n->trans('ticket-footer', [FS_IVA]) .
             sprintf('%' . ($this->anchopapel - 24) . 's', $this->i18n->trans('total-caps')) .
-            "\n"
+            PHP_EOL
         );
         foreach ($factura->getLineasIva() as $imp) {
             $this->addLinea(
@@ -370,11 +370,11 @@ class TerminalCaja
                 sprintf('%-6s', $this->showNumero($imp->totaliva)) . ' ' .
                 sprintf('%-6s', $this->showNumero($imp->totalrecargo)) . ' ' .
                 sprintf('%' . ($this->anchopapel - 29) . 's', $this->showNumero($imp->totallinea)) .
-                '\n'
+                PHP_EOL
             );
         }
 
-        $lineaiguales .= "\n\n\n\n\n\n\n\n";
+        $lineaiguales .= PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL;
         $this->addLinea($lineaiguales);
         $this->cortarPapel();
     }
@@ -390,52 +390,52 @@ class TerminalCaja
     public function imprimirTicketRegalo(&$factura, &$empresa, $imprimirDescripciones = true, $imprimirObservaciones = false)
     {
         $medio = $this->anchopapel / 2.5;
-        $this->addLineaBig($this->centerText($empresa->nombre, $medio) . "\n");
+        $this->addLineaBig($this->centerText($empresa->nombre, $medio) . PHP_EOL);
 
         if ($empresa->lema !== '') {
-            $this->addLinea($this->centerText($empresa->lema) . "\n\n");
+            $this->addLinea($this->centerText($empresa->lema) . PHP_EOL . PHP_EOL);
         } else {
-            $this->addLinea("\n");
+            $this->addLinea(PHP_EOL);
         }
 
         $this->addLinea($this->centerText($empresa->direccion . ' - '
-                . $empresa->ciudad) . "\n");
-        $this->addLinea($this->centerText(FS_CIFNIF . ': ' . $empresa->cifnif));
-        $this->addLinea("\n\n");
+                . $empresa->ciudad) . PHP_EOL);
+        $this->addLinea($this->centerText($this->i18n->trans('cifnif') . ': ' . $empresa->cifnif));
+        $this->addLinea(PHP_EOL . PHP_EOL);
 
         if ($empresa->horario !== '') {
-            $this->addLinea($this->centerText($empresa->horario) . "\n\n");
+            $this->addLinea($this->centerText($empresa->horario) . PHP_EOL . PHP_EOL);
         }
 
-        $linea = "\n" . ucfirst($this->i18n->trans('simplified-invoice')) . ': ' . $factura->codigo . "\n";
-        $linea .= $factura->fecha . ' ' . date('H:i', strtotime($factura->hora)) . "\n";
+        $linea = PHP_EOL . ucfirst($this->i18n->trans('simplified-invoice')) . ': ' . $factura->codigo . PHP_EOL;
+        $linea .= $factura->fecha . ' ' . date('H:i', strtotime($factura->hora)) . PHP_EOL;
         $this->addLinea($linea);
-        $this->addLinea($this->i18n->trans('customer') . ': ' . $factura->nombrecliente . "\n");
-        $this->addLinea($this->i18n->trans('employee') . ': ' . $factura->codagente . "\n\n");
+        $this->addLinea($this->i18n->trans('customer') . ': ' . $factura->nombrecliente . PHP_EOL);
+        $this->addLinea($this->i18n->trans('employee') . ': ' . $factura->codagente . PHP_EOL . PHP_EOL);
 
         if ($imprimirObservaciones) {
-            $this->addLinea($this->i18n->trans('observations') . ': ' . $factura->observaciones . "\n\n");
+            $this->addLinea($this->i18n->trans('observations') . ': ' . $factura->observaciones . PHP_EOL . PHP_EOL);
         }
 
         $width = $this->anchopapel - 15;
         $this->addLinea(sprintf('%3s', $this->i18n->trans('units_short')) . ' ' .
             sprintf('%-' . $width . 's', $this->i18n->trans('product')) . ' ' .
-            sprintf('%10s', $this->i18n->trans('total-caps')) . "\n");
+            sprintf('%10s', $this->i18n->trans('total-caps')) . PHP_EOL);
         $this->addLinea(
             sprintf('%3s', '---') . ' ' . sprintf(
                 '%-' . $width . 's', substr('--------------------------------------------------------', 0, $width - 1)
             ) . ' ' .
-            sprintf('%10s', '----------') . "\n"
+            sprintf('%10s', '----------') . PHP_EOL
         );
         foreach ($factura->getLineas() as $col) {
             if ($imprimirDescripciones) {
                 $linea = sprintf('%3s', $col->cantidad) . ' ' . sprintf(
                         '%-' . $width . 's', substr($col->descripcion, 0, $width - 1)
-                    ) . ' ' . sprintf('%10s', '-') . "\n";
+                    ) . ' ' . sprintf('%10s', '-') . PHP_EOL;
             } else {
                 $linea = sprintf('%3s', $col->cantidad) . ' ' . sprintf(
                         '%-' . $width . 's', $col->referencia
-                    ) . ' ' . sprintf('%10s', '-') . "\n";
+                    ) . ' ' . sprintf('%10s', '-') . PHP_EOL;
             }
 
             $this->addLinea($linea);
@@ -447,7 +447,7 @@ class TerminalCaja
         }
         $this->addLinea($lineaiguales);
         $this->addLinea($this->centerText($this->i18n->trans('gift-ticket')));
-        $lineaiguales .= "\n\n\n\n\n\n\n\n";
+        $lineaiguales .= PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL;
         $this->addLinea($lineaiguales);
         $this->cortarPapel();
     }

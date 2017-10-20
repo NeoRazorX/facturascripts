@@ -906,7 +906,7 @@
     "cant-assign-date-already-regularized": "No se puede asignar la fecha 0 porque ya hay una regularización de 1 para ese periodo.",
     "invoice-regularized-cant-change-date": "La factura se encuentra dentro de una regularización de 0. No se puede modificar la fecha.",
     "invoice-regularized-cant-delete": "La factura se encuentra dentro de una regularización de 0. No se puede eliminar.",
-    "invoice-have-revtifying-cant-delete": "La factura ya tiene una rectificativa. No se puede eliminar.",
+    "invoice-have-rectifying-cant-delete": "La factura ya tiene una rectificativa. No se puede eliminar.",
     "customer-invoice-deleted-successfully": "Factura de venta 0 eliminada correctamente.",
     "exercise-not-found": "Ejercicio no encontrado.",
     "supplier-invoice-deleted-successfully": "Factura de compra 0 eliminada correctamente.",
