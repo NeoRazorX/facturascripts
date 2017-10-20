@@ -309,4 +309,27 @@ class Stock
     {
         return $this->count('DISTINCT referencia');
     }
+
+    /**
+     * Devuelve el stock por referencia ordenado por codalmacen
+     *
+     * @param $ref
+     *
+     * @return self[]
+     */
+    public function allFromArticulo($ref)
+    {
+        $stocklist = array();
+
+        $sql = 'SELECT * FROM ' . $this->tableName()
+            . ' WHERE referencia = ' . $this->var2str($ref) . ' ORDER BY codalmacen ASC;';
+        $data = $this->dataBase->select($sql);
+        if ($data) {
+            foreach ($data as $s) {
+                $stocklist[] = new self($s);
+            }
+        }
+
+        return $stocklist;
+    }
 }

@@ -370,11 +370,7 @@ class Articulo
      */
     public function preciocoste()
     {
-        if ($this->secompra && FS_COST_IS_AVERAGE) {
-            return $this->costemedio;
-        }
-
-        return $this->preciocoste;
+        return ($this->secompra && FS_COST_IS_AVERAGE) ? $this->costemedio : $this->preciocoste;
     }
 
     /**
@@ -409,12 +405,8 @@ class Articulo
      */
     public function getNewReferencia()
     {
-        $sql = 'SELECT referencia FROM ' . $this->tableName() . " WHERE referencia REGEXP '^\d+$'"
-            . ' ORDER BY ABS(referencia) DESC';
-        if (strtolower(FS_DB_TYPE) === 'postgresql') {
-            $sql = 'SELECT referencia FROM ' . $this->tableName() . " WHERE referencia ~ '^\d+$'"
-                . ' ORDER BY referencia::BIGINT DESC';
-        }
+        $sql = 'SELECT referencia FROM ' . $this->tableName() . ' WHERE referencia ';
+        $sql .= (strtolower(FS_DB_TYPE) === 'postgresql') ? "~ '^\d+$' ORDER BY referencia::BIGINT DESC" : "REGEXP '^\d+$' ORDER BY ABS(referencia) DESC";
 
         $ref = 1;
         $data = $this->dataBase->selectLimit($sql, 1);
@@ -454,7 +446,7 @@ class Articulo
     /**
      * Devuelve el stock del artículo
      *
-     * @return array
+     * @return Stock[]
      */
     public function getStock()
     {
@@ -548,18 +540,20 @@ class Articulo
 
     /**
      * Asigna una imagen a un artículo.
+     * Si $img está vacío, se elimina la imagen anterior.
      *
      * @param string $img
      * @param bool   $png
      */
     public function setImagen($img, $png = true)
     {
-        if ($img) {
-            $this->imagen = null;
+        $this->imagen = null;
 
-            if ($oldImage = $this->checkImageExists()) {
-                unlink($oldImage);
-            }
+        if ($oldImage = $this->checkImageExists()) {
+            unlink($oldImage);
+        }
+
+        if ($img) {
 
             if (!file_exists(FS_MYDOCS . 'images/articulos')) {
                 @mkdir(FS_MYDOCS . 'images/articulos', 0777, true);
@@ -679,7 +673,7 @@ class Articulo
             $encontrado = false;
             $stocks = $stock->allFromArticulo($this->referencia);
             foreach ($stocks as $sto) {
-                if ($sto instanceof Stock && $sto->codalmacen === $codalmacen) {
+                if ($sto->codalmacen === $codalmacen) {
                     $sto->setCantidad($cantidad);
                     $result = $sto->save();
                     $encontrado = true;
@@ -1002,7 +996,7 @@ class Articulo
      * @param int    $offset
      * @param int    $limit
      *
-     * @return array
+     * @return self[]
      */
     public function searchByCodbar($cod, $offset = 0, $limit = FS_ITEM_LIMIT)
     {

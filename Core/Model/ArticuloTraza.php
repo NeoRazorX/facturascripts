@@ -195,7 +195,7 @@ class ArticuloTraza
      * @param string $ref
      * @param bool   $sololibre
      *
-     * @return array
+     * @return self[]
      */
     public function allFromRef($ref, $sololibre = false)
     {
@@ -223,7 +223,7 @@ class ArticuloTraza
      * @param string $tipo
      * @param string $idlinea
      *
-     * @return array
+     * @return self[]
      */
     public function allFromLinea($tipo, $idlinea)
     {

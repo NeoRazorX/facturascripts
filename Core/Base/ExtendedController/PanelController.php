@@ -203,7 +203,7 @@ abstract class PanelController extends Base\Controller
     /**
      * Prepara la inserción de un nuevo registro
      *
-     * @param BaseView $view
+     * @param EditView $view
      */
     protected function insertAction($view)
     {

@@ -189,7 +189,7 @@ class Caja
      * @param int    $offset
      * @param int    $limit
      *
-     * @return array
+     * @return self[]
      */
     public function allByAgente($codagente, $offset = 0, $limit = FS_ITEM_LIMIT)
     {

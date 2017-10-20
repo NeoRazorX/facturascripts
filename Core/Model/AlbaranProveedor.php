@@ -101,7 +101,7 @@ class AlbaranProveedor
     /**
      * Devuelve las líneas asociadas al albarán
      *
-     * @return array
+     * @return LineaAlbaranProveedor[]
      */
     public function getLineas()
     {

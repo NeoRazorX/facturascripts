@@ -125,7 +125,7 @@ class FacturaProveedor
     /**
      * Devuelve las líneas asociadas a la factura.
      *
-     * @return array
+     * @return LineaFacturaProveedor[]
      */
     public function getLineas()
     {
@@ -137,7 +137,7 @@ class FacturaProveedor
      * Devuelve las líneas de IVA de la factura.
      * Si no hay, las crea.
      *
-     * @return array
+     * @return LineaIvaFacturaProveedor[]
      */
     public function getLineasIva()
     {

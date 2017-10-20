@@ -118,7 +118,7 @@ class PresupuestoCliente
     /**
      * Devuelve las líneas asociadas al presupuesto.
      *
-     * @return array
+     * @return LineaPresupuestoCliente[]
      */
     public function getLineas()
     {
@@ -129,7 +129,7 @@ class PresupuestoCliente
     /**
      * Devuelve las versiones de un presupuesto
      *
-     * @return array
+     * @return self[]
      */
     public function getVersiones()
     {

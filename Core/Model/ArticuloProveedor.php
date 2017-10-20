@@ -325,7 +325,7 @@ class ArticuloProveedor
      *
      * @param string $ref
      *
-     * @return array
+     * @return self[]
      */
     public function allFromRef($ref)
     {
@@ -367,7 +367,7 @@ class ArticuloProveedor
      *
      * @param
      *
-     * @return array
+     * @return self[]
      */
     public function allConRef()
     {

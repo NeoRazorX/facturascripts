@@ -86,7 +86,7 @@ class AlbaranCliente
     /**
      * Devuelve las líneas asociadas al albarán.
      *
-     * @return array
+     * @return LineaAlbaranCliente[]
      */
     public function getLineas()
     {

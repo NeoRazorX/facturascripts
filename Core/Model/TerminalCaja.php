@@ -263,7 +263,7 @@ class TerminalCaja
     /**
      * Devuelve un listao de los terminales disponibles
      *
-     * @return array
+     * @return self[]
      */
     public function disponibles()
     {

@@ -80,7 +80,7 @@ class GrupoEpigrafes
     /**
      * Devuelve los epígrafes del grupo
      *
-     * @return array
+     * @return Epigrafe[]
      */
     public function getEpigrafes()
     {

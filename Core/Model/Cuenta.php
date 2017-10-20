@@ -102,7 +102,7 @@ class Cuenta
     /**
      * Devuelve todas las subucuentas de la cuenta
      *
-     * @return array
+     * @return Subcuenta[]
      */
     public function getSubcuentas()
     {
@@ -187,7 +187,7 @@ class Cuenta
      *
      * @param int $idepi
      *
-     * @return array
+     * @return self[]
      */
     public function fullFromEpigrafe($idepi)
     {
@@ -211,7 +211,7 @@ class Cuenta
      * @param string $codejercicio
      * @param int    $offset
      *
-     * @return array
+     * @return self[]
      */
     public function allFromEjercicio($codejercicio, $offset = 0)
     {
@@ -234,7 +234,7 @@ class Cuenta
      *
      * @param string $codejercicio
      *
-     * @return array
+     * @return self[]
      */
     public function fullFromEjercicio($codejercicio)
     {
@@ -258,7 +258,7 @@ class Cuenta
      * @param int    $idcuesp
      * @param string $codejercicio
      *
-     * @return array
+     * @return self[]
      */
     public function allFromCuentaesp($idcuesp, $codejercicio)
     {
@@ -283,7 +283,7 @@ class Cuenta
      * @param string $query
      * @param int    $offset
      *
-     * @return array
+     * @return self[]
      */
     public function search($query, $offset = 0)
     {

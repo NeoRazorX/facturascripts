@@ -248,7 +248,7 @@ class Proveedor extends Base\Persona
      * @param string $query
      * @param int    $offset
      *
-     * @return array
+     * @return self[]
      */
     public function search($query, $offset = 0)
     {

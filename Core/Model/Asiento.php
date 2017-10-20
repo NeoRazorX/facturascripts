@@ -231,7 +231,7 @@ class Asiento
     /**
      * Devuelve todas las partidas del asiento
      *
-     * @return array
+     * @return Partida[]
      */
     public function getPartidas()
     {
@@ -516,7 +516,7 @@ class Asiento
      * @param string $query
      * @param int    $offset
      *
-     * @return array
+     * @return self[]
      */
     public function search($query, $offset = 0)
     {

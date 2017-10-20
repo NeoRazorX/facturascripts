@@ -107,7 +107,7 @@ class Familia
     /**
      * Devuelve las famílias madre
      *
-     * @return array
+     * @return self[]
      */
     public function madres()
     {
@@ -135,7 +135,7 @@ class Familia
      *
      * @param string|bool $codmadre
      *
-     * @return array
+     * @return self[]
      */
     public function hijas($codmadre = false)
     {

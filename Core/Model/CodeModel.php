@@ -68,7 +68,7 @@ class CodeModel
      * @param string  $fieldDescription
      * @param bool $addEmpty
      *
-     * @return array Model\CodeModel
+     * @return self[]
      */
     public static function all($tableName, $fieldCode, $fieldDescription, $addEmpty = false)
     {

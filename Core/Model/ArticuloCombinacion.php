@@ -196,7 +196,7 @@ class ArticuloCombinacion
      *
      * @param string $ref
      *
-     * @return array
+     * @return self[]
      */
     public function allFromRef($ref)
     {
@@ -220,7 +220,7 @@ class ArticuloCombinacion
      *
      * @param string $cod
      *
-     * @return array
+     * @return self[]
      */
     public function allFromCodigo($cod)
     {
@@ -244,7 +244,7 @@ class ArticuloCombinacion
      *
      * @param string $cod
      *
-     * @return array
+     * @return self[]
      */
     public function allFromCodigo2($cod)
     {
@@ -295,7 +295,7 @@ class ArticuloCombinacion
      *
      * @param string $query
      *
-     * @return array
+     * @return self[]
      */
     public function search($query = '')
     {

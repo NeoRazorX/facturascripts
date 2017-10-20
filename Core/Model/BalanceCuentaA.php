@@ -130,7 +130,7 @@ class BalanceCuentaA
      *
      * @param string $cod
      *
-     * @return array
+     * @return self[]
      */
     public function allFromCodbalance($cod)
     {
@@ -153,7 +153,7 @@ class BalanceCuentaA
      *
      * @param string $cod
      *
-     * @return array
+     * @return self[]
      */
     public function searchByCodbalance($cod)
     {

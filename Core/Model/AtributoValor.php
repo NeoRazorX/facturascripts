@@ -107,7 +107,7 @@ class AtributoValor
      *
      * @param string $cod
      *
-     * @return array
+     * @return self[]
      */
     public function allFromAtributo($cod)
     {

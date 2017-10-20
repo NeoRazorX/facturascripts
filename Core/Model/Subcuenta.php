@@ -384,7 +384,7 @@ class Subcuenta
      * @param int    $idcuesp
      * @param string $codeje
      *
-     * @return array
+     * @return self[]
      */
     public function allFromCuentaesp($idcuesp, $codeje)
     {
@@ -409,7 +409,7 @@ class Subcuenta
      *
      * @param string $query
      *
-     * @return array
+     * @return self[]
      */
     public function search($query)
     {

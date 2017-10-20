@@ -89,7 +89,7 @@ class PedidoProveedor
     /**
      * Devuelve las líneas asociadas al pedido.
      *
-     * @return array
+     * @return LineaPedidoProveedor[]
      */
     public function getLineas()
     {
@@ -100,7 +100,7 @@ class PedidoProveedor
     /**
      * Devuelve las versiones de un pedido
      *
-     * @return array
+     * @return self[]
      */
     public function getVersiones()
     {

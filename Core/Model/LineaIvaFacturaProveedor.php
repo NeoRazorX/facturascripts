@@ -193,7 +193,7 @@ class LineaIvaFacturaProveedor
      *
      * @param int $idfac
      *
-     * @return array
+     * @return self[]
      */
     public function allFromFactura($idfac)
     {

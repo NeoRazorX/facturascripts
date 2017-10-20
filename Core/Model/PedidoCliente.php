@@ -109,7 +109,7 @@ class PedidoCliente
     /**
      * Devuelve las líneas asociadas al pedido.
      *
-     * @return array
+     * @return LineaPedidoCliente[]
      */
     public function getLineas()
     {
@@ -120,7 +120,7 @@ class PedidoCliente
     /**
      * Devuelve las versiones de un pedido
      *
-     * @return array
+     * @return self[]
      */
     public function getVersiones()
     {

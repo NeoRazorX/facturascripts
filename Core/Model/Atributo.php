@@ -67,7 +67,7 @@ class Atributo
     /**
      * Obtener los atributos de un código de atributo
      *
-     * @return array
+     * @return AtributoValor[]
      */
     public function valores()
     {

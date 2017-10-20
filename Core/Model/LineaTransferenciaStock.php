@@ -140,7 +140,7 @@ class LineaTransferenciaStock
      * @param string $desde
      * @param string $hasta
      *
-     * @return array
+     * @return self[]
      */
     public function allFromReferencia($ref, $codalmaorigen = '', $codalmadestino = '', $desde = '', $hasta = '')
     {

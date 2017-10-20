@@ -152,7 +152,7 @@ class Epigrafe
     /**
      * Devuelve las cuentas del epígrafe
      *
-     * @return array
+     * @return Cuenta[]
      */
     public function getCuentas()
     {
@@ -204,7 +204,7 @@ class Epigrafe
      *
      * @param int $idgrp
      *
-     * @return array
+     * @return self[]
      */
     public function allFromGrupo($idgrp)
     {
@@ -227,7 +227,7 @@ class Epigrafe
      *
      * @param string $codejercicio
      *
-     * @return array
+     * @return self[]
      */
     public function allFromEjercicio($codejercicio)
     {
@@ -250,7 +250,7 @@ class Epigrafe
      *
      * @param string $codejercicio
      *
-     * @return array
+     * @return self[]
      */
     public function superFromEjercicio($codejercicio)
     {

@@ -100,7 +100,7 @@ class RegularizacionIva
     /**
      * Devuelve las partidas por asiento
      *
-     * @return array|bool
+     * @return Partida[]|bool
      */
     public function getPartidas()
     {
