@@ -31,7 +31,7 @@ class Caja
     /**
      * UN array con todos los agentes utilizados, para agilizar la carga.
      *
-     * @var array
+     * @var Agente[]
      */
     private static $agentes;
 

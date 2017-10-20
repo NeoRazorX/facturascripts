@@ -33,7 +33,7 @@ class ArticuloProveedor
     /**
      * Listado de impuestos
      *
-     * @var array
+     * @var Impuesto[]
      */
     private static $impuestos;
 

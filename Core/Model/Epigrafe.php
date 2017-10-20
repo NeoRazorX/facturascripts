@@ -32,7 +32,7 @@ class Epigrafe
     /**
      * Lista de grupos
      *
-     * @var array
+     * @var GrupoEpigrafes[]
      */
     private static $grupos;
 

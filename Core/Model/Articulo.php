@@ -35,7 +35,7 @@ class Articulo
     /**
      * Array de impuestos
      *
-     * @var array
+     * @var Impuesto[]
      */
     private static $impuestos;
 
@@ -554,7 +554,6 @@ class Articulo
         }
 
         if ($img) {
-
             if (!file_exists(FS_MYDOCS . 'images/articulos')) {
                 @mkdir(FS_MYDOCS . 'images/articulos', 0777, true);
             }
@@ -657,8 +656,8 @@ class Articulo
      * Modifica el stock del artículo en un almacén concreto.
      * Ya se encarga de ejecutar save() si es necesario.
      *
-     * @param string  $codalmacen
-     * @param int $cantidad
+     * @param string $codalmacen
+     * @param int    $cantidad
      *
      * @return bool
      */
@@ -718,7 +717,7 @@ class Articulo
      * Ya se encarga de ejecutar save() si es necesario.
      *
      * @param string  $codalmacen
-     * @param int $cantidad
+     * @param int     $cantidad
      * @param bool    $recalculaCoste
      * @param string  $codcombinacion
      *
@@ -885,7 +884,7 @@ class Articulo
      * Devuelve un array con los artículos encontrados en base a la búsqueda.
      *
      * @param string  $query
-     * @param int $offset
+     * @param int     $offset
      * @param string  $codfamilia
      * @param bool    $conStock
      * @param string  $codfabricante
