@@ -365,4 +365,11 @@ trait DocumentoCompra
 
         return $status;
     }
+
+    /**
+     * Devuelve las líneas asociadas al pedido.
+     *
+     * @return array
+     */
+    abstract public function getLineas();
 }

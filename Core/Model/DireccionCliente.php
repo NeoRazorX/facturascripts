@@ -128,11 +128,11 @@ class DireccionCliente
 
             if (empty($sql)) {
                 return $this->saveData();
-            } else {
-                $this->dataBase->beginTransaction();
-                if ($this->dataBase->exec($sql)) {
-                    return $this->saveData() ? $this->dataBase->commit() : $this->dataBase->rollback();
-                }
+            }
+
+            $this->dataBase->beginTransaction();
+            if ($this->dataBase->exec($sql)) {
+                return $this->saveData() ? $this->dataBase->commit() : $this->dataBase->rollback();
             }
         }
 

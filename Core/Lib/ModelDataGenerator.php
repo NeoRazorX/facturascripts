@@ -623,7 +623,7 @@ class ModelDataGenerator
     /**
      * Genera un documento de compra aleatorio
      *
-     * @param Model\Base\DocumentoCompra $doc
+     * @param $doc
      * @param Model\Ejercicio $eje
      * @param Model\Proveedor[] $proveedores
      * @param int $num
@@ -652,7 +652,7 @@ class ModelDataGenerator
     /**
      * Genera un documento de venta aleatorio
      *
-     * @param Model\Base\DocumentoVenta $doc
+     * @param $doc
      * @param Model\Ejercicio $eje
      * @param Model\Cliente[] $clientes
      * @param int $num

@@ -70,7 +70,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
     /**
      * Carga los grupos desde las columnas
      *
-     * @param \SimpleXMLElement[] $group
+     * @param \SimpleXMLElement $group
      */
     public function loadFromXMLColumns($group)
     {
@@ -87,7 +87,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
     /**
      * Carga la estructura de atributos en base a un archivo XML
      *
-     * @param \SimpleXMLElement[] $group
+     * @param \SimpleXMLElement $group
      */
     public function loadFromXML($group)
     {

@@ -88,7 +88,7 @@ class EditView extends BaseView
     /**
      * Establece y carga los datos del modelo en base a su PK
      *
-     * @param string $code
+     * @param string|array $code
      */
     public function loadData($code)
     {

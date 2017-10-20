@@ -279,7 +279,7 @@ trait ModelTrait
      * Devuelve True si existe el registro y False en caso contrario.
      *
      * @param string $cod
-     * @param string|null $where
+     * @param array|null $where
      * @param array $orderby
      *
      * @return bool
@@ -610,7 +610,7 @@ trait ModelTrait
      * o el primero que cumple la condición indicada
      *
      * @param string $cod
-     * @param null $where
+     * @param array|null $where
      * @param array $orderby
      *
      * @return array

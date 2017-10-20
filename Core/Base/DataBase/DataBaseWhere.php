@@ -57,7 +57,7 @@ class DataBaseWhere
     /**
      * Valor por el que se filtra
      *
-     * @var string
+     * @var string|bool
      */
     private $value;
 

@@ -134,7 +134,7 @@ class PedidoCliente
         $sql .= 'ORDER BY fecha DESC, hora DESC;';
 
         $data = $this->dataBase->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $versiones[] = new self($d);
             }

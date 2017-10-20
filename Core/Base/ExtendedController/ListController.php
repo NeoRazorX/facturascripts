@@ -241,7 +241,7 @@ abstract class ListController extends Base\Controller
     {
         $result = [];
 
-        if ($this->query !== '' && $this->query != false) {
+        if ($this->query !== '' && $this->query !== false) {
             $fields = $this->views[$this->active]->getSearchIn();
             $result[] = new DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }

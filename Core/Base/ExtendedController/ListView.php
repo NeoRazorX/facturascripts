@@ -81,7 +81,7 @@ class ListView extends BaseView
 
     /**
      * Almacena el order para el cursor
-     * @var string
+     * @var array
      */
     private $order;
 
