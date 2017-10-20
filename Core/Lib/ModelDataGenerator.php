@@ -416,7 +416,7 @@ class ModelDataGenerator
                 $dir->ciudad = $this->tools->ciudad();
                 $dir->direccion = $this->tools->direccion();
                 $dir->codpostal = mt_rand(1234, 99999);
-                $dir->apartado = (string) (mt_rand(0, 3) == 0) ? mt_rand(1234, 99999) : null;
+                $dir->apartado = (mt_rand(0, 3) == 0) ? (string) mt_rand(1234, 99999) : null;
                 $dir->domenvio = (mt_rand(0, 1) === 1);
                 $dir->domfacturacion = (mt_rand(0, 1) === 1);
                 $dir->descripcion = 'Dirección #' . $num_dirs;
