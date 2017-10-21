@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base;
@@ -33,66 +32,79 @@ define('FS_STOCK_NEGATIVO', true);
  */
 class ModelDataGenerator
 {
+
     /**
      * Contiene agentes generados
      * @var Model\Agente[]
      */
     protected $agentes;
+
     /**
      * Contiene almacenes generados
      * @var Model\Almacen[]
      */
     protected $almacenes;
+
     /**
      * Proporciona acceso directo a la base de datos.
      * @var Base\DataBase
      */
     protected $db;
+
     /**
      * Contiene divisas generadas
      * @var Model\Divisa[]
      */
     protected $divisas;
+
     /**
      * Contiene ejercicios generados
      * @var Model\Ejercicio
      */
     protected $ejercicio;
+
     /**
      * Contiene empresas generadas
      * @var Model\Empresa
      */
     protected $empresa;
+
     /**
      * Contiene formas de pago generadas
      * @var Model\FormaPago[]
      */
     protected $formas_pago;
+
     /**
      * Contiene grupos de clientes generados
      * @var Model\GrupoClientes[]
      */
     protected $grupos;
+
     /**
      * Contiene impuestos generados
      * @var Model\Impuesto[]
      */
     protected $impuestos;
+
     /**
      * Contiene países generados
      * @var Model\Pais[]
      */
     protected $paises;
+
     /**
      * Contiene series generadas
      * @var Model\Serie[]
      */
     protected $series;
+
     /**
      * Proporciona acceso al generador de datos
      * @var DataGeneratorTools
      */
     protected $tools;
+
     /**
      * Contiene usuarios generados
      * @var Model\User[]
@@ -109,7 +121,7 @@ class ModelDataGenerator
         $this->empresa = $empresa;
         $this->ejercicio = new Model\Ejercicio();
         $this->tools = new DataGeneratorTools();
-        
+
         $this->tools->loadData($this->agentes, new Model\Agente(), true);
         $this->tools->loadData($this->almacenes, new Model\Almacen(), true);
         $this->tools->loadData($this->divisas, new Model\Divisa(), true);
