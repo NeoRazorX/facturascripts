@@ -2,6 +2,8 @@
     Genera el código para la vista List según las columnas indicadas
 -->
 {% macro columnsForListView(context, view) %}
+    {% set cols = (view.getColumns()|length)+1 %}
+    {% set show_delete = true %}
     <table class="table table-hover">
         <thead>
             <tr>
@@ -11,7 +13,9 @@
                 {% endif %}
                 {% endfor %}
                 <th class="text-right">
-                    <input type="checkbox" id="listDeleteCB"/>
+                    <label class="custom-checkbox-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
+                        <input class="custom-control-input" type="checkbox" id="listDeleteCB"><span class="custom-control-indicator"></span>
+                    </label>
                 </th>
             </tr>
         </thead>
@@ -37,14 +41,28 @@
                 {% endif %}
                 {% endfor %}
                 <td class="text-right cancelClickable">
-                    <input type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}" class="listDelete"/>
+                    <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
+                        <input class="custom-control-input listDelete" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}"><span class="custom-control-indicator"></span>
+                    </label>
                 </td>
             </tr>
             {% else %}
+            {% set show_delete = false %}
             <tr class="table-warning">
-                <td colspan="20"><b>{{ context.i18n.trans('no-data') }}</b></td>
+                <td colspan="{{ cols }}"><b>{{ context.i18n.trans('no-data') }}</b></td>
             </tr>
         {% endfor %}
+        {% if show_delete == true %}
+        <tfoot>
+            <tr>
+                <td class="text-right" colspan="{{ cols }}">
+                    <a href="#" class="btn btn-danger" onclick="return deleteFromList();">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                    </a>
+                </td>
+            </tr>
+        </tfoot>
+        {% endif %}
     </table>
 {% endmacro %}
 
@@ -95,7 +113,7 @@
                 {% set remove, remove_title = context.i18n.trans('delete'), context.i18n.trans('delete record') %}
                 <a id="b_remove" class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
                     <i class="fa fa-trash" aria-hidden="true"></i>
-                    <span class="hidden-xs">&nbsp;{{ remove }}</span>
+                    <span class="d-none d-sm-inline-block">&nbsp;{{ remove }}</span>
                 </a>
                 {% endif %}
             </div>

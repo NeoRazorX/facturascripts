@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Model;
  * La línea de un asiento.
  * Se relaciona con un asiento y una subcuenta.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Partida
 {
@@ -58,178 +58,188 @@ class Partida
     public $codsubcuenta;
 
     /**
-     * TODO
+     * Identificador del concepto
      *
      * @var int
      */
     public $idconcepto;
 
     /**
-     * TODO
+     * Concepto
      *
      * @var string
      */
     public $concepto;
 
     /**
-     * TODO
+     * Identificador de la contrapartida
      *
      * @var int
      */
     public $idcontrapartida;
 
     /**
-     * TODO
+     * Código de la contrapartida
      *
      * @var string
      */
     public $codcontrapartida;
 
     /**
-     * TODO
+     * True si está punteada, sino False
      *
-     * @var
+     * @var bool
      */
     public $punteada;
 
     /**
-     * TODO
+     * Valor de la tasa de conversión
      *
-     * @var float
+     * @var float|int
      */
     public $tasaconv;
 
     /**
-     * TODO
+     * Código de la divisa
      *
      * @var string
      */
     public $coddivisa;
 
     /**
-     * TODO
+     * Haber de la partida
      *
-     * @var float
+     * @var float|int
      */
     public $haberme;
 
     /**
-     * TODO
+     * Debe de la partida
      *
-     * @var float
+     * @var float|int
      */
     public $debeme;
 
     /**
-     * TODO
+     * Importe del recargo
      *
-     * @var float
+     * @var float|int
      */
     public $recargo;
 
     /**
-     * TODO
+     * Importe del iva
      *
-     * @var float
+     * @var float|int
      */
     public $iva;
 
     /**
-     * TODO
+     * Importe de la base imponible
      *
-     * @var float
+     * @var float|int
      */
     public $baseimponible;
 
     /**
-     * TODO
+     * Factura de la partida
      *
      * @var
      */
     public $factura;
 
     /**
-     * TODO
+     * Código de serie
      *
      * @var string
      */
     public $codserie;
 
     /**
-     * TODO
+     * Tipo de documento
      *
      * @var
      */
     public $tipodocumento;
 
     /**
-     * TODO
+     * Documento de la partida
      *
-     * @var
+     * @var string
      */
     public $documento;
 
     /**
-     * TODO
+     * CIF/NIF de la partida
      *
      * @var string
      */
     public $cifnif;
 
     /**
-     * TODO
+     * Haber de la partida
      *
-     * @var float
+     * @var float|int
      */
     public $haber;
 
     /**
-     * TODO
+     * Debe de la partida
      *
-     * @var float
+     * @var float|int
      */
     public $debe;
 
     /**
-     * TODO
+     * Número de la partida
      *
      * @var int
      */
     public $numero;
 
     /**
-     * TODO
+     * Fecha
      *
      * @var string
      */
     public $fecha;
 
     /**
-     * TODO
+     * Saldo de la partida
      *
-     * @var float
+     * @var float|int
      */
     public $saldo;
 
     /**
-     * TODO
+     * Suma del debe
      *
-     * @var float
+     * @var float|int
      */
     public $sum_debe;
 
     /**
-     * TODO
+     * Suma del haber
      *
-     * @var float
+     * @var float|int
      */
     public $sum_haber;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'co_partidas';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'idpartida';
@@ -271,7 +281,7 @@ class Partida
     }
 
     /**
-     * TODO
+     * Devuelve la subcuenta de la partida
      *
      * @return bool|mixed
      */
@@ -283,7 +293,7 @@ class Partida
     }
 
     /**
-     * TODO
+     * Devuelve la url de la subcuenta de la partida
      *
      * @return string
      */
@@ -298,7 +308,7 @@ class Partida
     }
 
     /**
-     * TODO
+     * Devuelve la subcuenta de la contrapartida
      *
      * @return bool|mixed
      */
@@ -313,7 +323,7 @@ class Partida
     }
 
     /**
-     * TODO
+     * Devuelve la url de la subcuenta de la contrapartida
      *
      * @return string
      */
@@ -327,6 +337,11 @@ class Partida
         return '#';
     }
 
+    /**
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     *
+     * @return bool
+     */
     public function test()
     {
         $this->concepto = self::noHtml($this->concepto);
@@ -357,7 +372,7 @@ class Partida
     }
 
     /**
-     * TODO
+     * Devuelve todas las partidas de la subcuenta desde el offset
      *
      * @param int $idsubc
      * @param int $offset
@@ -401,7 +416,7 @@ class Partida
     }
 
     /**
-     * TODO
+     * Devuelve todas las partidas de la subcuenta
      *
      * @param int $idsubc
      *
@@ -446,7 +461,7 @@ class Partida
     }
 
     /**
-     * TODO
+     * Devuelve todas las partidas del ejercici con offset
      *
      * @param string $eje
      * @param int    $offset
@@ -471,7 +486,7 @@ class Partida
     }
 
     /**
-     * TODO
+     * Cuenta las partidas de la subcuenta
      *
      * @param int $idsubc
      *
@@ -492,7 +507,7 @@ class Partida
     }
 
     /**
-     * TODO
+     * Devuelve los totales de la partida de la subcuenta
      *
      * @param int $idsubc
      *
@@ -500,22 +515,14 @@ class Partida
      */
     public function totalesFromSubcuenta($idsubc)
     {
-        $totales = ['debe' => 0, 'haber' => 0, 'saldo' => 0];
         $sql = 'SELECT COALESCE(SUM(debe), 0) as debe,COALESCE(SUM(haber), 0) as haber'
             . ' FROM ' . $this->tableName() . ' WHERE idsubcuenta = ' . $this->var2str($idsubc) . ';';
 
-        $resultados = $this->dataBase->select($sql);
-        if (!empty($resultados)) {
-            $totales['debe'] = (float) $resultados[0]['debe'];
-            $totales['haber'] = (float) $resultados[0]['haber'];
-            $totales['saldo'] = (float) $resultados[0]['debe'] - (float) $resultados[0]['haber'];
-        }
-
-        return $totales;
+        return $this->getTotalesFromSQL($sql);
     }
 
     /**
-     * TODO
+     * Devuelve los totales del ejercicio de la partida
      *
      * @param string $cod
      *
@@ -523,11 +530,23 @@ class Partida
      */
     public function totalesFromEjercicio($cod)
     {
-        $totales = ['debe' => 0, 'haber' => 0, 'saldo' => 0];
         $sql = 'SELECT COALESCE(SUM(p.debe), 0) as debe,COALESCE(SUM(p.haber), 0) as haber'
             . ' FROM co_partidas p, co_asientos a'
             . ' WHERE p.idasiento = a.idasiento AND a.codejercicio = ' . $this->var2str($cod) . ';';
 
+        return $this->getTotalesFromSQL($sql);
+    }
+
+    /**
+     * Realiza la consulta recibida y reparte los totales en debe, haber y saldo
+     *
+     * @param $sql
+     *
+     * @return array
+     */
+    public function getTotalesFromSQL($sql)
+    {
+        $totales = ['debe' => 0, 'haber' => 0, 'saldo' => 0];
         $resultados = $this->dataBase->select($sql);
         if (!empty($resultados)) {
             $totales['debe'] = (float) $resultados[0]['debe'];
@@ -539,12 +558,12 @@ class Partida
     }
 
     /**
-     * TODO
+     * Devuelve los totales de las subcuentas de las partidas entre fechas
      *
-     * @param int    $idsubc
-     * @param string $fechaini
-     * @param string $fechafin
-     * @param bool   $excluir
+     * @param int          $idsubc
+     * @param string       $fechaini
+     * @param string       $fechafin
+     * @param array|bool   $excluir
      *
      * @return array
      */

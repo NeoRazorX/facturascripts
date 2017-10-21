@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Description of App
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 abstract class App
 {
@@ -108,7 +108,7 @@ abstract class App
         $this->cache = new Base\Cache($folder);
         $this->dataBase = new Base\DataBase();
         $this->folder = $folder;
-        $this->i18n = new Base\Translator($folder, FS_LANG);
+        $this->i18n = new Base\Translator($folder);
         $this->ipFilter = new Base\IPFilter($folder);
         $this->miniLog = new Base\MiniLog();
         $this->pluginManager = new Base\PluginManager($folder);
@@ -135,7 +135,7 @@ abstract class App
     }
 
     /**
-     * TODO
+     * Selecciona y ejecuta el controlador pertinente.
      *
      * @return bool
      */
@@ -150,7 +150,7 @@ abstract class App
     }
 
     /**
-     * Devuelve TRUE si la IP del cliente ha sido baneada.
+     * Devuelve True si la IP del cliente ha sido baneada.
      *
      * @return bool
      */

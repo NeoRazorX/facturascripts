@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,17 +16,26 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 /**
  * Description of NewCodigoDoc
  *
- * @author carlos
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class NewCodigoDoc
 {
+    /**
+     * Opción del código
+     *
+     * @var string
+     */
     private static $option;
 
+    /**
+     * NewCodigoDoc constructor.
+     */
     public function __construct()
     {
         if (!isset(self::$option)) {
@@ -34,26 +43,60 @@ class NewCodigoDoc
         }
     }
 
+    /**
+     * Devuelve la opción
+     *
+     * @return string
+     */
     public function getOption()
     {
         return self::$option;
     }
 
+    /**
+     * Asigna la opción
+     *
+     * @param string $value
+     */
     public function setOption($value)
     {
         self::$option = $value;
     }
 
+    /**
+     * Devuelve las opciones disponibles para el código
+     *
+     * @return array
+     */
     public function options()
     {
         return ['new', 'eneboo'];
     }
 
+    /**
+     * Devuelve el número del documento
+     *
+     * @param string $tableName
+     * @param string $codejercicio
+     * @param string $codserie
+     *
+     * @return int
+     */
     public function getNumero($tableName, $codejercicio, $codserie)
     {
         return mt_rand(1, 99999999);
     }
 
+    /**
+     * Devuelve el código del documento
+     *
+     * @param string $tableName
+     * @param int $numero
+     * @param string $codserie
+     * @param string $codejercicio
+     *
+     * @return string
+     */
     public function getCodigo($tableName, $numero, $codserie, $codejercicio)
     {
         /// provisional

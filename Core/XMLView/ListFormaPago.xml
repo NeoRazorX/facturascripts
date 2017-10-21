@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -42,7 +42,7 @@
                 <option color="brown">Emitidos</option>
             </widget>
         </column>
-        <column name="domiciled" display="center" order="140">
+        <column name="domicilied" display="center" order="140">
             <widget type="checkbox" fieldname="domiciliado" />
         </column>
         <column name="print" display="center" order="150">

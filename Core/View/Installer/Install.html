@@ -3,9 +3,9 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>INSTALL</title>
-        <meta name="description" content="FacturaScripts es un software de facturación y contabilidad para pymes. Es software libre bajo licencia GNU/LGPL." />
+        <meta name="description" content="{{ i18n.trans('meta-description') }}" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="generator" content="FacturaScripts" />
+        <meta name="generator" content="{{ i18n.trans('facturascripts') }}" />
         <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css" />
         <link rel="shortcut icon" href="Core/Assets/Images/favicon.ico" />
@@ -26,6 +26,12 @@
                         $('#db_port').val(5432);
                         $('#db_user').val('postgres');
                     }
+                });
+
+                $('#fs_lang').on('change', function () {
+                    var lang = $( "#fs_lang option:selected" ).val();
+                    var url = location.pathname + '?fs_lang=' + lang;
+                    window.location.href = url;
                 });
             });
         </script>
@@ -76,9 +82,9 @@
                             <div class="col-sm-3">
                                 <div class="form-group">
                                     {{ i18n.trans('select-language') }}:
-                                    <select name="fs_lang" class="form-control">
+                                    <select id="fs_lang" name="fs_lang" class="form-control">
                                         {% for langCode, langName in languages %}
-                                        {% if langCode == 'es_ES' %}
+                                        {% if langCode == i18n.getLangCode() %}
                                         <option value="{{ langCode }}" selected="">{{ langName }}</option>
                                         {% else %}
                                         <option value="{{ langCode }}">{{ langName }}</option>
@@ -175,7 +181,7 @@
                 <div class="col-sm-12">
                     <hr/>
                     <small>
-                        &COPY; 2013-{{ 'now'|date('Y')}} <a target="_blank" href="https://www.facturascripts.com">FacturaScripts</a>
+                        &COPY; 2013-{{ 'now'|date('Y')}} <a target="_blank" href="https://www.facturascripts.com">{{ i18n.trans('facturascripts') }}</a>
                     </small>
                     <br/>
                     <br/>

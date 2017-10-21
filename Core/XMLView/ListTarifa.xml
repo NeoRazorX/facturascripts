@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,8 +32,8 @@
         </column>
         <column name="formula" title="formula-to-apply" order="120">
             <widget type="select" fieldname="aplicar_a">
-                <values title="Precio de venta - X% - Y">pvp</values>
-                <values title="Precio de coste + X% + Y">coste</values>
+                <values title="formula-sale-price">pvp</values>
+                <values title="formula-cost-price">coste</values>
             </widget>
         </column>
         <column name="incpct" title="variation" order="130">

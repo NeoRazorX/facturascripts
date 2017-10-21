@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Model;
  * Un impuesto (IVA) que puede estar asociado a artículos, líneas de albaranes,
  * facturas, etc.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Impuesto
 {
@@ -51,31 +51,41 @@ class Impuesto
     public $codsubcuentasop;
 
     /**
-     * TODO
+     * Descripción del impuesto.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * TODO
+     * Valor del IVA
      *
-     * @var float
+     * @var float|int
      */
     public $iva;
 
     /**
-     * TODO
+     * Valor del Recargo
      *
-     * @var float
+     * @var float|int
      */
     public $recargo;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'impuestos';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'codimpuesto';
@@ -95,7 +105,7 @@ class Impuesto
     }
 
     /**
-     * Devuelve TRUE si el impuesto es el predeterminado del usuario
+     * Devuelve True si el impuesto es el predeterminado del usuario
      *
      * @return bool
      */
@@ -105,7 +115,7 @@ class Impuesto
     }
 
     /**
-     * TODO
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
      *
      * @return bool
      */
@@ -117,9 +127,9 @@ class Impuesto
         $this->descripcion = self::noHtml($this->descripcion);
 
         if (empty($this->codimpuesto) || strlen($this->codimpuesto) > 10) {
-            $this->miniLog->alert('Código del impuesto no válido. Debe tener entre 1 y 10 caracteres.');
+            $this->miniLog->alert($this->i18n->trans('not-valid-tax-code-length'));
         } elseif (empty($this->descripcion) || strlen($this->descripcion) > 50) {
-            $this->miniLog->alert('Descripción del impuesto no válida.');
+            $this->miniLog->alert($this->i18n->trans('not-valid-description-tax'));
         } else {
             $status = true;
         }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,24 +29,31 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListFamilia extends ExtendedController\ListController
 {
-
+    /**
+     * Devuelve los datos básicos de la página
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Familias';
+        $pagedata['title'] = 'families';
         $pagedata['icon'] = 'fa-object-group';
-        $pagedata['menu'] = 'almacen';
+        $pagedata['menu'] = 'warehouse';
 
         return $pagedata;
     }
 
+    /**
+     * Procedimiento para insertar vistas en el controlador
+     */
     protected function createViews()
     {
         $className = $this->getClassName();
         $this->addView('FacturaScripts\Core\Model\Familia', $className);
         $this->addSearchFields($className, ['descripcion', 'codfamilia', 'madre']);
 
-        $this->addOrderBy($className, 'codfamilia', 'Code');
+        $this->addOrderBy($className, 'codfamilia', 'code');
         $this->addOrderBy($className, 'descripcion', 'description');
         $this->addOrderBy($className, 'madre', 'parent');
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -63,7 +64,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     /**
      * Carga la estructura de atributos en base a un archivo XML
      *
-     * @param SimpleXMLElement $column
+     * @param \SimpleXMLElement $column
      */
     public function loadFromXML($column)
     {
@@ -84,7 +85,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Carga la estructura de atributos en base a la base de datos
+     * Carga la estructura de atributos en base un archivo JSON
      *
      * @param array $column
      */
@@ -103,7 +104,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     /**
      * Carga un grupo de columnas en base a la base de datos
      *
-     * @param type $columns
+     * @param array $columns
      *
      * @return array
      */
@@ -123,6 +124,8 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      * Genera el código html para visualizar la cabecera del elemento visual
      *
      * @param string $value
+     *
+     * @return string
      */
     public function getHeaderHTML($value)
     {
@@ -140,6 +143,8 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      * para controladores List
      *
      * @param string $value
+     *
+     * @return string
      */
     public function getListHTML($value)
     {
@@ -151,6 +156,8 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      * para controladores Edit
      *
      * @param string $value
+     *
+     * @return string
      */
     public function getEditHTML($value)
     {
@@ -186,8 +193,8 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      */
     private function standardHTMLColumn($header, $input, $data)
     {
-        $label = ($header != NULL)
-            ? '<label for="' . $this->widget->fieldName . '"' . $data['ColumnHint'] . '>' . $header . '</label>'
+        $label = ($header != null)
+            ? '<label for="' . $this->widget->fieldName . '" ' . $data['ColumnHint'] . '>' . $header . '</label>'
             : '';
 
         return '<div class="form-group' . $data['ColumnClass'] . '">'
@@ -206,8 +213,8 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      */
     private function checkboxHTMLColumn($header, $input, $data)
     {
-        $label = ($header != NULL)
-            ? '<label class="form-check-label"' . $data['ColumnHint'] . '>' . $input . '&nbsp;' . $header . '</label>'
+        $label = ($header != null)
+            ? '<label class="form-check-label" ' . $data['ColumnHint'] . '>' . $input . '&nbsp;' . $header . '</label>'
             : '';
 
         $result = '<div class="form-row align-items-center' . $data['ColumnClass'] . '">'
@@ -242,7 +249,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             ++$index;
             $values = [($index . '"'), $optionValue['value'], $checked];
             $html .= '<div class="form-check">'
-                . '<label class="form-check-label"' . $data['ColumnHint'] . '>'
+                . '<label class="form-check-label" ' . $data['ColumnHint'] . '>'
                 . str_replace($template_var, $values, $input)
                 . '&nbsp;' . $optionValue['title']
                 . '</label>'
@@ -258,6 +265,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      * para obtener las propiedades de la columna
      *
      * @param array $properties
+     *
      * @return array
      */
     private function getColumnData($properties)
@@ -271,21 +279,43 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         return $result;
     }
 
+    /**
+     * Devuelve la clase de la columna
+     *
+     * @return string
+     */
     private function getColumnClass()
     {
         return ($this->numColumns > 0) ? (' col-md-' . $this->numColumns) : ' col';
     }
 
+    /**
+     * Devuelve el código HTML para la visualización de un popover
+     * con el texto indicado.
+     *
+     * @return string
+     */
     private function getColumnHint()
     {
         return $this->widget->getHintHTML($this->i18n->trans($this->widget->hint));
     }
 
+    /**
+     * Devuelve el código HTML para la visualización de si es una columna
+     * requerida o no.
+     *
+     * @return string
+     */
     private function getColumnRequired()
     {
-        return $this->widget->required ? '<div class="invalid-feedback">' . $this->i18n->trans('Por favor, introduzca un valor para el campo') . '</div>' : '';
+        return $this->widget->required ? '<div class="invalid-feedback">' . $this->i18n->trans('please-enter-value') . '</div>' : '';
     }
 
+    /**
+     * Devuelve el código HTML para la visualización de una descripción.
+     *
+     * @return string
+     */
     private function getColumnDescription()
     {
         return empty($this->description) ? '' : '<small class="form-text text-muted">' . $this->i18n->trans($this->description) . '</small>';

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -79,8 +80,10 @@ class MenuItem
      */
     public function __construct($name, $title, $url, $icon = null)
     {
-        $this->name = $name;
-        $this->title = $title;
+        $i18n = new Translator();
+
+        $this->name = $i18n->trans($name);
+        $this->title = $i18n->trans($title);
         $this->url = $url;
         $this->icon = $icon;
         $this->menu = [];
@@ -99,7 +102,7 @@ class MenuItem
 
     /**
      * Devuelve el indintificador del menu
-     * 
+     *
      * @param string $parent
      * @return string
      */
@@ -118,10 +121,10 @@ class MenuItem
         $active = $this->active ? ' active' : '';
         $menuId = $this->getMenuId($parent);
 
-        $html = empty($parent) ? '<li class="text-capitalize nav-item dropdown' . $active . '">'
-            . '<a class="nav-link dropdown-toggle" href="#" id="' . $menuId . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&nbsp; ' . $this->title . '</a>'
+        $html = empty($parent) ? '<li class="nav-item dropdown' . $active . '">'
+            . '<a class="nav-link dropdown-toggle" href="#" id="' . $menuId . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&nbsp; ' . \ucfirst($this->title) . '</a>'
             . '<ul class="dropdown-menu" aria-labelledby="' . $menuId . '">' : '<li class="dropdown-submenu">'
-            . '<a class="dropdown-item" href="#" id="' . $menuId . '"><i class="fa fa-folder-open fa-fw" aria-hidden="true"></i>&nbsp; ' . $this->title . '</a>'
+            . '<a class="dropdown-item" href="#" id="' . $menuId . '"><i class="fa fa-folder-open fa-fw" aria-hidden="true"></i>&nbsp; ' . \ucfirst($this->title) . '</a>'
             . '<ul class="dropdown-menu" aria-labelledby="' . $menuId . '">';
 
         foreach ($this->menu as $menuItem) {
@@ -131,7 +134,7 @@ class MenuItem
             }
 
             $html .= empty($menuItem->menu) ? '<li><a class="dropdown-item ' . $extraClass . '" href="' . $menuItem->url . '">'
-                . $menuItem->getHTMLIcon() . '&nbsp; ' . $menuItem->title . '</a></li>' : $menuItem->getHTML($menuId);
+                . $menuItem->getHTMLIcon() . '&nbsp; ' . \ucfirst($menuItem->title) . '</a></li>' : $menuItem->getHTML($menuId);
         }
 
         $html .= '</ul>';

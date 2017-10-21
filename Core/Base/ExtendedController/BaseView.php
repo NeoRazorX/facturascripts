@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,9 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Model;
+use FacturaScripts\Core\Base;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -57,12 +59,19 @@ abstract class BaseView
      * @var int
      */
     public $count;
-    
+
+    /**
+     * Contiene el traductor
+     *
+     * @var Base\Translator
+     */
+    public static $i18n;
+
     /**
      * Método para la exportación de los datos de la vista
-     * 
+     *
      * @param Base\ExportManager $exportManager
-     * @param Response $exportManager
+     * @param Response $response
      * @param string $action
      */
     abstract public function export(&$exportManager, &$response, $action);
@@ -75,9 +84,11 @@ abstract class BaseView
      */
     public function __construct($title, $modelName)
     {
+        static::$i18n = new Base\Translator();
+
         $this->count = 0;
-        $this->title = $title;
-        $this->model = empty($modelName) ? NULL : new $modelName;
+        $this->title = static::$i18n->trans($title);
+        $this->model = empty($modelName) ? null : new $modelName;
         $this->pageOption = new Model\PageOption();
     }
 
@@ -110,7 +121,7 @@ abstract class BaseView
      
     /**
      * Elimina el registro con el código indicado de la base de datos
-     * 
+     *
      * @param string $code
      * @return boolean
      */
@@ -120,7 +131,7 @@ abstract class BaseView
             return $this->model->delete();
         }
 
-        return FALSE;
+        return false;
     }
     
     /**
@@ -142,7 +153,7 @@ abstract class BaseView
      */
     public function getRow($key)
     {
-        return empty($this->pageOption->rows) ? NULL : $this->pageOption->rows[$key];
+        return empty($this->pageOption->rows) ? null : $this->pageOption->rows[$key];
     }
 
     /**
@@ -164,5 +175,5 @@ abstract class BaseView
     public function getModelID()
     {
         return empty($this->model) ? '' : $this->model->modelClassName();
-    }    
+    }
 }

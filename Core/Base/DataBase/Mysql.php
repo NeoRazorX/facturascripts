@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
 use mysqli;
+use FacturaScripts\Core\Base\Translator;
 
 /**
  * Clase para conectar a MySQL.
@@ -59,6 +60,13 @@ class Mysql implements DataBaseEngine
     private $lastErrorMsg;
 
     /**
+     * Contiene el traductor
+     *
+     * @var Translator
+     */
+    private $i18n;
+
+    /**
      * Contructor e inicializador de la clase
      */
     public function __construct()
@@ -67,6 +75,7 @@ class Mysql implements DataBaseEngine
         $this->utilsSQL = new MysqlSQL();
         $this->transactions = [];
         $this->lastErrorMsg = '';
+        $this->i18n = new Translator();
     }
 
     /**
@@ -90,7 +99,7 @@ class Mysql implements DataBaseEngine
     /**
      * Borra de la lista la transaccion indicada
      *
-     * @param mysqli $link
+     * @param \mysqli $link
      */
     private function unsetTransaction($link)
     {
@@ -107,7 +116,7 @@ class Mysql implements DataBaseEngine
     /**
      * Devuelve el motor de base de datos y la versión.
      *
-     * @param mysqli $link
+     * @param \mysqli $link
      *
      * @return string
      */
@@ -126,7 +135,7 @@ class Mysql implements DataBaseEngine
     public function connect(&$error)
     {
         if (!class_exists('mysqli')) {
-            $error = 'No tienes instalada la extensión de PHP para MySQL.';
+            $error = $this->i18n->trans('php-mysql-not-found');
 
             return null;
         }
@@ -153,7 +162,7 @@ class Mysql implements DataBaseEngine
     /**
      * Desconecta de la base de datos.
      *
-     * @param mysqli $link
+     * @param \mysqli $link
      *
      * @return bool
      */
@@ -167,19 +176,19 @@ class Mysql implements DataBaseEngine
     /**
      * Devuelve el error de la ultima sentencia ejecutada
      *
-     * @param mysqli $link
+     * @param \mysqli $link
      *
      * @return string
      */
     public function errorMessage($link)
     {
-        return ($link->error != '') ? $link->error : $this->lastErrorMsg;
+        return ($link->error !== '') ? $link->error : $this->lastErrorMsg;
     }
 
     /**
      * Inicia una transacción SQL.
      *
-     * @param mysqli $link
+     * @param \mysqli $link
      *
      * @return bool
      */
@@ -196,7 +205,7 @@ class Mysql implements DataBaseEngine
     /**
      * Guarda los cambios de una transacción SQL.
      *
-     * @param mysqli $link
+     * @param \mysqli $link
      *
      * @return bool
      */
@@ -211,9 +220,9 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * TODO
+     * Revertir transaccion
      *
-     * @param mysqli $link
+     * @param \mysqli $link
      *
      * @return bool
      */
@@ -230,7 +239,7 @@ class Mysql implements DataBaseEngine
     /**
      * Indica si la conexión está en transacción
      *
-     * @param mysqli $link
+     * @param \mysqli $link
      *
      * @return bool
      */
@@ -243,7 +252,7 @@ class Mysql implements DataBaseEngine
      * Ejecuta una sentencia SQL de tipo select, y devuelve un array con los resultados,
      * o array vacío en caso de fallo.
      *
-     * @param mysqli $link
+     * @param \mysqli $link
      * @param string $sql
      *
      * @return array
@@ -272,7 +281,7 @@ class Mysql implements DataBaseEngine
      * Ejecuta sentencias SQL sobre la base de datos
      * (inserts, updates o deletes)
      *
-     * @param mysqli $link
+     * @param \mysqli $link
      * @param string $sql
      *
      * @return bool
@@ -297,7 +306,7 @@ class Mysql implements DataBaseEngine
     /**
      * Escapa las comillas de la cadena de texto.
      *
-     * @param mysqli $link
+     * @param \mysqli $link
      * @param string $str
      *
      * @return string
@@ -350,7 +359,7 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Compara los tipos de datos de una columna. Devuelve TRUE si son iguales.
+     * Compara los tipos de datos de una columna. Devuelve True si son iguales.
      *
      * @param string $dbType
      * @param string $xmlType
@@ -380,7 +389,7 @@ class Mysql implements DataBaseEngine
     /**
      * Devuelve un array con los nombres de las tablas de la base de datos.
      *
-     * @param mysqli $link
+     * @param \mysqli $link
      *
      * @return array
      */
@@ -406,7 +415,7 @@ class Mysql implements DataBaseEngine
      * comprueba la existencia de la secuencia. Si no la encuentra
      * la crea.
      *
-     * @param mysqli $link
+     * @param \mysqli $link
      * @param string $tableName
      * @param string $default
      * @param string $colname
@@ -421,7 +430,7 @@ class Mysql implements DataBaseEngine
     /**
      * Realiza comprobaciones extra a la tabla.
      *
-     * @param mysqli $link
+     * @param \mysqli $link
      * @param string $tableName
      * @param string $error
      *
@@ -436,8 +445,7 @@ class Mysql implements DataBaseEngine
         if (!empty($data) && $data[0]['Engine'] !== 'InnoDB') {
             $result = $this->exec($link, 'ALTER TABLE ' . $tableName . ' ENGINE=InnoDB;');
             if ($result) {
-                $error = 'Imposible convertir la tabla ' . $tableName . ' a InnoDB.'
-                    . ' Imprescindible para FacturaScripts.';
+                $error = $this->i18n->trans('cant-convert-to-innodb', [$tableName]);
             }
         }
 

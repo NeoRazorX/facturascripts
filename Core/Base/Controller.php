@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Clase de la que deben heredar todos los controladores de FacturaScripts.
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Controller
 {
@@ -170,10 +170,12 @@ class Controller
      * Establece el template HTML a utilizar para este controlador.
      *
      * @param string|false $template
+     *
+     * @return bool
      */
     public function setTemplate($template)
     {
-        if($template === false) {
+        if ($template === false) {
             $this->template = false;
             return true;
         }
@@ -182,6 +184,11 @@ class Controller
         return true;
     }
 
+    /**
+     * Devuelve los datos básicos de la página
+     *
+     * @return array
+     */
     public function getPageData()
     {
         return [
@@ -189,8 +196,8 @@ class Controller
             'title' => $this->className,
             'icon' => 'fa-circle-o',
             'menu' => 'new',
-            'submenu' => NULL,
-            'showonmenu' => TRUE,
+            'submenu' => null,
+            'showonmenu' => true,
             'orden' => 100,
         ];
     }

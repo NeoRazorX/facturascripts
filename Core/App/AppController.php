@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
 use DebugBar\Bridge\Twig;
@@ -34,7 +35,7 @@ use Twig_Loader_Filesystem;
 /**
  * Description of App
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class AppController extends App
 {
@@ -93,7 +94,7 @@ class AppController extends App
             $pageName = $this->request->query->get('page', 'AdminHome');
             $this->loadController($pageName);
 
-            /// todo OK, para los test
+            /// devolvemos true, para los test
             return true;
         }
 
@@ -113,7 +114,7 @@ class AppController extends App
 
         /// Si hemos encontrado el controlador, lo cargamos
         if (class_exists($controllerName)) {
-            $this->miniLog->debug('Loading controller: ' . $controllerName);
+            $this->miniLog->debug($this->i18n->trans('loading-controller', [$controllerName]));
             $user = $this->userAuth();
             $this->menuManager->setUser($user);
 
@@ -142,6 +143,8 @@ class AppController extends App
     }
 
     /**
+     * Devuelve el nombre completo del controlador
+     *
      * @param string $pageName
      *
      * @return string
@@ -215,7 +218,7 @@ class AppController extends App
     }
 
     /**
-     * TODO
+     * Autentica al usuario, devuelve el usuario en caso afirmativo o false
      *
      * @return User|false
      */
@@ -232,19 +235,19 @@ class AppController extends App
                     $user->save();
                     $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, time() + FS_COOKIES_EXPIRE));
                     $this->response->headers->setCookie(new Cookie('fsLogkey', $logKey, time() + FS_COOKIES_EXPIRE));
-                    $this->miniLog->debug('Login OK. User: ' . $nick);
+                    $this->miniLog->debug($this->i18n->trans('login-ok', [$nick]));
 
                     return $user;
                 }
 
                 $this->ipFilter->setAttempt($this->request->getClientIp());
-                $this->miniLog->alert('login-password-fail');
+                $this->miniLog->alert($this->i18n->trans('login-password-fail'));
 
                 return false;
             }
 
             $this->ipFilter->setAttempt($this->request->getClientIp());
-            $this->miniLog->alert('login-user-not-found');
+            $this->miniLog->alert($this->i18n->trans('login-user-not-found'));
 
             return false;
         }
@@ -254,17 +257,17 @@ class AppController extends App
             $cookieUser = $user0->get($cookieNick);
             if ($cookieUser) {
                 if ($cookieUser->verifyLogkey($this->request->cookies->get('fsLogkey'))) {
-                    $this->miniLog->debug('Login OK (cookie). User: ' . $cookieNick);
+                    $this->miniLog->debug($this->i18n->trans('login-ok', [$cookieNick]));
 
                     return $cookieUser;
                 }
 
-                $this->miniLog->alert('login-cookie-fail');
+                $this->miniLog->alert($this->i18n->trans('login-cookie-fail'));
 
                 return false;
             }
 
-            $this->miniLog->alert('login-user-not-found');
+            $this->miniLog->alert($this->i18n->trans('login-user-not-found'));
 
             return false;
         }
@@ -273,15 +276,18 @@ class AppController extends App
     }
 
     /**
-     * TODO
+     * Desautentica al usuario
      */
     private function userLogout()
     {
         $this->response->headers->clearCookie('fsNick');
         $this->response->headers->clearCookie('fsLogkey');
-        $this->miniLog->debug('Logout OK.');
+        $this->miniLog->debug($this->i18n->trans('logout-ok'));
     }
 
+    /**
+     * Carga los plugins
+     */
     private function deployPlugins()
     {
         $pluginManager = new PluginManager($this->folder);

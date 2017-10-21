@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,15 +22,25 @@ namespace FacturaScripts\Core\Lib;
 /**
  * Description of RegimenIVA
  *
- * @author carlos
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class RegimenIVA
 {
+    /**
+     * Devuelve el valor por defecto
+     *
+     * @return string
+     */
     public function defaultValue()
     {
         return 'General';
     }
 
+    /**
+     * Devuelve todas las opciones disponibles
+     *
+     * @return array
+     */
     public function all()
     {
         return ['General', 'Exento'];

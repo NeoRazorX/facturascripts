@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 
@@ -151,8 +152,8 @@ class WidgetItem
     {
         $this->fieldName = '';
         $this->hint = '';
-        $this->readOnly = FALSE;
-        $this->required = FALSE;
+        $this->readOnly = false;
+        $this->required = false;
         $this->icon = null;
         $this->onClick = '';
         $this->options = [];
@@ -163,7 +164,7 @@ class WidgetItem
      * del widget
      *
      * @param array            $property
-     * @param SimpleXMLElement $group
+     * @param \SimpleXMLElement $group
      */
     protected function getAttributesGroup(&$property, $group)
     {
@@ -188,8 +189,8 @@ class WidgetItem
     protected function loadFromXMLColumn($column, $widgetAtributes) {
         $this->fieldName = (string) $widgetAtributes->fieldname;
         $this->hint = (string) $widgetAtributes->hint;
-        $this->readOnly = (bool) boolval($widgetAtributes->readonly);
-        $this->required = (bool) boolval($widgetAtributes->required);
+        $this->readOnly = (bool) $widgetAtributes->readonly;
+        $this->required = (bool) $widgetAtributes->required;
         $this->icon = (string) $widgetAtributes->icon;
         $this->onClick = (string) $widgetAtributes->onclick;
 
@@ -199,7 +200,7 @@ class WidgetItem
     /**
      * Carga la estructura de atributos en base a la base de datos
      *
-     * @param SimpleXMLElement $column
+     * @param array $column
      */
     protected function loadFromJSONColumn($column)
     {
@@ -221,15 +222,15 @@ class WidgetItem
      */
     private function canApplyOptions($optionValue, $valueItem)
     {
-        switch (substr($optionValue, 0, 1)) {
+        switch ($optionValue[0]) {
             case '<':
                 $optionValue = substr($optionValue, 1);
-                $result = (floatval($valueItem) < floatval($optionValue));
+                $result = ((float) $valueItem < (float) $optionValue);
                 break;
 
             case '>':
                 $optionValue = substr($optionValue, 1);
-                $result = (floatval($valueItem) > floatval($optionValue));
+                $result = ((float) $valueItem > (float) $optionValue);
                 break;
 
             default:
@@ -309,8 +310,8 @@ class WidgetItem
     protected function specialAttributes()
     {
         $hint = $this->getHintHTML($this->hint);
-        $readOnly = (empty($this->readOnly)) ? '' : ' readonly="readonly"';
-        $required = (empty($this->required)) ? '' : ' required="required"';
+        $readOnly = empty($this->readOnly) ? '' : ' readonly="readonly"';
+        $required = empty($this->required) ? '' : ' required="required"';
 
         return $hint . $readOnly . $required;
     }

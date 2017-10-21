@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
  * Segundo nivel del plan contable.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Epigrafe
 {
@@ -29,9 +30,9 @@ class Epigrafe
     use Base\ModelTrait;
 
     /**
-     * TODO
+     * Lista de grupos
      *
-     * @var array
+     * @var GrupoEpigrafes[]
      */
     private static $grupos;
 
@@ -54,45 +55,55 @@ class Epigrafe
     public $idpadre;
 
     /**
-     * TODO
+     * Código de epígrafe
      *
      * @var string
      */
     public $codepigrafe;
 
     /**
-     * TODO
+     * Identificador de grupo
      *
      * @var int
      */
     public $idgrupo;
 
     /**
-     * TODO
+     * Código de ejercicio
      *
      * @var string
      */
     public $codejercicio;
 
     /**
-     * TODO
+     * Descripción del epígrafe.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * TODO
+     * Grupo al que pertenece.
      *
      * @var string
      */
     public $codgrupo;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'co_epigrafes';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'idepigrafe';
@@ -118,7 +129,7 @@ class Epigrafe
     }
 
     /**
-     * TODO
+     * Devuelve los epígrafes hijo
      *
      * @return array
      */
@@ -139,9 +150,9 @@ class Epigrafe
     }
 
     /**
-     * TODO
+     * Devuelve las cuentas del epígrafe
      *
-     * @return array
+     * @return Cuenta[]
      */
     public function getCuentas()
     {
@@ -151,7 +162,7 @@ class Epigrafe
     }
 
     /**
-     * TODO
+     * Obtiene el primer epígrafe del ejercicio
      *
      * @param string $cod
      * @param string $codejercicio
@@ -172,7 +183,7 @@ class Epigrafe
     }
 
     /**
-     * TODO
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
      *
      * @return bool
      */
@@ -183,17 +194,17 @@ class Epigrafe
         if (strlen($this->codepigrafe) > 0 && strlen($this->descripcion) > 0) {
             return true;
         }
-        $this->miniLog->alert('Faltan datos en el epígrafe.');
+        $this->miniLog->alert($this->i18n->trans('missing-epigraph-data'));
 
         return false;
     }
 
     /**
-     * TODO
+     * Devuelve los grupos del epígrafe
      *
      * @param int $idgrp
      *
-     * @return array
+     * @return self[]
      */
     public function allFromGrupo($idgrp)
     {
@@ -212,11 +223,11 @@ class Epigrafe
     }
 
     /**
-     * TODO
+     * Devuelve los epígrafes del ejercicio
      *
      * @param string $codejercicio
      *
-     * @return array
+     * @return self[]
      */
     public function allFromEjercicio($codejercicio)
     {
@@ -235,11 +246,11 @@ class Epigrafe
     }
 
     /**
-     * TODO
+     * Devuelve todos los epígrafes del ejercicios sin idpadre ni idgrupo
      *
      * @param string $codejercicio
      *
-     * @return array
+     * @return self[]
      */
     public function superFromEjercicio($codejercicio)
     {
@@ -281,6 +292,13 @@ class Epigrafe
         return '';
     }
 
+    /**
+     * Devuelve la url donde ver/modificar los datos
+     *
+     * @param string $type
+     *
+     * @return string
+     */
     public function url($type = 'auto')
     {
         $value = $this->primaryColumnValue();

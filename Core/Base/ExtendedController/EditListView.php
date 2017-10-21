@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,9 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
-use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Definición de vista para uso en ExtendedControllers
@@ -38,19 +40,19 @@ class EditListView extends BaseView
 
     /**
      * Almacena el offset para el cursor
-     * @var integer 
+     * @var int
      */
     private $offset;
 
     /**
      * Almacena el order para el cursor
-     * @var string 
+     * @var array
      */
     private $order;
 
     /**
      * Almacena los parámetros del where del cursor
-     * @var array 
+     * @var array
      */
     private $where;
 
@@ -96,8 +98,8 @@ class EditListView extends BaseView
 
     /**
      * Carga los datos en la propiedad cursor, según el filtro where indicado.
-     * Añade un registro/modelo en blanco al final de los datos cargados. 
-     * 
+     * Añade un registro/modelo en blanco al final de los datos cargados.
+     *
      * @param array $where
      * @param int $offset
      * @param int $limit
@@ -108,27 +110,40 @@ class EditListView extends BaseView
         if ($this->count > 0) {
             $this->cursor = $this->model->all($where, $this->order, $offset, $limit);
         }
-        
+
         // nos guardamos los valores where y offset para la exportación
         $this->offset = $offset;
         $this->where = $where;
     }
 
+    /**
+     * Prepara los campos para un modelo vacío
+     *
+     * @return mixed
+     */
     public function newEmptyModel()
     {
         $class = $this->model->modelName();
         $result = new $class();
-        
-        foreach (DataBase\DataBaseWhere::getFieldsFilter($this->where) as $field => $value) {
+
+        foreach (Base\DataBase\DataBaseWhere::getFieldsFilter($this->where) as $field => $value) {
             $result->{$field} = $value;
         }
-        
+
         return $result;
     }
-    
+
+    /**
+     * Método para la exportación de los datos de la vista
+     *
+     * @param Base\ExportManager $exportManager
+     * @param Response $response
+     * @param string $action
+     *
+     * @return mixed
+     */
     public function export(&$exportManager, &$response, $action)
     {
-        return $exportManager->generateList(
-                $response, $action, $this->model, $this->where, $this->order, $this->offset, $this->getColumns());
+        return $exportManager->generateList($response, $action, $this->model, $this->where, $this->order, $this->offset, $this->getColumns());
     }
 }

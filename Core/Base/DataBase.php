@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -99,7 +99,8 @@ class DataBase
 
                 default:
                     self::$engine = null;
-                    self::$miniLog->critical('No se reconoce el tipo de conexión. Debe ser MySQL o PostgreSQL');
+                    $i18n = new Translator();
+                    self::$miniLog->critical($i18n->trans('db-type-not-recognized'));
                     break;
             }
         }
@@ -202,7 +203,7 @@ class DataBase
     }
 
     /**
-     * Devuelve TRUE si se está conestado a la base de datos.
+     * Devuelve True si se está conestado a la base de datos.
      *
      * @return bool
      */
@@ -329,8 +330,8 @@ class DataBase
      * Offset es el número de resultado desde el que quieres que empiece.
      *
      * @param string  $sql
-     * @param integer $limit
-     * @param integer $offset
+     * @param int $limit
+     * @param int $offset
      *
      * @return array
      */
@@ -419,7 +420,7 @@ class DataBase
     }
 
     /**
-     * Devuelve TRUE si la tabla existe, FALSE en caso contrario.
+     * Devuelve True si la tabla existe, False en caso contrario.
      *
      * @param string $tableName
      * @param array  $list

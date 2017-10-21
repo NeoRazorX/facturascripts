@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
  * Primer nivel del plan contable.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class GrupoEpigrafes
 {
@@ -36,40 +37,50 @@ class GrupoEpigrafes
     public $idgrupo;
 
     /**
-     * TODO
+     * Grupo al que pertenece.
      *
      * @var string
      */
     public $codgrupo;
 
     /**
-     * TODO
+     * Código de ejercicio
      *
      * @var string
      */
     public $codejercicio;
 
     /**
-     * TODO
+     * Descripción del grupo del epígrafe.
      *
      * @var string
      */
     public $descripcion;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'co_gruposepigrafes';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'idgrupo';
     }
 
     /**
-     * TODO
+     * Devuelve los epígrafes del grupo
      *
-     * @return array
+     * @return Epigrafe[]
      */
     public function getEpigrafes()
     {
@@ -79,7 +90,7 @@ class GrupoEpigrafes
     }
 
     /**
-     * TODO
+     * Devuelve el grupo de epígrafé del código de ejercicio
      *
      * @param string $cod
      * @param string $codejercicio
@@ -100,7 +111,7 @@ class GrupoEpigrafes
     }
 
     /**
-     * TODO
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
      *
      * @return bool
      */
@@ -112,10 +123,17 @@ class GrupoEpigrafes
             return true;
         }
 
-        $this->miniLog->alert('Faltan datos en el grupo de epígrafes.');
+        $this->miniLog->alert($this->i18n->trans('missing-data-epigraph-group'));
         return false;
     }
 
+    /**
+     * Devuelve la url donde ver/modificar los datos
+     *
+     * @param string $type
+     *
+     * @return string
+     */
     public function url($type = 'auto')
     {
         $value = $this->primaryColumnValue();

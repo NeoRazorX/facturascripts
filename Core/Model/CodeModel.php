@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -66,11 +66,11 @@ class CodeModel
      * @param string  $tableName
      * @param string  $fieldCode
      * @param string  $fieldDescription
-     * @param boolean $addEmpty
+     * @param bool $addEmpty
      *
-     * @return array Model\CodeModel
+     * @return self[]
      */
-    public static function all($tableName, $fieldCode, $fieldDescription, $addEmpty = FALSE)
+    public static function all($tableName, $fieldCode, $fieldDescription, $addEmpty = false)
     {
         $result = [];
 
@@ -80,7 +80,7 @@ class CodeModel
 
         if (self::$dataBase->tableExists($tableName)) {
             if ($addEmpty) {
-                $result[] = new self(['code' => NULL, 'description' => '']);
+                $result[] = new self(['code' => null, 'description' => '']);
             }
 
             $sql = 'SELECT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM ' . $tableName . ' ORDER BY 2 ASC';
