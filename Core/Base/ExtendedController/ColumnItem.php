@@ -58,7 +58,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
 
         $this->description = '';
         $this->display = 'left';
-        $this->widget = new WidgetItem();
+        $this->widget = NULL;
     }
 
     /**
@@ -81,7 +81,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             $this->display = (string) $column_atributes->display;
         }
 
-        $this->widget->loadFromXMLColumn($column);
+        $this->widget = WidgetItem::newFromXMLColumn($column);
     }
 
     /**
@@ -94,7 +94,11 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         parent::loadFromJSON($column);
         $this->description = (string) $column['description'];
         $this->display = (string) $column['display'];
-        $this->widget->loadFromJSONColumn($column);
+
+        if (!empty($this->widget)) {
+            unset($this->widget);
+        }
+        $this->widget = WidgetItem::newFromJSONColumn($column);
     }
 
     /**
@@ -110,7 +114,6 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         foreach ($columns as $data) {
             $columnItem = new self();
             $columnItem->loadFromJSON($data);
-            $columnItem->widget->loadFromJSONColumn($data);
             $result[] = $columnItem;
         }
 
@@ -193,7 +196,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         $label = ($header != null)
             ? '<label for="' . $this->widget->fieldName . '" ' . $data['ColumnHint'] . '>' . $header . '</label>'
             : '';
-        
+
         return '<div class="form-group' . $data['ColumnClass'] . '">'
             . $label . $input . $data['ColumnDescription'] . $data['ColumnRequired']
             . '</div>';
@@ -213,7 +216,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         $label = ($header != null)
             ? '<label class="form-check-label" ' . $data['ColumnHint'] . '>' . $input . '&nbsp;' . $header . '</label>'
             : '';
-        
+
         $result = '<div class="form-row align-items-center' . $data['ColumnClass'] . '">'
             . '<div class="form-check col">' . $label . $data['ColumnDescription'] . '</div>'
             . $data['ColumnRequired']
@@ -240,7 +243,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
 
         $result = '<div class="' . $data['ColumnClass'] . '">'
             . '<label>' . $header . '</label>';
-                        
+
         foreach ($this->widget->values as $optionValue) {
             $checked = ($optionValue['value'] == $value) ? ' checked="checked"' : '';
             ++$index;
@@ -252,13 +255,14 @@ class ColumnItem extends VisualItem implements VisualItemInterface
                 . '</label>'
                 . '</div>';
         }
-                        
+
         $result .= $html . $data['ColumnRequired'] . '</div>';
         return $result;
     }
 
     /**
-     * Genera los datos para la columna
+     * Ejecuta la lista de funciones ($properties)
+     * para obtener las propiedades de la columna
      *
      * @param array $properties
      *

@@ -129,6 +129,20 @@ class AlbaranProveedor
         return $this->fullTestTrait('albaran');
     }
 
+    public function save()
+    {
+        if ($this->test()) {
+            if ($this->exists()) {
+                return $this->saveUpdate();
+            }
+
+            $this->newCodigo();
+            return $this->saveInsert();
+        }
+
+        return FALSE;
+    }
+
     /**
      * Elimina el albarán de la base de datos
      *

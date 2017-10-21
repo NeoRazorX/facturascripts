@@ -164,6 +164,20 @@ class FacturaProveedor
         return $this->fullTestTrait('invoice');
     }
 
+    public function save()
+    {
+        if ($this->test()) {
+            if ($this->exists()) {
+                return $this->saveUpdate();
+            }
+
+            $this->newCodigo();
+            return $this->saveInsert();
+        }
+
+        return FALSE;
+    }
+
     /**
      * Elimina la factura de la base de datos.
      *

@@ -48,13 +48,22 @@ class ListArticulo extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\Articulo', $className);
-        $this->addSearchFields($className, ['referencia', 'descripcion']);
+        /* Artículos */
+        $this->addView('FacturaScripts\Core\Model\Articulo', 'ListArticulo', 'products');
+        $this->addSearchFields('ListArticulo', ['referencia', 'descripcion']);
 
-        $this->addOrderBy($className, 'referencia', 'reference');
-        $this->addOrderBy($className, 'descripcion', 'description');
-        $this->addOrderBy($className, 'pvp', 'price');
-        $this->addOrderBy($className, 'stockfis', 'stock');
+        $this->addOrderBy('ListArticulo', 'referencia', 'reference');
+        $this->addOrderBy('ListArticulo', 'descripcion', 'description');
+        $this->addOrderBy('ListArticulo', 'pvp', 'price');
+        $this->addOrderBy('ListArticulo', 'stockfis', 'stock');
+        
+        /* Artículos de proveedor */
+        $this->addView('FacturaScripts\Core\Model\ArticuloProveedor', 'ListArticuloProveedor', 'supplier-products');
+        $this->addSearchFields('ListArticuloProveedor', ['referencia', 'descripcion']);
+
+        $this->addOrderBy('ListArticuloProveedor', 'referencia', 'reference');
+        $this->addOrderBy('ListArticuloProveedor', 'descripcion', 'description');
+        $this->addOrderBy('ListArticuloProveedor', 'pvp', 'price');
+        $this->addOrderBy('ListArticuloProveedor', 'stockfis', 'stock');
     }
 }

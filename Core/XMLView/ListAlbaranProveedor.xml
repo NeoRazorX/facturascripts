@@ -30,7 +30,7 @@
         <column name="numsupplier" order="110">
             <widget type="text" fieldname="numproveedor" />
         </column>
-        <column name="customer" order="120">
+        <column name="supplier" order="120">
             <widget type="text" fieldname="nombre" />
         </column>
         <column name="notes" order="130">

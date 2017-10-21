@@ -172,9 +172,20 @@ class PresupuestoCliente
         return $this->testTrait();
     }
 
-    /**
-     * Ejecuta una tarea con cron
-     */
+    public function save()
+    {
+        if ($this->test()) {
+            if ($this->exists()) {
+                return $this->saveUpdate();
+            }
+
+            $this->newCodigo();
+            return $this->saveInsert();
+        }
+
+        return FALSE;
+    }
+
     public function cronJob()
     {
         /// marcamos como aprobados los presupuestos con idpedido

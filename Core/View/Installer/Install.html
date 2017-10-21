@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es" >
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>INSTALL</title>
+        <title>{{ i18n.trans('installer') }}</title>
         <meta name="description" content="{{ i18n.trans('meta-description') }}" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="generator" content="{{ i18n.trans('facturascripts') }}" />
@@ -15,6 +15,8 @@
         <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
         <script type="text/javascript">
             $(document).ready(function () {
+                document.fs_install.fs_timezone.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                
                 $('#db_type').on('change', function () {
                     $('#db_type option:selected').each(function () {
                         str = $(this).val();
@@ -22,9 +24,11 @@
                     if (str === 'mysql') {
                         $('#db_port').val(3306);
                         $('#db_user').val('root');
+                        $("#mysql_socket_div").show();
                     } else if (str === 'postgresql') {
                         $('#db_port').val(5432);
                         $('#db_user').val('postgres');
+                        $("#mysql_socket_div").hide();
                     }
                 });
 
@@ -37,25 +41,19 @@
         </script>
     </head>
     <body>
-        <br/>
+        <nav class="navbar navbar-dark bg-dark">
+            <a class="navbar-brand" href="install.php">
+                <i class="fa fa-magic" aria-hidden="true"></i> {{ i18n.trans('installer') }}
+            </a>
+        </nav>
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
-                    <h1>
-                        <i class="fa fa-magic" aria-hidden="true"></i> {{ i18n.trans('installer') }}
-                        <a href="install.php" class="btn btn-sm btn-secondary">
-                            <i class="fa fa-refresh" aria-hidden="true"></i>
-                        </a>
-                    </h1>
-                    <hr/>
-                    <p class="help-block">{{ i18n.trans('installer-p') }}</p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
+                    <br/>
                     {% for msg in errors %}
                     <div class="alert alert-danger">{{ msg }}</div>
                     {% endfor %}
+                    <p class="help-block">{{ i18n.trans('installer-p') }}</p>
                 </div>
             </div>
             <div class="row">
@@ -75,7 +73,7 @@
                     <br/>
                 </div>
             </div>
-            <form action="install.php" method="post" class="form">
+            <form name="fs_install" action="install.php" method="post" class="form">
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="preferencias">
                         <div class="row">
@@ -98,11 +96,7 @@
                                     {{ i18n.trans('select-timezone') }}:
                                     <select name="fs_timezone" class="form-control">
                                         {% for tz in timezone %}
-                                        {% if tz['zone'] == 'Europe/Madrid' %}
-                                        <option value="{{ tz['zone'] }}" selected="">{{ tz['diff_from_GMT']}} - {{ tz['zone'] }}</option>
-                                        {% else %}
-                                        <option value="{{ tz['zone'] }}">{{ tz['diff_from_GMT']}} - {{ tz['zone'] }}</option>
-                                        {% endif %}
+                                        <option value="{{ tz['zone'] }}">{{ tz['zone'] }} - {{ tz['diff_from_GMT']}}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -148,9 +142,7 @@
                                     <input type="password" name="db_pass" class="form-control"/>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-3">
+                            <div id="mysql_socket_div" class="col-sm-3">
                                 <div class="form-group">
                                     {{ i18n.trans('mysql-socket') }}:
                                     <input type="text" name="mysql_socket" class="form-control"/>
@@ -174,19 +166,16 @@
                         <button type="submit" class="btn btn-primary">
                             <i class="fa fa-check" aria-hidden="true"></i> {{ i18n.trans('accept') }}
                         </button>
+                        <br/><br/><br/>
+                        <br/><br/><br/>
                     </div>
                 </div>
             </form>
-            <div class="row">
-                <div class="col-sm-12">
-                    <hr/>
-                    <small>
-                        &COPY; 2013-{{ 'now'|date('Y')}} <a target="_blank" href="https://www.facturascripts.com">{{ i18n.trans('facturascripts') }}</a>
-                    </small>
-                    <br/>
-                    <br/>
-                </div>
-            </div>
         </div>
+        <nav class="navbar fixed-bottom navbar-link bg-light">
+            <a class="navbar-brand" href="https://www.facturascripts.com" target="_blank">
+                &COPY; 2013-{{ 'now'|date('Y')}} FacturaScripts
+            </a>
+        </nav>
     </body>
 </html>

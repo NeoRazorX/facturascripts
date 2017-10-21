@@ -49,12 +49,13 @@ class ListAlbaranProveedor extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\AlbaranProveedor', $className);
-        $this->addSearchFields($className, ['codigo', 'numproveedor', 'observaciones']);
+        $this->addView('FacturaScripts\Core\Model\AlbaranProveedor', 'ListAlbaranProveedor');
+        $this->addSearchFields('ListAlbaranProveedor', ['codigo', 'numproveedor', 'observaciones']);
+        
+        $this->addFilterSelect('ListAlbaranProveedor', 'codserie', 'series', '', 'codserie');
 
-        $this->addOrderBy($className, 'codigo', 'code');
-        $this->addOrderBy($className, 'fecha', 'date');
-        $this->addOrderBy($className, 'total', 'amount');
+        $this->addOrderBy('ListAlbaranProveedor', 'codigo', 'code');
+        $this->addOrderBy('ListAlbaranProveedor', 'fecha', 'date');
+        $this->addOrderBy('ListAlbaranProveedor', 'total', 'amount');
     }
 }

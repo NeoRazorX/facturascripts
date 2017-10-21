@@ -76,6 +76,14 @@ class GrupoEpigrafes
     {
         return 'idgrupo';
     }
+    
+    public function install()
+    {
+        /// forzamos la comprobación de la tabla de ejercicios.
+        new Ejercicio();
+        
+        return '';
+    }
 
     /**
      * Devuelve los epígrafes del grupo

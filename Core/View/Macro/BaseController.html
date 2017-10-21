@@ -19,6 +19,7 @@
                 </th>
             </tr>
         </thead>
+        <tbody>
         {% for model in view.getCursor() %}
             {# Set background status #}
             {% set rowClass = 'table-light' %}
@@ -52,6 +53,7 @@
                 <td colspan="{{ cols }}"><b>{{ context.i18n.trans('no-data') }}</b></td>
             </tr>
         {% endfor %}
+        </tbody>
         {% if show_delete == true %}
         <tfoot>
             <tr>

@@ -163,6 +163,20 @@ class PedidoCliente
         return $this->testTrait();
     }
 
+    public function save()
+    {
+        if ($this->test()) {
+            if ($this->exists()) {
+                return $this->saveUpdate();
+            }
+
+            $this->newCodigo();
+            return $this->saveInsert();
+        }
+
+        return FALSE;
+    }
+
     /**
      * Elimina el pedido de la base de datos.
      * Devuelve False en caso de fallo.

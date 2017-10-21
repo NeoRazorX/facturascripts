@@ -29,6 +29,27 @@ class MenuItem
 {
 
     /**
+     * Indica si está activado o no.
+     *
+     * @var bool
+     */
+    public $active;
+
+    /**
+     * Icono de la fuente Fontawesome de la opción de menú.
+     *
+     * @var string
+     */
+    public $icon;
+
+    /**
+     * Lista de opciones de menú para el item.
+     *
+     * @var MenuItem[]
+     */
+    public $menu;
+
+    /**
      * Nombre identificativo del elemento.
      *
      * @var string
@@ -50,27 +71,6 @@ class MenuItem
     public $url;
 
     /**
-     * Icono de la fuente Fontawesome de la opción de menú.
-     *
-     * @var string
-     */
-    public $icon;
-
-    /**
-     * Indica si está activado o no.
-     *
-     * @var bool
-     */
-    public $active;
-
-    /**
-     * Lista de opciones de menú para el item.
-     *
-     * @var MenuItem[]
-     */
-    public $menu;
-
-    /**
      * Contruye y rellena los valores principales del Item
      *
      * @param string $name
@@ -80,10 +80,8 @@ class MenuItem
      */
     public function __construct($name, $title, $url, $icon = null)
     {
-        $i18n = new Translator();
-
         $this->name = $name;
-        $this->title = $i18n->trans($title);
+        $this->title = $title;
         $this->url = $url;
         $this->icon = $icon;
         $this->menu = [];

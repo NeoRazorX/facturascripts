@@ -73,6 +73,14 @@ class AlbaranCliente
     {
         return 'idalbaran';
     }
+    
+    public function install()
+    {
+        /// forzamos la comprobación de la tabla de facturascli.
+        new FacturaCliente();
+        
+        return '';
+    }
 
     /**
      * Resetea los valores de todas las propiedades modelo.
@@ -102,6 +110,20 @@ class AlbaranCliente
     public function test()
     {
         return $this->testTrait();
+    }
+
+    public function save()
+    {
+        if ($this->test()) {
+            if ($this->exists()) {
+                return $this->saveUpdate();
+            }
+
+            $this->newCodigo();
+            return $this->saveInsert();
+        }
+
+        return FALSE;
     }
 
     /**
