@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -29,8 +28,6 @@ class DireccionCliente
 
     use Base\ModelTrait,
         Base\Direccion {
-
-        save as private traitSave;
         clear as private traitClear;
     }
 
@@ -95,14 +92,24 @@ class DireccionCliente
         $this->fecha = date('d-m-Y');
     }
 
-    /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
-     *
-     * @return bool
-     */
     public function test()
     {
         return $this->testDireccion();
+    }
+
+    /**
+     * Persiste los datos en la base de datos, modificando si existía el registro
+     * o insertando en caso de no existir la clave primaria.
+     *
+     * @return bool
+     */
+    private function saveData()
+    {
+        if ($this->exists()) {
+            return $this->saveUpdate();
+        }
+
+        return $this->saveInsert();
     }
 
     /**
