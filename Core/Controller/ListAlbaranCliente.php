@@ -49,12 +49,13 @@ class ListAlbaranCliente extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\AlbaranCliente', $className);
-        $this->addSearchFields($className, ['codigo', 'numero2', 'observaciones']);
+        $this->addView('FacturaScripts\Core\Model\AlbaranCliente', 'ListAlbaranCliente');
+        $this->addSearchFields('ListAlbaranCliente', ['codigo', 'numero2', 'observaciones']);
+        
+        $this->addFilterSelect('ListAlbaranCliente', 'codserie', 'series', '', 'codserie');
 
-        $this->addOrderBy($className, 'codigo', 'code');
-        $this->addOrderBy($className, 'fecha', 'date');
-        $this->addOrderBy($className, 'total', 'amount');
+        $this->addOrderBy('ListAlbaranCliente', 'codigo', 'code');
+        $this->addOrderBy('ListAlbaranCliente', 'fecha', 'date');
+        $this->addOrderBy('ListAlbaranCliente', 'total', 'amount');
     }
 }
