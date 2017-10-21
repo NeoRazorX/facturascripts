@@ -73,6 +73,14 @@ class AlbaranCliente
     {
         return 'idalbaran';
     }
+    
+    public function install()
+    {
+        /// forzamos la comprobación de la tabla de facturascli.
+        new FacturaCliente();
+        
+        return '';
+    }
 
     /**
      * Resetea los valores de todas las propiedades modelo.

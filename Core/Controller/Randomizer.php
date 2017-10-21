@@ -63,6 +63,11 @@ class Randomizer extends Base\Controller
                 $this->miniLog->info($this->i18n->trans('generated-products', [$num]));
                 break;
             
+            case 'articulosprov':
+                $num = $ModelDataGenerator->articulosProveedor();
+                $this->miniLog->info($this->i18n->trans('generated-products', [$num]));
+                break;
+            
             case 'clientes':
                 $num = $ModelDataGenerator->clientes();
                 $this->miniLog->info($this->i18n->trans('generated-customers', [$num]));

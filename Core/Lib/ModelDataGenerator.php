@@ -257,6 +257,40 @@ class ModelDataGenerator
     }
 
     /**
+     * Genera $max artículos de proveedor aleatorios.
+     * Devuelve el número de artículos generados.
+     * @param int $max
+     * @return int
+     */
+    public function articulosProveedor($max = 50)
+    {
+        $proveedores = $this->randomProveedores();
+
+        for ($num = 0; $num < $max; ++$num) {
+            if (mt_rand(0, 2) == 0 && $this->impuestos[0]->iva <= 10) {
+                shuffle($this->impuestos);
+            }
+
+            $art = new Model\ArticuloProveedor();
+            $art->referencia = mt_rand(1, 99999999);
+            $art->refproveedor = mt_rand(1, 99999999);
+            $art->descripcion = $this->tools->descripcion();
+            $art->codimpuesto = $this->impuestos[0]->codimpuesto;
+            $art->codproveedor = $proveedores[$num]->codproveedor;
+            $art->precio = $this->tools->precio(1, 49, 699);
+            $art->dto = mt_rand(0, 80);
+            $art->nostock = (mt_rand(0, 2) == 0);
+            $art->stock = mt_rand(0, 10);
+
+            if (!$art->save()) {
+                break;
+            }
+        }
+
+        return $num;
+    }
+
+    /**
      * Genera $max agentes (empleados) aleatorios.
      * Devuelve el número de agentes generados.
      * @param int $max

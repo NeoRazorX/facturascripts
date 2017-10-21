@@ -200,52 +200,6 @@ class Epigrafe
     }
 
     /**
-     * Devuelve los grupos del epígrafe
-     *
-     * @param int $idgrp
-     *
-     * @return self[]
-     */
-    public function allFromGrupo($idgrp)
-    {
-        $epilist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idgrupo = ' . $this->var2str($idgrp)
-            . ' ORDER BY codepigrafe ASC;';
-
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $epi) {
-                $epilist[] = new self($epi);
-            }
-        }
-
-        return $epilist;
-    }
-
-    /**
-     * Devuelve los epígrafes del ejercicio
-     *
-     * @param string $codejercicio
-     *
-     * @return self[]
-     */
-    public function allFromEjercicio($codejercicio)
-    {
-        $epilist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($codejercicio)
-            . ' ORDER BY codepigrafe ASC;';
-
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $ep) {
-                $epilist[] = new self($ep);
-            }
-        }
-
-        return $epilist;
-    }
-
-    /**
      * Devuelve todos los epígrafes del ejercicios sin idpadre ni idgrupo
      *
      * @param string $codejercicio
@@ -288,7 +242,8 @@ class Epigrafe
     public function install()
     {
         /// forzamos los creación de la tabla de grupos
-        //$grupo = new GrupoEpigrafes();
+        $grupo = new GrupoEpigrafes();
+        
         return '';
     }
 
