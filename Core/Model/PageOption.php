@@ -148,7 +148,7 @@ class PageOption
             foreach ($rows as $item) {
                 $rowItem = new ExtendedController\RowItem();
                 $rowItem->loadFromJSON($item);
-                $this->rows[$rowItem->type] = $rowItem;                
+                $this->rows[$rowItem->type] = $rowItem;
                 unset($rowItem);
             }
         }
