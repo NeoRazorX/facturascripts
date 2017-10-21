@@ -117,7 +117,7 @@ _pintar de color azul cuando el valor del campo **estado es CERRADO**_
     </widget>
 ```
 
-_pintar de color rojo cuando el valor del campo **cantidad es menor de uno**_
+_pintar de color rojo cuando el valor del campo **cantidad es menor de 0**_
 ```XML
     <widget type="number" fieldname="cantidad">
         <option color="red">&lt;0</option>

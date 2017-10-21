@@ -41,7 +41,7 @@ class VisualItem
      * @var string
      */
     public $name;
-    
+
     /**
      * Etiqueta o título del grupo
      *
@@ -76,7 +76,7 @@ class VisualItem
      */
     public function __construct()
     {
-        $this->name = 'unnamed';
+        $this->name = 'root';
         $this->title = '';
         $this->titleURL = '';
         $this->numColumns = 0;
