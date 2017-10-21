@@ -952,5 +952,6 @@
     "symbol-dot": ". (dot)",
     "pages": "pages",
     "logout": "Logout",
-    "table-checked": "Table 0 checked."
+    "table-checked": "Table 0 checked.",
+    "translation-not-registered": "The string '0' isn't registered on translations in use."
 }

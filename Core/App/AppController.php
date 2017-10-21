@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\App;
 use DebugBar\Bridge\Twig;
 use DebugBar\StandardDebugBar;
 use Exception;
+use FacturaScripts\Core\Base\Collector\TranslationCollector;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseCollector;
 use FacturaScripts\Core\Base\MenuManager;
@@ -135,6 +136,8 @@ class AppController extends App
         }
 
         $this->debugBar->addCollector(new DataBaseCollector($this->miniLog->read(['sql'])));
+        $this->debugBar->addCollector(new TranslationCollector());
+        $this->i18n->setDebugBar($this->debugBar);
 
         $this->response->setStatusCode($httpStatus);
         if ($template) {

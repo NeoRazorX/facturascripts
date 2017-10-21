@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Base;
 
+use DebugBar\StandardDebugBar;
 use Symfony\Component\Translation\Loader\JsonFileLoader;
 use Symfony\Component\Translation\Translator as symfonyTranslator;
 
@@ -51,6 +52,20 @@ class Translator
     private static $translator;
 
     /**
+     * La barra de depuración.
+     *
+     * @var StandardDebugBar
+     */
+    private static $debugBar;
+
+    /**
+     * Gestor de log de la app.
+     *
+     * @var MiniLog
+     */
+    private static $miniLog;
+
+    /**
      * Constructor del traductor
      * Por defecto se usará y definirá en_EN si no está definido en config.php.
      *
@@ -72,6 +87,9 @@ class Translator
             self::$translator->addLoader('json', new JsonFileLoader());
             $this->locateFiles();
         }
+        if (self::$miniLog === null) {
+            self::$miniLog = new MiniLog();
+        }
     }
 
     /**
@@ -84,6 +102,14 @@ class Translator
      */
     public function trans($txt, array $parameters = [])
     {
+        if (self::$debugBar !== null) {
+            $catalogue = self::$translator->getCatalogue(self::$lang);
+            self::$debugBar['translations']->addTranslation($txt, $catalogue->get($txt, 'messages'));
+        }
+        if (self::$debugBar === null) {
+            self::$miniLog->debug('La string \'' . $txt . '\' no se ha registrado en las traducciones en uso.');
+            //self::$miniLog->debug($this->trans('translation-not-registered', [$txt]));
+        }
         return self::$translator->trans($txt, $parameters);
     }
 
@@ -114,5 +140,17 @@ class Translator
     public function getLangCode()
     {
         return self::$lang;
+    }
+
+    /**
+     * Asigna la debugBar
+     *
+     * @param StandardDebugBar $debugBar
+     */
+    public function setDebugBar(&$debugBar)
+    {
+        if (self::$debugBar === null) {
+            self::$debugBar = $debugBar;
+        }
     }
 }

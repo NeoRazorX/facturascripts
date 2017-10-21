@@ -23,6 +23,7 @@
 div.phpdebugbar div.phpdebugbar-body div.phpdebugbar-panel div.phpdebugbar-widgets-sqlqueries ol.phpdebugbar-widgets-list {
     padding: 0 0 0 40px;
 }
+
 ol.phpdebugbar-widgets-list {
     list-style: decimal !important;
     font-family: monospace;
@@ -50,4 +51,34 @@ div.phpdebugbar-header, a.phpdebugbar-restore-btn {
 a.phpdebugbar-tab i {
     display: initial;
     vertical-align: middle;
+}
+
+/**
+ * Estilo personalizado para tener en la pestaña Translations
+ */
+div.phpdebugbar div.phpdebugbar-body div.phpdebugbar-panel div.phpdebugbar-widgets-translations ol.phpdebugbar-widgets-list {
+    padding: 0 0 0 40px;
+}
+
+div.phpdebugbar-widgets-translations div.phpdebugbar-widgets-status {
+    font-family: monospace;
+    padding: 6px 6px;
+    border-bottom: 1px solid #ddd;
+    font-weight: bold;
+    color: #555;
+    background: #fafafa;
+}
+
+div.phpdebugbar-widgets-translations span.phpdebugbar-widgets-render_time {
+    float: right;
+}
+div.phpdebugbar-widgets-translations span.phpdebugbar-widgets-render_time:before {
+    content: "\f017";
+    font-family: FontAwesome;
+    font-size: 12px;
+    margin-right: 4px;
+}
+
+div.phpdebugbar-widgets-translations div.phpdebugbar-widgets-status span.phpdebugbar-widgets-render_time {
+    color: #555;
 }
