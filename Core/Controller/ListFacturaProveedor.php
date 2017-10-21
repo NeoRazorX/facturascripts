@@ -49,12 +49,14 @@ class ListFacturaProveedor extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\FacturaProveedor', $className);
-        $this->addSearchFields($className, ['codigo', 'numproveedor', 'observaciones']);
+        $this->addView('FacturaScripts\Core\Model\FacturaProveedor', 'ListFacturaProveedor');
+        $this->addSearchFields('ListFacturaProveedor', ['codigo', 'numproveedor', 'observaciones']);
+        
+        $this->addFilterSelect('ListFacturaProveedor', 'codserie', 'series', '', 'codserie');
+        $this->addFilterSelect('ListFacturaProveedor', 'codpago', 'formaspago', '', 'codpago');
 
-        $this->addOrderBy($className, 'codigo', 'code');
-        $this->addOrderBy($className, 'fecha', 'date');
-        $this->addOrderBy($className, 'total', 'amount');
+        $this->addOrderBy('ListFacturaProveedor', 'codigo', 'code');
+        $this->addOrderBy('ListFacturaProveedor', 'fecha', 'date');
+        $this->addOrderBy('ListFacturaProveedor', 'total', 'amount');
     }
 }

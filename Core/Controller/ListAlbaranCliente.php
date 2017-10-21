@@ -53,6 +53,7 @@ class ListAlbaranCliente extends ExtendedController\ListController
         $this->addSearchFields('ListAlbaranCliente', ['codigo', 'numero2', 'observaciones']);
         
         $this->addFilterSelect('ListAlbaranCliente', 'codserie', 'series', '', 'codserie');
+        $this->addFilterSelect('ListAlbaranCliente', 'codpago', 'formaspago', '', 'codpago');
 
         $this->addOrderBy('ListAlbaranCliente', 'codigo', 'code');
         $this->addOrderBy('ListAlbaranCliente', 'fecha', 'date');

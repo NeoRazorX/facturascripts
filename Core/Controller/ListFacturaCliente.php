@@ -49,12 +49,14 @@ class ListFacturaCliente extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\FacturaCliente', $className);
-        $this->addSearchFields($className, ['codigo', 'numero2', 'observaciones']);
+        $this->addView('FacturaScripts\Core\Model\FacturaCliente', 'ListFacturaCliente');
+        $this->addSearchFields('ListFacturaCliente', ['codigo', 'numero2', 'observaciones']);
+        
+        $this->addFilterSelect('ListFacturaCliente', 'codserie', 'series', '', 'codserie');
+        $this->addFilterSelect('ListFacturaCliente', 'codpago', 'formaspago', '', 'codpago');
 
-        $this->addOrderBy($className, 'codigo', 'code');
-        $this->addOrderBy($className, 'fecha', 'date');
-        $this->addOrderBy($className, 'total', 'amount');
+        $this->addOrderBy('ListFacturaCliente', 'codigo', 'code');
+        $this->addOrderBy('ListFacturaCliente', 'fecha', 'date');
+        $this->addOrderBy('ListFacturaCliente', 'total', 'amount');
     }
 }

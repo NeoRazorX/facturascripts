@@ -51,6 +51,9 @@ class ListArticulo extends ExtendedController\ListController
         /* Artículos */
         $this->addView('FacturaScripts\Core\Model\Articulo', 'ListArticulo', 'products');
         $this->addSearchFields('ListArticulo', ['referencia', 'descripcion']);
+        
+        $this->addFilterSelect('ListArticulo', 'codfabricante', 'fabricantes', '', 'codfabricante');
+        $this->addFilterSelect('ListArticulo', 'codfamilia', 'familias', '', 'codfamilias');
 
         $this->addOrderBy('ListArticulo', 'referencia', 'reference');
         $this->addOrderBy('ListArticulo', 'descripcion', 'description');
