@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2016-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2016-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 /**
  * Description of DataGeneratorTools
  *
- * @author carlos
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class DataGeneratorTools
 {
@@ -29,8 +30,8 @@ class DataGeneratorTools
     /**
      * Metodo de apoyo para el constructor de modelos e inicializacion de datos
      * @param array $variable    -> destino de los datos
-     * @param fs_model $modelo   -> modelo de cada uno de los items del array
-     * @param boolean $shuffle   -> ordenar aleatoriamente la lista
+     * @param $modelo   -> modelo de cada uno de los items del array
+     * @param bool $shuffle   -> ordenar aleatoriamente la lista
      */
     public function loadData(&$variable, $modelo, $shuffle)
     {
@@ -139,7 +140,7 @@ class DataGeneratorTools
 
         if (mt_rand(0, 9) == 0) {
             $cantidad = mt_rand($min, $max2);
-        } else if ($cantidad < $max1 && mt_rand(0, 4) == 0) {
+        } elseif ($cantidad < $max1 && mt_rand(0, 4) == 0) {
             $cantidad += round(mt_rand(1, 5) / mt_rand(1, 10), mt_rand(0, 3));
             $cantidad = min([$max1, $cantidad]);
         }
@@ -162,7 +163,7 @@ class DataGeneratorTools
 
         if (mt_rand(0, 9) == 0) {
             $precio = mt_rand($min, $max2);
-        } else if ($precio < $max1 && mt_rand(0, 2) == 0) {
+        } elseif ($precio < $max1 && mt_rand(0, 2) == 0) {
             $precio += round(mt_rand(1, 5) / mt_rand(1, 10), FS_NF0_ART);
             $precio = min([$max1, $precio]);
         }
@@ -192,7 +193,7 @@ class DataGeneratorTools
 
     /**
      * Devuelve dos apellidos aleatorios.
-     * @return type
+     * @return string
      */
     public function apellidos()
     {
@@ -211,7 +212,7 @@ class DataGeneratorTools
 
     /**
      * Devuelve un nombre comercial aleatorio.
-     * @return type
+     * @return string
      */
     public function empresa()
     {
@@ -236,7 +237,7 @@ class DataGeneratorTools
 
     /**
      * Devuelve un email aleatorio.
-     * @return type
+     * @return string
      */
     public function email()
     {
@@ -290,7 +291,7 @@ class DataGeneratorTools
 
     /**
      * Devuelve una dirección aleatoria.
-     * @return type
+     * @return string
      */
     public function direccion()
     {
@@ -312,10 +313,10 @@ class DataGeneratorTools
 
     /**
      * Devuelve unas observaciones aleatorias.
-     * @param type $fecha
+     * @param string|bool $fecha
      * @return string
      */
-    public function observaciones($fecha = FALSE)
+    public function observaciones($fecha = false)
     {
         $observaciones = [
             'Pagado', 'Faltan piezas', 'No se corresponde con lo solicitado.',
@@ -334,20 +335,20 @@ class DataGeneratorTools
         shuffle($observaciones);
 
         if ($fecha && mt_rand(0, 2) == 0) {
-            $semana = date("D", strtotime($fecha));
+            $semana = date('D', strtotime($fecha));
             $semanaArray = [
-                "Mon" => "lunes", "Tue" => "martes", "Wed" => "miércoles", "Thu" => "jueves",
-                "Fri" => "viernes", "Sat" => "sábado", "Sun" => "domingo",
+                'Mon' => 'lunes', 'Tue' => 'martes', 'Wed' => 'miércoles', 'Thu' => 'jueves',
+                'Fri' => 'viernes', 'Sat' => 'sábado', 'Sun' => 'domingo',
             ];
             $title = urlencode(sprintf('{{Plantilla:Frase-%s}}', $semanaArray[$semana]));
-            $sock = @fopen("http://es.wikiquote.org/w/api.php?action=parse&format=php&text=$title", "r");
+            $sock = @fopen("http://es.wikiquote.org/w/api.php?action=parse&format=php&text=$title", 'rb');
             if (!$sock) {
                 return $observaciones[0];
             }
 
             # Hacemos la peticion al servidor
             $array__ = unserialize(stream_get_contents($sock));
-            $texto_final = strip_tags($array__["parse"]["text"]["*"]);
+            $texto_final = strip_tags($array__['parse']['text']['*']);
             $texto_final = str_replace("\n\n\n\n", "\n", $texto_final);
 
             return $texto_final;
@@ -358,11 +359,11 @@ class DataGeneratorTools
 
     /**
      * Devuelve un string aleatorio de longitud $length
-     * @param type $length la longitud del string
-     * @return type la cadena aleatoria
+     * @param string $length la longitud del string
+     * @return string la cadena aleatoria
      */
     public function randomString($length = 30)
     {
-        return mb_substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
+        return mb_substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, $length);
     }
 }

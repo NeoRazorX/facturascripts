@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Lib\NewCodigoDoc;
@@ -23,7 +24,7 @@ use FacturaScripts\Core\Lib\NewCodigoDoc;
 /**
  * Description of DocumentoCompra
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 trait DocumentoCompra
 {
@@ -40,7 +41,7 @@ trait DocumentoCompra
     public $cifnif;
 
     /**
-     * Empleado que ha creado este albarán.
+     * Empleado que ha creado este documento.
      *
      * @var string
      */
@@ -113,7 +114,7 @@ trait DocumentoCompra
      * % de retención IRPF del albarán. Se obtiene de la serie.
      * Cada línea puede tener un % distinto.
      *
-     * @var float
+     * @var float|int
      */
     public $irpf;
 
@@ -150,28 +151,28 @@ trait DocumentoCompra
     /**
      * Suma del pvptotal de líneas. Total del albarán antes de impuestos.
      *
-     * @var float
+     * @var float|int
      */
     public $neto;
 
     /**
      * Tasa de conversión a Euros de la divisa seleccionada.
      *
-     * @var float
+     * @var float|int
      */
     public $tasaconv;
 
     /**
      * Suma total del albarán, con impuestos.
      *
-     * @var float
+     * @var float|int
      */
     public $total;
 
     /**
      * Suma del IVA de las líneas.
      *
-     * @var float
+     * @var float|int
      */
     public $totaliva;
 
@@ -180,21 +181,21 @@ trait DocumentoCompra
      * totaleuros = total/tasaconv
      * No hace falta rellenarlo, al hacer save() se calcula el valor.
      *
-     * @var float
+     * @var float|int
      */
     public $totaleuros;
 
     /**
      * Suma total de las retenciones IRPF de las líneas.
      *
-     * @var float
+     * @var float|int
      */
     public $totalirpf;
 
     /**
      * Suma total del recargo de equivalencia de las líneas.
      *
-     * @var float
+     * @var float|int
      */
     public $totalrecargo;
 
@@ -205,6 +206,9 @@ trait DocumentoCompra
      */
     public $observaciones;
 
+    /**
+     * Inicializa los valores del documento.
+     */
     private function clearDocumentoCompra()
     {
         $this->clearTrait();
@@ -224,6 +228,11 @@ trait DocumentoCompra
         $this->totalrecargo = 0.0;
     }
 
+    /**
+     * Acorta el texto de observaciones
+     *
+     * @return string
+     */
     public function observacionesResume()
     {
         if ($this->observaciones == '') {
@@ -237,6 +246,9 @@ trait DocumentoCompra
         return mb_substr($this->observaciones, 0, 50) . '...';
     }
 
+    /**
+     * Genera un nuevo código
+     */
     private function newCodigo()
     {
         $newCodigoDoc = new NewCodigoDoc();
@@ -244,14 +256,19 @@ trait DocumentoCompra
         $this->codigo = $newCodigoDoc->getCodigo($this->tableName(), $this->numero, $this->codserie, $this->codejercicio);
     }
 
+    /**
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     *
+     * @return bool
+     */
     private function testTrait()
     {
-        $this->nombre = $this->noHtml($this->nombre);
+        $this->nombre = static::noHtml($this->nombre);
         if ($this->nombre == '') {
             $this->nombre = '-';
         }
-        $this->numproveedor = $this->noHtml($this->numproveedor);
-        $this->observaciones = $this->noHtml($this->observaciones);
+        $this->numproveedor = static::noHtml($this->numproveedor);
+        $this->observaciones = static::noHtml($this->observaciones);
 
         /**
          * Usamos el euro como divisa puente a la hora de sumar, comparar
@@ -259,26 +276,33 @@ trait DocumentoCompra
          * muchos decimales.
          */
         $this->totaleuros = round($this->total / $this->tasaconv, 5);
-        if ($this->floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, TRUE)) {
-            return TRUE;
+        if (static::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, TRUE)) {
+            return true;
         }
 
-        $this->miniLog->alert('bad-total-error');
-        return FALSE;
+        $this->miniLog->alert($this->i18n->trans('bad-total-error'));
+        return false;
     }
 
+    /**
+     * Ejecuta un test completo de pruebas
+     *
+     * @param string $tipoDoc
+     *
+     * @return bool
+     */
     private function fullTestTrait($tipoDoc)
     {
-        $status = TRUE;
+        $status = true;
         $subtotales = [];
         $irpf = 0;
 
         /// calculamos también con el método anterior
         $neto_alt = 0;
         $iva_alt = 0;
-        foreach ($this->get_lineas() as $lin) {
+        foreach ($this->getLineas() as $lin) {
             if (!$lin->test()) {
-                $status = FALSE;
+                $status = false;
             }
             $codimpuesto = ($lin->codimpuesto === null ) ? 0 : $lin->codimpuesto;
             if (!array_key_exists($codimpuesto, $subtotales)) {
@@ -314,31 +338,38 @@ trait DocumentoCompra
         $total = $neto + $iva - $irpf + $recargo;
         $total_alt = $neto_alt + $iva_alt - $irpf + $recargo;
 
-        if (!$this->floatcmp($this->neto, $neto, FS_NF0, TRUE) && !$this->floatcmp($this->neto, $neto_alt, FS_NF0, TRUE)) {
-            $this->miniLog->alert("Valor neto de " . $tipoDoc . " " . $this->codigo . " incorrecto (" . $this->neto . "). Valor correcto: " . $neto);
-            $status = FALSE;
+        if (!static::floatcmp($this->neto, $neto, FS_NF0, true) && !static::floatcmp($this->neto, $neto_alt, FS_NF0, true)) {
+            $this->miniLog->alert($this->i18n->trans('neto-value-error', [$tipoDoc, $this->codigo, $this->neto, $neto]));
+            $status = false;
         }
 
-        if (!$this->floatcmp($this->totaliva, $iva, FS_NF0, TRUE) && !$this->floatcmp($this->totaliva, $iva_alt, FS_NF0, TRUE)) {
-            $this->miniLog->alert("Valor totaliva de " . $tipoDoc . " " . $this->codigo . " incorrecto (" . $this->totaliva . "). Valor correcto: " . $iva);
-            $status = FALSE;
+        if (!static::floatcmp($this->totaliva, $iva, FS_NF0, true) && !static::floatcmp($this->totaliva, $iva_alt, FS_NF0, true)) {
+            $this->miniLog->alert($this->i18n->trans('totaliva-value-error', [$tipoDoc, $this->codigo, $this->totaliva, $iva]));
+            $status = false;
         }
 
-        if (!$this->floatcmp($this->totalirpf, $irpf, FS_NF0, TRUE)) {
-            $this->miniLog->alert("Valor totalirpf de " . $tipoDoc . " " . $this->codigo . " incorrecto (" . $this->totalirpf . "). Valor correcto: " . $irpf);
-            $status = FALSE;
+        if (!static::floatcmp($this->totalirpf, $irpf, FS_NF0, true)) {
+            $this->miniLog->alert($this->i18n->trans('totaliva-value-error', [$tipoDoc, $this->codigo, $this->totalirpf, $irpf]));
+            $status = false;
         }
 
-        if (!$this->floatcmp($this->totalrecargo, $recargo, FS_NF0, TRUE)) {
-            $this->miniLog->alert("Valor totalrecargo de " . $tipoDoc . " " . $this->codigo . " incorrecto (" . $this->totalrecargo . "). Valor correcto: " . $recargo);
-            $status = FALSE;
+        if (!static::floatcmp($this->totalrecargo, $recargo, FS_NF0, true)) {
+            $this->miniLog->alert($this->i18n->trans('totalrecargp-value-error', [$tipoDoc, $this->codigo, $this->totalrecargo, $recargo]));
+            $status = false;
         }
 
-        if (!$this->floatcmp($this->total, $total, FS_NF0, TRUE) && !$this->floatcmp($this->total, $total_alt, FS_NF0, TRUE)) {
-            $this->miniLog->alert("Valor total de " . $tipoDoc . " " . $this->codigo . " incorrecto (" . $this->total . "). Valor correcto: " . $total);
-            $status = FALSE;
+        if (!static::floatcmp($this->total, $total, FS_NF0, true) && !static::floatcmp($this->total, $total_alt, FS_NF0, true)) {
+            $this->miniLog->alert($this->i18n->trans('total-value-error', [$tipoDoc, $this->codigo, $this->total, $total]));
+            $status = false;
         }
 
         return $status;
     }
+
+    /**
+     * Devuelve las líneas asociadas al documento.
+     *
+     * @return array
+     */
+    abstract public function getLineas();
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -99,11 +99,21 @@ class Ejercicio
      */
     public $longsubcuenta;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'ejercicios';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'codejercicio';
@@ -160,7 +170,7 @@ class Ejercicio
             return $cod;
         }
 
-        $sql = 'SELECT MAX(' . $this->dataBase->sql2int('codejercicio') . ') as cod FROM ' . $this->tableName() . ';';
+        $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codejercicio') . ') as cod FROM ' . $this->tableName() . ';';
         $newCod = $this->dataBase->select($sql);
         if (!empty($newCod)) {
             return sprintf('%04s', 1 + (int) $newCod[0]['cod']);
@@ -170,7 +180,7 @@ class Ejercicio
     }
 
     /**
-     * Devuelve TRUE si este es el ejercicio predeterminado de la empresa
+     * Devuelve True si este es el ejercicio predeterminado de la empresa
      *
      * @return bool
      */
@@ -249,7 +259,7 @@ class Ejercicio
     }
 
     /**
-     * Comprueba los datos del ejercicio, devuelve TRUE si son correctos
+     * Comprueba los datos del ejercicio, devuelve True si son correctos
      *
      * @return bool
      */
@@ -286,6 +296,6 @@ class Ejercicio
         return 'INSERT INTO ' . $this->tableName() . ' (codejercicio,nombre,fechainicio,fechafin,'
             . 'estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre) '
             . "VALUES ('" . date('Y') . "','" . date('Y') . "'," . $this->var2str(date('01-01-Y'))
-            . ', ' . $this->var2str(date('31-12-Y')) . ",'ABIERTO',10,'08',NULL,NULL,NULL);";
+            . ', ' . $this->var2str(date('31-12-Y')) . ",'ABIERTO',10,'08',null,null,null);";
     }
 }

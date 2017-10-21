@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base\DivisaTools;
@@ -93,18 +94,21 @@ class WidgetItem
     public $options;
 
     /**
+     * Valor del incremento
      *
      * @var string
      */
     public $step;
 
     /**
+     * Valor máximo
      *
      * @var string
      */
     public $max;
 
     /**
+     * Valor mínimo
      *
      * @var string
      */
@@ -118,12 +122,14 @@ class WidgetItem
     public $values;
 
     /**
+     * Clase para formatear valores de la divisa
      *
      * @var DivisaTools
      */
     private static $divisaTools;
 
     /**
+     * Clase para formatear valores numéricos
      *
      * @var NumberTools
      */
@@ -144,8 +150,8 @@ class WidgetItem
         $this->decimal = 0;
         $this->fieldName = '';
         $this->hint = '';
-        $this->readOnly = FALSE;
-        $this->required = FALSE;
+        $this->readOnly = false;
+        $this->required = false;
         $this->icon = null;
         $this->onClick = '';
         $this->options = [];
@@ -174,7 +180,7 @@ class WidgetItem
 
     /**
      * Carga la lista de valores según un array de valores
-     * 
+     *
      * @param array $values
      */
     public function setValuesFromArray(&$values)
@@ -194,7 +200,7 @@ class WidgetItem
      * del widget
      *
      * @param array            $property
-     * @param SimpleXMLElement $group
+     * @param \SimpleXMLElement $group
      */
     private function getAttributesGroup(&$property, $group)
     {
@@ -213,17 +219,17 @@ class WidgetItem
     /**
      * Carga la estructura de atributos en base a un archivo XML
      *
-     * @param SimpleXMLElement $column
+     * @param \SimpleXMLElement $column
      */
     public function loadFromXMLColumn($column)
     {
         $widgetAtributes = $column->widget->attributes();
         $this->fieldName = (string) $widgetAtributes->fieldname;
         $this->type = (string) $widgetAtributes->type;
-        $this->decimal = (int) intval($widgetAtributes->decimal);
+        $this->decimal = (int) $widgetAtributes->decimal;
         $this->hint = (string) $widgetAtributes->hint;
-        $this->readOnly = (bool) boolval($widgetAtributes->readonly);
-        $this->required = (bool) boolval($widgetAtributes->required);
+        $this->readOnly = (bool) $widgetAtributes->readonly;
+        $this->required = (bool) $widgetAtributes->required;
         $this->icon = (string) $widgetAtributes->icon;
         $this->onClick = (string) $widgetAtributes->onclick;
         $this->step = (string) $widgetAtributes->step;
@@ -237,16 +243,16 @@ class WidgetItem
     /**
      * Carga la estructura de atributos en base a la base de datos
      *
-     * @param SimpleXMLElement $column
+     * @param array $column
      */
     public function loadFromJSONColumn($column)
     {
         $this->fieldName = (string) $column['widget']['fieldName'];
         $this->type = (string) $column['widget']['type'];
-        $this->decimal = (int) intval($column['widget']['decimal']);
+        $this->decimal = (int) $column['widget']['decimal'];
         $this->hint = (string) $column['widget']['hint'];
-        $this->readOnly = (bool) boolval($column['widget']['readOnly']);
-        $this->required = (bool) boolval($column['widget']['required']);
+        $this->readOnly = (bool) $column['widget']['readOnly'];
+        $this->required = (bool) $column['widget']['required'];
         $this->step = (string) $column['widget']['step'];
         $this->min = (string) $column['widget']['min'];
         $this->max = (string) $column['widget']['max'];
@@ -278,15 +284,15 @@ class WidgetItem
      */
     private function canApplyOptions($optionValue, $valueItem)
     {
-        switch (substr($optionValue, 0, 1)) {
+        switch ($optionValue[0]) {
             case '<':
                 $optionValue = substr($optionValue, 1);
-                $result = (floatval($valueItem) < floatval($optionValue));
+                $result = ((float) $valueItem < (float) $optionValue);
                 break;
 
             case '>':
                 $optionValue = substr($optionValue, 1);
-                $result = (floatval($valueItem) > floatval($optionValue));
+                $result = ((float) $valueItem > (float) $optionValue);
                 break;
 
             default:
@@ -335,23 +341,32 @@ class WidgetItem
         switch ($this->type) {
             case 'text':
                 $txt = $this->getTextResume($value);
-                $html = (empty($this->onClick)) ? '<span' . $style . '>' . $txt . '</span>' : '<a href="?page='
-                    . $this->onClick . '&code=' . $value . '"' . $style . '>' . $txt . '</a>';
+                $html = empty($this->onClick) ? '<span ' . $style . '>' . $txt . '</span>' : '<a href="?page='
+                    . $this->onClick . '&code=' . $value . '" ' . $style . '>' . $txt . '</a>';
                 break;
 
             case 'number':
-                $html = '<span' . $style . '>' . self::$numberTools->format($value, $this->decimal) . '</span>';
+                $html = '<span ' . $style . '>' . self::$numberTools->format($value, $this->decimal) . '</span>';
                 break;
 
             case 'money':
                 $aux = empty($this->decimal) ? self::$divisaTools->format($value) : self::$divisaTools->format($value, $this->decimal);
-                $html = '<span' . $style . '>' . $aux . '</span>';
+                $html = '<span ' . $style . '>' . $aux . '</span>';
                 break;
+            default:
+                $html = 'not-supported-type';
         }
 
         return $html;
     }
 
+    /**
+     * Devuelve el texto resumido
+     *
+     * @param string $txt
+     *
+     * @return string
+     */
     private function getTextResume($txt)
     {
         if (mb_strlen($txt) < 60) {
@@ -387,7 +402,7 @@ class WidgetItem
                 $value = in_array($value, ['t', '1']);
                 $icon = $value ? 'fa-check' : 'fa-minus';
                 $style = $this->getTextOptionsHTML($value);
-                $html = '<i class="fa ' . $icon . '" aria-hidden="true"' . $style . '></i>';
+                $html = '<i class="fa ' . $icon . '" aria-hidden="true" ' . $style . '></i>';
                 break;
 
             case 'icon':
@@ -432,8 +447,8 @@ class WidgetItem
     private function specialAttributes()
     {
         $hint = $this->getHintHTML($this->hint);
-        $readOnly = (empty($this->readOnly)) ? '' : ' readonly="readonly"';
-        $required = (empty($this->required)) ? '' : ' required="required"';
+        $readOnly = empty($this->readOnly) ? '' : ' readonly="readonly"';
+        $required = empty($this->required) ? '' : ' required="required"';
 
         return $hint . $readOnly . $required;
     }
@@ -448,12 +463,12 @@ class WidgetItem
      */
     private function specialNumberAttributes()
     {
-        $step = (empty($this->step)) ? '' : ' step="' . $this->step . '"';
-        $min = (empty($this->min)) ? '' : ' min="' . $this->min . '"';
-        $max = (empty($this->max)) ? '' : ' max="' . $this->max . '"';
+        $step = empty($this->step) ? '' : ' step="' . $this->step . '"';
+        $min = empty($this->min) ? '' : ' min="' . $this->min . '"';
+        $max = empty($this->max) ? '' : ' max="' . $this->max . '"';
         return $step . $min . $max;
     }
-    
+
     /**
      * Genera el código html para la visualización y edición de los datos
      * en el controlador List / Edit
@@ -481,7 +496,7 @@ class WidgetItem
                 break;
 
             case 'textarea':
-                $html .= '<textarea id=' . $fieldName . ' class="form-control" name=' . $fieldName . ' rows="3"'
+                $html .= '<textarea id=' . $fieldName . ' class="form-control" name=' . $fieldName . ' rows="3" '
                     . $specialAttributes . '>' . $value . '</textarea>';
                 break;
 
@@ -495,7 +510,7 @@ class WidgetItem
 
             case 'number':
                 $specialAttributes .= ' ' . $this->specialNumberAttributes();
-            
+
             default:
                 $html .= $this->standardHTMLWidget($fieldName, $value, $specialAttributes);
         }
@@ -513,7 +528,7 @@ class WidgetItem
      * @param mixed $value
      * @param string $specialAttributes
      * @param string $extraClass
-     * 
+     *
      * @return string
      */
     private function standardHTMLWidget($fieldName, $value, $specialAttributes, $extraClass = '')
@@ -536,7 +551,7 @@ class WidgetItem
         $html = '<select id=' . $fieldName . ' class="form-control" name=' . $fieldName . $specialAttributes . '>';
         foreach ($this->values as $selectValue) {
             $selected = ($selectValue['value'] == $value) ? ' selected="selected" ' : '';
-            $html .= '<option value="' . $selectValue['value'] . '"' . $selected . '>' . $selectValue['title'] . '</option>';
+            $html .= '<option value="' . $selectValue['value'] . '" ' . $selected . '>' . $selectValue['title'] . '</option>';
         }
         $html .= '</select>';
 

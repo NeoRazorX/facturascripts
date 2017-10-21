@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,24 +20,44 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\ExportInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of CSVExport
  *
- * @author carlos
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class CSVExport implements ExportInterface
 {
+    /**
+     * Nuevo documento
+     *
+     * @param $model
+     */
     public function newDoc($model)
     {
         ;
     }
-    
+
+    /**
+     * Nueva lista de documentos
+     *
+     * @param $model
+     * @param array $where
+     * @param array $order
+     * @param int $offset
+     * @param array $columns
+     */
     public function newListDoc($model, $where, $order, $offset, $columns)
     {
         ;
     }
-    
+
+    /**
+     * Asigna la cabecera
+     *
+     * @param Response $response
+     */
     public function setHeaders(&$response)
     {
         ;

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,7 +29,7 @@ namespace FacturaScripts\Core\Base\DataBase;
 class MysqlSQL implements DataBaseSQL
 {
     /**
-     * Genera el SQL con el tipo de campo y las constraints DEFAULT y NULL
+     * Genera el SQL con el tipo de campo y las constraints DEFAULT y null
      *
      * @param array $colData
      *
@@ -37,10 +37,10 @@ class MysqlSQL implements DataBaseSQL
      */
     private function getTypeAndConstraints($colData)
     {
-        $type = stripos('integer,serial', $colData['tipo']) === FALSE ? strtolower($colData['tipo']) : FS_DB_INTEGER;
-        switch (TRUE) {
+        $type = stripos('integer,serial', $colData['tipo']) === false ? strtolower($colData['tipo']) : FS_DB_INTEGER;
+        switch (true) {
             case $type == 'serial':
-            case stripos($colData['defecto'], 'nextval(') !== FALSE:
+            case stripos($colData['defecto'], 'nextval(') !== false:
                 $contraints = ' NOT NULL AUTO_INCREMENT';
                 break;
 
@@ -53,7 +53,7 @@ class MysqlSQL implements DataBaseSQL
     }
 
     /**
-     *
+     * Devuelve una string con las restricciones dels columnas.
      * @param array $colData
      *
      * @return string
@@ -285,7 +285,7 @@ class MysqlSQL implements DataBaseSQL
     }
 
     /**
-     * Sentencia SQL para modificar una constraint NULL de un campo de una tabla
+     * Sentencia SQL para modificar una constraint null de un campo de una tabla
      *
      * @param string $tableName
      * @param array  $colData

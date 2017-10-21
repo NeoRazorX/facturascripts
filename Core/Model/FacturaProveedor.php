@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,18 +24,28 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 /**
  * Factura de un proveedor.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class FacturaProveedor
 {
     use Base\DocumentoCompra;
     use Base\Factura;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'facturasprov';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'idfactura';
@@ -81,11 +91,9 @@ class FacturaProveedor
                             /// ¿La factura está dentro de alguna regularización?
                             $regiva0 = new RegularizacionIva();
                             if ($regiva0->getFechaInside($this->fecha)) {
-                                $this->miniLog->alert('La factura se encuentra dentro de una regularización de '
-                                    . FS_IVA . '. No se puede modificar la fecha.');
+                                $this->miniLog->alert($this->i18n->trans('invoice-regularized-cant-change-date', [FS_IVA]));
                             } elseif ($regiva0->getFechaInside($fecha)) {
-                                $this->miniLog->alert('No se puede asignar la fecha ' . $fecha . ' porque ya hay'
-                                    . ' una regularización de ' . FS_IVA . ' para ese periodo.');
+                                $this->miniLog->alert($this->i18n->trans('cant-assign-date-already-regularized', [$fecha, FS_IVA]));
                             } else {
                                 $cambio = false;
                                 $this->fecha = $fecha;
@@ -98,18 +106,14 @@ class FacturaProveedor
                                 }
                             }
                         } else {
-                            $this->miniLog->alert(
-                                'El ejercicio ' . $eje2->nombre . ' está cerrado. No se puede modificar la fecha.'
-                            );
+                            $this->miniLog->alert($this->i18n->trans('closed-exercise-cant-change-date', [$eje2->nombre]));
                         }
                     }
                 } else {
-                    $this->miniLog->alert(
-                        'El ejercicio ' . $ejercicio->nombre . ' está cerrado. No se puede modificar la fecha.'
-                    );
+                    $this->miniLog->alert($this->i18n->trans('closed-exercise-cant-change-date', [$ejercicio->nombre]));
                 }
             } else {
-                $this->miniLog->alert('Ejercicio no encontrado.');
+                $this->miniLog->alert($this->i18n->trans('exercise-not-found'));
             }
         } elseif ($hora !== $this->hora) { /// factura existente y cambiamos hora
             $this->hora = $hora;
@@ -119,9 +123,9 @@ class FacturaProveedor
     }
 
     /**
-     * Devuelve las líneas de la factura.
+     * Devuelve las líneas asociadas a la factura.
      *
-     * @return array
+     * @return LineaFacturaProveedor[]
      */
     public function getLineas()
     {
@@ -133,11 +137,11 @@ class FacturaProveedor
      * Devuelve las líneas de IVA de la factura.
      * Si no hay, las crea.
      *
-     * @return array
+     * @return LineaIvaFacturaProveedor[]
      */
     public function getLineasIva()
     {
-        return $this->getLineasIvaTrait($this->getLineas(), 'LineaIvaFacturaProveedor');
+        return $this->getLineasIvaTrait('FacturaProveedor');
     }
 
     /**
@@ -149,24 +153,15 @@ class FacturaProveedor
     {
         return $this->testTrait();
     }
-    
+
+    /**
+     * Ejecuta un test completo de pruebas
+     *
+     * @return bool
+     */
     public function fullTest()
     {
         return $this->fullTestTrait('invoice');
-    }
-
-    public function save()
-    {
-        if ($this->test()) {
-            if ($this->exists()) {
-                return $this->saveUpdate();
-            }
-
-            $this->newCodigo();
-            return $this->saveInsert();
-        }
-
-        return FALSE;
     }
 
     /**
@@ -184,18 +179,17 @@ class FacturaProveedor
             if ($ejercicio->abierto()) {
                 $reg0 = new RegularizacionIva();
                 if ($reg0->getFechaInside($this->fecha)) {
-                    $this->miniLog->alert('La factura se encuentra dentro de una regularización de '
-                        . FS_IVA . '. No se puede eliminar.');
+                    $this->miniLog->alert($this->i18n->trans('invoice-regularized-cant-delete', [FS_IVA]));
                     $bloquear = true;
                 } else {
                     foreach ($this->getRectificativas() as $rect) {
-                        $this->miniLog->alert('La factura ya tiene una rectificativa. No se puede eliminar.');
+                        $this->miniLog->alert($this->i18n->trans('invoice-have-rectifying-cant-delete'));
                         $bloquear = true;
                         break;
                     }
                 }
             } else {
-                $this->miniLog->alert('El ejercicio ' . $ejercicio->nombre . ' está cerrado.');
+                $this->miniLog->alert($this->i18n->trans('closed-exercise', [$ejercicio->nombre]));
                 $bloquear = true;
             }
         }
@@ -225,7 +219,7 @@ class FacturaProveedor
                 }
             }
 
-            $this->miniLog->info(ucfirst(FS_FACTURA) . ' de compra ' . $this->codigo . ' eliminada correctamente.');
+            $this->miniLog->info($this->i18n->trans('supplier-invoice-deleted-successfully', [$this->codigo]));
 
             return true;
         }

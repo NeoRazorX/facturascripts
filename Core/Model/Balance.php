@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Model;
 /**
  * Define que cuentas hay que usar para generar los distintos informes contables.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Balance
 {
@@ -33,92 +33,102 @@ class Balance
     /**
      * Clave primaria.
      *
-     * @var
+     * @var string
      */
     public $codbalance;
 
     /**
-     * TODO
+     * Descripción 4  del balance
      *
-     * @var
+     * @var string
      */
     public $descripcion4ba;
 
     /**
-     * TODO
+     * Descripción 4 del balance
      *
-     * @var
+     * @var string
      */
     public $descripcion4;
 
     /**
-     * TODO
+     * Nivel 4  del balance
      *
-     * @var
+     * @var string
      */
     public $nivel4;
 
     /**
-     * TODO
+     * Descripción 3 del balance
      *
-     * @var
+     * @var string
      */
     public $descripcion3;
 
     /**
-     * TODO
+     * Orden 3 del balance
      *
-     * @var
+     * @var string
      */
     public $orden3;
 
     /**
-     * TODO
+     * Nivel 2 del balance
      *
-     * @var
+     * @var string
      */
     public $nivel3;
 
     /**
-     * TODO
+     * Descripción 2 del balance
      *
-     * @var
+     * @var string
      */
     public $descripcion2;
 
     /**
-     * TODO
+     * Nivel 2 del balance
      *
-     * @var
+     * @var int
      */
     public $nivel2;
 
     /**
-     * TODO
+     * Descripción 1 del balance
      *
-     * @var
+     * @var string
      */
     public $descripcion1;
 
     /**
-     * TODO
+     * Nivel 1 del balance
      *
-     * @var
+     * @var string
      */
     public $nivel1;
 
     /**
-     * TODO
+     * Naturaleza del balance
      *
-     * @var
+     * @var string
      */
     public $naturaleza;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'co_codbalances08';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'codbalance';

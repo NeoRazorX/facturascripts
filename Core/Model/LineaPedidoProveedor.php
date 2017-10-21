@@ -1,8 +1,8 @@
 <?php
-/*
+/**
  * This file is part of presupuestos_y_pedidos
- * Copyright (C) 2014-2017  Carlos Garcia Gomez       neorazorx@gmail.com
- * Copyright (C) 2014-2015  Francesc Pineda Segarra   shawe.ewahs@gmail.com
+ * Copyright (C) 2014-2017  Carlos Garcia Gomez       <carlos@facturascripts.com>
+ * Copyright (C) 2014-2015  Francesc Pineda Segarra   <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,12 +17,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
  * Línea de pedido de proveedor.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class LineaPedidoProveedor
 {
@@ -36,6 +37,11 @@ class LineaPedidoProveedor
      */
     public $idpedido;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'lineaspedidosprov';

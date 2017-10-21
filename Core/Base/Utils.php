@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Base;
 /**
  * Description of Utils
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 trait Utils
 {
@@ -62,7 +62,7 @@ trait Utils
 
     /**
      * Devuelve el valor entero de la variable $s,
-     * o NULL si es NULL. La función intval() del php devuelve 0 si es NULL.
+     * o null si es null. La función intval() del php devuelve 0 si es null.
      *
      * @param string $str
      *
@@ -79,7 +79,7 @@ trait Utils
 
     /**
      * Compara dos números en coma flotante con una precisión de $precision,
-     * devuelve TRUE si son iguales, FALSE en caso contrario.
+     * devuelve True si son iguales, False en caso contrario.
      *
      * @param double $f1
      * @param double $f2
@@ -124,7 +124,7 @@ trait Utils
     /**
      * Devuelve una cadena de texto aleatorio de longitud $length
      *
-     * @param integer $length
+     * @param int $length
      *
      * @return string
      */
@@ -155,7 +155,14 @@ trait Utils
 
         return trim($newt);
     }
-    
+
+    /**
+     * Realiza correcciones en el código HTML
+     *
+     * @param string $txt
+     *
+     * @return string
+     */
     public function fixHtml($txt)
     {
         $original = ['&lt;', '&gt;', '&quot;', '&#39;'];
@@ -164,11 +171,11 @@ trait Utils
     }
 
     /**
-     * PostgreSQL guarda los valores TRUE como 't', MySQL como 1.
-     * Esta función devuelve TRUE si el valor se corresponde con
+     * PostgreSQL guarda los valores True como 't', MySQL como 1.
+     * Esta función devuelve True si el valor se corresponde con
      * alguno de los anteriores.
      *
-     * @param $val
+     * @param string $val
      *
      * @return bool
      */
@@ -178,9 +185,9 @@ trait Utils
     }
 
     /**
-     * TODO
+     * Convierte un boleano a a texto
      *
-     * @param boolean $val
+     * @param bool $val
      *
      * @return string
      */
@@ -195,6 +202,8 @@ trait Utils
                 return '1';
             case 0:
                 return '0';
+            default:
+                return 'f';
         }
     }
 }

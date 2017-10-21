@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,31 +22,64 @@ namespace FacturaScripts\Core\Base;
 /**
  * Define atributos y métodos globales a todas las clases
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Rafael San José Tovar
  */
 abstract class CronClass
 {
+    /**
+     * Objeto de la cache
+     *
+     * @var Cache|null
+     */
     protected static $cache = null;
+
+    /**
+     * Objeto de la base de datos
+     *
+     * @var DataBase|null
+     */
     protected static $dataBase = null;
+
+    /**
+     * Objeto del traductor
+     *
+     * @var Translator|null
+     */
     protected static $i18n = null;
+
+    /**
+     * Objeto minilog
+     *
+     * @var MiniLog|null
+     */
     protected static $miniLog = null;
 
+    /**
+     * CronClass constructor.
+     *
+     * @param string $folder
+     */
     public function __construct($folder = '')
     {
         if (!isset(self::$cache)) {
-            self::$cache = new Base\Cache($folder);
+            self::$cache = new Cache($folder);
         }
         if (!isset(self::$dataBase)) {
-            self::$dataBase = new Base\DataBase();
+            self::$dataBase = new DataBase();
         }
         if (!isset(self::$i18n)) {
-            self::$i18n = new Base\Translator($folder, FS_LANG);
+            self::$i18n = new Translator($folder);
         }
         if (!isset(self::$miniLog)) {
-            self::$miniLog = new Base\MiniLog();
+            self::$miniLog = new MiniLog();
         }
     }
 
+    /**
+     * Selecciona y ejecuta el controlador pertinente para el cron.
+     *
+     * @return mixed
+     */
     abstract public function run();
 }

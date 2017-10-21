@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,7 +26,7 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" numcolumns="2" order="100"
-                    description="Code for internal family use.">
+                    description="desc-family-code">
                 <widget type="text" fieldname="codfamilia" onclick="" icon="fa-object-group" required="true" />
             </column>
             
@@ -34,7 +34,7 @@
                 <widget type="text" fieldname="descripcion" required="true" />
             </column>
             
-            <column name="parent" numcolumns="4" order="120" description="Indicates if the family is grouped at a higher level.">
+            <column name="parent" numcolumns="4" order="120" description="desc-parent-family">
                 <widget type="select" fieldname="madre" required="true">
                     <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
                 </widget>

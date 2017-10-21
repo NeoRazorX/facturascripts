@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,7 +26,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  * de un material que se ha comprado. Implica la entrada de ese material
  * al almacén.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class AlbaranProveedor
 {
@@ -47,17 +47,27 @@ class AlbaranProveedor
     public $idfactura;
 
     /**
-     * TRUE => está pendiente de factura.
+     * True => está pendiente de factura.
      *
      * @var bool
      */
     public $ptefactura;
 
+    /**
+     * Devuelve el nombdre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'albaranesprov';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'idalbaran';
@@ -85,13 +95,13 @@ class AlbaranProveedor
     public function clear()
     {
         $this->clearDocumentoCompra();
-        $this->ptefactura = TRUE;
+        $this->ptefactura = true;
     }
 
     /**
      * Devuelve las líneas asociadas al albarán
      *
-     * @return array
+     * @return LineaAlbaranProveedor[]
      */
     public function getLineas()
     {
@@ -100,7 +110,7 @@ class AlbaranProveedor
     }
 
     /**
-     * Comprueba los datos del albarán, devuelve TRUE si está correcto
+     * Comprueba los datos del albarán, devuelve True si está correcto
      *
      * @return bool
      */
@@ -108,24 +118,15 @@ class AlbaranProveedor
     {
         return $this->testTrait();
     }
-    
+
+    /**
+     * Ejecuta un test completo de pruebas
+     *
+     * @return bool
+     */
     public function fullTest()
     {
         return $this->fullTestTrait('albaran');
-    }
-
-    public function save()
-    {
-        if ($this->test()) {
-            if ($this->exists()) {
-                return $this->saveUpdate();
-            }
-
-            $this->newCodigo();
-            return $this->saveInsert();
-        }
-
-        return FALSE;
     }
 
     /**
@@ -149,7 +150,7 @@ class AlbaranProveedor
                 }
             }
 
-            $this->miniLog->info(ucfirst(FS_ALBARAN) . ' de compra ' . $this->codigo . ' eliminado correctamente.');
+            $this->miniLog->info($this->i18n->trans('supplier-delivery-note-deleted-successfully', [$this->codigo]));
 
             return true;
         }
@@ -158,12 +159,12 @@ class AlbaranProveedor
     }
 
     /**
-     * TODO
+     * Ejecuta una tarea con cron
      */
     public function cronJob()
     {
         /**
-         * Ponemos a NULL todos los idfactura que no están en facturasprov
+         * Ponemos a null todos los idfactura que no están en facturasprov
          */
         $sql = 'UPDATE ' . $this->tableName() . ' SET idfactura = NULL WHERE idfactura IS NOT NULL'
             . ' AND idfactura NOT IN (SELECT idfactura FROM facturasprov);';

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
+
+use FacturaScripts\Core\Base;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Definición de vista para uso en ExtendedControllers
@@ -40,7 +44,7 @@ class EditView extends BaseView
         parent::__construct($title, $modelName);
         
         // Carga configuración de la vista para el usuario
-        $this->pageOption->getForUser($viewName, $userNick);        
+        $this->pageOption->getForUser($viewName, $userNick);
     }
 
     /**
@@ -84,7 +88,7 @@ class EditView extends BaseView
     /**
      * Establece y carga los datos del modelo en base a su PK
      *
-     * @param string $code
+     * @param string|array $code
      */
     public function loadData($code)
     {
@@ -99,7 +103,16 @@ class EditView extends BaseView
             $column->widget->readOnly = (!empty($this->model->{$fieldName}));
         }
     }
-        
+
+    /**
+     * Método para la exportación de los datos de la vista
+     *
+     * @param Base\ExportManager $exportManager
+     * @param Response $response
+     * @param string $action
+     *
+     * @return mixed
+     */
     public function export(&$exportManager, &$response, $action)
     {
         return $exportManager->generateDoc($response, $action, $this->model);

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 /**
- * Gestiona la barra de navegación 
+ * Gestiona la barra de navegación
  * para saltar entre los datos de un modelo
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -34,7 +35,6 @@ class Pagination
     
     /**
      * Constructor de la clase
-     * 
      */
     public function __construct()
     {
@@ -43,7 +43,9 @@ class Pagination
     /**
      * Devuelve el offset para el primer elemento del margen especificado
      * para la paginación
-     * 
+     *
+     * @param int $offset
+     *
      * @return int
      */
     private function getRecordMin($offset)
@@ -58,7 +60,10 @@ class Pagination
     /**
      * Devuelve el offset para el último elemento del margen especificado
      * para la paginación
-     * 
+     *
+     * @param int $offset
+     * @param int $count
+     *
      * @return int
      */
     private function getRecordMax($offset, $count)
@@ -68,25 +73,25 @@ class Pagination
             $result = $count;
         }
         return $result;
-    }    
+    }
     
     /**
      * Devuelve un item de paginación
      * @param string $url
      * @param int $page
      * @param int $offset
-     * @param string $icon
-     * @param boolean $active
+     * @param string|bool $icon
+     * @param bool $active
      * @return array
      */
-    private function addPaginationItem($url, $page, $offset, $icon = FALSE, $active = FALSE)
+    private function addPaginationItem($url, $page, $offset, $icon = false, $active = false)
     {
         /// ¿La url lleva #?
         if (strpos($url, '#') !== false) {
             $auxUrl = explode('#', $url);
             
             return [
-                'url' => $auxUrl[0] . "&offset=" . $offset . '#' . $auxUrl[1],
+                'url' => $auxUrl[0] . '&offset=' . $offset . '#' . $auxUrl[1],
                 'icon' => $icon,
                 'page' => $page,
                 'active' => $active
@@ -94,7 +99,7 @@ class Pagination
         }
 
         return [
-            'url' => $url . "&offset=" . $offset,
+            'url' => $url . '&offset=' . $offset,
             'icon' => $icon,
             'page' => $page,
             'active' => $active
@@ -112,6 +117,10 @@ class Pagination
      *      mitad posterior
      *      última
      *
+     * @param string $url
+     * @param int $count
+     * @param int $offset
+     *
      * @return array
      *      url    => link a la página
      *      icon   => icono específico de bootstrap en vez de núm. página
@@ -127,7 +136,7 @@ class Pagination
 
         // Añadimos la primera página, si no está incluida en el margen de páginas
         if ($offset > (self::FS_ITEM_LIMIT * self::FS_PAGE_MARGIN)) {
-            $result[$index] = $this->addPaginationItem($url, 1, 0, "fa-step-backward");
+            $result[$index] = $this->addPaginationItem($url, 1, 0, 'fa-step-backward');
             $index++;
         }
 
@@ -136,7 +145,7 @@ class Pagination
         $recordMiddleLeft = ($recordMin > self::FS_ITEM_LIMIT) ? ($offset / 2) : $recordMin;
         if ($recordMiddleLeft < $recordMin) {
             $page = floor($recordMiddleLeft / self::FS_ITEM_LIMIT);
-            $result[$index] = $this->addPaginationItem($url, ($page + 1), ($page * self::FS_ITEM_LIMIT), "fa-backward");
+            $result[$index] = $this->addPaginationItem($url, ($page + 1), ($page * self::FS_ITEM_LIMIT), 'fa-backward');
             $index++;
         }
 
@@ -144,7 +153,7 @@ class Pagination
         for ($record = $recordMin; $record < $recordMax; $record += self::FS_ITEM_LIMIT) {
             if (($record >= $recordMin && $record <= $offset) || ($record <= $recordMax && $record >= $offset)) {
                 $page = ($record / self::FS_ITEM_LIMIT) + 1;
-                $result[$index] = $this->addPaginationItem($url, $page, $record, FALSE, ($record == $offset));
+                $result[$index] = $this->addPaginationItem($url, $page, $record, false, ($record == $offset));
                 $index++;
             }
         }
@@ -154,17 +163,17 @@ class Pagination
         $recordMiddleRight = $offset + (($count - $offset) / 2);
         if ($recordMiddleRight > $recordMax) {
             $page = floor($recordMiddleRight / self::FS_ITEM_LIMIT);
-            $result[$index] = $this->addPaginationItem($url, ($page + 1), ($page * self::FS_ITEM_LIMIT), "fa-forward");
+            $result[$index] = $this->addPaginationItem($url, ($page + 1), ($page * self::FS_ITEM_LIMIT), 'fa-forward');
             $index++;
         }
 
         // Añadimos la última página, si no está incluida en el margen de páginas
         if ($recordMax < $count) {
             $pageMax = floor($count / self::FS_ITEM_LIMIT);
-            $result[$index] = $this->addPaginationItem($url, ($pageMax + 1), ($pageMax * self::FS_ITEM_LIMIT), "fa-step-forward");
+            $result[$index] = $this->addPaginationItem($url, ($pageMax + 1), ($pageMax * self::FS_ITEM_LIMIT), 'fa-step-forward');
         }
 
         /// si solamente hay una página, no merece la pena mostrar un único botón
         return (count($result) > 1) ? $result : [];
-    }    
+    }
 }
