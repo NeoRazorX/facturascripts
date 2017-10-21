@@ -50,24 +50,33 @@ class GroupItem extends VisualItem implements VisualItemInterface
         $this->icon = NULL;
         $this->columns = [];
     }
-
+    
+    /**
+     * Función para la ordenación de columnas
+     * 
+     * @param ColumnItem $column1
+     * @param ColumnItem $column2
+     * @return int
+     */
+    static function sortColumns($column1, $column2)
+    {
+        if ($column1->order == $column2->order) {
+            return 0;
+        }
+        
+        return ($column1->order < $column2->order) ? -1 : 1;
+    }
+    
     public function loadFromXMLColumns($group)
     {
-        $this->columns = [];
-        $count = 1;
         foreach ($group->column as $column) {
             $columnItem = new ColumnItem();
             $columnItem->loadFromXML($column);
 
-            $order = str_pad($columnItem->order, 3, '0', STR_PAD_LEFT);
-            $position = str_pad($count, 2, '0', STR_PAD_LEFT);
-            $key = $order . $position;
-
-            $this->columns[$key] = $columnItem;
+            $this->columns[$columnItem->name] = $columnItem;
             unset($columnItem);
-            ++$count;
         }
-        ksort($this->columns, SORT_STRING);
+        uasort($this->columns, ['self', 'sortColumns']);
     }
 
     /**
@@ -92,7 +101,16 @@ class GroupItem extends VisualItem implements VisualItemInterface
     public function loadFromJSON($group)
     {
         parent::loadFromJSON($group);
-        $this->columns = (array) $group['columns'];
+        $this->icon = (string) $group['icon'];
+
+        foreach ($group['columns'] as $column) {
+            $columnItem = new ColumnItem();
+            $columnItem->loadFromJSON($column);
+
+            $this->columns[$columnItem->name] = $columnItem;
+            unset($columnItem);
+        }
+        uasort($this->columns, ['self', 'sortColumns']);
     }
 
     /**

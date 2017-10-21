@@ -47,5 +47,6 @@ class ListArticulo extends ExtendedController\ListController
         $this->addOrderBy($className, 'referencia', 'reference');
         $this->addOrderBy($className, 'descripcion', 'description');
         $this->addOrderBy($className, 'pvp', 'price');
+        $this->addOrderBy($className, 'stockfis', 'stock');
     }
 }

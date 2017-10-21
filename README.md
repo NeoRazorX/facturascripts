@@ -2,7 +2,7 @@
 *Software de facturación y contabilidad para pymes, fácil, libre y con actualizaciones constantes. Es compatible con FacturaLux, Abanq y Eneboo. Es software libre bajo licencia GNU/LGPL.*
 
 ## Atención
-Este es un prototipo con el que estamos experimentando. La versión estable de FacturaScripts está en
+Esta es la versión que estamos rediseñando para 2018. La versión actual (2017) de FacturaScripts está en
 https://github.com/NeoRazorX/facturascripts_2015
 
 ## Instalación

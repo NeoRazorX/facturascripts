@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la edición de un registro del modelo Familia
@@ -35,13 +34,13 @@ class EditFamilia extends ExtendedController\EditController
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         // Establecemos el modelo de datos
-        $this->model = new Model\Familia();
+        $this->modelName = 'FacturaScripts\Core\Model\Familia';
     }
 
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Familias';
+        $pagedata['title'] = 'families';
         $pagedata['icon'] = 'fa-object-group';
         $pagedata['showonmenu'] = FALSE;
 

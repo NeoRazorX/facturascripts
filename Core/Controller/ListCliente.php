@@ -32,7 +32,7 @@ class ListCliente extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Clientes';
+        $pagedata['title'] = 'customers';
         $pagedata['icon'] = 'fa-users';
         $pagedata['menu'] = 'ventas';
 
@@ -43,7 +43,7 @@ class ListCliente extends ExtendedController\ListController
     {
         /* Clientes */
         $this->addView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'Clientes');
-        $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente']);
+        $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente', 'email']);
 
         $this->addOrderBy('ListCliente', 'codcliente', 'code');
         $this->addOrderBy('ListCliente', 'nombre', 'name', 1);

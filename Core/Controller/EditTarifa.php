@@ -20,34 +20,29 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la edición de un registro del modelo Cliente
+ * Controlador para la edición de un registro del modelo Tarifa
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author @jhonsmall <juancarloschico0@gmail.com>
  */
-class EditCliente extends ExtendedController\EditController
+class EditTarifa extends ExtendedController\EditController
 {
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         // Establecemos el modelo de datos
-        $this->model = new Model\Cliente();
-    }
-
-    public function getPanelFooter()
-    {
-        return $this->i18n->trans('Fecha de alta: ') . $this->model->fechaalta;
+        $this->modelName = 'FacturaScripts\Core\Model\Tarifa';
     }
 
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'customers';
-        $pagedata['icon'] = 'fa-users';
+        $pagedata['title'] = 'Rates';
+        $pagedata['icon'] = 'fa-money';
         $pagedata['showonmenu'] = FALSE;
 
         return $pagedata;

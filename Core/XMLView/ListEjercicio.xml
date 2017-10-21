@@ -24,32 +24,29 @@
 
 <view>
     <columns>
-        <column title="Código" order="100">
+        <column name="code" order="100">
             <widget type="text" fieldname="codejercicio" onclick="EditEjercicio" />
         </column>
-        <column title="Nombre" order="110">
+        <column name="name" order="110">
             <widget type="text" fieldname="nombre" />
         </column>
-        <column title="Inicio" display="center" order="120">
+        <column name="start-date" display="center" order="120">
             <widget type="text" fieldname="fechainicio" />
         </column>
-        <column title="Fin" display="center" order="130">
+        <column name="end-date" display="center" order="130">
             <widget type="text" fieldname="fechafin" />
         </column>
-        <column title="Estado" display="center" order="140">
+        <column name="state" display="center" order="140">
             <widget type="text" fieldname="estado">
                 <option color="red" font-weight="bold">ABIERTO</option>
                 <option color="blue">CERRADO</option>
             </widget>
         </column>
-        <column title="Plan" description="Indica si se usa un plancontable anterior o posterior al 2008" display="center" order="150">
+        <column name="plan" display="center" order="150">
             <widget type="text" fieldname="plancontable" />
         </column>
-        <column title="Long.Cta" display="center" order="160">
+        <column name="account-length" display="center" order="160">
             <widget type="text" fieldname="longsubcuenta" />
         </column>
     </columns>
-    
-    <filters>        
-    </filters>    
 </view>

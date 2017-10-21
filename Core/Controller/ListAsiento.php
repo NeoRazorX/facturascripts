@@ -42,7 +42,7 @@ class ListAsiento extends ExtendedController\ListController
     {
         $className = $this->getClassName();
         $this->addView('FacturaScripts\Core\Model\Asiento', $className);
-        $this->addSearchFields($className, ['CAST(numero AS VARCHAR)', 'concepto']);
+        $this->addSearchFields($className, ['numero', 'concepto']);
 
         $this->addOrderBy($className, 'numero', 'number');
         $this->addOrderBy($className, 'fecha', 'date', 2); /// forzamos el orden por defecto fecha desc

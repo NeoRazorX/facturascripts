@@ -28,28 +28,25 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 class PresupuestoCliente
 {
     use Base\DocumentoVenta;
-    use Base\ModelTrait {
-        clear as clearTrait;
-    }
 
     /**
      * Clave primaria.
      *
-     * @var type
+     * @var integer
      */
     public $idpresupuesto;
 
     /**
      * ID del pedido relacionado, si lo hay.
      *
-     * @var type
+     * @var integer
      */
     public $idpedido;
 
     /**
      * Fecha en la que termina la validéz del presupuesto.
      *
-     * @var type
+     * @var string
      */
     public $finoferta;
 
@@ -67,7 +64,7 @@ class PresupuestoCliente
     /**
      * Si este presupuesto es la versión de otro, aquí se almacena el idpresupuesto del original.
      *
-     * @var type
+     * @var integer
      */
     public $idoriginal;
 
@@ -83,14 +80,8 @@ class PresupuestoCliente
 
     public function clear()
     {
-        $this->clearTrait();
-        $this->codpago = $this->default_items->codpago();
-        $this->codserie = $this->default_items->codserie();
-        $this->codalmacen = $this->default_items->codalmacen();
-        $this->fecha = date('d-m-Y');
-        $this->finoferta = date('d-m-Y', strtotime(date('d-m-Y') . ' +1month'));
-        $this->hora = date('H:i:s');
-        $this->tasaconv = 1.0;
+        $this->clearDocumentoVenta();
+        $this->finoferta = date('d-m-Y', strtotime(date('d-m-Y') . ' +1 month'));
         $this->status = 0;
         $this->editable = TRUE;
     }
@@ -103,7 +94,6 @@ class PresupuestoCliente
     public function getLineas()
     {
         $lineaModel = new LineaPresupuestoCliente();
-
         return $lineaModel->all(new DataBaseWhere('idpresupuesto', $this->idpresupuesto));
     }
 
@@ -111,7 +101,7 @@ class PresupuestoCliente
     {
         $versiones = [];
 
-        $sql = 'SELECT * FROM ' . $this->table_name . ' WHERE idoriginal = ' . $this->var2str($this->idpresupuesto);
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idoriginal = ' . $this->var2str($this->idpresupuesto);
         if ($this->idoriginal) {
             $sql .= ' OR idoriginal = ' . $this->var2str($this->idoriginal);
             $sql .= ' OR idpresupuesto = ' . $this->var2str($this->idoriginal);
@@ -135,29 +125,6 @@ class PresupuestoCliente
      */
     public function test()
     {
-        $this->nombrecliente = $this->no_html($this->nombrecliente);
-        if ($this->nombrecliente == '') {
-            $this->nombrecliente = '-';
-        }
-
-        $this->direccion = $this->no_html($this->direccion);
-        $this->ciudad = $this->no_html($this->ciudad);
-        $this->provincia = $this->no_html($this->provincia);
-        $this->envio_nombre = $this->no_html($this->envio_nombre);
-        $this->envio_apellidos = $this->no_html($this->envio_apellidos);
-        $this->envio_direccion = $this->no_html($this->envio_direccion);
-        $this->envio_ciudad = $this->no_html($this->envio_ciudad);
-        $this->envio_provincia = $this->no_html($this->envio_provincia);
-        $this->numero2 = $this->no_html($this->numero2);
-        $this->observaciones = $this->no_html($this->observaciones);
-
-        /**
-         * Usamos el euro como divisa puente a la hora de sumar, comparar
-         * o convertir cantidades en varias divisas. Por este motivo necesimos
-         * muchos decimales.
-         */
-        $this->totaleuros = round($this->total / $this->tasaconv, 5);
-
         /// comprobamos que editable se corresponda con el status
         if ($this->idpedido) {
             $this->status = 1;
@@ -168,13 +135,7 @@ class PresupuestoCliente
             $this->editable = FALSE;
         }
 
-        if ($this->floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, TRUE)) {
-            return TRUE;
-        }
-
-        $this->miniLog->critical('Error grave: El total está mal calculado. ¡Informa del error!');
-
-        return FALSE;
+        return $this->testTrait();
     }
 
     public function save()
@@ -185,92 +146,20 @@ class PresupuestoCliente
             }
 
             $this->newCodigo();
-
             return $this->saveInsert();
         }
 
         return FALSE;
     }
 
-    /**
-     * Devuelve un array con los presupuestos que coinciden con $query
-     *
-     * @param type    $query
-     * @param integer $offset
-     *
-     * @return \PresupuestoCliente
-     */
-    public function search($query, $offset = 0)
-    {
-        $preslist = [];
-        $query = mb_strtolower($this->no_html($query), 'UTF8');
-
-        $consulta = 'SELECT * FROM ' . $this->table_name . ' WHERE ';
-        if (is_numeric($query)) {
-            $consulta .= "codigo LIKE '%" . $query . "%' OR numero2 LIKE '%" . $query . "%' OR observaciones LIKE '%" . $query . "%'
-            OR total BETWEEN '" . ($query - .01) . "' AND '" . ($query + .01) . "'";
-        } elseif (preg_match('/^([0-9]{1,2})-([0-9]{1,2})-([0-9]{4})$/i', $query)) {
-            /// es una fecha
-            $consulta .= 'fecha = ' . $this->var2str($query) . " OR observaciones LIKE '%" . $query . "%'";
-        } else {
-            $consulta .= "lower(codigo) LIKE '%" . $query . "%' OR lower(numero2) LIKE '%" . $query . "%' "
-                . "OR lower(observaciones) LIKE '%" . str_replace(' ', '%', $query) . "%'";
-        }
-        $consulta .= ' ORDER BY fecha DESC, codigo DESC';
-
-        $data = $this->db->select_limit($consulta, FS_ITEM_LIMIT, $offset);
-        if ($data) {
-            foreach ($data as $p) {
-                $preslist[] = new self($p);
-            }
-        }
-
-        return $preslist;
-    }
-
-    /**
-     * Devuelve un array con los presupuestos del cliente $codcliente que coinciden con $query
-     *
-     * @param type $codcliente
-     * @param type $desde
-     * @param type $hasta
-     * @param type $serie
-     * @param type $obs
-     *
-     * @return PresupuestoCliente[]
-     */
-    public function search_from_cliente($codcliente, $desde, $hasta, $serie, $obs = '')
-    {
-        $pedilist = [];
-
-        $sql = 'SELECT * FROM ' . $this->table_name . ' WHERE codcliente = ' . $this->var2str($codcliente) .
-            ' AND idpedido AND fecha BETWEEN ' . $this->var2str($desde) . ' AND ' . $this->var2str($hasta) .
-            ' AND codserie = ' . $this->var2str($serie);
-
-        if ($obs != '') {
-            $sql .= ' AND lower(observaciones) = ' . $this->var2str(strtolower($obs));
-        }
-
-        $sql .= ' ORDER BY fecha DESC, codigo DESC;';
-
-        $data = $this->db->select($sql);
-        if ($data) {
-            foreach ($data as $p) {
-                $preslist[] = new self($p);
-            }
-        }
-
-        return $preslist;
-    }
-
-    public function cron_job()
+    public function cronJob()
     {
         /// marcamos como aprobados los presupuestos con idpedido
-        $this->db->exec('UPDATE ' . $this->table_name . " SET status = '1', editable = FALSE"
+        $this->db->exec('UPDATE ' . $this->tableName() . " SET status = '1', editable = FALSE"
             . " WHERE status != '1' AND idpedido IS NOT NULL;");
 
         /// devolvemos al estado pendiente a los presupuestos con estado 1 a los que se haya borrado el pedido
-        $this->db->exec('UPDATE ' . $this->table_name . " SET status = '0', idpedido = NULL, editable = TRUE"
+        $this->db->exec('UPDATE ' . $this->tableName() . " SET status = '0', idpedido = NULL, editable = TRUE"
             . " WHERE status = '1' AND idpedido NOT IN (SELECT idpedido FROM pedidoscli);");
 
         /// marcamos como rechazados todos los presupuestos con finoferta ya pasada

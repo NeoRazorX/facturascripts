@@ -149,10 +149,11 @@ class DataBase
     public function getColumns($tableName)
     {
         $result = [];
-        $aux = $this->select(self::$engine->getSQL()->sqlColumns($tableName));
-        if (is_array($aux) && !empty($aux)) {
-            foreach ($aux as $data) {
-                $result[] = self::$engine->columnFromData($data);
+        $data = $this->select(self::$engine->getSQL()->sqlColumns($tableName));
+        if (is_array($data) && !empty($data)) {
+            foreach ($data as $dataCol) {
+                $column = self::$engine->columnFromData($dataCol);
+                $result[$column['name']] = $column;
             }
         }
 
@@ -289,7 +290,7 @@ class DataBase
         $result = self::$engine->commit(self::$link);
         if ($result) {
             self::$miniLog->sql('Commit Transaction');
-            ++self::$totalTransactions;
+            self::$totalTransactions++;
         }
 
         return $result;
@@ -351,7 +352,7 @@ class DataBase
             return [];
         }
 
-        ++self::$totalSelects;
+        self::$totalSelects++;
 
         return $result;
     }

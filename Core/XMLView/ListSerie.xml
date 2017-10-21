@@ -24,34 +24,33 @@
 
 <view>
     <columns>
-        <column title="Código" order="100">
+        <column name="code" order="100">
             <widget type="text" fieldname="codserie" onclick="EditSerie" />
         </column>
-        <column title="Descripción" order="110">
+        <column name="description" order="110">
             <widget type="text" fieldname="descripcion" />
         </column>
-        <column title="% Iva" display="right" order="120">
-            <widget type="text" fieldname="iva" />
+        <column name="vat" title="% VAT" display="right" order="120">
+            <widget type="number" decimal="2" fieldname="iva" />
         </column>
-        <column title="% Recargo" display="right" order="130">
-            <widget type="text" fieldname="recargo" />
+        <column name="surcharge" title="% Surcharge" display="right" order="130">
+            <widget type="number" decimal="2" fieldname="recargo" />
         </column>
-        <column title="Sin Impuesto" display="center" order="140">
+        <column name="without-taxation" display="center" order="140">
             <widget type="checkbox" fieldname="siniva">
                 <option color="red">0</option>
             </widget>
         </column>
-        <column title="Cuenta" order="150">
+        <column name="account" order="150">
             <widget type="text" fieldname="codcuenta" />
         </column>
-        <column title="Ejercicio" display="center" order="160">
+        <column name="fiscal-exercise" display="center" order="160">
             <widget type="text" fieldname="codejercicio" />
         </column>
-        <column title="Núm. Factura" display="right" order="170">
-            <widget type="text" fieldname="numfactura" />
+        <column name="first-invoice-number" display="right" order="170">
+            <widget type="number" fieldname="numfactura" />
         </column>
     </columns>
-    
-    <filters>        
-    </filters>    
+    <filters>
+    </filters>
 </view>

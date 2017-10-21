@@ -23,10 +23,11 @@
   },
   "homepage": "https://www.facturascripts.com",
   "dependencies": {
-    "bootbox.js": "^4.3.0",
+    "bootbox.js": "^4.4.0",
     "bootstrap": "4.0.0-beta",
     "font-awesome": "^4.x",
     "jquery": "^3.x",
+    "jscolor-picker": "^2.0.4",
     "popper.js": "^1.12.5"
   }
 }

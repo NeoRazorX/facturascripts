@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base;
@@ -34,6 +33,7 @@ use FacturaScripts\Core\Base\Translator;
  */
 trait ModelTrait
 {
+
     use Base\Utils;
 
     /**
@@ -163,9 +163,7 @@ trait ModelTrait
     public function modelClassName()
     {
         $result = explode('\\', $this->modelName());
-        $index = count($result) - 1;
-
-        return $result[$index];
+        return end($result);
     }
 
     /**
@@ -209,48 +207,54 @@ trait ModelTrait
      */
     public function checkArrayData(&$data)
     {
+        
     }
 
     /**
      * Asigna a las propiedades del modelo los valores del array $data
      *
      * @param array $data
+     * @param array $exclude
      */
-    public function loadFromData(array $data = [])
+    public function loadFromData(array $data = [], array $exclude = [])
     {
         foreach ($data as $key => $value) {
-            foreach (self::$fields as $field) {
-                if ($field['name'] === $key) {
-                    // Comprobamos si es un varchar (con longitud establecida) u otro tipo de dato
-                    $type = (strpos($field['type'], '(') === FALSE) ? $field['type'] : substr($field['type'], 0, strpos($field['type'], '('));
+            if (in_array($key, $exclude)) {
+                continue;
+            }
 
-                    switch ($type) {
-                        case 'tinyint':
-                        case 'boolean':
-                            $this->{$key} = $this->str2bool($value);
-                            break;
+            if (isset(self::$fields[$key])) {
+                $field = self::$fields[$key];
 
-                        case 'integer':
-                        case 'int':
-                            $this->{$key} = empty($value) ? 0 : (int) $value;
-                            break;
+                // Comprobamos si es un varchar (con longitud establecida) u otro tipo de dato
+                $type = (strpos($field['type'], '(') === FALSE) ? $field['type'] : substr($field['type'], 0, strpos($field['type'], '('));
 
-                        case 'double':
-                        case 'float':
-                            $this->{$key} = empty($value) ? 0 : (float) $value;
-                            break;
+                switch ($type) {
+                    case 'tinyint':
+                    case 'boolean':
+                        $this->{$key} = $this->str2bool($value);
+                        break;
 
-                        case 'date':
-                            $this->{$key} = empty($value) ? NULL : date('d-m-Y', strtotime($value));
-                            break;
+                    case 'integer':
+                    case 'int':
+                        $this->{$key} = empty($value) ? 0 : (int) $value;
+                        break;
 
-                        default:
-                            if (empty($value)) {
-                                $value = ($field['is_nullable'] === 'NO') ? '' : NULL;
-                            }
-                            $this->{$key} = $value;
-                    }
-                    break;
+                    case 'double':
+                    case 'double precision':
+                    case 'float':
+                        $this->{$key} = empty($value) ? 0.00 : (float) $value;
+                        break;
+
+                    case 'date':
+                        $this->{$key} = empty($value) ? NULL : date('d-m-Y', strtotime($value));
+                        break;
+
+                    default:
+                        if (empty($value)) {
+                            $value = ($field['is_nullable'] === 'NO') ? '' : NULL;
+                        }
+                        $this->{$key} = $value;
                 }
             }
         }
@@ -268,25 +272,26 @@ trait ModelTrait
 
     /**
      * Rellena la clase con los valores del registro
-     * cuya columna primaria corresponda al valor $cod, o vacio si no existe.
+     * cuya columna primaria corresponda al valor $cod, o según la condición
+     * where indicada, si no se informa valor en $cod. 
+     * Inicializa los valores de la clase si no existe ningún registro que
+     * cumpla las condiciones anteriores.
      * Devuelve True si existe el registro y False en caso contrario.
      *
      * @param string $cod
      *
      * @return boolean
      */
-    public function loadFromCode($cod)
+    public function loadFromCode($cod, $where = NULL, $orderby = [])
     {
-        $data = $this->getRecord($cod);
-        if (!empty($data)) {
-            $this->loadFromData($data[0]);
-
-            return true;
+        $data = $this->getRecord($cod, $where, $orderby);
+        if (empty($data)) {
+            $this->clear();
+            return false;
         }
 
-        $this->clear();
-
-        return false;
+        $this->loadFromData($data[0]);
+        return true;
     }
 
     /**
@@ -532,7 +537,7 @@ trait ModelTrait
                 $done = false;
             }
         } else {
-            $this->miniLog->critical('Error con el xml.');
+            $this->miniLog->critical('error-on-xml-file');
             $done = false;
         }
 
@@ -599,18 +604,19 @@ trait ModelTrait
     }
 
     /**
-     * Lee el registro cuya columna primaria corresponda al valor $cod
+     * Lee el registro cuya columna primaria corresponda al valor $cod 
+     * o el primero que cumple la condición indicada
      *
      * @param string $cod
      *
      * @return array
      */
-    private function getRecord($cod)
+    private function getRecord($cod, $where = NULL, $orderby = [])
     {
-        $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($cod) . ';';
+        $sqlWhere = empty($where) ? ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($cod) : DataBase\DataBaseWhere::getSQLWhere($where);
 
-        return $this->dataBase->select($sql);
+        $sql = 'SELECT * FROM ' . $this->tableName() . $sqlWhere . $this->getOrderBy($orderby);
+        return $this->dataBase->selectLimit($sql, 1);
     }
 
     /**
@@ -647,7 +653,7 @@ trait ModelTrait
         $insertFields = [];
         $insertValues = [];
         foreach (self::$fields as $field) {
-            if ($this->{$field['name']} !== null) {
+            if (isset($this->{$field['name']})) {
                 $insertFields[] = $field['name'];
                 $insertValues[] = $this->var2str($this->{$field['name']});
             }

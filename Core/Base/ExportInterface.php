@@ -26,6 +26,7 @@ namespace FacturaScripts\Core\Base;
  */
 interface ExportInterface
 {
+    public function setHeaders(&$response);
     public function newDoc($model);
-    public function newListDoc($cursor, $columns);
+    public function newListDoc($model, $where, $order, $offset, $columns);
 }

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -28,6 +27,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class Stock
 {
+
     use Base\ModelTrait;
 
     /**
@@ -106,6 +106,8 @@ class Stock
      * @var
      */
     public $cantidadultreg;
+    public $fechaultreg;
+    public $horaultreg;
 
     /**
      * TODO
@@ -140,6 +142,8 @@ class Stock
         $this->stockmin = 0;
         $this->stockmax = 0;
         $this->cantidadultreg = 0;
+        $this->fechaultreg = null;
+        $this->horaultreg = null;
         $this->ubicacion = null;
     }
 

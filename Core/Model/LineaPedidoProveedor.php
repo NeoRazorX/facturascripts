@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -27,8 +26,8 @@ namespace FacturaScripts\Core\Model;
  */
 class LineaPedidoProveedor
 {
-    use Base\LineaDocumento;
-    use Base\ModelTrait;
+
+    use Base\LineaDocumentoCompra;
 
     /**
      * ID del pedido.
@@ -36,132 +35,18 @@ class LineaPedidoProveedor
      * @var integer
      */
     public $idpedido;
-    private static $pedidos;
 
     public function tableName()
     {
         return 'lineaspedidosprov';
     }
 
-    public function primaryColumn()
-    {
-        return 'idlinea';
-    }
-
-    public function show_codigo()
-    {
-        $codigo = 'desconocido';
-
-        $encontrado = FALSE;
-        foreach (self::$pedidos as $p) {
-            if ($p->idpedido == $this->idpedido) {
-                $codigo = $p->codigo;
-                $encontrado = TRUE;
-                break;
-            }
-        }
-
-        if (!$encontrado) {
-            $pre = new PedidoProveedor();
-            self::$pedidos[] = $pre->get($this->idpedido);
-            $codigo = self::$pedidos[count(self::$pedidos) - 1]->codigo;
-        }
-
-        return $codigo;
-    }
-
-    public function show_fecha()
-    {
-        $fecha = 'desconocida';
-
-        $encontrado = FALSE;
-        foreach (self::$pedidos as $p) {
-            if ($p->idpedido == $this->idpedido) {
-                $fecha = $p->fecha;
-                $encontrado = TRUE;
-                break;
-            }
-        }
-
-        if (!$encontrado) {
-            $pre = new PedidoProveedor();
-            self::$pedidos[] = $pre->get($this->idpedido);
-            $fecha = self::$pedidos[count(self::$pedidos) - 1]->fecha;
-        }
-
-        return $fecha;
-    }
-
-    public function show_nombre()
-    {
-        $nombre = 'desconocido';
-
-        $encontrado = FALSE;
-        foreach (self::$pedidos as $p) {
-            if ($p->idpedido == $this->idpedido) {
-                $nombre = $p->nombre;
-                $encontrado = TRUE;
-                break;
-            }
-        }
-
-        if (!$encontrado) {
-            $pre = new PedidoProveedor();
-            self::$pedidos[] = $pre->get($this->idpedido);
-            $nombre = self::$pedidos[count(self::$pedidos) - 1]->nombre;
-        }
-
-        return $nombre;
-    }
-
-    public function test()
-    {
-        $this->descripcion = $this->no_html($this->descripcion);
-        $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
-        $totalsindto = $this->pvpunitario * $this->cantidad;
-
-        if (!$this->floatcmp($this->pvptotal, $total, FS_NF0, TRUE)) {
-            $this->miniLog->critical('Error en el valor de pvptotal de la línea ' . $this->referencia . ' del ' . FS_PEDIDO . '. Valor correcto: ' . $total);
-
-            return FALSE;
-        } elseif (!$this->floatcmp($this->pvpsindto, $totalsindto, FS_NF0, TRUE)) {
-            $this->miniLog->critical('Error en el valor de pvpsindto de la línea ' . $this->referencia . ' del ' . FS_PEDIDO . '. Valor correcto: ' . $totalsindto);
-
-            return FALSE;
-        }
-
-        return TRUE;
-    }
-
     /**
-     * Busca todas las coincidencias de $query en las líneas.
-     *
-     * @param string  $query
-     * @param integer $offset
-     *
-     * @return \LineaPedidoProveedor
+     * Resetea los valores de todas las propiedades modelo.
      */
-    public function search($query = '', $offset = 0)
+    public function clear()
     {
-        $linealist = [];
-        $query = mb_strtolower($this->no_html($query), 'UTF8');
-
-        $sql = 'SELECT * FROM ' . $this->table_name . ' WHERE ';
-        if (is_numeric($query)) {
-            $sql .= "referencia LIKE '%" . $query . "%' OR descripcion LIKE '%" . $query . "%'";
-        } else {
-            $buscar = str_replace(' ', '%', $query);
-            $sql .= "lower(referencia) LIKE '%" . $buscar . "%' OR lower(descripcion) LIKE '%" . $buscar . "%'";
-        }
-        $sql .= ' ORDER BY idpedido DESC, idlinea ASC';
-
-        $data = $this->db->select_limit($sql, FS_ITEM_LIMIT, $offset);
-        if ($data) {
-            foreach ($data as $l) {
-                $linealist[] = new self($l);
-            }
-        }
-
-        return $linealist;
+        $this->clearLinea();
+        $this->idpedido = null;
     }
 }

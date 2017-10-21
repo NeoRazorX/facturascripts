@@ -28,8 +28,6 @@ use FacturaScripts\Core\Base;
  */
 trait Direccion
 {
-    use Base\Utils;
-
     /**
      *
      * @var string
@@ -79,7 +77,7 @@ trait Direccion
      */
     public $fecha;
 
-    public function test()
+    public function testDireccion()
     {
         $this->apartado = self::noHtml($this->apartado);
         $this->ciudad = self::noHtml($this->ciudad);
@@ -87,5 +85,6 @@ trait Direccion
         $this->descripcion = self::noHtml($this->descripcion);
         $this->direccion = self::noHtml($this->direccion);
         $this->provincia = self::noHtml($this->provincia);
+        return true;
     }
 }

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : fs_settings.xml
+    Created on : 12 de septiembre de 2017
+    Author     : jcuello@artextrading.com
+    Description:
+        Estructura de la tabla fs_settings.
+-->
+
+
+<tabla>
+    <columna>
+        <nombre>name</nombre>
+        <tipo>character varying(50)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+
+    <columna>
+        <nombre>icon</nombre>
+        <tipo>character varying(20)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+
+    <columna>
+        <nombre>description</nombre>
+        <tipo>text</tipo>
+        <nulo>YES</nulo>
+    </columna>
+                                
+    <columna>
+        <nombre>properties</nombre>
+        <tipo>text</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    
+    <restriccion>
+        <nombre>fs_settings_pkey</nombre>
+        <consulta>PRIMARY KEY (name)</consulta>
+    </restriccion>     
+</tabla>

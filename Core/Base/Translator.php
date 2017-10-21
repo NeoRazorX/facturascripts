@@ -72,7 +72,7 @@ class Translator
      * Traduce el texto al idioma predeterminado.
      *
      * @param string $txt
-     * @param array  $parameters
+     * @param array $parameters
      *
      * @return string
      */

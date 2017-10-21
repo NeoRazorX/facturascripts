@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,8 +25,13 @@ namespace FacturaScripts\Core\Model;
  */
 class DireccionCliente
 {
-    use Base\ModelTrait;
-    use Base\Direccion;
+
+    use Base\ModelTrait,
+        Base\Direccion {
+
+        save as private traitSave;
+        clear as private traitClear;
+    }
 
     /**
      * Clave primaria.
@@ -72,20 +76,34 @@ class DireccionCliente
      */
     public function clear()
     {
-        $this->id = null;
-        $this->codcliente = null;
-        $this->codpais = null;
-        $this->apartado = null;
-        $this->provincia = null;
-        $this->ciudad = null;
-        $this->codpostal = null;
-        $this->direccion = null;
+        $this->traitClear();
+
         $this->domenvio = true;
         $this->domfacturacion = true;
         $this->descripcion = 'Principal';
         $this->fecha = date('d-m-Y');
     }
 
+    public function test()
+    {
+        return $this->testDireccion();
+    }
+
+    /**
+     * Persiste los datos en la base de datos, modificando si existía el registro
+     * o insertando en caso de no existir la clave primaria.
+     * 
+     * @return boolean
+     */
+    private function saveData()
+    {
+        if ($this->exists()) {
+            return $this->saveUpdate();
+        }
+
+        return $this->saveInsert();
+    }
+    
     /**
      * Almacena los datos del modelo en la base de datos.
      *
@@ -97,23 +115,24 @@ class DireccionCliente
         $this->fecha = date('d-m-Y');
 
         if ($this->test()) {
-            if ($this->exists()) {
-                /// ¿Desmarcamos las demás direcciones principales?
-                $sql = '';
-                if ($this->domenvio) {
-                    $sql .= 'UPDATE ' . $this->tableName() . ' SET domenvio = false'
-                        . ' WHERE codcliente = ' . $this->var2str($this->codcliente) . ';';
-                }
-                if ($this->domfacturacion) {
-                    $sql .= 'UPDATE ' . $this->tableName() . ' SET domfacturacion = false'
-                        . ' WHERE codcliente = ' . $this->var2str($this->codcliente) . ';';
-                }
-                $this->dataBase->exec($sql);
-
-                return $this->saveUpdate();
+            /// ¿Desmarcamos las demás direcciones principales?
+            $sql = '';
+            $where = 'WHERE codcliente = ' . $this->var2str($this->codcliente);
+            if ($this->domenvio) {
+                $sql .= 'UPDATE ' . $this->tableName() . ' SET domenvio = false ' . $where . ' AND domenvio = TRUE;';
+            }
+            if ($this->domfacturacion) {
+                $sql .= 'UPDATE ' . $this->tableName() . ' SET domfacturacion = false ' . $where . ' AND domfacturacion = TRUE;';
             }
 
-            return $this->saveInsert();
+            if (empty($sql)) {
+                return $this->saveData();
+            } else {
+                $this->dataBase->beginTransaction();
+                if ($this->dataBase->exec($sql)) {
+                    return $this->saveData() ? $this->dataBase->commit() : $this->dataBase->rollback();
+                }
+            }
         }
 
         return false;

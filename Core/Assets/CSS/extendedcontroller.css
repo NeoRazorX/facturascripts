@@ -1,4 +1,4 @@
-/*!
+/*
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
  *
@@ -15,7 +15,38 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/* 
+    Created on : 09-oct-2017
+    Author     : Artex Trading sa <jcuello@artextrading.com>
+*/
 
-.table th {
-    border-top: none;
+.card-header {
+    padding: .5rem 1.25rem;
+    font-size: 120%;
+    font-weight: bold;
+}
+
+.cust-text {
+    margin-left: 35px;
+    overflow: hidden;
+    font-size: 80%;
+}
+
+legend {
+    font-size: 120%;
+    font-weight: bold;
+}
+
+label {
+    font-weight: 500;
+}
+
+select[required],
+input[required] {
+    background: aliceblue;
+}
+
+input:invalid,
+input:required:invalid {
+    border: 1px solid red;
 }

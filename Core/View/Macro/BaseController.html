@@ -1,0 +1,138 @@
+<!--
+    Genera el código para la vista List según las columnas indicadas
+-->
+{% macro columnsForListView(context, view) %}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                {% for column in view.getColumns() %}
+                {% if column.display != 'none' %}
+                <th class="text-{{ column.display }}">{{ column.getHeaderHTML(column.title)|raw }}</th>
+                {% endif %}
+                {% endfor %}
+                <th class="text-right">
+                    <input type="checkbox" id="listDeleteCB"/>
+                </th>
+            </tr>
+        </thead>
+        {% for model in view.getCursor() %}
+            {# Set background status #}
+            {% set rowClass = 'table-light' %}
+            {% set rowStatus = view.getRow('status') %}
+            {% if rowStatus is not empty %}
+            {% set rowClass = rowStatus.getStatus( attribute(model, rowStatus.fieldName) ) %}
+            {% endif %}
+
+            {% set rowDataHref = view.getClickEvent(model) %}
+            {% if rowDataHref is not empty %}
+            {% set rowClass = rowClass ~ ' clickableRow' %}
+            {% endif %}
+
+            <tr class="{{ rowClass }}" data-href="{{ rowDataHref }}">
+                {# Print data columns for row #}
+                {% for column in view.getColumns() %}
+                {% if column.display != 'none' %}
+                {% set value = attribute(model, column.widget.fieldName) %}
+                <td class="text-{{ column.display }}">{{ column.getListHTML(value)|raw }}</td>
+                {% endif %}
+                {% endfor %}
+                <td class="text-right cancelClickable">
+                    <input type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}" class="listDelete"/>
+                </td>
+            </tr>
+            {% else %}
+            <tr class="table-warning">
+                <td colspan="20"><b>{{ context.i18n.trans('no-data') }}</b></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endmacro %}
+
+<!--
+    Genera el código para la vista Edit según las columnas indicadas
+    (con o sin formulario)
+-->
+{% macro columnsForEditView(context, view, model, withForm) %}
+    {% set keyValue = context.fsc.getFieldValue(model, model.primaryColumn()) %}
+    {% set formName = context.indexView ~ '-' ~ keyValue %}
+
+    {% if withForm == TRUE %}
+    <form name="{{ formName }}" action="#" method="post" class="form" role="form">
+        <input type="hidden" name="action" value="save">
+        <input type="hidden" name="active" value="{{ context.indexView }}">
+        <div class="row">
+    {% endif %}
+
+    {% for group in view.getColumns() %}
+    <div class="{{ group.numColumns == 0 ? 'col' : 'col-md-' ~ group.numColumns }}">
+        <div class="form-row">
+            {% if group.title is not empty %}
+            <legend>{{ group.getHeaderHTML(group.title)|raw }}</legend>
+            {% endif %}
+            {% for column in group.columns %}
+                {% if column.display == 'none' %}
+                    {% if withForm == TRUE %}
+                        {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
+                        <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
+                    {% endif %}
+                {% else %}
+                    {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
+                    {{ column.getEditHTML(value)|raw }}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+    {% if withForm == TRUE %}
+    {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+    {% set save, save_title = context.i18n.trans('save'), context.i18n.trans('save data') %}
+    {% set undo, undo_title = context.i18n.trans('undo'), context.i18n.trans('restore data') %}
+        </div>
+        <div class="row">
+            <div class="col-6">
+                {% if keyValue is not empty %}
+                {% set remove, remove_title = context.i18n.trans('delete'), context.i18n.trans('delete record') %}
+                <a id="b_remove" class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                    <span class="hidden-xs">&nbsp;{{ remove }}</span>
+                </a>
+                {% endif %}
+            </div>
+
+            <div class="col-6 text-right">
+                <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
+                    <i class="fa fa-undo" aria-hidden="true"></i>&nbsp; {{ undo }}
+                </button>
+                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" {{ popoverTitle(save_title, 'bottom') }}>
+                    <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
+                </button>
+            </div>
+        </div>
+    </form>
+    {% endif %}
+{% endmacro %}
+
+<!--
+    Genera el código para la vista EditList según las columnas indicadas
+-->
+{% macro columnsForEditListView(context, view) %}
+    {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
+    {% set new_record, new_record_title = context.i18n.trans('new'), context.i18n.trans('create-new-record') %}
+
+    {% for model in view.getCursor() %}
+        {{ columnsForEditView(context, view, model, TRUE) }}
+        <hr style="height:5px" />
+    {% endfor %}    
+    
+    <div class="alert alert-success" role="alert">
+        <a class="alert-link" data-toggle="collapse" href="#new-{{ context.indexView }}" aria-expanded="true" aria-controls="new-{{ context.indexView }}">
+            <i class="fa fa-plus" aria-hidden="true"></i>&nbsp; {{ new_record_title }}...
+        </a>
+    </div>    
+
+    <div id="new-{{ context.indexView }}" class="collapse">
+        {% set newModel = view.newEmptyModel() %}
+        {{ columnsForEditView(context, view, newModel, TRUE) }}
+    </div>
+{% endmacro %}

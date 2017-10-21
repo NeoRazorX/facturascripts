@@ -32,8 +32,8 @@ abstract class ListController extends Base\Controller
 
     /**
      * Indica cual es la vista activa
-     * 
-     * @var string 
+     *
+     * @var string
      */
     public $active;
 
@@ -59,8 +59,8 @@ abstract class ListController extends Base\Controller
 
     /**
      * Lista de vistas mostradas por el controlador
-     * 
-     * @var DataView[]
+     *
+     * @var ListView[]
      */
     public $views;
 
@@ -93,6 +93,7 @@ abstract class ListController extends Base\Controller
     /**
      * Ejecuta la lógica privada del controlador.
      *
+     * @param mixed $response
      * @param mixed $user
      */
     public function privateCore(&$response, $user)
@@ -102,8 +103,14 @@ abstract class ListController extends Base\Controller
         // Creamos las vistas a visualizar
         $this->createViews();
 
-        // Lanzamos cada una de las vistas
-        foreach ($this->views as $key => $dataView) {
+        // Guardamos si hay operaciones por realizar
+        $action = $this->request->get('action', '');
+
+        // Operaciones sobre los datos antes de leerlos
+        $this->execPreviousAction($action);
+
+        // Lanzamos la carga de datos para cada una de las vistas
+        foreach ($this->views as $key => $listView) {
             $where = [];
             $orderKey = '';
 
@@ -117,55 +124,105 @@ abstract class ListController extends Base\Controller
             $this->views[$key]->setSelectedOrderBy($orderKey);
 
             // Cargamos los datos según filtro y orden
-            $dataView->loadData($where, $this->getOffSet($key), Base\Pagination::FS_ITEM_LIMIT);
+            $listView->loadData($where, $this->getOffSet($key), Base\Pagination::FS_ITEM_LIMIT);
         }
 
-        // Comprobamos si hay operaciones por realizar
-        if ($this->request->get('action', false)) {
-            $this->setActionForm();
+        // Operaciones generales con los datos cargados
+        $this->execAfterAction($action);
+    }
+
+    /**
+     * Ejecuta las acciones que alteran los datos antes de leerlos
+     * 
+     * @param string $action
+     */
+    private function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'delete':
+                $this->deleteAction($this->views[$this->active]);
+                break;
         }
     }
 
     /**
-     * Aplica la acción solicitada por el usuario
+     * Ejecuta las acciones del controlador
+     * 
+     * @param string $action
      */
-    private function setActionForm()
+    private function execAfterAction($action)
     {
-        switch ($this->request->get('action')) {
-            case 'delete':
-                /// Se llama a la función para que las clases hijas puedan operar, si lo necesitan
-                $this->deleteAction($this->views[$this->active]);
-                break;
-
+        switch ($action) {
             case 'export':
                 $this->setTemplate(false);
-                $this->response->setContent(
-                    $this->exportManager->generateList(
-                        $this->views[$this->active]->getCursor(),
-                        $this->views[$this->active]->getColumns(),
-                        $this->request->get('option')
-                    )
-                );
+                $view = $this->views[$this->active];
+                $document = $view->export($this->exportManager, $this->response, $this->request->get('option'));
+                $this->response->setContent($document);
                 break;
 
-            default:
+            case 'json':
+                $this->jsonAction($this->views[$this->active]);
                 break;
         }
     }
 
     /**
      * Acción de borrado de datos
-     * 
-     * @param DataView $view     Vista sobre la que se realiza la acción
+     *
+     * @param BaseView $view     Vista sobre la que se realiza la acción
      * @return boolean
      */
     protected function deleteAction($view)
     {
-        if ($view->delete($this->request->get('code'))) {
-            $this->miniLog->notice($this->i18n->trans('Record deleted correctly!'));
+        $code = $this->request->get('code');
+        if (strpos($code, ',') === false) {
+            if ($view->delete($code)) {
+                $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+                return TRUE;
+            }
+
+            return FALSE;
+        }
+
+        /// borrado múltiple
+        $numDeletes = 0;
+        foreach (explode(',', $code) as $cod) {
+            if ($view->delete($cod)) {
+                $numDeletes++;
+            } else {
+                $this->miniLog->warning($this->i18n->trans('record-deleted-error'));
+            }
+        }
+
+        if ($numDeletes > 0) {
+            $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
             return TRUE;
         }
+        
         return FALSE;
+    }
+
+    protected function jsonAction($view)
+    {
+        $this->setTemplate(false);
+        $cols = [];
+        foreach ($view->getColumns() as $col) {
+            if ($col->display != 'none' && $col->widget->type == 'text' && count($cols) < 4) {
+                $cols[] = $col->widget->fieldName;
+            }
+        }
+        $json = [];
+        foreach ($view->getCursor() as $item) {
+            $jItem = ['url' => $item->url()];
+            foreach ($cols as $col) {
+                $jItem[$col] = $item->{$col};
+            }
+            $json[] = $jItem;
+        }
+        if (!empty($json)) {
+            \array_unshift($json, $cols);
+        }
+        $this->response->setContent(json_encode($json));
     }
 
     /**
@@ -205,17 +262,15 @@ abstract class ListController extends Base\Controller
 
     /**
      * Crea y añade una vista al controlador.
-     * Devuelve el indice de la vista dentro del array de vistas.
-     * 
+     *
      * @param string $modelName
      * @param string $viewName
      * @param string $viewTitle
      */
     protected function addView($modelName, $viewName, $viewTitle = 'search')
     {
-        $this->views[$viewName] = new DataView($viewTitle, $modelName, $viewName, $this->user->nick);
-
-        if ($this->active == '') {
+        $this->views[$viewName] = new ListView($viewTitle, $modelName, $viewName, $this->user->nick);
+        if (empty($this->active)) {
             $this->active = $viewName;
         }
     }
@@ -223,7 +278,7 @@ abstract class ListController extends Base\Controller
     /**
      * Añade una lista de campos (separados por |) a lista de campos de búsqueda
      * para el filtrado de datos.
-     * 
+     *
      * @param string $indexView
      * @param string $fields
      */
@@ -234,7 +289,7 @@ abstract class ListController extends Base\Controller
 
     /**
      * Añade un campo a la lista de Order By de una vista.
-     * 
+     *
      * @param string $indexView
      * @param string $field
      * @param string $label
@@ -248,7 +303,7 @@ abstract class ListController extends Base\Controller
     /**
      * Add a filter type data table selection
      * Añade un filtro de tipo selección en tabla.
-     * 
+     *
      * @param string $indexView
      * @param string $key      (Filter field name identifier)
      * @param string $table    (Table name)
@@ -263,7 +318,7 @@ abstract class ListController extends Base\Controller
 
     /**
      * Añade un filtro del tipo condición boleana.
-     * 
+     *
      * @param string $indexView
      * @param string  $key     (Filter identifier)
      * @param string  $label   (Human reader description)
@@ -278,7 +333,7 @@ abstract class ListController extends Base\Controller
 
     /**
      * Añade un filtro del tipo fecha.
-     * 
+     *
      * @param string $indexView
      * @param string  $key     (Filter identifier)
      * @param string  $label   (Human reader description)
@@ -292,7 +347,7 @@ abstract class ListController extends Base\Controller
 
     /**
      * Carga una lista de datos desde una tabla.
-     * 
+     *
      * @param string $field : Field name with real value
      * @param array $options : Array with configuration values [field = Field description, table = table name, where = SQL Where clausule]
      * @return array
@@ -325,7 +380,7 @@ abstract class ListController extends Base\Controller
 
     /**
      * Devuelve el valor de offset para la vista indicada.
-     * 
+     *
      * @param string $indexView
      * @return int
      */
@@ -337,7 +392,7 @@ abstract class ListController extends Base\Controller
     /**
      * Construye un string con los parámetros pasados en la url
      * de la llamada al controlador.
-     * 
+     *
      * @param string $indexView
      * @return string
      */
@@ -363,7 +418,7 @@ abstract class ListController extends Base\Controller
     /**
      * Crea un array con los "saltos" disponibles para paginar los datos
      * del modelo de la vista indicada.
-     * 
+     *
      * @param string $indexView
      * @return array
      */

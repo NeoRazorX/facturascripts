@@ -19,6 +19,8 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\ExportInterface;
+use FacturaScripts\Core\Base\NumberTools;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of PDF
@@ -29,6 +31,15 @@ class PDFExport implements ExportInterface
 {
 
     use \FacturaScripts\Core\Base\Utils;
+
+    const LIST_LIMIT = 1000;
+
+    private $numberTools;
+
+    public function __construct()
+    {
+        $this->numberTools = new NumberTools();
+    }
 
     public function newDoc($model)
     {
@@ -43,42 +54,75 @@ class PDFExport implements ExportInterface
         $pdf->addInfo('Creator', 'FacturaScripts');
         $pdf->addInfo('Producer', 'FacturaScripts');
         $pdf->ezTable($tableData);
-        return $pdf->ezStream(array('Content-Disposition' => 'doc.pdf'));
+        return $pdf->ezStream(['Content-Disposition' => 'doc_' . $model->tableName() . '.pdf']);
     }
 
-    public function newListDoc($cursor, $columns)
+    public function newListDoc($model, $where, $order, $offset, $columns)
     {
         $orientation = 'portrait';
         $tableCols = [];
-        $tableData = [];
+        $tableOptions = ['cols' => []];
 
-        if (!empty($cursor)) {
-            /// obtenemos las columnas
-            foreach ($columns as $col) {
+        /// obtenemos las columnas
+        foreach ($columns as $col) {
+            if ($col->display != 'none') {
                 $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
+                $tableOptions['cols'][$col->widget->fieldName] = [
+                    'justification' => $col->display,
+                    'col-type' => $col->widget->type,
+                ];
             }
+        }
 
-            if (count($tableCols) > 5) {
-                $orientation = 'landscape';
-            }
-
-            /// obtenemos los datos
-            foreach ($cursor as $key => $row) {
-                foreach ($tableCols as $col) {
-                    $value = $row->{$col};
-                    if (is_string($value)) {
-                        $value = $this->fixHtml($value);
-                    }
-
-                    $tableData[$key][$col] = $value;
-                }
-            }
+        if (count($tableCols) > 5) {
+            $orientation = 'landscape';
         }
 
         $pdf = new \Cezpdf('a4', $orientation);
         $pdf->addInfo('Creator', 'FacturaScripts');
         $pdf->addInfo('Producer', 'FacturaScripts');
-        $pdf->ezTable($tableData, $tableCols);
-        return $pdf->ezStream(array('Content-Disposition' => 'list.pdf'));
+
+        $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
+        while (!empty($cursor)) {
+            $tableData = $this->getTableData($cursor, $tableCols, $tableOptions);
+            $pdf->ezTable($tableData, $tableCols, '', $tableOptions);
+
+            /// avanzamos en los resultados
+            $offset += self::LIST_LIMIT;
+            $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
+        }
+
+        return $pdf->ezStream(['Content-Disposition' => 'list_' . $model->tableName() . '.pdf']);
+    }
+
+    private function getTableData($cursor, $tableCols, $tableOptions)
+    {
+        $tableData = [];
+
+        /// obtenemos los datos
+        foreach ($cursor as $key => $row) {
+            foreach ($tableCols as $col) {
+                $value = $row->{$col};
+
+                if (in_array($tableOptions['cols'][$col]['col-type'], ['money', 'number'])) {
+                    $value = $this->numberTools->format($value, 2);
+                } else if (is_string($value)) {
+                    $value = $this->fixHtml($value);
+                }
+
+                $tableData[$key][$col] = $value;
+            }
+        }
+
+        return $tableData;
+    }
+
+    /**
+     * 
+     * @param Response $response
+     */
+    public function setHeaders(&$response)
+    {
+        $response->headers->set('Content-type', 'application/pdf');
     }
 }

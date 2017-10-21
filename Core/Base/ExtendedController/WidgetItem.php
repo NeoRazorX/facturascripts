@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base\DivisaTools;
@@ -29,6 +28,7 @@ use FacturaScripts\Core\Base\NumberTools;
  */
 class WidgetItem
 {
+
     /**
      * Nombre del campo con los datos que visualiza el widget
      *
@@ -42,11 +42,11 @@ class WidgetItem
      * @var string
      */
     public $type;
-        
+
     /**
      * Numero de decimales para tipos numéricos
-     * 
-     * @var int 
+     *
+     * @var int
      */
     public $decimal;
 
@@ -93,18 +93,36 @@ class WidgetItem
     public $options;
 
     /**
+     *
+     * @var string
+     */
+    public $step;
+
+    /**
+     *
+     * @var string
+     */
+    public $max;
+
+    /**
+     *
+     * @var string
+     */
+    public $min;
+
+    /**
      * Valores aceptados por el campo asociado al widget
      *
      * @var array
      */
     public $values;
-    
+
     /**
      *
      * @var DivisaTools
      */
     private static $divisaTools;
-    
+
     /**
      *
      * @var NumberTools
@@ -117,11 +135,11 @@ class WidgetItem
      */
     public function __construct()
     {
-        if(!isset(self::$divisaTools)) {
+        if (!isset(self::$divisaTools)) {
             self::$divisaTools = new DivisaTools();
             self::$numberTools = new NumberTools();
         }
-        
+
         $this->type = 'text';
         $this->decimal = 0;
         $this->fieldName = '';
@@ -132,6 +150,9 @@ class WidgetItem
         $this->onClick = '';
         $this->options = [];
         $this->values = [];
+        $this->step = 'any';
+        $this->max = '';
+        $this->min = '';
     }
 
     /**
@@ -143,11 +164,28 @@ class WidgetItem
     {
         $this->values = [];
         foreach ($rows as $codeModel) {
-            $values = [];
-            $values['value'] = $codeModel->code;
-            $values['title'] = $codeModel->description;
-            $this->values[] = $values;
-            unset($values);
+            $item = [];
+            $item['value'] = $codeModel->code;
+            $item['title'] = $codeModel->description;
+            $this->values[] = $item;
+            unset($item);
+        }
+    }
+
+    /**
+     * Carga la lista de valores según un array de valores
+     * 
+     * @param array $values
+     */
+    public function setValuesFromArray(&$values)
+    {
+        $this->values = [];
+        foreach ($values as $value) {
+            $item = [];
+            $item['value'] = $value;
+            $item['title'] = $value;
+            $this->values[] = $item;
+            unset($item);
         }
     }
 
@@ -179,15 +217,18 @@ class WidgetItem
      */
     public function loadFromXMLColumn($column)
     {
-        $widget_atributes = $column->widget->attributes();
-        $this->fieldName = (string) $widget_atributes->fieldname;
-        $this->type = (string) $widget_atributes->type;
-        $this->decimal = (int) intval($widget_atributes->decimal);
-        $this->hint = (string) $widget_atributes->hint;
-        $this->readOnly = (bool) boolval($widget_atributes->readonly);
-        $this->required = (bool) boolval($widget_atributes->required);
-        $this->icon = (string) $widget_atributes->icon;
-        $this->onClick = (string) $widget_atributes->onclick;
+        $widgetAtributes = $column->widget->attributes();
+        $this->fieldName = (string) $widgetAtributes->fieldname;
+        $this->type = (string) $widgetAtributes->type;
+        $this->decimal = (int) intval($widgetAtributes->decimal);
+        $this->hint = (string) $widgetAtributes->hint;
+        $this->readOnly = (bool) boolval($widgetAtributes->readonly);
+        $this->required = (bool) boolval($widgetAtributes->required);
+        $this->icon = (string) $widgetAtributes->icon;
+        $this->onClick = (string) $widgetAtributes->onclick;
+        $this->step = (string) $widgetAtributes->step;
+        $this->min = (string) $widgetAtributes->min;
+        $this->max = (string) $widgetAtributes->max;
 
         $this->getAttributesGroup($this->options, $column->widget->option);
         $this->getAttributesGroup($this->values, $column->widget->values);
@@ -204,8 +245,11 @@ class WidgetItem
         $this->type = (string) $column['widget']['type'];
         $this->decimal = (int) intval($column['widget']['decimal']);
         $this->hint = (string) $column['widget']['hint'];
-        $this->readOnly = (bool) boolval($column['widget']['readonly']);
+        $this->readOnly = (bool) boolval($column['widget']['readOnly']);
         $this->required = (bool) boolval($column['widget']['required']);
+        $this->step = (string) $column['widget']['step'];
+        $this->min = (string) $column['widget']['min'];
+        $this->max = (string) $column['widget']['max'];
         $this->icon = (string) $column['widget']['icon'];
         $this->onClick = (string) $column['widget']['onClick'];
         $this->options = (array) $column['widget']['options'];
@@ -222,14 +266,12 @@ class WidgetItem
      */
     public function getHintHTML($hint)
     {
-        return empty($hint)
-            ? ''
-            : ' data-toggle="popover" data-placement="auto" data-trigger="hover" data-content="' . $hint . '" ';
+        return empty($hint) ? '' : ' data-toggle="popover" data-placement="auto" data-trigger="hover" data-content="' . $hint . '" ';
     }
 
     /**
      * Indica si se cumple la condición para aplicar un Option Text
-     * 
+     *
      * @param string $optionValue
      * @param string $valueItem
      * @return boolean
@@ -246,14 +288,14 @@ class WidgetItem
                 $optionValue = substr($optionValue, 1);
                 $result = (floatval($valueItem) > floatval($optionValue));
                 break;
-            
+
             default:
                 $result = ($optionValue == $valueItem);
                 break;
         }
         return $result;
     }
-    
+
     /**
      * Genera el código CSS para el style del widget en base a los options
      *
@@ -282,7 +324,7 @@ class WidgetItem
 
     /**
      * Aplica el formato a tipos: texto, numérico y moneda
-     * 
+     *
      * @param string $value
      * @return string
      */
@@ -292,9 +334,9 @@ class WidgetItem
 
         switch ($this->type) {
             case 'text':
-                $html = (empty($this->onClick)) 
-                    ? '<span' . $style . '>' . $value . '</span>' 
-                    : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $value . '</a>';
+                $txt = $this->getTextResume($value);
+                $html = (empty($this->onClick)) ? '<span' . $style . '>' . $txt . '</span>' : '<a href="?page='
+                    . $this->onClick . '&code=' . $value . '"' . $style . '>' . $txt . '</a>';
                 break;
 
             case 'number':
@@ -302,17 +344,23 @@ class WidgetItem
                 break;
 
             case 'money':
-                $html = empty($this->decimal) 
-                    ? self::$divisaTools->format($value)
-                    : self::$divisaTools->format($value, $this->decimal);
-
-                $html = '<span' . $style . '>' . $html . '</span>';
-                break;                    
+                $aux = empty($this->decimal) ? self::$divisaTools->format($value) : self::$divisaTools->format($value, $this->decimal);
+                $html = '<span' . $style . '>' . $aux . '</span>';
+                break;
         }
-        
+
         return $html;
     }
-    
+
+    private function getTextResume($txt)
+    {
+        if (mb_strlen($txt) < 60) {
+            return $txt;
+        }
+
+        return mb_substr($txt, 0, 57) . '...';
+    }
+
     /**
      * Genera el código html para la visualización de los datos en el
      * controlador List
@@ -324,7 +372,7 @@ class WidgetItem
     public function getListHTML($value)
     {
         // Verificamos el valor, en vez de usar empty() para que deje pasar 0 y false
-        if (is_null($value) || ($value == '')) {
+        if ($value === null || $value === '') {
             return '';
         }
 
@@ -374,13 +422,14 @@ class WidgetItem
     }
 
     /**
-     * Genera el código html para clases especiales como:
+     * Genera el código html para atributos especiales como:
+     * hint
      * sólo lectura
      * valor obligatorio
      *
      * @return string
      */
-    private function specialClass()
+    private function specialAttributes()
     {
         $hint = $this->getHintHTML($this->hint);
         $readOnly = (empty($this->readOnly)) ? '' : ' readonly="readonly"';
@@ -390,8 +439,24 @@ class WidgetItem
     }
 
     /**
+     * Genera el código html para atributos especiales de widgets numericos como:
+     * step
+     * valor mínimo
+     * valor máximo
+     *
+     * @return string
+     */
+    private function specialNumberAttributes()
+    {
+        $step = (empty($this->step)) ? '' : ' step="' . $this->step . '"';
+        $min = (empty($this->min)) ? '' : ' min="' . $this->min . '"';
+        $max = (empty($this->max)) ? '' : ' max="' . $this->max . '"';
+        return $step . $min . $max;
+    }
+    
+    /**
      * Genera el código html para la visualización y edición de los datos
-     * en el controlador Edit
+     * en el controlador List / Edit
      *
      * @param string $value
      *
@@ -399,38 +464,40 @@ class WidgetItem
      */
     public function getEditHTML($value)
     {
-        $specialClass = $this->specialClass();
+        $specialAttributes = $this->specialAttributes();
         $fieldName = '"' . $this->fieldName . '"';
         $html = $this->getIconHTML();
 
         switch ($this->type) {
-            case 'text':
-                $html .= $this->standardHTMLWidget($fieldName, $value, $specialClass);
-                break;
-
-            case 'datepicker':
-                $html .= '<input id=' . $fieldName . ' class="form-control datepicker" type="text" name=' . $fieldName . ' value="' . $value . '"' . $specialClass . '>';
-                break;
-
             case 'checkbox':
                 $checked = in_array(strtolower($value), ['true', 't', '1']) ? ' checked ' : '';
-                $html .= '<input id=' . $fieldName . ' class="form-check-input" type="checkbox" name=' . $fieldName . ' value="true"' . $specialClass . $checked . '>';
+                $html .= '<input id=' . $fieldName . ' class="form-check-input" type="checkbox" name='
+                    . $fieldName . ' value="true"' . $specialAttributes . $checked . '>';
                 break;
 
             case 'radio':
-                $html .= '<input id=' . $fieldName . 'sufix% class="form-check-input" type="radio" name=' . $fieldName . ' value=""value%"' . $specialClass . '"checked%>';
+                $html .= '<input id=' . $fieldName . 'sufix% class="form-check-input" type="radio" name='
+                    . $fieldName . ' value=""value%"' . $specialAttributes . '"checked%>';
                 break;
 
             case 'textarea':
-                $html .= '<textarea id=' . $fieldName . ' class="form-control" name=' . $fieldName . ' rows="3"' . $specialClass . '>' . $value . '</textarea>';
+                $html .= '<textarea id=' . $fieldName . ' class="form-control" name=' . $fieldName . ' rows="3"'
+                    . $specialAttributes . '>' . $value . '</textarea>';
                 break;
 
             case 'select':
-                $html .= $this->selectHTMLWidget($fieldName, $value, $specialClass);
+                $html .= $this->selectHTMLWidget($fieldName, $value, $specialAttributes);
                 break;
 
+            case 'datepicker':
+                $html .= $this->standardHTMLWidget($fieldName, $value, $specialAttributes, ' datepicker');
+                break;
+
+            case 'number':
+                $specialAttributes .= ' ' . $this->specialNumberAttributes();
+            
             default:
-                $html .= $this->standardHTMLWidget($fieldName, $value, $specialClass);
+                $html .= $this->standardHTMLWidget($fieldName, $value, $specialAttributes);
         }
 
         if (!empty($this->icon)) {
@@ -442,17 +509,17 @@ class WidgetItem
 
     /**
      * Devuelve el código HTML para controles no especiales
-     *
      * @param string $fieldName
-     * @param string $value
-     * @param string $specialClass
-     *
+     * @param mixed $value
+     * @param string $specialAttributes
+     * @param string $extraClass
+     * 
      * @return string
      */
-    private function standardHTMLWidget($fieldName, $value, $specialClass)
+    private function standardHTMLWidget($fieldName, $value, $specialAttributes, $extraClass = '')
     {
-        return '<input id=' . $fieldName . ' type="' . $this->type . '" class="form-control" name=' . $fieldName
-                . ' value="' . $value . '"' . $specialClass . '>';
+        return '<input id=' . $fieldName . ' type="' . $this->type . '" class="form-control' . $extraClass
+            . '" name=' . $fieldName . ' value="' . $value . '"' . $specialAttributes . ' />';
     }
 
     /**
@@ -460,13 +527,13 @@ class WidgetItem
      *
      * @param string $fieldName
      * @param string $value
-     * @param string $specialClass
+     * @param string $specialAttributes
      *
      * @return string
      */
-    private function selectHTMLWidget($fieldName, $value, $specialClass)
+    private function selectHTMLWidget($fieldName, $value, $specialAttributes)
     {
-        $html = '<select id=' . $fieldName . ' class="form-control" name=' . $fieldName . $specialClass . '>';
+        $html = '<select id=' . $fieldName . ' class="form-control" name=' . $fieldName . $specialAttributes . '>';
         foreach ($this->values as $selectValue) {
             $selected = ($selectValue['value'] == $value) ? ' selected="selected" ' : '';
             $html .= '<option value="' . $selectValue['value'] . '"' . $selected . '>' . $selectValue['title'] . '</option>';

@@ -8,6 +8,8 @@
         <meta name="generator" content="FacturaScripts" />
         <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css" />
+        <link rel="shortcut icon" href="Core/Assets/Images/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="Core/Assets/Images/apple-icon-180x180.png" />
         <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
         <script type="text/javascript" src="node_modules/popper.js/dist/umd/popper.min.js"></script>
         <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -85,18 +87,20 @@
                                     </select>
                                 </div>
                             </div>
-
                             <div class="col-sm-3">
                                 <div class="form-group">
                                     {{ i18n.trans('select-timezone') }}:
                                     <select name="fs_timezone" class="form-control">
-                                        {% for t in timezone %}
-                                        <option value="{{ t['zone'] }}">{{ t['diff_from_GMT']}} - {{ t['zone'] }}</option>
+                                        {% for tz in timezone %}
+                                        {% if tz['zone'] == 'Europe/Madrid' %}
+                                        <option value="{{ tz['zone'] }}" selected="">{{ tz['diff_from_GMT']}} - {{ tz['zone'] }}</option>
+                                        {% else %}
+                                        <option value="{{ tz['zone'] }}">{{ tz['diff_from_GMT']}} - {{ tz['zone'] }}</option>
+                                        {% endif %}
                                         {% endfor %}
                                     </select>
                                 </div>
                             </div>
-                            
                         </div>
                         <div class="row">
                             <div class="col-sm-3">

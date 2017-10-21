@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -27,6 +26,7 @@ namespace FacturaScripts\Core\Base;
  */
 class MenuItem
 {
+
     /**
      * Nombre identificativo del elemento.
      *
@@ -90,49 +90,50 @@ class MenuItem
     /**
      * Devuelve el html para el icono del item
      *
-     * @param mixed $forceIcon
-     *
      * @return string
      */
     private function getHTMLIcon()
     {
-        return empty($this->icon)
-            ? '<i class="fa fa-fw" aria-hidden="true"></i> '
-            : '<i class="fa ' . $this->icon . ' fa-fw" aria-hidden="true"></i> ';
+        return empty($this->icon) ? '<i class="fa fa-fw" aria-hidden="true"></i> ' : '<i class="fa ' . $this->icon . ' fa-fw" aria-hidden="true"></i> ';
     }
 
+    /**
+     * Devuelve el indintificador del menu
+     * 
+     * @param string $parent
+     * @return string
+     */
     private function getMenuId($parent)
     {
-        return empty($parent)
-            ? 'menu-' . $this->title
-            : $parent . $this->title;
+        return empty($parent) ? 'menu-' . $this->title : $parent . $this->title;
     }
-    
+
     /**
      * Devuelve el html para el menú / submenú
      * @param string $parent
      * @return string
      */
     public function getHTML($parent = '')
-    {          
+    {
         $active = $this->active ? ' active' : '';
         $menuId = $this->getMenuId($parent);
-        
-        $html = empty($parent)
-            ? '<li class="text-capitalize nav-item dropdown' . $active . '">'
-                    . '<a class="nav-link dropdown-toggle" href="#" id="' . $menuId . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&nbsp; ' . $this->title . '</a>'
-                    . '<ul class="dropdown-menu" aria-labelledby="' . $menuId . '">'
-            
-            : '<li class="dropdown-submenu">'
-                    . '<a class="dropdown-item" href="#" id="' . $menuId . '"><i class="fa fa-folder-open fa-fw" aria-hidden="true"></i>&nbsp; ' . $this->title . '</a>'
-                    . '<ul class="dropdown-menu" aria-labelledby="' . $menuId . '">';
-            
+
+        $html = empty($parent) ? '<li class="text-capitalize nav-item dropdown' . $active . '">'
+            . '<a class="nav-link dropdown-toggle" href="#" id="' . $menuId . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&nbsp; ' . $this->title . '</a>'
+            . '<ul class="dropdown-menu" aria-labelledby="' . $menuId . '">' : '<li class="dropdown-submenu">'
+            . '<a class="dropdown-item" href="#" id="' . $menuId . '"><i class="fa fa-folder-open fa-fw" aria-hidden="true"></i>&nbsp; ' . $this->title . '</a>'
+            . '<ul class="dropdown-menu" aria-labelledby="' . $menuId . '">';
+
         foreach ($this->menu as $menuItem) {
-            $html .= empty($menuItem->menu)
-                ? '<li><a class="dropdown-item" href="' . $menuItem->url . '">' . $menuItem->getHTMLIcon() . '&nbsp; ' . $menuItem->title . '</a></li>'
-                : $menuItem->getHTML($menuId);
+            $extraClass = '';
+            if ($menuItem->active) {
+                $extraClass = 'active';
+            }
+
+            $html .= empty($menuItem->menu) ? '<li><a class="dropdown-item ' . $extraClass . '" href="' . $menuItem->url . '">'
+                . $menuItem->getHTMLIcon() . '&nbsp; ' . $menuItem->title . '</a></li>' : $menuItem->getHTML($menuId);
         }
-        
+
         $html .= '</ul>';
         return $html;
     }

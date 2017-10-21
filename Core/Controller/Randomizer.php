@@ -42,6 +42,16 @@ class Randomizer extends Base\Controller
                 $this->miniLog->info($num.' agentes generados.');
                 break;
             
+            case 'albaranescli':
+                $num = $ModelDataGenerator->albaranesCliente();
+                $this->miniLog->info($num.' albaranes de venta generados.');
+                break;
+            
+            case 'albaranesprov':
+                $num = $ModelDataGenerator->albaranesProveedor();
+                $this->miniLog->info($num.' albaranes de compra generados.');
+                break;
+            
             case 'articulos':
                 $num = $ModelDataGenerator->articulos();
                 $this->miniLog->info($num.' artículos generados.');
@@ -63,8 +73,23 @@ class Randomizer extends Base\Controller
                 break;
             
             case 'grupos':
-                $num = $ModelDataGenerator->grupos_clientes();
+                $num = $ModelDataGenerator->gruposClientes();
                 $this->miniLog->info($num.' grupos de clientes generados.');
+                break;
+            
+            case 'pedidoscli':
+                $num = $ModelDataGenerator->pedidosCliente();
+                $this->miniLog->info($num.' pedidos de cliente generados.');
+                break;
+            
+            case 'pedidosprov':
+                $num = $ModelDataGenerator->pedidosProveedor();
+                $this->miniLog->info($num.' pedidos de proveedor generados.');
+                break;
+            
+            case 'presupuestoscli':
+                $num = $ModelDataGenerator->presupuestosCliente();
+                $this->miniLog->info($num.' presupuestos de cliente generados.');
                 break;
             
             case 'proveedores':

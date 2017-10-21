@@ -165,6 +165,7 @@
     <columna>
         <nombre>recfinanciero</nombre>
         <tipo>double precision</tipo>
+        <defecto>0</defecto>
     </columna>
     <columna>
         <nombre>servido</nombre>
