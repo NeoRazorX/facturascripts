@@ -243,7 +243,7 @@ class Epigrafe
     {
         /// forzamos los creación de la tabla de grupos
         $grupo = new GrupoEpigrafes();
-        
+
         return '';
     }
 

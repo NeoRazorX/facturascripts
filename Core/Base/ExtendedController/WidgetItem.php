@@ -206,8 +206,8 @@ class WidgetItem
     {
         $this->fieldName = (string) $column['widget']['fieldName'];
         $this->hint = (string) $column['widget']['hint'];
-        $this->readOnly = (bool) boolval($column['widget']['readOnly']);
-        $this->required = (bool) boolval($column['widget']['required']);
+        $this->readOnly = (bool) $column['widget']['readOnly'];
+        $this->required = (bool) $column['widget']['required'];
         $this->icon = (string) $column['widget']['icon'];
         $this->onClick = (string) $column['widget']['onClick'];
         $this->options = (array) $column['widget']['options'];

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Model;
@@ -28,7 +29,6 @@ use FacturaScripts\Core\Model;
  */
 class MenuManager
 {
-
     /**
      * Contiene la estructura del menú para el usuario.
      *
@@ -167,7 +167,6 @@ class MenuManager
         $menuValue = '';
         $submenuValue = null;
         $menuItem = null;
-        $i18n = new Translator();
 
         /// Cargamos la lista de paginas para el usuario
         $pages = $this->loadPages();
@@ -180,7 +179,7 @@ class MenuManager
             if ($menuValue !== $page->menu) {
                 $menuValue = $page->menu;
                 $submenuValue = null;
-                $result[$menuValue] = new MenuItem($menuValue, $i18n->trans($menuValue), '#');
+                $result[$menuValue] = new MenuItem($menuValue, $menuValue, '#');
                 $menuItem = &$result[$menuValue]->menu;
             }
 
@@ -189,12 +188,12 @@ class MenuManager
                 $submenuValue = $page->submenu;
                 $menuItem = &$result[$menuValue]->menu;
                 if ($submenuValue != null) {
-                    $menuItem[$submenuValue] = new MenuItem($submenuValue, $i18n->trans($submenuValue), '#');
+                    $menuItem[$submenuValue] = new MenuItem($submenuValue, $submenuValue, '#');
                     $menuItem = &$menuItem[$submenuValue]->menu;
                 }
             }
 
-            $menuItem[$page->name] = new MenuItem($page->name, $i18n->trans($page->title), $page->url(), $page->icon);
+            $menuItem[$page->name] = new MenuItem($page->name, $page->title, $page->url(), $page->icon);
         }
 
         return $result;

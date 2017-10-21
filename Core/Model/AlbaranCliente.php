@@ -112,20 +112,6 @@ class AlbaranCliente
         return $this->testTrait();
     }
 
-    public function save()
-    {
-        if ($this->test()) {
-            if ($this->exists()) {
-                return $this->saveUpdate();
-            }
-
-            $this->newCodigo();
-            return $this->saveInsert();
-        }
-
-        return FALSE;
-    }
-
     /**
      * Ejecuta una tarea con cron
      */

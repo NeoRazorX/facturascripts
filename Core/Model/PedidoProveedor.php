@@ -143,21 +143,10 @@ class PedidoProveedor
         return $this->fullTestTrait('order');
     }
 
-    public function save()
-    {
-        if ($this->test()) {
-            if ($this->exists()) {
-                return $this->saveUpdate();
-            }
-
-            $this->newCodigo();
-            return $this->saveInsert();
-        }
-
-        return FALSE;
-    }
-
-    public function cron_job()
+    /**
+     * Ejecuta una tarea con cron
+     */
+    public function cronJob()
     {
         $sql = 'UPDATE ' . $this->tableName() . ' SET idalbaran = NULL, editable = TRUE'
             . ' WHERE idalbaran IS NOT NULL AND NOT EXISTS(SELECT 1 FROM albaranesprov t1 WHERE t1.idalbaran = ' . $this->tableName() . '.idalbaran);';

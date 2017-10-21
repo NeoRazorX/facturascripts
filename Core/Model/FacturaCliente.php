@@ -192,20 +192,6 @@ class FacturaCliente
         return $this->testTrait();
     }
 
-    public function save()
-    {
-        if ($this->test()) {
-            if ($this->exists()) {
-                return $this->saveUpdate();
-            }
-
-            $this->newCodigo();
-            return $this->saveInsert();
-        }
-
-        return FALSE;
-    }
-
     /**
      * Elimina una factura y actualiza los registros relacionados con ella.
      *
