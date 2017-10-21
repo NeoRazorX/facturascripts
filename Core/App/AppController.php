@@ -136,8 +136,6 @@ class AppController extends App
         }
 
         $this->debugBar->addCollector(new DataBaseCollector($this->miniLog->read(['sql'])));
-        $this->debugBar->addCollector(new TranslationCollector());
-        $this->i18n->setDebugBar($this->debugBar);
 
         $this->response->setStatusCode($httpStatus);
         if ($template) {
@@ -210,6 +208,8 @@ class AppController extends App
             $this->debugBar['messages']->info('END');
         }
         $twig = new Twig_Environment($twigLoader, $twigOptions);
+
+        $this->debugBar->addCollector(new TranslationCollector($this->i18n->getUsedStrings()));
 
         try {
             $this->response->setContent($twig->render($template, $templateVars));

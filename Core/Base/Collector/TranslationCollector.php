@@ -15,7 +15,7 @@ use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\Renderable;
 
 /**
- * Clase para "tracear" las consultas SQL.
+ * Clase para "recopilar" las traducciones.
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  * @source Based on: https://github.com/spiroski/laravel-debugbar-translations
@@ -30,11 +30,13 @@ class TranslationCollector extends DataCollector implements Renderable, AssetPro
     protected $translations;
 
     /**
-     * DataBaseCollector constructor.
+     * TranslationCollector constructor.
+     *
+     * @param $translations
      */
-    public function __construct()
+    public function __construct($translations)
     {
-        $this->translations = [];
+        $this->addTranslations($translations);
     }
 
     /**
@@ -88,15 +90,16 @@ class TranslationCollector extends DataCollector implements Renderable, AssetPro
     /**
      * Add a translation key to the collector
      *
-     * @param string $key
-     * @param string $value
+     * @param array $translations
      */
-    public function addTranslation($key, $value)
+    private function addTranslations($translations)
     {
-        $this->translations[] = array(
-            'key' => $key,
-            'value' => $value
-        );
+        foreach ($translations as $key => $value) {
+            $this->translations[] = array(
+                'key' => $key,
+                'value' => $value
+            );
+        }
     }
 
     /**

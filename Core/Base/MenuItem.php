@@ -82,7 +82,7 @@ class MenuItem
     {
         $i18n = new Translator();
 
-        $this->name = $i18n->trans($name);
+        $this->name = $name;
         $this->title = $i18n->trans($title);
         $this->url = $url;
         $this->icon = $icon;

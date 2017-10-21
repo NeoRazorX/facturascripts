@@ -214,9 +214,9 @@
             this.$list = new PhpDebugBar.Widgets.ListWidget({ itemRenderer: function(li, translation) {
                 var text = translation.key + " => " + translation.value;
                 if (translation.key == translation.value) {
-                    var $line  = $('<a target="translations"/>').addClass(csscls('name')).addClass('text-danger').text(text);
+                    var $line  = $('<span/>').addClass(csscls('name')).addClass('text-danger').text(text);
                 } else {
-                    var $line  = $('<a target="translations"/>').addClass(csscls('name')).addClass('text-muted').text(text);
+                    var $line  = $('<span/>').addClass(csscls('name')).addClass('text-muted').text(text);
                 }
 
                 $line.appendTo(li);

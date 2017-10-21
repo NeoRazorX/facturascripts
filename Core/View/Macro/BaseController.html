@@ -104,13 +104,13 @@
 
     {% if withForm == TRUE %}
     {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
-    {% set save, save_title = context.i18n.trans('save'), context.i18n.trans('save data') %}
-    {% set undo, undo_title = context.i18n.trans('undo'), context.i18n.trans('restore data') %}
+    {% set save, save_title = context.i18n.trans('save'), context.i18n.trans('save-data') %}
+    {% set undo, undo_title = context.i18n.trans('undo'), context.i18n.trans('restore-data') %}
         </div>
         <div class="row">
             <div class="col-6">
                 {% if keyValue is not empty %}
-                {% set remove, remove_title = context.i18n.trans('delete'), context.i18n.trans('delete record') %}
+                {% set remove, remove_title = context.i18n.trans('delete'), context.i18n.trans('delete-record') %}
                 <a id="b_remove" class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
                     <i class="fa fa-trash" aria-hidden="true"></i>
                     <span class="d-none d-sm-inline-block">&nbsp;{{ remove }}</span>
