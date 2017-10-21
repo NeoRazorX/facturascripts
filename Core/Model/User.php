@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class User
 {
+
     use Base\ModelTrait {
         get as private getTrait;
     }
@@ -163,7 +163,8 @@ class User
     }
 
     /**
-     * Verifica si la contraseña dada es correcta.
+     * Verifica si la contraseña dada es correcta. Además comprueba si es necesario
+     * regenerar el hash de la contraseña, por ejemplo si php ha mejorado el algoritmo.
      *
      * @param string $value
      *
@@ -171,7 +172,15 @@ class User
      */
     public function verifyPassword($value)
     {
-        return password_verify($value, $this->password);
+        if (password_verify($value, $this->password)) {
+            if (password_needs_rehash($this->password, PASSWORD_DEFAULT)) {
+                $this->setPassword($value);
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
