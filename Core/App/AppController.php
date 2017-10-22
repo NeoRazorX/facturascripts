@@ -209,7 +209,7 @@ class AppController extends App
         }
         $twig = new Twig_Environment($twigLoader, $twigOptions);
 
-        $this->debugBar->addCollector(new TranslationCollector($this->i18n->getUsedStrings()));
+        $this->debugBar->addCollector(new TranslationCollector($this->i18n));
 
         try {
             $this->response->setContent($twig->render($template, $templateVars));

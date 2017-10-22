@@ -13,6 +13,7 @@ namespace FacturaScripts\Core\Base\Collector;
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\Renderable;
+use FacturaScripts\Core\Base\Translator;
 
 /**
  * Clase para "recopilar" las traducciones.
@@ -30,13 +31,20 @@ class TranslationCollector extends DataCollector implements Renderable, AssetPro
     protected $translations;
 
     /**
+     * Motor de traducción.
+     *
+     * @var Translator
+     */
+    protected static $i18n;
+
+    /**
      * TranslationCollector constructor.
      *
-     * @param $translations
+     * @param Translator $i18n
      */
-    public function __construct($translations)
+    public function __construct(&$i18n)
     {
-        $this->addTranslations($translations);
+        static::$i18n = $i18n;
     }
 
     /**
@@ -89,12 +97,10 @@ class TranslationCollector extends DataCollector implements Renderable, AssetPro
 
     /**
      * Add a translation key to the collector
-     *
-     * @param array $translations
      */
-    private function addTranslations($translations)
+    private function addTranslations()
     {
-        foreach ($translations as $key => $value) {
+        foreach (static::$i18n->getUsedStrings() as $key => $value) {
             $this->translations[] = array(
                 'key' => $key,
                 'value' => $value
@@ -109,6 +115,8 @@ class TranslationCollector extends DataCollector implements Renderable, AssetPro
      */
     public function collect()
     {
+        $this->addTranslations();
+
         return [
             'nb_statements' => count($this->translations),
             'translations' => $this->translations,
