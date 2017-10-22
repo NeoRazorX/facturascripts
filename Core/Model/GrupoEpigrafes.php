@@ -76,7 +76,14 @@ class GrupoEpigrafes
     {
         return 'idgrupo';
     }
-    
+
+    /**
+     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará tras la creación de la tabla. útil para insertar valores
+     * por defecto.
+     *
+     * @return string
+     */
     public function install()
     {
         /// forzamos la comprobación de la tabla de ejercicios.

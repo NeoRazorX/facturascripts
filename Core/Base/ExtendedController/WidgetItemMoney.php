@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base\DivisaTools;
@@ -28,6 +29,7 @@ use FacturaScripts\Core\Base\DivisaTools;
 class WidgetItemMoney extends WidgetItem
 {
     /**
+     * Clase para formatear monedas
      *
      * @var DivisaTools
      */

@@ -119,7 +119,7 @@ class WidgetItem
     /**
      * Crea y carga la estructura de atributos en base a un archivo XML
      *
-     * @param SimpleXMLElement $column
+     * @param \SimpleXMLElement $column
      * @return WidgetItem
      */
     public static function newFromXMLColumn($column)
@@ -134,7 +134,7 @@ class WidgetItem
     /**
      * Crea y carga la estructura de atributos en base a la base de datos
      *
-     * @param SimpleXMLElement $column
+     * @param \SimpleXMLElement $column
      * @return WidgetItem
      */
     public static function newFromJSONColumn($column)
@@ -183,8 +183,8 @@ class WidgetItem
     /**
      * Carga la estructura de atributos en base a un archivo XML
      *
-     * @param SimpleXMLElement $column
-     * @param SimpleXMLElement $widgetAtributes
+     * @param \SimpleXMLElement $column
+     * @param \SimpleXMLElement $widgetAtributes
      */
     protected function loadFromXMLColumn($column, $widgetAtributes) {
         $this->fieldName = (string) $widgetAtributes->fieldname;
