@@ -964,5 +964,6 @@
     "error-processing-xmlview": "Error procesando el XML de la vista, el archivo '0' no existe o esta mal formado",
     "contact-data": "Datos del contacto",
     "invoice-number": "Número de factura",
-    "status": "Estado"
+    "status": "Estado",
+    "error-dinamic-select-values": "<b>Algo está mal</b>: Estás intentado definir un widget select para la tabla '0', con key '1' y value '2'. <a target='_blank' href='https://github.com/NeoRazorX/facturascripts/blob/master/Documentation/XMLViews_ES.md'>Más información</a>"
 }

@@ -351,13 +351,17 @@ class PageOption
                         $column->widget->setValuesFromCodeModel($rows);
                         unset($rows);
                     }
-                    
-                    if (array_key_exists('start', $column->widget->values[0])) {
-                        $start = $column->widget->values[0]['start'];
-                        $end = $column->widget->values[0]['end'];
-                        $step = $column->widget->values[0]['step'];
-                        $values = range($start, $end, $step);
-                        $column->widget->setValuesFromArray($values);
+
+                    if (!empty($column->widget->values)) {
+                        if (array_key_exists('start', $column->widget->values[0])) {
+                            $start = $column->widget->values[0]['start'];
+                            $end = $column->widget->values[0]['end'];
+                            $step = $column->widget->values[0]['step'];
+                            $values = range($start, $end, $step);
+                            $column->widget->setValuesFromArray($values);
+                        }
+                    } else {
+                        $this->miniLog->critical($this->i18n->trans('error-dinamic-select-values', [$tableName, $fieldCode, $fieldDesc]));
                     }
                 }
             }
