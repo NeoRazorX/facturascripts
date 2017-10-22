@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\App;
 
 use DebugBar\Bridge\Twig;
@@ -221,7 +220,7 @@ class AppController extends App
     }
 
     /**
-     * Autentica al usuario, devuelve el usuario en caso afirmativo o false
+     * Autentica al usuario, devuelve el usuario en caso afirmativo o false.
      *
      * @return User|false
      */
@@ -239,39 +238,44 @@ class AppController extends App
                     $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, time() + FS_COOKIES_EXPIRE));
                     $this->response->headers->setCookie(new Cookie('fsLogkey', $logKey, time() + FS_COOKIES_EXPIRE));
                     $this->miniLog->debug($this->i18n->trans('login-ok', [$nick]));
-
                     return $user;
                 }
 
                 $this->ipFilter->setAttempt($this->request->getClientIp());
                 $this->miniLog->alert($this->i18n->trans('login-password-fail'));
-
                 return false;
             }
 
             $this->ipFilter->setAttempt($this->request->getClientIp());
             $this->miniLog->alert($this->i18n->trans('login-user-not-found'));
-
             return false;
         }
 
+        return $this->cookieAuth($user0);
+    }
+
+    /**
+     * Autentica al usuario usando la cookie.
+     * 
+     * @param User $user0
+     * @return boolean
+     */
+    private function cookieAuth(&$user0)
+    {
         $cookieNick = $this->request->cookies->get('fsNick', '');
         if ($cookieNick !== '') {
             $cookieUser = $user0->get($cookieNick);
             if ($cookieUser) {
                 if ($cookieUser->verifyLogkey($this->request->cookies->get('fsLogkey'))) {
                     $this->miniLog->debug($this->i18n->trans('login-ok', [$cookieNick]));
-
                     return $cookieUser;
                 }
 
                 $this->miniLog->alert($this->i18n->trans('login-cookie-fail'));
-
                 return false;
             }
 
             $this->miniLog->alert($this->i18n->trans('login-user-not-found'));
-
             return false;
         }
 

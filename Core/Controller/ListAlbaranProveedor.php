@@ -53,6 +53,7 @@ class ListAlbaranProveedor extends ExtendedController\ListController
         $this->addSearchFields('ListAlbaranProveedor', ['codigo', 'numproveedor', 'observaciones']);
         
         $this->addFilterSelect('ListAlbaranProveedor', 'codserie', 'series', '', 'codserie');
+        $this->addFilterSelect('ListAlbaranProveedor', 'codpago', 'formaspago', '', 'codpago');
 
         $this->addOrderBy('ListAlbaranProveedor', 'codigo', 'code');
         $this->addOrderBy('ListAlbaranProveedor', 'fecha', 'date');

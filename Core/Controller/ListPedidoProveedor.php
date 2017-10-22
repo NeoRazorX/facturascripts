@@ -49,12 +49,14 @@ class ListPedidoProveedor extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\PedidoProveedor', $className);
-        $this->addSearchFields($className, ['codigo', 'numproveedor', 'observaciones']);
+        $this->addView('FacturaScripts\Core\Model\PedidoProveedor', 'ListPedidoProveedor');
+        $this->addSearchFields('ListPedidoProveedor', ['codigo', 'numproveedor', 'observaciones']);
+        
+        $this->addFilterSelect('ListPedidoProveedor', 'codserie', 'series', '', 'codserie');
+        $this->addFilterSelect('ListPedidoProveedor', 'codpago', 'formaspago', '', 'codpago');
 
-        $this->addOrderBy($className, 'codigo', 'code');
-        $this->addOrderBy($className, 'fecha', 'date');
-        $this->addOrderBy($className, 'total', 'amount');
+        $this->addOrderBy('ListPedidoProveedor', 'codigo', 'code');
+        $this->addOrderBy('ListPedidoProveedor', 'fecha', 'date');
+        $this->addOrderBy('ListPedidoProveedor', 'total', 'amount');
     }
 }

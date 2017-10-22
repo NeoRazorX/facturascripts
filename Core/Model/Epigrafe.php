@@ -242,7 +242,7 @@ class Epigrafe
     public function install()
     {
         /// forzamos los creación de la tabla de grupos
-        $grupo = new GrupoEpigrafes();
+        new GrupoEpigrafes();
 
         return '';
     }
