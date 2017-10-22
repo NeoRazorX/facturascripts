@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\App;
 
-use DebugBar\Bridge\Twig;
 use DebugBar\StandardDebugBar;
 use Exception;
 use FacturaScripts\Core\Base\DebugBar\DataBaseCollector;
@@ -73,6 +72,7 @@ class AppController extends App
         $this->menuManager = new MenuManager();
 
         if (FS_DEBUG) {
+            $this->debugBar['time']->startMeasure('init', 'AppController::__construct()');
             $this->debugBar->addCollector(new DataBaseCollector($this->miniLog));
             $this->debugBar->addCollector(new TranslationCollector($this->i18n));
         }
@@ -113,6 +113,11 @@ class AppController extends App
      */
     private function loadController($pageName)
     {
+        if (FS_DEBUG) {
+            $this->debugBar['time']->stopMeasure('init');
+            $this->debugBar['time']->startMeasure('loadController', 'AppController::loadController()');
+        }
+
         $controllerName = $this->getControllerFullName($pageName);
         $template = 'Error/ControllerNotFound.html';
         $httpStatus = Response::HTTP_NOT_FOUND;
@@ -141,6 +146,11 @@ class AppController extends App
 
         $this->response->setStatusCode($httpStatus);
         if ($template) {
+            if (FS_DEBUG) {
+                $this->debugBar['time']->stopMeasure('loadController');
+                $this->debugBar['time']->startMeasure('renderHtml', 'AppController::renderHtml()');
+            }
+
             $this->renderHtml($template, $controllerName);
         }
     }
@@ -198,9 +208,9 @@ class AppController extends App
         if (FS_DEBUG) {
             unset($twigOptions['cache']);
             $twigOptions['debug'] = true;
-            
-            $env = new Twig\TraceableTwigEnvironment(new Twig_Environment($twigLoader));
-            $this->debugBar->addCollector(new Twig\TwigCollector($env));
+
+            $env = new \DebugBar\Bridge\Twig\TraceableTwigEnvironment(new Twig_Environment($twigLoader));
+            $this->debugBar->addCollector(new \DebugBar\Bridge\Twig\TwigCollector($env));
             $baseUrl = 'vendor/maximebf/debugbar/src/DebugBar/Resources/';
             $templateVars['debugBarRender'] = $this->debugBar->getJavascriptRenderer($baseUrl);
 
