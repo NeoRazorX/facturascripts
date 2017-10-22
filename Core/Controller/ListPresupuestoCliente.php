@@ -52,8 +52,9 @@ class ListPresupuestoCliente extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\PresupuestoCliente', 'ListPresupuestoCliente');
         $this->addSearchFields('ListPresupuestoCliente', ['codigo', 'numero2', 'observaciones']);
         
-        $this->addFilterSelect('ListPresupuestoCliente', 'codserie', 'series', '', 'codserie');
-        $this->addFilterSelect('ListPresupuestoCliente', 'codpago', 'formaspago', '', 'codpago');
+        $this->addFilterSelect('ListPresupuestoCliente', 'codalmacen', 'almacenes', '', 'nombre');
+        $this->addFilterSelect('ListPresupuestoCliente', 'codserie', 'series', '', 'descripcion');
+        $this->addFilterSelect('ListPresupuestoCliente', 'codpago', 'formaspago', '', 'descripcion');
 
         $this->addOrderBy('ListPresupuestoCliente', 'codigo', 'code');
         $this->addOrderBy('ListPresupuestoCliente', 'fecha', 'date');

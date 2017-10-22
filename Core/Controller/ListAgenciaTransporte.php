@@ -58,6 +58,6 @@ class ListAgenciaTransporte extends ExtendedController\ListController
         $this->addOrderBy($className, 'codtrans', 'code');
         $this->addOrderBy($className, 'nombre');
 
-        $this->addFilterCheckbox($className, 'activo', 'active', '', TRUE);
+        $this->addFilterCheckbox($className, 'activo', 'active');
     }
 }

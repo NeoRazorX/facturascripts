@@ -1022,6 +1022,26 @@ class ModelDataGenerator
 
         return $num;
     }
+    
+    private function randomModel($modelName, $tableName, $functionName, $recursivo = true)
+    {
+        $lista = [];
+
+        $sql = 'SELECT * FROM '.$tableName.' ORDER BY ';
+        $sql .= strtolower(FS_DB_TYPE) == 'mysql' ? 'RAND()' : 'random()';
+
+        $data = $this->db->selectLimit($sql, 100, 0);
+        if (!empty($data)) {
+            foreach ($data as $d) {
+                $lista[] = new $modelName($d);
+            }
+        } elseif ($recursivo) {
+            $this->{$functionName}();
+            $lista = $this->randomModel($modelName, $tableName, $functionName, false);
+        }
+
+        return $lista;
+    }
 
     /**
      * Devuelve un array con clientes aleatorios.
@@ -1030,22 +1050,7 @@ class ModelDataGenerator
      */
     protected function randomClientes($recursivo = true)
     {
-        $lista = [];
-
-        $sql = 'SELECT * FROM clientes ORDER BY ';
-        $sql .= strtolower(FS_DB_TYPE) == 'mysql' ? 'RAND()' : 'random()';
-
-        $data = $this->db->selectLimit($sql, 100, 0);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $lista[] = new Model\Cliente($d);
-            }
-        } elseif ($recursivo) {
-            $this->clientes();
-            $lista = $this->randomClientes(false);
-        }
-
-        return $lista;
+        return $this->randomModel('FacturaScripts\Core\Model\Cliente', 'clientes', 'clientes', $recursivo);
     }
 
     /**
@@ -1055,22 +1060,7 @@ class ModelDataGenerator
      */
     protected function randomProveedores($recursivo = true)
     {
-        $lista = [];
-
-        $sql = 'SELECT * FROM proveedores ORDER BY ';
-        $sql .= strtolower(FS_DB_TYPE) == 'mysql' ? 'RAND()' : 'random()';
-
-        $data = $this->db->selectLimit($sql, 100, 0);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $lista[] = new Model\Proveedor($d);
-            }
-        } elseif ($recursivo) {
-            $this->proveedores();
-            return $this->randomProveedores(false);
-        }
-
-        return $lista;
+        return $this->randomModel('FacturaScripts\Core\Model\Proveedor', 'proveedores', 'proveedores', $recursivo);
     }
 
     /**
@@ -1080,22 +1070,7 @@ class ModelDataGenerator
      */
     protected function randomAgentes($recursivo = true)
     {
-        $lista = [];
-
-        $sql = 'SELECT * FROM agentes ORDER BY ';
-        $sql .= strtolower(FS_DB_TYPE) == 'mysql' ? 'RAND()' : 'random()';
-
-        $data = $this->db->selectLimit($sql, 100, 0);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $lista[] = new Model\Agente($d);
-            }
-        } elseif ($recursivo) {
-            $this->agentes();
-            return $this->randomAgentes(false);
-        }
-
-        return $lista;
+        return $this->randomModel('FacturaScripts\Core\Model\Agente', 'agentes', 'agentes', $recursivo);
     }
 
     /**
@@ -1105,21 +1080,6 @@ class ModelDataGenerator
      */
     protected function randomArticulos($recursivo = true)
     {
-        $lista = [];
-
-        $sql = 'SELECT * FROM articulos ORDER BY ';
-        $sql .= strtolower(FS_DB_TYPE) == 'mysql' ? 'RAND()' : 'random()';
-
-        $data = $this->db->selectLimit($sql, 100, 0);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $lista[] = new Model\Articulo($d);
-            }
-        } elseif ($recursivo) {
-            $this->articulos();
-            return $this->randomArticulos(false);
-        }
-
-        return $lista;
+        return $this->randomModel('FacturaScripts\Core\Model\Articulo', 'articulos', 'articulos', $recursivo);
     }
 }
