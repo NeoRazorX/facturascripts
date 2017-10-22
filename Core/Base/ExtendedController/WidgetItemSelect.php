@@ -58,7 +58,7 @@ class WidgetItemSelect extends WidgetItem
     /**
      * Carga la estructura de atributos en base a la base de datos
      *
-     * @param \SimpleXMLElement $column
+     * @param array $column
      */
     protected function loadFromJSONColumn($column)
     {
