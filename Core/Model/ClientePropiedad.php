@@ -50,7 +50,7 @@ class ClientePropiedad
     public $text;
 
     /**
-     * Devuelve el nombdre de la tabla que usa este modelo.
+     * Devuelve el nombre de la tabla que usa este modelo.
      *
      * @return string
      */
