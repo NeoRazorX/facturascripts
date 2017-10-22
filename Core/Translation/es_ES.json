@@ -657,7 +657,7 @@
     "agents": "Agentes",
     "agent": "Agente",
     "city": "Ciudad",
-    "discharge-date": "Fecha de alta",
+    "discharge-date": "Fecha de alta: 0",
     "new": "Nuevo",
     "print": "Imprimir",
     "print-list-of-records": "Imprimir lista de registros",
@@ -960,5 +960,6 @@
     "pages": "páginas",
     "logout": "Cerrar sesión",
     "table-checked": "Tabla 0 comprobada.",
-    "translation-not-registered": "La string '0' no se ha registrado en las traducciones en uso."
+    "translation-not-registered": "La string '0' no se ha registrado en las traducciones en uso.",
+    "error-processing-xmlview": "Error procesando el XML de la vista, el archivo '0' no existe o esta mal formado"
 }

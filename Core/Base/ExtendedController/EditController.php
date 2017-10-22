@@ -182,7 +182,7 @@ class EditController extends Base\Controller
      */
     public function getPanelFooter()
     {
-        return $this->i18n->trans($this->view->getPanelFooter());
+        return !empty($this->view->getPanelFooter()) ? $this->i18n->trans($this->view->getPanelFooter()) : '';
     }
 
     /**
