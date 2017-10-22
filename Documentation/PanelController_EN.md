@@ -1,5 +1,5 @@
 # PanelController Controller
-This controller, like the _ListController_, is a ** universal controller ** for multiple views
+This controller, like the _ListController_, is a **universal controller** for multiple views
 although in this case the use of different types of views is allowed: _ListView_, _EditView_ and _EditListView_
 
 The controller divides the screen into two zones, one to the left (navigation zone) and one to the right
@@ -7,17 +7,17 @@ where the views with the data are displayed.
 
 For the use of this controller it is necessary to create the views in XML format, as described in the
 document [XMLViews] (https://github.com/ArtexTrading/facturascripts/blob/master/Documentation/XMLViews_EN.md),
-included in the documentation of ** Facturascripts **.
+included in the documentation of **Facturascripts**.
 
 ## Using the Controller
 To use _PanelController_ we must create a new PHP class that inherits or extends from PanelController,
 having to implement the following methods:
 
-* ** createViews **: In charge of creating and adding the views that we want to visualize inside the PanelController.
+* **createViews**: In charge of creating and adding the views that we want to visualize inside the PanelController.
 
-* ** loadData **: Charge the data for each of the views.
+* **loadData**: Charge the data for each of the views.
 
-* ** getPageData **: Sets the general data (title, icon, menu, etc) for the main view (the first one we added in _createViews_).
+* **getPageData**: Sets the general data (title, icon, menu, etc) for the main view (the first one we added in _createViews_).
 
 
 ### createViews
@@ -26,9 +26,9 @@ using different methods depending on the type of view we are adding. We must ind
 when adding a view, the model (Full name) and the name of the XML view, and optionally the title and icon
 for the navigation group.
 
-* ** addEditView **: Adds a view to edit data from a single record of a model.
-* ** addEditListView **: Adds a view to edit multiple records of a model.
-* ** addListView **: Adds a view to display in multiple record list mode of a model.
+* **addEditView**: Adds a view to edit data from a single record of a model.
+* **addEditListView**: Adds a view to edit multiple records of a model.
+* **addListView**: Adds a view to display in multiple record list mode of a model.
 
 ```PHP
     $this->addEditView('FacturaScripts\Core\Model\Cliente', 'EditCliente', 'Cliente');
@@ -79,21 +79,21 @@ Example of loading data for different types of views.
 
 ### getPageData
 This method is responsible for returning an array with the data for the installation and configuration of the controller
-within the environment of ** Facturascripts **. As a rule, you must call the _parent_ of the controller to initialize the
+within the environment of **Facturascripts**. As a rule, you must call the _parent_ of the controller to initialize the
 default values and ensure a proper operation of our controller in the Facturascripts environment.
 
 The values that can be configured are:
-* title: View title
-* icon: Text font icon _fontawesome_
-* menu: Name of the menu where the controller will be inserted
-* submenu: (optional) Second level of the menu where the controller would be entered
-* order: We can alter the natural order of the menu system to place our controller higher or lower
+* **title**: Translation reference for view title
+* **icon**: Text font icon _fontawesome_
+* **menu**: Name of the menu where the controller will be inserted
+* **submenu**: (optional) Second level of the menu where the controller would be entered
+* **order**: We can alter the natural order of the menu system to place our controller higher or lower
 
 ```PHP
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Agentes';
+        $pagedata['title'] = 'agents';
         $pagedata['icon'] = 'fa-user-circle-o';
         $pagedata['menu'] = 'admin';
         return $pagedata;

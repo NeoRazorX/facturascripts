@@ -1,6 +1,5 @@
 # Controlador ListController
 
-
 Para el uso de este controlador es necesario crear las vistas en formato XML, tal y como se describe en el
 documento [XMLViews](https://github.com/ArtexTrading/facturascripts/blob/master/Documentation/XMLViews_ES.md), incluido en la documentación de **Facturascripts**.
 
