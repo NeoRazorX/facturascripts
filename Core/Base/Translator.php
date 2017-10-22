@@ -129,7 +129,7 @@ class Translator
     /**
      * Devuelve las strings utilizadas
      *
-     * @return string
+     * @return array
      */
     public function getUsedStrings()
     {
