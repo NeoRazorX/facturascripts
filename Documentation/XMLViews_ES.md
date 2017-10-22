@@ -194,7 +194,7 @@ mediante los siguientes atributos:
 
 * **titleurl** : URL destino si el usuario hace click sobre el título del grupo.
 
-* **icon** : Si se indica se visualizará el icono a la izquierda del título.
+* **icon** : Si se indica se visualizará el icono a la izquierda del título. El icono de el grupo sólo se mostrará si el atributo title está presente.
 
 * **order** : Posición que ocupa el grupo. Sirve para indicar el orden en que se visualizara.
 
