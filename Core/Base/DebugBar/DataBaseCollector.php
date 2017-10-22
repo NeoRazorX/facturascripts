@@ -17,11 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base\DataBase;
+namespace FacturaScripts\Core\Base\DebugBar;
 
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\Renderable;
+use FacturaScripts\Core\Base\MiniLog;
 
 /**
  * Clase para "tracear" las consultas SQL.
@@ -31,20 +32,20 @@ use DebugBar\DataCollector\Renderable;
 class DataBaseCollector extends DataCollector implements Renderable, AssetProvider
 {
     /**
-     * Array con las consultas realizadas
+     * Gestor del log de la app.
      *
-     * @var array
+     * @var MiniLog
      */
-    protected $queries;
+    protected $miniLog;
 
     /**
      * DataBaseCollector constructor.
      *
-     * @param array $queries
+     * @param miniLog $miniLog
      */
-    public function __construct($queries)
+    public function __construct($miniLog)
     {
-        $this->queries = $queries;
+        $this->miniLog = $miniLog;
     }
 
     /**
@@ -56,7 +57,7 @@ class DataBaseCollector extends DataCollector implements Renderable, AssetProvid
     {
         $queries = [];
         $totalExecTime = 0;
-        foreach ($this->queries as $q) {
+        foreach ($this->miniLog->read(['sql']) as $q) {
             $queries[] = [
                 'sql' => $q['message'],
                 'duration' => 0,

@@ -52,8 +52,9 @@ class ListPedidoCliente extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\PedidoCliente', 'ListPedidoCliente');
         $this->addSearchFields('ListPedidoCliente', ['codigo', 'numero2', 'observaciones']);
         
-        $this->addFilterSelect('ListPedidoCliente', 'codserie', 'series', '', 'codserie');
-        $this->addFilterSelect('ListPedidoCliente', 'codpago', 'formaspago', '', 'codpago');
+        $this->addFilterSelect('ListPedidoCliente', 'codalmacen', 'almacenes', '', 'nombre');
+        $this->addFilterSelect('ListPedidoCliente', 'codserie', 'series', '', 'descripcion');
+        $this->addFilterSelect('ListPedidoCliente', 'codpago', 'formaspago', '', 'descripcion');
 
         $this->addOrderBy('ListPedidoCliente', 'codigo', 'code');
         $this->addOrderBy('ListPedidoCliente', 'fecha', 'date');

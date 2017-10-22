@@ -52,8 +52,10 @@ class ListAlbaranCliente extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\AlbaranCliente', 'ListAlbaranCliente');
         $this->addSearchFields('ListAlbaranCliente', ['codigo', 'numero2', 'observaciones']);
         
-        $this->addFilterSelect('ListAlbaranCliente', 'codserie', 'series', '', 'codserie');
-        $this->addFilterSelect('ListAlbaranCliente', 'codpago', 'formaspago', '', 'codpago');
+        $this->addFilterSelect('ListAlbaranCliente', 'codalmacen', 'almacenes', '', 'nombre');
+        $this->addFilterSelect('ListAlbaranCliente', 'codserie', 'series', '', 'descripcion');
+        $this->addFilterSelect('ListAlbaranCliente', 'codpago', 'formaspago', '', 'descripcion');
+        $this->addFilterCheckbox('ListAlbaranCliente', 'invoice', 'invoice', 'ptefactura', true);
 
         $this->addOrderBy('ListAlbaranCliente', 'codigo', 'code');
         $this->addOrderBy('ListAlbaranCliente', 'fecha', 'date');

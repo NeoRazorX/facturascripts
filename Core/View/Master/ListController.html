@@ -188,10 +188,10 @@
                                 <option value="">{{ any }} {{ key1 }}</option>
                                 <option value="">------</option>
                                 {% for key2, data in fsc.optionlist(key1, filter.options) %}
-                                {% if (indexView == fsc.active) and (data == filter.value) %}
-                                <option value="{{ data }}" selected="">{{ data }}</option>
+                                {% if (indexView == fsc.active) and (key2 == filter.value) %}
+                                <option value="{{ key2 }}" selected="">{{ data }}</option>
                                 {% else %}
-                                <option value="{{ data }}">{{ data }}</option>
+                                <option value="{{ key2 }}">{{ data }}</option>
                                 {% endif %}
                                 {% endfor %}
                             </select>

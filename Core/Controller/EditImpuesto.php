@@ -1,7 +1,6 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015       Pablo Peralta
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,17 +19,34 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controlador para la lista de agencias de transportes
+ * Controlador para la edición de un registro del modelo Almacen
  *
- * @author Pablo Peralta
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class ListAgenciaTransporte extends ExtendedController\ListController
+class EditImpuesto extends ExtendedController\EditController
 {
+    /**
+     * EditFormaPago constructor.
+     *
+     * @param Base\Cache $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog $miniLog
+     * @param string $className
+     */
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    {
+        parent::__construct($cache, $i18n, $miniLog, $className);
+
+        // Establecemos el modelo de datos
+        $this->modelName = 'FacturaScripts\Core\Model\Impuesto';
+    }
+
     /**
      * Devuelve los datos básicos de la página
      *
@@ -39,25 +55,10 @@ class ListAgenciaTransporte extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'carriers';
-        $pagedata['icon'] = 'fa-truck';
-        $pagedata['menu'] = 'admin';
+        $pagedata['title'] = 'tax';
+        $pagedata['icon'] = 'fa-plus-square-o';
+        $pagedata['showonmenu'] = false;
 
         return $pagedata;
-    }
-
-    /**
-     * Procedimiento para insertar vistas en el controlador
-     */
-    protected function createViews()
-    {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\AgenciaTransporte', $className);
-        $this->addSearchFields($className, ['nombre', 'codtrans']);
-
-        $this->addOrderBy($className, 'codtrans', 'code');
-        $this->addOrderBy($className, 'nombre');
-
-        $this->addFilterCheckbox($className, 'activo', 'active');
     }
 }
