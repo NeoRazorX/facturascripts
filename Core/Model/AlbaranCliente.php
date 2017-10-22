@@ -55,7 +55,7 @@ class AlbaranCliente
     public $ptefactura;
 
     /**
-     * Devuelve el nombdre de la tabla que usa este modelo.
+     * Devuelve el nombre de la tabla que usa este modelo.
      *
      * @return string
      */
@@ -73,7 +73,14 @@ class AlbaranCliente
     {
         return 'idalbaran';
     }
-    
+
+    /**
+     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará tras la creación de la tabla. útil para insertar valores
+     * por defecto.
+     *
+     * @return string
+     */
     public function install()
     {
         /// forzamos la comprobación de la tabla de facturascli.
@@ -110,20 +117,6 @@ class AlbaranCliente
     public function test()
     {
         return $this->testTrait();
-    }
-
-    public function save()
-    {
-        if ($this->test()) {
-            if ($this->exists()) {
-                return $this->saveUpdate();
-            }
-
-            $this->newCodigo();
-            return $this->saveInsert();
-        }
-
-        return FALSE;
     }
 
     /**

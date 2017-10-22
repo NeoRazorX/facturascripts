@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base\NumberTools;
@@ -43,18 +44,21 @@ class WidgetItemNumber extends WidgetItem
     public $decimal;
 
     /**
+     * Valor del incremento/decremento
      *
      * @var string
      */
     public $step;
 
     /**
+     * Valor máximo
      *
      * @var string
      */
     public $max;
 
     /**
+     * Valor mínimo
      *
      * @var string
      */
@@ -81,13 +85,13 @@ class WidgetItemNumber extends WidgetItem
     /**
      * Carga la estructura de atributos en base a un archivo XML
      *
-     * @param SimpleXMLElement $column
-     * @param SimpleXMLElement $widgetAtributes
+     * @param \SimpleXMLElement $column
+     * @param \SimpleXMLElement $widgetAtributes
      */
     protected function loadFromXMLColumn($column, $widgetAtributes) {
         parent::loadFromXMLColumn($column, $widgetAtributes);
 
-        $this->decimal = (int) intval($widgetAtributes->decimal);
+        $this->decimal = (int) $widgetAtributes->decimal;
         $this->step = (string) $widgetAtributes->step;
         $this->min = (string) $widgetAtributes->min;
         $this->max = (string) $widgetAtributes->max;
@@ -96,13 +100,13 @@ class WidgetItemNumber extends WidgetItem
     /**
      * Carga la estructura de atributos en base a la base de datos
      *
-     * @param SimpleXMLElement $column
+     * @param \SimpleXMLElement $column
      */
     protected function loadFromJSONColumn($column)
     {
         parent::loadFromJSONColumn($column);
 
-        $this->decimal = (int) intval($column['widget']['decimal']);
+        $this->decimal = (int) $column['widget']['decimal'];
         $this->step = (string) $column['widget']['step'];
         $this->min = (string) $column['widget']['min'];
         $this->max = (string) $column['widget']['max'];

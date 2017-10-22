@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -46,8 +47,8 @@ class WidgetItemSelect extends WidgetItem
     /**
      * Carga la estructura de atributos en base a un archivo XML
      *
-     * @param SimpleXMLElement $column
-     * @param SimpleXMLElement $widgetAtributes
+     * @param \SimpleXMLElement $column
+     * @param \SimpleXMLElement $widgetAtributes
      */
     protected function loadFromXMLColumn($column, $widgetAtributes) {
         parent::loadFromXMLColumn($column, $widgetAtributes);
@@ -57,7 +58,7 @@ class WidgetItemSelect extends WidgetItem
     /**
      * Carga la estructura de atributos en base a la base de datos
      *
-     * @param SimpleXMLElement $column
+     * @param array $column
      */
     protected function loadFromJSONColumn($column)
     {

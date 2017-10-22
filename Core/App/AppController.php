@@ -16,11 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
 use DebugBar\Bridge\Twig;
 use DebugBar\StandardDebugBar;
 use Exception;
+use FacturaScripts\Core\Base\Collector\TranslationCollector;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseCollector;
 use FacturaScripts\Core\Base\MenuManager;
@@ -206,6 +208,8 @@ class AppController extends App
             $this->debugBar['messages']->info('END');
         }
         $twig = new Twig_Environment($twigLoader, $twigOptions);
+
+        $this->debugBar->addCollector(new TranslationCollector($this->i18n));
 
         try {
             $this->response->setContent($twig->render($template, $templateVars));
