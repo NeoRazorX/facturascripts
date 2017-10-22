@@ -194,7 +194,7 @@ through the following attributes:
 
 * **titleurl**: Destination URL if the user clicks on the group title.
 
-* **icon**: If indicated the icon will be displayed to the left of the title.
+* **icon**: If indicated the icon will be displayed to the left of the title. The icon group only will be showed if title is present.
 
 * **order**: Position of the group. It is used to indicate the order in which it will be displayed.
 
