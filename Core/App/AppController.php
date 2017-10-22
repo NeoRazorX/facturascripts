@@ -16,15 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\App;
 
 use DebugBar\Bridge\Twig;
 use DebugBar\StandardDebugBar;
 use Exception;
-use FacturaScripts\Core\Base\Collector\TranslationCollector;
+use FacturaScripts\Core\Base\DebugBar\DataBaseCollector;
+use FacturaScripts\Core\Base\DebugBar\TranslationCollector;
 use FacturaScripts\Core\Base\Controller;
-use FacturaScripts\Core\Base\DataBase\DataBaseCollector;
 use FacturaScripts\Core\Base\MenuManager;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Model\User;
@@ -72,6 +71,11 @@ class AppController extends App
         parent::__construct($folder);
         $this->debugBar = new StandardDebugBar();
         $this->menuManager = new MenuManager();
+
+        if (FS_DEBUG) {
+            $this->debugBar->addCollector(new DataBaseCollector($this->miniLog));
+            $this->debugBar->addCollector(new TranslationCollector($this->i18n));
+        }
     }
 
     /**
@@ -135,8 +139,6 @@ class AppController extends App
             }
         }
 
-        $this->debugBar->addCollector(new DataBaseCollector($this->miniLog->read(['sql'])));
-
         $this->response->setStatusCode($httpStatus);
         if ($template) {
             $this->renderHtml($template, $controllerName);
@@ -172,8 +174,6 @@ class AppController extends App
     {
         /// cargamos el motor de plantillas
         $twigLoader = new Twig_Loader_Filesystem($this->folder . '/Core/View');
-        $env = new Twig\TraceableTwigEnvironment(new Twig_Environment($twigLoader));
-        $this->debugBar->addCollector(new Twig\TwigCollector($env));
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
             if (file_exists($this->folder . '/Plugins/' . $pluginName . '/View')) {
                 $twigLoader->prependPath($this->folder . '/Plugins/' . $pluginName . '/View');
@@ -198,6 +198,9 @@ class AppController extends App
         if (FS_DEBUG) {
             unset($twigOptions['cache']);
             $twigOptions['debug'] = true;
+            
+            $env = new Twig\TraceableTwigEnvironment(new Twig_Environment($twigLoader));
+            $this->debugBar->addCollector(new Twig\TwigCollector($env));
             $baseUrl = 'vendor/maximebf/debugbar/src/DebugBar/Resources/';
             $templateVars['debugBarRender'] = $this->debugBar->getJavascriptRenderer($baseUrl);
 
@@ -209,13 +212,11 @@ class AppController extends App
         }
         $twig = new Twig_Environment($twigLoader, $twigOptions);
 
-        $this->debugBar->addCollector(new TranslationCollector($this->i18n));
-
         try {
             $this->response->setContent($twig->render($template, $templateVars));
         } catch (Exception $exc) {
             $this->debugBar['exceptions']->addException($exc);
-            $this->response->setContent($twig->render('Error/TemplateNotFound.html', $templateVars));
+            $this->response->setContent($twig->render('Error/TemplateError.html', $templateVars));
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
