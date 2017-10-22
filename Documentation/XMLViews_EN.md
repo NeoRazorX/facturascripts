@@ -171,17 +171,17 @@ For the case of values ​​by definition of range a single tag_\<values ​​
 The various options are indicated by the tag system_\<values ​​\>_ described in the group_\<widget\>_, in the style of the _select_ type.
 
 
-* **fieldname **: (required) Name of the field containing the information.
+* **fieldname**: (required) Name of the field containing the information.
 
-* **onclick **: (optional) Name of the controller to call and pass the value of the field when clicking on the value of the column.
+* **onclick**: (optional) Name of the controller to call and pass the value of the field when clicking on the value of the column.
 
-* **required **: Optional attribute to indicate that the column must have a value at the time the data persist in the database. ** [required = "true"] **
+* **required**: Optional attribute to indicate that the column must have a value at the time the data persist in the database. **[required = "true"]**
 
-* **readonly **: Optional attribute to indicate that the column is not editable. ** [readonly = "true"] **
+* **readonly**: Optional attribute to indicate that the column is not editable. **[readonly = "true"]**
 
-* **icon **: (optional) If indicated, the icon will be displayed to the left of the field.
+* **icon**: (optional) If indicated, the icon will be displayed to the left of the field.
 
-* **hint **: (optional) Explanatory text that is displayed by placing the mouse over the title in the Edit controller.
+* **hint**: (optional) Explanatory text that is displayed by placing the mouse over the title in the Edit controller.
 
 
 ### group
