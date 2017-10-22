@@ -657,7 +657,7 @@
     "agents": "Agents",
     "agent": "Agent",
     "city": "City",
-    "discharge-date": "Discharge date",
+    "discharge-date": "Discharge date: 0",
     "new": "New",
     "print": "Print",
     "print-list-of-records": "Print list of records",
@@ -960,5 +960,9 @@
     "pages": "pages",
     "logout": "Logout",
     "table-checked": "Table 0 checked.",
-    "translation-not-registered": "The string '0' isn't registered on translations in use."
+    "translation-not-registered": "The string '0' isn't registered on translations in use.",
+    "error-processing-xmlview": "Error processing XML View, file '0' not exist or is incorrect",
+    "contact-data": "Contact data",
+    "invoice-number": "Invoice number",
+    "status": "Status"
 }

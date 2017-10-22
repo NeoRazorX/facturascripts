@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ File EditEjercicio.xml | EditEjercicio.xml
+  ~
+  ~ @package     facturascripts
+  ~ @subpackage  facturascripts
+  ~ @autor       Francesc Pineda Segarra francesc.pineda.segarra@gmail.com
+  ~ @copyright   Copyright (c) 2017
+  -->
+
+<view>
+    <columns>
+        <group name="data" title="warehouse" numcolumns="12">
+            <column name="code" numcolumns="2" order="100">
+                <widget type="text" fieldname="codejercicio" onclick="" required="true" />
+            </column>
+
+            <column name="name" numcolumns="2" order="110">
+                <widget type="text" fieldname="nombre" onclick="" required="true" />
+            </column>
+
+            <column name="start-date" numcolumns="2" order="120">
+                <widget type="datepicker" fieldname="fechainicio" onclick="" />
+            </column>
+
+            <column name="end-date" numcolumns="2" order="130">
+                <widget type="datepicker" fieldname="fechafin" onclick="" />
+            </column>
+
+            <column name="account-length" numcolumns="2" order="140">
+                <widget type="text" fieldname="longsubcuenta" onclick="" required="true" />
+            </column>
+
+            <column name="status" numcolumns="2" order="150">
+                <widget type="select" fieldname="estado" required="true">
+                    <values title="ABIERTO">Abierto</values>
+                    <values title="CERRADO">Cerrado</values>
+                </widget>
+            </column>
+        </group>
+    </columns>
+</view>
+
