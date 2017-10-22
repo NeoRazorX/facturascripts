@@ -214,7 +214,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     private function checkboxHTMLColumn($header, $input, $data)
     {
         $label = ($header != null)
-            ? '<label class="form-check-label" ' . $data['ColumnHint'] . '>' . $input . '&nbsp;' . $header . '</label>'
+            ? '<label class="form-check-label custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0" ' . $data['ColumnHint'] . '>' . $input . '&nbsp;' . $header . '</label>'
             : '';
 
         $result = '<div class="form-row align-items-center' . $data['ColumnClass'] . '">'
@@ -249,7 +249,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             ++$index;
             $values = [($index . '"'), $optionValue['value'], $checked];
             $html .= '<div class="form-check">'
-                . '<label class="form-check-label" ' . $data['ColumnHint'] . '>'
+                . '<label class="form-check-label custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0" ' . $data['ColumnHint'] . '>'
                 . str_replace($template_var, $values, $input)
                 . '&nbsp;' . $optionValue['title']
                 . '</label>'
