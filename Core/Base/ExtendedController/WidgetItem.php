@@ -134,7 +134,7 @@ class WidgetItem
     /**
      * Crea y carga la estructura de atributos en base a la base de datos
      *
-     * @param \SimpleXMLElement $column
+     * @param array $column
      * @return WidgetItem
      */
     public static function newFromJSONColumn($column)
