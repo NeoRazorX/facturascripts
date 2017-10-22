@@ -268,10 +268,10 @@ class PageOption
          * Reports 'simplexml_load_file(...)' calls, which may be affected by this PHP bug.
          * $xml = simplexml_load_file($file);
          */
-        $xml = simplexml_load_string(file_get_contents($file));
+        $xml = @simplexml_load_string(file_get_contents($file));
 
         if ($xml === false) {
-            $this->miniLog->critical($this->i18n->trans('error-processing-xmlview'));
+            $this->miniLog->critical($this->i18n->trans('error-processing-xmlview', [$file]));
             return;
         }
 
