@@ -25,41 +25,41 @@
 <view>
    
     <columns>
-        <group name="data" numcolumns="6" icon="fa-file-o" title="Datos fiscales">
+        <group name="data" numcolumns="6" icon="fa-file-o" title="..corporation-fiscal-data..">
             <column name="code" numcolumns="2" order="100">
                 <widget type="text" fieldname="id" icon="fa-object-group" required="true" />
             </column>
-            <column name="name" numcolumns="4" order="110" description="Razón social de la empresa">
+            <column name="name" numcolumns="4" order="110" description="..company-name..">
                 
-                <widget type="text" fieldname="nombre" required="true"  hint="Razón social" />
+                <widget type="text" fieldname="nombre" required="true"  hint="..company-name.." />
             </column>
-            <column name="short-name" numcolumns="3" order="120" description="Nombre uso interno">
+            <column name="short-name" numcolumns="3" order="120" description="short-name">
                 <widget type="text" fieldname="nombrecorto" />
             </column>
-            <column name="cif" numcolumns="3" order="120" >
+            <column name="cifnif" numcolumns="3" order="120" >
                 <widget type="text" fieldname="cifnif" />
             </column>
             
-            <column name="administrator" numcolumns="6" order="125" description="Administrador">
-                <widget type="text" fieldname="administrador" hint="Administrador de la empresa"/>
+            <column name="administrator" numcolumns="6" order="125" description="administrator">
+                <widget type="text" fieldname="administrador" hint="..company-manager.."/>
             </column>
-            <column name="address" numcolumns="6" order="130" description="Dirección fiscal">
+            <column name="address" numcolumns="6" order="130" description="..company-tax-management..">
                 <widget type="text" fieldname="direccion" hint="Calle y número"/>
             </column>
                 
-            <column name="boxoffice" numcolumns="3" order="139" description="Apartado de correos">    
-                <widget type="text" fieldname="apartado" hint="Apartado de correos"/>
+            <column name="postalmail" numcolumns="3" order="139" description="..post-office-box..">    
+                <widget type="text" fieldname="apartado" hint="..post-office-box.."/>
             </column>
-            <column name="zipcode" numcolumns="3" order="140" description="Código postal">    
-                <widget type="text" fieldname="codpostal" hint="Código postal"/>
+            <column name="postalcode" numcolumns="3" order="140" description="postalcode">    
+                <widget type="text" fieldname="codpostal" hint="postalcode"/>
             </column>
-            <column name="city" numcolumns="6" order="150" description="Ciudad">    
-                <widget type="text" fieldname="ciudad" hint="Municipio/ciudad"/>
+            <column name="city" numcolumns="6" order="150" description="city">    
+                <widget type="text" fieldname="ciudad" hint="city"/>
            </column>
-           <column name="county" numcolumns="6" order="160" description="Provincia">
-                <widget type="text" fieldname="provincia" hint="provincia"/>
+           <column name="province" numcolumns="6" order="160" description="province">
+                <widget type="text" fieldname="provincia" hint="province"/>
             </column>
-            <column name="country" numcolumns="6" order="170" description="Pais de la empresa">
+            <column name="country" numcolumns="6" order="170" description="corporation-country">
                 <widget type="select" fieldname="codpais">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre">
                         
@@ -68,38 +68,38 @@
             </column>
                 
         </group>
-        <group name="contactdata" numcolumns="6" icon="fa-address-card" title="Datos de contacto">
-            <column name="telephone" numcolumns="6" order="100" description="Teléfono empresa">   
+        <group name="contactdata" numcolumns="6" icon="fa-address-card" title="contactdata">
+            <column name="telephone" numcolumns="6" order="100" description="..corporation-telephone..">   
                 <widget type="text" fieldname="telefono"/>
             </column>
-            <column name="fax" numcolumns="6" order="110" description="Fax empresa">   
+            <column name="fax" numcolumns="6" order="110" description="..business-fax..">   
                 <widget type="text" fieldname="fax"/>
             </column>
-            <column name="email" numcolumns="4" order="120" description="Correo electrónico empresa">   
-                <widget type="text" fieldname="email" hint="correo electrónico"/>
+            <column name="email" numcolumns="4" order="120" description="..business-email..">   
+                <widget type="text" fieldname="email" hint="..business-email.."/>
             </column>
-            <column name="webpage" numcolumns="6" order="130" description="Página web empresa">   
-                <widget type="text" fieldname="web" hint="http;//"/>
+            <column name="webpage" numcolumns="6" order="130" description="..company-website..">   
+                <widget type="text" fieldname="web" hint="+company-website.."/>
             </column>
-            <column name="schedule" numcolumns="2" order="140" description="PHorario">   
-                <widget type="text" fieldname="horario" hint=""/>
+            <column name="schedule" numcolumns="2" order="140" description="schedule">   
+                <widget type="text" fieldname="horario" hint="schedule"/>
             </column>
-             <column name="motto" numcolumns="12" order="150" description="Lema empresa">   
-                <widget type="textarea" fieldname="lema" hint=""/>
+             <column name="motto" numcolumns="12" order="150" description="..business-moto..">   
+                <widget type="textarea" fieldname="lema" hint="..business-moto.."/>
             </column>
-             <column name="invoicefoot" numcolumns="12" order="160" description="Texto pie de documentos">   
+             <column name="document-footer" numcolumns="12" order="160" description="document-foot">   
                 <widget type="textarea" fieldname="pie_factura" hint=""/>
             </column>
             
             
         </group>
-        <group name="logo" numcolumns="12" title="Logotipo"> 
-            <column name="logo" numcolumns="4" order="149" description="Logotipo de la empresa">
+        <group name="logo" numcolumns="12" title="logo"> 
+            <column name="logo" numcolumns="4" order="149" description="..business-logo..">
                 <widget type="image" fieldname="logo"/>
             </column>
            
         </group>
-        <group name="management" columns="12" icon="fa-cog" title="Parámetros gestion/contabilidad">
+        <group name="management" columns="12" icon="fa-cog" title="..management-accouting-parametres..">
             <column name="warehouse" numcolumns="3">
                 <widget type="select" fieldname="codalmacen">
                     <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre">
@@ -110,40 +110,40 @@
             <column name="stockorders" columns="1" order="170">
                 <widget type="checkbox" fieldname="stockpedidos"/>
             </column>
-            <column name="startdate" numcolumns="2" order="180" description="Fecha de inicio de actividad">   
+            <column name="startdate" numcolumns="2" order="180" description="..start-date-activity..">   
                 <widget type="date" fieldname="inicioact" hint=""/>
             </column>
-            <column name="exercise" numcolumns="2" order="190" description="Ejercicio por defecto">   
+            <column name="exercise" numcolumns="2" order="190" description="..default-exercise..">   
                 <widget type="select" fieldname="codejercicio"> 
                     <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
                   
                 </widget>
             </column>
-            <column name="currency" numcolumns="2" order="200" description="Divisa por defecto">   
+            <column name="currency" numcolumns="2" order="200" description="..default-currency..">   
                 <widget type="select" fieldname="coddivisa"> 
                     <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
                   
                 </widget>
             </column>
-            <column name="serialcode" numcolumns="2" order="210" description="Serie documentos por defecto">   
+            <column name="serialcode" numcolumns="2" order="210" description="..default-document-serie..">   
                 <widget type="select" fieldname="codserie"> 
                     <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
                   
                 </widget>
             </column>
-            <column name="paycode" numcolumns="2" order="220" description="Forma de pago por defecto">   
+            <column name="method-payment" numcolumns="2" order="220" description="..default-payment-method..">   
                 <widget type="select" fieldname="codpago"> 
                     <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
                   
                 </widget>
             </column>
-            <column name="integratedaccounting" columns="1" order="230">
+            <column name="integrated-accounting" columns="1" order="230">
                 <widget type="checkbox" fieldname="contintegrada"/>
             </column>
             <column name="surcharge" columns="1" order="240">
                 <widget type="checkbox" fieldname="recequivalencia"/>
             </column>
-            <column name="codedi" numcolumns="2" order="250" description="Cod EDI">   
+            <column name="..edi-code.." numcolumns="2" order="250" description="..codigo-edicion-electronica-documentos..">   
                 <widget type="text" fieldname="codedi" hint=""/>
             </column>
         </group>    
