@@ -208,6 +208,13 @@ trait ModelTrait
      */
     public function checkArrayData(&$data)
     {
+        foreach (self::$fields as $field => $values) {
+            if ($values['type'] === 'boolean') {
+                if (!isset($data[$field])) {
+                    $data[$field] = FALSE;
+                }
+            }    
+        }
     }
 
     /**
