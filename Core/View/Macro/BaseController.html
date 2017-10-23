@@ -3,7 +3,6 @@
 -->
 {% macro columnsForListView(context, view) %}
     {% set cols = (view.getColumns()|length)+1 %}
-    {% set show_delete = true %}
     <table class="table table-hover">
         <thead>
             <tr>
@@ -48,23 +47,11 @@
                 </td>
             </tr>
             {% else %}
-            {% set show_delete = false %}
             <tr class="table-warning">
                 <td colspan="{{ cols }}"><b>{{ context.i18n.trans('no-data') }}</b></td>
             </tr>
         {% endfor %}
         </tbody>
-        {% if show_delete == true %}
-        <tfoot>
-            <tr>
-                <td class="text-right" colspan="{{ cols }}">
-                    <a href="#" class="btn btn-danger" onclick="return deleteFromList();">
-                        <i class="fa fa-trash" aria-hidden="true"></i>
-                    </a>
-                </td>
-            </tr>
-        </tfoot>
-        {% endif %}
     </table>
 {% endmacro %}
 

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -28,37 +27,10 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class Articulo
 {
+
     use Base\ModelTrait {
         clear as clearTrait;
     }
-
-    /**
-     * Array de impuestos
-     *
-     * @var Impuesto[]
-     */
-    private static $impuestos;
-
-    /**
-     * Array de búsquedas precargadas
-     *
-     * @var array
-     */
-    private static $search_tags;
-
-    /**
-     * Bool que indica si la caché está limpiada
-     *
-     * @var null|bool
-     */
-    private static $cleaned_cache;
-
-    /**
-     * Lista de columnas
-     *
-     * @var array
-     */
-    private static $column_list;
 
     /**
      * Clave primaria. Varchar (18).
@@ -275,11 +247,11 @@ class Articulo
     private $imagen;
 
     /**
-     * El artículo existe o no
+     * Array de impuestos
      *
-     * @var bool
+     * @var Impuesto[]
      */
-    private $exists;
+    private static $impuestos;
 
     /**
      * Devuelve el nombre de la tabla que usa este modelo.
@@ -311,11 +283,6 @@ class Articulo
     public function install()
     {
         /**
-         * Limpiamos la caché por si el usuario ha borrado la tabla, pero ya tenía búsquedas.
-         */
-        $this->cleanCache();
-
-        /**
          * La tabla articulos tiene varias claves ajenas, por eso debemos forzar la comprobación de esas tablas.
          */
         new Fabricante();
@@ -332,25 +299,6 @@ class Articulo
     {
         $this->clearTrait();
         $this->factualizado = date('d-m-Y');
-        $this->imagen = null;
-        $this->exists = false;
-    }
-
-    /**
-     * Devuelve la descripción,
-     * si se indica $len se cortará a a esa longitud
-     *
-     * @param int $len
-     *
-     * @return string
-     */
-    public function getDescripcion($len = 120)
-    {
-        if (mb_strlen($this->descripcion, 'UTF8') > $len) {
-            return mb_substr($this->descripcion, 0, $len) . '...';
-        }
-
-        return $this->descripcion;
     }
 
     /**
@@ -393,11 +341,8 @@ class Articulo
      */
     public function imageRef($ref = false)
     {
-        $ref = $ref ? : $this->referencia;
-
-        $ref = str_replace(['/', '\\'], '_', $ref);
-
-        return $ref;
+        $ref2 = ($ref === false) ? $this->referencia : $ref;
+        return str_replace(['/', '\\'], '_', $ref2);
     }
 
     /**
@@ -414,8 +359,6 @@ class Articulo
             $ref = sprintf(1 + (int) $data[0]['referencia']);
         }
 
-        $this->exists = false;
-
         return $ref;
     }
 
@@ -427,7 +370,6 @@ class Articulo
     public function getFamilia()
     {
         $fam = new Familia();
-
         return $this->codfamilia === null ? false : $fam->get($this->codfamilia);
     }
 
@@ -439,7 +381,6 @@ class Articulo
     public function getFabricante()
     {
         $fab = new Fabricante();
-
         return $this->codfabricante === null ? false : $fab->get($this->codfabricante);
     }
 
@@ -451,7 +392,6 @@ class Articulo
     public function getStock()
     {
         $stock = new Stock();
-
         return $this->nostock ? [] : $stock->all([new DataBaseWhere('referencia', $this->referencia)]);
     }
 
@@ -463,7 +403,6 @@ class Articulo
     public function getImpuesto()
     {
         $imp = new Impuesto();
-
         return $imp->get($this->codimpuesto);
     }
 
@@ -481,26 +420,19 @@ class Articulo
             $this->iva = null;
         }
 
+        if (!isset(self::$impuestos)) {
+            self::$impuestos = [];
+            $impuestoModel = new Impuesto();
+            foreach ($impuestoModel->all() as $imp) {
+                self::$impuestos[$imp->codimpuesto] = $imp;
+            }
+        }
+
         if ($this->iva === null) {
             $this->iva = 0;
 
-            if (!$this->codimpuesto === null) {
-                $encontrado = false;
-                foreach (self::$impuestos as $i) {
-                    if ($i->codimpuesto === $this->codimpuesto) {
-                        $this->iva = $i->iva;
-                        $encontrado = true;
-                        break;
-                    }
-                }
-                if (!$encontrado) {
-                    $imp = new Impuesto();
-                    $imp0 = $imp->get($this->codimpuesto);
-                    if ($imp0) {
-                        $this->iva = $imp0->iva;
-                        self::$impuestos[] = $imp0;
-                    }
-                }
+            if (!$this->codimpuesto === null && isset(self::$impuestos[$this->codimpuesto])) {
+                $this->iva = self::$impuestos[$this->codimpuesto]->iva;
             }
         }
 
@@ -513,16 +445,6 @@ class Articulo
      * @return string|false
      */
     public function imagenUrl()
-    {
-        return $this->checkImageExists();
-    }
-
-    /**
-     * Comprueba si la imagen existe, si existe devuelve su ruta, y sino existe devuelve False
-     *
-     * @return string|false
-     */
-    private function checkImageExists()
     {
         $images = [
             FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png',
@@ -549,7 +471,7 @@ class Articulo
     {
         $this->imagen = null;
 
-        if ($oldImage = $this->checkImageExists()) {
+        if ($oldImage = $this->imagenUrl()) {
             unlink($oldImage);
         }
 
@@ -559,7 +481,6 @@ class Articulo
             }
 
             $file = @fopen(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.' . ($png ? 'png' : 'jpg'), 'ab');
-
             if ($file) {
                 fwrite($file, $img);
                 fclose($file);
@@ -609,7 +530,7 @@ class Articulo
                 . ' WHERE referencia = ' . $this->var2str($this->referencia) . ';';
             if ($this->dataBase->exec($sql)) {
                 /// renombramos la imagen, si la hay
-                if ($oldImage = $this->checkImageExists()) {
+                if ($oldImage = $this->imagenUrl()) {
                     rename($oldImage, FS_MYDOCS . 'images/articulos/' . $this->imageRef($ref) . '-1.png');
                 }
 
@@ -618,8 +539,6 @@ class Articulo
                 $this->miniLog->alert($this->i18n->trans('cant-modify-reference'));
             }
         }
-
-        $this->exists = false;
     }
 
     /**
@@ -631,22 +550,13 @@ class Articulo
     {
         if ($codimpuesto !== $this->codimpuesto) {
             $this->codimpuesto = $codimpuesto;
+            $this->iva = null;
 
-            $encontrado = false;
-            foreach (self::$impuestos as $i) {
-                if ($i->codimpuesto === $this->codimpuesto) {
-                    $this->iva = (float) $i->iva;
-                    $encontrado = true;
-                    break;
-                }
-            }
-            if (!$encontrado) {
-                $imp = new Impuesto();
-                $imp0 = $imp->get($this->codimpuesto);
-                $this->iva = 0;
-                if ($imp0) {
-                    $this->iva = (float) $imp0->iva;
-                    self::$impuestos[] = $imp0;
+            if (!isset(self::$impuestos)) {
+                self::$impuestos = [];
+                $impuestoModel = new Impuesto();
+                foreach ($impuestoModel->all() as $imp) {
+                    self::$impuestos[$imp->codimpuesto] = $imp;
                 }
             }
         }
@@ -663,50 +573,49 @@ class Articulo
      */
     public function setStock($codalmacen, $cantidad = 1)
     {
-        $result = false;
-
         if ($this->nostock) {
-            $result = true;
+            return true;
+        }
+
+        $result = false;
+        $stock = new Stock();
+        $encontrado = false;
+        $stocks = $stock->allFromArticulo($this->referencia);
+        foreach ($stocks as $sto) {
+            if ($sto->codalmacen === $codalmacen) {
+                $sto->setCantidad($cantidad);
+                $result = $sto->save();
+                $encontrado = true;
+                break;
+            }
+        }
+        if (!$encontrado) {
+            $stock->referencia = $this->referencia;
+            $stock->codalmacen = $codalmacen;
+            $stock->setCantidad($cantidad);
+            $result = $stock->save();
+        }
+
+        if ($result) {
+            /// $result es True
+            /// este código está muy optimizado para guardar solamente los cambios
+
+            $nuevoStock = $stock->totalFromArticulo($this->referencia);
+            if ($this->stockfis !== $nuevoStock) {
+                $this->stockfis = $nuevoStock;
+
+                if ($this->exists) {
+                    $this->cleanCache();
+                    $sql = 'UPDATE ' . $this->tableName()
+                        . ' SET stockfis = ' . $this->var2str($this->stockfis)
+                        . ' WHERE referencia = ' . $this->var2str($this->referencia) . ';';
+                    $result = $this->dataBase->exec($sql);
+                } elseif (!$this->save()) {
+                    $this->miniLog->alert($this->i18n->trans('error-updating-product-stock'));
+                }
+            }
         } else {
-            $stock = new Stock();
-            $encontrado = false;
-            $stocks = $stock->allFromArticulo($this->referencia);
-            foreach ($stocks as $sto) {
-                if ($sto->codalmacen === $codalmacen) {
-                    $sto->setCantidad($cantidad);
-                    $result = $sto->save();
-                    $encontrado = true;
-                    break;
-                }
-            }
-            if (!$encontrado) {
-                $stock->referencia = $this->referencia;
-                $stock->codalmacen = $codalmacen;
-                $stock->setCantidad($cantidad);
-                $result = $stock->save();
-            }
-
-            if ($result) {
-                /// $result es True
-                /// este código está muy optimizado para guardar solamente los cambios
-
-                $nuevoStock = $stock->totalFromArticulo($this->referencia);
-                if ($this->stockfis !== $nuevoStock) {
-                    $this->stockfis = $nuevoStock;
-
-                    if ($this->exists) {
-                        $this->cleanCache();
-                        $sql = 'UPDATE ' . $this->tableName()
-                            . ' SET stockfis = ' . $this->var2str($this->stockfis)
-                            . ' WHERE referencia = ' . $this->var2str($this->referencia) . ';';
-                        $result = $this->dataBase->exec($sql);
-                    } elseif (!$this->save()) {
-                        $this->miniLog->alert($this->i18n->trans('error-updating-product-stock'));
-                    }
-                }
-            } else {
-                $this->miniLog->alert($this->i18n->trans('error-saving-stock'));
-            }
+            $this->miniLog->alert($this->i18n->trans('error-saving-stock'));
         }
 
         return $result;
@@ -858,8 +767,6 @@ class Articulo
         if ($this->dataBase->exec($sql)) {
             $this->setImagen(false);
 
-            $this->exists = false;
-
             return true;
         }
 
@@ -867,175 +774,10 @@ class Articulo
     }
 
     /**
-     * Obtiene las búsquedas precargadas
-     *
-     * @return array|mixed
-     */
-    public function getSearchTags()
-    {
-        if (self::$search_tags === null) {
-            self::$search_tags = $this->cache->get('articulos_searches');
-        }
-
-        return self::$search_tags;
-    }
-
-    /**
-     * Devuelve un array con los artículos encontrados en base a la búsqueda.
-     *
-     * @param string  $query
-     * @param int     $offset
-     * @param string  $codfamilia
-     * @param bool    $conStock
-     * @param string  $codfabricante
-     * @param bool    $bloqueados
-     *
-     * @return Articulo
-     */
-    public function search($query = '', $offset = 0, $codfamilia = '', $conStock = false, $codfabricante = '', $bloqueados = false)
-    {
-        $artilist = [];
-        $query = self::noHtml(mb_strtolower($query, 'UTF8'));
-
-        if ($query !== '' && $offset === 0 && $codfamilia === '' &&
-            $codfabricante === '' && !$conStock && !$bloqueados) {
-            /// intentamos obtener los datos de memcache
-            if ($this->newSearchTag($query)) {
-                $artilist = $this->cache->get('articulos_search_' . $query);
-            }
-        }
-
-        if (count($artilist) <= 1) {
-            $sql = 'SELECT ' . self::$column_list . ' FROM ' . $this->tableName();
-            $separador = ' WHERE';
-
-            if ($codfamilia !== '') {
-                $sql .= $separador . ' codfamilia = ' . $this->var2str($codfamilia);
-                $separador = ' AND';
-            }
-
-            if ($codfabricante !== '') {
-                $sql .= $separador . ' codfabricante = ' . $this->var2str($codfabricante);
-                $separador = ' AND';
-            }
-
-            if ($conStock) {
-                $sql .= $separador . ' stockfis > 0';
-                $separador = ' AND';
-            }
-
-            if ($bloqueados) {
-                $sql .= $separador . ' bloqueado = TRUE';
-                $separador = ' AND';
-            } else {
-                $sql .= $separador . ' bloqueado = FALSE';
-                $separador = ' AND';
-            }
-
-            if ($query === '') {
-                /// nada
-            } elseif (is_numeric($query)) {
-                $sql .= $separador . ' (referencia = ' . $this->var2str($query)
-                    . " OR referencia LIKE '%" . $query . "%'"
-                    . " OR partnumber LIKE '%" . $query . "%'"
-                    . " OR equivalencia LIKE '%" . $query . "%'"
-                    . " OR descripcion LIKE '%" . $query . "%'"
-                    . ' OR codbarras = ' . $this->var2str($query) . ')';
-                $separador = ' AND';
-            } else {
-                /// ¿La búsqueda son varias palabras?
-                $palabras = explode(' ', $query);
-                if (count($palabras) > 1) {
-                    $sql .= $separador . ' (lower(referencia) = ' . $this->var2str($query)
-                        . " OR lower(referencia) LIKE '%" . $query . "%'"
-                        . " OR lower(partnumber) LIKE '%" . $query . "%'"
-                        . " OR lower(equivalencia) LIKE '%" . $query . "%'"
-                        . ' OR (';
-
-                    foreach ($palabras as $i => $pal) {
-                        if ($i === 0) {
-                            $sql .= "lower(descripcion) LIKE '%" . $pal . "%'";
-                        } else {
-                            $sql .= " AND lower(descripcion) LIKE '%" . $pal . "%'";
-                        }
-                    }
-
-                    $sql .= '))';
-                } else {
-                    $sql .= $separador . ' (lower(referencia) = ' . $this->var2str($query)
-                        . " OR lower(referencia) LIKE '%" . $query . "%'"
-                        . " OR lower(partnumber) LIKE '%" . $query . "%'"
-                        . " OR lower(equivalencia) LIKE '%" . $query . "%'"
-                        . ' OR lower(codbarras) = ' . $this->var2str($query)
-                        . " OR lower(descripcion) LIKE '%" . $query . "%')";
-                }
-            }
-
-            if (strtolower(FS_DB_TYPE) === 'mysql') {
-                $sql .= ' ORDER BY lower(referencia) ASC';
-            } else {
-                $sql .= ' ORDER BY referencia ASC';
-            }
-
-            $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
-            if (!empty($data)) {
-                foreach ($data as $a) {
-                    $artilist[] = new self($a);
-                }
-            }
-        }
-
-        return $artilist;
-    }
-
-    /**
-     * Devuelve un array con los artículos que tengan $cod como código de barras.
-     *
-     * @param string $cod
-     * @param int    $offset
-     * @param int    $limit
-     *
-     * @return self[]
-     */
-    public function searchByCodbar($cod, $offset = 0, $limit = FS_ITEM_LIMIT)
-    {
-        $artilist = [];
-        $sql = 'SELECT ' . self::$column_list . ' FROM ' . $this->tableName()
-            . ' WHERE codbarras = ' . $this->var2str($cod)
-            . ' ORDER BY lower(referencia) ASC';
-
-        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $artilist[] = new self($d);
-            }
-        }
-
-        return $artilist;
-    }
-
-    /**
      * Ejecuta una tarea con cron
      */
     public function cronJob()
     {
-        /// aceleramos las búsquedas
-        if ($this->getSearchTags()) {
-            foreach (self::$search_tags as $i => $value) {
-                if ($value['expires'] < time()) {
-                    /// eliminamos las búsquedas antiguas
-                    unset(self::$search_tags[$i]);
-                } elseif ($value['count'] > 1) {
-                    /// guardamos los resultados de la búsqueda en memcache
-                    $this->cache->set('articulos_search_' . $value['tag'], $this->search($value['tag']));
-                    echo '.';
-                }
-            }
-
-            /// guardamos en memcache la lista de búsquedas
-            $this->cache->set('articulos_searches', self::$search_tags);
-        }
-
         $this->fixDb();
     }
 
@@ -1056,71 +798,6 @@ class Articulo
         ];
         foreach ($fixes as $sql) {
             $this->dataBase->exec($sql);
-        }
-    }
-
-    /**
-     * Comprueba y añade una cadena a la lista de búsquedas precargadas
-     * en memcache. Devuelve True si la cadena ya está en la lista de
-     * precargadas.
-     *
-     * @param string $tag
-     *
-     * @return bool
-     */
-    private function newSearchTag($tag)
-    {
-        $encontrado = false;
-        $actualizar = false;
-
-        if (strlen($tag) > 1) {
-            /// obtenemos los datos de memcache
-            $this->getSearchTags();
-
-            foreach (self::$search_tags as $i => $value) {
-                if ($value['tag'] === $tag) {
-                    $encontrado = true;
-                    if (time() + 5400 > $value['expires'] + 300) {
-                        ++self::$search_tags[$i]['count'];
-                        self::$search_tags[$i]['expires'] = time() + (self::$search_tags[$i]['count'] * 5400);
-                        $actualizar = true;
-                    }
-                    break;
-                }
-            }
-            if (!$encontrado) {
-                self::$search_tags[] = ['tag' => $tag, 'expires' => time() + 5400, 'count' => 1];
-                $actualizar = true;
-            }
-
-            if ($actualizar) {
-                $this->cache->set('articulos_searches', self::$search_tags);
-            }
-        }
-
-        return $encontrado;
-    }
-
-    /**
-     * Limpia la cache
-     */
-    private function cleanCache()
-    {
-        /*
-         * Durante las actualizaciones masivas de artículos se ejecuta esta
-         * función cada vez que se guarda un artículo, por eso es mejor limitarla.
-         */
-        if (self::$cleaned_cache !== null && !empty(self::$cleaned_cache)) {
-            /// obtenemos los datos de memcache
-            $this->getSearchTags();
-
-            if (!empty(self::$search_tags)) {
-                foreach (self::$search_tags as $value) {
-                    $this->cache->delete('articulos_search_' . $value['tag']);
-                }
-            }
-
-            self::$cleaned_cache = true;
         }
     }
 }
