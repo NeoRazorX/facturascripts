@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\App;
 /**
  * Description of App
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class AppCron extends App
 {
@@ -36,7 +36,7 @@ class AppCron extends App
         $this->response->headers->set('Content-Type', 'text/plain');
         if ($this->dataBase->connected()) {
             /// implementar aquí
-            /// todo OK, para los tests
+            /// devolvemos true, para los test
             return true;
         }
 

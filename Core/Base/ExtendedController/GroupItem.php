@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -47,18 +47,18 @@ class GroupItem extends VisualItem implements VisualItemInterface
     {
         parent::__construct();
 
-        $this->icon = NULL;
+        $this->icon = null;
         $this->columns = [];
     }
     
     /**
      * Función para la ordenación de columnas
-     * 
+     *
      * @param ColumnItem $column1
      * @param ColumnItem $column2
      * @return int
      */
-    static function sortColumns($column1, $column2)
+    public static function sortColumns($column1, $column2)
     {
         if ($column1->order == $column2->order) {
             return 0;
@@ -66,7 +66,12 @@ class GroupItem extends VisualItem implements VisualItemInterface
         
         return ($column1->order < $column2->order) ? -1 : 1;
     }
-    
+
+    /**
+     * Carga los grupos desde las columnas
+     *
+     * @param \SimpleXMLElement $group
+     */
     public function loadFromXMLColumns($group)
     {
         foreach ($group->column as $column) {
@@ -82,7 +87,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
     /**
      * Carga la estructura de atributos en base a un archivo XML
      *
-     * @param SimpleXMLElement $group
+     * @param \SimpleXMLElement $group
      */
     public function loadFromXML($group)
     {
@@ -94,9 +99,9 @@ class GroupItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Carga la estructura de atributos en base a la base de datos
+     * Carga la estructura de atributos en base un archivo JSON
      *
-     * @param SimpleXMLElement $group
+     * @param array $group
      */
     public function loadFromJSON($group)
     {
@@ -135,11 +140,11 @@ class GroupItem extends VisualItem implements VisualItemInterface
      * Genera el código html para visualizar la cabecera del elemento visual
      *
      * @param string $value
+     *
+     * @return string
      */
     public function getHeaderHTML($value)
     {
-        $html = $this->getIconHTML() . parent::getHeaderHTML($value);
-
-        return $html;
+        return $this->getIconHTML() . parent::getHeaderHTML($value);
     }
 }

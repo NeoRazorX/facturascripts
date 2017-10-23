@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -70,7 +70,7 @@ class DataBaseUtils
 
     /**
      * Compara los tipos de datos de una columna.
-     * Devuelve TRUE si son iguales.
+     * Devuelve True si son iguales.
      *
      * @param string $dbType
      * @param string $xmlType

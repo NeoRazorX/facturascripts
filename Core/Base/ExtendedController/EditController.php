@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -28,8 +29,8 @@ use FacturaScripts\Core\Base;
  */
 class EditController extends Base\Controller
 {
-
     /**
+     * Objeto para exportar datos
      *
      * @var Base\ExportManager
      */
@@ -52,9 +53,9 @@ class EditController extends Base\Controller
     /**
      * Inicia todos los objetos y propiedades.
      *
-     * @param Cache      $cache
-     * @param Translator $i18n
-     * @param MiniLog    $miniLog
+     * @param Base\Cache      $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog    $miniLog
      * @param string     $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
@@ -150,10 +151,10 @@ class EditController extends Base\Controller
     protected function editAction()
     {
         if ($this->view->save()) {
-            $this->miniLog->notice($this->i18n->trans('Record updated correctly!'));
-            return TRUE;
+            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            return true;
         }
-        return FALSE;
+        return false;
     }
 
     /**
@@ -181,7 +182,7 @@ class EditController extends Base\Controller
      */
     public function getPanelFooter()
     {
-        return $this->i18n->trans($this->view->getPanelFooter());
+        return !empty($this->view->getPanelFooter()) ? $this->i18n->trans($this->view->getPanelFooter()) : '';
     }
 
     /**

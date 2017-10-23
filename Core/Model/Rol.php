@@ -2,7 +2,7 @@
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2016 Joe Nilson             <joenilson at gmail.com>
- * Copyright (C) 2017 Carlos García Gómez    <neorazorx at gmail.com>
+ * Copyright (C) 2017 Carlos García Gómez    <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -24,31 +24,41 @@ namespace FacturaScripts\Core\Model;
  * Define un paquete de permisos para asignar rápidamente a usuarios.
  *
  * @author Joe Nilson            <joenilson at gmail.com>
- * @author Carlos García Gómez   <neorazorx at gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Rol
 {
     use Base\ModelTrait;
 
     /**
-     * TODO
+     * Código de rol
      *
      * @var string
      */
     public $codrol;
 
     /**
-     * TODO
+     * Descripción del rol.
      *
      * @var string
      */
     public $descripcion;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'fs_roles';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'codrol';

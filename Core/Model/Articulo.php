@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2012-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2012-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 /**
  * Almacena los datos de un artículos.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Articulo
 {
@@ -33,28 +33,28 @@ class Articulo
     }
 
     /**
-     * TODO
+     * Array de impuestos
      *
-     * @var array
+     * @var Impuesto[]
      */
     private static $impuestos;
 
     /**
-     * TODO
+     * Array de búsquedas precargadas
      *
      * @var array
      */
     private static $search_tags;
 
     /**
-     * TODO
+     * Bool que indica si la caché está limpiada
      *
-     * @var
+     * @var null|bool
      */
     private static $cleaned_cache;
 
     /**
-     * TODO
+     * Lista de columnas
      *
      * @var array
      */
@@ -99,7 +99,7 @@ class Articulo
     /**
      * Precio del artículo, sin impuestos.
      *
-     * @var float
+     * @var float|int
      */
     public $pvp;
 
@@ -108,7 +108,7 @@ class Articulo
      * Este valor no se almacena en la base de datos, es decir,
      * no se recuerda.
      *
-     * @var float
+     * @var float|int
      */
     public $pvp_ant;
 
@@ -122,7 +122,7 @@ class Articulo
     /**
      * Coste medio al comprar el artículo. Calculado.
      *
-     * @var float
+     * @var float|int
      */
     public $costemedio;
 
@@ -131,7 +131,7 @@ class Articulo
      * No necesariamente es el precio de compra, puede incluir
      * también otros costes.
      *
-     * @var float
+     * @var float|int
      */
     public $preciocoste;
 
@@ -143,28 +143,28 @@ class Articulo
     public $codimpuesto;
 
     /**
-     * TRUE => el artículos está bloqueado / obsoleto.
+     * True => el artículos está bloqueado / obsoleto.
      *
      * @var bool
      */
     public $bloqueado;
 
     /**
-     * TRUE => el artículo se compra
+     * True => el artículo se compra
      *
      * @var bool
      */
     public $secompra;
 
     /**
-     * TRUE => el artículo se vende
+     * True => el artículo se vende
      *
      * @var bool
      */
     public $sevende;
 
     /**
-     * TRUE -> se mostrará sincronizará con la tienda online.
+     * True -> se mostrará sincronizará con la tienda online.
      *
      * @var bool
      */
@@ -188,27 +188,27 @@ class Articulo
     /**
      * Stock físico. La suma de las cantidades de esta referencia que en la tabla stocks.
      *
-     * @var float
+     * @var float|int
      */
     public $stockfis;
 
     /**
      * El stock mínimo que debe haber
      *
-     * @var float
+     * @var float|int
      */
     public $stockmin;
 
     /**
      * El stock máximo que debe haber
      *
-     * @var float
+     * @var float|int
      */
     public $stockmax;
 
     /**
-     * TRUE -> permitir ventas sin stock.
-     * Si, sé que no tiene sentido que poner controlstock a TRUE
+     * True -> permitir ventas sin stock.
+     * Si, sé que no tiene sentido que poner controlstock a True
      * implique la ausencia de control de stock. Pero es una cagada de
      * FacturaLux -> Abanq -> Eneboo, y por motivos de compatibilidad
      * se mantiene.
@@ -218,8 +218,8 @@ class Articulo
     public $controlstock;
 
     /**
-     * TRUE -> no controlar el stock.
-     * Activarlo implica poner a TRUE $controlstock;
+     * True -> no controlar el stock.
+     * Activarlo implica poner a True $controlstock;
      *
      * @var bool
      */
@@ -263,7 +263,7 @@ class Articulo
     /**
      * % IVA del impuesto asignado.
      *
-     * @var float
+     * @var float|int
      */
     private $iva;
 
@@ -275,17 +275,27 @@ class Articulo
     private $imagen;
 
     /**
-     * TODO
+     * El artículo existe o no
      *
      * @var bool
      */
     private $exists;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'articulos';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'referencia';
@@ -360,11 +370,7 @@ class Articulo
      */
     public function preciocoste()
     {
-        if ($this->secompra && FS_COST_IS_AVERAGE) {
-            return $this->costemedio;
-        }
-
-        return $this->preciocoste;
+        return ($this->secompra && FS_COST_IS_AVERAGE) ? $this->costemedio : $this->preciocoste;
     }
 
     /**
@@ -381,15 +387,13 @@ class Articulo
      * Devuelve la referencia codificada para poder ser usada en imágenes.
      * Evitamos así errores con caracteres especiales como / y \.
      *
-     * @param bool $ref
+     * @param string|false $ref
      *
      * @return string
      */
     public function imageRef($ref = false)
     {
-        if (!$ref) {
-            $ref = $this->referencia;
-        }
+        $ref = $ref ? : $this->referencia;
 
         $ref = str_replace(['/', '\\'], '_', $ref);
 
@@ -401,12 +405,8 @@ class Articulo
      */
     public function getNewReferencia()
     {
-        $sql = 'SELECT referencia FROM ' . $this->tableName() . " WHERE referencia REGEXP '^\d+$'"
-            . ' ORDER BY ABS(referencia) DESC';
-        if (strtolower(FS_DB_TYPE) === 'postgresql') {
-            $sql = 'SELECT referencia FROM ' . $this->tableName() . " WHERE referencia ~ '^\d+$'"
-                . ' ORDER BY referencia::BIGINT DESC';
-        }
+        $sql = 'SELECT referencia FROM ' . $this->tableName() . ' WHERE referencia ';
+        $sql .= (strtolower(FS_DB_TYPE) === 'postgresql') ? "~ '^\d+$' ORDER BY referencia::BIGINT DESC" : "REGEXP '^\d+$' ORDER BY ABS(referencia) DESC";
 
         $ref = 1;
         $data = $this->dataBase->selectLimit($sql, 1);
@@ -426,12 +426,9 @@ class Articulo
      */
     public function getFamilia()
     {
-        if ($this->codfamilia === null) {
-            return false;
-        }
         $fam = new Familia();
 
-        return $fam->get($this->codfamilia);
+        return $this->codfamilia === null ? false : $fam->get($this->codfamilia);
     }
 
     /**
@@ -441,27 +438,21 @@ class Articulo
      */
     public function getFabricante()
     {
-        if ($this->codfabricante === null) {
-            return false;
-        }
         $fab = new Fabricante();
 
-        return $fab->get($this->codfabricante);
+        return $this->codfabricante === null ? false : $fab->get($this->codfabricante);
     }
 
     /**
      * Devuelve el stock del artículo
      *
-     * @return array
+     * @return Stock[]
      */
     public function getStock()
     {
-        if ($this->nostock) {
-            return [];
-        }
         $stock = new Stock();
 
-        return $stock->all([new DataBaseWhere('referencia', $this->referencia)]);
+        return $this->nostock ? [] : $stock->all([new DataBaseWhere('referencia', $this->referencia)]);
     }
 
     /**
@@ -478,7 +469,7 @@ class Articulo
 
     /**
      * Devuelve el % de IVA del artículo.
-     * Si $reload es TRUE, vuelve a consultarlo en lugar de usar los datos cargados.
+     * Si $reload es True, vuelve a consultarlo en lugar de usar los datos cargados.
      *
      * @param bool $reload
      *
@@ -523,11 +514,25 @@ class Articulo
      */
     public function imagenUrl()
     {
-        if (file_exists(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png')) {
-            return 'images/articulos/' . $this->imageRef() . '-1.png';
-        }
-        if (file_exists(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.jpg')) {
-            return 'images/articulos/' . $this->imageRef() . '-1.jpg';
+        return $this->checkImageExists();
+    }
+
+    /**
+     * Comprueba si la imagen existe, si existe devuelve su ruta, y sino existe devuelve False
+     *
+     * @return string|false
+     */
+    private function checkImageExists()
+    {
+        $images = [
+            FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png',
+            FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.jpg'
+        ];
+
+        foreach ($images as $image) {
+            if (file_exists($image)) {
+                return $image;
+            }
         }
 
         return false;
@@ -535,6 +540,7 @@ class Articulo
 
     /**
      * Asigna una imagen a un artículo.
+     * Si $img está vacío, se elimina la imagen anterior.
      *
      * @param string $img
      * @param bool   $png
@@ -543,10 +549,8 @@ class Articulo
     {
         $this->imagen = null;
 
-        if (file_exists(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png')) {
-            unlink(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png');
-        } elseif (file_exists('images/articulos/' . $this->imageRef() . '-1.jpg')) {
-            unlink(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.jpg');
+        if ($oldImage = $this->checkImageExists()) {
+            unlink($oldImage);
         }
 
         if ($img) {
@@ -554,11 +558,7 @@ class Articulo
                 @mkdir(FS_MYDOCS . 'images/articulos', 0777, true);
             }
 
-            if ($png) {
-                $file = @fopen(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png', 'ab');
-            } else {
-                $file = @fopen(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.jpg', 'ab');
-            }
+            $file = @fopen(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.' . ($png ? 'png' : 'jpg'), 'ab');
 
             if ($file) {
                 fwrite($file, $img);
@@ -576,7 +576,7 @@ class Articulo
     {
         $pvp = round($pvp, FS_NF0_ART);
 
-        if (!$this->floatcmp($this->pvp, $pvp, FS_NF0_ART + 2)) {
+        if (!static::floatcmp($this->pvp, $pvp, FS_NF0_ART + 2)) {
             $this->pvp_ant = $this->pvp;
             $this->factualizado = date('d-m-Y');
             $this->pvp = $pvp;
@@ -603,19 +603,19 @@ class Articulo
     {
         $ref = trim($ref);
         if ($ref === null || empty($ref) || strlen($ref) > 18) {
-            $this->miniLog->alert('¡Referencia de artículo no válida! Debe tener entre 1 y 18 caracteres.');
+            $this->miniLog->alert($this->i18n->trans('product-reference-not-valid', [$this->referencia]));
         } elseif ($ref !== $this->referencia && !$this->referencia === null) {
             $sql = 'UPDATE ' . $this->tableName() . ' SET referencia = ' . $this->var2str($ref)
                 . ' WHERE referencia = ' . $this->var2str($this->referencia) . ';';
             if ($this->dataBase->exec($sql)) {
                 /// renombramos la imagen, si la hay
-                if (file_exists(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png')) {
-                    rename(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png', FS_MYDOCS . 'images/articulos/' . $this->imageRef($ref) . '-1.png');
+                if ($oldImage = $this->checkImageExists()) {
+                    rename($oldImage, FS_MYDOCS . 'images/articulos/' . $this->imageRef($ref) . '-1.png');
                 }
 
                 $this->referencia = $ref;
             } else {
-                $this->miniLog->alert('Imposible modificar la referencia.');
+                $this->miniLog->alert($this->i18n->trans('cant-modify-reference'));
             }
         }
 
@@ -656,8 +656,8 @@ class Articulo
      * Modifica el stock del artículo en un almacén concreto.
      * Ya se encarga de ejecutar save() si es necesario.
      *
-     * @param string  $codalmacen
-     * @param integer $cantidad
+     * @param string $codalmacen
+     * @param int    $cantidad
      *
      * @return bool
      */
@@ -672,7 +672,7 @@ class Articulo
             $encontrado = false;
             $stocks = $stock->allFromArticulo($this->referencia);
             foreach ($stocks as $sto) {
-                if ($sto instanceof Stock && $sto->codalmacen === $codalmacen) {
+                if ($sto->codalmacen === $codalmacen) {
                     $sto->setCantidad($cantidad);
                     $result = $sto->save();
                     $encontrado = true;
@@ -687,7 +687,7 @@ class Articulo
             }
 
             if ($result) {
-                /// $result es TRUE
+                /// $result es True
                 /// este código está muy optimizado para guardar solamente los cambios
 
                 $nuevoStock = $stock->totalFromArticulo($this->referencia);
@@ -701,11 +701,11 @@ class Articulo
                             . ' WHERE referencia = ' . $this->var2str($this->referencia) . ';';
                         $result = $this->dataBase->exec($sql);
                     } elseif (!$this->save()) {
-                        $this->miniLog->alert('¡Error al actualizar el stock del artículo!');
+                        $this->miniLog->alert($this->i18n->trans('error-updating-product-stock'));
                     }
                 }
             } else {
-                $this->miniLog->alert('Error al guardar el stock');
+                $this->miniLog->alert($this->i18n->trans('error-saving-stock'));
             }
         }
 
@@ -717,7 +717,7 @@ class Articulo
      * Ya se encarga de ejecutar save() si es necesario.
      *
      * @param string  $codalmacen
-     * @param integer $cantidad
+     * @param int     $cantidad
      * @param bool    $recalculaCoste
      * @param string  $codcombinacion
      *
@@ -728,9 +728,7 @@ class Articulo
         $result = false;
 
         if ($recalculaCoste) {
-            /**
-             * TODO: completar
-             */
+            // TODO: Uncomplete
             $this->costemedio = 1;
         }
 
@@ -746,7 +744,7 @@ class Articulo
                         . '  WHERE referencia = ' . $this->var2str($this->referencia) . ';';
                     $result = $this->dataBase->exec($sql);
                 } elseif (!$this->save()) {
-                    $this->miniLog->alert('¡Error al actualizar el stock del artículo!');
+                    $this->miniLog->alert($this->i18n->trans('error-updating-product-stock'));
                     $result = false;
                 }
             }
@@ -784,7 +782,7 @@ class Articulo
                             . '  WHERE referencia = ' . $this->var2str($this->referencia) . ';';
                         $result = $this->dataBase->exec($sql);
                     } elseif (!$this->save()) {
-                        $this->miniLog->alert('¡Error al actualizar el stock del artículo!');
+                        $this->miniLog->alert($this->i18n->trans('error-updating-product-stock'));
                         $result = false;
                     }
 
@@ -800,7 +798,7 @@ class Articulo
                     }
                 }
             } else {
-                $this->miniLog->alert('¡Error al guardar el stock!');
+                $this->miniLog->alert($this->i18n->trans('error-saving-stock'));
             }
         }
 
@@ -808,7 +806,7 @@ class Articulo
     }
 
     /**
-     * Devuelve TRUE  si los datos del artículo son correctos.
+     * Devuelve True  si los datos del artículo son correctos.
      *
      * @return bool
      */
@@ -836,14 +834,9 @@ class Articulo
         }
 
         if ($this->referencia === null || empty($this->referencia) || strlen($this->referencia) > 18) {
-            $this->miniLog->alert(
-                'Referencia de artículo no válida: ' . $this->referencia . '. Debe tener entre 1 y 18 caracteres.'
-            );
+            $this->miniLog->alert($this->i18n->trans('product-reference-not-valid', [$this->referencia]));
         } elseif ($this->equivalencia !== null && strlen($this->equivalencia) > 25) {
-            $this->miniLog->alert(
-                'Código de equivalencia del artículos no válido: ' . $this->equivalencia
-                . '. Debe tener entre 1 y 25 caracteres.'
-            );
+            $this->miniLog->alert($this->i18n->trans('product-equivalence-not-valid', [$this->equivalencia]));
         } else {
             $status = true;
         }
@@ -874,9 +867,9 @@ class Articulo
     }
 
     /**
-     * TODO
+     * Obtiene las búsquedas precargadas
      *
-     * @return mixed
+     * @return array|mixed
      */
     public function getSearchTags()
     {
@@ -891,7 +884,7 @@ class Articulo
      * Devuelve un array con los artículos encontrados en base a la búsqueda.
      *
      * @param string  $query
-     * @param integer $offset
+     * @param int     $offset
      * @param string  $codfamilia
      * @param bool    $conStock
      * @param string  $codfabricante
@@ -1002,7 +995,7 @@ class Articulo
      * @param int    $offset
      * @param int    $limit
      *
-     * @return array
+     * @return self[]
      */
     public function searchByCodbar($cod, $offset = 0, $limit = FS_ITEM_LIMIT)
     {
@@ -1022,7 +1015,7 @@ class Articulo
     }
 
     /**
-     * TODO
+     * Ejecuta una tarea con cron
      */
     public function cronJob()
     {
@@ -1068,7 +1061,7 @@ class Articulo
 
     /**
      * Comprueba y añade una cadena a la lista de búsquedas precargadas
-     * en memcache. Devuelve TRUE si la cadena ya está en la lista de
+     * en memcache. Devuelve True si la cadena ya está en la lista de
      * precargadas.
      *
      * @param string $tag
@@ -1109,7 +1102,7 @@ class Articulo
     }
 
     /**
-     * TODO
+     * Limpia la cache
      */
     private function cleanCache()
     {

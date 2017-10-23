@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -37,6 +38,7 @@ abstract class PanelController extends Base\Controller
     public $active;
 
     /**
+     * Objeto para exportar datos
      *
      * @var Base\ExportManager
      */
@@ -72,9 +74,9 @@ abstract class PanelController extends Base\Controller
     /**
      * Inicia todos los objetos y propiedades.
      *
-     * @param Cache      $cache
-     * @param Translator $i18n
-     * @param MiniLog    $miniLog
+     * @param Base\Cache $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog    $miniLog
      * @param string     $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
@@ -102,7 +104,7 @@ abstract class PanelController extends Base\Controller
         $this->createViews();
 
         // Guardamos si hay operaciones por realizar
-        $view = empty($this->active) ? NULL : $this->views[$this->active];
+        $view = empty($this->active) ? null : $this->views[$this->active];
         $action = empty($view) ? '' : $this->request->get('action', '');
 
         // Operaciones sobre los datos antes de leerlos
@@ -144,6 +146,7 @@ abstract class PanelController extends Base\Controller
     /**
      * Ejecuta las acciones que alteran los datos antes de leerlos
      *
+     * @param BaseView $view
      * @param string $action
      */
     private function execPreviousAction($view, $action)
@@ -164,6 +167,7 @@ abstract class PanelController extends Base\Controller
     /**
      * Ejecuta las acciones del controlador
      *
+     * @param EditView $view
      * @param string $action
      */
     private function execAfterAction($view, $action)
@@ -184,16 +188,16 @@ abstract class PanelController extends Base\Controller
     /**
      * Ejecuta la modificación de los datos
      *
-     * @param EditView $view
+     * @param BaseView $view
      * @return boolean
      */
     protected function editAction($view)
     {
         if ($view->save()) {
-            $this->miniLog->notice($this->i18n->trans('Record updated correctly!'));
-            return TRUE;
+            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            return true;
         }
-        return FALSE;
+        return false;
     }
 
     /**
@@ -209,7 +213,7 @@ abstract class PanelController extends Base\Controller
     /**
      * Acción de borrado de datos
      *
-     * @param  BaseView $view
+     * @param BaseView $view
      * @return boolean
      */
     protected function deleteAction($view)
@@ -217,9 +221,9 @@ abstract class PanelController extends Base\Controller
         $fieldKey = $view->getModel()->primaryColumn();
         if ($view->delete($this->request->get($fieldKey))) {
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
-            return TRUE;
+            return true;
         }
-        return FALSE;
+        return false;
     }
     
     /**
@@ -227,6 +231,7 @@ abstract class PanelController extends Base\Controller
      *
      * @param string $keyView
      * @param BaseView $view
+     * @param string $icon
      */
     private function addView($keyView, $view, $icon)
     {

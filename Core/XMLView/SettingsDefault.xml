@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,7 @@
 
 <view>
     <columns>
-        <group name="numericformat" title="Numeric Formats" numcolumns="6" icon="fa-info-circle fa-lg">
+        <group name="numericformat" title="numeric-formats" numcolumns="6" icon="fa-info-circle fa-lg">
             <column name="name" display="none" order="0">
                 <widget type="text" fieldname="name" readonly="true" required="true" />
             </column>
@@ -43,20 +43,20 @@
 
             <column name="decimal_separator" title="decimal" numcolumns="3" order="120">
                 <widget type="select" fieldname="decimal_separator" required="true" icon="fa-calculator">
-                    <values title=", (comma)">,</values>
-                    <values title=". (dot)">.</values>
+                    <values title="symbol-comma">,</values>
+                    <values title="symbol-dot">.</values>
                 </widget>
             </column>            
 
             <column name="thousands_separator" title="thousands" numcolumns="3" order="120">
                 <widget type="select" fieldname="thousands_separator" required="true" icon="fa-calculator">
-                    <values title=", (comma)">,</values>
-                    <values title=". (dot)">.</values>
+                    <values title="symbol-comma">,</values>
+                    <values title="symbol-dot">.</values>
                 </widget>
             </column>            
         </group>
 
-        <group name="dateformat" title="Date Formats" numcolumns="6" icon="fa-calendar fa-lg">
+        <group name="dateformat" title="date-formats" numcolumns="6" icon="fa-calendar fa-lg">
             <column name="short" numcolumns="4" order="100">
                 <widget type="select" fieldname="dateshort" required="true" icon="fa-calendar">
                     <values title="dd-mm-yy">dd-mm-yy</values>

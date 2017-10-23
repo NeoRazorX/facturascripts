@@ -2,7 +2,7 @@
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2015       Pablo Peralta
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,25 +31,33 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListAgenciaTransporte extends ExtendedController\ListController
 {
+    /**
+     * Devuelve los datos básicos de la página
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Transportistas';
+        $pagedata['title'] = 'carriers';
         $pagedata['icon'] = 'fa-truck';
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
     }
 
+    /**
+     * Procedimiento para insertar vistas en el controlador
+     */
     protected function createViews()
     {
         $className = $this->getClassName();
         $this->addView('FacturaScripts\Core\Model\AgenciaTransporte', $className);
         $this->addSearchFields($className, ['nombre', 'codtrans']);
 
-        $this->addOrderBy($className, 'codtrans', 'Código');
+        $this->addOrderBy($className, 'codtrans', 'code');
         $this->addOrderBy($className, 'nombre');
 
-        $this->addFilterCheckbox($className, 'activo', 'Activo', '', TRUE);
+        $this->addFilterCheckbox($className, 'activo', 'active');
     }
 }

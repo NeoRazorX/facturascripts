@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,89 +21,105 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Lib\ModelDataGenerator;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of Randomizer
  *
- * @author carlos
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Randomizer extends Base\Controller
 {
+    /**
+     * Ejecuta la lógica privada del controlador.
+     *
+     * @param Response $response
+     * @param \FacturaScripts\Core\Model\User|null $user
+     */
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-        
         $ModelDataGenerator = new ModelDataGenerator($this->empresa);
         
         $option = $this->request->get('gen', '');
-        switch($option) {
+        switch ($option) {
             case 'agentes':
                 $num = $ModelDataGenerator->agentes();
-                $this->miniLog->info($num.' agentes generados.');
+                $this->miniLog->info($this->i18n->trans('generated-agents', [$num]));
                 break;
             
             case 'albaranescli':
                 $num = $ModelDataGenerator->albaranesCliente();
-                $this->miniLog->info($num.' albaranes de venta generados.');
+                $this->miniLog->info($this->i18n->trans('generated-customer-delivery-notes', [$num]));
                 break;
             
             case 'albaranesprov':
                 $num = $ModelDataGenerator->albaranesProveedor();
-                $this->miniLog->info($num.' albaranes de compra generados.');
+                $this->miniLog->info($this->i18n->trans('generated-supplier-delivery-notes', [$num]));
                 break;
             
             case 'articulos':
                 $num = $ModelDataGenerator->articulos();
-                $this->miniLog->info($num.' artículos generados.');
+                $this->miniLog->info($this->i18n->trans('generated-products', [$num]));
+                break;
+            
+            case 'articulosprov':
+                $num = $ModelDataGenerator->articulosProveedor();
+                $this->miniLog->info($this->i18n->trans('generated-products', [$num]));
                 break;
             
             case 'clientes':
                 $num = $ModelDataGenerator->clientes();
-                $this->miniLog->info($num.' clientes generados.');
+                $this->miniLog->info($this->i18n->trans('generated-customers', [$num]));
                 break;
             
             case 'fabricantes':
                 $num = $ModelDataGenerator->fabricantes();
-                $this->miniLog->info($num.' fabricantes generados.');
+                $this->miniLog->info($this->i18n->trans('generated-manufacturers', [$num]));
                 break;
             
             case 'familias':
                 $num = $ModelDataGenerator->familias();
-                $this->miniLog->info($num.' familias generadas.');
+                $this->miniLog->info($this->i18n->trans('generated-families', [$num]));
                 break;
             
             case 'grupos':
                 $num = $ModelDataGenerator->gruposClientes();
-                $this->miniLog->info($num.' grupos de clientes generados.');
+                $this->miniLog->info($this->i18n->trans('generated-customer-groups', [$num]));
                 break;
             
             case 'pedidoscli':
                 $num = $ModelDataGenerator->pedidosCliente();
-                $this->miniLog->info($num.' pedidos de cliente generados.');
+                $this->miniLog->info($this->i18n->trans('generated-customer-orders', [$num]));
                 break;
             
             case 'pedidosprov':
                 $num = $ModelDataGenerator->pedidosProveedor();
-                $this->miniLog->info($num.' pedidos de proveedor generados.');
+                $this->miniLog->info($this->i18n->trans('generated-supplier-orders', [$num]));
                 break;
             
             case 'presupuestoscli':
                 $num = $ModelDataGenerator->presupuestosCliente();
-                $this->miniLog->info($num.' presupuestos de cliente generados.');
+                $this->miniLog->info($this->i18n->trans('generated-customer-estimations', [$num]));
                 break;
             
             case 'proveedores':
                 $num = $ModelDataGenerator->proveedores();
-                $this->miniLog->info($num.' proveedores generados.');
+                $this->miniLog->info($this->i18n->trans('generated-supplier', [$num]));
                 break;
         }
     }
-    
+
+    /**
+     * Devuelve los datos básicos de la página
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pageData = parent::getPageData();
         $pageData['menu'] = 'admin';
-        $pageData['title'] = 'Generar datos de prueba';
+        $pageData['title'] = 'generate-test-data';
         $pageData['icon'] = 'fa-magic';
 
         return $pageData;

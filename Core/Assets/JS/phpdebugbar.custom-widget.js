@@ -1,6 +1,6 @@
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Francesc Pineda Segarra  francesc.pineda.segarra@gmail.com
+ * Copyright (C) 2017  Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -193,6 +193,40 @@
                 if (data.memory_usage_str) {
                     this.$status.append($("<span title=\"Memory usage\" />").addClass(csscls("memory")).text(data.memory_usage_str));
                 }
+            });
+        }
+
+    });
+
+    /**
+     * Widget for the displaying translations data
+     *
+     * Options:
+     *  - data
+     */
+    var TranslationsWidget = PhpDebugBar.Widgets.TranslationsWidget = PhpDebugBar.Widget.extend({
+
+        className: csscls('translations'),
+
+        render: function() {
+            this.$status = $('<div />').addClass(csscls('status')).appendTo(this.$el);
+
+            this.$list = new PhpDebugBar.Widgets.ListWidget({ itemRenderer: function(li, translation) {
+                var text = translation.key + " => " + translation.value;
+                if (translation.key == translation.value) {
+                    var $line  = $('<span/>').addClass(csscls('name')).addClass('text-danger').text(text);
+                } else {
+                    var $line  = $('<span/>').addClass(csscls('name')).addClass('text-muted').text(text);
+                }
+
+                $line.appendTo(li);
+            }});
+            this.$list.$el.appendTo(this.$el);
+
+            this.bindAttr('data', function(data) {
+                this.$list.set('data', data.translations);
+                var sentence = data.sentence || "translations were used";
+                this.$status.empty().append($('<span />').text(data.translations.length + " " + sentence));
             });
         }
 

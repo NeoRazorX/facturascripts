@@ -6,7 +6,7 @@ El controlador divide la pantalla en dos zonas, una a la izquierda (zona de nave
 donde se visualizan las vistas con los datos. 
 
 Para el uso de este controlador es necesario crear las vistas en formato XML, tal y como se describe en el
-documento [XMLViews](https://github.com/ArtexTrading/facturascripts/blob/master/Documentation/XMLViews.md), 
+documento [XMLViews](https://github.com/ArtexTrading/facturascripts/blob/master/Documentation/XMLViews_ES.md), 
 incluido en la documentación de **Facturascripts**.
 
 ## Cómo usar el controlador
@@ -83,17 +83,17 @@ dentro del entorno de **Facturascripts**. Como norma hay que llamar al _parent_ 
 valores por defecto y asegurar un correcto funcionamiento de nuestro controlador en el entorno de Facturascripts.
 
 Los valores que se pueden configurar son:
-* title : Título de la vista
-* icon : Icono de la fuente de texto _fontawesome_
-* menu : Nombre del menú donde se introducirá el controlador
-* submenu : (opcional) Segundo nivel del menú donde se introduciría el controlador
-* orden : Podemos alterar el orden natural del sistema de menú para colocar nuestro controlador más arriba o abajo
+* **title**: Referencia de traducción del título de la vista
+* **icon**: Icono de la fuente de texto _fontawesome_
+* **menu**: Nombre del menú donde se introducirá el controlador
+* **submenu**: (opcional) Segundo nivel del menú donde se introduciría el controlador
+* **orden**: Podemos alterar el orden natural del sistema de menú para colocar nuestro controlador más arriba o abajo
 
 ```PHP
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Agentes';
+        $pagedata['title'] = 'agents';
         $pagedata['icon'] = 'fa-user-circle-o';
         $pagedata['menu'] = 'admin';
         return $pagedata;

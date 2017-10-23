@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Model;
 /**
  * El asiento contable. Se relaciona con un ejercicio y se compone de partidas.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Asiento
 {
@@ -45,80 +45,91 @@ class Asiento
     public $numero;
 
     /**
-     * TODO
+     * Identificador del concepto
      *
      * @var int
      */
     public $idconcepto;
 
     /**
-     * TODO
+     * Concepto del asiento
      *
      * @var string
      */
     public $concepto;
 
     /**
-     * TODO
+     * Fecha del asiento
      *
      * @var string
      */
     public $fecha;
 
     /**
-     * TODO
+     * Código de ejercicio del asiento
      *
      * @var string
      */
     public $codejercicio;
 
     /**
-     * TODO
+     * Código del plan de asiento
      *
      * @var string
      */
     public $codplanasiento;
 
     /**
-     * TODO
+     * True si es editable, sino false
      *
-     * @var
+     * @var bool
      */
     public $editable;
 
     /**
-     * TODO
+     * Documento asociado al asiento
      *
-     * @var
+     * @var string
      */
     public $documento;
 
     /**
-     * TODO
+     * Texto que identifica el tipo de documento
+     * 'Factura de cliente' o 'Factura de proveedor'
      *
-     * @var
+     * @var string
      */
     public $tipodocumento;
 
     /**
-     * TODO
+     * Importe del asiento
      *
-     * @var float
+     * @var float|int
      */
     public $importe;
 
     /**
-     * TODO
+     * Código de divisa del asiento
      *
      * @var string
      */
     private $coddivisa;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'co_asientos';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'idasiento';
@@ -143,7 +154,7 @@ class Asiento
     }
 
     /**
-     * TODO
+     * Devuelve la factura asociada al asiento
      *
      * @return bool|FacturaCliente|FacturaProveedor
      */
@@ -164,7 +175,7 @@ class Asiento
     }
 
     /**
-     * TODO
+     * Devuelve la url de la factura asociada al asiento
      *
      * @return string
      */
@@ -179,7 +190,7 @@ class Asiento
     }
 
     /**
-     * TODO
+     * Devuelve la url al ejercicio asociado al asiento
      *
      * @return string
      */
@@ -199,7 +210,7 @@ class Asiento
      * Lo que pasa es que ese dato se almacena en las partidas, por eso
      * hay que usar esta función.
      *
-     * @return Divisa|null
+     * @return string|null
      */
     public function codDivisa()
     {
@@ -218,9 +229,9 @@ class Asiento
     }
 
     /**
-     * TODO
+     * Devuelve todas las partidas del asiento
      *
-     * @return array
+     * @return Partida[]
      */
     public function getPartidas()
     {
@@ -255,7 +266,7 @@ class Asiento
     }
 
     /**
-     * TODO
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
      *
      * @return bool
      */
@@ -265,7 +276,7 @@ class Asiento
         $this->documento = self::noHtml($this->documento);
 
         if (strlen($this->concepto) > 255) {
-            $this->miniLog->alert('Concepto del asiento demasiado largo.');
+            $this->miniLog->alert($this->i18n->trans('concept-seat-too-large'));
 
             return false;
         }
@@ -274,7 +285,7 @@ class Asiento
     }
 
     /**
-     * TODO
+     * Ejecuta un test completo de pruebas
      *
      * @param bool $duplicados
      *
@@ -298,21 +309,21 @@ class Asiento
                 $sc = $p->getSubcuenta();
                 if ($sc) {
                     if ($sc->codejercicio !== $this->codejercicio) {
-                        $this->miniLog->alert('La subcuenta ' . $sc->codsubcuenta . ' pertenece a otro ejercicio.');
+                        $this->miniLog->alert($this->i18n->trans('subaccount-belongs-other-year', [$sc->codsubcuenta]));
                         $status = false;
                     }
                 } else {
-                    $this->miniLog->alert('Subcuenta ' . $p->codsubcuenta . ' no encontrada.');
+                    $this->miniLog->alert($this->i18n->trans('subaccount-not-found', [$p->codsubcuenta]));
                     $status = false;
                 }
             }
         }
 
-        if (!$this->floatcmp($debe, $haber, FS_NF0, true)) {
-            $this->miniLog->alert('Asiento descuadrado. Descuadre: ' . round($debe - $haber, FS_NF0 + 1));
+        if (!static::floatcmp($debe, $haber, FS_NF0, true)) {
+            $this->miniLog->alert($this->i18n->trans('notchead-seat', [round($debe - $haber, FS_NF0 + 1)]));
             $status = false;
-        } elseif (!$this->floatcmp($this->importe, max([abs($debe), abs($haber)]), FS_NF0, true)) {
-            $this->miniLog->alert('Importe del asiento incorrecto.');
+        } elseif (!static::floatcmp($this->importe, max([abs($debe), abs($haber)]), FS_NF0, true)) {
+            $this->miniLog->alert($this->i18n->trans('incorrect-seat-amount'));
             $status = false;
         }
 
@@ -321,7 +332,7 @@ class Asiento
         $eje0 = $ejercicio->get($this->codejercicio);
         if ($eje0) {
             if (strtotime($this->fecha) < strtotime($eje0->fechainicio) || strtotime($this->fecha) > strtotime($eje0->fechafin)) {
-                $this->miniLog->alert("La fecha de este asiento está fuera del rango del <a target='_blank' href='" . $eje0->url() . "'>ejercicio</a>.");
+                $this->miniLog->alert($this->i18n->trans('seat-date-not-in-exercise-range', [$eje0->url()]));
                 $status = false;
             }
         }
@@ -350,9 +361,7 @@ class Asiento
                     }
 
                     if (empty($aux)) {
-                        $this->miniLog->alert("Este asiento es un posible duplicado de
-                     <a href='index.php?page=ContabilidadAsiento&id=" . $as['idasiento'] . "'>este otro</a>.
-                     Si no lo es, para evitar este mensaje, simplemente modifica el concepto.");
+                        $this->miniLog->alert($this->i18n->trans('seat-possible duplicated', [$as['idasiento']]));
                         $status = false;
                     }
                 }
@@ -363,7 +372,7 @@ class Asiento
     }
 
     /**
-     * TODO
+     * Aplica correcciones al asiento
      *
      * @return bool
      */
@@ -379,7 +388,7 @@ class Asiento
         $this->importe = max([abs($debe), abs($haber)]);
 
         /// corregimos descuadres de menos de 0.01
-        if ($this->floatcmp($debe, $haber, 2)) {
+        if (static::floatcmp($debe, $haber, 2)) {
             $debe = $haber = 0;
             $partidas = $this->getPartidas();
             foreach ($partidas as $p) {
@@ -390,7 +399,7 @@ class Asiento
             }
 
             /// si con el redondeo se soluciona el problema, pues genial!
-            if ($this->floatcmp($debe, $haber)) {
+            if (static::floatcmp($debe, $haber)) {
                 $this->importe = max([abs($debe), abs($haber)]);
                 foreach ($partidas as $p) {
                     $p->save();
@@ -416,7 +425,7 @@ class Asiento
                 }
 
                 /// si hemos resuelto el problema grabamos
-                if ($this->floatcmp($debe, $haber)) {
+                if (static::floatcmp($debe, $haber)) {
                     $this->importe = max([abs($debe), abs($haber)]);
                     foreach ($partidas as $p) {
                         $p->save();
@@ -426,7 +435,7 @@ class Asiento
         }
 
         /// si el importe ha cambiado, lo guardamos
-        if (!$this->floatcmp($this->importe, $importeOld)) {
+        if (!static::floatcmp($this->importe, $importeOld)) {
             $this->save();
         }
 
@@ -448,7 +457,7 @@ class Asiento
     }
 
     /**
-     * TODO
+     * Elimina el asiento de la base de datos.
      *
      * @return bool
      */
@@ -468,12 +477,11 @@ class Asiento
             } elseif ($ejercicio->abierto()) {
                 $reg0 = new RegularizacionIva();
                 if ($reg0->getFechaInside($this->fecha)) {
-                    $this->miniLog->alert('El asiento se encuentra dentro de una regularización de '
-                        . FS_IVA . '. No se puede eliminar.');
+                    $this->miniLog->alert($this->i18n->trans('seat-within-regularization', [FS_IVA]));
                     $bloquear = true;
                 }
             } else {
-                $this->miniLog->alert('El ejercicio ' . $ejercicio->nombre . ' está cerrado.');
+                $this->miniLog->alert($this->i18n->trans('closed-exercise', [$ejercicio->nombre]));
                 $bloquear = true;
             }
         }
@@ -502,12 +510,13 @@ class Asiento
     }
 
     /**
-     * TODO
+     * Devuelve un array con las combinaciones que contienen $query en su numero
+     * o concepto o importe.
      *
      * @param string $query
      * @param int    $offset
      *
-     * @return array
+     * @return self[]
      */
     public function search($query, $offset = 0)
     {
@@ -541,7 +550,7 @@ class Asiento
     }
 
     /**
-     * TODO
+     * Devuelve un listado de asientos descuadrados
      *
      * @return array
      */
@@ -569,7 +578,7 @@ class Asiento
     }
 
     /**
-     * TODO
+     * Reenumera los asientos de los ejercicios abiertos
      *
      * @return bool
      */
@@ -600,10 +609,7 @@ class Asiento
 
                 if ($sql !== '') {
                     if (!$this->dataBase->exec($sql)) {
-                        $this->miniLog->alert(
-                            'Se ha producido un error mientras se renumeraban los asientos del ejercicio '
-                            . $eje->codejercicio
-                        );
+                        $this->miniLog->alert($this->i18n->trans('error-while-renumbering-seats', [$eje->codejercicio]));
                         $continuar = false;
                     }
                     $sql = '';
@@ -617,7 +623,7 @@ class Asiento
     }
 
     /**
-     * TODO
+     * Ejecuta una tarea con cron
      */
     public function cronJob()
     {
@@ -627,7 +633,7 @@ class Asiento
         $eje0 = new Ejercicio();
         $regiva0 = new RegularizacionIva();
         foreach ($eje0->all() as $ej) {
-            if ($ej->abierto()) {
+            if ($ej instanceof Ejercicio && $ej->abierto()) {
                 foreach ($regiva0->allFromEjercicio($ej->codejercicio) as $reg) {
                     $sql = 'UPDATE ' . $this->tableName() . ' SET editable = false WHERE editable = true'
                         . ' AND codejercicio = ' . $this->var2str($ej->codejercicio)
@@ -642,11 +648,11 @@ class Asiento
             }
         }
 
-        echo "\nRenumerando asientos...";
+        echo $this->i18n->trans('renumbering-seats');
         $this->renumerar();
     }
 
-    /// renumera todos los asientos. Devuelve FALSE en caso de error
+    /// renumera todos los asientos. Devuelve False en caso de error
 
     /**
      * Inserta los datos del modelo en la base de datos.

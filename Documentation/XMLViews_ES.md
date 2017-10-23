@@ -101,15 +101,15 @@ introducido en la etiqueta _\<option\>_:
 
 Ejemplos:
 
-_pintar de color rojo cuando el valor del campo **pendiente es cero**_
+_Pintar de color rojo cuando el valor del campo **pendiente es cero**_
 ```XML
     <widget type="checkbox" fieldname="pendiente">
         <option color="red">0</option>
     </widget>
 ```
 
-_pintar de color rojo y negrita cuando el valor del campo **estado es ABIERTO**_
-_pintar de color azul cuando el valor del campo **estado es CERRADO**_
+_Pintar de color rojo y negrita cuando el valor del campo **estado es ABIERTO**_
+_Pintar de color azul cuando el valor del campo **estado es CERRADO**_
 ```XML
     <widget type="text" fieldname="estado">
         <option color="red" font-weight="bold">ABIERTO</option>
@@ -117,14 +117,14 @@ _pintar de color azul cuando el valor del campo **estado es CERRADO**_
     </widget>
 ```
 
-_pintar de color rojo cuando el valor del campo **cantidad es menor de uno**_
+_Pintar de color rojo cuando el valor del campo **cantidad es menor de 0**_
 ```XML
     <widget type="number" fieldname="cantidad">
         <option color="red">&lt;0</option>
     </widget>
 ```
 
-_pintar de color rojo cuando el valor del campo **importe es mayor de treinta mil**_
+_Pintar de color rojo cuando el valor del campo **importe es mayor de treinta mil**_
 ```XML
     <widget type="money" fieldname="importe">
         <option color="red">&gt;30000</option>
@@ -132,19 +132,19 @@ _pintar de color rojo cuando el valor del campo **importe es mayor de treinta mi
 ```
 
 * **type** : (obligatorio) Indica el tipo de widget a utilizar.
-    * text: Campos varchar o de texto.
-    * number: Campos de tipo numérico. Para este tipo se puede indicar el atributo _decimal_ para configurar la precisión a visualizar.
+    * **text**: Campos varchar o de texto.
+    * **number**: Campos de tipo numérico. Para este tipo se puede indicar el atributo _decimal_ para configurar la precisión a visualizar.
 El atributo _step_ para indicar el aumento o decremento al realizar un "paso" mediante el control de avance/retroceso. Los atributos _min_ y _max_ 
 para indicar los valores mínimo y máximo.
-    * money: Campos de tipo float para importes. Para este tipo se puede indicar el atributo _decimal_ para configurar la precisión a visualizar en vez de los de la moneda.
-    * checkbox: Valores booleanos que se visualizan mediante el icono de un check (true) o un guión (false) respectivamente.
-    * select: Lista de valores establecidos por un conjunto de etiquetas _\<values\>_ descritas dentro del grupo _\<widget\>_.
+    * **money**: Campos de tipo float para importes. Para este tipo se puede indicar el atributo _decimal_ para configurar la precisión a visualizar en vez de los de la moneda.
+    * **checkbox**: Valores booleanos que se visualizan mediante el icono de un check (true) o un guión (false) respectivamente.
+    * **select**: Lista de valores establecidos por un conjunto de etiquetas _\<values\>_ descritas dentro del grupo _\<widget\>_.
 Los valores podrán ser fijos, incluyendo tantos _\<values\>_ como necesitemos e indicando el atributo _title_ y asignando un valor,
 como dinámicos, ya sea calculados en base al contenido de los registros de una tabla de la base de datos o mediante la definición de un rango.
 Para el caso de valores de una tabla se utilizará una sóla etiqueta _\<values\>_ indicando los atributos:
-        * _source_: Indica el nombre de la tabla origen de los datos
-        * _fieldcode_: Indica el campo que contiene el valor a grabar en el campo de la columna
-        * _fieldtitle_: Indica el campo que contiene el valor que se visualizará en pantalla
+        * **_source_**: Indica el nombre de la tabla origen de los datos
+        * **_fieldcode_**: Indica el campo que contiene el valor a grabar en el campo de la columna
+        * **_fieldtitle_**: Indica el campo que contiene el valor que se visualizará en pantalla
 
 Para el caso de valores por definición de rango una sóla etiqueta _\<values\>_ indicando los atributos:
         * _start_: Indica el valor inicial (numérico o alfabético)
@@ -194,7 +194,7 @@ mediante los siguientes atributos:
 
 * **titleurl** : URL destino si el usuario hace click sobre el título del grupo.
 
-* **icon** : Si se indica se visualizará el icono a la izquierda del título.
+* **icon** : Si se indica se visualizará el icono a la izquierda del título. El icono de el grupo sólo se mostrará si el atributo title está presente.
 
 * **order** : Posición que ocupa el grupo. Sirve para indicar el orden en que se visualizara.
 

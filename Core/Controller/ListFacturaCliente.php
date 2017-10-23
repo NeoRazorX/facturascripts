@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,24 +29,34 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListFacturaCliente extends ExtendedController\ListController
 {
+    /**
+     * Devuelve los datos básicos de la página
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'invoices';
         $pagedata['icon'] = 'fa-files-o';
-        $pagedata['menu'] = 'ventas';
+        $pagedata['menu'] = 'sales';
 
         return $pagedata;
     }
 
+    /**
+     * Procedimiento para insertar vistas en el controlador
+     */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\FacturaCliente', $className);
-        $this->addSearchFields($className, ['codigo', 'numero2', 'observaciones']);
+        $this->addView('FacturaScripts\Core\Model\FacturaCliente', 'ListFacturaCliente');
+        $this->addSearchFields('ListFacturaCliente', ['codigo', 'numero2', 'observaciones']);
+        
+        $this->addFilterSelect('ListFacturaCliente', 'codserie', 'series', '', 'codserie');
+        $this->addFilterSelect('ListFacturaCliente', 'codpago', 'formaspago', '', 'codpago');
 
-        $this->addOrderBy($className, 'codigo', 'code');
-        $this->addOrderBy($className, 'fecha', 'date');
-        $this->addOrderBy($className, 'total', 'amount');
+        $this->addOrderBy('ListFacturaCliente', 'codigo', 'code');
+        $this->addOrderBy('ListFacturaCliente', 'fecha', 'date');
+        $this->addOrderBy('ListFacturaCliente', 'total', 'amount');
     }
 }

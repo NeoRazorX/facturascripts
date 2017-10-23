@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -28,10 +29,13 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListCuenta extends ExtendedController\ListController
 {
+    /**
+     * Procedimiento para insertar vistas en el controlador
+     */
     protected function createViews()
     {
         /* Cuentas */
-        $this->addView('FacturaScripts\Core\Model\Cuenta', 'ListCuenta', 'Cuentas');
+        $this->addView('FacturaScripts\Core\Model\Cuenta', 'ListCuenta', 'accounts');
         $this->addSearchFields('ListCuenta', ['descripcion', 'codcuenta', 'codejercicio', 'codepigrafe']);
 
         $this->addOrderBy('ListCuenta', 'codcuenta||codejercicio', 'code');
@@ -41,7 +45,7 @@ class ListCuenta extends ExtendedController\ListController
         $this->addFilterSelect('ListCuenta', 'codejercicio', 'ejercicios', '', 'nombre');
 
         /* Epigrafes */
-        $this->addView('FacturaScripts\Core\Model\Epigrafe', 'ListEpigrafe', 'Epigrafes');
+        $this->addView('FacturaScripts\Core\Model\Epigrafe', 'ListEpigrafe', 'epigraphs');
         $this->addSearchFields('ListEpigrafe', ['descripcion', 'codepigrafe', 'codejercicio']);
 
         $this->addOrderBy('ListEpigrafe', 'descripcion||codejercicio', 'description');
@@ -51,7 +55,7 @@ class ListCuenta extends ExtendedController\ListController
         $this->addFilterSelect('ListEpigrafe', 'codejercicio', 'ejercicios', '', 'nombre');
 
         /* Grupo Epígrafes */
-        $this->addView('FacturaScripts\Core\Model\GrupoEpigrafes', 'ListGrupoEpigrafes', 'Grupo Epígrafes');
+        $this->addView('FacturaScripts\Core\Model\GrupoEpigrafes', 'ListGrupoEpigrafes', 'epigraphs-group');
         $this->addSearchFields('ListGrupoEpigrafes', ['descripcion', 'codgrupo', 'codejercicio']);
 
         $this->addOrderBy('ListGrupoEpigrafes', 'codgrupo||codejercicio', 'code');
@@ -60,12 +64,17 @@ class ListCuenta extends ExtendedController\ListController
         $this->addFilterSelect('ListGrupoEpigrafes', 'codejercicio', 'ejercicios', '', 'nombre');
     }
 
+    /**
+     * Devuelve los datos básicos de la página
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Cuentas';
+        $pagedata['title'] = 'accounting-accounts';
         $pagedata['icon'] = 'fa-book';
-        $pagedata['menu'] = 'contabilidad';
+        $pagedata['menu'] = 'accounting';
 
         return $pagedata;
     }

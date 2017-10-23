@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
+
+use FacturaScripts\Core\Base;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Definición de vista para uso en ListController
@@ -70,19 +74,19 @@ class ListView extends BaseView
 
     /**
      * Almacena el offset para el cursor
-     * @var integer 
+     * @var int
      */
     private $offset;
 
     /**
      * Almacena el order para el cursor
-     * @var string 
+     * @var array
      */
     private $order;
 
     /**
      * Almacena los parámetros del where del cursor
-     * @var array 
+     * @var array
      */
     private $where;
 
@@ -109,6 +113,13 @@ class ListView extends BaseView
         $this->pageOption->getForUser($viewName, $userNick);
     }
 
+    /**
+     * Devuelve el texto de un enlace para un modelo dado.
+     *
+     * @param $data
+     *
+     * @return string
+     */
     public function getClickEvent($data)
     {
         foreach ($this->getColumns() as $col) {
@@ -147,7 +158,7 @@ class ListView extends BaseView
      */
     public function getSearchIn()
     {
-        return implode("|", $this->searchIn);
+        return implode('|', $this->searchIn);
     }
 
     /**
@@ -173,7 +184,10 @@ class ListView extends BaseView
 
     /**
      * Devuelve el Order By indicado en formato array
+     *
      * @param string $orderKey
+     *
+     * @return array
      */
     public function getSQLOrderBy($orderKey = '')
     {
@@ -181,7 +195,7 @@ class ListView extends BaseView
             return [];
         }
 
-        if ($orderKey == '') {
+        if ($orderKey === '') {
             $orderKey = array_keys($this->orderby)[0];
         }
 
@@ -191,8 +205,8 @@ class ListView extends BaseView
 
     /**
      * Comprueba y establece el valor seleccionado en el order by
+     *
      * @param string $orderKey
-     * @return string
      */
     public function setSelectedOrderBy($orderKey)
     {
@@ -215,6 +229,10 @@ class ListView extends BaseView
     {
         if (is_array($fields)) {
             $this->searchIn += $fields;
+            //$this->searchIn = array_merge($this->searchIn, $fields);
+
+            // TODO: First comment on http://php.net/manual/es/function.array-merge.php
+            // With += Can have duplicate items in diferent positions, with array_merge can't.
         }
     }
 
@@ -232,8 +250,8 @@ class ListView extends BaseView
             $label = ucfirst($field);
         }
 
-        $this->orderby[$key1] = ['icon' => self::ICON_ASC, 'label' => $label];
-        $this->orderby[$key2] = ['icon' => self::ICON_DESC, 'label' => $label];
+        $this->orderby[$key1] = ['icon' => self::ICON_ASC, 'label' => static::$i18n->trans($label)];
+        $this->orderby[$key2] = ['icon' => self::ICON_DESC, 'label' => static::$i18n->trans($label)];
 
         switch ($default) {
             case 1:
@@ -286,24 +304,35 @@ class ListView extends BaseView
      * @param string  $value    (Value introduced by user, if there are)
      * @param string  $label   (Human reader description)
      * @param string  $field   (Field of the table to apply filter)
-     * @param boolean $inverse (If you need to invert the selected value)
+     * @param bool $inverse (If you need to invert the selected value)
      */
-    public function addFilterCheckbox($key, $value, $label, $field = '', $inverse = FALSE)
+    public function addFilterCheckbox($key, $value, $label, $field = '', $inverse = false)
     {
-        $options = ['label' => $label, 'field' => $field, 'inverse' => $inverse];
+        $options = ['label' => static::$i18n->trans($label), 'field' => $field, 'inverse' => $inverse];
         $this->addFilter('checkbox', $key, $value, $options);
     }
 
     /**
+     * Añade filtro del tipo fecha
+     *
      * @param string $key
+     * @param string $value
      * @param string $label
+     * @param string $field
      */
     public function addFilterDatePicker($key, $value, $label, $field = '')
     {
-        $options = ['label' => $label, 'field' => $field];
+        $options = ['label' => static::$i18n->trans($label), 'field' => $field];
         $this->addFilter('datepicker', $key, $value, $options);
     }
 
+    /**
+     * Carga los datos
+     *
+     * @param array $where
+     * @param int $offset
+     * @param int $limit
+     */
     public function loadData($where, $offset = 0, $limit = 50)
     {
         $order = $this->getSQLOrderBy($this->selectedOrderBy);
@@ -318,6 +347,15 @@ class ListView extends BaseView
         $this->where = $where;
     }
 
+    /**
+     * Método para la exportación de los datos de la vista
+     *
+     * @param Base\ExportManager $exportManager
+     * @param Response $response
+     * @param string $action
+     *
+     * @return mixed
+     */
     public function export(&$exportManager, &$response, $action)
     {
         return $exportManager->generateList($response, $action, $this->model, $this->where, $this->order, $this->offset, $this->getColumns());

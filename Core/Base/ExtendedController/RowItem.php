@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -47,6 +48,9 @@ class RowItem implements VisualItemInterface
      */
     public $options;
 
+    /**
+     * RowItem constructor.
+     */
     public function __construct()
     {
         $this->type = 'status';
@@ -54,6 +58,11 @@ class RowItem implements VisualItemInterface
         $this->options = [];
     }
 
+    /**
+     * Carga la estructura de atributos en base a un archivo XML
+     *
+     * @param \SimpleXMLElement $row
+     */
     public function loadFromXML($row)
     {
         $row_atributes = $row->attributes();
@@ -71,6 +80,11 @@ class RowItem implements VisualItemInterface
         }
     }
 
+    /**
+     * Carga la estructura de atributos en base un archivo JSON
+     *
+     * @param array $row
+     */
     public function loadFromJSON($row)
     {
         $this->type = (string) $row['type'];
@@ -78,6 +92,13 @@ class RowItem implements VisualItemInterface
         $this->options = (array) $row['options'];
     }
 
+    /**
+     * Devuelve el estado del valor
+     *
+     * @param string $value
+     *
+     * @return string
+     */
     public function getStatus($value)
     {
         foreach ($this->options as $option) {
@@ -85,8 +106,8 @@ class RowItem implements VisualItemInterface
                 return $option['color'];
             }
             
-            $operator = substr($option['value'], 0, 1);
-            $value2 = floatval(substr($option['value'], 1));
+            $operator = $option['value'][0];
+            $value2 = (float) substr($option['value'], 1);
             if ($operator == '>' && $value > $value2) {
                 return $option['color'];
             }
@@ -99,6 +120,13 @@ class RowItem implements VisualItemInterface
         return 'table-light';
     }
 
+    /**
+     * Genera el código html para visualizar la cabecera del elemento visual
+     *
+     * @param string $value
+     *
+     * @return string
+     */
     public function getHeaderHTML($value)
     {
         return $value;

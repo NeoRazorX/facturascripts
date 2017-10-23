@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -44,12 +44,14 @@ class FileCache implements AdaptorInterface
     private static $config;
 
     /**
+     * Objeto traductor
      *
      * @var Translator
      */
     private $i18n;
 
     /**
+     * Objeto del minilog
      *
      * @var MiniLog
      */
@@ -159,7 +161,7 @@ class FileCache implements AdaptorInterface
      */
     public function clear()
     {
-        foreach (scandir(self::$config['cache_path']) as $fileName) {
+        foreach (scandir(self::$config['cache_path'], SCANDIR_SORT_ASCENDING) as $fileName) {
             if (substr($fileName, -4) == '.php') {
                 unlink(self::$config['cache_path'] . '/' . $fileName);
             }

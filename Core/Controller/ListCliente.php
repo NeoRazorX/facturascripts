@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,20 +29,28 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListCliente extends ExtendedController\ListController
 {
+    /**
+     * Devuelve los datos básicos de la página
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'customers';
         $pagedata['icon'] = 'fa-users';
-        $pagedata['menu'] = 'ventas';
+        $pagedata['menu'] = 'sales';
 
         return $pagedata;
     }
 
+    /**
+     * Procedimiento para insertar vistas en el controlador
+     */
     protected function createViews()
     {
         /* Clientes */
-        $this->addView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'Clientes');
+        $this->addView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'customers');
         $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente', 'email']);
 
         $this->addOrderBy('ListCliente', 'codcliente', 'code');
@@ -50,10 +58,10 @@ class ListCliente extends ExtendedController\ListController
         $this->addOrderBy('ListCliente', 'fecha', 'date');
 
         $this->addFilterSelect('ListCliente', 'codgrupo', 'gruposclientes', '', 'nombre');
-        $this->addFilterCheckbox('ListCliente', 'debaja', 'De baja');
+        $this->addFilterCheckbox('ListCliente', 'debaja', 'suspended');
         
         /* Grupos */
-        $this->addView('FacturaScripts\Core\Model\GrupoClientes', 'ListGrupoClientes', 'Grupos');
+        $this->addView('FacturaScripts\Core\Model\GrupoClientes', 'ListGrupoClientes', 'groups');
         $this->addSearchFields('ListGrupoClientes', ['nombre', 'codgrupo']);
         
         $this->addOrderBy('ListGrupoClientes', 'codgrupo', 'code');

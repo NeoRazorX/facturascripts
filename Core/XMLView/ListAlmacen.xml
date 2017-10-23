@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -36,7 +36,7 @@
         <column name="address" order="100">
             <widget type="text" fieldname="direccion" />
         </column>
-        <column name="postal-mail" display="none" order="100">
+        <column name="postalmail" display="none" order="100">
             <widget type="text" fieldname="apartado" />
         </column>
         <column name="town" order="100">

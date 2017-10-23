@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DefaultItems;
@@ -25,7 +26,7 @@ use FacturaScripts\Core\Lib\RegimenIVA;
 /**
  * Description of Persona
  *
- * @author carlos
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 abstract class Persona
 {
@@ -87,18 +88,26 @@ abstract class Persona
     public $debaja;
 
     /**
+     * Clase que se utiliza para definir algunos valores por defecto:
+     * codejercicio, codserie, coddivisa, etc...
      *
      * @var DefaultItems
      */
     private static $defaultItems;
 
     /**
-     * TODO
+     * Email de la persona.
      *
      * @var string
      */
     public $email;
 
+    /**
+     * Fax de la persona.
+     *
+     * @var string
+     */
+    public $fax;
     /**
      * Fecha en la que se dió de alta al cliente.
      *
@@ -114,6 +123,7 @@ abstract class Persona
     public $fechabaja;
 
     /**
+     * Tipo de identificador fiscal
      *
      * @var IDFiscal
      */
@@ -127,15 +137,15 @@ abstract class Persona
     public $nombre;
 
     /**
-     * TODO
+     * Observaciones de la persona.
      *
      * @var string
      */
     public $observaciones;
 
     /**
-     * TRUE  -> el cliente es una persona física.
-     * FALSE -> el cliente es una persona jurídica (empresa).
+     * True  -> el cliente es una persona física.
+     * False -> el cliente es una persona jurídica (empresa).
      *
      * @var boolean
      */
@@ -157,20 +167,21 @@ abstract class Persona
     public $regimeniva;
 
     /**
+     * Tipo de régimen de IVA
      *
      * @var RegimenIVA
      */
     private static $regimenIVA;
 
     /**
-     * TODO
+     * Teléfono de la persona.
      *
      * @var string
      */
     public $telefono1;
 
     /**
-     * TODO
+     * Teléfono de la persona.
      *
      * @var string
      */
@@ -185,15 +196,18 @@ abstract class Persona
     public $tipoidfiscal;
 
     /**
-     * TODO
+     * Página web de la persona.
      *
      * @var string
      */
     public $web;
 
+    /**
+     * Persona constructor.
+     */
     public function __construct()
     {
-        if (self::$defaultItems === NULL) {
+        if (self::$defaultItems === null) {
             self::$defaultItems = new DefaultItems();
             self::$idFiscal = new IDFiscal();
             self::$regimenIVA = new RegimenIVA();
@@ -208,13 +222,13 @@ abstract class Persona
         $this->cifnif = '';
         $this->coddivisa = self::$defaultItems->codDivisa();
         $this->codpago = self::$defaultItems->codPago();
-        $this->debaja = FALSE;
+        $this->debaja = false;
         $this->email = '';
         $this->fax = '';
         $this->fechaalta = date('d-m-Y');
-        $this->fechabaja = NULL;
+        $this->fechabaja = null;
         $this->nombre = '';
-        $this->personafisica = TRUE;
+        $this->personafisica = true;
         $this->razonsocial = '';
         $this->regimeniva = self::$regimenIVA->defaultValue();
         $this->telefono1 = '';
@@ -223,12 +237,37 @@ abstract class Persona
         $this->web = '';
     }
 
+    /**
+     * Devuelve la persona por cifnif
+     *
+     * @param string $cifnif
+     * @param string $razon
+     *
+     * @return mixed
+     */
     abstract public function getByCifnif($cifnif, $razon = '');
 
+    /**
+     * Devuelve las direcciones de la persona
+     *
+     * @return mixed
+     */
     abstract public function getDirecciones();
 
+    /**
+     * Devuelve las subcuentas de la persona
+     *
+     * @return mixed
+     */
     abstract public function getSubcuentas();
 
+    /**
+     * Devuelve la subcuenta de la persona para el ejercicio dado
+     *
+     * @param string $codejercicio
+     *
+     * @return mixed
+     */
     abstract public function getSubcuenta($codejercicio);
 
     /**

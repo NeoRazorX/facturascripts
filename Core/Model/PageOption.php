@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,6 +35,11 @@ class PageOption
         loadFromData as loadFromDataTrait;
     }
 
+    /**
+     * Identificador
+     *
+     * @var int
+     */
     public $id;
 
     /**
@@ -73,16 +78,33 @@ class PageOption
      */
     public $filters;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'fs_pages_options';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'id';
     }
 
+    /**
+     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará tras la creación de la tabla. útil para insertar valores
+     * por defecto.
+     *
+     * @return string
+     */
     public function install()
     {
         /// necesitamos estas clase para las claves ajenas
@@ -123,9 +145,12 @@ class PageOption
 
         $rows = json_decode($data['rows'], true);
         if (!empty($rows)) {
-            $rowItem = new ExtendedController\RowItem();
-            $rowItem->loadFromJSON($rows);
-            $this->rows[] = $rowItem;
+            foreach ($rows as $item) {
+                $rowItem = new ExtendedController\RowItem();
+                $rowItem->loadFromJSON($item);
+                $this->rows[$rowItem->type] = $rowItem;
+                unset($rowItem);
+            }
         }
     }
 
@@ -182,7 +207,7 @@ class PageOption
     /**
      * Carga la estructura de columnas desde el XML
      *
-     * @param SimpleXMLElement $columns
+     * @param \SimpleXMLElement $columns
      */
     private function getXMLGroupsColumns($columns)
     {
@@ -209,7 +234,7 @@ class PageOption
      * Carga las condiciones especiales para las filas
      * desde el XML
      *
-     * @param SimpleXMLElement $rows
+     * @param \SimpleXMLElement[] $rows
      */
     private function getXMLRows($rows)
     {
@@ -233,15 +258,20 @@ class PageOption
     public function installXML($name)
     {
         if ($this->name != $name) {
-            $this->miniLog->critical('error-install-name-xmlview');
+            $this->miniLog->critical($this->i18n->trans('error-install-name-xmlview'));
             return;
         }
         
         $file = "Core/XMLView/{$name}.xml";
-        $xml = simplexml_load_file($file);
+        /**
+         * This can be affected by a PHP bug #62577 (https://bugs.php.net/bug.php?id=62577)
+         * Reports 'simplexml_load_file(...)' calls, which may be affected by this PHP bug.
+         * $xml = simplexml_load_file($file);
+         */
+        $xml = @simplexml_load_string(file_get_contents($file));
 
         if ($xml === false) {
-            $this->miniLog->critical('error-processing-xmlview');
+            $this->miniLog->critical($this->i18n->trans('error-processing-xmlview', [$file]));
             return;
         }
 
@@ -271,6 +301,7 @@ class PageOption
             $this->filters = [];
             $this->rows = [];
             $this->installXML($name);
+//            $this->save();
         }
 
         // Aplicamos sobre los widgets Select dinámicos sus valores
@@ -282,11 +313,11 @@ class PageOption
      *
      * @param string $fieldName
      *
-     * @return ColumnItem
+     * @return ExtendedController\ColumnItem
      */
     public function columnForField($fieldName)
     {
-        $result = NULL;
+        $result = null;
         foreach ($this->columns as $group) {
             foreach ($group->columns as $column) {
                 if ($column->widget->fieldName === $fieldName) {

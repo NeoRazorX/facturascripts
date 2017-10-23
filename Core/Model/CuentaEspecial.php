@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Model;
  * Permite relacionar cuentas especiales (VENTAS, por ejemplo)
  * con la cuenta o subcuenta real.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class CuentaEspecial
 {
@@ -32,22 +32,32 @@ class CuentaEspecial
     /**
      * Identificador de la cuenta especial.
      *
-     * @var
+     * @var string
      */
     public $idcuentaesp;
 
     /**
-     * TODO
+     * Descripción de la cuenta especial.
      *
      * @var string
      */
     public $descripcion;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'co_cuentasesp';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'idcuentaesp';

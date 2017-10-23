@@ -1,7 +1,7 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Model;
 /**
  * Una cuenta bancaria de la propia empresa.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class CuentaBanco
 {
@@ -35,6 +35,12 @@ class CuentaBanco
      * @var string
      */
     public $codcuenta;
+
+    /**
+     * Descripción de la cuenta
+     *
+     * @var string
+     */
     public $descripcion;
 
     /**
@@ -44,11 +50,21 @@ class CuentaBanco
      */
     public $codsubcuenta;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'cuentasbanco';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'cocuenta';
@@ -62,11 +78,11 @@ class CuentaBanco
     public function test()
     {
         if (!$this->testBankAccount()) {
-            $this->miniLog->alert('Error grave: Los datos bancarios son incorrectos');
+            $this->miniLog->alert($this->i18n->trans('error-incorrect-bank-details'));
 
-            return FALSE;
+            return false;
         }
 
-        return TRUE;
+        return true;
     }
 }

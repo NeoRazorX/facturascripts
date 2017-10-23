@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
+
+use FacturaScripts\Core\Model\Asiento;
 
 /**
  * Description of Factura
  *
- * @author carlos
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 trait Factura
 {
@@ -106,6 +109,22 @@ trait Factura
         return $asiento->get($this->idasientop);
     }
 
+    /**
+     * Devuelve las facturas rectificativas
+     */
+    public function getRectificativas()
+    {
+        return [];
+    }
+
+    /**
+     * Obtiene las líneas de iva
+     *
+     * @param string $className
+     * @param int $dueTotales
+     *
+     * @return mixed
+     */
     private function getLineasIvaTrait($className, $dueTotales = 1)
     {
         $linea_iva = new $className();
@@ -115,7 +134,7 @@ trait Factura
         if (empty($lineasi) && !empty($lineas)) {
             /// necesitamos los totales por impuesto
             $subtotales = [];
-            foreach ($this->get_lineas() as $lin) {
+            foreach ($lineas as $lin) {
                 $codimpuesto = ($lin->codimpuesto === null ) ? 0 : $lin->codimpuesto;
                 if (!array_key_exists($codimpuesto, $subtotales)) {
                     $subtotales[$codimpuesto] = array(
@@ -139,7 +158,7 @@ trait Factura
             }
             /// ahora creamos las líneas de iva
             foreach ($subtotales as $codimp => $subt) {
-                $lineasi[$codimp] = new $class_name();
+                $lineasi[$codimp] = new $className();
                 $lineasi[$codimp]->idfactura = $this->idfactura;
                 $lineasi[$codimp]->codimpuesto = $codimp;
                 $lineasi[$codimp]->iva = $subt['ivapor'];
@@ -153,4 +172,11 @@ trait Factura
         }
         return $lineasi;
     }
+
+    /**
+     * Devuelve las líneas asociadas al documento.
+     *
+     * @return LineaFacturaCliente[]|LineaFacturaProveedor[]
+     */
+    abstract public function getLineas();
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Model;
 /**
  * Detalle abreviado de un balance.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class BalanceCuentaA
 {
@@ -31,36 +31,46 @@ class BalanceCuentaA
     /**
      * Clave primaria.
      *
-     * @var
+     * @var int
      */
     public $id;
 
     /**
-     * TODO
+     * Código del balance
      *
-     * @var
+     * @var string
      */
     public $codbalance;
 
     /**
-     * TODO
+     * Código de la cuenta
      *
-     * @var
+     * @var string
      */
     public $codcuenta;
 
     /**
-     * TODO
+     * Descripción de la cuenta
      *
-     * @var
+     * @var string
      */
     public $desccuenta;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'co_cuentascbba';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'id';
@@ -116,11 +126,11 @@ class BalanceCuentaA
     }
 
     /**
-     * TODO
+     * Obtener todos los balances sde la cuenta por su código de balance
      *
      * @param string $cod
      *
-     * @return array
+     * @return self[]
      */
     public function allFromCodbalance($cod)
     {
@@ -139,11 +149,11 @@ class BalanceCuentaA
     }
 
     /**
-     * TODO
+     * Buscar todos los balances sde la cuenta por su código de balance
      *
      * @param string $cod
      *
-     * @return array
+     * @return self[]
      */
     public function searchByCodbalance($cod)
     {

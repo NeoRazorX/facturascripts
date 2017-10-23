@@ -300,6 +300,8 @@ function installerMain()
 
     if (filter_input(INPUT_POST, 'fs_lang')) {
         $i18n = new Translator(__DIR__, filter_input(INPUT_POST, 'fs_lang'));
+    } elseif (filter_input(INPUT_GET, 'fs_lang')) {
+        $i18n = new Translator(__DIR__, filter_input(INPUT_GET, 'fs_lang'));
     } else {
         $i18n = new Translator(__DIR__);
     }

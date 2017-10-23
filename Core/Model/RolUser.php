@@ -2,7 +2,7 @@
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2016 Joe Nilson             <joenilson at gmail.com>
- * Copyright (C) 2017 Carlos García Gómez    <neorazorx at gmail.com>
+ * Copyright (C) 2017 Carlos García Gómez    <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -24,38 +24,48 @@ namespace FacturaScripts\Core\Model;
  * Define la relación entre un usuario y un rol.
  *
  * @author Joe Nilson            <joenilson at gmail.com>
- * @author Carlos García Gómez   <neorazorx at gmail.com>
+ * @author Carlos García Gómez   <carlos@facturascripts.com>
  */
 class RolUser
 {
     use Base\ModelTrait;
 
     /**
-     * TODO
+     * Identificador
      *
      * @var int
      */
     public $id;
 
     /**
-     * TODO
+     * Código de rol
      *
      * @var string
      */
     public $codrol;
 
     /**
-     * TODO
+     * Nick
      *
      * @var string
      */
     public $nick;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'fs_roles_users';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'id';

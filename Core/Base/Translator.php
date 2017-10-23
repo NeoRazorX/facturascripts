@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,7 +25,7 @@ use Symfony\Component\Translation\Translator as symfonyTranslator;
 /**
  * Description of Translator
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Translator
 {
@@ -51,16 +51,29 @@ class Translator
     private static $translator;
 
     /**
-     * Translator constructor.
+     * Lista de strings utilizadas.
+     *
+     * @var array
+     */
+    private static $usedStrings;
+
+    /**
+     * Constructor del traductor
+     * Por defecto se usará y definirá en_EN si no está definido en config.php.
      *
      * @param string $folder
      * @param string $lang
      */
-    public function __construct($folder = '', $lang = 'es_ES')
+    public function __construct($folder = '', $lang = 'en_EN')
     {
         if (self::$folder === null) {
             self::$folder = $folder;
-            self::$lang = $lang;
+            if (!\array_key_exists('FS_LANG', \get_defined_constants())) {
+                self::$lang = $lang;
+                define('FS_LANG', self::$lang);
+            } else {
+                self::$lang = FS_LANG;
+            }
 
             self::$translator = new symfonyTranslator(self::$lang);
             self::$translator->addLoader('json', new JsonFileLoader());
@@ -78,6 +91,9 @@ class Translator
      */
     public function trans($txt, array $parameters = [])
     {
+        $catalogue = self::$translator->getCatalogue(self::$lang);
+        self::$usedStrings[$txt] = $catalogue->get($txt, 'messages');
+
         return self::$translator->trans($txt, $parameters);
     }
 
@@ -98,5 +114,25 @@ class Translator
                 self::$translator->addResource('json', $file, self::$lang);
             }
         }
+    }
+
+    /**
+     * Devuelve el código de idioma en uso
+     *
+     * @return string
+     */
+    public function getLangCode()
+    {
+        return self::$lang;
+    }
+
+    /**
+     * Devuelve las strings utilizadas
+     *
+     * @return array
+     */
+    public function getUsedStrings()
+    {
+        return self::$usedStrings;
     }
 }

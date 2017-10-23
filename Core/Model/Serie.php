@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -53,7 +53,7 @@ class Serie
     /**
      * % de retención IRPF de las facturas asociadas.
      *
-     * @var float
+     * @var float|int
      */
     public $irpf;
 
@@ -71,11 +71,21 @@ class Serie
      */
     public $numfactura;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'series';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'codserie';
@@ -139,6 +149,6 @@ class Serie
     public function install()
     {
         return 'INSERT INTO ' . $this->tableName() . ' (codserie,descripcion,siniva,irpf) VALUES '
-            . "('A','SERIE A',FALSE,'0'),('R','RECTIFICATIVAS',FALSE,'0');";
+            . "('A','SERIE A',false,'0'),('R','RECTIFICATIVAS',false,'0');";
     }
 }

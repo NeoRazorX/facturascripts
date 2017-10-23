@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Base;
 /**
  * Description of DivisaTools
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class DivisaTools
 {
@@ -31,6 +31,14 @@ class DivisaTools
     const NF2 = ' ';
     const POSITION = 'right';
 
+    /**
+     * Devuelve el valor de la divisa formateada
+     *
+     * @param float $number
+     * @param int $decimals
+     *
+     * @return string
+     */
     public function format($number, $decimals = self::NF0)
     {
         $symbol = '€';

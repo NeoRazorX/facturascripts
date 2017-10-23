@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Model;
 /**
  * Una cuenta bancaria de un proveedor.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class CuentaBancoProveedor
 {
@@ -47,24 +47,34 @@ class CuentaBancoProveedor
     public $codproveedor;
 
     /**
-     * TODO
+     * Descripción de la cuenta.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * TODO
+     * True si es la cuenta principal, sino False
      *
-     * @var
+     * @var bool
      */
     public $principal;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'cuentasbcopro';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'codcuenta';
@@ -109,7 +119,7 @@ class CuentaBancoProveedor
             return $allOK;
         }
 
-        return FALSE;
+        return false;
     }
 
     /**
@@ -121,11 +131,11 @@ class CuentaBancoProveedor
     {
         $this->descripcion = self::noHtml($this->descripcion);
         if (!$this->testBankAccount()) {
-            $this->miniLog->alert('Error grave: Los datos bancarios son incorrectos');
+            $this->miniLog->alert($this->i18n->trans('error-incorrect-bank-details'));
 
-            return FALSE;
+            return false;
         }
 
-        return TRUE;
+        return true;
     }
 }

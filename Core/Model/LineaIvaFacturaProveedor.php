@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Model;
  * La línea de IVA de una factura de proveedor.
  * Indica el neto, iva y total para un determinado IVA y una factura.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class LineaIvaFacturaProveedor
 {
@@ -46,35 +46,35 @@ class LineaIvaFacturaProveedor
     /**
      * neto + totaliva + totalrecargo.
      *
-     * @var float
+     * @var float|int
      */
     public $totallinea;
 
     /**
      * Total de recargo de equivalencia para ese impuesto.
      *
-     * @var float
+     * @var float|int
      */
     public $totalrecargo;
 
     /**
      * % de recargo de equivalencia del impuesto.
      *
-     * @var float
+     * @var float|int
      */
     public $recargo;
 
     /**
      * Total de IVA para ese impuesto.
      *
-     * @var float
+     * @var float|int
      */
     public $totaliva;
 
     /**
      * % de IVA del impuesto.
      *
-     * @var float
+     * @var float|int
      */
     public $iva;
 
@@ -88,15 +88,25 @@ class LineaIvaFacturaProveedor
     /**
      * Neto o base imponible para ese impuesto.
      *
-     * @var float
+     * @var float|int
      */
     public $neto;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'lineasivafactprov';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'idlinea';
@@ -119,24 +129,22 @@ class LineaIvaFacturaProveedor
     }
 
     /**
-     * TODO
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
      *
      * @return bool
      */
     public function test()
     {
-        if ($this->floatcmp($this->totallinea, $this->neto + $this->totaliva + $this->totalrecargo, FS_NF0, true)) {
+        if (static::floatcmp($this->totallinea, $this->neto + $this->totaliva + $this->totalrecargo, FS_NF0, true)) {
             return true;
         }
-        $this->miniLog->alert('Error en el valor de totallinea de la línea de IVA del impuesto ' .
-            $this->codimpuesto . ' de la factura. Valor correcto: ' .
-            round($this->neto + $this->totaliva + $this->totalrecargo, FS_NF0));
+        $this->miniLog->alert($this->i18n->trans('totallinea-value-error', [$this->codimpuesto, round($this->neto + $this->totaliva + $this->totalrecargo, FS_NF0)]));
 
         return false;
     }
 
     /**
-     * TODO
+     * Comprueba que las líneas de Iva de la factura sean correctas
      *
      * @param int   $idfactura
      * @param float $neto
@@ -166,14 +174,14 @@ class LineaIvaFacturaProveedor
         $liIva = round($liIva, FS_NF0);
         $liRecargo = round($liRecargo, FS_NF0);
 
-        if (!$this->floatcmp($neto, $liNeto, FS_NF0, true)) {
-            $this->miniLog->alert('La suma de los netos de las líneas de IVA debería ser: ' . $neto);
+        if (!static::floatcmp($neto, $liNeto, FS_NF0, true)) {
+            $this->miniLog->alert($this->i18n->trans('sum-netos-line-tax-must-be', [$neto]));
             $status = false;
-        } elseif (!$this->floatcmp($totaliva, $liIva, FS_NF0, true)) {
-            $this->miniLog->alert('La suma de los totales de iva de las líneas de IVA debería ser: ' . $totaliva);
+        } elseif (!static::floatcmp($totaliva, $liIva, FS_NF0, true)) {
+            $this->miniLog->alert($this->i18n->trans('sum-total-line-tax-must-be', [$totaliva]));
             $status = false;
-        } elseif (!$this->floatcmp($totalrecargo, $liRecargo, FS_NF0, true)) {
-            $this->miniLog->alert('La suma de los totalrecargo de las líneas de IVA debería ser: ' . $totalrecargo);
+        } elseif (!static::floatcmp($totalrecargo, $liRecargo, FS_NF0, true)) {
+            $this->miniLog->alert($this->i18n->trans('sum-totalrecargo-line-tax-must-be', [$totalrecargo]));
             $status = false;
         }
 
@@ -181,11 +189,11 @@ class LineaIvaFacturaProveedor
     }
 
     /**
-     * TODO
+     * Devuelve todas las líneas de Iva de la factura
      *
      * @param int $idfac
      *
-     * @return array
+     * @return self[]
      */
     public function allFromFactura($idfac)
     {

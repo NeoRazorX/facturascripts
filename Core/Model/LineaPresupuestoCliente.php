@@ -1,8 +1,8 @@
 <?php
-/*
+/**
  * This file is part of presupuestos_y_pedidos
- * Copyright (C) 2014-2017    Carlos Garcia Gomez        neorazorx@gmail.com
- * Copyright (C) 2014         Francesc Pineda Segarra    shawe.ewahs@gmail.com
+ * Copyright (C) 2014-2017    Carlos Garcia Gomez        <carlos@facturascripts.com>
+ * Copyright (C) 2014         Francesc Pineda Segarra    <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Model;
 /**
  * Línea de presupuesto de cliente.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class LineaPresupuestoCliente
 {
@@ -36,14 +36,22 @@ class LineaPresupuestoCliente
      */
     public $idpresupuesto;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'lineaspresupuestoscli';
     }
 
+    /**
+     * Resetea los valores de todas las propiedades modelo.
+     */
     public function clear()
     {
         $this->clearLinea();
-        $this->idpresupuesto = NULL;
+        $this->idpresupuesto = null;
     }
 }

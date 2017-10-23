@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Base\DataBase;
 
+use FacturaScripts\Core\Base\DataBase;
+
 /**
  * Estructura para definir una condición WHERE de uso en el
  * filtrado de datos desde los modelos
@@ -34,7 +36,7 @@ class DataBaseWhere
     /**
      * Enlace con la base de datos activa
      *
-     * @var \FacturaScripts\Core\Base\DataBase
+     * @var DataBase
      */
     private $dataBase;
 
@@ -55,7 +57,7 @@ class DataBaseWhere
     /**
      * Valor por el que se filtra
      *
-     * @var variant
+     * @var string|bool
      */
     private $value;
 
@@ -66,29 +68,42 @@ class DataBaseWhere
      */
     private $operation;
 
+    /**
+     * DataBaseWhere constructor.
+     *
+     * @param string $fields
+     * @param string|bool $value
+     * @param string $operator
+     * @param string $operation
+     */
     public function __construct($fields, $value, $operator = '=', $operation = 'AND')
     {
         $this->fields = $fields;
         $this->value = $value;
         $this->operator = $operator;
         $this->operation = $operation;
-        $this->dataBase = new \FacturaScripts\Core\Base\DataBase();
+        $this->dataBase = new DataBase();
     }
 
     /**
      * Formatea el valor fecha al formato de la base de datos
      *
-     * @param boolean $addTime
+     * @param bool $addTime
      *
      * @return string
      */
-    private function format2Date($addTime = FALSE)
+    private function format2Date($addTime = false)
     {
         $time = $addTime ? ' H:i:s' : '';
 
         return "'" . date($this->dataBase->dateStyle() . $time, strtotime($this->value)) . "'";
     }
 
+    /**
+     * Devuelve el valor para el operador
+     *
+     * @return string
+     */
     private function getValueFromOperator()
     {
         switch ($this->operator) {
@@ -107,6 +122,11 @@ class DataBaseWhere
         return $result;
     }
 
+    /**
+     * Devuelve el valor por el tipo
+     *
+     * @return string
+     */
     private function getValueFromType()
     {
         switch (gettype($this->value)) {
@@ -127,7 +147,7 @@ class DataBaseWhere
 
             /// DATETIME
             case preg_match(self::MATCH_DATETIME, $this->value) > 0:
-                $result = $this->format2Date(TRUE);
+                $result = $this->format2Date(true);
                 break;
 
             default:
@@ -150,11 +170,11 @@ class DataBaseWhere
     /**
      * Devuelve un string para aplicar en la clausula WHERE
      *
-     * @param boolean $applyOperation
+     * @param bool $applyOperation
      *
      * @return string
      */
-    public function getSQLWhereItem($applyOperation = FALSE)
+    public function getSQLWhereItem($applyOperation = false)
     {
         $result = '';
         $union = '';
@@ -191,10 +211,10 @@ class DataBaseWhere
     public static function getSQLWhere(array $whereItems)
     {
         $result = '';
-        $join = FALSE;
+        $join = false;
         foreach ($whereItems as $item) {
             $result .= $item->getSQLWhereItem($join);
-            $join = TRUE;
+            $join = true;
         }
 
         if ($result != '') {
@@ -222,7 +242,7 @@ class DataBaseWhere
                     $result[$field] = $item->value;
                 }
             }
-        }        
+        }
         return $result;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,29 +24,51 @@ use FacturaScripts\Core\Base\ExtendedController;
 /**
  * Description of ListArticulo
  *
- * @author carlos
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class ListArticulo extends ExtendedController\ListController
 {
+    /**
+     * Devuelve los datos básicos de la página
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Articulos';
+        $pagedata['title'] = 'products';
         $pagedata['icon'] = 'fa-cubes';
-        $pagedata['menu'] = 'almacen';
+        $pagedata['menu'] = 'warehouse';
 
         return $pagedata;
     }
 
+    /**
+     * Procedimiento para insertar vistas en el controlador
+     */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\Articulo', $className);
-        $this->addSearchFields($className, ['referencia', 'descripcion']);
+        /* Artículos */
+        $this->addView('FacturaScripts\Core\Model\Articulo', 'ListArticulo', 'products');
+        $this->addSearchFields('ListArticulo', ['referencia', 'descripcion']);
+        
+        $this->addFilterSelect('ListArticulo', 'codfabricante', 'fabricantes', '', 'nombre');
+        $this->addFilterSelect('ListArticulo', 'codfamilia', 'familias', '', 'descripcion');
+        $this->addFilterCheckbox('ListArticulo', 'bloqueado', 'locked', 'bloqueado');
+        $this->addFilterCheckbox('ListArticulo', 'publico', 'public', 'publico');
 
-        $this->addOrderBy($className, 'referencia', 'reference');
-        $this->addOrderBy($className, 'descripcion', 'description');
-        $this->addOrderBy($className, 'pvp', 'price');
-        $this->addOrderBy($className, 'stockfis', 'stock');
+        $this->addOrderBy('ListArticulo', 'referencia', 'reference');
+        $this->addOrderBy('ListArticulo', 'descripcion', 'description');
+        $this->addOrderBy('ListArticulo', 'pvp', 'price');
+        $this->addOrderBy('ListArticulo', 'stockfis', 'stock');
+        
+        /* Artículos de proveedor */
+        $this->addView('FacturaScripts\Core\Model\ArticuloProveedor', 'ListArticuloProveedor', 'supplier-products');
+        $this->addSearchFields('ListArticuloProveedor', ['referencia', 'descripcion']);
+
+        $this->addOrderBy('ListArticuloProveedor', 'referencia', 'reference');
+        $this->addOrderBy('ListArticuloProveedor', 'descripcion', 'description');
+        $this->addOrderBy('ListArticuloProveedor', 'pvp', 'price');
+        $this->addOrderBy('ListArticuloProveedor', 'stockfis', 'stock');
     }
 }

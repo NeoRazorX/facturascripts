@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,24 +29,35 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListPedidoCliente extends ExtendedController\ListController
 {
+    /**
+     * Devuelve los datos básicos de la página
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'orders';
         $pagedata['icon'] = 'fa-files-o';
-        $pagedata['menu'] = 'ventas';
+        $pagedata['menu'] = 'sales';
 
         return $pagedata;
     }
 
+    /**
+     * Procedimiento encargado de insertar las vistas a visualizar
+     */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\PedidoCliente', $className);
-        $this->addSearchFields($className, ['codigo', 'numero2', 'observaciones']);
+        $this->addView('FacturaScripts\Core\Model\PedidoCliente', 'ListPedidoCliente');
+        $this->addSearchFields('ListPedidoCliente', ['codigo', 'numero2', 'observaciones']);
+        
+        $this->addFilterSelect('ListPedidoCliente', 'codalmacen', 'almacenes', '', 'nombre');
+        $this->addFilterSelect('ListPedidoCliente', 'codserie', 'series', '', 'descripcion');
+        $this->addFilterSelect('ListPedidoCliente', 'codpago', 'formaspago', '', 'descripcion');
 
-        $this->addOrderBy($className, 'codigo', 'code');
-        $this->addOrderBy($className, 'fecha', 'date');
-        $this->addOrderBy($className, 'total', 'amount');
+        $this->addOrderBy('ListPedidoCliente', 'codigo', 'code');
+        $this->addOrderBy('ListPedidoCliente', 'fecha', 'date');
+        $this->addOrderBy('ListPedidoCliente', 'total', 'amount');
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Model;
 /**
  * Un atributo para artículos.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Atributo
 {
@@ -38,26 +38,36 @@ class Atributo
     public $codatributo;
 
     /**
-     * TODO
+     * Nombre del atributo
      *
      * @var string
      */
     public $nombre;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'atributos';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'codatributo';
     }
 
     /**
-     * TODO
+     * Obtener los atributos de un código de atributo
      *
-     * @return array
+     * @return AtributoValor[]
      */
     public function valores()
     {
@@ -67,7 +77,7 @@ class Atributo
     }
 
     /**
-     * TODO
+     * Obtener atributo por nombre
      *
      * @param string $nombre
      * @param bool   $minusculas

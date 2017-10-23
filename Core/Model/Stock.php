@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -23,7 +24,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 /**
  * La cantidad en inventario de un artículo en un almacén concreto.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Stock
 {
@@ -38,89 +39,111 @@ class Stock
     public $idstock;
 
     /**
-     * TODO
+     * Código de almacén
      *
      * @var string
      */
     public $codalmacen;
 
     /**
-     * TODO
+     * Referéncia
      *
      * @var string
      */
     public $referencia;
 
     /**
-     * TODO
+     * Nombre
      *
      * @var string
      */
     public $nombre;
 
     /**
-     * TODO
+     * Cantidad
      *
-     * @var float
+     * @var float|int
      */
     public $cantidad;
 
     /**
-     * TODO
+     * Reservada
      *
-     * @var
+     * @var float|int
      */
     public $reservada;
 
     /**
-     * TODO
+     * Disponible
      *
-     * @var
+     * @var float|int
      */
     public $disponible;
 
     /**
-     * TODO
+     * Pendiente de recibir
      *
-     * @var
+     * @var float|int
      */
     public $pterecibir;
 
     /**
-     * TODO
+     * Stock mínimo
      *
-     * @var float
+     * @var float|int
      */
     public $stockmin;
 
     /**
-     * TODO
+     * Stock máximo
      *
-     * @var float
+     * @var float|int
      */
     public $stockmax;
 
     /**
-     * TODO
+     * Cantidad última regularización
      *
-     * @var
+     * @var float|int
      */
     public $cantidadultreg;
+
+    /**
+     * Fecha última regularización
+     *
+     * @var string
+     */
     public $fechaultreg;
+
+    /**
+     * Hora última regularización
+     *
+     * @var string
+     */
     public $horaultreg;
 
     /**
-     * TODO
+     * Ubicación
      *
-     * @var
+     * @var string
      */
     public $ubicacion;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'stocks';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'idstock';
@@ -148,9 +171,9 @@ class Stock
     }
 
     /**
-     * TODO
+     * Devuelve el nombre del almacén
      *
-     * @return mixed
+     * @return string
      */
     public function getNombre()
     {
@@ -164,7 +187,7 @@ class Stock
     }
 
     /**
-     * TODO
+     * Asigna la cantidad
      *
      * @param int $cant
      */
@@ -180,7 +203,7 @@ class Stock
     }
 
     /**
-     * TODO
+     * Añade la cantidad
      *
      * @param int $cant
      */
@@ -197,7 +220,7 @@ class Stock
     }
 
     /**
-     * TODO
+     * Devuelve el stock por referencia y adicionalmente por almacén
      *
      * @param string $ref
      * @param bool   $codalmacen
@@ -218,6 +241,11 @@ class Stock
         return false;
     }
 
+    /**
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     *
+     * @return bool
+     */
     public function test()
     {
         $this->cantidad = round($this->cantidad, 3);
@@ -228,7 +256,7 @@ class Stock
     }
 
     /**
-     * TODO
+     * Devuelve el stock total por referencia y adicionalmente por almacén
      *
      * @param string $ref
      * @param bool   $codalmacen
@@ -253,7 +281,7 @@ class Stock
     }
 
     /**
-     * TODO
+     * Devuelve el stock total
      *
      * @param string $column
      *
@@ -273,12 +301,35 @@ class Stock
     }
 
     /**
-     * TODO
+     * Devuelve el stock total por referencia
      *
      * @return int
      */
     public function countByArticulo()
     {
         return $this->count('DISTINCT referencia');
+    }
+
+    /**
+     * Devuelve el stock por referencia ordenado por codalmacen
+     *
+     * @param $ref
+     *
+     * @return self[]
+     */
+    public function allFromArticulo($ref)
+    {
+        $stocklist = array();
+
+        $sql = 'SELECT * FROM ' . $this->tableName()
+            . ' WHERE referencia = ' . $this->var2str($ref) . ' ORDER BY codalmacen ASC;';
+        $data = $this->dataBase->select($sql);
+        if (!empty($data)) {
+            foreach ($data as $s) {
+                $stocklist[] = new self($s);
+            }
+        }
+
+        return $stocklist;
     }
 }

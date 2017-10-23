@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,11 +37,11 @@ class VisualItem
 
     /**
      * Identificador de la columna
-     * 
-     * @var string 
+     *
+     * @var string
      */
     public $name;
-    
+
     /**
      * Etiqueta o título del grupo
      *
@@ -76,7 +76,7 @@ class VisualItem
      */
     public function __construct()
     {
-        $this->name = 'unnamed';
+        $this->name = 'root';
         $this->title = '';
         $this->titleURL = '';
         $this->numColumns = 0;
@@ -84,6 +84,11 @@ class VisualItem
         $this->i18n = new Base\Translator();
     }
 
+    /**
+     * Carga la estructura de atributos en base a un archivo XML
+     *
+     * @param \SimpleXMLElement $items
+     */
     public function loadFromXML($items)
     {
         $items_atributes = $items->attributes();
@@ -102,6 +107,11 @@ class VisualItem
         }
     }
 
+    /**
+     * Carga la estructura de atributos en base un archivo JSON
+     *
+     * @param array $items
+     */
     public function loadFromJSON($items)
     {
         $this->name = (string) $items['name'];
@@ -111,12 +121,19 @@ class VisualItem
         $this->order = (int) $items['order'];
     }
 
+    /**
+     * Genera el código html para visualizar la cabecera del elemento visual
+     *
+     * @param string $value
+     *
+     * @return string
+     */
     public function getHeaderHTML($value)
     {
         $html = $this->i18n->trans($value);
 
         if (!empty($this->titleURL)) {
-            $target = (substr($this->titleURL, 0, 1) != '?') ? "target='_blank'" : '';
+            $target = ($this->titleURL[0] != '?') ? "target='_blank'" : '';
             $html = '<a href="' . $this->titleURL . '" ' . $target . '>' . $html . '</a>';
         }
 

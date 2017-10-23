@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-12">
             <h1>
-                Generar datos de prueba
+                {{ i18n.trans('generate-test-data') }}
                 <a href="{{ fsc.url() }}" class="btn btn-sm btn-secondary">
                     <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
@@ -23,6 +23,9 @@
             </a>
             <a href="{{ fsc.url() }}&gen=articulos" class="btn btn-block btn-info">
                 <i class="fa fa-cubes" aria-hidden="true"></i>&nbsp; {{ i18n.trans('products') }}
+            </a>
+            <a href="{{ fsc.url() }}&gen=articulosprov" class="btn btn-block btn-info">
+                <i class="fa fa-cubes" aria-hidden="true"></i>&nbsp; {{ i18n.trans('supplier-products') }}
             </a>
             <a href="{{ fsc.url() }}&gen=agentes" class="btn btn-block btn-info">
                 <i class="fa fa-users" aria-hidden="true"></i>&nbsp; {{ i18n.trans('agents') }}

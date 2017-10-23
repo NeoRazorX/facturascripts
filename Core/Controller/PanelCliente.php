@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -28,20 +29,35 @@ use FacturaScripts\Core\Base\DataBase;
  */
 class PanelCliente extends ExtendedController\PanelController
 {
-
+    /**
+     * Procedimiento para insertar vistas en el controlador
+     */
     protected function createViews()
     {
-        $this->addEditView('FacturaScripts\Core\Model\Cliente', 'EditCliente', 'Cliente');
-        $this->addEditListView('FacturaScripts\Core\Model\DireccionCliente', 'EditDireccionCliente', 'Direcciones', 'fa-road');
-        $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'Mismo Grupo');
+        $this->addEditView('FacturaScripts\Core\Model\Cliente', 'EditCliente', 'customer');
+        $this->addEditListView('FacturaScripts\Core\Model\DireccionCliente', 'EditDireccionCliente', 'addresses', 'fa-road');
+        $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'same-group');
     }
 
+    /**
+     * Devuele el campo $fieldName del cliente
+     *
+     * @param string $fieldName
+     *
+     * @return mixed
+     */
     private function getClientFieldValue($fieldName)
     {
         $model = $this->views['EditCliente']->getModel();
         return $model->{$fieldName};
-    }    
-    
+    }
+
+    /**
+     * Procedimiento encargado de cargar los datos a visualizar
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
     protected function loadData($keyView, $view)
     {
         switch ($keyView) {
@@ -52,7 +68,7 @@ class PanelCliente extends ExtendedController\PanelController
 
             case 'EditDireccionCliente':
                 $where = [new DataBase\DataBaseWhere('codcliente', $this->getClientFieldValue('codcliente'))];
-                $view->loadData($where);                
+                $view->loadData($where);
                 break;
             
             case 'ListCliente':
@@ -66,12 +82,17 @@ class PanelCliente extends ExtendedController\PanelController
         }
     }
 
+    /**
+     * Devuelve los datos básicos de la página
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'customers';
         $pagedata['icon'] = 'fa-users';
-        $pagedata['showonmenu'] = FALSE;
+        $pagedata['showonmenu'] = false;
 
         return $pagedata;
     }

@@ -1,8 +1,8 @@
 <?php
-/*
+/**
  * This file is part of presupuestos_y_pedidos
- * Copyright (C) 2014-2017    Carlos Garcia Gomez        neorazorx@gmail.com
- * Copyright (C) 2014         Francesc Pineda Segarra    shawe.ewahs@gmail.com
+ * Copyright (C) 2014-2017    Carlos Garcia Gomez        <carlos@facturascripts.com>
+ * Copyright (C) 2014         Francesc Pineda Segarra    <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -59,6 +59,12 @@ class PresupuestoCliente
      * @var integer
      */
     public $status;
+
+    /**
+     * True si es editable, sino false
+     *
+     * @var bool
+     */
     public $editable;
 
     /**
@@ -68,35 +74,63 @@ class PresupuestoCliente
      */
     public $idoriginal;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'presupuestoscli';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'idpresupuesto';
     }
 
+    /**
+     * Resetea los valores de todas las propiedades modelo.
+     */
     public function clear()
     {
         $this->clearDocumentoVenta();
         $this->finoferta = date('d-m-Y', strtotime(date('d-m-Y') . ' +1 month'));
         $this->status = 0;
-        $this->editable = TRUE;
+        $this->editable = true;
     }
 
+    /**
+     * Devuelve True si la fecha de oferta es menor a la actual, sino False
+     *
+     * @return bool
+     */
     public function finoferta()
     {
         return strtotime(date('d-m-Y')) > strtotime($this->finoferta);
     }
 
+    /**
+     * Devuelve las líneas asociadas al presupuesto.
+     *
+     * @return LineaPresupuestoCliente[]
+     */
     public function getLineas()
     {
         $lineaModel = new LineaPresupuestoCliente();
         return $lineaModel->all(new DataBaseWhere('idpresupuesto', $this->idpresupuesto));
     }
 
+    /**
+     * Devuelve las versiones de un presupuesto
+     *
+     * @return self[]
+     */
     public function getVersiones()
     {
         $versiones = [];
@@ -108,8 +142,8 @@ class PresupuestoCliente
         }
         $sql .= 'ORDER BY fecha DESC, hora DESC;';
 
-        $data = $this->db->select($sql);
-        if ($data) {
+        $data = $this->dataBase->select($sql);
+        if (!empty($data)) {
             foreach ($data as $d) {
                 $versiones[] = new self($d);
             }
@@ -119,7 +153,7 @@ class PresupuestoCliente
     }
 
     /**
-     * Comprueba los datos del presupuesto, devuelve TRUE si está todo correcto
+     * Comprueba los datos del presupuesto, devuelve True si está correcto
      *
      * @return boolean
      */
@@ -128,46 +162,35 @@ class PresupuestoCliente
         /// comprobamos que editable se corresponda con el status
         if ($this->idpedido) {
             $this->status = 1;
-            $this->editable = FALSE;
+            $this->editable = false;
         } elseif ($this->status == 0) {
-            $this->editable = TRUE;
+            $this->editable = true;
         } elseif ($this->status == 2) {
-            $this->editable = FALSE;
+            $this->editable = false;
         }
 
         return $this->testTrait();
     }
 
-    public function save()
-    {
-        if ($this->test()) {
-            if ($this->exists()) {
-                return $this->saveUpdate();
-            }
-
-            $this->newCodigo();
-            return $this->saveInsert();
-        }
-
-        return FALSE;
-    }
-
+    /**
+     * Ejecuta una tarea con cron
+     */
     public function cronJob()
     {
         /// marcamos como aprobados los presupuestos con idpedido
-        $this->db->exec('UPDATE ' . $this->tableName() . " SET status = '1', editable = FALSE"
+        $this->dataBase->exec('UPDATE ' . $this->tableName() . " SET status = '1', editable = FALSE"
             . " WHERE status != '1' AND idpedido IS NOT NULL;");
 
         /// devolvemos al estado pendiente a los presupuestos con estado 1 a los que se haya borrado el pedido
-        $this->db->exec('UPDATE ' . $this->tableName() . " SET status = '0', idpedido = NULL, editable = TRUE"
+        $this->dataBase->exec('UPDATE ' . $this->tableName() . " SET status = '0', idpedido = NULL, editable = TRUE"
             . " WHERE status = '1' AND idpedido NOT IN (SELECT idpedido FROM pedidoscli);");
 
         /// marcamos como rechazados todos los presupuestos con finoferta ya pasada
-        $this->db->exec("UPDATE presupuestoscli SET status = '2' WHERE finoferta IS NOT NULL AND"
+        $this->dataBase->exec('UPDATE ' . $this->tableName() . " SET status = '2' WHERE finoferta IS NOT NULL AND"
             . ' finoferta < ' . $this->var2str(date('d-m-Y')) . ' AND idpedido IS NULL;');
 
         /// marcamos como rechazados todos los presupuestos no editables y sin pedido asociado
-        $this->db->exec("UPDATE presupuestoscli SET status = '2' WHERE idpedido IS NULL AND"
+        $this->dataBase->exec("UPDATE " . $this->tableName() . " SET status = '2' WHERE idpedido IS NULL AND"
             . ' editable = false;');
     }
 }
