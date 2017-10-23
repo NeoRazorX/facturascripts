@@ -44,7 +44,7 @@
             <column name="ppdf_tcolor" title="tcolor" numcolumns="3" order="130">
                 <widget type="text" fieldname="ppdf_tcolor" required="true" />
             </column>
-        </group>                                                        
+        </group>
         
         <group name="fonts" title="font-preferences" numcolumns="6" icon="fa-font fa-lg" order="200">
             <column name="ppdf_font" title="font" numcolumns="3" order="100">
@@ -60,16 +60,16 @@
 
             <column name="ppdf_fsize" title="size" numcolumns="3" order="110">
                 <widget type="select" fieldname="ppdf_fsize" required="true" icon="fa-sort-numeric-asc">
-                    <values start="8" end="16" step="1"></values>                    
+                    <values start="8" end="16" step="1"></values>
                 </widget>
             </column>
 
             <column name="ppdf_margin_top" title="margin-top" numcolumns="3" order="120">
                 <widget type="select" fieldname="ppdf_margin_top" required="true" icon="fa-sort-numeric-asc">
-                    <values start="0" end="5" step="1"></values>                    
+                    <values start="0" end="5" step="1"></values>
                 </widget>
             </column>
-                        
+
             <column name="ppdf_mostrar_empresa" title="company" numcolumns="3" order="130">
                 <widget type="select" fieldname="ppdf_font" required="true" icon="fa-header">
                     <values title="H1">h1</values>
