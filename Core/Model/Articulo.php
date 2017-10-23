@@ -604,8 +604,7 @@ class Articulo
             if ($this->stockfis !== $nuevoStock) {
                 $this->stockfis = $nuevoStock;
 
-                if ($this->exists) {
-                    $this->cleanCache();
+                if ($this->exists()) {
                     $sql = 'UPDATE ' . $this->tableName()
                         . ' SET stockfis = ' . $this->var2str($this->stockfis)
                         . ' WHERE referencia = ' . $this->var2str($this->referencia) . ';';
@@ -646,8 +645,7 @@ class Articulo
 
             if ($recalculaCoste) {
                 /// este código está muy optimizado para guardar solamente los cambios
-                if ($this->exists) {
-                    $this->cleanCache();
+                if ($this->exists()) {
                     $sql = 'UPDATE ' . $this->tableName()
                         . '  SET costemedio = ' . $this->var2str($this->costemedio)
                         . '  WHERE referencia = ' . $this->var2str($this->referencia) . ';';
@@ -683,8 +681,7 @@ class Articulo
                 if ($this->stockfis !== $nuevoStock) {
                     $this->stockfis = $nuevoStock;
 
-                    if ($this->exists) {
-                        $this->cleanCache();
+                    if ($this->exists()) {
                         $sql = 'UPDATE ' . $this->tableName()
                             . '  SET stockfis = ' . $this->var2str($this->stockfis)
                             . ', costemedio = ' . $this->var2str($this->costemedio)
@@ -760,8 +757,6 @@ class Articulo
      */
     public function delete()
     {
-        $this->cleanCache();
-
         $sql = 'DELETE FROM articulosprov WHERE referencia = ' . $this->var2str($this->referencia) . ';';
         $sql .= 'DELETE FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($this->referencia) . ';';
         if ($this->dataBase->exec($sql)) {
