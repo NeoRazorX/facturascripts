@@ -48,6 +48,12 @@
         
         return false;
     }
+    
+    function setOperator(buttonID, operator) {
+        document.getElementById(buttonID+'-operator').value = operator;
+        document.getElementById(buttonID+'-btn').value = operator;
+    }
+    
     $(document).ready(function () {
         // Situa el foco cuando se cambia de tab
         $('#mainTabs').on('shown.bs.tab', function (e) {
@@ -82,7 +88,6 @@
 {% set print, print_title = i18n.trans('print'), i18n.trans('print-list-of-records') %}
 {% set new_record, new_record_title = i18n.trans('new'), i18n.trans('create-new-record') %}
 {% set search_title = i18n.trans('filter-records-containing-indicated-value') %}
-{% set any = i18n.trans('any') %}
 {% set panel_header = i18n.trans('common-data') %}
 {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
 
@@ -94,6 +99,9 @@
 {% from 'Macro/Utils.html' import message as show_message %}
 {% from 'Macro/Utils.html' import exportData as exportData %}
 {% from 'Macro/BaseController.html' import columnsForListView as columnsForListView %}
+{% from 'Macro/BaseController.html' import filterForSelectInput as filterForSelectInput %}
+{% from 'Macro/BaseController.html' import filterForCheckBoxInput as filterForCheckBoxInput %}
+{% from 'Macro/BaseController.html' import filterForDatePickerInput as filterForDatePickerInput %}
 
 <!-- Page Header -->
 <div class="container-fluid d-print-none">
@@ -182,44 +190,17 @@
                         </div>
                         <!-- Aditionals filters -->
                         {% for key1, filter in view.getFilters() %}
-                        {% if filter.type == 'select' %}
-                        <div class="col-md-2">
-                            <select name="{{ key1 }}" class="form-control" onchange="this.form.submit()">
-                                <option value="">{{ any }} {{ key1 }}</option>
-                                <option value="">------</option>
-                                {% for key2, data in fsc.optionlist(key1, filter.options) %}
-                                {% if (indexView == fsc.active) and (key2 == filter.value) %}
-                                <option value="{{ key2 }}" selected="">{{ data }}</option>
-                                {% else %}
-                                <option value="{{ key2 }}">{{ data }}</option>
-                                {% endif %}
-                                {% endfor %}
-                            </select>
-                        </div>
-                        {% endif %}
+                            {% if filter.type == 'select' %}
+                                {{ filterForSelectInput(_context, key1, filter) }}
+                            {% endif %}
 
-                        {% if filter.type == 'checkbox' %}
-                        <div class="col">
-                            <div class="form-check mb-2 mb-sm-0">
-                                <label class="form-check-label custom-checkbox-control custom-checkbox">
-                                    {% if (indexView == fsc.active) and filter.value %}
-                                    <input class="form-check-input custom-control-input" type="checkbox" name="{{ key1 }}" value="TRUE" checked="" onchange="this.form.submit()"/>
-                                    {% else %}
-                                    <input class="form-check-input custom-control-input" type="checkbox" name="{{ key1 }}" value="TRUE" onchange="this.form.submit()"/>
-                                    {% endif %}
-                                    <span class="custom-control-indicator"></span>
-                                    {{ filter.options.label }}
-                                </label>
-                            </div>
-                        </div>
-                        {% endif %}
+                            {% if filter.type == 'checkbox' %}
+                                {{ filterForCheckBoxInput(_context, key1, filter) }}
+                            {% endif %}
 
-                        {% if filter.type == 'datepicker' %}
-                        <div class="col">
-                            <input type="text" name="{{ key1 }}" value="{% if indexView == fsc.active %}{{ filter.value }}{% endif %}" class="form-control datepicker"
-                                   placeholder="{{ filter.options.label }}" autocomplete="off" onchange="this.form.submit()"/>
-                        </div>
-                        {% endif %}
+                            {% if filter.type == 'datepicker' %}
+                                {{ filterForDatePickerInput(_context, key1, filter) }}                                                         
+                            {% endif %}
                         {% endfor %}
 
                         <!-- Order by selector -->

@@ -37,6 +37,20 @@ class WidgetItemCheckBox extends WidgetItem
     }
 
     /**
+     * Genera el código html para atributos especiales como:
+     * hint
+     * sólo lectura
+     * valor obligatorio
+     *
+     * @return string
+     */
+    protected function specialAttributes()
+    {
+        $readOnly = empty($this->readOnly) ? '' : ' disabled';
+        return parent::specialAttributes() . $readOnly;
+    }
+    
+    /**
      * Genera el código html para la visualización de los datos en el
      * controlador List
      *
