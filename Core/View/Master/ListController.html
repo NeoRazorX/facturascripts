@@ -100,7 +100,7 @@
 {% from 'Macro/BaseController.html' import columnsForListView as columnsForListView %}
 {% from 'Macro/BaseController.html' import filterForSelectInput as filterForSelectInput %}
 {% from 'Macro/BaseController.html' import filterForCheckBoxInput as filterForCheckBoxInput %}
-{% from 'Macro/BaseController.html' import filterForDatePickerInput as filterForDatePickerInput %}
+{% from 'Macro/BaseController.html' import filterForTextInput as filterForTextInput %}
 
 <!-- Page Header -->
 <div class="container-fluid d-print-none">
@@ -191,14 +191,10 @@
                         {% for key1, filter in view.getFilters() %}
                             {% if filter.type == 'select' %}
                                 {{ filterForSelectInput(_context, key1, filter) }}
-                            {% endif %}
-
-                            {% if filter.type == 'checkbox' %}
+                            {% elseif filter.type == 'checkbox' %}
                                 {{ filterForCheckBoxInput(_context, key1, filter) }}
-                            {% endif %}
-
-                            {% if filter.type == 'datepicker' %}
-                                {{ filterForDatePickerInput(_context, key1, filter) }}                                                         
+                            {% else %}
+                                {{ filterForTextInput(_context, key1, filter) }}                                                         
                             {% endif %}
                         {% endfor %}
 

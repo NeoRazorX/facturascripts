@@ -247,14 +247,9 @@ abstract class ListController extends Base\Controller
 
         $filters = $this->views[$this->active]->getFilters();
         foreach ($filters as $key => $value) {
-            if ($value['value']) {
+            if ($value['value'] != '') {
                 $field = $value['options']['field'];
                 switch ($value['type']) {
-                    case 'datepicker':         
-                        $operator = $value['options']['operator'];
-                        $result[] = new DataBase\DataBaseWhere($field, $value['value'], $operator);
-                        break;
-                    
                     case 'select':
                         // we use the key value because the field value indicate is the text field of the source data
                         $result[] = new DataBase\DataBaseWhere($key, $value['value']);
@@ -264,6 +259,10 @@ abstract class ListController extends Base\Controller
                         $checked = (bool) (($value['options']['inverse']) ? !$value['value'] : $value['value']);
                         $result[] = new DataBase\DataBaseWhere($field, $checked);
                         break;
+                    
+                    default:
+                        $operator = $value['options']['operator'];
+                        $result[] = new DataBase\DataBaseWhere($field, $value['value'], $operator);
                 }
             }
         }
@@ -342,22 +341,62 @@ abstract class ListController extends Base\Controller
         $this->views[$indexView]->addFilterCheckBox($key, $value, $label, $field, $inverse);
     }
 
+    private function addFilterFromType($indexView, $options)
+    {
+        $key = $options['key'];
+        $keyValue = $this->request->get($key);
+        $operatorValue = $this->request->get($key . '-operator');
+        if (empty($operatorValue)) {
+            $operatorValue = $options['operator'];
+        }
+        
+        $this->views[$indexView]->addFilterFromType(
+            $options['type'], $key, $keyValue, $options['label'], $options['field'], $operatorValue
+        );
+    }
+
     /**
      * Añade un filtro del tipo fecha.
      *
      * @param string $indexView
-     * @param string  $key     (Filter identifier)
-     * @param string  $label   (Human reader description)
-     * @param string  $field   (Field of the table to apply filter)
+     * @param string $key     (Filter identifier)
+     * @param string $label   (Human reader description)
+     * @param string $field   (Field of the table to apply filter)
+     * @param string $operator
      */
     protected function addFilterDatePicker($indexView, $key, $label, $field = '', $operator = '=')
     {
-        $keyValue = $this->request->get($key);
-        $operatorValue = $this->request->get($key . '-operator');
-        if (empty($operatorValue)) {
-            $operatorValue = $operator;
-        }
-        $this->views[$indexView]->addFilterDatePicker($key, $keyValue, $label, $field, $operatorValue);
+        $options = [
+            'type' => 'datepicker',
+            'key' => $key,
+            'label' => $label, 
+            'field' => $field,
+            'operator' => $operator
+        ];
+
+        $this->addFilterFromType($indexView, $options);
+    }
+
+    /**
+     * Añade un filtro del tipo texto.
+     *
+     * @param string $indexView
+     * @param string $key     (Filter identifier)
+     * @param string $label   (Human reader description)
+     * @param string $field   (Field of the table to apply filter)
+     * @param string $operator
+     */
+    protected function addFilterText($indexView, $key, $label, $field = '', $operator = '=')
+    {
+        $options = [
+            'type' => 'text',
+            'key' => $key,
+            'label' => $label, 
+            'field' => $field,
+            'operator' => $operator
+        ];
+
+        $this->addFilterFromType($indexView, $options);
     }
 
     /**

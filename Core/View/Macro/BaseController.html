@@ -180,11 +180,12 @@
     </div>
 {% endmacro %}
 
-{% macro filterForDatePickerInput(context, key, filter) %}
+{% macro filterForTextInput(context, key, filter) %}
     {% set filterTxt = context.i18n.trans('filter-method') %}
     {% set likeTxt = context.i18n.trans('like-than') %}
     {% set greaterTxt = context.i18n.trans('greater-than') %}
-    {% set smallerTxt = context.i18n.trans('smaller-than') %}    
+    {% set smallerTxt = context.i18n.trans('smaller-than') %}
+    {% set specialClass = filter.type == 'datepicker' ? ' datepicker' : '' %}
 
     <div class="col-md-2">
         <div class="input-group">                                                                
@@ -202,7 +203,7 @@
             </div>
             <input type="hidden" name="{{ key }}-operator" id="{{ key }}-operator" value="{{ filter.options.operator }}" />                
             <input type="text" name="{{ key }}" value="{% if indexView == fsc.active %}{{ filter.value }}{% endif %}"
-                   class="form-control datepicker" placeholder="{{ filter.options.label }}" 
+                   class="form-control{{ specialClass }}" placeholder="{{ filter.options.label }}" 
                    autocomplete="off" onchange="this.form.submit()"/>
         </div>
     </div>  
