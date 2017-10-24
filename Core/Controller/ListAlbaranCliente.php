@@ -50,14 +50,14 @@ class ListAlbaranCliente extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('FacturaScripts\Core\Model\AlbaranCliente', 'ListAlbaranCliente');
-        $this->addSearchFields('ListAlbaranCliente', ['codigo', 'numero2', 'CAST(total as VARCHAR)', 'CAST(fecha as VARCHAR)', 'observaciones']);
+        $this->addSearchFields('ListAlbaranCliente', ['codigo', 'numero2', 'CAST(total as VARCHAR)', 'observaciones']);
         
         $this->addFilterSelect('ListAlbaranCliente', 'codalmacen', 'almacenes', '', 'nombre');
-//        $this->addFilterSelect('ListAlbaranCliente', 'codserie', 'series', '', 'descripcion');
-//        $this->addFilterSelect('ListAlbaranCliente', 'codpago', 'formaspago', '', 'descripcion');
+        $this->addFilterSelect('ListAlbaranCliente', 'codserie', 'series', '', 'descripcion');
+        $this->addFilterSelect('ListAlbaranCliente', 'codpago', 'formaspago', '', 'descripcion');
 
-        $this->addFilterDatePicker('ListAlbaranCliente', 'date1', 'date', 'fecha');
-        $this->addFilterDatePicker('ListAlbaranCliente', 'date2', 'date', 'fecha');
+        $this->addFilterDatePicker('ListAlbaranCliente', 'date1', 'date', 'fecha', '>=');
+        $this->addFilterDatePicker('ListAlbaranCliente', 'date2', 'date', 'fecha', '<=');
 
         $this->addFilterCheckbox('ListAlbaranCliente', 'invoice', 'invoice', 'ptefactura', true);
         
