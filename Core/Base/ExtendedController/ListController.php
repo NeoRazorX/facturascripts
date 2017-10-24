@@ -247,7 +247,7 @@ abstract class ListController extends Base\Controller
 
         $filters = $this->views[$this->active]->getFilters();
         foreach ($filters as $key => $value) {
-            if ($value['value'] !== '') {
+            if ($value['value'] != '') {
                 $field = $value['options']['field'];
                 switch ($value['type']) {
                     case 'select':
