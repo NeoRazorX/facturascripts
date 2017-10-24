@@ -106,7 +106,7 @@ class PanelSettings extends ExtendedController\PanelController
     protected function createViews()
     {
         $modelName = 'FacturaScripts\Core\Model\Settings';
-        $title = $this->i18n->trans('general');
+        $title = 'general';
         $icon = $this->getPageData()['icon'];
         $this->addEditView($modelName, $this->getViewNameFromKey('Default'), $title, $icon);
 
@@ -114,12 +114,12 @@ class PanelSettings extends ExtendedController\PanelController
         $where = [new DataBase\DataBaseWhere('name', 'default', '<>')];
         $rows = $model->all($where, ['name' => 'ASC'], 0, 0);
         foreach ($rows as $setting) {
-            $title = $this->i18n->trans($setting->name);
+            $title = $setting->name;
             $viewName = $this->getViewNameFromKey($setting->name);
             $this->addEditView($modelName, $viewName, $title, $setting->icon);
         }
 
-        $title2 = $this->i18n->trans('about');
+        $title2 = 'about';
         $this->addHtmlView('Block/About.html', null, 'about', $title2);
     }
 

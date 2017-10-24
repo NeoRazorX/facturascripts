@@ -52,7 +52,7 @@ class ListUser extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\User', $className);
         $this->addSearchFields($className, ['nick', 'email']);
 
-        $this->addOrderBy($className, 'nick');
-        $this->addOrderBy($className, 'email');
+        $this->addOrderBy($className, 'nick', 'nick');
+        $this->addOrderBy($className, 'email', 'email');
     }
 }

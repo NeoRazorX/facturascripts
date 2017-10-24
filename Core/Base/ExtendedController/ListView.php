@@ -247,7 +247,7 @@ class ListView extends BaseView
         $key1 = strtolower($field) . '_asc';
         $key2 = strtolower($field) . '_desc';
         if (empty($label)) {
-            $label = ucfirst($field);
+            $label = $field;
         }
 
         $this->orderby[$key1] = ['icon' => self::ICON_ASC, 'label' => static::$i18n->trans($label)];
