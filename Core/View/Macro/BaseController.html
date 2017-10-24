@@ -156,3 +156,65 @@
         {{ columnsForEditView(context, view, newModel, TRUE) }}
     </div>
 {% endmacro %}
+
+{% macro filterForSelectInput(context, key, filter) %}
+    {% set any = context.i18n.trans('any') %}
+
+    <div class="col-md-2">
+        <select name="{{ key }}" class="form-control" onchange="this.form.submit()">
+            <option value="">{{ any }} {{ key }}</option>
+            <option value="">------</option>
+            {% for key2, data in context.fsc.optionlist(key, filter.options) %}
+            {% if (context.indexView == context.fsc.active) and (key2 == filter.value) %}
+            <option value="{{ key2 }}" selected="">{{ data }}</option>
+            {% else %}
+            <option value="{{ key2 }}">{{ data }}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+{% endmacro %}
+
+{% macro filterForCheckBoxInput(context, key, filter) %}
+    <div class="col">
+        <div class="form-check mb-2 mb-sm-0">
+            <label class="form-check-label custom-checkbox-control custom-checkbox">
+                {% if (context.indexView == context.fsc.active) and filter.value %}
+                <input class="form-check-input custom-control-input" type="checkbox" name="{{ key }}" value="TRUE" checked="" onchange="this.form.submit()"/>
+                {% else %}
+                <input class="form-check-input custom-control-input" type="checkbox" name="{{ key }}" value="TRUE" onchange="this.form.submit()"/>
+                {% endif %}
+                <span class="custom-control-indicator"></span>
+                {{ filter.options.label }}
+            </label>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro filterForDatePickerInput(context, key, filter) %}
+    {% set filterTxt = context.i18n.trans('filter-method') %}
+    {% set likeTxt = context.i18n.trans('like-than') %}
+    {% set greaterTxt = context.i18n.trans('greater-than') %}
+    {% set smallerTxt = context.i18n.trans('smaller-than') %}    
+
+    <div class="col-md-2">
+        <div class="input-group">                                                                
+            <div class="input-group-btn">
+                <input name="{{ key }}-btn" id="{{ key }}-btn" type="button" value="{{ filter.options.operator }}"
+                        class="btn btn-outline-secondary dropdown-toggle"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
+                
+                <div class="dropdown-menu">
+                    <h6 class="dropdown-header">{{ filterTxt }}</h6>
+                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}', '=')">{{ likeTxt }} {{ filter.options.label }}</a>                                        
+                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}', '>=')">{{ greaterTxt }} {{ filter.options.label }}</a>
+                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}', '<=')">{{ smallerTxt }} {{ filter.options.label }}</a>
+                </div>
+            </div>
+            <input type="hidden" name="{{ key }}-operator" id="{{ key }}-operator" value="{{ filter.options.operator }}" />                
+            <input type="text" name="{{ key }}" value="{% if indexView == fsc.active %}{{ filter.value }}{% endif %}"
+                   class="form-control datepicker" placeholder="{{ filter.options.label }}" 
+                   autocomplete="off" onchange="this.form.submit()"/>
+        </div>
+    </div>  
+{% endmacro %}

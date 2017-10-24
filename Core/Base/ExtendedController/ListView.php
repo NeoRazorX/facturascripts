@@ -320,9 +320,9 @@ class ListView extends BaseView
      * @param string $label
      * @param string $field
      */
-    public function addFilterDatePicker($key, $value, $label, $field = '')
+    public function addFilterDatePicker($key, $value, $label, $field = '', $operator = '=')
     {
-        $options = ['label' => static::$i18n->trans($label), 'field' => $field];
+        $options = ['label' => static::$i18n->trans($label), 'field' => $field, 'operator' => $operator];
         $this->addFilter('datepicker', $key, $value, $options);
     }
 
