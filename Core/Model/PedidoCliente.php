@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -27,6 +26,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class PedidoCliente
 {
+
     use Base\DocumentoVenta;
 
     /**
@@ -52,7 +52,7 @@ class PedidoCliente
      * @var integer
      */
     public $status;
-    
+
     /**
      * True si es editable, sino false
      *
@@ -175,8 +175,6 @@ class PedidoCliente
             /// modificamos el presupuesto relacionado
             $this->dataBase->exec('UPDATE presupuestoscli SET idpedido = NULL, editable = TRUE,'
                 . ' status = 0 WHERE idpedido = ' . $this->var2str($this->idpedido) . ';');
-
-            $this->new_message(ucfirst(FS_PEDIDO) . ' de venta ' . $this->codigo . ' eliminado correctamente.');
 
             return true;
         }

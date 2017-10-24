@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017  Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Definición inicial para el controlador ListEstadoDocumento
+ *
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+-->
+
+<view>
+    <columns>
+        <column name="register-symbol" order="100">
+            <widget type="text" fieldname="id" onclick="EditEstadoDocumento" />
+        </column>
+        <column name="document" order="110">
+            <widget type="text" fieldname="documento" />
+        </column>
+        <column name="status" order="120">
+            <widget type="number" decimal="0" fieldname="status" />
+        </column>
+        <column name="name" order="130">
+            <widget type="text" fieldname="nombre" />
+        </column>
+        <column name="blocked" display="center" order="140">
+            <widget type="checkbox" fieldname="bloqueado"></widget>
+        </column>
+    </columns>
+    <filters>
+    </filters>
+</view>

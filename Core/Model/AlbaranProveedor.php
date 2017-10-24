@@ -150,8 +150,6 @@ class AlbaranProveedor
                 }
             }
 
-            $this->miniLog->info($this->i18n->trans('supplier-delivery-note-deleted-successfully', [$this->codigo]));
-
             return true;
         }
 

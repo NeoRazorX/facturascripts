@@ -48,17 +48,16 @@
         
         return false;
     }
-    
     function setOperator(buttonID, operator) {
         document.getElementById(buttonID+'-operator').value = operator;
         document.getElementById(buttonID+'-btn').value = operator;
+        $('#formSearch' + tabActive).submit();
     }
-    
     $(document).ready(function () {
         // Situa el foco cuando se cambia de tab
         $('#mainTabs').on('shown.bs.tab', function (e) {
             tabActive = 'List' + e.target.hash.substring(1);
-            var formName = '#formSearchList' + e.target.hash.substring(1) + ' :text:first';
+            var formName = '#formSearch' + tabActive + ' :text:first';
             $(formName).focus().select();
         });
         // marca/desmarca todos los checkbox de eliminar del listado
@@ -233,7 +232,7 @@
             <!-- Footer Navigation -->
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-12 text-center">
+                    <div class="col-10 text-center">
                         <div class="btn-group">
                             {% for item in fsc.pagination(indexView) %}
                                 {% if item.active %}
@@ -251,6 +250,11 @@
                         </div>
                         <br/>
                         <br/>
+                    </div>
+                    <div class="col-2 text-right">
+                        <a href="#" class="btn btn-danger" onclick="return deleteFromList();">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </a>
                     </div>
                 </div>
             </div>
