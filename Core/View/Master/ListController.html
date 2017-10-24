@@ -256,7 +256,7 @@
             <!-- Footer Navigation -->
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-12 text-center">
+                    <div class="col-10 text-center">
                         <div class="btn-group">
                             {% for item in fsc.pagination(indexView) %}
                                 {% if item.active %}
@@ -274,6 +274,11 @@
                         </div>
                         <br/>
                         <br/>
+                    </div>
+                    <div class="col-2 text-right">
+                        <a href="#" class="btn btn-danger" onclick="return deleteFromList();">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </a>
                     </div>
                 </div>
             </div>
