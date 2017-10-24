@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Lib;
+namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
 /**
  * Description of DataGeneratorTools
