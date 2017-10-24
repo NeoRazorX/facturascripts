@@ -107,15 +107,15 @@
     <div class="row">
         <div class="col-sm-7 col-6">
             <div class="btn-group d-xs-none" aria-label="Button group with navigation actions">
-                <a class="btn btn-sm btn-light" href="{{ list_url }}" {{ popoverTitle(refresh, 'bottom') }}>
+                <a class="btn btn-sm btn-outline-secondary" href="{{ list_url }}" {{ popoverTitle(refresh, 'bottom') }}>
                     <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
                 {% if fsc.getPageData()['isDefault'] %}
-                <a class="btn btn-sm btn-light active" href="{{ list_url }}&amp;default_page=FALSE" {{ popoverTitle(defaultF, 'bottom') }}>
+                <a class="btn btn-sm btn-outline-secondary active" href="{{ list_url }}&amp;default_page=FALSE" {{ popoverTitle(defaultF, 'bottom') }}>
                     <i class="fa fa-bookmark" aria-hidden="true"></i>
                 </a>
                 {% else %}
-                <a class="btn btn-sm btn-light" href="{{ list_url }}&amp;default_page=TRUE" {{ popoverTitle(defaultT, 'bottom') }}>
+                <a class="btn btn-sm btn-outline-secondary" href="{{ list_url }}&amp;default_page=TRUE" {{ popoverTitle(defaultT, 'bottom') }}>
                     <i class="fa fa-bookmark-o" aria-hidden="true"></i>
                 </a>
                 {% endif %}
@@ -146,12 +146,12 @@
     <!-- Tabs declaration -->
     <ul class="nav nav-tabs d-print-none" id="mainTabs" role="tablist">
         {% for indexView, view in fsc.views %}
-        <li class="nav-item">
+        <li class="nav-item" {{ popoverTitle(view.title, 'bottom') }}>
             {% set active = (indexView == fsc.active) ? 'active' : '' %}
             {% set modelID = view.getModelID() %}
             <a href="#{{ modelID }}" class="nav-link {{ active }}" id="{{ modelID }}-tab" data-toggle="tab" role="tab" aria-controls="{{ modelID }}">
                 <i class="fa fa-search" aria-hidden="true"></i>
-                <span class="d-none d-sm-inline-block">&nbsp;{{ i18n.trans(view.title) }}</span>
+                <span class="d-none d-sm-inline-block">&nbsp;{{ view.title }}</span>
                 <span class="badge badge-secondary">{{ view.count }}</span>
             </a>
         </li>
@@ -172,7 +172,7 @@
                             <div class="input-group">
                                 <input type="hidden" name="active" value="{{ indexView }}"/>
                                 {% set query_value = (indexView == fsc.active) ? fsc.query : '' %}
-                                <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{{ query_value }}" autocomplete="off" placeholder="Buscar" autofocus=""/>
+                                <input class="form-control" type="text" name="query" id="query{{ indexView }}" value="{{ query_value }}" autocomplete="off" placeholder="{{ i18n.trans('search') }}" autofocus=""/>
                                 <span class="input-group-btn">
                                     <button class="btn btn-primary" type="submit">
                                         <i class="fa fa-search" aria-hidden="true"></i>
@@ -183,15 +183,15 @@
                         <!-- Aditionals filters -->
                         {% for key1, filter in view.getFilters() %}
                         {% if filter.type == 'select' %}
-                        <div class="col-2">
+                        <div class="col-md-2">
                             <select name="{{ key1 }}" class="form-control" onchange="this.form.submit()">
                                 <option value="">{{ any }} {{ key1 }}</option>
                                 <option value="">------</option>
                                 {% for key2, data in fsc.optionlist(key1, filter.options) %}
-                                {% if (indexView == fsc.active) and (data == filter.value) %}
-                                <option value="{{ data }}" selected="">{{ data }}</option>
+                                {% if (indexView == fsc.active) and (key2 == filter.value) %}
+                                <option value="{{ key2 }}" selected="">{{ data }}</option>
                                 {% else %}
-                                <option value="{{ data }}">{{ data }}</option>
+                                <option value="{{ key2 }}">{{ data }}</option>
                                 {% endif %}
                                 {% endfor %}
                             </select>
@@ -228,13 +228,13 @@
                                 {% set orderbylist = view.getOrderBy() %}
                                 <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuOrder{{ indexView }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                     <i class="fa {{ orderbylist[view.selectedOrderBy]['icon'] }}" aria-hidden="true"></i>
-                                    &nbsp; {{ i18n.trans(orderbylist[view.selectedOrderBy]['label']) }}
+                                    &nbsp; {{ orderbylist[view.selectedOrderBy]['label'] }}
                                     <span class="caret"></span>
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuOrder{{ indexView }}">
                                     {% for key, orderby in orderbylist %}
                                     <a class="dropdown-item" href="{{ list_url }}&order={{ key }}">
-                                        <i class="fa {{ orderby['icon'] }}" aria-hidden="true"></i>&nbsp; {{ i18n.trans(orderby['label']) }} &nbsp;
+                                        <i class="fa {{ orderby['icon'] }}" aria-hidden="true"></i>&nbsp; {{ orderby['label'] }} &nbsp;
                                         {% if view.selectedOrderBy == key %}
                                         <i class="fa fa-check" aria-hidden="true"></i>
                                         {% endif %}

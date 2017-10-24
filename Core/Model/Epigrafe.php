@@ -90,7 +90,7 @@ class Epigrafe
     public $codgrupo;
 
     /**
-     * Devuelve el nombdre de la tabla que usa este modelo.
+     * Devuelve el nombre de la tabla que usa este modelo.
      *
      * @return string
      */
@@ -243,7 +243,7 @@ class Epigrafe
     {
         /// forzamos los creación de la tabla de grupos
         new GrupoEpigrafes();
-        
+
         return '';
     }
 

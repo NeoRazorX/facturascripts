@@ -361,6 +361,25 @@ trait DocumentoVenta
     }
 
     /**
+     * Almacena los datos del modelo en la base de datos.
+     *
+     * @return bool
+     */
+    public function save()
+    {
+        if ($this->test()) {
+            if ($this->exists()) {
+                return $this->saveUpdate();
+            }
+
+            $this->newCodigo();
+            return $this->saveInsert();
+        }
+
+        return FALSE;
+    }
+
+    /**
      * Acorta el texto de observaciones
      *
      * @return string

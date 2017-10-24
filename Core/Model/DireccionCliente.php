@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -60,7 +61,7 @@ class DireccionCliente
     public $domfacturacion;
 
     /**
-     * Devuelve el nombdre de la tabla que usa este modelo.
+     * Devuelve el nombre de la tabla que usa este modelo.
      *
      * @return string
      */
@@ -92,6 +93,11 @@ class DireccionCliente
         $this->fecha = date('d-m-Y');
     }
 
+    /**
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     *
+     * @return bool
+     */
     public function test()
     {
         return $this->testDireccion();

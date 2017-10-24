@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Copyright (C) 2017 Joe Nilson <joenilson at gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -24,22 +25,65 @@ namespace FacturaScripts\Core\Model;
  */
 class ApiKey
 {
-
     use Base\ModelTrait;
 
+    /**
+     * Clave primaria. Id autoincremental
+     * @var int
+     */
     public $id;
+
+    /**
+     * Clave de la API
+     * @var string
+     */
     public $apikey;
+
+    /**
+     * Descripción
+     * @var string
+     */
     public $descripcion;
+
+    /**
+     * Activada/Desactivada
+     * @var bool
+     */
     public $enabled;
+
+    /**
+     * Fecha de alta
+     * @var string
+     */
     public $f_alta;
+
+    /**
+     * Fecha de baja
+     * @var string
+     */
     public $f_baja;
+
+    /**
+     * Nick del usuario
+     * @var string
+     */
     public $nick;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'fs_api_keys';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'id';

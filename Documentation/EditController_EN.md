@@ -1,19 +1,19 @@
 # Controller EditController
-It is a ** universal controller ** for views that want to display the complete data of a record
+It is a **universal controller** for views that want to display the complete data of a record
 of data of a model, in format "tab" or by a design of columns grouped according to the type of information.
 The use of this controller greatly simplifies the programming required for editing the data,
 as well as unify the image of the application and plugins creating a uniform environment for the user which speeds up learning
-and adaptation to ** Facturascripts **.
+and adaptation to **Facturascripts**.
 
 For the use of this controller it is necessary to create the views in XML format, as described in the
 document [XMLViews] (https://github.com/ArtexTrading/facturascripts/blob/master/Documentation/XMLViews_EN.md), included in the documentation
-of ** Facturascripts **.
+of **Facturascripts**.
 
 ## Using the Controller
 To use _EditController_ we must create a new PHP class that inherits or extends from EditController, establishing in the constructor
 of our new class the model on which we will work and having to implement the following method:
 
-* ** getPageData **: Sets the general data (title, icon, menu, etc) for the view
+* **getPageData**: Sets the general data (title, icon, menu, etc) for the view
 
 ```PHP
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
@@ -30,21 +30,21 @@ There are also general methods that we can override to customize the screen, (se
 
 ### getPageData
 This method is responsible for returning an array with the data for the installation and configuration of the controller
-within the environment of ** Facturascripts **. As a rule, you must call the _parent_ of the controller to initialize the
+within the environment of **Facturascripts**. As a rule, you must call the _parent_ of the controller to initialize the
 default values and ensure a proper operation of our controller in the Facturascripts environment.
 
 The values that can be configured are:
-* title: View title
-* icon: Text font icon _fontawesome_
-* menu: Name of the menu where the controller will be inserted
-* submenu: (optional) Second level of the menu where the controller would be entered
-* order: We can alter the natural order of the menu system to place our controller higher or lower
+* **title**: Translation reference for view title
+* **icon**: Text font icon _fontawesome_
+* **menu**: Name of the menu where the controller will be inserted
+* **submenu**: (optional) Second level of the menu where the controller would be entered
+* **order**: We can alter the natural order of the menu system to place our controller higher or lower
 
 ```PHP
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Agentes';
+        $pagedata['title'] = 'agents';
         $pagedata['icon'] = 'fa-user-circle-o';
         $pagedata['menu'] = 'admin';
         return $pagedata;
@@ -67,8 +67,8 @@ There are two methods that allow us to customize the data to be displayed in the
 ```
 
 We can also customize the view by including it in the group XML file
-_\<rows\>_ and create _\<row type = ""\>_ of the classes ** header **, to define a list of
-statistical and relational buttons with other models, and ** footer **, to add information
+_\<rows\>_ and create _\<row type = ""\>_ of the classes **header**, to define a list of
+statistical and relational buttons with other models, and **footer**, to add information
 additional to display to the user just after the data sheet.
 
 Examples:

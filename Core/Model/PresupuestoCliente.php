@@ -75,7 +75,7 @@ class PresupuestoCliente
     public $idoriginal;
 
     /**
-     * Devuelve el nombdre de la tabla que usa este modelo.
+     * Devuelve el nombre de la tabla que usa este modelo.
      *
      * @return string
      */
@@ -172,20 +172,9 @@ class PresupuestoCliente
         return $this->testTrait();
     }
 
-    public function save()
-    {
-        if ($this->test()) {
-            if ($this->exists()) {
-                return $this->saveUpdate();
-            }
-
-            $this->newCodigo();
-            return $this->saveInsert();
-        }
-
-        return FALSE;
-    }
-
+    /**
+     * Ejecuta una tarea con cron
+     */
     public function cronJob()
     {
         /// marcamos como aprobados los presupuestos con idpedido

@@ -52,8 +52,10 @@ class ListArticulo extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\Articulo', 'ListArticulo', 'products');
         $this->addSearchFields('ListArticulo', ['referencia', 'descripcion']);
         
-        $this->addFilterSelect('ListArticulo', 'codfabricante', 'fabricantes', '', 'codfabricante');
-        $this->addFilterSelect('ListArticulo', 'codfamilia', 'familias', '', 'codfamilias');
+        $this->addFilterSelect('ListArticulo', 'codfabricante', 'fabricantes', '', 'nombre');
+        $this->addFilterSelect('ListArticulo', 'codfamilia', 'familias', '', 'descripcion');
+        $this->addFilterCheckbox('ListArticulo', 'bloqueado', 'locked', 'bloqueado');
+        $this->addFilterCheckbox('ListArticulo', 'publico', 'public', 'publico');
 
         $this->addOrderBy('ListArticulo', 'referencia', 'reference');
         $this->addOrderBy('ListArticulo', 'descripcion', 'description');

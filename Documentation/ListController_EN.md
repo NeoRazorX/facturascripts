@@ -2,15 +2,15 @@
 
 For the use of this controller it's necessary create the views in XML format, as described in the
 document [XMLViews] (https://github.com/ArtexTrading/facturascripts/blob/master/Documentation/XMLViews_EN.md), 
-included in the documentation for ** Facturascripts **.
+included in the documentation for **Facturascripts**.
 
 ## Using the Controller
 To use _ListController_ we must create a new PHP class that inherits or extends from ListController,
 having to implement the following methods:
 
-* ** createViews **: For create and add the views that we want to visualize inside the ListController.
+* **createViews**: For create and add the views that we want to visualize inside the ListController.
 
-* ** getPageData **: Sets the general data (title, icon, menu, etc) for the main view (the first one we added in _createViews_).
+* **getPageData**: Sets the general data (title, icon, menu, etc) for the main view (the first one we added in _createViews_).
 
 
 ### createViews
@@ -50,7 +50,7 @@ default indicative of order.
 Considerations:
 * if no text is displayed, the value entered in the sort expression (using the translation system) will be used,
 * if no default sort value is indicated, it is understood that there is no default ordering and the first added order will be applied
-* When adding a ** always ** sort, two sorting options are added, one ascending and one descending
+* When adding a **always** sort, two sorting options are added, one ascending and one descending
 * to set a default order, when adding the ordering we can indicate as values ​​1 for the ascender and 2 for the descending
 
 Example of sorting addition (following the example above) with sorting by descending code
@@ -67,19 +67,19 @@ The _ListController_ controller integrates a data filtering system that allows e
 the filtering options that are presented to the user. Each type of filter requires its own parameterization to
 its operation as the name of the view to which we add it, and among the types of filters available are:
 
-* ** addFilterSelect **: Filter type selection from a list of values.
+* **addFilterSelect**: Filter type selection from a list of values.
      * key: This is the internal name of the filter and must match the name of the field of the model being displayed and the one to be filtered.
      * table: Name of the table where the options for the drop - down list will be read.
      * where: WHERE clause to pass in the data selection of the source table in the list.
      * field: The name of the field that is displayed in the drop-down list. If not, the key field is displayed.
 
-* ** addFilterCheckbox **: Checkbox or Boolean selection filter.
+* **addFilterCheckbox**: Checkbox or Boolean selection filter.
      * key: This is the internal name of the filter.
      * label: This is the description to be displayed and indicates to the user the function of the filter.
      * field: Name of the field of the model where the filter is applied. If not indicated the key value is used.
      * inverse: Allows you to invert the Boolean values.
 
-* ** addFilterDatePicker **: Date type filter.
+* **addFilterDatePicker**: Date type filter.
       * key: This is the internal name of the filter.
       * label: This is the description to be displayed and indicates to the user the function of the filter.
       * field: Name of the field of the model where the filter is applied. If not indicated the key value is used.
@@ -95,7 +95,7 @@ Examples of filters
 
 ### getPageData
 This method is responsible for returning an array with the data for the installation and configuration of the controller
-within the environment of ** Facturascripts **. As a rule, you must call the _parent_ of the controller to initialize the
+within the environment of **Facturascripts**. As a rule, you must call the _parent_ of the controller to initialize the
 default values and ensure a proper operation of our controller in the Facturascripts environment.
 
 The values that can be configured are:

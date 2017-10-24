@@ -119,7 +119,7 @@ class WidgetItem
     /**
      * Crea y carga la estructura de atributos en base a un archivo XML
      *
-     * @param SimpleXMLElement $column
+     * @param \SimpleXMLElement $column
      * @return WidgetItem
      */
     public static function newFromXMLColumn($column)
@@ -134,7 +134,7 @@ class WidgetItem
     /**
      * Crea y carga la estructura de atributos en base a la base de datos
      *
-     * @param SimpleXMLElement $column
+     * @param array $column
      * @return WidgetItem
      */
     public static function newFromJSONColumn($column)
@@ -183,8 +183,8 @@ class WidgetItem
     /**
      * Carga la estructura de atributos en base a un archivo XML
      *
-     * @param SimpleXMLElement $column
-     * @param SimpleXMLElement $widgetAtributes
+     * @param \SimpleXMLElement $column
+     * @param \SimpleXMLElement $widgetAtributes
      */
     protected function loadFromXMLColumn($column, $widgetAtributes) {
         $this->fieldName = (string) $widgetAtributes->fieldname;
@@ -206,8 +206,8 @@ class WidgetItem
     {
         $this->fieldName = (string) $column['widget']['fieldName'];
         $this->hint = (string) $column['widget']['hint'];
-        $this->readOnly = (bool) boolval($column['widget']['readOnly']);
-        $this->required = (bool) boolval($column['widget']['required']);
+        $this->readOnly = (bool) $column['widget']['readOnly'];
+        $this->required = (bool) $column['widget']['required'];
         $this->icon = (string) $column['widget']['icon'];
         $this->onClick = (string) $column['widget']['onClick'];
         $this->options = (array) $column['widget']['options'];

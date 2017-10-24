@@ -51,6 +51,13 @@ class Translator
     private static $translator;
 
     /**
+     * Lista de strings utilizadas.
+     *
+     * @var array
+     */
+    private static $usedStrings;
+
+    /**
      * Constructor del traductor
      * Por defecto se usará y definirá en_EN si no está definido en config.php.
      *
@@ -84,6 +91,9 @@ class Translator
      */
     public function trans($txt, array $parameters = [])
     {
+        $catalogue = self::$translator->getCatalogue(self::$lang);
+        self::$usedStrings[$txt] = $catalogue->get($txt, 'messages');
+
         return self::$translator->trans($txt, $parameters);
     }
 
@@ -114,5 +124,15 @@ class Translator
     public function getLangCode()
     {
         return self::$lang;
+    }
+
+    /**
+     * Devuelve las strings utilizadas
+     *
+     * @return array
+     */
+    public function getUsedStrings()
+    {
+        return self::$usedStrings;
     }
 }

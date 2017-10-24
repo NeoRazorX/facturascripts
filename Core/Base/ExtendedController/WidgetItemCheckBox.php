@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -72,8 +73,9 @@ class WidgetItemCheckBox extends WidgetItem
 
         $html = $this->getIconHTML()
             . '<input name=' . $fieldName . ' id=' . $fieldName
-            . ' class="form-check-input" type="checkbox" value="true"'
-            . $specialAttributes . $checked . '>';
+            . ' class="custom-control-input form-check-input" type="checkbox" value="true"'
+            . $specialAttributes . $checked . '>'
+            . '<span class="custom-control-indicator"></span>';
 
         if (!empty($this->icon)) {
             $html .= '</div>';

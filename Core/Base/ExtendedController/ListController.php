@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -200,7 +199,7 @@ abstract class ListController extends Base\Controller
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
             return true;
         }
-        
+
         return false;
     }
 
@@ -257,7 +256,7 @@ abstract class ListController extends Base\Controller
 
                     case 'checkbox':
                         $field = $value['options']['field'];
-                        $checked = (bool) (($value['options']['inverse']) ? !$value['value'] :  $value['value']);
+                        $checked = (bool) (($value['options']['inverse']) ? !$value['value'] : $value['value']);
                         $result[] = new DataBase\DataBaseWhere($field, $checked);
                         break;
                 }
@@ -377,7 +376,11 @@ abstract class ListController extends Base\Controller
             foreach ($data as $item) {
                 $value = $item[$options['field']];
                 if ($value !== '') {
-                    $result[mb_strtolower($item[$field], 'UTF8')] = $value;
+                    /**
+                     * Si la key es mb_strtolower($item[$field], 'UTF8') entonces
+                     * no podemos filtrar por codserie, codalmacen, etc...
+                     */
+                    $result[$item[$field]] = $value;
                 }
             }
         }
