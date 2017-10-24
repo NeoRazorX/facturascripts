@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : estados_documentos.xml
+    Author     : Francesc Pineda Segarra
+    Description:
+        Estructura de la tabla estados_documentos.
+-->
+<tabla>
+    <columna>
+        <nombre>id</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('estados_documentos_id_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>documento</nombre>
+        <tipo>character varying(20)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>status</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nombre</nombre>
+        <tipo>character varying(20)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>bloqueado</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <restriccion>
+        <nombre>estados_documentos_pkey</nombre>
+        <consulta>PRIMARY KEY (id)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>uniq_tipo_estados_documentos</nombre>
+        <consulta>UNIQUE (documento, status)</consulta>
+    </restriccion>
+</tabla>
