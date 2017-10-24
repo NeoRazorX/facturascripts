@@ -965,5 +965,11 @@
     "contact-data": "Datos del contacto",
     "invoice-number": "Número de factura",
     "status": "Estado",
-    "error-dinamic-select-values": "<b>Algo está mal</b>: Estás intentado definir un widget select para la tabla '0', con key '1' y value '2'. <a target='_blank' href='https://github.com/NeoRazorX/facturascripts/blob/master/Documentation/XMLViews_ES.md'>Más información</a>"
+    "error-dinamic-select-values": "<b>Algo está mal</b>: Estás intentado definir un widget select para la tabla '0', con key '1' y value '2'. <a target='_blank' href='https://github.com/NeoRazorX/facturascripts/blob/master/Documentation/XMLViews_ES.md'>Más información</a>",
+    "status-document": "Estado de documento",
+    "document": "Documento",
+    "register-symbol": "#",
+    "document-type-valid-length": "Tipo de documento no válido (debe tener entre 1 y 20 carácteres).",
+    "status-name-valid-length": "Nombre del estado no válido (debe tener entre 1 y 20 carácteres).",
+    "status-value-is-number": "El campo estado debe ser numérico."
 }

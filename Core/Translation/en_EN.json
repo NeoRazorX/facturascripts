@@ -965,5 +965,11 @@
     "contact-data": "Contact data",
     "invoice-number": "Invoice number",
     "status": "Status",
-    "error-dinamic-select-values": "<b>Something is wrong</b>: You are trying to define a select widget for the table '0', with key '1' and value '2'. <a target='_blank' href='https://github.com/NeoRazorX/facturascripts/blob/master/Documentation/XMLViews_EN.md'>Más información</a>"
+    "error-dinamic-select-values": "<b>Something is wrong</b>: You are trying to define a select widget for the table '0', with key '1' and value '2'. <a target='_blank' href='https://github.com/NeoRazorX/facturascripts/blob/master/Documentation/XMLViews_EN.md'>Más información</a>",
+    "status-document": "Status document",
+    "document": "Document",
+    "register-symbol": "#",
+    "document-type-valid-length": "Invalid document type. Must be between 1 and 20 characters.",
+    "status-name-valid-length": "Invalid status name. Must be between 1 and 20 characteres.",
+    "status-value-is-number": "El campo estado debe ser numérico."
 }
