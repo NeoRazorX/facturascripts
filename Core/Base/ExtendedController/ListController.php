@@ -248,14 +248,19 @@ abstract class ListController extends Base\Controller
         $filters = $this->views[$this->active]->getFilters();
         foreach ($filters as $key => $value) {
             if ($value['value']) {
+                $field = $value['options']['field'];
                 switch ($value['type']) {
-                    case 'datepicker':
+                    case 'datepicker':         
+                        $operator = $value['options']['operator'];
+                        $result[] = new DataBase\DataBaseWhere($field, $value['value'], $operator);
+                        break;
+                    
                     case 'select':
+                        // we use the key value because the field value indicate is the text field of the source data
                         $result[] = new DataBase\DataBaseWhere($key, $value['value']);
                         break;
 
                     case 'checkbox':
-                        $field = $value['options']['field'];
                         $checked = (bool) (($value['options']['inverse']) ? !$value['value'] : $value['value']);
                         $result[] = new DataBase\DataBaseWhere($field, $checked);
                         break;
@@ -345,10 +350,14 @@ abstract class ListController extends Base\Controller
      * @param string  $label   (Human reader description)
      * @param string  $field   (Field of the table to apply filter)
      */
-    protected function addFilterDatePicker($indexView, $key, $label, $field = '')
+    protected function addFilterDatePicker($indexView, $key, $label, $field = '', $operator = '=')
     {
-        $value = $this->request->get($key);
-        $this->views[$indexView]->addFilterDatePicker($key, $value, $label, $field);
+        $keyValue = $this->request->get($key);
+        $operatorValue = $this->request->get($key . '-operator');
+        if (empty($operatorValue)) {
+            $operatorValue = $operator;
+        }
+        $this->views[$indexView]->addFilterDatePicker($key, $keyValue, $label, $field, $operatorValue);
     }
 
     /**

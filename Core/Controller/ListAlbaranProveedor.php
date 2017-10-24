@@ -55,6 +55,10 @@ class ListAlbaranProveedor extends ExtendedController\ListController
         $this->addFilterSelect('ListAlbaranProveedor', 'codalmacen', 'almacenes', '', 'nombre');
         $this->addFilterSelect('ListAlbaranProveedor', 'codserie', 'series', '', 'descripcion');
         $this->addFilterSelect('ListAlbaranProveedor', 'codpago', 'formaspago', '', 'descripcion');
+        
+        $this->addFilterDatePicker('ListAlbaranProveedor', 'date1', 'date', 'fecha', '>=');
+        $this->addFilterDatePicker('ListAlbaranProveedor', 'date2', 'date', 'fecha', '<=');
+        
         $this->addFilterCheckbox('ListAlbaranProveedor', 'invoice', 'invoice', 'ptefactura', true);
 
         $this->addOrderBy('ListAlbaranProveedor', 'codigo', 'code');
