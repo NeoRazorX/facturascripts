@@ -25,7 +25,7 @@ use FacturaScripts\Core\Base\ExtendedController;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
- * @Fco. Antonio Moreno Pérez |famphuelva@gmail.com>
+ * @author Fco. Antonio Moreno Pérez |famphuelva@gmail.com>
  */
 class ListAtributo extends ExtendedController\ListController
 {
