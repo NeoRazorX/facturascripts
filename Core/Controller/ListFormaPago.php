@@ -49,16 +49,23 @@ class ListFormaPago extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\FormaPago', $className);
-        $this->addSearchFields($className, ['descripcion', 'codpago', 'codcuenta']);
+        /* Formas de pago */
+        $this->addView('FacturaScripts\Core\Model\FormaPago', 'ListFormaPago', 'payment-methods');
+        $this->addSearchFields('ListFormaPago', ['descripcion', 'codpago', 'codcuenta']);
 
-        $this->addOrderBy($className, 'codpago', 'code');
-        $this->addOrderBy($className, 'descripcion', 'description');
+        $this->addOrderBy('ListFormaPago', 'codpago', 'code');
+        $this->addOrderBy('ListFormaPago', 'descripcion', 'description');
 
-        $this->addFilterSelect($className, 'generación', 'formaspago', '', 'genrecibos');
-        $this->addFilterSelect($className, 'vencimiento', 'formaspago');
-        $this->addFilterCheckbox($className, 'domiciliado', 'domicilied');
-        $this->addFilterCheckbox($className, 'imprimir', 'print');
+        $this->addFilterSelect('ListFormaPago', 'generación', 'formaspago', '', 'genrecibos');
+        $this->addFilterSelect('ListFormaPago', 'vencimiento', 'formaspago');
+        $this->addFilterCheckbox('ListFormaPago', 'domiciliado', 'domicilied');
+        $this->addFilterCheckbox('ListFormaPago', 'imprimir', 'print');
+        
+        /* Cuentas bancarias */
+        $this->addView('FacturaScripts\Core\Model\CuentaBanco', 'ListCuentaBanco', 'bank-accounts');
+        $this->addSearchFields('ListCuentaBanco', ['descripcion', 'codcuenta']);
+
+        $this->addOrderBy('ListCuentaBanco', 'codcuenta', 'code');
+        $this->addOrderBy('ListCuentaBanco', 'descripcion', 'description');
     }
 }
