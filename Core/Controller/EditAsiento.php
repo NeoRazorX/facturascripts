@@ -56,6 +56,7 @@ class EditAsiento extends ExtendedController\EditController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'accounting-entries';
+        $pagedata['menu'] = 'accounting';
         $pagedata['icon'] = 'fa-balance-scale';
         $pagedata['showonmenu'] = false;
 

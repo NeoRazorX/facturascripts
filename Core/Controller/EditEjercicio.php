@@ -47,6 +47,7 @@ class EditEjercicio extends ExtendedController\EditController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'exercise';
+        $pagedata['menu'] = 'accounting';
         $pagedata['icon'] = 'fa-calendar';
         $pagedata['showonmenu'] = false;
 
