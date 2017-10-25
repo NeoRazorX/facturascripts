@@ -38,23 +38,19 @@ class DocumentGenerator extends ModelDataGenerator
         $doc->fecha = mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, date('Y'));
         $doc->hora = mt_rand(10, 20) . ':' . mt_rand(10, 59) . ':' . mt_rand(10, 59);
         $doc->codpago = $this->formasPago[0]->codpago;
+        $doc->codalmacen = (mt_rand(0, 2) == 0) ? $this->almacenes[0]->codalmacen : $this->empresa->codalmacen;
+
+        foreach ($this->divisas as $div) {
+            if ($div->coddivisa == $this->empresa->coddivisa) {
+                $doc->coddivisa = $div->coddivisa;
+                $doc->tasaconv = $div->tasaconv;
+                break;
+            }
+        }
 
         if (mt_rand(0, 2) == 0) {
             $doc->coddivisa = $this->divisas[0]->coddivisa;
             $doc->tasaconv = $this->divisas[0]->tasaconv;
-        } else {
-            foreach ($this->divisas as $div) {
-                if ($div->coddivisa == $this->empresa->coddivisa) {
-                    $doc->coddivisa = $div->coddivisa;
-                    $doc->tasaconv = $div->tasaconv;
-                    break;
-                }
-            }
-        }
-
-        $doc->codalmacen = $this->empresa->codalmacen;
-        if (mt_rand(0, 2) == 0) {
-            $doc->codalmacen = $this->almacenes[0]->codalmacen;
         }
 
         $doc->codserie = $this->empresa->codserie;
