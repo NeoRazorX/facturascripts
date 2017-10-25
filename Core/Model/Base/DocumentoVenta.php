@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Lib\NewCodigoDoc;
@@ -457,30 +456,9 @@ trait DocumentoVenta
         $irpf = 0;
 
         /// calculamos también con el método anterior
-        $neto_alt = 0;
-        $iva_alt = 0;
-        foreach ($this->getLineas() as $lin) {
-            if (!$lin->test()) {
-                $status = false;
-            }
-            $codimpuesto = ($lin->codimpuesto === null ) ? 0 : $lin->codimpuesto;
-            if (!array_key_exists($codimpuesto, $subtotales)) {
-                $subtotales[$codimpuesto] = array(
-                    'neto' => 0,
-                    'iva' => 0, // Total IVA
-                    'recargo' => 0, // Total Recargo
-                );
-            }
-            /// Acumulamos por tipos de IVAs
-            $subtotales[$codimpuesto]['neto'] += $lin->pvptotal;
-            $subtotales[$codimpuesto]['iva'] += $lin->pvptotal * $lin->iva / 100;
-            $subtotales[$codimpuesto]['recargo'] += $lin->pvptotal * $lin->recargo / 100;
-            $irpf += $lin->pvptotal * $lin->irpf / 100;
-
-            /// Cálculo anterior
-            $neto_alt += $lin->pvptotal;
-            $iva_alt += $lin->pvptotal * $lin->iva / 100;
-        }
+        $netoAlt = 0;
+        $ivaAlt = 0;
+        $this->getSubtotales($status, $subtotales, $irpf, $netoAlt, $ivaAlt);
 
         /// redondeamos y sumamos
         $neto = 0;
@@ -492,17 +470,17 @@ trait DocumentoVenta
             $iva += round($subt['iva'], FS_NF0);
             $recargo += round($subt['recargo'], FS_NF0);
         }
-        $neto_alt = round($neto_alt, FS_NF0);
-        $iva_alt = round($iva_alt, FS_NF0);
+        $netoAlt = round($netoAlt, FS_NF0);
+        $ivaAlt = round($ivaAlt, FS_NF0);
         $total = $neto + $iva - $irpf + $recargo;
-        $total_alt = $neto_alt + $iva_alt - $irpf + $recargo;
+        $total_alt = $netoAlt + $ivaAlt - $irpf + $recargo;
 
-        if (!static::floatcmp($this->neto, $neto, FS_NF0, true) && !static::floatcmp($this->neto, $neto_alt, FS_NF0, true)) {
+        if (!static::floatcmp($this->neto, $neto, FS_NF0, true) && !static::floatcmp($this->neto, $netoAlt, FS_NF0, true)) {
             $this->miniLog->alert($this->i18n->trans('neto-value-error', [$tipoDoc, $this->codigo, $this->neto, $neto]));
             $status = false;
         }
 
-        if (!static::floatcmp($this->totaliva, $iva, FS_NF0, true) && !static::floatcmp($this->totaliva, $iva_alt, FS_NF0, true)) {
+        if (!static::floatcmp($this->totaliva, $iva, FS_NF0, true) && !static::floatcmp($this->totaliva, $ivaAlt, FS_NF0, true)) {
             $this->miniLog->alert($this->i18n->trans('totaliva-value-error', [$tipoDoc, $this->codigo, $this->totaliva, $iva]));
             $status = false;
         }
@@ -523,6 +501,32 @@ trait DocumentoVenta
         }
 
         return $status;
+    }
+
+    private function getSubtotales(&$status, &$subtotales, &$irpf, &$netoAlt, &$ivaAlt)
+    {
+        foreach ($this->getLineas() as $lin) {
+            if (!$lin->test()) {
+                $status = false;
+            }
+            $codimpuesto = ($lin->codimpuesto === null ) ? 0 : $lin->codimpuesto;
+            if (!array_key_exists($codimpuesto, $subtotales)) {
+                $subtotales[$codimpuesto] = array(
+                    'neto' => 0,
+                    'iva' => 0, // Total IVA
+                    'recargo' => 0, // Total Recargo
+                );
+            }
+            /// Acumulamos por tipos de IVAs
+            $subtotales[$codimpuesto]['neto'] += $lin->pvptotal;
+            $subtotales[$codimpuesto]['iva'] += $lin->pvptotal * $lin->iva / 100;
+            $subtotales[$codimpuesto]['recargo'] += $lin->pvptotal * $lin->recargo / 100;
+            $irpf += $lin->pvptotal * $lin->irpf / 100;
+
+            /// Cálculo anterior
+            $netoAlt += $lin->pvptotal;
+            $ivaAlt += $lin->pvptotal * $lin->iva / 100;
+        }
     }
 
     /**

@@ -253,16 +253,6 @@ class Asiento
         if (!empty($data)) {
             $this->numero = 1 + (int) $data[0]['num'];
         }
-
-        /// Nos guardamos la secuencia para dar compatibilidad con eneboo
-        $secc = new SecuenciaContabilidad();
-        $secc0 = $secc->getByParams2($this->codejercicio, 'nasiento');
-        if ($secc0) {
-            if ($this->numero >= $secc0->valorout) {
-                $secc0->valorout = 1 + $this->numero;
-                $secc0->save();
-            }
-        }
     }
 
     /**

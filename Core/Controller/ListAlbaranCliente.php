@@ -51,7 +51,7 @@ class ListAlbaranCliente extends ExtendedController\ListController
     {
         $this->addView('FacturaScripts\Core\Model\AlbaranCliente', 'ListAlbaranCliente');
         $this->addSearchFields('ListAlbaranCliente', ['codigo', 'numero2', 'CAST(total as VARCHAR)', 'observaciones']);
-        
+
         $this->addFilterSelect('ListAlbaranCliente', 'codalmacen', 'almacenes', '', 'nombre');
         $this->addFilterSelect('ListAlbaranCliente', 'codserie', 'series', '', 'descripcion');
         $this->addFilterSelect('ListAlbaranCliente', 'codpago', 'formaspago', '', 'descripcion');
@@ -59,8 +59,10 @@ class ListAlbaranCliente extends ExtendedController\ListController
         $this->addFilterDatePicker('ListAlbaranCliente', 'date1', 'date', 'fecha', '>=');
         $this->addFilterDatePicker('ListAlbaranCliente', 'date2', 'date', 'fecha', '<=');
 
-        $this->addFilterCheckbox('ListAlbaranCliente', 'invoice', 'invoice', 'ptefactura', true);
-        
+//        $this->addFilterCheckbox('ListAlbaranCliente', 'invoice', 'invoice', 'ptefactura', true);
+
+        $this->addFilterText('ListAlbaranCliente', 'total', 'total');
+
         $this->addOrderBy('ListAlbaranCliente', 'codigo', 'code');
         $this->addOrderBy('ListAlbaranCliente', 'fecha', 'date');
         $this->addOrderBy('ListAlbaranCliente', 'total', 'amount');

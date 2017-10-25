@@ -17,26 +17,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Definición inicial para el controlador ListSubcuenta
- *
- * @author Artex Trading sa <jcuello@artextrading.com>  
+ * Definición inicial para el controlador EditAsiento
+ * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
 -->
 
 <view>
     <columns>
-        <column name="id" order="100" display="none">
-            <widget type="text" fieldname="idsubcuenta" onclick="EditSubcuenta" />
-        </column>
-        <column name="fiscal-exercise" order="110">
-            <widget type="text" fieldname="codejercicio" />
-        </column>
-        <column name="account" order="120">
-            <widget type="text" fieldname="codcuenta" />
-        </column>
-        <column name="description" order="130">
-            <widget type="text" fieldname="descripcion" />
-        </column>
+        <group name="data" numcolumns="12">
+            <column name="fecha" title="date" numcolumns="3" order="100">
+                <widget type="datepicker" fieldname="fecha" required="true" />
+            </column>
+            <column name="concepto" numcolumns="6" order="120">
+                <widget type="text" fieldname="concepto" required="true" />
+            </column>
+            <column name="importe" numcolumns="3" order="140">
+                <widget type="money" fieldname="importe" readonly="readonly"/>
+            </column>
+        </group>
     </columns>
-    <filters>
-    </filters>
 </view>

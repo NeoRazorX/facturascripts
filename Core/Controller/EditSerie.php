@@ -47,6 +47,7 @@ class EditSerie extends ExtendedController\EditController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'series';
+        $pagedata['menu'] = 'accounting';
         $pagedata['icon'] = 'fa-file-text';
         $pagedata['showonmenu'] = false;
 

@@ -16,8 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-namespace FacturaScripts\Core\Lib;
+namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
 /**
  * Description of DataGeneratorTools
@@ -208,6 +207,18 @@ class DataGeneratorTools
 
         shuffle($apellidos);
         return $apellidos[0] . ' ' . $apellidos[1];
+    }
+
+    /**
+     * Devuelve un cargo.
+     * @return string
+     */
+    public function cargo()
+    {
+        $cargos = ['Gerente', 'CEO', 'Compras', 'Comercial', 'Técnico', 'Freelance', 'Becario', 'Becario Senior'];
+
+        shuffle($cargos);
+        return $cargos[0];
     }
 
     /**

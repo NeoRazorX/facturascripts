@@ -17,26 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Definición inicial para el controlador ListSubcuenta
+ * Definición inicial para el controlador ListCuentaBanco
  *
  * @author Artex Trading sa <jcuello@artextrading.com>  
 -->
 
 <view>
     <columns>
-        <column name="id" order="100" display="none">
-            <widget type="text" fieldname="idsubcuenta" onclick="EditSubcuenta" />
+        <column name="code" order="100">
+            <widget type="text" fieldname="codcuenta" onclick="EditCuentaBanco" />
         </column>
-        <column name="fiscal-exercise" order="110">
-            <widget type="text" fieldname="codejercicio" />
-        </column>
-        <column name="account" order="120">
-            <widget type="text" fieldname="codcuenta" />
-        </column>
-        <column name="description" order="130">
+        <column name="description" order="110">
             <widget type="text" fieldname="descripcion" />
         </column>
+        <column name="iban" order="120">
+            <widget type="text" fieldname="iban" />
+        </column>
+        <column name="swift" order="130">
+            <widget type="text" fieldname="swift" />
+        </column>
     </columns>
-    <filters>
-    </filters>
 </view>

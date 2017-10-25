@@ -313,17 +313,18 @@ class ListView extends BaseView
     }
 
     /**
-     * Añade filtro del tipo fecha
+     * Añade filtro del tipo indicado
      *
+     * @param string $type     (text, datepicker)
      * @param string $key
      * @param string $value
      * @param string $label
      * @param string $field
      */
-    public function addFilterDatePicker($key, $value, $label, $field = '', $operator = '=')
+    public function addFilterFromType($type, $key, $value, $label, $field = '', $operator = '=')
     {
         $options = ['label' => static::$i18n->trans($label), 'field' => $field, 'operator' => $operator];
-        $this->addFilter('datepicker', $key, $value, $options);
+        $this->addFilter($type, $key, $value, $options);
     }
 
     /**
