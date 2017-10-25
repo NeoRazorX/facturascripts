@@ -80,7 +80,7 @@
             {% endif %}
             {% for column in group.columns %}
                 {% if column.display == 'none' %}
-                    {% if withForm == TRUE %}
+                    {% if column.widget.fieldName == model.primaryColumn() %}
                         {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
                         <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
                     {% endif %}
