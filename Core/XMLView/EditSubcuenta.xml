@@ -34,7 +34,7 @@
             <column name="account" numcolumns="4" order="100">
                 <widget type="select" fieldname="codcuenta" required="true">
                     <values source="co_cuentas" fieldcode="codcuenta" fieldtitle="descripcion"></values>
-                 </widget>
+                </widget>
             </column>
             
             <column name="idsubaccount" numcolumns="2" display="none" order="100">
@@ -67,11 +67,10 @@
         </group>
         
         <group name="saldos-accounts" numcolumns="6">
-            
-           <column name="divisa" numcolumns="6" order="190">
-           <widget type="select" fieldname="coddivisa" required="true">
-                    <values source="divisas" fieldcode="coddivisa" fieldtitle="coddivisa||' '||descripcion"></values>
-                 </widget> 
+            <column name="divisa" numcolumns="6" order="190">
+                <widget type="select" fieldname="coddivisa" required="true">
+                    <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
+                </widget> 
             </column>
             
             <column name="debe" numcolumns="2" order="190">

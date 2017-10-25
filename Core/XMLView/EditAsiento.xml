@@ -24,29 +24,15 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="fecha" title="fecha" numcolumns="2" order="100">
-                <widget type="date" fieldname="fecha" required="true" />
-            </column>   
-             <column name="predefinido" title="predefinido" numcolumns="2" order="110">
-                <widget type="select" fieldname="idconcepto">
-                    <values title="---">---</values>                   
-                </widget>
-            </column>            
-            <column name="concepto" numcolumns="4" order="120">
-                <widget type="text" fieldname="concepto"  required="true" />
+            <column name="fecha" title="date" numcolumns="3" order="100">
+                <widget type="datepicker" fieldname="fecha" required="true" />
             </column>
-            <column name="divisa" title="divisa" numcolumns="2" order="130">
-                 <widget type="select" fieldname="gfhfgh">
-                    <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
-                </widget>
-            </column>               
-            <column name="importe" numcolumns="1" order="140">
-                <widget type="number" fieldname="importe" readonly="readonly"/>
-            </column> 
-            <column name="descuadre" numcolumns="1" order="150">
-                <widget type="number" fieldname="descuadre" readonly="readonly"/>
-            </column>       
+            <column name="concepto" numcolumns="6" order="120">
+                <widget type="text" fieldname="concepto" required="true" />
+            </column>
+            <column name="importe" numcolumns="3" order="140">
+                <widget type="money" fieldname="importe" readonly="readonly"/>
+            </column>
         </group>
     </columns>
 </view>
-
