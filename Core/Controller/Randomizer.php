@@ -41,7 +41,7 @@ class Randomizer extends Base\Controller
     {
         parent::privateCore($response, $user);
 
-        $accountingGenerator = new RandomDataGenerator\AccountingGenerator();
+        $accountingGenerator = new RandomDataGenerator\AccountingGenerator($this->empresa);
         $documentGenerator = new RandomDataGenerator\DocumentGenerator($this->empresa);
         $modelDataGenerator = new RandomDataGenerator\ModelDataGenerator($this->empresa);
 
@@ -72,15 +72,20 @@ class Randomizer extends Base\Controller
                 $this->miniLog->info($this->i18n->trans('generated-products', [$num]));
                 break;
 
+            case 'asientos':
+                $num = $accountingGenerator->asientos();
+                $this->miniLog->info($this->i18n->trans('generated-accounting-entries', [$num]));
+                break;
+
             case 'clientes':
                 $num = $modelDataGenerator->clientes();
                 $this->miniLog->info($this->i18n->trans('generated-customers', [$num]));
                 break;
 
             case 'cuentas':
-                $accountingGenerator->gruposEpigrafes(3);
-                $accountingGenerator->epigrafes(6);
-                $num = $accountingGenerator->cuentas(9);
+                $accountingGenerator->gruposEpigrafes(2);
+                $accountingGenerator->epigrafes(4);
+                $num = $accountingGenerator->cuentas(8);
                 $this->miniLog->info($this->i18n->trans('generated-accounts', [$num]));
                 break;
 
@@ -117,6 +122,11 @@ class Randomizer extends Base\Controller
             case 'proveedores':
                 $num = $modelDataGenerator->proveedores();
                 $this->miniLog->info($this->i18n->trans('generated-supplier', [$num]));
+                break;
+
+            case 'subcuentas':
+                $num = $accountingGenerator->subcuentas();
+                $this->miniLog->info($this->i18n->trans('generated-subaccounts', [$num]));
                 break;
         }
     }

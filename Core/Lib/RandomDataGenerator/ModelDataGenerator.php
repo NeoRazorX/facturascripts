@@ -453,50 +453,60 @@ class ModelDataGenerator
             }
 
             /// añadimos direcciones
-            $num_dirs = mt_rand(0, 3);
-            while ($num_dirs > 0) {
-                $dir = new Model\DireccionCliente();
-                $dir->codcliente = $cliente->codcliente;
-                $dir->codpais = (mt_rand(0, 2) === 0) ? $this->paises[0]->codpais : $this->empresa->codpais;
-                $dir->provincia = $this->tools->provincia();
-                $dir->ciudad = $this->tools->ciudad();
-                $dir->direccion = $this->tools->direccion();
-                $dir->codpostal = mt_rand(1234, 99999);
-                $dir->apartado = (mt_rand(0, 3) == 0) ? (string) mt_rand(1234, 99999) : null;
-                $dir->domenvio = (mt_rand(0, 1) === 1);
-                $dir->domfacturacion = (mt_rand(0, 1) === 1);
-                $dir->descripcion = 'Dirección #' . $num_dirs;
-                if (!$dir->save()) {
-                    break;
-                }
-
-                $num_dirs--;
-            }
+            $numDirs = mt_rand(0, 3);
+            $this->direccionesCliente($cliente, $numDirs);
 
             /// Añadimos cuentas bancarias
-            $num_cuentas = mt_rand(0, 3);
-            while ($num_cuentas > 0) {
-                $cuenta = new Model\CuentaBancoCliente();
-                $cuenta->codcliente = $cliente->codcliente;
-                $cuenta->descripcion = 'Banco ' . mt_rand(1, 999);
-
-                $opcion = mt_rand(0, 2);
-                $cuenta->iban = ($opcion != 1) ? 'ES' . mt_rand(10, 99) . ' ' . mt_rand(1000, 9999) . ' '
-                    . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' '
-                    . mt_rand(1000, 9999) : '';
-
-                $cuenta->swift = ($opcion != 0) ? $this->tools->randomString(8) : '';
-                $cuenta->fmandato = (mt_rand(0, 1) == 0) ? date('d-m-Y', strtotime($cliente->fechaalta . ' +' . mt_rand(1, 30) . ' days')) : null;
-
-                if (!$cuenta->save()) {
-                    break;
-                }
-
-                $num_cuentas--;
-            }
+            $numCuentas = mt_rand(0, 3);
+            $this->cuentasBancoCliente($cliente, $numCuentas);
         }
 
         return $num;
+    }
+
+    private function direccionesCliente($cliente, $max = 3)
+    {
+        while ($max > 0) {
+            $dir = new Model\DireccionCliente();
+            $dir->codcliente = $cliente->codcliente;
+            $dir->codpais = (mt_rand(0, 2) === 0) ? $this->paises[0]->codpais : $this->empresa->codpais;
+            $dir->provincia = $this->tools->provincia();
+            $dir->ciudad = $this->tools->ciudad();
+            $dir->direccion = $this->tools->direccion();
+            $dir->codpostal = mt_rand(1234, 99999);
+            $dir->apartado = (mt_rand(0, 3) == 0) ? (string) mt_rand(1234, 99999) : null;
+            $dir->domenvio = (mt_rand(0, 1) === 1);
+            $dir->domfacturacion = (mt_rand(0, 1) === 1);
+            $dir->descripcion = 'Dirección #' . $max;
+            if (!$dir->save()) {
+                break;
+            }
+
+            $max--;
+        }
+    }
+
+    private function cuentasBancoCliente($cliente, $max = 3)
+    {
+        while ($max > 0) {
+            $cuenta = new Model\CuentaBancoCliente();
+            $cuenta->codcliente = $cliente->codcliente;
+            $cuenta->descripcion = 'Banco ' . mt_rand(1, 999);
+
+            $opcion = mt_rand(0, 2);
+            $cuenta->iban = ($opcion != 1) ? 'ES' . mt_rand(10, 99) . ' ' . mt_rand(1000, 9999) . ' '
+                . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' '
+                . mt_rand(1000, 9999) : '';
+
+            $cuenta->swift = ($opcion != 0) ? $this->tools->randomString(8) : '';
+            $cuenta->fmandato = (mt_rand(0, 1) == 0) ? date('d-m-Y', strtotime($cliente->fechaalta . ' +' . mt_rand(1, 30) . ' days')) : null;
+
+            if (!$cuenta->save()) {
+                break;
+            }
+
+            $max--;
+        }
     }
 
     /**
@@ -555,60 +565,70 @@ class ModelDataGenerator
                 $num++;
 
                 /// añadimos direcciones
-                $num_dirs = mt_rand(0, 3);
-                while ($num_dirs) {
-                    $dir = new Model\DireccionProveedor();
-                    $dir->codproveedor = $proveedor->codproveedor;
-                    $dir->codpais = $this->empresa->codpais;
-
-                    if (mt_rand(0, 2) == 0) {
-                        $dir->codpais = $this->paises[0]->codpais;
-                    }
-
-                    $dir->provincia = $this->tools->provincia();
-                    $dir->ciudad = $this->tools->ciudad();
-                    $dir->direccion = $this->tools->direccion();
-                    $dir->codpostal = mt_rand(1234, 99999);
-
-                    if (mt_rand(0, 3) == 0) {
-                        $dir->apartado = (string) mt_rand(1234, 99999);
-                    }
-
-                    if (mt_rand(0, 1) == 0) {
-                        $dir->direccionppal = false;
-                    }
-
-                    $dir->descripcion = 'Dirección #' . $num_dirs;
-                    $dir->save();
-                    $num_dirs--;
-                }
+                $numDirs = mt_rand(0, 3);
+                $this->direccionesProveedor($proveedor, $numDirs);
 
                 /// Añadimos cuentas bancarias
-                $num_cuentas = mt_rand(0, 3);
-                while ($num_cuentas > 0) {
-                    $cuenta = new Model\CuentaBancoProveedor();
-                    $cuenta->codproveedor = $proveedor->codproveedor;
-                    $cuenta->descripcion = 'Banco ' . mt_rand(1, 999);
-                    $cuenta->iban = 'ES' . mt_rand(10, 99) . ' ' . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' '
-                        . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999);
-                    $cuenta->swift = $this->tools->randomString(8);
-
-                    $opcion = mt_rand(0, 2);
-                    if ($opcion == 0) {
-                        $cuenta->swift = '';
-                    } elseif ($opcion == 1) {
-                        $cuenta->iban = '';
-                    }
-
-                    $cuenta->save();
-                    $num_cuentas--;
-                }
+                $numCuentas = mt_rand(0, 3);
+                $this->cuentasBancoProveedor($proveedor, $numCuentas);
             } else {
                 break;
             }
         }
 
         return $num;
+    }
+
+    private function direccionesProveedor($proveedor, $max = 3)
+    {
+        while ($max) {
+            $dir = new Model\DireccionProveedor();
+            $dir->codproveedor = $proveedor->codproveedor;
+            $dir->codpais = $this->empresa->codpais;
+
+            if (mt_rand(0, 2) == 0) {
+                $dir->codpais = $this->paises[0]->codpais;
+            }
+
+            $dir->provincia = $this->tools->provincia();
+            $dir->ciudad = $this->tools->ciudad();
+            $dir->direccion = $this->tools->direccion();
+            $dir->codpostal = mt_rand(1234, 99999);
+
+            if (mt_rand(0, 3) == 0) {
+                $dir->apartado = (string) mt_rand(1234, 99999);
+            }
+
+            if (mt_rand(0, 1) == 0) {
+                $dir->direccionppal = false;
+            }
+
+            $dir->descripcion = 'Dirección #' . $max;
+            $dir->save();
+            $max--;
+        }
+    }
+
+    private function cuentasBancoProveedor($proveedor, $max = 3)
+    {
+        while ($max > 0) {
+            $cuenta = new Model\CuentaBancoProveedor();
+            $cuenta->codproveedor = $proveedor->codproveedor;
+            $cuenta->descripcion = 'Banco ' . mt_rand(1, 999);
+            $cuenta->iban = 'ES' . mt_rand(10, 99) . ' ' . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' '
+                . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999);
+            $cuenta->swift = $this->tools->randomString(8);
+
+            $opcion = mt_rand(0, 2);
+            if ($opcion == 0) {
+                $cuenta->swift = '';
+            } elseif ($opcion == 1) {
+                $cuenta->iban = '';
+            }
+
+            $cuenta->save();
+            $max--;
+        }
     }
 
     protected function randomModel($modelName, $tableName, $functionName, $recursivo = true)

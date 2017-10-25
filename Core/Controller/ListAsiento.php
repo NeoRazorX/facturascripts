@@ -48,11 +48,12 @@ class ListAsiento extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\Asiento', $className);
-        $this->addSearchFields($className, ['numero', 'concepto']);
+        $this->addView('FacturaScripts\Core\Model\Asiento', 'ListAsiento');
+        $this->addSearchFields('ListAsiento', ['numero', 'concepto']);
+        
+        $this->addFilterSelect('ListAsiento', 'codejercicio', 'ejercicios', '', 'nombre');
 
-        $this->addOrderBy($className, 'numero', 'number');
-        $this->addOrderBy($className, 'fecha', 'date', 2); /// forzamos el orden por defecto fecha desc
+        $this->addOrderBy('ListAsiento', 'numero', 'number');
+        $this->addOrderBy('ListAsiento', 'fecha', 'date', 2); /// forzamos el orden por defecto fecha desc
     }
 }

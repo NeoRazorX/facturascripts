@@ -35,25 +35,54 @@ class AccountingGenerator
     protected $ejercicios;
 
     /**
+     * Empresa por defecto.
+     * @var Model\Empresa 
+     */
+    protected $empresa;
+
+    /**
      * Proporciona acceso al generador de datos.
      * @var DataGeneratorTools
      */
     protected $tools;
 
-    public function __construct()
+    /**
+     * 
+     * @param Model\Empresa $empresa
+     */
+    public function __construct($empresa)
     {
         $ejercicioModel = new Model\Ejercicio();
         $this->ejercicios = $ejercicioModel->all();
 
+        $this->empresa = $empresa;
         $this->tools = new DataGeneratorTools();
+    }
+
+    public function asientos($max = 50)
+    {
+        for ($num = 0; $num < $max; ++$num) {
+            shuffle($this->ejercicios);
+
+            $asiento = new Model\Asiento();
+            $asiento->codejercicio = $this->ejercicios[0]->codejercicio;
+            $asiento->concepto = $this->tools->descripcion();
+            $asiento->fecha = date('d-m-Y', strtotime($this->ejercicios[0]->fechainicio . ' +' . mt_rand(1, 360) . ' days'));
+            $asiento->importe = $this->tools->precio(-999, 150, 99999);
+            if (!$asiento->save()) {
+                break;
+            }
+        }
+
+        return $num;
     }
 
     public function cuentas($max = 50)
     {
-        $epigrafes = $this->randomEpigrafes();
-        for ($num = 0; $num < $max; ++$num) {
+        $epigrafes = $this->randomModel("\FacturaScripts\Core\Model\Epigrafe");
+        for ($num = 0; $num < $max && count($epigrafes) > 0; ++$num) {
             $cuenta = new Model\Cuenta();
-            $cuenta->codcuenta = $epigrafes[0]->codepigrafe . mt_rand(1, 99);
+            $cuenta->codcuenta = $epigrafes[0]->codepigrafe . mt_rand(0, 99);
             $cuenta->codejercicio = $epigrafes[0]->codejercicio;
             $cuenta->codepigrafe = $epigrafes[0]->codepigrafe;
             $cuenta->descripcion = $this->tools->descripcion();
@@ -61,6 +90,8 @@ class AccountingGenerator
             if (!$cuenta->save()) {
                 break;
             }
+
+            shuffle($epigrafes);
         }
 
         return $num;
@@ -68,17 +99,19 @@ class AccountingGenerator
 
     public function epigrafes($max = 50)
     {
-        $grupos = $this->randomGruposEpigrafes();
-        for ($num = 0; $num < $max; ++$num) {
+        $grupos = $this->randomModel("\FacturaScripts\Core\Model\GrupoEpigrafes");
+        for ($num = 0; $num < $max && count($grupos) > 0; ++$num) {
             $epigrafe = new Model\Epigrafe();
             $epigrafe->codejercicio = $grupos[0]->codejercicio;
-            $epigrafe->codepigrafe = $grupos[0]->codgrupo . mt_rand(1, 99);
+            $epigrafe->codepigrafe = $grupos[0]->codgrupo . mt_rand(0, 99);
             $epigrafe->codgrupo = $grupos[0]->codgrupo;
             $epigrafe->descripcion = $this->tools->descripcion();
             $epigrafe->idgrupo = $grupos[0]->idgrupo;
             if (!$epigrafe->save()) {
                 break;
             }
+
+            shuffle($grupos);
         }
 
         return $num;
@@ -86,8 +119,9 @@ class AccountingGenerator
 
     public function gruposEpigrafes($max = 50)
     {
-        shuffle($this->ejercicios);
         for ($num = 0; $num < $max; ++$num) {
+            shuffle($this->ejercicios);
+
             $grupo = new Model\GrupoEpigrafes();
             $grupo->codejercicio = $this->ejercicios[0]->codejercicio;
             $grupo->codgrupo = mt_rand(1, 99);
@@ -100,27 +134,36 @@ class AccountingGenerator
         return $num;
     }
 
-    protected function randomEpigrafes()
+    protected function randomModel($modelName = "\FacturaScripts\Core\Model\Cuenta")
     {
-        $epigrafeModel = new Model\Epigrafe();
-        $epigrafes = $epigrafeModel->all();
-        if (empty($epigrafes)) {
+        $model = new $modelName();
+        $data = $model->all();
+        if (empty($model)) {
             return [];
         }
 
-        shuffle($epigrafes);
-        return $epigrafes;
+        shuffle($data);
+        return $data;
     }
 
-    protected function randomGruposEpigrafes()
+    public function subcuentas($max = 50)
     {
-        $grupoModel = new Model\GrupoEpigrafes();
-        $grupos = $grupoModel->all();
-        if (empty($grupos)) {
-            return [];
+        $cuentas = $this->randomModel("\FacturaScripts\Core\Model\Cuenta");
+        for ($num = 0; $num < $max; ++$num) {
+            $subcuenta = new Model\Subcuenta();
+            $subcuenta->codcuenta = $cuentas[0]->codcuenta;
+            $subcuenta->coddivisa = $this->empresa->coddivisa;
+            $subcuenta->codejercicio = $cuentas[0]->codejercicio;
+            $subcuenta->codsubcuenta = $cuentas[0]->codcuenta . mt_rand(0, 9999);
+            $subcuenta->descripcion = $this->tools->descripcion();
+            $subcuenta->idcuenta = $cuentas[0]->idcuenta;
+            if (!$subcuenta->save()) {
+                break;
+            }
+
+            shuffle($cuentas);
         }
 
-        shuffle($grupos);
-        return $grupos;
+        return $num;
     }
 }

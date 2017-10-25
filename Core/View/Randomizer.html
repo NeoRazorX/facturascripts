@@ -122,6 +122,18 @@
             </a>
             <br/>
         </div>
+        <div class="col-4">
+            <a href="{{ fsc.url() }}&gen=subcuentas" class="btn btn-block btn-info">
+                <i class="fa fa-th-list" aria-hidden="true"></i>&nbsp; {{ i18n.trans('subaccounts') }}
+            </a>
+            <br/>
+        </div>
+        <div class="col-4">
+            <a href="{{ fsc.url() }}&gen=asientos" class="btn btn-block btn-info">
+                <i class="fa fa-balance-scale" aria-hidden="true"></i>&nbsp; {{ i18n.trans('accounting-entries') }}
+            </a>
+            <br/>
+        </div>
     </div>
 </div>
 {% endblock %}

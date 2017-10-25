@@ -35,7 +35,6 @@ if (!file_exists(__DIR__ . '/vendor')) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-
 use FacturaScripts\Core\Base\Translator;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -89,18 +88,19 @@ function getLanguages(&$i18n)
  * para la instalación
  * @return string
  */
-function getUserLanguage(){   
-    $dataLanguage = explode(';',\filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'));
-    $userLanguage = explode(',',$dataLanguage[0])[0];
-    return str_replace('-','_', $userLanguage);
+function getUserLanguage()
+{
+    $dataLanguage = explode(';', \filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'));
+    $userLanguage = explode(',', $dataLanguage[0])[0];
+    return str_replace('-', '_', $userLanguage);
 }
 
 /**
-* Timezones list with GMT offset
-* 
-* @return array
-* @link http://stackoverflow.com/a/9328760
-*/
+ * Timezones list with GMT offset
+ * 
+ * @return array
+ * @link http://stackoverflow.com/a/9328760
+ */
 function get_timezone_list()
 {
     $zones_array = array();
@@ -326,7 +326,7 @@ function installerMain()
             return 0;
         }
     }
-    
+
     /// empaquetamos las variables a pasar el motor de plantillas
     $templateVars = [
         'errors' => $errors,

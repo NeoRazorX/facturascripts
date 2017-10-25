@@ -34,12 +34,17 @@
             <widget type="text" fieldname="concepto" />
         </column>
         <column name="amount" display="right" order="100">
-            <widget type="money" fieldname="importe" />
+            <widget type="money" fieldname="importe">
+                <option color="red">&lt;0</option>
+            </widget>
         </column>
         <column name="date" display="right" order="100">
             <widget type="text" fieldname="fecha" />
         </column>
     </columns>
-    <filters>
-    </filters>
+    <rows>
+        <row type="status" fieldname="editable">
+            <option color="table-warning">1</option>
+        </row>
+    </rows>
 </view>
