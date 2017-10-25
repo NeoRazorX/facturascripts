@@ -23,16 +23,16 @@ use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controlador para la edición de un registro del modelo Tarifa
+ * Controlador para la edición de un registro del modelo Fabricante
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
- * @author @jhonsmall <juancarloschico0@gmail.com>
  */
-class EditTarifa extends ExtendedController\EditController
+
+class EditSubcuenta extends ExtendedController\EditController
 {
-    /**
-     * EditTarifa constructor.
+ /**
+     * EditFabricante constructor.
      *
      * @param Base\Cache $cache
      * @param Base\Translator $i18n
@@ -44,7 +44,7 @@ class EditTarifa extends ExtendedController\EditController
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         // Establecemos el modelo de datos
-        $this->modelName = 'FacturaScripts\Core\Model\Tarifa';
+        $this->modelName = 'FacturaScripts\Core\Model\Subcuenta';
     }
 
     /**
@@ -55,10 +55,9 @@ class EditTarifa extends ExtendedController\EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'rates';
-        $pagedata['icon'] = 'fa-money';
+        $pagedata['title'] = 'subaccounts';
+        $pagedata['icon'] = 'fa-th-list';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
-    }
-}
+    }}
