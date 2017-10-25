@@ -12,9 +12,11 @@
                 {% endif %}
                 {% endfor %}
                 <th class="text-right">
+                    {% if view.getCursor() is not empty %}
                     <label class="custom-checkbox-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
                         <input class="custom-control-input" type="checkbox" id="listDeleteCB"><span class="custom-control-indicator"></span>
                     </label>
+                    {% endif %}
                 </th>
             </tr>
         </thead>

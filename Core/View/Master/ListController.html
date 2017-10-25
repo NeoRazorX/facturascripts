@@ -252,9 +252,11 @@
                         <br/>
                     </div>
                     <div class="col-2 text-right">
+                        {% if view.getCursor() is not empty %}
                         <a href="#" class="btn btn-danger" onclick="return deleteFromList();">
                             <i class="fa fa-trash" aria-hidden="true"></i>
                         </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

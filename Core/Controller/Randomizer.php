@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Lib\ModelDataGenerator;
+use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Lib\RandomDataGenerator;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -30,81 +30,92 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Randomizer extends Base\Controller
 {
+
     /**
      * Ejecuta la lógica privada del controlador.
      *
      * @param Response $response
-     * @param \FacturaScripts\Core\Model\User|null $user
+     * @param User|null $user
      */
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
-        $ModelDataGenerator = new ModelDataGenerator($this->empresa);
-        
+
+        $accountingGenerator = new RandomDataGenerator\AccountingGenerator();
+        $documentGenerator = new RandomDataGenerator\DocumentGenerator($this->empresa);
+        $modelDataGenerator = new RandomDataGenerator\ModelDataGenerator($this->empresa);
+
         $option = $this->request->get('gen', '');
         switch ($option) {
             case 'agentes':
-                $num = $ModelDataGenerator->agentes();
+                $num = $modelDataGenerator->agentes();
                 $this->miniLog->info($this->i18n->trans('generated-agents', [$num]));
                 break;
-            
+
             case 'albaranescli':
-                $num = $ModelDataGenerator->albaranesCliente();
+                $num = $documentGenerator->albaranesCliente();
                 $this->miniLog->info($this->i18n->trans('generated-customer-delivery-notes', [$num]));
                 break;
-            
+
             case 'albaranesprov':
-                $num = $ModelDataGenerator->albaranesProveedor();
+                $num = $documentGenerator->albaranesProveedor();
                 $this->miniLog->info($this->i18n->trans('generated-supplier-delivery-notes', [$num]));
                 break;
-            
+
             case 'articulos':
-                $num = $ModelDataGenerator->articulos();
+                $num = $modelDataGenerator->articulos();
                 $this->miniLog->info($this->i18n->trans('generated-products', [$num]));
                 break;
-            
+
             case 'articulosprov':
-                $num = $ModelDataGenerator->articulosProveedor();
+                $num = $modelDataGenerator->articulosProveedor();
                 $this->miniLog->info($this->i18n->trans('generated-products', [$num]));
                 break;
-            
+
             case 'clientes':
-                $num = $ModelDataGenerator->clientes();
+                $num = $modelDataGenerator->clientes();
                 $this->miniLog->info($this->i18n->trans('generated-customers', [$num]));
                 break;
-            
+
+            case 'cuentas':
+                $accountingGenerator->gruposEpigrafes(3);
+                $accountingGenerator->epigrafes(6);
+                $num = $accountingGenerator->cuentas(9);
+                $this->miniLog->info($this->i18n->trans('generated-accounts', [$num]));
+                break;
+
             case 'fabricantes':
-                $num = $ModelDataGenerator->fabricantes();
+                $num = $modelDataGenerator->fabricantes();
                 $this->miniLog->info($this->i18n->trans('generated-manufacturers', [$num]));
                 break;
-            
+
             case 'familias':
-                $num = $ModelDataGenerator->familias();
+                $num = $modelDataGenerator->familias();
                 $this->miniLog->info($this->i18n->trans('generated-families', [$num]));
                 break;
-            
+
             case 'grupos':
-                $num = $ModelDataGenerator->gruposClientes();
+                $num = $modelDataGenerator->gruposClientes();
                 $this->miniLog->info($this->i18n->trans('generated-customer-groups', [$num]));
                 break;
-            
+
             case 'pedidoscli':
-                $num = $ModelDataGenerator->pedidosCliente();
+                $num = $documentGenerator->pedidosCliente();
                 $this->miniLog->info($this->i18n->trans('generated-customer-orders', [$num]));
                 break;
-            
+
             case 'pedidosprov':
-                $num = $ModelDataGenerator->pedidosProveedor();
+                $num = $documentGenerator->pedidosProveedor();
                 $this->miniLog->info($this->i18n->trans('generated-supplier-orders', [$num]));
                 break;
-            
+
             case 'presupuestoscli':
-                $num = $ModelDataGenerator->presupuestosCliente();
+                $num = $documentGenerator->presupuestosCliente();
                 $this->miniLog->info($this->i18n->trans('generated-customer-estimations', [$num]));
                 break;
-            
+
             case 'proveedores':
-                $num = $ModelDataGenerator->proveedores();
+                $num = $modelDataGenerator->proveedores();
                 $this->miniLog->info($this->i18n->trans('generated-supplier', [$num]));
                 break;
         }
