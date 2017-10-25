@@ -310,8 +310,8 @@ class WidgetItem
     protected function specialAttributes()
     {
         $hint = $this->getHintHTML($this->hint);
-        $readOnly = empty($this->readOnly) ? '' : ' readonly="readonly"';
-        $required = empty($this->required) ? '' : ' required="required"';
+        $readOnly = empty($this->readOnly) ? '' : ' readonly';
+        $required = empty($this->required) ? '' : ' required';
 
         return $hint . $readOnly . $required;
     }

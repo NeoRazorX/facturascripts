@@ -24,7 +24,7 @@
 
 <view>
     <columns>
-        <column name="id" order="100">
+        <column name="id" order="100" display="none">
             <widget type="text" fieldname="idsubcuenta" onclick="EditSubcuenta" />
         </column>
         <column name="fiscal-exercise" order="110">

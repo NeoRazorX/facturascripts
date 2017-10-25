@@ -64,6 +64,7 @@ class EditAgente extends ExtendedController\EditController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'agent';
+        $pagedata['menu'] = 'admin';
         $pagedata['icon'] = 'fa-id-badge';
         $pagedata['showonmenu'] = false;
 

@@ -3,7 +3,6 @@
 -->
 {% macro columnsForListView(context, view) %}
     {% set cols = (view.getColumns()|length)+1 %}
-    {% set show_delete = true %}
     <table class="table table-hover">
         <thead>
             <tr>
@@ -13,9 +12,11 @@
                 {% endif %}
                 {% endfor %}
                 <th class="text-right">
+                    {% if view.getCursor() is not empty %}
                     <label class="custom-checkbox-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
                         <input class="custom-control-input" type="checkbox" id="listDeleteCB"><span class="custom-control-indicator"></span>
                     </label>
+                    {% endif %}
                 </th>
             </tr>
         </thead>
@@ -48,23 +49,11 @@
                 </td>
             </tr>
             {% else %}
-            {% set show_delete = false %}
             <tr class="table-warning">
                 <td colspan="{{ cols }}"><b>{{ context.i18n.trans('no-data') }}</b></td>
             </tr>
         {% endfor %}
         </tbody>
-        {% if show_delete == true %}
-        <tfoot>
-            <tr>
-                <td class="text-right" colspan="{{ cols }}">
-                    <a href="#" class="btn btn-danger" onclick="return deleteFromList();">
-                        <i class="fa fa-trash" aria-hidden="true"></i>
-                    </a>
-                </td>
-            </tr>
-        </tfoot>
-        {% endif %}
     </table>
 {% endmacro %}
 
@@ -91,7 +80,7 @@
             {% endif %}
             {% for column in group.columns %}
                 {% if column.display == 'none' %}
-                    {% if withForm == TRUE %}
+                    {% if column.widget.fieldName == model.primaryColumn() %}
                         {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
                         <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
                     {% endif %}
@@ -155,4 +144,67 @@
         {% set newModel = view.newEmptyModel() %}
         {{ columnsForEditView(context, view, newModel, TRUE) }}
     </div>
+{% endmacro %}
+
+{% macro filterForSelectInput(context, key, filter) %}
+    {% set any = context.i18n.trans('any') %}
+
+    <div class="col-md-2">
+        <select name="{{ key }}" class="form-control" onchange="this.form.submit()">
+            <option value="">{{ any }} {{ key }}</option>
+            <option value="">------</option>
+            {% for key2, data in context.fsc.optionlist(key, filter.options) %}
+            {% if (context.indexView == context.fsc.active) and (key2 == filter.value) %}
+            <option value="{{ key2 }}" selected="">{{ data }}</option>
+            {% else %}
+            <option value="{{ key2 }}">{{ data }}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+{% endmacro %}
+
+{% macro filterForCheckBoxInput(context, key, filter) %}
+    <div class="col">
+        <div class="form-check mb-2 mb-sm-0">
+            <label class="form-check-label custom-checkbox-control custom-checkbox">
+                {% if (context.indexView == context.fsc.active) and filter.value %}
+                <input class="form-check-input custom-control-input" type="checkbox" name="{{ key }}" value="TRUE" checked="" onchange="this.form.submit()"/>
+                {% else %}
+                <input class="form-check-input custom-control-input" type="checkbox" name="{{ key }}" value="TRUE" onchange="this.form.submit()"/>
+                {% endif %}
+                <span class="custom-control-indicator"></span>
+                {{ filter.options.label }}
+            </label>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro filterForTextInput(context, key, filter) %}
+    {% set filterTxt = context.i18n.trans('filter-method') %}
+    {% set likeTxt = context.i18n.trans('like-than') %}
+    {% set greaterTxt = context.i18n.trans('greater-than') %}
+    {% set smallerTxt = context.i18n.trans('smaller-than') %}
+    {% set specialClass = filter.type == 'datepicker' ? ' datepicker' : '' %}
+
+    <div class="col-md-2">
+        <div class="input-group">                                                                
+            <div class="input-group-btn">
+                <input name="{{ key }}-btn" id="{{ key }}-btn" type="button" value="{{ filter.options.operator }}"
+                        class="btn btn-outline-secondary dropdown-toggle"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
+                
+                <div class="dropdown-menu">
+                    <h6 class="dropdown-header">{{ filterTxt }}</h6>
+                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}', '=')">{{ likeTxt }} {{ filter.options.label }}</a>                                        
+                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}', '>=')">{{ greaterTxt }} {{ filter.options.label }}</a>
+                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}', '<=')">{{ smallerTxt }} {{ filter.options.label }}</a>
+                </div>
+            </div>
+            <input type="hidden" name="{{ key }}-operator" id="{{ key }}-operator" value="{{ filter.options.operator }}" />                
+            <input type="text" name="{{ key }}" value="{% if indexView == fsc.active %}{{ filter.value }}{% endif %}"
+                   class="form-control{{ specialClass }}" placeholder="{{ filter.options.label }}" 
+                   autocomplete="off" onchange="this.form.submit()"/>
+        </div>
+    </div>  
 {% endmacro %}

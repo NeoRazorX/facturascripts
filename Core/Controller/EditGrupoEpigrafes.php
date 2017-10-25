@@ -55,6 +55,7 @@ class EditGrupoEpigrafes extends ExtendedController\EditController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'groups-epigraphs';
+        $pagedata['menu'] = 'accounting';
         $pagedata['icon'] = 'fa-bars';
         $pagedata['showonmenu'] = false;
 

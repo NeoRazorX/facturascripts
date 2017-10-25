@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -30,6 +29,7 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class PageOption
 {
+
     use Base\ModelTrait {
         clear as clearTrait;
         loadFromData as loadFromDataTrait;
@@ -241,7 +241,7 @@ class PageOption
         if (empty($rows)) {
             return;
         }
-        
+
         foreach ($rows->row as $row) {
             $rowItem = new ExtendedController\RowItem();
             $rowItem->loadFromXML($row);
@@ -261,7 +261,7 @@ class PageOption
             $this->miniLog->critical($this->i18n->trans('error-install-name-xmlview'));
             return;
         }
-        
+
         $file = "Core/XMLView/{$name}.xml";
         /**
          * This can be affected by a PHP bug #62577 (https://bugs.php.net/bug.php?id=62577)
@@ -301,7 +301,7 @@ class PageOption
             $this->filters = [];
             $this->rows = [];
             $this->installXML($name);
-//            $this->save();
+            //$this->save();
         }
 
         // Aplicamos sobre los widgets Select dinámicos sus valores
@@ -342,7 +342,7 @@ class PageOption
         foreach ($this->columns as $group) {
             foreach ($group->columns as $column) {
                 if ($column->widget->type === 'select') {
-                    if (array_key_exists('source', $column->widget->values[0])) {
+                    if (isset($column->widget->values[0]['source'])) {
                         $tableName = $column->widget->values[0]['source'];
                         $fieldCode = $column->widget->values[0]['fieldcode'];
                         $fieldDesc = $column->widget->values[0]['fieldtitle'];
@@ -351,8 +351,9 @@ class PageOption
                         $column->widget->setValuesFromCodeModel($rows);
                         unset($rows);
                     }
-                    
-                    if (array_key_exists('start', $column->widget->values[0])) {
+
+                    /// para los bucles como este <values start="0" end="5" step="1"></values>
+                    if (isset($column->widget->values[0]['start'])) {
                         $start = $column->widget->values[0]['start'];
                         $end = $column->widget->values[0]['end'];
                         $step = $column->widget->values[0]['step'];

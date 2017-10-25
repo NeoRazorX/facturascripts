@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Definición inicial para el controlador EditSubcuenta
+ *
+ * @author Artex Trading sa <jferrer@artextrading.com>
+-->
+
+<view>
+    <columns>
+        <group name="Ejercicio" numcolumns="10">
+            <column name="exercise" numcolumns="2" order="100">
+                <widget type="select" required="true" fieldname="codejercicio">
+                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            
+            <column name="account" numcolumns="4" order="100">
+                <widget type="select" fieldname="codcuenta" required="true">
+                    <values source="co_cuentas" fieldcode="codcuenta" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            
+            <column name="idsubaccount" numcolumns="2" display="none" order="100">
+                <widget type="text" fieldname="idsubcuenta"/>
+            </column>
+        </group> 
+        
+        <group name="Sub-accounts" numcolumns="6">
+            <column name="Subcuenta" numcolumns="3" order="105">
+                <widget type="text" fieldname="codsubcuenta" required="true" />
+            </column>
+            
+            <column name="description" numcolumns="5" order="110">
+                <widget type="text" fieldname="descripcion" required="true" />
+            </column> 
+             
+            <column name="taxes" numcolumns="3" order="195">
+                <widget type="select" fieldname="codimpuesto" required="true">
+                    <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
+                </widget>    
+            </column>
+            
+            <column name="vat" numcolumns="1" order="195" display="none">
+                <widget type="text" fieldname="iva" readonly="true"/>
+            </column>
+            
+            <column name="recargo" numcolumns="1" order="195" display="none">
+                <widget type="text" fieldname="recargo" required="true" />
+            </column>     
+        </group>
+        
+        <group name="saldos-accounts" numcolumns="6">
+            <column name="divisa" numcolumns="6" order="190">
+                <widget type="select" fieldname="coddivisa" required="true">
+                    <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
+                </widget> 
+            </column>
+            
+            <column name="debe" numcolumns="2" order="190">
+                <widget type="money" fieldname="debe" readonly="true" />
+            </column>
+            
+            <column name="haber" numcolumns="2" order="190">
+                <widget type="money" fieldname="haber" readonly="true" />
+            </column>
+            
+            <column name="saldo" numcolumns="2" order="190">
+                <widget type="money" fieldname="saldo" readonly="true" />
+            </column>
+        </group>
+    </columns>
+</view>

@@ -55,6 +55,9 @@ class ListPedidoCliente extends ExtendedController\ListController
         $this->addFilterSelect('ListPedidoCliente', 'codalmacen', 'almacenes', '', 'nombre');
         $this->addFilterSelect('ListPedidoCliente', 'codserie', 'series', '', 'descripcion');
         $this->addFilterSelect('ListPedidoCliente', 'codpago', 'formaspago', '', 'descripcion');
+        
+        $this->addFilterDatePicker('ListPedidoCliente', 'date1', 'date', 'fecha', '>=');
+        $this->addFilterDatePicker('ListPedidoCliente', 'date2', 'date', 'fecha', '<=');
 
         $this->addOrderBy('ListPedidoCliente', 'codigo', 'code');
         $this->addOrderBy('ListPedidoCliente', 'fecha', 'date');
