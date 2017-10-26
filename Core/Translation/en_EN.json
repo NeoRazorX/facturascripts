@@ -973,5 +973,9 @@
     "register-symbol": "#",
     "document-type-valid-length": "Invalid document type. Must be between 1 and 20 characters.",
     "status-name-valid-length": "Invalid status name. Must be between 1 and 20 characteres.",
-    "status-value-is-number": "El campo estado debe ser numérico."
+    "status-value-is-number": "El campo estado debe ser numérico.",
+    "supplier-reference" : "Supplier reference",
+    "supplier" : "Supplier",
+    "discount" : "Discount"
+   
 }
