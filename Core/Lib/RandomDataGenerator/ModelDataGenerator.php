@@ -302,23 +302,17 @@ class ModelDataGenerator
             $agente = new Model\Agente();
             $agente->f_nacimiento = date(mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(1970, 1997));
             $agente->f_alta = date(mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, 2016));
-
-            if (mt_rand(0, 24) == 0) {
-                $agente->f_baja = date('d-m-Y');
-            }
-
-            if (mt_rand(0, 9) == 0) {
-                $agente->dnicif = '';
-            } else {
-                $agente->dnicif = mt_rand(0, 99999999);
-            }
-
+            $agente->dnicif = (mt_rand(0, 9) == 0) ? '' : mt_rand(0, 99999999);
             $agente->nombre = $this->tools->nombre();
             $agente->apellidos = $this->tools->apellidos();
             $agente->provincia = $this->tools->provincia();
             $agente->ciudad = $this->tools->ciudad();
             $agente->direccion = $this->tools->direccion();
             $agente->codpostal = mt_rand(11111, 99999);
+
+            if (mt_rand(0, 24) == 0) {
+                $agente->f_baja = date('d-m-Y');
+            }
 
             if (mt_rand(0, 1) == 0) {
                 $agente->telefono = mt_rand(555555555, 999999999);
@@ -329,9 +323,7 @@ class ModelDataGenerator
             }
 
             if (mt_rand(0, 2) > 0) {
-                $cargos = ['Gerente', 'CEO', 'Compras', 'Comercial', 'Técnico', 'Freelance', 'Becario', 'Becario Senior'];
-                shuffle($cargos);
-                $agente->cargo = $cargos[0];
+                $agente->cargo = $this->tools->cargo();
             }
 
             if (mt_rand(0, 1) == 0) {
@@ -395,42 +387,9 @@ class ModelDataGenerator
     {
         for ($num = 0; $num < $max; ++$num) {
             $cliente = new Model\Cliente();
+            $this->fillCliente($cliente);
+
             $cliente->fechaalta = date(mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, date('Y')));
-
-            if (mt_rand(0, 24) == 0) {
-                $cliente->debaja = true;
-                $cliente->fechabaja = date('d-m-Y');
-            }
-
-            $cliente->cifnif = (mt_rand(0, 14) === 0) ? '' : mt_rand(0, 99999999);
-
-            switch (mt_rand(0, 2)) {
-                case 0:
-                    $cliente->nombre = $cliente->razonsocial = $this->tools->empresa();
-                    $cliente->personafisica = false;
-                    break;
-                case 1:
-                    $cliente->nombre = $this->tools->nombre() . ' ' . $this->tools->apellidos();
-                    $cliente->razonsocial = $this->tools->empresa();
-                    $cliente->personafisica = false;
-                    break;
-                default:
-                    $cliente->nombre = $cliente->razonsocial = $this->tools->nombre() . ' ' . $this->tools->apellidos();
-            }
-
-            switch (mt_rand(0, 2)) {
-                case 0:
-                    $cliente->telefono1 = mt_rand(555555555, 999999999);
-                    break;
-                case 1:
-                    $cliente->telefono1 = mt_rand(555555555, 999999999);
-                    $cliente->telefono2 = mt_rand(555555555, 999999999);
-                    break;
-                default:
-                    $cliente->telefono2 = mt_rand(555555555, 999999999);
-            }
-
-            $cliente->email = (mt_rand(0, 2) > 0) ? $this->tools->email() : null;
             $cliente->regimeniva = (mt_rand(0, 9) === 0) ? 'Exento' : 'General';
 
             if (mt_rand(0, 2) > 0) {
@@ -462,6 +421,44 @@ class ModelDataGenerator
         }
 
         return $num;
+    }
+
+    private function fillCliente(&$cliente)
+    {
+        $cliente->cifnif = (mt_rand(0, 14) === 0) ? '' : mt_rand(0, 99999999);
+
+        if (mt_rand(0, 24) == 0) {
+            $cliente->debaja = true;
+            $cliente->fechabaja = date('d-m-Y');
+        }
+
+        switch (mt_rand(0, 2)) {
+            case 0:
+                $cliente->nombre = $cliente->razonsocial = $this->tools->empresa();
+                $cliente->personafisica = false;
+                break;
+            case 1:
+                $cliente->nombre = $this->tools->nombre() . ' ' . $this->tools->apellidos();
+                $cliente->razonsocial = $this->tools->empresa();
+                $cliente->personafisica = false;
+                break;
+            default:
+                $cliente->nombre = $cliente->razonsocial = $this->tools->nombre() . ' ' . $this->tools->apellidos();
+        }
+
+        switch (mt_rand(0, 2)) {
+            case 0:
+                $cliente->telefono1 = mt_rand(555555555, 999999999);
+                break;
+            case 1:
+                $cliente->telefono1 = mt_rand(555555555, 999999999);
+                $cliente->telefono2 = mt_rand(555555555, 999999999);
+                break;
+            default:
+                $cliente->telefono2 = mt_rand(555555555, 999999999);
+        }
+
+        $cliente->email = (mt_rand(0, 2) > 0) ? $this->tools->email() : null;
     }
 
     private function direccionesCliente($cliente, $max = 3)
@@ -521,43 +518,10 @@ class ModelDataGenerator
 
         while ($num < $max) {
             $proveedor = new Model\Proveedor();
-            $proveedor->cifnif = mt_rand(0, 99999999);
-            if (mt_rand(0, 14) == 0) {
-                $proveedor->cifnif = '';
-            }
-
-            $opcion = mt_rand(0, 4);
-            $proveedor->nombre = $proveedor->razonsocial = $this->tools->empresa();
-            $proveedor->personafisica = false;
-            if ($opcion == 0) {
-                $proveedor->nombre = $this->tools->nombre() . ' ' . $this->tools->apellidos();
-                $proveedor->personafisica = true;
-            } elseif ($opcion == 1) {
-                $proveedor->nombre = $proveedor->razonsocial = $this->tools->empresa();
-                $proveedor->acreedor = true;
-            }
-
-            $opcion = mt_rand(0, 2);
-            if ($opcion == 0) {
-                $proveedor->telefono1 = mt_rand(555555555, 999999999);
-            } elseif ($opcion == 1) {
-                $proveedor->telefono1 = mt_rand(555555555, 999999999);
-                $proveedor->telefono2 = mt_rand(555555555, 999999999);
-            } else {
-                $proveedor->telefono2 = mt_rand(555555555, 999999999);
-            }
-
-            if (mt_rand(0, 2) > 0) {
-                $proveedor->email = $this->tools->email();
-            }
+            $this->fillCliente($proveedor);
 
             if (mt_rand(0, 9) == 0) {
                 $proveedor->regimeniva = 'Exento';
-            }
-
-            if (mt_rand(0, 24) == 0) {
-                $proveedor->debaja = true;
-                $proveedor->fechabaja = date('d-m-Y');
             }
 
             $proveedor->codproveedor = $proveedor->newCode();

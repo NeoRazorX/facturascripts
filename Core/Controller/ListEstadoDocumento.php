@@ -36,9 +36,9 @@ class ListEstadoDocumento extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'status-document';
+        $pagedata['title'] = 'document-status';
         $pagedata['icon'] = 'fa-tag';
-        $pagedata['menu'] = 'sales';
+        $pagedata['menu'] = 'admin';
 
         return $pagedata;
     }

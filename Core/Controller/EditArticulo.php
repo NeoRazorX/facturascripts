@@ -23,15 +23,16 @@ use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controlador para la edición de un registro del modelo Empresa
+ * Controlador para la edición de un registro del modelo Articulo
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Fco Antonio Moreno Pérez <famphuelva@gmail.com>
  */
-class EditEmpresa extends ExtendedController\EditController
+class EditArticulo extends ExtendedController\EditController
 {
     /**
-     * EditEmpresa constructor.
+     * EditArticulo constructor.
      *
      * @param Base\Cache $cache
      * @param Base\Translator $i18n
@@ -43,7 +44,7 @@ class EditEmpresa extends ExtendedController\EditController
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         // Establecemos el modelo de datos
-        $this->modelName = 'FacturaScripts\Core\Model\Empresa';
+        $this->modelName = 'FacturaScripts\Core\Model\Articulo';
     }
 
     /**
@@ -54,9 +55,9 @@ class EditEmpresa extends ExtendedController\EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'corporation';
-        $pagedata['menu'] = 'admin';
-        $pagedata['icon'] = 'fa-home';
+        $pagedata['title'] = 'products';
+        $pagedata['menu'] = 'warehouse';
+        $pagedata['icon'] = 'fa-cubes';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

@@ -56,6 +56,7 @@ class EditSubcuenta extends ExtendedController\EditController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'subaccounts';
+        $pagedata['menu'] = 'accounting';
         $pagedata['icon'] = 'fa-th-list';
         $pagedata['showonmenu'] = false;
 
