@@ -105,13 +105,10 @@
             <legend>{{ group.getHeaderHTML(group.title)|raw }}</legend>
             {% endif %}
             {% for column in group.columns %}
+                {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
                 {% if column.display == 'none' %}
-                    {% if column.widget.fieldName == model.primaryColumn() %}
-                        {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
-                        <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
-                    {% endif %}
+                    <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
                 {% else %}
-                    {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
                     {{ column.getEditHTML(value)|raw }}
                 {% endif %}
             {% endfor %}

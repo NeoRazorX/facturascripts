@@ -71,7 +71,7 @@ abstract class ListController extends Base\Controller
      * @var array
      */
     public $icons;
-    
+
     /**
      * Procedimiento encargado de insertar las vistas a visualizar
      */
@@ -96,7 +96,7 @@ abstract class ListController extends Base\Controller
         $this->offset = (int) $this->request->get('offset', 0);
         $this->query = $this->request->get('query', '');
         $this->views = [];
-        $this->icons = [];        
+        $this->icons = [];
     }
 
     /**
@@ -253,24 +253,22 @@ abstract class ListController extends Base\Controller
             $result[] = new DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }
 
-        $filters = $this->views[$this->active]->getFilters();
-        foreach ($filters as $key => $value) {
-            if ($value['value'] != '') {
-                $field = $value['options']['field'];
-                switch ($value['type']) {
+        foreach ($this->views[$this->active]->getFilters() as $key => $filter) {
+            if ($filter->value != '') {
+                switch ($filter->type) {
                     case 'select':
                         // we use the key value because the field value indicate is the text field of the source data
-                        $result[] = new DataBase\DataBaseWhere($key, $value['value']);
+                        $result[] = new DataBase\DataBaseWhere($key, $filter->value);
                         break;
 
                     case 'checkbox':
-                        $checked = (bool) (($value['options']['inverse']) ? !$value['value'] : $value['value']);
-                        $result[] = new DataBase\DataBaseWhere($field, $checked);
+                        $checked = (bool) (($filter->options['inverse']) ? !$filter->value : $filter->value);
+                        $result[] = new DataBase\DataBaseWhere($filter->options['field'], $checked);
                         break;
-                    
+
                     default:
-                        $operator = $value['options']['operator'];
-                        $result[] = new DataBase\DataBaseWhere($field, $value['value'], $operator);
+                        $operator = $filter->options['operator'];
+                        $result[] = new DataBase\DataBaseWhere($filter->options['field'], $filter->value, $operator);
                 }
             }
         }
@@ -289,7 +287,7 @@ abstract class ListController extends Base\Controller
     protected function addView($modelName, $viewName, $viewTitle = 'search', $icon = 'fa-search')
     {
         $this->views[$viewName] = new ListView($viewTitle, $modelName, $viewName, $this->user->nick);
-        $this->icons[$viewName] = $icon;        
+        $this->icons[$viewName] = $icon;
         if (empty($this->active)) {
             $this->active = $viewName;
         }
@@ -333,36 +331,30 @@ abstract class ListController extends Base\Controller
     protected function addFilterSelect($indexView, $key, $table, $where = '', $field = '')
     {
         $value = $this->request->get($key);
-        $this->views[$indexView]->addFilterSelect($key, $value, $table, $where, $field);
+        $this->views[$indexView]->addFilter($key, ListFilter::newSelectFilter($field, $value, $table, $where));
     }
 
     /**
      * Añade un filtro del tipo condición boleana.
      *
      * @param string $indexView
-     * @param string  $key     (Filter identifier)
-     * @param string  $label   (Human reader description)
-     * @param string  $field   (Field of the table to apply filter)
-     * @param bool $inverse (If you need to invert the selected value)
+     * @param string $key     (Filter identifier)
+     * @param string $label   (Human reader description)
+     * @param string $field   (Field of the table to apply filter)
+     * @param bool $inverse   (If you need to invert the selected value)
      */
     protected function addFilterCheckbox($indexView, $key, $label, $field = '', $inverse = false)
     {
         $value = $this->request->get($key);
-        $this->views[$indexView]->addFilterCheckBox($key, $value, $label, $field, $inverse);
+        $this->views[$indexView]->addFilter($key, ListFilter::newCheckboxFilter($field, $value, $label, $inverse));
     }
 
-    private function addFilterFromType($indexView, $options)
+    private function addFilterFromType($indexView, $key, $type, $label, $field, $operator)
     {
-        $key = $options['key'];
-        $keyValue = $this->request->get($key);
-        $operatorValue = $this->request->get($key . '-operator');
-        if (empty($operatorValue)) {
-            $operatorValue = $options['operator'];
-        }
-        
-        $this->views[$indexView]->addFilterFromType(
-            $options['type'], $key, $keyValue, $options['label'], $options['field'], $operatorValue
-        );
+        $value = $this->request->get($key);
+        $operatorValue = $this->request->get($key . '-operator', $operator);
+        $this->views[$indexView]->addFilter(
+            $key, ListFilter::newStandardFilter($type, $field, $value, $label, $operatorValue));
     }
 
     /**
@@ -376,15 +368,7 @@ abstract class ListController extends Base\Controller
      */
     protected function addFilterDatePicker($indexView, $key, $label, $field = '', $operator = '=')
     {
-        $options = [
-            'type' => 'datepicker',
-            'key' => $key,
-            'label' => $label, 
-            'field' => $field,
-            'operator' => $operator
-        ];
-
-        $this->addFilterFromType($indexView, $options);
+        $this->addFilterFromType($indexView, $key, 'datepicker', $label, $field, $operator);
     }
 
     /**
@@ -398,15 +382,21 @@ abstract class ListController extends Base\Controller
      */
     protected function addFilterText($indexView, $key, $label, $field = '', $operator = '=')
     {
-        $options = [
-            'type' => 'text',
-            'key' => $key,
-            'label' => $label, 
-            'field' => $field,
-            'operator' => $operator
-        ];
+        $this->addFilterFromType($indexView, $key, 'text', $label, $field, $operator);
+    }
 
-        $this->addFilterFromType($indexView, $options);
+    /**
+     * Añade un filtro del tipo numérico.
+     *
+     * @param string $indexView
+     * @param string $key     (Filter identifier)
+     * @param string $label   (Human reader description)
+     * @param string $field   (Field of the table to apply filter)
+     * @param string $operator
+     */
+    protected function addFilterNumber($indexView, $key, $label, $field = '', $operator = '=')
+    {
+        $this->addFilterFromType($indexView, $key, 'number', $label, $field, $operator);
     }
 
     /**
@@ -472,10 +462,9 @@ abstract class ListController extends Base\Controller
                 $result = '&query=' . $this->query;
             }
 
-            $filters = $this->views[$this->active]->getFilters();
-            foreach ($filters as $key => $value) {
-                if ($value['value'] !== '') {
-                    $result .= '&' . $key . '=' . $value['value'];
+            foreach ($this->views[$this->active]->getFilters() as $key => $filter) {
+                if ($filter->value !== '') {
+                    $result .= '&' . $key . '=' . $filter->value;
                 }
             }
         }
