@@ -993,5 +993,7 @@
     "smaller-than": "Menor que",
     "locked": "Bloqueado",
     "public": "Público",
-    "dto%": "DTO %"
+    "dto%": "DTO %",
+    "enabled": "Activado",
+    "disabled": "Desactivado"
 }

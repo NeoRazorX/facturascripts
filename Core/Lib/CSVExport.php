@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\ExportInterface;
+use FacturaScripts\Core\Base\Translator;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -57,10 +58,18 @@ class CSVExport implements ExportInterface
     private $delimiter;
 
     /**
+     * Objeto traductor
+     *
+     * @var Translator
+     */
+    private $i18n;
+
+    /**
      * CSVExport constructor.
      */
     public function __construct()
     {
+        $this->i18n = new Translator();
         $this->separator = ';';
         $this->delimiter = '"';
     }
@@ -145,12 +154,18 @@ class CSVExport implements ExportInterface
         /// obtenemos las columnas
         $tableCols = [];
         $sheetHeaders = [];
+        $tableData = [];
+
+        /// obtenemos las columnas
         foreach ($columns as $col) {
             $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
-            $sheetHeaders[$col->widget->fieldName] = 'string';
+            $sheetHeaders[$this->i18n->trans($col->title)] = 'string';
         }
 
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
+        if (empty($cursor)) {
+            $this->writeSheet($tableData, $sheetHeaders);
+        }
         while (!empty($cursor)) {
             $tableData = $this->getTableData($cursor, $tableCols);
             $this->writeSheet($tableData, $sheetHeaders);
@@ -178,9 +193,16 @@ class CSVExport implements ExportInterface
         /// obtenemos los datos
         foreach ($cursor as $key => $row) {
             foreach ($tableCols as $col) {
-                $value = $row->{$col};
-                if (is_string($value)) {
-                    $value = $this->fixHtml($value);
+                $value = '';
+                if (isset($row->{$col})) {
+                    $value = $row->{$col};
+                    if (is_string($value)) {
+                        $value = $this->fixHtml($value);
+                    } elseif (is_bool($value)) {
+                        $value = $value == 1 ? $this->i18n->trans('enabled') : $this->i18n->trans('disabled');
+                    } elseif (is_null($value)) {
+                        $value = '';
+                    }
                 }
 
                 $tableData[$key][$col] = $this->delimiter . $value . $this->delimiter;
@@ -210,6 +232,8 @@ class CSVExport implements ExportInterface
     public function writeSheet($tableData, $sheetHeaders)
     {
         $this->csv = [];
+        $header = [];
+        $body = [];
 
         foreach ($sheetHeaders as $key => $value) {
             $header[] = $key;

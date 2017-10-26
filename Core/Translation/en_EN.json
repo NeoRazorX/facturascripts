@@ -993,5 +993,7 @@
     "smaller-than": "Smaller than",
     "locked": "Locked",
     "public": "Public",
-    "dto%": "Disc. %"
+    "dto%": "Disc. %",
+    "enabled": "Enabled",
+    "disabled": "Disabled"
 }
