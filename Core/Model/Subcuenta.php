@@ -381,7 +381,7 @@ class Subcuenta
         ];
 
         $count = new Model\Cuenta();
-        if ($count->loadFromCode(NULL, $where) == FALSE) {
+        if ($count->loadFromCode(NULL, $where) === FALSE) {
             $this->miniLog->alert($this->i18n->trans('account-data-error'));
             return false;         
         }

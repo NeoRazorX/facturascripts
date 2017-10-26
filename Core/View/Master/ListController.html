@@ -97,6 +97,7 @@
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 {% from 'Macro/Utils.html' import message as show_message %}
 {% from 'Macro/Utils.html' import exportData as exportData %}
+{% from 'Macro/BaseController.html' import buttonOrderBy as buttonOrderBy %}
 {% from 'Macro/BaseController.html' import columnsForListView as columnsForListView %}
 {% from 'Macro/BaseController.html' import filterForSelectInput as filterForSelectInput %}
 {% from 'Macro/BaseController.html' import filterForCheckBoxInput as filterForCheckBoxInput %}
@@ -187,8 +188,26 @@
                                 </span>
                             </div>
                         </div>
+                        
                         <!-- Aditionals filters -->
+                        {% set columnsUsed = 2 %}
                         {% for key1, filter in view.getFilters() %}
+                            <!-- check if column is OrderBy column -->
+                            {% if columnsUsed == 10 %}
+                            {{ buttonOrderBy(_context, view) }}  
+                            {% set columnsUsed = columnsUsed + 2 %}
+                            {% endif %}
+
+                            <!-- check if there is space available for columns -->
+                            {% if (columnsUsed % 12) == 0 %}
+                                <!-- Order by selector -->
+                    </div>
+                    <div class="row align-items-center" style="margin-top:5px; margin-bottom: 10px;">  
+                        <div class="col-md-2"></div>
+                                {% set columnsUsed = columnsUsed + 2 %}
+                            {% endif %}
+                            
+                            <!-- Add new column filter -->
                             {% if filter.type == 'select' %}
                                 {{ filterForSelectInput(_context, key1, filter) }}
                             {% elseif filter.type == 'checkbox' %}
@@ -196,29 +215,15 @@
                             {% else %}
                                 {{ filterForTextInput(_context, key1, filter) }}                                                         
                             {% endif %}
+                            
+                            <!-- subtract the available space -->
+                            {% set columnsUsed = columnsUsed + 2 %}
                         {% endfor %}
 
                         <!-- Order by selector -->
-                        <div class="col">
-                            <div class="btn-group float-md-right">
-                                {% set orderbylist = view.getOrderBy() %}
-                                <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuOrder{{ indexView }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    <i class="fa {{ orderbylist[view.selectedOrderBy]['icon'] }}" aria-hidden="true"></i>
-                                    &nbsp; {{ orderbylist[view.selectedOrderBy]['label'] }}
-                                    <span class="caret"></span>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuOrder{{ indexView }}">
-                                    {% for key, orderby in orderbylist %}
-                                    <a class="dropdown-item" href="{{ list_url }}&order={{ key }}">
-                                        <i class="fa {{ orderby['icon'] }}" aria-hidden="true"></i>&nbsp; {{ orderby['label'] }} &nbsp;
-                                        {% if view.selectedOrderBy == key %}
-                                        <i class="fa fa-check" aria-hidden="true"></i>
-                                        {% endif %}
-                                    </a>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
+                        {% if columnsUsed <= 10 %}
+                        {{ buttonOrderBy(_context, view) }}                        
+                        {% endif %}
                     </div>
                 </div>
             </form>
