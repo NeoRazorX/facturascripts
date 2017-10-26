@@ -66,6 +66,13 @@ abstract class ListController extends Base\Controller
     public $views;
 
     /**
+     * Lista de iconos para cada una de las vistas
+     *
+     * @var array
+     */
+    public $icons;
+    
+    /**
      * Procedimiento encargado de insertar las vistas a visualizar
      */
     abstract protected function createViews();
@@ -89,6 +96,7 @@ abstract class ListController extends Base\Controller
         $this->offset = (int) $this->request->get('offset', 0);
         $this->query = $this->request->get('query', '');
         $this->views = [];
+        $this->icons = [];        
     }
 
     /**
@@ -276,10 +284,12 @@ abstract class ListController extends Base\Controller
      * @param string $modelName
      * @param string $viewName
      * @param string $viewTitle
+     * @param string $icon
      */
-    protected function addView($modelName, $viewName, $viewTitle = 'search')
+    protected function addView($modelName, $viewName, $viewTitle = 'search', $icon = 'fa-search')
     {
         $this->views[$viewName] = new ListView($viewTitle, $modelName, $viewName, $this->user->nick);
+        $this->icons[$viewName] = $icon;        
         if (empty($this->active)) {
             $this->active = $viewName;
         }
