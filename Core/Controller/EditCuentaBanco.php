@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,37 +19,34 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Description of AdminUsers
+ * Controlador para la edición de un registro del modelo Fabricante
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Artex Trading sa <jferrer@artextrading.com>
  */
-class ListUser extends ExtendedController\ListController
+class EditCuentaBanco extends ExtendedController\EditController
 {
-   
-    /**
-     * Procedimiento para insertar vistas en el controlador
+   /**
+     * EditFabricante constructor.
+     *
+     * @param Base\Cache $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog $miniLog
+     * @param string $className
      */
-    protected function createViews()
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
-        $this->addView('FacturaScripts\Core\Model\User', 'ListUser', 'users');
-        $this->addSearchFields('ListUser', ['nick', 'email']);
+        parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->addOrderBy('ListUser', 'nick');
-        $this->addOrderBy('ListUser', 'email');
-        
-        /* Roles */
-        $this->addView('FacturaScripts\Core\Model\Rol', 'ListRol', 'roles');
-        $this->addSearchFields('ListRol', ['codrol', 'descripcion']);
-
-        $this->addOrderBy('ListRol', 'descripcion');
-        $this->addOrderBy('ListRol', 'codrol');
-
+        // Establecemos el modelo de datos
+        $this->modelName = 'FacturaScripts\Core\Model\CuentaBanco';
     }
-    
-     /**
+
+    /**
      * Devuelve los datos básicos de la página
      *
      * @return array
@@ -57,9 +54,10 @@ class ListUser extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'users';
-        $pagedata['icon'] = 'fa-user-circle-o';
-        $pagedata['menu'] = 'admin';
+        $pagedata['title'] = 'bank-account';
+        $pagedata['icon'] = 'fa-university';
+        $pagedata['menu'] = 'accounting';
+        $pagedata['showonmenu'] = false;
 
         return $pagedata;
     }
