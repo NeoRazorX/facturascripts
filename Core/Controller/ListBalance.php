@@ -16,18 +16,18 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controlador para la lista de Atributo
+ * Description of ListBalance
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
  */
-class ListAtributo extends ExtendedController\ListController
+class ListBalance extends ExtendedController\ListController
 {
     /**
      * Devuelve los datos básicos de la página
@@ -37,9 +37,9 @@ class ListAtributo extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Atributos';
-        $pagedata['icon'] = 'fa-sliders';
-        $pagedata['menu'] = 'warehouse';
+        $pagedata['title'] = 'balance';
+        $pagedata['icon'] = 'fa-clipboard';
+        $pagedata['menu'] = 'accounting';
 
         return $pagedata;
     }
@@ -50,10 +50,14 @@ class ListAtributo extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\Atributo', $className);
-        $this->addSearchFields($className, ['nombre', 'codatributo']);
+        $this->addView('FacturaScripts\Core\Model\Balance', $className);
+        $this->addSearchFields($className, ['codbalance', 'naturaleza','descripcion1','descripcion2','descripcion3','descripcion4','descripcion4ba']);
 
-        $this->addOrderBy($className, 'codatributo', 'code');
-        $this->addOrderBy($className, 'nombre', 'name');
+        $this->addOrderBy($className, 'codbalance', 'code');
+        $this->addOrderBy($className, 'descripcion1', 'description 1', 2); /// forzamos el orden por defecto descripcion1
+        $this->addOrderBy($className, 'descripcion2', 'description 2', 3);
+        $this->addOrderBy($className, 'descripcion3', 'description 3', 4);
+        $this->addOrderBy($className, 'descripcion4', 'description 4', 5);
+        $this->addOrderBy($className, 'descripcion4ba', 'description4ba', 6);
     }
 }
