@@ -110,6 +110,9 @@ class WidgetItem
 
             case 'radio':
                 return new WidgetItemRadio();
+                
+            case 'color':
+                return new WidgetItemColor();
 
             default:
                 return new WidgetItemText($type);
@@ -349,15 +352,19 @@ class WidgetItem
      *
      * @return string
      */
-    protected function standardEditHTMLWidget($value, $specialAttributes, $extraClass = '')
+    protected function standardEditHTMLWidget($value, $specialAttributes, $extraClass = '', $type = '')
     {
         $fieldName = '"' . $this->fieldName . '"';
         $icon = $this->getIconHTML();
 
+        if (empty($type)) {
+            $type = $this->type;
+        }
+        
         $html = $icon
-            . '<input id=' . $fieldName . ' type="' . $this->type . '" class="form-control' . $extraClass . '"'
+            . '<input id=' . $fieldName . ' type="' . $type . '" class="form-control' . $extraClass . '"'
             . 'name=' . $fieldName . ' value="' . $value . '"' . $specialAttributes . ' />';
-
+            
         if (!empty($this->icon)) {
             $html .= '</div>';
         }

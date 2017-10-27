@@ -20,11 +20,11 @@
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Description of WidgetItemDateTime
+ * Description of WidgetItemColor
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa <jferrer@artextrading.com>
  */
-class WidgetItemDateTime extends WidgetItem
+class WidgetItemColor extends WidgetItem
 {
     /**
      * Constructor de la clase
@@ -33,7 +33,7 @@ class WidgetItemDateTime extends WidgetItem
     {
         parent::__construct();
 
-        $this->type = 'datepicker';
+        $this->type = 'color';
     }
 
     /**
@@ -60,7 +60,6 @@ class WidgetItemDateTime extends WidgetItem
     public function getEditHTML($value)
     {
         $specialAttributes = $this->specialAttributes();
-        $specialClass = $this->readOnly ? '' : ' datepicker';
-        return $this->standardEditHTMLWidget($value, $specialAttributes, $specialClass, 'text');
+        return $this->standardEditHTMLWidget($value, $specialAttributes, ' jscolor', 'text');
     }
 }
