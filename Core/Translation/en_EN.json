@@ -976,6 +976,10 @@
     "status-value-is-number": "El campo estado debe ser numérico.",
     "supplier-reference" : "Supplier reference",
     "supplier" : "Supplier",
-    "discount" : "Discount"
+    "discount" : "Discount",
+    "account-section" : "Account section",
+    "special-account-id" : "ID special account",
+    "section-id" : "ID Section",
+    "account-code" : "Account code"
    
 }

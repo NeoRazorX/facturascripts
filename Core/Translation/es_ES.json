@@ -976,5 +976,9 @@
     "status-value-is-number": "El campo estado debe ser numérico.",
     "supplier-reference" : "Referencia de proveedor",
     "supplier" : "Proveedor",
-    "discount" : "Descuento"
+    "discount" : "Descuento",
+    "account-section" : "Epígrafe",
+    "special-account-id" : "ID cuenta especial",
+    "section-id" : "ID Epígrafe",
+    "account-code" : "Código cuenta"
 }
