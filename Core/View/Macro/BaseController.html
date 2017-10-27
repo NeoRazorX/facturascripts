@@ -204,13 +204,6 @@
 {% endmacro %}
 
 {% macro filterForTextInput(context, key, filter) %}
-    {% set filterTxt = context.i18n.trans('filter-method') %}
-    {% set likeTxt = context.i18n.trans('like-than') %}
-    {% set greaterTxt = context.i18n.trans('greater-than') %}
-    {% set smallerTxt = context.i18n.trans('smaller-than') %}
-    {% set differentTxt = context.i18n.trans('different-than') %}    
-    {% set specialClass = filter.type == 'datepicker' ? ' datepicker' : '' %}
-
     <div class="col-md-2">
         <div class="input-group">                                                                
             <div class="input-group-btn">
@@ -219,17 +212,16 @@
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
                 
                 <div class="dropdown-menu">
-                    <h6 class="dropdown-header">{{ filterTxt }}</h6>
-                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}', '=')">{{ likeTxt }} {{ filter.options.label }}</a>                                        
-                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}', '>=')">{{ greaterTxt }} {{ filter.options.label }}</a>
-                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}', '<=')">{{ smallerTxt }} {{ filter.options.label }}</a>
-                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}', '<>')">{{ differentTxt }} {{ filter.options.label }}</a>
+                    <h6 class="dropdown-header">{{ context.i18n.trans('filter-method') }}</h6>
+                    {% for keyOperator, valueOperator in filter.getFilterOperators() %}
+                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}', '{{ valueOperator }}')">{{ context.i18n.trans(keyOperator) }} {{ filter.options.label }}</a>                                        
+                    {% endfor %}
                 </div>
             </div>
             <input type="hidden" name="{{ key }}-operator" id="{{ key }}-operator" value="{{ filter.options.operator }}" />                
             <input type="text" name="{{ key }}" value="{% if indexView == fsc.active %}{{ filter.value }}{% endif %}"
-                   class="form-control{{ specialClass }}" placeholder="{{ filter.options.label }}" 
-                   autocomplete="off" onchange="this.form.submit()"/>
+                   class="form-control {{ filter.getSpecialClass() }}" placeholder="{{ filter.options.label }}" 
+                   autocomplete="off" onchange="this.form.submit()" {{ filter.getKeyboardFilter()|raw }}/>
         </div>
     </div>  
 {% endmacro %}

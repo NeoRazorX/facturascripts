@@ -61,9 +61,8 @@ class ListAlbaranCliente extends ExtendedController\ListController
         $this->addFilterDatePicker('ListAlbaranCliente', 'date1', 'date', 'fecha', '>=');
         $this->addFilterDatePicker('ListAlbaranCliente', 'date2', 'date', 'fecha', '<=');
         
-
-        $this->addFilterText('ListAlbaranCliente', 'total1', 'total', '>=');
-        $this->addFilterText('ListAlbaranCliente', 'total2', 'total', '<=');
+        $this->addFilterNumber('ListAlbaranCliente', 'total1', 'total', 'total', '>=');
+        $this->addFilterNumber('ListAlbaranCliente', 'total2', 'total', 'total', '<=');
 
         $this->addOrderBy('ListAlbaranCliente', 'codigo', 'code');
         $this->addOrderBy('ListAlbaranCliente', 'fecha', 'date');
