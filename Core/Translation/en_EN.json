@@ -973,5 +973,15 @@
     "register-symbol": "#",
     "document-type-valid-length": "Invalid document type. Must be between 1 and 20 characters.",
     "status-name-valid-length": "Invalid status name. Must be between 1 and 20 characteres.",
-    "status-value-is-number": "El campo estado debe ser numérico."
+    "status-value-is-number": "El campo estado debe ser numérico.",
+    "supplier-reference" : "Supplier reference",
+    "supplier" : "Supplier",
+    "discount" : "Discount",
+    "accounting-heading" : "Accounting heading",
+    "special-account-id" : "ID special account",
+    "accounting-heading-code" : "ID Accounting heading",
+    "account-code" : "Account code",
+    "heading-account-group-id" : "Heading account ID group",
+    "heading-account-id-root" : "Heading account root"
+   
 }
