@@ -62,6 +62,64 @@ class ListFilter
     }
 
     /**
+     * Lista de operadores disponibles
+     * 
+     * @return array
+     */
+    public function getFilterOperators()
+    {
+        return [
+          'like-than' => '=',
+          'greater-than' => '>=',
+          'smaller-than' => '<=',
+          'different-than' => '<>'
+        ];        
+    }
+    
+    /**
+     * Devuelve la clase especial a aplicar al input del formulario de filtros
+     * 
+     * @return string
+     */
+    public function getSpecialClass()
+    {
+        switch ($this->type) {
+            case 'datepicker':
+                return 'datepicker';
+
+            default:
+                return '';
+        }        
+    }
+    
+    /**
+     * Devuelve la función onkeypress (JavaScript)
+     * en caso de que el input acepte sólo un conjunto de valores
+     * 
+     * @return string
+     */
+    public function getKeyboardFilter()
+    {
+        switch ($this->type) {
+            case 'number':
+                /// enter + number + ','
+                return 'onkeypress="return event.charCode == 13 || '
+                    . '(event.charCode >= 48 && event.charCode <= 57) || '
+                    . ' event.charCode == 46"';
+
+            case 'datepicker':
+                /// enter + number + '-' + '/'
+                return 'onkeypress="return event.charCode == 13 || '
+                    . '(event.charCode >= 48 && event.charCode <= 57) || '
+                    . ' event.charCode == 45 || '
+                    . ' event.charCode == 47"';
+                
+            default:
+                return '';
+        }
+    }
+    
+    /**
      * Crea y devuelve un filtro de tipo select
      *
      * @param string $field
@@ -105,6 +163,11 @@ class ListFilter
      */
     public static function newStandardFilter($type, $field, $value, $label, $operator)
     {
+        if ($type === 'number') {
+            $values = explode(',', $value, 1);
+            $value = count($values) === 1 ? $values[0] : $values[0] . '.' . $values[1];
+        }
+        
         $options = ['label' => $label, 'field' => $field, 'operator' => $operator];
         $result = new ListFilter($type, $value, $options);
         return $result;

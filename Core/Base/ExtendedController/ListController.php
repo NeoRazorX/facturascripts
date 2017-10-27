@@ -211,6 +211,20 @@ abstract class ListController extends Base\Controller
         return false;
     }
 
+    private function getTExtColumns($view, $maxColumns)
+    {
+        $result = [];
+        foreach ($view->getColumns() as $col) {
+            if ($col->display !== 'none' && $col->widget->type === 'text') {
+                $cols[] = $col->widget->fieldName;
+                if (count($cols) === $maxColumns) {
+                    break;
+                }
+            }
+        }        
+        return $result;
+    }
+    
     /**
      * Devuelve una respuesta JSON
      *
@@ -219,12 +233,7 @@ abstract class ListController extends Base\Controller
     protected function jsonAction($view)
     {
         $this->setTemplate(false);
-        $cols = [];
-        foreach ($view->getColumns() as $col) {
-            if ($col->display !== 'none' && $col->widget->type === 'text' && count($cols) < 4) {
-                $cols[] = $col->widget->fieldName;
-            }
-        }
+        $cols = $this->getTextColumns(4);
         $json = [];
         foreach ($view->getCursor() as $item) {
             $jItem = ['url' => $item->url()];
