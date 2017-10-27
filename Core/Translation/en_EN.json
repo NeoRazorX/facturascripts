@@ -977,9 +977,11 @@
     "supplier-reference" : "Supplier reference",
     "supplier" : "Supplier",
     "discount" : "Discount",
-    "account-section" : "Account section",
+    "accounting-heading" : "Accounting heading",
     "special-account-id" : "ID special account",
-    "section-id" : "ID Section",
-    "account-code" : "Account code"
+    "accounting-heading-code" : "ID Accounting heading",
+    "account-code" : "Account code",
+    "heading-account-group-id" : "Heading account ID group",
+    "heading-account-id-root" : "Heading account root"
    
 }

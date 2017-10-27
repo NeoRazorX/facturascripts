@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Definición inicial para el controlador EditArticuloProveedor
+ * Definición inicial para el controlador EditEpigrafe
  *
  * @author PC REDNET S.L. luismi@pcrednet.com>
 -->
@@ -25,30 +25,26 @@
 <view>
    <columns>
       <group name="data" numcolumns="12">
-         <column name="id" numcolumns="1" order="100" display="none">
-            <widget type="text" fieldname="idcuenta" onclick="" />
+         <column name="accounting-heading-id" numcolumns="1" order="100" display="none">
+            <widget type="text" fieldname="idepigrafe" onclick="" />
          </column>
-         <column name="account-code" numcolumns="2" order="100">
-            <widget type="text" fieldname="codcuenta" icon="fa-bar-chart" onclick="" />
+         <column name="accounting-heading-code" numcolumns="2" order="100">
+            <widget type="text" fieldname="codepigrafe" icon="fa-bar-chart" onclick="" />
          </column>
          <column name="description" numcolumns="4" order="110">
             <widget type="text" fieldname="descripcion" onclick="" />
          </column>
-         <column name="fiscal-exercise" numcolumns="4" order="120">
+         <column name="fiscal-exercise" numcolumns="2" order="120">
             <widget type="select" fieldname="codejercicio">
                <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
             </widget>
          </column>
-         <column name="accounting-heading-code" numcolumns="2" order="130">
-            <widget type="text" fieldname="codepigrafe" onclick="" />
+         <column name="heading-account-group-id" numcolumns="2" order="110">
+            <widget type="text" fieldname="idgrupo" onclick="" />
          </column>
-         <column name="special-account-id" numcolumns="2" order="140">
-            <widget type="text" fieldname="idcuentaesp" onclick="" />
+         <column name="heading-account-id-root" numcolumns="2" order="110">
+            <widget type="text" fieldname="idpadre" onclick="" />
          </column>
-         <column name="accounting-heading" numcolumns="2" order="150">
-            <widget type="text" fieldname="idepigrafe" onclick="" required="true"/>
-         </column>
-         
       </group>
    </columns>
 </view>

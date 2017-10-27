@@ -977,8 +977,10 @@
     "supplier-reference" : "Referencia de proveedor",
     "supplier" : "Proveedor",
     "discount" : "Descuento",
-    "account-section" : "Epígrafe",
+    "accounting-heading" : "Epígrafe",
     "special-account-id" : "ID cuenta especial",
-    "section-id" : "ID Epígrafe",
-    "account-code" : "Código cuenta"
+    "accounting-heading-code" : "ID Epígrafe",
+    "account-code" : "Código cuenta",
+    "heading-account-group-id" : "ID grupo epígrafes",
+    "heading-account-id-root" : "ID padre"
 }
