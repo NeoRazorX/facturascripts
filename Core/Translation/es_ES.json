@@ -757,8 +757,8 @@
     "card-text": "Texto de tarjeta",
     "date-time": "Fecha hora",
     "no-data": "Sin datos",
-    "reference": "Referéncia",
-    "partnumber": "Número de parte",
+    "reference": "Referencia",
+    "partnumber": "Part Number",
     "manufacturer": "Fabricante",
     "attribute": "Atributo",
     "family": "Família",
@@ -973,5 +973,14 @@
     "register-symbol": "#",
     "document-type-valid-length": "Tipo de documento no válido (debe tener entre 1 y 20 carácteres).",
     "status-name-valid-length": "Nombre del estado no válido (debe tener entre 1 y 20 carácteres).",
-    "status-value-is-number": "El campo estado debe ser numérico."
+    "status-value-is-number": "El campo estado debe ser numérico.",
+    "supplier-reference" : "Referencia de proveedor",
+    "supplier" : "Proveedor",
+    "discount" : "Descuento",
+    "accounting-heading" : "Epígrafe",
+    "special-account-id" : "ID cuenta especial",
+    "accounting-heading-code" : "ID Epígrafe",
+    "account-code" : "Código cuenta",
+    "heading-account-group-id" : "ID grupo epígrafes",
+    "heading-account-id-root" : "ID padre"
 }
