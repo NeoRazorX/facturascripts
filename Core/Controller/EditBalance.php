@@ -16,19 +16,37 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controlador para la lista de Atributo
+ * Controlador para la edición de un registro del modelo Balance
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
+ * @author Fco. Antonio Moreno Pérez
  */
-class ListAtributo extends ExtendedController\ListController
+class EditBalance extends ExtendedController\EditController
 {
+    /**
+     * EditBalance constructor.
+     *
+     * @param Base\Cache $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog $miniLog
+     * @param string $className
+     */
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    {
+        parent::__construct($cache, $i18n, $miniLog, $className);
+
+        // Establecemos el modelo de datos
+        $this->modelName = 'FacturaScripts\Core\Model\Balance';
+    }
+
     /**
      * Devuelve los datos básicos de la página
      *
@@ -37,23 +55,11 @@ class ListAtributo extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Atributos';
-        $pagedata['icon'] = 'fa-sliders';
-        $pagedata['menu'] = 'warehouse';
+        $pagedata['title'] = 'balance';
+        $pagedata['menu'] = 'accounting';
+        $pagedata['icon'] = 'fa-clipboard';
+        $pagedata['showonmenu'] = false;
 
         return $pagedata;
-    }
-
-    /**
-     * Procedimiento para insertar vistas en el controlador
-     */
-    protected function createViews()
-    {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\Atributo', $className);
-        $this->addSearchFields($className, ['nombre', 'codatributo']);
-
-        $this->addOrderBy($className, 'codatributo', 'code');
-        $this->addOrderBy($className, 'nombre', 'name');
     }
 }
