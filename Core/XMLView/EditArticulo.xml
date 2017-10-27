@@ -103,7 +103,7 @@
             <column name="pvp" numcolumns="3" order="130">
                 <widget type="number" fieldname="pvp"/>
             </column>
-            <column name="codimpuesto" numcolumns="3" order="140">
+            <column name="codimpuesto" title="tax" numcolumns="3" order="140">
                 <widget type="select" fieldname="codimpuesto">
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
                 </widget>

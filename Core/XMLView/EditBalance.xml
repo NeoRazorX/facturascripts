@@ -29,7 +29,7 @@
                 <widget type="text" fieldname="codbalance" onclick="EditBalance" />
             </column>           
             <column name="naturaleza" title="Nature" numcolumns="2" order="110">
-                <widget type="select" fieldname="tipoidfiscal">
+                <widget type="select" fieldname="naturaleza">
                     <values title="A = Activo">A</values>
                     <values title="P = Pasivo">P</values>
                     <values title="PG = Pérdidas y ganancias">PG</values>
