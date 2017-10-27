@@ -70,6 +70,7 @@
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 {% from 'Macro/Utils.html' import exportData as exportData %}
 {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
+{% from 'Macro/BaseController.html' import rowHeaderForEditView as rowHeaderForEditView %}
 
 <!-- Aux Objects -->
 {% set model = fsc.view.getModel() %}
@@ -136,25 +137,7 @@
 
                     <div class="card-body">
                         <!-- Statistical buttons bar -->
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="btn-toolbar pull-right" role="toolbar">
-                                    <div class="btn-group btn-group-lg" role="group">
-                                        {% set header = fsc.view.getRow('header') %}
-                                        {% if header is not empty %}
-                                        {% for button in header.options %}
-                                        <button type="button" class="btn btn-default" onclick="{{ button.onclick }}">
-                                            <i class="fa {{ button.icon }} fa-lg pull-left"></i>
-                                            <div class="cust-text">
-                                                {{ i18n.trans(button.label) }} xxxx.xx €
-                                            </div>
-                                        </button>
-                                        {% endfor %}
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        {{ rowHeaderForEditView(_context, fsc.view) }}
 
                         <!-- Main Form -->
                         <div id="main_row" class="row">

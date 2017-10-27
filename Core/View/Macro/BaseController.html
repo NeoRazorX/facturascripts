@@ -1,5 +1,5 @@
 <!--
-    Genera el código para el desplegable de ordenación en los ListController
+    Generate the code for the sort dropdown in the ListController
 -->
 {% macro buttonOrderBy(context, view) %}
     <div class="col">
@@ -24,8 +24,35 @@
     </div>                            
 {% endmacro %}
 
+
 <!--
-    Genera el código para la vista List según las columnas indicadas
+    Generate the code for the row of statistical buttons
+-->
+{% macro rowHeaderForEditView(contex, view) %}
+    <div class="row" style="margin-top: -.5rem">
+        <div class="col-12">
+            <div class="btn-toolbar pull-right" role="toolbar" style="margin-bottom: 1rem">
+                <div class="btn-group btn-group-lg" role="group">
+                    {% set header = view.getRow('header') %}
+                    {% if header is not empty %}
+                    {% for button in header.options %}
+                    <button type="button" class="btn btn-light" onclick="{{ button.onclick }}" style="margin-right: 5px;">
+                        <i class="fa {{ button.icon }} fa-lg pull-left"></i>
+                        <div class="cust-text">
+                            {{ contex.i18n.trans(button.label) }} {{ attribute(contex.fsc, button.calculateby, [view])  }}
+                        </div>
+                    </button>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+
+<!--
+    Generate the code for the List view according to the indicated columns
 -->
 {% macro columnsForListView(context, view) %}
     {% set cols = (view.getColumns()|length)+1 %}
@@ -83,9 +110,10 @@
     </table>
 {% endmacro %}
 
+
 <!--
-    Genera el código para la vista Edit según las columnas indicadas
-    (con o sin formulario)
+    Generate the code for the Edit view according to the indicated columns
+    (with or without form)
 -->
 {% macro columnsForEditView(context, view, model, withForm) %}
     {% set keyValue = context.fsc.getFieldValue(model, model.primaryColumn()) %}
@@ -145,8 +173,9 @@
     {% endif %}
 {% endmacro %}
 
+
 <!--
-    Genera el código para la vista EditList según las columnas indicadas
+    Generate the code for the EditList view according to the indicated columns
 -->
 {% macro columnsForEditListView(context, view) %}
     {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
@@ -169,6 +198,10 @@
     </div>
 {% endmacro %}
 
+
+<!--
+    Generates the code for a Select filter in a ListController
+-->
 {% macro filterForSelectInput(context, key, filter) %}
     {% set any = context.i18n.trans('any') %}
 
@@ -187,6 +220,10 @@
     </div>
 {% endmacro %}
 
+
+<!--
+    Generates the code for a Checkbox filter in a ListController
+-->
 {% macro filterForCheckBoxInput(context, key, filter) %}
     <div class="col-md-2">
         <div class="form-check mb-2 mb-sm-0">
@@ -203,6 +240,10 @@
     </div>
 {% endmacro %}
 
+
+<!--
+    Generate the code for a Text filter in a ListController
+-->
 {% macro filterForTextInput(context, key, filter) %}
     <div class="col-md-2">
         <div class="input-group">                                                                

@@ -69,6 +69,7 @@
 {% from 'Macro/BaseController.html' import columnsForListView as columnsForListView %}
 {% from 'Macro/BaseController.html' import columnsForEditListView as columnsForEditListView %}
 {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
+{% from 'Macro/BaseController.html' import rowHeaderForEditView as rowHeaderForEditView %}
 
 {# -- Main Body -- #}
 <div class="container-fluid">
@@ -131,6 +132,9 @@
                             {% endif %}
                             
                             {% if viewType == 'EditView' %}
+                                <!-- Statistical buttons bar -->
+                                {{ rowHeaderForEditView(_context, view) }}
+                                <!-- Main Form -->
                                 {% set model = view.getModel() %}
                                 {{ columnsForEditView(_context, view, model, TRUE) }}
                             {% endif %}                            
