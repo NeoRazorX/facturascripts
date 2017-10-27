@@ -35,7 +35,6 @@ if (!file_exists(__DIR__ . '/vendor')) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-
 use FacturaScripts\Core\Base\Translator;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -84,23 +83,35 @@ function getLanguages(&$i18n)
     return $languages;
 }
 
-    /**
-    * Timezones list with GMT offset
-    * 
-    * @return array
-    * @link http://stackoverflow.com/a/9328760
-    */
-    function get_timezone_list()
-    {
-        $zones_array = array();
-        $timestamp = time();
-        foreach (timezone_identifiers_list() as $key => $zone) {
-            date_default_timezone_set($zone);
-            $zones_array[$key]['zone'] = $zone;
-            $zones_array[$key]['diff_from_GMT'] = 'UTC/GMT ' . date('P', $timestamp);
-        }
-        return $zones_array;
+/**
+ * Devuelve el lenguaje del usuario para mostrar en el selector el idioma correcto
+ * para la instalación
+ * @return string
+ */
+function getUserLanguage()
+{
+    $dataLanguage = explode(';', \filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'));
+    $userLanguage = explode(',', $dataLanguage[0])[0];
+    return str_replace('-', '_', $userLanguage);
+}
+
+/**
+ * Timezones list with GMT offset
+ * 
+ * @return array
+ * @link http://stackoverflow.com/a/9328760
+ */
+function get_timezone_list()
+{
+    $zones_array = array();
+    $timestamp = time();
+    foreach (timezone_identifiers_list() as $key => $zone) {
+        date_default_timezone_set($zone);
+        $zones_array[$key]['zone'] = $zone;
+        $zones_array[$key]['diff_from_GMT'] = 'UTC/GMT ' . date('P', $timestamp);
     }
+    return $zones_array;
+}
 
 /**
  * Se intenta realizar la conexión a la base de datos,
@@ -303,7 +314,7 @@ function installerMain()
     } elseif (filter_input(INPUT_GET, 'fs_lang')) {
         $i18n = new Translator(__DIR__, filter_input(INPUT_GET, 'fs_lang'));
     } else {
-        $i18n = new Translator(__DIR__);
+        $i18n = new Translator(__DIR__, getUserLanguage());
     }
 
     searchErrors($errors, $i18n);
@@ -315,7 +326,7 @@ function installerMain()
             return 0;
         }
     }
-    
+
     /// empaquetamos las variables a pasar el motor de plantillas
     $templateVars = [
         'errors' => $errors,

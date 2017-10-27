@@ -1,3 +1,4 @@
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/NeoRazorX/facturascripts/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/NeoRazorX/facturascripts/?branch=master)
 # FacturaScripts
 *Software de facturación y contabilidad para pymes, fácil, libre y con actualizaciones constantes. Es compatible con FacturaLux, Abanq y Eneboo. Es software libre bajo licencia GNU/LGPL.*
 

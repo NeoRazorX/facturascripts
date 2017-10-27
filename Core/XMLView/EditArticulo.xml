@@ -26,59 +26,49 @@
         <group name="data" numcolumns="2">
             <column name="referencia" title="Referencia" numcolumns="12" order="100">
                 <widget type="text" fieldname="referencia" maxlength="18" required="true" />
-            </column>            
+            </column>
             <column name="tipo" numcolumns="12" order="110">
                 <widget type="select" fieldname="tipo">
                     <values title="Producto simple"></values>
                 </widget>
             </column>
-        </group>           
+        </group>
         <group name="descripcion" numcolumns="10">
-            <column name="description" numcolumns="6" order="110">
+            <column name="description" numcolumns="12" order="110">
                 <widget type="textarea" fieldname="descripcion"  required="true" />
-            </column>   
-            <column name="imagen" numcolumns="6" order="120">
-                <!--
-                                   **
-                                  * Aqui en este campo al poner imagen, deja de mostrar la vista desde aqui por eso es el motivo de poner un churro
-                                 * debido a las prisas no me he puesto a investigar el por que.
-                                 ** 
-                               -->
-               <widget type="text" fieldname="cvzczxc" icon="fa-image" />
-           </column>   
-                      
+            </column>
         </group>
         <group name="varios" numcolumns="12">
             <column name="codfamilia" numcolumns="3" order="100">
                 <widget type="select" fieldname="codfamilia">
-                   <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
+                    <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
                 </widget>
-            </column>             
+            </column>
             <column name="codfabricante" numcolumns="3" order="110">
                 <widget type="select" fieldname="codfabricante">
-                   <values source="fabricantes" fieldcode="codfabricante" fieldtitle="nombre"></values>
+                    <values source="fabricantes" fieldcode="codfabricante" fieldtitle="nombre"></values>
                 </widget>
-            </column>      
-             <column name="codbarras" numcolumns="2" order="130">
+            </column>
+            <column name="codbarras" numcolumns="2" order="130">
                 <widget type="text"  fieldname="codbarras"/>
-            </column>  
+            </column>
             <column name="partnumber" numcolumns="2" order="140">
                 <widget type="text" fieldname="partnumber"/>
-            </column>   
+            </column>
             <column name="equivalencia" numcolumns="2" order="150">
                 <widget type="text" fieldname="equivalencia"/>
-            </column> 
+            </column>
         </group>
         <group name="stock" numcolumns="4">
-             <column name="stockfis" numcolumns="4" order="100">
+            <column name="stockfis" numcolumns="4" order="100">
                 <widget type="number" fieldname="stockfis" readonly="readonly"/>
-            </column>    
+            </column>
             <column name="stockmin" numcolumns="4" order="100">
                 <widget type="number" fieldname="stockmin"/>
-            </column>    
+            </column>
             <column name="stockmax" numcolumns="4" order="210">
                 <widget type="number" fieldname="stockmax"/>
-            </column>         
+            </column>
         </group>
         <group name="vacio" numcolumns="3">
              
@@ -86,39 +76,38 @@
         <group name="option" numcolumns="5">
             <column name="nostock" numcolumns="6" order="100">
                 <widget type="checkbox" fieldname="nostock" />
-            </column>     
+            </column>
             <column name="secompra" numcolumns="6" order="140">
                 <widget type="checkbox" fieldname="secompra" />
-            </column>     
+            </column>
             <column name="sevende" numcolumns="6" order="120">
                 <widget type="checkbox" fieldname="sevende" />
             </column>
-              <column name="publico" numcolumns="6" order="130">
+            <column name="publico" numcolumns="6" order="130">
                 <widget type="checkbox" fieldname="publico" />
             </column> 
-             <column name="trazabilidad" numcolumns="6" order="110">
+            <column name="trazabilidad" numcolumns="6" order="110">
                 <widget type="checkbox" fieldname="trazabilidad"/>
             </column>  
-               <column name="bloqueado" numcolumns="6" order="120">
+            <column name="bloqueado" numcolumns="6" order="120">
                 <widget type="checkbox" fieldname="bloqueado"/>
-            </column>               
+            </column>
         </group>  
-           <group name="precios" numcolumns="12">
-             <column name="preciocoste" numcolumns="3" order="100">
+        <group name="precios" numcolumns="12">
+            <column name="preciocoste" numcolumns="3" order="100">
                 <widget type="number" fieldname="preciocoste" readonly="readonly"/>
-            </column>    
+            </column>
             <column name="costemedio" numcolumns="3" order="120">
                 <widget type="number" fieldname="costemedio" readonly="readonly"/>
-            </column>    
+            </column>
             <column name="pvp" numcolumns="3" order="130">
                 <widget type="number" fieldname="pvp"/>
-            </column> 
+            </column>
             <column name="codimpuesto" numcolumns="3" order="140">
-                 <widget type="select" fieldname="codimpuesto">
-                    <values source="impuestos" fieldcode="codimpuesto" fieldtitle="iva"></values>
-                 </widget>
-            </column>         
+                <widget type="select" fieldname="codimpuesto">
+                    <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
         </group>
     </columns>
 </view>
-

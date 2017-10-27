@@ -56,6 +56,7 @@ class EditAgenciaTransporte extends ExtendedController\EditController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'carrier';
+        $pagedata['menu'] = 'admin';
         $pagedata['icon'] = 'fa-truck';
         $pagedata['showonmenu'] = false;
 

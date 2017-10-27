@@ -38,7 +38,7 @@ class ListAtributo extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'Atributos';
-        $pagedata['icon'] = 'fa-list';
+        $pagedata['icon'] = 'fa-sliders';
         $pagedata['menu'] = 'warehouse';
 
         return $pagedata;
