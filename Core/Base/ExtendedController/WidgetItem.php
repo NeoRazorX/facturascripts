@@ -25,7 +25,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class WidgetItem
+abstract class WidgetItem
 {
 
     /**
@@ -83,6 +83,9 @@ class WidgetItem
      * @var array
      */
     public $options;
+    
+    abstract public function getListHTML($value);
+    abstract public function getEditHTML($value);
 
     /**
      * Constructor dinámico de la clase.

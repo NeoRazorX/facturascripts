@@ -211,13 +211,13 @@ abstract class ListController extends Base\Controller
         return false;
     }
 
-    private function getTExtColumns($view, $maxColumns)
+    private function getTextColumns($view, $maxColumns)
     {
         $result = [];
         foreach ($view->getColumns() as $col) {
             if ($col->display !== 'none' && $col->widget->type === 'text') {
-                $cols[] = $col->widget->fieldName;
-                if (count($cols) === $maxColumns) {
+                $result[] = $col->widget->fieldName;
+                if (count($result) === $maxColumns) {
                     break;
                 }
             }
