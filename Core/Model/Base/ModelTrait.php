@@ -94,6 +94,12 @@ trait ModelTrait
      */
     protected $miniLog;
 
+    /** 
+     * Comprueba que una determinada tabla existe, y si no la crea desde su defición xml
+     * @var checkTable
+     */
+    protected $checkTable;
+    
     /**
      * Constructor por defecto.
      *
@@ -119,7 +125,7 @@ trait ModelTrait
         $this->defaultItems = new DefaultItems();
         $this->i18n = new Translator();
         $this->miniLog = new MiniLog();
-
+        $this->checkTable= new checkTable();
         if (self::$checkedTables === null) {
             self::$checkedTables = $this->cache->get('fs_checked_tables');
             if (self::$checkedTables === null) {
@@ -129,7 +135,7 @@ trait ModelTrait
             self::$modelName = get_class($this);
         }
 
-        if ($this->tableName() !== '' && !in_array($this->tableName(), self::$checkedTables, false) && $this->checkTable($this->tableName())) {
+        if ($this->tableName() !== '' && !in_array($this->tableName(), self::$checkedTables, false) && $this->checkTable->checkTable($this->tableName())) {
             $this->miniLog->debug($this->i18n->trans('table-checked', [$this->tableName()]));
             self::$checkedTables[] = $this->tableName();
             $this->cache->set('fs_checked_tables', self::$checkedTables);
@@ -140,22 +146,7 @@ trait ModelTrait
         }
     }
 
-    /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        if (method_exists(__CLASS__, 'cleanCache')) {
-            $this->cleanCache();
-        }
-
-        return '';
-    }
-
+    
     /**
      * Devuelve el nombre de la clase del modelo
      *
@@ -494,124 +485,9 @@ trait ModelTrait
         return $this->dataBase->escapeString($str);
     }
 
-    /**
-     * Comprueba y actualiza la estructura de la tabla si es necesario
-     *
-     * @param string $tableName
-     *
-     * @return bool
-     */
-    protected function checkTable($tableName)
-    {
-        $done = true;
-        $sql = '';
-        $xmlCols = [];
-        $xmlCons = [];
+   
 
-        if ($this->getXmlTable($tableName, $xmlCols, $xmlCons)) {
-            if ($this->dataBase->tableExists($tableName)) {
-                if (!$this->dataBase->checkTableAux($tableName)) {
-                    $this->miniLog->critical($this->i18n->trans('error-to-innodb'));
-                }
-
-                /**
-                 * Si hay que hacer cambios en las restricciones, eliminamos todas las restricciones,
-                 * luego añadiremos las correctas. Lo hacemos así porque evita problemas en MySQL.
-                 */
-                $dbCons = $this->dataBase->getConstraints($tableName);
-                $sql2 = $this->dataBase->compareConstraints($tableName, $xmlCons, $dbCons, true);
-                if ($sql2 !== '') {
-                    if (!$this->dataBase->exec($sql2)) {
-                        $this->miniLog->critical($this->i18n->trans('check-table', [$tableName]));
-                    }
-
-                    /// leemos de nuevo las restricciones
-                    $dbCons = $this->dataBase->getConstraints($tableName);
-                }
-
-                /// comparamos las columnas
-                $dbCols = $this->dataBase->getColumns($tableName);
-                $sql .= $this->dataBase->compareColumns($tableName, $xmlCols, $dbCols);
-
-                /// comparamos las restricciones
-                $sql .= $this->dataBase->compareConstraints($tableName, $xmlCons, $dbCons);
-            } else {
-                /// generamos el sql para crear la tabla
-                $sql .= $this->dataBase->generateTable($tableName, $xmlCols, $xmlCons);
-                $sql .= $this->install();
-            }
-            if ($sql !== '' && !$this->dataBase->exec($sql)) {
-                $this->miniLog->critical($this->i18n->trans('check-table', [$tableName]));
-                $this->cache->clear();
-                $done = false;
-            }
-        } else {
-            $this->miniLog->critical($this->i18n->trans('error-on-xml-file'));
-            $done = false;
-        }
-
-        return $done;
-    }
-
-    /**
-     * Obtiene las columnas y restricciones del fichero xml para una tabla
-     *
-     * @param string $tableName
-     * @param array  $columns
-     * @param array  $constraints
-     *
-     * @return bool
-     */
-    protected function getXmlTable($tableName, &$columns, &$constraints)
-    {
-        $return = false;
-
-        $filename = FS_FOLDER . '/Dinamic/Table/' . $tableName . '.xml';
-        if (file_exists($filename)) {
-            $xml = simplexml_load_string(file_get_contents($filename, FILE_USE_INCLUDE_PATH));
-            if ($xml) {
-                if ($xml->columna) {
-                    $key = 0;
-                    foreach ($xml->columna as $col) {
-                        $columns[$key]['nombre'] = (string) $col->nombre;
-                        $columns[$key]['tipo'] = (string) $col->tipo;
-
-                        $columns[$key]['nulo'] = 'YES';
-                        if ($col->nulo && strtolower($col->nulo) === 'no') {
-                            $columns[$key]['nulo'] = 'NO';
-                        }
-
-                        if ($col->defecto === '') {
-                            $columns[$key]['defecto'] = null;
-                        } else {
-                            $columns[$key]['defecto'] = (string) $col->defecto;
-                        }
-
-                        ++$key;
-                    }
-
-                    /// debe de haber columnas, sino es un fallo
-                    $return = true;
-                }
-
-                if ($xml->restriccion) {
-                    $key = 0;
-                    foreach ($xml->restriccion as $col) {
-                        $constraints[$key]['nombre'] = (string) $col->nombre;
-                        $constraints[$key]['consulta'] = (string) $col->consulta;
-                        ++$key;
-                    }
-                }
-            } else {
-                $this->miniLog->critical($this->i18n->trans('error-reading-file', [$filename]));
-            }
-        } else {
-            $this->miniLog->critical($this->i18n->trans('file-not-found', [$filename]));
-        }
-
-        return $return;
-    }
-
+   
     /**
      * Lee el registro cuya columna primaria corresponda al valor $cod
      * o el primero que cumple la condición indicada
