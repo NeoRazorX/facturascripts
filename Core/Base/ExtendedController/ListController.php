@@ -263,23 +263,7 @@ abstract class ListController extends Base\Controller
         }
 
         foreach ($this->views[$this->active]->getFilters() as $key => $filter) {
-            if ($filter->value != '') {
-                switch ($filter->type) {
-                    case 'select':
-                        // we use the key value because the field value indicate is the text field of the source data
-                        $result[] = new DataBase\DataBaseWhere($key, $filter->value);
-                        break;
-
-                    case 'checkbox':
-                        $checked = (bool) (($filter->options['inverse']) ? !$filter->value : $filter->value);
-                        $result[] = new DataBase\DataBaseWhere($filter->options['field'], $checked);
-                        break;
-
-                    default:
-                        $operator = $filter->options['operator'];
-                        $result[] = new DataBase\DataBaseWhere($filter->options['field'], $filter->value, $operator);
-                }
-            }
+            $filter->getDataBaseWhere($result, $key);
         }
 
         return $result;
@@ -358,12 +342,18 @@ abstract class ListController extends Base\Controller
         $this->views[$indexView]->addFilter($key, ListFilter::newCheckboxFilter($field, $value, $label, $inverse));
     }
 
-    private function addFilterFromType($indexView, $key, $type, $label, $field, $operator)
+    private function addFilterFromType($indexView, $key, $type, $label, $field)
     {
-        $value = $this->request->get($key);
-        $operatorValue = $this->request->get($key . '-operator', $operator);
-        $this->views[$indexView]->addFilter(
-            $key, ListFilter::newStandardFilter($type, $field, $value, $label, $operatorValue));
+        $config = [
+            'field' => $field,
+            'label' => $label,
+            'valueFrom' => $this->request->get($key . '-from'),
+            'operatorFrom' => $this->request->get($key . '-from-operator', '>='),
+            'valueTo' => $this->request->get($key . '-to'),
+            'operatorTo' => $this->request->get($key . '-to-operator', '<=')
+        ];
+        
+        $this->views[$indexView]->addFilter($key, ListFilter::newStandardFilter($type, $config));
     }
 
     /**
@@ -375,9 +365,9 @@ abstract class ListController extends Base\Controller
      * @param string $field   (Field of the table to apply filter)
      * @param string $operator
      */
-    protected function addFilterDatePicker($indexView, $key, $label, $field = '', $operator = '=')
+    protected function addFilterDatePicker($indexView, $key, $label, $field = '')
     {
-        $this->addFilterFromType($indexView, $key, 'datepicker', $label, $field, $operator);
+        $this->addFilterFromType($indexView, $key, 'datepicker', $label, $field);
     }
 
     /**
@@ -389,9 +379,9 @@ abstract class ListController extends Base\Controller
      * @param string $field   (Field of the table to apply filter)
      * @param string $operator
      */
-    protected function addFilterText($indexView, $key, $label, $field = '', $operator = '=')
+    protected function addFilterText($indexView, $key, $label, $field = '')
     {
-        $this->addFilterFromType($indexView, $key, 'text', $label, $field, $operator);
+        $this->addFilterFromType($indexView, $key, 'text', $label, $field);
     }
 
     /**
@@ -403,9 +393,9 @@ abstract class ListController extends Base\Controller
      * @param string $field   (Field of the table to apply filter)
      * @param string $operator
      */
-    protected function addFilterNumber($indexView, $key, $label, $field = '', $operator = '=')
+    protected function addFilterNumber($indexView, $key, $label, $field = '')
     {
-        $this->addFilterFromType($indexView, $key, 'number', $label, $field, $operator);
+        $this->addFilterFromType($indexView, $key, 'number', $label, $field);
     }
 
     /**
@@ -472,9 +462,7 @@ abstract class ListController extends Base\Controller
             }
 
             foreach ($this->views[$this->active]->getFilters() as $key => $filter) {
-                if ($filter->value !== '') {
-                    $result .= '&' . $key . '=' . $filter->value;
-                }
+                $result .= $filter->getParams($key);
             }
         }
 
