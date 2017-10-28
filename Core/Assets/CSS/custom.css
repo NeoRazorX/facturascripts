@@ -1,6 +1,6 @@
 /*!
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,4 +22,13 @@
 
 .clickable, .clickableRow:hover {
     cursor: pointer;
+}
+
+.custom-checkbox-control {
+    position: relative;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    min-height: 1.2rem;
+    padding-left: 1.5rem;
+    margin-right: 1rem;
 }

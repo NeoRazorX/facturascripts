@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,20 +16,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
  * Una dirección de un cliente. Puede tener varias.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class DireccionCliente
 {
 
     use Base\ModelTrait,
         Base\Direccion {
-
-        save as private traitSave;
         clear as private traitClear;
     }
 
@@ -50,22 +49,32 @@ class DireccionCliente
     /**
      * TRUE -> esta dirección es la principal para envíos.
      *
-     * @var
+     * @var bool
      */
     public $domenvio;
 
     /**
      * TRUE -> esta dirección es la principal para facturación.
      *
-     * @var
+     * @var bool
      */
     public $domfacturacion;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'dirclientes';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'id';
@@ -83,10 +92,30 @@ class DireccionCliente
         $this->descripcion = 'Principal';
         $this->fecha = date('d-m-Y');
     }
-    
+
+    /**
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     *
+     * @return bool
+     */
     public function test()
     {
         return $this->testDireccion();
+    }
+
+    /**
+     * Persiste los datos en la base de datos, modificando si existía el registro
+     * o insertando en caso de no existir la clave primaria.
+     *
+     * @return bool
+     */
+    private function saveData()
+    {
+        if ($this->exists()) {
+            return $this->saveUpdate();
+        }
+
+        return $this->saveInsert();
     }
 
     /**
@@ -100,32 +129,24 @@ class DireccionCliente
         $this->fecha = date('d-m-Y');
 
         if ($this->test()) {
-            if ($this->exists()) {
-                /// ¿Desmarcamos las demás direcciones principales?
-                $sql = '';
-                $where = 'WHERE codcliente = ' . $this->var2str($this->codcliente);
-                if ($this->domenvio) {
-                    $sql .= 'UPDATE ' . $this->tableName() . ' SET domenvio = false ' . $where . ' AND domenvio = TRUE;';
-                }
-                if ($this->domfacturacion) {
-                    $sql .= 'UPDATE ' . $this->tableName() . ' SET domfacturacion = false ' . $where . ' AND domfacturacion = TRUE;';
-                }
-
-                // Sólo actualizamos el registro de dirección
-                if (empty($sql)) {
-                    return $this->saveUpdate();
-                }
-                
-                // Actualizamos el registro de dirección y activamos como dirección principal
-                $this->dataBase->beginTransaction();
-                $allOK = $this->dataBase->exec($sql);
-                if ($allOK) {
-                    $allOK = $this->saveUpdate() ? $this->dataBase->commit() : $this->dataBase->rollback();
-                }
-                return $allOK;
+            /// ¿Desmarcamos las demás direcciones principales?
+            $sql = '';
+            $where = 'WHERE codcliente = ' . $this->var2str($this->codcliente);
+            if ($this->domenvio) {
+                $sql .= 'UPDATE ' . $this->tableName() . ' SET domenvio = false ' . $where . ' AND domenvio = TRUE;';
+            }
+            if ($this->domfacturacion) {
+                $sql .= 'UPDATE ' . $this->tableName() . ' SET domfacturacion = false ' . $where . ' AND domfacturacion = TRUE;';
             }
 
-            return $this->saveInsert();
+            if (empty($sql)) {
+                return $this->saveData();
+            }
+
+            $this->dataBase->beginTransaction();
+            if ($this->dataBase->exec($sql)) {
+                return $this->saveData() ? $this->dataBase->commit() : $this->dataBase->rollback();
+            }
         }
 
         return false;

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
 use Symfony\Component\HttpFoundation\Response;
@@ -23,11 +24,10 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Description of App
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class AppAPI extends App
 {
-
     /**
      * Ejecuta la API.
      *
@@ -42,7 +42,8 @@ class AppAPI extends App
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->response->setContent(json_encode(['error' => 'DB-ERROR']));
             return false;
-        } elseif ($this->isIPBanned()) {
+        }
+        if ($this->isIPBanned()) {
             $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
             $this->response->setContent(json_encode(['error' => 'IP-BANNED']));
             return false;
@@ -51,6 +52,11 @@ class AppAPI extends App
         return $this->selectVersion();
     }
 
+    /**
+     * Selecciona la versión de API si está soportada
+     *
+     * @return bool
+     */
     private function selectVersion()
     {
         $version = $this->request->get('v', '');
@@ -63,6 +69,11 @@ class AppAPI extends App
         return true;
     }
 
+    /**
+     * Selecciona recurso
+     *
+     * @return bool
+     */
     private function selectResource()
     {
         $map = $this->getResourcesMap();
@@ -83,6 +94,13 @@ class AppAPI extends App
         return $this->processResourceParam($modelName, $cod);
     }
 
+    /**
+     * Procesa recurso, permitiendo hacer POST/PUT/DELETE/GET ALL
+     *
+     * @param string $modelName
+     *
+     * @return bool
+     */
     private function processResource($modelName)
     {
         try {
@@ -112,13 +130,21 @@ class AppAPI extends App
 
             $this->response->setContent(json_encode($data));
             return true;
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->response->setContent(json_encode(['error' => 'API-ERROR']));
             return false;
         }
     }
 
+    /**
+     * Procesa recurso con parametro
+     *
+     * @param string $modelName
+     * @param string $cod
+     *
+     * @return bool
+     */
     private function processResourceParam($modelName, $cod)
     {
         try {
@@ -145,26 +171,31 @@ class AppAPI extends App
 
             $this->response->setContent(json_encode($data));
             return true;
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->response->setContent(json_encode(['error' => 'API-ERROR']));
             return false;
         }
     }
 
+    /**
+     * Obtiene mapa de recursos
+     *
+     * @return array
+     */
     private function getResourcesMap()
     {
         $resources = [];
-        foreach (scandir($this->folder . '/Dinamic/Model') as $fName) {
+        foreach (scandir($this->folder . '/Dinamic/Model', SCANDIR_SORT_ASCENDING) as $fName) {
             if (substr($fName, -4) == '.php') {
                 $modelName = substr($fName, 0, -4);
 
                 /// convertimos en plural
                 if (substr($modelName, -1) == 's') {
                     $plural = strtolower($modelName);
-                } else if (substr($modelName, -3) == 'ser' || substr($modelName, -4) == 'tion') {
+                } elseif (substr($modelName, -3) == 'ser' || substr($modelName, -4) == 'tion') {
                     $plural = strtolower($modelName) . 's';
-                } else if (in_array(substr($modelName, -1), ['a', 'e', 'i', 'o', 'u', 'k'])) {
+                } elseif (in_array(substr($modelName, -1), ['a', 'e', 'i', 'o', 'u', 'k'])) {
                     $plural = strtolower($modelName) . 's';
                 } else {
                     $plural = strtolower($modelName) . 'es';
@@ -177,6 +208,11 @@ class AppAPI extends App
         return $resources;
     }
 
+    /**
+     * Expone recurso
+     *
+     * @param array $map
+     */
     private function exposeResources(&$map)
     {
         $json = ['resources' => []];

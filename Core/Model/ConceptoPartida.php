@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Model;
 /**
  * Un concepto predefinido para una partida (la línea de un asiento contable).
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class ConceptoPartida
 {
@@ -36,24 +36,34 @@ class ConceptoPartida
     public $idconceptopar;
 
     /**
-     * TODO
+     * Concepto de la partida
      *
      * @var string
      */
     public $concepto;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'co_conceptospar';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'idconceptopar';
     }
 
     /**
-     * TODO
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
      *
      * @return bool
      */

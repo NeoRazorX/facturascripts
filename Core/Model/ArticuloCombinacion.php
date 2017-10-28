@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,7 +32,7 @@ namespace FacturaScripts\Core\Model;
  * pero uno con nombreatributo talla y valor l, y el otro con nombreatributo color
  * y valor blanco.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class ArticuloCombinacion
 {
@@ -43,7 +43,7 @@ class ArticuloCombinacion
     /**
      * Clave primaria. Identificador de este par atributo-valor, no de la combinación.
      *
-     * @var
+     * @var int
      */
     public $id;
 
@@ -51,7 +51,7 @@ class ArticuloCombinacion
      * Identificador de la combinación.
      * Ten en cuenta que la combinación es la suma de todos los pares atributo-valor.
      *
-     * @var
+     * @var string
      */
     public $codigo;
 
@@ -59,71 +59,81 @@ class ArticuloCombinacion
      * Segundo identificador para la combinación, para facilitar la sincronización
      * con woocommerce o prestashop.
      *
-     * @var
+     * @var string
      */
     public $codigo2;
 
     /**
      * Referencia del artículos relacionado.
      *
-     * @var
+     * @var string
      */
     public $referencia;
 
     /**
      * ID del valor del atributo.
      *
-     * @var
+     * @var int
      */
     public $idvalor;
 
     /**
      * Nombre del atributo.
      *
-     * @var
+     * @var string
      */
     public $nombreatributo;
 
     /**
      * Valor del atributo.
      *
-     * @var
+     * @var string
      */
     public $valor;
 
     /**
      * Referencia de la propia combinación.
      *
-     * @var
+     * @var string
      */
     public $refcombinacion;
 
     /**
      * Código de barras de la combinación.
      *
-     * @var
+     * @var string
      */
     public $codbarras;
 
     /**
      * Impacto en el precio del artículo.
      *
-     * @var
+     * @var float|int
      */
     public $impactoprecio;
 
     /**
      * Stock físico de la combinación.
      *
-     * @var
+     * @var float|int
      */
     public $stockfis;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'articulo_combinaciones';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'id';
@@ -186,7 +196,7 @@ class ArticuloCombinacion
      *
      * @param string $ref
      *
-     * @return array
+     * @return self[]
      */
     public function allFromRef($ref)
     {
@@ -210,7 +220,7 @@ class ArticuloCombinacion
      *
      * @param string $cod
      *
-     * @return array
+     * @return self[]
      */
     public function allFromCodigo($cod)
     {
@@ -234,7 +244,7 @@ class ArticuloCombinacion
      *
      * @param string $cod
      *
-     * @return array
+     * @return self[]
      */
     public function allFromCodigo2($cod)
     {
@@ -285,7 +295,7 @@ class ArticuloCombinacion
      *
      * @param string $query
      *
-     * @return array
+     * @return self[]
      */
     public function search($query = '')
     {
@@ -313,7 +323,7 @@ class ArticuloCombinacion
     private function saveInsert()
     {
         if ($this->codigo === null) {
-            $this->codigo = $this->getNewCodigo();
+            $this->codigo = (string) $this->getNewCodigo();
         }
 
         return $this->saveInsertTrait();

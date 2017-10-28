@@ -49,7 +49,7 @@
 
             if (items.length > 0) {
                 $("#v-pills-tab").append("<a class='nav-link' id='v-pills-{{ key }}-tab' data-toggle='pill' href='#v-pills-{{ key }}' role='tab' aria-controls='v-pills-{{ key }}' aria-expanded='true'>\n\
-                    <i class='fa {{ section.icon }} fa-fw'></i>&nbsp; {{ section.title }}&nbsp;\n\
+                    <i class='fa {{ section.icon }} fa-fw'></i>&nbsp; {{ i18n.trans(section.title) | capitalize }}&nbsp;\n\
                     <span class='badge badge-secondary'>" + (items.length - 1) + "</span>\n\
                 </a>");
                 var tableHTML = '';
@@ -92,7 +92,7 @@
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
                 {% if fsc.results['pages'] is not empty  %}
                 <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-paginas" role="tab" aria-controls="v-pills-paginas" aria-expanded="true">
-                    <i class="fa fa-mouse-pointer fa-fw"></i>&nbsp; {{ i18n.trans('pages') }}&nbsp;
+                    <i class="fa fa-mouse-pointer fa-fw"></i>&nbsp; {{ i18n.trans('pages') | capitalize }}&nbsp;
                     <span class='badge badge-secondary'>{{ fsc.results['pages']|length }}</span>
                 </a>
                 {% endif %}
@@ -106,23 +106,23 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>{{ i18n.trans('menu') }}</th>
+                                    <th>{{ i18n.trans('menu') | capitalize }}</th>
                                     <th></th>
-                                    <th>{{ i18n.trans('page') }}</th>
+                                    <th>{{ i18n.trans('page') | capitalize }}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for page in fsc.results['pages'] %}
                                 <tr class="clickableRow" data-href='{{ page.url() }}'>
-                                    <td class="text-capitalize">
-                                        {{ page.menu }}{% if page.submenu %} - {{ page.submenu }}{% endif %}
+                                    <td>
+                                        {{ i18n.trans(page.menu) | capitalize }}{% if page.submenu %} - {{ i18n.trans(page.submenu) | capitalize }}{% endif %}
                                     </td>
                                     <td class="text-right">
                                         {% if page.icon %}
                                         <i class="fa {{ page.icon }}"></i>
                                         {% endif %}
                                     </td>
-                                    <td>{{ page.title }}</td>
+                                    <td>{{ i18n.trans(page.title) | capitalize }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

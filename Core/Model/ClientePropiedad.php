@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,45 +22,55 @@ namespace FacturaScripts\Core\Model;
 /**
  * Description of cliente_propiedad
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class ClientePropiedad
 {
     use Base\ModelTrait;
 
     /**
-     * TODO
+     * Nombre del cliente
      *
      * @var string
      */
     public $name;
 
     /**
-     * TODO
+     * Código del cliente
      *
      * @var string
      */
     public $codcliente;
 
     /**
-     * TODO
+     * Nombre de la propiedad del cliente
      *
      * @var string
      */
     public $text;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'cliente_propiedades';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'name';
     }
 
     /**
-     * TODO
+     * Elimina la propidad del cliente de la base de datos.
      *
      * @return bool
      */
@@ -95,7 +105,7 @@ class ClientePropiedad
     }
 
     /**
-     * TODO
+     * Guardar array de propiedades del cliente
      *
      * @param string $cod
      * @param array  $values

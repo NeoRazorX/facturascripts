@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,12 +19,13 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * El cuarto nivel de un plan contable. Está relacionada con una única cuenta.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Subcuenta
 {
@@ -38,9 +39,9 @@ class Subcuenta
     public $idsubcuenta;
 
     /**
-     * TODO
+     * Código de subcuenta
      *
-     * @var float
+     * @var float|int
      */
     public $codsubcuenta;
 
@@ -52,80 +53,90 @@ class Subcuenta
     public $idcuenta;
 
     /**
-     * TODO
+     * Código de cuenta
      *
      * @var string
      */
     public $codcuenta;
 
     /**
-     * TODO
+     * Código de ejercicio
      *
      * @var string
      */
     public $codejercicio;
 
     /**
-     * TODO
+     * Código de divisa
      *
      * @var string
      */
     public $coddivisa;
 
     /**
-     * TODO
+     * Código de impuesto
      *
      * @var string
      */
     public $codimpuesto;
 
     /**
-     * TODO
+     * Descripción de la subcuenta.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * TODO
+     * Importe del Haber
      *
-     * @var float
+     * @var float|int
      */
     public $haber;
 
     /**
-     * TODO
+     * Importe del Debe
      *
-     * @var float
+     * @var float|int
      */
     public $debe;
 
     /**
-     * TODO
+     * Importe del Saldo
      *
-     * @var float
+     * @var float|int
      */
     public $saldo;
 
     /**
-     * TODO
+     * Importe del Recargo
      *
-     * @var float
+     * @var float|int
      */
     public $recargo;
 
     /**
-     * TODO
+     * Importe del Iva
      *
-     * @var float
+     * @var float|int
      */
     public $iva;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'co_subcuentas';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'idsubcuenta';
@@ -152,7 +163,7 @@ class Subcuenta
     }
 
     /**
-     * TODO
+     * Devuelve la tasa de conversión para la divisa
      *
      * @return int
      */
@@ -170,7 +181,7 @@ class Subcuenta
     }
 
     /**
-     * TODO
+     * Devuelve la cuenta
      *
      * @return bool|mixed
      */
@@ -182,7 +193,7 @@ class Subcuenta
     }
 
     /**
-     * TODO
+     * Devuelve el ejercicio
      *
      * @return bool|mixed
      */
@@ -194,7 +205,7 @@ class Subcuenta
     }
 
     /**
-     * TODO
+     * Devuelve todas las partidas de una subcuenta con offset
      *
      * @param int $offset
      *
@@ -208,7 +219,7 @@ class Subcuenta
     }
 
     /**
-     * TODO
+     * Devuelve todas las partidas de una subcuenta
      *
      * @return array
      */
@@ -220,7 +231,7 @@ class Subcuenta
     }
 
     /**
-     * TODO
+     * Cuenta las partidas de una subcuenta
      *
      * @return int
      */
@@ -232,7 +243,7 @@ class Subcuenta
     }
 
     /**
-     * TODO
+     * Devuelve los totales de una subcuenta
      *
      * @return array
      */
@@ -244,7 +255,7 @@ class Subcuenta
     }
 
     /**
-     * TODO
+     * Devuelve todas las subcuentas por código, código de ejercicio
      *
      * @param string $cod
      * @param string $codejercicio
@@ -282,15 +293,12 @@ class Subcuenta
                     return false;
                 }
 
-                $this->miniLog->alert('No se ha encontrado la cuenta equivalente a ' . $oldSc->codcuenta
-                    . ' en el ejercicio ' . $codejercicio
-                    . ' <a href="index.php?page=ContabilidadEjercicio&cod=' . $codejercicio
-                    . '">¿Has importado el plan contable?</a>');
+                $this->miniLog->alert($this->i18n->trans('equivalent-account-not-found', [$oldSc->codcuenta, $codejercicio, 'index.php?page=ContabilidadEjercicio&cod=' . $codejercicio]));
 
                 return false;
             }
 
-            $this->miniLog->alert('No se ha encontrado ninguna subcuenta equivalente a ' . $cod . ' para copiar.');
+            $this->miniLog->alert($this->i18n->trans('equivalent-subaccount-not-found', [$cod]));
 
             return false;
         }
@@ -322,17 +330,17 @@ class Subcuenta
     }
 
     /**
-     * TODO
+     * Devuelve si una subcuenta tiene saldo o no
      *
      * @return bool
      */
     public function tieneSaldo()
     {
-        return !$this->floatcmp($this->debe, $this->haber, FS_NF0, true);
+        return !static::floatcmp($this->debe, $this->haber, FS_NF0, true);
     }
 
     /**
-     * TODO
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
      *
      * @return bool
      */
@@ -361,13 +369,31 @@ class Subcuenta
         if ($limpiarCache) {
             $this->cleanCache();
         }
+        
+        if (strlen($this->codcuenta) === 0 || strlen($this->codejercicio) === 0) {
+            $this->miniLog->alert($this->i18n->trans('account-data-missing'));
+            return false;
+        }        
+        
+        $where = [
+            new DataBaseWhere('codejercicio', $this->codejercicio),
+            new DataBaseWhere('codcuenta', $this->codcuenta)
+        ];
 
-        if (strlen($this->codsubcuenta) > 0 && strlen($this->descripcion) > 0) {
-            return true;
+        $count = new Model\Cuenta();
+        if ($count->loadFromCode(NULL, $where) === FALSE) {
+            $this->miniLog->alert($this->i18n->trans('account-data-error'));
+            return false;         
         }
-        $this->miniLog->alert('Faltan datos en la subcuenta.');
-
-        return false;
+        
+        $this->idcuenta = $count->idcuenta;
+        
+        if (strlen($this->codsubcuenta) === 0 || strlen($this->descripcion) === 0) {
+            $this->miniLog->alert($this->i18n->trans('missing-data-subaccount'));
+            return false;
+        }
+        
+        return true;
     }
 
     /**
@@ -377,7 +403,7 @@ class Subcuenta
      * @param int    $idcuesp
      * @param string $codeje
      *
-     * @return array
+     * @return self[]
      */
     public function allFromCuentaesp($idcuesp, $codeje)
     {
@@ -397,11 +423,12 @@ class Subcuenta
     }
 
     /**
-     * TODO
+     * Devuelve un array con las combinaciones que contienen $query en su codsubcuenta
+     * o descripcion.
      *
      * @param string $query
      *
-     * @return array
+     * @return self[]
      */
     public function search($query)
     {

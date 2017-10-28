@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -52,11 +52,11 @@ trait BankAccount
     /**
      * Devuelve el CCC con o sin espacios.
      *
-     * @param boolean $espacios
+     * @param bool $espacios
      *
      * @return string
      */
-    public function getCcc($espacios = FALSE)
+    public function getCcc($espacios = false)
     {
         $ccc = str_replace(' ', '', $this->ccc);
         if ($espacios) {
@@ -72,16 +72,16 @@ trait BankAccount
     /**
      * Devuelve el IBAN con o sin espacios.
      *
-     * @param boolean $espacios
+     * @param bool $espacios
      *
      * @return string
      */
-    public function getIban($espacios = FALSE)
+    public function getIban($espacios = false)
     {
         $iban = str_replace(' ', '', $this->iban);
         if ($espacios) {
             $txt = '';
-            for ($i = 0; $i < strlen($iban); $i += 4) {
+            for ($i = 0; $i < $len = strlen($iban); $i += 4) {
                 $txt .= substr($iban, $i, 4) . ' ';
             }
 
@@ -131,7 +131,7 @@ trait BankAccount
             'U' => '30', 'V' => '31', 'W' => '32', 'X' => '33', 'Y' => '34', 'Z' => '35',
         ];
 
-        $dividendo = $ccc . $pesos[substr($pais, 0, 1)] . $pesos[substr($pais, 1, 1)] . '00';
+        $dividendo = $ccc . $pesos[$pais[0]] . $pesos[$pais[1]] . '00';
         $digitoControl = 98 - bcmod($dividendo, '97');
 
         if (strlen($digitoControl) == 1) {
@@ -152,8 +152,8 @@ trait BankAccount
     private function calcularDC($cadena, $pesos)
     {
         $totPeso = 0;
-        for ($i = 0; $i < strlen($cadena); ++$i) {
-            $val = intval(substr($cadena, $i, 1));
+        for ($i = 0; $i < $len = strlen($cadena); ++$i) {
+            $val = (int) $cadena[$i];
             $totPeso += ($pesos[$i] * $val);
         }
 
@@ -168,7 +168,7 @@ trait BankAccount
                 break;
         }
 
-        return strval($result);
+        return (string) $result;
     }
 
     /**
@@ -203,7 +203,7 @@ trait BankAccount
     public function verificarCCC($ccc)
     {
         if (strlen($ccc) != 20) {
-            return FALSE;
+            return false;
         }
 
         $entidad = substr($ccc, 0, 4);
@@ -223,7 +223,7 @@ trait BankAccount
     public function verificarIBAN($iban)
     {
         if (strlen($iban) != 24) {
-            return FALSE;
+            return false;
         }
 
         $codpais = substr($iban, 0, 2);

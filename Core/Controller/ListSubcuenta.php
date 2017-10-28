@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,23 +29,32 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListSubcuenta extends ExtendedController\ListController
 {
+    /**
+     * Devuelve los datos básicos de la página
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Subcuentas';
+        $pagedata['title'] = 'subaccounts';
         $pagedata['icon'] = 'fa-th-list';
-        $pagedata['menu'] = 'contabilidad';
+        $pagedata['menu'] = 'accounting';
 
         return $pagedata;
     }
 
+    /**
+     * Procedimiento encargado de insertar las vistas a visualizar
+     */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\Subcuenta', $className);
-        $this->addSearchFields($className, ['codsubcuenta', 'descripcion']);
+        $this->addView('FacturaScripts\Core\Model\Subcuenta', 'ListSubcuenta');
+        $this->addSearchFields('ListSubcuenta', ['codsubcuenta', 'descripcion']);
+        
+        $this->addFilterSelect('ListSubcuenta', 'codejercicio', 'ejercicios', '', 'nombre');
 
-        $this->addOrderBy($className, 'codsubcuenta', 'code');
-        $this->addOrderBy($className, 'descripcion', 'description');
+        $this->addOrderBy('ListSubcuenta', 'codejercicio desc, codsubcuenta', 'code');
+        $this->addOrderBy('ListSubcuenta', 'codejercicio desc, descripcion', 'description');
     }
 }

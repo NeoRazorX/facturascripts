@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,36 +19,46 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controlador para la edición de un registro del modelo Cliente
+ * Controlador para la edición de un registro del modelo Atributo
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Ramiro Salvador Mamani <ramiro@solsun.pe>
  */
-class EditCliente extends ExtendedController\EditController
+class EditAtributo extends ExtendedController\EditController
 {
+    /**
+     * EditAtributo constructor.
+     *
+     * @param Base\Cache $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog $miniLog
+     * @param string $className
+     */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         // Establecemos el modelo de datos
-        $this->modelName = 'FacturaScripts\Core\Model\Cliente';
+        $this->modelName = 'FacturaScripts\Core\Model\Atributo';
     }
 
-    public function getPanelFooter()
-    {
-        $model = $this->getModel();
-        return $this->i18n->trans('Fecha de alta: ') . $model->fechaalta;
-    }
-
+    /**
+     * Devuelve los datos básicos de la página
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'customers';
-        $pagedata['icon'] = 'fa-users';
-        $pagedata['showonmenu'] = FALSE;
+        $pagedata['title'] = 'attribute';
+        $pagedata['menu'] = 'warehouse';
+        $pagedata['icon'] = 'fa-folder-open';
+        $pagedata['showonmenu'] = false;
 
         return $pagedata;
     }

@@ -17,14 +17,14 @@
 
     function deleteRecord() {
         bootbox.confirm({
-            title: "{{ i18n.trans('Confirm delete?') }}",
-            message: "{{ i18n.trans('This cannot be undone. Are you sure you wish to continue?') }}",
+            title: "{{ i18n.trans('confirm-delete') }}",
+            message: "{{ i18n.trans('are-you-sure') }}",
             buttons: {
                 cancel: {
-                    label: '<i class="fa fa-times"></i> {{ i18n.trans('Cancel') }}'
+                    label: '<i class="fa fa-times"></i> {{ i18n.trans("cancel") }}'
                 },
                 confirm: {
-                    label: '<i class="fa fa-check"></i> {{ i18n.trans('Confirm') }}',
+                    label: '<i class="fa fa-check"></i> {{ i18n.trans("confirm") }}',
                     className: 'btn-danger'
                 }
             },
@@ -33,7 +33,7 @@
                     document.delete_form.submit(); 
                 }
             }
-        });           
+        });
     }
     
     $(document).ready(function() {
@@ -55,17 +55,16 @@
 {% block body %}
 <!-- Calculate texts according to language -->
 {% set go_back = i18n.trans('back') %}
-{% set save, save_title = i18n.trans('save'), i18n.trans('save data') %}
-{% set undo, undo_title = i18n.trans('undo'), i18n.trans('restore data') %}
+{% set save, save_title = i18n.trans('save'), i18n.trans('save-data') %}
+{% set undo, undo_title = i18n.trans('undo'), i18n.trans('restore-data') %}
 {% set refresh_title = i18n.trans('refresh') %}
-{% set remove, remove_title = i18n.trans('delete'), i18n.trans('delete record') %}
-{% set insert_title = i18n.trans('New') %}
+{% set remove, remove_title = i18n.trans('delete'), i18n.trans('delete-record') %}
+{% set insert_title = i18n.trans('new') %}
 
 {% set panel_header = fsc.getPanelHeader() %}
 {% set panel_footer = fsc.getPanelFooter() %}
 
-{% set title = fsc.getPageData()['title'] %}
-{% set title = i18n.trans(title) %}
+{% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
 
 <!-- Visual macros -->
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
@@ -83,11 +82,11 @@
     <div id="header" class="row">
         <div class="col-3 d-print-none">
             <div class="btn-group">
-                <a href="{{ model.url('list') }}" class="btn btn-sm btn-light">
+                <a href="{{ model.url('list') }}" class="btn btn-sm btn-outline-secondary">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i>
-                    <span class="hidden-xs hidden-sm">&nbsp;{{ go_back }} </span>
+                    <span class="d-none d-md-inline-block">&nbsp;{{ go_back }} </span>
                 </a>
-                <a href="{{ model.url('edit') }}" class="btn btn-sm btn-light" {{ popoverTitle(refresh_title, 'bottom') }}>
+                <a href="{{ model.url('edit') }}" class="btn btn-sm btn-outline-secondary" {{ popoverTitle(refresh_title, 'bottom') }}>
                     <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
             </div>
@@ -120,7 +119,7 @@
             
             <a id="b_remove" class="btn btn-sm btn-danger" onclick="deleteRecord();" href="#" {{ popoverTitle(remove_title, 'bottom') }}">
                 <i class="fa fa-trash" aria-hidden="true"></i>
-                <span class="hidden-xs">&nbsp;{{ remove }}</span>
+                <span class="d-none d-sm-inline-block">&nbsp;{{ remove }}</span>
             </a>
         </div>
     </div>

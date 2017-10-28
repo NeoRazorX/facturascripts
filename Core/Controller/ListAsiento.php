@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,27 +24,36 @@ use FacturaScripts\Core\Base\ExtendedController;
 /**
  * Description of ListAsiento
  *
- * @author carlos
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class ListAsiento extends ExtendedController\ListController
 {
+    /**
+     * Devuelve los datos básicos de la página
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Asientos';
+        $pagedata['title'] = 'accounting-entries';
         $pagedata['icon'] = 'fa-balance-scale';
-        $pagedata['menu'] = 'contabilidad';
+        $pagedata['menu'] = 'accounting';
 
         return $pagedata;
     }
 
+    /**
+     * Procedimiento para insertar vistas en el controlador
+     */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\Asiento', $className);
-        $this->addSearchFields($className, ['numero', 'concepto']);
+        $this->addView('FacturaScripts\Core\Model\Asiento', 'ListAsiento');
+        $this->addSearchFields('ListAsiento', ['numero', 'concepto']);
+        
+        $this->addFilterSelect('ListAsiento', 'codejercicio', 'ejercicios', '', 'nombre');
 
-        $this->addOrderBy($className, 'numero', 'number');
-        $this->addOrderBy($className, 'fecha', 'date', 2); /// forzamos el orden por defecto fecha desc
+        $this->addOrderBy('ListAsiento', 'numero', 'number');
+        $this->addOrderBy('ListAsiento', 'fecha', 'date', 2); /// forzamos el orden por defecto fecha desc
     }
 }

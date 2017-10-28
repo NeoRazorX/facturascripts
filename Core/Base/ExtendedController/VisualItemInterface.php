@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
+ * Interfaz para elementos visuales
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -28,14 +29,14 @@ interface VisualItemInterface
     /**
      * Carga la estructura de atributos en base a un archivo XML
      *
-     * @param SimpleXMLElement $items
+     * @param \SimpleXMLElement $items
      */
     public function loadFromXML($items);
 
     /**
-     * Carga la estructura de atributos en base a la base de datos
+     * Carga la estructura de atributos en base un archivo JSON
      *
-     * @param SimpleXMLElement $items
+     * @param array $items
      */
     public function loadFromJSON($items);
 

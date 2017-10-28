@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Model;
 /**
  * Un grupo de clientes, que puede estar asociado a una tarifa.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class GrupoClientes
 {
@@ -31,29 +31,39 @@ class GrupoClientes
     /**
      * Clave primaria
      *
-     * @var
+     * @var string
      */
     public $codgrupo;
 
     /**
      * Nombre del grupo
      *
-     * @var
+     * @var string
      */
     public $nombre;
 
     /**
      * Código de la tarifa asociada, si la hay
      *
-     * @var
+     * @var string
      */
     public $codtarifa;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'gruposclientes';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'codgrupo';
@@ -66,7 +76,7 @@ class GrupoClientes
      */
     public function getNewCodigo()
     {
-        if (strtolower(FS_DB_TYPE) == 'postgresql') {
+        if (strtolower(FS_DB_TYPE) === 'postgresql') {
             $sql = "SELECT codgrupo from " . $this->tableName() . " where codgrupo ~ '^\d+$'"
                 . " ORDER BY codgrupo::integer DESC";
         } else {
@@ -75,18 +85,23 @@ class GrupoClientes
         }
 
         $data = $this->dataBase->selectLimit($sql, 1, 0);
-        if ($data) {
-            return sprintf('%06s', (1 + intval($data[0]['codgrupo'])));
+        if (!empty($data)) {
+            return sprintf('%06s', (1 + (int) $data[0]['codgrupo']));
         }
 
         return '000001';
     }
 
+    /**
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     *
+     * @return bool
+     */
     public function test()
     {
         $this->nombre = self::noHtml($this->nombre);
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -103,7 +118,14 @@ class GrupoClientes
 
         return '';
     }
-    
+
+    /**
+     * Devuelve la url donde ver/modificar los datos
+     *
+     * @param string $type
+     *
+     * @return string
+     */
     public function url($type = 'auto')
     {
         $value = $this->primaryColumnValue();

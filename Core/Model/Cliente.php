@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 /**
  * El cliente. Puede tener una o varias direcciones y subcuentas asociadas.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Cliente extends Base\Persona
 {
@@ -56,22 +56,42 @@ class Cliente extends Base\Persona
      */
     public $diaspago;
 
+    /**
+     * Cliente constructor.
+     *
+     * @param array $data
+     */
     public function __construct($data = [])
     {
         parent::__construct();
         $this->traitConstruct($data);
     }
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'clientes';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'codcliente';
     }
 
+    /**
+     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará tras la creación de la tabla. útil para insertar valores
+     * por defecto.
+     */
     public function install()
     {
         /// necesitamos la tabla de grupos comprobada para la clave ajena
@@ -80,6 +100,9 @@ class Cliente extends Base\Persona
         return '';
     }
 
+    /**
+     * Resetea los valores de todas las propiedades modelo.
+     */
     public function clear()
     {
         $this->traitClear();
@@ -151,7 +174,7 @@ class Cliente extends Base\Persona
 
     /**
      * Devuelve la subcuenta asociada al cliente para el ejercicio $eje.
-     * Si no existe intenta crearla. Si falla devuelve FALSE.
+     * Si no existe intenta crearla. Si falla devuelve False.
      *
      * @param string $codejercicio
      *
@@ -188,12 +211,12 @@ class Cliente extends Base\Persona
                     return $subcuenta;
                 }
 
-                $this->miniLog->alert('Imposible asociar la subcuenta para el cliente ' . $this->codcliente);
+                $this->miniLog->alert($this->i18n->trans('cant-associate-customer-subaccount', [$this->codcliente]));
 
                 return false;
             }
 
-            $this->miniLog->alert('Imposible crear la subcuenta para el cliente ' . $this->codcliente);
+            $this->miniLog->alert($this->i18n->trans('cant-create-customer-subaccount', [$this->codcliente]));
 
             return false;
         }
@@ -205,7 +228,7 @@ class Cliente extends Base\Persona
     }
 
     /**
-     * TODO
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
      *
      * @return bool
      */
@@ -245,11 +268,11 @@ class Cliente extends Base\Persona
         }
 
         if (!preg_match('/^[A-Z0-9]{1,6}$/i', $this->codcliente)) {
-            $this->miniLog->alert('Código de cliente no válido: ' . $this->codcliente, ['fieldname' => 'codcliente']);
+            $this->miniLog->alert($this->i18n->trans('not-valid-client-code', [$this->codcliente]), ['fieldname' => 'codcliente']);
         } elseif (empty($this->nombre) || strlen($this->nombre) > 100) {
-            $this->miniLog->alert('Nombre de cliente no válido: ' . $this->nombre, ['fieldname' => 'nombre']);
+            $this->miniLog->alert($this->i18n->trans('not-valid-client-name', [$this->nombre]), ['fieldname' => 'nombre']);
         } elseif (empty($this->razonsocial) || strlen($this->razonsocial) > 100) {
-            $this->miniLog->alert('Razón social del cliente no válida: ' . $this->razonsocial, ['fieldname' => 'razonsocial']);
+            $this->miniLog->alert($this->i18n->trans('not-valid-client-business-name', [$this->razonsocial]), ['fieldname' => 'razonsocial']);
         } else {
             $status = true;
         }
@@ -258,12 +281,13 @@ class Cliente extends Base\Persona
     }
 
     /**
-     * TODO
+     * Devuelve un array con las combinaciones que contienen $query en su nombre
+     * o razonsocial o codcliente o cifnif o telefono1 o telefono2 o observaciones.
      *
      * @param string $query
      * @param int    $offset
      *
-     * @return array
+     * @return self[]
      */
     public function search($query, $offset = 0)
     {

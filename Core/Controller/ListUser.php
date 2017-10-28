@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,27 +24,43 @@ use FacturaScripts\Core\Base\ExtendedController;
 /**
  * Description of AdminUsers
  *
- * @author carlos
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class ListUser extends ExtendedController\ListController
 {
+   
+    /**
+     * Procedimiento para insertar vistas en el controlador
+     */
+    protected function createViews()
+    {
+        $this->addView('FacturaScripts\Core\Model\User', 'ListUser', 'users');
+        $this->addSearchFields('ListUser', ['nick', 'email']);
+
+        $this->addOrderBy('ListUser', 'nick');
+        $this->addOrderBy('ListUser', 'email');
+        
+        /* Roles */
+        $this->addView('FacturaScripts\Core\Model\Rol', 'ListRol', 'roles');
+        $this->addSearchFields('ListRol', ['codrol', 'descripcion']);
+
+        $this->addOrderBy('ListRol', 'descripcion');
+        $this->addOrderBy('ListRol', 'codrol');
+
+    }
+    
+     /**
+     * Devuelve los datos básicos de la página
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Usuarios';
+        $pagedata['title'] = 'users';
         $pagedata['icon'] = 'fa-user-circle-o';
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
-    }
-
-    protected function createViews()
-    {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\User', $className);
-        $this->addSearchFields($className, ['nick', 'email']);
-
-        $this->addOrderBy($className, 'nick');
-        $this->addOrderBy($className, 'email');
     }
 }

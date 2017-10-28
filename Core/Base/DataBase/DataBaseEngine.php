@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -51,7 +51,7 @@ interface DataBaseEngine
     /**
      * Información sobre el motor de base de datos
      *
-     * @param mysqli|resource $link
+     * @param \mysqli|resource $link
      *
      * @return string
      */
@@ -67,21 +67,21 @@ interface DataBaseEngine
     /**
      * Cierra la conexión con la base de datos
      *
-     * @param mysqli|resource $link
+     * @param \mysqli|resource $link
      */
     public function close($link);
 
     /**
      * Último mensaje de error generado un operación con la BD
      *
-     * @param mysqli|resource $link
+     * @param \mysqli|resource $link
      */
     public function errorMessage($link);
 
     /**
      * Inicia una transacción sobre la conexión
      *
-     * @param mysqli|resource $link
+     * @param \mysqli|resource $link
      */
     public function beginTransaction($link);
 
@@ -89,7 +89,7 @@ interface DataBaseEngine
      * Confirma las operaciones realizadas sobre la conexión
      * desde el beginTransaction
      *
-     * @param mysqli|resource $link
+     * @param \mysqli|resource $link
      */
     public function commit($link);
 
@@ -97,21 +97,21 @@ interface DataBaseEngine
      * Deshace las operaciones realizadas sobre la conexión
      * desde el beginTransaction
      *
-     * @param mysqli|resource $link
+     * @param \mysqli|resource $link
      */
     public function rollback($link);
 
     /**
      * Indica si la conexión tiene una transacción abierta
      *
-     * @param mysqli|resource $link
+     * @param \mysqli|resource $link
      */
     public function inTransaction($link);
 
     /**
      * Ejecuta una sentencia de datos sobre la conexión
      *
-     * @param mysqli|resource $link
+     * @param \mysqli|resource $link
      * @param string          $sql
      *
      * @return array
@@ -122,7 +122,7 @@ interface DataBaseEngine
      * Ejecuta una sentencia DDL sobre la conexión.
      * Si no hay transacción abierta crea una y la finaliza
      *
-     * @param mysqli|resource $link
+     * @param \mysqli|resource $link
      * @param string          $sql
      */
     public function exec($link, $sql);
@@ -138,14 +138,14 @@ interface DataBaseEngine
     /**
      * Lista de tablas existentes en la conexión
      *
-     * @param mysqli|resource $link
+     * @param \mysqli|resource $link
      */
     public function listTables($link);
 
     /**
      * Escapa la cadena indicada
      *
-     * @param mysqli|resource $link
+     * @param \mysqli|resource $link
      * @param string          $str
      */
     public function escapeString($link, $str);
@@ -158,7 +158,7 @@ interface DataBaseEngine
     /**
      * Comprueba la existencia de una secuencia
      *
-     * @param mysqli|resource $link
+     * @param \mysqli|resource $link
      * @param string          $tableName
      * @param string          $default
      * @param string          $colname
@@ -168,7 +168,7 @@ interface DataBaseEngine
     /**
      * Comprobación adicional a la existencia de una tabla
      *
-     * @param mysqli|resource $link
+     * @param \mysqli|resource $link
      * @param string          $tableName
      * @param string          $error
      */

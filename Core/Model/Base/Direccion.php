@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,52 +19,57 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\Base;
-
 /**
  * Description of Direccion
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 trait Direccion
 {
     /**
+     * País de la dirección.
      *
      * @var string
      */
     public $codpais;
 
     /**
+     * Apartado de correos de la dirección.
      *
      * @var string
      */
     public $apartado;
 
     /**
+     * Provincia de la dirección.
      *
      * @var string
      */
     public $provincia;
 
     /**
+     * Ciudad de la dirección.
      *
      * @var string
      */
     public $ciudad;
 
     /**
+     * Código postal de la dirección.
      *
      * @var string
      */
     public $codpostal;
 
     /**
+     * Dirección.
      *
      * @var string
      */
     public $direccion;
 
     /**
+     * Descripción de la dirección.
      *
      * @var string
      */
@@ -77,6 +82,11 @@ trait Direccion
      */
     public $fecha;
 
+    /**
+     * Test de la dirección
+     *
+     * @return bool
+     */
     public function testDireccion()
     {
         $this->apartado = self::noHtml($this->apartado);

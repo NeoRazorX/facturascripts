@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,10 +30,10 @@
         <column name="name" order="110">
             <widget type="text" fieldname="nombre" />
         </column>
-        <column name="start date" display="center" order="120">
+        <column name="start-date" display="center" order="120">
             <widget type="text" fieldname="fechainicio" />
         </column>
-        <column name="end date" display="center" order="130">
+        <column name="end-date" display="center" order="130">
             <widget type="text" fieldname="fechafin" />
         </column>
         <column name="state" display="center" order="140">
@@ -42,10 +42,10 @@
                 <option color="blue">CERRADO</option>
             </widget>
         </column>
-        <column name="plan" description="Indica si se usa un plancontable anterior o posterior al 2008" display="center" order="150">
+        <column name="plan" display="center" order="150">
             <widget type="text" fieldname="plancontable" />
         </column>
-        <column name="account length" display="center" order="160">
+        <column name="account-length" display="center" order="160">
             <widget type="text" fieldname="longsubcuenta" />
         </column>
     </columns>

@@ -1,7 +1,34 @@
 <!--
+    Genera el código para el desplegable de ordenación en los ListController
+-->
+{% macro buttonOrderBy(context, view) %}
+    <div class="col">
+        <div class="btn-group float-md-right">
+            {% set orderbylist = view.getOrderBy() %}
+            <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuOrder{{ context.indexView }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <i class="fa {{ orderbylist[view.selectedOrderBy]['icon'] }}" aria-hidden="true"></i>
+                &nbsp; {{ orderbylist[view.selectedOrderBy]['label'] }}
+                <span class="caret"></span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuOrder{{ context.indexView }}">
+                {% for key, orderby in orderbylist %}
+                <a class="dropdown-item" href="{{ context.list_url }}&order={{ key }}">
+                    <i class="fa {{ orderby['icon'] }}" aria-hidden="true"></i>&nbsp; {{ orderby['label'] }} &nbsp;
+                    {% if view.selectedOrderBy == key %}
+                    <i class="fa fa-check" aria-hidden="true"></i>
+                    {% endif %}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>                            
+{% endmacro %}
+
+<!--
     Genera el código para la vista List según las columnas indicadas
 -->
 {% macro columnsForListView(context, view) %}
+    {% set cols = (view.getColumns()|length)+1 %}
     <table class="table table-hover">
         <thead>
             <tr>
@@ -10,36 +37,49 @@
                 <th class="text-{{ column.display }}">{{ column.getHeaderHTML(column.title)|raw }}</th>
                 {% endif %}
                 {% endfor %}
+                <th class="text-right">
+                    {% if view.getCursor() is not empty %}
+                    <label class="custom-checkbox-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
+                        <input class="custom-control-input" type="checkbox" id="listDeleteCB"><span class="custom-control-indicator"></span>
+                    </label>
+                    {% endif %}
+                </th>
             </tr>
         </thead>
+        <tbody>
         {% for model in view.getCursor() %}
             {# Set background status #}
             {% set rowClass = 'table-light' %}
             {% set rowStatus = view.getRow('status') %}
             {% if rowStatus is not empty %}
-            {% set status = attribute(data, rowStatus.fieldName) %}
-            {% set rowClass = rowStatus.getStatus(status) %}
+            {% set rowClass = rowStatus.getStatus( attribute(model, rowStatus.fieldName) ) %}
             {% endif %}
 
-            {% set rowDataHref = view.getClickEvent(data) %}
+            {% set rowDataHref = view.getClickEvent(model) %}
             {% if rowDataHref is not empty %}
             {% set rowClass = rowClass ~ ' clickableRow' %}
             {% endif %}
 
             <tr class="{{ rowClass }}" data-href="{{ rowDataHref }}">
-            {# Print data columns for row #}
-            {% for column in view.getColumns() %}
+                {# Print data columns for row #}
+                {% for column in view.getColumns() %}
                 {% if column.display != 'none' %}
                 {% set value = attribute(model, column.widget.fieldName) %}
                 <td class="text-{{ column.display }}">{{ column.getListHTML(value)|raw }}</td>
                 {% endif %}
-            {% endfor %}
+                {% endfor %}
+                <td class="text-right cancelClickable">
+                    <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
+                        <input class="custom-control-input listDelete" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}"><span class="custom-control-indicator"></span>
+                    </label>
+                </td>
             </tr>
             {% else %}
             <tr class="table-warning">
-                <td colspan="12"><b>{{ context.i18n.trans('no-data') }}</b></td>
+                <td colspan="{{ cols }}"><b>{{ context.i18n.trans('no-data') }}</b></td>
             </tr>
         {% endfor %}
+        </tbody>
     </table>
 {% endmacro %}
 
@@ -58,7 +98,6 @@
         <div class="row">
     {% endif %}
 
-    <input type="hidden" name="primarykey" value="{{ keyValue }}">
     {% for group in view.getColumns() %}
     <div class="{{ group.numColumns == 0 ? 'col' : 'col-md-' ~ group.numColumns }}">
         <div class="form-row">
@@ -66,9 +105,14 @@
             <legend>{{ group.getHeaderHTML(group.title)|raw }}</legend>
             {% endif %}
             {% for column in group.columns %}
-                {% if column.display != 'none' %}
-                {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
-                {{ column.getEditHTML(value)|raw }}
+                {% if column.display == 'none' %}
+                    {% if column.widget.fieldName == model.primaryColumn() %}
+                        {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
+                        <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
+                    {% endif %}
+                {% else %}
+                    {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
+                    {{ column.getEditHTML(value)|raw }}
                 {% endif %}
             {% endfor %}
         </div>
@@ -77,16 +121,18 @@
 
     {% if withForm == TRUE %}
     {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
-    {% set remove, remove_title = context.i18n.trans('delete'), context.i18n.trans('delete record') %}
-    {% set save, save_title = context.i18n.trans('save'), context.i18n.trans('save data') %}
-    {% set undo, undo_title = context.i18n.trans('undo'), context.i18n.trans('restore data') %}
+    {% set save, save_title = context.i18n.trans('save'), context.i18n.trans('save-data') %}
+    {% set undo, undo_title = context.i18n.trans('undo'), context.i18n.trans('restore-data') %}
         </div>
         <div class="row">
             <div class="col-6">
+                {% if keyValue is not empty %}
+                {% set remove, remove_title = context.i18n.trans('delete'), context.i18n.trans('delete-record') %}
                 <a id="b_remove" class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
                     <i class="fa fa-trash" aria-hidden="true"></i>
-                    <span class="hidden-xs">&nbsp;{{ remove }}</span>
+                    <span class="d-none d-sm-inline-block">&nbsp;{{ remove }}</span>
                 </a>
+                {% endif %}
             </div>
 
             <div class="col-6 text-right">
@@ -107,9 +153,86 @@
 -->
 {% macro columnsForEditListView(context, view) %}
     {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
+    {% set new_record, new_record_title = context.i18n.trans('new'), context.i18n.trans('create-new-record') %}
 
     {% for model in view.getCursor() %}
         {{ columnsForEditView(context, view, model, TRUE) }}
-        {% if not loop.last %}<hr style="height:5px" />{% endif %}
-    {% endfor %}
+        <hr style="height:5px" />
+    {% endfor %}    
+    
+    <div class="alert alert-success" role="alert">
+        <a class="alert-link" data-toggle="collapse" href="#new-{{ context.indexView }}" aria-expanded="true" aria-controls="new-{{ context.indexView }}">
+            <i class="fa fa-plus" aria-hidden="true"></i>&nbsp; {{ new_record_title }}...
+        </a>
+    </div>    
+
+    <div id="new-{{ context.indexView }}" class="collapse">
+        {% set newModel = view.newEmptyModel() %}
+        {{ columnsForEditView(context, view, newModel, TRUE) }}
+    </div>
+{% endmacro %}
+
+{% macro filterForSelectInput(context, key, filter) %}
+    {% set any = context.i18n.trans('any') %}
+
+    <div class="col-md-2">
+        <select name="{{ key }}" class="form-control" onchange="this.form.submit()">
+            <option value="">{{ any }} {{ key }}</option>
+            <option value="">------</option>
+            {% for key2, data in context.fsc.optionlist(key, filter.options) %}
+            {% if (context.indexView == context.fsc.active) and (key2 == filter.value) %}
+            <option value="{{ key2 }}" selected="">{{ data }}</option>
+            {% else %}
+            <option value="{{ key2 }}">{{ data }}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+{% endmacro %}
+
+{% macro filterForCheckBoxInput(context, key, filter) %}
+    <div class="col-md-2">
+        <div class="form-check mb-2 mb-sm-0">
+            <label class="form-check-label custom-checkbox-control custom-checkbox">
+                {% if (context.indexView == context.fsc.active) and filter.value %}
+                <input class="form-check-input custom-control-input" type="checkbox" name="{{ key }}" value="TRUE" checked="" onchange="this.form.submit()"/>
+                {% else %}
+                <input class="form-check-input custom-control-input" type="checkbox" name="{{ key }}" value="TRUE" onchange="this.form.submit()"/>
+                {% endif %}
+                <span class="custom-control-indicator"></span>
+                {{ filter.options.label }}
+            </label>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro filterForTextInput(context, key, filter) %}
+    {% set filterTxt = context.i18n.trans('filter-method') %}
+    {% set likeTxt = context.i18n.trans('like-than') %}
+    {% set greaterTxt = context.i18n.trans('greater-than') %}
+    {% set smallerTxt = context.i18n.trans('smaller-than') %}
+    {% set differentTxt = context.i18n.trans('different-than') %}    
+    {% set specialClass = filter.type == 'datepicker' ? ' datepicker' : '' %}
+
+    <div class="col-md-2">
+        <div class="input-group">                                                                
+            <div class="input-group-btn">
+                <input name="{{ key }}-btn" id="{{ key }}-btn" type="button" value="{{ filter.options.operator }}"
+                        class="btn btn-outline-secondary dropdown-toggle"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
+                
+                <div class="dropdown-menu">
+                    <h6 class="dropdown-header">{{ filterTxt }}</h6>
+                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}', '=')">{{ likeTxt }} {{ filter.options.label }}</a>                                        
+                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}', '>=')">{{ greaterTxt }} {{ filter.options.label }}</a>
+                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}', '<=')">{{ smallerTxt }} {{ filter.options.label }}</a>
+                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}', '<>')">{{ differentTxt }} {{ filter.options.label }}</a>
+                </div>
+            </div>
+            <input type="hidden" name="{{ key }}-operator" id="{{ key }}-operator" value="{{ filter.options.operator }}" />                
+            <input type="text" name="{{ key }}" value="{% if indexView == fsc.active %}{{ filter.value }}{% endif %}"
+                   class="form-control{{ specialClass }}" placeholder="{{ filter.options.label }}" 
+                   autocomplete="off" onchange="this.form.submit()"/>
+        </div>
+    </div>  
 {% endmacro %}

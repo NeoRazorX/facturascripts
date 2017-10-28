@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,28 +29,43 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListFormaPago extends ExtendedController\ListController
 {
+    /**
+     * Devuelve los datos básicos de la página
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Formas de Pago';
+        $pagedata['title'] = 'payment-methods';
         $pagedata['icon'] = 'fa-credit-card';
-        $pagedata['menu'] = 'contabilidad';
+        $pagedata['menu'] = 'accounting';
 
         return $pagedata;
     }
 
+    /**
+     * Procedimiento encargado de insertar las vistas a visualizar
+     */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\FormaPago', $className);
-        $this->addSearchFields($className, ['descripcion', 'codpago', 'codcuenta']);
+        /* Formas de pago */
+        $this->addView('FacturaScripts\Core\Model\FormaPago', 'ListFormaPago', 'payment-methods');
+        $this->addSearchFields('ListFormaPago', ['descripcion', 'codpago', 'codcuenta']);
 
-        $this->addOrderBy($className, 'codpago', 'code');
-        $this->addOrderBy($className, 'descripcion', 'description');
+        $this->addOrderBy('ListFormaPago', 'codpago', 'code');
+        $this->addOrderBy('ListFormaPago', 'descripcion', 'description');
 
-        $this->addFilterSelect($className, 'generación', 'formaspago', '', 'genrecibos');
-        $this->addFilterSelect($className, 'vencimiento', 'formaspago');
-        $this->addFilterCheckbox($className, 'domiciliado', 'Domiciliado');
-        $this->addFilterCheckbox($className, 'imprimir', 'Imprimir');
+        $this->addFilterSelect('ListFormaPago', 'generación', 'formaspago', '', 'genrecibos');
+        $this->addFilterSelect('ListFormaPago', 'vencimiento', 'formaspago');
+        $this->addFilterCheckbox('ListFormaPago', 'domiciliado', 'domicilied');
+        $this->addFilterCheckbox('ListFormaPago', 'imprimir', 'print');
+        
+        /* Cuentas bancarias */
+        $this->addView('FacturaScripts\Core\Model\CuentaBanco', 'ListCuentaBanco', 'bank-accounts');
+        $this->addSearchFields('ListCuentaBanco', ['descripcion', 'codcuenta']);
+
+        $this->addOrderBy('ListCuentaBanco', 'codcuenta', 'code');
+        $this->addOrderBy('ListCuentaBanco', 'descripcion', 'description');
     }
 }

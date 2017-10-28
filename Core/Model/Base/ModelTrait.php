@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base;
@@ -109,7 +110,7 @@ trait ModelTrait
     }
 
     /**
-     * Inicializa todo lo necesario.
+     * Inicializa lo necesario.
      */
     private function init()
     {
@@ -129,7 +130,7 @@ trait ModelTrait
         }
 
         if ($this->tableName() !== '' && !in_array($this->tableName(), self::$checkedTables, false) && $this->checkTable($this->tableName())) {
-            $this->miniLog->debug('Table ' . $this->tableName() . ' checked.');
+            $this->miniLog->debug($this->i18n->trans('table-checked', [$this->tableName()]));
             self::$checkedTables[] = $this->tableName();
             $this->cache->set('fs_checked_tables', self::$checkedTables);
         }
@@ -194,7 +195,7 @@ trait ModelTrait
     }
 
     /**
-     * Devuelve el nombdre de la tabla que usa este modelo.
+     * Devuelve el nombre de la tabla que usa este modelo.
      *
      * @return string
      */
@@ -207,7 +208,13 @@ trait ModelTrait
      */
     public function checkArrayData(&$data)
     {
-        
+        foreach (self::$fields as $field => $values) {
+            if ($values['type'] === 'boolean') {
+                if (!isset($data[$field])) {
+                    $data[$field] = FALSE;
+                }
+            }    
+        }
     }
 
     /**
@@ -223,39 +230,38 @@ trait ModelTrait
                 continue;
             }
 
-            foreach (self::$fields as $field) {
-                if ($field['name'] === $key) {
-                    // Comprobamos si es un varchar (con longitud establecida) u otro tipo de dato
-                    $type = (strpos($field['type'], '(') === FALSE) ? $field['type'] : substr($field['type'], 0, strpos($field['type'], '('));
+            if (isset(self::$fields[$key])) {
+                $field = self::$fields[$key];
 
-                    switch ($type) {
-                        case 'tinyint':
-                        case 'boolean':
-                            $this->{$key} = $this->str2bool($value);
-                            break;
+                // Comprobamos si es un varchar (con longitud establecida) u otro tipo de dato
+                $type = (strpos($field['type'], '(') === false) ? $field['type'] : substr($field['type'], 0, strpos($field['type'], '('));
 
-                        case 'integer':
-                        case 'int':
-                            $this->{$key} = empty($value) ? 0 : (int) $value;
-                            break;
+                switch ($type) {
+                    case 'tinyint':
+                    case 'boolean':
+                        $this->{$key} = $this->str2bool($value);
+                        break;
 
-                        case 'double':
-                        case 'double precision':
-                        case 'float':
-                            $this->{$key} = empty($value) ? 0.00 : (float) $value;
-                            break;
+                    case 'integer':
+                    case 'int':
+                        $this->{$key} = empty($value) ? 0 : (int) $value;
+                        break;
 
-                        case 'date':
-                            $this->{$key} = empty($value) ? NULL : date('d-m-Y', strtotime($value));
-                            break;
+                    case 'double':
+                    case 'double precision':
+                    case 'float':
+                        $this->{$key} = empty($value) ? 0.00 : (float) $value;
+                        break;
 
-                        default:
-                            if (empty($value)) {
-                                $value = ($field['is_nullable'] === 'NO') ? '' : NULL;
-                            }
-                            $this->{$key} = $value;
-                    }
-                    break;
+                    case 'date':
+                        $this->{$key} = empty($value) ? null : date('d-m-Y', strtotime($value));
+                        break;
+
+                    default:
+                        if (empty($value)) {
+                            $value = ($field['is_nullable'] === 'NO') ? '' : null;
+                        }
+                        $this->{$key} = $value;
                 }
             }
         }
@@ -274,16 +280,18 @@ trait ModelTrait
     /**
      * Rellena la clase con los valores del registro
      * cuya columna primaria corresponda al valor $cod, o según la condición
-     * where indicada, si no se informa valor en $cod. 
+     * where indicada, si no se informa valor en $cod.
      * Inicializa los valores de la clase si no existe ningún registro que
      * cumpla las condiciones anteriores.
      * Devuelve True si existe el registro y False en caso contrario.
      *
      * @param string $cod
+     * @param array|null $where
+     * @param array $orderby
      *
-     * @return boolean
+     * @return bool
      */
-    public function loadFromCode($cod, $where = NULL, $orderby = [])
+    public function loadFromCode($cod, $where = null, $orderby = [])
     {
         $data = $this->getRecord($cod, $where, $orderby);
         if (empty($data)) {
@@ -399,8 +407,8 @@ trait ModelTrait
      *
      * @param array   $where  filtros a aplicar a los registros del modelo. (Array de DataBaseWhere)
      * @param array   $order  campos a utilizar en la ordenación. Por ejemplo ['codigo' => 'ASC']
-     * @param integer $offset
-     * @param integer $limit
+     * @param int $offset
+     * @param int $limit
      *
      * @return array
      */
@@ -503,7 +511,7 @@ trait ModelTrait
         if ($this->getXmlTable($tableName, $xmlCols, $xmlCons)) {
             if ($this->dataBase->tableExists($tableName)) {
                 if (!$this->dataBase->checkTableAux($tableName)) {
-                    $this->miniLog->critical('Error al convertir la tabla a InnoDB.');
+                    $this->miniLog->critical($this->i18n->trans('error-to-innodb'));
                 }
 
                 /**
@@ -514,7 +522,7 @@ trait ModelTrait
                 $sql2 = $this->dataBase->compareConstraints($tableName, $xmlCons, $dbCons, true);
                 if ($sql2 !== '') {
                     if (!$this->dataBase->exec($sql2)) {
-                        $this->miniLog->critical('Error al comprobar la tabla ' . $tableName);
+                        $this->miniLog->critical($this->i18n->trans('check-table', [$tableName]));
                     }
 
                     /// leemos de nuevo las restricciones
@@ -533,12 +541,12 @@ trait ModelTrait
                 $sql .= $this->install();
             }
             if ($sql !== '' && !$this->dataBase->exec($sql)) {
-                $this->miniLog->critical('Error al comprobar la tabla ' . $tableName);
+                $this->miniLog->critical($this->i18n->trans('check-table', [$tableName]));
                 $this->cache->clear();
                 $done = false;
             }
         } else {
-            $this->miniLog->critical('error-on-xml-file');
+            $this->miniLog->critical($this->i18n->trans('error-on-xml-file'));
             $done = false;
         }
 
@@ -595,24 +603,26 @@ trait ModelTrait
                     }
                 }
             } else {
-                $this->miniLog->critical('Error al leer el archivo ' . $filename);
+                $this->miniLog->critical($this->i18n->trans('error-reading-file', [$filename]));
             }
         } else {
-            $this->miniLog->critical('Archivo ' . $filename . ' no encontrado.');
+            $this->miniLog->critical($this->i18n->trans('file-not-found', [$filename]));
         }
 
         return $return;
     }
 
     /**
-     * Lee el registro cuya columna primaria corresponda al valor $cod 
+     * Lee el registro cuya columna primaria corresponda al valor $cod
      * o el primero que cumple la condición indicada
      *
      * @param string $cod
+     * @param array|null $where
+     * @param array $orderby
      *
      * @return array
      */
-    private function getRecord($cod, $where = NULL, $orderby = [])
+    private function getRecord($cod, $where = null, $orderby = [])
     {
         $sqlWhere = empty($where) ? ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($cod) : DataBase\DataBaseWhere::getSQLWhere($where);
 

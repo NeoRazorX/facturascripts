@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Model;
 /**
  * Un fabricante de artículos.
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class Fabricante
@@ -37,24 +37,34 @@ class Fabricante
     public $codfabricante;
 
     /**
-     * TODO
+     * Nombre del fabricante
      *
      * @var string
      */
     public $nombre;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'fabricantes';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'codfabricante';
     }
 
     /**
-     * TODO
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
      *
      * @return bool
      */
@@ -66,9 +76,9 @@ class Fabricante
         $this->nombre = self::noHtml($this->nombre);
 
         if (empty($this->codfabricante) || strlen($this->codfabricante) > 8) {
-            $this->miniLog->alert('Código de fabricante no válido. Deben ser entre 1 y 8 caracteres.');
+            $this->miniLog->alert($this->i18n->trans('code-manufacturer-valid-length'));
         } elseif (empty($this->nombre) || strlen($this->nombre) > 100) {
-            $this->miniLog->alert('Descripción de fabricante no válida.');
+            $this->miniLog->alert($this->i18n->trans('manufacturer-description-not-valid'));
         } else {
             $status = true;
         }

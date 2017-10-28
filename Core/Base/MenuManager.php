@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,6 +29,7 @@ use FacturaScripts\Core\Model;
  */
 class MenuManager
 {
+
     /**
      * Contiene la estructura del menú para el usuario.
      *
@@ -37,12 +38,14 @@ class MenuManager
     private static $menu;
 
     /**
+     * Es true si es el menú activo, sino false
      *
      * @var bool
      */
     private static $menuActive;
 
     /**
+     * Controlador asociado a la página
      *
      * @var Model\Page
      */
@@ -81,11 +84,12 @@ class MenuManager
     }
 
     /**
+     * Devuelve si la página debe ser guardada
      *
      * @param Model\Page $pageModel
      * @param array      $pageData
      *
-     * @return boolean
+     * @return bool
      */
     private function pageNeedSave($pageModel, $pageData)
     {
@@ -122,6 +126,7 @@ class MenuManager
     }
 
     /**
+     * Asignar menú activo
      *
      * @param Model\Page $pageModel
      */
@@ -137,6 +142,7 @@ class MenuManager
     }
 
     /**
+     * Asignar elemento de menú activo
      *
      * @param MenuItem[] $menu
      * @param Model\Page $pageModel
@@ -154,14 +160,15 @@ class MenuManager
     /**
      * Carga la estructura de menú para el usuario
      *
-     * @return \FacturaScripts\Core\Base\MenuItem
+     * @return array
      */
     private function loadUserMenu()
     {
         $result = [];
         $menuValue = '';
-        $submenuValue = NULL;
-        $menuItem = NULL;
+        $submenuValue = null;
+        $menuItem = null;
+        $i18n = new Translator();
 
         /// Cargamos la lista de paginas para el usuario
         $pages = $this->loadPages();
@@ -173,8 +180,8 @@ class MenuManager
             /// Control de ruptura de menu
             if ($menuValue !== $page->menu) {
                 $menuValue = $page->menu;
-                $submenuValue = NULL;
-                $result[$menuValue] = new MenuItem($menuValue, $menuValue, '#');
+                $submenuValue = null;
+                $result[$menuValue] = new MenuItem($menuValue, $i18n->trans($menuValue), '#');
                 $menuItem = &$result[$menuValue]->menu;
             }
 
@@ -182,13 +189,13 @@ class MenuManager
             if ($submenuValue !== $page->submenu) {
                 $submenuValue = $page->submenu;
                 $menuItem = &$result[$menuValue]->menu;
-                if ($submenuValue != NULL) {
-                    $menuItem[$submenuValue] = new MenuItem($submenuValue, $submenuValue, '#');
+                if ($submenuValue != null) {
+                    $menuItem[$submenuValue] = new MenuItem($submenuValue, $i18n->trans($submenuValue), '#');
                     $menuItem = &$menuItem[$submenuValue]->menu;
                 }
             }
 
-            $menuItem[$page->name] = new MenuItem($page->name, $page->title, $page->url(), $page->icon);
+            $menuItem[$page->name] = new MenuItem($page->name, $i18n->trans($page->title), $page->url(), $page->icon);
         }
 
         return $result;
@@ -201,7 +208,7 @@ class MenuManager
      */
     private function loadPages()
     {
-        $where = [new DataBase\DataBaseWhere('showonmenu', TRUE)];
+        $where = [new DataBase\DataBaseWhere('showonmenu', true)];
         $order = [
             'lower(menu)' => 'ASC',
             'lower(submenu)' => 'ASC',
@@ -221,7 +228,7 @@ class MenuManager
             foreach ($pageRule_list as $pageRule) {
                 if ($page->name == $pageRule->pagename) {
                     $result[] = $page;
-                    // TODO: Eliminar del array de Reglas la pagina añadida
+                    // TODO: Delete the added page from the rule set
                     break;
                 }
             }

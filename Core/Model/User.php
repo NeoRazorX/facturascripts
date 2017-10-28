@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -103,11 +103,21 @@ class User
      */
     private $logkey;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'fs_users';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'nick';
@@ -153,7 +163,8 @@ class User
     }
 
     /**
-     * Verifica si la contraseña dada es correcta.
+     * Verifica si la contraseña dada es correcta. Además comprueba si es necesario
+     * regenerar el hash de la contraseña, por ejemplo si php ha mejorado el algoritmo.
      *
      * @param string $value
      *
@@ -161,7 +172,15 @@ class User
      */
     public function verifyPassword($value)
     {
-        return password_verify($value, $this->password);
+        if (password_verify($value, $this->password)) {
+            if (password_needs_rehash($this->password, PASSWORD_DEFAULT)) {
+                $this->setPassword($value);
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     /**

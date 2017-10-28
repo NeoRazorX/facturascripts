@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Model;
 /**
  * Relaciona a un proveedor con una subcuenta para cada ejercicio
  *
- * @author Carlos García Gómez <neorazorx@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class SubcuentaProveedor
 {
@@ -50,31 +50,41 @@ class SubcuentaProveedor
     public $codproveedor;
 
     /**
-     * TODO
+     * Código de subcuenta
      *
      * @var string
      */
     public $codsubcuenta;
 
     /**
-     * TODO
+     * Código de ejercicio
      *
      * @var string
      */
     public $codejercicio;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'co_subcuentasprov';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'id';
     }
 
     /**
-     * TODO
+     * Devuelve la subcuenta
      *
      * @return Subcuenta|false
      */

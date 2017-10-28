@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,7 +27,7 @@
         <column name="id" order="100">
             <widget type="text" fieldname="idgrupo" onclick="EditGrupoEpigrafes" />
         </column>
-        <column name="fiscal exercise" order="110">
+        <column name="fiscal-exercise" order="110">
             <widget type="text" fieldname="codejercicio" />
         </column>
         <column name="group" display="center" order="120">

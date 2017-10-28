@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2016-2017    Carlos Garcia Gomez  neorazorx@gmail.com
+ * Copyright (C) 2016-2017    Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,60 +22,69 @@ namespace FacturaScripts\Core\Model;
 /**
  * Description of transferencia_stock
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class TransferenciaStock
 {
     use Base\ModelTrait;
 
-    /// clave primaria. integer
     /**
-     * TODO
+     * Clave primaria. integer
      *
      * @var int
      */
     public $idtrans;
 
     /**
-     * TODO
+     * Código de almacén de destino
      *
      * @var string
      */
     public $codalmadestino;
 
     /**
-     * TODO
+     * Código de almacén de origen
      *
      * @var string
      */
     public $codalmaorigen;
 
     /**
-     * TODO
+     * Fecha de la transferencia
      *
      * @var string
      */
     public $fecha;
 
     /**
-     * TODO
+     * Hora de la transferencia
      *
      * @var string
      */
     public $hora;
 
     /**
-     * TODO
+     * Usuario que realiza la transferencia
      *
      * @var string
      */
     public $usuario;
 
+    /**
+     * Devuelve el nombre de la tabla que usa este modelo.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'transstock';
     }
 
+    /**
+     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'idtrans';
@@ -95,14 +104,14 @@ class TransferenciaStock
     }
 
     /**
-     * TODO
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
      *
      * @return bool
      */
     public function test()
     {
         if ($this->codalmadestino === $this->codalmaorigen) {
-            $this->miniLog->alert('El almacén de orígen y de destino no puede ser el mismo.');
+            $this->miniLog->alert($this->i18n->trans('warehouse-cant-be-same'));
 
             return false;
         }
