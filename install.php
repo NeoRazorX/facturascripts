@@ -272,6 +272,9 @@ function saveInstall()
         fwrite($file, "define('FS_DB_NAME', '" . filter_input(INPUT_POST, 'db_name') . "');\n");
         fwrite($file, "define('FS_DB_USER', '" . filter_input(INPUT_POST, 'db_user') . "');\n");
         fwrite($file, "define('FS_DB_PASS', '" . filter_input(INPUT_POST, 'db_pass') . "');\n");
+        fwrite($file, "define('FS_CACHE_HOST', '" . filter_input(INPUT_POST, 'memcache_host') . "');\n");
+        fwrite($file, "define('FS_CACHE_PORT', '" . filter_input(INPUT_POST, 'memcache_port') . "');\n");
+        fwrite($file, "define('FS_CACHE_PREFIX', '" . filter_input(INPUT_POST, 'memcache_prefix') . "');\n");
         if (filter_input(INPUT_POST, 'db_type') === 'MYSQL' && filter_input(INPUT_POST, 'mysql_socket') !== '') {
             fwrite($file, "ini_set('mysqli.default_socket', '" . filter_input(INPUT_POST, 'mysql_socket') . "');\n");
         }
@@ -298,6 +301,18 @@ function renderHTML(&$templateVars)
     /// generamos y volcamos el html
     $response = new Response($twig->render('Installer/Install.html', $templateVars), Response::HTTP_OK);
     $response->send();
+}
+
+/**
+ * Return a random string
+ *
+ * @param int $length
+ *
+ * @return bool|string
+ */
+function randomString($length = 20)
+{
+    return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
 }
 
 /**
@@ -334,6 +349,7 @@ function installerMain()
         'languages' => getLanguages($i18n),
         'timezone' => get_timezone_list(),
         'license' => file_get_contents(__DIR__ . '/COPYING'),
+        'memcache_prefix' => randomString(8),
     ];
     renderHTML($templateVars);
 }

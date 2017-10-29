@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Base\Cache\FileCache;
+use FacturaScripts\Core\Base\Cache\MemcacheAdapter;
 
 /**
  * Class Cache
@@ -31,7 +31,7 @@ class Cache
     /**
      * El motor utilizado para la cache.
      *
-     * @var FileCache
+     * @var MemcacheAdapter
      */
     private static $engine;
 
@@ -43,7 +43,7 @@ class Cache
     public function __construct($folder = '')
     {
         if (self::$engine === null) {
-            self::$engine = new FileCache($folder);
+            self::$engine = new MemcacheAdapter($folder);
         }
     }
 

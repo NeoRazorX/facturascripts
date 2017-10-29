@@ -122,14 +122,14 @@ trait ModelTrait
 
         if (self::$checkedTables === null) {
             self::$checkedTables = $this->cache->get('fs_checked_tables');
-            if (self::$checkedTables === null) {
+            if (self::$checkedTables === null || self::$checkedTables === false) {
                 self::$checkedTables = [];
             }
 
             self::$modelName = get_class($this);
         }
 
-        if ($this->tableName() !== '' && !in_array($this->tableName(), self::$checkedTables, false) && $this->checkTable($this->tableName())) {
+        if ($this->tableName() != '' && !in_array($this->tableName(), self::$checkedTables, false) && $this->checkTable($this->tableName())) {
             $this->miniLog->debug($this->i18n->trans('table-checked', [$this->tableName()]));
             self::$checkedTables[] = $this->tableName();
             $this->cache->set('fs_checked_tables', self::$checkedTables);

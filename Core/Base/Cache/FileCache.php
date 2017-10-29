@@ -76,6 +76,8 @@ class FileCache implements AdaptorInterface
         if (!file_exists($dir) && !@mkdir($dir, 0775, true) && !is_dir($dir)) {
             $this->minilog->critical($this->i18n->trans('cant-create-folder', [$dir]));
         }
+        $this->minilog->debug('using-filecache');
+        $this->minilog->debug('cache-dir', [$dir]);
     }
 
     /**
@@ -101,6 +103,7 @@ class FileCache implements AdaptorInterface
      */
     public function get($key, $raw = false, $custom_time = null)
     {
+        $this->minilog->debug($this->i18n->trans('filecache-get-key-item', [$key]));
         if (!$this->fileExpired($file = $this->getRoute($key), $custom_time)) {
             $content = file_get_contents($file);
             /**
@@ -125,6 +128,14 @@ class FileCache implements AdaptorInterface
      */
     public function set($key, $content, $raw = false)
     {
+        if (\is_array($content)) {
+            $contentMsg = \implode(', ', $content);
+        } elseif (\is_string($content)) {
+            $contentMsg = $content;
+        } else {
+            $content = \gettype($content);
+        }
+        $this->minilog->debug($this->i18n->trans('filecache-set-key-item', [$key, $contentMsg]));
         $dest_file_name = $this->getRoute($key);
         /** Use a unique temporary filename to make writes atomic with rewrite */
         $temp_file_name = str_replace('.php', uniqid('-', true) . '.php', $dest_file_name);
@@ -146,6 +157,7 @@ class FileCache implements AdaptorInterface
      */
     public function delete($key)
     {
+        $this->minilog->debug($this->i18n->trans('filecache-delete-key-item', [$key]));
         $ruta = $this->getRoute($key);
         if (file_exists($ruta)) {
             return unlink($ruta);
@@ -161,8 +173,9 @@ class FileCache implements AdaptorInterface
      */
     public function clear()
     {
+        $this->minilog->debug($this->i18n->trans('filecache-clear'));
         foreach (scandir(self::$config['cache_path'], SCANDIR_SORT_ASCENDING) as $fileName) {
-            if (substr($fileName, -4) == '.php') {
+            if (substr($fileName, -4) === '.php') {
                 unlink(self::$config['cache_path'] . '/' . $fileName);
             }
         }
