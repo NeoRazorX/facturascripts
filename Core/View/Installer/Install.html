@@ -16,7 +16,7 @@
         <script type="text/javascript">
             $(document).ready(function () {
                 document.fs_install.fs_timezone.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
-                
+
                 $('#db_type').on('change', function () {
                     $('#db_type option:selected').each(function () {
                         str = $(this).val();
