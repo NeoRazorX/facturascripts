@@ -108,29 +108,29 @@ class DataBaseUtils
     {
         $result = '';
         foreach ($xmlCols as $xml_col) {
-            if (strtolower($xml_col['tipo']) === 'integer') {
+            if (strtolower($xml_col['type']) === 'integer') {
                 /**
                  * Desde la pestaña avanzado el panel de control se puede cambiar
                  * el tipo de entero a usar en las columnas.
                  */
-                $xml_col['tipo'] = FS_DB_INTEGER;
+                $xml_col['type'] = FS_DB_INTEGER;
             }
 
-            $column = $this->searchInArray($dbCols, 'name', $xml_col['nombre']);
+            $column = $this->searchInArray($dbCols, 'name', $xml_col['name']);
             if (empty($column)) {
                 $result .= $this->engine->getSQL()->sqlAlterAddColumn($tableName, $xml_col);
                 continue;
             }
 
-            if (!$this->compareDataTypes($column['type'], $xml_col['tipo'])) {
+            if (!$this->compareDataTypes($column['type'], $xml_col['type'])) {
                 $result .= $this->engine->getSQL()->sqlAlterModifyColumn($tableName, $xml_col);
             }
 
-            if ($column['default'] === null && $xml_col['defecto'] !== '') {
+            if ($column['default'] === null && $xml_col['default'] !== '') {
                 $result .= $this->engine->getSQL()->sqlAlterConstraintDefault($tableName, $xml_col);
             }
 
-            if ($column['is_nullable'] !== $xml_col['nulo']) {
+            if ($column['is_nullable'] !== $xml_col['null']) {
                 $result .= $this->engine->getSQL()->sqlAlterConstraintNull($tableName, $xml_col);
             }
         }
@@ -154,7 +154,7 @@ class DataBaseUtils
 
         foreach ($dbCons as $db_con) {
             if (strpos('PRIMARY;UNIQUE', $db_con['name']) === false) {
-                $column = $this->searchInArray($xmlCons, 'nombre', $db_con['name']);
+                $column = $this->searchInArray($xmlCons, 'name', $db_con['name']);
                 if (empty($column)) {
                     $result .= $this->engine->getSQL()->sqlDropConstraint($tableName, $db_con);
                 }
@@ -163,13 +163,13 @@ class DataBaseUtils
 
         if (!empty($xmlCons) && !$deleteOnly && FS_FOREIGN_KEYS === '1') {
             foreach ($xmlCons as $xml_con) {
-                if (strpos($xml_con['consulta'], 'PRIMARY') === 0) {
+                if (strpos($xml_con['constraint'], 'PRIMARY') === 0) {
                     continue;
                 }
 
-                $column = $this->searchInArray($dbCons, 'name', $xml_con['nombre']);
+                $column = $this->searchInArray($dbCons, 'name', $xml_con['name']);
                 if (empty($column)) {
-                    $result .= $this->engine->getSQL()->sqlAddConstraint($tableName, $xml_con['nombre'], $xml_con['consulta']);
+                    $result .= $this->engine->getSQL()->sqlAddConstraint($tableName, $xml_con['name'], $xml_con['constraint']);
                 }
             }
         }

@@ -5,31 +5,31 @@
     Description:
         Estructura de la tabla atributos_valores.
 -->
-<tabla>
-    <columna>
-        <nombre>id</nombre>
-        <tipo>serial</tipo>
-        <nulo>NO</nulo>
-        <defecto>nextval('atributos_valores_seq'::regclass)</defecto>
-    </columna>
-    <columna>
-        <nombre>codatributo</nombre>
-        <tipo>character varying(20)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>valor</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <restriccion>
-        <nombre>atributos_valores_pkey</nombre>
-        <consulta>PRIMARY KEY (id)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_atributos_valores</nombre>
-        <consulta>FOREIGN KEY (codatributo)
+<table>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('atributos_valores_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>codatributo</name>
+        <type>character varying(20)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>valor</name>
+        <type>character varying(100)</type>
+        <null>NO</null>
+    </column>
+    <indexes>
+        <name>atributos_valores_pkey</name>
+        <constraint>PRIMARY KEY (id)</constraint>
+    </indexes>
+    <indexes>
+        <name>ca_atributos_valores</name>
+        <constraint>FOREIGN KEY (codatributo)
             REFERENCES atributos (codatributo)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-</tabla>
+            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
+    </indexes>
+</table>
