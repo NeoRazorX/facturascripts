@@ -30,11 +30,11 @@ use FacturaScripts\Core\Base\Translator;
 class APCAdapter implements AdaptorInterface
 {
     /**
-     * Objeto APC
+     * APC, contiene True, si está en uso, sino False
      *
-     * @var apc
+     * @var bool
      */
-    private static $memcache;
+    private static $apc;
 
     /**
      * Objeto FileCache
@@ -42,20 +42,6 @@ class APCAdapter implements AdaptorInterface
      * @var FileCache
      */
     private static $PhpFileCache;
-
-    /**
-     * Si contiene errores True, sino False
-     *
-     * @var bool
-     */
-    private static $error;
-
-    /**
-     * Si está conectado True, sino False
-     *
-     * @var bool
-     */
-    private static $connected;
 
     /**
      * Objeto traductor
@@ -72,81 +58,21 @@ class APCAdapter implements AdaptorInterface
     private $minilog;
 
     /**
-     * MemcacheAdaptor constructor.
-     * If Memcache can't be used, default option is FileCache
+     * APCAdaptor constructor.
+     * If APC can't be used, default option is FileCache
      *
      * @param string $folder
      */
     public function __construct($folder = '')
     {
-        $this->minilog = new MiniLog();
-        $this->i18n = new Translator($folder);
-
-        if (self::$memcache === null) {
-            if (\class_exists('Memcache')) {
-                self::$memcache = new \Memcache();
-                if (@self::$memcache->connect(FS_CACHE_HOST, FS_CACHE_PORT)) {
-                    self::$connected = true;
-                    self::$error = false;
-                    $this->minilog->debug($this->i18n->trans('using-memcache'));
-                } else {
-                    self::$connected = false;
-                    self::$error = true;
-                    $this->minilog->error($this->i18n->trans('error-connecting-memcache'));
-                }
-            } else {
-                self::$memcache = null;
-                self::$connected = false;
-                $this->minilog->error($this->i18n->trans('memcache-not-found'));
-            }
-        }
-
-        if (!self::$connected) {
+        if (extension_loaded('apc') && ini_get('apc.enabled')) {
+            self::$apc = true;
+            $this->minilog->debug($this->i18n->trans('using-apc'));
+        } else {
+            self::$apc = false;
+            $this->minilog->error($this->i18n->trans('apc-not-found'));
             self::$PhpFileCache = new FileCache($folder);
         }
-    }
-
-    /**
-     * Return True if got error, false otherwise.
-     *
-     * @return bool
-     */
-    public function getError()
-    {
-        return self::$error;
-    }
-
-    /**
-     * Cierra la conexión con Memcache
-     */
-    public function close()
-    {
-        if (self::$memcache !== null && self::$connected) {
-            self::$memcache->close();
-        }
-    }
-
-    /**
-     * Return the Memcache version
-     *
-     * @return string
-     */
-    public function getVersion()
-    {
-        if (self::$connected) {
-            return 'Memcache ' . self::$memcache->getVersion();
-        }
-        return 'Files';
-    }
-
-    /**
-     * Return if is connected or not.
-     *
-     * @return bool
-     */
-    public function isConnected()
-    {
-        return self::$connected;
     }
 
     /**
@@ -158,67 +84,35 @@ class APCAdapter implements AdaptorInterface
      */
     public function get($key)
     {
-        if (self::$connected) {
-            $this->minilog->debug($this->i18n->trans('memcache-get-key-item', [$key]));
-            return self::$memcache->get(FS_CACHE_PREFIX . $key);
+        $this->minilog->debug($this->i18n->trans('apc-get-key-item', [$key]));
+
+        if (self::$apc) {
+            return apc_fetch($key);
         }
+
         return self::$PhpFileCache->get($key);
     }
 
     /**
      * Get the array data associated with a key.
      *
-     * @param string $key
+     * @param array $key
      * @return array
      */
     public function getArray($key)
     {
-        $this->minilog->debug($this->i18n->trans('memcache-getarray-key-item', [\implode(',', $key)]));
-        $result = [];
-        if (self::$connected) {
-            $data = self::$memcache->get(FS_CACHE_PREFIX . $key);
-            if ($data) {
-                $result = $data;
-            }
-        } else {
-            $data = self::$PhpFileCache->get($key);
-            if ($data) {
-                $result = $data;
-            }
+        $stringKey = \implode(',', $key);
+        $this->minilog->debug($this->i18n->trans('apc-getarray-key-item', [$stringKey]));
+
+        if (self::$apc) {
+            return apc_fetch($key) ?: [];
         }
-        return $result;
-    }
 
-    /**
-     * Get the array data associated with a key.
-     * If data not found in cache, $error = true.
-     *
-     * @param string $key
-     * @param bool $error
-     *
-     * @return array
-     */
-    public function getArray2($key, &$error)
-    {
-        $this->minilog->debug($this->i18n->trans('memcache-getarray2-key-item', [\implode(',', $key)]));
         $result = [];
-        $error = true;
-
-        if (self::$connected) {
-            $this->minilog->debug($this->i18n->trans('memcache-get-key-item', [$key]));
-            $data = self::$memcache->get(FS_CACHE_PREFIX . $key);
-            if ($data) {
-                $result = $data;
-                $error = false;
-                $this->minilog->info($this->i18n->trans('element-not-in-memcache', [$key]));
-            }
-        } else {
-            $data = self::$PhpFileCache->get($key);
-            if ($data) {
-                $result = $data;
-                $error = false;
-                $this->minilog->info($this->i18n->trans('element-not-in-memcache', [$key]));
-            }
+        $stringKey = \implode(',', $key);
+        $data = self::$PhpFileCache->get($stringKey);
+        if ($data) {
+            $result = $data;
         }
         return $result;
     }
@@ -226,9 +120,10 @@ class APCAdapter implements AdaptorInterface
     /**
      * Put content into the cache.
      *
-     * @param string $key
-     * @param mixed  $content the the content you want to store
-     * @param int    $expire  time to expire
+     * @param string|array $key if string, value on content
+     *                          if array, key => value
+     * @param mixed  $content   the the content you want to store
+     * @param int    $expire    time to expire
      *
      * @return bool whether if the operation was successful or not
      */
@@ -239,11 +134,16 @@ class APCAdapter implements AdaptorInterface
         } elseif (\is_string($content)) {
             $contentMsg = $content;
         } else {
-            $content = \gettype($content);
+            $contentMsg = \gettype($content);
         }
-        $this->minilog->debug($this->i18n->trans('memcache-set-key-item', [$key, $contentMsg]));
-        if (self::$connected) {
-            return self::$memcache->set(FS_CACHE_PREFIX . $key, $content, false, $expire);
+        $this->minilog->debug($this->i18n->trans('apc-set-key-item', [$key, $contentMsg]));
+
+        if (self::$apc) {
+            if (\is_array($key)) {
+                $result = apc_store($key, null, $expire);
+                return empty($result);
+            }
+            return apc_store($key, $content, $expire);
         }
 
         return self::$PhpFileCache->set($key, $content);
@@ -251,36 +151,19 @@ class APCAdapter implements AdaptorInterface
 
     /**
      * Delete data from cache.
-     * If $key is string, only delete one key.
-     * If $key is array, delete all key strings on array.
      *
-     * @param array|string $key
+     * @param string $key
      *
      * @return bool true if the data was removed successfully
      */
     public function delete($key)
     {
-        $this->minilog->debug($this->i18n->trans('memcache-delete-key-item', [$key]));
-        $done = false;
-
-        if (self::$connected) {
-            if (!is_array($key)) {
-                foreach ($key as $i => $value) {
-                    $done = self::$memcache->delete(FS_CACHE_PREFIX . $key);
-                }
-            } else {
-                $done = self::$memcache->delete(FS_CACHE_PREFIX . $key);
-            }
+        $this->minilog->debug($this->i18n->trans('apc-delete-key-item', [$key]));
+        if (self::$apc) {
+            return apc_delete($key) || ! apc_exists($key);
         }
 
-        if (\is_array($key)) {
-            foreach ($key as $i => $value) {
-                $done = self::$PhpFileCache->delete($key);
-            }
-        } else {
-            $done = self::$PhpFileCache->delete($key);
-        }
-        return $done;
+        return self::$PhpFileCache->delete($key);
     }
 
     /**
@@ -290,10 +173,11 @@ class APCAdapter implements AdaptorInterface
      */
     public function clear()
     {
-        $this->minilog->debug($this->i18n->trans('memcache-clear'));
-        if (self::$connected) {
-            return self::$memcache->flush();
+        $this->minilog->debug($this->i18n->trans('apc-clear'));
+        if (self::$apc) {
+            return apc_clear_cache() && apc_clear_cache('user');
         }
+
         return self::$PhpFileCache->clear();
     }
 }

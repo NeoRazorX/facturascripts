@@ -1035,7 +1035,7 @@
     "description-4ba": "Description 4ba",
     "nature": "Nature",
     "error-connecting-memcache": "Error connecting to Memcache server.",
-    "memcache-not-found": "Memcache class not fount.",
+    "memcache-not-found": "Memcache class not found.",
     "element-not-in-memcache": "Element 0 not in Memcache.",
     "memcache-host": "Memcache host",
     "memcache-port": "Memcache port",
@@ -1052,5 +1052,11 @@
     "filecache-get-key-item": "Getted element '0' from Filecache.",
     "filecache-set-key-item": "Setted element '0' to Filecache.",
     "filecache-delete-key-item": "Deleted element '0' from Filecache.",
-    "filecache-clear": "Filecache cleared."
+    "filecache-clear": "Filecache cleared.",
+    "apc-not-found": "APC extension not found.",
+    "apc-get-key-item": "Getted element '0' from APC.",
+    "apc-getarray-key-item": "Getted array elements '0' from APC.",
+    "apc-set-key-item": "Setted element '0' to APC.",
+    "apc-delete-key-item": "Deleted element '0' from APC.",
+    "apc-clear": "APC cleared."
 }
