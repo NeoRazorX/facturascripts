@@ -89,15 +89,16 @@ function getLanguages(&$i18n)
  * para la instalación
  * @return string
  */
-function getUserLanguage(){   
+function getUserLanguage(){
     $dataLanguage = explode(';',\filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'));
-    $userLanguage = explode(',',$dataLanguage[0])[0];
-    return str_replace('-','_', $userLanguage);
+    $userLanguage = str_replace('-','_', explode(',',$dataLanguage[0])[0]);
+    $translationExists = file_exists(__DIR__ . '/Core/Translation/'.$userLanguage.'.json');
+    return ($translationExists) ? $userLanguage : 'en_EN';
 }
 
 /**
 * Timezones list with GMT offset
-* 
+*
 * @return array
 * @link http://stackoverflow.com/a/9328760
 */
@@ -326,7 +327,7 @@ function installerMain()
             return 0;
         }
     }
-    
+
     /// empaquetamos las variables a pasar el motor de plantillas
     $templateVars = [
         'errors' => $errors,
