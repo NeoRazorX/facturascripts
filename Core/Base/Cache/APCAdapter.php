@@ -1,7 +1,6 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  * Copyright (C) 2017  Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,17 +23,16 @@ use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator;
 
 /**
- * Clase para concectar e interactuar con memcache.
+ * Clase para conectar e interactuar con APC.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class MemcacheAdapter implements AdaptorInterface
+class APCAdapter implements AdaptorInterface
 {
     /**
-     * Objeto Memcache
+     * Objeto APC
      *
-     * @var \Memcache
+     * @var apc
      */
     private static $memcache;
 
@@ -84,22 +82,21 @@ class MemcacheAdapter implements AdaptorInterface
         $this->minilog = new MiniLog();
         $this->i18n = new Translator($folder);
 
-        self::$connected = false;
-        self::$error = false;
-
         if (self::$memcache === null) {
             if (\class_exists('Memcache')) {
                 self::$memcache = new \Memcache();
                 if (@self::$memcache->connect(FS_CACHE_HOST, FS_CACHE_PORT)) {
                     self::$connected = true;
+                    self::$error = false;
                     $this->minilog->debug($this->i18n->trans('using-memcache'));
                 } else {
+                    self::$connected = false;
                     self::$error = true;
                     $this->minilog->error($this->i18n->trans('error-connecting-memcache'));
                 }
             } else {
                 self::$memcache = null;
-                self::$error = true;
+                self::$connected = false;
                 $this->minilog->error($this->i18n->trans('memcache-not-found'));
             }
         }
@@ -114,7 +111,7 @@ class MemcacheAdapter implements AdaptorInterface
      *
      * @return bool
      */
-    public function hasError()
+    public function getError()
     {
         return self::$error;
     }
@@ -171,13 +168,12 @@ class MemcacheAdapter implements AdaptorInterface
     /**
      * Get the array data associated with a key.
      *
-     * @param array $key
+     * @param string $key
      * @return array
      */
     public function getArray($key)
     {
-        $stringKey = \implode(',', $key);
-        $this->minilog->debug($this->i18n->trans('memcache-getarray-key-item', [$stringKey]));
+        $this->minilog->debug($this->i18n->trans('memcache-getarray-key-item', [\implode(',', $key)]));
         $result = [];
         if (self::$connected) {
             $data = self::$memcache->get(FS_CACHE_PREFIX . $key);
@@ -185,7 +181,7 @@ class MemcacheAdapter implements AdaptorInterface
                 $result = $data;
             }
         } else {
-            $data = self::$PhpFileCache->get($stringKey);
+            $data = self::$PhpFileCache->get($key);
             if ($data) {
                 $result = $data;
             }
@@ -197,15 +193,14 @@ class MemcacheAdapter implements AdaptorInterface
      * Get the array data associated with a key.
      * If data not found in cache, $error = true.
      *
-     * @param array $key
+     * @param string $key
      * @param bool $error
      *
      * @return array
      */
     public function getArray2($key, &$error)
     {
-        $stringKey = \implode(',', $key);
-        $this->minilog->debug($this->i18n->trans('memcache-getarray2-key-item', [$stringKey]));
+        $this->minilog->debug($this->i18n->trans('memcache-getarray2-key-item', [\implode(',', $key)]));
         $result = [];
         $error = true;
 
@@ -218,7 +213,7 @@ class MemcacheAdapter implements AdaptorInterface
                 $this->minilog->info($this->i18n->trans('element-not-in-memcache', [$key]));
             }
         } else {
-            $data = self::$PhpFileCache->get($stringKey);
+            $data = self::$PhpFileCache->get($key);
             if ($data) {
                 $result = $data;
                 $error = false;
@@ -244,7 +239,7 @@ class MemcacheAdapter implements AdaptorInterface
         } elseif (\is_string($content)) {
             $contentMsg = $content;
         } else {
-            $contentMsg = \gettype($content);
+            $content = \gettype($content);
         }
         $this->minilog->debug($this->i18n->trans('memcache-set-key-item', [$key, $contentMsg]));
         if (self::$connected) {
@@ -269,9 +264,9 @@ class MemcacheAdapter implements AdaptorInterface
         $done = false;
 
         if (self::$connected) {
-            if (\is_array($key)) {
+            if (!is_array($key)) {
                 foreach ($key as $i => $value) {
-                    $done = self::$memcache->delete(FS_CACHE_PREFIX . $value);
+                    $done = self::$memcache->delete(FS_CACHE_PREFIX . $key);
                 }
             } else {
                 $done = self::$memcache->delete(FS_CACHE_PREFIX . $key);
@@ -280,7 +275,7 @@ class MemcacheAdapter implements AdaptorInterface
 
         if (\is_array($key)) {
             foreach ($key as $i => $value) {
-                $done = self::$PhpFileCache->delete($value);
+                $done = self::$PhpFileCache->delete($key);
             }
         } else {
             $done = self::$PhpFileCache->delete($key);

@@ -205,7 +205,7 @@ class MenuManager
         // Reorder submenu by title
         foreach ($result as $posM => $menu) {
             $sortSubMenu = [];
-            foreach ($menu->menu as $posS => $submenu) {
+            foreach ($menu->menu as $submenu) {
                 $sortSubMenu[$submenu->name] = $submenu->title;
             }
             array_multisort($sortSubMenu, SORT_ASC, $result[$posM]->menu);
