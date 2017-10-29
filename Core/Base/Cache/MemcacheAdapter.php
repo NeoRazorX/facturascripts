@@ -32,13 +32,6 @@ use FacturaScripts\Core\Base\Translator;
 class MemcacheAdapter implements AdaptorInterface
 {
     /**
-     * Configuración de la cache.
-     *
-     * @var array
-     */
-    private static $config;
-
-    /**
      * Objeto Memcache
      *
      * @var \Memcache
@@ -248,7 +241,7 @@ class MemcacheAdapter implements AdaptorInterface
         } elseif (\is_string($content)) {
             $contentMsg = $content;
         } else {
-            $content = \gettype($content);
+            $contentMsg = \gettype($content);
         }
         $this->minilog->debug($this->i18n->trans('memcache-set-key-item', [$key, $contentMsg]));
         if (self::$connected) {

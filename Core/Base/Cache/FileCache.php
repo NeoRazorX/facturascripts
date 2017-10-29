@@ -133,7 +133,7 @@ class FileCache implements AdaptorInterface
         } elseif (\is_string($content)) {
             $contentMsg = $content;
         } else {
-            $content = \gettype($content);
+            $contentMsg = \gettype($content);
         }
         $this->minilog->debug($this->i18n->trans('filecache-set-key-item', [$key, $contentMsg]));
         $dest_file_name = $this->getRoute($key);
