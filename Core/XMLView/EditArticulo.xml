@@ -24,10 +24,10 @@
 <view>
     <columns>
         <group name="data" numcolumns="2">
-            <column name="referencia" title="Referencia" numcolumns="12" order="100">
+            <column name="referencia" title="reference" numcolumns="12" order="100">
                 <widget type="text" fieldname="referencia" maxlength="18" required="true" />
             </column>
-            <column name="tipo" numcolumns="12" order="110">
+            <column name="tipo" title="type" numcolumns="12" order="110">
                 <widget type="select" fieldname="tipo">
                     <values title="Producto simple"></values>
                 </widget>
@@ -39,34 +39,34 @@
             </column>
         </group>
         <group name="varios" numcolumns="12">
-            <column name="codfamilia" numcolumns="3" order="100">
+            <column name="codfamilia" title="family-code" numcolumns="3" order="100">
                 <widget type="select" fieldname="codfamilia">
                     <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="codfabricante" numcolumns="3" order="110">
+            <column name="codfabricante" title="manufacturer-code" numcolumns="3" order="110">
                 <widget type="select" fieldname="codfabricante">
                     <values source="fabricantes" fieldcode="codfabricante" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="codbarras" numcolumns="2" order="130">
-                <widget type="text"  fieldname="codbarras"/>
+            <column name="codbarras" title="barcode" numcolumns="2" order="130">
+                <widget type="text" fieldname="codbarras"/>
             </column>
             <column name="partnumber" numcolumns="2" order="140">
                 <widget type="text" fieldname="partnumber"/>
             </column>
-            <column name="equivalencia" numcolumns="2" order="150">
+            <column name="equivalencia" title="equivalence" numcolumns="2" order="150">
                 <widget type="text" fieldname="equivalencia"/>
             </column>
         </group>
         <group name="stock" numcolumns="4">
-            <column name="stockfis" numcolumns="4" order="100">
+            <column name="stockfis" title="physical-stock" numcolumns="4" order="100">
                 <widget type="number" fieldname="stockfis" readonly="readonly"/>
             </column>
-            <column name="stockmin" numcolumns="4" order="100">
+            <column name="stockmin" title="minimum-stock" numcolumns="4" order="100">
                 <widget type="number" fieldname="stockmin"/>
             </column>
-            <column name="stockmax" numcolumns="4" order="210">
+            <column name="stockmax" title="maximum-stock" numcolumns="4" order="210">
                 <widget type="number" fieldname="stockmax"/>
             </column>
         </group>
@@ -74,36 +74,36 @@
              
         </group>
         <group name="option" numcolumns="5">
-            <column name="nostock" numcolumns="6" order="100">
+            <column name="nostock" title="no-stock" numcolumns="6" order="100">
                 <widget type="checkbox" fieldname="nostock" />
             </column>
-            <column name="secompra" numcolumns="6" order="140">
+            <column name="secompra" title="for-purchase" numcolumns="6" order="140">
                 <widget type="checkbox" fieldname="secompra" />
             </column>
-            <column name="sevende" numcolumns="6" order="120">
+            <column name="sevende" title="for-sale" numcolumns="6" order="120">
                 <widget type="checkbox" fieldname="sevende" />
             </column>
-            <column name="publico" numcolumns="6" order="130">
+            <column name="publico" title="public" numcolumns="6" order="130">
                 <widget type="checkbox" fieldname="publico" />
             </column> 
-            <column name="trazabilidad" numcolumns="6" order="110">
+            <column name="trazabilidad" title="traceability" numcolumns="6" order="110">
                 <widget type="checkbox" fieldname="trazabilidad"/>
             </column>  
-            <column name="bloqueado" numcolumns="6" order="120">
+            <column name="bloqueado" title="blocked" numcolumns="6" order="120">
                 <widget type="checkbox" fieldname="bloqueado"/>
             </column>
         </group>  
         <group name="precios" numcolumns="12">
-            <column name="preciocoste" numcolumns="3" order="100">
+            <column name="preciocoste" title="cost-price" numcolumns="3" order="100">
                 <widget type="number" fieldname="preciocoste" readonly="readonly"/>
             </column>
-            <column name="costemedio" numcolumns="3" order="120">
+            <column name="costemedio" title="average-cost" numcolumns="3" order="120">
                 <widget type="number" fieldname="costemedio" readonly="readonly"/>
             </column>
-            <column name="pvp" numcolumns="3" order="130">
+            <column name="pvp" title="pvp" numcolumns="3" order="130">
                 <widget type="number" fieldname="pvp"/>
             </column>
-            <column name="codimpuesto" numcolumns="3" order="140">
+            <column name="codimpuesto" title="tax-code" numcolumns="3" order="140">
                 <widget type="select" fieldname="codimpuesto">
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
                 </widget>

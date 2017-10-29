@@ -55,7 +55,7 @@ class EditArticulo extends ExtendedController\EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'products';
+        $pagedata['title'] = 'product';
         $pagedata['menu'] = 'warehouse';
         $pagedata['icon'] = 'fa-cubes';
         $pagedata['showonmenu'] = false;

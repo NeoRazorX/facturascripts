@@ -44,8 +44,8 @@ class ListUser extends ExtendedController\ListController
         $this->addView('FacturaScripts\Core\Model\Rol', 'ListRol', 'roles');
         $this->addSearchFields('ListRol', ['codrol', 'descripcion']);
 
-        $this->addOrderBy('ListRol', 'descripcion');
-        $this->addOrderBy('ListRol', 'codrol');
+        $this->addOrderBy('ListRol', 'descripcion', 'description');
+        $this->addOrderBy('ListRol', 'codrol', 'code');
 
     }
 
