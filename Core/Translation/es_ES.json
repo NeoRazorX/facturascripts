@@ -1025,5 +1025,13 @@
     "for-purchase": "Se compra",
     "cost-price": "Precio de coste",
     "average-cost": "Precio medio",
-    "tax-code": "Código de impuesto"
+    "tax-code": "Código de impuesto",
+    "balance": "Balance",
+    "balances": "Balances",
+    "description-1": "Descripción 1",
+    "description-2": "Descripción 2",
+    "description-3": "Descripción 3",
+    "description-4": "Descripción 4",
+    "description-4ba": "Descripción 4ba",
+    "nature": "Natural"
 }

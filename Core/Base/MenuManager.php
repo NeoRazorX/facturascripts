@@ -172,6 +172,7 @@ class MenuManager
 
         /// Cargamos la lista de paginas para el usuario
         $pages = $this->loadPages();
+        $sortMenu = [];
         foreach ($pages as $page) {
             if ($page->menu == '') {
                 continue;
@@ -183,6 +184,7 @@ class MenuManager
                 $submenuValue = null;
                 $result[$menuValue] = new MenuItem($menuValue, $i18n->trans($menuValue), '#');
                 $menuItem = &$result[$menuValue]->menu;
+                $sortMenu[$menuValue][] = $result[$menuValue]->title;
             }
 
             /// Control de ruptura de submenu
@@ -194,8 +196,19 @@ class MenuManager
                     $menuItem = &$menuItem[$submenuValue]->menu;
                 }
             }
-
             $menuItem[$page->name] = new MenuItem($page->name, $i18n->trans($page->title), $page->url(), $page->icon);
+        }
+
+        // Reorder menu by title
+        array_multisort($sortMenu, SORT_ASC, $result);
+
+        // Reorder submenu by title
+        foreach ($result as $posM => $menu) {
+            $sortSubMenu = [];
+            foreach ($menu->menu as $posS => $submenu) {
+                $sortSubMenu[$submenu->name] = $submenu->title;
+            }
+            array_multisort($sortSubMenu, SORT_ASC, $result[$posM]->menu);
         }
 
         return $result;

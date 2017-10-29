@@ -1025,5 +1025,13 @@
     "for-purchase": "For purchase",
     "cost-price": "Cost price",
     "average-cost": "Average cost",
-    "tax-code": "Tax code"
+    "tax-code": "Tax code",
+    "balance": "Balance",
+    "balances": "Balances",
+    "description-1": "Description 1",
+    "description-2": "Description 2",
+    "description-3": "Description 3",
+    "description-4": "Description 4",
+    "description-4ba": "Description 4ba",
+    "nature": "Nature"
 }
