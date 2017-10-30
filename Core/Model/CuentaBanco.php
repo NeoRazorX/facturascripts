@@ -85,4 +85,30 @@ class CuentaBanco
 
         return true;
     }
+    
+    public function url($type = 'auto')
+    {
+        $value = $this->primaryColumnValue();
+        $model = $this->modelClassName();
+        $result = 'index.php?page=';
+        switch ($type) {
+            case 'list':
+                $result .= 'ListFormaPago&active=List' . $model;
+                break;
+
+            case 'edit':
+                $result .= 'Edit' . $model . '&code=' . $value;
+                break;
+
+            case 'new':
+                $result .= 'Edit' . $model;
+                break;
+
+            default:
+                $result .= empty($value) ? 'ListFormaPago&active=List' . $model : 'Edit' . $model . '&code=' . $value;
+                break;
+        }
+
+        return $result;
+    }
 }

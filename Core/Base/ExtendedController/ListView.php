@@ -211,7 +211,7 @@ class ListView extends BaseView
         $keys = array_keys($this->orderby);
         if (empty($orderKey) || !in_array($orderKey, $keys)) {
             if (empty($this->selectedOrderBy)) {
-                $this->selectedOrderBy = $keys[0]; // Forzamos el primer elemento cuando no hay valor por defecto
+                $this->selectedOrderBy = (string) $keys[0]; // We force the first element when there is no default
             }
         } else {
             $this->selectedOrderBy = $orderKey;

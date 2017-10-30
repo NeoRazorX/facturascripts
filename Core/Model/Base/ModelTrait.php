@@ -244,6 +244,10 @@ trait ModelTrait
 
                     case 'integer':
                     case 'int':
+                        if (($field['name'] === $this->primaryColumn()) && empty($value)) {
+                            $this->{$key} = NULL;
+                            continue;
+                        }
                         $this->{$key} = empty($value) ? 0 : (int) $value;
                         break;
 

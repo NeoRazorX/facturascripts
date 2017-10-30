@@ -133,5 +133,12 @@
             </column>
         </group>
     </columns>
+    
+    <rows>
+        <row type="header">
+            <option icon="fa-files-o" label="delivery-notes-button" calculateby="calcClientDeliveryNotes" onclick="#"></option>
+            <option icon="fa-money" label="pending-invoices-button" calculateby="calcClientInvoicePending" onclick="#"></option>
+        </row>        
+    </rows>    
 </view>
 

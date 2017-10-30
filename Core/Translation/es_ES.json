@@ -982,5 +982,7 @@
     "accounting-heading-code" : "ID Epígrafe",
     "account-code" : "Código cuenta",
     "heading-account-group-id" : "ID grupo epígrafes",
-    "heading-account-id-root" : "ID padre"
+    "heading-account-id-root" : "ID padre",
+    "delivery-notes-button" : "Alb. Ptes:",
+    "pending-invoices-button" : "Riesgo:"
 }
