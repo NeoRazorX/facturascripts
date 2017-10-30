@@ -28,7 +28,28 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListUser extends ExtendedController\ListController
 {
+   
     /**
+     * Procedimiento para insertar vistas en el controlador
+     */
+    protected function createViews()
+    {
+        $this->addView('FacturaScripts\Core\Model\User', 'ListUser', 'users');
+        $this->addSearchFields('ListUser', ['nick', 'email']);
+
+        $this->addOrderBy('ListUser', 'nick');
+        $this->addOrderBy('ListUser', 'email');
+        
+        /* Roles */
+        $this->addView('FacturaScripts\Core\Model\Rol', 'ListRol', 'roles');
+        $this->addSearchFields('ListRol', ['codrol', 'descripcion']);
+
+        $this->addOrderBy('ListRol', 'descripcion');
+        $this->addOrderBy('ListRol', 'codrol');
+
+    }
+    
+     /**
      * Devuelve los datos básicos de la página
      *
      * @return array
@@ -41,18 +62,5 @@ class ListUser extends ExtendedController\ListController
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
-    }
-
-    /**
-     * Procedimiento para insertar vistas en el controlador
-     */
-    protected function createViews()
-    {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\User', $className);
-        $this->addSearchFields($className, ['nick', 'email']);
-
-        $this->addOrderBy($className, 'nick');
-        $this->addOrderBy($className, 'email');
     }
 }

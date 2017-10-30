@@ -55,6 +55,7 @@ class EditEmpresa extends ExtendedController\EditController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'corporation';
+        $pagedata['menu'] = 'admin';
         $pagedata['icon'] = 'fa-home';
         $pagedata['showonmenu'] = false;
 

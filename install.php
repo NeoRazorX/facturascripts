@@ -35,7 +35,6 @@ if (!file_exists(__DIR__ . '/vendor')) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-
 use FacturaScripts\Core\Base\Translator;
 use Symfony\Component\HttpFoundation\Response;
 

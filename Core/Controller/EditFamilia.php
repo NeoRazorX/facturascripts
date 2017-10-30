@@ -55,6 +55,7 @@ class EditFamilia extends ExtendedController\EditController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'families';
+        $pagedata['menu'] = 'warehouse';
         $pagedata['icon'] = 'fa-object-group';
         $pagedata['showonmenu'] = false;
 

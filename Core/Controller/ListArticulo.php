@@ -65,6 +65,8 @@ class ListArticulo extends ExtendedController\ListController
         /* Artículos de proveedor */
         $this->addView('FacturaScripts\Core\Model\ArticuloProveedor', 'ListArticuloProveedor', 'supplier-products');
         $this->addSearchFields('ListArticuloProveedor', ['referencia', 'descripcion']);
+        
+        $this->addFilterSelect('ListArticuloProveedor', 'codproveedor', 'proveedores', '', 'nombre');
 
         $this->addOrderBy('ListArticuloProveedor', 'referencia', 'reference');
         $this->addOrderBy('ListArticuloProveedor', 'descripcion', 'description');
