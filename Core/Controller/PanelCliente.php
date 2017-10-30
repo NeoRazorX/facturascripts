@@ -65,7 +65,7 @@ class PanelCliente extends ExtendedController\PanelController
      *
      * @param string $fieldName
      *
-     * @return mixed
+     * @return string|boolean
      */
     private function getClientFieldValue($fieldName)
     {

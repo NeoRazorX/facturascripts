@@ -131,21 +131,21 @@ class EstadoDocumento
     public function install()
     {
         $estados = [
-            ['documento' => 'ventas_presupuesto', 'status' => 0, 'nombre' => 'Pendiente', 'bloqueado' => true ],
-            ['documento' => 'ventas_presupuesto', 'status' => 1, 'nombre' => 'Aprobado', 'bloqueado' => true ],
-            ['documento' => 'ventas_presupuesto', 'status' => 2, 'nombre' => 'Rechazado', 'bloqueado' => true ],
-            ['documento' => 'ventas_pedido', 'status' => 0, 'nombre' => 'Pendiente', 'bloqueado' => true ],
-            ['documento' => 'ventas_pedido', 'status' => 1, 'nombre' => 'Aprobado', 'bloqueado' => true ],
-            ['documento' => 'ventas_pedido', 'status' => 2, 'nombre' => 'Rechazado', 'bloqueado' => true ],
-            ['documento' => 'ventas_pedido', 'status' => 3, 'nombre' => 'En trámite', 'bloqueado' => false ],
-            ['documento' => 'ventas_pedido', 'status' => 4, 'nombre' => 'Back orders', 'bloqueado' => false ]
+            ['documento' => 'ventas_presupuesto', 'status' => 0, 'nombre' => 'Pendiente', 'bloqueado' => true],
+            ['documento' => 'ventas_presupuesto', 'status' => 1, 'nombre' => 'Aprobado', 'bloqueado' => true],
+            ['documento' => 'ventas_presupuesto', 'status' => 2, 'nombre' => 'Rechazado', 'bloqueado' => true],
+            ['documento' => 'ventas_pedido', 'status' => 0, 'nombre' => 'Pendiente', 'bloqueado' => true],
+            ['documento' => 'ventas_pedido', 'status' => 1, 'nombre' => 'Aprobado', 'bloqueado' => true],
+            ['documento' => 'ventas_pedido', 'status' => 2, 'nombre' => 'Rechazado', 'bloqueado' => true],
+            ['documento' => 'ventas_pedido', 'status' => 3, 'nombre' => 'En trámite', 'bloqueado' => false],
+            ['documento' => 'ventas_pedido', 'status' => 4, 'nombre' => 'Back orders', 'bloqueado' => false]
         ];
         $sql = '';
         foreach ($estados as $pos => $estado) {
             $sql .= 'INSERT INTO ' . $this->tableName()
                 . ' (id, documento, status, nombre, bloqueado)'
                 . ' VALUES ('
-                . $this->var2str($pos+1)
+                . $this->var2str($pos + 1)
                 . ',' . $this->var2str($estado['documento'])
                 . ',' . $this->var2str($estado['status'])
                 . ',' . $this->var2str($estado['nombre'])

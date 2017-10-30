@@ -211,6 +211,9 @@ abstract class ListController extends Base\Controller
         return false;
     }
 
+    /**
+     * @param integer $view
+     */
     private function getTextColumns($view, $maxColumns)
     {
         $result = [];
@@ -291,7 +294,7 @@ abstract class ListController extends Base\Controller
      * para el filtrado de datos.
      *
      * @param string $indexView
-     * @param array $fields
+     * @param string[] $fields
      */
     protected function addSearchFields($indexView, $fields)
     {
@@ -342,6 +345,13 @@ abstract class ListController extends Base\Controller
         $this->views[$indexView]->addFilter($key, ListFilter::newCheckboxFilter($field, $value, $label, $inverse));
     }
 
+    /**
+     * @param string $indexView
+     * @param string $key
+     * @param string $type
+     * @param string $label
+     * @param string $field
+     */
     private function addFilterFromType($indexView, $key, $type, $label, $field)
     {
         $config = [
@@ -363,7 +373,6 @@ abstract class ListController extends Base\Controller
      * @param string $key     (Filter identifier)
      * @param string $label   (Human reader description)
      * @param string $field   (Field of the table to apply filter)
-     * @param string $operator
      */
     protected function addFilterDatePicker($indexView, $key, $label, $field = '')
     {
@@ -377,7 +386,6 @@ abstract class ListController extends Base\Controller
      * @param string $key     (Filter identifier)
      * @param string $label   (Human reader description)
      * @param string $field   (Field of the table to apply filter)
-     * @param string $operator
      */
     protected function addFilterText($indexView, $key, $label, $field = '')
     {
@@ -391,7 +399,6 @@ abstract class ListController extends Base\Controller
      * @param string $key     (Filter identifier)
      * @param string $label   (Human reader description)
      * @param string $field   (Field of the table to apply filter)
-     * @param string $operator
      */
     protected function addFilterNumber($indexView, $key, $label, $field = '')
     {
