@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSºE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Definición inicial para el controlador EditCliente
+ *
+ * @author Nazca Networks <comercial@nazcanetworks.com>
+-->
+
+<view>
+    <columns>
+        <group name="data" numcolumns="12">
+            <column name="code" numcolumns="2" order="100">
+                <widget type="text" fieldname="codproveedor" onclick="" icon="fa-user" required="true" />
+            </column>
+            
+            <column name="name" numcolumns="3" order="110"
+                    description="desc-provider-name">
+                <widget type="text" fieldname="nombre" required="true" hint="desc-provider-name-2" />
+            </column>
+            <column name="fiscal name" title="business-name" numcolumns="3" order="120"
+                    description="desc-provider-business-name">
+                <widget type="text" fieldname="razonsocial" hint="desc-provicer-business-name-2" />
+            </column>
+            <column name="fiscal type" title="fiscal-id" numcolumns="2" order="130">
+                <widget type="select" fieldname="tipoidfiscal">
+                    <values title="CIF/NIF">cifnif</values>
+                    <values title="Pasaporte">passport</values>
+                    <values title="DNI">DNI</values>
+                    <values title="NIF">NIF</values>
+                    <values title="CIF">CIF</values>
+                    <values title="VAT">VAT</values>
+                    <values title="CUIT">CUIT</values>
+                </widget>
+            </column>
+
+            
+
+            <column name="fiscal number" title="cifnif" numcolumns="2" order="140">
+                <widget type="text" fieldname="cifnif" required="true" />
+            </column>
+
+            <column name="fiscal-mode" title="is-person" numcolumns="4" order="200">
+                <widget type="checkbox" fieldname="personafisica" />
+            </column>
+            <column name="is-creditor" title="is-creditor" numcolumns="3" order="200">
+                <widget type="checkbox" fieldname="acreedor" />
+            </column>
+            <column name="customer" title="customer" numcolumns="4" order="220">
+                <widget type="select"  fieldname="codcliente">
+                    <values source="clientes" fieldcode="cliente" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+        </group>
+        
+        <group name="comercial" title="commercial-terms" numcolumns="4">
+            
+
+            <column name="payment" title="method-payment" numcolumns="12" titleurl="?page=ListFormaPago" order="120">
+                <widget type="select" fieldname="codpago">
+                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+
+                       
+            <column name="vat-type" title="vat-regime" order="150" numcolumns="6">
+                <widget type="radio" fieldname="regimeniva">
+                    <values title="general">general</values>
+                    <values title="exempt">exempt</values>
+                </widget>
+                
+            </column>
+            <column name="badge" title="badge" numcolumns="6" order="160">
+                <widget type="select" fieldname="coddivisa">
+                    <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion">   </values>
+                </widget>
+            </column>
+            <column name="financial-surcharge" numcolumns="6" order="170">
+                <widget type="number" fieldname="recfinanciero"/>
+            </column>
+            <column name="tax-transport" title="tax-transport" numcolumns="6" order="160">
+                <widget type="select" fieldname="ivaportes">
+                    <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion">   </values>
+                </widget>
+            </column>
+            <column name="serie" title="serie" numcolumns="6" order="160">
+                <widget type="select" fieldname="codserie">
+                    <values source="series" fieldcode="codserie" fieldtitle="descripcion">   </values>
+                </widget>
+            </column>
+            <column name="subaccount" title="subaccounts" numcolumns="6" order="160">
+                <widget type="select" fieldname="codsubbuenta">
+                    <values source="co-subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion">   </values>
+                </widget>
+            </column>
+            <column name="subaccount" title="subaccounts" numcolumns="6" order="160">
+                <widget type="select" fieldname="codsubcuenta">
+                    <values source="co_subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion">   </values>
+                </widget>
+            </column>
+                
+        </group>
+        
+        <group name="contact" title="contact-info" numcolumns="4">
+            <column name="phone" numcolumns="6" order="100">
+                <widget type="tel" fieldname="telefono1" />
+            </column>
+            
+            <column name="phone2" numcolumns="6" order="110">
+                <widget type="tel" fieldname="telefono2" />
+            </column>
+            
+            <column name="fax" numcolumns="6" order="120">
+                <widget type="tel" fieldname="fax" />
+            </column>
+            
+            <column name="contact-person" numcolumns="12" order="200">
+                <widget type="text" fieldname="contacto" />
+            </column>
+            
+            <column name="email" numcolumns="12" order="200">
+                <widget type="email" fieldname="email" />
+            </column>
+
+            <column name="url" numcolumns="12" order="210">
+                <widget type="url" fieldname="web" />
+            </column>
+        </group>
+
+        <group name="other" title="other-data" numcolumns="4">
+            <column name="create-date" numcolumns="4" order="80">
+                <widget type="datepicker" fieldname="fechaalta" readonly="true" />
+            </column>
+
+            <column name="blocked-date" numcolumns="4" order="90">
+                <widget type="datepicker" fieldname="fechabaja" />
+            </column>
+
+            <column name="blocked" numcolumns="4" order="100">
+                <widget type="checkbox" fieldname="debaja" />
+            </column>
+        </group>
+        
+        <group name="notes">
+            <column name="notes" order="170">
+                <widget type="textarea" fieldname="observaciones" />
+            </column>
+        </group>
+    </columns>
+</view>
+
+<!--
+        codcontacto         character varying(6)         YES   
+        codcuentadom         character varying(10)         YES
+        codcuentapago         character varying(6)         YES
+       idsubcuenta          integer         YES
+       
+       
+-->
