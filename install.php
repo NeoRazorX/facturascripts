@@ -63,6 +63,16 @@ function searchErrors(&$errors, &$i18n)
 }
 
 /**
+ * Regresa un valor de font-awesome si el parametro es true o false
+ * @param boolean $isOk
+ * @return string
+ */
+function checkRequirement($isOk)
+{
+    return $isOk ? 'fa-check text-success' : 'fa-ban text-danger';
+}
+
+/**
  * Devuelve un array de idiomas, donde la key es el nombre del archivo JSON y
  * el value es su correspondiente traducción.
  *
@@ -308,6 +318,13 @@ function renderHTML(&$templateVars)
  */
 function installerMain()
 {
+    $requeriments = [
+        'mb_substr' => checkRequirement(function_exists('mb_substr')),
+        'SimpleXML' => checkRequirement(extension_loaded('simplexml')),
+        'openSSL' => checkRequirement(extension_loaded('openssl')),
+        'Zip' => checkRequirement(extension_loaded('zip'))
+    ];
+    
     $errors = [];
 
     if (filter_input(INPUT_POST, 'fs_lang')) {
@@ -331,6 +348,7 @@ function installerMain()
     /// empaquetamos las variables a pasar el motor de plantillas
     $templateVars = [
         'errors' => $errors,
+        'requirements' => $requeriments,
         'i18n' => $i18n,
         'languages' => getLanguages($i18n),
         'timezone' => get_timezone_list(),
