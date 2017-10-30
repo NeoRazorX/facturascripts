@@ -57,6 +57,7 @@ class TotalModel
      */
     public function __construct($data = [])
     {
+        $this->code = '';
         $this->totals = [];
         foreach ($data as $field => $value) {
             if ($field === 'code') {
@@ -65,6 +66,31 @@ class TotalModel
             }
             $this->totals[$field] = empty($value) ? 0 : $value;
         }
+    }
+
+    private function clearTotals($totalFields)
+    {
+        foreach ($totalFields as $fieldName) {
+            $this->totals[$fieldName] = 0;
+        }                    
+    }
+    
+    private static function getFieldSQL($fieldCode, $fieldList)
+    {
+        $result = '';
+        $comma = '';
+
+        if (!empty($fieldCode)) {
+            $result .= $fieldCode . ' AS code';
+            $comma = ', ';
+        }
+
+        foreach ($fieldList as $fieldName => $fieldSQL) {
+            $result .= $comma . $fieldSQL . ' AS ' . $fieldName;
+            $comma = ', ';
+        }
+
+        return $result;
     }
 
     /**
@@ -86,36 +112,21 @@ class TotalModel
         }
 
         if (self::$dataBase->tableExists($tableName)) {
-            $sql = 'SELECT ';
-            $groupby = ';';
-
-            if (!empty($fieldCode)) {
-                $sql .= $fieldCode . ' AS code, ';
-                $groupby = ' GROUP BY 1 ORDER BY 1;';
-            }
-            
-            $comma = '';
-            foreach ($fieldList as $fieldName => $fieldSQL) {
-                $sql .= $comma . $fieldSQL . ' AS ' . $fieldName;
-                $comma = ', ';
-            }
-            
+            $sql = 'SELECT ' . self::getFieldSQL($fieldCode, $fieldList);
+            $groupby = empty($fieldCode) ? ';' : ' GROUP BY 1 ORDER BY 1;';
+                        
             $sqlWhere = DataBase\DataBaseWhere::getSQLWhere($where);            
             $sql .= ' FROM ' . $tableName . $sqlWhere . $groupby;            
             $data = self::$dataBase->select($sql);
-            if (!empty($data)) {
-                foreach ($data as $d) {
-                    $result[] = new self($d);
-                }
+            foreach ($data as $d) {
+                $result[] = new self($d);
             }
         }
 
         /// if it is empty we are obliged to always return a record with the totals to zero
         if (empty($result)) {
             $result[] = new self();
-            foreach (array_keys($fieldList) as $fieldName) {
-                $result[0]->totals[$fieldName] = 0;
-            }            
+            $result[0]->clearTotals(array_keys($fieldList));
         }
         
         return $result;
