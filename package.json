@@ -28,6 +28,6 @@
     "font-awesome": "^4.x",
     "jquery": "^3.x",
     "jscolor-picker": "^2.0.4",
-    "popper.js": "^1.12.5"
+    "popper.js": "^1.12.6"
   }
 }

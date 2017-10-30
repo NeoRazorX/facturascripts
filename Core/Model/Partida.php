@@ -540,7 +540,7 @@ class Partida
     /**
      * Realiza la consulta recibida y reparte los totales en debe, haber y saldo
      *
-     * @param $sql
+     * @param string $sql
      *
      * @return array
      */

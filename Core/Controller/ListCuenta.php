@@ -35,7 +35,7 @@ class ListCuenta extends ExtendedController\ListController
     protected function createViews()
     {
         /* Cuentas */
-        $this->addView('FacturaScripts\Core\Model\Cuenta', 'ListCuenta', 'accounts');
+        $this->addView('FacturaScripts\Core\Model\Cuenta', 'ListCuenta', 'accounts', 'fa-book');
         $this->addSearchFields('ListCuenta', ['descripcion', 'codcuenta', 'codejercicio', 'codepigrafe']);
 
         $this->addOrderBy('ListCuenta', 'codejercicio desc,codcuenta', 'code');
@@ -45,7 +45,7 @@ class ListCuenta extends ExtendedController\ListController
         $this->addFilterSelect('ListCuenta', 'codepigrafe', 'co_epigrafes', '', 'descripcion');
 
         /* Epigrafes */
-        $this->addView('FacturaScripts\Core\Model\Epigrafe', 'ListEpigrafe', 'epigraphs');
+        $this->addView('FacturaScripts\Core\Model\Epigrafe', 'ListEpigrafe', 'epigraphs', 'fa-list-alt');
         $this->addSearchFields('ListEpigrafe', ['descripcion', 'codepigrafe', 'codejercicio']);
 
         $this->addOrderBy('ListEpigrafe', 'codejercicio desc,descripcion', 'description');
@@ -55,7 +55,7 @@ class ListCuenta extends ExtendedController\ListController
         $this->addFilterSelect('ListEpigrafe', 'codgrupo', 'co_gruposepigrafes', '', 'descripcion');
 
         /* Grupo Epígrafes */
-        $this->addView('FacturaScripts\Core\Model\GrupoEpigrafes', 'ListGrupoEpigrafes', 'epigraphs-group');
+        $this->addView('FacturaScripts\Core\Model\GrupoEpigrafes', 'ListGrupoEpigrafes', 'epigraphs-group', 'fa-bars');
         $this->addSearchFields('ListGrupoEpigrafes', ['descripcion', 'codgrupo', 'codejercicio']);
 
         $this->addOrderBy('ListGrupoEpigrafes', 'codejercicio desc,codgrupo', 'code');

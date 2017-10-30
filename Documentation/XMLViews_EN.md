@@ -138,6 +138,7 @@ The _step_ attribute to indicate the increase or decrease when performing a "ste
 to indicate the minimum and maximum values.
     * **money**: Fields of type float for amounts. For this type you can specify the _decimal_ attribute to set the precision to be displayed instead of the currency.
     * **checkbox**: Boolean values ​​that are displayed by the icon of a check (true) or a dash (false) respectively.
+    * **color**: For color selections.
     * **select**: List of values ​​set by a set of tags_\<values ​​\>_ described within the group_\<widget\>_.
 The values ​​can be fixed, including as many_\<values ​​\>_ as we need and indicating the attribute _title_ and assigning a value,
 as dynamic, either calculated based on the contents of the records of a table in the database or by defining a range.

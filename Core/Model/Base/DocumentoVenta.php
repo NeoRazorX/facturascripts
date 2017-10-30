@@ -503,13 +503,19 @@ trait DocumentoVenta
         return $status;
     }
 
+    /**
+     * @param boolean $status
+     * @param integer $irpf
+     * @param integer $netoAlt
+     * @param integer $ivaAlt
+     */
     private function getSubtotales(&$status, &$subtotales, &$irpf, &$netoAlt, &$ivaAlt)
     {
         foreach ($this->getLineas() as $lin) {
             if (!$lin->test()) {
                 $status = false;
             }
-            $codimpuesto = ($lin->codimpuesto === null ) ? 0 : $lin->codimpuesto;
+            $codimpuesto = ($lin->codimpuesto === null) ? 0 : $lin->codimpuesto;
             if (!array_key_exists($codimpuesto, $subtotales)) {
                 $subtotales[$codimpuesto] = array(
                     'neto' => 0,

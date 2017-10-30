@@ -1,5 +1,5 @@
 <!--
-    Genera el código para el desplegable de ordenación en los ListController
+    Generate the code for the sort dropdown in the ListController
 -->
 {% macro buttonOrderBy(context, view) %}
     <div class="col">
@@ -24,8 +24,35 @@
     </div>                            
 {% endmacro %}
 
+
 <!--
-    Genera el código para la vista List según las columnas indicadas
+    Generate the code for the row of statistical buttons
+-->
+{% macro rowHeaderForEditView(contex, view) %}
+    <div class="row" style="margin-top: -.5rem">
+        <div class="col-12">
+            <div class="btn-toolbar pull-right" role="toolbar" style="margin-bottom: 1rem">
+                <div class="btn-group btn-group-lg" role="group">
+                    {% set header = view.getRow('header') %}
+                    {% if header is not empty %}
+                    {% for button in header.options %}
+                    <button type="button" class="btn btn-light" onclick="{{ button.onclick }}" style="margin-right: 5px;">
+                        <i class="fa {{ button.icon }} fa-lg pull-left"></i>
+                        <div class="cust-text">
+                            {{ contex.i18n.trans(button.label) }} {{ attribute(contex.fsc, button.calculateby, [view])  }}
+                        </div>
+                    </button>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+
+<!--
+    Generate the code for the List view according to the indicated columns
 -->
 {% macro columnsForListView(context, view) %}
     {% set cols = (view.getColumns()|length)+1 %}
@@ -83,9 +110,10 @@
     </table>
 {% endmacro %}
 
+
 <!--
-    Genera el código para la vista Edit según las columnas indicadas
-    (con o sin formulario)
+    Generate the code for the Edit view according to the indicated columns
+    (with or without form)
 -->
 {% macro columnsForEditView(context, view, model, withForm) %}
     {% set keyValue = context.fsc.getFieldValue(model, model.primaryColumn()) %}
@@ -105,13 +133,10 @@
             <legend>{{ group.getHeaderHTML(group.title)|raw }}</legend>
             {% endif %}
             {% for column in group.columns %}
+                {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
                 {% if column.display == 'none' %}
-                    {% if column.widget.fieldName == model.primaryColumn() %}
-                        {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
-                        <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
-                    {% endif %}
+                    <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
                 {% else %}
-                    {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
                     {{ column.getEditHTML(value)|raw }}
                 {% endif %}
             {% endfor %}
@@ -148,8 +173,9 @@
     {% endif %}
 {% endmacro %}
 
+
 <!--
-    Genera el código para la vista EditList según las columnas indicadas
+    Generate the code for the EditList view according to the indicated columns
 -->
 {% macro columnsForEditListView(context, view) %}
     {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
@@ -172,6 +198,10 @@
     </div>
 {% endmacro %}
 
+
+<!--
+    Generates the code for a Select filter in a ListController
+-->
 {% macro filterForSelectInput(context, key, filter) %}
     {% set any = context.i18n.trans('any') %}
 
@@ -180,7 +210,7 @@
             <option value="">{{ any }} {{ key }}</option>
             <option value="">------</option>
             {% for key2, data in context.fsc.optionlist(key, filter.options) %}
-            {% if (context.indexView == context.fsc.active) and (key2 == filter.value) %}
+            {% if (context.indexView == context.fsc.active) and (key2 == filter.options.value) %}
             <option value="{{ key2 }}" selected="">{{ data }}</option>
             {% else %}
             <option value="{{ key2 }}">{{ data }}</option>
@@ -190,11 +220,15 @@
     </div>
 {% endmacro %}
 
+
+<!--
+    Generates the code for a Checkbox filter in a ListController
+-->
 {% macro filterForCheckBoxInput(context, key, filter) %}
     <div class="col-md-2">
         <div class="form-check mb-2 mb-sm-0">
             <label class="form-check-label custom-checkbox-control custom-checkbox">
-                {% if (context.indexView == context.fsc.active) and filter.value %}
+                {% if (context.indexView == context.fsc.active) and filter.options.value %}
                 <input class="form-check-input custom-control-input" type="checkbox" name="{{ key }}" value="TRUE" checked="" onchange="this.form.submit()"/>
                 {% else %}
                 <input class="form-check-input custom-control-input" type="checkbox" name="{{ key }}" value="TRUE" onchange="this.form.submit()"/>
@@ -206,33 +240,47 @@
     </div>
 {% endmacro %}
 
-{% macro filterForTextInput(context, key, filter) %}
-    {% set filterTxt = context.i18n.trans('filter-method') %}
-    {% set likeTxt = context.i18n.trans('like-than') %}
-    {% set greaterTxt = context.i18n.trans('greater-than') %}
-    {% set smallerTxt = context.i18n.trans('smaller-than') %}
-    {% set differentTxt = context.i18n.trans('different-than') %}    
-    {% set specialClass = filter.type == 'datepicker' ? ' datepicker' : '' %}
 
+<!--
+    Generate the code for a Text filter in a ListController
+-->
+{% macro filterForTextInput(context, key, filter) %}
     <div class="col-md-2">
         <div class="input-group">                                                                
             <div class="input-group-btn">
-                <input name="{{ key }}-btn" id="{{ key }}-btn" type="button" value="{{ filter.options.operator }}"
+                <input name="{{ key }}-from-btn" id="{{ key }}-from-btn" type="button" value="{{ filter.options.operatorFrom }}"
                         class="btn btn-outline-secondary dropdown-toggle"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
                 
                 <div class="dropdown-menu">
-                    <h6 class="dropdown-header">{{ filterTxt }}</h6>
-                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}', '=')">{{ likeTxt }} {{ filter.options.label }}</a>                                        
-                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}', '>=')">{{ greaterTxt }} {{ filter.options.label }}</a>
-                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}', '<=')">{{ smallerTxt }} {{ filter.options.label }}</a>
-                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}', '<>')">{{ differentTxt }} {{ filter.options.label }}</a>
+                    <h6 class="dropdown-header">{{ context.i18n.trans('filter-method') }}</h6>
+                    {% for keyOperator, valueOperator in filter.getFilterOperators() %}
+                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}-from', '{{ valueOperator }}')">{{ context.i18n.trans(keyOperator) }} {{ filter.options.label }}</a>                                        
+                    {% endfor %}
                 </div>
             </div>
-            <input type="hidden" name="{{ key }}-operator" id="{{ key }}-operator" value="{{ filter.options.operator }}" />                
-            <input type="text" name="{{ key }}" value="{% if indexView == fsc.active %}{{ filter.value }}{% endif %}"
-                   class="form-control{{ specialClass }}" placeholder="{{ filter.options.label }}" 
-                   autocomplete="off" onchange="this.form.submit()"/>
+            <input type="hidden" name="{{ key }}-from-operator" id="{{ key }}-from-operator" value="{{ filter.options.operatorFrom }}" />                
+            <input type="text" name="{{ key }}-from" value="{% if indexView == fsc.active %}{{ filter.options.valueFrom }}{% endif %}"
+                   class="form-control {{ filter.getSpecialClass() }}" placeholder="{{ filter.options.label }}" 
+                   autocomplete="off" onchange="this.form.submit()" {{ filter.getKeyboardFilter()|raw }}/>
+        </div>
+        <div class="input-group">                                                                
+            <div class="input-group-btn">
+                <input name="{{ key }}-to-btn" id="{{ key }}-to-btn" type="button" value="{{ filter.options.operatorTo }}"
+                        class="btn btn-outline-secondary dropdown-toggle"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
+                
+                <div class="dropdown-menu">
+                    <h6 class="dropdown-header">{{ context.i18n.trans('filter-method') }}</h6>
+                    {% for keyOperator, valueOperator in filter.getFilterOperators() %}
+                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}-to', '{{ valueOperator }}')">{{ context.i18n.trans(keyOperator) }} {{ filter.options.label }}</a>                                        
+                    {% endfor %}
+                </div>
+            </div>
+            <input type="hidden" name="{{ key }}-to-operator" id="{{ key }}-to-operator" value="{{ filter.options.operatorTo }}" />                
+            <input type="text" name="{{ key }}-to" value="{% if indexView == fsc.active %}{{ filter.options.valueTo }}{% endif %}"
+                   class="form-control {{ filter.getSpecialClass() }}" placeholder="{{ filter.options.label }}" 
+                   autocomplete="off" onchange="this.form.submit()" {{ filter.getKeyboardFilter()|raw }}/>
         </div>
     </div>  
 {% endmacro %}

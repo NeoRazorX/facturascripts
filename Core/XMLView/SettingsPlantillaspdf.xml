@@ -32,17 +32,17 @@
             <column name="ppdf_plantilla" title="template" numcolumns="3" order="100">
                 <widget type="number" decimals="0" fieldname="ppdf_plantilla" required="true" icon="fa-bars" />
             </column>
-
+            
             <column name="ppdf_pcolor" title="pcolor" numcolumns="3" order="110">
-                <widget type="text" fieldname="ppdf_pcolor" required="true" />
+                <widget type="color" fieldname="ppdf_pcolor" required="true" />
             </column>
 
             <column name="ppdf_scolor" title="scolor" numcolumns="3" order="120">
-                <widget type="text" fieldname="ppdf_scolor" required="true" />
+                <widget type="color" fieldname="ppdf_scolor" required="true" />
             </column>
 
             <column name="ppdf_tcolor" title="tcolor" numcolumns="3" order="130">
-                <widget type="text" fieldname="ppdf_tcolor" required="true" />
+                <widget type="color" fieldname="ppdf_tcolor" required="true" />
             </column>
         </group>
         

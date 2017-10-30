@@ -32,7 +32,7 @@ use FacturaScripts\Core\Base\ExtendedController;
 
 class EditCuenta extends ExtendedController\EditController
 {
- /**
+    /**
      * EditCuenta constructor.
      *
      * @param Base\Cache $cache

@@ -21,6 +21,8 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DivisaTools;
+use FacturaScripts\Core\Model;
 
 /**
  * Description of PanelSettings
@@ -29,6 +31,25 @@ use FacturaScripts\Core\Base\DataBase;
  */
 class PanelCliente extends ExtendedController\PanelController
 {
+    /**
+     * Clase para formatear monedas
+     *
+     * @var DivisaTools
+     */
+    private static $divisaTools;
+
+    /**
+     * Constructor de la clase
+     */
+    public function __construct($cache, $i18n, $miniLog, $className)
+    {
+        parent::__construct($cache, $i18n, $miniLog, $className);
+        
+        if (!isset(self::$divisaTools)) {
+            self::$divisaTools = new DivisaTools();
+        }
+    }
+    
     /**
      * Procedimiento para insertar vistas en el controlador
      */
@@ -44,7 +65,7 @@ class PanelCliente extends ExtendedController\PanelController
      *
      * @param string $fieldName
      *
-     * @return mixed
+     * @return string|boolean
      */
     private function getClientFieldValue($fieldName)
     {
@@ -95,5 +116,25 @@ class PanelCliente extends ExtendedController\PanelController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    public function calcClientDeliveryNotes($view)        
+    {
+        $where = [];
+        $where[] = new DataBase\DataBaseWhere('codcliente', $this->getClientFieldValue('codcliente'));
+        $where[] = new DataBase\DataBaseWhere('ptefactura', TRUE);        
+        
+        $totalModel = Model\TotalModel::all('albaranescli', $where, ['total' => 'SUM(total)'], '')[0];
+        return self::$divisaTools->format($totalModel->totals['total'], 2);
+    }
+
+    public function calcClientInvoicePending($view)
+    {
+        $where = [];
+        $where[] = new DataBase\DataBaseWhere('codcliente', $this->getClientFieldValue('codcliente'));
+        $where[] = new DataBase\DataBaseWhere('estado', 'Pagado', '<>');        
+        
+        $totalModel = Model\TotalModel::all('reciboscli', $where, ['total' => 'SUM(importe)'], '')[0];
+        return self::$divisaTools->format($totalModel->totals['total'], 2);
     }
 }

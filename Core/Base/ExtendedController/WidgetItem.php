@@ -25,7 +25,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class WidgetItem
+abstract class WidgetItem
 {
 
     /**
@@ -83,6 +83,16 @@ class WidgetItem
      * @var array
      */
     public $options;
+    
+    /**
+     * @param string $value
+     */
+    abstract public function getListHTML($value);
+
+    /**
+     * @param string $value
+     */
+    abstract public function getEditHTML($value);
 
     /**
      * Constructor dinámico de la clase.
@@ -110,6 +120,9 @@ class WidgetItem
 
             case 'radio':
                 return new WidgetItemRadio();
+                
+            case 'color':
+                return new WidgetItemColor();
 
             default:
                 return new WidgetItemText($type);
@@ -318,7 +331,7 @@ class WidgetItem
 
     /**
      * Devuelve el código HTML para lista de controles no especiales
-     * @param mixed $value
+     * @param string $value
      * @param string $text
      *
      * @return string
@@ -343,21 +356,25 @@ class WidgetItem
 
     /**
      * Devuelve el código HTML para edición de controles no especiales
-     * @param mixed $value
+     * @param string $value
      * @param string $specialAttributes
      * @param string $extraClass
      *
      * @return string
      */
-    protected function standardEditHTMLWidget($value, $specialAttributes, $extraClass = '')
+    protected function standardEditHTMLWidget($value, $specialAttributes, $extraClass = '', $type = '')
     {
         $fieldName = '"' . $this->fieldName . '"';
         $icon = $this->getIconHTML();
 
+        if (empty($type)) {
+            $type = $this->type;
+        }
+        
         $html = $icon
-            . '<input id=' . $fieldName . ' type="' . $this->type . '" class="form-control' . $extraClass . '"'
+            . '<input id=' . $fieldName . ' type="' . $type . '" class="form-control' . $extraClass . '"'
             . 'name=' . $fieldName . ' value="' . $value . '"' . $specialAttributes . ' />';
-
+            
         if (!empty($this->icon)) {
             $html .= '</div>';
         }

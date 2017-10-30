@@ -221,7 +221,7 @@ trait ModelTrait
      * Asigna a las propiedades del modelo los valores del array $data
      *
      * @param array $data
-     * @param array $exclude
+     * @param string[] $exclude
      */
     public function loadFromData(array $data = [], array $exclude = [])
     {
@@ -244,6 +244,10 @@ trait ModelTrait
 
                     case 'integer':
                     case 'int':
+                        if (($field['name'] === $this->primaryColumn()) && empty($value)) {
+                            $this->{$key} = NULL;
+                            continue;
+                        }
                         $this->{$key} = empty($value) ? 0 : (int) $value;
                         break;
 
@@ -286,7 +290,7 @@ trait ModelTrait
      * Devuelve True si existe el registro y False en caso contrario.
      *
      * @param string $cod
-     * @param array|null $where
+     * @param DataBase\DataBaseWhere[] $where
      * @param array $orderby
      *
      * @return bool

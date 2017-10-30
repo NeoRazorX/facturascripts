@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -186,7 +185,6 @@ class ListView extends BaseView
      * Devuelve el Order By indicado en formato array
      *
      * @param string $orderKey
-     *
      * @return array
      */
     public function getSQLOrderBy($orderKey = '')
@@ -213,7 +211,7 @@ class ListView extends BaseView
         $keys = array_keys($this->orderby);
         if (empty($orderKey) || !in_array($orderKey, $keys)) {
             if (empty($this->selectedOrderBy)) {
-                $this->selectedOrderBy = $keys[0]; // Forzamos el primer elemento cuando no hay valor por defecto
+                $this->selectedOrderBy = (string) $keys[0]; // We force the first element when there is no default
             }
         } else {
             $this->selectedOrderBy = $orderKey;
@@ -229,15 +227,12 @@ class ListView extends BaseView
     {
         if (is_array($fields)) {
             $this->searchIn += $fields;
-            //$this->searchIn = array_merge($this->searchIn, $fields);
-
-            // TODO: First comment on http://php.net/manual/es/function.array-merge.php
-            // With += Can have duplicate items in diferent positions, with array_merge can't.
         }
     }
 
     /**
      * Añade un campo a la lista de Order By
+     *
      * @param string $field
      * @param string $label
      * @param int $default    (0 = None, 1 = ASC, 2 = DESC)
@@ -269,62 +264,21 @@ class ListView extends BaseView
 
     /**
      * Define una nueva opción de filtrado para los datos
-     * @param string $type    (option: 'select', 'checkbox')
-     * @param string $key     (Filter identification)
-     * @param string $value   (Value introduced by user, if there are)
-     * @param array  $options (Filter options needed for run)
+     *
+     * @param string $key
+     * @param ListFilter $filter
      */
-    private function addFilter($type, $key, $value, $options)
+    public function addFilter($key, $filter)
     {
-        if (empty($options['field'])) {
-            $options['field'] = $key;
+        if (empty($filter->options['field'])) {
+            $filter->options['field'] = $key;
         }
 
-        $this->filters[$key] = ['type' => $type, 'value' => $value, 'options' => $options];
-    }
+        if (isset($filter->options['label'])) {
+            $filter->options['label'] = static::$i18n->trans($filter->options['label']);
+        }
 
-    /**
-     * Add a filter type data table selection
-     * Añade un filtro de tipo selección en tabla
-     * @param string $key      (Filter identifier)
-     * @param string $value    (Value introduced by user, if there are)
-     * @param string $table    (Table name)
-     * @param string $where    (Where condition for table)
-     * @param string $field    (Field of the table with the data to show)
-     */
-    public function addFilterSelect($key, $value, $table, $where = '', $field = '')
-    {
-        $options = ['field' => $field, 'table' => $table, 'where' => $where];
-        $this->addFilter('select', $key, $value, $options);
-    }
-
-    /**
-     * Añade un filtro del tipo condición boleana
-     * @param string  $key     (Filter identifier)
-     * @param string  $value    (Value introduced by user, if there are)
-     * @param string  $label   (Human reader description)
-     * @param string  $field   (Field of the table to apply filter)
-     * @param bool $inverse (If you need to invert the selected value)
-     */
-    public function addFilterCheckbox($key, $value, $label, $field = '', $inverse = false)
-    {
-        $options = ['label' => static::$i18n->trans($label), 'field' => $field, 'inverse' => $inverse];
-        $this->addFilter('checkbox', $key, $value, $options);
-    }
-
-    /**
-     * Añade filtro del tipo indicado
-     *
-     * @param string $type     (text, datepicker)
-     * @param string $key
-     * @param string $value
-     * @param string $label
-     * @param string $field
-     */
-    public function addFilterFromType($type, $key, $value, $label, $field = '', $operator = '=')
-    {
-        $options = ['label' => static::$i18n->trans($label), 'field' => $field, 'operator' => $operator];
-        $this->addFilter($type, $key, $value, $options);
+        $this->filters[$key] = $filter;
     }
 
     /**

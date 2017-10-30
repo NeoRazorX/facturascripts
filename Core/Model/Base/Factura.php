@@ -135,7 +135,7 @@ trait Factura
             /// necesitamos los totales por impuesto
             $subtotales = [];
             foreach ($lineas as $lin) {
-                $codimpuesto = ($lin->codimpuesto === null ) ? 0 : $lin->codimpuesto;
+                $codimpuesto = ($lin->codimpuesto === null) ? 0 : $lin->codimpuesto;
                 if (!array_key_exists($codimpuesto, $subtotales)) {
                     $subtotales[$codimpuesto] = array(
                         'neto' => 0,

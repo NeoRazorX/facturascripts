@@ -49,11 +49,11 @@ class ListUser extends ExtendedController\ListController
 
     }
     
-     /**
-     * Devuelve los datos básicos de la página
-     *
-     * @return array
-     */
+        /**
+         * Devuelve los datos básicos de la página
+         *
+         * @return array
+         */
     public function getPageData()
     {
         $pagedata = parent::getPageData();

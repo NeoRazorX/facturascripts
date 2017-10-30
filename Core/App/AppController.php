@@ -178,7 +178,7 @@ class AppController extends App
      * hasta ejecutar render()
      *
      * @param string $template       archivo html a utilizar
-     * @param mixed $controllerName
+     * @param string $controllerName
      */
     private function renderHtml($template, $controllerName = '')
     {
