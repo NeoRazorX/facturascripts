@@ -83,7 +83,7 @@ class FormaPago
      *
      * @return string
      */
-    public function tableName()
+    static function tableName()
     {
         return 'formaspago';
     }

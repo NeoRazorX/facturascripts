@@ -70,7 +70,7 @@ class RolAccess
      *
      * @return string
      */
-    public function tableName()
+    static function tableName() 
     {
         return 'fs_roles_access';
     }

@@ -104,7 +104,7 @@ class TerminalCaja
      *
      * @return string
      */
-    public function tableName()
+    static function tableName()
     {
         return 'cajas_terminales';
     }

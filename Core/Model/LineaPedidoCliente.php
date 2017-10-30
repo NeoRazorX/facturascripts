@@ -56,7 +56,7 @@ class LineaPedidoCliente
      *
      * @return string
      */
-    public function tableName()
+    static function tableName()
     {
         return 'lineaspedidoscli';
     }

@@ -119,7 +119,7 @@ class Balance
      *
      * @return string
      */
-    public function tableName()
+    static function tableName()
     {
         return 'co_codbalances08';
     }

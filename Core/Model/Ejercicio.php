@@ -104,7 +104,7 @@ class Ejercicio
      *
      * @return string
      */
-    public function tableName()
+    static function tableName()
     {
         return 'ejercicios';
     }

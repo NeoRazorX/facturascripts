@@ -41,7 +41,7 @@ class LineaPresupuestoCliente
      *
      * @return string
      */
-    public function tableName()
+    static function tableName()
     {
         return 'lineaspresupuestoscli';
     }

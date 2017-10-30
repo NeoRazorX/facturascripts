@@ -68,7 +68,7 @@ class SubcuentaProveedor
      *
      * @return string
      */
-    public function tableName()
+    static function tableName()
     {
         return 'co_subcuentasprov';
     }

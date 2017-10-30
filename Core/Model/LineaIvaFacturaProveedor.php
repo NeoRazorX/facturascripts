@@ -97,7 +97,7 @@ class LineaIvaFacturaProveedor
      *
      * @return string
      */
-    public function tableName()
+    static function tableName()
     {
         return 'lineasivafactprov';
     }

@@ -59,7 +59,7 @@ class AlbaranCliente
      *
      * @return string
      */
-    public function tableName()
+    static function tableName()
     {
         return 'albaranescli';
     }

@@ -72,7 +72,7 @@ class CuentaBancoCliente
      *
      * @return string
      */
-    public function tableName()
+    static function tableName()
     {
         return 'cuentasbcocli';
     }

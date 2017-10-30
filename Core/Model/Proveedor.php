@@ -57,7 +57,7 @@ class Proveedor extends Base\Persona
      *
      * @return string
      */
-    public function tableName()
+    static function tableName()
     {
         return 'proveedores';
     }

@@ -182,7 +182,7 @@ class Empresa
      *
      * @return string
      */
-    public function tableName()
+    static function tableName()
     {
         return 'empresa';
     }

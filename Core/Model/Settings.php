@@ -65,7 +65,7 @@ class Settings
      *
      * @return string
      */
-    public function tableName()
+    static function tableName()
     {
         return 'fs_settings';
     }

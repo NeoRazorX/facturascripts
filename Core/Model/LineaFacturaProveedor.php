@@ -54,7 +54,7 @@ class LineaFacturaProveedor
      *
      * @return string
      */
-    public function tableName()
+    static function tableName()
     {
         return 'lineasfacturasprov';
     }

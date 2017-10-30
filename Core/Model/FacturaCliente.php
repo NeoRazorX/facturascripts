@@ -45,7 +45,7 @@ class FacturaCliente
      *
      * @return string
      */
-    public function tableName()
+    static function tableName()
     {
         return 'facturascli';
     }

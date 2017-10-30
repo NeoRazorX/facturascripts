@@ -54,7 +54,7 @@ class GrupoClientes
      *
      * @return string
      */
-    public function tableName()
+    static function tableName()
     {
         return 'gruposclientes';
     }

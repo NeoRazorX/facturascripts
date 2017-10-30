@@ -55,7 +55,7 @@ class ArticuloPropiedad
      *
      * @return string
      */
-    public function tableName()
+    static function tableName()
     {
         return 'articulo_propiedades';
     }

@@ -97,7 +97,7 @@ class LineaIvaFacturaCliente
      *
      * @return string
      */
-    public function tableName()
+    static function tableName()
     {
         return 'lineasivafactcli';
     }

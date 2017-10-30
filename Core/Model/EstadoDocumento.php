@@ -69,7 +69,7 @@ class EstadoDocumento
      *
      * @return string
      */
-    public function tableName()
+    static function tableName()
     {
         return 'estados_documentos';
     }

@@ -36,7 +36,7 @@ class FacturaProveedor
      *
      * @return string
      */
-    public function tableName()
+    static function tableName()
     {
         return 'facturasprov';
     }

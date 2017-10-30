@@ -63,7 +63,7 @@ class Familia
      *
      * @return string
      */
-    public function tableName()
+    static function tableName()
     {
         return 'familias';
     }
