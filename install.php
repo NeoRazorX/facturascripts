@@ -86,7 +86,7 @@ function getLanguages(&$i18n)
 
 /**
  * Devuelve el lenguaje del usuario para mostrar en el selector el idioma correcto
- * para la instalación
+ * para la instalación en caso que no exista el archivo json usa en_EN
  * @return string
  */
 function getUserLanguage(){
