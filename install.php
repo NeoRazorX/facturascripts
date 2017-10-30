@@ -85,22 +85,22 @@ function getLanguages(&$i18n)
 
 /**
  * Devuelve el lenguaje del usuario para mostrar en el selector el idioma correcto
- * para la instalación
+ * para la instalación en caso que no exista el archivo json usa en_EN
  * @return string
  */
-function getUserLanguage()
-{
-    $dataLanguage = explode(';', \filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'));
-    $userLanguage = explode(',', $dataLanguage[0])[0];
-    return str_replace('-', '_', $userLanguage);
+function getUserLanguage(){
+    $dataLanguage = explode(';',\filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'));
+    $userLanguage = str_replace('-','_', explode(',',$dataLanguage[0])[0]);
+    $translationExists = file_exists(__DIR__ . '/Core/Translation/'.$userLanguage.'.json');
+    return ($translationExists) ? $userLanguage : 'en_EN';
 }
 
 /**
- * Timezones list with GMT offset
- * 
- * @return array
- * @link http://stackoverflow.com/a/9328760
- */
+* Timezones list with GMT offset
+*
+* @return array
+* @link http://stackoverflow.com/a/9328760
+*/
 function get_timezone_list()
 {
     $zones_array = array();
