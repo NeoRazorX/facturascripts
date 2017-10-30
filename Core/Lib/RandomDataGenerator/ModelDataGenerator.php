@@ -168,8 +168,9 @@ class ModelDataGenerator
             $fam->descripcion = $this->tools->empresa();
             $fam->codfamilia = $this->tools->txt2codigo($fam->descripcion);
             $fam->madre = (mt_rand(0, 4) == 0) ? $codfamilia : null;
-            if (!$fam->save())
-                break;
+            if (!$fam->save()) {
+                            break;
+            }
 
             $codfamilia = $fam->codfamilia;
         }
@@ -595,6 +596,11 @@ class ModelDataGenerator
         }
     }
 
+    /**
+     * @param string $modelName
+     * @param string $tableName
+     * @param string $functionName
+     */
     protected function randomModel($modelName, $tableName, $functionName, $recursivo = true)
     {
         $lista = [];

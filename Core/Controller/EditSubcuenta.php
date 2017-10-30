@@ -31,7 +31,7 @@ use FacturaScripts\Core\Base\ExtendedController;
 
 class EditSubcuenta extends ExtendedController\EditController
 {
- /**
+    /**
      * EditFabricante constructor.
      *
      * @param Base\Cache $cache

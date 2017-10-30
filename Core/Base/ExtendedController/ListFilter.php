@@ -46,7 +46,6 @@ class ListFilter
      * Constructor de la clase
      *
      * @param string $type
-     * @param string $value
      * @param array $options
      */
     public function __construct($type, $options)
@@ -187,7 +186,7 @@ class ListFilter
      * @param string $field
      * @param string $value
      * @param string $table
-     * @param DatabaseWhere $where
+     * @param string $where
      * @return ListFilter
      */
     public static function newSelectFilter($field, $value, $table, $where)

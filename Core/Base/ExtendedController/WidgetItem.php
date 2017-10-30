@@ -84,7 +84,14 @@ abstract class WidgetItem
      */
     public $options;
     
+    /**
+     * @param string $value
+     */
     abstract public function getListHTML($value);
+
+    /**
+     * @param string $value
+     */
     abstract public function getEditHTML($value);
 
     /**
@@ -324,7 +331,7 @@ abstract class WidgetItem
 
     /**
      * Devuelve el código HTML para lista de controles no especiales
-     * @param mixed $value
+     * @param string $value
      * @param string $text
      *
      * @return string
@@ -349,7 +356,7 @@ abstract class WidgetItem
 
     /**
      * Devuelve el código HTML para edición de controles no especiales
-     * @param mixed $value
+     * @param string $value
      * @param string $specialAttributes
      * @param string $extraClass
      *

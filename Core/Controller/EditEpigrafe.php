@@ -32,7 +32,7 @@ use FacturaScripts\Core\Base\ExtendedController;
 
 class EditEpigrafe extends ExtendedController\EditController
 {
- /**
+    /**
      * EditCuenta constructor.
      *
      * @param Base\Cache $cache
