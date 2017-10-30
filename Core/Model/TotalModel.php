@@ -110,6 +110,14 @@ class TotalModel
             }
         }
 
+        /// if it is empty we are obliged to always return a record with the totals to zero
+        if (empty($result)) {
+            $result[] = new self();
+            foreach (array_keys($fieldList) as $fieldName) {
+                $result[0]->totals[$fieldName] = 0;
+            }            
+        }
+        
         return $result;
     }
 }
