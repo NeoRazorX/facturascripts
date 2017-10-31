@@ -138,6 +138,7 @@ El atributo _step_ para indicar el aumento o decremento al realizar un "paso" me
 para indicar los valores mínimo y máximo.
     * **money**: Campos de tipo float para importes. Para este tipo se puede indicar el atributo _decimal_ para configurar la precisión a visualizar en vez de los de la moneda.
     * **checkbox**: Valores booleanos que se visualizan mediante el icono de un check (true) o un guión (false) respectivamente.
+    * **color**: Para la selección de colores.
     * **select**: Lista de valores establecidos por un conjunto de etiquetas _\<values\>_ descritas dentro del grupo _\<widget\>_.
 Los valores podrán ser fijos, incluyendo tantos _\<values\>_ como necesitemos e indicando el atributo _title_ y asignando un valor,
 como dinámicos, ya sea calculados en base al contenido de los registros de una tabla de la base de datos o mediante la definición de un rango.

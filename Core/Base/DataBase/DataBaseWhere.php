@@ -108,7 +108,11 @@ class DataBaseWhere
     {
         switch ($this->operator) {
             case 'LIKE':
-                $result = "LOWER('%" . $this->dataBase->escapeString($this->value) . "%')";
+                if (is_bool($this->value)) {
+                    $result = $this->value ? 'TRUE' : 'FALSE';
+                } else {
+                    $result = "LOWER('%" . $this->dataBase->escapeString($this->value) . "%')";
+                }
                 break;
 
             case 'IS':

@@ -50,7 +50,7 @@ class ListCliente extends ExtendedController\ListController
     protected function createViews()
     {
         /* Clientes */
-        $this->addView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'customers');
+        $this->addView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'customers', 'fa-users');
         $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente', 'email']);
 
         $this->addOrderBy('ListCliente', 'codcliente', 'code');
@@ -61,7 +61,7 @@ class ListCliente extends ExtendedController\ListController
         $this->addFilterCheckbox('ListCliente', 'debaja', 'suspended');
         
         /* Grupos */
-        $this->addView('FacturaScripts\Core\Model\GrupoClientes', 'ListGrupoClientes', 'groups');
+        $this->addView('FacturaScripts\Core\Model\GrupoClientes', 'ListGrupoClientes', 'groups', 'fa-folder-open');
         $this->addSearchFields('ListGrupoClientes', ['nombre', 'codgrupo']);
         
         $this->addOrderBy('ListGrupoClientes', 'codgrupo', 'code');
