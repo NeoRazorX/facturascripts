@@ -79,7 +79,7 @@
 
             <column name="employee" numcolumns="6" titleurl="?page=ListUser" order="140">
                 <widget type="select" fieldname="codagente">
-                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
+                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre || ' ' || apellidos"></values>
                 </widget>
             </column>
             

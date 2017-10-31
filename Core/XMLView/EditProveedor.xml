@@ -48,9 +48,7 @@
                     <values title="CUIT">CUIT</values>
                 </widget>
             </column>
-
-            
-
+           
             <column name="fiscal number" title="cifnif" numcolumns="2" order="140">
                 <widget type="text" fieldname="cifnif" required="true" />
             </column>
@@ -63,7 +61,7 @@
             </column>
             <column name="customer" title="customer" numcolumns="4" order="220">
                 <widget type="select"  fieldname="codcliente">
-                    <values source="clientes" fieldcode="cliente" fieldtitle="nombre"></values>
+                    <values source="clientes" fieldcode="codcliente" fieldtitle="nombre"></values>
                 </widget>
             </column>
         </group>
