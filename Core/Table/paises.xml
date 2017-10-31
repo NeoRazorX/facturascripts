@@ -31,8 +31,8 @@
         <type>character varying(20)</type>
         <null>NO</null>
     </column>
-    <indexes>
+    <constraint>
         <name>paises_pkey</name>
-        <constraint>PRIMARY KEY (codpais)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (codpais)</type>
+    </constraint>
 </table>

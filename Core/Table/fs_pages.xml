@@ -44,8 +44,8 @@
         <type>character varying(50)</type>
         <null>YES</null>
     </column>
-    <indexes>
+    <constraint>
         <name>fs_pages_pkey</name>
-        <constraint>PRIMARY KEY (name)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (name)</type>
+    </constraint>
 </table>

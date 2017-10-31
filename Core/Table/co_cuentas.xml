@@ -47,24 +47,24 @@
         <type>integer</type>
         <null>NO</null>
     </column>
-    <indexes>
+    <constraint>
         <name>co_cuentas_pkey</name>
-        <constraint>PRIMARY KEY (idcuenta)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (idcuenta)</type>
+    </constraint>
+    <constraint>
         <name>uniq_codcuenta</name>
-        <constraint>UNIQUE (codcuenta,codejercicio)</constraint>
-    </indexes>
-    <indexes>
+        <type>UNIQUE (codcuenta,codejercicio)</type>
+    </constraint>
+    <constraint>
         <name>ca_co_cuentas_ejercicios</name>
-        <constraint>FOREIGN KEY (codejercicio)
+        <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_co_cuentas_epigrafes2</name>
-        <constraint>FOREIGN KEY (idepigrafe)
+        <type>FOREIGN KEY (idepigrafe)
             REFERENCES co_epigrafes (idepigrafe)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
 </table>

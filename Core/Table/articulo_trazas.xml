@@ -49,42 +49,42 @@
         <name>idlfaccompra</name>
         <type>integer</type>
     </column>
-    <indexes>
+    <constraint>
         <name>articulo_trazas_pkey</name>
-        <constraint>PRIMARY KEY (id)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
         <name>ca_articulo_trazas_articulos</name>
-        <constraint>FOREIGN KEY (referencia)
+        <type>FOREIGN KEY (referencia)
             REFERENCES articulos (referencia)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_articulo_trazas_linalbcli</name>
-        <constraint>FOREIGN KEY (idlalbventa)
+        <type>FOREIGN KEY (idlalbventa)
             REFERENCES lineasalbaranescli (idlinea)
-            ON DELETE SET NULL ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_articulo_trazas_linfaccli</name>
-        <constraint>FOREIGN KEY (idlfacventa)
+        <type>FOREIGN KEY (idlfacventa)
             REFERENCES lineasfacturascli (idlinea)
-            ON DELETE SET NULL ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_articulo_trazas_linalbprov</name>
-        <constraint>FOREIGN KEY (idlalbcompra)
+        <type>FOREIGN KEY (idlalbcompra)
             REFERENCES lineasalbaranesprov (idlinea)
-            ON DELETE SET NULL ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_articulo_trazas_linfacprov</name>
-        <constraint>FOREIGN KEY (idlfaccompra)
+        <type>FOREIGN KEY (idlfaccompra)
             REFERENCES lineasfacturasprov (idlinea)
-            ON DELETE SET NULL ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>uniq_codigo_articulo_trazas</name>
-        <constraint>UNIQUE (numserie)</constraint>
-    </indexes>
+        <type>UNIQUE (numserie)</type>
+    </constraint>
 </table>

@@ -115,14 +115,14 @@
         <type>boolean</type>
         <default>true</default>
     </column>
-    <indexes>
+    <constraint>
         <name>ca_lineasalbaranescli_albaranescli2</name>
-        <constraint>FOREIGN KEY (idalbaran)
+        <type>FOREIGN KEY (idalbaran)
             REFERENCES albaranescli (idalbaran)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>lineasalbaranescli_pkey</name>
-        <constraint>PRIMARY KEY (idlinea)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (idlinea)</type>
+    </constraint>
 </table>

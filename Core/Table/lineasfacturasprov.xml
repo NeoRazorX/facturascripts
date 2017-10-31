@@ -99,14 +99,14 @@
         <name>codcombinacion</name>
         <type>character varying(18)</type>
     </column>
-    <indexes>
+    <constraint>
         <name>ca_linea_facturasprov2</name>
-        <constraint>FOREIGN KEY (idfactura)
+        <type>FOREIGN KEY (idfactura)
             REFERENCES facturasprov (idfactura)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>lineasfacturasprov_pkey</name>
-        <constraint>PRIMARY KEY (idlinea)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (idlinea)</type>
+    </constraint>
 </table>

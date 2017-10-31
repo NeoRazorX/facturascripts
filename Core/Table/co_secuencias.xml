@@ -37,14 +37,14 @@
         <type>integer</type>
         <null>YES</null>
     </column>
-    <indexes>
+    <constraint>
         <name>co_secuencias_pkey</name>
-        <constraint>PRIMARY KEY (idsecuencia)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (idsecuencia)</type>
+    </constraint>
+    <constraint>
         <name>ca_co_secuencias_ejercicios</name>
-        <constraint>FOREIGN KEY (codejercicio)
+        <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
 </table>

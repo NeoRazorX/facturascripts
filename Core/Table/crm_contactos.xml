@@ -121,14 +121,14 @@
         <type>character varying(6)</type>
         <null>YES</null>
     </column>
-    <indexes>
+    <constraint>
         <name>crm_contactos_pkey</name>
-        <constraint>PRIMARY KEY (codcontacto)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (codcontacto)</type>
+    </constraint>
+    <constraint>
         <name>ca_contactos_grupos</name>
-        <constraint>FOREIGN KEY (codgrupo)
+        <type>FOREIGN KEY (codgrupo)
             REFERENCES gruposclientes (codgrupo)
-            ON DELETE SET NULL ON UPDATE CASCADE</constraint>
-    </indexes>
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
 </table>

@@ -246,24 +246,24 @@
         <name>idoriginal</name>
         <type>integer</type>
     </column>
-    <indexes>
+    <constraint>
         <name>presupuestoscli_pkey</name>
-        <constraint>PRIMARY KEY (idpresupuesto)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (idpresupuesto)</type>
+    </constraint>
+    <constraint>
         <name>ca_presupuestoscli_series</name>
-        <constraint>FOREIGN KEY (codserie)
+        <type>FOREIGN KEY (codserie)
             REFERENCES series (codserie)
-            ON DELETE RESTRICT ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_presupuestoscli_ejercicios</name>
-        <constraint>FOREIGN KEY (codejercicio)
+        <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE RESTRICT ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>uniq_codigo_presupuestoscli</name>
-        <constraint>UNIQUE (codigo)</constraint>
-    </indexes>
+        <type>UNIQUE (codigo)</type>
+    </constraint>
 </table>

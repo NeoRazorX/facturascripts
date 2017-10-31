@@ -63,20 +63,20 @@
         <null>YES</null>
         <default>0</default>
     </column>
-    <indexes>
+    <constraint>
         <name>articulo_combinaciones_pkey</name>
-        <constraint>PRIMARY KEY (id)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
         <name>ca_articulo_combinaciones_valores</name>
-        <constraint>FOREIGN KEY (idvalor)
+        <type>FOREIGN KEY (idvalor)
             REFERENCES atributos_valores (id)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_articulo_combinaciones_articulos</name>
-        <constraint>FOREIGN KEY (referencia)
+        <type>FOREIGN KEY (referencia)
             REFERENCES articulos (referencia)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
 </table>

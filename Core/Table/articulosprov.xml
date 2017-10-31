@@ -70,18 +70,18 @@
         <type>character varying(38)</type>
         <null>YES</null>
     </column>
-    <indexes>
+    <constraint>
         <name>articulosprov_pkey</name>
-        <constraint>PRIMARY KEY (id)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
         <name>ca_articulosprov_proveedores</name>
-        <constraint>FOREIGN KEY (codproveedor)
+        <type>FOREIGN KEY (codproveedor)
             REFERENCES proveedores (codproveedor)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>uniq_articulo_proveedor2</name>
-        <constraint>UNIQUE (codproveedor, refproveedor)</constraint>
-    </indexes>
+        <type>UNIQUE (codproveedor, refproveedor)</type>
+    </constraint>
 </table>

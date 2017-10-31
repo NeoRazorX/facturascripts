@@ -83,24 +83,24 @@
         <type>character varying(100)</type>
         <null>YES</null>
     </column>
-    <indexes>
+    <constraint>
         <name>ca_stocks_articulos2</name>
-        <constraint>FOREIGN KEY (referencia)
+        <type>FOREIGN KEY (referencia)
             REFERENCES articulos (referencia)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_stocks_almacenes3</name>
-        <constraint>FOREIGN KEY (codalmacen)
+        <type>FOREIGN KEY (codalmacen)
             REFERENCES almacenes (codalmacen)
-            ON DELETE CASCADE ON UPDATE CASCADE </constraint>
-    </indexes>
-    <indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE </type>
+    </constraint>
+    <constraint>
         <name>uniq_stocks_almacen_referencia</name>
-        <constraint>UNIQUE (codalmacen, referencia)</constraint>
-    </indexes>
-    <indexes>
+        <type>UNIQUE (codalmacen, referencia)</type>
+    </constraint>
+    <constraint>
         <name>stocks_pkey</name>
-        <constraint>PRIMARY KEY (idstock)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (idstock)</type>
+    </constraint>
 </table>

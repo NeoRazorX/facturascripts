@@ -32,26 +32,26 @@
         <type>integer</type>
         <null>NO</null>
     </column>
-    <indexes>
+    <constraint>
         <name>co_subcuentasprov_pkey</name>
-        <constraint>PRIMARY KEY (id)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
         <name>ca_co_subcuentasprov_ejercicios</name>
-        <constraint>FOREIGN KEY (codejercicio)
+        <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_co_subcuentasprov_proveedores</name>
-        <constraint>FOREIGN KEY (codproveedor)
+        <type>FOREIGN KEY (codproveedor)
             REFERENCES proveedores (codproveedor)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_co_subcuentasprov_subcuentas</name>
-        <constraint>FOREIGN KEY (idsubcuenta)
+        <type>FOREIGN KEY (idsubcuenta)
             REFERENCES co_subcuentas (idsubcuenta)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
 </table>

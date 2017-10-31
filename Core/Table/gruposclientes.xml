@@ -21,8 +21,8 @@
         <type>character varying(6)</type>
         <null>YES</null>
     </column>
-    <indexes>
+    <constraint>
         <name>gruposclientes_pkey</name>
-        <constraint>PRIMARY KEY (codgrupo)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (codgrupo)</type>
+    </constraint>
 </table>

@@ -89,14 +89,14 @@
         <name>totalenalbaran</name>
         <type>double precision</type>
     </column>
-    <indexes>
+    <constraint>
         <name>lineaspedidosprov_pkey</name>
-        <constraint>PRIMARY KEY (idlinea)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (idlinea)</type>
+    </constraint>
+    <constraint>
         <name>ca_lineaspedidosprov_pedidosprov</name>
-        <constraint>FOREIGN KEY (idpedido)
+        <type>FOREIGN KEY (idpedido)
             REFERENCES pedidosprov (idpedido)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
 </table>

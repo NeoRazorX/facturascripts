@@ -62,8 +62,8 @@
         <type>character varying(8)</type>
         <null>NO</null>
     </column>
-    <indexes>
+    <constraint>
         <name>co_regiva_pkey</name>
-        <constraint>PRIMARY KEY (idregiva)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (idregiva)</type>
+    </constraint>
 </table>

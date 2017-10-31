@@ -16,8 +16,8 @@
         <type>character varying(200)</type>
         <null>NO</null>
     </column>
-    <indexes>
+    <constraint>
         <name>fs_roles_pkey</name>
-        <constraint>PRIMARY KEY (codrol)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (codrol)</type>
+    </constraint>
 </table>

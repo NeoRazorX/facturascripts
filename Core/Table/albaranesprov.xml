@@ -157,30 +157,30 @@
         <type>integer</type>
         <default>0</default>
     </column>
-    <indexes>
+    <constraint>
         <name>ca_albaranesprov_series2</name>
-        <constraint>FOREIGN KEY (codserie)
+        <type>FOREIGN KEY (codserie)
             REFERENCES series (codserie)
-            ON DELETE RESTRICT ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_albaranesprov_ejercicios2</name>
-        <constraint>FOREIGN KEY (codejercicio)
+        <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE RESTRICT ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_albaranesprov_facturas</name>
-        <constraint>FOREIGN KEY (idfactura)
+        <type>FOREIGN KEY (idfactura)
             REFERENCES facturasprov (idfactura)
-            ON DELETE SET NULL ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>uniq_codigo_albaranesprov</name>
-        <constraint>UNIQUE (codigo)</constraint>
-    </indexes>
-    <indexes>
+        <type>UNIQUE (codigo)</type>
+    </constraint>
+    <constraint>
         <name>albaranesprov_pkey</name>
-        <constraint>PRIMARY KEY (idalbaran)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (idalbaran)</type>
+    </constraint>
 </table>

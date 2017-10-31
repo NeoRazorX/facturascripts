@@ -36,8 +36,8 @@
         <null>NO</null>
         <default>nextval('transstock_idtrans_seq'::regclass)</default>
     </column>
-    <indexes>
+    <constraint>
         <name>transstock_pkey</name>
-        <constraint>PRIMARY KEY (idtrans)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (idtrans)</type>
+    </constraint>
 </table>

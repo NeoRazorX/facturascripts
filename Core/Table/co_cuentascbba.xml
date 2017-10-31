@@ -27,8 +27,8 @@
         <null>NO</null>
         <default>nextval('co_cuentascbba_id_seq'::regclass)</default>
     </column>
-    <indexes>
+    <constraint>
         <name>co_cuentascbba_pkey</name>
-        <constraint>PRIMARY KEY (id)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
 </table>

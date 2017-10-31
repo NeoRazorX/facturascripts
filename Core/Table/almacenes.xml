@@ -81,8 +81,8 @@
         <type>character varying(100)</type>
         <null>YES</null>
     </column>
-    <indexes>
+    <constraint>
         <name>almacenes_pkey</name>
-        <constraint>PRIMARY KEY (codalmacen)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (codalmacen)</type>
+    </constraint>
 </table>

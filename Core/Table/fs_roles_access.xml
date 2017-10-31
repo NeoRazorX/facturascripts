@@ -34,20 +34,20 @@
         <null>NO</null>
         <default>true</default>
     </column>
-    <indexes>
+    <constraint>
         <name>fs_roles_access_pkey</name>
-        <constraint>PRIMARY KEY (id)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
         <name>fs_roles_access_roles</name>
-        <constraint>FOREIGN KEY (codrol) REFERENCES fs_roles (codrol) ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+        <type>FOREIGN KEY (codrol) REFERENCES fs_roles (codrol) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>fs_roles_access_page</name>
-        <constraint>FOREIGN KEY (pagename) REFERENCES fs_pages (name) ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+        <type>FOREIGN KEY (pagename) REFERENCES fs_pages (name) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>unique_fs_roles_access</name>
-        <constraint>UNIQUE (codrol,pagename)</constraint>
-    </indexes>
+        <type>UNIQUE (codrol,pagename)</type>
+    </constraint>
 </table>

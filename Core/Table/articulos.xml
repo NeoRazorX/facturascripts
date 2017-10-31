@@ -171,26 +171,26 @@
         <null>YES</null>
         <default>false</default>
     </column>
-    <indexes>
+    <constraint>
         <name>ca_articulos_impuestos</name>
-        <constraint>FOREIGN KEY (codimpuesto)
+        <type>FOREIGN KEY (codimpuesto)
             REFERENCES impuestos (codimpuesto)
-            ON DELETE SET NULL ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_articulos_familias</name>
-        <constraint>FOREIGN KEY (codfamilia)
+        <type>FOREIGN KEY (codfamilia)
             REFERENCES familias (codfamilia)
-            ON DELETE SET NULL ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_articulos_fabricantes</name>
-        <constraint>FOREIGN KEY (codfabricante)
+        <type>FOREIGN KEY (codfabricante)
             REFERENCES fabricantes (codfabricante)
-            ON DELETE SET NULL ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>articulos_pkey</name>
-        <constraint>PRIMARY KEY (referencia)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (referencia)</type>
+    </constraint>
 </table>

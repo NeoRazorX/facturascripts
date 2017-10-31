@@ -27,14 +27,14 @@
         <null>NO</null>
         <default>nextval('co_gruposepigrafes_idgrupo_seq'::regclass)</default>
     </column>
-    <indexes>
+    <constraint>
         <name>co_gruposepigrafes_pkey</name>
-        <constraint>PRIMARY KEY (idgrupo)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (idgrupo)</type>
+    </constraint>
+    <constraint>
         <name>ca_co_gruposepigrafes_ejercicios</name>
-        <constraint>FOREIGN KEY (codejercicio)
+        <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
 </table>

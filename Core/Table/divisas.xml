@@ -45,8 +45,8 @@
         <name>tasaconvcompra</name>
         <type>double precision</type>
     </column>
-    <indexes>
+    <constraint>
         <name>divisas_pkey</name>
-        <constraint>PRIMARY KEY (coddivisa)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (coddivisa)</type>
+    </constraint>
 </table>

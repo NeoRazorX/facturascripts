@@ -109,14 +109,14 @@
         <type>boolean</type>
         <default>true</default>
     </column>
-    <indexes>
+    <constraint>
         <name>lineaspedidoscli_pkey</name>
-        <constraint>PRIMARY KEY (idlinea)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (idlinea)</type>
+    </constraint>
+    <constraint>
         <name>ca_lineaspedidoscli_pedidoscli</name>
-        <constraint>FOREIGN KEY (idpedido)
+        <type>FOREIGN KEY (idpedido)
             REFERENCES pedidoscli (idpedido)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
 </table>

@@ -193,36 +193,36 @@
         <type>integer</type>
         <default>0</default>
     </column>
-    <indexes>
+    <constraint>
         <name>ca_facturasprov_series2</name>
-        <constraint>FOREIGN KEY (codserie)
+        <type>FOREIGN KEY (codserie)
             REFERENCES series (codserie)
-            ON DELETE RESTRICT ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_facturasprov_ejercicios2</name>
-        <constraint>FOREIGN KEY (codejercicio)
+        <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE RESTRICT ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_facturasprov_asiento2</name>
-        <constraint>FOREIGN KEY (idasiento)
+        <type>FOREIGN KEY (idasiento)
             REFERENCES co_asientos (idasiento)
-            ON DELETE SET NULL ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_facturasprov_asientop</name>
-        <constraint>FOREIGN KEY (idasientop)
+        <type>FOREIGN KEY (idasientop)
             REFERENCES co_asientos (idasiento)
-            ON DELETE SET NULL ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>uniq_codigo_facturasprov</name>
-        <constraint>UNIQUE (codigo)</constraint>
-    </indexes>
-    <indexes>
+        <type>UNIQUE (codigo)</type>
+    </constraint>
+    <constraint>
         <name>facturasprov_pkey</name>
-        <constraint>PRIMARY KEY (idfactura)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (idfactura)</type>
+    </constraint>
 </table>

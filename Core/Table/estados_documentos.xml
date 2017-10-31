@@ -32,12 +32,12 @@
         <type>boolean</type>
         <null>NO</null>
     </column>
-    <indexes>
+    <constraint>
         <name>estados_documentos_pkey</name>
-        <constraint>PRIMARY KEY (id)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
         <name>uniq_tipo_estados_documentos</name>
-        <constraint>UNIQUE (documento, status)</constraint>
-    </indexes>
+        <type>UNIQUE (documento, status)</type>
+    </constraint>
 </table>

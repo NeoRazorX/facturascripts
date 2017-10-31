@@ -72,24 +72,24 @@
         <type>double precision</type>
         <null>NO</null>
     </column>
-    <indexes>
+    <constraint>
         <name>co_subcuentas_pkey</name>
-        <constraint>PRIMARY KEY (idsubcuenta)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (idsubcuenta)</type>
+    </constraint>
+    <constraint>
         <name>uniq_codsubcuenta</name>
-        <constraint>UNIQUE (codsubcuenta,codejercicio)</constraint>
-    </indexes>
-    <indexes>
+        <type>UNIQUE (codsubcuenta,codejercicio)</type>
+    </constraint>
+    <constraint>
         <name>ca_co_subcuentas_ejercicios</name>
-        <constraint>FOREIGN KEY (codejercicio)
+        <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_co_subcuentas_cuentas2</name>
-        <constraint>FOREIGN KEY (idcuenta)
+        <type>FOREIGN KEY (idcuenta)
             REFERENCES co_cuentas (idcuenta)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
 </table>

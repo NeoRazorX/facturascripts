@@ -20,14 +20,14 @@
         <name>text</name>
         <type>text</type>
     </column>
-    <indexes>
+    <constraint>
         <name>articulo_propiedades_pkey</name>
-        <constraint>PRIMARY KEY (name,referencia)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (name,referencia)</type>
+    </constraint>
+    <constraint>
         <name>ca_articulo_propiedades_articulos</name>
-        <constraint>FOREIGN KEY (referencia)
+        <type>FOREIGN KEY (referencia)
             REFERENCES articulos (referencia)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
 </table>

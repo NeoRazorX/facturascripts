@@ -62,14 +62,14 @@
         <type>character varying(25)</type>
         <null>YES</null>
     </column>
-    <indexes>
+    <constraint>
         <name>ca_co_asientos_ejercicios2</name>
-        <constraint>FOREIGN KEY (codejercicio)
+        <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE RESTRICT ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>co_asientos_pkey</name>
-        <constraint>PRIMARY KEY (idasiento)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (idasiento)</type>
+    </constraint>
 </table>

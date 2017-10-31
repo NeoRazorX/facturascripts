@@ -22,20 +22,20 @@
         <type>character varying(50)</type>
         <null>NO</null>
     </column>
-    <indexes>
+    <constraint>
         <name>fs_roles_users_pkey</name>
-        <constraint>PRIMARY KEY (id)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
         <name>fs_roles_users_roles</name>
-        <constraint>FOREIGN KEY (codrol) REFERENCES fs_roles (codrol) ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+        <type>FOREIGN KEY (codrol) REFERENCES fs_roles (codrol) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>fs_roles_users_user</name>
-        <constraint>FOREIGN KEY (nick) REFERENCES fs_users (nick) ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+        <type>FOREIGN KEY (nick) REFERENCES fs_users (nick) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>unique_fs_roles_users</name>
-        <constraint>UNIQUE (codrol,nick)</constraint>
-    </indexes>
+        <type>UNIQUE (codrol,nick)</type>
+    </constraint>
 </table>

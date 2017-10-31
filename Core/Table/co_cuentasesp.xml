@@ -26,8 +26,8 @@
         <type>character varying(6)</type>
         <null>NO</null>
     </column>
-    <indexes>
+    <constraint>
         <name>co_cuentasesp_pkey</name>
-        <constraint>PRIMARY KEY (idcuentaesp)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (idcuentaesp)</type>
+    </constraint>
 </table>

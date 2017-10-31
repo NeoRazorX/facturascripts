@@ -37,20 +37,20 @@
         <type>integer</type>
         <null>YES</null>
     </column>
-    <indexes>
+    <constraint>
         <name>co_epigrafes_pkey</name>
-        <constraint>PRIMARY KEY (idepigrafe)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (idepigrafe)</type>
+    </constraint>
+    <constraint>
         <name>ca_co_epigrafes_ejercicios</name>
-        <constraint>FOREIGN KEY (codejercicio)
+        <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_co_epigrafes_gruposepigrafes2</name>
-        <constraint>FOREIGN KEY (idgrupo)
+        <type>FOREIGN KEY (idgrupo)
             REFERENCES co_gruposepigrafes (idgrupo)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
 </table>

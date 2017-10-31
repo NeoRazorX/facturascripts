@@ -53,14 +53,14 @@
         <name>nick</name>
         <type>character varying(12)</type>
     </column>
-    <indexes>
+    <constraint>
         <name>lineasregstocks_pkey</name>
-        <constraint>PRIMARY KEY (id)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
         <name>ca_lineasregstocks_stocks</name>
-        <constraint>FOREIGN KEY (idstock)
+        <type>FOREIGN KEY (idstock)
             REFERENCES stocks (idstock)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
 </table>

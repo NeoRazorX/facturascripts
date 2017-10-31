@@ -53,14 +53,14 @@
         <type>boolean</type>
         <null>YES</null>
     </column>
-    <indexes>
+    <constraint>
         <name>cuentasbcopro_pkey</name>
-        <constraint>PRIMARY KEY (codcuenta)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (codcuenta)</type>
+    </constraint>
+    <constraint>
         <name>ca_cuentasbcopro_proveedores</name>
-        <constraint>FOREIGN KEY (codproveedor)
+        <type>FOREIGN KEY (codproveedor)
             REFERENCES proveedores (codproveedor)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
 </table>

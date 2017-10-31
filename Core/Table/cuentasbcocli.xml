@@ -57,14 +57,14 @@
         <name>fmandato</name>
         <type>date</type>
     </column>
-    <indexes>
+    <constraint>
         <name>cuentasbcocli_pkey</name>
-        <constraint>PRIMARY KEY (codcuenta)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (codcuenta)</type>
+    </constraint>
+    <constraint>
         <name>ca_cuentasbcocli_clientes</name>
-        <constraint>FOREIGN KEY (codcliente)
+        <type>FOREIGN KEY (codcliente)
             REFERENCES clientes (codcliente)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
 </table>

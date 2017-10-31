@@ -53,8 +53,8 @@
         <type>boolean</type>
         <default>false</default>
     </column>
-    <indexes>
+    <constraint>
         <name>cajas_terminales_pkey</name>
-        <constraint>PRIMARY KEY (id)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
 </table>

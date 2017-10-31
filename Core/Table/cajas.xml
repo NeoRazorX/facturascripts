@@ -55,8 +55,8 @@
         <type>character varying(40)</type>
         <null>YES</null>
     </column>
-    <indexes>
+    <constraint>
         <name>cajas_pkey</name>
-        <constraint>PRIMARY KEY (id)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
 </table>

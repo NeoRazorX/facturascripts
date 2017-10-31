@@ -96,14 +96,14 @@
         <type>boolean</type>
         <default>true</default>
     </column>
-    <indexes>
+    <constraint>
         <name>lineaspresupuestoscli_pkey</name>
-        <constraint>PRIMARY KEY (idlinea)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (idlinea)</type>
+    </constraint>
+    <constraint>
         <name>ca_lineaspresupuestoscli_presupuestoscli</name>
-        <constraint>FOREIGN KEY (idpresupuesto)
+        <type>FOREIGN KEY (idpresupuesto)
             REFERENCES presupuestoscli (idpresupuesto)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
 </table>

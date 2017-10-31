@@ -20,14 +20,14 @@
         <name>text</name>
         <type>text</type>
     </column>
-    <indexes>
+    <constraint>
         <name>cliente_propiedades_pkey</name>
-        <constraint>PRIMARY KEY (name,codcliente)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (name,codcliente)</type>
+    </constraint>
+    <constraint>
         <name>ca_cliente_propiedades_clientes</name>
-        <constraint>FOREIGN KEY (codcliente)
+        <type>FOREIGN KEY (codcliente)
             REFERENCES clientes (codcliente)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
 </table>

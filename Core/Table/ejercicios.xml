@@ -56,8 +56,8 @@
         <type>character varying(4)</type>
         <null>NO</null>
     </column>
-    <indexes>
+    <constraint>
         <name>ejercicios_pkey</name>
-        <constraint>PRIMARY KEY (codejercicio)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (codejercicio)</type>
+    </constraint>
 </table>

@@ -89,8 +89,8 @@
         <type>date</type>
         <null>YES</null>
     </column>
-    <indexes>
+    <constraint>
         <name>agentes_pkey</name>
-        <constraint>PRIMARY KEY (codagente)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (codagente)</type>
+    </constraint>
 </table>

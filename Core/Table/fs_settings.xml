@@ -33,8 +33,8 @@
         <null>YES</null>
     </column>
     
-    <indexes>
+    <constraint>
         <name>fs_settings_pkey</name>
-        <constraint>PRIMARY KEY (name)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (name)</type>
+    </constraint>
 </table>

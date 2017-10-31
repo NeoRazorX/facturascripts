@@ -47,8 +47,8 @@
         <null>YES</null>
         <default>1</default>
     </column>
-    <indexes>
+    <constraint>
         <name>series_pkey</name>
-        <constraint>PRIMARY KEY (codserie)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (codserie)</type>
+    </constraint>
 </table>

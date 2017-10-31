@@ -66,8 +66,8 @@
         <type>character varying(15)</type>
         <null>NO</null>
     </column>
-    <indexes>
+    <constraint>
         <name>co_codbalances08_pkey</name>
-        <constraint>PRIMARY KEY (codbalance)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (codbalance)</type>
+    </constraint>
 </table>

@@ -32,8 +32,8 @@
         <default>true</default>
         <null>NO</null>
     </column>
-    <indexes>
+    <constraint>
         <name>agenciastrans_pkey</name>
-        <constraint>PRIMARY KEY (codtrans)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (codtrans)</type>
+    </constraint>
 </table>

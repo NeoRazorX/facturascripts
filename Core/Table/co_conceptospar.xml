@@ -16,8 +16,8 @@
         <type>character varying(4)</type>
         <null>NO</null>
     </column>
-    <indexes>
+    <constraint>
         <name>co_conceptospar_pkey</name>
-        <constraint>PRIMARY KEY (idconceptopar)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (idconceptopar)</type>
+    </constraint>
 </table>

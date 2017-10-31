@@ -192,14 +192,14 @@
         <type>character varying(10)</type>
         <null>YES</null>
     </column>
-    <indexes>
+    <constraint>
         <name>clientes_pkey</name>
-        <constraint>PRIMARY KEY (codcliente)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (codcliente)</type>
+    </constraint>
+    <constraint>
         <name>ca_clientes_grupos</name>
-        <constraint>FOREIGN KEY (codgrupo)
+        <type>FOREIGN KEY (codgrupo)
             REFERENCES gruposclientes (codgrupo)
-            ON DELETE SET NULL ON UPDATE CASCADE</constraint>
-    </indexes>
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
 </table>

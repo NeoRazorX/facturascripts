@@ -43,8 +43,8 @@
         <null>YES</null>
         <default>'+1month'::character varying</default>
     </column>
-    <indexes>
+    <constraint>
         <name>formaspago_pkey</name>
-        <constraint>PRIMARY KEY (codpago)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (codpago)</type>
+    </constraint>
 </table>

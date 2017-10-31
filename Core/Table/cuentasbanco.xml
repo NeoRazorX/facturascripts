@@ -27,8 +27,8 @@
         <name>swift</name>
         <type>character varying(11)</type>
     </column>
-    <indexes>
+    <constraint>
         <name>cuentasbanco_pkey</name>
-        <constraint>PRIMARY KEY (codcuenta)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (codcuenta)</type>
+    </constraint>
 </table>

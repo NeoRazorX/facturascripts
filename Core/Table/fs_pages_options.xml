@@ -38,16 +38,16 @@
         <type>text</type>
         <null>YES</null>
     </column>
-    <indexes>
+    <constraint>
         <name>fs_pages_options_pkey</name>
-        <constraint>PRIMARY KEY (id)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
         <name>uniq_pages_options</name>
-        <constraint>UNIQUE (name, nick)</constraint>
-    </indexes>
-    <indexes>
+        <type>UNIQUE (name, nick)</type>
+    </constraint>
+    <constraint>
         <name>ca_fs_pagesoptions_users</name>
-        <constraint>FOREIGN KEY (nick) REFERENCES fs_users (nick) ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
+        <type>FOREIGN KEY (nick) REFERENCES fs_users (nick) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
 </table>

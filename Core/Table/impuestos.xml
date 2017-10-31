@@ -156,8 +156,8 @@
         <type>double precision</type>
         <null>NO</null>
     </column>
-    <indexes>
+    <constraint>
         <name>impuestos_pkey</name>
-        <constraint>PRIMARY KEY (codimpuesto)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (codimpuesto)</type>
+    </constraint>
 </table>

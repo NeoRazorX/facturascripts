@@ -985,6 +985,8 @@
     "heading-account-group-id" : "Heading account ID group",
     "heading-account-id-root" : "Heading account root",
     "fiscal-data": "Fiscal data",
+    "delivery-notes-button" : "Pen. del. notes:",
+    "pending-invoices-button" : "Risk:",
     "company-name": "Company name",
     "company-manager": "Company manager",
     "website": "Website",

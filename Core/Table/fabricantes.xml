@@ -16,8 +16,8 @@
         <type>character varying(8)</type>
         <null>NO</null>
     </column>
-    <indexes>
+    <constraint>
         <name>fabricantes_pkey</name>
-        <constraint>PRIMARY KEY (codfabricante)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (codfabricante)</type>
+    </constraint>
 </table>

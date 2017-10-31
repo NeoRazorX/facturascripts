@@ -598,11 +598,11 @@ trait ModelTrait
                     $return = true;
                 }
 
-                if ($xml->indexes) {
+                if ($xml->constraint) {
                     $key = 0;
-                    foreach ($xml->indexes as $col) {
+                    foreach ($xml->constraint as $col) {
                         $constraints[$key]['name'] = (string) $col->name;
-                        $constraints[$key]['constraint'] = (string) $col->constraint;
+                        $constraints[$key]['constraint'] = (string) $col->type;
                         ++$key;
                     }
                 }

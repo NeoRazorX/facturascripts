@@ -148,8 +148,8 @@
         <type>character varying(10)</type>
         <null>YES</null>
     </column>
-    <indexes>
+    <constraint>
         <name>proveedores_pkey</name>
-        <constraint>PRIMARY KEY (codproveedor)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (codproveedor)</type>
+    </constraint>
 </table>

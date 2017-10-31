@@ -32,24 +32,24 @@
         <type>character varying(18)</type>
         <null>NO</null>
     </column>
-    <indexes>
+    <constraint>
         <name>lineastransstock_pkey</name>
-        <constraint>PRIMARY KEY (idlinea)</constraint>
-    </indexes>
-    <indexes>
+        <type>PRIMARY KEY (idlinea)</type>
+    </constraint>
+    <constraint>
         <name>ca_linea_transstock</name>
-        <constraint>FOREIGN KEY (idtrans)
+        <type>FOREIGN KEY (idtrans)
             REFERENCES transstock (idtrans)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_linea_transstock_articulos</name>
-        <constraint>FOREIGN KEY (referencia)
+        <type>FOREIGN KEY (referencia)
             REFERENCES articulos (referencia)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>uniq_referencia_transferencia</name>
-        <constraint>UNIQUE (idtrans,referencia)</constraint>
-    </indexes>
+        <type>UNIQUE (idtrans,referencia)</type>
+    </constraint>
 </table>

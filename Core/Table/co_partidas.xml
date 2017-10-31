@@ -125,20 +125,20 @@
         <type>character varying(25)</type>
         <null>YES</null>
     </column>
-    <indexes>
+    <constraint>
         <name>ca_co_partidas_co_asientos2</name>
-        <constraint>FOREIGN KEY (idasiento)
+        <type>FOREIGN KEY (idasiento)
             REFERENCES co_asientos (idasiento)
-            ON DELETE CASCADE ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_co_partidas_subcuentas</name>
-        <constraint>FOREIGN KEY (idsubcuenta)
+        <type>FOREIGN KEY (idsubcuenta)
             REFERENCES co_subcuentas (idsubcuenta)
-            ON DELETE RESTRICT ON UPDATE CASCADE</constraint>
-    </indexes>
-    <indexes>
+            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>co_partidas_pkey</name>
-        <constraint>PRIMARY KEY (idpartida)</constraint>
-    </indexes>
+        <type>PRIMARY KEY (idpartida)</type>
+    </constraint>
 </table>
