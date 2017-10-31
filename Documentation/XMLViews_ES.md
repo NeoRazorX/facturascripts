@@ -138,6 +138,7 @@ El atributo _step_ para indicar el aumento o decremento al realizar un "paso" me
 para indicar los valores mínimo y máximo.
     * **money**: Campos de tipo float para importes. Para este tipo se puede indicar el atributo _decimal_ para configurar la precisión a visualizar en vez de los de la moneda.
     * **checkbox**: Valores booleanos que se visualizan mediante el icono de un check (true) o un guión (false) respectivamente.
+    * **datepicker**: Campos de tipo fecha, que incorporan un desplegable para elegir la misma.
     * **color**: Para la selección de colores.
     * **select**: Lista de valores establecidos por un conjunto de etiquetas _\<values\>_ descritas dentro del grupo _\<widget\>_.
 Los valores podrán ser fijos, incluyendo tantos _\<values\>_ como necesitemos e indicando el atributo _title_ y asignando un valor,
@@ -171,6 +172,12 @@ Para el caso de valores por definición de rango una sóla etiqueta _\<values\>_
     * radio: Lista de valores donde podemos seleccionar una de ellas.
 Se indican las distintas opciones mediante sistema de etiquetas _\<values\>_ descritas dentro del grupo _\<widget\>_, al estilo del tipo _select_.
 
+        ```XML
+                <widget type="radio" fieldname="regimeniva">
+                    <values title="general">General</values>
+                    <values title="exempt">Exento</values>
+                </widget>
+        ```
 
 * **fieldname** : (obligatorio) Nombre del campo que contiene la información.
 
