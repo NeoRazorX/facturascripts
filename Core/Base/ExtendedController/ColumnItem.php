@@ -264,7 +264,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      * Ejecuta la lista de funciones ($properties)
      * para obtener las propiedades de la columna
      *
-     * @param array $properties
+     * @param string[] $properties
      *
      * @return array
      */

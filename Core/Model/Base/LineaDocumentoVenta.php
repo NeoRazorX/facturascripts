@@ -188,7 +188,7 @@ trait LineaDocumentoVenta
     /**
      * Devuelve el PVP total (con IVA, IRPF y recargo)
      *
-     * @return float|int
+     * @return integer
      */
     public function totalIva()
     {

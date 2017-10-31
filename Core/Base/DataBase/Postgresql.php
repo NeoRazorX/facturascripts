@@ -241,7 +241,7 @@ class Postgresql implements DataBaseEngine
      * @param resource $link
      * @param string   $sql
      *
-     * @return array
+     * @return resource
      */
     public function select($link, $sql)
     {

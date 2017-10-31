@@ -51,7 +51,7 @@ class ListBalance extends ExtendedController\ListController
     {
         $className = $this->getClassName();
         $this->addView('FacturaScripts\Core\Model\Balance', $className);
-        $this->addSearchFields($className, ['codbalance', 'naturaleza','descripcion1','descripcion2','descripcion3','descripcion4','descripcion4ba']);
+        $this->addSearchFields($className, ['codbalance', 'naturaleza', 'descripcion1', 'descripcion2', 'descripcion3', 'descripcion4', 'descripcion4ba']);
 
         $this->addOrderBy($className, 'codbalance', 'code');
         $this->addOrderBy($className, 'descripcion1', 'description 1', 2); /// forzamos el orden por defecto descripcion1

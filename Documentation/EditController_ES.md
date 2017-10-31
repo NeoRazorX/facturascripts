@@ -1,7 +1,7 @@
 # Controlador EditController
 Es un **controlador universal** para vistas que desean mostrar los datos completos de un registro
 de datos de un modelo, en formato "ficha" o mediante un diseño de columnas agrupadas según el tipo de información. 
-El uso de este controlador simplifica de gran manera la programación necesaria para la edición de los datos,
+El uso de este controlador simplifica en gran manera la programación necesaria para la edición de los datos,
 así como unificamos la imagen de la aplicación y plugins creando un entorno uniforme para el usuario lo que acelera el aprendizaje 
 y adaptación a **Facturascripts**.
 

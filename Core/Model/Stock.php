@@ -313,7 +313,7 @@ class Stock
     /**
      * Devuelve el stock por referencia ordenado por codalmacen
      *
-     * @param $ref
+     * @param string $ref
      *
      * @return self[]
      */
