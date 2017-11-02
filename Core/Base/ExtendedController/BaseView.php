@@ -68,6 +68,14 @@ abstract class BaseView
     public static $i18n;
 
     /**
+     * Establece el estado de visualización/edición de una columna
+     * 
+     * @param string $columnName
+     * @param boolean $disabled
+     */
+    abstract public function disableColumn($columnName, $disabled);
+    
+    /**
      * Método para la exportación de los datos de la vista
      *
      * @param Base\ExportManager $exportManager
@@ -175,5 +183,5 @@ abstract class BaseView
     public function getModelID()
     {
         return empty($this->model) ? '' : $this->model->modelClassName();
-    }
+    }    
 }

@@ -128,6 +128,11 @@ class WidgetItemSelect extends WidgetItem
     public function getEditHTML($value)
     {
         $specialAttributes = $this->specialAttributes();
+        
+        if ($this->readOnly) {
+            return $this->standardEditHTMLWidget($value, $specialAttributes, '', 'text');
+        }
+            
         $fieldName = '"' . $this->fieldName . '"';
         $html = $this->getIconHTML()
             . '<select name=' . $fieldName . ' id=' . $fieldName

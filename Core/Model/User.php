@@ -28,6 +28,7 @@ class User
 {
     use Base\ModelTrait {
         get as private getTrait;
+        clear as clearTrait;
     }
 
     /**
@@ -37,6 +38,11 @@ class User
      */
     public $nick;
 
+    /**
+     * Identificador de empresa seleccionada
+     */
+    public $idempresa;
+    
     /**
      * Email del usuario.
      *
@@ -91,7 +97,7 @@ class User
      *
      * @var string
      */
-    private $password;
+    public $password;
 
     /**
      * Clave de sesión. El cliente se la guarda en una cookie,
@@ -128,16 +134,8 @@ class User
      */
     public function clear()
     {
-        $this->nick = null;
-        $this->password = null;
-        $this->email = null;
-        $this->logkey = null;
-        $this->admin = false;
-        $this->enabled = true;
+        $this->clearTrait();
         $this->langcode = FS_LANG;
-        $this->homepage = null;
-        $this->lastactivity = null;
-        $this->lastip = null;
     }
 
     /**
@@ -243,7 +241,40 @@ class User
 
         $this->miniLog->info($this->i18n->trans('created-default-admin-account'));
 
-        return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled) VALUES ('admin','"
-            . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE);";
+        return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled,idempresa) VALUES ('admin','"
+            . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE,NULL);";
     }
+    
+    /**
+     * Devuelve la url donde ver/modificar los datos
+     *
+     * @param mixed $type
+     *
+     * @return string
+     */
+    public function url($type = 'auto')
+    {
+        $value = $this->primaryColumnValue();
+        $model = $this->modelClassName();
+        $result = 'index.php?page=';
+        switch ($type) {
+            case 'list':
+                $result .= 'ListUser&active=List' . $model;
+                break;
+
+            case 'edit':
+                $result .= 'Panel' . $model . '&code=' . $value;
+                break;
+
+            case 'new':
+                $result .= 'Panel' . $model;
+                break;
+
+            default:
+                $result .= empty($value) ? 'ListUser&active=List' . $model : 'Panel' . $model . '&code=' . $value;
+                break;
+        }
+
+        return $result;
+    }    
 }

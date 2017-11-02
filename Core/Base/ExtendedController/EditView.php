@@ -78,6 +78,20 @@ class EditView extends BaseView
     }
 
     /**
+     * Establece el estado de edición de una columna
+     * 
+     * @param string $columnName
+     * @param boolean $disabled
+     */
+    public function disableColumn($columnName, $disabled)
+    {
+        $column = $this->pageOption->columnForName($columnName);
+        if (!empty($column)) {
+            $column->widget->readOnly = $disabled;
+        }
+    }
+    
+    /**
      * Establece y carga los datos del modelo en base a su PK
      *
      * @param string|array $code

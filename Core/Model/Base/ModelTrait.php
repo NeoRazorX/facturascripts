@@ -218,6 +218,26 @@ trait ModelTrait
     }
 
     /**
+     * Devuelve el valor integer controlando casos especiales para las PK y FK
+     * 
+     * @param array $field
+     * @param string $value
+     * @return integer|NULL
+     */
+    private function getIntergerValueForField($field, $value)
+    {
+        if (!empty($value)) {
+            return (int) $value;
+        }
+
+        if ($field['name'] === $this->primaryColumn()) {
+            return NULL;
+        }
+
+        return ($field['is_nullable'] === 'NO') ? 0 : NULL;        
+    }
+    
+    /**
      * Asigna a las propiedades del modelo los valores del array $data
      *
      * @param array $data
@@ -244,11 +264,7 @@ trait ModelTrait
 
                     case 'integer':
                     case 'int':
-                        if (($field['name'] === $this->primaryColumn()) && empty($value)) {
-                            $this->{$key} = NULL;
-                            continue;
-                        }
-                        $this->{$key} = empty($value) ? 0 : (int) $value;
+                        $this->{$key} = $this->getIntergerValueForField($field, $value);                        
                         break;
 
                     case 'double':
@@ -263,7 +279,7 @@ trait ModelTrait
 
                     default:
                         if (empty($value)) {
-                            $value = ($field['is_nullable'] === 'NO') ? '' : null;
+                            $value = ($field['is_nullable'] === 'NO') ? '' : NULL;
                         }
                         $this->{$key} = $value;
                 }

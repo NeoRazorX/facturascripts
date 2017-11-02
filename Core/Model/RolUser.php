@@ -20,6 +20,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * Define la relación entre un usuario y un rol.
  *
@@ -69,5 +71,23 @@ class RolUser
     public function primaryColumn()
     {
         return 'id';
+    }
+    
+    public function test()
+    {
+        $where = [
+            new DataBaseWhere('nick', $this->nick),
+            new DataBaseWhere('codrol', $this->codrol)
+        ];
+
+        $rolUser = new RolUser();
+        if ($rolUser->loadFromCode(NULL, $where)) {
+            if ($rolUser->id !== $this->id) {
+                $this->miniLog->alert($this->i18n->trans('rol-user-exists'));
+                return false;
+            }
+        }
+
+        return TRUE;
     }
 }

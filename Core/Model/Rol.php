@@ -95,11 +95,11 @@ class Rol
                 break;
 
             case 'edit':
-                $result .= 'Edit' . $model . '&code=' . $value;
+                $result .= 'Panel' . $model . '&code=' . $value;
                 break;
 
             case 'new':
-                $result .= 'Edit' . $model;
+                $result .= 'Panel' . $model;
                 break;
 
             default:

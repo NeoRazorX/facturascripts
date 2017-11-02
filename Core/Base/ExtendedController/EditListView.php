@@ -97,6 +97,20 @@ class EditListView extends BaseView
     }
 
     /**
+     * Establece el estado de edición de una columna
+     * 
+     * @param string $columnName
+     * @param boolean $disabled
+     */
+    public function disableColumn($columnName, $disabled)
+    {
+        $column = $this->pageOption->columnForName($columnName);
+        if (!empty($column)) {
+            $column->widget->readOnly = $disabled;
+        }
+    }
+    
+    /**
      * Carga los datos en la propiedad cursor, según el filtro where indicado.
      * Añade un registro/modelo en blanco al final de los datos cargados.
      *

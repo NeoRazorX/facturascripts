@@ -282,6 +282,20 @@ class ListView extends BaseView
     }
 
     /**
+     * Establece el estado de visualización de una columna
+     * 
+     * @param string $columnName
+     * @param boolean $disabled
+     */
+    public function disableColumn($columnName, $disabled)
+    {
+        $column = $this->pageOption->columnForName($columnName);
+        if (!empty($column)) {
+            $column->display = $disabled ? 'none' : 'left';
+        }
+    }
+    
+    /**
      * Carga los datos
      *
      * @param array $where
