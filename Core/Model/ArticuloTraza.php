@@ -107,7 +107,7 @@ class ArticuloTraza
      *
      * @return string
      */
-    static function tableName()
+    public static function tableName()
     {
         return 'articulo_trazas';
     }

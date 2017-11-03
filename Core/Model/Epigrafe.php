@@ -94,7 +94,7 @@ class Epigrafe
      *
      * @return string
      */
-    static function tableName()
+    public static function tableName()
     {
         return 'co_epigrafes';
     }

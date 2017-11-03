@@ -56,7 +56,7 @@ class RolUser
      *
      * @return string
      */
-    static function tableName() 
+    public static function tableName() 
     {
         return 'fs_roles_users';
     }

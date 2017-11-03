@@ -48,7 +48,7 @@ class CuentaEspecial
      *
      * @return string
      */
-    static function tableName()
+    public static function tableName()
     {
         return 'co_cuentasesp';
     }

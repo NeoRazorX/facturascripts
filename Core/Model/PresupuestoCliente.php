@@ -79,7 +79,7 @@ class PresupuestoCliente
      *
      * @return string
      */
-    static function tableName()
+    public static function tableName()
     {
         return 'presupuestoscli';
     }

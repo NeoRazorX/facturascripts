@@ -57,7 +57,7 @@ class AtributoValor
      *
      * @return string
      */
-    static function tableName()
+    public static function tableName()
     {
         return 'atributos_valores';
     }

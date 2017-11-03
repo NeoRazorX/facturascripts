@@ -65,7 +65,7 @@ class CuentaBancoProveedor
      *
      * @return string
      */
-    static function tableName()
+    public static function tableName()
     {
         return 'cuentasbcopro';
     }

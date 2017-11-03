@@ -56,7 +56,7 @@ class Pais
      *
      * @return string
      */
-    static function tableName()
+    public static function tableName()
     {
         return 'paises';
     }

@@ -55,7 +55,7 @@ class DireccionProveedor
      *
      * @return string
      */
-    static function tableName()
+    public static function tableName()
     {
         return 'dirproveedores';
     }

@@ -194,7 +194,7 @@ class Contacto
      *
      * @return string
      */
-    static function tableName()
+    public static function tableName()
     {
         return 'crm_contactos';
     }
