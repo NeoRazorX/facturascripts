@@ -115,7 +115,7 @@ class Settings
     public function loadFromData($data)
     {
         $this->loadFromDataTrait($data, ['properties', 'action']);
-        $this->properties = empty($data['properties']) ? [] : json_decode($data['properties'], true);
+        $this->properties = isset($data['properties']) ? json_decode($data['properties'], true) : [];
     }
 
     /**
@@ -123,7 +123,7 @@ class Settings
      *
      * @return bool
      */
-    private function saveUpdate()
+    public function saveUpdate()
     {
         $properties = json_encode($this->properties);
 

@@ -236,7 +236,7 @@ abstract class ListController extends Base\Controller
     protected function jsonAction($view)
     {
         $this->setTemplate(false);
-        $cols = $this->getTextColumns(4);
+        $cols = $this->getTextColumns($view, 4);
         $json = [];
         foreach ($view->getCursor() as $item) {
             $jItem = ['url' => $item->url()];

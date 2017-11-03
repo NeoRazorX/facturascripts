@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 class WidgetItemSelect extends WidgetItem
 {
+
     /**
      * Valores aceptados por el campo asociado al widget
      *
@@ -50,7 +50,8 @@ class WidgetItemSelect extends WidgetItem
      * @param \SimpleXMLElement $column
      * @param \SimpleXMLElement $widgetAtributes
      */
-    protected function loadFromXMLColumn($column, $widgetAtributes) {
+    protected function loadFromXMLColumn($column, $widgetAtributes)
+    {
         parent::loadFromXMLColumn($column, $widgetAtributes);
         $this->getAttributesGroup($this->values, $column->widget->values);
     }
@@ -136,11 +137,11 @@ class WidgetItemSelect extends WidgetItem
     public function getEditHTML($value)
     {
         $specialAttributes = $this->specialAttributes();
-        
+
         if ($this->readOnly) {
             return $this->standardEditHTMLWidget($value, $specialAttributes, '', 'text');
         }
-            
+
         $fieldName = '"' . $this->fieldName . '"';
         $html = $this->getIconHTML()
             . '<select name=' . $fieldName . ' id=' . $fieldName

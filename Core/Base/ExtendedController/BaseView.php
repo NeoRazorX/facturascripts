@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Model;
@@ -69,12 +68,12 @@ abstract class BaseView
 
     /**
      * Establece el estado de visualización/edición de una columna
-     * 
+     *
      * @param string $columnName
      * @param boolean $disabled
      */
     abstract public function disableColumn($columnName, $disabled);
-    
+
     /**
      * Método para la exportación de los datos de la vista
      *
@@ -83,7 +82,7 @@ abstract class BaseView
      * @param string $action
      */
     abstract public function export(&$exportManager, &$response, $action);
-    
+
     /**
      * Constructor e inicializador de la clase
      *
@@ -112,7 +111,7 @@ abstract class BaseView
         if ($fieldValue != $this->model->primaryColumnValue()) {
             $this->model->loadFromCode($fieldValue);
         }
-        
+
         $this->model->checkArrayData($data);
         $this->model->loadFromData($data, ['action', 'active']);
     }
@@ -126,7 +125,7 @@ abstract class BaseView
     {
         return $this->model->save();
     }
-     
+
     /**
      * Elimina el registro con el código indicado de la base de datos
      *
@@ -141,7 +140,7 @@ abstract class BaseView
 
         return false;
     }
-    
+
     /**
      * Devuelve el puntero al modelo de datos
      *
@@ -151,7 +150,7 @@ abstract class BaseView
     {
         return $this->model;
     }
-    
+
     /**
      * Obtiene la columna por el nombre de la columna
      *
@@ -176,7 +175,7 @@ abstract class BaseView
 
         return $result;
     }
-    
+
     /**
      * Obtiene la columna para el nombre de campo informado
      *
@@ -233,5 +232,5 @@ abstract class BaseView
     public function getModelID()
     {
         return empty($this->model) ? '' : $this->model->modelClassName();
-    }    
+    }
 }

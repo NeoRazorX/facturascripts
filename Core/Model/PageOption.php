@@ -196,8 +196,12 @@ class PageOption
             . ');';
 
         if ($this->dataBase->exec($sql)) {
-            $this->id = $this->dataBase->lastval();
+            $lastVal = $this->dataBase->lastval();
+            if ($lastVal === FALSE) {
+                return false;
+            }
 
+            $this->id = $lastVal;
             return true;
         }
 
