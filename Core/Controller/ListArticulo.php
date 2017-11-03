@@ -72,5 +72,15 @@ class ListArticulo extends ExtendedController\ListController
         $this->addOrderBy('ListArticuloProveedor', 'descripcion', 'description');
         $this->addOrderBy('ListArticuloProveedor', 'pvp', 'price');
         $this->addOrderBy('ListArticuloProveedor', 'stockfis', 'stock');
+        
+        /*Stock*/
+        $this->addView('FacturaScripts\Core\Model\Stock', 'ListStock', 'stock');
+        $this->addSearchFields('ListStock', ['referencia', 'codalmacen']);
+        
+        $this->addFilterSelect('ListStock', 'codalmacen', 'almacen', 'nombre');
+        
+        $this->addOrderBy('ListStock', 'referencia', 'reference');
+        $this->addOrderBy('ListStock', 'cantidad', 'quantity');
+        $this->addOrderBy('ListStock', 'disponible', 'available');
     }
 }
