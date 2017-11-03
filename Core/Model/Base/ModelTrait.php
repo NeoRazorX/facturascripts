@@ -535,4 +535,11 @@ trait ModelTrait
         }
         return $result;
     }
+      public function install()
+    {
+        if (method_exists(__CLASS__, 'cleanCache')) {
+            $this->cleanCache();
+        }
+        return '';
+    }
 }

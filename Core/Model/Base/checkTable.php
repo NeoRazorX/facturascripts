@@ -185,13 +185,7 @@ class checkTable
      *
      * @return string
      */
-    public function install()
-    {
-        if (method_exists(__CLASS__, 'cleanCache')) {
-            $this->cleanCache();
-        }
-        return '';
-    }
+  
     
    
 }
