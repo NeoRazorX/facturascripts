@@ -42,7 +42,9 @@
                 </widget>    
             </column>
             <column name="lang-code" numcolumns="5" order="210">
-                <widget type="text" fieldname="langcode" />
+                <widget type="select" fieldname="langcode">
+                    <values></values>
+                </widget>
             </column>
             <column name="password" numcolumns="4" order="220">
                 <widget type="password" fieldname="password" required="true" />

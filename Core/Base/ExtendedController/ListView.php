@@ -289,7 +289,7 @@ class ListView extends BaseView
      */
     public function disableColumn($columnName, $disabled)
     {
-        $column = $this->pageOption->columnForName($columnName);
+        $column = $this->columnForName($columnName);
         if (!empty($column)) {
             $column->display = $disabled ? 'none' : 'left';
         }

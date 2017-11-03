@@ -84,7 +84,10 @@ class WidgetItemSelect extends WidgetItem
     }
 
     /**
-     * Carga la lista de valores según un array de valores
+     * Carga la lista de valores según un array de valores.
+     * Si el array informado:
+     * - es un array de valores, usa como title y value el valor de cada elemento
+     * - es un array de array, se usa los indices title y value para cada elemento
      *
      * @param array $values
      */
@@ -92,6 +95,11 @@ class WidgetItemSelect extends WidgetItem
     {
         $this->values = [];
         foreach ($values as $value) {
+            if (is_array($value)) {
+                $this->values[] = ['title' => $value['title'], 'value' => $value['value']];
+                continue;
+            }
+
             $item = [];
             $item['value'] = $value;
             $item['title'] = $value;

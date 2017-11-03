@@ -85,7 +85,7 @@ class EditView extends BaseView
      */
     public function disableColumn($columnName, $disabled)
     {
-        $column = $this->pageOption->columnForName($columnName);
+        $column = $this->columnForName($columnName);
         if (!empty($column)) {
             $column->widget->readOnly = $disabled;
         }
@@ -104,7 +104,7 @@ class EditView extends BaseView
         $this->count = empty($this->model->{$fieldName}) ? 0 : 1;
 
         // Bloqueamos el campo Primary Key si no es una alta
-        $column = $this->pageOption->columnForField($fieldName);
+        $column = $this->columnForField($fieldName);
         if (!empty($column)) {
             $column->widget->readOnly = (!empty($this->model->{$fieldName}));
         }

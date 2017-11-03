@@ -29,18 +29,44 @@ use FacturaScripts\Core\Base\DataBase;
  */
 class PanelUser extends ExtendedController\PanelController
 {
+    /**
+     * Devuelve un array de idiomas, donde la key es el nombre del archivo JSON y
+     * el value es su correspondiente traducción.
+     *
+     * @return array
+     */
+    private function getLanguages()
+    {
+        $languages = [];
+        $dir = __DIR__ . '/../Translation';
+        foreach (scandir($dir, SCANDIR_SORT_ASCENDING) as $fileName) {
+            if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
+                $languages[] = [
+                    'value' => substr($fileName, 0, -5),
+                    'title' => $this->i18n->trans('languages-' . substr($fileName, 0, -5))
+                ];
+            }
+        }
 
+        return $languages;
+    }
+    
     /**
      * Procedimiento para insertar vistas en el controlador
      */
     protected function createViews()
     {
+        /// Add all views
         $this->addEditView('FacturaScripts\Core\Model\User', 'EditUser', 'user', 'fa-user');
-
         $this->addEditListView('FacturaScripts\Core\Model\RolUser', 'EditRolUser', 'rol-user', 'fa-address-card-o');
-        $this->views['EditRolUser']->disableColumn('nick', TRUE);
-
         $this->addListView('FacturaScripts\Core\Model\PageRule', 'ListPageRule', 'page-rule', 'fa fa-check-square');
+
+        /// Load values option to Language select input
+        $columnLangCode = $this->views['EditUser']->columnForName('lang-code');
+        $columnLangCode->widget->setValuesFromArray($this->getLanguages());
+
+        /// Disable columns
+        $this->views['EditRolUser']->disableColumn('nick', TRUE);
         $this->views['ListPageRule']->disableColumn('nick', TRUE);
     }
 

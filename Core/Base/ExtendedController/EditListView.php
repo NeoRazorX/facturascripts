@@ -115,7 +115,7 @@ class EditListView extends BaseView
      */
     public function disableColumn($columnName, $disabled)
     {
-        $column = $this->pageOption->columnForName($columnName);
+        $column = $this->columnForName($columnName);
         if (!empty($column)) {
             $column->widget->readOnly = $disabled;
         }
