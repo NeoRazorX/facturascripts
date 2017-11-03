@@ -29,12 +29,12 @@
             <widget type="text" fieldname="id"/>
         </column>    
         <column name="nick" order="100">
-            <widget type="select" fieldname="nick" required="true">
+            <widget type="select" fieldname="nick">
                 <values source="fs_users" fieldcode="nick" fieldtitle="nick"></values>            
             </widget>    
         </column>    
         <column name="role" order="100">
-            <widget type="select" fieldname="codrol" required="true">
+            <widget type="select" fieldname="codrol">
                 <values source="fs_roles" fieldcode="codrol" fieldtitle="descripcion"></values>            
             </widget>    
         </column>    

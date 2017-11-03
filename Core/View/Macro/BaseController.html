@@ -173,29 +173,87 @@
     {% endif %}
 {% endmacro %}
 
+<!--
+    Generate the code for the Basic in Line Edit view according to the indicated columns
+-->
+{% macro columnsForBasicEditView(context, view, model, needTitle) %}
+    {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+    {% set remove_title = context.i18n.trans('delete-record') %}
+    {% set undo_title = context.i18n.trans('restore-data') %}
+    {% set save_title = context.i18n.trans('save-data') %}
+    {% set keyValue = context.fsc.getFieldValue(model, model.primaryColumn()) %}
+    {% set formName = context.indexView ~ '-' ~ keyValue %}
+
+    <form name="{{ formName }}" action="#" method="post" class="form" role="form">
+        <input type="hidden" name="action" value="save">
+        <input type="hidden" name="active" value="{{ context.indexView }}">
+        <div class="row">
+        {% for group in view.getColumns() %}
+            <div class="col">
+                <div class="form-row {% if needTitle %}align-items-center{% endif %}">
+                    {% for column in group.columns %}
+                        {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
+                        {% if column.display == 'none' %}
+                            <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
+                        {% else %}
+                            {{ column.getEditHTML(value, needTitle)|raw }}
+                        {% endif %}
+                    {% endfor %}
+                
+                    <div class="col">
+                        {% if keyValue is not empty %}
+                        <a id="b_remove" class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
+                            &nbsp;<i class="fa fa-trash" aria-hidden="true"></i>&nbsp;
+                        </a>
+                        {% endif %}
+                        
+                        <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
+                            &nbsp;<i class="fa fa-undo" aria-hidden="true"></i>&nbsp;
+                        </button>
+                        <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" {{ popoverTitle(save_title, 'bottom') }}>
+                            &nbsp;<i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;
+                        </button>
+                    </div>
+                </div>            
+            </div>            
+        {% endfor %}
+        </div>
+    </form>
+{% endmacro %}
+
 
 <!--
     Generate the code for the EditList view according to the indicated columns
 -->
 {% macro columnsForEditListView(context, view) %}
     {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
+    {% from 'Macro/BaseController.html' import columnsForBasicEditView as columnsForBasicEditView %}
     {% set new_record, new_record_title = context.i18n.trans('new'), context.i18n.trans('create-new-record') %}
+    {% set isBasic = view.isBasicEditList() %}
 
     {% for model in view.getCursor() %}
-        {{ columnsForEditView(context, view, model, TRUE) }}
-        <hr style="height:5px" />
+        {% if isBasic %}
+            {{ columnsForBasicEditView(context, view, model, loop.first) }}        
+        {% else %}
+            {{ columnsForEditView(context, view, model, TRUE) }}
+        {% endif %}
+        <hr />
     {% endfor %}    
     
-    <div class="alert alert-success" role="alert">
-        <a class="alert-link" data-toggle="collapse" href="#new-{{ context.indexView }}" aria-expanded="true" aria-controls="new-{{ context.indexView }}">
-            <i class="fa fa-plus" aria-hidden="true"></i>&nbsp; {{ new_record_title }}...
-        </a>
-    </div>    
+    {% set newModel = view.newEmptyModel() %}
+    {% if isBasic %}
+        {{ columnsForBasicEditView(context, view, newModel) }}
+    {% else %}
+        <div class="alert alert-success" role="alert">
+            <a class="alert-link" data-toggle="collapse" href="#new-{{ context.indexView }}" aria-expanded="true" aria-controls="new-{{ context.indexView }}">
+                <i class="fa fa-plus" aria-hidden="true"></i>&nbsp; {{ new_record_title }}...
+            </a>
+        </div>    
 
-    <div id="new-{{ context.indexView }}" class="collapse">
-        {% set newModel = view.newEmptyModel() %}
-        {{ columnsForEditView(context, view, newModel, TRUE) }}
-    </div>
+        <div id="new-{{ context.indexView }}" class="collapse">
+            {{ columnsForEditView(context, view, newModel, TRUE) }}
+        </div>
+    {% endif %}
 {% endmacro %}
 
 

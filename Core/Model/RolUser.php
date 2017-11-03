@@ -72,9 +72,19 @@ class RolUser
     {
         return 'id';
     }
-    
+
     public function test()
     {
+        if (empty($this->nick)) {
+            $this->miniLog->alert($this->i18n->trans('nick-is-empty'));
+            return false;
+        }
+
+        if (empty($this->codrol)) {
+            $this->miniLog->alert($this->i18n->trans('role-is-empty'));
+            return false;
+        }
+        
         $where = [
             new DataBaseWhere('nick', $this->nick),
             new DataBaseWhere('codrol', $this->codrol)

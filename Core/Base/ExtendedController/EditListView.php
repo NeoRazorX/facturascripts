@@ -96,6 +96,17 @@ class EditListView extends BaseView
         return $this->pageOption->columns;
     }
 
+    public function isBasicEditList()
+    {
+        $isBasic = count($this->pageOption->columns) === 1;    // Only one group
+        if ($isBasic) {
+            $group = current($this->pageOption->columns);
+            $isBasic = (count($group->columns) < 5);
+        }
+        
+        return $isBasic;
+    }
+    
     /**
      * Establece el estado de edición de una columna
      * 

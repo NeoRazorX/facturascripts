@@ -159,9 +159,9 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      *
      * @return string
      */
-    public function getEditHTML($value)
+    public function getEditHTML($value, $withLabel = TRUE)
     {
-        $header = $this->getHeaderHTML($this->title);
+        $header = $withLabel ? $this->getHeaderHTML($this->title) : '';
         $input = $this->widget->getEditHTML($value);
         $data = $this->getColumnData(['ColumnClass', 'ColumnHint', 'ColumnRequired', 'ColumnDescription']);
 
