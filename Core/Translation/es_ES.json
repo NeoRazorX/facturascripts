@@ -1051,14 +1051,15 @@
     "memcache-set-key-item": "Asignado elemento '0' a Memcache (1).",
     "memcache-delete-key-item": "Eliminado elemento '0' de Memcache.",
     "memcache-clear": "Memcache limpiada.",
-    "filecache-get-key-item": "Getted elemento '0' from Filecache.",
+    "filecache-get-key-item": "Obtenido elemento '0' from Filecache.",
     "filecache-set-key-item": "Asignado elemento '0' a Filecache (1).",
-    "filecache-delete-key-item": "Deleted elemento '0' de Filecache.",
+    "filecache-delete-key-item": "Eliminado elemento '0' de Filecache.",
     "filecache-clear": "Filecache limpiada.",
     "apc-not-found": "Extensión APC no encontrada.",
     "apc-get-key-item": "Obtenido elemento '0' desde APC.",
     "apc-getarray-key-item": "Obtenido array de elementos '0' desde APC.",
     "apc-set-key-item": "Asignado elemento '0' a APC.",
     "apc-delete-key-item": "Eliminado elemento '0' de APC.",
-    "apc-clear": "APC limpiado."
+    "apc-clear": "APC limpiado.",
+    "total": "Total"
 }

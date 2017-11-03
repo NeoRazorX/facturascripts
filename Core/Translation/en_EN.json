@@ -1060,5 +1060,6 @@
     "apc-getarray-key-item": "Getted array elements '0' from APC.",
     "apc-set-key-item": "Setted element '0' to APC.",
     "apc-delete-key-item": "Deleted element '0' from APC.",
-    "apc-clear": "APC cleared."
+    "apc-clear": "APC cleared.",
+    "total": "Total"
 }
