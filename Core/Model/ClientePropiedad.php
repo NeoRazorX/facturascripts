@@ -54,7 +54,7 @@ class ClientePropiedad
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'cliente_propiedades';
     }

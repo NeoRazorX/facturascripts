@@ -58,7 +58,7 @@ class AlbaranProveedor
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'albaranesprov';
     }

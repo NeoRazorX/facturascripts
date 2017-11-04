@@ -84,7 +84,7 @@ class Page
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'fs_pages';
     }

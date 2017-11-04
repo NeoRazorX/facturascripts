@@ -69,7 +69,7 @@ class PageRule
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'fs_page_rules';
     }

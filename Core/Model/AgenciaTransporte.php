@@ -57,7 +57,7 @@ class AgenciaTransporte
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'agenciastrans';
     }

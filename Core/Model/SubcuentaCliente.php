@@ -68,7 +68,7 @@ class SubcuentaCliente
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'co_subcuentascli';
     }

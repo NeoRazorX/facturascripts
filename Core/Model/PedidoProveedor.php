@@ -62,7 +62,7 @@ class PedidoProveedor
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'pedidosprov';
     }

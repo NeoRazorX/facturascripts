@@ -114,7 +114,7 @@ class Agente
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'agentes';
     }

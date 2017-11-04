@@ -74,7 +74,7 @@ class ApiKey
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'fs_api_keys';
     }

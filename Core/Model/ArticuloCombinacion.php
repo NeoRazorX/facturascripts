@@ -124,7 +124,7 @@ class ArticuloCombinacion
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'articulo_combinaciones';
     }
