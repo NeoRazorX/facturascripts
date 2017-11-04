@@ -38,7 +38,7 @@ class PanelArticulo extends ExtendedController\PanelController
         $this->addEditView('FacturaScripts\Core\Model\Articulo', 'EditArticulo', 'products', 'fa-cubes');
         $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListFabricante', 'same-suppliers', 'fa-users');
         $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListFamilia', 'same-families', 'fa-object-group');
-         $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListImpuesto', 'same-taxes', 'fa-plus-square-o'); 
+        $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListImpuesto', 'same-taxes', 'fa-plus-square-o'); 
         
     }
 
