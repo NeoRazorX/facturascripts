@@ -42,7 +42,7 @@ class Empresa
      * @var string
      */
     public $xid;
-
+    
     /**
      * Todavía sin uso.
      *
@@ -184,7 +184,7 @@ class Empresa
      */
     public function tableName()
     {
-        return 'empresa';
+        return 'empresas';
     }
 
     /**

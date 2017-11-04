@@ -25,7 +25,7 @@ use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Model;
 
 /**
- * Description of PanelSettings
+ * Description of PanelCliente
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -61,7 +61,7 @@ class PanelCliente extends ExtendedController\PanelController
     }
 
     /**
-     * Devuele el campo $fieldName del cliente
+     * Devuele el campo $fieldName del modelo Cliente
      *
      * @param string $fieldName
      *

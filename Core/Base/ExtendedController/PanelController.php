@@ -207,7 +207,6 @@ abstract class PanelController extends Base\Controller
      */
     protected function insertAction($view)
     {
-        $view->setNewCode();
     }
 
     /**

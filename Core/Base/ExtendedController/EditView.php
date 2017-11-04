@@ -46,14 +46,6 @@ class EditView extends BaseView
         // Carga configuración de la vista para el usuario
         $this->pageOption->getForUser($viewName, $userNick);
     }
-
-    /**
-     * Calcula y establece un nuevo código para la PK del modelo
-     */
-    public function setNewCode()
-    {
-        $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
-    }
     
     /**
      * Devuelve el texto para la cabecera del panel de datos
@@ -86,6 +78,20 @@ class EditView extends BaseView
     }
 
     /**
+     * Establece el estado de edición de una columna
+     * 
+     * @param string $columnName
+     * @param boolean $disabled
+     */
+    public function disableColumn($columnName, $disabled)
+    {
+        $column = $this->columnForName($columnName);
+        if (!empty($column)) {
+            $column->widget->readOnly = $disabled;
+        }
+    }
+    
+    /**
      * Establece y carga los datos del modelo en base a su PK
      *
      * @param string|array $code
@@ -98,7 +104,7 @@ class EditView extends BaseView
         $this->count = empty($this->model->{$fieldName}) ? 0 : 1;
 
         // Bloqueamos el campo Primary Key si no es una alta
-        $column = $this->pageOption->columnForField($fieldName);
+        $column = $this->columnForField($fieldName);
         if (!empty($column)) {
             $column->widget->readOnly = (!empty($this->model->{$fieldName}));
         }

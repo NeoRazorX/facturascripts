@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -45,7 +44,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     /**
      * Configuración del objeto de visualización del campo
      *
-     * @var WidgetItem
+     * @var mixed
      */
     public $widget;
 
@@ -159,9 +158,9 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      *
      * @return string
      */
-    public function getEditHTML($value)
+    public function getEditHTML($value, $withLabel = TRUE)
     {
-        $header = $this->getHeaderHTML($this->title);
+        $header = $withLabel ? $this->getHeaderHTML($this->title) : '';
         $input = $this->widget->getEditHTML($value);
         $data = $this->getColumnData(['ColumnClass', 'ColumnHint', 'ColumnRequired', 'ColumnDescription']);
 
@@ -193,9 +192,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      */
     private function standardHTMLColumn($header, $input, $data)
     {
-        $label = ($header != null)
-            ? '<label for="' . $this->widget->fieldName . '" ' . $data['ColumnHint'] . '>' . $header . '</label>'
-            : '';
+        $label = ($header != null) ? '<label for="' . $this->widget->fieldName . '" ' . $data['ColumnHint'] . '>' . $header . '</label>' : '';
 
         return '<div class="form-group' . $data['ColumnClass'] . '">'
             . $label . $input . $data['ColumnDescription'] . $data['ColumnRequired']
@@ -213,9 +210,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      */
     private function checkboxHTMLColumn($header, $input, $data)
     {
-        $label = ($header != null)
-            ? '<label class="form-check-label custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0" ' . $data['ColumnHint'] . '>' . $input . '&nbsp;' . $header . '</label>'
-            : '';
+        $label = ($header != null) ? '<label class="form-check-label custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0" ' . $data['ColumnHint'] . '>' . $input . '&nbsp;' . $header . '</label>' : '';
 
         $result = '<div class="form-row align-items-center' . $data['ColumnClass'] . '">'
             . '<div class="form-check col">' . $label . $data['ColumnDescription'] . '</div>'
