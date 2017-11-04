@@ -49,7 +49,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
-                    <br/>
+                    <br />
                     {% for msg in errors %}
                     <div class="alert alert-danger">{{ msg }}</div>
                     {% endfor %}
@@ -167,10 +167,20 @@
                             <i class="fa fa-check" aria-hidden="true"></i> {{ i18n.trans('accept') }}
                         </button>
                         <br/><br/><br/>
-                        <br/><br/><br/>
                     </div>
                 </div>
             </form>
+            <h5>
+                {{ i18n.trans('installer-requirements') }}
+            </h5>
+            <div class="row">
+                <br />
+                {% for extension, status in requirements %}
+                    <div class="col-sm-3">
+                        <div class="alert alert-info">{{ extension }}: <i class="fa {{ status }} pull-right"></i></div>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
         <nav class="navbar fixed-bottom navbar-link bg-light">
             <a class="navbar-brand" href="https://www.facturascripts.com" target="_blank">
