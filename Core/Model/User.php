@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class User
 {
+
     use Base\ModelTrait {
         get as private getTrait;
         clear as clearTrait;
@@ -42,7 +42,7 @@ class User
      * Identificador de empresa seleccionada
      */
     public $idempresa;
-    
+
     /**
      * Email del usuario.
      *
@@ -244,7 +244,7 @@ class User
         return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled,idempresa) VALUES ('admin','"
             . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE,NULL);";
     }
-    
+
     /**
      * Devuelve la url donde ver/modificar los datos
      *
@@ -276,5 +276,5 @@ class User
         }
 
         return $result;
-    }    
+    }
 }

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 class WidgetItemRadio extends WidgetItem
 {
+
     /**
      * Valores aceptados por el campo asociado al widget
      *
@@ -50,7 +50,8 @@ class WidgetItemRadio extends WidgetItem
      * @param \SimpleXMLElement $column
      * @param \SimpleXMLElement $widgetAtributes
      */
-    protected function loadFromXMLColumn($column, $widgetAtributes) {
+    protected function loadFromXMLColumn($column, $widgetAtributes)
+    {
         parent::loadFromXMLColumn($column, $widgetAtributes);
         $this->getAttributesGroup($this->values, $column->widget->values);
     }

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -105,13 +104,13 @@ class RowItem implements VisualItemInterface
             if ($option['value'] == $value) {
                 return $option['color'];
             }
-            
+
             $operator = $option['value'][0];
             $value2 = (float) substr($option['value'], 1);
             if ($operator == '>' && $value > $value2) {
                 return $option['color'];
             }
-            
+
             if ($operator == '<' && $value < $value2) {
                 return $option['color'];
             }

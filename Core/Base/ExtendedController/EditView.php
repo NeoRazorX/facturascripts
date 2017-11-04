@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -30,7 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class EditView extends BaseView
 {
-    
+
     /**
      * Constructor e inicializador de la clase
      *
@@ -42,11 +41,11 @@ class EditView extends BaseView
     public function __construct($title, $modelName, $viewName, $userNick)
     {
         parent::__construct($title, $modelName);
-        
+
         // Carga configuración de la vista para el usuario
         $this->pageOption->getForUser($viewName, $userNick);
     }
-    
+
     /**
      * Devuelve el texto para la cabecera del panel de datos
      *
@@ -90,7 +89,7 @@ class EditView extends BaseView
             $column->widget->readOnly = $disabled;
         }
     }
-    
+
     /**
      * Establece y carga los datos del modelo en base a su PK
      *

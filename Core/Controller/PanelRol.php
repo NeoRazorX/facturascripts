@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -30,6 +29,7 @@ use FacturaScripts\Core\Base\DataBase;
  */
 class PanelRol extends ExtendedController\PanelController
 {
+
     /**
      * Procedimiento para insertar vistas en el controlador
      */
@@ -39,11 +39,11 @@ class PanelRol extends ExtendedController\PanelController
 
         $this->addEditListView('FacturaScripts\Core\Model\RolUser', 'EditRolUser', 'rol-user', 'fa-address-card-o');
         $this->views['EditRolUser']->disableColumn('role', TRUE);
-        
+
         $this->addListView('FacturaScripts\Core\Model\RolAccess', 'ListRolAccess', 'page-rule', 'fa fa-check-square');
         $this->views['ListRolAccess']->disableColumn('role', TRUE);
     }
-    
+
     /**
      * Devuele el campo $fieldName del modelo Rol
      *
@@ -56,7 +56,7 @@ class PanelRol extends ExtendedController\PanelController
         $model = $this->views['EditRol']->getModel();
         return $model->{$fieldName};
     }
-    
+
     /**
      * Procedimiento encargado de cargar los datos a visualizar
      *
@@ -82,7 +82,7 @@ class PanelRol extends ExtendedController\PanelController
                 break;
         }
     }
-    
+
     /**
      * Devuelve los datos básicos de la página
      *

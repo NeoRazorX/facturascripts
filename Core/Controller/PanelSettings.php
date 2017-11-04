@@ -4,7 +4,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -59,7 +58,6 @@ class PanelSettings extends ExtendedController\PanelController
         return $result;
     }
 
-    
     /**
      * Devuelve el valor para la propiedad de configuración
      *
@@ -73,10 +71,10 @@ class PanelSettings extends ExtendedController\PanelController
         if (array_key_exists($field, $properties)) {
             return $properties[$field];
         }
-        
+
         return $model->{$field};
     }
-    
+
     /**
      * Devuelve el id de la vista con el valor de la constante KEYSSETTINGS
      * como prefijo

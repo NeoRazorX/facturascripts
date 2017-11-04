@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -28,6 +27,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class Subcuenta
 {
+
     use Base\ModelTrait;
 
     /**
@@ -368,12 +368,12 @@ class Subcuenta
         if ($limpiarCache) {
             $this->cleanCache();
         }
-        
+
         if (strlen($this->codcuenta) === 0 || strlen($this->codejercicio) === 0) {
             $this->miniLog->alert($this->i18n->trans('account-data-missing'));
             return false;
-        }        
-        
+        }
+
         $where = [
             new DataBaseWhere('codejercicio', $this->codejercicio),
             new DataBaseWhere('codcuenta', $this->codcuenta)
@@ -382,16 +382,16 @@ class Subcuenta
         $count = new Model\Cuenta();
         if ($count->loadFromCode(NULL, $where) === FALSE) {
             $this->miniLog->alert($this->i18n->trans('account-data-error'));
-            return false;         
+            return false;
         }
-        
+
         $this->idcuenta = $count->idcuenta;
-        
+
         if (strlen($this->codsubcuenta) === 0 || strlen($this->descripcion) === 0) {
             $this->miniLog->alert($this->i18n->trans('missing-data-subaccount'));
             return false;
         }
-        
+
         return true;
     }
 

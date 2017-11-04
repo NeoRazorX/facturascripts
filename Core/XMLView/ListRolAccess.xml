@@ -32,13 +32,13 @@
         </column>            
         <column name="pagename" order="110">
             <widget type="text" fieldname="pagename" />
-         </column>
+        </column>
         <column name="allow-delete" order="110">
             <widget type="checkbox" fieldname="allow-delete" />
-         </column>
+        </column>
         <column name="allow-update" order="110">
             <widget type="checkbox" fieldname="allow-update" />
-         </column>
+        </column>
     </columns>
 </view>
 

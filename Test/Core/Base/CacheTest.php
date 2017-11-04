@@ -1,5 +1,4 @@
 <?php
-
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -7,6 +6,7 @@ namespace FacturaScripts\Core\Base;
  */
 class CacheTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * @var Cache
      */
@@ -28,6 +28,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
+        
     }
 
     /**

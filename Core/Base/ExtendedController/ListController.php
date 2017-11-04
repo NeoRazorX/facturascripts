@@ -224,10 +224,10 @@ abstract class ListController extends Base\Controller
                     break;
                 }
             }
-        }        
+        }
         return $result;
     }
-    
+
     /**
      * Devuelve una respuesta JSON
      *
@@ -362,7 +362,7 @@ abstract class ListController extends Base\Controller
             'valueTo' => $this->request->get($key . '-to'),
             'operatorTo' => $this->request->get($key . '-to-operator', '<=')
         ];
-        
+
         $this->views[$indexView]->addFilter($key, ListFilter::newStandardFilter($type, $config));
     }
 

@@ -28,7 +28,7 @@
             <column name="code" numcolumns="3" order="100">
                 <widget type="text" fieldname="nick" icon="fa-user-circle-o" required="true" />
             </column>
-           <column name="homepage" numcolumns="5" order="110">
+            <column name="homepage" numcolumns="5" order="110">
                 <widget type="select" fieldname="homepage">
                     <values source="fs_pages" fieldcode="name" fieldtitle="title"></values>
                 </widget>    
@@ -36,7 +36,7 @@
             <column name="email" numcolumns="4" order="120">
                 <widget type="email" fieldname="email" />
             </column>
-           <column name="company" numcolumns="3" order="210">
+            <column name="company" numcolumns="3" order="210">
                 <widget type="select" fieldname="idempresa">
                     <values source="empresas" fieldcode="id" fieldtitle="nombre"></values>
                 </widget>    

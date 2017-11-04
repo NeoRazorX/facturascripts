@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base\NumberTools;
@@ -28,6 +27,7 @@ use FacturaScripts\Core\Base\NumberTools;
  */
 class WidgetItemNumber extends WidgetItem
 {
+
     /**
      * Clase para formatear las visualizaciones y herramientas
      * para tratar los valores numéricos
@@ -88,7 +88,8 @@ class WidgetItemNumber extends WidgetItem
      * @param \SimpleXMLElement $column
      * @param \SimpleXMLElement $widgetAtributes
      */
-    protected function loadFromXMLColumn($column, $widgetAtributes) {
+    protected function loadFromXMLColumn($column, $widgetAtributes)
+    {
         parent::loadFromXMLColumn($column, $widgetAtributes);
 
         $this->decimal = (int) $widgetAtributes->decimal;

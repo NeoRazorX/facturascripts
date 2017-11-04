@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -29,6 +28,7 @@ use FacturaScripts\Core\Base\DataBase;
  */
 class TotalModel
 {
+
     /**
      * Proporciona acceso directo a la base de datos.
      *
@@ -72,9 +72,9 @@ class TotalModel
     {
         foreach ($totalFields as $fieldName) {
             $this->totals[$fieldName] = 0;
-        }                    
+        }
     }
-    
+
     private static function getFieldSQL($fieldCode, $fieldList)
     {
         $result = '';
@@ -114,9 +114,9 @@ class TotalModel
         if (self::$dataBase->tableExists($tableName)) {
             $sql = 'SELECT ' . self::getFieldSQL($fieldCode, $fieldList);
             $groupby = empty($fieldCode) ? ';' : ' GROUP BY 1 ORDER BY 1;';
-                        
-            $sqlWhere = DataBase\DataBaseWhere::getSQLWhere($where);            
-            $sql .= ' FROM ' . $tableName . $sqlWhere . $groupby;            
+
+            $sqlWhere = DataBase\DataBaseWhere::getSQLWhere($where);
+            $sql .= ' FROM ' . $tableName . $sqlWhere . $groupby;
             $data = self::$dataBase->select($sql);
             foreach ($data as $d) {
                 $result[] = new self($d);
@@ -128,7 +128,7 @@ class TotalModel
             $result[] = new self();
             $result[0]->clearTotals(array_keys($fieldList));
         }
-        
+
         return $result;
     }
 }

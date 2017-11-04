@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -27,17 +26,19 @@ namespace FacturaScripts\Core\Base;
  */
 class Pagination
 {
+
     /**
      * Constantes para paginación
      */
     const FS_ITEM_LIMIT = 50;
     const FS_PAGE_MARGIN = 5;
-    
+
     /**
      * Constructor de la clase
      */
     public function __construct()
     {
+        
     }
 
     /**
@@ -74,7 +75,7 @@ class Pagination
         }
         return $result;
     }
-    
+
     /**
      * Devuelve un item de paginación
      * @param string $url
@@ -89,7 +90,7 @@ class Pagination
         /// ¿La url lleva #?
         if (strpos($url, '#') !== false) {
             $auxUrl = explode('#', $url);
-            
+
             return [
                 'url' => $auxUrl[0] . '&offset=' . $offset . '#' . $auxUrl[1],
                 'icon' => $icon,
@@ -105,7 +106,7 @@ class Pagination
             'active' => $active
         ];
     }
-    
+
     /**
      * Calcula el navegador entre páginas.
      * Permite saltar a:

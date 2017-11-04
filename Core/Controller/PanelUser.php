@@ -29,6 +29,7 @@ use FacturaScripts\Core\Base\DataBase;
  */
 class PanelUser extends ExtendedController\PanelController
 {
+
     /**
      * Devuelve un array de idiomas, donde la key es el nombre del archivo JSON y
      * el value es su correspondiente traducción.
@@ -50,7 +51,7 @@ class PanelUser extends ExtendedController\PanelController
 
         return $languages;
     }
-    
+
     /**
      * Procedimiento para insertar vistas en el controlador
      */

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -28,7 +27,7 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListUser extends ExtendedController\ListController
 {
-   
+
     /**
      * Procedimiento para insertar vistas en el controlador
      */
@@ -39,21 +38,20 @@ class ListUser extends ExtendedController\ListController
 
         $this->addOrderBy('ListUser', 'nick');
         $this->addOrderBy('ListUser', 'email');
-        
+
         /* Roles */
         $this->addView('FacturaScripts\Core\Model\Rol', 'ListRol', 'roles', 'fa-address-card-o');
         $this->addSearchFields('ListRol', ['codrol', 'descripcion']);
 
         $this->addOrderBy('ListRol', 'descripcion');
         $this->addOrderBy('ListRol', 'codrol');
-
     }
-    
-        /**
-         * Devuelve los datos básicos de la página
-         *
-         * @return array
-         */
+
+    /**
+     * Devuelve los datos básicos de la página
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pagedata = parent::getPageData();

@@ -294,7 +294,7 @@ class ListView extends BaseView
             $column->display = $disabled ? 'none' : 'left';
         }
     }
-    
+
     /**
      * Carga los datos
      *

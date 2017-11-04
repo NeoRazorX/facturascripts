@@ -1,18 +1,18 @@
 {% extends "Master/MenuTemplate.html" %}
 
 {% block css %}
-    {{ parent() }}
-    
-    <link rel="stylesheet" href="Core/Assets/CSS/extendedcontroller.css" />
+{{ parent() }}
+
+<link rel="stylesheet" href="Core/Assets/CSS/extendedcontroller.css" />
 {% endblock %}
 
 
 {% block javascript %}
 {{ parent() }}
 
-<script type="text/javascript">    
+<script type="text/javascript">
     function insertRecord() {
-        document.insert_form.submit(); 
+        document.insert_form.submit();
     }
 
     function deleteRecord() {
@@ -30,13 +30,13 @@
             },
             callback: function (result) {
                 if (result) {
-                    document.delete_form.submit(); 
+                    document.delete_form.submit();
                 }
             }
         });
     }
-    
-    $(document).ready(function() {
+
+    $(document).ready(function () {
         $('#main_row :text:first').focus();
     });
 </script>
@@ -88,10 +88,10 @@
                     <span class="d-none d-md-inline-block">&nbsp;{{ go_back }} </span>
                 </a>
                 <a href="{{ model.url('edit') }}" class="btn btn-sm btn-outline-secondary" {{ popoverTitle(refresh_title, 'bottom') }}>
-                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                   <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
             </div>
-            
+
             <!-- Añadimos opciones de impresión y exportación -->
             {{ exportData(fsc, i18n, 'edit') }}
         </div>
@@ -113,18 +113,18 @@
                 <input type="hidden" name="action" value="delete"> 
                 <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"> 
             </form>             
-            
+
             <a id="b_new" class="btn btn-sm btn-success" onclick="insertRecord();" href="#" {{ popoverTitle((insert_title ~ ' ' ~ title), 'bottom') }}>
-                <i class="fa fa-plus" aria-hidden="true"></i>
+               <i class="fa fa-plus" aria-hidden="true"></i>
             </a>
-            
+
             <a id="b_remove" class="btn btn-sm btn-danger" onclick="deleteRecord();" href="#" {{ popoverTitle(remove_title, 'bottom') }}">
-                <i class="fa fa-trash" aria-hidden="true"></i>
+               <i class="fa fa-trash" aria-hidden="true"></i>
                 <span class="d-none d-sm-inline-block">&nbsp;{{ remove }}</span>
             </a>
         </div>
     </div>
-    
+
     <!-- Data Row -->
     <div id="data" class="row">
         <div class="col-12">
@@ -149,10 +149,10 @@
                     <div class="card-footer text-right">
                         <small class="pull-left">{{ panel_footer }}</small>
                         <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
-                            <i class="fa fa-undo" aria-hidden="true"></i>&nbsp; {{ undo }}
+                                <i class="fa fa-undo" aria-hidden="true"></i>&nbsp; {{ undo }}
                         </button>
                         <button class="btn btn-sm btn-primary" type="submit" {{ popoverTitle(save_title, 'bottom') }}>
-                            <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
+                                <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
                         </button>
                     </div>
                 </div>

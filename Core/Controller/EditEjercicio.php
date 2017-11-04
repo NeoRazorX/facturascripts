@@ -7,7 +7,6 @@
  * @autor       Francesc Pineda Segarra francesc.pineda.segarra@gmail.com
  * @copyright   Copyright (c) 2017
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
@@ -22,6 +21,7 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class EditEjercicio extends ExtendedController\EditController
 {
+
     /**
      * EditFamilia constructor.
      *

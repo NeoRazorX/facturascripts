@@ -82,7 +82,6 @@ function checkRequirement($isOk)
 function getLanguages(&$i18n)
 {
     $languages = [];
-
     foreach (scandir(__DIR__ . '/Core/Translation', SCANDIR_SORT_ASCENDING) as $fileName) {
         if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
             $key = substr($fileName, 0, -5);
@@ -318,15 +317,6 @@ function renderHTML(&$templateVars)
  */
 function installerMain()
 {
-    $requeriments = [
-        'mb_substr' => checkRequirement(function_exists('mb_substr')),
-        'SimpleXML' => checkRequirement(extension_loaded('simplexml')),
-        'openSSL' => checkRequirement(extension_loaded('openssl')),
-        'Zip' => checkRequirement(extension_loaded('zip'))
-    ];
-    
-    $errors = [];
-
     if (filter_input(INPUT_POST, 'fs_lang')) {
         $i18n = new Translator(__DIR__, filter_input(INPUT_POST, 'fs_lang'));
     } elseif (filter_input(INPUT_GET, 'fs_lang')) {
@@ -335,6 +325,7 @@ function installerMain()
         $i18n = new Translator(__DIR__, getUserLanguage());
     }
 
+    $errors = [];
     searchErrors($errors, $i18n);
 
     if (empty($errors) && filter_input(INPUT_POST, 'db_type')) {
@@ -348,7 +339,12 @@ function installerMain()
     /// empaquetamos las variables a pasar el motor de plantillas
     $templateVars = [
         'errors' => $errors,
-        'requirements' => $requeriments,
+        'requirements' => [
+            'mb_substr' => checkRequirement(function_exists('mb_substr')),
+            'SimpleXML' => checkRequirement(extension_loaded('simplexml')),
+            'openSSL' => checkRequirement(extension_loaded('openssl')),
+            'Zip' => checkRequirement(extension_loaded('zip'))
+        ],
         'i18n' => $i18n,
         'languages' => getLanguages($i18n),
         'timezone' => get_timezone_list(),

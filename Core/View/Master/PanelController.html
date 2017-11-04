@@ -1,14 +1,14 @@
 {% extends "Master/MenuTemplate.html" %}
 
 {% block css %}
-    {{ parent() }}
-    
-    <link rel="stylesheet" href="Core/Assets/CSS/extendedcontroller.css" />
+{{ parent() }}
+
+<link rel="stylesheet" href="Core/Assets/CSS/extendedcontroller.css" />
 {% endblock %}
 
 {% block javascript %}
-    {{ parent() }}
-    
+{{ parent() }}
+
 <script type="text/javascript">
     var tabActive = '{{ fsc.active }}';
     $(document).ready(function () {
@@ -16,7 +16,7 @@
             tabActive = e.target.hash.substring(1);
         });
     });
-    
+
     function deleteRecord(formName) {
         bootbox.confirm({
             title: "{{ i18n.trans('confirm-delete') }}",
@@ -38,7 +38,7 @@
                 }
             }
         });
-    }    
+    }
 </script>
 {% endblock %}
 
@@ -74,7 +74,7 @@
 {# -- Main Body -- #}
 <div class="container-fluid">
     {{ parent() }}
-    
+
     {# -- Header Row -- #}
     <div id="header" class="row">
         <div class="col-3 d-print-none">
@@ -84,10 +84,10 @@
                     <span class="d-none d-md-inline-block">&nbsp;{{ go_back }} </span>
                 </a>
                 <a href="{{ edit_url }}" class="btn btn-sm btn-outline-secondary" {{ popoverTitle(refresh_title, 'bottom') }}>
-                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                   <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
             </div>
-            
+
             {# -- Añadimos opciones de impresión y exportación -- #}
             {{ exportData(fsc, i18n, 'edit') }}
         </div>
@@ -108,48 +108,48 @@
         {# -- Left Panel -- #}
         <div class="col-sm-auto ml-3 mb-2">
             <div class="nav flex-column nav-pills" id="optionsindex" role="tablist">
-            {% for indexView, view in fsc.views %}
+                {% for indexView, view in fsc.views %}
                 {% set active = (indexView == fsc.active) ? ' active' : '' %}                    
                 <a class="nav-link{{ active }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
                     <i class="fa {{ fsc.icons[indexView] }}" aria-hidden="true"></i>
                     &nbsp;{{ view.title }}
                 </a>
-            {% endfor %}                        
+                {% endfor %}                        
             </div>
         </div>
-        
+
         {# -- Right Panel -- #}
         <div class="col mr-3">
             <div class="card">
                 <div class="card-body">
                     <div class="tab-content" id="optionsindex-tabContent">                        
-                    {% for indexView, view in fsc.views %}
+                        {% for indexView, view in fsc.views %}
                         {% set active = (indexView == fsc.active) ? ' show active' : '' %}                    
                         <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">                                                        
                             {% set viewType = fsc.viewClass(view) %}
                             {% if viewType == 'ListView' %}
-                                {{ columnsForListView(_context, view) }}
+                            {{ columnsForListView(_context, view) }}
                             {% endif %}
-                            
+
                             {% if viewType == 'EditView' %}
-                                <!-- Statistical buttons bar -->
-                                {{ rowHeaderForEditView(_context, view) }}
-                                <!-- Main Form -->
-                                {% set model = view.getModel() %}
-                                {{ columnsForEditView(_context, view, model, TRUE) }}
+                            <!-- Statistical buttons bar -->
+                            {{ rowHeaderForEditView(_context, view) }}
+                            <!-- Main Form -->
+                            {% set model = view.getModel() %}
+                            {{ columnsForEditView(_context, view, model, TRUE) }}
                             {% endif %}                            
 
                             {% if viewType == 'EditListView' %}
-                                {{ columnsForEditListView(_context, view) }}
+                            {{ columnsForEditListView(_context, view) }}
                             {% endif %}
-                            
+
                             {% if viewType == 'HtmlView' %}
                             <div class="row">
-                            {% include view.fileName ignore missing %}
+                                {% include view.fileName ignore missing %}
                             </div>
                             {% endif %}                            
                         </div>
-                    {% endfor %}                        
+                        {% endfor %}                        
                     </div>
                 </div>
             </div>

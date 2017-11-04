@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -52,7 +51,7 @@ class Settings
      * @var string
      */
     public $icon;
-    
+
     /**
      * Conjunto de valores de configuración
      *
@@ -106,7 +105,7 @@ class Settings
         $data['properties'] = json_encode($properties);
         unset($properties);
     }
-    
+
     /**
      * Carga los datos desde un array
      *

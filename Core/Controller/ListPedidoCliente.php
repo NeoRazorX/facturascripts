@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -29,6 +28,7 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListPedidoCliente extends ExtendedController\ListController
 {
+
     /**
      * Devuelve los datos básicos de la página
      *
@@ -51,11 +51,11 @@ class ListPedidoCliente extends ExtendedController\ListController
     {
         $this->addView('FacturaScripts\Core\Model\PedidoCliente', 'ListPedidoCliente');
         $this->addSearchFields('ListPedidoCliente', ['codigo', 'numero2', 'observaciones']);
-        
+
         $this->addFilterSelect('ListPedidoCliente', 'codalmacen', 'almacenes', '', 'nombre');
         $this->addFilterSelect('ListPedidoCliente', 'codserie', 'series', '', 'descripcion');
         $this->addFilterSelect('ListPedidoCliente', 'codpago', 'formaspago', '', 'descripcion');
-        
+
         $this->addFilterDatePicker('ListPedidoCliente', 'date1', 'date', 'fecha', '>=');
         $this->addFilterDatePicker('ListPedidoCliente', 'date2', 'date', 'fecha', '<=');
 

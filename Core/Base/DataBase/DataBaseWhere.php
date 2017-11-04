@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -30,6 +29,7 @@ use FacturaScripts\Core\Base\DataBase;
  */
 class DataBaseWhere
 {
+
     const MATCH_DATE = "/^([\d]{1,2})-([\d]{1,2})-([\d]{4})$/i";
     const MATCH_DATETIME = "/^([\d]{1,2})-([\d]{1,2})-([\d]{4}) ([\d]{1,2}):([\d]{1,2}):([\d]{1,2})$/i";
 
@@ -227,7 +227,7 @@ class DataBaseWhere
 
         return $result;
     }
-    
+
     /**
      * Dado un array de DataBaseWhere devuelve la lista de campos y sus valores
      * que se aplicarán como filtro. (Sólo devuelve filtros con operador '='

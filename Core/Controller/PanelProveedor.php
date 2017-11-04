@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -29,6 +28,7 @@ use FacturaScripts\Core\Base\DataBase;
  */
 class PanelProveedor extends ExtendedController\PanelController
 {
+
     /**
      * Procedimiento para insertar vistas en el controlador
      */
@@ -36,7 +36,7 @@ class PanelProveedor extends ExtendedController\PanelController
     {
         $this->addEditView('FacturaScripts\Core\Model\Proveedor', 'EditProveedor', 'supplier');
         $this->addEditListView('FacturaScripts\Core\Model\DireccionProveedor', 'EditDireccionProveedor', 'addresses', 'fa-road');
-       /* $this->addListView('FacturaScripts\Core\Model\Proveedor', 'ListProveedor', 'same-group');*/
+        /* $this->addListView('FacturaScripts\Core\Model\Proveedor', 'ListProveedor', 'same-group'); */
     }
 
     /**
@@ -70,7 +70,7 @@ class PanelProveedor extends ExtendedController\PanelController
                 $where = [new DataBase\DataBaseWhere('codproveedor', $this->getProviderFieldValue('codproveedor'))];
                 $view->loadData($where);
                 break;
-            
+
             case 'ListProveedor':
                 $codgroup = $this->getClientFieldValue('codgrupo');
 
@@ -90,7 +90,7 @@ class PanelProveedor extends ExtendedController\PanelController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'suppliers';
+        $pagedata['title'] = 'supplier';
         $pagedata['icon'] = 'fa-users';
         $pagedata['showonmenu'] = false;
 

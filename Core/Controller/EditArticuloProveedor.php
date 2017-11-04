@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
@@ -31,6 +30,7 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class EditArticuloProveedor extends ExtendedController\EditController
 {
+
     /**
      * Edit Articulo Prveedor constructor
      *
@@ -55,7 +55,7 @@ class EditArticuloProveedor extends ExtendedController\EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'supplier-products';
+        $pagedata['title'] = 'supplier-product';
         $pagedata['menu'] = 'warehouse';
         $pagedata['icon'] = 'fa-cubes';
         $pagedata['showonmenu'] = false;

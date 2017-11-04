@@ -16,11 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Base\ExtendedController;;
+use FacturaScripts\Core\Base\ExtendedController;
+
+;
 
 /**
  * Description of PanelBalance
@@ -29,25 +30,14 @@ use FacturaScripts\Core\Base\ExtendedController;;
  */
 class PanelBalance extends ExtendedController\PanelController
 {
-    
-    /**
-     * Constructor de la clase
-     */
-    public function __construct($cache, $i18n, $miniLog, $className)
-    {
-        parent::__construct($cache, $i18n, $miniLog, $className);
-        
-    }
-    
+
     /**
      * Procedimiento para insertar vistas en el controlador
      */
     protected function createViews()
     {
         $this->addEditView('FacturaScripts\Core\Model\Balance', 'EditBalance', 'accounting');
-        
     }
-
 
     /**
      * Procedimiento encargado de cargar los datos a visualizar
@@ -80,5 +70,4 @@ class PanelBalance extends ExtendedController\PanelController
 
         return $pagedata;
     }
-   
 }

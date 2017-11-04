@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base;
@@ -213,7 +212,7 @@ trait ModelTrait
                 if (!isset($data[$field])) {
                     $data[$field] = FALSE;
                 }
-            }    
+            }
         }
     }
 
@@ -234,9 +233,9 @@ trait ModelTrait
             return NULL;
         }
 
-        return ($field['is_nullable'] === 'NO') ? 0 : NULL;        
+        return ($field['is_nullable'] === 'NO') ? 0 : NULL;
     }
-    
+
     /**
      * Asigna a las propiedades del modelo los valores del array $data
      *
@@ -264,7 +263,7 @@ trait ModelTrait
 
                     case 'integer':
                     case 'int':
-                        $this->{$key} = $this->getIntergerValueForField($field, $value);                        
+                        $this->{$key} = $this->getIntergerValueForField($field, $value);
                         break;
 
                     case 'double':

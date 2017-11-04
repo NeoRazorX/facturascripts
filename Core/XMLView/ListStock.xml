@@ -36,10 +36,10 @@
         <column name="quantity" display="right" order="130">
             <widget type="number" fieldname="cantidad" />
         </column>
-         <column name="stockmin" display="right" order="140">
+        <column name="stockmin" display="right" order="140">
             <widget type="number" fieldname="stockmin" />
         </column>
-         <column name="stockmax" display="right" order="150">
+        <column name="stockmax" display="right" order="150">
             <widget type="number" fieldname="stockmax" />
         </column>
     </columns>
