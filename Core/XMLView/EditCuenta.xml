@@ -23,33 +23,33 @@
 -->
 
 <view>
-   <columns>
-      <group name="data" numcolumns="12">
-         <column name="id" numcolumns="1" order="100" display="none">
-            <widget type="text" fieldname="idcuenta" onclick="" />
-         </column>
-         <column name="account-code" numcolumns="2" order="100">
-            <widget type="text" fieldname="codcuenta" icon="fa-bar-chart" onclick="" />
-         </column>
-         <column name="description" numcolumns="4" order="110">
-            <widget type="text" fieldname="descripcion" onclick="" />
-         </column>
-         <column name="fiscal-exercise" numcolumns="4" order="120">
-            <widget type="select" fieldname="codejercicio">
-               <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
-            </widget>
-         </column>
-         <column name="accounting-heading-code" numcolumns="2" order="130">
-            <widget type="text" fieldname="codepigrafe" onclick="" />
-         </column>
-         <column name="special-account-id" numcolumns="2" order="140">
-            <widget type="text" fieldname="idcuentaesp" onclick="" />
-         </column>
-         <column name="accounting-heading" numcolumns="2" order="150">
-            <widget type="text" fieldname="idepigrafe" onclick="" required="true"/>
-         </column>
+    <columns>
+        <group name="data" numcolumns="12">
+            <column name="id" numcolumns="1" order="100" display="none">
+                <widget type="text" fieldname="idcuenta" onclick="" />
+            </column>
+            <column name="account-code" numcolumns="2" order="100">
+                <widget type="text" fieldname="codcuenta" icon="fa-bar-chart" onclick="" />
+            </column>
+            <column name="description" numcolumns="4" order="110">
+                <widget type="text" fieldname="descripcion" onclick="" />
+            </column>
+            <column name="fiscal-exercise" numcolumns="4" order="120">
+                <widget type="select" fieldname="codejercicio">
+                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="accounting-heading-code" numcolumns="2" order="130">
+                <widget type="text" fieldname="codepigrafe" onclick="" />
+            </column>
+            <column name="special-account-id" numcolumns="2" order="140">
+                <widget type="text" fieldname="idcuentaesp" onclick="" />
+            </column>
+            <column name="accounting-heading" numcolumns="2" order="150">
+                <widget type="text" fieldname="idepigrafe" onclick="" required="true"/>
+            </column>
          
-      </group>
-   </columns>
+        </group>
+    </columns>
 </view>
 

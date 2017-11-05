@@ -138,6 +138,7 @@ The _step_ attribute to indicate the increase or decrease when performing a "ste
 to indicate the minimum and maximum values.
     * **money**: Fields of type float for amounts. For this type you can specify the _decimal_ attribute to set the precision to be displayed instead of the currency.
     * **checkbox**: Boolean values ​​that are displayed by the icon of a check (true) or a dash (false) respectively.
+    * **datepicker**: Date type fields, which include a drop-down to choose it.
     * **color**: For color selections.
     * **select**: List of values ​​set by a set of tags_\<values ​​\>_ described within the group_\<widget\>_.
 The values ​​can be fixed, including as many_\<values ​​\>_ as we need and indicating the attribute _title_ and assigning a value,
@@ -171,6 +172,12 @@ For the case of values ​​by definition of range a single tag_\<values ​​
 * radio: List of values ​​where we can select one of them.
 The various options are indicated by the tag system_\<values ​​\>_ described in the group_\<widget\>_, in the style of the _select_ type.
 
+        ```XML
+                <widget type="radio" fieldname="regimeniva">
+                    <values title="general">General</values>
+                    <values title="exempt">Exento</values>
+                </widget>
+        ```
 
 * **fieldname**: (required) Name of the field containing the information.
 

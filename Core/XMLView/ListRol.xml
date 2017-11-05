@@ -25,10 +25,10 @@
 <view>
     <columns>
         <column name="code" order="100">
-            <widget type="text" fieldname="codrol" onclick="EditRol" />
+            <widget type="text" fieldname="codrol" onclick="PanelRol" />
         </column>
         <column name="description" order="100">
             <widget type="text" fieldname="descripcion" />
         </column>
     </columns>
- </view>
+</view>

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 class GroupItem extends VisualItem implements VisualItemInterface
 {
+
     /**
      * Icono que se usa como valor o acompañante del título de grupo
      *
@@ -50,7 +50,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
         $this->icon = null;
         $this->columns = [];
     }
-    
+
     /**
      * Función para la ordenación de columnas
      *
@@ -63,7 +63,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
         if ($column1->order == $column2->order) {
             return 0;
         }
-        
+
         return ($column1->order < $column2->order) ? -1 : 1;
     }
 

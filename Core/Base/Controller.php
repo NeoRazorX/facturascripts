@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Model;
@@ -31,6 +30,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Controller
 {
+
     /**
      * Gestor de acceso a cache.
      *
@@ -179,7 +179,7 @@ class Controller
             $this->template = false;
             return true;
         }
-        
+
         $this->template = $template . '.html';
         return true;
     }

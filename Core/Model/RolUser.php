@@ -17,8 +17,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * Define la relación entre un usuario y un rol.
@@ -28,6 +29,7 @@ namespace FacturaScripts\Core\Model;
  */
 class RolUser
 {
+
     use Base\ModelTrait;
 
     /**
@@ -56,7 +58,7 @@ class RolUser
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'fs_roles_users';
     }
@@ -69,5 +71,33 @@ class RolUser
     public function primaryColumn()
     {
         return 'id';
+    }
+
+    public function test()
+    {
+        if (empty($this->nick)) {
+            $this->miniLog->alert($this->i18n->trans('nick-is-empty'));
+            return false;
+        }
+
+        if (empty($this->codrol)) {
+            $this->miniLog->alert($this->i18n->trans('role-is-empty'));
+            return false;
+        }
+
+        $where = [
+            new DataBaseWhere('nick', $this->nick),
+            new DataBaseWhere('codrol', $this->codrol)
+        ];
+
+        $rolUser = new RolUser();
+        if ($rolUser->loadFromCode(NULL, $where)) {
+            if ($rolUser->id !== $this->id) {
+                $this->miniLog->alert($this->i18n->trans('rol-user-exists'));
+                return false;
+            }
+        }
+
+        return TRUE;
     }
 }

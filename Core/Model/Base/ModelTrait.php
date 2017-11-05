@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\Cache;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DefaultItems;
@@ -122,14 +123,14 @@ trait ModelTrait
 
         if (self::$checkedTables === null) {
             self::$checkedTables = $this->cache->get('fs_checked_tables');
-            if (self::$checkedTables === null || self::$checkedTables === false) {
+            if (self::$checkedTables === null) {
                 self::$checkedTables = [];
             }
 
             self::$modelName = get_class($this);
         }
 
-        if ($this->tableName() != '' && !in_array($this->tableName(), self::$checkedTables, false) && $this->checkTable($this->tableName())) {
+        if ($this->tableName() !== '' && !in_array($this->tableName(), self::$checkedTables, false) && $this->checkTable($this->tableName())) {
             $this->miniLog->debug($this->i18n->trans('table-checked', [$this->tableName()]));
             self::$checkedTables[] = $this->tableName();
             $this->cache->set('fs_checked_tables', self::$checkedTables);
@@ -218,6 +219,26 @@ trait ModelTrait
     }
 
     /**
+     * Devuelve el valor integer controlando casos especiales para las PK y FK
+     *
+     * @param array $field
+     * @param string $value
+     * @return integer|NULL
+     */
+    private function getIntergerValueForField($field, $value)
+    {
+        if (!empty($value)) {
+            return (int) $value;
+        }
+
+        if ($field['name'] === $this->primaryColumn()) {
+            return NULL;
+        }
+
+        return ($field['is_nullable'] === 'NO') ? 0 : NULL;
+    }
+
+    /**
      * Asigna a las propiedades del modelo los valores del array $data
      *
      * @param array $data
@@ -244,11 +265,7 @@ trait ModelTrait
 
                     case 'integer':
                     case 'int':
-                        if (($field['name'] === $this->primaryColumn()) && empty($value)) {
-                            $this->{$key} = NULL;
-                            continue;
-                        }
-                        $this->{$key} = empty($value) ? 0 : (int) $value;
+                        $this->{$key} = $this->getIntergerValueForField($field, $value);
                         break;
 
                     case 'double':

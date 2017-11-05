@@ -2,26 +2,26 @@
     Generate the code for the sort dropdown in the ListController
 -->
 {% macro buttonOrderBy(context, view) %}
-    <div class="col">
-        <div class="btn-group float-md-right">
-            {% set orderbylist = view.getOrderBy() %}
-            <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuOrder{{ context.indexView }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                <i class="fa {{ orderbylist[view.selectedOrderBy]['icon'] }}" aria-hidden="true"></i>
-                &nbsp; {{ orderbylist[view.selectedOrderBy]['label'] }}
-                <span class="caret"></span>
-            </button>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuOrder{{ context.indexView }}">
-                {% for key, orderby in orderbylist %}
-                <a class="dropdown-item" href="{{ context.list_url }}&order={{ key }}">
-                    <i class="fa {{ orderby['icon'] }}" aria-hidden="true"></i>&nbsp; {{ orderby['label'] }} &nbsp;
-                    {% if view.selectedOrderBy == key %}
-                    <i class="fa fa-check" aria-hidden="true"></i>
-                    {% endif %}
-                </a>
-                {% endfor %}
-            </div>
+<div class="col">
+    <div class="btn-group float-md-right">
+        {% set orderbylist = view.getOrderBy() %}
+        <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuOrder{{ context.indexView }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <i class="fa {{ orderbylist[view.selectedOrderBy]['icon'] }}" aria-hidden="true"></i>
+            &nbsp; {{ orderbylist[view.selectedOrderBy]['label'] }}
+            <span class="caret"></span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuOrder{{ context.indexView }}">
+            {% for key, orderby in orderbylist %}
+            <a class="dropdown-item" href="{{ context.list_url }}&order={{ key }}">
+                <i class="fa {{ orderby['icon'] }}" aria-hidden="true"></i>&nbsp; {{ orderby['label'] }} &nbsp;
+                {% if view.selectedOrderBy == key %}
+                <i class="fa fa-check" aria-hidden="true"></i>
+                {% endif %}
+            </a>
+            {% endfor %}
         </div>
-    </div>                            
+    </div>
+</div>                            
 {% endmacro %}
 
 
@@ -29,25 +29,25 @@
     Generate the code for the row of statistical buttons
 -->
 {% macro rowHeaderForEditView(contex, view) %}
-    <div class="row" style="margin-top: -.5rem">
-        <div class="col-12">
-            <div class="btn-toolbar pull-right" role="toolbar" style="margin-bottom: 1rem">
-                <div class="btn-group btn-group-lg" role="group">
-                    {% set header = view.getRow('header') %}
-                    {% if header is not empty %}
-                    {% for button in header.options %}
-                    <button type="button" class="btn btn-light" onclick="{{ button.onclick }}" style="margin-right: 5px;">
-                        <i class="fa {{ button.icon }} fa-lg pull-left"></i>
-                        <div class="cust-text">
-                            {{ contex.i18n.trans(button.label) }} {{ attribute(contex.fsc, button.calculateby, [view])  }}
-                        </div>
-                    </button>
-                    {% endfor %}
-                    {% endif %}
-                </div>
+<div class="row" style="margin-top: -.5rem">
+    <div class="col-12">
+        <div class="btn-toolbar pull-right" role="toolbar" style="margin-bottom: 1rem">
+            <div class="btn-group btn-group-lg" role="group">
+                {% set header = view.getRow('header') %}
+                {% if header is not empty %}
+                {% for button in header.options %}
+                <button type="button" class="btn btn-light" onclick="{{ button.onclick }}" style="margin-right: 5px;">
+                    <i class="fa {{ button.icon }} fa-lg pull-left"></i>
+                    <div class="cust-text">
+                        {{ contex.i18n.trans(button.label) }} {{ attribute(contex.fsc, button.calculateby, [view])  }}
+                    </div>
+                </button>
+                {% endfor %}
+                {% endif %}
             </div>
         </div>
     </div>
+</div>
 {% endmacro %}
 
 
@@ -55,59 +55,59 @@
     Generate the code for the List view according to the indicated columns
 -->
 {% macro columnsForListView(context, view) %}
-    {% set cols = (view.getColumns()|length)+1 %}
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                {% for column in view.getColumns() %}
-                {% if column.display != 'none' %}
-                <th class="text-{{ column.display }}">{{ column.getHeaderHTML(column.title)|raw }}</th>
+{% set cols = (view.getColumns()|length)+1 %}
+<table class="table table-hover">
+    <thead>
+        <tr>
+            {% for column in view.getColumns() %}
+            {% if column.display != 'none' %}
+            <th class="text-{{ column.display }}">{{ column.getHeaderHTML(column.title)|raw }}</th>
+            {% endif %}
+            {% endfor %}
+            <th class="text-right">
+                {% if view.getCursor() is not empty %}
+                <label class="custom-checkbox-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
+                    <input class="custom-control-input" type="checkbox" id="listDeleteCB"><span class="custom-control-indicator"></span>
+                </label>
                 {% endif %}
-                {% endfor %}
-                <th class="text-right">
-                    {% if view.getCursor() is not empty %}
-                    <label class="custom-checkbox-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
-                        <input class="custom-control-input" type="checkbox" id="listDeleteCB"><span class="custom-control-indicator"></span>
-                    </label>
-                    {% endif %}
-                </th>
-            </tr>
-        </thead>
-        <tbody>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
         {% for model in view.getCursor() %}
-            {# Set background status #}
-            {% set rowClass = 'table-light' %}
-            {% set rowStatus = view.getRow('status') %}
-            {% if rowStatus is not empty %}
-            {% set rowClass = rowStatus.getStatus( attribute(model, rowStatus.fieldName) ) %}
-            {% endif %}
+        {# Set background status #}
+        {% set rowClass = 'table-light' %}
+        {% set rowStatus = view.getRow('status') %}
+        {% if rowStatus is not empty %}
+        {% set rowClass = rowStatus.getStatus( attribute(model, rowStatus.fieldName) ) %}
+        {% endif %}
 
-            {% set rowDataHref = view.getClickEvent(model) %}
-            {% if rowDataHref is not empty %}
-            {% set rowClass = rowClass ~ ' clickableRow' %}
-            {% endif %}
+        {% set rowDataHref = view.getClickEvent(model) %}
+        {% if rowDataHref is not empty %}
+        {% set rowClass = rowClass ~ ' clickableRow' %}
+        {% endif %}
 
-            <tr class="{{ rowClass }}" data-href="{{ rowDataHref }}">
-                {# Print data columns for row #}
-                {% for column in view.getColumns() %}
-                {% if column.display != 'none' %}
-                {% set value = attribute(model, column.widget.fieldName) %}
-                <td class="text-{{ column.display }}">{{ column.getListHTML(value)|raw }}</td>
-                {% endif %}
-                {% endfor %}
-                <td class="text-right cancelClickable">
-                    <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
-                        <input class="custom-control-input listDelete" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}"><span class="custom-control-indicator"></span>
-                    </label>
-                </td>
-            </tr>
-            {% else %}
-            <tr class="table-warning">
-                <td colspan="{{ cols }}"><b>{{ context.i18n.trans('no-data') }}</b></td>
-            </tr>
+        <tr class="{{ rowClass }}" data-href="{{ rowDataHref }}">
+            {# Print data columns for row #}
+            {% for column in view.getColumns() %}
+            {% if column.display != 'none' %}
+            {% set value = attribute(model, column.widget.fieldName) %}
+            <td class="text-{{ column.display }}">{{ column.getListHTML(value)|raw }}</td>
+            {% endif %}
+            {% endfor %}
+            <td class="text-right cancelClickable">
+                <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
+                    <input class="custom-control-input listDelete" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}"><span class="custom-control-indicator"></span>
+                </label>
+            </td>
+        </tr>
+        {% else %}
+        <tr class="table-warning">
+            <td colspan="{{ cols }}"><b>{{ context.i18n.trans('no-data') }}</b></td>
+        </tr>
         {% endfor %}
-        </tbody>
-    </table>
+    </tbody>
+</table>
 {% endmacro %}
 
 
@@ -116,61 +116,109 @@
     (with or without form)
 -->
 {% macro columnsForEditView(context, view, model, withForm) %}
-    {% set keyValue = context.fsc.getFieldValue(model, model.primaryColumn()) %}
-    {% set formName = context.indexView ~ '-' ~ keyValue %}
+{% set keyValue = context.fsc.getFieldValue(model, model.primaryColumn()) %}
+{% set formName = context.indexView ~ '-' ~ keyValue %}
 
-    {% if withForm == TRUE %}
-    <form name="{{ formName }}" action="#" method="post" class="form" role="form">
-        <input type="hidden" name="action" value="save">
-        <input type="hidden" name="active" value="{{ context.indexView }}">
-        <div class="row">
-    {% endif %}
+{% if withForm == TRUE %}
+<form name="{{ formName }}" action="#" method="post" class="form" role="form">
+    <input type="hidden" name="action" value="save">
+    <input type="hidden" name="active" value="{{ context.indexView }}">
+    <div class="row">
+        {% endif %}
 
-    {% for group in view.getColumns() %}
-    <div class="{{ group.numColumns == 0 ? 'col' : 'col-md-' ~ group.numColumns }}">
-        <div class="form-row">
-            {% if group.title is not empty %}
-            <legend>{{ group.getHeaderHTML(group.title)|raw }}</legend>
-            {% endif %}
-            {% for column in group.columns %}
+        {% for group in view.getColumns() %}
+        <div class="{{ group.numColumns == 0 ? 'col' : 'col-md-' ~ group.numColumns }}">
+            <div class="form-row">
+                {% if group.title is not empty %}
+                <legend>{{ group.getHeaderHTML(group.title)|raw }}</legend>
+                {% endif %}
+                {% for column in group.columns %}
                 {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
                 {% if column.display == 'none' %}
-                    <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
+                <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
                 {% else %}
-                    {{ column.getEditHTML(value)|raw }}
+                {{ column.getEditHTML(value)|raw }}
                 {% endif %}
-            {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        {% if withForm == TRUE %}
+        {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+        {% set save, save_title = context.i18n.trans('save'), context.i18n.trans('save-data') %}
+        {% set undo, undo_title = context.i18n.trans('undo'), context.i18n.trans('restore-data') %}
+    </div>
+    <div class="row">
+        <div class="col-6">
+            {% if keyValue is not empty %}
+            {% set remove, remove_title = context.i18n.trans('delete'), context.i18n.trans('delete-record') %}
+            <a id="b_remove" class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
+               <i class="fa fa-trash" aria-hidden="true"></i>
+                <span class="d-none d-sm-inline-block">&nbsp;{{ remove }}</span>
+            </a>
+            {% endif %}
+        </div>
+
+        <div class="col-6 text-right">
+            <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
+                    <i class="fa fa-undo" aria-hidden="true"></i>&nbsp; {{ undo }}
+            </button>
+            <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled = true; this.form.submit();" {{ popoverTitle(save_title, 'bottom') }}>
+                    <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
+            </button>
         </div>
     </div>
-    {% endfor %}
+</form>
+{% endif %}
+{% endmacro %}
 
-    {% if withForm == TRUE %}
-    {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
-    {% set save, save_title = context.i18n.trans('save'), context.i18n.trans('save-data') %}
-    {% set undo, undo_title = context.i18n.trans('undo'), context.i18n.trans('restore-data') %}
-        </div>
-        <div class="row">
-            <div class="col-6">
-                {% if keyValue is not empty %}
-                {% set remove, remove_title = context.i18n.trans('delete'), context.i18n.trans('delete-record') %}
-                <a id="b_remove" class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
-                    <i class="fa fa-trash" aria-hidden="true"></i>
-                    <span class="d-none d-sm-inline-block">&nbsp;{{ remove }}</span>
-                </a>
+<!--
+    Generate the code for the Basic in Line Edit view according to the indicated columns
+-->
+{% macro columnsForBasicEditView(context, view, model, needTitle) %}
+{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+{% set remove_title = context.i18n.trans('delete-record') %}
+{% set undo_title = context.i18n.trans('restore-data') %}
+{% set save_title = context.i18n.trans('save-data') %}
+{% set keyValue = context.fsc.getFieldValue(model, model.primaryColumn()) %}
+{% set formName = context.indexView ~ '-' ~ keyValue %}
+
+<form name="{{ formName }}" action="#" method="post" class="form" role="form">
+    <input type="hidden" name="action" value="save">
+    <input type="hidden" name="active" value="{{ context.indexView }}">
+    <div class="row">
+        {% for group in view.getColumns() %}
+        <div class="col">
+            <div class="form-row {% if needTitle %}align-items-center{% endif %}">
+                {% for column in group.columns %}
+                {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
+                {% if column.display == 'none' %}
+                <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
+                {% else %}
+                {{ column.getEditHTML(value, needTitle)|raw }}
                 {% endif %}
-            </div>
+                {% endfor %}
 
-            <div class="col-6 text-right">
-                <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
-                    <i class="fa fa-undo" aria-hidden="true"></i>&nbsp; {{ undo }}
-                </button>
-                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();" {{ popoverTitle(save_title, 'bottom') }}>
-                    <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
-                </button>
-            </div>
-        </div>
-    </form>
-    {% endif %}
+                <div class="col">
+                    {% if keyValue is not empty %}
+                    <a id="b_remove" class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
+                       &nbsp;<i class="fa fa-trash" aria-hidden="true"></i>&nbsp;
+                    </a>
+                    {% endif %}
+
+                    <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
+                            &nbsp;<i class="fa fa-undo" aria-hidden="true"></i>&nbsp;
+                    </button>
+                    <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled = true; this.form.submit();" {{ popoverTitle(save_title, 'bottom') }}>
+                            &nbsp;<i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;
+                    </button>
+                </div>
+            </div>            
+        </div>            
+        {% endfor %}
+    </div>
+</form>
 {% endmacro %}
 
 
@@ -178,24 +226,34 @@
     Generate the code for the EditList view according to the indicated columns
 -->
 {% macro columnsForEditListView(context, view) %}
-    {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
-    {% set new_record, new_record_title = context.i18n.trans('new'), context.i18n.trans('create-new-record') %}
+{% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
+{% from 'Macro/BaseController.html' import columnsForBasicEditView as columnsForBasicEditView %}
+{% set new_record, new_record_title = context.i18n.trans('new'), context.i18n.trans('create-new-record') %}
+{% set isBasic = view.isBasicEditList() %}
 
-    {% for model in view.getCursor() %}
-        {{ columnsForEditView(context, view, model, TRUE) }}
-        <hr style="height:5px" />
-    {% endfor %}    
-    
-    <div class="alert alert-success" role="alert">
-        <a class="alert-link" data-toggle="collapse" href="#new-{{ context.indexView }}" aria-expanded="true" aria-controls="new-{{ context.indexView }}">
-            <i class="fa fa-plus" aria-hidden="true"></i>&nbsp; {{ new_record_title }}...
-        </a>
-    </div>    
+{% for model in view.getCursor() %}
+{% if isBasic %}
+{{ columnsForBasicEditView(context, view, model, loop.first) }}        
+{% else %}
+{{ columnsForEditView(context, view, model, TRUE) }}
+{% endif %}
+<hr />
+{% endfor %}    
 
-    <div id="new-{{ context.indexView }}" class="collapse">
-        {% set newModel = view.newEmptyModel() %}
-        {{ columnsForEditView(context, view, newModel, TRUE) }}
-    </div>
+{% set newModel = view.newEmptyModel() %}
+{% if isBasic %}
+{{ columnsForBasicEditView(context, view, newModel) }}
+{% else %}
+<div class="alert alert-success" role="alert">
+    <a class="alert-link" data-toggle="collapse" href="#new-{{ context.indexView }}" aria-expanded="true" aria-controls="new-{{ context.indexView }}">
+        <i class="fa fa-plus" aria-hidden="true"></i>&nbsp; {{ new_record_title }}...
+    </a>
+</div>    
+
+<div id="new-{{ context.indexView }}" class="collapse">
+    {{ columnsForEditView(context, view, newModel, TRUE) }}
+</div>
+{% endif %}
 {% endmacro %}
 
 
@@ -203,21 +261,21 @@
     Generates the code for a Select filter in a ListController
 -->
 {% macro filterForSelectInput(context, key, filter) %}
-    {% set any = context.i18n.trans('any') %}
+{% set any = context.i18n.trans('any') %}
 
-    <div class="col-md-2">
-        <select name="{{ key }}" class="form-control" onchange="this.form.submit()">
-            <option value="">{{ any }} {{ key }}</option>
-            <option value="">------</option>
-            {% for key2, data in context.fsc.optionlist(key, filter.options) %}
-            {% if (context.indexView == context.fsc.active) and (key2 == filter.options.value) %}
-            <option value="{{ key2 }}" selected="">{{ data }}</option>
-            {% else %}
-            <option value="{{ key2 }}">{{ data }}</option>
-            {% endif %}
-            {% endfor %}
-        </select>
-    </div>
+<div class="col-md-2">
+    <select name="{{ key }}" class="form-control" onchange="this.form.submit()">
+        <option value="">{{ any }} {{ key }}</option>
+        <option value="">------</option>
+        {% for key2, data in context.fsc.optionlist(key, filter.options) %}
+        {% if (context.indexView == context.fsc.active) and (key2 == filter.options.value) %}
+        <option value="{{ key2 }}" selected="">{{ data }}</option>
+        {% else %}
+        <option value="{{ key2 }}">{{ data }}</option>
+        {% endif %}
+        {% endfor %}
+    </select>
+</div>
 {% endmacro %}
 
 
@@ -225,19 +283,19 @@
     Generates the code for a Checkbox filter in a ListController
 -->
 {% macro filterForCheckBoxInput(context, key, filter) %}
-    <div class="col-md-2">
-        <div class="form-check mb-2 mb-sm-0">
-            <label class="form-check-label custom-checkbox-control custom-checkbox">
-                {% if (context.indexView == context.fsc.active) and filter.options.value %}
-                <input class="form-check-input custom-control-input" type="checkbox" name="{{ key }}" value="TRUE" checked="" onchange="this.form.submit()"/>
-                {% else %}
-                <input class="form-check-input custom-control-input" type="checkbox" name="{{ key }}" value="TRUE" onchange="this.form.submit()"/>
-                {% endif %}
-                <span class="custom-control-indicator"></span>
-                {{ filter.options.label }}
-            </label>
-        </div>
+<div class="col-md-2">
+    <div class="form-check mb-2 mb-sm-0">
+        <label class="form-check-label custom-checkbox-control custom-checkbox">
+            {% if (context.indexView == context.fsc.active) and filter.options.value %}
+            <input class="form-check-input custom-control-input" type="checkbox" name="{{ key }}" value="TRUE" checked="" onchange="this.form.submit()"/>
+            {% else %}
+            <input class="form-check-input custom-control-input" type="checkbox" name="{{ key }}" value="TRUE" onchange="this.form.submit()"/>
+            {% endif %}
+            <span class="custom-control-indicator"></span>
+            {{ filter.options.label }}
+        </label>
     </div>
+</div>
 {% endmacro %}
 
 
@@ -245,42 +303,42 @@
     Generate the code for a Text filter in a ListController
 -->
 {% macro filterForTextInput(context, key, filter) %}
-    <div class="col-md-2">
-        <div class="input-group">                                                                
-            <div class="input-group-btn">
-                <input name="{{ key }}-from-btn" id="{{ key }}-from-btn" type="button" value="{{ filter.options.operatorFrom }}"
-                        class="btn btn-outline-secondary dropdown-toggle"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
-                
-                <div class="dropdown-menu">
-                    <h6 class="dropdown-header">{{ context.i18n.trans('filter-method') }}</h6>
-                    {% for keyOperator, valueOperator in filter.getFilterOperators() %}
-                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}-from', '{{ valueOperator }}')">{{ context.i18n.trans(keyOperator) }} {{ filter.options.label }}</a>                                        
-                    {% endfor %}
-                </div>
+<div class="col-md-2">
+    <div class="input-group">                                                                
+        <div class="input-group-btn">
+            <input name="{{ key }}-from-btn" id="{{ key }}-from-btn" type="button" value="{{ filter.options.operatorFrom }}"
+                   class="btn btn-outline-secondary dropdown-toggle"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
+
+            <div class="dropdown-menu">
+                <h6 class="dropdown-header">{{ context.i18n.trans('filter-method') }}</h6>
+                {% for keyOperator, valueOperator in filter.getFilterOperators() %}
+                <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}- from', '{{ valueOperator }}')">{{ context.i18n.trans(keyOperator) }} {{ filter.options.label }}</a>                                        
+                {% endfor %}
             </div>
-            <input type="hidden" name="{{ key }}-from-operator" id="{{ key }}-from-operator" value="{{ filter.options.operatorFrom }}" />                
-            <input type="text" name="{{ key }}-from" value="{% if indexView == fsc.active %}{{ filter.options.valueFrom }}{% endif %}"
-                   class="form-control {{ filter.getSpecialClass() }}" placeholder="{{ filter.options.label }}" 
-                   autocomplete="off" onchange="this.form.submit()" {{ filter.getKeyboardFilter()|raw }}/>
         </div>
-        <div class="input-group">                                                                
-            <div class="input-group-btn">
-                <input name="{{ key }}-to-btn" id="{{ key }}-to-btn" type="button" value="{{ filter.options.operatorTo }}"
-                        class="btn btn-outline-secondary dropdown-toggle"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
-                
-                <div class="dropdown-menu">
-                    <h6 class="dropdown-header">{{ context.i18n.trans('filter-method') }}</h6>
-                    {% for keyOperator, valueOperator in filter.getFilterOperators() %}
-                    <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}-to', '{{ valueOperator }}')">{{ context.i18n.trans(keyOperator) }} {{ filter.options.label }}</a>                                        
-                    {% endfor %}
-                </div>
+        <input type="hidden" name="{{ key }}-from-operator" id="{{ key }}-from-operator" value="{{ filter.options.operatorFrom }}" />                
+        <input type="text" name="{{ key }}-from" value="{% if indexView == fsc.active %}{{ filter.options.valueFrom }}{% endif %}"
+               class="form-control {{ filter.getSpecialClass() }}" placeholder="{{ filter.options.label }}" 
+               autocomplete="off" onchange="this.form.submit()" {{ filter.getKeyboardFilter()|raw }}/>
+    </div>
+    <div class="input-group">                                                                
+        <div class="input-group-btn">
+            <input name="{{ key }}-to-btn" id="{{ key }}-to-btn" type="button" value="{{ filter.options.operatorTo }}"
+                   class="btn btn-outline-secondary dropdown-toggle"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
+
+            <div class="dropdown-menu">
+                <h6 class="dropdown-header">{{ context.i18n.trans('filter-method') }}</h6>
+                {% for keyOperator, valueOperator in filter.getFilterOperators() %}
+                <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}- to', '{{ valueOperator }}')">{{ context.i18n.trans(keyOperator) }} {{ filter.options.label }}</a>                                        
+                {% endfor %}
             </div>
-            <input type="hidden" name="{{ key }}-to-operator" id="{{ key }}-to-operator" value="{{ filter.options.operatorTo }}" />                
-            <input type="text" name="{{ key }}-to" value="{% if indexView == fsc.active %}{{ filter.options.valueTo }}{% endif %}"
-                   class="form-control {{ filter.getSpecialClass() }}" placeholder="{{ filter.options.label }}" 
-                   autocomplete="off" onchange="this.form.submit()" {{ filter.getKeyboardFilter()|raw }}/>
         </div>
-    </div>  
+        <input type="hidden" name="{{ key }}-to-operator" id="{{ key }}-to-operator" value="{{ filter.options.operatorTo }}" />                
+        <input type="text" name="{{ key }}-to" value="{% if indexView == fsc.active %}{{ filter.options.valueTo }}{% endif %}"
+               class="form-control {{ filter.getSpecialClass() }}" placeholder="{{ filter.options.label }}" 
+               autocomplete="off" onchange="this.form.submit()" {{ filter.getKeyboardFilter()|raw }}/>
+    </div>
+</div>  
 {% endmacro %}

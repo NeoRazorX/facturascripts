@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -29,6 +28,7 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListFacturaProveedor extends ExtendedController\ListController
 {
+
     /**
      * Devuelve los datos básicos de la página
      *
@@ -51,7 +51,7 @@ class ListFacturaProveedor extends ExtendedController\ListController
     {
         $this->addView('FacturaScripts\Core\Model\FacturaProveedor', 'ListFacturaProveedor');
         $this->addSearchFields('ListFacturaProveedor', ['codigo', 'numproveedor', 'observaciones']);
-        
+
         $this->addFilterSelect('ListFacturaProveedor', 'codserie', 'series', '', 'codserie');
         $this->addFilterSelect('ListFacturaProveedor', 'codpago', 'formaspago', '', 'codpago');
 

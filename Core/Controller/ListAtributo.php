@@ -29,6 +29,7 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListAtributo extends ExtendedController\ListController
 {
+
     /**
      * Devuelve los datos básicos de la página
      *

@@ -51,8 +51,8 @@
             </column>
             <column name="city" numcolumns="4" order="150">
                 <widget type="text" fieldname="ciudad" />
-           </column>
-           <column name="province" numcolumns="3" order="160">
+            </column>
+            <column name="province" numcolumns="3" order="160">
                 <widget type="text" fieldname="provincia" />
             </column>
             <column name="country" numcolumns="3" order="170">

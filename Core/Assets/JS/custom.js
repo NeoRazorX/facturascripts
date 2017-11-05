@@ -18,12 +18,12 @@
 
 $(document).ready(function () {
     $(".datepicker").datepicker();
-    
+
     // Aplica el tiempo de delay para los mensajes de ayuda
     $('[data-toggle="popover"]').popover({
         delay: {"show": 1000, "hide": 100}
     });
-    
+
     $(".clickableRow").mousedown(function (event) {
         if (event.which === 1) {
             var href = $(this).attr("data-href");
@@ -37,7 +37,7 @@ $(document).ready(function () {
             }
         }
     });
-    
+
     $(".cancelClickable").mousedown(function (event) {
         event.preventDefault();
         event.stopPropagation();

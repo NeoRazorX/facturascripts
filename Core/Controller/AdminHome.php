@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
@@ -47,7 +46,7 @@ class AdminHome extends Base\Controller
         /// por ahora desplegamos siempre el contenido de Dinamic, para las pruebas
         $pluginManager = new Base\PluginManager();
         $pluginManager->deploy(true);
-        
+
         $this->cache->clear();
     }
 

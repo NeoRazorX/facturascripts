@@ -1,5 +1,4 @@
 <?php
-
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -7,6 +6,7 @@ namespace FacturaScripts\Core\Base;
  */
 class IPFilterTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * @var IPFilter
      */
@@ -28,6 +28,7 @@ class IPFilterTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
+        
     }
 
     /**

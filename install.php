@@ -62,6 +62,16 @@ function searchErrors(&$errors, &$i18n)
 }
 
 /**
+ * Regresa un valor de font-awesome si el parametro es true o false
+ * @param boolean $isOk
+ * @return string
+ */
+function checkRequirement($isOk)
+{
+    return $isOk ? 'fa-check text-success' : 'fa-ban text-danger';
+}
+
+/**
  * Devuelve un array de idiomas, donde la key es el nombre del archivo JSON y
  * el value es su correspondiente traducción.
  *
@@ -72,7 +82,6 @@ function searchErrors(&$errors, &$i18n)
 function getLanguages(&$i18n)
 {
     $languages = [];
-
     foreach (scandir(__DIR__ . '/Core/Translation', SCANDIR_SORT_ASCENDING) as $fileName) {
         if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
             $key = substr($fileName, 0, -5);
@@ -323,8 +332,6 @@ function randomString($length = 20)
  */
 function installerMain()
 {
-    $errors = [];
-
     if (filter_input(INPUT_POST, 'fs_lang')) {
         $i18n = new Translator(__DIR__, filter_input(INPUT_POST, 'fs_lang'));
     } elseif (filter_input(INPUT_GET, 'fs_lang')) {
@@ -333,6 +340,7 @@ function installerMain()
         $i18n = new Translator(__DIR__, getUserLanguage());
     }
 
+    $errors = [];
     searchErrors($errors, $i18n);
 
     if (empty($errors) && filter_input(INPUT_POST, 'db_type')) {
@@ -346,6 +354,12 @@ function installerMain()
     /// empaquetamos las variables a pasar el motor de plantillas
     $templateVars = [
         'errors' => $errors,
+        'requirements' => [
+            'mb_substr' => checkRequirement(function_exists('mb_substr')),
+            'SimpleXML' => checkRequirement(extension_loaded('simplexml')),
+            'openSSL' => checkRequirement(extension_loaded('openssl')),
+            'Zip' => checkRequirement(extension_loaded('zip'))
+        ],
         'i18n' => $i18n,
         'languages' => getLanguages($i18n),
         'timezone' => get_timezone_list(),

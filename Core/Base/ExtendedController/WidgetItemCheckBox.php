@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 class WidgetItemCheckBox extends WidgetItem
 {
+
     /**
      * Constructor de la clase
      */
@@ -49,7 +49,7 @@ class WidgetItemCheckBox extends WidgetItem
         $readOnly = empty($this->readOnly) ? '' : ' disabled';
         return parent::specialAttributes() . $readOnly;
     }
-    
+
     /**
      * Genera el código html para la visualización de los datos en el
      * controlador List

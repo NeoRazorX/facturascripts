@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
@@ -31,6 +30,7 @@ use FacturaScripts\Core\Base\Translator;
  */
 class Mysql implements DataBaseEngine
 {
+
     /**
      * El enlace con las utilidades comunes entre motores de base de datos.
      *

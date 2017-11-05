@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
@@ -29,9 +28,9 @@ use FacturaScripts\Core\Base\ExtendedController;
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author PC REDNET S.L. <luismi@pcrednet.com>
  */
-
 class EditCuenta extends ExtendedController\EditController
 {
+
     /**
      * EditCuenta constructor.
      *
@@ -62,4 +61,5 @@ class EditCuenta extends ExtendedController\EditController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
-    }}
+    }
+}

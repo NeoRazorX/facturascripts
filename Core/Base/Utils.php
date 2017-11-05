@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Base;
  */
 trait Utils
 {
+
     /**
      * Convierte una variable con contenido binario a texto.
      * Lo hace en base64.
@@ -91,7 +91,7 @@ trait Utils
     public static function floatcmp($f1, $f2, $precision = 10, $round = false)
     {
         if ($round || !function_exists('bccomp')) {
-            return abs($f1 - $f2) < 6 / 10**($precision + 1);
+            return abs($f1 - $f2) < 6 / 10 ** ($precision + 1);
         }
 
         return bccomp((string) $f1, (string) $f2, $precision) === 0;

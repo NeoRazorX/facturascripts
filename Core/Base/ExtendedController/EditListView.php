@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -85,7 +84,7 @@ class EditListView extends BaseView
     {
         return $this->cursor;
     }
-    
+
     /**
      * Lista de columnas y su configuración
      * (Array of ColumnItem)
@@ -94,6 +93,31 @@ class EditListView extends BaseView
     public function getColumns()
     {
         return $this->pageOption->columns;
+    }
+
+    public function isBasicEditList()
+    {
+        $isBasic = count($this->pageOption->columns) === 1; // Only one group
+        if ($isBasic) {
+            $group = current($this->pageOption->columns);
+            $isBasic = (count($group->columns) < 5);
+        }
+
+        return $isBasic;
+    }
+
+    /**
+     * Establece el estado de edición de una columna
+     *
+     * @param string $columnName
+     * @param boolean $disabled
+     */
+    public function disableColumn($columnName, $disabled)
+    {
+        $column = $this->columnForName($columnName);
+        if (!empty($column)) {
+            $column->widget->readOnly = $disabled;
+        }
     }
 
     /**

@@ -32,7 +32,7 @@
                 <widget type="text" fieldname="simbolo" onclick="" />
             </column>
             <column name="desc" numcolumns="4" order="110"
-                    >
+            >
                 <widget type="text" fieldname="descripcion" onclick="" />
             </column>
         </group>

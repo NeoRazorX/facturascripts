@@ -14,30 +14,30 @@
         <script type="text/javascript" src="node_modules/popper.js/dist/umd/popper.min.js"></script>
         <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
         <script type="text/javascript">
-            $(document).ready(function () {
-                document.fs_install.fs_timezone.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+$(document).ready(function () {
+    document.fs_install.fs_timezone.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-                $('#db_type').on('change', function () {
-                    $('#db_type option:selected').each(function () {
-                        str = $(this).val();
-                    });
-                    if (str === 'mysql') {
-                        $('#db_port').val(3306);
-                        $('#db_user').val('root');
-                        $("#mysql_socket_div").show();
-                    } else if (str === 'postgresql') {
-                        $('#db_port').val(5432);
-                        $('#db_user').val('postgres');
-                        $("#mysql_socket_div").hide();
-                    }
-                });
+    $('#db_type').on('change', function () {
+        $('#db_type option:selected').each(function () {
+            str = $(this).val();
+        });
+        if (str === 'mysql') {
+            $('#db_port').val(3306);
+            $('#db_user').val('root');
+            $("#mysql_socket_div").show();
+        } else if (str === 'postgresql') {
+            $('#db_port').val(5432);
+            $('#db_user').val('postgres');
+            $("#mysql_socket_div").hide();
+        }
+    });
 
-                $('#fs_lang').on('change', function () {
-                    var lang = $( "#fs_lang option:selected" ).val();
-                    var url = location.pathname + '?fs_lang=' + lang;
-                    window.location.href = url;
-                });
-            });
+    $('#fs_lang').on('change', function () {
+        var lang = $("#fs_lang option:selected").val();
+        var url = location.pathname + '?fs_lang=' + lang;
+        window.location.href = url;
+    });
+});
         </script>
     </head>
     <body>
@@ -49,7 +49,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
-                    <br/>
+                    <br />
                     {% for msg in errors %}
                     <div class="alert alert-danger">{{ msg }}</div>
                     {% endfor %}
@@ -187,10 +187,20 @@
                             <i class="fa fa-check" aria-hidden="true"></i> {{ i18n.trans('accept') }}
                         </button>
                         <br/><br/><br/>
-                        <br/><br/><br/>
                     </div>
                 </div>
             </form>
+            <h5>
+                {{ i18n.trans('installer-requirements') }}
+            </h5>
+            <div class="row">
+                <br />
+                {% for extension, status in requirements %}
+                <div class="col-sm-3">
+                    <div class="alert alert-info">{{ extension }}: <i class="fa {{ status }} pull-right"></i></div>
+                </div>
+                {% endfor %}
+            </div>
         </div>
         <nav class="navbar fixed-bottom navbar-link bg-light">
             <a class="navbar-brand" href="https://www.facturascripts.com" target="_blank">

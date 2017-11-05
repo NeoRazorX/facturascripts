@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use DOMDocument;
@@ -31,13 +30,14 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class HtmlView extends BaseView
 {
+
     /**
      * Nombre de archivo
      *
      * @var string
      */
     public $fileName;
-    
+
     /**
      * Constructor e inicializador de la clase
      *
@@ -63,5 +63,10 @@ class HtmlView extends BaseView
     public function export(&$exportManager, &$response, $action)
     {
         return null;
+    }
+
+    public function disableColumn($columnName, $disabled)
+    {
+        
     }
 }

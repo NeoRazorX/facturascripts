@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -52,7 +51,7 @@ class Settings
      * @var string
      */
     public $icon;
-    
+
     /**
      * Conjunto de valores de configuración
      *
@@ -65,7 +64,7 @@ class Settings
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'fs_settings';
     }
@@ -106,7 +105,7 @@ class Settings
         $data['properties'] = json_encode($properties);
         unset($properties);
     }
-    
+
     /**
      * Carga los datos desde un array
      *
@@ -115,7 +114,7 @@ class Settings
     public function loadFromData($data)
     {
         $this->loadFromDataTrait($data, ['properties', 'action']);
-        $this->properties = empty($data['properties']) ? [] : json_decode($data['properties'], true);
+        $this->properties = isset($data['properties']) ? json_decode($data['properties'], true) : [];
     }
 
     /**
@@ -123,7 +122,7 @@ class Settings
      *
      * @return bool
      */
-    private function saveUpdate()
+    public function saveUpdate()
     {
         $properties = json_encode($this->properties);
 

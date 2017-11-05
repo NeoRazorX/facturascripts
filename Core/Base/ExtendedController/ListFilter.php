@@ -155,7 +155,7 @@ class ListFilter
      * @param string $key
      * @return string
      */
-    public function getParams($key)        
+    public function getParams($key)
     {
         $result = '';
         switch ($this->type) {
@@ -165,7 +165,7 @@ class ListFilter
                     $result .= '&' . $key . '=' . $this->options['value'];
                 }
                 break;
-                
+
             default:
                 if ($this->options['valueFrom'] !== '') {
                     $result .= '&' . $key . '-from=' . $this->options['valueFrom'];
@@ -175,11 +175,11 @@ class ListFilter
                 if ($this->options['valueTo'] !== '') {
                     $result .= '&' . $key . '-to=' . $this->options['valueTo'];
                     $result .= '&' . $key . '-to-operator=' . $this->options['operatorTo'];
-                }        
+                }
         }
         return $result;
     }
-    
+
     /**
      * Crea y devuelve un filtro de tipo select
      *

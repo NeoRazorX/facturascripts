@@ -34,22 +34,21 @@ class ListUser extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('FacturaScripts\Core\Model\User', 'ListUser', 'users');
+        $this->addView('FacturaScripts\Core\Model\User', 'ListUser', 'users', 'fa-users');
         $this->addSearchFields('ListUser', ['nick', 'email']);
 
         $this->addOrderBy('ListUser', 'nick');
         $this->addOrderBy('ListUser', 'email');
 
         /* Roles */
-        $this->addView('FacturaScripts\Core\Model\Rol', 'ListRol', 'roles');
+        $this->addView('FacturaScripts\Core\Model\Rol', 'ListRol', 'roles', 'fa-address-card-o');
         $this->addSearchFields('ListRol', ['codrol', 'descripcion']);
 
         $this->addOrderBy('ListRol', 'descripcion', 'description');
         $this->addOrderBy('ListRol', 'codrol', 'code');
-
     }
 
-     /**
+    /**
      * Devuelve los datos básicos de la página
      *
      * @return array
@@ -58,7 +57,7 @@ class ListUser extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'users';
-        $pagedata['icon'] = 'fa-user-circle-o';
+        $pagedata['icon'] = 'fa-users';
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
