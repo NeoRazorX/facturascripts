@@ -61,7 +61,7 @@
         </group>
         <group name="stock" numcolumns="4">
             <column name="stockfis" numcolumns="4" order="100">
-                <widget type="number" fieldname="stockfis" readonly="readonly"/>
+                <widget type="number" fieldname="stockfis"/>
             </column>
             <column name="stockmin" numcolumns="4" order="100">
                 <widget type="number" fieldname="stockmin"/>
