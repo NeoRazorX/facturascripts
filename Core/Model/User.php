@@ -244,37 +244,4 @@ class User
         return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled,idempresa) VALUES ('admin','"
             . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE,NULL);";
     }
-
-    /**
-     * Devuelve la url donde ver/modificar los datos
-     *
-     * @param mixed $type
-     *
-     * @return string
-     */
-    public function url($type = 'auto')
-    {
-        $value = $this->primaryColumnValue();
-        $model = $this->modelClassName();
-        $result = 'index.php?page=';
-        switch ($type) {
-            case 'list':
-                $result .= 'ListUser&active=List' . $model;
-                break;
-
-            case 'edit':
-                $result .= 'Panel' . $model . '&code=' . $value;
-                break;
-
-            case 'new':
-                $result .= 'Panel' . $model;
-                break;
-
-            default:
-                $result .= empty($value) ? 'ListUser&active=List' . $model : 'Panel' . $model . '&code=' . $value;
-                break;
-        }
-
-        return $result;
-    }
 }

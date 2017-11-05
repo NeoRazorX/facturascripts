@@ -279,32 +279,4 @@ class Proveedor extends Base\Persona
 
         return $prolist;
     }
-
-    /**
-     * Devuelve la url donde ver/modificar los datos
-     *
-     * @param mixed $type
-     *
-     * @return string
-     */
-    public function url($type = 'auto')
-    {
-        $result = 'index.php?page=';
-        switch ($type) {
-            case 'edit':
-                $value = $this->primaryColumnValue();
-                $result .= 'PanelProveedor' . '&code=' . $value;
-                break;
-
-            case 'new':
-                $result .= 'PanelProveedor';
-                break;
-
-            default:
-                $result = $this->traitURL($type);
-                break;
-        }
-
-        return $result;
-    }
 }

@@ -317,32 +317,4 @@ class Cliente extends Base\Persona
 
         return $clilist;
     }
-
-    /**
-     * Devuelve la url donde ver/modificar los datos
-     *
-     * @param mixed $type
-     *
-     * @return string
-     */
-    public function url($type = 'auto')
-    {
-        $result = 'index.php?page=';
-        switch ($type) {
-            case 'edit':
-                $value = $this->primaryColumnValue();
-                $result .= 'PanelCliente' . '&code=' . $value;
-                break;
-
-            case 'new':
-                $result .= 'PanelCliente';
-                break;
-
-            default:
-                $result = $this->traitURL($type);
-                break;
-        }
-
-        return $result;
-    }
 }

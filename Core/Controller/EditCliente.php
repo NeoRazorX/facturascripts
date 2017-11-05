@@ -24,11 +24,11 @@ use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Model;
 
 /**
- * Description of PanelCliente
+ * Description of EditCliente
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class PanelCliente extends ExtendedController\PanelController
+class EditCliente extends ExtendedController\PanelController
 {
 
     /**
@@ -67,7 +67,7 @@ class PanelCliente extends ExtendedController\PanelController
      *
      * @return string|boolean
      */
-    private function getClientFieldValue($fieldName)
+    private function getClienteFieldValue($fieldName)
     {
         $model = $this->views['EditCliente']->getModel();
         return $model->{$fieldName};
@@ -88,12 +88,12 @@ class PanelCliente extends ExtendedController\PanelController
                 break;
 
             case 'EditDireccionCliente':
-                $where = [new DataBase\DataBaseWhere('codcliente', $this->getClientFieldValue('codcliente'))];
+                $where = [new DataBase\DataBaseWhere('codcliente', $this->getClienteFieldValue('codcliente'))];
                 $view->loadData($where);
                 break;
 
             case 'ListCliente':
-                $codgroup = $this->getClientFieldValue('codgrupo');
+                $codgroup = $this->getClienteFieldValue('codgrupo');
 
                 if (!empty($codgroup)) {
                     $where = [new DataBase\DataBaseWhere('codgrupo', $codgroup)];
@@ -121,7 +121,7 @@ class PanelCliente extends ExtendedController\PanelController
     public function calcClientDeliveryNotes($view)
     {
         $where = [];
-        $where[] = new DataBase\DataBaseWhere('codcliente', $this->getClientFieldValue('codcliente'));
+        $where[] = new DataBase\DataBaseWhere('codcliente', $this->getClienteFieldValue('codcliente'));
         $where[] = new DataBase\DataBaseWhere('ptefactura', TRUE);
 
         $totalModel = Model\TotalModel::all('albaranescli', $where, ['total' => 'SUM(total)'], '')[0];
@@ -131,7 +131,7 @@ class PanelCliente extends ExtendedController\PanelController
     public function calcClientInvoicePending($view)
     {
         $where = [];
-        $where[] = new DataBase\DataBaseWhere('codcliente', $this->getClientFieldValue('codcliente'));
+        $where[] = new DataBase\DataBaseWhere('codcliente', $this->getClienteFieldValue('codcliente'));
         $where[] = new DataBase\DataBaseWhere('estado', 'Pagado', '<>');
 
         $totalModel = Model\TotalModel::all('reciboscli', $where, ['total' => 'SUM(importe)'], '')[0];
