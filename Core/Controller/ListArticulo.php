@@ -75,9 +75,9 @@ class ListArticulo extends ExtendedController\ListController
 
         /* Stock */
         $this->addView('FacturaScripts\Core\Model\Stock', 'ListStock', 'stock');
-        $this->addSearchFields('ListStock', ['referencia', 'codalmacen']);
+        $this->addSearchFields('ListStock', ['referencia', 'ubicacion']);
 
-        $this->addFilterSelect('ListStock', 'codalmacen', 'almacen', 'nombre');
+        $this->addFilterSelect('ListStock', 'codalmacen', 'almacenes', '', 'nombre');
 
         $this->addOrderBy('ListStock', 'referencia', 'reference');
         $this->addOrderBy('ListStock', 'cantidad', 'quantity');

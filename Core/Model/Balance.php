@@ -150,32 +150,4 @@ class Balance
 
         return $this->saveTrait();
     }
-
-    /**
-     * Devuelve la url donde ver/modificar los datos
-     *
-     * @param mixed $type
-     *
-     * @return string
-     */
-    public function url($type = 'auto')
-    {
-        $result = 'index.php?page=';
-        switch ($type) {
-            case 'edit':
-                $value = $this->primaryColumnValue();
-                $result .= 'PanelBalance' . '&code=' . $value;
-                break;
-
-            case 'new':
-                $result .= 'PanelBalance';
-                break;
-
-            default:
-                $result = $this->traitURL($type);
-                break;
-        }
-
-        return $result;
-    }
 }

@@ -25,7 +25,7 @@
 <view>
     <columns>
         <column name="code" display="left" order="100">
-            <widget type="text" fieldname="codproveedor" onclick="PanelProveedor" />
+            <widget type="text" fieldname="codproveedor" onclick="EditProveedor" />
         </column>
         <column name="name" display="left" order="110">
             <widget type="text" fieldname="nombre" />

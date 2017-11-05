@@ -25,7 +25,7 @@
 <view>
     <columns>
         <column name="code" order="100">
-            <widget type="text" fieldname="codbalance" onclick="PanelBalance" />
+            <widget type="text" fieldname="codbalance" onclick="EditBalance" />
         </column>
         <column name="Nature" order="110">
             <widget type="text" fieldname="naturaleza" />

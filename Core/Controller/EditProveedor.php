@@ -26,7 +26,7 @@ use FacturaScripts\Core\Base\DataBase;
  *
  * @author Nazca Networks <comercial@nazcanetworks.com>
  */
-class PanelProveedor extends ExtendedController\PanelController
+class EditProveedor extends ExtendedController\PanelController
 {
 
     /**
@@ -36,7 +36,6 @@ class PanelProveedor extends ExtendedController\PanelController
     {
         $this->addEditView('FacturaScripts\Core\Model\Proveedor', 'EditProveedor', 'supplier');
         $this->addEditListView('FacturaScripts\Core\Model\DireccionProveedor', 'EditDireccionProveedor', 'addresses', 'fa-road');
-        /* $this->addListView('FacturaScripts\Core\Model\Proveedor', 'ListProveedor', 'same-group'); */
     }
 
     /**
@@ -69,15 +68,6 @@ class PanelProveedor extends ExtendedController\PanelController
             case 'EditDireccionProveedor':
                 $where = [new DataBase\DataBaseWhere('codproveedor', $this->getProviderFieldValue('codproveedor'))];
                 $view->loadData($where);
-                break;
-
-            case 'ListProveedor':
-                $codgroup = $this->getClientFieldValue('codgrupo');
-
-                if (!empty($codgroup)) {
-                    $where = [new DataBase\DataBaseWhere('codgrupo', $codgroup)];
-                    $view->loadData($where);
-                }
                 break;
         }
     }

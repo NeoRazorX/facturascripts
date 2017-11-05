@@ -24,11 +24,11 @@ use FacturaScripts\Core\Base\ExtendedController;
 ;
 
 /**
- * Description of PanelBalance
+ * Description of EditBalance
  *
  * @author PC REDNET S.L. <luismi@pcrednet.com>
  */
-class PanelBalance extends ExtendedController\PanelController
+class EditBalance extends ExtendedController\PanelController
 {
 
     /**
@@ -36,7 +36,7 @@ class PanelBalance extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('FacturaScripts\Core\Model\Balance', 'EditBalance', 'accounting');
+        $this->addEditView('FacturaScripts\Core\Model\Balance', 'EditBalance', 'Balance');
     }
 
     /**

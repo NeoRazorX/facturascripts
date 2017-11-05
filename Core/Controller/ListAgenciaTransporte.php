@@ -1,7 +1,6 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015       Pablo Peralta
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,7 +23,6 @@ use FacturaScripts\Core\Base\ExtendedController;
 /**
  * Controlador para la lista de agencias de transportes
  *
- * @author Pablo Peralta
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */

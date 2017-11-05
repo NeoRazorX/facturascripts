@@ -22,12 +22,12 @@ use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Description of PanelUser
+ * Description of EditUser
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class PanelUser extends ExtendedController\PanelController
+class EditUser extends ExtendedController\PanelController
 {
 
     /**
@@ -64,7 +64,8 @@ class PanelUser extends ExtendedController\PanelController
 
         /// Load values option to Language select input
         $columnLangCode = $this->views['EditUser']->columnForName('lang-code');
-        $columnLangCode->widget->setValuesFromArray($this->getLanguages());
+        $langs = $this->getLanguages();
+        $columnLangCode->widget->setValuesFromArray($langs);
 
         /// Disable columns
         $this->views['EditRolUser']->disableColumn('nick', TRUE);
@@ -118,8 +119,8 @@ class PanelUser extends ExtendedController\PanelController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'users';
-        $pagedata['icon'] = 'fa-users';
+        $pagedata['title'] = 'user';
+        $pagedata['icon'] = 'fa-user';
         $pagedata['menu'] = 'admin';
         $pagedata['showonmenu'] = false;
 

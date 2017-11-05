@@ -22,12 +22,12 @@ use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Description of PanelRol
+ * Description of EditRol
  *
  *
  * @author Artex Trading sa <jferrer@artextrading.com>
  */
-class PanelRol extends ExtendedController\PanelController
+class EditRol extends ExtendedController\PanelController
 {
 
     /**
@@ -91,7 +91,7 @@ class PanelRol extends ExtendedController\PanelController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'roles';
+        $pagedata['title'] = 'rol';
         $pagedata['menu'] = 'admin';
         $pagedata['icon'] = 'fa-id-card-o';
         $pagedata['showonmenu'] = false;
