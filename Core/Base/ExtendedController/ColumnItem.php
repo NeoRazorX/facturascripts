@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 class ColumnItem extends VisualItem implements VisualItemInterface
 {
-
     /**
      * Texto adicional que explica el campo al usuario
      *

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use Symfony\Component\Translation\Loader\JsonFileLoader;
@@ -28,7 +29,6 @@ use Symfony\Component\Translation\Translator as symfonyTranslator;
  */
 class Translator
 {
-
     /**
      * Carpeta de trabajo de FacturaScripts.
      *

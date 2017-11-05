@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Model;
@@ -30,7 +31,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class BaseView
 {
-
     /**
      * Modelo necesario para llamadas a los métodos del modelo
      * o en el caso del EditController contiene los datos visualizados.

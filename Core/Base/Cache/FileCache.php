@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\Cache;
 
 use FacturaScripts\Core\Base\MiniLog;
@@ -35,7 +36,6 @@ use FacturaScripts\Core\Base\Translator;
  */
 class FileCache implements AdaptorInterface
 {
-
     /**
      * Configuración de la cache.
      *

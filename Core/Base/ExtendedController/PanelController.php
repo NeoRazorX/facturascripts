@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -28,7 +29,6 @@ use FacturaScripts\Core\Base;
  */
 abstract class PanelController extends Base\Controller
 {
-
     /**
      * Indica cual es la vista activa
      *

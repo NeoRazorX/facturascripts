@@ -123,7 +123,7 @@ trait ModelTrait
 
         if (self::$checkedTables === null) {
             self::$checkedTables = $this->cache->get('fs_checked_tables');
-            if (self::$checkedTables === null) {
+            if (self::$checkedTables === null || self::$checkedTables === false) {
                 self::$checkedTables = [];
             }
 
