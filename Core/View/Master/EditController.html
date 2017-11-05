@@ -88,7 +88,7 @@
                     <span class="d-none d-md-inline-block">&nbsp;{{ go_back }} </span>
                 </a>
                 <a href="{{ model.url('edit') }}" class="btn btn-sm btn-outline-secondary" {{ popoverTitle(refresh_title, 'bottom') }}>
-                   <i class="fa fa-refresh" aria-hidden="true"></i>
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
             </div>
 
@@ -115,11 +115,11 @@
             </form>             
 
             <a id="b_new" class="btn btn-sm btn-success" onclick="insertRecord();" href="#" {{ popoverTitle((insert_title ~ ' ' ~ title), 'bottom') }}>
-               <i class="fa fa-plus" aria-hidden="true"></i>
+                <i class="fa fa-plus" aria-hidden="true"></i>
             </a>
 
             <a id="b_remove" class="btn btn-sm btn-danger" onclick="deleteRecord();" href="#" {{ popoverTitle(remove_title, 'bottom') }}">
-               <i class="fa fa-trash" aria-hidden="true"></i>
+                <i class="fa fa-trash" aria-hidden="true"></i>
                 <span class="d-none d-sm-inline-block">&nbsp;{{ remove }}</span>
             </a>
         </div>
@@ -149,10 +149,10 @@
                     <div class="card-footer text-right">
                         <small class="pull-left">{{ panel_footer }}</small>
                         <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
-                                <i class="fa fa-undo" aria-hidden="true"></i>&nbsp; {{ undo }}
+                            <i class="fa fa-undo" aria-hidden="true"></i>&nbsp; {{ undo }}
                         </button>
                         <button class="btn btn-sm btn-primary" type="submit" {{ popoverTitle(save_title, 'bottom') }}>
-                                <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
+                            <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
                         </button>
                     </div>
                 </div>

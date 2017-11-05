@@ -150,6 +150,26 @@ $(document).ready(function () {
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    {{ i18n.trans('memcache-host') }}:
+                                    <input type="text" name="memcache_host" value="localhost"  class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    {{ i18n.trans('memcache-port') }}:
+                                    <input type="number" name="memcache_port" value="11211"  class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    {{ i18n.trans('memcache-prefix') }}:
+                                    <input type="text" name="memcache_prefix" value="{{ memcache_prefix }}" class="form-control"/>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="licencia">
                         <div class="row">

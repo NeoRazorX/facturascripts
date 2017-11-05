@@ -16,9 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Base\Cache\FileCache;
+use FacturaScripts\Core\Base\Cache\MemcacheAdapter;
 
 /**
  * Class Cache
@@ -27,11 +28,10 @@ use FacturaScripts\Core\Base\Cache\FileCache;
  */
 class Cache
 {
-
     /**
      * El motor utilizado para la cache.
      *
-     * @var FileCache
+     * @var MemcacheAdapter
      */
     private static $engine;
 
@@ -43,7 +43,7 @@ class Cache
     public function __construct($folder = '')
     {
         if (self::$engine === null) {
-            self::$engine = new FileCache($folder);
+            self::$engine = new MemcacheAdapter($folder);
         }
     }
 

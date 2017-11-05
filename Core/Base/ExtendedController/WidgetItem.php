@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 abstract class WidgetItem
 {
-
     /**
      * Nombre del campo con los datos que visualiza el widget
      *

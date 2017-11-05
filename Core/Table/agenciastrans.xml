@@ -5,35 +5,35 @@
     Description:
         Estructura de la tabla agenciastrans.
 -->
-<tabla>
-    <columna>
-        <nombre>codtrans</nombre>
-        <tipo>character varying(8)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>nombre</nombre>
-        <tipo>character varying(50)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>telefono</nombre>
-        <tipo>character varying(20)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>web</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>activo</nombre>
-        <tipo>boolean</tipo>
+<table>
+    <column>
+        <name>codtrans</name>
+        <type>character varying(8)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>nombre</name>
+        <type>character varying(50)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>telefono</name>
+        <type>character varying(20)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>web</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>activo</name>
+        <type>boolean</type>
         <default>true</default>
-        <nulo>NO</nulo>
-    </columna>
-    <restriccion>
-        <nombre>agenciastrans_pkey</nombre>
-        <consulta>PRIMARY KEY (codtrans)</consulta>
-    </restriccion>
-</tabla>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>agenciastrans_pkey</name>
+        <type>PRIMARY KEY (codtrans)</type>
+    </constraint>
+</table>

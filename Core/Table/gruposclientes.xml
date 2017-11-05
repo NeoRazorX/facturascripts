@@ -5,24 +5,24 @@
     Description:
         Estructura de la tabla gruposclientes.
 -->
-<tabla>
-    <columna>
-        <nombre>codgrupo</nombre>
-        <tipo>character varying(6)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>nombre</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codtarifa</nombre>
-        <tipo>character varying(6)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <restriccion>
-        <nombre>gruposclientes_pkey</nombre>
-        <consulta>PRIMARY KEY (codgrupo)</consulta>
-    </restriccion>
-</tabla>
+<table>
+    <column>
+        <name>codgrupo</name>
+        <type>character varying(6)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>nombre</name>
+        <type>character varying(100)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codtarifa</name>
+        <type>character varying(6)</type>
+        <null>YES</null>
+    </column>
+    <constraint>
+        <name>gruposclientes_pkey</name>
+        <type>PRIMARY KEY (codgrupo)</type>
+    </constraint>
+</table>

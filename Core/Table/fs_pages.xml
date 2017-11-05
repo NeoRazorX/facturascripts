@@ -6,46 +6,46 @@
     Description:
         Estructura de la tabla fs_pages.
 -->
-<tabla>
-    <columna>
-        <nombre>name</nombre>
-        <tipo>character varying(30)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>title</nombre>
-        <tipo>character varying(50)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>menu</nombre>
-        <tipo>character varying(20)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>submenu</nombre>
-        <tipo>character varying(20)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>showonmenu</nombre>
-        <tipo>boolean</tipo>
-        <nulo>NO</nulo>
-        <defecto>true</defecto>
-    </columna>
-    <columna>
-        <nombre>orden</nombre>
-        <tipo>integer</tipo>
-        <nulo>NO</nulo>
-        <defecto>100</defecto>
-    </columna>
-    <columna>
-        <nombre>icon</nombre>
-        <tipo>character varying(50)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <restriccion>
-        <nombre>fs_pages_pkey</nombre>
-        <consulta>PRIMARY KEY (name)</consulta>
-    </restriccion>
-</tabla>
+<table>
+    <column>
+        <name>name</name>
+        <type>character varying(30)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>title</name>
+        <type>character varying(50)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>menu</name>
+        <type>character varying(20)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>submenu</name>
+        <type>character varying(20)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>showonmenu</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>true</default>
+    </column>
+    <column>
+        <name>orden</name>
+        <type>integer</type>
+        <null>NO</null>
+        <default>100</default>
+    </column>
+    <column>
+        <name>icon</name>
+        <type>character varying(50)</type>
+        <null>YES</null>
+    </column>
+    <constraint>
+        <name>fs_pages_pkey</name>
+        <type>PRIMARY KEY (name)</type>
+    </constraint>
+</table>

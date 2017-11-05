@@ -54,7 +54,7 @@ class ListAgenciaTransporte extends ExtendedController\ListController
         $this->addSearchFields($className, ['nombre', 'codtrans']);
 
         $this->addOrderBy($className, 'codtrans', 'code');
-        $this->addOrderBy($className, 'nombre');
+        $this->addOrderBy($className, 'nombre', 'name');
 
         $this->addFilterCheckbox($className, 'activo', 'active');
     }

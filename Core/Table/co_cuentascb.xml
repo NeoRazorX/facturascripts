@@ -5,30 +5,30 @@
     Description:
         Estructura de la tabla co_cuentascb.
 -->
-<tabla>
-    <columna>
-        <nombre>desccuenta</nombre>
-        <tipo>character varying(255)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codcuenta</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codbalance</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>id</nombre>
-        <tipo>serial</tipo>
-        <nulo>NO</nulo>
-        <defecto>nextval('co_cuentascb_id_seq'::regclass)</defecto>
-    </columna>
-    <restriccion>
-        <nombre>co_cuentascb_pkey</nombre>
-        <consulta>PRIMARY KEY (id)</consulta>
-    </restriccion>
-</tabla>
+<table>
+    <column>
+        <name>desccuenta</name>
+        <type>character varying(255)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codcuenta</name>
+        <type>character varying(10)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codbalance</name>
+        <type>character varying(15)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('co_cuentascb_id_seq'::regclass)</default>
+    </column>
+    <constraint>
+        <name>co_cuentascb_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+</table>

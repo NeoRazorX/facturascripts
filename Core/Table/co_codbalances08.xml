@@ -5,69 +5,69 @@
     Description:
         Estructura de la tabla co_codbalances08.
 -->
-<tabla>
-    <columna>
-        <nombre>descripcion4ba</nombre>
-        <tipo>character varying(255)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>descripcion4</nombre>
-        <tipo>character varying(255)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>nivel4</nombre>
-        <tipo>character varying(5)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>descripcion3</nombre>
-        <tipo>character varying(255)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>orden3</nombre>
-        <tipo>character varying(5)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>nivel3</nombre>
-        <tipo>character varying(5)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>descripcion2</nombre>
-        <tipo>character varying(255)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>nivel2</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>descripcion1</nombre>
-        <tipo>character varying(255)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>nivel1</nombre>
-        <tipo>character varying(5)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>naturaleza</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codbalance</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <restriccion>
-        <nombre>co_codbalances08_pkey</nombre>
-        <consulta>PRIMARY KEY (codbalance)</consulta>
-    </restriccion>
-</tabla>
+<table>
+    <column>
+        <name>descripcion4ba</name>
+        <type>character varying(255)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>descripcion4</name>
+        <type>character varying(255)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>nivel4</name>
+        <type>character varying(5)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>descripcion3</name>
+        <type>character varying(255)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>orden3</name>
+        <type>character varying(5)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>nivel3</name>
+        <type>character varying(5)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>descripcion2</name>
+        <type>character varying(255)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>nivel2</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>descripcion1</name>
+        <type>character varying(255)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>nivel1</name>
+        <type>character varying(5)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>naturaleza</name>
+        <type>character varying(15)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codbalance</name>
+        <type>character varying(15)</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>co_codbalances08_pkey</name>
+        <type>PRIMARY KEY (codbalance)</type>
+    </constraint>
+</table>

@@ -5,19 +5,19 @@
     Description:
         Estructura de la tabla atributos.
 -->
-<tabla>
-    <columna>
-        <nombre>codatributo</nombre>
-        <tipo>character varying(20)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>nombre</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <restriccion>
-        <nombre>atributos_pkey</nombre>
-        <consulta>PRIMARY KEY (codatributo)</consulta>
-    </restriccion>
-</tabla>
+<table>
+    <column>
+        <name>codatributo</name>
+        <type>character varying(20)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>nombre</name>
+        <type>character varying(100)</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>atributos_pkey</name>
+        <type>PRIMARY KEY (codatributo)</type>
+    </constraint>
+</table>

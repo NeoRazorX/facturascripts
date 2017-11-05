@@ -5,84 +5,84 @@
     Description:
         Estructura de la tabla almacenes.
 -->
-<tabla>
-    <columna>
-        <nombre>apartado</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codalmacen</nombre>
-        <tipo>character varying(4)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codpais</nombre>
-        <tipo>character varying(20)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codpostal</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>contacto</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>direccion</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>fax</nombre>
-        <tipo>character varying(50)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idprovincia</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>nombre</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>observaciones</nombre>
-        <tipo>text</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>poblacion</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>porpvp</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>provincia</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>telefono</nombre>
-        <tipo>character varying(50)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>tipovaloracion</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <restriccion>
-        <nombre>almacenes_pkey</nombre>
-        <consulta>PRIMARY KEY (codalmacen)</consulta>
-    </restriccion>
-</tabla>
+<table>
+    <column>
+        <name>apartado</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codalmacen</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codpais</name>
+        <type>character varying(20)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codpostal</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>contacto</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>direccion</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>fax</name>
+        <type>character varying(50)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idprovincia</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>nombre</name>
+        <type>character varying(100)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>observaciones</name>
+        <type>text</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>poblacion</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>porpvp</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>provincia</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>telefono</name>
+        <type>character varying(50)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>tipovaloracion</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <constraint>
+        <name>almacenes_pkey</name>
+        <type>PRIMARY KEY (codalmacen)</type>
+    </constraint>
+</table>

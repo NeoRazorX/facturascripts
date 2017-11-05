@@ -5,201 +5,201 @@
     Description:
         Estructura de la tabla clientes.
 -->
-<tabla>
-    <columna>
-        <nombre>capitalimpagado</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>cifnif</nombre>
-        <tipo>character varying(30)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codagente</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codcliente</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codcontacto</nombre>
-        <tipo>character varying(6)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codcuentadom</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codcuentarem</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>coddivisa</nombre>
-        <tipo>character varying(3)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codedi</nombre>
-        <tipo>character varying(17)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codgrupo</nombre>
-        <tipo>character varying(6)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codpago</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codserie</nombre>
-        <tipo>character varying(4)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codsubcuenta</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codtiporappel</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>contacto</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>copiasfactura</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>debaja</nombre>
-        <tipo>boolean</tipo>
-        <nulo>YES</nulo>
-        <defecto>false</defecto>
-    </columna>
-    <columna>
-        <nombre>email</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>fax</nombre>
-        <tipo>character varying(30)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>fechabaja</nombre>
-        <tipo>date</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>fechaalta</nombre>
-        <tipo>date</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idsubcuenta</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>ivaincluido</nombre>
-        <tipo>boolean</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>nombre</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>razonsocial</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>observaciones</nombre>
-        <tipo>text</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>recargo</nombre>
-        <tipo>boolean</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>regimeniva</nombre>
-        <tipo>character varying(20)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>riesgoalcanzado</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>riesgomax</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>telefono1</nombre>
-        <tipo>character varying(30)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>telefono2</nombre>
-        <tipo>character varying(30)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>tipoidfiscal</nombre>
-        <tipo>character varying(25)</tipo>
-        <nulo>NO</nulo>
-        <defecto>'NIF'::character varying</defecto>
-    </columna>
-    <columna>
-        <nombre>personafisica</nombre>
-        <tipo>boolean</tipo>
-        <defecto>true</defecto>
-    </columna>
-    <columna>
-        <nombre>web</nombre>
-        <tipo>character varying(250)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>diaspago</nombre>
-        <tipo>character varying(10)</tipo>
-    </columna>
-    <columna>
-        <nombre>codproveedor</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <restriccion>
-        <nombre>clientes_pkey</nombre>
-        <consulta>PRIMARY KEY (codcliente)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_clientes_grupos</nombre>
-        <consulta>FOREIGN KEY (codgrupo)
+<table>
+    <column>
+        <name>capitalimpagado</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>cifnif</name>
+        <type>character varying(30)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codagente</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codcliente</name>
+        <type>character varying(10)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codcontacto</name>
+        <type>character varying(6)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codcuentadom</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codcuentarem</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>coddivisa</name>
+        <type>character varying(3)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codedi</name>
+        <type>character varying(17)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codgrupo</name>
+        <type>character varying(6)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codpago</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codserie</name>
+        <type>character varying(4)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codsubcuenta</name>
+        <type>character varying(15)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codtiporappel</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>contacto</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>copiasfactura</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>debaja</name>
+        <type>boolean</type>
+        <null>YES</null>
+        <default>false</default>
+    </column>
+    <column>
+        <name>email</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>fax</name>
+        <type>character varying(30)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>fechabaja</name>
+        <type>date</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>fechaalta</name>
+        <type>date</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idsubcuenta</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>ivaincluido</name>
+        <type>boolean</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>nombre</name>
+        <type>character varying(100)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>razonsocial</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>observaciones</name>
+        <type>text</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>recargo</name>
+        <type>boolean</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>regimeniva</name>
+        <type>character varying(20)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>riesgoalcanzado</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>riesgomax</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>telefono1</name>
+        <type>character varying(30)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>telefono2</name>
+        <type>character varying(30)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>tipoidfiscal</name>
+        <type>character varying(25)</type>
+        <null>NO</null>
+        <default>'NIF'::character varying</default>
+    </column>
+    <column>
+        <name>personafisica</name>
+        <type>boolean</type>
+        <default>true</default>
+    </column>
+    <column>
+        <name>web</name>
+        <type>character varying(250)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>diaspago</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
+        <name>codproveedor</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <constraint>
+        <name>clientes_pkey</name>
+        <type>PRIMARY KEY (codcliente)</type>
+    </constraint>
+    <constraint>
+        <name>ca_clientes_grupos</name>
+        <type>FOREIGN KEY (codgrupo)
             REFERENCES gruposclientes (codgrupo)
-            ON DELETE SET NULL ON UPDATE CASCADE</consulta>
-    </restriccion>
-</tabla>
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+</table>

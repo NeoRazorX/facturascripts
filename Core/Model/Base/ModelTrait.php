@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base;
@@ -24,6 +25,7 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DefaultItems;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * La clase de la que heredan todos los modelos, conecta a la base de datos,
@@ -34,7 +36,7 @@ use FacturaScripts\Core\Base\Translator;
 trait ModelTrait
 {
 
-    use Base\Utils;
+    use Utils;
 
     /**
      * Lista de campos de la tabla.
@@ -121,7 +123,7 @@ trait ModelTrait
 
         if (self::$checkedTables === null) {
             self::$checkedTables = $this->cache->get('fs_checked_tables');
-            if (self::$checkedTables === null) {
+            if (self::$checkedTables === null || self::$checkedTables === false) {
                 self::$checkedTables = [];
             }
 
@@ -208,7 +210,7 @@ trait ModelTrait
     public function checkArrayData(&$data)
     {
         foreach (self::$fields as $field => $values) {
-            if ($values['type'] === 'boolean') {
+            if ($values['type'] === 'boolean' || $values['type'] === 'tinyint(1)') {
                 if (!isset($data[$field])) {
                     $data[$field] = FALSE;
                 }
@@ -218,7 +220,7 @@ trait ModelTrait
 
     /**
      * Devuelve el valor integer controlando casos especiales para las PK y FK
-     * 
+     *
      * @param array $field
      * @param string $value
      * @return integer|NULL
@@ -278,7 +280,7 @@ trait ModelTrait
 
                     default:
                         if (empty($value)) {
-                            $value = ($field['is_nullable'] === 'NO') ? '' : NULL;
+                            $value = ($field['is_nullable'] === 'NO') ? '' : null;
                         }
                         $this->{$key} = $value;
                 }
@@ -589,21 +591,21 @@ trait ModelTrait
         if (file_exists($filename)) {
             $xml = simplexml_load_string(file_get_contents($filename, FILE_USE_INCLUDE_PATH));
             if ($xml) {
-                if ($xml->columna) {
+                if ($xml->column) {
                     $key = 0;
-                    foreach ($xml->columna as $col) {
-                        $columns[$key]['nombre'] = (string) $col->nombre;
-                        $columns[$key]['tipo'] = (string) $col->tipo;
+                    foreach ($xml->column as $col) {
+                        $columns[$key]['name'] = (string) $col->name;
+                        $columns[$key]['type'] = (string) $col->type;
 
-                        $columns[$key]['nulo'] = 'YES';
-                        if ($col->nulo && strtolower($col->nulo) === 'no') {
-                            $columns[$key]['nulo'] = 'NO';
+                        $columns[$key]['null'] = 'YES';
+                        if ($col->null && strtolower($col->nulo) === 'no') {
+                            $columns[$key]['null'] = 'NO';
                         }
 
-                        if ($col->defecto === '') {
-                            $columns[$key]['defecto'] = null;
+                        if ($col->default === '') {
+                            $columns[$key]['default'] = null;
                         } else {
-                            $columns[$key]['defecto'] = (string) $col->defecto;
+                            $columns[$key]['default'] = (string) $col->default;
                         }
 
                         ++$key;
@@ -613,11 +615,11 @@ trait ModelTrait
                     $return = true;
                 }
 
-                if ($xml->restriccion) {
+                if ($xml->constraint) {
                     $key = 0;
-                    foreach ($xml->restriccion as $col) {
-                        $constraints[$key]['nombre'] = (string) $col->nombre;
-                        $constraints[$key]['consulta'] = (string) $col->consulta;
+                    foreach ($xml->constraint as $col) {
+                        $constraints[$key]['name'] = (string) $col->name;
+                        $constraints[$key]['constraint'] = (string) $col->type;
                         ++$key;
                     }
                 }

@@ -5,58 +5,58 @@
     Description:
         Estructura de la tabla cajas.
 -->
-<tabla>
-    <columna>
-        <nombre>id</nombre>
-        <tipo>serial</tipo>
-        <nulo>NO</nulo>
-        <defecto>nextval('cajas_id_seq'::regclass)</defecto>
-    </columna>
-    <columna>
-        <nombre>fs_id</nombre>
-        <tipo>integer</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codagente</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>f_inicio</nombre>
-        <tipo>timestamp without time zone</tipo>
-        <nulo>NO</nulo>
-        <defecto>CURRENT_TIMESTAMP</defecto>
-    </columna>
-    <columna>
-        <nombre>d_inicio</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>f_fin</nombre>
-        <tipo>timestamp without time zone</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>d_fin</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>tickets</nombre>
-        <tipo>integer</tipo>
+<table>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('cajas_id_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>fs_id</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codagente</name>
+        <type>character varying(10)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>f_inicio</name>
+        <type>timestamp without time zone</type>
+        <null>NO</null>
+        <default>CURRENT_TIMESTAMP</default>
+    </column>
+    <column>
+        <name>d_inicio</name>
+        <type>double precision</type>
+        <null>NO</null>
         <default>0</default>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>ip</nombre>
-        <tipo>character varying(40)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <restriccion>
-        <nombre>cajas_pkey</nombre>
-        <consulta>PRIMARY KEY (id)</consulta>
-    </restriccion>
-</tabla>
+    </column>
+    <column>
+        <name>f_fin</name>
+        <type>timestamp without time zone</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>d_fin</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>tickets</name>
+        <type>integer</type>
+        <default>0</default>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>ip</name>
+        <type>character varying(40)</type>
+        <null>YES</null>
+    </column>
+    <constraint>
+        <name>cajas_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+</table>

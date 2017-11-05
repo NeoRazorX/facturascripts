@@ -5,330 +5,330 @@
     Description:
         Estructura de la tabla facturascli.
 -->
-<tabla>
-    <columna>
-        <nombre>apartado</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>automatica</nombre>
-        <tipo>boolean</tipo>
-    </columna>
-    <columna>
-        <nombre>cifnif</nombre>
-        <tipo>character varying(30)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>ciudad</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codagente</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codalmacen</nombre>
-        <tipo>character varying(4)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codcliente</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>coddir</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>coddivisa</nombre>
-        <tipo>character varying(3)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codejercicio</nombre>
-        <tipo>character varying(4)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codigo</nombre>
-        <tipo>character varying(20)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codigorect</nombre>
-        <tipo>character varying(20)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codpago</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codpais</nombre>
-        <tipo>character varying(20)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codpostal</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codserie</nombre>
-        <tipo>character varying(4)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>deabono</nombre>
-        <tipo>boolean</tipo>
-        <defecto>false</defecto>
-    </columna>
-    <columna>
-        <nombre>direccion</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>editable</nombre>
-        <tipo>boolean</tipo>
-        <defecto>false</defecto>
-    </columna>
-    <columna>
-        <nombre>fecha</nombre>
-        <tipo>date</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>vencimiento</nombre>
-        <tipo>date</tipo>
-    </columna>
-    <columna>
-        <nombre>femail</nombre>
-        <tipo>date</tipo>
-    </columna>
-    <columna>
-        <nombre>hora</nombre>
-        <tipo>time without time zone</tipo>
-        <nulo>NO</nulo>
-        <defecto>now()</defecto>
-    </columna>
-    <columna>
-        <nombre>idasiento</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idasientop</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idfactura</nombre>
-        <tipo>serial</tipo>
-        <nulo>NO</nulo>
-        <defecto>nextval('facturascli_idfactura_seq'::regclass)</defecto>
-    </columna>
-    <columna>
-        <nombre>idfacturarect</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idpagodevol</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idprovincia</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>irpf</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>neto</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>nogenerarasiento</nombre>
-        <tipo>boolean</tipo>
-    </columna>
-    <columna>
-        <nombre>nombrecliente</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>numero</nombre>
-        <tipo>character varying(12)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>numero2</nombre>
-        <tipo>character varying(50)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>observaciones</nombre>
-        <tipo>text</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>pagada</nombre>
-        <tipo>boolean</tipo>
-        <nulo>NO</nulo>
-        <defecto>false</defecto>
-    </columna>
-    <columna>
-        <nombre>anulada</nombre>
-        <tipo>boolean</tipo>
-        <nulo>NO</nulo>
-        <defecto>false</defecto>
-    </columna>
-    <columna>
-        <nombre>porcomision</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>provincia</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>recfinanciero</nombre>
-        <tipo>double precision</tipo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>tasaconv</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>total</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>totaleuros</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>totalirpf</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>totaliva</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>totalrecargo</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>tpv</nombre>
-        <tipo>boolean</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codtrans</nombre>
-        <tipo>character varying(8)</tipo>
-    </columna>
-    <columna>
-        <nombre>codigoenv</nombre>
-        <tipo>character varying(200)</tipo>
-    </columna>
-    <columna>
-        <nombre>nombreenv</nombre>
-        <tipo>character varying(200)</tipo>
-    </columna>
-    <columna>
-        <nombre>apellidosenv</nombre>
-        <tipo>character varying(200)</tipo>
-    </columna>
-    <columna>
-        <nombre>direccionenv</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codpostalenv</nombre>
-        <tipo>character varying(10)</tipo>
-    </columna>
-    <columna>
-        <nombre>ciudadenv</nombre>
-        <tipo>character varying(100)</tipo>
-    </columna>
-    <columna>
-        <nombre>provinciaenv</nombre>
-        <tipo>character varying(100)</tipo>
-    </columna>
-    <columna>
-        <nombre>apartadoenv</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codpaisenv</nombre>
-        <tipo>character varying(20)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idimprenta</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>numdocs</nombre>
-        <tipo>integer</tipo>
-        <defecto>0</defecto>
-    </columna>
-    <restriccion>
-        <nombre>ca_facturascli_series2</nombre>
-        <consulta>FOREIGN KEY (codserie)
+<table>
+    <column>
+        <name>apartado</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>automatica</name>
+        <type>boolean</type>
+    </column>
+    <column>
+        <name>cifnif</name>
+        <type>character varying(30)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>ciudad</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codagente</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codalmacen</name>
+        <type>character varying(4)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codcliente</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>coddir</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>coddivisa</name>
+        <type>character varying(3)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codejercicio</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codigo</name>
+        <type>character varying(20)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codigorect</name>
+        <type>character varying(20)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codpago</name>
+        <type>character varying(10)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codpais</name>
+        <type>character varying(20)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codpostal</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codserie</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>deabono</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
+        <name>direccion</name>
+        <type>character varying(100)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>editable</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
+        <name>fecha</name>
+        <type>date</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>vencimiento</name>
+        <type>date</type>
+    </column>
+    <column>
+        <name>femail</name>
+        <type>date</type>
+    </column>
+    <column>
+        <name>hora</name>
+        <type>time without time zone</type>
+        <null>NO</null>
+        <default>now()</default>
+    </column>
+    <column>
+        <name>idasiento</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idasientop</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idfactura</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('facturascli_idfactura_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>idfacturarect</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idpagodevol</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idprovincia</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>irpf</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>neto</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>nogenerarasiento</name>
+        <type>boolean</type>
+    </column>
+    <column>
+        <name>nombrecliente</name>
+        <type>character varying(100)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>numero</name>
+        <type>character varying(12)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>numero2</name>
+        <type>character varying(50)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>observaciones</name>
+        <type>text</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>pagada</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
+    </column>
+    <column>
+        <name>anulada</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
+    </column>
+    <column>
+        <name>porcomision</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>provincia</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>recfinanciero</name>
+        <type>double precision</type>
+        <default>0</default>
+    </column>
+    <column>
+        <name>tasaconv</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>total</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>totaleuros</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>totalirpf</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>totaliva</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>totalrecargo</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>tpv</name>
+        <type>boolean</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codtrans</name>
+        <type>character varying(8)</type>
+    </column>
+    <column>
+        <name>codigoenv</name>
+        <type>character varying(200)</type>
+    </column>
+    <column>
+        <name>nombreenv</name>
+        <type>character varying(200)</type>
+    </column>
+    <column>
+        <name>apellidosenv</name>
+        <type>character varying(200)</type>
+    </column>
+    <column>
+        <name>direccionenv</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codpostalenv</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
+        <name>ciudadenv</name>
+        <type>character varying(100)</type>
+    </column>
+    <column>
+        <name>provinciaenv</name>
+        <type>character varying(100)</type>
+    </column>
+    <column>
+        <name>apartadoenv</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codpaisenv</name>
+        <type>character varying(20)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idimprenta</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>numdocs</name>
+        <type>integer</type>
+        <default>0</default>
+    </column>
+    <constraint>
+        <name>ca_facturascli_series2</name>
+        <type>FOREIGN KEY (codserie)
             REFERENCES series (codserie)
-            ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_facturascli_ejercicios2</nombre>
-        <consulta>FOREIGN KEY (codejercicio)
+            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_facturascli_ejercicios2</name>
+        <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_facturascli_asiento2</nombre>
-        <consulta>FOREIGN KEY (idasiento)
+            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_facturascli_asiento2</name>
+        <type>FOREIGN KEY (idasiento)
             REFERENCES co_asientos (idasiento)
-            ON DELETE SET NULL ON UPDATE CASCADE</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_facturascli_asientop</nombre>
-        <consulta>FOREIGN KEY (idasientop)
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_facturascli_asientop</name>
+        <type>FOREIGN KEY (idasientop)
             REFERENCES co_asientos (idasiento)
-            ON DELETE SET NULL ON UPDATE CASCADE</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>uniq_codigo_facturascli</nombre>
-        <consulta>UNIQUE (codigo)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>facturascli_pkey</nombre>
-        <consulta>PRIMARY KEY (idfactura)</consulta>
-    </restriccion>
-</tabla>
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>uniq_codigo_facturascli</name>
+        <type>UNIQUE (codigo)</type>
+    </constraint>
+    <constraint>
+        <name>facturascli_pkey</name>
+        <type>PRIMARY KEY (idfactura)</type>
+    </constraint>
+</table>

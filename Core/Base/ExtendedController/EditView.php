@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -29,7 +30,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class EditView extends BaseView
 {
-
     /**
      * Constructor e inicializador de la clase
      *
