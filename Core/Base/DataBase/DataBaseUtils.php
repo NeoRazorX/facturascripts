@@ -190,4 +190,21 @@ class DataBaseUtils
     {
         return $this->engine->getSQL()->sqlCreateTable($tableName, $xmlCols, $xmlCons);
     }
+
+    /**
+     * Carga registros desde un archivo CSV a una tabla
+     *
+     * @param string $filePath
+     * @param string $tableName
+     * @param string $delimiter
+     * @param string $enclosed
+     * @param string $escaped
+     * @param string $lineEnd
+     *
+     * @return string
+     */
+    public function loadFromCSV($filePath, $tableName, $delimiter = ';', $enclosed = '"', $escaped = '\\', $lineEnd = PHP_EOL)
+    {
+        return $this->engine->getSQL()->sqlLoadFromCSV($filePath, $tableName, $delimiter, $enclosed, $escaped, $lineEnd);
+    }
 }

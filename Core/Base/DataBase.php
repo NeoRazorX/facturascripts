@@ -534,4 +534,38 @@ class DataBase
     {
         return self::$engine->getSQL()->sql2Int($colName);
     }
+
+    /**
+     * Devuelve el SQL necesario para cargar registros desde un archivo CSV.
+     *
+     * @param string $filePath
+     * @param string $tableName
+     * @param string $delimiter
+     * @param string $enclosed
+     * @param string $escaped
+     * @param string $lineEnd
+     *
+     * @return string
+     */
+    public function sqlLoadFromCSV($filePath, $tableName, $delimiter = ';', $enclosed = '"', $escaped = '\\', $lineEnd = PHP_EOL)
+    {
+        return self::$engine->getSQL()->sqlLoadFromCSV($filePath, $tableName, $delimiter, $enclosed, $escaped, $lineEnd);
+    }
+
+    /**
+     * Devuelve el SQL necesario para cargar registros a un archivo CSV.
+     *
+     * @param string $filePath
+     * @param string $tableName
+     * @param string $delimiter
+     * @param string $enclosed
+     * @param string $escaped
+     * @param string $lineEnd
+     *
+     * @return string
+     */
+    public function sqlSaveToCSV($filePath, $tableName, $delimiter = ';', $enclosed = '"', $escaped = '\\', $lineEnd = PHP_EOL)
+    {
+        return self::$engine->getSQL()->sqlSaveToCSV($filePath, $tableName, $delimiter, $enclosed, $escaped, $lineEnd);
+    }
 }

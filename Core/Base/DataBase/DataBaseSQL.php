@@ -141,4 +141,33 @@ interface DataBaseSQL
      * @param string $seqName
      */
     public function sqlSequenceExists($seqName);
+
+    /**
+     * Devuelve la string para la carga registros desde un archivo CSV a una tabla
+     *
+     * @param string $filePath
+     * @param string $tableName
+     * @param string $delimiter
+     * @param string $enclosed
+     * @param string $escaped
+     * @param string $lineEnd
+     *
+     * @return mixed
+     */
+    public function sqlLoadFromCSV($filePath, $tableName, $delimiter = ';', $enclosed = '"', $escaped = '\\', $lineEnd = PHP_EOL);
+
+
+    /**
+     * Devuelve la string para guardar los registros desde una tabla a un archivo CSV
+     *
+     * @param string $filePath
+     * @param string $tableName
+     * @param string $delimiter
+     * @param string $enclosed
+     * @param string $escaped
+     * @param string $lineEnd
+     *
+     * @return string
+     */
+    public function sqlSaveToCSV($filePath, $tableName, $delimiter = ';', $enclosed = '"', $escaped = '\\', $lineEnd = PHP_EOL);
 }

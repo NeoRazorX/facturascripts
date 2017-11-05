@@ -1062,5 +1062,8 @@
     "apc-set-key-item": "Asignado elemento '0' a APC.",
     "apc-delete-key-item": "Eliminado elemento '0' de APC.",
     "apc-clear": "APC limpiado.",
-    "total": "Total"
+    "total": "Total",
+    "latitude": "Latitud",
+    "longitude": "Longitud",
+    "review-date": "Fecha de revisión"
 }
