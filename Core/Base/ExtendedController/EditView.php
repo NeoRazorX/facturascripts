@@ -46,7 +46,7 @@ class EditView extends BaseView
         // Carga configuración de la vista para el usuario
         $this->pageOption->getForUser($viewName, $userNick);
     }
-
+    
     /**
      * Calcula y establece un nuevo código para la PK del modelo
      */

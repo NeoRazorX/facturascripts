@@ -75,7 +75,7 @@ class EditListView extends BaseView
         // Carga configuración de la vista para el usuario
         $this->pageOption->getForUser($viewName, $userNick);
     }
-
+    
     /**
      * Devuelve la lista de datos leidos en formato Model
      *
@@ -115,7 +115,7 @@ class EditListView extends BaseView
         $this->offset = $offset;
         $this->where = $where;
     }
-
+   
     /**
      * Prepara los campos para un modelo vacío
      *

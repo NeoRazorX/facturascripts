@@ -37,10 +37,10 @@ class EditEstadoDocumento extends ExtendedController\EditController
      * @param Base\MiniLog $miniLog
      * @param string $className
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, &$className)
+  
+     public function getModelName()
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
-        $this->modelName = 'FacturaScripts\Core\Model\EstadoDocumento';
+         return 'FacturaScripts\Core\Model\EstadoDocumento';
     }
 
     /**

@@ -27,7 +27,7 @@ use FacturaScripts\Core\Base;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class EditController extends Base\Controller
+abstract class EditController extends Base\Controller
 {
     /**
      * Objeto para exportar datos
@@ -48,8 +48,14 @@ class EditController extends Base\Controller
      *
      * @var string
      */
-    protected $modelName;
-
+    //protected $modelName;
+    
+    /** Devuelve el modelName del controlador    
+    * 
+    */ 
+    abstract protected function getModelName();
+     
+    
     /**
      * Inicia todos los objetos y propiedades.
      *
@@ -60,10 +66,12 @@ class EditController extends Base\Controller
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
+        
         parent::__construct($cache, $i18n, $miniLog, $className);
-
+        
         $this->setTemplate('Master/EditController');
         $this->exportManager = new Base\ExportManager();
+        
     }
 
     /**
@@ -74,12 +82,14 @@ class EditController extends Base\Controller
      */
     public function privateCore(&$response, $user)
     {
+       
         parent::privateCore($response, $user);
 
         // Creamos la vista a visualizar
         $viewName = $this->getClassName();
+       
         $title = $this->getPageData()['title'];
-        $this->view = new EditView($title, $this->modelName, $viewName, $user->nick);
+        $this->view = new EditView($title, $this->getModelName(), $viewName, $user->nick);
 
         // Guardamos si hay operaciones por realizar
         $action = $this->request->get('action', '');
@@ -93,6 +103,8 @@ class EditController extends Base\Controller
 
         // Operaciones generales con los datos cargados
         $this->execAfterAction($action);
+        
+       
     }
 
     /**
@@ -205,4 +217,7 @@ class EditController extends Base\Controller
     {
         return $this->view->getURL($type);
     }
+     
+    
 }
+

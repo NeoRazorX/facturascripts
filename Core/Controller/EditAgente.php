@@ -38,12 +38,11 @@ class EditAgente extends ExtendedController\EditController
      * @param Base\MiniLog $miniLog
      * @param string $className
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    
+    public function getModelName()
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
-        $this->modelName = 'FacturaScripts\Core\Model\Agente';
+        return 'FacturaScripts\Core\Model\Agente';
     }
-
     /**
      * Devuelve el texto para el pie del panel de datos
      *
@@ -70,4 +69,5 @@ class EditAgente extends ExtendedController\EditController
 
         return $pagedata;
     }
+    
 }

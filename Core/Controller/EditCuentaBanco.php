@@ -38,12 +38,11 @@ class EditCuentaBanco extends ExtendedController\EditController
      * @param Base\MiniLog $miniLog
      * @param string $className
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+  
+     public function getModelName()
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
-
         // Establecemos el modelo de datos
-        $this->modelName = 'FacturaScripts\Core\Model\CuentaBanco';
+        return 'FacturaScripts\Core\Model\CuentaBanco';
     }
 
     /**
