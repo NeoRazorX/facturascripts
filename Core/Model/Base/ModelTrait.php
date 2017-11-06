@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\Cache;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DefaultItems;
@@ -598,7 +597,7 @@ trait ModelTrait
                         $columns[$key]['type'] = (string) $col->type;
 
                         $columns[$key]['null'] = 'YES';
-                        if ($col->null && strtolower($col->nulo) === 'no') {
+                        if ($col->null && strtolower($col->null) === 'no') {
                             $columns[$key]['null'] = 'NO';
                         }
 

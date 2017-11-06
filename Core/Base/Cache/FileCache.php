@@ -59,17 +59,15 @@ class FileCache implements AdaptorInterface
 
     /**
      * FileCache constructor.
-     *
-     * @param string $folder
      */
-    public function __construct($folder = '')
+    public function __construct()
     {
         self::$config = [
-            'cache_path' => $folder . '/Cache/FileCache',
+            'cache_path' => FS_FOLDER . '/Cache/FileCache',
             'expires' => 180,
         ];
 
-        $this->i18n = new Translator($folder);
+        $this->i18n = new Translator();
         $this->minilog = new MiniLog();
 
         $dir = self::$config['cache_path'];
@@ -128,14 +126,7 @@ class FileCache implements AdaptorInterface
      */
     public function set($key, $content, $raw = false)
     {
-        if (\is_array($content)) {
-            $contentMsg = \implode(', ', $content);
-        } elseif (\is_string($content)) {
-            $contentMsg = $content;
-        } else {
-            $contentMsg = \gettype($content);
-        }
-        $this->minilog->debug($this->i18n->trans('filecache-set-key-item', [$key, $contentMsg]));
+        $this->minilog->debug($this->i18n->trans('filecache-set-key-item', [$key]));
         $dest_file_name = $this->getRoute($key);
         /** Use a unique temporary filename to make writes atomic with rewrite */
         $temp_file_name = str_replace('.php', uniqid('-', true) . '.php', $dest_file_name);
