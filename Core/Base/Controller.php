@@ -59,6 +59,12 @@ class Controller
      * @var EventDispatcher
      */
     protected $dispatcher;
+    
+    /**
+     * Herramientas para trabajar con divisas.
+     * @var DivisaTools 
+     */
+    public $divisaTools;
 
     /**
      * Empresa seleccionada.
@@ -80,6 +86,12 @@ class Controller
      * @var MiniLog
      */
     protected $miniLog;
+    
+    /**
+     * Herramientas para trabajar con números.
+     * @var NumberTools 
+     */
+    public $numberTools;
 
     /**
      * Request sobre la que podemos hacer consultas.
@@ -128,14 +140,16 @@ class Controller
     {
         $this->cache = $cache;
         $this->className = $className;
-        $this->dispatcher = new EventDispatcher();
         $this->dataBase = new DataBase();
+        $this->dispatcher = new EventDispatcher();
+        $this->divisaTools = new DivisaTools();
 
         $empresa = new Model\Empresa();
         $this->empresa = $empresa->getDefault();
 
         $this->i18n = $i18n;
         $this->miniLog = $miniLog;
+        $this->numberTools = new NumberTools();
         $this->request = Request::createFromGlobals();
         $this->template = $this->className . '.html';
 

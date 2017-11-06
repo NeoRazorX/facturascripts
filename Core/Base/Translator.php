@@ -60,6 +60,7 @@ class Translator
     {
         if (self::$translator === null) {
             self::$lang = $lang;
+            self::$usedStrings = [];
             self::$translator = new symfonyTranslator(self::$lang);
 
             self::$translator->addLoader('json', new JsonFileLoader());

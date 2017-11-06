@@ -105,27 +105,12 @@
 
     {# -- Data Row -- #}
     <div id="data" class="row">
-        {# -- Left Panel -- #}
-        <div class="col-sm-2">
-            <div class="nav flex-column nav-pills" id="optionsindex" role="tablist">
-                {% for indexView, view in fsc.views %}
-                {% set active = (indexView == fsc.active) ? ' active' : '' %}
-                <a class="nav-link{{ active }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
-                    <i class="fa {{ fsc.icons[indexView] }}" aria-hidden="true"></i>
-                    &nbsp;{{ view.title }}
-                </a>
-                {% endfor %}
-            </div>
-        </div>
-
-        {# -- Right Panel -- #}
-        <div class="col-sm-10">
+        {# -- First View Panel -- #}
+        <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="tab-content" id="optionsindex-tabContent">
-                        {% for indexView, view in fsc.views %}
-                        {% set active = (indexView == fsc.active) ? ' show active' : '' %}
-                        <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
+                    {% for indexView, view in fsc.views %}
+                        {% if loop.index == 1 %}
                             {% set viewType = fsc.viewClass(view) %}
                             {% if viewType == 'ListView' %}
                             {{ columnsForListView(_context, view) }}
@@ -148,10 +133,50 @@
                                 {% include view.fileName ignore missing %}
                             </div>
                             {% endif %}
-                        </div>
-                        {% endfor %}
-                    </div>
+                        {% endif %}
+                    {% endfor %}
                 </div>
+            </div>
+            <br/>
+            <div class="nav nav-tabs" id="optionsindex" role="tablist">
+                {% for indexView, view in fsc.views %}
+                {% set active = (loop.index == 2) ? ' active' : '' %}
+                {% if loop.index > 1 %}
+                <a class="nav-link{{ active }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
+                    <i class="fa {{ fsc.icons[indexView] }}" aria-hidden="true"></i>
+                    &nbsp;{{ view.title }}
+                </a>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div class="tab-content" id="optionsindex-tabContent">
+                {% for indexView, view in fsc.views %}
+                    {% set active = (loop.index == 2) ? ' show active' : '' %}
+                    <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
+                        {% set viewType = fsc.viewClass(view) %}
+                        {% if viewType == 'ListView' %}
+                        {{ columnsForListView(_context, view) }}
+                        {% endif %}
+
+                        {% if viewType == 'EditView' %}
+                        <!-- Statistical buttons bar -->
+                        {{ rowHeaderForEditView(_context, view) }}
+                        <!-- Main Form -->
+                        {% set model = view.getModel() %}
+                        {{ columnsForEditView(_context, view, model, TRUE) }}
+                        {% endif %}
+
+                        {% if viewType == 'EditListView' %}
+                        {{ columnsForEditListView(_context, view) }}
+                        {% endif %}
+
+                        {% if viewType == 'HtmlView' %}
+                        <div class="row">
+                            {% include view.fileName ignore missing %}
+                        </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
             </div>
         </div>
     </div>

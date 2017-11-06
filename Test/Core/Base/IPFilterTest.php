@@ -18,7 +18,7 @@ class IPFilterTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->object = new IPFilter(PHPUNIT_PATH);
+        $this->object = new IPFilter();
         $this->object->clear();
     }
 
