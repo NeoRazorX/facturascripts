@@ -30,6 +30,25 @@ class ListPedidoCliente extends ExtendedController\ListController
 {
 
     /**
+     * Procedimiento encargado de insertar las vistas a visualizar
+     */
+    protected function createViews()
+    {
+        $this->addView('FacturaScripts\Core\Model\PedidoCliente', 'ListPedidoCliente');
+        $this->addSearchFields('ListPedidoCliente', ['codigo', 'numero2', 'observaciones']);
+
+        $this->addFilterDatePicker('ListPedidoCliente', 'date', 'date', 'fecha');
+        $this->addFilterNumber('ListPedidoCliente', 'total', 'total');
+        $this->addFilterSelect('ListPedidoCliente', 'codalmacen', 'almacenes', '', 'nombre');
+        $this->addFilterSelect('ListPedidoCliente', 'codserie', 'series', '', 'descripcion');
+        $this->addFilterSelect('ListPedidoCliente', 'codpago', 'formaspago', '', 'descripcion');
+
+        $this->addOrderBy('ListPedidoCliente', 'codigo', 'code');
+        $this->addOrderBy('ListPedidoCliente', 'fecha', 'date');
+        $this->addOrderBy('ListPedidoCliente', 'total', 'amount');
+    }
+
+    /**
      * Devuelve los datos básicos de la página
      *
      * @return array
@@ -42,25 +61,5 @@ class ListPedidoCliente extends ExtendedController\ListController
         $pagedata['menu'] = 'sales';
 
         return $pagedata;
-    }
-
-    /**
-     * Procedimiento encargado de insertar las vistas a visualizar
-     */
-    protected function createViews()
-    {
-        $this->addView('FacturaScripts\Core\Model\PedidoCliente', 'ListPedidoCliente');
-        $this->addSearchFields('ListPedidoCliente', ['codigo', 'numero2', 'observaciones']);
-
-        $this->addFilterSelect('ListPedidoCliente', 'codalmacen', 'almacenes', '', 'nombre');
-        $this->addFilterSelect('ListPedidoCliente', 'codserie', 'series', '', 'descripcion');
-        $this->addFilterSelect('ListPedidoCliente', 'codpago', 'formaspago', '', 'descripcion');
-
-        $this->addFilterDatePicker('ListPedidoCliente', 'date1', 'date', 'fecha', '>=');
-        $this->addFilterDatePicker('ListPedidoCliente', 'date2', 'date', 'fecha', '<=');
-
-        $this->addOrderBy('ListPedidoCliente', 'codigo', 'code');
-        $this->addOrderBy('ListPedidoCliente', 'fecha', 'date');
-        $this->addOrderBy('ListPedidoCliente', 'total', 'amount');
     }
 }

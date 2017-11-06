@@ -30,6 +30,25 @@ class ListFacturaProveedor extends ExtendedController\ListController
 {
 
     /**
+     * Procedimiento para insertar vistas en el controlador
+     */
+    protected function createViews()
+    {
+        $this->addView('FacturaScripts\Core\Model\FacturaProveedor', 'ListFacturaProveedor');
+        $this->addSearchFields('ListFacturaProveedor', ['codigo', 'numproveedor', 'observaciones']);
+
+        $this->addFilterDatePicker('ListFacturaProveedor', 'date', 'date', 'fecha');
+        $this->addFilterNumber('ListFacturaProveedor', 'total', 'total');
+        $this->addFilterSelect('ListFacturaProveedor', 'codalmacen', 'almacenes', '', 'nombre');
+        $this->addFilterSelect('ListFacturaProveedor', 'codserie', 'series', '', 'codserie');
+        $this->addFilterSelect('ListFacturaProveedor', 'codpago', 'formaspago', '', 'codpago');
+
+        $this->addOrderBy('ListFacturaProveedor', 'codigo', 'code');
+        $this->addOrderBy('ListFacturaProveedor', 'fecha', 'date');
+        $this->addOrderBy('ListFacturaProveedor', 'total', 'amount');
+    }
+
+    /**
      * Devuelve los datos básicos de la página
      *
      * @return array
@@ -42,21 +61,5 @@ class ListFacturaProveedor extends ExtendedController\ListController
         $pagedata['menu'] = 'purchases';
 
         return $pagedata;
-    }
-
-    /**
-     * Procedimiento para insertar vistas en el controlador
-     */
-    protected function createViews()
-    {
-        $this->addView('FacturaScripts\Core\Model\FacturaProveedor', 'ListFacturaProveedor');
-        $this->addSearchFields('ListFacturaProveedor', ['codigo', 'numproveedor', 'observaciones']);
-
-        $this->addFilterSelect('ListFacturaProveedor', 'codserie', 'series', '', 'codserie');
-        $this->addFilterSelect('ListFacturaProveedor', 'codpago', 'formaspago', '', 'codpago');
-
-        $this->addOrderBy('ListFacturaProveedor', 'codigo', 'code');
-        $this->addOrderBy('ListFacturaProveedor', 'fecha', 'date');
-        $this->addOrderBy('ListFacturaProveedor', 'total', 'amount');
     }
 }

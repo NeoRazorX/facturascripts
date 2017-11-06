@@ -30,6 +30,26 @@ class ListAlbaranProveedor extends ExtendedController\ListController
 {
 
     /**
+     * Procedimiento para insertar vistas en el controlador
+     */
+    protected function createViews()
+    {
+        $this->addView('FacturaScripts\Core\Model\AlbaranProveedor', 'ListAlbaranProveedor');
+        $this->addSearchFields('ListAlbaranProveedor', ['codigo', 'numproveedor', 'observaciones']);
+        
+        $this->addFilterDatePicker('ListAlbaranProveedor', 'date', 'date', 'fecha');
+        $this->addFilterNumber('ListAlbaranProveedor', 'total', 'total');
+        $this->addFilterSelect('ListAlbaranProveedor', 'codalmacen', 'almacenes', '', 'nombre');
+        $this->addFilterSelect('ListAlbaranProveedor', 'codserie', 'series', '', 'descripcion');
+        $this->addFilterSelect('ListAlbaranProveedor', 'codpago', 'formaspago', '', 'descripcion');
+        $this->addFilterCheckbox('ListAlbaranProveedor', 'invoice', 'invoice', 'ptefactura', true);
+
+        $this->addOrderBy('ListAlbaranProveedor', 'codigo', 'code');
+        $this->addOrderBy('ListAlbaranProveedor', 'fecha', 'date');
+        $this->addOrderBy('ListAlbaranProveedor', 'total', 'amount');
+    }
+
+    /**
      * Devuelve los datos básicos de la página
      *
      * @return array
@@ -42,27 +62,5 @@ class ListAlbaranProveedor extends ExtendedController\ListController
         $pagedata['menu'] = 'purchases';
 
         return $pagedata;
-    }
-
-    /**
-     * Procedimiento para insertar vistas en el controlador
-     */
-    protected function createViews()
-    {
-        $this->addView('FacturaScripts\Core\Model\AlbaranProveedor', 'ListAlbaranProveedor');
-        $this->addSearchFields('ListAlbaranProveedor', ['codigo', 'numproveedor', 'observaciones']);
-
-        $this->addFilterSelect('ListAlbaranProveedor', 'codalmacen', 'almacenes', '', 'nombre');
-        $this->addFilterSelect('ListAlbaranProveedor', 'codserie', 'series', '', 'descripcion');
-        $this->addFilterSelect('ListAlbaranProveedor', 'codpago', 'formaspago', '', 'descripcion');
-
-        $this->addFilterDatePicker('ListAlbaranProveedor', 'date1', 'date', 'fecha', '>=');
-        $this->addFilterDatePicker('ListAlbaranProveedor', 'date2', 'date', 'fecha', '<=');
-
-        $this->addFilterCheckbox('ListAlbaranProveedor', 'invoice', 'invoice', 'ptefactura', true);
-
-        $this->addOrderBy('ListAlbaranProveedor', 'codigo', 'code');
-        $this->addOrderBy('ListAlbaranProveedor', 'fecha', 'date');
-        $this->addOrderBy('ListAlbaranProveedor', 'total', 'amount');
     }
 }
