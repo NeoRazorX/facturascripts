@@ -13,7 +13,7 @@
     {% if not loop.last %}<br />{% endif %}
     {% endfor %}
 </div>
-{% endif %}        
+{% endif %}
 {% endmacro %}
 
 <!--
@@ -33,27 +33,25 @@
 <div class="btn-group">
     {% if type == 'list' %}
     <a href="#" onclick="doAction('export&option={{ fsc.exportManager.defaultOption() }}')" id="b_print" class="btn btn-sm btn-secondary" {{ popoverTitle(print_title, 'bottom') }}>
-       {% else %}
-       <a href="{{ fsc.getURL('edit') }}&action=export&option={{ fsc.exportManager.defaultOption() }}" id="b_print" class="btn btn-sm btn-secondary" {{ popoverTitle(print_title, 'bottom') }}>
-       {% endif %}
-       <i class="fa fa-print" aria-hidden="true"></i>
-            <span class="d-none d-sm-inline-block">&nbsp;{{ print }}</span>
-        </a>
-        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="sr-only">{{ i18n.trans('print-export-options') }}</span>
-        </button>    
-        <div class="dropdown-menu">
-            {% for key, option in fsc.exportManager.options() %}
+    {% else %}
+    <a href="{{ fsc.getURL('edit') }}&action=export&option={{ fsc.exportManager.defaultOption() }}" id="b_print" class="btn btn-sm btn-secondary" {{ popoverTitle(print_title, 'bottom') }}>
+    {% endif %}
+    <i class="fa fa-print" aria-hidden="true"></i>
+        <span class="d-none d-sm-inline-block">&nbsp;{{ print }}</span>
+    </a>
+    <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="sr-only">{{ i18n.trans('print-export-options') }}</span>
+    </button>
+    <div class="dropdown-menu">
+        {% for key, option in fsc.exportManager.options() %}
             {% if type == 'list' %}
             <a href="#" onclick="doAction('export&option={{ key }}')" class="dropdown-item">
-                {% else %}
-                <a href="{{ fsc.getURL('edit') }}&action=export&option={{ key }}" class="dropdown-item">
-                    {% endif %}            
-                    <i class="fa {{ option.icon }}" aria-hidden="true"></i>
-                    {#<span class="d-none d-sm-inline-block">&nbsp;{{ i18n.trans(option.description) }}</span>#}
-                    {{ i18n.trans(option.description) }}
-                </a>
-                {% endfor %}
-        </div>
+            {% else %}
+            <a href="{{ fsc.getURL('edit') }}&action=export&option={{ key }}" class="dropdown-item">
+            {% endif %}
+            <i class="fa {{ option.icon }} fa-fw" aria-hidden="true"></i> {{ i18n.trans(option.description) }}
+            </a>
+        {% endfor %}
+    </div>
 </div>
 {% endmacro %}

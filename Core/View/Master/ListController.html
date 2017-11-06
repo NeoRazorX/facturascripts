@@ -128,11 +128,11 @@
             <div class="btn-group">
                 <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord()" {{ popoverTitle(new_record_title, 'bottom') }}>
                    <i class="fa fa-plus" aria-hidden="true"></i>
-                    <span class="d-none d-sm-inline-block">&nbsp;{{ new_record }}</span>
+                   <span class="d-none d-sm-inline-block">&nbsp;{{ new_record }}</span>
                 </a>
-                <a href="#" id="b_options" class="btn btn-sm btn-secondary" {{ popoverTitle(options_title, 'bottom') }}>
+                <a href="index.php?page=EditPageOption" id="b_options" class="btn btn-sm btn-secondary" {{ popoverTitle(options_title, 'bottom') }}>
                    <i class="fa fa-wrench" aria-hidden="true"></i>
-                    <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
+                   <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
                 </a>
                 <!-- Añadimos opciones de impresión y exportación -->
                 {{ exportData(fsc, i18n) }}
