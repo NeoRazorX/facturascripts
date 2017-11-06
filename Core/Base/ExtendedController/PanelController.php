@@ -104,8 +104,12 @@ abstract class PanelController extends Base\Controller
             case 'bottom':
                 $this->setTemplate('Master/PanelControllerBottom');
                 break;
+            
+            case 'top':
+                $this->setTemplate('Master/PanelControllerTop');
+                break;
 
-            default :
+            default:
                 $this->tabsPosition = 'left';
                 $this->setTemplate('Master/PanelController');
                 break;
