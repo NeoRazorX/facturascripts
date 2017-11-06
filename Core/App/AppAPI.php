@@ -186,7 +186,7 @@ class AppAPI extends App
     private function getResourcesMap()
     {
         $resources = [];
-        foreach (scandir($this->folder . '/Dinamic/Model', SCANDIR_SORT_ASCENDING) as $fName) {
+        foreach (scandir(FS_FOLDER . '/Dinamic/Model', SCANDIR_SORT_ASCENDING) as $fName) {
             if (substr($fName, -4) == '.php') {
                 $modelName = substr($fName, 0, -4);
 

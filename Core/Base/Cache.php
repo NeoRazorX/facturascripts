@@ -16,9 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\Base\Cache\APCAdapter;
+use FacturaScripts\Core\Base\Cache\FileCache;
 use FacturaScripts\Core\Base\Cache\MemcacheAdapter;
 
 /**
@@ -28,22 +29,32 @@ use FacturaScripts\Core\Base\Cache\MemcacheAdapter;
  */
 class Cache
 {
+
     /**
      * El motor utilizado para la cache.
      *
-     * @var MemcacheAdapter
+     * @var FileCache
      */
     private static $engine;
 
     /**
      * Constructor por defecto.
-     *
-     * @param string $folder carpeta de trabajo
      */
-    public function __construct($folder = '')
+    public function __construct()
     {
         if (self::$engine === null) {
-            self::$engine = new MemcacheAdapter($folder);
+            if (extension_loaded('apc') && ini_get('apc.enabled')) {
+                self::$engine = new APCAdapter();
+            } else if (\class_exists('Memcache') && FS_CACHE_HOST !== '') {
+                self::$engine = new MemcacheAdapter();
+                if (!self::$engine->isConnected()) {
+                    self::$engine = null;
+                }
+            }
+
+            if (self::$engine === null) {
+                self::$engine = new FileCache();
+            }
         }
     }
 

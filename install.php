@@ -34,6 +34,7 @@ if (!file_exists(__DIR__ . '/vendor')) {
 }
 
 require_once __DIR__ . '/vendor/autoload.php';
+define('FS_FOLDER', __DIR__);
 
 use FacturaScripts\Core\Base\Translator;
 use Symfony\Component\HttpFoundation\Response;
@@ -333,11 +334,11 @@ function randomString($length = 20)
 function installerMain()
 {
     if (filter_input(INPUT_POST, 'fs_lang')) {
-        $i18n = new Translator(__DIR__, filter_input(INPUT_POST, 'fs_lang'));
+        $i18n = new Translator(filter_input(INPUT_POST, 'fs_lang'));
     } elseif (filter_input(INPUT_GET, 'fs_lang')) {
-        $i18n = new Translator(__DIR__, filter_input(INPUT_GET, 'fs_lang'));
+        $i18n = new Translator(filter_input(INPUT_GET, 'fs_lang'));
     } else {
-        $i18n = new Translator(__DIR__, getUserLanguage());
+        $i18n = new Translator(getUserLanguage());
     }
 
     $errors = [];
