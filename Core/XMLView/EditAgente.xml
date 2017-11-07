@@ -62,4 +62,12 @@
             </column>
         </group>
     </columns>
+    
+    <rows>        
+        <row type="footer">
+            <option label="Panel Footer" footer="Panel footer" color="warning">Este es un ejemplo con cabecera y footer</option>
+            <option>Este es un ejemplo con cabecera y sin footer</option>
+            <option footer="Texto en el footer" color="success">Este es un ejemplo sin cabecera</option>
+        </row>    
+    </rows>
 </view>

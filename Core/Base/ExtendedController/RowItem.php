@@ -57,6 +57,25 @@ class RowItem implements VisualItemInterface
         $this->options = [];
     }
 
+    private function getAttributesFromXML($item)
+    {
+        $result = [];
+        foreach ($item->attributes() as $key => $value) {
+            $result[$key] = (string) $value;
+        }
+        $result['value'] = trim((string) $item);
+        return $result;
+    }
+    
+    private function getActionsFromXML($actions)
+    {
+        $result = [];
+        foreach ($actions as $action) {
+            $result[] = $this->getAttributesFromXML($action);
+        }
+        return $result;
+    }
+    
     /**
      * Carga la estructura de atributos en base a un archivo XML
      *
@@ -69,11 +88,8 @@ class RowItem implements VisualItemInterface
         $this->fieldName = (string) $row_atributes->fieldname;
 
         foreach ($row->option as $option) {
-            $values = [];
-            foreach ($option->attributes() as $key => $value) {
-                $values[$key] = (string) $value;
-            }
-            $values['value'] = (string) $option;
+            $values = $this->getAttributesFromXML($option);
+            $values['actions'] = isset($option->action) ? $this->getActionsFromXML($option->action) : [];            
             $this->options[] = $values;
             unset($values);
         }
@@ -118,7 +134,7 @@ class RowItem implements VisualItemInterface
 
         return 'table-light';
     }
-
+    
     /**
      * Genera el código html para visualizar la cabecera del elemento visual
      *
