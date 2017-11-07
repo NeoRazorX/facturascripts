@@ -91,11 +91,9 @@ class RolUser
         ];
 
         $rolUser = new RolUser();
-        if ($rolUser->loadFromCode(NULL, $where)) {
-            if ($rolUser->id !== $this->id) {
-                $this->miniLog->alert($this->i18n->trans('rol-user-exists'));
-                return false;
-            }
+        if ($rolUser->loadFromCode(NULL, $where) && $rolUser->id !== $this->id) {
+            $this->miniLog->alert($this->i18n->trans('rol-user-exists'));
+            return false;
         }
 
         return TRUE;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : empresa.xml
+    Document   : empresas.xml
     Author     : Carlos Garcia Gomez
     Description:
         Estructura de la tabla empresas.
@@ -100,7 +100,7 @@
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('empresa_id_seq'::regclass)</default>
+        <default>nextval('empresas_id_seq'::regclass)</default>
     </column>
     <column>
         <name>idprovincia</name>
@@ -173,7 +173,7 @@
         <null>YES</null>
     </column>
     <constraint>
-        <name>empresa_pkey</name>
+        <name>empresas_pkey</name>
         <type>PRIMARY KEY (id)</type>
     </constraint>
 </table>

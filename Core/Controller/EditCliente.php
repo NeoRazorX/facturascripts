@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Model;
 
 /**
@@ -30,25 +29,6 @@ use FacturaScripts\Core\Model;
  */
 class EditCliente extends ExtendedController\PanelController
 {
-
-    /**
-     * Clase para formatear monedas
-     *
-     * @var DivisaTools
-     */
-    private static $divisaTools;
-
-    /**
-     * Constructor de la clase
-     */
-    public function __construct($cache, $i18n, $miniLog, $className)
-    {
-        parent::__construct($cache, $i18n, $miniLog, $className);
-
-        if (!isset(self::$divisaTools)) {
-            self::$divisaTools = new DivisaTools();
-        }
-    }
 
     /**
      * Procedimiento para insertar vistas en el controlador
@@ -125,7 +105,7 @@ class EditCliente extends ExtendedController\PanelController
         $where[] = new DataBase\DataBaseWhere('ptefactura', TRUE);
 
         $totalModel = Model\TotalModel::all('albaranescli', $where, ['total' => 'SUM(total)'], '')[0];
-        return self::$divisaTools->format($totalModel->totals['total'], 2);
+        return $this->divisaTools->format($totalModel->totals['total'], 2);
     }
 
     public function calcClientInvoicePending($view)
@@ -135,6 +115,6 @@ class EditCliente extends ExtendedController\PanelController
         $where[] = new DataBase\DataBaseWhere('estado', 'Pagado', '<>');
 
         $totalModel = Model\TotalModel::all('reciboscli', $where, ['total' => 'SUM(importe)'], '')[0];
-        return self::$divisaTools->format($totalModel->totals['total'], 2);
+        return $this->divisaTools->format($totalModel->totals['total'], 2);
     }
 }

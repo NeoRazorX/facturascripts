@@ -6,63 +6,63 @@
 <script type="text/javascript">
     var tabActive = '{{ fsc.active }}';
     function insertRecord() {
-    var url = { {{ fsc.getStringURLs('new') | raw }} };
-    document.insert_form.action = url[tabActive];
-    document.insert_form.submit();
+        var url = { {{ fsc.getStringURLs('new') | raw }} };
+        document.insert_form.action = url[tabActive];
+        document.insert_form.submit();
     }
     function doAction(action) {
-    var url = '{{ fsc.url() }}';
-    window.location.href = url + '&active=' + tabActive + '&action=' + action;
+        var url = '{{ fsc.url() }}';
+        window.location.href = url + '&active=' + tabActive + '&action=' + action;
     }
     function deleteFromList() {
-    var deleteCodes = [];
-    $('.listDelete').each(function() {
-    if ($(this).prop('checked')) {
-    deleteCodes.push($(this).val());
-    }
-    });
-    if (deleteCodes.length) {
-    bootbox.confirm({
-    title: "{{ i18n.trans('warning')|raw }}",
-            message: "{{ i18n.trans('are-you-sure') }}",
-            closeButton: false,
-            buttons: {
-            cancel: {
-            label: '<i class="fa fa-times"></i> {{ i18n.trans("cancel") }}'
-            },
+        var deleteCodes = [];
+        $('.listDelete').each(function() {
+            if ($(this).prop('checked')) {
+                deleteCodes.push($(this).val());
+            }
+        });
+        if (deleteCodes.length) {
+            bootbox.confirm({
+            title: "{{ i18n.trans('warning')|raw }}",
+                message: "{{ i18n.trans('are-you-sure') }}",
+                closeButton: false,
+                buttons: {
+                cancel: {
+                label: '<i class="fa fa-times"></i> {{ i18n.trans("cancel") }}'
+                },
                     confirm: {
                     label: '<i class="fa fa-check"></i> {{ i18n.trans("confirm") }}'
                     }
-            },
-            callback: function (result) {
-            if (result) {
-            document.f_list_delete.active.value = tabActive;
-            document.f_list_delete.code.value = deleteCodes.join();
-            document.f_list_delete.submit();
-            }
-            }
-    });
-    }
-
-    return false;
+                },
+                callback: function (result) {
+                if (result) {
+                    document.f_list_delete.active.value = tabActive;
+                    document.f_list_delete.code.value = deleteCodes.join();
+                    document.f_list_delete.submit();
+                    }
+                }
+            });
+        }
+        
+        return false;
     }
     function setOperator(buttonID, operator) {
-    document.getElementById(buttonID + '-operator').value = operator;
-    document.getElementById(buttonID + '-btn').value = operator;
-    $('#formSearch' + tabActive).submit();
+        document.getElementById(buttonID + '-operator').value = operator;
+        document.getElementById(buttonID + '-btn').value = operator;
+        $('#formSearch' + tabActive).submit();
     }
     $(document).ready(function () {
-    // Situa el foco cuando se cambia de tab
-    $('#mainTabs').on('shown.bs.tab', function (e) {
-    tabActive = 'List' + e.target.hash.substring(1);
-    var formName = '#formSearch' + tabActive + ' :text:first';
-    $(formName).focus().select();
-    });
-    // marca/desmarca todos los checkbox de eliminar del listado
-    $('#listDeleteCB').click(function() {
-    var checked = $(this).prop('checked');
-    $('.listDelete').prop('checked', checked);
-    });
+        // Situa el foco cuando se cambia de tab
+        $('#mainTabs').on('shown.bs.tab', function (e) {
+            tabActive = 'List' + e.target.hash.substring(1);
+            var formName = '#formSearch' + tabActive + ' :text:first';
+            $(formName).focus().select();
+        });
+        // marca/desmarca todos los checkbox de eliminar del listado
+        $('#listDeleteCB').click(function() {
+            var checked = $(this).prop('checked');
+            $('.listDelete').prop('checked', checked);
+        });
     });</script>
 {% endblock %}
 
@@ -128,11 +128,11 @@
             <div class="btn-group">
                 <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord()" {{ popoverTitle(new_record_title, 'bottom') }}>
                    <i class="fa fa-plus" aria-hidden="true"></i>
-                    <span class="d-none d-sm-inline-block">&nbsp;{{ new_record }}</span>
+                   <span class="d-none d-sm-inline-block">&nbsp;{{ new_record }}</span>
                 </a>
-                <a href="#" id="b_options" class="btn btn-sm btn-secondary" {{ popoverTitle(options_title, 'bottom') }}>
+                <a href="index.php?page=EditPageOption" id="b_options" class="btn btn-sm btn-secondary" {{ popoverTitle(options_title, 'bottom') }}>
                    <i class="fa fa-wrench" aria-hidden="true"></i>
-                    <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
+                   <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
                 </a>
                 <!-- Añadimos opciones de impresión y exportación -->
                 {{ exportData(fsc, i18n) }}
@@ -189,19 +189,11 @@
                         <!-- Aditionals filters -->
                         {% set columnsUsed = 2 %}
                         {% for key1, filter in view.getFilters() %}
-                        <!-- check if column is OrderBy column -->
-                        {% if columnsUsed == 10 %}
-                        {{ buttonOrderBy(_context, view) }}  
-                        {% set columnsUsed = columnsUsed + 2 %}
-                        {% endif %}
-
                         <!-- check if there is space available for columns -->
                         {% if (columnsUsed % 12) == 0 %}
-                        <!-- Order by selector -->
                     </div>
-                    <div class="row align-items-center" style="margin-top:5px; margin-bottom: 10px;">  
-                        <div class="col-md-2"></div>
-                        {% set columnsUsed = columnsUsed + 2 %}
+                    <div class="row align-items-center" style="margin-top:5px; margin-bottom: 10px;">
+                        {% set columnsUsed = 0 %}
                         {% endif %}
 
                         <!-- Add new column filter -->
@@ -210,7 +202,8 @@
                         {% elseif filter.type == 'checkbox' %}
                         {{ filterForCheckBoxInput(_context, key1, filter) }}
                         {% else %}
-                        {{ filterForTextInput(_context, key1, filter) }}                                                         
+                        {{ filterForTextInput(_context, key1, filter) }}
+                        {% set columnsUsed = columnsUsed + 2 %}
                         {% endif %}
 
                         <!-- subtract the available space -->
@@ -218,9 +211,7 @@
                         {% endfor %}
 
                         <!-- Order by selector -->
-                        {% if columnsUsed <= 10 %}
-                        {{ buttonOrderBy(_context, view) }}                        
-                        {% endif %}
+                        {{ buttonOrderBy(_context, view) }}
                     </div>
                 </div>
             </form>

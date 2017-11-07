@@ -29,7 +29,8 @@
             </column>
             <column name="tipo" title="type" numcolumns="12" order="110">
                 <widget type="select" fieldname="tipo">
-                    <values title="Producto simple"></values>
+                    <values title="Producto simple">simple</values>
+                    <values title="Producto con atributos">atributos</values>
                 </widget>
             </column>
         </group>

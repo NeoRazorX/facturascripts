@@ -70,7 +70,6 @@
 {% from 'Macro/BaseController.html' import columnsForEditListView as columnsForEditListView %}
 {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
 {% from 'Macro/BaseController.html' import rowHeaderForEditView as rowHeaderForEditView %}
-{% from 'Macro/BaseController.html' import rowFooterForEditView as rowFooterForEditView %}
 
 {# -- Main Body -- #}
 <div class="container-fluid">
@@ -106,22 +105,17 @@
 
     {# -- Data Row -- #}
     <div id="data" class="row">
-        {# -- Left Panel -- #}
-        <div class="col-sm-2">
-            <div class="nav flex-column nav-pills" id="optionsindex" role="tablist">
-                {% for indexView, view in fsc.views %}
-                {% set active = (indexView == fsc.active) ? ' active' : '' %}
-                <a class="nav-link{{ active }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
-                    <i class="fa {{ fsc.icons[indexView] }}" aria-hidden="true"></i>
-                    &nbsp;{{ view.title }}
-                </a>
-                {% endfor %}
-            </div>
-        </div>
-
-        {# -- Right Panel -- #}
-        <div class="col-sm-10">
+        <div class="col-sm-12">
             <div class="card">
+                <div class="nav nav-tabs" id="optionsindex" role="tablist">
+                    {% for indexView, view in fsc.views %}
+                    {% set active = (indexView == fsc.active) ? ' active' : '' %}
+                    <a class="nav-link{{ active }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
+                        <i class="fa {{ fsc.icons[indexView] }}" aria-hidden="true"></i>
+                        &nbsp;{{ view.title }}
+                    </a>
+                    {% endfor %}
+                </div>
                 <div class="card-body">
                     <div class="tab-content" id="optionsindex-tabContent">
                         {% for indexView, view in fsc.views %}
@@ -138,13 +132,10 @@
                             <!-- Main Form -->
                             {% set model = view.getModel() %}
                             {{ columnsForEditView(_context, view, model, TRUE) }}
-                            <!-- Info footer bar -->
-                            {{ rowFooterForEditView(_context, view) }}
                             {% endif %}
 
                             {% if viewType == 'EditListView' %}
                             {{ columnsForEditListView(_context, view) }}
-                            {{ rowFooterForEditView(_context, view) }}
                             {% endif %}
 
                             {% if viewType == 'HtmlView' %}
@@ -160,4 +151,5 @@
         </div>
     </div>
 </div>
+<br/>
 {% endblock %}

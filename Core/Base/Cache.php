@@ -33,7 +33,7 @@ class Cache
     /**
      * El motor utilizado para la cache.
      *
-     * @var FileCache
+     * @var FileCache|APCAdapter|MemcacheAdapter
      */
     private static $engine;
 
