@@ -83,23 +83,23 @@
         </group>
 <!--        
                 
-        'ppdf_numero2' => '1', 
-        'ppdf_multidivisa' => '0', 
-        'ppdf_referencias' => '1', 
-        'ppdf_descuentos' => '1', 
-        'ppdf_numlinea' => '0', 
-        'ppdf_lf_alb' => '0', 
-        'ppdf_lf_ped' => '0', 
-        'ppdf_pie_f_y' => 270, 
-        'ppdf_lalb_ped' => '0',
-        'ppdf_pie_alb' => '', 
-        'ppdf_pie_alb_y' => 270, 
-        'ppdf_lped_pre' => '0', 
-        'ppdf_pie_ped' => '', 
-        'ppdf_pie_ped_y' => 270,
-        'ppdf_lpre_wooc' => '0', 
-        'ppdf_pie_pre' => '', 
-        'ppdf_pie_pre_y' => 270  
--->              
+                'ppdf_numero2' => '1', 
+                'ppdf_multidivisa' => '0', 
+                'ppdf_referencias' => '1', 
+                'ppdf_descuentos' => '1', 
+                'ppdf_numlinea' => '0', 
+                'ppdf_lf_alb' => '0', 
+                'ppdf_lf_ped' => '0', 
+                'ppdf_pie_f_y' => 270, 
+                'ppdf_lalb_ped' => '0',
+                'ppdf_pie_alb' => '', 
+                'ppdf_pie_alb_y' => 270, 
+                'ppdf_lped_pre' => '0', 
+                'ppdf_pie_ped' => '', 
+                'ppdf_pie_ped_y' => 270,
+                'ppdf_lpre_wooc' => '0', 
+                'ppdf_pie_pre' => '', 
+                'ppdf_pie_pre_y' => 270  
+        -->              
     </columns>
 </view>

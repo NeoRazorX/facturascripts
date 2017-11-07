@@ -16,35 +16,43 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
 
-/**
- * Controlador para la edición de un registro del modelo Balance
- *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Fco. Antonio Moreno Pérez
- */
-class EditBalance extends ExtendedController\EditController
-{
-    /**
-     * EditBalance constructor.
-     *
-     * @param Base\Cache $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
-     * @param string $className
-     */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
-    {
-        parent::__construct($cache, $i18n, $miniLog, $className);
+;
 
-        // Establecemos el modelo de datos
-        $this->modelName = 'FacturaScripts\Core\Model\Balance';
+/**
+ * Description of EditBalance
+ *
+ * @author PC REDNET S.L. <luismi@pcrednet.com>
+ */
+class EditBalance extends ExtendedController\PanelController
+{
+
+    /**
+     * Procedimiento para insertar vistas en el controlador
+     */
+    protected function createViews()
+    {
+        $this->addEditView('FacturaScripts\Core\Model\Balance', 'EditBalance', 'Balance');
+    }
+
+    /**
+     * Procedimiento encargado de cargar los datos a visualizar
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        switch ($keyView) {
+            case 'EditBalance':
+                $value = $this->request->get('code');
+                $view->loadData($value);
+                break;
+        }
     }
 
     /**

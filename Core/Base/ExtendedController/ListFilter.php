@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -27,7 +28,6 @@ use FacturaScripts\Core\Base\DataBase;
  */
 class ListFilter
 {
-
     /**
      * Indica el tipo de filtro
      *
@@ -155,7 +155,7 @@ class ListFilter
      * @param string $key
      * @return string
      */
-    public function getParams($key)        
+    public function getParams($key)
     {
         $result = '';
         switch ($this->type) {
@@ -165,7 +165,7 @@ class ListFilter
                     $result .= '&' . $key . '=' . $this->options['value'];
                 }
                 break;
-                
+
             default:
                 if ($this->options['valueFrom'] !== '') {
                     $result .= '&' . $key . '-from=' . $this->options['valueFrom'];
@@ -175,11 +175,11 @@ class ListFilter
                 if ($this->options['valueTo'] !== '') {
                     $result .= '&' . $key . '-to=' . $this->options['valueTo'];
                     $result .= '&' . $key . '-to-operator=' . $this->options['operatorTo'];
-                }        
+                }
         }
         return $result;
     }
-    
+
     /**
      * Crea y devuelve un filtro de tipo select
      *

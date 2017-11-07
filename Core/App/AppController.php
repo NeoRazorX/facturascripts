@@ -183,15 +183,15 @@ class AppController extends App
     private function renderHtml($template, $controllerName = '')
     {
         /// cargamos el motor de plantillas
-        $twigLoader = new Twig_Loader_Filesystem($this->folder . '/Core/View');
+        $twigLoader = new Twig_Loader_Filesystem(FS_FOLDER . '/Core/View');
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
-            if (file_exists($this->folder . '/Plugins/' . $pluginName . '/View')) {
-                $twigLoader->prependPath($this->folder . '/Plugins/' . $pluginName . '/View');
+            if (file_exists(FS_FOLDER . '/Plugins/' . $pluginName . '/View')) {
+                $twigLoader->prependPath(FS_FOLDER . '/Plugins/' . $pluginName . '/View');
             }
         }
 
         /// opciones de twig
-        $twigOptions = ['cache' => $this->folder . '/Cache/Twig'];
+        $twigOptions = ['cache' => FS_FOLDER . '/Cache/Twig'];
 
         /// variables para la plantilla HTML
         $templateVars = [
@@ -309,7 +309,7 @@ class AppController extends App
      */
     private function deployPlugins()
     {
-        $pluginManager = new PluginManager($this->folder);
+        $pluginManager = new PluginManager();
         $pluginManager->deploy();
     }
 }

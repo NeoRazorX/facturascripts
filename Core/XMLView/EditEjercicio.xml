@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ File EditEjercicio.xml | EditEjercicio.xml
-  ~
-  ~ @package     facturascripts
-  ~ @subpackage  facturascripts
-  ~ @autor       Francesc Pineda Segarra francesc.pineda.segarra@gmail.com
-  ~ @copyright   Copyright (c) 2017
-  -->
+~ File EditEjercicio.xml | EditEjercicio.xml
+~
+~ @package     facturascripts
+~ @subpackage  facturascripts
+~ @autor       Francesc Pineda Segarra francesc.pineda.segarra@gmail.com
+~ @copyright   Copyright (c) 2017
+-->
 
 <view>
     <columns>

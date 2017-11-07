@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -29,7 +30,6 @@ use FacturaScripts\Core\Base\DataBase;
  */
 abstract class ListController extends Base\Controller
 {
-
     /**
      * Indica cual es la vista activa
      *
@@ -224,10 +224,10 @@ abstract class ListController extends Base\Controller
                     break;
                 }
             }
-        }        
+        }
         return $result;
     }
-    
+
     /**
      * Devuelve una respuesta JSON
      *
@@ -236,7 +236,7 @@ abstract class ListController extends Base\Controller
     protected function jsonAction($view)
     {
         $this->setTemplate(false);
-        $cols = $this->getTextColumns(4);
+        $cols = $this->getTextColumns($view, 4);
         $json = [];
         foreach ($view->getCursor() as $item) {
             $jItem = ['url' => $item->url()];
@@ -362,7 +362,7 @@ abstract class ListController extends Base\Controller
             'valueTo' => $this->request->get($key . '-to'),
             'operatorTo' => $this->request->get($key . '-to-operator', '<=')
         ];
-        
+
         $this->views[$indexView]->addFilter($key, ListFilter::newStandardFilter($type, $config));
     }
 

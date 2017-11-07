@@ -5,23 +5,23 @@
     Description:
         Estructura de la tabla familias.
 -->
-<tabla>
-    <columna>
-        <nombre>descripcion</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codfamilia</nombre>
-        <tipo>character varying(8)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>madre</nombre>
-        <tipo>character varying(8)</tipo>
-    </columna>
-    <restriccion>
-        <nombre>familias_pkey</nombre>
-        <consulta>PRIMARY KEY (codfamilia)</consulta>
-    </restriccion>
-</tabla>
+<table>
+    <column>
+        <name>descripcion</name>
+        <type>character varying(100)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codfamilia</name>
+        <type>character varying(8)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>madre</name>
+        <type>character varying(8)</type>
+    </column>
+    <constraint>
+        <name>familias_pkey</name>
+        <type>PRIMARY KEY (codfamilia)</type>
+    </constraint>
+</table>

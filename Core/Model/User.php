@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,8 +25,10 @@ namespace FacturaScripts\Core\Model;
  */
 class User
 {
+
     use Base\ModelTrait {
         get as private getTrait;
+        clear as clearTrait;
     }
 
     /**
@@ -36,6 +37,11 @@ class User
      * @var string
      */
     public $nick;
+
+    /**
+     * Identificador de empresa seleccionada
+     */
+    public $idempresa;
 
     /**
      * Email del usuario.
@@ -91,7 +97,7 @@ class User
      *
      * @var string
      */
-    private $password;
+    public $password;
 
     /**
      * Clave de sesión. El cliente se la guarda en una cookie,
@@ -108,7 +114,7 @@ class User
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'fs_users';
     }
@@ -128,16 +134,8 @@ class User
      */
     public function clear()
     {
-        $this->nick = null;
-        $this->password = null;
-        $this->email = null;
-        $this->logkey = null;
-        $this->admin = false;
-        $this->enabled = true;
+        $this->clearTrait();
         $this->langcode = FS_LANG;
-        $this->homepage = null;
-        $this->lastactivity = null;
-        $this->lastip = null;
     }
 
     /**
@@ -243,7 +241,7 @@ class User
 
         $this->miniLog->info($this->i18n->trans('created-default-admin-account'));
 
-        return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled) VALUES ('admin','"
-            . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE);";
+        return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled,idempresa) VALUES ('admin','"
+            . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE,NULL);";
     }
 }

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -45,18 +44,24 @@ abstract class PanelController extends Base\Controller
     public $exportManager;
 
     /**
-     * Lista de vistas mostradas por el controlador
-     *
-     * @var BaseView[]
-     */
-    public $views;
-
-    /**
      * Lista de iconos para cada una de las vistas
      *
      * @var array
      */
     public $icons;
+
+    /**
+     * Tabs position in page: left, bottom.
+     * @var string 
+     */
+    public $tabsPosition;
+
+    /**
+     * Lista de vistas mostradas por el controlador
+     *
+     * @var BaseView[]
+     */
+    public $views;
 
     /**
      * Procedimiento encargado de insertar las vistas a visualizar
@@ -86,8 +91,29 @@ abstract class PanelController extends Base\Controller
         $this->setTemplate('Master/PanelController');
         $this->active = $this->request->get('active', '');
         $this->exportManager = new Base\ExportManager();
-        $this->views = [];
         $this->icons = [];
+        $this->tabsPosition = 'left';
+        $this->views = [];
+    }
+
+    public function setTabsPosition($position)
+    {
+        $this->tabsPosition = $position;
+
+        switch ($position) {
+            case 'bottom':
+                $this->setTemplate('Master/PanelControllerBottom');
+                break;
+            
+            case 'top':
+                $this->setTemplate('Master/PanelControllerTop');
+                break;
+
+            default:
+                $this->tabsPosition = 'left';
+                $this->setTemplate('Master/PanelController');
+                break;
+        }
     }
 
     /**
@@ -157,7 +183,7 @@ abstract class PanelController extends Base\Controller
                 $view->loadFromData($data);
                 $this->editAction($view);
                 break;
-            
+
             case 'delete':
                 $this->deleteAction($view);
                 break;
@@ -207,7 +233,7 @@ abstract class PanelController extends Base\Controller
      */
     protected function insertAction($view)
     {
-        $view->setNewCode();
+        
     }
 
     /**
@@ -225,7 +251,7 @@ abstract class PanelController extends Base\Controller
         }
         return false;
     }
-    
+
     /**
      * Añade una vista al controlador y carga sus datos.
      *

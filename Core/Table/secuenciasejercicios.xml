@@ -5,66 +5,66 @@
     Description:
         Estructura de la tabla secuenciasejercicios.
 -->
-<tabla>
-    <columna>
-        <nombre>codejercicio</nombre>
-        <tipo>character varying(4)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codserie</nombre>
-        <tipo>character varying(4)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>id</nombre>
-        <tipo>serial</tipo>
-        <nulo>NO</nulo>
-        <defecto>nextval('secuenciasejercicios_id_seq'::regclass)</defecto>
-    </columna>
-    <columna>
-        <nombre>nalbarancli</nombre>
-        <tipo>integer</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>nalbaranprov</nombre>
-        <tipo>integer</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>nfacturacli</nombre>
-        <tipo>integer</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>nfacturaprov</nombre>
-        <tipo>integer</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>npedidocli</nombre>
-        <tipo>integer</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>npedidoprov</nombre>
-        <tipo>integer</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>npresupuestocli</nombre>
-        <tipo>integer</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <restriccion>
-        <nombre>secuenciasejercicios_pkey</nombre>
-        <consulta>PRIMARY KEY (id)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_secuenciasejercicios_ejercicios</nombre>
-        <consulta>FOREIGN KEY (codejercicio)
+<table>
+    <column>
+        <name>codejercicio</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codserie</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('secuenciasejercicios_id_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>nalbarancli</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>nalbaranprov</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>nfacturacli</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>nfacturaprov</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>npedidocli</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>npedidoprov</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>npresupuestocli</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>secuenciasejercicios_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>ca_secuenciasejercicios_ejercicios</name>
+        <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-</tabla>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>

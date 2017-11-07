@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -28,6 +27,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class Proveedor extends Base\Persona
 {
+
     use Base\ModelTrait {
         __construct as private traitConstruct;
         clear as private traitClear;
@@ -58,7 +58,7 @@ class Proveedor extends Base\Persona
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'proveedores';
     }
@@ -278,33 +278,5 @@ class Proveedor extends Base\Persona
         }
 
         return $prolist;
-    }
-    
-    /**
-     * Devuelve la url donde ver/modificar los datos
-     *
-     * @param mixed $type
-     *
-     * @return string
-     */
-    public function url($type = 'auto')
-    {
-        $result = 'index.php?page=';
-        switch ($type) {
-            case 'edit':
-                $value = $this->primaryColumnValue();
-                $result .= 'PanelProveedor' . '&code=' . $value;
-                break;
-
-            case 'new':
-                $result .= 'PanelProveedor';
-                break;
-
-            default:
-                $result = $this->traitURL($type);
-                break;
-        }
-
-        return $result;
     }
 }

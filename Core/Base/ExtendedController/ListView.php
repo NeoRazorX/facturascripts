@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -29,7 +30,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ListView extends BaseView
 {
-
     /**
      * Constantes para ordenación
      */
@@ -242,7 +242,7 @@ class ListView extends BaseView
         $key1 = strtolower($field) . '_asc';
         $key2 = strtolower($field) . '_desc';
         if (empty($label)) {
-            $label = ucfirst($field);
+            $label = $field;
         }
 
         $this->orderby[$key1] = ['icon' => self::ICON_ASC, 'label' => static::$i18n->trans($label)];
@@ -279,6 +279,20 @@ class ListView extends BaseView
         }
 
         $this->filters[$key] = $filter;
+    }
+
+    /**
+     * Establece el estado de visualización de una columna
+     * 
+     * @param string $columnName
+     * @param boolean $disabled
+     */
+    public function disableColumn($columnName, $disabled)
+    {
+        $column = $this->columnForName($columnName);
+        if (!empty($column)) {
+            $column->display = $disabled ? 'none' : 'left';
+        }
     }
 
     /**

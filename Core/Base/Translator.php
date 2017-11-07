@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 use Symfony\Component\Translation\Loader\JsonFileLoader;
@@ -29,12 +28,6 @@ use Symfony\Component\Translation\Translator as symfonyTranslator;
  */
 class Translator
 {
-    /**
-     * Carpeta de trabajo de FacturaScripts.
-     *
-     * @var string
-     */
-    private static $folder;
 
     /**
      * Idioma por defecto.
@@ -61,21 +54,15 @@ class Translator
      * Constructor del traductor
      * Por defecto se usará y definirá en_EN si no está definido en config.php.
      *
-     * @param string $folder
      * @param string $lang
      */
-    public function __construct($folder = '', $lang = 'en_EN')
+    public function __construct($lang = FS_LANG)
     {
-        if (self::$folder === null) {
-            self::$folder = $folder;
-            if (!\array_key_exists('FS_LANG', \get_defined_constants())) {
-                self::$lang = $lang;
-                define('FS_LANG', self::$lang);
-            } else {
-                self::$lang = FS_LANG;
-            }
-
+        if (self::$translator === null) {
+            self::$lang = $lang;
+            self::$usedStrings = [];
             self::$translator = new symfonyTranslator(self::$lang);
+
             self::$translator->addLoader('json', new JsonFileLoader());
             $this->locateFiles();
         }
@@ -104,12 +91,12 @@ class Translator
      */
     private function locateFiles()
     {
-        $file = self::$folder . '/Core/Translation/' . self::$lang . '.json';
+        $file = FS_FOLDER . '/Core/Translation/' . self::$lang . '.json';
         self::$translator->addResource('json', $file, self::$lang);
 
-        $pluginManager = new PluginManager(self::$folder);
+        $pluginManager = new PluginManager();
         foreach ($pluginManager->enabledPlugins() as $pluginName) {
-            $file = self::$folder . '/Plugins/' . $pluginName . '/Translation/' . self::$lang . '.json';
+            $file = FS_FOLDER . '/Plugins/' . $pluginName . '/Translation/' . self::$lang . '.json';
             if (file_exists($file)) {
                 self::$translator->addResource('json', $file, self::$lang);
             }

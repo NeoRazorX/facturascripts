@@ -1,0 +1,184 @@
+{% extends "Master/MenuTemplate.html" %}
+
+{% block css %}
+{{ parent() }}
+
+<link rel="stylesheet" href="Core/Assets/CSS/extendedcontroller.css" />
+{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+
+<script type="text/javascript">
+    var tabActive = '{{ fsc.active }}';
+    $(document).ready(function () {
+        $('#mainTabs').on('shown.bs.tab', function (e) {
+            tabActive = e.target.hash.substring(1);
+        });
+    });
+
+    function deleteRecord(formName) {
+        bootbox.confirm({
+            title: "{{ i18n.trans('confirm-delete') }}",
+            message: "{{ i18n.trans('are-you-sure') }}",
+            buttons: {
+                cancel: {
+                    label: "<i class='fa fa-times'></i> {{ i18n.trans('cancel') }}"
+                },
+                confirm: {
+                    label: "<i class='fa fa-check'></i> {{ i18n.trans('confirm') }}",
+                    className: 'btn-danger'
+                }
+            },
+            callback: function (result) {
+                if (result) {
+                    var form = document.forms[formName];
+                    form.action.value = 'delete';
+                    form.submit();
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}
+
+{% block messages %}
+<div class="container-fluid">
+    <div id="messages" class="row">
+        <div class="col-12">
+            {{ parent() }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block body %}
+{# -- Calculate texts according to language -- #}
+{% set go_back = i18n.trans('back') %}
+{% set refresh_title = i18n.trans('refresh') %}
+
+{% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
+
+{# -- Calculate common values -- #}
+{% set list_url = fsc.getURL('list') %}
+{% set edit_url = fsc.getURL('edit') %}
+
+{# -- Visual macros -- #}
+{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+{% from 'Macro/Utils.html' import exportData as exportData %}
+{% from 'Macro/BaseController.html' import columnsForListView as columnsForListView %}
+{% from 'Macro/BaseController.html' import columnsForEditListView as columnsForEditListView %}
+{% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
+{% from 'Macro/BaseController.html' import rowHeaderForEditView as rowHeaderForEditView %}
+
+{# -- Main Body -- #}
+<div class="container-fluid">
+    {{ parent() }}
+
+    {# -- Header Row -- #}
+    <div id="header" class="row">
+        <div class="col-3 d-print-none">
+            <div class="btn-group" aria-label="Button group with navigation actions">
+                <a href="{{ list_url }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                    <span class="d-none d-md-inline-block">&nbsp;{{ go_back }} </span>
+                </a>
+                <a href="{{ edit_url }}" class="btn btn-sm btn-outline-secondary" {{ popoverTitle(refresh_title, 'bottom') }}>
+                   <i class="fa fa-refresh" aria-hidden="true"></i>
+                </a>
+            </div>
+
+            {# -- Añadimos opciones de impresión y exportación -- #}
+            {{ exportData(fsc, i18n, 'edit') }}
+        </div>
+
+        <div class="col-6 text-center">
+            <div class="page-header">
+                <h2>
+                    <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    <p>&nbsp;</p>
+
+    {# -- Data Row -- #}
+    <div id="data" class="row">
+        {# -- First View Panel -- #}
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    {% for indexView, view in fsc.views %}
+                        {% if loop.index == 1 %}
+                            {% set viewType = fsc.viewClass(view) %}
+                            {% if viewType == 'ListView' %}
+                            {{ columnsForListView(_context, view) }}
+                            {% endif %}
+
+                            {% if viewType == 'EditView' %}
+                            <!-- Statistical buttons bar -->
+                            {{ rowHeaderForEditView(_context, view) }}
+                            <!-- Main Form -->
+                            {% set model = view.getModel() %}
+                            {{ columnsForEditView(_context, view, model, TRUE) }}
+                            {% endif %}
+
+                            {% if viewType == 'EditListView' %}
+                            {{ columnsForEditListView(_context, view) }}
+                            {% endif %}
+
+                            {% if viewType == 'HtmlView' %}
+                            <div class="row">
+                                {% include view.fileName ignore missing %}
+                            </div>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <br/>
+            <div class="nav nav-tabs" id="optionsindex" role="tablist">
+                {% for indexView, view in fsc.views %}
+                {% set active = (loop.index == 2) ? ' active' : '' %}
+                {% if loop.index > 1 %}
+                <a class="nav-link{{ active }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
+                    <i class="fa {{ fsc.icons[indexView] }}" aria-hidden="true"></i>
+                    &nbsp;{{ view.title }}
+                </a>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div class="tab-content" id="optionsindex-tabContent">
+                {% for indexView, view in fsc.views %}
+                    {% set active = (loop.index == 2) ? ' show active' : '' %}
+                    <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
+                        {% set viewType = fsc.viewClass(view) %}
+                        {% if viewType == 'ListView' %}
+                        {{ columnsForListView(_context, view) }}
+                        {% endif %}
+
+                        {% if viewType == 'EditView' %}
+                        <!-- Statistical buttons bar -->
+                        {{ rowHeaderForEditView(_context, view) }}
+                        <!-- Main Form -->
+                        {% set model = view.getModel() %}
+                        {{ columnsForEditView(_context, view, model, TRUE) }}
+                        {% endif %}
+
+                        {% if viewType == 'EditListView' %}
+                        {{ columnsForEditListView(_context, view) }}
+                        {% endif %}
+
+                        {% if viewType == 'HtmlView' %}
+                        <div class="row">
+                            {% include view.fileName ignore missing %}
+                        </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

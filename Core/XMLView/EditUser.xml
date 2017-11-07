@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Definición inicial para el controlador EditUser
+ *
+ * @author Artex Trading sa <jcuello@artextrading.com>
+-->
+
+<view>
+    <columns>
+        <group name="data" numcolumns="8">
+            <column name="code" numcolumns="3" order="100">
+                <widget type="text" fieldname="nick" icon="fa-user-circle-o" required="true" />
+            </column>
+            <column name="homepage" numcolumns="5" order="110">
+                <widget type="select" fieldname="homepage">
+                    <values source="fs_pages" fieldcode="name" fieldtitle="title"></values>
+                </widget>    
+            </column>
+            <column name="email" numcolumns="4" order="120">
+                <widget type="email" fieldname="email" />
+            </column>
+            <column name="company" numcolumns="3" order="210">
+                <widget type="select" fieldname="idempresa">
+                    <values source="empresas" fieldcode="id" fieldtitle="nombre"></values>
+                </widget>    
+            </column>
+            <column name="lang-code" numcolumns="5" order="210">
+                <widget type="select" fieldname="langcode">
+                    <values></values>
+                </widget>
+            </column>
+            <column name="password" numcolumns="4" order="220">
+                <widget type="password" fieldname="password" required="true" />
+            </column>
+            <column name="is-admin" numcolumns="3" order="310">
+                <widget type="checkbox" fieldname="admin"/>
+            </column>
+            <column name="enabled" numcolumns="3" order="320">
+                <widget type="checkbox" fieldname="enabled" />
+            </column>
+        </group>
+        
+        <group name="estadistic" numcolumns="4">
+            <column name="last-activity" order="110">
+                <widget type="text" fieldname="lastactivity" readonly="true" />
+            </column>
+            <column name="last-ip" order="120">
+                <widget type="text" fieldname="lastip" readonly="true" />
+            </column>
+        </group>    
+    </columns>
+</view>

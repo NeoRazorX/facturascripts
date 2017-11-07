@@ -19,32 +19,72 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Controlador para la edición de un registro del modelo Articulo
+ * Description of PanelSettings
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Fco Antonio Moreno Pérez <famphuelva@gmail.com>
+ * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
  */
-class EditArticulo extends ExtendedController\EditController
+class EditArticulo extends ExtendedController\PanelController
 {
     /**
-     * EditArticulo constructor.
-     *
-     * @param Base\Cache $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
-     * @param string $className
+     * Procedimiento para insertar vistas en el controlador
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    protected function createViews()
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
+        $this->addEditView('FacturaScripts\Core\Model\Articulo', 'EditArticulo', 'products', 'fa-cubes');
+        $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListFabricante', 'same-suppliers', 'fa-users');
+        $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListFamilia', 'same-families', 'fa-object-group');
+    }
 
-        // Establecemos el modelo de datos
-        $this->modelName = 'FacturaScripts\Core\Model\Articulo';
+    /**
+     * Devuele el campo $fieldName del articulo
+     *
+     * @param string $fieldName
+     *
+     * @return mixed
+     */
+    private function getArticuloFieldValue($fieldName)
+    {
+        $model = $this->views['EditArticulo']->getModel();
+        return $model->{$fieldName};
+    }
+
+    /**
+     * Procedimiento encargado de cargar los datos a visualizar
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        switch ($keyView) {
+            case 'EditArticulo':
+                $value = $this->request->get('code');
+                $view->loadData($value);
+                break;
+
+            case 'ListFabricante':
+                $codfabricante = $this->getArticuloFieldValue('codfabricante');
+
+                if (!empty($codfabricante)) {
+                    $where = [new DataBase\DataBaseWhere('codfabricante', $codfabricante)];
+                    $view->loadData($where);
+                }
+                break;
+
+            case 'ListFamilia':
+                $codfamilia = $this->getArticuloFieldValue('codfamilia');
+
+                if (!empty($codfamilia)) {
+                    $where = [new DataBase\DataBaseWhere('codfamilia', $codfamilia)];
+                    $view->loadData($where);
+                }
+                break;
+        }
     }
 
     /**
@@ -55,9 +95,8 @@ class EditArticulo extends ExtendedController\EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'products';
-        $pagedata['menu'] = 'warehouse';
-        $pagedata['icon'] = 'fa-cubes';
+        $pagedata['title'] = 'product';
+        $pagedata['icon'] = 'fa-cube';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

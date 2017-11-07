@@ -16,40 +16,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Model;
 
 /**
- * Description of PanelSettings
+ * Description of EditCliente
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class PanelCliente extends ExtendedController\PanelController
+class EditCliente extends ExtendedController\PanelController
 {
-    /**
-     * Clase para formatear monedas
-     *
-     * @var DivisaTools
-     */
-    private static $divisaTools;
 
-    /**
-     * Constructor de la clase
-     */
-    public function __construct($cache, $i18n, $miniLog, $className)
-    {
-        parent::__construct($cache, $i18n, $miniLog, $className);
-        
-        if (!isset(self::$divisaTools)) {
-            self::$divisaTools = new DivisaTools();
-        }
-    }
-    
     /**
      * Procedimiento para insertar vistas en el controlador
      */
@@ -61,13 +41,13 @@ class PanelCliente extends ExtendedController\PanelController
     }
 
     /**
-     * Devuele el campo $fieldName del cliente
+     * Devuele el campo $fieldName del modelo Cliente
      *
      * @param string $fieldName
      *
      * @return string|boolean
      */
-    private function getClientFieldValue($fieldName)
+    private function getClienteFieldValue($fieldName)
     {
         $model = $this->views['EditCliente']->getModel();
         return $model->{$fieldName};
@@ -88,12 +68,12 @@ class PanelCliente extends ExtendedController\PanelController
                 break;
 
             case 'EditDireccionCliente':
-                $where = [new DataBase\DataBaseWhere('codcliente', $this->getClientFieldValue('codcliente'))];
+                $where = [new DataBase\DataBaseWhere('codcliente', $this->getClienteFieldValue('codcliente'))];
                 $view->loadData($where);
                 break;
-            
+
             case 'ListCliente':
-                $codgroup = $this->getClientFieldValue('codgrupo');
+                $codgroup = $this->getClienteFieldValue('codgrupo');
 
                 if (!empty($codgroup)) {
                     $where = [new DataBase\DataBaseWhere('codgrupo', $codgroup)];
@@ -111,30 +91,30 @@ class PanelCliente extends ExtendedController\PanelController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'customers';
+        $pagedata['title'] = 'customer';
         $pagedata['icon'] = 'fa-users';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
     }
 
-    public function calcClientDeliveryNotes($view)        
+    public function calcClientDeliveryNotes($view)
     {
         $where = [];
-        $where[] = new DataBase\DataBaseWhere('codcliente', $this->getClientFieldValue('codcliente'));
-        $where[] = new DataBase\DataBaseWhere('ptefactura', TRUE);        
-        
+        $where[] = new DataBase\DataBaseWhere('codcliente', $this->getClienteFieldValue('codcliente'));
+        $where[] = new DataBase\DataBaseWhere('ptefactura', TRUE);
+
         $totalModel = Model\TotalModel::all('albaranescli', $where, ['total' => 'SUM(total)'], '')[0];
-        return self::$divisaTools->format($totalModel->totals['total'], 2);
+        return $this->divisaTools->format($totalModel->totals['total'], 2);
     }
 
     public function calcClientInvoicePending($view)
     {
         $where = [];
-        $where[] = new DataBase\DataBaseWhere('codcliente', $this->getClientFieldValue('codcliente'));
-        $where[] = new DataBase\DataBaseWhere('estado', 'Pagado', '<>');        
-        
+        $where[] = new DataBase\DataBaseWhere('codcliente', $this->getClienteFieldValue('codcliente'));
+        $where[] = new DataBase\DataBaseWhere('estado', 'Pagado', '<>');
+
         $totalModel = Model\TotalModel::all('reciboscli', $where, ['total' => 'SUM(importe)'], '')[0];
-        return self::$divisaTools->format($totalModel->totals['total'], 2);
+        return $this->divisaTools->format($totalModel->totals['total'], 2);
     }
 }

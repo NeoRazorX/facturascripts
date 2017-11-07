@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
@@ -30,6 +29,7 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class EditGrupoEpigrafes extends ExtendedController\EditController
 {
+
     /**
      * Inicia todos los objetos y propiedades.
      *
@@ -54,7 +54,7 @@ class EditGrupoEpigrafes extends ExtendedController\EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'groups-epigraphs';
+        $pagedata['title'] = 'epigraphs-group';
         $pagedata['menu'] = 'accounting';
         $pagedata['icon'] = 'fa-bars';
         $pagedata['showonmenu'] = false;

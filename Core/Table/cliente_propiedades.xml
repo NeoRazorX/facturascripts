@@ -5,29 +5,29 @@
     Description:
         Estructura de la tabla cliente_propiedades.
 -->
-<tabla>
-    <columna>
-        <nombre>name</nombre>
-        <tipo>character varying(50)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codcliente</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>text</nombre>
-        <tipo>text</tipo>
-    </columna>
-    <restriccion>
-        <nombre>cliente_propiedades_pkey</nombre>
-        <consulta>PRIMARY KEY (name,codcliente)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_cliente_propiedades_clientes</nombre>
-        <consulta>FOREIGN KEY (codcliente)
+<table>
+    <column>
+        <name>name</name>
+        <type>character varying(50)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codcliente</name>
+        <type>character varying(10)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>text</name>
+        <type>text</type>
+    </column>
+    <constraint>
+        <name>cliente_propiedades_pkey</name>
+        <type>PRIMARY KEY (name,codcliente)</type>
+    </constraint>
+    <constraint>
+        <name>ca_cliente_propiedades_clientes</name>
+        <type>FOREIGN KEY (codcliente)
             REFERENCES clientes (codcliente)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-</tabla>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>

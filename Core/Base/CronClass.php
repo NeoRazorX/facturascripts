@@ -57,19 +57,17 @@ abstract class CronClass
 
     /**
      * CronClass constructor.
-     *
-     * @param string $folder
      */
-    public function __construct($folder = '')
+    public function __construct()
     {
         if (!isset(self::$cache)) {
-            self::$cache = new Cache($folder);
+            self::$cache = new Cache();
         }
         if (!isset(self::$dataBase)) {
             self::$dataBase = new DataBase();
         }
         if (!isset(self::$i18n)) {
-            self::$i18n = new Translator($folder);
+            self::$i18n = new Translator();
         }
         if (!isset(self::$miniLog)) {
             self::$miniLog = new MiniLog();

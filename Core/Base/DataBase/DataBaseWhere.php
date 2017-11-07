@@ -227,7 +227,7 @@ class DataBaseWhere
 
         return $result;
     }
-    
+
     /**
      * Dado un array de DataBaseWhere devuelve la lista de campos y sus valores
      * que se aplicarán como filtro. (Sólo devuelve filtros con operador '='

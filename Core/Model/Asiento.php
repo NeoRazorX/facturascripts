@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class Asiento
 {
+
     use Base\ModelTrait {
         saveInsert as private saveInsertTrait;
     }
@@ -120,7 +120,7 @@ class Asiento
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'co_asientos';
     }
@@ -641,7 +641,6 @@ class Asiento
         echo $this->i18n->trans('renumbering-seats');
         $this->renumerar();
     }
-
     /// renumera todos los asientos. Devuelve False en caso de error
 
     /**

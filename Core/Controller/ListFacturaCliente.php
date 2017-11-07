@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -29,6 +28,26 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListFacturaCliente extends ExtendedController\ListController
 {
+
+    /**
+     * Procedimiento para insertar vistas en el controlador
+     */
+    protected function createViews()
+    {
+        $this->addView('FacturaScripts\Core\Model\FacturaCliente', 'ListFacturaCliente');
+        $this->addSearchFields('ListFacturaCliente', ['codigo', 'numero2', 'observaciones']);
+
+        $this->addFilterDatePicker('ListFacturaCliente', 'date', 'date', 'fecha');
+        $this->addFilterNumber('ListFacturaCliente', 'total', 'total');
+        $this->addFilterSelect('ListFacturaCliente', 'codalmacen', 'almacenes', '', 'nombre');
+        $this->addFilterSelect('ListFacturaCliente', 'codserie', 'series', '', 'codserie');
+        $this->addFilterSelect('ListFacturaCliente', 'codpago', 'formaspago', '', 'codpago');
+
+        $this->addOrderBy('ListFacturaCliente', 'codigo', 'code');
+        $this->addOrderBy('ListFacturaCliente', 'fecha', 'date');
+        $this->addOrderBy('ListFacturaCliente', 'total', 'amount');
+    }
+
     /**
      * Devuelve los datos básicos de la página
      *
@@ -42,21 +61,5 @@ class ListFacturaCliente extends ExtendedController\ListController
         $pagedata['menu'] = 'sales';
 
         return $pagedata;
-    }
-
-    /**
-     * Procedimiento para insertar vistas en el controlador
-     */
-    protected function createViews()
-    {
-        $this->addView('FacturaScripts\Core\Model\FacturaCliente', 'ListFacturaCliente');
-        $this->addSearchFields('ListFacturaCliente', ['codigo', 'numero2', 'observaciones']);
-        
-        $this->addFilterSelect('ListFacturaCliente', 'codserie', 'series', '', 'codserie');
-        $this->addFilterSelect('ListFacturaCliente', 'codpago', 'formaspago', '', 'codpago');
-
-        $this->addOrderBy('ListFacturaCliente', 'codigo', 'code');
-        $this->addOrderBy('ListFacturaCliente', 'fecha', 'date');
-        $this->addOrderBy('ListFacturaCliente', 'total', 'amount');
     }
 }

@@ -31,4 +31,4 @@
             <widget type="text" fieldname="descripcion" />
         </column>
     </columns>
- </view>
+</view>

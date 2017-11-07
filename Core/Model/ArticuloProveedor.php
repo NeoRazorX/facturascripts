@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class ArticuloProveedor
 {
+
     use Base\ModelTrait;
 
     /**
@@ -117,7 +117,7 @@ class ArticuloProveedor
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'articulosprov';
     }
@@ -131,12 +131,12 @@ class ArticuloProveedor
     {
         return 'id';
     }
-    
+
     public function install()
     {
         /// forzamos la comprobación de la tabla de proveedores
         new Proveedor();
-        
+
         return '';
     }
 
@@ -158,7 +158,7 @@ class ArticuloProveedor
         $this->codbarras = null;
         $this->partnumber = null;
     }
-    
+
     public function test()
     {
         $this->descripcion = self::noHtml($this->descripcion);
@@ -171,10 +171,10 @@ class ArticuloProveedor
             $this->miniLog->alert($this->i18n->trans('supplier-reference-valid-length'));
             return false;
         }
-        
+
         return true;
     }
-    
+
     public function url($type = 'auto')
     {
         $value = $this->primaryColumnValue();

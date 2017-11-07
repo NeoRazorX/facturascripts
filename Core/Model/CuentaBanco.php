@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class CuentaBanco
 {
+
     use Base\ModelTrait;
     use Base\BankAccount;
 
@@ -55,7 +55,7 @@ class CuentaBanco
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'cuentasbanco';
     }
@@ -85,7 +85,7 @@ class CuentaBanco
 
         return true;
     }
-    
+
     public function url($type = 'auto')
     {
         $value = $this->primaryColumnValue();

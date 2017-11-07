@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -29,6 +28,26 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListPresupuestoCliente extends ExtendedController\ListController
 {
+
+    /**
+     * Procedimiento para insertar vistas en el controlador
+     */
+    protected function createViews()
+    {
+        $this->addView('FacturaScripts\Core\Model\PresupuestoCliente', 'ListPresupuestoCliente');
+        $this->addSearchFields('ListPresupuestoCliente', ['codigo', 'numero2', 'observaciones']);
+
+        $this->addFilterDatePicker('ListPresupuestoCliente', 'date', 'date', 'fecha');
+        $this->addFilterNumber('ListPresupuestoCliente', 'total', 'total');
+        $this->addFilterSelect('ListPresupuestoCliente', 'codalmacen', 'almacenes', '', 'nombre');
+        $this->addFilterSelect('ListPresupuestoCliente', 'codserie', 'series', '', 'descripcion');
+        $this->addFilterSelect('ListPresupuestoCliente', 'codpago', 'formaspago', '', 'descripcion');
+
+        $this->addOrderBy('ListPresupuestoCliente', 'codigo', 'code');
+        $this->addOrderBy('ListPresupuestoCliente', 'fecha', 'date');
+        $this->addOrderBy('ListPresupuestoCliente', 'total', 'amount');
+    }
+
     /**
      * Devuelve los datos básicos de la página
      *
@@ -42,25 +61,5 @@ class ListPresupuestoCliente extends ExtendedController\ListController
         $pagedata['menu'] = 'sales';
 
         return $pagedata;
-    }
-
-    /**
-     * Procedimiento para insertar vistas en el controlador
-     */
-    protected function createViews()
-    {
-        $this->addView('FacturaScripts\Core\Model\PresupuestoCliente', 'ListPresupuestoCliente');
-        $this->addSearchFields('ListPresupuestoCliente', ['codigo', 'numero2', 'observaciones']);
-        
-        $this->addFilterSelect('ListPresupuestoCliente', 'codalmacen', 'almacenes', '', 'nombre');
-        $this->addFilterSelect('ListPresupuestoCliente', 'codserie', 'series', '', 'descripcion');
-        $this->addFilterSelect('ListPresupuestoCliente', 'codpago', 'formaspago', '', 'descripcion');
-        
-        $this->addFilterDatePicker('ListPresupuestoCliente', 'date1', 'date', 'fecha', '>=');
-        $this->addFilterDatePicker('ListPresupuestoCliente', 'date2', 'date', 'fecha', '<=');
-
-        $this->addOrderBy('ListPresupuestoCliente', 'codigo', 'code');
-        $this->addOrderBy('ListPresupuestoCliente', 'fecha', 'date');
-        $this->addOrderBy('ListPresupuestoCliente', 'total', 'amount');
     }
 }

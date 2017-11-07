@@ -6,48 +6,48 @@
     Description:
         Estructura de la tabla fs_pages_options.
 -->
-<tabla>
-    <columna>
-        <nombre>id</nombre>
-        <tipo>serial</tipo>
-        <nulo>NO</nulo>
-        <defecto>nextval('fs_pages_options_id_seq'::regclass)</defecto>
-    </columna>
-    <columna>
-        <nombre>name</nombre>
-        <tipo>character varying(30)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>nick</nombre>
-        <tipo>character varying(50)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>rows</nombre>
-        <tipo>text</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>columns</nombre>
-        <tipo>text</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>filters</nombre>
-        <tipo>text</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <restriccion>
-        <nombre>fs_pages_options_pkey</nombre>
-        <consulta>PRIMARY KEY (id)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>uniq_pages_options</nombre>
-        <consulta>UNIQUE (name, nick)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_fs_pagesoptions_users</nombre>
-        <consulta>FOREIGN KEY (nick) REFERENCES fs_users (nick) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-</tabla>
+<table>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('fs_pages_options_id_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>name</name>
+        <type>character varying(30)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>nick</name>
+        <type>character varying(50)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>rows</name>
+        <type>text</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>columns</name>
+        <type>text</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>filters</name>
+        <type>text</type>
+        <null>YES</null>
+    </column>
+    <constraint>
+        <name>fs_pages_options_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>uniq_pages_options</name>
+        <type>UNIQUE (name, nick)</type>
+    </constraint>
+    <constraint>
+        <name>ca_fs_pagesoptions_users</name>
+        <type>FOREIGN KEY (nick) REFERENCES fs_users (nick) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>

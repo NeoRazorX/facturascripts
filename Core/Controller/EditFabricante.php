@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
@@ -30,6 +29,7 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class EditFabricante extends ExtendedController\EditController
 {
+
     /**
      * EditFabricante constructor.
      *
@@ -54,7 +54,7 @@ class EditFabricante extends ExtendedController\EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'manufacturers';
+        $pagedata['title'] = 'manufacturer';
         $pagedata['menu'] = 'warehouse';
         $pagedata['icon'] = 'fa-folder-open';
         $pagedata['showonmenu'] = false;

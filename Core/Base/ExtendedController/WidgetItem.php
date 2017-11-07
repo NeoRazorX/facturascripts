@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Base\ExtendedController;
 
-
 /**
  * Description of WidgetItem
  *
@@ -27,7 +26,6 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 abstract class WidgetItem
 {
-
     /**
      * Nombre del campo con los datos que visualiza el widget
      *
@@ -83,7 +81,7 @@ abstract class WidgetItem
      * @var array
      */
     public $options;
-    
+
     /**
      * @param string $value
      */
@@ -120,7 +118,7 @@ abstract class WidgetItem
 
             case 'radio':
                 return new WidgetItemRadio();
-                
+
             case 'color':
                 return new WidgetItemColor();
 
@@ -199,7 +197,8 @@ abstract class WidgetItem
      * @param \SimpleXMLElement $column
      * @param \SimpleXMLElement $widgetAtributes
      */
-    protected function loadFromXMLColumn($column, $widgetAtributes) {
+    protected function loadFromXMLColumn($column, $widgetAtributes)
+    {
         $this->fieldName = (string) $widgetAtributes->fieldname;
         $this->hint = (string) $widgetAtributes->hint;
         $this->readOnly = (bool) $widgetAtributes->readonly;
@@ -347,9 +346,7 @@ abstract class WidgetItem
         }
 
         $style = $this->getTextOptionsHTML($value);
-        $html = (empty($this->onClick))
-            ? '<span' . $style . '>' . $text . '</span>'
-            : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $text . '</a>';
+        $html = (empty($this->onClick)) ? '<span' . $style . '>' . $text . '</span>' : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $text . '</a>';
 
         return $html;
     }
@@ -370,11 +367,11 @@ abstract class WidgetItem
         if (empty($type)) {
             $type = $this->type;
         }
-        
+
         $html = $icon
             . '<input id=' . $fieldName . ' type="' . $type . '" class="form-control' . $extraClass . '"'
             . 'name=' . $fieldName . ' value="' . $value . '"' . $specialAttributes . ' />';
-            
+
         if (!empty($this->icon)) {
             $html .= '</div>';
         }

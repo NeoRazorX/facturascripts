@@ -8,33 +8,29 @@
 -->
 
 
-<tabla>
-    <columna>
-        <nombre>name</nombre>
-        <tipo>character varying(50)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-
-    <columna>
-        <nombre>icon</nombre>
-        <tipo>character varying(20)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-
-    <columna>
-        <nombre>description</nombre>
-        <tipo>text</tipo>
-        <nulo>YES</nulo>
-    </columna>
-                                
-    <columna>
-        <nombre>properties</nombre>
-        <tipo>text</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    
-    <restriccion>
-        <nombre>fs_settings_pkey</nombre>
-        <consulta>PRIMARY KEY (name)</consulta>
-    </restriccion>     
-</tabla>
+<table>
+    <column>
+        <name>name</name>
+        <type>character varying(50)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>icon</name>
+        <type>character varying(20)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>description</name>
+        <type>text</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>properties</name>
+        <type>text</type>
+        <null>YES</null>
+    </column>
+    <constraint>
+        <name>fs_settings_pkey</name>
+        <type>PRIMARY KEY (name)</type>
+    </constraint>
+</table>

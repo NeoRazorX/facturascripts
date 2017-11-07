@@ -5,9 +5,8 @@
 
 <script type="text/javascript">
     var tabActive = '{{ fsc.active }}';
-
     function insertRecord() {
-        var url = { {{ fsc.getStringURLs('new')|raw }} };
+        var url = { {{ fsc.getStringURLs('new') | raw }} };
         document.insert_form.action = url[tabActive];
         document.insert_form.submit();
     }
@@ -18,29 +17,28 @@
     function deleteFromList() {
         var deleteCodes = [];
         $('.listDelete').each(function() {
-            if($(this).prop('checked')) {
+            if ($(this).prop('checked')) {
                 deleteCodes.push($(this).val());
             }
         });
-        
-        if(deleteCodes.length) {
+        if (deleteCodes.length) {
             bootbox.confirm({
-                title: "{{ i18n.trans('warning')|raw }}",
+            title: "{{ i18n.trans('warning')|raw }}",
                 message: "{{ i18n.trans('are-you-sure') }}",
                 closeButton: false,
                 buttons: {
-                    cancel: {
-                        label: '<i class="fa fa-times"></i> {{ i18n.trans("cancel") }}'
-                    },
+                cancel: {
+                label: '<i class="fa fa-times"></i> {{ i18n.trans("cancel") }}'
+                },
                     confirm: {
-                        label: '<i class="fa fa-check"></i> {{ i18n.trans("confirm") }}'
+                    label: '<i class="fa fa-check"></i> {{ i18n.trans("confirm") }}'
                     }
                 },
                 callback: function (result) {
-                    if (result) {
-                        document.f_list_delete.active.value = tabActive;
-                        document.f_list_delete.code.value = deleteCodes.join();
-                        document.f_list_delete.submit();
+                if (result) {
+                    document.f_list_delete.active.value = tabActive;
+                    document.f_list_delete.code.value = deleteCodes.join();
+                    document.f_list_delete.submit();
                     }
                 }
             });
@@ -49,8 +47,8 @@
         return false;
     }
     function setOperator(buttonID, operator) {
-        document.getElementById(buttonID+'-operator').value = operator;
-        document.getElementById(buttonID+'-btn').value = operator;
+        document.getElementById(buttonID + '-operator').value = operator;
+        document.getElementById(buttonID + '-btn').value = operator;
         $('#formSearch' + tabActive).submit();
     }
     $(document).ready(function () {
@@ -65,8 +63,7 @@
             var checked = $(this).prop('checked');
             $('.listDelete').prop('checked', checked);
         });
-    });
-</script>
+    });</script>
 {% endblock %}
 
 {% block messages %}
@@ -116,26 +113,26 @@
         <div class="col-sm-7 col-6">
             <div class="btn-group d-xs-none" aria-label="Button group with navigation actions">
                 <a class="btn btn-sm btn-outline-secondary" href="{{ list_url }}" {{ popoverTitle(refresh, 'bottom') }}>
-                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                   <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
                 {% if fsc.getPageData()['isDefault'] %}
                 <a class="btn btn-sm btn-outline-secondary active" href="{{ list_url }}&amp;default_page=FALSE" {{ popoverTitle(defaultF, 'bottom') }}>
-                    <i class="fa fa-bookmark" aria-hidden="true"></i>
+                   <i class="fa fa-bookmark" aria-hidden="true"></i>
                 </a>
                 {% else %}
                 <a class="btn btn-sm btn-outline-secondary" href="{{ list_url }}&amp;default_page=TRUE" {{ popoverTitle(defaultT, 'bottom') }}>
-                    <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                   <i class="fa fa-bookmark-o" aria-hidden="true"></i>
                 </a>
                 {% endif %}
             </div>
             <div class="btn-group">
                 <a href="#" id="b_new_record" class="btn btn-sm btn-success" onclick="insertRecord()" {{ popoverTitle(new_record_title, 'bottom') }}>
-                    <i class="fa fa-plus" aria-hidden="true"></i>
-                    <span class="d-none d-sm-inline-block">&nbsp;{{ new_record }}</span>
+                   <i class="fa fa-plus" aria-hidden="true"></i>
+                   <span class="d-none d-sm-inline-block">&nbsp;{{ new_record }}</span>
                 </a>
-                <a href="#" id="b_options" class="btn btn-sm btn-secondary" {{ popoverTitle(options_title, 'bottom') }}>
-                    <i class="fa fa-wrench" aria-hidden="true"></i>
-                    <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
+                <a href="index.php?page=EditPageOption" id="b_options" class="btn btn-sm btn-secondary" {{ popoverTitle(options_title, 'bottom') }}>
+                   <i class="fa fa-wrench" aria-hidden="true"></i>
+                   <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
                 </a>
                 <!-- Añadimos opciones de impresión y exportación -->
                 {{ exportData(fsc, i18n) }}
@@ -188,42 +185,33 @@
                                 </span>
                             </div>
                         </div>
-                        
+
                         <!-- Aditionals filters -->
                         {% set columnsUsed = 2 %}
                         {% for key1, filter in view.getFilters() %}
-                            <!-- check if column is OrderBy column -->
-                            {% if columnsUsed == 10 %}
-                            {{ buttonOrderBy(_context, view) }}  
-                            {% set columnsUsed = columnsUsed + 2 %}
-                            {% endif %}
-
-                            <!-- check if there is space available for columns -->
-                            {% if (columnsUsed % 12) == 0 %}
-                                <!-- Order by selector -->
+                        <!-- check if there is space available for columns -->
+                        {% if (columnsUsed % 12) == 0 %}
                     </div>
-                    <div class="row align-items-center" style="margin-top:5px; margin-bottom: 10px;">  
-                        <div class="col-md-2"></div>
-                                {% set columnsUsed = columnsUsed + 2 %}
-                            {% endif %}
-                            
-                            <!-- Add new column filter -->
-                            {% if filter.type == 'select' %}
-                                {{ filterForSelectInput(_context, key1, filter) }}
-                            {% elseif filter.type == 'checkbox' %}
-                                {{ filterForCheckBoxInput(_context, key1, filter) }}
-                            {% else %}
-                                {{ filterForTextInput(_context, key1, filter) }}                                                         
-                            {% endif %}
-                            
-                            <!-- subtract the available space -->
-                            {% set columnsUsed = columnsUsed + 2 %}
+                    <div class="row align-items-center" style="margin-top:5px; margin-bottom: 10px;">
+                        {% set columnsUsed = 0 %}
+                        {% endif %}
+
+                        <!-- Add new column filter -->
+                        {% if filter.type == 'select' %}
+                        {{ filterForSelectInput(_context, key1, filter) }}
+                        {% elseif filter.type == 'checkbox' %}
+                        {{ filterForCheckBoxInput(_context, key1, filter) }}
+                        {% else %}
+                        {{ filterForTextInput(_context, key1, filter) }}
+                        {% set columnsUsed = columnsUsed + 2 %}
+                        {% endif %}
+
+                        <!-- subtract the available space -->
+                        {% set columnsUsed = columnsUsed + 2 %}
                         {% endfor %}
 
                         <!-- Order by selector -->
-                        {% if columnsUsed <= 10 %}
-                        {{ buttonOrderBy(_context, view) }}                        
-                        {% endif %}
+                        {{ buttonOrderBy(_context, view) }}
                     </div>
                 </div>
             </form>
@@ -240,17 +228,17 @@
                     <div class="col-10 text-center">
                         <div class="btn-group">
                             {% for item in fsc.pagination(indexView) %}
-                                {% if item.active %}
-                                <a class="btn btn-primary">{{ item.page }}</a>
+                            {% if item.active %}
+                            <a class="btn btn-primary">{{ item.page }}</a>
+                            {% else %}
+                            <a class="btn btn-light" href="{{ item.url }}">
+                                {% if item.icon %}
+                                <i class="fa {{ item.icon }}" aria-hidden="true"></i>
                                 {% else %}
-                                <a class="btn btn-light" href="{{ item.url }}">
-                                    {% if item.icon %}
-                                    <i class="fa {{ item.icon }}" aria-hidden="true"></i>
-                                    {% else %}
-                                    <span>{{ item.page }}</span>
-                                    {% endif %}
-                                </a>
+                                <span>{{ item.page }}</span>
                                 {% endif %}
+                            </a>
+                            {% endif %}
                             {% endfor %}
                         </div>
                         <br/>

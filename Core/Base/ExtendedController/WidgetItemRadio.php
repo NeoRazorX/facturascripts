@@ -50,7 +50,8 @@ class WidgetItemRadio extends WidgetItem
      * @param \SimpleXMLElement $column
      * @param \SimpleXMLElement $widgetAtributes
      */
-    protected function loadFromXMLColumn($column, $widgetAtributes) {
+    protected function loadFromXMLColumn($column, $widgetAtributes)
+    {
         parent::loadFromXMLColumn($column, $widgetAtributes);
         $this->getAttributesGroup($this->values, $column->widget->values);
     }

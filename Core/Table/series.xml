@@ -5,50 +5,50 @@
     Description:
         Estructura de la tabla series.
 -->
-<tabla>
-    <columna>
-        <nombre>irpf</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idcuenta</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codserie</nombre>
-        <tipo>character varying(4)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>descripcion</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>siniva</nombre>
-        <tipo>boolean</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codcuenta</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codejercicio</nombre>
-        <tipo>character varying(4)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>numfactura</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-        <defecto>1</defecto>
-    </columna>
-    <restriccion>
-        <nombre>series_pkey</nombre>
-        <consulta>PRIMARY KEY (codserie)</consulta>
-    </restriccion>
-</tabla>
+<table>
+    <column>
+        <name>irpf</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idcuenta</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codserie</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>siniva</name>
+        <type>boolean</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codcuenta</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codejercicio</name>
+        <type>character varying(4)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>numfactura</name>
+        <type>integer</type>
+        <null>YES</null>
+        <default>1</default>
+    </column>
+    <constraint>
+        <name>series_pkey</name>
+        <type>PRIMARY KEY (codserie)</type>
+    </constraint>
+</table>

@@ -16,11 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Base\DataBase;
 
 /**
  * Description of EditRol
@@ -28,22 +27,60 @@ use FacturaScripts\Core\Base\ExtendedController;
  *
  * @author Artex Trading sa <jferrer@artextrading.com>
  */
-class EditRol extends ExtendedController\EditController
+class EditRol extends ExtendedController\PanelController
 {
-    /**
-     * EditRol constructor.
-     *
-     * @param Base\Cache $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
-     * @param string $className
-     */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
-    {
-        parent::__construct($cache, $i18n, $miniLog, $className);
 
-        // Establecemos el modelo de datos
-        $this->modelName = 'FacturaScripts\Core\Model\Rol';
+    /**
+     * Procedimiento para insertar vistas en el controlador
+     */
+    protected function createViews()
+    {
+        $this->addEditView('FacturaScripts\Core\Model\Rol', 'EditRol', 'rol', 'fa-id-card');
+
+        $this->addEditListView('FacturaScripts\Core\Model\RolUser', 'EditRolUser', 'rol-user', 'fa-address-card-o');
+        $this->views['EditRolUser']->disableColumn('role', TRUE);
+
+        $this->addListView('FacturaScripts\Core\Model\RolAccess', 'ListRolAccess', 'page-rule', 'fa fa-check-square');
+        $this->views['ListRolAccess']->disableColumn('role', TRUE);
+    }
+
+    /**
+     * Devuele el campo $fieldName del modelo Rol
+     *
+     * @param string $fieldName
+     *
+     * @return string|boolean
+     */
+    private function getRolFieldValue($fieldName)
+    {
+        $model = $this->views['EditRol']->getModel();
+        return $model->{$fieldName};
+    }
+
+    /**
+     * Procedimiento encargado de cargar los datos a visualizar
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        switch ($keyView) {
+            case 'EditRol':
+                $value = $this->request->get('code');
+                $view->loadData($value);
+                break;
+
+            case 'EditRolUser':
+                $where = [new DataBase\DataBaseWhere('codrol', $this->getRolFieldValue('codrol'))];
+                $view->loadData($where);
+                break;
+
+            case 'ListRolAccess':
+                $where = [new DataBase\DataBaseWhere('codrol', $this->getRolFieldValue('codrol'))];
+                $view->loadData($where);
+                break;
+        }
     }
 
     /**
@@ -54,7 +91,7 @@ class EditRol extends ExtendedController\EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'roles';
+        $pagedata['title'] = 'rol';
         $pagedata['menu'] = 'admin';
         $pagedata['icon'] = 'fa-id-card-o';
         $pagedata['showonmenu'] = false;

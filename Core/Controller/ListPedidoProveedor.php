@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -29,6 +28,26 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListPedidoProveedor extends ExtendedController\ListController
 {
+
+    /**
+     * Procedimiento para insertar vistas en el controlador
+     */
+    protected function createViews()
+    {
+        $this->addView('FacturaScripts\Core\Model\PedidoProveedor', 'ListPedidoProveedor');
+        $this->addSearchFields('ListPedidoProveedor', ['codigo', 'numproveedor', 'observaciones']);
+
+        $this->addFilterDatePicker('ListPedidoProveedor', 'date', 'date', 'fecha');
+        $this->addFilterNumber('ListPedidoProveedor', 'total', 'total');
+        $this->addFilterSelect('ListPedidoProveedor', 'codalmacen', 'almacenes', '', 'nombre');
+        $this->addFilterSelect('ListPedidoProveedor', 'codserie', 'series', '', 'descripcion');
+        $this->addFilterSelect('ListPedidoProveedor', 'codpago', 'formaspago', '', 'descripcion');
+
+        $this->addOrderBy('ListPedidoProveedor', 'codigo', 'code');
+        $this->addOrderBy('ListPedidoProveedor', 'fecha', 'date');
+        $this->addOrderBy('ListPedidoProveedor', 'total', 'amount');
+    }
+
     /**
      * Devuelve los datos básicos de la página
      *
@@ -42,25 +61,5 @@ class ListPedidoProveedor extends ExtendedController\ListController
         $pagedata['menu'] = 'purchases';
 
         return $pagedata;
-    }
-
-    /**
-     * Procedimiento para insertar vistas en el controlador
-     */
-    protected function createViews()
-    {
-        $this->addView('FacturaScripts\Core\Model\PedidoProveedor', 'ListPedidoProveedor');
-        $this->addSearchFields('ListPedidoProveedor', ['codigo', 'numproveedor', 'observaciones']);
-        
-        $this->addFilterSelect('ListPedidoProveedor', 'codalmacen', 'almacenes', '', 'nombre');
-        $this->addFilterSelect('ListPedidoProveedor', 'codserie', 'series', '', 'descripcion');
-        $this->addFilterSelect('ListPedidoProveedor', 'codpago', 'formaspago', '', 'descripcion');
-        
-        $this->addFilterDatePicker('ListPedidoProveedor', 'date1', 'date', 'fecha', '>=');
-        $this->addFilterDatePicker('ListPedidoProveedor', 'date2', 'date', 'fecha', '<=');
-
-        $this->addOrderBy('ListPedidoProveedor', 'codigo', 'code');
-        $this->addOrderBy('ListPedidoProveedor', 'fecha', 'date');
-        $this->addOrderBy('ListPedidoProveedor', 'total', 'amount');
     }
 }

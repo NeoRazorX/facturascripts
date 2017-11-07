@@ -140,14 +140,14 @@ class PostgresqlSQL implements DataBaseSQL
         $sql = '';
 
         foreach ($xmlCons as $res) {
-            $value = strtolower($res['consulta']);
+            $value = strtolower($res['constraint']);
             if (false !== strpos($value, 'primary key')) {
-                $sql .= ', ' . $res['consulta'];
+                $sql .= ', ' . $res['constraint'];
                 continue;
             }
 
-            if (FS_FOREIGN_KEYS === '1' || 0 !== strpos($res['consulta'], 'FOREIGN KEY')) {
-                $sql .= ', CONSTRAINT ' . $res['nombre'] . ' ' . $res['consulta'];
+            if (FS_FOREIGN_KEYS === '1' || 0 !== strpos($res['constraint'], 'FOREIGN KEY')) {
+                $sql .= ', CONSTRAINT ' . $res['name'] . ' ' . $res['constraint'];
             }
         }
 
@@ -181,18 +181,18 @@ class PostgresqlSQL implements DataBaseSQL
         $serials = ['serial', 'bigserial'];
         $fields = '';
         foreach ($columns as $col) {
-            $fields .= ', ' . $col['nombre'] . ' ' . $col['tipo'];
+            $fields .= ', ' . $col['name'] . ' ' . $col['type'];
 
-            if ($col['nulo'] === 'NO') {
+            if ($col['null'] === 'NO') {
                 $fields .= ' NOT NULL';
             }
 
-            if (in_array($col['tipo'], $serials, false)) {
+            if (in_array($col['type'], $serials, false)) {
                 continue;
             }
 
-            if ($col['defecto'] !== '') {
-                $fields .= ' DEFAULT ' . $col['defecto'];
+            if ($col['default'] !== '') {
+                $fields .= ' DEFAULT ' . $col['default'];
             }
         }
 
@@ -213,13 +213,13 @@ class PostgresqlSQL implements DataBaseSQL
     public function sqlAlterAddColumn($tableName, $colData)
     {
         $sql = 'ALTER TABLE ' . $tableName
-            . ' ADD COLUMN ' . $colData['nombre'] . ' ' . $colData['tipo'];
+            . ' ADD COLUMN ' . $colData['name'] . ' ' . $colData['type'];
 
-        if ($colData['defecto'] !== '') {
-            $sql .= ' DEFAULT ' . $colData['defecto'];
+        if ($colData['default'] !== '') {
+            $sql .= ' DEFAULT ' . $colData['default'];
         }
 
-        if ($colData['nulo'] === 'NO') {
+        if ($colData['null'] === 'NO') {
             $sql .= ' NOT NULL';
         }
 
@@ -237,7 +237,7 @@ class PostgresqlSQL implements DataBaseSQL
     public function sqlAlterModifyColumn($tableName, $colData)
     {
         $sql = 'ALTER TABLE ' . $tableName
-            . ' ALTER COLUMN ' . $colData['nombre'] . ' TYPE ' . $colData['tipo'];
+            . ' ALTER COLUMN ' . $colData['name'] . ' TYPE ' . $colData['type'];
 
         return $sql . ';';
     }
@@ -252,9 +252,9 @@ class PostgresqlSQL implements DataBaseSQL
      */
     public function sqlAlterConstraintDefault($tableName, $colData)
     {
-        $action = ($colData['defecto'] !== '') ? ' SET DEFAULT ' . $colData['defecto'] : ' DROP DEFAULT';
+        $action = ($colData['default'] !== '') ? ' SET DEFAULT ' . $colData['default'] : ' DROP DEFAULT';
 
-        return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['nombre'] . $action . ';';
+        return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['name'] . $action . ';';
     }
 
     /**
@@ -267,9 +267,9 @@ class PostgresqlSQL implements DataBaseSQL
      */
     public function sqlAlterConstraintNull($tableName, $colData)
     {
-        $action = ($colData['nulo'] === 'YES') ? ' DROP ' : ' SET ';
+        $action = ($colData['null'] === 'YES') ? ' DROP ' : ' SET ';
 
-        return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['nombre'] . $action . 'NOT NULL;';
+        return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['name'] . $action . 'NOT NULL;';
     }
 
     /**

@@ -162,7 +162,7 @@ class EditController extends Base\Controller
      */
     protected function insertAction()
     {
-        $this->view->setNewCode();
+        
     }
 
     /**

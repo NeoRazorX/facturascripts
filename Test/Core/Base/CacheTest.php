@@ -1,5 +1,4 @@
 <?php
-
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -7,6 +6,7 @@ namespace FacturaScripts\Core\Base;
  */
 class CacheTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * @var Cache
      */
@@ -18,7 +18,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->object = new Cache(PHPUNIT_PATH);
+        $this->object = new Cache();
         $this->object->clear();
     }
 
@@ -28,6 +28,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
+        
     }
 
     /**

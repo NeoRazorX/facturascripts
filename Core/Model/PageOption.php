@@ -196,8 +196,12 @@ class PageOption
             . ');';
 
         if ($this->dataBase->exec($sql)) {
-            $this->id = $this->dataBase->lastval();
+            $lastVal = $this->dataBase->lastval();
+            if ($lastVal === FALSE) {
+                return false;
+            }
 
+            $this->id = $lastVal;
             return true;
         }
 
@@ -309,33 +313,8 @@ class PageOption
     }
 
     /**
-     * Obtiene la columna para el nombre de campo informado
-     *
-     * @param string $fieldName
-     *
-     * @return ExtendedController\ColumnItem
-     */
-    public function columnForField($fieldName)
-    {
-        $result = null;
-        foreach ($this->columns as $group) {
-            foreach ($group->columns as $column) {
-                if ($column->widget->fieldName === $fieldName) {
-                    $result = $column;
-                    break;
-                }
-            }
-            if (!empty($result)) {
-                break;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Carga la lista de valores para un widget de tipo select dinámico
-     * con un modelo de la base de datos
+     * con un modelo de la base de datos o un rango de valores
      */
     private function dynamicSelectValues()
     {

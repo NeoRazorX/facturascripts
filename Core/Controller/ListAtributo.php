@@ -29,6 +29,7 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListAtributo extends ExtendedController\ListController
 {
+
     /**
      * Devuelve los datos básicos de la página
      *
@@ -37,7 +38,7 @@ class ListAtributo extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'Atributos';
+        $pagedata['title'] = 'attributes';
         $pagedata['icon'] = 'fa-sliders';
         $pagedata['menu'] = 'warehouse';
 

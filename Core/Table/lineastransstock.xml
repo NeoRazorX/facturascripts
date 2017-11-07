@@ -5,51 +5,51 @@
     Description:
         Estructura de la tabla lineastransstock.
 -->
-<tabla>
-    <columna>
-        <nombre>cantidad</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>descripcion</nombre>
-        <tipo>text</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idlinea</nombre>
-        <tipo>serial</tipo>
-        <nulo>NO</nulo>
-        <defecto>nextval('lineastransstock_idlinea_seq'::regclass)</defecto>
-    </columna>
-    <columna>
-        <nombre>idtrans</nombre>
-        <tipo>integer</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>referencia</nombre>
-        <tipo>character varying(18)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <restriccion>
-        <nombre>lineastransstock_pkey</nombre>
-        <consulta>PRIMARY KEY (idlinea)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_linea_transstock</nombre>
-        <consulta>FOREIGN KEY (idtrans)
+<table>
+    <column>
+        <name>cantidad</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>text</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idlinea</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('lineastransstock_idlinea_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>idtrans</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>referencia</name>
+        <type>character varying(18)</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>lineastransstock_pkey</name>
+        <type>PRIMARY KEY (idlinea)</type>
+    </constraint>
+    <constraint>
+        <name>ca_linea_transstock</name>
+        <type>FOREIGN KEY (idtrans)
             REFERENCES transstock (idtrans)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_linea_transstock_articulos</nombre>
-        <consulta>FOREIGN KEY (referencia)
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_linea_transstock_articulos</name>
+        <type>FOREIGN KEY (referencia)
             REFERENCES articulos (referencia)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>uniq_referencia_transferencia</nombre>
-        <consulta>UNIQUE (idtrans,referencia)</consulta>
-    </restriccion>
-</tabla>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>uniq_referencia_transferencia</name>
+        <type>UNIQUE (idtrans,referencia)</type>
+    </constraint>
+</table>

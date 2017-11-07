@@ -5,159 +5,159 @@
     Description:
         Estructura de la tabla impuestos.
 -->
-<tabla>
-    <columna>
-        <nombre>codimpuesto</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codsubcuentaacr</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codsubcuentadeu</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codsubcuentaivadedadue</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codsubcuentaivadevadue</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codsubcuentaivadeventue</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codsubcuentaivarepexe</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codsubcuentaivarepexp</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codsubcuentaivarepre</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codsubcuentaivasopagra</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codsubcuentaivasopexe</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codsubcuentaivasopimp</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codsubcuentarep</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codsubcuentasop</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>descripcion</nombre>
-        <tipo>character varying(50)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idsubcuentaacr</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idsubcuentadeu</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idsubcuentaivadedadue</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idsubcuentaivadevadue</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idsubcuentaivadeventue</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idsubcuentaivarepexe</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idsubcuentaivarepexp</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idsubcuentaivarepre</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idsubcuentaivasopagra</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idsubcuentaivasopexe</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idsubcuentaivasopimp</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idsubcuentarep</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idsubcuentasop</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>iva</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>recargo</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <restriccion>
-        <nombre>impuestos_pkey</nombre>
-        <consulta>PRIMARY KEY (codimpuesto)</consulta>
-    </restriccion>
-</tabla>
+<table>
+    <column>
+        <name>codimpuesto</name>
+        <type>character varying(10)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codsubcuentaacr</name>
+        <type>character varying(15)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codsubcuentadeu</name>
+        <type>character varying(15)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codsubcuentaivadedadue</name>
+        <type>character varying(15)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codsubcuentaivadevadue</name>
+        <type>character varying(15)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codsubcuentaivadeventue</name>
+        <type>character varying(15)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codsubcuentaivarepexe</name>
+        <type>character varying(15)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codsubcuentaivarepexp</name>
+        <type>character varying(15)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codsubcuentaivarepre</name>
+        <type>character varying(15)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codsubcuentaivasopagra</name>
+        <type>character varying(15)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codsubcuentaivasopexe</name>
+        <type>character varying(15)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codsubcuentaivasopimp</name>
+        <type>character varying(15)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codsubcuentarep</name>
+        <type>character varying(15)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codsubcuentasop</name>
+        <type>character varying(15)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>character varying(50)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idsubcuentaacr</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idsubcuentadeu</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idsubcuentaivadedadue</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idsubcuentaivadevadue</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idsubcuentaivadeventue</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idsubcuentaivarepexe</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idsubcuentaivarepexp</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idsubcuentaivarepre</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idsubcuentaivasopagra</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idsubcuentaivasopexe</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idsubcuentaivasopimp</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idsubcuentarep</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idsubcuentasop</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>iva</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>recargo</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>impuestos_pkey</name>
+        <type>PRIMARY KEY (codimpuesto)</type>
+    </constraint>
+</table>

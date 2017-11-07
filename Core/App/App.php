@@ -45,13 +45,6 @@ abstract class App
     protected $dataBase;
 
     /**
-     * Carpeta de trabajo de FacturaScripts.
-     *
-     * @var string
-     */
-    protected $folder;
-
-    /**
      * Motor de traducción.
      *
      * @var Base\Translator
@@ -105,13 +98,12 @@ abstract class App
             define('FS_FOLDER', $folder);
         }
 
-        $this->cache = new Base\Cache($folder);
+        $this->cache = new Base\Cache();
         $this->dataBase = new Base\DataBase();
-        $this->folder = $folder;
-        $this->i18n = new Base\Translator($folder);
-        $this->ipFilter = new Base\IPFilter($folder);
+        $this->i18n = new Base\Translator();
+        $this->ipFilter = new Base\IPFilter();
         $this->miniLog = new Base\MiniLog();
-        $this->pluginManager = new Base\PluginManager($folder);
+        $this->pluginManager = new Base\PluginManager();
         $this->request = Request::createFromGlobals();
         $this->response = new Response();
     }

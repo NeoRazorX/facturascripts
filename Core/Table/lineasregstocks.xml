@@ -5,62 +5,62 @@
     Description:
         Estructura de la tabla lineasregstocks.
 -->
-<tabla>
-    <columna>
-        <nombre>cantidadfin</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>cantidadini</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>codalmacendest</nombre>
-        <tipo>character varying(4)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>fecha</nombre>
-        <tipo>date</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>hora</nombre>
-        <tipo>time without time zone</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>id</nombre>
-        <tipo>serial</tipo>
-        <nulo>NO</nulo>
-        <defecto>nextval('lineasregstocks_id_seq'::regclass)</defecto>
-    </columna>
-    <columna>
-        <nombre>idstock</nombre>
-        <tipo>integer</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>motivo</nombre>
-        <tipo>text</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>nick</nombre>
-        <tipo>character varying(12)</tipo>
-    </columna>
-    <restriccion>
-        <nombre>lineasregstocks_pkey</nombre>
-        <consulta>PRIMARY KEY (id)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_lineasregstocks_stocks</nombre>
-        <consulta>FOREIGN KEY (idstock)
+<table>
+    <column>
+        <name>cantidadfin</name>
+        <type>double precision</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>cantidadini</name>
+        <type>double precision</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>codalmacendest</name>
+        <type>character varying(4)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>fecha</name>
+        <type>date</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>hora</name>
+        <type>time without time zone</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('lineasregstocks_id_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>idstock</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>motivo</name>
+        <type>text</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>nick</name>
+        <type>character varying(12)</type>
+    </column>
+    <constraint>
+        <name>lineasregstocks_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>ca_lineasregstocks_stocks</name>
+        <type>FOREIGN KEY (idstock)
             REFERENCES stocks (idstock)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-</tabla>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>
