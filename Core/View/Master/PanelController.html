@@ -121,12 +121,12 @@
 
         {# -- Right Panel -- #}
         <div class="col-sm-10">
-            <div class="card">
-                <div class="card-body">
-                    <div class="tab-content" id="optionsindex-tabContent">
-                        {% for indexView, view in fsc.views %}
-                        {% set active = (indexView == fsc.active) ? ' show active' : '' %}
-                        <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
+            <div class="tab-content" id="optionsindex-tabContent">
+                {% for indexView, view in fsc.views %}
+                {% set active = (indexView == fsc.active) ? ' show active' : '' %}
+                    <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
+                        <div class="card">
+                            <div class="card-body">
                             {% set viewType = fsc.viewClass(view) %}
                             {% if viewType == 'ListView' %}
                             {{ columnsForListView(_context, view) }}
@@ -138,13 +138,10 @@
                             <!-- Main Form -->
                             {% set model = view.getModel() %}
                             {{ columnsForEditView(_context, view, model, TRUE) }}
-                            <!-- Info footer bar -->
-                            {{ rowFooterForEditView(_context, view) }}
                             {% endif %}
 
                             {% if viewType == 'EditListView' %}
                             {{ columnsForEditListView(_context, view) }}
-                            {{ rowFooterForEditView(_context, view) }}
                             {% endif %}
 
                             {% if viewType == 'HtmlView' %}
@@ -153,11 +150,15 @@
                             </div>
                             {% endif %}
                         </div>
-                        {% endfor %}
                     </div>
+                    {% if viewType in ['EditView','EditListView'] %}
+                    {{ rowFooterForEditView(_context, view) }}
+                    {% endif %}
                 </div>
+                {% endfor %}
             </div>
         </div>
     </div>
 </div>
+<br/>
 {% endblock %}
