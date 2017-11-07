@@ -210,7 +210,7 @@ abstract class BaseView
      */
     public function getRow($key)
     {
-        return empty($this->pageOption->rows) ? null : $this->pageOption->rows[$key];
+        return isset($this->pageOption->rows[$key]) ? $this->pageOption->rows[$key] : null;
     }
 
     /**

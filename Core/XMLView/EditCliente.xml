@@ -138,7 +138,20 @@
         <row type="header">
             <option icon="fa-files-o" label="delivery-notes-button" calculateby="calcClientDeliveryNotes" onclick="#"></option>
             <option icon="fa-money" label="pending-invoices-button" calculateby="calcClientInvoicePending" onclick="#"></option>
-        </row>        
+        </row>   
+             
+        <row type="footer">
+            <option>
+                <action color="primary" onclick="#">Action 1</action>
+                <action color="info" onclick="#">Action 2</action>
+                <action onclick="#">Action 3</action>
+            </option>
+            <option label="Danger Actions" color="danger">
+                Estas son acciones peligrosas
+                <action color="danger" onclick="#">Alert 1</action>
+                <action color="danger" onclick="#">Alert 2</action>
+            </option>
+        </row>    
     </rows>    
 </view>
 

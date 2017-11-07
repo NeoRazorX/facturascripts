@@ -66,7 +66,7 @@ class EditUser extends ExtendedController\PanelController
         $columnLangCode = $this->views['EditUser']->columnForName('lang-code');
         $langs = $this->getLanguages();
         $columnLangCode->widget->setValuesFromArray($langs);
-
+        
         /// Disable columns
         $this->views['EditRolUser']->disableColumn('nick', TRUE);
         $this->views['ListPageRule']->disableColumn('nick', TRUE);
