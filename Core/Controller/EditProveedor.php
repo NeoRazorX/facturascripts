@@ -36,6 +36,7 @@ class EditProveedor extends ExtendedController\PanelController
     {
         $this->addEditView('FacturaScripts\Core\Model\Proveedor', 'EditProveedor', 'supplier');
         $this->addEditListView('FacturaScripts\Core\Model\DireccionProveedor', 'EditDireccionProveedor', 'addresses', 'fa-road');
+        $this->addEditListView('FacturaScripts\Core\Model\ArticuloProveedor', 'ListArticuloProveedor', 'supplier-products','fa-cubes');
     }
 
     /**
