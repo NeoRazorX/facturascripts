@@ -31,22 +31,13 @@ use FacturaScripts\Core\Base\ExtendedController;
 class EditCuenta extends ExtendedController\EditController
 {
 
-    /**
-     * EditCuenta constructor.
-     *
-     * @param Base\Cache $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
-     * @param string $className
+     /**
+     * Devuelve el nombre del modelo
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    public function getModelName()
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
-
-        // Establecemos el modelo de datos
-        $this->modelName = 'FacturaScripts\Core\Model\Cuenta';
+        return 'FacturaScripts\Core\Model\Cuenta';
     }
-
     /**
      * Devuelve los datos básicos de la página
      *

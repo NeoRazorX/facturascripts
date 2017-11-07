@@ -43,12 +43,7 @@ class EditController extends Base\Controller
      */
     public $view;
 
-    /**
-     * Nombre del modelo de datos
-     *
-     * @var string
-     */
-    protected $modelName;
+  
 
     /**
      * Inicia todos los objetos y propiedades.
@@ -79,7 +74,7 @@ class EditController extends Base\Controller
         // Creamos la vista a visualizar
         $viewName = $this->getClassName();
         $title = $this->getPageData()['title'];
-        $this->view = new EditView($title, $this->modelName, $viewName, $user->nick);
+        $this->view = new EditView($title, $this->getmodelName(), $viewName, $user->nick);
 
         // Guardamos si hay operaciones por realizar
         $action = $this->request->get('action', '');

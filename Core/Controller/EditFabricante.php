@@ -30,22 +30,14 @@ use FacturaScripts\Core\Base\ExtendedController;
 class EditFabricante extends ExtendedController\EditController
 {
 
-    /**
-     * EditFabricante constructor.
-     *
-     * @param Base\Cache $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
-     * @param string $className
+  
+     /**
+     * Devuelve el nombre del modelo
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    public function getModelName()
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
-
-        // Establecemos el modelo de datos
-        $this->modelName = 'FacturaScripts\Core\Model\Fabricante';
+        return 'FacturaScripts\Core\Model\Fabricante';
     }
-
     /**
      * Devuelve los datos básicos de la página
      *

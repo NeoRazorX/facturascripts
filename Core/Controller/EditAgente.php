@@ -30,20 +30,14 @@ use FacturaScripts\Core\Base;
  */
 class EditAgente extends ExtendedController\EditController
 {
-    /**
-     * EditAgente constructor.
-     *
-     * @param Base\Cache $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
-     * @param string $className
+  
+      /**
+     * Devuelve el nombre del modelo
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    public function getModelName()
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
-        $this->modelName = 'FacturaScripts\Core\Model\Agente';
+        return 'FacturaScripts\Core\Model\Agente';
     }
-
     /**
      * Devuelve el texto para el pie del panel de datos
      *
