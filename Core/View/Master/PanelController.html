@@ -70,6 +70,7 @@
 {% from 'Macro/BaseController.html' import columnsForEditListView as columnsForEditListView %}
 {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
 {% from 'Macro/BaseController.html' import rowHeaderForEditView as rowHeaderForEditView %}
+{% from 'Macro/BaseController.html' import rowFooterForEditView as rowFooterForEditView %}
 
 {# -- Main Body -- #}
 <div class="container-fluid">
@@ -120,12 +121,12 @@
 
         {# -- Right Panel -- #}
         <div class="col-sm-10">
-            <div class="card">
-                <div class="card-body">
-                    <div class="tab-content" id="optionsindex-tabContent">
-                        {% for indexView, view in fsc.views %}
-                        {% set active = (indexView == fsc.active) ? ' show active' : '' %}
-                        <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
+            <div class="tab-content" id="optionsindex-tabContent">
+                {% for indexView, view in fsc.views %}
+                {% set active = (indexView == fsc.active) ? ' show active' : '' %}
+                    <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
+                        <div class="card">
+                            <div class="card-body">
                             {% set viewType = fsc.viewClass(view) %}
                             {% if viewType == 'ListView' %}
                             {{ columnsForListView(_context, view) }}
@@ -149,11 +150,15 @@
                             </div>
                             {% endif %}
                         </div>
-                        {% endfor %}
                     </div>
+                    {% if viewType in ['EditView','EditListView'] %}
+                    {{ rowFooterForEditView(_context, view) }}
+                    {% endif %}
                 </div>
+                {% endfor %}
             </div>
         </div>
     </div>
 </div>
+<br/>
 {% endblock %}

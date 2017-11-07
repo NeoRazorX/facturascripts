@@ -70,6 +70,7 @@
 {% from 'Macro/BaseController.html' import columnsForEditListView as columnsForEditListView %}
 {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
 {% from 'Macro/BaseController.html' import rowHeaderForEditView as rowHeaderForEditView %}
+{% from 'Macro/BaseController.html' import rowFooterForEditView as rowFooterForEditView %}
 
 {# -- Main Body -- #}
 <div class="container-fluid">
@@ -107,15 +108,15 @@
     <div id="data" class="row">
         {# -- First View Panel -- #}
         <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    {% for indexView, view in fsc.views %}
-                        {% if loop.index == 1 %}
+            {% for indexView, view in fsc.views %}
+                {% if loop.index == 1 %}
+                    <div class="card">
+                        <div class="card-body">
                             {% set viewType = fsc.viewClass(view) %}
                             {% if viewType == 'ListView' %}
                             {{ columnsForListView(_context, view) }}
                             {% endif %}
-
+                        
                             {% if viewType == 'EditView' %}
                             <!-- Statistical buttons bar -->
                             {{ rowHeaderForEditView(_context, view) }}
@@ -129,14 +130,15 @@
                             {% endif %}
 
                             {% if viewType == 'HtmlView' %}
-                            <div class="row">
-                                {% include view.fileName ignore missing %}
-                            </div>
+                            <div>{% include view.fileName ignore missing %}</div>
                             {% endif %}
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
+                        </div>
+                    </div>
+                    {% if viewType in ['EditView','EditListView'] %}
+                    {{ rowFooterForEditView(_context, view) }}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
             <br/>
             <div class="nav nav-tabs" id="optionsindex" role="tablist">
                 {% for indexView, view in fsc.views %}
@@ -156,6 +158,8 @@
                         {% set viewType = fsc.viewClass(view) %}
                         {% if viewType == 'ListView' %}
                         {{ columnsForListView(_context, view) }}
+                        {% else %}
+                        <br/>
                         {% endif %}
 
                         {% if viewType == 'EditView' %}
@@ -171,9 +175,9 @@
                         {% endif %}
 
                         {% if viewType == 'HtmlView' %}
-                        <div class="row">
-                            {% include view.fileName ignore missing %}
-                        </div>
+                        <div>{% include view.fileName ignore missing %}</div>
+                        {% elseif viewType in ['EditView','EditListView'] %}
+                        {{ rowFooterForEditView(_context, view) }}
                         {% endif %}
                     </div>
                 {% endfor %}
@@ -181,4 +185,5 @@
         </div>
     </div>
 </div>
+<br/>
 {% endblock %}
