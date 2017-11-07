@@ -24,6 +24,45 @@
 </div>
 {% endmacro %}
 
+<!--
+    Generate the code for the row of footers views (information cards)
+-->
+{% macro rowFooterForEditView(context, view) %}
+    {% set footer = view.getRow('footer') %}
+    {% if footer is not empty %}
+    <br />
+    <div id="footer" class="row">
+        {% for panel in footer.options %}
+        <div class="col">
+            <div class="card {% if panel.color %}border-{{ panel.color }}{% endif %}">
+                {% if panel.label is not empty %}
+                <div class="card-header {% if panel.color %}text-{{ panel.color }}{% endif %}">
+                    <h3 class="card-title">{{ context.i18n.trans(panel.label) }}</h3>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    {% if panel.value is not empty %}
+                    <p><i>{{ context.i18n.trans(panel.value) }}</i></p>
+                    {% endif %}
+                    {% for action in panel.actions %}
+                    <a href="{{ action.onclick }}" class="btn btn-{{ action.color }}">{{ context.i18n.trans(action.value) }}</a>
+                    {% endfor %}
+                </div>
+
+                {% if panel.footer is not empty %}
+                <div class="card-footer">
+                    <b>{{ context.i18n.trans(panel.footer) }}</b>
+                </div>
+                {% endif %}
+            </div>
+            {% if not loop.last %}
+            <br />
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endmacro %}
 
 <!--
     Generate the code for the row of statistical buttons

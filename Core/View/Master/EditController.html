@@ -71,6 +71,7 @@
 {% from 'Macro/Utils.html' import exportData as exportData %}
 {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
 {% from 'Macro/BaseController.html' import rowHeaderForEditView as rowHeaderForEditView %}
+{% from 'Macro/BaseController.html' import rowFooterForEditView as rowFooterForEditView %}
 
 <!-- Aux Objects -->
 {% set model = fsc.view.getModel() %}
@@ -161,30 +162,6 @@
     </div>
 
     <!-- Footer Row -->
-    <div id="footer" class="row">
-        <div class="col-10">
-            {% set footer = fsc.view.getRow('footer') %}
-            {% if footer is not empty %}
-            <div class="panel-group">
-                {% for panel in footer.options %}
-                <div class="panel panel-{{ panel.color }}">
-                    {% if panel.label is not empty %}
-                    <div class="panel-heading">
-                        <h3 class="panel-title">{{ i18n.trans(panel.label) }}</h3>
-                    </div>
-                    {% endif %}
-                    <div class="panel-body">
-                        {{ i18n.trans(panel.value) }}
-                    </div>
-
-                    {% if panel.footer is not empty %}
-                    <div class="panel-footer">{{ i18n.trans(panel.footer) }}</div>
-                    {% endif %}
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-    </div>
+    {{ rowFooterForEditView(_context, fsc.view) }}
 </div>
 {% endblock %}
