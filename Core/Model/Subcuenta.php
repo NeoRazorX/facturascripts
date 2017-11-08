@@ -140,6 +140,14 @@ class Subcuenta
     {
         return 'idsubcuenta';
     }
+    
+    public function install()
+    {
+        new Ejercicio();
+        new Cuenta();
+        
+        return '';
+    }
 
     /**
      * Resetea los valores de todas las propiedades modelo.

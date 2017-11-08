@@ -116,11 +116,11 @@
                    <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
                 {% if fsc.getPageData()['isDefault'] %}
-                <a class="btn btn-sm btn-outline-secondary active" href="{{ list_url }}&amp;default_page=FALSE" {{ popoverTitle(defaultF, 'bottom') }}>
+                <a class="btn btn-sm btn-outline-secondary active" href="{{ list_url }}&amp;defaultPage=FALSE" {{ popoverTitle(defaultF, 'bottom') }}>
                    <i class="fa fa-bookmark" aria-hidden="true"></i>
                 </a>
                 {% else %}
-                <a class="btn btn-sm btn-outline-secondary" href="{{ list_url }}&amp;default_page=TRUE" {{ popoverTitle(defaultT, 'bottom') }}>
+                <a class="btn btn-sm btn-outline-secondary" href="{{ list_url }}&amp;defaultPage=TRUE" {{ popoverTitle(defaultT, 'bottom') }}>
                    <i class="fa fa-bookmark-o" aria-hidden="true"></i>
                 </a>
                 {% endif %}
