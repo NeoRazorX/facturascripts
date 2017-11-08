@@ -100,7 +100,7 @@
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('empresa_id_seq'::regclass)</default>
+        <default>nextval('empresas_id_seq'::regclass)</default>
     </column>
     <column>
         <name>idprovincia</name>
