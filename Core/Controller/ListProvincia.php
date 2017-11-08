@@ -37,7 +37,7 @@ class ListProvincia extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'province';
-        $pagedata['icon'] = 'fa-globe';
+        $pagedata['icon'] = 'fa-map-signs';
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
@@ -49,7 +49,7 @@ class ListProvincia extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\Provincia', $className);
+        $this->addView('FacturaScripts\Core\Model\Provincia', 'ListProvincia');
         $this->addSearchFields($className, ['provincia', 'codisoprov'], ['codpostal2d']);
 
         $this->addOrderBy($className, 'provincia', 'province');

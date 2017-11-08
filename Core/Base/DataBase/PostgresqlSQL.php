@@ -326,7 +326,7 @@ class PostgresqlSQL implements DataBaseSQL
     public function sqlLoadFromCSV($filePath, $tableName, $delimiter = ';', $enclosed = '"', $escaped = '\\', $lineEnd = PHP_EOL)
     {
         /**
-         * // TODO: Esta es la forma ideal para funcionar
+         * // TODO: Esta es la forma ideal para funcionar, pero está limitado a superuser y los archivos deben pertenecer a postgres
          * return  "COPY " . $tableName
          * . " FROM '" . $filePath . "'"
          * . " WITH"
@@ -336,7 +336,7 @@ class PostgresqlSQL implements DataBaseSQL
          * . " CSV HEADER;";
          */
 
-        // TODO: Este es el parche provisional para probar con igualdad de funcionalidades
+        // TODO: Este es el 'parche' provisional para probar con igualdad de funcionalidades
         if (!file_exists($filePath) || !is_readable($filePath)) {
             return '';
         }
