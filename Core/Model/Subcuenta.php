@@ -379,7 +379,7 @@ class Subcuenta
             new DataBaseWhere('codcuenta', $this->codcuenta)
         ];
 
-        $count = new Model\Cuenta();
+        $count = new Cuenta();
         if ($count->loadFromCode(NULL, $where) === FALSE) {
             $this->miniLog->alert($this->i18n->trans('account-data-error'));
             return false;

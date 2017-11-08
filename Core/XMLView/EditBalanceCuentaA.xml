@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your value) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Definición inicial para el controlador EditBalanceCuentaA
+ *
+ * @author Luis Miguel Pérez PC REDNET S.L.<luismi@pcrednet.com>
+-->
+
+<view>
+    <columns>
+        <group name="data" numcolumns="12">    
+            <column name="code" order="100" numcolumns="2" display="none">
+                <widget type="text" fieldname="id" onclick="EditBalance"/>
+            </column>           
+            <column name="cod-balance" order="110" numcolumns="2" display="none">
+                <widget type="text" fieldname="codbalance" />
+            </column>
+            <column name="account-code" order="120" numcolumns="4">
+                <widget type="text" fieldname="codcuenta" />
+            </column>
+            <column name="description" order="130" numcolumns="4">
+                <widget type="text" fieldname="desccuenta" />
+            </column>
+        </group>
+    </columns>
+</view>
+

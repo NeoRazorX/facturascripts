@@ -36,6 +36,8 @@ class EditProveedor extends ExtendedController\PanelController
     {
         $this->addEditView('FacturaScripts\Core\Model\Proveedor', 'EditProveedor', 'supplier');
         $this->addEditListView('FacturaScripts\Core\Model\DireccionProveedor', 'EditDireccionProveedor', 'addresses', 'fa-road');
+        $this->addEditListView('FacturaScripts\Core\Model\CuentaBancoProveedor', 'EditCuentaBancoProveedor', 'bank-accounts', 'fa-university');
+        $this->addEditListView('FacturaScripts\Core\Model\ArticuloProveedor', 'EditProveedorArticulo', 'products', 'fa-cubes');
     }
 
     /**
@@ -66,6 +68,16 @@ class EditProveedor extends ExtendedController\PanelController
                 break;
 
             case 'EditDireccionProveedor':
+                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getProviderFieldValue('codproveedor'))];
+                $view->loadData($where);
+                break;
+
+            case 'EditCuentaBancoProveedor':
+                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getProviderFieldValue('codproveedor'))];
+                $view->loadData($where);
+                break;
+
+            case 'EditProveedorArticulo':
                 $where = [new DataBase\DataBaseWhere('codproveedor', $this->getProviderFieldValue('codproveedor'))];
                 $view->loadData($where);
                 break;

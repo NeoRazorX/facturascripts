@@ -77,6 +77,11 @@ Ejemplo de carga de datos para distintos tipos de vistas.
 ```
 
 
+### setTabsPosition
+Este método permite poner las pestaña a la izquierda (left), abajo (bottom) o arriba (top). Por defecto están
+colocadas a la izquierda.
+
+
 ### getPageData
 Este método es el encargado de devolver un array con los datos para la instalación y configuración del controlador
 dentro del entorno de **Facturascripts**. Como norma hay que llamar al _parent_ del controlador para inicializar los

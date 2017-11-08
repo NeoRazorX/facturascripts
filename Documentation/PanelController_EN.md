@@ -77,6 +77,10 @@ Example of loading data for different types of views.
 ```
 
 
+### setTabsPosition
+This method let you put tabs on left, bottom or on top of the page. Left is the default position.
+
+
 ### getPageData
 This method is responsible for returning an array with the data for the installation and configuration of the controller
 within the environment of **Facturascripts**. As a rule, you must call the _parent_ of the controller to initialize the

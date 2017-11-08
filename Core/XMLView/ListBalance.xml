@@ -30,19 +30,19 @@
         <column name="nature" order="110">
             <widget type="text" fieldname="naturaleza" />
         </column>
-          <column name="description-1" order="120">
+        <column name="description-1" order="120">
             <widget type="text" fieldname="descripcion1" />
         </column>
-         <column name="description-2" order="130">
+        <column name="description-2" order="130">
             <widget type="text" fieldname="descripcion2" />
         </column>
-         <column name="description-3" order="140">
+        <column name="description-3" order="140">
             <widget type="text" fieldname="descripcion3" />
         </column>
-         <column name="description-4" order="150">
+        <column name="description-4" order="150">
             <widget type="text" fieldname="descripcion4" />
         </column>
-         <column name="description-4ba" order="160">
+        <column name="description-4ba" order="160">
             <widget type="text" fieldname="descripcion4ba" />
         </column>
     </columns>

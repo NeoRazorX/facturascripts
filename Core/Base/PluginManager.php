@@ -182,7 +182,7 @@ class PluginManager
     private function deployControllers()
     {
         self::$deployedControllers = true;
-        $cache = new Cache(FS_FOLDER);
+        $cache = new Cache();
         $menuManager = new MenuManager();
         $menuManager->init();
 

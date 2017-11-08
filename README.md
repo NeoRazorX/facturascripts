@@ -22,7 +22,7 @@ npm install
 
 ## Feedback
 Tienes las instrucciones para colaborar en desarrollo o traducciones aquí:
-https://www.facturascripts.com/foro/quieres-colaborar-en-el-desarrollo-de-facturascripts-964.html
+https://www.facturascripts.com/documentacion/como-contribuir/hemos-abierto-un-para-todo-el-que-este-interesado-252.html
 
 [1]: https://github.com/NeorazorX/facturascripts/issues?utf8=✓&q=is%3Aopen%20is%3Aissue
 [2]: https://img.shields.io/badge/Symfony-%202.x%20&%203.x-green.svg

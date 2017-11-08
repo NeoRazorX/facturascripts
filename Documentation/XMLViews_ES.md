@@ -252,6 +252,7 @@ Ejemplo:
 ```XML
     <rows>
         <row type="footer">
+            <option>Este es un ejemplo con sólo texto</option>
             <option label="Panel Footer" footer="Panel footer" color="warning">Este es un ejemplo con cabecera y footer</option>
             <option label="Esto es un info" color="info">Este es un ejemplo con cabecera y sin footer</option>
             <option footer="Texto en el footer" color="success">Este es un ejemplo sin cabecera</option>

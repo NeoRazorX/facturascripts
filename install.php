@@ -334,13 +334,14 @@ function randomString($length = 20)
 function installerMain()
 {
     if (filter_input(INPUT_POST, 'fs_lang')) {
-        $i18n = new Translator(filter_input(INPUT_POST, 'fs_lang'));
+        define('FS_LANG', filter_input(INPUT_POST, 'fs_lang'));
     } elseif (filter_input(INPUT_GET, 'fs_lang')) {
-        $i18n = new Translator(filter_input(INPUT_GET, 'fs_lang'));
+        define('FS_LANG', filter_input(INPUT_GET, 'fs_lang'));
     } else {
-        $i18n = new Translator(getUserLanguage());
+        define('FS_LANG', getUserLanguage());
     }
 
+    $i18n = new Translator();
     $errors = [];
     searchErrors($errors, $i18n);
 

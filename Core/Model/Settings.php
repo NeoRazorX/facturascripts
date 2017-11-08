@@ -127,7 +127,7 @@ class Settings
         $properties = json_encode($this->properties);
 
         $sql = 'UPDATE ' . $this->tableName() . ' SET '
-            . '  properties = ' . $this->var2str($properties)
+            . ' properties = ' . $this->var2str($properties)
             . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->name) . ';';
 
         return $this->dataBase->exec($sql);
