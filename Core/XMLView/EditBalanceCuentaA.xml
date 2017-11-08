@@ -31,10 +31,10 @@
             <column name="cod-balance" order="110" numcolumns="2" display="none">
                 <widget type="text" fieldname="codbalance" />
             </column>
-             <column name="account-code" order="120" numcolumns="4">
+            <column name="account-code" order="120" numcolumns="4">
                 <widget type="text" fieldname="codcuenta" />
             </column>
-             <column name="description" order="130" numcolumns="4">
+            <column name="description" order="130" numcolumns="4">
                 <widget type="text" fieldname="desccuenta" />
             </column>
         </group>

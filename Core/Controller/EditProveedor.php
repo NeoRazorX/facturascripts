@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Model;
 
 /**
  * Description of PanelSettings
@@ -37,65 +36,66 @@ class EditProveedor extends ExtendedController\PanelController
     {
         $this->addEditView('FacturaScripts\Core\Model\Proveedor', 'EditProveedor', 'supplier');
         $this->addEditListView('FacturaScripts\Core\Model\DireccionProveedor', 'EditDireccionProveedor', 'addresses', 'fa-road');
-        $this->addEditListView('FacturaScripts\Core\Model\ArticuloProveedor', 'EditProveedorArticulo', 'supplier-products','fa-cubes');
-        $this->addEditListView('FacturaScripts\Core\Model\CuentaBancoProveedor', 'EditCuentaBancoProveedor', 'accounts' );
-   }
+        $this->addEditListView('FacturaScripts\Core\Model\CuentaBancoProveedor', 'EditCuentaBancoProveedor', 'bank-accounts', 'fa-university');
+        $this->addEditListView('FacturaScripts\Core\Model\ArticuloProveedor', 'EditProveedorArticulo', 'products', 'fa-cubes');
+    }
 
-   /**
-    * Devuele el campo $fieldName del cliente
-    *
-    * @param string $fieldName
-    *
-    * @return mixed
-    */
-   private function getProviderFieldValue($fieldName)
-   {
-      $model = $this->views['EditProveedor']->getModel();
-      return $model->{$fieldName};
-   }
+    /**
+     * Devuele el campo $fieldName del cliente
+     *
+     * @param string $fieldName
+     *
+     * @return mixed
+     */
+    private function getProviderFieldValue($fieldName)
+    {
+        $model = $this->views['EditProveedor']->getModel();
+        return $model->{$fieldName};
+    }
 
-   /**
-    * Procedimiento encargado de cargar los datos a visualizar
-    *
-    * @param string $keyView
-    * @param ExtendedController\EditView $view
-    */
-   protected function loadData($keyView, $view)
-   {
-      switch ($keyView) {
-         case 'EditProveedor':
-            $value = $this->request->get('code');
-            $view->loadData($value);
-            break;
-          
-          case 'EditDireccionProveedor':
+    /**
+     * Procedimiento encargado de cargar los datos a visualizar
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        switch ($keyView) {
+            case 'EditProveedor':
+                $value = $this->request->get('code');
+                $view->loadData($value);
+                break;
+
+            case 'EditDireccionProveedor':
                 $where = [new DataBase\DataBaseWhere('codproveedor', $this->getProviderFieldValue('codproveedor'))];
                 $view->loadData($where);
                 break;
+
+            case 'EditCuentaBancoProveedor':
+                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getProviderFieldValue('codproveedor'))];
+                $view->loadData($where);
+                break;
+
             case 'EditProveedorArticulo':
                 $where = [new DataBase\DataBaseWhere('codproveedor', $this->getProviderFieldValue('codproveedor'))];
                 $view->loadData($where);
                 break;
+        }
+    }
 
-         case 'EditCuentaBancoProveedor':
-            $where = [new DataBase\DataBaseWhere('codproveedor', $this->getProviderFieldValue('codproveedor'))];
-            $view->loadData($where);
-            break;
-      }
-   }
+    /**
+     * Devuelve los datos básicos de la página
+     *
+     * @return array
+     */
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'supplier';
+        $pagedata['icon'] = 'fa-users';
+        $pagedata['showonmenu'] = false;
 
-   /**
-    * Devuelve los datos básicos de la página
-    *
-    * @return array
-    */
-   public function getPageData()
-   {
-      $pagedata = parent::getPageData();
-      $pagedata['title'] = 'supplier';
-      $pagedata['icon'] = 'fa-users';
-      $pagedata['showonmenu'] = false;
-
-      return $pagedata;
-   }
+        return $pagedata;
+    }
 }

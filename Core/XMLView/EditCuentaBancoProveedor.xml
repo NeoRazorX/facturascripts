@@ -25,7 +25,7 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-           <column name="account-code" numcolumns="2" order="100">
+            <column name="account-code" numcolumns="2" order="100">
                 <widget type="text" fieldname="codcuenta" onclick="" icon="fa-university" required="true" readonly="true" />
             </column>
             <column name="codproveedor" display="none" numcolumns="1" order="110">

@@ -36,7 +36,7 @@
                     <values source="articulos" fieldcode="referencia" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-             <column name="provider-reference" order="120" numcolumns="2">
+            <column name="provider-reference" order="120" numcolumns="2">
                 <widget type="text" fieldname="refproveedor"  required="true" />
             </column>
             <column name="codbarras" order="130" numcolumns="2">
@@ -47,13 +47,12 @@
             </column>
         </group>
         <group name="price" numcolumns="12">   
-           
             <column name="precio" numcolumns="2" display="left" order="110">
                 <widget type="number" fieldname="precio" >
                
                 </widget>
             </column>
-             <column name="dto" order="120" numcolumns="2">
+            <column name="dto" order="120" numcolumns="2">
                 <widget type="number" fieldname="dto"/>
             </column>
             <column name="tax" numcolumns="4" display="left" order="110">

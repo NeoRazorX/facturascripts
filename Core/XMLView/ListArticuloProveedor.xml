@@ -24,27 +24,27 @@
 
 <view>
     <columns>
-        <column name="reference" display="left" order="100" numcolumns="2">
+        <column name="reference" display="left" order="100">
             <widget type="text" fieldname="id" onclick="EditArticuloProveedor" />
         </column>
-        <column name="supplier-reference" numcolumns="2" order="110" >
-                <widget type="text" fieldname="refproveedor" onclick="" icon="fa-barcode" required="true" />
-            </column>
-        <column name="supplier" display="left" order="100" numcolumns="2">
+        <column name="supplier-reference" order="110" >
+            <widget type="text" fieldname="refproveedor" onclick="" icon="fa-barcode" required="true" />
+        </column>
+        <column name="supplier" display="left" order="100">
             <widget type="text" fieldname="codproveedor" />
         </column>
-        <column name="description" display="left" order="110"  numcolumns="3">
+        <column name="description" display="left" order="110">
             <widget type="text" fieldname="descripcion" />
         </column>
-        <column name="price" title="pvp" display="right" order="150" numcolumns="1">
+        <column name="price" title="pvp" display="right" order="150">
             <widget type="money" fieldname="precio" />
         </column>
-        <column name="dto" title="dto%" display="right" order="160" numcolumns="1" >
+        <column name="dto" title="dto%" display="right" order="160">
             <widget type="number" fieldname="dto">
                 <option color="green">&gt;0</option>
             </widget>
         </column>
-        <column name="stock" display="right" order="160" numcolumns="1">
+        <column name="stock" display="right" order="160">
             <widget type="number" fieldname="stock">
                 <option color="red">&lt;0</option>
             </widget>
