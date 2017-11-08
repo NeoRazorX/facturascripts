@@ -50,7 +50,7 @@ class ListProvincia extends ExtendedController\ListController
     {
         $className = $this->getClassName();
         $this->addView('FacturaScripts\Core\Model\Provincia', 'ListProvincia');
-        $this->addSearchFields($className, ['provincia', 'codisoprov'], ['codpostal2d']);
+        $this->addSearchFields($className, ['provincia', 'codisoprov', 'codpostal2d']);
 
         $this->addOrderBy($className, 'provincia', 'province');
         $this->addOrderBy($className, 'codpais', 'alfa-code-3', 1);
