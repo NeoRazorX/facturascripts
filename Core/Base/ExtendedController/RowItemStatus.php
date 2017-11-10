@@ -61,7 +61,6 @@ class RowItemStatus extends RowItem
 
         foreach ($row->option as $option) {
             $values = $this->getAttributesFromXML($option);
-            $values['actions'] = isset($option->action) ? $this->getActionsFromXML($option->action) : [];            
             $this->options[] = $values;
             unset($values);
         }

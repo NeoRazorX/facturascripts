@@ -38,17 +38,6 @@ class RowItemFooter extends RowItem
         $this->buttons = [];
     }
 
-    private function loadButtonsFromXML($buttonsXML)
-    {
-        $buttons = [];
-        foreach ($buttonsXML as $item) {
-            $values = $this->getAttributesFromXML($item);
-            $buttons[] = new WidgetButton($values);
-            unset($values);
-        }
-        return $buttons;
-    }
-
     public function loadFromXML($row)
     {
         $groupCount = 1;

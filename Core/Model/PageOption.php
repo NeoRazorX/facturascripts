@@ -146,8 +146,7 @@ class PageOption
         $rows = json_decode($data['rows'], true);
         if (!empty($rows)) {
             foreach ($rows as $item) {
-                $rowItem = new ExtendedController\RowItem();
-                $rowItem->loadFromJSON($item);
+                $rowItem = ExtendedController\RowItem::newFromJSONRow($item);
                 $this->rows[$rowItem->type] = $rowItem;
                 unset($rowItem);
             }
@@ -304,7 +303,6 @@ class PageOption
             $this->filters = [];
             $this->rows = [];
             $this->installXML($name);
-            //$this->save();
         }
 
         // Aplicamos sobre los widgets Select dinámicos sus valores

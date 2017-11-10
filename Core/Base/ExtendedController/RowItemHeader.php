@@ -43,12 +43,7 @@ class RowItemHeader extends RowItem
      */
     public function loadFromXML($row)
     {
-        foreach ($row->button as $item) {
-            $values = $this->getAttributesFromXML($item);
-            $button = new WidgetButton($values);
-            $this->buttons[] = $button;
-            unset($values);
-        }
+        $this->buttons = $this->loadButtonsFromXML($row);
     }
     
     /**

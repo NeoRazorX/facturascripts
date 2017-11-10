@@ -103,16 +103,17 @@ abstract class RowItem implements VisualItemInterface
         return $result;
     }
 
-/*    
-    protected function getActionsFromXML($actions)
+    protected function loadButtonsFromXML($buttonsXML)
     {
-        $result = [];
-        foreach ($actions as $action) {
-            $result[] = $this->getAttributesFromXML($action);
+        $buttons = [];
+        foreach ($buttonsXML as $item) {
+            $values = $this->getAttributesFromXML($item);
+            $buttons[] = new WidgetButton($values);
+            unset($values);
         }
-        return $result;
+        return $buttons;
     }
-*/    
+    
     /**
      * Carga la estructura de atributos en base a un archivo XML
      *
