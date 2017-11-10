@@ -28,24 +28,29 @@
     Generate the code for the row of footers views (information cards)
 -->
 {% macro rowFooterForEditView(context, view) %}
-    {% set footer = view.getRow('footer') %}
-    {% if footer is not empty %}
+{% set footer = view.getRow('footer') %}
+{% if footer is not empty %}
+{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+
     <br />
     <div id="footer" class="row">
-        {% for panel in footer.options %}
+        {% for panel in footer.panels %}
         <div class="col">
             <div class="card {% if panel.color %}border-{{ panel.color }}{% endif %}">
-                {% if panel.label is not empty %}
+                {% if panel.title is not empty %}
                 <div class="card-header {% if panel.color %}text-{{ panel.color }}{% endif %}">
-                    <h3 class="card-title">{{ context.i18n.trans(panel.label) }}</h3>
+                    <h3 class="card-title">{{ context.i18n.trans(panel.title) }}</h3>
                 </div>
                 {% endif %}
                 <div class="card-body">
-                    {% if panel.value is not empty %}
-                    <p><i>{{ context.i18n.trans(panel.value) }}</i></p>
+                    {% if panel.label is not empty %}
+                    <p><i>{{ context.i18n.trans(panel.label) }}</i></p>
                     {% endif %}
-                    {% for action in panel.actions %}
-                    <a href="{{ action.onclick }}" class="btn btn-{{ action.color }}">{{ context.i18n.trans(action.value) }}</a>
+                    {% for button in footer.getButtons(panel.name) %}
+                        {% set label = context.i18n.trans(button.label) %}
+                        {% set hint = context.i18n.trans(button.hint) %}
+                        {% set hint = popoverTitle(hint, 'bottom') %}
+                        {{ button.getHTML(label, context.indexView, hint)|raw }}
                     {% endfor %}
                 </div>
 
@@ -61,27 +66,28 @@
         </div>
         {% endfor %}
     </div>
-    {% endif %}
+{% endif %}
 {% endmacro %}
 
 <!--
     Generate the code for the row of statistical buttons
 -->
-{% macro rowHeaderForEditView(contex, view) %}
+{% macro rowHeaderForEditView(context, view) %}
+{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+
 <div class="row" style="margin-top: -.5rem">
     <div class="col-12">
         <div class="btn-toolbar pull-right" role="toolbar" style="margin-bottom: 1rem">
             <div class="btn-group btn-group-lg" role="group">
                 {% set header = view.getRow('header') %}
                 {% if header is not empty %}
-                {% for button in header.options %}
-                <button type="button" class="btn btn-light" onclick="{{ button.onclick }}" style="margin-right: 5px;">
-                    <i class="fa {{ button.icon }} fa-lg pull-left"></i>
-                    <div class="cust-text">
-                        {{ contex.i18n.trans(button.label) }} {{ attribute(contex.fsc, button.calculateby, [view])  }}
-                    </div>
-                </button>
-                {% endfor %}
+                    {% for button in header.buttons %}
+                        {% set value = attribute(context.fsc, button.action, [view]) %}
+                        {% set label = context.i18n.trans(button.label) %}
+                        {% set hint = context.i18n.trans(button.hint) %}
+                        {% set hint = popoverTitle(hint, 'bottom') %}
+                        {{ button.getHTML(label, value, hint)|raw }}
+                    {% endfor %}
                 {% endif %}
             </div>
         </div>
@@ -163,7 +169,7 @@
     <input type="hidden" name="action" value="save">
     <input type="hidden" name="active" value="{{ context.indexView }}">
     <div class="row">
-        {% endif %}
+{% endif %}
 
         {% for group in view.getColumns() %}
         <div class="{{ group.numColumns == 0 ? 'col' : 'col-md-' ~ group.numColumns }}">
@@ -183,10 +189,10 @@
         </div>
         {% endfor %}
 
-        {% if withForm == TRUE %}
-        {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
-        {% set save, save_title = context.i18n.trans('save'), context.i18n.trans('save-data') %}
-        {% set undo, undo_title = context.i18n.trans('undo'), context.i18n.trans('restore-data') %}
+    {% if withForm == TRUE %}
+    {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+    {% set save, save_title = context.i18n.trans('save'), context.i18n.trans('save-data') %}
+    {% set undo, undo_title = context.i18n.trans('undo'), context.i18n.trans('restore-data') %}
     </div>
     <div class="row">
         <div class="col-6">

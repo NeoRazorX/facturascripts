@@ -22,7 +22,7 @@ use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Description of PanelSettings
+ * Description of EditProveedor
  *
  * @author Nazca Networks <comercial@nazcanetworks.com>
  */

@@ -111,7 +111,7 @@
                 {% for indexView, view in fsc.views %}
                     {% set active = (indexView == fsc.active) ? ' active' : '' %}
                     <a class="nav-link{{ active }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
-                        <i class="fa {{ fsc.icons[indexView] }}" aria-hidden="true"></i>
+                        <i class="fa {{ fsc.icons[indexView] }} fa-fw" aria-hidden="true"></i>
                         &nbsp;{{ view.title }}
                     </a>
                 {% endfor %}

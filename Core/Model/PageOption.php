@@ -247,8 +247,7 @@ class PageOption
         }
 
         foreach ($rows->row as $row) {
-            $rowItem = new ExtendedController\RowItem();
-            $rowItem->loadFromXML($row);
+            $rowItem = ExtendedController\RowItem::newFromXMLRow($row);
             $this->rows[$rowItem->type] = $rowItem;
             unset($rowItem);
         }

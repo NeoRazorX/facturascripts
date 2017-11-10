@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Description of PanelSettings
+ * Description of EditArticulo
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
