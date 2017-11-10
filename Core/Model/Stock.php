@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -134,7 +133,7 @@ class Stock
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'stocks';
     }
@@ -147,6 +146,14 @@ class Stock
     public function primaryColumn()
     {
         return 'idstock';
+    }
+    
+    public function install()
+    {
+        new Almacen();
+        new Articulo();
+        
+        return '';
     }
 
     /**
@@ -270,7 +277,7 @@ class Stock
 
         if ($codalmacen) {
             $sql .= ' AND codalmacen = ' . $this->var2str($codalmacen);
-        }
+}
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
@@ -313,7 +320,7 @@ class Stock
     /**
      * Devuelve el stock por referencia ordenado por codalmacen
      *
-     * @param $ref
+     * @param string $ref
      *
      * @return self[]
      */

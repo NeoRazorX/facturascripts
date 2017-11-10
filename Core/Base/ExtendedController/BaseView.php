@@ -31,7 +31,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class BaseView
 {
-
     /**
      * Modelo necesario para llamadas a los métodos del modelo
      * o en el caso del EditController contiene los datos visualizados.
@@ -68,6 +67,14 @@ abstract class BaseView
     public static $i18n;
 
     /**
+     * Establece el estado de visualización/edición de una columna
+     *
+     * @param string $columnName
+     * @param boolean $disabled
+     */
+    abstract public function disableColumn($columnName, $disabled);
+
+    /**
      * Método para la exportación de los datos de la vista
      *
      * @param Base\ExportManager $exportManager
@@ -75,7 +82,7 @@ abstract class BaseView
      * @param string $action
      */
     abstract public function export(&$exportManager, &$response, $action);
-    
+
     /**
      * Constructor e inicializador de la clase
      *
@@ -104,7 +111,7 @@ abstract class BaseView
         if ($fieldValue != $this->model->primaryColumnValue()) {
             $this->model->loadFromCode($fieldValue);
         }
-        
+
         $this->model->checkArrayData($data);
         $this->model->loadFromData($data, ['action', 'active']);
     }
@@ -118,7 +125,7 @@ abstract class BaseView
     {
         return $this->model->save();
     }
-     
+
     /**
      * Elimina el registro con el código indicado de la base de datos
      *
@@ -133,7 +140,7 @@ abstract class BaseView
 
         return false;
     }
-    
+
     /**
      * Devuelve el puntero al modelo de datos
      *
@@ -143,7 +150,57 @@ abstract class BaseView
     {
         return $this->model;
     }
-    
+
+    /**
+     * Obtiene la columna por el nombre de la columna
+     *
+     * @param string $columnName
+     *
+     * @return ExtendedController\ColumnItem
+     */
+    public function columnForName($columnName)
+    {
+        $result = null;
+        foreach ($this->pageOption->columns as $group) {
+            foreach ($group->columns as $key => $column) {
+                if ($key === $columnName) {
+                    $result = $column;
+                    break;
+                }
+            }
+            if (!empty($result)) {
+                break;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Obtiene la columna para el nombre de campo informado
+     *
+     * @param string $fieldName
+     *
+     * @return ExtendedController\ColumnItem
+     */
+    public function columnForField($fieldName)
+    {
+        $result = null;
+        foreach ($this->pageOption->columns as $group) {
+            foreach ($group->columns as $column) {
+                if ($column->widget->fieldName === $fieldName) {
+                    $result = $column;
+                    break;
+                }
+            }
+            if (!empty($result)) {
+                break;
+            }
+        }
+
+        return $result;
+    }
+
     /**
      * Si existe, devuelve el tipo de row especificado
      *
@@ -153,7 +210,7 @@ abstract class BaseView
      */
     public function getRow($key)
     {
-        return empty($this->pageOption->rows) ? null : $this->pageOption->rows[$key];
+        return isset($this->pageOption->rows[$key]) ? $this->pageOption->rows[$key] : null;
     }
 
     /**

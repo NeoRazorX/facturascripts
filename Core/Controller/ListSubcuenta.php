@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -29,6 +28,7 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListSubcuenta extends ExtendedController\ListController
 {
+
     /**
      * Devuelve los datos básicos de la página
      *
@@ -49,11 +49,12 @@ class ListSubcuenta extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\Subcuenta', $className);
-        $this->addSearchFields($className, ['codsubcuenta', 'descripcion']);
+        $this->addView('FacturaScripts\Core\Model\Subcuenta', 'ListSubcuenta');
+        $this->addSearchFields('ListSubcuenta', ['codsubcuenta', 'descripcion']);
 
-        $this->addOrderBy($className, 'codsubcuenta', 'code');
-        $this->addOrderBy($className, 'descripcion', 'description');
+        $this->addFilterSelect('ListSubcuenta', 'codejercicio', 'ejercicios', '', 'nombre');
+
+        $this->addOrderBy('ListSubcuenta', 'codejercicio desc, codsubcuenta', 'code');
+        $this->addOrderBy('ListSubcuenta', 'codejercicio desc, descripcion', 'description');
     }
 }

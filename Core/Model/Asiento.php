@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class Asiento
 {
+
     use Base\ModelTrait {
         saveInsert as private saveInsertTrait;
     }
@@ -120,7 +120,7 @@ class Asiento
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'co_asientos';
     }
@@ -252,16 +252,6 @@ class Asiento
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             $this->numero = 1 + (int) $data[0]['num'];
-        }
-
-        /// Nos guardamos la secuencia para dar compatibilidad con eneboo
-        $secc = new SecuenciaContabilidad();
-        $secc0 = $secc->getByParams2($this->codejercicio, 'nasiento');
-        if ($secc0) {
-            if ($this->numero >= $secc0->valorout) {
-                $secc0->valorout = 1 + $this->numero;
-                $secc0->save();
-            }
         }
     }
 
@@ -651,7 +641,6 @@ class Asiento
         echo $this->i18n->trans('renumbering-seats');
         $this->renumerar();
     }
-
     /// renumera todos los asientos. Devuelve False en caso de error
 
     /**

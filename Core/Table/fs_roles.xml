@@ -5,19 +5,19 @@
     Description:
         Estructura de la tabla fs_roles.
 -->
-<tabla>
-    <columna>
-        <nombre>codrol</nombre>
-        <tipo>character varying(20)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>descripcion</nombre>
-        <tipo>character varying(200)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <restriccion>
-        <nombre>fs_roles_pkey</nombre>
-        <consulta>PRIMARY KEY (codrol)</consulta>
-    </restriccion>
-</tabla>
+<table>
+    <column>
+        <name>codrol</name>
+        <type>character varying(20)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>character varying(200)</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>fs_roles_pkey</name>
+        <type>PRIMARY KEY (codrol)</type>
+    </constraint>
+</table>

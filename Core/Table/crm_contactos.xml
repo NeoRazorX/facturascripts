@@ -4,131 +4,131 @@
     Description:
         Estructura de la tabla crm_contactos.
 -->
-<tabla>
-    <columna>
-        <nombre>codcontacto</nombre>
-        <tipo>character varying(6)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>nif</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>personafisica</nombre>
-        <tipo>boolean</tipo>
-        <defecto>true</defecto>
-    </columna>
-    <columna>
-        <nombre>nombre</nombre>
-        <tipo>character varying(150)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>empresa</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>cargo</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>email</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>telefono1</nombre>
-        <tipo>character varying(30)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>telefono2</nombre>
-        <tipo>character varying(30)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>direccion</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codpostal</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>ciudad</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>provincia</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codpais</nombre>
-        <tipo>character varying(20)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>admitemarketing</nombre>
-        <tipo>boolean</tipo>
-        <nulo>NO</nulo>
-        <defecto>true</defecto>
-    </columna>
-    <columna>
-        <nombre>observaciones</nombre>
-        <tipo>text</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codagente</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>fechaalta</nombre>
-        <tipo>date</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>ultima_comunicacion</nombre>
-        <tipo>date</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>fuente</nombre>
-        <tipo>character varying(50)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>estado</nombre>
-        <tipo>character varying(50)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>potencial</nombre>
-        <tipo>integer</tipo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>codgrupo</nombre>
-        <tipo>character varying(6)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <restriccion>
-        <nombre>crm_contactos_pkey</nombre>
-        <consulta>PRIMARY KEY (codcontacto)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_contactos_grupos</nombre>
-        <consulta>FOREIGN KEY (codgrupo)
+<table>
+    <column>
+        <name>codcontacto</name>
+        <type>character varying(6)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>nif</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>personafisica</name>
+        <type>boolean</type>
+        <default>true</default>
+    </column>
+    <column>
+        <name>nombre</name>
+        <type>character varying(150)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>empresa</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>cargo</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>email</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>telefono1</name>
+        <type>character varying(30)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>telefono2</name>
+        <type>character varying(30)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>direccion</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codpostal</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>ciudad</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>provincia</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codpais</name>
+        <type>character varying(20)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>admitemarketing</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>true</default>
+    </column>
+    <column>
+        <name>observaciones</name>
+        <type>text</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codagente</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>fechaalta</name>
+        <type>date</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>ultima_comunicacion</name>
+        <type>date</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>fuente</name>
+        <type>character varying(50)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>estado</name>
+        <type>character varying(50)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>potencial</name>
+        <type>integer</type>
+        <default>0</default>
+    </column>
+    <column>
+        <name>codgrupo</name>
+        <type>character varying(6)</type>
+        <null>YES</null>
+    </column>
+    <constraint>
+        <name>crm_contactos_pkey</name>
+        <type>PRIMARY KEY (codcontacto)</type>
+    </constraint>
+    <constraint>
+        <name>ca_contactos_grupos</name>
+        <type>FOREIGN KEY (codgrupo)
             REFERENCES gruposclientes (codgrupo)
-            ON DELETE SET NULL ON UPDATE CASCADE</consulta>
-    </restriccion>
-</tabla>
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+</table>

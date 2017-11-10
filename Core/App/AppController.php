@@ -96,7 +96,7 @@ class AppController extends App
             $this->renderHtml('Login/Login.html');
         } else {
             /// Obtenemos el nombre del controlador a cargar
-            $pageName = $this->request->query->get('page', 'AdminHome');
+            $pageName = $this->request->query->get('page', $this->getDefaultController());
             $this->loadController($pageName);
 
             /// devolvemos true, para los test
@@ -104,6 +104,11 @@ class AppController extends App
         }
 
         return false;
+    }
+    
+    private function getDefaultController()
+    {
+        return $this->request->cookies->get('fsHomepage', 'AdminHome');
     }
 
     /**
@@ -178,20 +183,20 @@ class AppController extends App
      * hasta ejecutar render()
      *
      * @param string $template       archivo html a utilizar
-     * @param mixed $controllerName
+     * @param string $controllerName
      */
     private function renderHtml($template, $controllerName = '')
     {
         /// cargamos el motor de plantillas
-        $twigLoader = new Twig_Loader_Filesystem($this->folder . '/Core/View');
+        $twigLoader = new Twig_Loader_Filesystem(FS_FOLDER . '/Core/View');
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
-            if (file_exists($this->folder . '/Plugins/' . $pluginName . '/View')) {
-                $twigLoader->prependPath($this->folder . '/Plugins/' . $pluginName . '/View');
+            if (file_exists(FS_FOLDER . '/Plugins/' . $pluginName . '/View')) {
+                $twigLoader->prependPath(FS_FOLDER . '/Plugins/' . $pluginName . '/View');
             }
         }
 
         /// opciones de twig
-        $twigOptions = ['cache' => $this->folder . '/Cache/Twig'];
+        $twigOptions = ['cache' => FS_FOLDER . '/Cache/Twig'];
 
         /// variables para la plantilla HTML
         $templateVars = [
@@ -249,6 +254,9 @@ class AppController extends App
                     $user->save();
                     $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, time() + FS_COOKIES_EXPIRE));
                     $this->response->headers->setCookie(new Cookie('fsLogkey', $logKey, time() + FS_COOKIES_EXPIRE));
+                    $this->response->headers->setCookie(new Cookie('fsHomepage', $user->homepage, time() + FS_COOKIES_EXPIRE));
+                    $this->response->headers->setCookie(new Cookie('fsLang', $user->langcode, time() + FS_COOKIES_EXPIRE));
+                    $this->response->headers->setCookie(new Cookie('fsCompany', $user->idempresa, time() + FS_COOKIES_EXPIRE));
                     $this->miniLog->debug($this->i18n->trans('login-ok', [$nick]));
                     return $user;
                 }
@@ -309,7 +317,7 @@ class AppController extends App
      */
     private function deployPlugins()
     {
-        $pluginManager = new PluginManager($this->folder);
+        $pluginManager = new PluginManager();
         $pluginManager->deploy();
     }
 }

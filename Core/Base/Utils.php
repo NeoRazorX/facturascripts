@@ -91,7 +91,7 @@ trait Utils
     public static function floatcmp($f1, $f2, $precision = 10, $round = false)
     {
         if ($round || !function_exists('bccomp')) {
-            return abs($f1 - $f2) < 6 / 10**($precision + 1);
+            return abs($f1 - $f2) < 6 / 10 ** ($precision + 1);
         }
 
         return bccomp((string) $f1, (string) $f2, $precision) === 0;

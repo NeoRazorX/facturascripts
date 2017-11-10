@@ -5,224 +5,224 @@
     Description:
         Estructura de la tabla facturasprov.
 -->
-<tabla>
-    <columna>
-        <nombre>automatica</nombre>
-        <tipo>boolean</tipo>
-    </columna>
-    <columna>
-        <nombre>cifnif</nombre>
-        <tipo>character varying(30)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codagente</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codalmacen</nombre>
-        <tipo>character varying(4)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>coddivisa</nombre>
-        <tipo>character varying(3)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codejercicio</nombre>
-        <tipo>character varying(4)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codigo</nombre>
-        <tipo>character varying(20)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codigorect</nombre>
-        <tipo>character varying(20)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codpago</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codproveedor</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codserie</nombre>
-        <tipo>character varying(4)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>deabono</nombre>
-        <tipo>boolean</tipo>
-        <defecto>false</defecto>
-    </columna>
-    <columna>
-        <nombre>editable</nombre>
-        <tipo>boolean</tipo>
-        <defecto>false</defecto>
-    </columna>
-    <columna>
-        <nombre>fecha</nombre>
-        <tipo>date</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>hora</nombre>
-        <tipo>time without time zone</tipo>
-        <nulo>NO</nulo>
-        <defecto>now()</defecto>
-    </columna>
-    <columna>
-        <nombre>idasiento</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idasientop</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idfactura</nombre>
-        <tipo>serial</tipo>
-        <nulo>NO</nulo>
-        <defecto>nextval('facturasprov_idfactura_seq'::regclass)</defecto>
-    </columna>
-    <columna>
-        <nombre>idfacturarect</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idpagodevol</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>irpf</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>neto</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>nogenerarasiento</nombre>
-        <tipo>boolean</tipo>
-    </columna>
-    <columna>
-        <nombre>nombre</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>numero</nombre>
-        <tipo>character varying(12)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>numproveedor</nombre>
-        <tipo>character varying(50)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>observaciones</nombre>
-        <tipo>text</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>pagada</nombre>
-        <tipo>boolean</tipo>
-        <nulo>NO</nulo>
-        <defecto>false</defecto>
-    </columna>
-    <columna>
-        <nombre>anulada</nombre>
-        <tipo>boolean</tipo>
-        <nulo>NO</nulo>
-        <defecto>false</defecto>
-    </columna>
-    <columna>
-        <nombre>recfinanciero</nombre>
-        <tipo>double precision</tipo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>tasaconv</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>total</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>totaleuros</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>totalirpf</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>totaliva</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>totalrecargo</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>numdocs</nombre>
-        <tipo>integer</tipo>
-        <defecto>0</defecto>
-    </columna>
-    <restriccion>
-        <nombre>ca_facturasprov_series2</nombre>
-        <consulta>FOREIGN KEY (codserie)
+<table>
+    <column>
+        <name>automatica</name>
+        <type>boolean</type>
+    </column>
+    <column>
+        <name>cifnif</name>
+        <type>character varying(30)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codagente</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codalmacen</name>
+        <type>character varying(4)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>coddivisa</name>
+        <type>character varying(3)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codejercicio</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codigo</name>
+        <type>character varying(20)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codigorect</name>
+        <type>character varying(20)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codpago</name>
+        <type>character varying(10)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codproveedor</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codserie</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>deabono</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
+        <name>editable</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
+        <name>fecha</name>
+        <type>date</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>hora</name>
+        <type>time without time zone</type>
+        <null>NO</null>
+        <default>now()</default>
+    </column>
+    <column>
+        <name>idasiento</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idasientop</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idfactura</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('facturasprov_idfactura_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>idfacturarect</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idpagodevol</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>irpf</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>neto</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>nogenerarasiento</name>
+        <type>boolean</type>
+    </column>
+    <column>
+        <name>nombre</name>
+        <type>character varying(100)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>numero</name>
+        <type>character varying(12)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>numproveedor</name>
+        <type>character varying(50)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>observaciones</name>
+        <type>text</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>pagada</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
+    </column>
+    <column>
+        <name>anulada</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
+    </column>
+    <column>
+        <name>recfinanciero</name>
+        <type>double precision</type>
+        <default>0</default>
+    </column>
+    <column>
+        <name>tasaconv</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>total</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>totaleuros</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>totalirpf</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>totaliva</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>totalrecargo</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>numdocs</name>
+        <type>integer</type>
+        <default>0</default>
+    </column>
+    <constraint>
+        <name>ca_facturasprov_series2</name>
+        <type>FOREIGN KEY (codserie)
             REFERENCES series (codserie)
-            ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_facturasprov_ejercicios2</nombre>
-        <consulta>FOREIGN KEY (codejercicio)
+            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_facturasprov_ejercicios2</name>
+        <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_facturasprov_asiento2</nombre>
-        <consulta>FOREIGN KEY (idasiento)
+            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_facturasprov_asiento2</name>
+        <type>FOREIGN KEY (idasiento)
             REFERENCES co_asientos (idasiento)
-            ON DELETE SET NULL ON UPDATE CASCADE</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_facturasprov_asientop</nombre>
-        <consulta>FOREIGN KEY (idasientop)
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_facturasprov_asientop</name>
+        <type>FOREIGN KEY (idasientop)
             REFERENCES co_asientos (idasiento)
-            ON DELETE SET NULL ON UPDATE CASCADE</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>uniq_codigo_facturasprov</nombre>
-        <consulta>UNIQUE (codigo)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>facturasprov_pkey</nombre>
-        <consulta>PRIMARY KEY (idfactura)</consulta>
-    </restriccion>
-</tabla>
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>uniq_codigo_facturasprov</name>
+        <type>UNIQUE (codigo)</type>
+    </constraint>
+    <constraint>
+        <name>facturasprov_pkey</name>
+        <type>PRIMARY KEY (idfactura)</type>
+    </constraint>
+</table>

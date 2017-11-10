@@ -5,19 +5,19 @@
     Description:
        Estructura de la tabla fabricantes.
 -->
-<tabla>
-    <columna>
-        <nombre>nombre</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codfabricante</nombre>
-        <tipo>character varying(8)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <restriccion>
-        <nombre>fabricantes_pkey</nombre>
-        <consulta>PRIMARY KEY (codfabricante)</consulta>
-    </restriccion>
-</tabla>
+<table>
+    <column>
+        <name>nombre</name>
+        <type>character varying(100)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codfabricante</name>
+        <type>character varying(8)</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>fabricantes_pkey</name>
+        <type>PRIMARY KEY (codfabricante)</type>
+    </constraint>
+</table>

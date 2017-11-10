@@ -5,19 +5,19 @@
     Description:
         Estructura de la tabla co_conceptospar.
 -->
-<tabla>
-    <columna>
-        <nombre>concepto</nombre>
-        <tipo>character varying(255)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idconceptopar</nombre>
-        <tipo>character varying(4)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <restriccion>
-        <nombre>co_conceptospar_pkey</nombre>
-        <consulta>PRIMARY KEY (idconceptopar)</consulta>
-    </restriccion>
-</tabla>
+<table>
+    <column>
+        <name>concepto</name>
+        <type>character varying(255)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idconceptopar</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>co_conceptospar_pkey</name>
+        <type>PRIMARY KEY (idconceptopar)</type>
+    </constraint>
+</table>

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Model\Asiento;
@@ -135,7 +134,7 @@ trait Factura
             /// necesitamos los totales por impuesto
             $subtotales = [];
             foreach ($lineas as $lin) {
-                $codimpuesto = ($lin->codimpuesto === null ) ? 0 : $lin->codimpuesto;
+                $codimpuesto = ($lin->codimpuesto === null) ? 0 : $lin->codimpuesto;
                 if (!array_key_exists($codimpuesto, $subtotales)) {
                     $subtotales[$codimpuesto] = array(
                         'neto' => 0,

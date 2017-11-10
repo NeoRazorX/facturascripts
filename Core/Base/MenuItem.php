@@ -27,7 +27,6 @@ namespace FacturaScripts\Core\Base;
  */
 class MenuItem
 {
-
     /**
      * Indica si está activado o no.
      *

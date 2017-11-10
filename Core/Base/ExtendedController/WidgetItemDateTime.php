@@ -60,6 +60,7 @@ class WidgetItemDateTime extends WidgetItem
     public function getEditHTML($value)
     {
         $specialAttributes = $this->specialAttributes();
-        return $this->standardEditHTMLWidget($value, $specialAttributes, ' datepicker');
+        $specialClass = $this->readOnly ? '' : ' datepicker';
+        return $this->standardEditHTMLWidget($value, $specialAttributes, $specialClass, 'text');
     }
 }

@@ -1,5 +1,10 @@
 # ListController
 
+This controller is a ListView view container, which automatically manages the display and filtering of data,
+showing the information of each view in a table of rows and columns. It does not allow the editing of the data
+but when clicking on one of the rows call automatic to the model edit controller. 
+For this event the configuration is used of the first column that has the _onclick_ attribute informed.
+
 For the use of this controller it's necessary create the views in XML format, as described in the
 document [XMLViews] (https://github.com/ArtexTrading/facturascripts/blob/master/Documentation/XMLViews_EN.md), 
 included in the documentation for **Facturascripts**.
@@ -22,8 +27,8 @@ and add new views, or modify existing ones.
 
 The way to add a view is by the _**addView**_ method included in the controller itself. For the
 correct call to the method we must inform through text strings: the model (Full name),
-name of the XML view and title for the tab that the controller displays. If the latter is omitted
-parameter, the controller assigns a default text.
+name of the XML view, the title for the tab that displays the controller and its icon. If any of
+these parameters, the controller will assign a text and/or default icon.
 
 Once added the view, we must configure it indicating the fields of search and the ordering through
 the methods _**addSearchFields**_ and _**addOrderBy**_.
@@ -36,8 +41,17 @@ array with the field names.
 Example of creating and adding fields for search.
 
 ```PHP
+    /* Epigrafes */
     $this->addView('FacturaScripts\Core\Model\Epigrafe', 'ListEpigrafe', 'Epigrafes');
     $this->addSearchFields('ListEpigrafe', ['descripcion', 'codepigrafe', 'codejercicio']);
+
+    /* Clientes */
+    $this->addView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'customers', 'fa-users');
+    $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente', 'email']);
+        
+    /* Grupos */
+    $this->addView('FacturaScripts\Core\Model\GrupoClientes', 'ListGrupoClientes', 'groups', 'fa-folder-open');
+    $this->addSearchFields('ListGrupoClientes', ['nombre', 'codgrupo']);
 ```
 
 
@@ -56,9 +70,19 @@ Considerations:
 Example of sorting addition (following the example above) with sorting by descending code
 
 ```PHP
+    /* Epigrafes */
     $this->addOrderBy('ListEpigrafe', 'descripcion', 'description');
     $this->addOrderBy('ListEpigrafe', 'codepigrafe||codejercicio', 'code', 2);
     $this->addOrderBy('ListEpigrafe', 'codejercicio');
+
+    /* Clientes */
+    $this->addOrderBy('ListCliente', 'codcliente', 'code');
+    $this->addOrderBy('ListCliente', 'nombre', 'name', 1);
+    $this->addOrderBy('ListCliente', 'fecha', 'date');
+
+    /* Grupos */
+    $this->addOrderBy('ListGrupoClientes', 'codgrupo', 'code');
+    $this->addOrderBy('ListGrupoClientes', 'nombre', 'name', 1);
 ```
 
 
@@ -80,9 +104,16 @@ its operation as the name of the view to which we add it, and among the types of
      * inverse: Allows you to invert the Boolean values.
 
 * **addFilterDatePicker**: Date type filter.
+* **addFilterText**: Filter of type alphanumeric or free text.
+* **addFilterNumber**: Filter of numeric type and/or amounts.
       * key: This is the internal name of the filter.
       * label: This is the description to be displayed and indicates to the user the function of the filter.
       * field: Name of the field of the model where the filter is applied. If not indicated the key value is used.
+
+These last filters, when added, insert two fields of filtering in the same column, along with buttons that allow
+select the type of operator [Equal, Greater or Equal, Minor or Equal, Different] to be applied to the filter.
+The combination of operators and values, allows to establish filtered of greater complexity giving the user a 
+great diversity in the search for information.
 
 Examples of filters
 

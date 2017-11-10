@@ -5,66 +5,66 @@
     Description:
         Estructura de la tabla cuentasbcocli.
 -->
-<tabla>
-    <columna>
-        <nombre>descripcion</nombre>
-        <tipo>character varying(100)</tipo>
-    </columna>
-    <columna>
-        <nombre>swift</nombre>
-        <tipo>character varying(11)</tipo>
-    </columna>
-    <columna>
-        <nombre>ctaentidad</nombre>
-        <tipo>character varying(4)</tipo>
-    </columna>
-    <columna>
-        <nombre>iban</nombre>
-        <tipo>character varying(34)</tipo>
-    </columna>
-    <columna>
-        <nombre>agencia</nombre>
-        <tipo>character varying(4)</tipo>
-    </columna>
-    <columna>
-        <nombre>entidad</nombre>
-        <tipo>character varying(4)</tipo>
-    </columna>
-    <columna>
-        <nombre>codcliente</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>ctaagencia</nombre>
-        <tipo>character varying(4)</tipo>
-    </columna>
-    <columna>
-        <nombre>codcuenta</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>cuenta</nombre>
-        <tipo>character varying(10)</tipo>
-    </columna>
-    <columna>
-        <nombre>principal</nombre>
-        <tipo>boolean</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>fmandato</nombre>
-        <tipo>date</tipo>
-    </columna>
-    <restriccion>
-        <nombre>cuentasbcocli_pkey</nombre>
-        <consulta>PRIMARY KEY (codcuenta)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_cuentasbcocli_clientes</nombre>
-        <consulta>FOREIGN KEY (codcliente)
+<table>
+    <column>
+        <name>descripcion</name>
+        <type>character varying(100)</type>
+    </column>
+    <column>
+        <name>swift</name>
+        <type>character varying(11)</type>
+    </column>
+    <column>
+        <name>ctaentidad</name>
+        <type>character varying(4)</type>
+    </column>
+    <column>
+        <name>iban</name>
+        <type>character varying(34)</type>
+    </column>
+    <column>
+        <name>agencia</name>
+        <type>character varying(4)</type>
+    </column>
+    <column>
+        <name>entidad</name>
+        <type>character varying(4)</type>
+    </column>
+    <column>
+        <name>codcliente</name>
+        <type>character varying(10)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>ctaagencia</name>
+        <type>character varying(4)</type>
+    </column>
+    <column>
+        <name>codcuenta</name>
+        <type>character varying(10)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>cuenta</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
+        <name>principal</name>
+        <type>boolean</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>fmandato</name>
+        <type>date</type>
+    </column>
+    <constraint>
+        <name>cuentasbcocli_pkey</name>
+        <type>PRIMARY KEY (codcuenta)</type>
+    </constraint>
+    <constraint>
+        <name>ca_cuentasbcocli_clientes</name>
+        <type>FOREIGN KEY (codcliente)
             REFERENCES clientes (codcliente)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-</tabla>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>

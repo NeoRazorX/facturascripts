@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -29,6 +28,7 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListEmpresa extends ExtendedController\ListController
 {
+
     /**
      * Devuelve los datos básicos de la página
      *
@@ -37,7 +37,7 @@ class ListEmpresa extends ExtendedController\ListController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'company';
+        $pagedata['title'] = 'companies';
         $pagedata['icon'] = 'fa fa-building-o';
         $pagedata['menu'] = 'admin';
 

@@ -20,6 +20,8 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
+define('FS_MYDOCS', '');
+
 /**
  * Almacena los datos de un artículos.
  *
@@ -258,7 +260,7 @@ class Articulo
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'articulos';
     }

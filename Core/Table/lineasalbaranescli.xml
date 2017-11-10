@@ -5,124 +5,124 @@
     Description:
         Estructura de la tabla lineasalbaranescli.
 -->
-<tabla>
-    <columna>
-        <nombre>cantidad</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>codimpuesto</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>descripcion</nombre>
-        <tipo>text</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>dtolineal</nombre>
-        <tipo>double precision</tipo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>dtopor</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>idalbaran</nombre>
-        <tipo>integer</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>idlinea</nombre>
-        <tipo>serial</tipo>
-        <nulo>NO</nulo>
-        <defecto>nextval('lineasalbaranescli_idlinea_seq'::regclass)</defecto>
-    </columna>
-    <columna>
-        <nombre>idlineapedido</nombre>
-        <tipo>integer</tipo>
-    </columna>
-    <columna>
-        <nombre>idpedido</nombre>
-        <tipo>integer</tipo>
-    </columna>
-    <columna>
-        <nombre>irpf</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>iva</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>porcomision</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>pvpsindto</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>pvptotal</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>pvpunitario</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>recargo</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>referencia</nombre>
-        <tipo>character varying(18)</tipo>
-    </columna>
-    <columna>
-        <nombre>codcombinacion</nombre>
-        <tipo>character varying(18)</tipo>
-    </columna>
-    <columna>
-        <nombre>orden</nombre>
-        <tipo>integer</tipo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>mostrar_cantidad</nombre>
-        <tipo>boolean</tipo>
-        <defecto>true</defecto>
-    </columna>
-    <columna>
-        <nombre>mostrar_precio</nombre>
-        <tipo>boolean</tipo>
-        <defecto>true</defecto>
-    </columna>
-    <restriccion>
-        <nombre>ca_lineasalbaranescli_albaranescli2</nombre>
-        <consulta>FOREIGN KEY (idalbaran)
+<table>
+    <column>
+        <name>cantidad</name>
+        <type>double precision</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>codimpuesto</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>text</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>dtolineal</name>
+        <type>double precision</type>
+        <default>0</default>
+    </column>
+    <column>
+        <name>dtopor</name>
+        <type>double precision</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>idalbaran</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idlinea</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('lineasalbaranescli_idlinea_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>idlineapedido</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idpedido</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>irpf</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>iva</name>
+        <type>double precision</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>porcomision</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>pvpsindto</name>
+        <type>double precision</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>pvptotal</name>
+        <type>double precision</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>pvpunitario</name>
+        <type>double precision</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>recargo</name>
+        <type>double precision</type>
+        <null>YES</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>referencia</name>
+        <type>character varying(18)</type>
+    </column>
+    <column>
+        <name>codcombinacion</name>
+        <type>character varying(18)</type>
+    </column>
+    <column>
+        <name>orden</name>
+        <type>integer</type>
+        <default>0</default>
+    </column>
+    <column>
+        <name>mostrar_cantidad</name>
+        <type>boolean</type>
+        <default>true</default>
+    </column>
+    <column>
+        <name>mostrar_precio</name>
+        <type>boolean</type>
+        <default>true</default>
+    </column>
+    <constraint>
+        <name>ca_lineasalbaranescli_albaranescli2</name>
+        <type>FOREIGN KEY (idalbaran)
             REFERENCES albaranescli (idalbaran)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>lineasalbaranescli_pkey</nombre>
-        <consulta>PRIMARY KEY (idlinea)</consulta>
-    </restriccion>
-</tabla>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>lineasalbaranescli_pkey</name>
+        <type>PRIMARY KEY (idlinea)</type>
+    </constraint>
+</table>

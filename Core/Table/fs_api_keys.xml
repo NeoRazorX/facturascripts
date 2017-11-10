@@ -5,46 +5,46 @@
     Description:
         Estructura de la tabla fs_api_keys.
 -->
-<tabla>
-    <columna>
-        <nombre>id</nombre>
-        <tipo>serial</tipo>
-        <nulo>NO</nulo>
-        <defecto>nextval('fs_api_keys_id_seq'::regclass)</defecto>
-    </columna>
-    <columna>
-        <nombre>apikey</nombre>
-        <tipo>character varying(250)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>descripcion</nombre>
-        <tipo>character varying(150)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>enabled</nombre>
-        <tipo>boolean</tipo>
-        <nulo>NO</nulo>
-        <defecto>false</defecto>
-    </columna>
-    <columna>
-        <nombre>f_alta</nombre>
-        <tipo>date</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>f_baja</nombre>
-        <tipo>date</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>nick</nombre>
-        <tipo>character varying(50)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <restriccion>
-        <nombre>fs_api_keys_pkey</nombre>
-        <consulta>PRIMARY KEY (id)</consulta>
-    </restriccion>
-</tabla>
+<table>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('fs_api_keys_id_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>apikey</name>
+        <type>character varying(250)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>character varying(150)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>enabled</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
+    </column>
+    <column>
+        <name>f_alta</name>
+        <type>date</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>f_baja</name>
+        <type>date</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>nick</name>
+        <type>character varying(50)</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>fs_api_keys_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+</table>

@@ -5,53 +5,53 @@
     Description:
         Estructura de la tabla co_subcuentasprov.
 -->
-<tabla>
-    <columna>
-        <nombre>codejercicio</nombre>
-        <tipo>character varying(4)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codproveedor</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codsubcuenta</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>id</nombre>
-        <tipo>serial</tipo>
-        <nulo>NO</nulo>
-        <defecto>nextval('co_subcuentasprov_id_seq'::regclass)</defecto>
-    </columna>
-    <columna>
-        <nombre>idsubcuenta</nombre>
-        <tipo>integer</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <restriccion>
-        <nombre>co_subcuentasprov_pkey</nombre>
-        <consulta>PRIMARY KEY (id)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_co_subcuentasprov_ejercicios</nombre>
-        <consulta>FOREIGN KEY (codejercicio)
+<table>
+    <column>
+        <name>codejercicio</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codproveedor</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codsubcuenta</name>
+        <type>character varying(15)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('co_subcuentasprov_id_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>idsubcuenta</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>co_subcuentasprov_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>ca_co_subcuentasprov_ejercicios</name>
+        <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_co_subcuentasprov_proveedores</nombre>
-        <consulta>FOREIGN KEY (codproveedor)
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_co_subcuentasprov_proveedores</name>
+        <type>FOREIGN KEY (codproveedor)
             REFERENCES proveedores (codproveedor)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_co_subcuentasprov_subcuentas</nombre>
-        <consulta>FOREIGN KEY (idsubcuenta)
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_co_subcuentasprov_subcuentas</name>
+        <type>FOREIGN KEY (idsubcuenta)
             REFERENCES co_subcuentas (idsubcuenta)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-</tabla>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>

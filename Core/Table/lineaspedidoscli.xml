@@ -5,118 +5,118 @@
     Description:
         Estructura de la tabla lineaspedidoscli.
 -->
-<tabla>
-    <columna>
-        <nombre>cantidad</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codimpuesto</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>descripcion</nombre>
-        <tipo>text</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>dtolineal</nombre>
-        <tipo>double precision</tipo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>dtopor</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>idlinea</nombre>
-        <tipo>serial</tipo>
-        <nulo>NO</nulo>
-        <defecto>nextval('lineaspedidoscli_idlinea_seq'::regclass)</defecto>
-    </columna>
-    <columna>
-        <nombre>idlineapresupuesto</nombre>
-        <tipo>integer</tipo>
-    </columna>
-    <columna>
-        <nombre>idpedido</nombre>
-        <tipo>integer</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>idpresupuesto</nombre>
-        <tipo>integer</tipo>
-    </columna>
-    <columna>
-        <nombre>irpf</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>iva</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>pvpsindto</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>pvptotal</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>pvpunitario</nombre>
-        <tipo>double precision</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>recargo</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>referencia</nombre>
-        <tipo>character varying(18)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codcombinacion</nombre>
-        <tipo>character varying(18)</tipo>
-    </columna>
-    <columna>
-        <nombre>totalenalbaran</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>orden</nombre>
-        <tipo>integer</tipo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>mostrar_cantidad</nombre>
-        <tipo>boolean</tipo>
-        <defecto>true</defecto>
-    </columna>
-    <columna>
-        <nombre>mostrar_precio</nombre>
-        <tipo>boolean</tipo>
-        <defecto>true</defecto>
-    </columna>
-    <restriccion>
-        <nombre>lineaspedidoscli_pkey</nombre>
-        <consulta>PRIMARY KEY (idlinea)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_lineaspedidoscli_pedidoscli</nombre>
-        <consulta>FOREIGN KEY (idpedido)
+<table>
+    <column>
+        <name>cantidad</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codimpuesto</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>text</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>dtolineal</name>
+        <type>double precision</type>
+        <default>0</default>
+    </column>
+    <column>
+        <name>dtopor</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idlinea</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('lineaspedidoscli_idlinea_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>idlineapresupuesto</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idpedido</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idpresupuesto</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>irpf</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>iva</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>pvpsindto</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>pvptotal</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>pvpunitario</name>
+        <type>double precision</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>recargo</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>referencia</name>
+        <type>character varying(18)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codcombinacion</name>
+        <type>character varying(18)</type>
+    </column>
+    <column>
+        <name>totalenalbaran</name>
+        <type>double precision</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>orden</name>
+        <type>integer</type>
+        <default>0</default>
+    </column>
+    <column>
+        <name>mostrar_cantidad</name>
+        <type>boolean</type>
+        <default>true</default>
+    </column>
+    <column>
+        <name>mostrar_precio</name>
+        <type>boolean</type>
+        <default>true</default>
+    </column>
+    <constraint>
+        <name>lineaspedidoscli_pkey</name>
+        <type>PRIMARY KEY (idlinea)</type>
+    </constraint>
+    <constraint>
+        <name>ca_lineaspedidoscli_pedidoscli</name>
+        <type>FOREIGN KEY (idpedido)
             REFERENCES pedidoscli (idpedido)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-</tabla>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>

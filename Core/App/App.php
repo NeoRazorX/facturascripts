@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base;
@@ -30,6 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class App
 {
+
     /**
      * Gestor de acceso a cache.
      *
@@ -43,13 +43,6 @@ abstract class App
      * @var Base\DataBase
      */
     protected $dataBase;
-
-    /**
-     * Carpeta de trabajo de FacturaScripts.
-     *
-     * @var string
-     */
-    protected $folder;
 
     /**
      * Motor de traducción.
@@ -105,14 +98,19 @@ abstract class App
             define('FS_FOLDER', $folder);
         }
 
-        $this->cache = new Base\Cache($folder);
-        $this->dataBase = new Base\DataBase();
-        $this->folder = $folder;
-        $this->i18n = new Base\Translator($folder);
-        $this->ipFilter = new Base\IPFilter($folder);
-        $this->miniLog = new Base\MiniLog();
-        $this->pluginManager = new Base\PluginManager($folder);
         $this->request = Request::createFromGlobals();
+
+        if ($this->request->cookies->get('fsLang')) {
+            $this->i18n = new Base\Translator($this->request->cookies->get('fsLang'));
+        } else {
+            $this->i18n = new Base\Translator();
+        }
+
+        $this->cache = new Base\Cache();
+        $this->dataBase = new Base\DataBase();
+        $this->ipFilter = new Base\IPFilter();
+        $this->miniLog = new Base\MiniLog();
+        $this->pluginManager = new Base\PluginManager();
         $this->response = new Response();
     }
 

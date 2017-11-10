@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -28,6 +27,7 @@ namespace FacturaScripts\Core\Model;
  */
 class Rol
 {
+
     use Base\ModelTrait;
 
     /**
@@ -49,7 +49,7 @@ class Rol
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'fs_roles';
     }
@@ -75,5 +75,38 @@ class Rol
         $this->descripcion = self::noHtml($this->descripcion);
 
         return true;
+    }
+
+    /**
+     * Devuelve la url donde ver/modificar los datos
+     *
+     * @param string $type
+     *
+     * @return string
+     */
+    public function url($type = 'auto')
+    {
+        $value = $this->primaryColumnValue();
+        $model = $this->modelClassName();
+        $result = 'index.php?page=';
+        switch ($type) {
+            case 'list':
+                $result .= 'ListUser&active=List' . $model;
+                break;
+
+            case 'edit':
+                $result .= 'Edit' . $model . '&code=' . $value;
+                break;
+
+            case 'new':
+                $result .= 'Edit' . $model;
+                break;
+
+            default:
+                $result .= empty($value) ? 'ListUser&active=List' . $model : 'Edit' . $model . '&code=' . $value;
+                break;
+        }
+
+        return $result;
     }
 }

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
@@ -30,6 +29,7 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class EditPais extends ExtendedController\EditController
 {
+
     /**
      * EditPais constructor.
      *
@@ -55,6 +55,7 @@ class EditPais extends ExtendedController\EditController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'country';
+        $pagedata['menu'] = 'admin';
         $pagedata['icon'] = 'fa-globe';
         $pagedata['showonmenu'] = false;
 

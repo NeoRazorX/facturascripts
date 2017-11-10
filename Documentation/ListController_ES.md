@@ -1,5 +1,10 @@
 # Controlador ListController
 
+Este controlador es un contenedor de vistas del tipo ListView, que gestiona automáticamente la visualización y filtrado de datos,
+mostrando la información de cada vista en una tabla de filas y columnas. No permite la edición de los datos pero al hacer click
+sobre una de las filas se realiza una llamada automática al controlador de edición del modelo. Para este evento se utiliza la configuración
+de la primera columna que tenga informado el atributo _onclick_.
+
 Para el uso de este controlador es necesario crear las vistas en formato XML, tal y como se describe en el
 documento [XMLViews](https://github.com/ArtexTrading/facturascripts/blob/master/Documentation/XMLViews_ES.md), incluido en la documentación de **Facturascripts**.
 
@@ -21,8 +26,8 @@ y añadir nuevas vistas, o modificar las existentes.
 
 La manera de añadir una vista es mediante el método _**addView**_ incluido en el propio controlador. Para la
 correcta llamada al método debemos informar mediante cadenas de texto: el modelo (Nombre completo), 
-nombre de la vista XML y del título para la pestaña que visualiza el controlador. Si se omite este último 
-parámetro, el controlador asignará un texto por defecto.
+nombre de la vista XML, el título para la pestaña que visualiza el controlador y su icono. Si se omite alguno de 
+estos últimos parámetros, el controlador asignará un texto y/o un icono por defecto.
 
 Una vez añadida la vista, debemos configurarla indicando los campos de búsqueda y la ordenación mediante 
 los métodos _**addSearchFields**_ y _**addOrderBy**_.
@@ -35,8 +40,17 @@ array con los nombre de los campos.
 Ejemplo de creación y adición de campos para búsqueda
 
 ```PHP
+    /* Epigrafes */
     $this->addView('FacturaScripts\Core\Model\Epigrafe', 'ListEpigrafe', 'Epigrafes');
     $this->addSearchFields('ListEpigrafe', ['descripcion', 'codepigrafe', 'codejercicio']);
+
+    /* Clientes */
+    $this->addView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'customers', 'fa-users');
+    $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente', 'email']);
+        
+    /* Grupos */
+    $this->addView('FacturaScripts\Core\Model\GrupoClientes', 'ListGrupoClientes', 'groups', 'fa-folder-open');
+    $this->addSearchFields('ListGrupoClientes', ['nombre', 'codgrupo']);
 ```
 
 
@@ -55,9 +69,19 @@ Consideraciones:
 Ejemplo de adición de ordenación (siguiendo el ejemplo anterior) con ordenación por código descendente
 
 ```PHP
+    /* Epigrafes */
     $this->addOrderBy('ListEpigrafe', 'descripcion', 'description');
     $this->addOrderBy('ListEpigrafe', 'codepigrafe||codejercicio', 'code', 2);
     $this->addOrderBy('ListEpigrafe', 'codejercicio');
+
+    /* Clientes */
+    $this->addOrderBy('ListCliente', 'codcliente', 'code');
+    $this->addOrderBy('ListCliente', 'nombre', 'name', 1);
+    $this->addOrderBy('ListCliente', 'fecha', 'date');
+
+    /* Grupos */
+    $this->addOrderBy('ListGrupoClientes', 'codgrupo', 'code');
+    $this->addOrderBy('ListGrupoClientes', 'nombre', 'name', 1);
 ```
 
 
@@ -79,9 +103,16 @@ su funcionamiento como el nombre de la vista a la que lo añadimos, y entre los 
      * inverse : Permite invertir los valores booleanos.
 
 * **addFilterDatePicker** : Filtro de tipo fecha.
+* **addFilterText** : Filtro de tipo alfanumérico o texto libre.
+* **addFilterNumber** : Filtro de tipo numérico y/o importes.
      * key : Es el nombre interno del filtro.
      * label : Es la descripción a visualizar y que indica al usuario la función del filtro.
      * field : Nombre del campo del modelo donde se aplica el filtro. Si no se indica se usa el valor de key.
+
+Estos últimos filtros, al ser añadidos, insertan dos campos de filtrado en la misma columna, junto con unos botones que permiten 
+seleccionar el tipo de operador [Igual, Mayor o Igual, Menor o Igual, Diferente] que se aplicará en el filtro. La combinación de
+operadores y valores informados, permite establecer filtrados de mayor complejidad dándole al usuario una gran diversidad en la
+búsqueda de información.
 
 Ejemplos de filtros
 

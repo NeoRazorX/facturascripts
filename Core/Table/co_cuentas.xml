@@ -5,66 +5,66 @@
     Description:
         Estructura de la tabla co_cuentas.
 -->
-<tabla>
-    <columna>
-        <nombre>codbalance</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codcuenta</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codejercicio</nombre>
-        <tipo>character varying(4)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codepigrafe</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>descripcion</nombre>
-        <tipo>character varying(255)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idcuenta</nombre>
-        <tipo>serial</tipo>
-        <nulo>NO</nulo>
-        <defecto>nextval('co_cuentas_idcuenta_seq'::regclass)</defecto>
-    </columna>
-    <columna>
-        <nombre>idcuentaesp</nombre>
-        <tipo>character varying(6)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idepigrafe</nombre>
-        <tipo>integer</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <restriccion>
-        <nombre>co_cuentas_pkey</nombre>
-        <consulta>PRIMARY KEY (idcuenta)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>uniq_codcuenta</nombre>
-        <consulta>UNIQUE (codcuenta,codejercicio)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_co_cuentas_ejercicios</nombre>
-        <consulta>FOREIGN KEY (codejercicio)
+<table>
+    <column>
+        <name>codbalance</name>
+        <type>character varying(15)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codcuenta</name>
+        <type>character varying(10)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codejercicio</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codepigrafe</name>
+        <type>character varying(10)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>character varying(255)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idcuenta</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('co_cuentas_idcuenta_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>idcuentaesp</name>
+        <type>character varying(6)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idepigrafe</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>co_cuentas_pkey</name>
+        <type>PRIMARY KEY (idcuenta)</type>
+    </constraint>
+    <constraint>
+        <name>uniq_codcuenta</name>
+        <type>UNIQUE (codcuenta,codejercicio)</type>
+    </constraint>
+    <constraint>
+        <name>ca_co_cuentas_ejercicios</name>
+        <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_co_cuentas_epigrafes2</nombre>
-        <consulta>FOREIGN KEY (idepigrafe)
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_co_cuentas_epigrafes2</name>
+        <type>FOREIGN KEY (idepigrafe)
             REFERENCES co_epigrafes (idepigrafe)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-</tabla>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>

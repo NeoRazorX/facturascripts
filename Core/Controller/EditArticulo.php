@@ -26,29 +26,30 @@ use FacturaScripts\Core\Base\DataBase;
  * Description of PanelSettings
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
  */
-class PanelCliente extends ExtendedController\PanelController
+class EditArticulo extends ExtendedController\PanelController
 {
     /**
      * Procedimiento para insertar vistas en el controlador
      */
     protected function createViews()
     {
-        $this->addEditView('FacturaScripts\Core\Model\Cliente', 'EditCliente', 'customer');
-        $this->addEditListView('FacturaScripts\Core\Model\DireccionCliente', 'EditDireccionCliente', 'addresses', 'fa-road');
-        $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'same-group');
+        $this->addEditView('FacturaScripts\Core\Model\Articulo', 'EditArticulo', 'products', 'fa-cubes');
+        $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListFabricante', 'same-suppliers', 'fa-users');
+        $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListFamilia', 'same-families', 'fa-object-group');
     }
 
     /**
-     * Devuele el campo $fieldName del cliente
+     * Devuele el campo $fieldName del articulo
      *
      * @param string $fieldName
      *
      * @return mixed
      */
-    private function getClientFieldValue($fieldName)
+    private function getArticuloFieldValue($fieldName)
     {
-        $model = $this->views['EditCliente']->getModel();
+        $model = $this->views['EditArticulo']->getModel();
         return $model->{$fieldName};
     }
 
@@ -61,21 +62,25 @@ class PanelCliente extends ExtendedController\PanelController
     protected function loadData($keyView, $view)
     {
         switch ($keyView) {
-            case 'EditCliente':
+            case 'EditArticulo':
                 $value = $this->request->get('code');
                 $view->loadData($value);
                 break;
 
-            case 'EditDireccionCliente':
-                $where = [new DataBase\DataBaseWhere('codcliente', $this->getClientFieldValue('codcliente'))];
-                $view->loadData($where);
-                break;
-            
-            case 'ListCliente':
-                $codgroup = $this->getClientFieldValue('codgrupo');
+            case 'ListFabricante':
+                $codfabricante = $this->getArticuloFieldValue('codfabricante');
 
-                if (!empty($codgroup)) {
-                    $where = [new DataBase\DataBaseWhere('codgrupo', $codgroup)];
+                if (!empty($codfabricante)) {
+                    $where = [new DataBase\DataBaseWhere('codfabricante', $codfabricante)];
+                    $view->loadData($where);
+                }
+                break;
+
+            case 'ListFamilia':
+                $codfamilia = $this->getArticuloFieldValue('codfamilia');
+
+                if (!empty($codfamilia)) {
+                    $where = [new DataBase\DataBaseWhere('codfamilia', $codfamilia)];
                     $view->loadData($where);
                 }
                 break;
@@ -90,8 +95,8 @@ class PanelCliente extends ExtendedController\PanelController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'customers';
-        $pagedata['icon'] = 'fa-users';
+        $pagedata['title'] = 'product';
+        $pagedata['icon'] = 'fa-cube';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

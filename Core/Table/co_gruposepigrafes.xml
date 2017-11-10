@@ -5,36 +5,36 @@
     Description:
         Estructura de la tabla co_gruposepigrafes.
 -->
-<tabla>
-    <columna>
-        <nombre>codejercicio</nombre>
-        <tipo>character varying(4)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codgrupo</nombre>
-        <tipo>character varying(6)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>descripcion</nombre>
-        <tipo>character varying(255)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idgrupo</nombre>
-        <tipo>serial</tipo>
-        <nulo>NO</nulo>
-        <defecto>nextval('co_gruposepigrafes_idgrupo_seq'::regclass)</defecto>
-    </columna>
-    <restriccion>
-        <nombre>co_gruposepigrafes_pkey</nombre>
-        <consulta>PRIMARY KEY (idgrupo)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_co_gruposepigrafes_ejercicios</nombre>
-        <consulta>FOREIGN KEY (codejercicio)
+<table>
+    <column>
+        <name>codejercicio</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codgrupo</name>
+        <type>character varying(6)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>character varying(255)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idgrupo</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('co_gruposepigrafes_idgrupo_seq'::regclass)</default>
+    </column>
+    <constraint>
+        <name>co_gruposepigrafes_pkey</name>
+        <type>PRIMARY KEY (idgrupo)</type>
+    </constraint>
+    <constraint>
+        <name>ca_co_gruposepigrafes_ejercicios</name>
+        <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-</tabla>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>

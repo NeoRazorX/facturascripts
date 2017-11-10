@@ -5,53 +5,53 @@
     Description:
         Estructura de la tabla co_subcuentascli.
 -->
-<tabla>
-    <columna>
-        <nombre>codcliente</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codejercicio</nombre>
-        <tipo>character varying(4)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codsubcuenta</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>id</nombre>
-        <tipo>serial</tipo>
-        <nulo>NO</nulo>
-        <defecto>nextval('co_subcuentascli_id_seq'::regclass)</defecto>
-    </columna>
-    <columna>
-        <nombre>idsubcuenta</nombre>
-        <tipo>integer</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <restriccion>
-        <nombre>co_subcuentascli_pkey</nombre>
-        <consulta>PRIMARY KEY (id)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_co_subcuentascli_ejercicios</nombre>
-        <consulta>FOREIGN KEY (codejercicio)
+<table>
+    <column>
+        <name>codcliente</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codejercicio</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codsubcuenta</name>
+        <type>character varying(15)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('co_subcuentascli_id_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>idsubcuenta</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>co_subcuentascli_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>ca_co_subcuentascli_ejercicios</name>
+        <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_co_subcuentascli_clientes</nombre>
-        <consulta>FOREIGN KEY (codcliente)
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_co_subcuentascli_clientes</name>
+        <type>FOREIGN KEY (codcliente)
             REFERENCES clientes (codcliente)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_co_subcuentascli_subcuentas</nombre>
-        <consulta>FOREIGN KEY (idsubcuenta)
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_co_subcuentascli_subcuentas</name>
+        <type>FOREIGN KEY (idsubcuenta)
             REFERENCES co_subcuentas (idsubcuenta)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-</tabla>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>

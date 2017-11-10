@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class Divisa
 {
+
     use Base\ModelTrait;
 
     /**
@@ -75,7 +75,7 @@ class Divisa
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'divisas';
     }
@@ -149,13 +149,13 @@ class Divisa
     {
         return 'INSERT INTO ' . $this->tableName() . ' (coddivisa,descripcion,tasaconv,tasaconvcompra,codiso,simbolo)'
             . " VALUES ('EUR','EUROS','1','1','978','€')"
-            . ",('ARS','PESOS (ARG)','16.684','16.684','32','AR$')"
-            . ",('CLP','PESOS (CLP)','704.0227','704.0227','152','CLP$')"
-            . ",('COP','PESOS (COP)','3140.6803','3140.6803','170','CO$')"
+            . ",('ARS','PESOS ARGENTINOS','16.684','16.684','32','AR$')"
+            . ",('CLP','PESOS CHILENOS','704.0227','704.0227','152','CLP$')"
+            . ",('COP','PESOS COLOMBIANOS','3140.6803','3140.6803','170','CO$')"
             . ",('DOP','PESOS DOMINICANOS','49.7618','49.7618','214','RD$')"
             . ",('GBP','LIBRAS ESTERLINAS','0.865','0.865','826','£')"
             . ",('HTG','GOURDES','72.0869','72.0869','322','G')"
-            . ",('MXN','PESOS (MXN)','23.3678','23.3678','484','MX$')"
+            . ",('MXN','PESOS MEXICANO','23.3678','23.3678','484','MX$')"
             . ",('PAB','BALBOAS','1.128','1.128','590','B')"
             . ",('PEN','NUEVOS SOLES','3.736','3.736','604','S/.')"
             . ",('USD','DÓLARES EE.UU.','1.129','1.129','840','$')"

@@ -14,30 +14,30 @@
         <script type="text/javascript" src="node_modules/popper.js/dist/umd/popper.min.js"></script>
         <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
         <script type="text/javascript">
-            $(document).ready(function () {
-                document.fs_install.fs_timezone.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+$(document).ready(function () {
+    document.fs_install.fs_timezone.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-                $('#db_type').on('change', function () {
-                    $('#db_type option:selected').each(function () {
-                        str = $(this).val();
-                    });
-                    if (str === 'mysql') {
-                        $('#db_port').val(3306);
-                        $('#db_user').val('root');
-                        $("#mysql_socket_div").show();
-                    } else if (str === 'postgresql') {
-                        $('#db_port').val(5432);
-                        $('#db_user').val('postgres');
-                        $("#mysql_socket_div").hide();
-                    }
-                });
+    $('#db_type').on('change', function () {
+        $('#db_type option:selected').each(function () {
+            str = $(this).val();
+        });
+        if (str === 'mysql') {
+            $('#db_port').val(3306);
+            $('#db_user').val('root');
+            $("#mysql_socket_div").show();
+        } else if (str === 'postgresql') {
+            $('#db_port').val(5432);
+            $('#db_user').val('postgres');
+            $("#mysql_socket_div").hide();
+        }
+    });
 
-                $('#fs_lang').on('change', function () {
-                    var lang = $( "#fs_lang option:selected" ).val();
-                    var url = location.pathname + '?fs_lang=' + lang;
-                    window.location.href = url;
-                });
-            });
+    $('#fs_lang').on('change', function () {
+        var lang = $("#fs_lang option:selected").val();
+        var url = location.pathname + '?fs_lang=' + lang;
+        window.location.href = url;
+    });
+});
         </script>
     </head>
     <body>
@@ -49,7 +49,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
-                    <br/>
+                    <br />
                     {% for msg in errors %}
                     <div class="alert alert-danger">{{ msg }}</div>
                     {% endfor %}
@@ -65,6 +65,11 @@
                             </a>
                         </li>
                         <li role="presentation" class="nav-item">
+                            <a class="nav-link" href="#memcache" aria-controls="memcache" role="tab" data-toggle="tab">
+                                <i class="fa fa-flask"></i>&nbsp; {{ i18n.trans('memcache') }}
+                            </a>
+                        </li>
+                        <li role="presentation" class="nav-item">
                             <a class="nav-link" href="#licencia" aria-controls="licencia" role="tab" data-toggle="tab">
                                 <i class="fa fa-file-text-o"></i>&nbsp; {{ i18n.trans('license') }}
                             </a>
@@ -77,7 +82,7 @@
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="preferencias">
                         <div class="row">
-                            <div class="col-sm-3">
+                            <div class="col-sm-4">
                                 <div class="form-group">
                                     {{ i18n.trans('select-language') }}:
                                     <select id="fs_lang" name="fs_lang" class="form-control">
@@ -91,7 +96,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-4">
                                 <div class="form-group">
                                     {{ i18n.trans('select-timezone') }}:
                                     <select name="fs_timezone" class="form-control">
@@ -101,9 +106,7 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-3">
+                            <div class="col-sm-4">
                                 <div class="form-group">
                                     {{ i18n.trans('db-type') }}:
                                     <select id="db_type" name="db_type" class="form-control">
@@ -112,41 +115,63 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-4">
                                 <div class="form-group">
                                     {{ i18n.trans('db-host') }}:
                                     <input type="text" name="db_host" value="localhost" class="form-control" required=""/>
                                 </div>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-4">
                                 <div class="form-group">
                                     {{ i18n.trans('db-port') }}:
                                     <input type="number" id="db_port" name="db_port" value="3306" class="form-control" required=""/>
                                 </div>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-4">
                                 <div class="form-group">
                                     {{ i18n.trans('db-name') }}:
                                     <input type="text" name="db_name" value="facturascripts" class="form-control" required=""/>
                                 </div>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-4">
                                 <div class="form-group">
                                     {{ i18n.trans('db-user') }}:
                                     <input type="text" id="db_user" name="db_user" value="root" class="form-control" required=""/>
                                 </div>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-4">
                                 <div class="form-group">
                                     {{ i18n.trans('db-password') }}:
                                     <input type="password" name="db_pass" class="form-control"/>
                                 </div>
                             </div>
-                            <div id="mysql_socket_div" class="col-sm-3">
+                            <div id="mysql_socket_div" class="col-sm-4">
                                 <div class="form-group">
                                     {{ i18n.trans('mysql-socket') }}:
                                     <input type="text" name="mysql_socket" class="form-control"/>
                                     <p class="help-block">{{ i18n.trans('mysql-socket-p') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="memcache">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    {{ i18n.trans('memcache-host') }}:
+                                    <input type="text" name="memcache_host" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    {{ i18n.trans('memcache-port') }}:
+                                    <input type="number" name="memcache_port" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    {{ i18n.trans('memcache-prefix') }}:
+                                    <input type="text" name="memcache_prefix" value="{{ memcache_prefix }}" class="form-control"/>
                                 </div>
                             </div>
                         </div>
@@ -167,10 +192,20 @@
                             <i class="fa fa-check" aria-hidden="true"></i> {{ i18n.trans('accept') }}
                         </button>
                         <br/><br/><br/>
-                        <br/><br/><br/>
                     </div>
                 </div>
             </form>
+            <h5>
+                {{ i18n.trans('installer-requirements') }}
+            </h5>
+            <div class="row">
+                <br />
+                {% for extension, status in requirements %}
+                <div class="col-sm-4">
+                    <div class="alert alert-info">{{ extension }}: <i class="fa {{ status }} pull-right"></i></div>
+                </div>
+                {% endfor %}
+            </div>
         </div>
         <nav class="navbar fixed-bottom navbar-link bg-light">
             <a class="navbar-brand" href="https://www.facturascripts.com" target="_blank">

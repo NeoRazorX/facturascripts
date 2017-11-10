@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -29,6 +28,7 @@ use FacturaScripts\Core\Base;
  */
 class EditDivisa extends ExtendedController\EditController
 {
+
     /**
      * EditDivisa constructor.
      *
@@ -52,6 +52,7 @@ class EditDivisa extends ExtendedController\EditController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'currency';
+        $pagedata['menu'] = 'admin';
         $pagedata['icon'] = 'fa-money';
         $pagedata['showonmenu'] = false;
 

@@ -7,190 +7,190 @@
         Algunas columnas de la tabla no se utilizan en FacturaScripts,
         pero las añado para dar compatilidad con Abanq/Eneboo.
 -->
-<tabla>
-    <columna>
-        <nombre>factualizado</nombre>
-        <tipo>date</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>bloqueado</nombre>
-        <tipo>boolean</tipo>
-        <nulo>YES</nulo>
-        <defecto>false</defecto>
-    </columna>
-    <columna>
-        <nombre>equivalencia</nombre>
-        <tipo>character varying(25)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idsubcuentairpfcom</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idsubcuentacom</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>stockmin</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>observaciones</nombre>
-        <tipo>text</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codbarras</nombre>
-        <tipo>character varying(18)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codimpuesto</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>stockfis</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>stockmax</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>costemedio</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>preciocoste</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>tipocodbarras</nombre>
-        <tipo>character varying(8)</tipo>
-        <nulo>YES</nulo>
-        <defecto>'Code39'::character varying</defecto>
-    </columna>
-    <columna>
-        <nombre>nostock</nombre>
-        <tipo>boolean</tipo>
-        <nulo>YES</nulo>
-        <defecto>false</defecto>
-    </columna>
-    <columna>
-        <nombre>codsubcuentacom</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>descripcion</nombre>
-        <tipo>text</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codsubcuentairpfcom</nombre>
-        <tipo>character varying(15)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>secompra</nombre>
-        <tipo>boolean</tipo>
-        <nulo>YES</nulo>
-        <defecto>true</defecto>
-    </columna>
-    <columna>
-        <nombre>codfamilia</nombre>
-        <tipo>character varying(8)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codfabricante</nombre>
-        <tipo>character varying(8)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>imagen</nombre>
-        <tipo>text</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>controlstock</nombre>
-        <tipo>boolean</tipo>
-        <nulo>YES</nulo>
-        <defecto>false</defecto>
-    </columna>
-    <columna>
-        <nombre>referencia</nombre>
-        <tipo>character varying(18)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>tipo</nombre>
-        <tipo>character varying(10)</tipo>
-    </columna>
-    <columna>
-        <nombre>pvp</nombre>
-        <tipo>double precision</tipo>
-        <nulo>YES</nulo>
-        <defecto>0</defecto>
-    </columna>
-    <columna>
-        <nombre>sevende</nombre>
-        <tipo>boolean</tipo>
-        <nulo>YES</nulo>
-        <defecto>true</defecto>
-    </columna>
-    <columna>
-        <nombre>publico</nombre>
-        <tipo>boolean</tipo>
-        <nulo>YES</nulo>
-        <defecto>false</defecto>
-    </columna>
-    <columna>
-        <nombre>partnumber</nombre>
-        <tipo>character varying(38)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>trazabilidad</nombre>
-        <tipo>boolean</tipo>
-        <nulo>YES</nulo>
-        <defecto>false</defecto>
-    </columna>
-    <restriccion>
-        <nombre>ca_articulos_impuestos</nombre>
-        <consulta>FOREIGN KEY (codimpuesto)
+<table>
+    <column>
+        <name>factualizado</name>
+        <type>date</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>bloqueado</name>
+        <type>boolean</type>
+        <null>YES</null>
+        <default>false</default>
+    </column>
+    <column>
+        <name>equivalencia</name>
+        <type>character varying(25)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idsubcuentairpfcom</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idsubcuentacom</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>stockmin</name>
+        <type>double precision</type>
+        <null>YES</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>observaciones</name>
+        <type>text</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codbarras</name>
+        <type>character varying(18)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codimpuesto</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>stockfis</name>
+        <type>double precision</type>
+        <null>YES</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>stockmax</name>
+        <type>double precision</type>
+        <null>YES</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>costemedio</name>
+        <type>double precision</type>
+        <null>YES</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>preciocoste</name>
+        <type>double precision</type>
+        <null>YES</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>tipocodbarras</name>
+        <type>character varying(8)</type>
+        <null>YES</null>
+        <default>'Code39'::character varying</default>
+    </column>
+    <column>
+        <name>nostock</name>
+        <type>boolean</type>
+        <null>YES</null>
+        <default>false</default>
+    </column>
+    <column>
+        <name>codsubcuentacom</name>
+        <type>character varying(15)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>text</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codsubcuentairpfcom</name>
+        <type>character varying(15)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>secompra</name>
+        <type>boolean</type>
+        <null>YES</null>
+        <default>true</default>
+    </column>
+    <column>
+        <name>codfamilia</name>
+        <type>character varying(8)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codfabricante</name>
+        <type>character varying(8)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>imagen</name>
+        <type>text</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>controlstock</name>
+        <type>boolean</type>
+        <null>YES</null>
+        <default>false</default>
+    </column>
+    <column>
+        <name>referencia</name>
+        <type>character varying(18)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>tipo</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
+        <name>pvp</name>
+        <type>double precision</type>
+        <null>YES</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>sevende</name>
+        <type>boolean</type>
+        <null>YES</null>
+        <default>true</default>
+    </column>
+    <column>
+        <name>publico</name>
+        <type>boolean</type>
+        <null>YES</null>
+        <default>false</default>
+    </column>
+    <column>
+        <name>partnumber</name>
+        <type>character varying(38)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>trazabilidad</name>
+        <type>boolean</type>
+        <null>YES</null>
+        <default>false</default>
+    </column>
+    <constraint>
+        <name>ca_articulos_impuestos</name>
+        <type>FOREIGN KEY (codimpuesto)
             REFERENCES impuestos (codimpuesto)
-            ON DELETE SET NULL ON UPDATE CASCADE</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_articulos_familias</nombre>
-        <consulta>FOREIGN KEY (codfamilia)
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_articulos_familias</name>
+        <type>FOREIGN KEY (codfamilia)
             REFERENCES familias (codfamilia)
-            ON DELETE SET NULL ON UPDATE CASCADE</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_articulos_fabricantes</nombre>
-        <consulta>FOREIGN KEY (codfabricante)
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_articulos_fabricantes</name>
+        <type>FOREIGN KEY (codfabricante)
             REFERENCES fabricantes (codfabricante)
-            ON DELETE SET NULL ON UPDATE CASCADE</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>articulos_pkey</nombre>
-        <consulta>PRIMARY KEY (referencia)</consulta>
-    </restriccion>
-</tabla>
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>articulos_pkey</name>
+        <type>PRIMARY KEY (referencia)</type>
+    </constraint>
+</table>

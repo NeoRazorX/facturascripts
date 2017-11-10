@@ -5,65 +5,74 @@
     Description:
         Estructura de la tabla fs_users.
 -->
-<tabla>
-    <columna>
-        <nombre>nick</nombre>
-        <tipo>character varying(50)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>password</nombre>
-        <tipo>character varying(255)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>email</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>logkey</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>lastactivity</nombre>
-        <tipo>timestamp</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>lastip</nombre>
-        <tipo>character varying(40)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>admin</nombre>
-        <tipo>boolean</tipo>
-        <nulo>NO</nulo>
-        <defecto>false</defecto>
-    </columna>
-    <columna>
-        <nombre>enabled</nombre>
-        <tipo>boolean</tipo>
-        <nulo>NO</nulo>
-        <defecto>true</defecto>
-    </columna>
-    <columna>
-        <nombre>langcode</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>homepage</nombre>
-        <tipo>character varying(30)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <restriccion>
-        <nombre>fs_users_pkey</nombre>
-        <consulta>PRIMARY KEY (nick)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_fs_users_pages</nombre>
-        <consulta>FOREIGN KEY (homepage) REFERENCES fs_pages (name) ON DELETE SET NULL ON UPDATE CASCADE</consulta>
-    </restriccion>
-</tabla>
+<table>
+    <column>
+        <name>nick</name>
+        <type>character varying(50)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>password</name>
+        <type>character varying(255)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>email</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>logkey</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>lastactivity</name>
+        <type>timestamp</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>lastip</name>
+        <type>character varying(40)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>admin</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
+    </column>
+    <column>
+        <name>enabled</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>true</default>
+    </column>
+    <column>
+        <name>langcode</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>homepage</name>
+        <type>character varying(30)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idempresa</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <constraint>
+        <name>fs_users_pkey</name>
+        <type>PRIMARY KEY (nick)</type>
+    </constraint>
+    <constraint>
+        <name>ca_fs_users_pages</name>
+        <type>FOREIGN KEY (homepage) REFERENCES fs_pages (name) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_fs_users_company</name>
+        <type>FOREIGN KEY (idempresa) REFERENCES empresas (id) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+</table>

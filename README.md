@@ -1,3 +1,9 @@
+﻿[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)][1]
+﻿![Symfony 3.x][2]
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/NeoRazorX/facturascripts/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/NeoRazorX/facturascripts/?branch=master)
+
+[![Throughput Graph](https://graphs.waffle.io/NeoRazorX/facturascripts/throughput.svg)](https://waffle.io/NeoRazorX/facturascripts/metrics/throughput)
+
 # FacturaScripts
 *Software de facturación y contabilidad para pymes, fácil, libre y con actualizaciones constantes. Es compatible con FacturaLux, Abanq y Eneboo. Es software libre bajo licencia GNU/LGPL.*
 
@@ -16,4 +22,7 @@ npm install
 
 ## Feedback
 Tienes las instrucciones para colaborar en desarrollo o traducciones aquí:
-https://www.facturascripts.com/foro/quieres-colaborar-en-el-desarrollo-de-facturascripts-964.html
+https://www.facturascripts.com/documentacion/como-contribuir/hemos-abierto-un-para-todo-el-que-este-interesado-252.html
+
+[1]: https://github.com/NeorazorX/facturascripts/issues?utf8=✓&q=is%3Aopen%20is%3Aissue
+[2]: https://img.shields.io/badge/Symfony-%202.x%20&%203.x-green.svg

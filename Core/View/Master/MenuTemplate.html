@@ -20,6 +20,7 @@
         <script src="node_modules/popper.js/dist/umd/popper.min.js"></script>
         <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
         <script src="node_modules/bootbox/bootbox.min.js"></script>
+        <script src="node_modules/jscolor-picker/jscolor.min.js"></script>
         <script src="Core/Assets/JS/datepicker.js"></script>
         <script src="Core/Assets/JS/custom.js"></script>
         {% endblock %}
@@ -71,11 +72,11 @@
         </nav>
         <br/>
         {% block messages %}
-            {% from 'Macro/Utils.html' import message as show_message %}
-            {{ show_message(log, ['error', 'critical', 'alert', 'emergency'], 'danger') }}
-            {{ show_message(log, ['warning'], 'warning') }}
-            {{ show_message(log, ['notice'], 'success') }}
-            {{ show_message(log, ['info'], 'info') }}
+        {% from 'Macro/Utils.html' import message as show_message %}
+        {{ show_message(log, ['error', 'critical', 'alert', 'emergency'], 'danger') }}
+        {{ show_message(log, ['warning'], 'warning') }}
+        {{ show_message(log, ['notice'], 'success') }}
+        {{ show_message(log, ['info'], 'info') }}
         {% endblock %}
         {% block body %}{% endblock %}
         {{ debugBarRender.render()|raw }}

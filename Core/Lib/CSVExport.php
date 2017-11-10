@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\ExportInterface;
@@ -145,12 +144,18 @@ class CSVExport implements ExportInterface
         /// obtenemos las columnas
         $tableCols = [];
         $sheetHeaders = [];
+        $tableData = [];
+
+        /// obtenemos las columnas
         foreach ($columns as $col) {
             $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
             $sheetHeaders[$col->widget->fieldName] = 'string';
         }
 
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
+        if (empty($cursor)) {
+            $this->writeSheet($tableData, $sheetHeaders);
+        }
         while (!empty($cursor)) {
             $tableData = $this->getTableData($cursor, $tableCols);
             $this->writeSheet($tableData, $sheetHeaders);
@@ -178,9 +183,14 @@ class CSVExport implements ExportInterface
         /// obtenemos los datos
         foreach ($cursor as $key => $row) {
             foreach ($tableCols as $col) {
-                $value = $row->{$col};
-                if (is_string($value)) {
-                    $value = $this->fixHtml($value);
+                $value = '';
+                if (isset($row->{$col})) {
+                    $value = $row->{$col};
+                    if (is_string($value)) {
+                        $value = $this->fixHtml($value);
+                    } elseif (is_null($value)) {
+                        $value = '';
+                    }
                 }
 
                 $tableData[$key][$col] = $this->delimiter . $value . $this->delimiter;
@@ -210,6 +220,8 @@ class CSVExport implements ExportInterface
     public function writeSheet($tableData, $sheetHeaders)
     {
         $this->csv = [];
+        $header = [];
+        $body = [];
 
         foreach ($sheetHeaders as $key => $value) {
             $header[] = $key;

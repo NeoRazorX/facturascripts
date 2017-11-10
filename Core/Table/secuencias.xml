@@ -5,46 +5,46 @@
     Description:
         Estructura de la tabla secuencias.
 -->
-<tabla>
-    <columna>
-        <nombre>descripcion</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>id</nombre>
-        <tipo>integer</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>idsec</nombre>
-        <tipo>serial</tipo>
-        <nulo>NO</nulo>
-        <defecto>nextval('secuencias_idsec_seq'::regclass)</defecto>
-    </columna>
-    <columna>
-        <nombre>nombre</nombre>
-        <tipo>character varying(50)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>valor</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>valorout</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <restriccion>
-        <nombre>secuencias_pkey</nombre>
-        <consulta>PRIMARY KEY (idsec)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_secuencias_secuenciasejercicios</nombre>
-        <consulta>FOREIGN KEY (id)
+<table>
+    <column>
+        <name>descripcion</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>id</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idsec</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('secuencias_idsec_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>nombre</name>
+        <type>character varying(50)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>valor</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>valorout</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <constraint>
+        <name>secuencias_pkey</name>
+        <type>PRIMARY KEY (idsec)</type>
+    </constraint>
+    <constraint>
+        <name>ca_secuencias_secuenciasejercicios</name>
+        <type>FOREIGN KEY (id)
             REFERENCES secuenciasejercicios (id)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-</tabla>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>

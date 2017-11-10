@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Model;
  */
 class CuentaBanco
 {
+
     use Base\ModelTrait;
     use Base\BankAccount;
 
@@ -55,7 +55,7 @@ class CuentaBanco
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'cuentasbanco';
     }
@@ -67,7 +67,7 @@ class CuentaBanco
      */
     public function primaryColumn()
     {
-        return 'cocuenta';
+        return 'codcuenta';
     }
 
     /**
@@ -84,5 +84,31 @@ class CuentaBanco
         }
 
         return true;
+    }
+
+    public function url($type = 'auto')
+    {
+        $value = $this->primaryColumnValue();
+        $model = $this->modelClassName();
+        $result = 'index.php?page=';
+        switch ($type) {
+            case 'list':
+                $result .= 'ListFormaPago&active=List' . $model;
+                break;
+
+            case 'edit':
+                $result .= 'Edit' . $model . '&code=' . $value;
+                break;
+
+            case 'new':
+                $result .= 'Edit' . $model;
+                break;
+
+            default:
+                $result .= empty($value) ? 'ListFormaPago&active=List' . $model : 'Edit' . $model . '&code=' . $value;
+                break;
+        }
+
+        return $result;
     }
 }

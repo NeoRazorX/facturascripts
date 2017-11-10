@@ -30,7 +30,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ListView extends BaseView
 {
-
     /**
      * Constantes para ordenación
      */
@@ -186,7 +185,6 @@ class ListView extends BaseView
      * Devuelve el Order By indicado en formato array
      *
      * @param string $orderKey
-     *
      * @return array
      */
     public function getSQLOrderBy($orderKey = '')
@@ -213,7 +211,7 @@ class ListView extends BaseView
         $keys = array_keys($this->orderby);
         if (empty($orderKey) || !in_array($orderKey, $keys)) {
             if (empty($this->selectedOrderBy)) {
-                $this->selectedOrderBy = $keys[0]; // Forzamos el primer elemento cuando no hay valor por defecto
+                $this->selectedOrderBy = (string) $keys[0]; // We force the first element when there is no default
             }
         } else {
             $this->selectedOrderBy = $orderKey;
@@ -229,15 +227,12 @@ class ListView extends BaseView
     {
         if (is_array($fields)) {
             $this->searchIn += $fields;
-            //$this->searchIn = array_merge($this->searchIn, $fields);
-
-            // TODO: First comment on http://php.net/manual/es/function.array-merge.php
-            // With += Can have duplicate items in diferent positions, with array_merge can't.
         }
     }
 
     /**
      * Añade un campo a la lista de Order By
+     *
      * @param string $field
      * @param string $label
      * @param int $default    (0 = None, 1 = ASC, 2 = DESC)
@@ -247,7 +242,7 @@ class ListView extends BaseView
         $key1 = strtolower($field) . '_asc';
         $key2 = strtolower($field) . '_desc';
         if (empty($label)) {
-            $label = ucfirst($field);
+            $label = $field;
         }
 
         $this->orderby[$key1] = ['icon' => self::ICON_ASC, 'label' => static::$i18n->trans($label)];
@@ -269,61 +264,35 @@ class ListView extends BaseView
 
     /**
      * Define una nueva opción de filtrado para los datos
-     * @param string $type    (option: 'select', 'checkbox')
-     * @param string $key     (Filter identification)
-     * @param string $value   (Value introduced by user, if there are)
-     * @param array  $options (Filter options needed for run)
-     */
-    private function addFilter($type, $key, $value, $options)
-    {
-        if (empty($options['field'])) {
-            $options['field'] = $key;
-        }
-
-        $this->filters[$key] = ['type' => $type, 'value' => $value, 'options' => $options];
-    }
-
-    /**
-     * Add a filter type data table selection
-     * Añade un filtro de tipo selección en tabla
-     * @param string $key      (Filter identifier)
-     * @param string $value    (Value introduced by user, if there are)
-     * @param string $table    (Table name)
-     * @param string $where    (Where condition for table)
-     * @param string $field    (Field of the table with the data to show)
-     */
-    public function addFilterSelect($key, $value, $table, $where = '', $field = '')
-    {
-        $options = ['field' => $field, 'table' => $table, 'where' => $where];
-        $this->addFilter('select', $key, $value, $options);
-    }
-
-    /**
-     * Añade un filtro del tipo condición boleana
-     * @param string  $key     (Filter identifier)
-     * @param string  $value    (Value introduced by user, if there are)
-     * @param string  $label   (Human reader description)
-     * @param string  $field   (Field of the table to apply filter)
-     * @param bool $inverse (If you need to invert the selected value)
-     */
-    public function addFilterCheckbox($key, $value, $label, $field = '', $inverse = false)
-    {
-        $options = ['label' => static::$i18n->trans($label), 'field' => $field, 'inverse' => $inverse];
-        $this->addFilter('checkbox', $key, $value, $options);
-    }
-
-    /**
-     * Añade filtro del tipo fecha
      *
      * @param string $key
-     * @param string $value
-     * @param string $label
-     * @param string $field
+     * @param ListFilter $filter
      */
-    public function addFilterDatePicker($key, $value, $label, $field = '', $operator = '=')
+    public function addFilter($key, $filter)
     {
-        $options = ['label' => static::$i18n->trans($label), 'field' => $field, 'operator' => $operator];
-        $this->addFilter('datepicker', $key, $value, $options);
+        if (empty($filter->options['field'])) {
+            $filter->options['field'] = $key;
+        }
+
+        if (isset($filter->options['label'])) {
+            $filter->options['label'] = static::$i18n->trans($filter->options['label']);
+        }
+
+        $this->filters[$key] = $filter;
+    }
+
+    /**
+     * Establece el estado de visualización de una columna
+     * 
+     * @param string $columnName
+     * @param boolean $disabled
+     */
+    public function disableColumn($columnName, $disabled)
+    {
+        $column = $this->columnForName($columnName);
+        if (!empty($column)) {
+            $column->display = $disabled ? 'none' : 'left';
+        }
     }
 
     /**

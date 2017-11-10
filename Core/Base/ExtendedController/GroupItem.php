@@ -50,7 +50,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
         $this->icon = null;
         $this->columns = [];
     }
-    
+
     /**
      * Función para la ordenación de columnas
      *
@@ -63,7 +63,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
         if ($column1->order == $column2->order) {
             return 0;
         }
-        
+
         return ($column1->order < $column2->order) ? -1 : 1;
     }
 

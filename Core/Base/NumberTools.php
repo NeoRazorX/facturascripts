@@ -26,7 +26,6 @@ namespace FacturaScripts\Core\Base;
  */
 class NumberTools
 {
-
     const NF1 = ',';
     const NF2 = ' ';
 

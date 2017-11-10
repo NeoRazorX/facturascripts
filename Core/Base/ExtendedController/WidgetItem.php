@@ -19,15 +19,13 @@
 
 namespace FacturaScripts\Core\Base\ExtendedController;
 
-
 /**
  * Description of WidgetItem
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class WidgetItem
+abstract class WidgetItem
 {
-
     /**
      * Nombre del campo con los datos que visualiza el widget
      *
@@ -85,6 +83,16 @@ class WidgetItem
     public $options;
 
     /**
+     * @param string $value
+     */
+    abstract public function getListHTML($value);
+
+    /**
+     * @param string $value
+     */
+    abstract public function getEditHTML($value);
+
+    /**
      * Constructor dinámico de la clase.
      * Crea un objeto Widget del tipo informado
      *
@@ -110,6 +118,9 @@ class WidgetItem
 
             case 'radio':
                 return new WidgetItemRadio();
+
+            case 'color':
+                return new WidgetItemColor();
 
             default:
                 return new WidgetItemText($type);
@@ -186,7 +197,8 @@ class WidgetItem
      * @param \SimpleXMLElement $column
      * @param \SimpleXMLElement $widgetAtributes
      */
-    protected function loadFromXMLColumn($column, $widgetAtributes) {
+    protected function loadFromXMLColumn($column, $widgetAtributes)
+    {
         $this->fieldName = (string) $widgetAtributes->fieldname;
         $this->hint = (string) $widgetAtributes->hint;
         $this->readOnly = (bool) $widgetAtributes->readonly;
@@ -318,7 +330,7 @@ class WidgetItem
 
     /**
      * Devuelve el código HTML para lista de controles no especiales
-     * @param mixed $value
+     * @param string $value
      * @param string $text
      *
      * @return string
@@ -334,28 +346,30 @@ class WidgetItem
         }
 
         $style = $this->getTextOptionsHTML($value);
-        $html = (empty($this->onClick))
-            ? '<span' . $style . '>' . $text . '</span>'
-            : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $text . '</a>';
+        $html = (empty($this->onClick)) ? '<span' . $style . '>' . $text . '</span>' : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $text . '</a>';
 
         return $html;
     }
 
     /**
      * Devuelve el código HTML para edición de controles no especiales
-     * @param mixed $value
+     * @param string $value
      * @param string $specialAttributes
      * @param string $extraClass
      *
      * @return string
      */
-    protected function standardEditHTMLWidget($value, $specialAttributes, $extraClass = '')
+    protected function standardEditHTMLWidget($value, $specialAttributes, $extraClass = '', $type = '')
     {
         $fieldName = '"' . $this->fieldName . '"';
         $icon = $this->getIconHTML();
 
+        if (empty($type)) {
+            $type = $this->type;
+        }
+
         $html = $icon
-            . '<input id=' . $fieldName . ' type="' . $this->type . '" class="form-control' . $extraClass . '"'
+            . '<input id=' . $fieldName . ' type="' . $type . '" class="form-control' . $extraClass . '"'
             . 'name=' . $fieldName . ' value="' . $value . '"' . $specialAttributes . ' />';
 
         if (!empty($this->icon)) {

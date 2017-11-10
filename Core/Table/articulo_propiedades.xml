@@ -5,29 +5,29 @@
     Description:
         Estructura de la tabla articulo_propiedades.
 -->
-<tabla>
-    <columna>
-        <nombre>name</nombre>
-        <tipo>character varying(50)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>referencia</nombre>
-        <tipo>character varying(18)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>text</nombre>
-        <tipo>text</tipo>
-    </columna>
-    <restriccion>
-        <nombre>articulo_propiedades_pkey</nombre>
-        <consulta>PRIMARY KEY (name,referencia)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_articulo_propiedades_articulos</nombre>
-        <consulta>FOREIGN KEY (referencia)
+<table>
+    <column>
+        <name>name</name>
+        <type>character varying(50)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>referencia</name>
+        <type>character varying(18)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>text</name>
+        <type>text</type>
+    </column>
+    <constraint>
+        <name>articulo_propiedades_pkey</name>
+        <type>PRIMARY KEY (name,referencia)</type>
+    </constraint>
+    <constraint>
+        <name>ca_articulo_propiedades_articulos</name>
+        <type>FOREIGN KEY (referencia)
             REFERENCES articulos (referencia)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-</tabla>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>

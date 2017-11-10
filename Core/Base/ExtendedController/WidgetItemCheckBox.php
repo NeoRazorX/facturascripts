@@ -49,7 +49,7 @@ class WidgetItemCheckBox extends WidgetItem
         $readOnly = empty($this->readOnly) ? '' : ' disabled';
         return parent::specialAttributes() . $readOnly;
     }
-    
+
     /**
      * Genera el código html para la visualización de los datos en el
      * controlador List

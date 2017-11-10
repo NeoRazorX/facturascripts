@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -28,9 +27,11 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class Proveedor extends Base\Persona
 {
+
     use Base\ModelTrait {
         __construct as private traitConstruct;
         clear as private traitClear;
+        url as private traitURL;
     }
 
     /**
@@ -57,7 +58,7 @@ class Proveedor extends Base\Persona
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'proveedores';
     }

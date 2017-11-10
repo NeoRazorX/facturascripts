@@ -37,10 +37,10 @@ class MysqlSQL implements DataBaseSQL
      */
     private function getTypeAndConstraints($colData)
     {
-        $type = stripos('integer,serial', $colData['tipo']) === false ? strtolower($colData['tipo']) : FS_DB_INTEGER;
+        $type = stripos('integer,serial', $colData['type']) === false ? strtolower($colData['type']) : FS_DB_INTEGER;
         switch (true) {
             case $type == 'serial':
-            case stripos($colData['defecto'], 'nextval(') !== false:
+            case stripos($colData['default'], 'nextval(') !== false:
                 $contraints = ' NOT NULL AUTO_INCREMENT';
                 break;
 
@@ -60,18 +60,18 @@ class MysqlSQL implements DataBaseSQL
      */
     private function getConstraints($colData)
     {
-        $notNull = ($colData['nulo'] === 'NO');
+        $notNull = ($colData['null'] === 'NO');
         $result = ' NULL';
         if ($notNull) {
             $result = ' NOT' . $result;
         }
 
-        $defaultNull = ($colData['defecto'] === null);
+        $defaultNull = ($colData['default'] === null);
         if ($defaultNull && !$notNull) {
             $result .= ' DEFAULT NULL';
         } else {
-            if ($colData['defecto'] !== '') {
-                $result .= ' DEFAULT ' . $colData['defecto'];
+            if ($colData['default'] !== '') {
+                $result .= ' DEFAULT ' . $colData['default'];
             }
         }
 
@@ -191,7 +191,7 @@ class MysqlSQL implements DataBaseSQL
     {
         $sql = '';
         foreach ($xmlCons as $res) {
-            $sql .= ', CONSTRAINT ' . $res['nombre'] . ' ' . $res['consulta'];
+            $sql .= ', CONSTRAINT ' . $res['name'] . ' ' . $res['constraint'];
         }
 
         return $this->fixPostgresql($sql);
@@ -223,7 +223,7 @@ class MysqlSQL implements DataBaseSQL
     {
         $fields = '';
         foreach ($columns as $col) {
-            $fields .= ', `' . $col['nombre'] . '` ' . $this->getTypeAndConstraints($col);
+            $fields .= ', `' . $col['name'] . '` ' . $this->getTypeAndConstraints($col);
         }
 
         $sql = $this->fixPostgresql(substr($fields, 2));
@@ -243,7 +243,7 @@ class MysqlSQL implements DataBaseSQL
      */
     public function sqlAlterAddColumn($tableName, $colData)
     {
-        $sql = 'ALTER TABLE ' . $tableName . ' ADD `' . $colData['nombre'] . '` '
+        $sql = 'ALTER TABLE ' . $tableName . ' ADD `' . $colData['name'] . '` '
             . $this->getTypeAndConstraints($colData) . ';';
 
         return $sql;
@@ -260,7 +260,7 @@ class MysqlSQL implements DataBaseSQL
     public function sqlAlterModifyColumn($tableName, $colData)
     {
         $sql = 'ALTER TABLE ' . $tableName
-            . ' MODIFY `' . $colData['nombre'] . '` '
+            . ' MODIFY `' . $colData['name'] . '` '
             . $this->getTypeAndConstraints($colData) . ';';
 
         return $this->fixPostgresql($sql);
@@ -277,7 +277,7 @@ class MysqlSQL implements DataBaseSQL
     public function sqlAlterConstraintDefault($tableName, $colData)
     {
         $result = '';
-        if ($colData['tipo'] != 'serial') {
+        if ($colData['type'] != 'serial') {
             $result = $this->sqlAlterModifyColumn($tableName, $colData);
         }
 

@@ -34,7 +34,7 @@ if (!file_exists(__DIR__ . '/vendor')) {
 }
 
 require_once __DIR__ . '/vendor/autoload.php';
-
+define('FS_FOLDER', __DIR__);
 
 use FacturaScripts\Core\Base\Translator;
 use Symfony\Component\HttpFoundation\Response;
@@ -63,6 +63,16 @@ function searchErrors(&$errors, &$i18n)
 }
 
 /**
+ * Regresa un valor de font-awesome si el parametro es true o false
+ * @param boolean $isOk
+ * @return string
+ */
+function checkRequirement($isOk)
+{
+    return $isOk ? 'fa-check text-success' : 'fa-ban text-danger';
+}
+
+/**
  * Devuelve un array de idiomas, donde la key es el nombre del archivo JSON y
  * el value es su correspondiente traducción.
  *
@@ -73,7 +83,6 @@ function searchErrors(&$errors, &$i18n)
 function getLanguages(&$i18n)
 {
     $languages = [];
-
     foreach (scandir(__DIR__ . '/Core/Translation', SCANDIR_SORT_ASCENDING) as $fileName) {
         if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
             $key = substr($fileName, 0, -5);
@@ -86,22 +95,23 @@ function getLanguages(&$i18n)
 
 /**
  * Devuelve el lenguaje del usuario para mostrar en el selector el idioma correcto
- * para la instalación en caso que no exista el archivo json usa en_EN
+ * para la instalación. En caso de que no exista el archivo json devuelve en_EN
  * @return string
  */
-function getUserLanguage(){
-    $dataLanguage = explode(';',\filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'));
-    $userLanguage = str_replace('-','_', explode(',',$dataLanguage[0])[0]);
-    $translationExists = file_exists(__DIR__ . '/Core/Translation/'.$userLanguage.'.json');
+function getUserLanguage()
+{
+    $dataLanguage = explode(';', \filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'));
+    $userLanguage = str_replace('-', '_', explode(',', $dataLanguage[0])[0]);
+    $translationExists = file_exists(__DIR__ . '/Core/Translation/' . $userLanguage . '.json');
     return ($translationExists) ? $userLanguage : 'en_EN';
 }
 
 /**
-* Timezones list with GMT offset
-*
-* @return array
-* @link http://stackoverflow.com/a/9328760
-*/
+ * Timezones list with GMT offset
+ *
+ * @return array
+ * @link http://stackoverflow.com/a/9328760
+ */
 function get_timezone_list()
 {
     $zones_array = array();
@@ -273,6 +283,9 @@ function saveInstall()
         fwrite($file, "define('FS_DB_NAME', '" . filter_input(INPUT_POST, 'db_name') . "');\n");
         fwrite($file, "define('FS_DB_USER', '" . filter_input(INPUT_POST, 'db_user') . "');\n");
         fwrite($file, "define('FS_DB_PASS', '" . filter_input(INPUT_POST, 'db_pass') . "');\n");
+        fwrite($file, "define('FS_CACHE_HOST', '" . filter_input(INPUT_POST, 'memcache_host') . "');\n");
+        fwrite($file, "define('FS_CACHE_PORT', '" . filter_input(INPUT_POST, 'memcache_port') . "');\n");
+        fwrite($file, "define('FS_CACHE_PREFIX', '" . filter_input(INPUT_POST, 'memcache_prefix') . "');\n");
         if (filter_input(INPUT_POST, 'db_type') === 'MYSQL' && filter_input(INPUT_POST, 'mysql_socket') !== '') {
             fwrite($file, "ini_set('mysqli.default_socket', '" . filter_input(INPUT_POST, 'mysql_socket') . "');\n");
         }
@@ -302,22 +315,34 @@ function renderHTML(&$templateVars)
 }
 
 /**
+ * Return a random string
+ *
+ * @param int $length
+ *
+ * @return bool|string
+ */
+function randomString($length = 20)
+{
+    return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
+}
+
+/**
  * Función principal del instalador
  *
  * @return int
  */
 function installerMain()
 {
-    $errors = [];
-
     if (filter_input(INPUT_POST, 'fs_lang')) {
-        $i18n = new Translator(__DIR__, filter_input(INPUT_POST, 'fs_lang'));
+        define('FS_LANG', filter_input(INPUT_POST, 'fs_lang'));
     } elseif (filter_input(INPUT_GET, 'fs_lang')) {
-        $i18n = new Translator(__DIR__, filter_input(INPUT_GET, 'fs_lang'));
+        define('FS_LANG', filter_input(INPUT_GET, 'fs_lang'));
     } else {
-        $i18n = new Translator(__DIR__, getUserLanguage());
+        define('FS_LANG', getUserLanguage());
     }
 
+    $i18n = new Translator();
+    $errors = [];
     searchErrors($errors, $i18n);
 
     if (empty($errors) && filter_input(INPUT_POST, 'db_type')) {
@@ -331,10 +356,17 @@ function installerMain()
     /// empaquetamos las variables a pasar el motor de plantillas
     $templateVars = [
         'errors' => $errors,
+        'requirements' => [
+            'mb_substr' => checkRequirement(function_exists('mb_substr')),
+            'SimpleXML' => checkRequirement(extension_loaded('simplexml')),
+            'openSSL' => checkRequirement(extension_loaded('openssl')),
+            'Zip' => checkRequirement(extension_loaded('zip'))
+        ],
         'i18n' => $i18n,
         'languages' => getLanguages($i18n),
         'timezone' => get_timezone_list(),
         'license' => file_get_contents(__DIR__ . '/COPYING'),
+        'memcache_prefix' => randomString(8),
     ];
     renderHTML($templateVars);
 }

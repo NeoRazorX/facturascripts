@@ -37,7 +37,7 @@ class HtmlView extends BaseView
      * @var string
      */
     public $fileName;
-    
+
     /**
      * Constructor e inicializador de la clase
      *
@@ -63,5 +63,10 @@ class HtmlView extends BaseView
     public function export(&$exportManager, &$response, $action)
     {
         return null;
+    }
+
+    public function disableColumn($columnName, $disabled)
+    {
+        
     }
 }

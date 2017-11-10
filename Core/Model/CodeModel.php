@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -28,6 +27,7 @@ use FacturaScripts\Core\Base\DataBase;
  */
 class CodeModel
 {
+
     /**
      * Proporciona acceso directo a la base de datos.
      *

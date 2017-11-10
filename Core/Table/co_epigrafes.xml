@@ -5,52 +5,52 @@
     Description:
         Estructura de la tabla co_epigrafes.
 -->
-<tabla>
-    <columna>
-        <nombre>codejercicio</nombre>
-        <tipo>character varying(4)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codepigrafe</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>descripcion</nombre>
-        <tipo>character varying(255)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idepigrafe</nombre>
-        <tipo>serial</tipo>
-        <nulo>NO</nulo>
-        <defecto>nextval('co_epigrafes_idepigrafe_seq'::regclass)</defecto>
-    </columna>
-    <columna>
-        <nombre>idgrupo</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idpadre</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <restriccion>
-        <nombre>co_epigrafes_pkey</nombre>
-        <consulta>PRIMARY KEY (idepigrafe)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_co_epigrafes_ejercicios</nombre>
-        <consulta>FOREIGN KEY (codejercicio)
+<table>
+    <column>
+        <name>codejercicio</name>
+        <type>character varying(4)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codepigrafe</name>
+        <type>character varying(10)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>character varying(255)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idepigrafe</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('co_epigrafes_idepigrafe_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>idgrupo</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idpadre</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <constraint>
+        <name>co_epigrafes_pkey</name>
+        <type>PRIMARY KEY (idepigrafe)</type>
+    </constraint>
+    <constraint>
+        <name>ca_co_epigrafes_ejercicios</name>
+        <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_co_epigrafes_gruposepigrafes2</nombre>
-        <consulta>FOREIGN KEY (idgrupo)
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_co_epigrafes_gruposepigrafes2</name>
+        <type>FOREIGN KEY (idgrupo)
             REFERENCES co_gruposepigrafes (idgrupo)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-</tabla>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>

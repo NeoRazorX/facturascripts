@@ -26,7 +26,6 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 class WidgetItemText extends WidgetItem
 {
-
     /**
      * Constructor de la clase
      *

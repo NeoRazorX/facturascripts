@@ -5,80 +5,80 @@
     Description:
         Estructura de la tabla dirclientes.
 -->
-<tabla>
-    <columna>
-        <nombre>codcliente</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>codpais</nombre>
-        <tipo>character varying(20)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>apartado</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>idprovincia</nombre>
-        <tipo>integer</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>provincia</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>ciudad</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>codpostal</nombre>
-        <tipo>character varying(10)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>direccion</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>NO</nulo>
-    </columna>
-    <columna>
-        <nombre>domenvio</nombre>
-        <tipo>boolean</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>domfacturacion</nombre>
-        <tipo>boolean</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>descripcion</nombre>
-        <tipo>character varying(100)</tipo>
-        <nulo>YES</nulo>
-    </columna>
-    <columna>
-        <nombre>id</nombre>
-        <tipo>serial</tipo>
-        <nulo>NO</nulo>
-        <defecto>nextval('dirclientes_id_seq'::regclass)</defecto>
-    </columna>
-    <columna>
-        <nombre>fecha</nombre>
-        <tipo>date</tipo>
-    </columna>
-    <restriccion>
-        <nombre>dirclientes_pkey</nombre>
-        <consulta>PRIMARY KEY (id)</consulta>
-    </restriccion>
-    <restriccion>
-        <nombre>ca_dirclientes_clientes</nombre>
-        <consulta>FOREIGN KEY (codcliente)
+<table>
+    <column>
+        <name>codcliente</name>
+        <type>character varying(10)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codpais</name>
+        <type>character varying(20)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>apartado</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>idprovincia</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>provincia</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>ciudad</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codpostal</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>direccion</name>
+        <type>character varying(100)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>domenvio</name>
+        <type>boolean</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>domfacturacion</name>
+        <type>boolean</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>character varying(100)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('dirclientes_id_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>fecha</name>
+        <type>date</type>
+    </column>
+    <constraint>
+        <name>dirclientes_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>ca_dirclientes_clientes</name>
+        <type>FOREIGN KEY (codcliente)
             REFERENCES clientes (codcliente)
-            ON DELETE CASCADE ON UPDATE CASCADE</consulta>
-    </restriccion>
-</tabla>
+            ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>
