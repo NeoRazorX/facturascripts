@@ -119,6 +119,17 @@ class DataBaseWhere
                 $result = $this->value;
                 break;
 
+            case 'IN':
+                $values = explode(',', $this->value);
+                $result = '(';
+                $comma = '';
+                foreach ($values as $value) {
+                    $result .= $comma . "'" . $this->dataBase->escapeString($value) . "'";
+                    $comma = ',';
+                }
+                $result .= ')';
+                break;
+            
             default:
                 $result = '';
         }
@@ -168,7 +179,7 @@ class DataBaseWhere
      */
     private function getValue()
     {
-        return (in_array($this->operator, ['LIKE', 'IS'])) ? $this->getValueFromOperator() : $this->getValueFromType();
+        return (in_array($this->operator, ['LIKE', 'IS', 'IN'])) ? $this->getValueFromOperator() : $this->getValueFromType();
     }
 
     /**
