@@ -351,7 +351,7 @@ class Asiento
                     }
 
                     if (empty($aux)) {
-                        $this->miniLog->alert($this->i18n->trans('seat-possible duplicated', [$as['idasiento']]));
+                        $this->miniLog->alert($this->i18n->trans('seat-possible-duplicated', [$as['idasiento']]));
                         $status = false;
                     }
                 }

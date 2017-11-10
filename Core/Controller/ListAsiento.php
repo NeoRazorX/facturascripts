@@ -37,7 +37,7 @@ class ListAsiento extends ExtendedController\ListController
         $this->addSearchFields('ListAsiento', ['numero', 'concepto']);
 
         $this->addFilterDatePicker('ListAsiento', 'date', 'date', 'fecha');
-        $this->addFilterNumber('ListAsiento', 'ammount', 'ammount', 'importe');
+        $this->addFilterNumber('ListAsiento', 'amount', 'amount', 'importe');
         $this->addFilterSelect('ListAsiento', 'codejercicio', 'ejercicios', '', 'nombre');
 
         $this->addOrderBy('ListAsiento', 'numero', 'number');
