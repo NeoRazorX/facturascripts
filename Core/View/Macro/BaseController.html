@@ -277,28 +277,80 @@
 {% set isBasic = view.isBasicEditList() %}
 
 {% for model in view.getCursor() %}
-{% if isBasic %}
-{{ columnsForBasicEditView(context, view, model, loop.first) }}
-{% else %}
-{{ columnsForEditView(context, view, model, TRUE) }}
-{% endif %}
-<hr />
+    {% if isBasic %}
+        {{ columnsForBasicEditView(context, view, model, loop.first) }}
+    {% else %}
+        {{ columnsForEditView(context, view, model, TRUE) }}
+    {% endif %}
+    <hr />
 {% endfor %}
 
 {% set newModel = view.newEmptyModel() %}
 {% if isBasic %}
-{{ columnsForBasicEditView(context, view, newModel) }}
+    {{ columnsForBasicEditView(context, view, newModel) }}
 {% else %}
-<div class="alert alert-success" role="alert">
-    <a class="alert-link" data-toggle="collapse" href="#new-{{ context.indexView }}" aria-expanded="true" aria-controls="new-{{ context.indexView }}">
-        <i class="fa fa-plus" aria-hidden="true"></i>&nbsp; {{ new_record_title }}...
-    </a>
-</div>
+    <div class="alert alert-success" role="alert">
+        <a class="alert-link" data-toggle="collapse" href="#new-{{ context.indexView }}" aria-expanded="true" aria-controls="new-{{ context.indexView }}">
+            <i class="fa fa-plus" aria-hidden="true"></i>&nbsp; {{ new_record_title }}...
+        </a>
+    </div>
 
-<div id="new-{{ context.indexView }}" class="collapse">
-    {{ columnsForEditView(context, view, newModel, TRUE) }}
-</div>
+    <div id="new-{{ context.indexView }}" class="collapse">
+        {{ columnsForEditView(context, view, newModel, TRUE) }}
+    </div>
 {% endif %}
+{% endmacro %}
+
+
+<!--
+    Generates the code for a Modal Form
+-->
+{% macro modalFormFromColumns(context, view) %}
+{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+{% set save, save_title = context.i18n.trans('save'), context.i18n.trans('save-data') %}
+{% set cancel, cancel_title = context.i18n.trans('cancel'), context.i18n.trans('cancel-data') %}
+
+{% for group in view.getModals() %}
+    {% set formName = context.indexView ~ '-' ~ group.name %}
+    {% set model = view.getModel() %}
+    
+    <div class="modal fade" id="{{ group.name }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">            
+            <div class="modal-content">
+                <form name="{{ formName }}" action="#" method="post" class="form" role="form">
+                    <input type="hidden" name="action" value="{{ group.name }}">
+                    <input type="hidden" name="active" value="{{ context.indexView }}">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ group.getHeaderHTML(group.title)|raw }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                        {% for column in group.columns %}
+                            {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
+                            {% if column.display == 'none' %}
+                                <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
+                            {% else %}
+                                {{ column.getEditHTML(value)|raw }}
+                            {% endif %}
+                        {% endfor %}                        
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal" {{ popoverTitle(cancel_title, 'bottom') }}>
+                            <i class="fa fa-ban" aria-hidden="true"></i>&nbsp; {{ cancel }}
+                        </button>
+                        <button type="submit" class="btn btn-sm btn-primary" onclick="this.disabled = true; this.form.submit();" {{ popoverTitle(save_title, 'bottom') }}>
+                            <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endfor %}
 {% endmacro %}
 
 

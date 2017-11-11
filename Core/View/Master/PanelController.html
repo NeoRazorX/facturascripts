@@ -71,6 +71,7 @@
 {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
 {% from 'Macro/BaseController.html' import rowHeaderForEditView as rowHeaderForEditView %}
 {% from 'Macro/BaseController.html' import rowFooterForEditView as rowFooterForEditView %}
+{% from 'Macro/BaseController.html' import modalFormFromColumns as modalFormFromColumns %}
 
 {# -- Main Body -- #}
 <div class="container-fluid">
@@ -123,25 +124,26 @@
         <div class="col-sm-10">
             <div class="tab-content" id="optionsindex-tabContent">
                 {% for indexView, view in fsc.views %}
-                {% set active = (indexView == fsc.active) ? ' show active' : '' %}
+                    {% set active = (indexView == fsc.active) ? ' show active' : '' %}
                     <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
                         <div class="card">
                             <div class="card-body">
                             {% set viewType = fsc.viewClass(view) %}
                             {% if viewType == 'ListView' %}
-                            {{ columnsForListView(_context, view) }}
+                                {{ columnsForListView(_context, view) }}
                             {% endif %}
 
                             {% if viewType == 'EditView' %}
-                            <!-- Statistical buttons bar -->
-                            {{ rowHeaderForEditView(_context, view) }}
-                            <!-- Main Form -->
-                            {% set model = view.getModel() %}
-                            {{ columnsForEditView(_context, view, model, TRUE) }}
+                                <!-- Statistical buttons bar -->
+                                {{ rowHeaderForEditView(_context, view) }}
+                            
+                                <!-- Main Form -->
+                                {% set model = view.getModel() %}
+                                {{ columnsForEditView(_context, view, model, TRUE) }}
                             {% endif %}
 
                             {% if viewType == 'EditListView' %}
-                            {{ columnsForEditListView(_context, view) }}
+                                {{ columnsForEditListView(_context, view) }}
                             {% endif %}
 
                             {% if viewType == 'HtmlView' %}
@@ -152,7 +154,8 @@
                         </div>
                     </div>
                     {% if viewType in ['EditView','EditListView'] %}
-                    {{ rowFooterForEditView(_context, view) }}
+                        {{ rowFooterForEditView(_context, view) }}
+                        {{ modalFormFromColumns(_context, view) }}
                     {% endif %}
                 </div>
                 {% endfor %}

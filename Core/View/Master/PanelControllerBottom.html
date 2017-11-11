@@ -71,6 +71,7 @@
 {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
 {% from 'Macro/BaseController.html' import rowHeaderForEditView as rowHeaderForEditView %}
 {% from 'Macro/BaseController.html' import rowFooterForEditView as rowFooterForEditView %}
+{% from 'Macro/BaseController.html' import modalFormFromColumns as modalFormFromColumns %}
 
 {# -- Main Body -- #}
 <div class="container-fluid">
@@ -114,28 +115,30 @@
                         <div class="card-body">
                             {% set viewType = fsc.viewClass(view) %}
                             {% if viewType == 'ListView' %}
-                            {{ columnsForListView(_context, view) }}
+                                {{ columnsForListView(_context, view) }}
                             {% endif %}
                         
                             {% if viewType == 'EditView' %}
-                            <!-- Statistical buttons bar -->
-                            {{ rowHeaderForEditView(_context, view) }}
-                            <!-- Main Form -->
-                            {% set model = view.getModel() %}
-                            {{ columnsForEditView(_context, view, model, TRUE) }}
+                                <!-- Statistical buttons bar -->
+                                {{ rowHeaderForEditView(_context, view) }}
+
+                                <!-- Main Form -->
+                                {% set model = view.getModel() %}
+                                {{ columnsForEditView(_context, view, model, TRUE) }}
                             {% endif %}
 
                             {% if viewType == 'EditListView' %}
-                            {{ columnsForEditListView(_context, view) }}
+                                {{ columnsForEditListView(_context, view) }}
                             {% endif %}
 
                             {% if viewType == 'HtmlView' %}
-                            <div>{% include view.fileName ignore missing %}</div>
+                                <div>{% include view.fileName ignore missing %}</div>
                             {% endif %}
                         </div>
                     </div>
                     {% if viewType in ['EditView','EditListView'] %}
-                    {{ rowFooterForEditView(_context, view) }}
+                        {{ rowFooterForEditView(_context, view) }}
+                        {{ modalFormFromColumns(_context, view) }}
                     {% endif %}
                 {% endif %}
             {% endfor %}

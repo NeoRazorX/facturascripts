@@ -32,9 +32,9 @@ class WidgetButton
     public $onClick;
     public $color;
     public $hint;
-    
+
     /**
-     * 
+     *
      * @param array $values
      */
     public function __construct($values)
@@ -47,33 +47,33 @@ class WidgetButton
         $this->color = isset($values['color']) ? $values['color'] : 'light';
         $this->hint = isset($values['hint']) ? $values['hint'] : '';
     }
-    
+
     private function getIconHTML()
     {
-        $html = empty($this->icon) 
-            ? '' 
+        $html = empty($this->icon)
+            ? ''
             : '<i class="fa ' . $this->icon . '"></i>&nbsp;&nbsp;';
         return $html;
     }
 
     private function getOnClickHTML()
     {
-        $html = empty($this->onClick) 
-            ? '' 
+        $html = empty($this->onClick)
+            ? ''
             : ' onclick="' . $this->onClick . '"';
         return $html;
     }
-    
+
     private function getCalculateHTML($label, $value, $hint)
     {
         $html = '<button type="button" class="btn btn-' . $this->color . '"'
             . $this->getOnClickHTML() . ' style="margin-right: 5px;" ' . $hint . '>'
-            . $this->getIconHTML()        
+            . $this->getIconHTML()
             . '<span class="cust-text">' . $label . ' ' . $value . '</span></button>';
 
         return $html;
     }
-    
+
     private function getActionHTML($label, $indexView, $hint)
     {
         $active = '<input type="hidden" name="active" value="' . $indexView . '">';
@@ -92,7 +92,17 @@ class WidgetButton
 
         return $html;
     }
-    
+
+    private function getModalHTML($label)
+    {
+        $html = '<button type="button" class="btn btn-' . $this->color . '"'
+            . ' data-toggle="modal" data-target="#' . $this->action . '">'
+            . $this->getIconHTML()
+            . $label
+            . '</button>';
+        return $html;
+    }
+
     public function getHTML($label, $value = '', $hint = '')
     {
         switch ($this->type) {
@@ -103,8 +113,8 @@ class WidgetButton
                 return $this->getActionHTML($label, $value, $hint);
 
             case 'modal':
-                return '';
-                
+                return $this->getModalHTML($label, $hint);
+
             default:
                 return '';
         }
