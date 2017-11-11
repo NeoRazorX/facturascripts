@@ -96,7 +96,7 @@ class AppController extends App
             $this->renderHtml('Login/Login.html');
         } else {
             /// Obtenemos el nombre del controlador a cargar
-            $pageName = $this->request->query->get('page', 'AdminHome');
+            $pageName = $this->request->query->get('page', $this->getDefaultController());
             $this->loadController($pageName);
 
             /// devolvemos true, para los test
@@ -104,6 +104,11 @@ class AppController extends App
         }
 
         return false;
+    }
+    
+    private function getDefaultController()
+    {
+        return $this->request->cookies->get('fsHomepage', 'AdminHome');
     }
 
     /**
@@ -249,6 +254,9 @@ class AppController extends App
                     $user->save();
                     $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, time() + FS_COOKIES_EXPIRE));
                     $this->response->headers->setCookie(new Cookie('fsLogkey', $logKey, time() + FS_COOKIES_EXPIRE));
+                    $this->response->headers->setCookie(new Cookie('fsHomepage', $user->homepage, time() + FS_COOKIES_EXPIRE));
+                    $this->response->headers->setCookie(new Cookie('fsLang', $user->langcode, time() + FS_COOKIES_EXPIRE));
+                    $this->response->headers->setCookie(new Cookie('fsCompany', $user->idempresa, time() + FS_COOKIES_EXPIRE));
                     $this->miniLog->debug($this->i18n->trans('login-ok', [$nick]));
                     return $user;
                 }

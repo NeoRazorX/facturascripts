@@ -65,11 +65,11 @@ class PageOption
 
     /**
      * Definición de los formularios modales
-     * 
-     * @var array 
+     *
+     * @var array
      */
     public $modals;
-    
+
     /**
      * Definición de las columnas. Se denomina columns pero contiene
      * siempre GroupItem, el cual contiene las columnas.
@@ -133,15 +133,15 @@ class PageOption
         $this->rows = [];
     }
 
-    
     /**
      * Carga la estructura de columnas desde el JSON
      *
-     * @param \SimpleXMLElement $columns
+     * @param \SimpleXMLElement $groups
+     * @param array $target
      */
     private function getJSONGroupsColumns($groups, &$target)
     {
-        if (!empty($groups)){
+        if (!empty($groups)) {
             foreach ($groups as $item) {
                 $groupItem = ExtendedController\GroupItem::newFromJSONGroup($item);
                 $target[$groupItem->name] = $groupItem;
@@ -149,7 +149,7 @@ class PageOption
             }
         }
     }
-    
+
     /**
      * Carga los datos desde un array
      *
@@ -164,7 +164,7 @@ class PageOption
 
         $modals = json_decode($data['modals'], true);
         $this->getJSONGroupsColumns($modals, $this->modals);
-        
+
         $rows = json_decode($data['rows'], true);
         if (!empty($rows)) {
             foreach ($rows as $item) {

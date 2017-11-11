@@ -48,6 +48,11 @@ class WidgetButton
         $this->hint = isset($values['hint']) ? $values['hint'] : '';
     }
 
+    /**
+     * Devuelve el código html para el icono
+     *
+     * @return string
+     */
     private function getIconHTML()
     {
         $html = empty($this->icon)
@@ -56,6 +61,11 @@ class WidgetButton
         return $html;
     }
 
+    /**
+     * Devuelve el código html para el evento onclick
+     *
+     * @return string
+     */
     private function getOnClickHTML()
     {
         $html = empty($this->onClick)
@@ -64,6 +74,14 @@ class WidgetButton
         return $html;
     }
 
+    /**
+     * Devuelve el código html para el pintado de un botón estadístico
+     *
+     * @param type $label
+     * @param type $value
+     * @param type $hint
+     * @return string
+     */
     private function getCalculateHTML($label, $value, $hint)
     {
         $html = '<button type="button" class="btn btn-' . $this->color . '"'
@@ -74,6 +92,14 @@ class WidgetButton
         return $html;
     }
 
+    /**
+     * Devuelve el código html para el pintado de un botón de acción
+     *
+     * @param type $label
+     * @param type $indexView
+     * @param type $hint
+     * @return string
+     */
     private function getActionHTML($label, $indexView, $hint)
     {
         $active = '<input type="hidden" name="active" value="' . $indexView . '">';
@@ -93,6 +119,13 @@ class WidgetButton
         return $html;
     }
 
+    /**
+     * Devuelve el código html para el pintado de un botón que llama a un
+     * formulario modal
+     *
+     * @param type $label
+     * @return string
+     */
     private function getModalHTML($label)
     {
         $html = '<button type="button" class="btn btn-' . $this->color . '"'
@@ -103,6 +136,14 @@ class WidgetButton
         return $html;
     }
 
+    /**
+     * Devuelve el código html para el pintado de un botón
+     *
+     * @param type $label
+     * @param type $value
+     * @param type $hint
+     * @return string
+     */
     public function getHTML($label, $value = '', $hint = '')
     {
         switch ($this->type) {
@@ -113,7 +154,7 @@ class WidgetButton
                 return $this->getActionHTML($label, $value, $hint);
 
             case 'modal':
-                return $this->getModalHTML($label, $hint);
+                return $this->getModalHTML($label);
 
             default:
                 return '';

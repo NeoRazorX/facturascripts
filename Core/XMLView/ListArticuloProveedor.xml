@@ -27,6 +27,9 @@
         <column name="reference" display="left" order="100">
             <widget type="text" fieldname="id" onclick="EditArticuloProveedor" />
         </column>
+        <column name="supplier-reference" order="110" >
+            <widget type="text" fieldname="refproveedor" onclick="" icon="fa-barcode" required="true" />
+        </column>
         <column name="supplier" display="left" order="100">
             <widget type="text" fieldname="codproveedor" />
         </column>
