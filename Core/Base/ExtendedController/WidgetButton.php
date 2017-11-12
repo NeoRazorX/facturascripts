@@ -77,9 +77,9 @@ class WidgetButton
     /**
      * Devuelve el código html para el pintado de un botón estadístico
      *
-     * @param type $label
-     * @param type $value
-     * @param type $hint
+     * @param string $label
+     * @param string $value
+     * @param string $hint
      * @return string
      */
     private function getCalculateHTML($label, $value, $hint)
@@ -95,9 +95,9 @@ class WidgetButton
     /**
      * Devuelve el código html para el pintado de un botón de acción
      *
-     * @param type $label
-     * @param type $indexView
-     * @param type $hint
+     * @param string $label
+     * @param string $indexView
+     * @param string $hint
      * @return string
      */
     private function getActionHTML($label, $indexView, $hint)
@@ -123,7 +123,7 @@ class WidgetButton
      * Devuelve el código html para el pintado de un botón que llama a un
      * formulario modal
      *
-     * @param type $label
+     * @param string $label
      * @return string
      */
     private function getModalHTML($label)
@@ -139,9 +139,9 @@ class WidgetButton
     /**
      * Devuelve el código html para el pintado de un botón
      *
-     * @param type $label
-     * @param type $value
-     * @param type $hint
+     * @param string $label
+     * @param string $value
+     * @param string $hint
      * @return string
      */
     public function getHTML($label, $value = '', $hint = '')
