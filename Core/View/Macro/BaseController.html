@@ -365,7 +365,7 @@
         <option value="">{{ any }} {{ key }}</option>
         <option value="">------</option>
         {% for key2, data in context.fsc.optionlist(key, filter.options) %}
-        {% if (context.indexView == context.fsc.active) and (key2 == filter.options.value) %}
+        {% if (context.indexView == context.fsc.active) and (filter.options.value != '') and (key2 == filter.options.value) %}
         <option value="{{ key2 }}" selected="">{{ data }}</option>
         {% else %}
         <option value="{{ key2 }}">{{ data }}</option>
