@@ -16,10 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -31,14 +29,15 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class EditAlmacen extends ExtendedController\EditController
 {
-   
-      /**
+
+    /**
      * Devuelve el nombre del modelo
      */
     public function getModelName()
     {
         return 'FacturaScripts\Core\Model\Almacen';
     }
+
     /**
      * Devuelve los datos básicos de la página
      *

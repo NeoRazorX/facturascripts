@@ -18,8 +18,8 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Base\DataBase;
 
 /**
  * Controlador para la edición de un registro del modelo Fabricante
@@ -28,16 +28,42 @@ use FacturaScripts\Core\Base\ExtendedController;
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author PC REDNET S.L. <luismi@pcrednet.com>
  */
-class EditEpigrafe extends ExtendedController\EditController
+class EditEpigrafe extends ExtendedController\PanelController
 {
 
-     /**
-     * Devuelve el nombre del modelo
+    /**
+     * Procedimiento para insertar vistas en el controlador
      */
-    public function getModelName()
+    protected function createViews()
     {
-        return 'FacturaScripts\Core\Model\Epigrafe'; 
+        $this->addEditView('FacturaScripts\Core\Model\Epigrafe', 'EditEpigrafe', 'accounting-heading');
+        $this->addListView('FacturaScripts\Core\Model\Cuenta', 'ListCuenta', 'accounts', 'fa-book');
     }
+
+    /**
+     * Procedimiento encargado de cargar los datos a visualizar
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        switch ($keyView) {
+            case 'EditEpigrafe':
+                $value = $this->request->get('code');
+                $view->loadData($value);
+                break;
+
+            case 'ListCuenta':
+                $idepigrafe = $this->getViewModelValue('EditEpigrafe', 'idepigrafe');
+                if (!empty($idepigrafe)) {
+                    $where = [new DataBase\DataBaseWhere('idepigrafe', $idepigrafe)];
+                    $view->loadData($where);
+                }
+                break;
+        }
+    }
+
     /**
      * Devuelve los datos básicos de la página
      *

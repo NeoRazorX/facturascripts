@@ -41,19 +41,6 @@ class EditCliente extends ExtendedController\PanelController
     }
 
     /**
-     * Devuele el campo $fieldName del modelo Cliente
-     *
-     * @param string $fieldName
-     *
-     * @return string|boolean
-     */
-    private function getClienteFieldValue($fieldName)
-    {
-        $model = $this->views['EditCliente']->getModel();
-        return $model->{$fieldName};
-    }
-
-    /**
      * Procedimiento encargado de cargar los datos a visualizar
      *
      * @param string $keyView
@@ -68,12 +55,12 @@ class EditCliente extends ExtendedController\PanelController
                 break;
 
             case 'EditDireccionCliente':
-                $where = [new DataBase\DataBaseWhere('codcliente', $this->getClienteFieldValue('codcliente'))];
+                $where = [new DataBase\DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente'))];
                 $view->loadData($where);
                 break;
 
             case 'ListCliente':
-                $codgroup = $this->getClienteFieldValue('codgrupo');
+                $codgroup = $this->getViewModelValue('EditCliente', 'codgrupo');
 
                 if (!empty($codgroup)) {
                     $where = [new DataBase\DataBaseWhere('codgrupo', $codgroup)];
@@ -101,7 +88,7 @@ class EditCliente extends ExtendedController\PanelController
     public function calcClientDeliveryNotes($view)
     {
         $where = [];
-        $where[] = new DataBase\DataBaseWhere('codcliente', $this->getClienteFieldValue('codcliente'));
+        $where[] = new DataBase\DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente'));
         $where[] = new DataBase\DataBaseWhere('ptefactura', TRUE);
 
         $totalModel = Model\TotalModel::all('albaranescli', $where, ['total' => 'SUM(total)'], '')[0];
@@ -111,7 +98,7 @@ class EditCliente extends ExtendedController\PanelController
     public function calcClientInvoicePending($view)
     {
         $where = [];
-        $where[] = new DataBase\DataBaseWhere('codcliente', $this->getClienteFieldValue('codcliente'));
+        $where[] = new DataBase\DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente'));
         $where[] = new DataBase\DataBaseWhere('estado', 'Pagado', '<>');
 
         $totalModel = Model\TotalModel::all('reciboscli', $where, ['total' => 'SUM(importe)'], '')[0];

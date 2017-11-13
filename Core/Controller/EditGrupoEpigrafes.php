@@ -18,34 +18,52 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Base\DataBase;
 
 /**
  * Controlador para la edición de un registro del modelo de un grupo de epígrafe
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author PC REDNET S.L. <luismi@pcrednet.com>
  */
-class EditGrupoEpigrafes extends ExtendedController\EditController
+class EditGrupoEpigrafes extends ExtendedController\PanelController
 {
 
     /**
-     * Inicia todos los objetos y propiedades.
-     *
-     * @param Base\Cache      $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog    $miniLog
-     * @param string     $className
+     * Procedimiento para insertar vistas en el controlador
      */
-   
-     /**
-     * Devuelve el nombre del modelo
-     */
-    public function getModelName()
+    protected function createViews()
     {
-        return 'FacturaScripts\Core\Model\GrupoEpigrafes';
+        $this->addEditView('FacturaScripts\Core\Model\GrupoEpigrafes', 'EditGrupoEpigrafes', 'epigraphs-group');
+        $this->addListView('FacturaScripts\Core\Model\Epigrafe', 'ListEpigrafe', 'epigraphs', 'fa-book');
     }
+
+    /**
+     * Procedimiento encargado de cargar los datos a visualizar
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        switch ($keyView) {
+            case 'EditGrupoEpigrafes':
+                $value = $this->request->get('code');
+                $view->loadData($value);
+                break;
+
+            case 'ListEpigrafe':
+                $idgrupo = $this->getViewModelValue('EditGrupoEpigrafes', 'idgrupo');
+                if (!empty($idgrupo)) {
+                    $where = [new DataBase\DataBaseWhere('idgrupo', $idgrupo)];
+                    $view->loadData($where);
+                }
+                break;
+        }
+    }
+
     /**
      * Devuelve los datos básicos de la página
      *

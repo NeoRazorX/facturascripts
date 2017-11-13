@@ -66,23 +66,10 @@ class EditUser extends ExtendedController\PanelController
         $columnLangCode = $this->views['EditUser']->columnForName('lang-code');
         $langs = $this->getLanguages();
         $columnLangCode->widget->setValuesFromArray($langs);
-        
+
         /// Disable columns
         $this->views['EditRolUser']->disableColumn('nick', TRUE);
         $this->views['ListPageRule']->disableColumn('nick', TRUE);
-    }
-
-    /**
-     * Devuele el campo $fieldName del modelo User
-     *
-     * @param string $fieldName
-     *
-     * @return string|boolean
-     */
-    private function getUserFieldValue($fieldName)
-    {
-        $model = $this->views['EditUser']->getModel();
-        return $model->{$fieldName};
     }
 
     /**
@@ -100,12 +87,12 @@ class EditUser extends ExtendedController\PanelController
                 break;
 
             case 'EditRolUser':
-                $where = [new DataBase\DataBaseWhere('nick', $this->getUserFieldValue('nick'))];
+                $where = [new DataBase\DataBaseWhere('nick', $this->getViewModelValue('EditUser', 'nick'))];
                 $view->loadData($where);
                 break;
 
             case 'ListPageRule':
-                $where = [new DataBase\DataBaseWhere('nick', $this->getUserFieldValue('nick'))];
+                $where = [new DataBase\DataBaseWhere('nick', $this->getViewModelValue('EditUser', 'nick'))];
                 $view->loadData($where);
                 break;
         }
