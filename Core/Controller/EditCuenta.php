@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la edición de un registro del modelo Fabricante

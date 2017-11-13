@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -29,23 +28,14 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class EditGrupoEpigrafes extends ExtendedController\EditController
 {
-
     /**
-     * Inicia todos los objetos y propiedades.
-     *
-     * @param Base\Cache      $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog    $miniLog
-     * @param string     $className
-     */
-   
-     /**
      * Devuelve el nombre del modelo
      */
     public function getModelName()
     {
         return 'FacturaScripts\Core\Model\GrupoEpigrafes';
     }
+
     /**
      * Devuelve los datos básicos de la página
      *

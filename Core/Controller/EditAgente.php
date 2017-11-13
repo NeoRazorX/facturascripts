@@ -16,11 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base;
 
 /**
  * Description of EditAgente
@@ -30,14 +28,15 @@ use FacturaScripts\Core\Base;
  */
 class EditAgente extends ExtendedController\EditController
 {
-  
-      /**
+
+    /**
      * Devuelve el nombre del modelo
      */
     public function getModelName()
     {
         return 'FacturaScripts\Core\Model\Agente';
     }
+
     /**
      * Devuelve el texto para el pie del panel de datos
      *

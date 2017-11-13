@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -30,7 +29,7 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class EditSerie extends ExtendedController\EditController
 {
-    
+
     /**
      * Devuelve el nombre del modelo
      */
@@ -38,6 +37,7 @@ class EditSerie extends ExtendedController\EditController
     {
         return 'FacturaScripts\Core\Model\Serie';
     }
+
     /**
      * Devuelve los datos básicos de la página
      *

@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -29,14 +28,15 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class EditSubcuenta extends ExtendedController\EditController
 {
-  
-     /**
+
+    /**
      * Devuelve el nombre del modelo
      */
     public function getModelName()
     {
         return 'FacturaScripts\Core\Model\Subcuenta';
     }
+
     /**
      * Devuelve los datos básicos de la página
      *

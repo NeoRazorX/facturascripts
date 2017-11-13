@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base;
 
 /**
  * Controlador para la edición de un registro del modelo de Divisa
@@ -29,13 +28,14 @@ use FacturaScripts\Core\Base;
 class EditDivisa extends ExtendedController\EditController
 {
 
-     /**
+    /**
      * Devuelve el nombre del modelo
      */
     public function getModelName()
     {
         return 'FacturaScripts\Core\Model\Divisa';
     }
+
     /**
      * Devuelve los datos básicos de la página
      *
