@@ -37,6 +37,7 @@ class EditCliente extends ExtendedController\PanelController
     {
         $this->addEditView('FacturaScripts\Core\Model\Cliente', 'EditCliente', 'customer');
         $this->addEditListView('FacturaScripts\Core\Model\DireccionCliente', 'EditDireccionCliente', 'addresses', 'fa-road');
+        $this->addEditListView('FacturaScripts\Core\Model\CuentaBancoCliente', 'EditCuentaBancoCliente', 'customer-banking-accounts', 'fa-bank');
         $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'same-group');
     }
 
@@ -56,6 +57,11 @@ class EditCliente extends ExtendedController\PanelController
 
             case 'EditDireccionCliente':
                 $where = [new DataBase\DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente'))];
+                $view->loadData($where);
+                break;
+            
+            case 'EditCuentaBancoCliente':
+                $where = [new DataBase\DataBaseWhere('codcliente', $this->request->get('code'))];
                 $view->loadData($where);
                 break;
 

@@ -45,7 +45,12 @@ class CuentaBancoCliente
      * @var string
      */
     public $codcliente;
-
+    
+    /**
+     *
+     * @var string
+     */
+    public $cuenta;
     /**
      * Identificación descriptiva para humanos
      *
@@ -97,6 +102,7 @@ class CuentaBancoCliente
         $this->descripcion = null;
         $this->principal = true;
         $this->fmandato = null;
+        $this->ccc = 1;
         $this->clearBankAccount();
     }
 
@@ -115,7 +121,7 @@ class CuentaBancoCliente
                 $allOK = $this->saveInsert();
             }
 
-            if ($allOK) {
+            if ($allOK && $this->principal) {
                 /// si esta cuenta es la principal, desmarcamos las demás
                 $sql = 'UPDATE ' . $this->tableName()
                     . ' SET principal = false'
