@@ -31,7 +31,6 @@ use FacturaScripts\Core\Model;
  */
 class EditGrupoEpigrafes extends ExtendedController\PanelController
 {
-
     /**
     * Procedimiento para insertar vistas en el controlador
     */
@@ -79,8 +78,7 @@ class EditGrupoEpigrafes extends ExtendedController\PanelController
             break;
       }
    }
-   
-     
+        
     /**
      * Devuelve los datos básicos de la página
      *

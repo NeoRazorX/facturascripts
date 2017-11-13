@@ -115,7 +115,7 @@
                 <a class="btn btn-sm btn-outline-secondary" href="{{ list_url }}" {{ popoverTitle(refresh, 'bottom') }}>
                    <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
-                {% if fsc.getPageData()['isDefault'] %}
+                {% if fsc.getPageData()['name'] == fsc.user.homepage %}
                 <a class="btn btn-sm btn-outline-secondary active" href="{{ list_url }}&amp;defaultPage=FALSE" {{ popoverTitle(defaultF, 'bottom') }}>
                    <i class="fa fa-bookmark" aria-hidden="true"></i>
                 </a>

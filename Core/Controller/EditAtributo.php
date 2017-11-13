@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -31,13 +30,14 @@ use FacturaScripts\Core\Base\ExtendedController;
 class EditAtributo extends ExtendedController\EditController
 {
 
-      /**
+    /**
      * Devuelve el nombre del modelo
      */
     public function getModelName()
     {
         return 'FacturaScripts\Core\Model\Atributo';
     }
+
     /**
      * Devuelve los datos básicos de la página
      *
