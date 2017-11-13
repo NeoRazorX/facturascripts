@@ -84,7 +84,7 @@ class CodeModel
             }
 
             $sql = 'SELECT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM ' . $tableName . ' ORDER BY 2 ASC';
-            $data = self::$dataBase->select($sql);
+            $data = self::$dataBase->selectLimit($sql, 1000);
             if (!empty($data)) {
                 foreach ($data as $d) {
                     $result[] = new self($d);

@@ -19,8 +19,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la edición de un registro del modelo Fabricante
@@ -31,44 +29,49 @@ use FacturaScripts\Core\Model;
  */
 class EditSubcuenta extends ExtendedController\PanelController
 {
-   
-   /**
-    * Procedimiento para insertar vistas en el controlador
-    */
-   protected function createViews()
-   {
-      $this->addEditView('FacturaScripts\Core\Model\Subcuenta', 'EditSubcuenta', 'subaccount');
-   }
 
-   /**
-    * Procedimiento encargado de cargar los datos a visualizar
-    *
-    * @param string $keyView
-    * @param ExtendedController\EditView $view
-    */
-   protected function loadData($keyView, $view)
-   {
-      switch ($keyView) {
-         case 'EditSubcuenta':
-            $value = $this->request->get('code');
-            $view->loadData($value);
-            break;
-      }
-   }
+    /**
+     * Procedimiento para insertar vistas en el controlador
+     */
+    protected function createViews()
+    {
+        $this->addEditView('FacturaScripts\Core\Model\Subcuenta', 'EditSubcuenta', 'subaccount');
+        $this->addListView('FacturaScripts\Core\Model\Asiento', 'ListAsiento', 'accounting-entries', 'fa-balance-scale');
+    }
 
-   /**
-    * Devuelve los datos básicos de la página
-    *
-    * @return array
-    */
-   public function getPageData()
-   {
-      $pagedata = parent::getPageData();
-      $pagedata['title'] = 'subaccounts';
-      $pagedata['menu'] = 'accounting';
-      $pagedata['icon'] = 'fa-th-list';
-      $pagedata['showonmenu'] = false;
+    /**
+     * Procedimiento encargado de cargar los datos a visualizar
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        switch ($keyView) {
+            case 'EditSubcuenta':
+                $value = $this->request->get('code');
+                $view->loadData($value);
+                break;
 
-      return $pagedata;
-   }
+            case 'ListAsiento':
+                /// TODO: cargar los asientos relacionados (a través de la tabla co_partidas).
+                break;
+        }
+    }
+
+    /**
+     * Devuelve los datos básicos de la página
+     *
+     * @return array
+     */
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'subaccount';
+        $pagedata['menu'] = 'accounting';
+        $pagedata['icon'] = 'fa-th-list';
+        $pagedata['showonmenu'] = false;
+
+        return $pagedata;
+    }
 }

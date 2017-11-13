@@ -41,19 +41,6 @@ class EditArticulo extends ExtendedController\PanelController
     }
 
     /**
-     * Devuele el campo $fieldName del articulo
-     *
-     * @param string $fieldName
-     *
-     * @return mixed
-     */
-    private function getArticuloFieldValue($fieldName)
-    {
-        $model = $this->views['EditArticulo']->getModel();
-        return $model->{$fieldName};
-    }
-
-    /**
      * Procedimiento encargado de cargar los datos a visualizar
      *
      * @param string $keyView
@@ -68,7 +55,7 @@ class EditArticulo extends ExtendedController\PanelController
                 break;
 
             case 'ListFabricante':
-                $codfabricante = $this->getArticuloFieldValue('codfabricante');
+                $codfabricante = $this->getViewModelValue('EditArticulo', 'codfabricante');
 
                 if (!empty($codfabricante)) {
                     $where = [new DataBase\DataBaseWhere('codfabricante', $codfabricante)];
@@ -77,7 +64,7 @@ class EditArticulo extends ExtendedController\PanelController
                 break;
 
             case 'ListFamilia':
-                $codfamilia = $this->getArticuloFieldValue('codfamilia');
+                $codfamilia = $this->getViewModelValue('EditArticulo', 'codfamilia');
 
                 if (!empty($codfamilia)) {
                     $where = [new DataBase\DataBaseWhere('codfamilia', $codfamilia)];

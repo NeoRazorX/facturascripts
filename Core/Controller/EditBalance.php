@@ -54,28 +54,15 @@ class EditBalance extends ExtendedController\PanelController
                 break;
 
             case 'EditBalanceCuenta':
-                $where = [new DataBase\DataBaseWhere('codbalance', $this->getBalanceFieldValue('codbalance'))];
+                $where = [new DataBase\DataBaseWhere('codbalance', $this->getViewModelValue('EditBalance', 'codbalance'))];
                 $view->loadData($where);
                 break;
 
             case 'EditBalanceCuentaA':
-                $where = [new DataBase\DataBaseWhere('codbalance', $this->getBalanceFieldValue('codbalance'))];
+                $where = [new DataBase\DataBaseWhere('codbalance', $this->getViewModelValue('EditBalance', 'codbalance'))];
                 $view->loadData($where);
                 break;
         }
-    }
-
-    /**
-     * Devuele el campo $fieldName del balance
-     *
-     * @param string $fieldName
-     *
-     * @return mixed
-     */
-    private function getBalanceFieldValue($fieldName)
-    {
-        $model = $this->views['EditBalance']->getModel();
-        return $model->{$fieldName};
     }
 
     /**
