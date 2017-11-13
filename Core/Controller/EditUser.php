@@ -31,28 +31,6 @@ class EditUser extends ExtendedController\PanelController
 {
 
     /**
-     * Devuelve un array de idiomas, donde la key es el nombre del archivo JSON y
-     * el value es su correspondiente traducción.
-     *
-     * @return array
-     */
-    private function getLanguages()
-    {
-        $languages = [];
-        $dir = __DIR__ . '/../Translation';
-        foreach (scandir($dir, SCANDIR_SORT_ASCENDING) as $fileName) {
-            if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
-                $languages[] = [
-                    'value' => substr($fileName, 0, -5),
-                    'title' => $this->i18n->trans('languages-' . substr($fileName, 0, -5))
-                ];
-            }
-        }
-
-        return $languages;
-    }
-
-    /**
      * Procedimiento para insertar vistas en el controlador
      */
     protected function createViews()
@@ -64,7 +42,10 @@ class EditUser extends ExtendedController\PanelController
 
         /// Load values option to Language select input
         $columnLangCode = $this->views['EditUser']->columnForName('lang-code');
-        $langs = $this->getLanguages();
+        $langs = [];
+        foreach ($this->i18n->getAvailableLanguages() as $key => $value) {
+            $langs[] = ['value' => $key, 'title' => $value];
+        }
         $columnLangCode->widget->setValuesFromArray($langs);
 
         /// Disable columns
