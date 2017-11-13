@@ -72,6 +72,7 @@
 {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
 {% from 'Macro/BaseController.html' import rowHeaderForEditView as rowHeaderForEditView %}
 {% from 'Macro/BaseController.html' import rowFooterForEditView as rowFooterForEditView %}
+{% from 'Macro/BaseController.html' import modalFormFromColumns as modalFormFromColumns %}
 
 <!-- Aux Objects -->
 {% set model = fsc.view.getModel() %}
@@ -163,5 +164,8 @@
 
     <!-- Footer Row -->
     {{ rowFooterForEditView(_context, fsc.view) }}
+    
+    <!-- Modals Forms -->
+    {{ modalFormFromColumns(_context, fsc.view) }}
 </div>
 {% endblock %}

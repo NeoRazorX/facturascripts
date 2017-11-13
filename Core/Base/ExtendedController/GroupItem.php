@@ -41,6 +41,32 @@ class GroupItem extends VisualItem implements VisualItemInterface
     public $columns;
 
     /**
+     * Crea y carga la estructura de un grupo en base a un archivo XML
+     *
+     * @param \SimpleXMLElement $group
+     * @return GroupItem
+     */
+    public static function newFromXMLGroup($group)
+    {
+        $result = new GroupItem();
+        $result->loadFromXML($group);
+        return $result;
+    }
+
+    /**
+     * Crea y carga la estructura de un grupo en base a la base de datos
+     *
+     * @param array $group
+     * @return GroupItem
+     */
+    public static function newFromJSONGroup($group)
+    {
+        $result = new GroupItem();
+        $result->loadFromJSON($group);
+        return $result;
+    }    
+    
+    /**
      * Construye e inicializa la clase.
      */
     public function __construct()
@@ -74,14 +100,16 @@ class GroupItem extends VisualItem implements VisualItemInterface
      */
     public function loadFromXMLColumns($group)
     {
-        foreach ($group->column as $column) {
-            $columnItem = new ColumnItem();
-            $columnItem->loadFromXML($column);
+        if (isset($group->column)) {
+            foreach ($group->column as $column) {
+                $columnItem = new ColumnItem();
+                $columnItem->loadFromXML($column);
 
-            $this->columns[$columnItem->name] = $columnItem;
-            unset($columnItem);
+                $this->columns[$columnItem->name] = $columnItem;
+                unset($columnItem);
+            }
+            uasort($this->columns, ['self', 'sortColumns']);
         }
-        uasort($this->columns, ['self', 'sortColumns']);
     }
 
     /**

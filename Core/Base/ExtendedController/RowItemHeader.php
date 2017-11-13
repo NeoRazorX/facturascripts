@@ -16,41 +16,50 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Controller;
-
-use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Base\ExtendedController;
+namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controlador para la edición de un registro del modelo Familia
+ * Description of RowItemHeader
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class EditSerie extends ExtendedController\EditController
+class RowItemHeader extends RowItem
 {
+    public $buttons;
     
     /**
-     * Devuelve el nombre del modelo
+     * Constructor de la clase
      */
-    public function getModelName()
+    public function __construct()
     {
-        return 'FacturaScripts\Core\Model\Serie';
+        parent::__construct('header');
+        $this->buttons = [];
     }
-    /**
-     * Devuelve los datos básicos de la página
-     *
-     * @return array
-     */
-    public function getPageData()
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'series';
-        $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fa-file-text';
-        $pagedata['showonmenu'] = false;
 
-        return $pagedata;
+    /**
+     * Carga la estructura de atributos en base a un archivo XML
+     *
+     * @param \SimpleXMLElement $row
+     */
+    public function loadFromXML($row)
+    {
+        $this->buttons = $this->loadButtonsFromXML($row);
     }
+    
+    /**
+     * Carga la estructura de atributos en base un archivo JSON
+     *
+     * @param array $row
+     */
+    public function loadFromJSON($row)
+    {
+        $this->type = (string) $row['type'];
+        
+        foreach ($row['buttons'] as $button) {
+            $values = $button;
+            $buttomItem = new WidgetButton($values);
+            $this->buttons[] = $buttomItem;
+            unset($buttomItem);
+        }        
+    }    
 }

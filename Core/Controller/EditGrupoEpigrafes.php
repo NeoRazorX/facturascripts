@@ -38,14 +38,14 @@ class EditGrupoEpigrafes extends ExtendedController\EditController
      * @param Base\MiniLog    $miniLog
      * @param string     $className
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+   
+     /**
+     * Devuelve el nombre del modelo
+     */
+    public function getModelName()
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
-
-        // Establecemos el modelo de datos
-        $this->modelName = 'FacturaScripts\Core\Model\GrupoEpigrafes';
+        return 'FacturaScripts\Core\Model\GrupoEpigrafes';
     }
-
     /**
      * Devuelve los datos básicos de la página
      *
