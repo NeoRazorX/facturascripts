@@ -19,37 +19,56 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la edición de un registro del modelo Fabricante
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author PC REDNET S.L. <luismi@pcrednet.com>
  */
-class EditSubcuenta extends ExtendedController\EditController
+class EditSubcuenta extends ExtendedController\PanelController
 {
+   
+   /**
+    * Procedimiento para insertar vistas en el controlador
+    */
+   protected function createViews()
+   {
+      $this->addEditView('FacturaScripts\Core\Model\Subcuenta', 'EditSubcuenta', 'subaccount');
+   }
 
-    /**
-     * Devuelve el nombre del modelo
-     */
-    public function getModelName()
-    {
-        return 'FacturaScripts\Core\Model\Subcuenta';
-    }
+   /**
+    * Procedimiento encargado de cargar los datos a visualizar
+    *
+    * @param string $keyView
+    * @param ExtendedController\EditView $view
+    */
+   protected function loadData($keyView, $view)
+   {
+      switch ($keyView) {
+         case 'EditSubcuenta':
+            $value = $this->request->get('code');
+            $view->loadData($value);
+            break;
+      }
+   }
 
-    /**
-     * Devuelve los datos básicos de la página
-     *
-     * @return array
-     */
-    public function getPageData()
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'subaccounts';
-        $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fa-th-list';
-        $pagedata['showonmenu'] = false;
+   /**
+    * Devuelve los datos básicos de la página
+    *
+    * @return array
+    */
+   public function getPageData()
+   {
+      $pagedata = parent::getPageData();
+      $pagedata['title'] = 'subaccounts';
+      $pagedata['menu'] = 'accounting';
+      $pagedata['icon'] = 'fa-th-list';
+      $pagedata['showonmenu'] = false;
 
-        return $pagedata;
-    }
+      return $pagedata;
+   }
 }

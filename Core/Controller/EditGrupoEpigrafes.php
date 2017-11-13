@@ -19,23 +19,66 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la edición de un registro del modelo de un grupo de epígrafe
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author PC REDNET S.L. <luismi@pcrednet.com>
  */
-class EditGrupoEpigrafes extends ExtendedController\EditController
+class EditGrupoEpigrafes extends ExtendedController\PanelController
 {
     /**
-     * Devuelve el nombre del modelo
-     */
-    public function getModelName()
-    {
-        return 'FacturaScripts\Core\Model\GrupoEpigrafes';
-    }
+    * Procedimiento para insertar vistas en el controlador
+    */
+   protected function createViews()
+   {
+      $this->addEditView('FacturaScripts\Core\Model\GrupoEpigrafes', 'EditGrupoEpigrafes', 'accounting-heading');
+      $this->addListView('FacturaScripts\Core\Model\Epigrafe', 'ListEpigrafe', 'sub-accounts', 'fa-book');
+   }
+   
+   /**
+    * Devuele el campo $fieldName del GrupoEpigrafe
+    *
+    * @param string $fieldName
+    *
+    * @return mixed
+    */
+   private function getGrupoEpigrafeFieldValue($fieldName)
+   {
+      $model = $this->views['EditGrupoEpigrafes']->getModel();
+      return $model->{$fieldName};
+   }
+   
+   
+   /**
+    * Procedimiento encargado de cargar los datos a visualizar
+    *
+    * @param string $keyView
+    * @param ExtendedController\EditView $view
+    */
+   protected function loadData($keyView, $view)
+   {
+      switch ($keyView) {
+         case 'EditGrupoEpigrafes':
+            $value = $this->request->get('code');
+            $view->loadData($value);
+            break;
 
+         case 'ListEpigrafe':
+            $idgrupo = $this->getGrupoEpigrafeFieldValue('idgrupo');
+
+            if (!empty($idgrupo)) {
+               $where = [new DataBase\DataBaseWhere('idgrupo', $idgrupo)];
+               $view->loadData($where);
+            }
+            break;
+      }
+   }
+        
     /**
      * Devuelve los datos básicos de la página
      *
