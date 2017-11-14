@@ -19,14 +19,16 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Base\DataBase;
 
 /**
  * Controlador para la edición de un registro del modelo Grupo Clientes
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Nazca Networks <comercial@nazcanetworks.com>
  */
-class EditGrupoClientes extends ExtendedController\EditController
+class EditGrupoClientes extends ExtendedController\PanelController
 {
 
     /**
@@ -35,6 +37,34 @@ class EditGrupoClientes extends ExtendedController\EditController
     public function getModelName()
     {
         return 'FacturaScripts\Core\Model\GrupoClientes';
+    }
+    /**
+     * Procedimiento para insertar vistas en el controlador
+     */
+    protected function createViews()
+    {
+        $this->addEditView('FacturaScripts\Core\Model\GrupoClientes', 'EditGrupoClientes', 'customer-group');
+        $this->addListView('FacturaScripts\Core\Model\Cliente', 'EditCliente', 'customers');
+    }
+    /**
+     * Procedimiento encargado de cargar los datos a visualizar
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        switch ($keyView) {
+            case 'EditGrupoClientes':
+                $value = $this->request->get('code');
+                $view->loadData($value);
+                break;
+            case 'EditCliente':
+                 $where = [new DataBase\DataBaseWhere('codgrupo', $this->getViewModelValue('EditGrupoClientes', 'codgrupo'))];
+                $view->loadData($where);
+                break;
+                
+        }
     }
 
     /**
