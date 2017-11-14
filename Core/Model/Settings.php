@@ -132,36 +132,4 @@ class Settings
 
         return $this->dataBase->exec($sql);
     }
-
-    /**
-     * Crea la consulta necesaria para crear configuración base en la base de datos.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        $description1 = $this->i18n->trans('description-general-settings');
-        $values1 = [
-            'decimals' => 2, 'product_decimals' => 2, 'decimal_separator' => ',', 'thousands_separator' => '.',
-            'dateshort' => 'dd-mm-yy', 'datelong' => 'dd mmm yyyy', 'datemaxtoday' => 3
-        ];
-        $properties1 = json_encode($values1);
-
-        $sqlBase = 'INSERT INTO ' . $this->tableName() . ' (name, icon, description, properties) VALUES ';
-        $sql1 = $sqlBase . "('default', 'fa-globe', " . $this->var2str($description1) . ',' . $this->var2str($properties1) . ');';
-
-        $description2 = $this->i18n->trans('description-pdf-template-settings');
-        $values2 = [
-            'ppdf_plantilla' => '2', 'ppdf_pcolor' => '#1296D7', 'ppdf_scolor' => '#FFFFFF', 'ppdf_tcolor' => '#F1F1F1',
-            'ppdf_fsize' => 9, 'ppdf_font' => 'dejavusans', 'ppdf_margin_top' => 0, 'ppdf_mostrar_empresa' => 'h1',
-            'ppdf_numero2' => '1', 'ppdf_multidivisa' => '0', 'ppdf_referencias' => '1', 'ppdf_descuentos' => '1',
-            'ppdf_numlinea' => '0', 'ppdf_lf_alb' => '0', 'ppdf_lf_ped' => '0', 'ppdf_pie_f_y' => 270, 'ppdf_lalb_ped' => '0',
-            'ppdf_pie_alb' => '', 'ppdf_pie_alb_y' => 270, 'ppdf_lped_pre' => '0', 'ppdf_pie_ped' => '', 'ppdf_pie_ped_y' => 270,
-            'ppdf_lpre_wooc' => '0', 'ppdf_pie_pre' => '', 'ppdf_pie_pre_y' => 270
-        ];
-        $properties2 = json_encode($values2);
-
-        $sql2 = $sqlBase . "('plantillaspdf', 'fa-file-pdf-o', " . $this->var2str($description2) . ',' . $this->var2str($properties2) . ');';
-        return $sql1 . $sql2;
-    }
 }

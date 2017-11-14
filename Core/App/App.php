@@ -31,6 +31,13 @@ abstract class App
 {
 
     /**
+     * Almacén de datos con la configuración predeterminada de la aplicación.
+     * 
+     * @var AppSettings 
+     */
+    protected $appSettings;
+
+    /**
      * Gestor de acceso a cache.
      *
      * @var Base\Cache
@@ -106,6 +113,7 @@ abstract class App
             $this->i18n = new Base\Translator();
         }
 
+        $this->appSettings = new AppSettings();
         $this->cache = new Base\Cache();
         $this->dataBase = new Base\DataBase();
         $this->ipFilter = new Base\IPFilter();
@@ -115,13 +123,18 @@ abstract class App
     }
 
     /**
-     * Conecta a la base de datos.
+     * Conecta a la base de datos y carga la configuración.
      *
      * @return bool
      */
     public function connect()
     {
-        return $this->dataBase->connect();
+        if ($this->dataBase->connect()) {
+            $this->appSettings->loadData();
+            return TRUE;
+        }
+
+        return false;
     }
 
     /**

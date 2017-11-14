@@ -36,13 +36,6 @@ class WidgetItemMoney extends WidgetItem
     private static $divisaTools;
 
     /**
-     * Numero de decimales para las divisas
-     *
-     * @var int
-     */
-    public $decimal;
-
-    /**
      * Constructor de la clase
      */
     public function __construct()
@@ -50,7 +43,6 @@ class WidgetItemMoney extends WidgetItem
         parent::__construct();
 
         $this->type = 'money';
-        $this->decimal = 2;
 
         if (!isset(self::$divisaTools)) {
             self::$divisaTools = new DivisaTools();
@@ -72,8 +64,7 @@ class WidgetItemMoney extends WidgetItem
         }
 
         $style = $this->getTextOptionsHTML($value);
-        $aux = empty($this->decimal) ? self::$divisaTools->format($value) : self::$divisaTools->format($value, $this->decimal);
-        $html = '<span' . $style . '>' . $aux . '</span>';
+        $html = '<span' . $style . '>' . self::$divisaTools->format($value) . '</span>';
         return $html;
     }
 

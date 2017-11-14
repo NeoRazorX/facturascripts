@@ -43,7 +43,6 @@ class EditSettings extends ExtendedController\PanelController
         $pagedata['title'] = 'app-preferences';
         $pagedata['icon'] = 'fa-cogs';
         $pagedata['menu'] = 'admin';
-        $pagedata['orden'] = '999';
 
         return $pagedata;
     }
@@ -84,7 +83,11 @@ class EditSettings extends ExtendedController\PanelController
             return $properties[$field];
         }
 
-        return $model->{$field};
+        if (isset($model->{$field})) {
+            return $model->{$field};
+        }
+
+        return null;
     }
 
     /**
