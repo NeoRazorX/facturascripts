@@ -29,7 +29,7 @@ class Dashboard extends Base\Controller
 {
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */

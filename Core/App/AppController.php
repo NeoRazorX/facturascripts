@@ -32,7 +32,7 @@ use Twig_Environment;
 use Twig_Loader_Filesystem;
 
 /**
- * Description of App
+ * App description
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -40,7 +40,7 @@ class AppController extends App
 {
 
     /**
-     * Controlador cargado.
+     * Controller loaded
      *
      * @var Controller
      */
@@ -54,7 +54,7 @@ class AppController extends App
     private $debugBar;
 
     /**
-     * Para gestionar el menú del usuario
+     * Load user's menu
      *
      * @var MenuManager
      */
@@ -79,7 +79,7 @@ class AppController extends App
     }
 
     /**
-     * Selecciona y ejecuta el controlador pertinente.
+     * Select and run the corresponding controller.
      *
      * @return boolean
      */
@@ -112,9 +112,9 @@ class AppController extends App
     }
 
     /**
-     * Carga y procesa el controlador $pageName.
+     * Load and process the $pageName controller.
      *
-     * @param string $pageName nombre del controlador
+     * @param string $pageName name of the controller
      */
     private function loadController($pageName)
     {
@@ -127,7 +127,7 @@ class AppController extends App
         $template = 'Error/ControllerNotFound.html';
         $httpStatus = Response::HTTP_NOT_FOUND;
 
-        /// Si hemos encontrado el controlador, lo cargamos
+        /// If we found a controller, load it
         if (class_exists($controllerName)) {
             $this->miniLog->debug($this->i18n->trans('loading-controller', [$controllerName]));
             $user = $this->userAuth();
@@ -161,7 +161,7 @@ class AppController extends App
     }
 
     /**
-     * Devuelve el nombre completo del controlador
+     * Returns the controllers full name
      *
      * @param string $pageName
      *
@@ -179,15 +179,15 @@ class AppController extends App
     }
 
     /**
-     * Crea el HTML con la plantilla seleccionada. Aunque los datos no se volcarán
-     * hasta ejecutar render()
+     * Creates HTML with the selected template. The data will not be inserted in it
+     * until render() is executed
      *
      * @param string $template       archivo html a utilizar
      * @param string $controllerName
      */
     private function renderHtml($template, $controllerName = '')
     {
-        /// cargamos el motor de plantillas
+        /// Load the template engine
         $twigLoader = new Twig_Loader_Filesystem(FS_FOLDER . '/Core/View');
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
             if (file_exists(FS_FOLDER . '/Plugins/' . $pluginName . '/View')) {
@@ -195,10 +195,10 @@ class AppController extends App
             }
         }
 
-        /// opciones de twig
+        /// Twig options
         $twigOptions = ['cache' => FS_FOLDER . '/Cache/Twig'];
 
-        /// variables para la plantilla HTML
+        /// HTML template variables
         $templateVars = [
             'controllerName' => $controllerName,
             'debugBarRender' => false,
@@ -219,7 +219,7 @@ class AppController extends App
             $baseUrl = 'vendor/maximebf/debugbar/src/DebugBar/Resources/';
             $templateVars['debugBarRender'] = $this->debugBar->getJavascriptRenderer($baseUrl);
 
-            /// añadimos del log a debugBar
+            /// add log data to the debugBar
             foreach ($this->miniLog->read(['debug']) as $msg) {
                 $this->debugBar['messages']->info($msg['message']);
             }
@@ -237,7 +237,7 @@ class AppController extends App
     }
 
     /**
-     * Autentica al usuario, devuelve el usuario en caso afirmativo o false.
+     * User authentication, returns the user when successful, or false when not.
      *
      * @return User|false
      */
@@ -275,7 +275,7 @@ class AppController extends App
     }
 
     /**
-     * Autentica al usuario usando la cookie.
+     * Authenticate the user using the cookie.
      * 
      * @param User $user0
      * @return boolean
@@ -303,7 +303,7 @@ class AppController extends App
     }
 
     /**
-     * Desautentica al usuario
+     * Log out the user
      */
     private function userLogout()
     {
@@ -313,7 +313,7 @@ class AppController extends App
     }
 
     /**
-     * Carga los plugins
+     * Load plugins
      */
     private function deployPlugins()
     {

@@ -3,7 +3,7 @@
     Document   : articulo_combinaciones.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla articulo_combinaciones.
+        Structure for the articulo_combinaciones table.
 -->
 <table>
     <column>

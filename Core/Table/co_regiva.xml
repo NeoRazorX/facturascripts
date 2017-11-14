@@ -3,7 +3,7 @@
     Document   : co_regiva.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla co_regiva.
+        Structure for the co_regiva table.
 -->
 <table>
     <column>

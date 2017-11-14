@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Description of App
+ * App description
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -31,69 +31,69 @@ abstract class App
 {
 
     /**
-     * Gestor de acceso a cache.
+     * Cache access manager.
      *
      * @var Base\Cache
      */
     protected $cache;
 
     /**
-     * Gestor de acceso a la base de datos.
+     * Database access manager.
      *
      * @var Base\DataBase
      */
     protected $dataBase;
 
     /**
-     * Motor de traducción.
+     * Translation engine.
      *
      * @var Base\Translator
      */
     protected $i18n;
 
     /**
-     * Filtro de IPs.
+     * IP filter.
      *
      * @var Base\IPFilter
      */
     protected $ipFilter;
 
     /**
-     * Gestor del log de la app.
+     * App log manager.
      *
      * @var Base\MiniLog
      */
     protected $miniLog;
 
     /**
-     * Gestor de plugins.
+     * Plugin manager.
      *
      * @var Base\PluginManager
      */
     protected $pluginManager;
 
     /**
-     * Permite acceder a los datos de la petición HTTP.
+     * Gives us access to the HTTP request parameters.
      *
      * @var Request
      */
     protected $request;
 
     /**
-     * Objeto respuesta HTTP.
+     * HTTP response object.
      *
      * @var Response
      */
     protected $response;
 
     /**
-     * Inicializa la app.
+     * Initializes the app.
      *
-     * @param string $folder Carpeta de trabajo de FacturaScripts
+     * @param string $folder FacturaScripts working directory
      */
     public function __construct($folder = '')
     {
-        /// al tener la carpeta en una constante la podemos usar más fácilmente
+        /// Having the directory in a constas lets us access it more easily
         if (!defined('FS_FOLDER')) {
             define('FS_FOLDER', $folder);
         }
@@ -115,7 +115,7 @@ abstract class App
     }
 
     /**
-     * Conecta a la base de datos.
+     * Connects to the database.
      *
      * @return bool
      */
@@ -125,7 +125,7 @@ abstract class App
     }
 
     /**
-     * Cierra la conexión a la base de datos.
+     * Disconnects from the database.
      */
     public function close()
     {
@@ -133,14 +133,14 @@ abstract class App
     }
 
     /**
-     * Selecciona y ejecuta el controlador pertinente.
+     * Selects and runs the corresponding controller.
      *
      * @return bool
      */
     abstract public function run();
 
     /**
-     * Vuelca los datos en la salida estándar.
+     * Returns the data into the standard output.
      */
     public function render()
     {
@@ -148,7 +148,7 @@ abstract class App
     }
 
     /**
-     * Devuelve True si la IP del cliente ha sido baneada.
+     * Returns true if the client IP has been banned.
      *
      * @return bool
      */

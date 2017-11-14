@@ -22,7 +22,7 @@ use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Description of EditArticulo
+ * Controller to edit a single item from the EditArticulo model
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
@@ -31,7 +31,7 @@ class EditArticulo extends ExtendedController\PanelController
 {
 
     /**
-     * Procedimiento para insertar vistas en el controlador
+     * Load views
      */
     protected function createViews()
     {
@@ -41,7 +41,7 @@ class EditArticulo extends ExtendedController\PanelController
     }
 
     /**
-     * Devuele el campo $fieldName del articulo
+     * Returns the Articulo's field $fieldName value
      *
      * @param string $fieldName
      *
@@ -54,7 +54,7 @@ class EditArticulo extends ExtendedController\PanelController
     }
 
     /**
-     * Procedimiento encargado de cargar los datos a visualizar
+     * Load view data procedure
      *
      * @param string $keyView
      * @param ExtendedController\EditView $view
@@ -88,7 +88,7 @@ class EditArticulo extends ExtendedController\PanelController
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */

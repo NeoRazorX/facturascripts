@@ -3,7 +3,7 @@
     Document   : formaspago.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla formaspago.
+        Structure for the formaspago table.
 -->
 <table>
     <column>

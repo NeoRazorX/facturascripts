@@ -22,7 +22,7 @@ use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Description of EditProveedor
+ * Controller to edit a single item from the Proveedor model
  *
  * @author Nazca Networks <comercial@nazcanetworks.com>
  */
@@ -30,7 +30,7 @@ class EditProveedor extends ExtendedController\PanelController
 {
 
     /**
-     * Procedimiento para insertar vistas en el controlador
+     * Load views
      */
     protected function createViews()
     {
@@ -41,7 +41,7 @@ class EditProveedor extends ExtendedController\PanelController
     }
 
     /**
-     * Devuele el campo $fieldName del cliente
+     * Returns the $fieldName value from the Proveedor model
      *
      * @param string $fieldName
      *
@@ -54,7 +54,7 @@ class EditProveedor extends ExtendedController\PanelController
     }
 
     /**
-     * Procedimiento encargado de cargar los datos a visualizar
+     * Load view data
      *
      * @param string $keyView
      * @param ExtendedController\EditView $view
@@ -85,7 +85,7 @@ class EditProveedor extends ExtendedController\PanelController
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */

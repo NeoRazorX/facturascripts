@@ -28,7 +28,7 @@ class RowItemHeader extends RowItem
     public $buttons;
     
     /**
-     * Constructor de la clase
+     * Class constructor
      */
     public function __construct()
     {
@@ -37,7 +37,7 @@ class RowItemHeader extends RowItem
     }
 
     /**
-     * Carga la estructura de atributos en base a un archivo XML
+     * Creates the attributes structure from a XML file
      *
      * @param \SimpleXMLElement $row
      */
@@ -47,7 +47,7 @@ class RowItemHeader extends RowItem
     }
     
     /**
-     * Carga la estructura de atributos en base un archivo JSON
+     * Creates the attributes structure from a JSON file
      *
      * @param array $row
      */

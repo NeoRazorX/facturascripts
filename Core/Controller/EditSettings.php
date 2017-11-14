@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Description of EditSettings
+ * Controller to edit main settings
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -33,7 +33,7 @@ class EditSettings extends ExtendedController\PanelController
     const KEYSETTINGS = 'Settings';
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */
@@ -49,7 +49,7 @@ class EditSettings extends ExtendedController\PanelController
     }
 
     /**
-     * Devuelve la url para el tipo indicado
+     * Returns the url for a specified $type
      *
      * @param string $type
      * @return string
@@ -71,7 +71,7 @@ class EditSettings extends ExtendedController\PanelController
     }
 
     /**
-     * Devuelve el valor para la propiedad de configuración
+     * Returns the configuration property value for a specified $field
      *
      * @param mixed $model
      * @param string $field
@@ -88,8 +88,7 @@ class EditSettings extends ExtendedController\PanelController
     }
 
     /**
-     * Devuelve el id de la vista con el valor de la constante KEYSSETTINGS
-     * como prefijo
+     * Returns the view id with the KEYSETTINGS constant as a prefix
      *
      * @param string $key
      * @return string
@@ -100,7 +99,7 @@ class EditSettings extends ExtendedController\PanelController
     }
 
     /**
-     * Devuelve el id de la vista
+     * Returns the view id for a specified $viewName
      *
      * @param string $viewName
      * @return string
@@ -111,7 +110,7 @@ class EditSettings extends ExtendedController\PanelController
     }
 
     /**
-     * Procedimiento para insertar vistas en el controlador
+     * Load views
      */
     protected function createViews()
     {
@@ -134,7 +133,7 @@ class EditSettings extends ExtendedController\PanelController
     }
 
     /**
-     * Procedimiento para cargar los datos de cada una de las vistas
+     * Load view data
      *
      * @param string $keyView
      * @param ExtendedController\EditView $view

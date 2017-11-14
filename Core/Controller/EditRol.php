@@ -22,7 +22,7 @@ use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Description of EditRol
+ * Controller to edit a single item from the EditRol model
  *
  *
  * @author Artex Trading sa <jferrer@artextrading.com>
@@ -31,7 +31,7 @@ class EditRol extends ExtendedController\PanelController
 {
 
     /**
-     * Procedimiento para insertar vistas en el controlador
+     * Load views
      */
     protected function createViews()
     {
@@ -45,7 +45,7 @@ class EditRol extends ExtendedController\PanelController
     }
 
     /**
-     * Devuele el campo $fieldName del modelo Rol
+     * Returns the $fieldName value from the Rol model
      *
      * @param string $fieldName
      *
@@ -58,7 +58,7 @@ class EditRol extends ExtendedController\PanelController
     }
 
     /**
-     * Procedimiento encargado de cargar los datos a visualizar
+     * Load view data
      *
      * @param string $keyView
      * @param ExtendedController\EditView $view
@@ -84,7 +84,7 @@ class EditRol extends ExtendedController\PanelController
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */

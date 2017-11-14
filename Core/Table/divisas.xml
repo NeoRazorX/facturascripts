@@ -3,7 +3,7 @@
     Document   : divisas.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla divisas.
+        Structure for the divisas table.
 -->
 <table>
     <column>
