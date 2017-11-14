@@ -86,6 +86,13 @@ class CuentaBanco
         return true;
     }
 
+    /**
+     * Devuelve la url donde ver/modificar los datos.
+     *
+     * @param string $type
+     *
+     * @return string
+     */
     public function url($type = 'auto')
     {
         $value = $this->primaryColumnValue();

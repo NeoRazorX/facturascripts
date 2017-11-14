@@ -196,7 +196,7 @@ class DataBaseWhere
         $value = $this->getValue();
         $fields = explode('|', $this->fields);
         foreach ($fields as $field) {
-            if ($this->operator == 'LIKE') {
+            if ($this->operator === 'LIKE') {
                 $field = 'LOWER(' . $field . ')';
             }
             $result .= $union . $field . ' ' . $this->operator . ' ' . $value;
@@ -219,11 +219,11 @@ class DataBaseWhere
     /**
      * Dado un array de DataBaseWhere devuelve la clausula WHERE completa
      *
-     * @param array $whereItems
+     * @param DataBaseWhere[] $whereItems
      *
      * @return string
      */
-    public static function getSQLWhere(array $whereItems)
+    public static function getSQLWhere($whereItems)
     {
         $result = '';
         $join = false;

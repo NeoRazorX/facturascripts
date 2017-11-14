@@ -726,7 +726,7 @@ trait ModelTrait
     /**
      * Devuelve la url donde ver/modificar los datos
      *
-     * @param mixed $type
+     * @param string $type
      *
      * @return string
      */

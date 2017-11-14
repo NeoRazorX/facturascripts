@@ -51,7 +51,7 @@ class ListTarifa extends ExtendedController\ListController
     {
         $className = $this->getClassName();
         $this->addView('FacturaScripts\Core\Model\Tarifa', $className);
-        $this->addSearchFields($className, ['nombre', 'codtarfa']);
+        $this->addSearchFields($className, ['nombre', 'codtarifa']);
 
         $this->addOrderBy($className, 'codtarifa', 'code');
         $this->addOrderBy($className, 'nombre', 'name', 1);

@@ -212,7 +212,12 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * @param integer $view
+     * Devuelve el texto de las columnas.
+     *
+     * @param ListView $view
+     * @param int $maxColumns
+     *
+     * @return array
      */
     private function getTextColumns($view, $maxColumns)
     {
@@ -346,6 +351,8 @@ abstract class ListController extends Base\Controller
     }
 
     /**
+     * Añade un filtro a un tipo de campo.
+     *
      * @param string $indexView
      * @param string $key
      * @param string $type

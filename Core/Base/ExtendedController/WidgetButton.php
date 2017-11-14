@@ -25,17 +25,52 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 class WidgetButton
 {
+    /**
+     * Tipo de botón
+     * @var string
+     */
     public $type;
+
+    /**
+     * Icono asociado al botón
+     * @var string
+     */
     public $icon;
+
+    /**
+     * Texto asociado al botón
+     * @var string
+     */
     public $label;
+
+    /**
+     * Acción asociada al botón
+     * @var string
+     */
     public $action;
+
+    /**
+     * Acción JS asociada al botón
+     * @var string
+     */
     public $onClick;
+
+    /**
+     * Color asociado al botón
+     * @var string
+     */
     public $color;
+
+    /**
+     * Código adicional asociado al botón
+     * @var string
+     */
     public $hint;
 
     /**
+     * WidgetButton constructor.
      *
-     * @param array $values
+     * @param $values
      */
     public function __construct($values)
     {
@@ -84,7 +119,7 @@ class WidgetButton
      */
     private function getCalculateHTML($label, $value, $hint)
     {
-        $html = '<button type="button" class="btn btn-' . $this->color . '"'
+        $html = '<button type="button" class="btn btn-' . $this->color . '" '
             . $this->getOnClickHTML() . ' style="margin-right: 5px;" ' . $hint . '>'
             . $this->getIconHTML()
             . '<span class="cust-text">' . $label . ' ' . $value . '</span></button>';

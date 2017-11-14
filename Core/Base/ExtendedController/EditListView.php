@@ -95,6 +95,9 @@ class EditListView extends BaseView
         return $this->pageOption->columns;
     }
 
+    /**
+     * Devuelve True si tiene menos de 5 columnas, sino False.
+     */
     public function isBasicEditList()
     {
         $isBasic = count($this->pageOption->columns) === 1; // Only one group

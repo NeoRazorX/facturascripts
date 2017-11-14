@@ -155,6 +155,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      * para controladores Edit
      *
      * @param string $value
+     * @param bool $withLabel
      *
      * @return string
      */

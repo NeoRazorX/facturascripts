@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Base\ExtendedController;
 
-use DOMDocument;
 use FacturaScripts\Core\Base;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -65,6 +64,12 @@ class HtmlView extends BaseView
         return null;
     }
 
+    /**
+     * Permite desactivar una columna de una tabla.
+     *
+     * @param string $columnName
+     * @param bool $disabled
+     */
     public function disableColumn($columnName, $disabled)
     {
         
