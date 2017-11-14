@@ -123,7 +123,6 @@ class CuentaBancoCliente
                     . ' AND codcuenta <> ' . $this->var2str($this->codcuenta) . ';';
                 $allOK = $this->dataBase->exec($sql);
             }
-
             return $allOK;
         }
 
