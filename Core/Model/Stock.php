@@ -201,11 +201,6 @@ class Stock
     public function setCantidad($cant = 0)
     {
         $this->cantidad = (float) $cant;
-
-        if ($this->cantidad < 0 && !FS_STOCK_NEGATIVO) {
-            $this->cantidad = 0;
-        }
-
         $this->disponible = $this->cantidad - $this->reservada;
     }
 
@@ -218,11 +213,6 @@ class Stock
     {
         /// convertimos a flot por si acaso nos ha llegado un string
         $this->cantidad += (float) $cant;
-
-        if ($this->cantidad < 0 && !FS_STOCK_NEGATIVO) {
-            $this->cantidad = 0;
-        }
-
         $this->disponible = $this->cantidad - $this->reservada;
     }
 

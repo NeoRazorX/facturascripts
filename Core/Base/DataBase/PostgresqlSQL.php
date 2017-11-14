@@ -146,7 +146,7 @@ class PostgresqlSQL implements DataBaseSQL
                 continue;
             }
 
-            if (FS_FOREIGN_KEYS === '1' || 0 !== strpos($res['constraint'], 'FOREIGN KEY')) {
+            if (FS_DB_FOREIGN_KEYS || 0 !== strpos($res['constraint'], 'FOREIGN KEY')) {
                 $sql .= ', CONSTRAINT ' . $res['name'] . ' ' . $res['constraint'];
             }
         }

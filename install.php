@@ -262,11 +262,15 @@ function saveInstall()
         fwrite($file, "define('FS_DB_NAME', '" . filter_input(INPUT_POST, 'db_name') . "');\n");
         fwrite($file, "define('FS_DB_USER', '" . filter_input(INPUT_POST, 'db_user') . "');\n");
         fwrite($file, "define('FS_DB_PASS', '" . filter_input(INPUT_POST, 'db_pass') . "');\n");
+        fwrite($file, "define('FS_DB_FOREIGN_KEYS', true);\n");
+        fwrite($file, "define('FS_DB_INTEGER', 'INTEGER');\n");
+        fwrite($file, "define('FS_DB_TYPE_CHECK', true);\n");
         fwrite($file, "define('FS_CACHE_HOST', '" . filter_input(INPUT_POST, 'memcache_host') . "');\n");
         fwrite($file, "define('FS_CACHE_PORT', '" . filter_input(INPUT_POST, 'memcache_port') . "');\n");
         fwrite($file, "define('FS_CACHE_PREFIX', '" . filter_input(INPUT_POST, 'memcache_prefix') . "');\n");
+        fwrite($file, "define('FS_MYDOCS', '');\n");
         if (filter_input(INPUT_POST, 'db_type') === 'MYSQL' && filter_input(INPUT_POST, 'mysql_socket') !== '') {
-            fwrite($file, "ini_set('mysqli.default_socket', '" . filter_input(INPUT_POST, 'mysql_socket') . "');\n");
+            fwrite($file, "\nini_set('mysqli.default_socket', '" . filter_input(INPUT_POST, 'mysql_socket') . "');\n");
         }
         fwrite($file, "\n");
         fclose($file);
