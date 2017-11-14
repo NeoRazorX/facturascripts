@@ -245,6 +245,14 @@ class Partida
         return 'idpartida';
     }
 
+    public function install()
+    {
+        new Asiento();
+        new Subcuenta();
+
+        return '';
+    }
+
     /**
      * Resetea los valores de todas las propiedades modelo.
      */

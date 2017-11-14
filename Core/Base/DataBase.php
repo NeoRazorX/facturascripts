@@ -23,10 +23,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseEngine;
 use FacturaScripts\Core\Base\DataBase\Mysql;
 use FacturaScripts\Core\Base\DataBase\Postgresql;
 
-define('FS_FOREIGN_KEYS', '1');
-define('FS_DB_INTEGER', 'INTEGER');
-define('FS_CHECK_DB_TYPES', '1');
-
 /**
  * Clase genérica de acceso a la base de datos, ya sea MySQL o PostgreSQL.
  *

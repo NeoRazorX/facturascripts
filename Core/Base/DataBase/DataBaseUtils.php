@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
@@ -29,6 +28,7 @@ namespace FacturaScripts\Core\Base\DataBase;
  */
 class DataBaseUtils
 {
+
     /**
      * Enlace al motor de base de datos seleccionado en la configuración
      *
@@ -83,7 +83,7 @@ class DataBaseUtils
         $xml = strtolower($xmlType);
 
         $result = (
-            (FS_CHECK_DB_TYPES !== '1') ||
+            (FS_DB_TYPE_CHECK) ||
             $this->engine->compareDataTypes($db0, $xml) ||
             ($xml === 'serial') ||
             (
@@ -161,7 +161,7 @@ class DataBaseUtils
             }
         }
 
-        if (!empty($xmlCons) && !$deleteOnly && FS_FOREIGN_KEYS === '1') {
+        if (!empty($xmlCons) && !$deleteOnly && FS_DB_FOREIGN_KEYS) {
             foreach ($xmlCons as $xml_con) {
                 if (strpos($xml_con['constraint'], 'PRIMARY') === 0) {
                     continue;

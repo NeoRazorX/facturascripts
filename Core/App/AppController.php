@@ -113,7 +113,8 @@ class AppController extends App
      */
     private function getDefaultController()
     {
-        return $this->request->cookies->get('fsHomepage', 'AdminHome');
+        $homePage = $this->appSettings->get('default', 'homepage', 'AdminHome');
+        return $this->request->cookies->get('fsHomepage', $homePage);
     }
 
     /**
