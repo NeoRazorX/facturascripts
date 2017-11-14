@@ -45,19 +45,6 @@ class EditRol extends ExtendedController\PanelController
     }
 
     /**
-     * Returns the $fieldName value from the Rol model
-     *
-     * @param string $fieldName
-     *
-     * @return string|boolean
-     */
-    private function getRolFieldValue($fieldName)
-    {
-        $model = $this->views['EditRol']->getModel();
-        return $model->{$fieldName};
-    }
-
-    /**
      * Load view data
      *
      * @param string $keyView
@@ -72,12 +59,12 @@ class EditRol extends ExtendedController\PanelController
                 break;
 
             case 'EditRolUser':
-                $where = [new DataBase\DataBaseWhere('codrol', $this->getRolFieldValue('codrol'))];
+                $where = [new DataBase\DataBaseWhere('codrol', $this->getViewModelValue('EditRol', 'codrol'))];
                 $view->loadData($where);
                 break;
 
             case 'ListRolAccess':
-                $where = [new DataBase\DataBaseWhere('codrol', $this->getRolFieldValue('codrol'))];
+                $where = [new DataBase\DataBaseWhere('codrol', $this->getViewModelValue('EditRol', 'codrol'))];
                 $view->loadData($where);
                 break;
         }

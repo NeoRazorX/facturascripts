@@ -31,6 +31,12 @@ abstract class App
 {
 
     /**
+     * Stored defaut configuration with the default application settings.
+     * @var AppSettings
+     */
+    protected $appSettings;
+
+    /**
      * Cache access manager.
      *
      * @var Base\Cache
@@ -106,6 +112,7 @@ abstract class App
             $this->i18n = new Base\Translator();
         }
 
+        $this->appSettings = new AppSettings();
         $this->cache = new Base\Cache();
         $this->dataBase = new Base\DataBase();
         $this->ipFilter = new Base\IPFilter();
@@ -115,13 +122,18 @@ abstract class App
     }
 
     /**
-     * Connects to the database.
+     * Connects to the database and loads the configuration.
      *
      * @return bool
      */
     public function connect()
     {
-        return $this->dataBase->connect();
+        if ($this->dataBase->connect()) {
+            $this->appSettings->load();
+            return TRUE;
+        }
+
+        return false;
     }
 
     /**

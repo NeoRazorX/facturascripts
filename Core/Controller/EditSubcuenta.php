@@ -19,8 +19,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the SubCuenta model
@@ -31,44 +29,49 @@ use FacturaScripts\Core\Model;
  */
 class EditSubcuenta extends ExtendedController\PanelController
 {
-   
-   /**
-    * Load views
-    */
-   protected function createViews()
-   {
-      $this->addEditView('FacturaScripts\Core\Model\Subcuenta', 'EditSubcuenta', 'subaccount');
-   }
 
-   /**
-    * Load view data procedure
-    *
-    * @param string $keyView
-    * @param ExtendedController\EditView $view
-    */
-   protected function loadData($keyView, $view)
-   {
-      switch ($keyView) {
-         case 'EditSubcuenta':
-            $value = $this->request->get('code');
-            $view->loadData($value);
-            break;
-      }
-   }
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $this->addEditView('FacturaScripts\Core\Model\Subcuenta', 'EditSubcuenta', 'subaccount');
+        $this->addListView('FacturaScripts\Core\Model\Asiento', 'ListAsiento', 'accounting-entries', 'fa-balance-scale');
+    }
 
-   /**
-    * Returns basic page attributes
-    *
-    * @return array
-    */
-   public function getPageData()
-   {
-      $pagedata = parent::getPageData();
-      $pagedata['title'] = 'subaccounts';
-      $pagedata['menu'] = 'accounting';
-      $pagedata['icon'] = 'fa-th-list';
-      $pagedata['showonmenu'] = false;
+    /**
+     * Load view data procedure
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        switch ($keyView) {
+            case 'EditSubcuenta':
+                $value = $this->request->get('code');
+                $view->loadData($value);
+                break;
 
-      return $pagedata;
-   }
+            case 'ListAsiento':
+                /// TODO: cargar los asientos relacionados (a través de la tabla co_partidas).
+                break;
+        }
+    }
+
+    /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'subaccount';
+        $pagedata['menu'] = 'accounting';
+        $pagedata['icon'] = 'fa-th-list';
+        $pagedata['showonmenu'] = false;
+
+        return $pagedata;
+    }
 }

@@ -145,9 +145,7 @@
                             {% endif %}
 
                             {% if viewType == 'HtmlView' %}
-                            <div class="row">
-                                {% include view.fileName ignore missing %}
-                            </div>
+                            <div>{% include view.fileName ignore missing %}</div>
                             {% endif %}
                         </div>
                     </div>

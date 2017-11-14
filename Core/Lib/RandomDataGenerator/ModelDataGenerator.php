@@ -21,10 +21,6 @@ namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
 
-define('FS_NF0', 2);
-define('FS_NF0_ART', 2);
-define('FS_STOCK_NEGATIVO', true);
-
 /**
  * Class that contains the functions to generate random data
  *

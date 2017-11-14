@@ -41,19 +41,6 @@ class EditCuenta extends ExtendedController\PanelController
     }
 
     /**
-     * Returns the $fieldName value from the Cuenta model
-     *
-     * @param string $fieldName
-     *
-     * @return string|boolean
-     */
-    private function getCuentaFieldValue($fieldName)
-    {
-        $model = $this->views['EditCuenta']->getModel();
-        return $model->{$fieldName};
-    }
-
-    /**
      * Load view data procedure
      *
      * @param string $keyView
@@ -68,7 +55,7 @@ class EditCuenta extends ExtendedController\PanelController
                 break;
 
             case 'ListSubcuenta':
-                $where = [new DataBase\DataBaseWhere('idcuenta', $this->getCuentaFieldValue('idcuenta'))];
+                $where = [new DataBase\DataBaseWhere('idcuenta', $this->getViewModelValue('EditCuenta', 'idcuenta'))];
                 $view->loadData($where);
                 break;
         }

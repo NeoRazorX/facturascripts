@@ -41,19 +41,6 @@ class EditProveedor extends ExtendedController\PanelController
     }
 
     /**
-     * Returns the $fieldName value from the Proveedor model
-     *
-     * @param string $fieldName
-     *
-     * @return mixed
-     */
-    private function getProviderFieldValue($fieldName)
-    {
-        $model = $this->views['EditProveedor']->getModel();
-        return $model->{$fieldName};
-    }
-
-    /**
      * Load view data
      *
      * @param string $keyView
@@ -68,17 +55,17 @@ class EditProveedor extends ExtendedController\PanelController
                 break;
 
             case 'EditDireccionProveedor':
-                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getProviderFieldValue('codproveedor'))];
+                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'))];
                 $view->loadData($where);
                 break;
 
             case 'EditCuentaBancoProveedor':
-                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getProviderFieldValue('codproveedor'))];
+                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'))];
                 $view->loadData($where);
                 break;
 
             case 'EditProveedorArticulo':
-                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getProviderFieldValue('codproveedor'))];
+                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'))];
                 $view->loadData($where);
                 break;
         }

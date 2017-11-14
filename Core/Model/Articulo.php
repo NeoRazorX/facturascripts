@@ -20,8 +20,6 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
-define('FS_MYDOCS', '');
-
 /**
  * Almacena los datos de un artículos.
  *
