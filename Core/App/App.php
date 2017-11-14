@@ -130,7 +130,7 @@ abstract class App
     public function connect()
     {
         if ($this->dataBase->connect()) {
-            $this->appSettings->loadData();
+            $this->appSettings->load();
             return TRUE;
         }
 

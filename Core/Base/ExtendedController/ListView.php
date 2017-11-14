@@ -302,7 +302,7 @@ class ListView extends BaseView
      * @param int $offset
      * @param int $limit
      */
-    public function loadData($where, $offset = 0, $limit = 50)
+    public function loadData($where, $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         $order = $this->getSQLOrderBy($this->selectedOrderBy);
         $this->count = $this->model->count($where);

@@ -586,6 +586,10 @@ trait ModelTrait
         $return = false;
 
         $filename = FS_FOLDER . '/Dinamic/Table/' . $tableName . '.xml';
+        if (!file_exists($filename)) {
+            $filename = FS_FOLDER . '/Core/Table/' . $tableName . '.xml';
+        }
+        
         if (file_exists($filename)) {
             $xml = simplexml_load_string(file_get_contents($filename, FILE_USE_INCLUDE_PATH));
             if ($xml) {

@@ -29,48 +29,68 @@ class AppSettings
 {
 
     private static $data;
+    private $save;
 
     public function __construct()
     {
         if (!isset(self::$data)) {
             self::$data = [];
         }
+
+        $this->save = false;
     }
 
     public function get($group, $property, $default = null)
     {
-        if (isset(self::$data[$group][$property])) {
-            return self::$data[$group][$property];
+        if (!isset(self::$data[$group][$property])) {
+            self::$data[$group][$property] = $default;
+            $this->save = true;
         }
 
-        return $default;
+        return self::$data[$group][$property];
     }
 
-    public function loadData()
+    public function load()
     {
         $settingsModel = new Settings();
         foreach ($settingsModel->all() as $group) {
             self::$data[$group->name] = $group->properties;
         }
 
-        if (!defined('FS_NF0')) {
-            define('FS_NF0', $this->get('default', 'decimals', 2));
+        $constants = [
+            'FS_NF0' => ['property' => 'decimals', 'default' => 2],
+            'FS_NF0_ART' => ['property' => 'product_decimals', 'default' => 2],
+            'FS_NF1' => ['property' => 'decimal_separator', 'default' => ','],
+            'FS_NF2' => ['property' => 'thousands_separator', 'default' => ' '],
+            'FS_POS_DIVISA' => ['property' => 'divisa_position', 'default' => 'right'],
+            'FS_ITEM_LIMIT' => ['property' => 'item_limit', 'default' => 50],
+        ];
+        $this->setConstants($constants);
+        $this->get('default', 'homepage', 'AdminHome');
+
+        if ($this->save) {
+            $this->save();
+        }
+    }
+
+    private function save()
+    {
+        foreach (self::$data as $key => $value) {
+            $settings = new Settings();
+            $settings->name = $key;
+            $settings->properties = $value;
+            $settings->save();
         }
 
-        if (!defined('FS_NF0_ART')) {
-            define('FS_NF0_ART', $this->get('default', 'product_decimals', 2));
-        }
+        $this->save = false;
+    }
 
-        if (!defined('FS_NF1')) {
-            define('FS_NF1', $this->get('default', 'decimal_separator', ','));
-        }
-
-        if (!defined('FS_NF2')) {
-            define('FS_NF2', $this->get('default', 'thousands_separator', ' '));
-        }
-
-        if (!defined('FS_POS_DIVISA')) {
-            define('FS_POS_DIVISA', $this->get('default', 'divisa_position', 'right'));
+    private function setConstants($data)
+    {
+        foreach ($data as $key => $value) {
+            if (!defined($key)) {
+                define($key, $this->get('default', $value['property'], $value['default']));
+            }
         }
     }
 }

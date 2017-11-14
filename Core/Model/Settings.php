@@ -122,14 +122,18 @@ class Settings
      *
      * @return bool
      */
-    public function saveUpdate()
+    public function save()
     {
-        $properties = json_encode($this->properties);
+        $this->properties = json_encode($this->properties);
 
-        $sql = 'UPDATE ' . $this->tableName() . ' SET '
-            . ' properties = ' . $this->var2str($properties)
-            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->name) . ';';
+        if ($this->test()) {
+            if ($this->exists()) {
+                return $this->saveUpdate();
+            }
 
-        return $this->dataBase->exec($sql);
+            return $this->saveInsert();
+        }
+
+        return false;
     }
 }

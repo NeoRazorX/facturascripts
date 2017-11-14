@@ -21,8 +21,6 @@ namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
 
-define('FS_STOCK_NEGATIVO', true);
-
 /**
  * Clase con las funciones para generar datos aleatorios.
  *
