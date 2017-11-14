@@ -24,11 +24,8 @@
 
 <view>
     <columns>
-        <column name="id" display="left" order="100">
-            <widget type="text" fieldname="idstock" onclick="EditArticulo" />
-        </column>
-        <column name="reference" display="left" order="110">
-            <widget type="text" fieldname="referencia" />
+        <column name="reference" display="left" order="100">
+            <widget type="text" fieldname="referencia" onclick="EditArticulo" />
         </column>
         <column name="warehouse" display="left" order="120">
             <widget type="text" fieldname="codalmacen" />

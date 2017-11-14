@@ -10,6 +10,9 @@
         document.insert_form.action = url[tabActive];
         document.insert_form.submit();
     }
+    function goToOptions() {
+        window.location.href = 'index.php?page=EditPageOption&code=' + tabActive;
+    }
     function doAction(action) {
         var url = '{{ fsc.url() }}';
         window.location.href = url + '&active=' + tabActive + '&action=' + action;
@@ -130,7 +133,7 @@
                    <i class="fa fa-plus" aria-hidden="true"></i>
                    <span class="d-none d-sm-inline-block">&nbsp;{{ new_record }}</span>
                 </a>
-                <a href="index.php?page=EditPageOption" id="b_options" class="btn btn-sm btn-secondary" {{ popoverTitle(options_title, 'bottom') }}>
+                <a href="#" id="b_options" class="btn btn-sm btn-secondary" onclick="goToOptions()" {{ popoverTitle(options_title, 'bottom') }}>
                    <i class="fa fa-wrench" aria-hidden="true"></i>
                    <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
                 </a>

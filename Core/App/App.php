@@ -31,13 +31,6 @@ abstract class App
 {
 
     /**
-     * Almacén de datos con la configuración predeterminada de la aplicación.
-     * 
-     * @var AppSettings 
-     */
-    protected $appSettings;
-
-    /**
      * Gestor de acceso a cache.
      *
      * @var Base\Cache
@@ -94,6 +87,13 @@ abstract class App
     protected $response;
 
     /**
+     * Almacén de datos con la configuración predeterminada de la aplicación.
+     * 
+     * @var AppSettings 
+     */
+    protected $settings;
+
+    /**
      * Inicializa la app.
      *
      * @param string $folder Carpeta de trabajo de FacturaScripts
@@ -113,13 +113,13 @@ abstract class App
             $this->i18n = new Base\Translator();
         }
 
-        $this->appSettings = new AppSettings();
         $this->cache = new Base\Cache();
         $this->dataBase = new Base\DataBase();
         $this->ipFilter = new Base\IPFilter();
         $this->miniLog = new Base\MiniLog();
         $this->pluginManager = new Base\PluginManager();
         $this->response = new Response();
+        $this->settings = new AppSettings();
     }
 
     /**
@@ -130,7 +130,7 @@ abstract class App
     public function connect()
     {
         if ($this->dataBase->connect()) {
-            $this->appSettings->load();
+            $this->settings->load();
             return TRUE;
         }
 

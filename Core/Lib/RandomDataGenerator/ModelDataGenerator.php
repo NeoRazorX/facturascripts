@@ -192,10 +192,7 @@ class ModelDataGenerator
             if (mt_rand(0, 2) == 0) {
                 shuffle($fabricantes);
                 shuffle($familias);
-
-                if ($this->impuestos[0]->iva <= 10) {
-                    shuffle($this->impuestos);
-                }
+                shuffle($this->impuestos);
             }
 
             $art = new Model\Articulo();
