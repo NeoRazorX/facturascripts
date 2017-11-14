@@ -32,20 +32,14 @@ class EditGrupoClientes extends ExtendedController\PanelController
 {
 
     /**
-     * Devuelve el nombre del modelo
-     */
-    public function getModelName()
-    {
-        return 'FacturaScripts\Core\Model\GrupoClientes';
-    }
-    /**
      * Procedimiento para insertar vistas en el controlador
      */
     protected function createViews()
     {
         $this->addEditView('FacturaScripts\Core\Model\GrupoClientes', 'EditGrupoClientes', 'customer-group');
-        $this->addListView('FacturaScripts\Core\Model\Cliente', 'EditCliente', 'customers');
+        $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'customers', 'fa-users');
     }
+
     /**
      * Procedimiento encargado de cargar los datos a visualizar
      *
@@ -59,11 +53,11 @@ class EditGrupoClientes extends ExtendedController\PanelController
                 $value = $this->request->get('code');
                 $view->loadData($value);
                 break;
-            case 'EditCliente':
-                 $where = [new DataBase\DataBaseWhere('codgrupo', $this->getViewModelValue('EditGrupoClientes', 'codgrupo'))];
+
+            case 'ListCliente':
+                $where = [new DataBase\DataBaseWhere('codgrupo', $this->request->get('code'))];
                 $view->loadData($where);
                 break;
-                
         }
     }
 
