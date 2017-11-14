@@ -24,29 +24,29 @@
 
 <view>
     <columns>
-        <group name="data" numcolumns="8">
+        <group name="data" numcolumns="12">
             <column name="code" numcolumns="3" order="100">
                 <widget type="text" fieldname="nick" icon="fa-user-circle-o" required="true" />
             </column>
-            <column name="homepage" numcolumns="5" order="110">
+            <column name="homepage" numcolumns="4" order="110">
                 <widget type="select" fieldname="homepage">
                     <values source="fs_pages" fieldcode="name" fieldtitle="title"></values>
                 </widget>    
             </column>
-            <column name="email" numcolumns="4" order="120">
-                <widget type="email" fieldname="email" />
+            <column name="email" numcolumns="5" order="120">
+                <widget type="email" fieldname="email" icon="fa-envelope" />
             </column>
             <column name="company" numcolumns="3" order="210">
                 <widget type="select" fieldname="idempresa">
                     <values source="empresas" fieldcode="id" fieldtitle="nombre"></values>
                 </widget>    
             </column>
-            <column name="lang-code" numcolumns="5" order="210">
+            <column name="lang-code" numcolumns="3" order="210">
                 <widget type="select" fieldname="langcode">
                     <values></values>
                 </widget>
             </column>
-            <column name="password" numcolumns="4" order="220">
+            <column name="password" numcolumns="3" order="220" display="none">
                 <widget type="password" fieldname="password" required="true" />
             </column>
             <column name="is-admin" numcolumns="3" order="310">
@@ -56,8 +56,7 @@
                 <widget type="checkbox" fieldname="enabled" />
             </column>
         </group>
-        
-        <group name="estadistic" numcolumns="4">
+        <group name="estadistic" numcolumns="12">
             <column name="last-activity" order="110">
                 <widget type="text" fieldname="lastactivity" readonly="true" />
             </column>

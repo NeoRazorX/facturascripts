@@ -18,8 +18,8 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Base\DataBase;
 
 /**
  * Controlador para la edición de un registro del modelo Fabricante
@@ -28,23 +28,40 @@ use FacturaScripts\Core\Base\ExtendedController;
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author PC REDNET S.L. <luismi@pcrednet.com>
  */
-class EditEpigrafe extends ExtendedController\EditController
+class EditEpigrafe extends ExtendedController\PanelController
 {
 
     /**
-     * EditCuenta constructor.
-     *
-     * @param Base\Cache $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
-     * @param string $className
+     * Procedimiento para insertar vistas en el controlador
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    protected function createViews()
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
+        $this->addEditView('FacturaScripts\Core\Model\Epigrafe', 'EditEpigrafe', 'accounting-heading');
+        $this->addListView('FacturaScripts\Core\Model\Cuenta', 'ListCuenta', 'accounts', 'fa-book');
+    }
 
-        // Establecemos el modelo de datos
-        $this->modelName = 'FacturaScripts\Core\Model\Epigrafe';
+    /**
+     * Procedimiento encargado de cargar los datos a visualizar
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        switch ($keyView) {
+            case 'EditEpigrafe':
+                $value = $this->request->get('code');
+                $view->loadData($value);
+                break;
+
+            case 'ListCuenta':
+                $idepigrafe = $this->getViewModelValue('EditEpigrafe', 'idepigrafe');
+                if (!empty($idepigrafe)) {
+                    $where = [new DataBase\DataBaseWhere('idepigrafe', $idepigrafe)];
+                    $view->loadData($where);
+                }
+                break;
+        }
     }
 
     /**

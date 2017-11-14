@@ -16,20 +16,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Description of PanelSettings
+ * Description of EditArticulo
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
  */
 class EditArticulo extends ExtendedController\PanelController
 {
+
     /**
      * Procedimiento para insertar vistas en el controlador
      */
@@ -38,19 +38,6 @@ class EditArticulo extends ExtendedController\PanelController
         $this->addEditView('FacturaScripts\Core\Model\Articulo', 'EditArticulo', 'products', 'fa-cubes');
         $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListFabricante', 'same-suppliers', 'fa-users');
         $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListFamilia', 'same-families', 'fa-object-group');
-    }
-
-    /**
-     * Devuele el campo $fieldName del articulo
-     *
-     * @param string $fieldName
-     *
-     * @return mixed
-     */
-    private function getArticuloFieldValue($fieldName)
-    {
-        $model = $this->views['EditArticulo']->getModel();
-        return $model->{$fieldName};
     }
 
     /**
@@ -68,7 +55,7 @@ class EditArticulo extends ExtendedController\PanelController
                 break;
 
             case 'ListFabricante':
-                $codfabricante = $this->getArticuloFieldValue('codfabricante');
+                $codfabricante = $this->getViewModelValue('EditArticulo', 'codfabricante');
 
                 if (!empty($codfabricante)) {
                     $where = [new DataBase\DataBaseWhere('codfabricante', $codfabricante)];
@@ -77,7 +64,7 @@ class EditArticulo extends ExtendedController\PanelController
                 break;
 
             case 'ListFamilia':
-                $codfamilia = $this->getArticuloFieldValue('codfamilia');
+                $codfamilia = $this->getViewModelValue('EditArticulo', 'codfamilia');
 
                 if (!empty($codfamilia)) {
                     $where = [new DataBase\DataBaseWhere('codfamilia', $codfamilia)];

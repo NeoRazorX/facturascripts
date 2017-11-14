@@ -72,6 +72,13 @@ class RolUser
     {
         return 'id';
     }
+    
+    public function install()
+    {
+        new Rol();
+        
+        return '';
+    }
 
     public function test()
     {

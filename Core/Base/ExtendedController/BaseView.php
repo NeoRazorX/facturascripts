@@ -214,6 +214,16 @@ abstract class BaseView
     }
 
     /**
+     * Devuelve la lista de formaularios modales
+     * 
+     * @return array
+     */
+    public function getModals()
+    {
+        return $this->pageOption->modals;
+    }
+    
+    /**
      * Devuelve la url del modelo del tipo solicitado
      *
      * @param string $type      (edit / list / auto)

@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -26,24 +25,38 @@ use FacturaScripts\Core\Base\ExtendedController;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author PC REDNET S.L. <luismi@pcrednet.com>
  */
-class EditSubcuenta extends ExtendedController\EditController
+class EditSubcuenta extends ExtendedController\PanelController
 {
 
     /**
-     * EditFabricante constructor.
-     *
-     * @param Base\Cache $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
-     * @param string $className
+     * Procedimiento para insertar vistas en el controlador
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    protected function createViews()
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
+        $this->addEditView('FacturaScripts\Core\Model\Subcuenta', 'EditSubcuenta', 'subaccount');
+        $this->addListView('FacturaScripts\Core\Model\Asiento', 'ListAsiento', 'accounting-entries', 'fa-balance-scale');
+    }
 
-        // Establecemos el modelo de datos
-        $this->modelName = 'FacturaScripts\Core\Model\Subcuenta';
+    /**
+     * Procedimiento encargado de cargar los datos a visualizar
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        switch ($keyView) {
+            case 'EditSubcuenta':
+                $value = $this->request->get('code');
+                $view->loadData($value);
+                break;
+
+            case 'ListAsiento':
+                /// TODO: cargar los asientos relacionados (a través de la tabla co_partidas).
+                break;
+        }
     }
 
     /**
@@ -54,7 +67,7 @@ class EditSubcuenta extends ExtendedController\EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'subaccounts';
+        $pagedata['title'] = 'subaccount';
         $pagedata['menu'] = 'accounting';
         $pagedata['icon'] = 'fa-th-list';
         $pagedata['showonmenu'] = false;

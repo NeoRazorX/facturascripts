@@ -16,11 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base;
 
 /**
  * Description of EditAgente
@@ -30,18 +28,13 @@ use FacturaScripts\Core\Base;
  */
 class EditAgente extends ExtendedController\EditController
 {
+
     /**
-     * EditAgente constructor.
-     *
-     * @param Base\Cache $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
-     * @param string $className
+     * Devuelve el nombre del modelo
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    public function getModelName()
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
-        $this->modelName = 'FacturaScripts\Core\Model\Agente';
+        return 'FacturaScripts\Core\Model\Agente';
     }
 
     /**

@@ -20,9 +20,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Model;
-
-;
 
 /**
  * Description of EditBalance
@@ -38,9 +35,8 @@ class EditBalance extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('FacturaScripts\Core\Model\Balance', 'EditBalance', 'Balance');
-        $this->addEditListView('FacturaScripts\Core\Model\BalanceCuenta', 'EditBalanceCuenta', 'balance-account' );
-        $this->addEditListView('FacturaScripts\Core\Model\BalanceCuentaA', 'EditBalanceCuentaA', 'balance-account-abreviated' );
-
+        $this->addEditListView('FacturaScripts\Core\Model\BalanceCuenta', 'EditBalanceCuenta', 'balance-account');
+        $this->addEditListView('FacturaScripts\Core\Model\BalanceCuentaA', 'EditBalanceCuentaA', 'balance-account-abreviated');
     }
 
     /**
@@ -56,31 +52,18 @@ class EditBalance extends ExtendedController\PanelController
                 $value = $this->request->get('code');
                 $view->loadData($value);
                 break;
-             
+
             case 'EditBalanceCuenta':
-               $where = [new DataBase\DataBaseWhere('codbalance', $this->getBalanceFieldValue('codbalance'))];
-               $view->loadData($where);
-               break;
-            
+                $where = [new DataBase\DataBaseWhere('codbalance', $this->getViewModelValue('EditBalance', 'codbalance'))];
+                $view->loadData($where);
+                break;
+
             case 'EditBalanceCuentaA':
-               $where = [new DataBase\DataBaseWhere('codbalance', $this->getBalanceFieldValue('codbalance'))];
-               $view->loadData($where);
-               break;
-      }
-   }
-    
-    /**
-    * Devuele el campo $fieldName del balance
-    *
-    * @param string $fieldName
-    *
-    * @return mixed
-    */
-   private function getBalanceFieldValue($fieldName)
-   {
-      $model = $this->views['EditBalance']->getModel();
-      return $model->{$fieldName};
-   }
+                $where = [new DataBase\DataBaseWhere('codbalance', $this->getViewModelValue('EditBalance', 'codbalance'))];
+                $view->loadData($where);
+                break;
+        }
+    }
 
     /**
      * Devuelve los datos básicos de la página

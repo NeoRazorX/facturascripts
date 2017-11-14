@@ -22,7 +22,7 @@ use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Description of PanelSettings
+ * Description of EditProveedor
  *
  * @author Nazca Networks <comercial@nazcanetworks.com>
  */
@@ -41,19 +41,6 @@ class EditProveedor extends ExtendedController\PanelController
     }
 
     /**
-     * Devuele el campo $fieldName del cliente
-     *
-     * @param string $fieldName
-     *
-     * @return mixed
-     */
-    private function getProviderFieldValue($fieldName)
-    {
-        $model = $this->views['EditProveedor']->getModel();
-        return $model->{$fieldName};
-    }
-
-    /**
      * Procedimiento encargado de cargar los datos a visualizar
      *
      * @param string $keyView
@@ -68,17 +55,17 @@ class EditProveedor extends ExtendedController\PanelController
                 break;
 
             case 'EditDireccionProveedor':
-                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getProviderFieldValue('codproveedor'))];
+                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'))];
                 $view->loadData($where);
                 break;
 
             case 'EditCuentaBancoProveedor':
-                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getProviderFieldValue('codproveedor'))];
+                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'))];
                 $view->loadData($where);
                 break;
 
             case 'EditProveedorArticulo':
-                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getProviderFieldValue('codproveedor'))];
+                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'))];
                 $view->loadData($where);
                 break;
         }

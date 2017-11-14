@@ -73,27 +73,6 @@ function checkRequirement($isOk)
 }
 
 /**
- * Devuelve un array de idiomas, donde la key es el nombre del archivo JSON y
- * el value es su correspondiente traducción.
- *
- * @param $i18n
- *
- * @return array
- */
-function getLanguages(&$i18n)
-{
-    $languages = [];
-    foreach (scandir(__DIR__ . '/Core/Translation', SCANDIR_SORT_ASCENDING) as $fileName) {
-        if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
-            $key = substr($fileName, 0, -5);
-            $languages[$key] = $i18n->trans('languages-' . substr($fileName, 0, -5));
-        }
-    }
-
-    return $languages;
-}
-
-/**
  * Devuelve el lenguaje del usuario para mostrar en el selector el idioma correcto
  * para la instalación. En caso de que no exista el archivo json devuelve en_EN
  * @return string
@@ -363,7 +342,7 @@ function installerMain()
             'Zip' => checkRequirement(extension_loaded('zip'))
         ],
         'i18n' => $i18n,
-        'languages' => getLanguages($i18n),
+        'languages' => $i18n->getAvailableLanguages(),
         'timezone' => get_timezone_list(),
         'license' => file_get_contents(__DIR__ . '/COPYING'),
         'memcache_prefix' => randomString(8),

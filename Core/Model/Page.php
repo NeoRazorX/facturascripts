@@ -122,24 +122,4 @@ class Page
     {
         return 'index.php?page=' . $this->name;
     }
-
-    /**
-     * Devuelve True si es la página por defecto, sino False
-     *
-     * @return bool
-     */
-    public function isDefault()
-    {
-        return $this->name === $this->defaultItems->defaultPage();
-    }
-
-    /**
-     * Devuelve True si es la página que se está mostrando, sino False
-     *
-     * @return bool
-     */
-    public function showing()
-    {
-        return $this->name === $this->defaultItems->showingPage();
-    }
 }

@@ -76,6 +76,14 @@ class PedidoProveedor
     {
         return 'idpedido';
     }
+    
+    public function install()
+    {
+        new Serie();
+        new Ejercicio();
+        
+        return '';
+    }
 
     /**
      * Resetea los valores de todas las propiedades modelo.

@@ -104,6 +104,25 @@ class Translator
     }
 
     /**
+     * Devuelve un array con los idiomas con traducciones disponibles.
+     *
+     * @return array
+     */
+    public function getAvailableLanguages()
+    {
+        $languages = [];
+        $dir = FS_FOLDER . '/Core/Translation';
+        foreach (scandir($dir, SCANDIR_SORT_ASCENDING) as $fileName) {
+            if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
+                $key = substr($fileName, 0, -5);
+                $languages[$key] = $this->trans('languages-' . substr($fileName, 0, -5));
+            }
+        }
+
+        return $languages;
+    }
+
+    /**
      * Devuelve el código de idioma en uso
      *
      * @return string
