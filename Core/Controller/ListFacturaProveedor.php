@@ -16,40 +16,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controller to list the items in the FacturaProveedor model
+ * Controlador para la lista de facturas de cliente
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class ListFacturaProveedor extends ExtendedController\ListController
 {
-
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addView('FacturaScripts\Core\Model\FacturaProveedor', 'ListFacturaProveedor');
-        $this->addSearchFields('ListFacturaProveedor', ['codigo', 'numproveedor', 'observaciones']);
-
-        $this->addFilterDatePicker('ListFacturaProveedor', 'date', 'date', 'fecha');
-        $this->addFilterNumber('ListFacturaProveedor', 'total', 'total');
-        $this->addFilterSelect('ListFacturaProveedor', 'codalmacen', 'almacenes', '', 'nombre');
-        $this->addFilterSelect('ListFacturaProveedor', 'codserie', 'series', '', 'codserie');
-        $this->addFilterSelect('ListFacturaProveedor', 'codpago', 'formaspago', '', 'codpago');
-
-        $this->addOrderBy('ListFacturaProveedor', 'codigo', 'code');
-        $this->addOrderBy('ListFacturaProveedor', 'fecha', 'date');
-        $this->addOrderBy('ListFacturaProveedor', 'total', 'amount');
-    }
-
-    /**
-     * Returns basic page attributes
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */
@@ -61,5 +42,21 @@ class ListFacturaProveedor extends ExtendedController\ListController
         $pagedata['menu'] = 'purchases';
 
         return $pagedata;
+    }
+
+    /**
+     * Procedimiento para insertar vistas en el controlador
+     */
+    protected function createViews()
+    {
+        $this->addView('FacturaScripts\Core\Model\FacturaProveedor', 'ListFacturaProveedor');
+        $this->addSearchFields('ListFacturaProveedor', ['codigo', 'numproveedor', 'observaciones']);
+        
+        $this->addFilterSelect('ListFacturaProveedor', 'codserie', 'series', '', 'codserie');
+        $this->addFilterSelect('ListFacturaProveedor', 'codpago', 'formaspago', '', 'codpago');
+
+        $this->addOrderBy('ListFacturaProveedor', 'codigo', 'code');
+        $this->addOrderBy('ListFacturaProveedor', 'fecha', 'date');
+        $this->addOrderBy('ListFacturaProveedor', 'total', 'amount');
     }
 }

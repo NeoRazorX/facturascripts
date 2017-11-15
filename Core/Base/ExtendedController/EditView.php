@@ -23,15 +23,16 @@ use FacturaScripts\Core\Base;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * View definition for its use in ExtendedControllers
+ * Definición de vista para uso en ExtendedControllers
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class EditView extends BaseView
 {
+    
     /**
-     * Class constructor and initialization
+     * Constructor e inicializador de la clase
      *
      * @param string $title
      * @param string $modelName
@@ -41,14 +42,21 @@ class EditView extends BaseView
     public function __construct($title, $modelName, $viewName, $userNick)
     {
         parent::__construct($title, $modelName);
-
-        // Loads the view configuration for the user
+        
+        // Carga configuración de la vista para el usuario
         $this->pageOption->getForUser($viewName, $userNick);
     }
 
     /**
-     * Returns the text for the data panel header
-     * Returns the
+     * Calcula y establece un nuevo código para la PK del modelo
+     */
+    public function setNewCode()
+    {
+        $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
+    }
+    
+    /**
+     * Devuelve el texto para la cabecera del panel de datos
      *
      * @return string
      */
@@ -58,8 +66,7 @@ class EditView extends BaseView
     }
 
     /**
-     * Returns the text for the data panel footer
-     *
+     * Devuelve el texto para el pie del panel de datos
      *
      * @return string
      */
@@ -69,7 +76,7 @@ class EditView extends BaseView
     }
 
     /**
-     * Returns the column configuration
+     * Devuelve la configuración de columnas
      *
      * @return array
      */
@@ -79,21 +86,7 @@ class EditView extends BaseView
     }
 
     /**
-     * Establishes the column edit state
-     * 
-     * @param string $columnName
-     * @param boolean $disabled
-     */
-    public function disableColumn($columnName, $disabled)
-    {
-        $column = $this->columnForName($columnName);
-        if (!empty($column)) {
-            $column->widget->readOnly = $disabled;
-        }
-    }
-
-    /**
-     * Establishes and loads the model data according to its Primary Key
+     * Establece y carga los datos del modelo en base a su PK
      *
      * @param string|array $code
      */
@@ -105,14 +98,14 @@ class EditView extends BaseView
         $this->count = empty($this->model->{$fieldName}) ? 0 : 1;
 
         // Bloqueamos el campo Primary Key si no es una alta
-        $column = $this->columnForField($fieldName);
+        $column = $this->pageOption->columnForField($fieldName);
         if (!empty($column)) {
             $column->widget->readOnly = (!empty($this->model->{$fieldName}));
         }
     }
 
     /**
-     * Method to export the view data
+     * Método para la exportación de los datos de la vista
      *
      * @param Base\ExportManager $exportManager
      * @param Response $response

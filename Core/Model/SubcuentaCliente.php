@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Model;
  */
 class SubcuentaCliente
 {
-
     use Base\ModelTrait;
 
     /**
@@ -68,7 +68,7 @@ class SubcuentaCliente
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'co_subcuentascli';
     }
@@ -91,7 +91,7 @@ class SubcuentaCliente
     public function getSubcuenta()
     {
         $subc = new Subcuenta();
-        $subc->loadFromCode($this->idsubcuenta);
-        return $subc;
+
+        return $subc->get($this->idsubcuenta);
     }
 }

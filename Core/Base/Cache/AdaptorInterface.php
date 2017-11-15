@@ -27,7 +27,7 @@ namespace FacturaScripts\Core\Base\Cache;
 interface AdaptorInterface
 {
     /**
-     * Gets the $key contents
+     * Obtiene el contenido de la $key
      *
      * @param string $key
      *
@@ -36,7 +36,7 @@ interface AdaptorInterface
     public function get($key);
 
     /**
-     * Assign $content to the adaptor $key
+     * Asigna $content a la $key del adaptador
      *
      * @param string $key
      * @param mixed $content
@@ -46,7 +46,7 @@ interface AdaptorInterface
     public function set($key, $content);
 
     /**
-     * Erases $key from the adaptor
+     * Borra la $key del adaptador
      *
      * @param string $key
      *
@@ -55,7 +55,7 @@ interface AdaptorInterface
     public function delete($key);
 
     /**
-     * Cleans the adaptor
+     * Limpia el adaptador
      *
      * @return mixed
      */

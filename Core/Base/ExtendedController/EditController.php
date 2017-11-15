@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base;
 
 /**
- * Controller to manage the data editing
+ * Controlador para edición de datos
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -30,23 +30,28 @@ use FacturaScripts\Core\Base;
 class EditController extends Base\Controller
 {
     /**
-     * Export data object
+     * Objeto para exportar datos
      *
      * @var Base\ExportManager
      */
     public $exportManager;
 
     /**
-     * View displayed by the controller
+     * Vista mostrada por el controlador
      *
      * @var EditView
      */
     public $view;
 
-  
+    /**
+     * Nombre del modelo de datos
+     *
+     * @var string
+     */
+    protected $modelName;
 
     /**
-     * Initializes all the objects and properties
+     * Inicia todos los objetos y propiedades.
      *
      * @param Base\Cache      $cache
      * @param Base\Translator $i18n
@@ -62,7 +67,7 @@ class EditController extends Base\Controller
     }
 
     /**
-     * Runs the controller's private logic
+     * Ejecuta la lógica privada del controlador.
      *
      * @param mixed $response
      * @param mixed $user
@@ -71,27 +76,27 @@ class EditController extends Base\Controller
     {
         parent::privateCore($response, $user);
 
-        // Create the view to display
+        // Creamos la vista a visualizar
         $viewName = $this->getClassName();
         $title = $this->getPageData()['title'];
-        $this->view = new EditView($title, $this->getmodelName(), $viewName, $user->nick);
+        $this->view = new EditView($title, $this->modelName, $viewName, $user->nick);
 
-        // Get any operations that have to be performed
+        // Guardamos si hay operaciones por realizar
         $action = $this->request->get('action', '');
 
-        // Run operations on the data before reading it
+        // Operaciones sobre los datos antes de leerlos
         $this->execPreviousAction($action);
 
-        // Load the model data
+        // Cargamos datos del modelo
         $value = $this->request->get('code');
         $this->view->loadData($value);
 
-        // General operations with the loaded data
+        // Operaciones generales con los datos cargados
         $this->execAfterAction($action);
     }
 
     /**
-     * Run the actions that alter data before reading it
+     * Ejecuta las acciones que alteran los datos antes de leerlos
      *
      * @param string $action
      */
@@ -107,7 +112,7 @@ class EditController extends Base\Controller
     }
 
     /**
-     * Run the controller actions
+     * Ejecuta las acciones del controlador
      *
      * @param string $action
      */
@@ -127,7 +132,7 @@ class EditController extends Base\Controller
     }
 
     /**
-     * Returns a field value for the loaded data model
+     * Devuelve el valor de un campo para el modelo de datos cargado
      *
      * @param mixed $model
      * @param string $field
@@ -139,7 +144,7 @@ class EditController extends Base\Controller
     }
 
     /**
-     * Run the data edits
+     * Ejecuta la modificación de los datos
      *
      * @return boolean
      */
@@ -153,15 +158,15 @@ class EditController extends Base\Controller
     }
 
     /**
-     * Prepare the insertion of a new row
+     * Prepara la inserción de un nuevo registro
      */
     protected function insertAction()
     {
-        
+        $this->view->setNewCode();
     }
 
     /**
-     * Returns the text for the data main panel header
+     * Devuelve el texto para la cabecera del panel principal de datos
      *
      * @return string
      */
@@ -171,7 +176,7 @@ class EditController extends Base\Controller
     }
 
     /**
-     * Returns the text for the data main panel footer
+     * Devuelve el texto para el pie del panel principal de datos
      *
      * @return string
      */
@@ -181,7 +186,7 @@ class EditController extends Base\Controller
     }
 
     /**
-     * Pointer to the data model
+     * Puntero al modelo de datos
      *
      * @return mixed
      */
@@ -191,7 +196,7 @@ class EditController extends Base\Controller
     }
 
     /**
-     * Returns the url for a specified type
+     * Devuelve la url para el tipo indicado
      *
      * @param string $type
      * @return string

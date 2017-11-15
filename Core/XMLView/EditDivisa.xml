@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Initial description for the controller EditDivisa
+ * Definición inicial para el controlador EditFamilia
  *
  * @author Raúl Jiménez Nazca Networks <comercial@nazcanetworks.com>
 -->
@@ -32,7 +32,7 @@
                 <widget type="text" fieldname="simbolo" onclick="" />
             </column>
             <column name="desc" numcolumns="4" order="110"
-            >
+                    >
                 <widget type="text" fieldname="descripcion" onclick="" />
             </column>
         </group>

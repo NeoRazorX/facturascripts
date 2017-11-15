@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,7 +30,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class AlbaranProveedor
 {
-
     use Base\DocumentoCompra;
 
     /**
@@ -58,7 +58,7 @@ class AlbaranProveedor
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'albaranesprov';
     }
@@ -136,7 +136,7 @@ class AlbaranProveedor
      */
     public function delete()
     {
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idalbaran = ' . $this->dataBase->var2str($this->idalbaran) . ';';
+        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idalbaran = ' . $this->var2str($this->idalbaran) . ';';
         if ($this->dataBase->exec($sql)) {
             if ($this->idfactura) {
                 /**

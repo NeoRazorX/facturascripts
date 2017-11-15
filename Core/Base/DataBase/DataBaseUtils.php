@@ -16,28 +16,28 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
- * This class has utilities for the control and management of objects in the
- * database. It needs the link to to the database with its type (MYSQL or
- * PostreSQL) used used when the DataBase class was created. (DataBase::$engine)
+ * Clase engloba utilidades para el control y manejo de objetos en la base de
+ * datos. Necesita el enlace con el tipo de base de datos (MySQL o PostgreSQL)
+ * usado al crear la clase DataBase. (DataBase::$engine)
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class DataBaseUtils
 {
-
     /**
-     * Link to the database engine selected in the configuration
+     * Enlace al motor de base de datos seleccionado en la configuración
      *
      * @var DataBaseEngine
      */
     private $engine;
 
     /**
-     * Builds and prepares the class to use it
+     * Construye y prepara la clase para su uso
      *
      * @param DataBaseEngine $engine
      */
@@ -69,8 +69,8 @@ class DataBaseUtils
     }
 
     /**
-     * Compares data types from a column.
-     * Returns True if they are the same.
+     * Compara los tipos de datos de una columna.
+     * Devuelve True si son iguales.
      *
      * @param string $dbType
      * @param string $xmlType
@@ -83,7 +83,7 @@ class DataBaseUtils
         $xml = strtolower($xmlType);
 
         $result = (
-            (FS_DB_TYPE_CHECK) ||
+            (FS_CHECK_DB_TYPES !== '1') ||
             $this->engine->compareDataTypes($db0, $xml) ||
             ($xml === 'serial') ||
             (
@@ -96,7 +96,7 @@ class DataBaseUtils
     }
 
     /**
-     * Compares two column arrays, returns a SQL statement if there are any differences.
+     * Compara dos arrays de columnas, devuelve una sentencia sql en caso de encontrar diferencias.
      *
      * @param string $tableName
      * @param array  $xmlCols
@@ -108,29 +108,29 @@ class DataBaseUtils
     {
         $result = '';
         foreach ($xmlCols as $xml_col) {
-            if (strtolower($xml_col['type']) === 'integer') {
+            if (strtolower($xml_col['tipo']) === 'integer') {
                 /**
-                 *
-                 * The integer type used in columns can be changed in the control panel tab
+                 * Desde la pestaña avanzado el panel de control se puede cambiar
+                 * el tipo de entero a usar en las columnas.
                  */
-                $xml_col['type'] = FS_DB_INTEGER;
+                $xml_col['tipo'] = FS_DB_INTEGER;
             }
 
-            $column = $this->searchInArray($dbCols, 'name', $xml_col['name']);
+            $column = $this->searchInArray($dbCols, 'name', $xml_col['nombre']);
             if (empty($column)) {
                 $result .= $this->engine->getSQL()->sqlAlterAddColumn($tableName, $xml_col);
                 continue;
             }
 
-            if (!$this->compareDataTypes($column['type'], $xml_col['type'])) {
+            if (!$this->compareDataTypes($column['type'], $xml_col['tipo'])) {
                 $result .= $this->engine->getSQL()->sqlAlterModifyColumn($tableName, $xml_col);
             }
 
-            if ($column['default'] === null && $xml_col['default'] !== '') {
+            if ($column['default'] === null && $xml_col['defecto'] !== '') {
                 $result .= $this->engine->getSQL()->sqlAlterConstraintDefault($tableName, $xml_col);
             }
 
-            if ($column['is_nullable'] !== $xml_col['null']) {
+            if ($column['is_nullable'] !== $xml_col['nulo']) {
                 $result .= $this->engine->getSQL()->sqlAlterConstraintNull($tableName, $xml_col);
             }
         }
@@ -139,7 +139,7 @@ class DataBaseUtils
     }
 
     /**
-     * Compares two constraint arrays, returns a SQL statement if there are any differences.
+     * Compara dos arrays de restricciones, devuelve una sentencia SQL en caso de encontrar diferencias.
      *
      * @param string $tableName
      * @param array  $xmlCons
@@ -154,22 +154,22 @@ class DataBaseUtils
 
         foreach ($dbCons as $db_con) {
             if (strpos('PRIMARY;UNIQUE', $db_con['name']) === false) {
-                $column = $this->searchInArray($xmlCons, 'name', $db_con['name']);
+                $column = $this->searchInArray($xmlCons, 'nombre', $db_con['name']);
                 if (empty($column)) {
                     $result .= $this->engine->getSQL()->sqlDropConstraint($tableName, $db_con);
                 }
             }
         }
 
-        if (!empty($xmlCons) && !$deleteOnly && FS_DB_FOREIGN_KEYS) {
+        if (!empty($xmlCons) && !$deleteOnly && FS_FOREIGN_KEYS === '1') {
             foreach ($xmlCons as $xml_con) {
-                if (strpos($xml_con['constraint'], 'PRIMARY') === 0) {
+                if (strpos($xml_con['consulta'], 'PRIMARY') === 0) {
                     continue;
                 }
 
-                $column = $this->searchInArray($dbCons, 'name', $xml_con['name']);
+                $column = $this->searchInArray($dbCons, 'name', $xml_con['nombre']);
                 if (empty($column)) {
-                    $result .= $this->engine->getSQL()->sqlAddConstraint($tableName, $xml_con['name'], $xml_con['constraint']);
+                    $result .= $this->engine->getSQL()->sqlAddConstraint($tableName, $xml_con['nombre'], $xml_con['consulta']);
                 }
             }
         }
@@ -178,7 +178,7 @@ class DataBaseUtils
     }
 
     /**
-     * Returns the needed SQL statement to create a table with the given structure.
+     * Devuelve la sentencia SQL necesaria para crear una tabla con la estructura proporcionada.
      *
      * @param string $tableName
      * @param array  $xmlCols

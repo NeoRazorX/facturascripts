@@ -24,7 +24,7 @@ use FacturaScripts\Core\Lib\RandomDataGenerator;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Controller to generate random data
+ * Description of Randomizer
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -32,7 +32,7 @@ class Randomizer extends Base\Controller
 {
 
     /**
-     * Runs the controller's private logic.
+     * Ejecuta la lógica privada del controlador.
      *
      * @param Response $response
      * @param User|null $user
@@ -132,7 +132,7 @@ class Randomizer extends Base\Controller
     }
 
     /**
-     * Returns basic page attributes
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */

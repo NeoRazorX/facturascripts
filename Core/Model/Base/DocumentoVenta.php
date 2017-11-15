@@ -503,22 +503,13 @@ trait DocumentoVenta
         return $status;
     }
 
-    /**
-     * Calcula los subtotales de neto, impuestos y recargo, por tipo de impuesto, además del irpf, neto e impuestos con el cálculo anterior.
-     *
-     * @param boolean $status
-     * @param array $subtotales
-     * @param int $irpf
-     * @param int $netoAlt
-     * @param int $ivaAlt
-     */
     private function getSubtotales(&$status, &$subtotales, &$irpf, &$netoAlt, &$ivaAlt)
     {
         foreach ($this->getLineas() as $lin) {
             if (!$lin->test()) {
                 $status = false;
             }
-            $codimpuesto = ($lin->codimpuesto === null) ? 0 : $lin->codimpuesto;
+            $codimpuesto = ($lin->codimpuesto === null ) ? 0 : $lin->codimpuesto;
             if (!array_key_exists($codimpuesto, $subtotales)) {
                 $subtotales[$codimpuesto] = array(
                     'neto' => 0,

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base;
@@ -23,128 +24,110 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * App description
+ * Description of App
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 abstract class App
 {
-
     /**
-     * Stored defaut configuration with the default application settings.
-     * @var AppSettings
-     */
-    protected $appSettings;
-
-    /**
-     * Cache access manager.
+     * Gestor de acceso a cache.
      *
      * @var Base\Cache
      */
     protected $cache;
 
     /**
-     * Database access manager.
+     * Gestor de acceso a la base de datos.
      *
      * @var Base\DataBase
      */
     protected $dataBase;
 
     /**
-     * Translation engine.
+     * Carpeta de trabajo de FacturaScripts.
+     *
+     * @var string
+     */
+    protected $folder;
+
+    /**
+     * Motor de traducción.
      *
      * @var Base\Translator
      */
     protected $i18n;
 
     /**
-     * IP filter.
+     * Filtro de IPs.
      *
      * @var Base\IPFilter
      */
     protected $ipFilter;
 
     /**
-     * App log manager.
+     * Gestor del log de la app.
      *
      * @var Base\MiniLog
      */
     protected $miniLog;
 
     /**
-     * Plugin manager.
+     * Gestor de plugins.
      *
      * @var Base\PluginManager
      */
     protected $pluginManager;
 
     /**
-     * Gives us access to the HTTP request parameters.
+     * Permite acceder a los datos de la petición HTTP.
      *
      * @var Request
      */
     protected $request;
 
     /**
-     * HTTP response object.
+     * Objeto respuesta HTTP.
      *
      * @var Response
      */
     protected $response;
 
     /**
-     * Stored defaut configuration with the application settings.
-     * 
-     * @var AppSettings 
-     */
-    protected $settings;
-
-    /**
-     * Initializes the app.
+     * Inicializa la app.
      *
-     * @param string $folder FacturaScripts working directory
+     * @param string $folder Carpeta de trabajo de FacturaScripts
      */
     public function __construct($folder = '')
     {
-        /// Having the directory in a constas lets us access it more easily
+        /// al tener la carpeta en una constante la podemos usar más fácilmente
         if (!defined('FS_FOLDER')) {
             define('FS_FOLDER', $folder);
         }
 
-        $this->request = Request::createFromGlobals();
-
-        if ($this->request->cookies->get('fsLang')) {
-            $this->i18n = new Base\Translator($this->request->cookies->get('fsLang'));
-        } else {
-            $this->i18n = new Base\Translator();
-        }
-
-        $this->cache = new Base\Cache();
+        $this->cache = new Base\Cache($folder);
         $this->dataBase = new Base\DataBase();
-        $this->ipFilter = new Base\IPFilter();
+        $this->folder = $folder;
+        $this->i18n = new Base\Translator($folder);
+        $this->ipFilter = new Base\IPFilter($folder);
         $this->miniLog = new Base\MiniLog();
-        $this->pluginManager = new Base\PluginManager();
+        $this->pluginManager = new Base\PluginManager($folder);
+        $this->request = Request::createFromGlobals();
         $this->response = new Response();
-        $this->settings = new AppSettings();
     }
 
     /**
-     * Connects to the database and loads the configuration.
+     * Conecta a la base de datos.
      *
      * @return bool
      */
     public function connect()
     {
-        if ($this->dataBase->connect()) {
-            $this->settings->load();
-            return TRUE;
-        }
-
-        return false;
+        return $this->dataBase->connect();
     }
 
     /**
-     * Disconnects from the database.
+     * Cierra la conexión a la base de datos.
      */
     public function close()
     {
@@ -152,14 +135,14 @@ abstract class App
     }
 
     /**
-     * Selects and runs the corresponding controller.
+     * Selecciona y ejecuta el controlador pertinente.
      *
      * @return bool
      */
     abstract public function run();
 
     /**
-     * Returns the data into the standard output.
+     * Vuelca los datos en la salida estándar.
      */
     public function render()
     {
@@ -167,7 +150,7 @@ abstract class App
     }
 
     /**
-     * Returns true if the client IP has been banned.
+     * Devuelve True si la IP del cliente ha sido baneada.
      *
      * @return bool
      */

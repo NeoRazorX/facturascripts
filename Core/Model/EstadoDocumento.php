@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,7 +27,6 @@ namespace FacturaScripts\Core\Model;
  */
 class EstadoDocumento
 {
-
     use Base\ModelTrait;
 
     /**
@@ -69,7 +69,7 @@ class EstadoDocumento
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'estados_documentos';
     }
@@ -131,25 +131,25 @@ class EstadoDocumento
     public function install()
     {
         $estados = [
-            ['documento' => 'ventas_presupuesto', 'status' => 0, 'nombre' => 'Pendiente', 'bloqueado' => true],
-            ['documento' => 'ventas_presupuesto', 'status' => 1, 'nombre' => 'Aprobado', 'bloqueado' => true],
-            ['documento' => 'ventas_presupuesto', 'status' => 2, 'nombre' => 'Rechazado', 'bloqueado' => true],
-            ['documento' => 'ventas_pedido', 'status' => 0, 'nombre' => 'Pendiente', 'bloqueado' => true],
-            ['documento' => 'ventas_pedido', 'status' => 1, 'nombre' => 'Aprobado', 'bloqueado' => true],
-            ['documento' => 'ventas_pedido', 'status' => 2, 'nombre' => 'Rechazado', 'bloqueado' => true],
-            ['documento' => 'ventas_pedido', 'status' => 3, 'nombre' => 'En trámite', 'bloqueado' => false],
-            ['documento' => 'ventas_pedido', 'status' => 4, 'nombre' => 'Back orders', 'bloqueado' => false]
+            ['documento' => 'ventas_presupuesto', 'status' => 0, 'nombre' => 'Pendiente', 'bloqueado' => true ],
+            ['documento' => 'ventas_presupuesto', 'status' => 1, 'nombre' => 'Aprobado', 'bloqueado' => true ],
+            ['documento' => 'ventas_presupuesto', 'status' => 2, 'nombre' => 'Rechazado', 'bloqueado' => true ],
+            ['documento' => 'ventas_pedido', 'status' => 0, 'nombre' => 'Pendiente', 'bloqueado' => true ],
+            ['documento' => 'ventas_pedido', 'status' => 1, 'nombre' => 'Aprobado', 'bloqueado' => true ],
+            ['documento' => 'ventas_pedido', 'status' => 2, 'nombre' => 'Rechazado', 'bloqueado' => true ],
+            ['documento' => 'ventas_pedido', 'status' => 3, 'nombre' => 'En trámite', 'bloqueado' => false ],
+            ['documento' => 'ventas_pedido', 'status' => 4, 'nombre' => 'Back orders', 'bloqueado' => false ]
         ];
         $sql = '';
         foreach ($estados as $pos => $estado) {
             $sql .= 'INSERT INTO ' . $this->tableName()
                 . ' (id, documento, status, nombre, bloqueado)'
                 . ' VALUES ('
-                . $this->dataBase->var2str($pos + 1)
-                . ',' . $this->dataBase->var2str($estado['documento'])
-                . ',' . $this->dataBase->var2str($estado['status'])
-                . ',' . $this->dataBase->var2str($estado['nombre'])
-                . ',' . $this->dataBase->var2str($estado['bloqueado'])
+                . $this->var2str($pos+1)
+                . ',' . $this->var2str($estado['documento'])
+                . ',' . $this->var2str($estado['status'])
+                . ',' . $this->var2str($estado['nombre'])
+                . ',' . $this->var2str($estado['bloqueado'])
                 . ');';
         }
 
@@ -168,7 +168,7 @@ class EstadoDocumento
         $list = [];
 
         $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE documento = ' . $this->dataBase->var2str($doc) . ' ORDER BY id ASC;';
+            . ' WHERE documento = ' . $this->var2str($doc) . ' ORDER BY id ASC;';
         $data = $this->dataBase->select($sql);
         if ($data) {
             foreach ($data as $d) {

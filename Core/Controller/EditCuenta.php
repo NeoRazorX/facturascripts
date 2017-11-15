@@ -16,53 +16,40 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Controller to edit a single item from the Cuenta model
+ * Controlador para la edición de un registro del modelo Fabricante
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author PC REDNET S.L. <luismi@pcrednet.com>
  */
-class EditCuenta extends ExtendedController\PanelController
+
+class EditCuenta extends ExtendedController\EditController
 {
-
-    /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addEditView('FacturaScripts\Core\Model\Cuenta', 'EditCuenta', 'account');
-        $this->addListView('FacturaScripts\Core\Model\Subcuenta', 'ListSubcuenta', 'subaccounts');
-    }
-
-    /**
-     * Load view data procedure
+ /**
+     * EditCuenta constructor.
      *
-     * @param string $keyView
-     * @param ExtendedController\EditView $view
+     * @param Base\Cache $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog $miniLog
+     * @param string $className
      */
-    protected function loadData($keyView, $view)
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
-        switch ($keyView) {
-            case 'EditCuenta':
-                $value = $this->request->get('code');
-                $view->loadData($value);
-                break;
+        parent::__construct($cache, $i18n, $miniLog, $className);
 
-            case 'ListSubcuenta':
-                $where = [new DataBase\DataBaseWhere('idcuenta', $this->getViewModelValue('EditCuenta', 'idcuenta'))];
-                $view->loadData($where);
-                break;
-        }
+        // Establecemos el modelo de datos
+        $this->modelName = 'FacturaScripts\Core\Model\Cuenta';
     }
 
     /**
-     * Returns basic page attributes
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */
@@ -75,5 +62,4 @@ class EditCuenta extends ExtendedController\PanelController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
-    }
-}
+    }}

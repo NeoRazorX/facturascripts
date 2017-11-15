@@ -16,14 +16,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\ExportInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class to export to CSV
- * Follow the XLSExport style to have a more uniform code
+ * Clase para exportar a CSV
+ * Sigue el estilo de XLSExport para tener un código más uniforme
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -35,21 +36,21 @@ class CSVExport implements ExportInterface
     const LIST_LIMIT = 1000;
 
     /**
-     * Contains the CSV data in array format
+     * Contiene los datos del CSV en formato array
      *
      * @var array
      */
     private $csv;
 
     /**
-     * Separator value
+     * Valor del separador
      *
      * @var string
      */
     private $separator;
 
     /**
-     * Text delimiter value
+     * Valor del delimitador de texto
      *
      * @var string
      */
@@ -65,8 +66,8 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * Assigns the received separator.
-     * By default it will use ';' semicolons.
+     * Asigna el separador recibido.
+     * Por defecto utiliza ';'.
      *
      * @param $sep
      */
@@ -76,8 +77,8 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * Assigns the received text delimiter
-     * By default it will use '"' quotes.
+     * Asigna el delimitador de texto recibido
+     * Por defecto utiliza '"'.
      * @param $del
      */
     public function setDelimiter($del)
@@ -86,7 +87,7 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * Returns the assigned separator
+     * Devuelve el separador asignado
      *
      * @return string
      */
@@ -96,7 +97,7 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * Returns the received text delimiter assigned
+     * Devuelve el delimitador de texto recibido asignado
      *
      * @return string
      */
@@ -106,7 +107,7 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * New document
+     * Nuevo documento
      *
      * @param $model
      *
@@ -129,7 +130,7 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * New document list
+     * Nueva lista de documentos
      *
      * @param $model
      * @param array $where
@@ -141,26 +142,20 @@ class CSVExport implements ExportInterface
      */
     public function newListDoc($model, $where, $order, $offset, $columns)
     {
-        /// get the columns
+        /// obtenemos las columnas
         $tableCols = [];
         $sheetHeaders = [];
-        $tableData = [];
-
-        /// Get the columns
         foreach ($columns as $col) {
             $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
             $sheetHeaders[$col->widget->fieldName] = 'string';
         }
 
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
-        if (empty($cursor)) {
-            $this->writeSheet($tableData, $sheetHeaders);
-        }
         while (!empty($cursor)) {
             $tableData = $this->getTableData($cursor, $tableCols);
             $this->writeSheet($tableData, $sheetHeaders);
 
-            /// Advance within the results
+            /// avanzamos en los resultados
             $offset += self::LIST_LIMIT;
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
@@ -169,7 +164,7 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * Returns the table data
+     * Devuelvo los datos de la tabla
      *
      * @param array $cursor
      * @param array $tableCols
@@ -180,17 +175,12 @@ class CSVExport implements ExportInterface
     {
         $tableData = [];
 
-        /// Get the data
+        /// obtenemos los datos
         foreach ($cursor as $key => $row) {
             foreach ($tableCols as $col) {
-                $value = '';
-                if (isset($row->{$col})) {
-                    $value = $row->{$col};
-                    if (is_string($value)) {
-                        $value = $this->fixHtml($value);
-                    } elseif (is_null($value)) {
-                        $value = '';
-                    }
+                $value = $row->{$col};
+                if (is_string($value)) {
+                    $value = $this->fixHtml($value);
                 }
 
                 $tableData[$key][$col] = $this->delimiter . $value . $this->delimiter;
@@ -201,7 +191,7 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * Assigns the header
+     * Asigna la cabecera
      *
      * @param Response $response
      */
@@ -212,7 +202,7 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * Fills an array with the CSV data
+     * Rellena los datos del CSV en un array
      *
      * @param $tableData
      * @param $sheetHeaders
@@ -220,8 +210,6 @@ class CSVExport implements ExportInterface
     public function writeSheet($tableData, $sheetHeaders)
     {
         $this->csv = [];
-        $header = [];
-        $body = [];
 
         foreach ($sheetHeaders as $key => $value) {
             $header[] = $key;
@@ -235,7 +223,7 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * Retrurns the CSV as plain text
+     * Devuelve el CSV como texto plano
      *
      * @return string
      */

@@ -20,7 +20,8 @@
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
- * Class that gathers all the needed SQL sentences by the database engine
+ * Clase que recopila las sentencias SQL necesarias
+ * por el motor de base de datos
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -28,7 +29,8 @@ namespace FacturaScripts\Core\Base\DataBase;
 class PostgresqlSQL implements DataBaseSQL
 {
     /**
-     * Returns the needed SQL to convert a column to integer
+     * Devuelve el SQL necesario para convertir
+     * la columna a entero.
      *
      * @param string $colName
      *
@@ -40,7 +42,9 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Returns the SQL to get last ID assigned when performing an INSERT in the database
+     * Devuleve el SQL para averiguar
+     * el último ID asignado al hacer un INSERT
+     * en la base de datos.
      *
      * @return string
      */
@@ -50,7 +54,8 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Returns the SQL needed to get the list of columns in a table
+     * Devuelve el SQL para averiguar
+     * la lista de las columnas de una tabla.
      *
      * @param string $tableName
      *
@@ -70,7 +75,8 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Returns the SQL needed to get the list of constraints in a table
+     * Devuelve el SQL para averiguar
+     * la lista de restricciones de una tabla.
      *
      * @param string $tableName
      *
@@ -88,7 +94,8 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Returns the SQL needed to get the list of advanced constraints in a table
+     * Devuelve el SQL para averiguar
+     * la lista de restricciones avanzadas de una tabla.
      *
      * @param string $tableName
      *
@@ -122,7 +129,7 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Generates the needed SQL to establish the given constraints
+     * Genera el SQL para establecer las restricciones proporcionadas.
      *
      * @param array $xmlCons
      *
@@ -133,14 +140,14 @@ class PostgresqlSQL implements DataBaseSQL
         $sql = '';
 
         foreach ($xmlCons as $res) {
-            $value = strtolower($res['constraint']);
+            $value = strtolower($res['consulta']);
             if (false !== strpos($value, 'primary key')) {
-                $sql .= ', ' . $res['constraint'];
+                $sql .= ', ' . $res['consulta'];
                 continue;
             }
 
-            if (FS_DB_FOREIGN_KEYS || 0 !== strpos($res['constraint'], 'FOREIGN KEY')) {
-                $sql .= ', CONSTRAINT ' . $res['name'] . ' ' . $res['constraint'];
+            if (FS_FOREIGN_KEYS === '1' || 0 !== strpos($res['consulta'], 'FOREIGN KEY')) {
+                $sql .= ', CONSTRAINT ' . $res['nombre'] . ' ' . $res['consulta'];
             }
         }
 
@@ -148,7 +155,8 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Returns the SQL needed to get the list of indexes in a table
+     * Devuelve el SQL para averiguar
+     * la lista de indices de una tabla.
      *
      * @param string $tableName
      *
@@ -160,7 +168,7 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Returns the SQL needed to create a table with the given structure
+     * Devuelve la sentencia SQL necesaria para crear una tabla con la estructura proporcionada.
      *
      * @param string $tableName
      * @param array  $columns
@@ -173,18 +181,18 @@ class PostgresqlSQL implements DataBaseSQL
         $serials = ['serial', 'bigserial'];
         $fields = '';
         foreach ($columns as $col) {
-            $fields .= ', ' . $col['name'] . ' ' . $col['type'];
+            $fields .= ', ' . $col['nombre'] . ' ' . $col['tipo'];
 
-            if ($col['null'] === 'NO') {
+            if ($col['nulo'] === 'NO') {
                 $fields .= ' NOT NULL';
             }
 
-            if (in_array($col['type'], $serials, false)) {
+            if (in_array($col['tipo'], $serials, false)) {
                 continue;
             }
 
-            if ($col['default'] !== '') {
-                $fields .= ' DEFAULT ' . $col['default'];
+            if ($col['defecto'] !== '') {
+                $fields .= ' DEFAULT ' . $col['defecto'];
             }
         }
 
@@ -195,7 +203,7 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Returns the SQL needed to add a column to a table
+     * Sentencia SQL para añadir una columna a una tabla
      *
      * @param string $tableName
      * @param array  $colData
@@ -205,13 +213,13 @@ class PostgresqlSQL implements DataBaseSQL
     public function sqlAlterAddColumn($tableName, $colData)
     {
         $sql = 'ALTER TABLE ' . $tableName
-            . ' ADD COLUMN ' . $colData['name'] . ' ' . $colData['type'];
+            . ' ADD COLUMN ' . $colData['nombre'] . ' ' . $colData['tipo'];
 
-        if ($colData['default'] !== '') {
-            $sql .= ' DEFAULT ' . $colData['default'];
+        if ($colData['defecto'] !== '') {
+            $sql .= ' DEFAULT ' . $colData['defecto'];
         }
 
-        if ($colData['null'] === 'NO') {
+        if ($colData['nulo'] === 'NO') {
             $sql .= ' NOT NULL';
         }
 
@@ -219,7 +227,7 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Returns the SQL needed to alter a column in a table
+     * Sentencia SQL para modificar una columna a una tabla
      *
      * @param string $tableName
      * @param array  $colData
@@ -229,13 +237,13 @@ class PostgresqlSQL implements DataBaseSQL
     public function sqlAlterModifyColumn($tableName, $colData)
     {
         $sql = 'ALTER TABLE ' . $tableName
-            . ' ALTER COLUMN ' . $colData['name'] . ' TYPE ' . $colData['type'];
+            . ' ALTER COLUMN ' . $colData['nombre'] . ' TYPE ' . $colData['tipo'];
 
         return $sql . ';';
     }
 
     /**
-     * Returns the needed SQL to alter a column default constraint
+     * Sentencia SQL para modificar un valor por defecto de un campo de una tabla
      *
      * @param string $tableName
      * @param array  $colData
@@ -244,13 +252,13 @@ class PostgresqlSQL implements DataBaseSQL
      */
     public function sqlAlterConstraintDefault($tableName, $colData)
     {
-        $action = ($colData['default'] !== '') ? ' SET DEFAULT ' . $colData['default'] : ' DROP DEFAULT';
+        $action = ($colData['defecto'] !== '') ? ' SET DEFAULT ' . $colData['defecto'] : ' DROP DEFAULT';
 
-        return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['name'] . $action . ';';
+        return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['nombre'] . $action . ';';
     }
 
     /**
-     * SQL statement to alter a null constraint in a table column
+     * Sentencia SQL para modificar una constraint null de un campo de una tabla
      *
      * @param string $tableName
      * @param array  $colData
@@ -259,13 +267,13 @@ class PostgresqlSQL implements DataBaseSQL
      */
     public function sqlAlterConstraintNull($tableName, $colData)
     {
-        $action = ($colData['null'] === 'YES') ? ' DROP ' : ' SET ';
+        $action = ($colData['nulo'] === 'YES') ? ' DROP ' : ' SET ';
 
-        return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['name'] . $action . 'NOT NULL;';
+        return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['nombre'] . $action . 'NOT NULL;';
     }
 
     /**
-     * Returns the SQL needed to remove a constraint from a table
+     * Sentencia SQL para eliminar una constraint a una tabla
      *
      * @param string $tableName
      * @param array  $colData
@@ -278,7 +286,7 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Returns the SQL needed to add a constraint to a table
+     * Sentencia SQL para añadir una constraint a una tabla
      *
      * @param string $tableName
      * @param string $constraintName
@@ -292,7 +300,7 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * SQL statement to check a sequence
+     * Sentencia SQL para comprobar una secuencia
      *
      * @param string $seqName
      *

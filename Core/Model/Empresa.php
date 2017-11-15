@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Model;
  */
 class Empresa
 {
-
     use Base\ModelTrait;
     use Base\ContactInformation;
 
@@ -182,9 +182,9 @@ class Empresa
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
-        return 'empresas';
+        return 'empresa';
     }
 
     /**
@@ -195,6 +195,21 @@ class Empresa
     public function primaryColumn()
     {
         return 'id';
+    }
+
+    /**
+     * Devuelve la empresa predeterminada (la primera, por ahora).
+     *
+     * @return Empresa|false
+     */
+    public function getDefault()
+    {
+        $emp = $this->all();
+        if (!empty($emp)) {
+            return $emp[0];
+        }
+
+        return false;
     }
 
     /**

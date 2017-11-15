@@ -16,40 +16,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controller to list the items in the PedidoCliente model
+ * Controlador para la lista de pedidos de cliente
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class ListPedidoCliente extends ExtendedController\ListController
 {
-
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addView('FacturaScripts\Core\Model\PedidoCliente', 'ListPedidoCliente');
-        $this->addSearchFields('ListPedidoCliente', ['codigo', 'numero2', 'observaciones']);
-
-        $this->addFilterDatePicker('ListPedidoCliente', 'date', 'date', 'fecha');
-        $this->addFilterNumber('ListPedidoCliente', 'total', 'total');
-        $this->addFilterSelect('ListPedidoCliente', 'codalmacen', 'almacenes', '', 'nombre');
-        $this->addFilterSelect('ListPedidoCliente', 'codserie', 'series', '', 'descripcion');
-        $this->addFilterSelect('ListPedidoCliente', 'codpago', 'formaspago', '', 'descripcion');
-
-        $this->addOrderBy('ListPedidoCliente', 'codigo', 'code');
-        $this->addOrderBy('ListPedidoCliente', 'fecha', 'date');
-        $this->addOrderBy('ListPedidoCliente', 'total', 'amount');
-    }
-
-    /**
-     * Returns basic page attributes
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */
@@ -61,5 +42,25 @@ class ListPedidoCliente extends ExtendedController\ListController
         $pagedata['menu'] = 'sales';
 
         return $pagedata;
+    }
+
+    /**
+     * Procedimiento encargado de insertar las vistas a visualizar
+     */
+    protected function createViews()
+    {
+        $this->addView('FacturaScripts\Core\Model\PedidoCliente', 'ListPedidoCliente');
+        $this->addSearchFields('ListPedidoCliente', ['codigo', 'numero2', 'observaciones']);
+        
+        $this->addFilterSelect('ListPedidoCliente', 'codalmacen', 'almacenes', '', 'nombre');
+        $this->addFilterSelect('ListPedidoCliente', 'codserie', 'series', '', 'descripcion');
+        $this->addFilterSelect('ListPedidoCliente', 'codpago', 'formaspago', '', 'descripcion');
+        
+        $this->addFilterDatePicker('ListPedidoCliente', 'date1', 'date', 'fecha', '>=');
+        $this->addFilterDatePicker('ListPedidoCliente', 'date2', 'date', 'fecha', '<=');
+
+        $this->addOrderBy('ListPedidoCliente', 'codigo', 'code');
+        $this->addOrderBy('ListPedidoCliente', 'fecha', 'date');
+        $this->addOrderBy('ListPedidoCliente', 'total', 'amount');
     }
 }

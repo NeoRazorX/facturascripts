@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Initial description for the controller EditEmpresa
+ * Definición inicial para el controlador EditEmpresa
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
 -->
@@ -51,8 +51,8 @@
             </column>
             <column name="city" numcolumns="4" order="150">
                 <widget type="text" fieldname="ciudad" />
-            </column>
-            <column name="province" numcolumns="3" order="160">
+           </column>
+           <column name="province" numcolumns="3" order="160">
                 <widget type="text" fieldname="provincia" />
             </column>
             <column name="country" numcolumns="3" order="170">

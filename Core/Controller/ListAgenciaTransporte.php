@@ -1,6 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
+ * Copyright (C) 2015       Pablo Peralta
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,21 +17,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controller to list the items in the AgenciaTransporte model
+ * Controlador para la lista de agencias de transportes
  *
+ * @author Pablo Peralta
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class ListAgenciaTransporte extends ExtendedController\ListController
 {
-
     /**
-     * Returns basic page attributes
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */
@@ -45,7 +47,7 @@ class ListAgenciaTransporte extends ExtendedController\ListController
     }
 
     /**
-     * Load views
+     * Procedimiento para insertar vistas en el controlador
      */
     protected function createViews()
     {
@@ -54,7 +56,7 @@ class ListAgenciaTransporte extends ExtendedController\ListController
         $this->addSearchFields($className, ['nombre', 'codtrans']);
 
         $this->addOrderBy($className, 'codtrans', 'code');
-        $this->addOrderBy($className, 'nombre', 'name');
+        $this->addOrderBy($className, 'nombre');
 
         $this->addFilterCheckbox($className, 'activo', 'active');
     }

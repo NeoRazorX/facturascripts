@@ -16,41 +16,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controller to list the items in the AlbaranCliente model
+ * Controlador para la lista de albaranes de cliente
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class ListAlbaranCliente extends ExtendedController\ListController
 {
-
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addView('FacturaScripts\Core\Model\AlbaranCliente', 'ListAlbaranCliente');
-        $this->addSearchFields('ListAlbaranCliente', ['codigo', 'numero2', 'nombrecliente', 'observaciones']);
-
-        $this->addFilterDatePicker('ListAlbaranCliente', 'date', 'date', 'fecha');
-        $this->addFilterNumber('ListAlbaranCliente', 'total', 'total');
-        $this->addFilterSelect('ListAlbaranCliente', 'codalmacen', 'almacenes', '', 'nombre');
-        $this->addFilterSelect('ListAlbaranCliente', 'codserie', 'series', '', 'descripcion');
-        $this->addFilterSelect('ListAlbaranCliente', 'codpago', 'formaspago', '', 'descripcion');
-        $this->addFilterCheckbox('ListAlbaranCliente', 'invoice', 'invoice', 'ptefactura', true);
-
-        $this->addOrderBy('ListAlbaranCliente', 'codigo', 'code');
-        $this->addOrderBy('ListAlbaranCliente', 'fecha', 'date');
-        $this->addOrderBy('ListAlbaranCliente', 'total', 'amount');
-    }
-
-    /**
-     * Returns basic page attributes
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */
@@ -62,5 +42,31 @@ class ListAlbaranCliente extends ExtendedController\ListController
         $pagedata['menu'] = 'sales';
 
         return $pagedata;
+    }
+
+    /**
+     * Procedimiento encargado de insertar las vistas a visualizar
+     */
+    protected function createViews()
+    {
+        $this->addView('FacturaScripts\Core\Model\AlbaranCliente', 'ListAlbaranCliente');
+        $this->addSearchFields('ListAlbaranCliente', ['codigo', 'numero2', 'CAST(total as VARCHAR)', 'observaciones']);
+
+        $this->addFilterSelect('ListAlbaranCliente', 'codalmacen', 'almacenes', '', 'nombre');
+        $this->addFilterSelect('ListAlbaranCliente', 'codserie', 'series', '', 'descripcion');
+        $this->addFilterSelect('ListAlbaranCliente', 'codpago', 'formaspago', '', 'descripcion');
+
+        $this->addFilterCheckbox('ListAlbaranCliente', 'invoice', 'invoice', 'ptefactura', true);
+        
+        $this->addFilterDatePicker('ListAlbaranCliente', 'date1', 'date', 'fecha', '>=');
+        $this->addFilterDatePicker('ListAlbaranCliente', 'date2', 'date', 'fecha', '<=');
+        
+
+        $this->addFilterText('ListAlbaranCliente', 'total1', 'total', '>=');
+        $this->addFilterText('ListAlbaranCliente', 'total2', 'total', '<=');
+
+        $this->addOrderBy('ListAlbaranCliente', 'codigo', 'code');
+        $this->addOrderBy('ListAlbaranCliente', 'fecha', 'date');
+        $this->addOrderBy('ListAlbaranCliente', 'total', 'amount');
     }
 }

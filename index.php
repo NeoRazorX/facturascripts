@@ -17,11 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// Preliminary checks
+/// comprobaciones previas
 if (!file_exists(__DIR__ . '/config.php')) {
     /**
-     * If there is no configuration file, it means the installation hasn't been done,
-     * then we redirect to the installer
+     * Si no hay fichero de configuración significa que no se ha instalado,
+     * así que redirigimos al instalador.
      */
     header('Location: install.php');
     die('');
@@ -30,15 +30,15 @@ if (!file_exists(__DIR__ . '/config.php')) {
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
 
-/// Initialise the application
+/// iniciamos la aplicación
 $app = new FacturaScripts\Core\App\AppController(__DIR__);
 
-/// Connect to the database, cache, etc.
+/// conectamos a la base de datos, cache, etc
 $app->connect();
 
-/// Run the corresponding controller
+/// ejecutamos el controlador que toque
 $app->run();
 $app->render();
 
-/// Disconnect from everything
+/// desconectamos de todo
 $app->close();

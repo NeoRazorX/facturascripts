@@ -17,9 +17,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+namespace FacturaScripts\Core\Model;
 
 /**
  * Define la relación entre un usuario y un rol.
@@ -29,7 +28,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class RolUser
 {
-
     use Base\ModelTrait;
 
     /**
@@ -58,7 +56,7 @@ class RolUser
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'fs_roles_users';
     }
@@ -71,48 +69,5 @@ class RolUser
     public function primaryColumn()
     {
         return 'id';
-    }
-
-    /**
-     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        new Rol();
-        
-        return '';
-    }
-
-    /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
-     *
-     * @return bool
-     */
-    public function test()
-    {
-        if (empty($this->nick)) {
-            $this->miniLog->alert($this->i18n->trans('nick-is-empty'));
-            return false;
-        }
-
-        if (empty($this->codrol)) {
-            $this->miniLog->alert($this->i18n->trans('role-is-empty'));
-            return false;
-        }
-
-        $where = [
-            new DataBaseWhere('nick', $this->nick),
-            new DataBaseWhere('codrol', $this->codrol)
-        ];
-
-        $rolUser = new RolUser();
-        if ($rolUser->loadFromCode(NULL, $where) && $rolUser->id !== $this->id) {
-            $this->miniLog->alert($this->i18n->trans('rol-user-exists'));
-            return false;
-        }
-
-        return TRUE;
     }
 }

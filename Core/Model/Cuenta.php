@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -27,7 +28,6 @@ namespace FacturaScripts\Core\Model;
  */
 class Cuenta
 {
-
     use Base\ModelTrait;
 
     /**
@@ -84,7 +84,7 @@ class Cuenta
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'co_cuentas';
     }
@@ -97,21 +97,6 @@ class Cuenta
     public function primaryColumn()
     {
         return 'idcuenta';
-    }
-
-    /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        /// forzamos la creación de la tabla epigrafes
-        new Epigrafe();
-
-        return '';
     }
 
     /**
@@ -148,8 +133,8 @@ class Cuenta
      */
     public function getByCodigo($cod, $codejercicio)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codcuenta = ' . $this->dataBase->var2str($cod) .
-            ' AND codejercicio = ' . $this->dataBase->var2str($codejercicio) . ';';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codcuenta = ' . $this->var2str($cod) .
+            ' AND codejercicio = ' . $this->var2str($codejercicio) . ';';
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
@@ -169,8 +154,8 @@ class Cuenta
      */
     public function getCuentaesp($idcuesp, $codejercicio)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idcuentaesp = ' . $this->dataBase->var2str($idcuesp) .
-            ' AND codejercicio = ' . $this->dataBase->var2str($codejercicio) . ' ORDER BY codcuenta ASC;';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idcuentaesp = ' . $this->var2str($idcuesp) .
+            ' AND codejercicio = ' . $this->var2str($codejercicio) . ' ORDER BY codcuenta ASC;';
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
@@ -207,7 +192,7 @@ class Cuenta
     public function fullFromEpigrafe($idepi)
     {
         $cuenlist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idepigrafe = ' . $this->dataBase->var2str($idepi)
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idepigrafe = ' . $this->var2str($idepi)
             . ' ORDER BY codcuenta ASC;';
 
         $data = $this->dataBase->select($sql);
@@ -231,7 +216,7 @@ class Cuenta
     public function allFromEjercicio($codejercicio, $offset = 0)
     {
         $cuenlist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->dataBase->var2str($codejercicio) .
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($codejercicio) .
             ' ORDER BY codcuenta ASC';
 
         $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
@@ -254,7 +239,7 @@ class Cuenta
     public function fullFromEjercicio($codejercicio)
     {
         $cuenlist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->dataBase->var2str($codejercicio)
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($codejercicio)
             . ' ORDER BY codcuenta ASC;';
 
         $data = $this->dataBase->select($sql);
@@ -278,8 +263,8 @@ class Cuenta
     public function allFromCuentaesp($idcuesp, $codejercicio)
     {
         $cuenlist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idcuentaesp = ' . $this->dataBase->var2str($idcuesp)
-            . ' AND codejercicio = ' . $this->dataBase->var2str($codejercicio) . ' ORDER BY codcuenta ASC;';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idcuentaesp = ' . $this->var2str($idcuesp)
+            . ' AND codejercicio = ' . $this->var2str($codejercicio) . ' ORDER BY codcuenta ASC;';
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
@@ -346,5 +331,20 @@ class Cuenta
         }
 
         return false;
+    }
+
+    /**
+     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará tras la creación de la tabla. útil para insertar valores
+     * por defecto.
+     *
+     * @return string
+     */
+    public function install()
+    {
+        /// forzamos la creación de la tabla epigrafes
+        new Epigrafe();
+
+        return '';
     }
 }

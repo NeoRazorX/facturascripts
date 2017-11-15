@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controller to list the items in the Atributo model
+ * Controlador para la lista de Atributo
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -29,16 +29,15 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class ListAtributo extends ExtendedController\ListController
 {
-
     /**
-     * Returns basic page attributes
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'attributes';
+        $pagedata['title'] = 'Atributos';
         $pagedata['icon'] = 'fa-sliders';
         $pagedata['menu'] = 'warehouse';
 
@@ -46,7 +45,7 @@ class ListAtributo extends ExtendedController\ListController
     }
 
     /**
-     * Load views
+     * Procedimiento para insertar vistas en el controlador
      */
     protected function createViews()
     {

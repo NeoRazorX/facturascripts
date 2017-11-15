@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -27,7 +28,6 @@ namespace FacturaScripts\Core\Model;
  */
 class Rol
 {
-
     use Base\ModelTrait;
 
     /**
@@ -49,7 +49,7 @@ class Rol
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'fs_roles';
     }
@@ -76,7 +76,7 @@ class Rol
 
         return true;
     }
-
+    
     /**
      * Devuelve la url donde ver/modificar los datos
      *

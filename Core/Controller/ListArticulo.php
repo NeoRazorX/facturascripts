@@ -16,61 +16,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controller to list the items in the Articulo model
+ * Description of ListArticulo
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class ListArticulo extends ExtendedController\ListController
 {
-
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        /* Artículos */
-        $this->addView('FacturaScripts\Core\Model\Articulo', 'ListArticulo', 'products');
-        $this->addSearchFields('ListArticulo', ['referencia', 'descripcion']);
-
-        $this->addFilterSelect('ListArticulo', 'codfabricante', 'fabricantes', '', 'nombre');
-        $this->addFilterSelect('ListArticulo', 'codfamilia', 'familias', '', 'descripcion');
-        $this->addFilterCheckbox('ListArticulo', 'bloqueado', 'locked', 'bloqueado');
-        $this->addFilterCheckbox('ListArticulo', 'publico', 'public', 'publico');
-
-        $this->addOrderBy('ListArticulo', 'referencia', 'reference');
-        $this->addOrderBy('ListArticulo', 'descripcion', 'description');
-        $this->addOrderBy('ListArticulo', 'pvp', 'price');
-        $this->addOrderBy('ListArticulo', 'stockfis', 'stock');
-
-        /* Artículos de proveedor */
-        $this->addView('FacturaScripts\Core\Model\ArticuloProveedor', 'ListArticuloProveedor', 'supplier-products');
-        $this->addSearchFields('ListArticuloProveedor', ['referencia', 'descripcion']);
-
-        $this->addFilterSelect('ListArticuloProveedor', 'codproveedor', 'proveedores', '', 'nombre');
-
-        $this->addOrderBy('ListArticuloProveedor', 'referencia', 'reference');
-        $this->addOrderBy('ListArticuloProveedor', 'descripcion', 'description');
-        $this->addOrderBy('ListArticuloProveedor', 'pvp', 'price');
-        $this->addOrderBy('ListArticuloProveedor', 'stockfis', 'stock');
-
-        /* Stock */
-        $this->addView('FacturaScripts\Core\Model\Stock', 'ListStock', 'stock');
-        $this->addSearchFields('ListStock', ['referencia', 'ubicacion']);
-
-        $this->addFilterSelect('ListStock', 'codalmacen', 'almacenes', '', 'nombre');
-
-        $this->addOrderBy('ListStock', 'referencia', 'reference');
-        $this->addOrderBy('ListStock', 'cantidad', 'quantity');
-        $this->addOrderBy('ListStock', 'disponible', 'available');
-    }
-
-    /**
-     * Returns basic page attributes
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */
@@ -82,5 +41,36 @@ class ListArticulo extends ExtendedController\ListController
         $pagedata['menu'] = 'warehouse';
 
         return $pagedata;
+    }
+
+    /**
+     * Procedimiento para insertar vistas en el controlador
+     */
+    protected function createViews()
+    {
+        /* Artículos */
+        $this->addView('FacturaScripts\Core\Model\Articulo', 'ListArticulo', 'products');
+        $this->addSearchFields('ListArticulo', ['referencia', 'descripcion']);
+        
+        $this->addFilterSelect('ListArticulo', 'codfabricante', 'fabricantes', '', 'nombre');
+        $this->addFilterSelect('ListArticulo', 'codfamilia', 'familias', '', 'descripcion');
+        $this->addFilterCheckbox('ListArticulo', 'bloqueado', 'locked', 'bloqueado');
+        $this->addFilterCheckbox('ListArticulo', 'publico', 'public', 'publico');
+
+        $this->addOrderBy('ListArticulo', 'referencia', 'reference');
+        $this->addOrderBy('ListArticulo', 'descripcion', 'description');
+        $this->addOrderBy('ListArticulo', 'pvp', 'price');
+        $this->addOrderBy('ListArticulo', 'stockfis', 'stock');
+        
+        /* Artículos de proveedor */
+        $this->addView('FacturaScripts\Core\Model\ArticuloProveedor', 'ListArticuloProveedor', 'supplier-products');
+        $this->addSearchFields('ListArticuloProveedor', ['referencia', 'descripcion']);
+        
+        $this->addFilterSelect('ListArticuloProveedor', 'codproveedor', 'proveedores', '', 'nombre');
+
+        $this->addOrderBy('ListArticuloProveedor', 'referencia', 'reference');
+        $this->addOrderBy('ListArticuloProveedor', 'descripcion', 'description');
+        $this->addOrderBy('ListArticuloProveedor', 'pvp', 'price');
+        $this->addOrderBy('ListArticuloProveedor', 'stockfis', 'stock');
     }
 }

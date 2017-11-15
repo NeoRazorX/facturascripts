@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Model;
  */
 class Caja
 {
-
     use Base\ModelTrait;
 
     /**
@@ -111,7 +111,7 @@ class Caja
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'cajas';
     }
@@ -195,7 +195,7 @@ class Caja
     {
         $cajalist = [];
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codagente = '
-            . $this->dataBase->var2str($codagente) . ' ORDER BY id DESC';
+            . $this->var2str($codagente) . ' ORDER BY id DESC';
 
         $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {

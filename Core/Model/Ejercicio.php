@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Model;
  */
 class Ejercicio
 {
-
     use Base\ModelTrait;
 
     /**
@@ -104,7 +104,7 @@ class Ejercicio
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'ejercicios';
     }
@@ -165,7 +165,7 @@ class Ejercicio
      */
     public function newCodigo($cod = '0001')
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->dataBase->var2str($cod) . ';';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($cod) . ';';
         if (!$this->dataBase->select($sql)) {
             return $cod;
         }
@@ -233,7 +233,7 @@ class Ejercicio
     public function getByFecha($fecha, $soloAbierto = true, $crear = true)
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fechainicio <= '
-            . $this->dataBase->var2str($fecha) . ' AND fechafin >= ' . $this->dataBase->var2str($fecha) . ';';
+            . $this->var2str($fecha) . ' AND fechafin >= ' . $this->var2str($fecha) . ';';
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
@@ -295,7 +295,7 @@ class Ejercicio
     {
         return 'INSERT INTO ' . $this->tableName() . ' (codejercicio,nombre,fechainicio,fechafin,'
             . 'estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre) '
-            . "VALUES ('" . date('Y') . "','" . date('Y') . "'," . $this->dataBase->var2str(date('01-01-Y'))
-            . ', ' . $this->dataBase->var2str(date('31-12-Y')) . ",'ABIERTO',10,'08',null,null,null);";
+            . "VALUES ('" . date('Y') . "','" . date('Y') . "'," . $this->var2str(date('01-01-Y'))
+            . ', ' . $this->var2str(date('31-12-Y')) . ",'ABIERTO',10,'08',null,null,null);";
     }
 }

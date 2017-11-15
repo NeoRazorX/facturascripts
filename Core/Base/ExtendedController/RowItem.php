@@ -24,130 +24,104 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-abstract class RowItem implements VisualItemInterface
+class RowItem implements VisualItemInterface
 {
+
     /**
-     * Displayed row type
+     * Tipo de row que se visualiza
      *
      * @var string
      */
     public $type;
 
     /**
-     * Dynamic class constructor. Creates a RowItem objec of the given type.
+     * Nombre del campo que al que se aplica las opciones
      *
-     * @param string $type
-     * @return RowItem|null
+     * @var string
      */
-    private static function rowItemFromType($type)
-    {
-        switch ($type) {
-            case 'status':
-                return new RowItemStatus();
-
-            case 'header':
-                return new RowItemHeader();
-
-            case 'footer':
-                return new RowItemFooter();
-
-            default:
-                return NULL;
-        }
-    }
-    
-    /**
-     * Creates and loads the row structure from an XML file
-     *
-     * @param \SimpleXMLElement $row
-     * @return RowItem
-     */
-    public static function newFromXMLRow($row)
-    {
-        $rowAtributes = $row->attributes();
-        $type = (string) $rowAtributes->type;
-        $result = self::rowItemFromType($type);
-        $result->loadFromXML($row);
-        return $result;
-    }
+    public $fieldName;
 
     /**
-     * Creates and loads the row structure from the database
+     * Opciones para configurar la fila
      *
-     * @param array $row
-     * @return RowItem
+     * @var array
      */
-    public static function newFromJSONRow($row)
-    {
-        $type = (string) $row['type'];
-        $result = self::rowItemFromType($type);
-        $result->loadFromJSON($row);
-        return $result;
-    }
-    
+    public $options;
+
     /**
      * RowItem constructor.
-     *
-     * @param string $type
      */
-    public function __construct($type)
+    public function __construct()
     {
-        $this->type = $type;
+        $this->type = 'status';
+        $this->fieldName = '';
+        $this->options = [];
     }
 
     /**
-     * Devuelve los atributos de un elemento desde el XML.
-     *
-     * @param \SimpleXMLElement $item
-     *
-     * @return array
-     */
-    protected function getAttributesFromXML($item)
-    {
-        $result = [];
-        foreach ($item->attributes() as $key => $value) {
-            $result[$key] = (string) $value;
-        }
-        $result['value'] = trim((string) $item);
-        return $result;
-    }
-
-    /**
-     * Devuelve una lista de WidgetButton desde el XML.
-     *
-     * @param \SimpleXMLElement[] $buttonsXML
-     *
-     * @return WidgetButton[]
-     */
-    protected function loadButtonsFromXML($buttonsXML)
-    {
-        $buttons = [];
-        foreach ($buttonsXML as $item) {
-            $values = $this->getAttributesFromXML($item);
-            $buttons[] = new WidgetButton($values);
-            unset($values);
-        }
-        return $buttons;
-    }
-    
-    /**
-     * Creates and loads the attributes structure from a XML file
-     *
+     * Carga la estructura de atributos en base a un archivo XML
      *
      * @param \SimpleXMLElement $row
      */
-    abstract public function loadFromXML($row);
+    public function loadFromXML($row)
+    {
+        $row_atributes = $row->attributes();
+        $this->type = (string) $row_atributes->type;
+        $this->fieldName = (string) $row_atributes->fieldname;
+
+        foreach ($row->option as $option) {
+            $values = [];
+            foreach ($option->attributes() as $key => $value) {
+                $values[$key] = (string) $value;
+            }
+            $values['value'] = (string) $option;
+            $this->options[] = $values;
+            unset($values);
+        }
+    }
 
     /**
-     * Creates and loads the attributes structure from JSON file
+     * Carga la estructura de atributos en base un archivo JSON
      *
      * @param array $row
      */
-    abstract public function loadFromJSON($row);
-
+    public function loadFromJSON($row)
+    {
+        $this->type = (string) $row['type'];
+        $this->fieldName = (string) $row['fieldName'];
+        $this->options = (array) $row['options'];
+    }
 
     /**
-     * Generates the HTML code to display the header for the visual element
+     * Devuelve el estado del valor
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    public function getStatus($value)
+    {
+        foreach ($this->options as $option) {
+            if ($option['value'] == $value) {
+                return $option['color'];
+            }
+            
+            $operator = $option['value'][0];
+            $value2 = (float) substr($option['value'], 1);
+            if ($operator == '>' && $value > $value2) {
+                return $option['color'];
+            }
+            
+            if ($operator == '<' && $value < $value2) {
+                return $option['color'];
+            }
+        }
+
+        return 'table-light';
+    }
+
+    /**
+     * Genera el código html para visualizar la cabecera del elemento visual
      *
      * @param string $value
      *
@@ -156,5 +130,5 @@ abstract class RowItem implements VisualItemInterface
     public function getHeaderHTML($value)
     {
         return $value;
-    }    
+    }
 }

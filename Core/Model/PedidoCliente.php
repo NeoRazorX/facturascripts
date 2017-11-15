@@ -79,7 +79,7 @@ class PedidoCliente
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'pedidoscli';
     }
@@ -92,19 +92,6 @@ class PedidoCliente
     public function primaryColumn()
     {
         return 'idpedido';
-    }
-
-    /**
-     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        new Serie();
-        new Ejercicio();
-        
-        return '';
     }
 
     /**
@@ -139,10 +126,10 @@ class PedidoCliente
     {
         $versiones = [];
 
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idoriginal = ' . $this->dataBase->var2str($this->idpedido);
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idoriginal = ' . $this->var2str($this->idpedido);
         if ($this->idoriginal) {
-            $sql .= ' OR idoriginal = ' . $this->dataBase->var2str($this->idoriginal);
-            $sql .= ' OR idpedido = ' . $this->dataBase->var2str($this->idoriginal);
+            $sql .= ' OR idoriginal = ' . $this->var2str($this->idoriginal);
+            $sql .= ' OR idpedido = ' . $this->var2str($this->idoriginal);
         }
         $sql .= 'ORDER BY fecha DESC, hora DESC;';
 
@@ -184,10 +171,10 @@ class PedidoCliente
      */
     public function delete()
     {
-        if ($this->dataBase->exec('DELETE FROM ' . static::tableName() . ' WHERE idpedido = ' . $this->dataBase->var2str($this->idpedido) . ';')) {
+        if ($this->dataBase->exec('DELETE FROM ' . $this->tableName() . ' WHERE idpedido = ' . $this->var2str($this->idpedido) . ';')) {
             /// modificamos el presupuesto relacionado
             $this->dataBase->exec('UPDATE presupuestoscli SET idpedido = NULL, editable = TRUE,'
-                . ' status = 0 WHERE idpedido = ' . $this->dataBase->var2str($this->idpedido) . ';');
+                . ' status = 0 WHERE idpedido = ' . $this->var2str($this->idpedido) . ';');
 
             return true;
         }
@@ -201,15 +188,15 @@ class PedidoCliente
     public function cronJob()
     {
         /// marcamos como aprobados los presupuestos con idpedido
-        $this->dataBase->exec('UPDATE ' . static::tableName() . " SET status = '1', editable = FALSE"
+        $this->dataBase->exec('UPDATE ' . $this->tableName() . " SET status = '1', editable = FALSE"
             . " WHERE status != '1' AND idalbaran IS NOT NULL;");
 
         /// devolvemos al estado pendiente a los pedidos con estado 1 a los que se haya borrado el albarán
-        $this->dataBase->exec('UPDATE ' . static::tableName() . " SET status = '0', idalbaran = NULL, editable = TRUE "
+        $this->dataBase->exec('UPDATE ' . $this->tableName() . " SET status = '0', idalbaran = NULL, editable = TRUE "
             . "WHERE status = '1' AND idalbaran NOT IN (SELECT idalbaran FROM albaranescli);");
 
         /// marcamos como rechazados todos los presupuestos no editables y sin pedido asociado
-        $this->dataBase->exec('UPDATE ' . static::tableName() . " SET status = '2' WHERE idalbaran IS NULL AND"
+        $this->dataBase->exec('UPDATE ' . $this->tableName() . " SET status = '2' WHERE idalbaran IS NULL AND"
             . ' editable = false;');
     }
 }

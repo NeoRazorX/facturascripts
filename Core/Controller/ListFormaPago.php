@@ -16,21 +16,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controller to list the items in the FormaPago model
+ * Controlador para la lista de Formas de Pago
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class ListFormaPago extends ExtendedController\ListController
 {
-
     /**
-     * Returns basic page attributes
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */
@@ -45,12 +45,12 @@ class ListFormaPago extends ExtendedController\ListController
     }
 
     /**
-     * Load views
+     * Procedimiento encargado de insertar las vistas a visualizar
      */
     protected function createViews()
     {
         /* Formas de pago */
-        $this->addView('FacturaScripts\Core\Model\FormaPago', 'ListFormaPago', 'payment-methods', 'fa-credit-card');
+        $this->addView('FacturaScripts\Core\Model\FormaPago', 'ListFormaPago', 'payment-methods');
         $this->addSearchFields('ListFormaPago', ['descripcion', 'codpago', 'codcuenta']);
 
         $this->addOrderBy('ListFormaPago', 'codpago', 'code');
@@ -60,9 +60,9 @@ class ListFormaPago extends ExtendedController\ListController
         $this->addFilterSelect('ListFormaPago', 'vencimiento', 'formaspago');
         $this->addFilterCheckbox('ListFormaPago', 'domiciliado', 'domicilied');
         $this->addFilterCheckbox('ListFormaPago', 'imprimir', 'print');
-
+        
         /* Cuentas bancarias */
-        $this->addView('FacturaScripts\Core\Model\CuentaBanco', 'ListCuentaBanco', 'bank-accounts', 'fa-university');
+        $this->addView('FacturaScripts\Core\Model\CuentaBanco', 'ListCuentaBanco', 'bank-accounts');
         $this->addSearchFields('ListCuentaBanco', ['descripcion', 'codcuenta']);
 
         $this->addOrderBy('ListCuentaBanco', 'codcuenta', 'code');

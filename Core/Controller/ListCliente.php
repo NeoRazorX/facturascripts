@@ -16,21 +16,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controller to list the items in the Cliente model
+ * Controlador para la lista de clientes
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class ListCliente extends ExtendedController\ListController
 {
-
     /**
-     * Returns basic page attributes
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */
@@ -45,12 +45,12 @@ class ListCliente extends ExtendedController\ListController
     }
 
     /**
-     * Load views
+     * Procedimiento para insertar vistas en el controlador
      */
     protected function createViews()
     {
         /* Clientes */
-        $this->addView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'customers', 'fa-users');
+        $this->addView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'customers');
         $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente', 'email']);
 
         $this->addOrderBy('ListCliente', 'codcliente', 'code');
@@ -59,11 +59,11 @@ class ListCliente extends ExtendedController\ListController
 
         $this->addFilterSelect('ListCliente', 'codgrupo', 'gruposclientes', '', 'nombre');
         $this->addFilterCheckbox('ListCliente', 'debaja', 'suspended');
-
+        
         /* Grupos */
-        $this->addView('FacturaScripts\Core\Model\GrupoClientes', 'ListGrupoClientes', 'groups', 'fa-folder-open');
+        $this->addView('FacturaScripts\Core\Model\GrupoClientes', 'ListGrupoClientes', 'groups');
         $this->addSearchFields('ListGrupoClientes', ['nombre', 'codgrupo']);
-
+        
         $this->addOrderBy('ListGrupoClientes', 'codgrupo', 'code');
         $this->addOrderBy('ListGrupoClientes', 'nombre', 'name', 1);
     }

@@ -19,15 +19,17 @@
 
 namespace FacturaScripts\Core\Base\ExtendedController;
 
+
 /**
  * Description of WidgetItem
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-abstract class WidgetItem
+class WidgetItem
 {
+
     /**
-     * Field name with the data that the widget displays
+     * Nombre del campo con los datos que visualiza el widget
      *
      * @var string
      */
@@ -48,61 +50,45 @@ abstract class WidgetItem
     public $hint;
 
     /**
-     * Indicates that the field is read only
+     * Indica que el campo es no editable
      *
      * @var boolean
      */
     public $readOnly;
 
     /**
-     * Indicates that the field is mandatory and it must have a value
+     * Indica que el campo es obligatorio y debe contener un valor
      *
      * @var boolean
      */
     public $required;
 
     /**
-     * Icon used as a value or to accompany the widget
+     * Icono que se usa como valor o acompañante del widget
      *
      * @var string
      */
     public $icon;
 
     /**
-     * Destination controller to go to when the displayed data is clicked
+     * Controlador destino al hacer click sobre los datos visualizados
      *
      * @var string
      */
     public $onClick;
 
     /**
-     * Visual options to configure the widget
+     * Opciones visuales para configurar el widget
      *
      * @var array
      */
     public $options;
 
     /**
-     * Genera el código html para visualizar el dato del modelo
-     * para controladores List
-     *
-     * @param string $value
-     */
-    abstract public function getListHTML($value);
-
-    /**
-     * Genera el código html para visualizar el dato del modelo
-     * para controladores Edit
-     *
-     * @param string $value
-     */
-    abstract public function getEditHTML($value);
-
-    /**
-     * Class dynamic constructor. It creates a widget of the given type
+     * Constructor dinámico de la clase.
+     * Crea un objeto Widget del tipo informado
      *
      * @param string $type
-     * @return WidgetItem
      */
     private static function widgetItemFromType($type)
     {
@@ -125,16 +111,13 @@ abstract class WidgetItem
             case 'radio':
                 return new WidgetItemRadio();
 
-            case 'color':
-                return new WidgetItemColor();
-
             default:
                 return new WidgetItemText($type);
         }
     }
 
     /**
-     * Creates and loads the attributes structure from a XML file
+     * Crea y carga la estructura de atributos en base a un archivo XML
      *
      * @param \SimpleXMLElement $column
      * @return WidgetItem
@@ -149,7 +132,7 @@ abstract class WidgetItem
     }
 
     /**
-     * Creates and loads the attributes structure from the database
+     * Crea y carga la estructura de atributos en base a la base de datos
      *
      * @param array $column
      * @return WidgetItem
@@ -163,7 +146,7 @@ abstract class WidgetItem
     }
 
     /**
-     * Class constructor
+     * Constructor de la clase
      */
     public function __construct()
     {
@@ -177,10 +160,11 @@ abstract class WidgetItem
     }
 
     /**
-     * Loads the attribute dictionary for a widget's group of options or values
+     * Carga el diccionario de atributos de un grupo de opciones o valores
+     * del widget
      *
      * @param array            $property
-     * @param \SimpleXMLElement[] $group
+     * @param \SimpleXMLElement $group
      */
     protected function getAttributesGroup(&$property, $group)
     {
@@ -197,14 +181,12 @@ abstract class WidgetItem
     }
 
     /**
-     * Loads the attributes structure from a XML file
-     *
+     * Carga la estructura de atributos en base a un archivo XML
      *
      * @param \SimpleXMLElement $column
      * @param \SimpleXMLElement $widgetAtributes
      */
-    protected function loadFromXMLColumn($column, $widgetAtributes)
-    {
+    protected function loadFromXMLColumn($column, $widgetAtributes) {
         $this->fieldName = (string) $widgetAtributes->fieldname;
         $this->hint = (string) $widgetAtributes->hint;
         $this->readOnly = (bool) $widgetAtributes->readonly;
@@ -216,7 +198,7 @@ abstract class WidgetItem
     }
 
     /**
-     * Loads the attributes structure from the database
+     * Carga la estructura de atributos en base a la base de datos
      *
      * @param array $column
      */
@@ -232,7 +214,7 @@ abstract class WidgetItem
     }
 
     /**
-     * Indicates if the conditions to apply an Option Text are met
+     * Indica si se cumple la condición para aplicar un Option Text
      *
      * @param string $optionValue
      * @param string $valueItem
@@ -259,7 +241,7 @@ abstract class WidgetItem
     }
 
     /**
-     * Generates the CSS code for the widget style from the options
+     * Genera el código CSS para el style del widget en base a los options
      *
      * @param string $valueItem
      *
@@ -272,7 +254,7 @@ abstract class WidgetItem
             if ($this->canApplyOptions($option['value'], $valueItem)) {
                 $html = ' style="';
                 foreach ($option as $key => $value) {
-                    if ($key !== 'value') {
+                    if ($key != 'value') {
                         $html .= $key . ':' . $value . '; ';
                     }
                 }
@@ -285,7 +267,9 @@ abstract class WidgetItem
     }
 
     /**
-     * Returns the HTML code to display a popover with the given text
+     * Devuelve el código HTML para la visualización de un popover
+     * con el texto indicado.
+     *
      * @param string $hint
      *
      * @return string
@@ -296,7 +280,8 @@ abstract class WidgetItem
     }
 
     /**
-     * Generates the HTML code to display an icon on the left side of the data
+     * General el código html para la visualización del icono en el lado
+     * izquierda de los datos
      *
      * @return string
      */
@@ -315,10 +300,10 @@ abstract class WidgetItem
     }
 
     /**
-     * Generates the HTML code for special attributes like:
+     * Genera el código html para atributos especiales como:
      * hint
-     * read only
-     * mandatory value
+     * sólo lectura
+     * valor obligatorio
      *
      * @return string
      */
@@ -332,9 +317,8 @@ abstract class WidgetItem
     }
 
     /**
-     * Returns the HTML code for the list of non special controls
-     *
-     * @param string $value
+     * Devuelve el código HTML para lista de controles no especiales
+     * @param mixed $value
      * @param string $text
      *
      * @return string
@@ -350,32 +334,28 @@ abstract class WidgetItem
         }
 
         $style = $this->getTextOptionsHTML($value);
-        $html = (empty($this->onClick)) ? '<span' . $style . '>' . $text . '</span>' : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $text . '</a>';
+        $html = (empty($this->onClick))
+            ? '<span' . $style . '>' . $text . '</span>'
+            : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $text . '</a>';
 
         return $html;
     }
 
     /**
-     * Returns the HTML code to edit non special controls
-     *
-     * @param string $value
+     * Devuelve el código HTML para edición de controles no especiales
+     * @param mixed $value
      * @param string $specialAttributes
      * @param string $extraClass
-     * @param string $type
      *
      * @return string
      */
-    protected function standardEditHTMLWidget($value, $specialAttributes, $extraClass = '', $type = '')
+    protected function standardEditHTMLWidget($value, $specialAttributes, $extraClass = '')
     {
         $fieldName = '"' . $this->fieldName . '"';
         $icon = $this->getIconHTML();
 
-        if (empty($type)) {
-            $type = $this->type;
-        }
-
         $html = $icon
-            . '<input id=' . $fieldName . ' type="' . $type . '" class="form-control' . $extraClass . '"'
+            . '<input id=' . $fieldName . ' type="' . $this->type . '" class="form-control' . $extraClass . '"'
             . 'name=' . $fieldName . ' value="' . $value . '"' . $specialAttributes . ' />';
 
         if (!empty($this->icon)) {

@@ -1,21 +1,10 @@
 <?php
 /**
- * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -23,17 +12,17 @@ use FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Controller to edit main settings
+ * Description of PanelSettings
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class EditSettings extends ExtendedController\PanelController
+class PanelSettings extends ExtendedController\PanelController
 {
 
     const KEYSETTINGS = 'Settings';
 
     /**
-     * Returns basic page attributes
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */
@@ -43,12 +32,13 @@ class EditSettings extends ExtendedController\PanelController
         $pagedata['title'] = 'app-preferences';
         $pagedata['icon'] = 'fa-cogs';
         $pagedata['menu'] = 'admin';
+        $pagedata['orden'] = '999';
 
         return $pagedata;
     }
 
     /**
-     * Returns the url for a specified $type
+     * Devuelve la url para el tipo indicado
      *
      * @param string $type
      * @return string
@@ -62,15 +52,16 @@ class EditSettings extends ExtendedController\PanelController
                 break;
 
             case 'edit':
-                $result .= '?page=EditSettings';
+                $result .= '?page=PanelSettings';
                 break;
         }
 
         return $result;
     }
 
+    
     /**
-     * Returns the configuration property value for a specified $field
+     * Devuelve el valor para la propiedad de configuración
      *
      * @param mixed $model
      * @param string $field
@@ -82,16 +73,13 @@ class EditSettings extends ExtendedController\PanelController
         if (array_key_exists($field, $properties)) {
             return $properties[$field];
         }
-
-        if (isset($model->{$field})) {
-            return $model->{$field};
-        }
-
-        return null;
+        
+        return $model->{$field};
     }
-
+    
     /**
-     * Returns the view id with the KEYSETTINGS constant as a prefix
+     * Devuelve el id de la vista con el valor de la constante KEYSSETTINGS
+     * como prefijo
      *
      * @param string $key
      * @return string
@@ -102,7 +90,7 @@ class EditSettings extends ExtendedController\PanelController
     }
 
     /**
-     * Returns the view id for a specified $viewName
+     * Devuelve el id de la vista
      *
      * @param string $viewName
      * @return string
@@ -113,12 +101,12 @@ class EditSettings extends ExtendedController\PanelController
     }
 
     /**
-     * Load views
+     * Procedimiento para insertar vistas en el controlador
      */
     protected function createViews()
     {
         $modelName = 'FacturaScripts\Core\Model\Settings';
-        $title = 'general';
+        $title = $this->i18n->trans('general');
         $icon = $this->getPageData()['icon'];
         $this->addEditView($modelName, $this->getViewNameFromKey('Default'), $title, $icon);
 
@@ -126,17 +114,17 @@ class EditSettings extends ExtendedController\PanelController
         $where = [new DataBase\DataBaseWhere('name', 'default', '<>')];
         $rows = $model->all($where, ['name' => 'ASC'], 0, 0);
         foreach ($rows as $setting) {
-            $title = $setting->name;
+            $title = $this->i18n->trans($setting->name);
             $viewName = $this->getViewNameFromKey($setting->name);
             $this->addEditView($modelName, $viewName, $title, $setting->icon);
         }
 
-        $title2 = 'about';
+        $title2 = $this->i18n->trans('about');
         $this->addHtmlView('Block/About.html', null, 'about', $title2);
     }
 
     /**
-     * Load view data
+     * Procedimiento para cargar los datos de cada una de las vistas
      *
      * @param string $keyView
      * @param ExtendedController\EditView $view

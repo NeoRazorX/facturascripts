@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Model;
  */
 class AtributoValor
 {
-
     use Base\ModelTrait {
         save as private saveTrait;
         saveInsert as private saveInsertTrait;
@@ -57,7 +57,7 @@ class AtributoValor
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'atributos_valores';
     }
@@ -81,7 +81,7 @@ class AtributoValor
     {
         $nombre = '';
 
-        $sql = 'SELECT * FROM atributos WHERE codatributo = ' . $this->dataBase->var2str($this->codatributo) . ';';
+        $sql = 'SELECT * FROM atributos WHERE codatributo = ' . $this->var2str($this->codatributo) . ';';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             $nombre = $data[0]['nombre'];
@@ -112,7 +112,7 @@ class AtributoValor
     public function allFromAtributo($cod)
     {
         $lista = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codatributo = ' . $this->dataBase->var2str($cod)
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codatributo = ' . $this->var2str($cod)
             . ' ORDER BY valor ASC;';
 
         $data = $this->dataBase->select($sql);
@@ -132,9 +132,9 @@ class AtributoValor
      */
     private function saveUpdate()
     {
-        $sql = 'UPDATE atributos_valores SET valor = ' . $this->dataBase->var2str($this->valor)
-            . ', codatributo = ' . $this->dataBase->var2str($this->codatributo)
-            . '  WHERE id = ' . $this->dataBase->var2str($this->id) . ';';
+        $sql = 'UPDATE atributos_valores SET valor = ' . $this->var2str($this->valor)
+            . ', codatributo = ' . $this->var2str($this->codatributo)
+            . '  WHERE id = ' . $this->var2str($this->id) . ';';
 
         return $this->dataBase->exec($sql);
     }

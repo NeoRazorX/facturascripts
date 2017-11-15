@@ -1,4 +1,5 @@
 <?php
+
 namespace FacturaScripts\Core\App;
 
 /**
@@ -6,7 +7,6 @@ namespace FacturaScripts\Core\App;
  */
 class AppControllerTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var AppController
      */
@@ -27,7 +27,6 @@ class AppControllerTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        
     }
 
     public function testConnect()

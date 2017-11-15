@@ -16,11 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Base\Cache\APCAdapter;
 use FacturaScripts\Core\Base\Cache\FileCache;
-use FacturaScripts\Core\Base\Cache\MemcacheAdapter;
 
 /**
  * Class Cache
@@ -29,37 +28,27 @@ use FacturaScripts\Core\Base\Cache\MemcacheAdapter;
  */
 class Cache
 {
-
     /**
-     * The engine used for cache
+     * El motor utilizado para la cache.
      *
-     * @var FileCache|APCAdapter|MemcacheAdapter
+     * @var FileCache
      */
     private static $engine;
 
     /**
-     * Default constructor
+     * Constructor por defecto.
+     *
+     * @param string $folder carpeta de trabajo
      */
-    public function __construct()
+    public function __construct($folder = '')
     {
         if (self::$engine === null) {
-            if (extension_loaded('apc') && ini_get('apc.enabled')) {
-                self::$engine = new APCAdapter();
-            } else if (\class_exists('Memcache') && FS_CACHE_HOST !== '') {
-                self::$engine = new MemcacheAdapter();
-                if (!self::$engine->isConnected()) {
-                    self::$engine = null;
-                }
-            }
-
-            if (self::$engine === null) {
-                self::$engine = new FileCache();
-            }
+            self::$engine = new FileCache($folder);
         }
     }
 
     /**
-     * Returns the contents in the cache associated to $key
+     * Devuelve el contenido asociado a esa $key que hay en la cache.
      *
      * @param string $key
      *
@@ -71,7 +60,7 @@ class Cache
     }
 
     /**
-     * Saves contents in the cache and associates them to $key
+     * Guarda en la cache el contenido y lo asocia a $key
      *
      * @param string $key
      * @param mixed  $content
@@ -84,7 +73,7 @@ class Cache
     }
 
     /**
-     * Deletes the contents from the cache associated to $key
+     * Elimina de la cache el contenido asociado a la $key
      *
      * @param string $key
      *
@@ -96,7 +85,7 @@ class Cache
     }
 
     /**
-     * Cleans all the cache contents
+     * Limpia el contenido de la cache al completo.
      *
      * @return bool
      */

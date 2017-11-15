@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
@@ -23,51 +24,50 @@ use mysqli;
 use FacturaScripts\Core\Base\Translator;
 
 /**
- * Class to connect with MySQL.
+ * Clase para conectar a MySQL.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class Mysql implements DataBaseEngine
 {
-
     /**
-     * The link with the common utilities between database engines.
+     * El enlace con las utilidades comunes entre motores de base de datos.
      *
      * @var DataBaseUtils
      */
     private $utils;
 
     /**
-     * Link to the SQL statements for the connected database
+     * Enlace al conjunto de sentencias SQL de la base de datos conectada
      *
      * @var DataBaseSQL;
      */
     private $utilsSQL;
 
     /**
-     * Open transaction list
+     * Relacion de Transacciones abiertas.
      *
      * @var array
      */
     private $transactions;
 
     /**
-     * Last error message
+     * Ultimo mensaje de error
      *
      * @var string
      */
     private $lastErrorMsg;
 
     /**
-     * Contains the translator
+     * Contiene el traductor
      *
      * @var Translator
      */
     private $i18n;
 
     /**
-     * Contructor and class initialization
+     * Contructor e inicializador de la clase
      */
     public function __construct()
     {
@@ -79,7 +79,7 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Class destructor
+     * Destructor de la clase
      */
     public function __destruct()
     {
@@ -87,7 +87,7 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Rollback all active transactions
+     * Deshace todas las transacciones activas
      */
     private function rollbackTransactions()
     {
@@ -97,7 +97,7 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Delete from the list the specified transaction
+     * Borra de la lista la transaccion indicada
      *
      * @param \mysqli $link
      */
@@ -114,7 +114,7 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Returns the database engine and its version
+     * Devuelve el motor de base de datos y la versión.
      *
      * @param \mysqli $link
      *
@@ -126,7 +126,7 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Connects to the database
+     * Conecta a la base de datos.
      *
      * @param string $error
      *
@@ -152,7 +152,7 @@ class Mysql implements DataBaseEngine
         $result->autocommit(false);
 
         /// desactivamos las claves ajenas
-        if (FS_DB_FOREIGN_KEYS) {
+        if (FS_FOREIGN_KEYS !== '1') {
             $this->exec($result, 'SET foreign_key_checks = 0;');
         }
 
@@ -160,7 +160,7 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Disconnect from the database
+     * Desconecta de la base de datos.
      *
      * @param \mysqli $link
      *
@@ -174,7 +174,7 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Returns the last run statement error
+     * Devuelve el error de la ultima sentencia ejecutada
      *
      * @param \mysqli $link
      *
@@ -186,7 +186,7 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Starts a SQL transaction
+     * Inicia una transacción SQL.
      *
      * @param \mysqli $link
      *
@@ -203,7 +203,7 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Commits changes in a SQL transaction
+     * Guarda los cambios de una transacción SQL.
      *
      * @param \mysqli $link
      *
@@ -220,7 +220,7 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Rolls back a transaction
+     * Revertir transaccion
      *
      * @param \mysqli $link
      *
@@ -237,7 +237,7 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Indicates if the connection has an active transaction
+     * Indica si la conexión está en transacción
      *
      * @param \mysqli $link
      *
@@ -249,8 +249,9 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Runs a SELECT SQL statement, and returns an array with the results,
-     * or an empty array when it fails.
+     * Ejecuta una sentencia SQL de tipo select, y devuelve un array con los resultados,
+     * o array vacío en caso de fallo.
+     *
      * @param \mysqli $link
      * @param string $sql
      *
@@ -277,8 +278,8 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Runs SQL statement in the database
-     * (inserts, updates or deletes)
+     * Ejecuta sentencias SQL sobre la base de datos
+     * (inserts, updates o deletes)
      *
      * @param \mysqli $link
      * @param string $sql
@@ -293,7 +294,7 @@ class Mysql implements DataBaseEngine
                     $more = ($link->more_results() && $link->next_result());
                 } while ($more);
             }
-            $result = ($link->errno === 0);
+            $result = (!$link->errno);
         } catch (Exception $e) {
             $this->lastErrorMsg = $e->getMessage();
             $result = false;
@@ -303,7 +304,7 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Escapes quotes from a text string
+     * Escapa las comillas de la cadena de texto.
      *
      * @param \mysqli $link
      * @param string $str
@@ -316,7 +317,7 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Returns the date format from the database engine
+     * Devuelve el estilo de fecha del motor de base de datos.
      *
      * @return string
      */
@@ -326,7 +327,7 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Compares the data types from a numeric column
+     * Compara los tipos de datos de una columna numerica.
      *
      * @param string $dbType
      * @param string $xmlType
@@ -340,7 +341,7 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Compares the data types from an alphanumeric column
+     * Compara los tipos de datos de una columna alfanumerica.
      *
      * @param string $dbType
      * @param string $xmlType
@@ -358,7 +359,7 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Compares the data types from a column. Returns true if they are equal.
+     * Compara los tipos de datos de una columna. Devuelve True si son iguales.
      *
      * @param string $dbType
      * @param string $xmlType
@@ -386,7 +387,7 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Returns an array with the database table names
+     * Devuelve un array con los nombres de las tablas de la base de datos.
      *
      * @param \mysqli $link
      *
@@ -409,9 +410,10 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * With the default field in a table
-     * it checks whether it refers to a sequence and if a
-     * sequence exists. If it can't find it, i will create one.
+     * A partir del campo default de una tabla
+     * comprueba si se refiere a una secuencia, y si es así
+     * comprueba la existencia de la secuencia. Si no la encuentra
+     * la crea.
      *
      * @param \mysqli $link
      * @param string $tableName
@@ -426,7 +428,7 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Runs extra checks in the table
+     * Realiza comprobaciones extra a la tabla.
      *
      * @param \mysqli $link
      * @param string $tableName
@@ -451,7 +453,7 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Converts the sqlColumns return data to a working structure
+     * Convierte los datos leidos del sqlColumns a estructura de trabajo
      *
      * @param array $colData
      *
@@ -469,7 +471,7 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Returns the link to the Utils class from the engine
+     * Devuelve el enlace a la clase de Utilidades del engine
      *
      * @return DataBaseUtils
      */
@@ -479,7 +481,7 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Returns the link to the SQL class from the engine
+     * Devuelve el enlace a la clase de SQL del engine
      *
      * @return DataBaseSQL
      */

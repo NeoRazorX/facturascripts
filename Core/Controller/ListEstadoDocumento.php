@@ -16,20 +16,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controller to list the items in the EstadoDocumento model
+ * Controlador para la lista de Familias
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
 class ListEstadoDocumento extends ExtendedController\ListController
 {
-
     /**
-     * Returns basic page attributes
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */
@@ -44,7 +44,7 @@ class ListEstadoDocumento extends ExtendedController\ListController
     }
 
     /**
-     * Load views
+     * Procedimiento para insertar vistas en el controlador
      */
     protected function createViews()
     {

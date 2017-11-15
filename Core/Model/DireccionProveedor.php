@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Model;
  */
 class DireccionProveedor
 {
-
     use Base\ModelTrait;
     use Base\Direccion;
 
@@ -55,7 +55,7 @@ class DireccionProveedor
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'dirproveedores';
     }
@@ -112,7 +112,7 @@ class DireccionProveedor
             /// ¿Desmarcamos las demás direcciones principales?
             if ($this->direccionppal) {
                 $sql = 'UPDATE ' . $this->tableName() . ' SET direccionppal = false'
-                    . ' WHERE codproveedor = ' . $this->dataBase->var2str($this->codproveedor) . ';';
+                    . ' WHERE codproveedor = ' . $this->var2str($this->codproveedor) . ';';
                 $this->dataBase->exec($sql);
             }
 

@@ -23,44 +23,41 @@ use FacturaScripts\Core\Base;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * View definition for its use in ExtendedControllers
+ * Definición de vista para uso en ExtendedControllers
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class EditListView extends BaseView
 {
+
     /**
-     * Cursor with the display model's data
+     * Cursor con los datos del modelo a mostrar
      *
      * @var array
      */
     private $cursor;
 
     /**
-     * Stores the offset for the cursor
-     *
+     * Almacena el offset para el cursor
      * @var int
      */
     private $offset;
 
     /**
-     * Stores the order for the cursor
-     *
+     * Almacena el order para el cursor
      * @var array
      */
     private $order;
 
     /**
-     * Store the parameters for the cursor's WHERE clause
-     *
+     * Almacena los parámetros del where del cursor
      * @var array
      */
     private $where;
 
     /**
      * Constructor e inicializador de la clase
-     * Clos constructor and initialization
      *
      * @param string $title
      * @param string $modelName
@@ -75,12 +72,12 @@ class EditListView extends BaseView
         $this->offset = 0;
         $this->where = [];
 
-        // Load the view configuration for the user
+        // Carga configuración de la vista para el usuario
         $this->pageOption->getForUser($viewName, $userNick);
     }
 
     /**
-     * Returns the list of read data in the Model format
+     * Devuelve la lista de datos leidos en formato Model
      *
      * @return array
      */
@@ -88,12 +85,10 @@ class EditListView extends BaseView
     {
         return $this->cursor;
     }
-
+    
     /**
-     * Column list and its configuration
-     *
+     * Lista de columnas y su configuración
      * (Array of ColumnItem)
-     *
      * @return array
      */
     public function getColumns()
@@ -102,36 +97,8 @@ class EditListView extends BaseView
     }
 
     /**
-     * Devuelve True si tiene menos de 5 columnas, sino False.
-     */
-    public function isBasicEditList()
-    {
-        $isBasic = count($this->pageOption->columns) === 1; // Only one group
-        if ($isBasic) {
-            $group = current($this->pageOption->columns);
-            $isBasic = (count($group->columns) < 5);
-        }
-
-        return $isBasic;
-    }
-
-    /**
-     * Establishes the column's edit state
-     *
-     * @param string $columnName
-     * @param boolean $disabled
-     */
-    public function disableColumn($columnName, $disabled)
-    {
-        $column = $this->columnForName($columnName);
-        if (!empty($column)) {
-            $column->widget->readOnly = $disabled;
-        }
-    }
-
-    /**
-     * Load the data in the cursor property, according to the where filter specified.
-     * Adds an empty row/model at the end of the loaded data.
+     * Carga los datos en la propiedad cursor, según el filtro where indicado.
+     * Añade un registro/modelo en blanco al final de los datos cargados.
      *
      * @param array $where
      * @param int $offset
@@ -144,13 +111,13 @@ class EditListView extends BaseView
             $this->cursor = $this->model->all($where, $this->order, $offset, $limit);
         }
 
-        // We save the values where and offset for the export
+        // nos guardamos los valores where y offset para la exportación
         $this->offset = $offset;
         $this->where = $where;
     }
 
     /**
-     * Prepares the fields for an empty model
+     * Prepara los campos para un modelo vacío
      *
      * @return mixed
      */
@@ -167,7 +134,7 @@ class EditListView extends BaseView
     }
 
     /**
-     * Method to export the view data
+     * Método para la exportación de los datos de la vista
      *
      * @param Base\ExportManager $exportManager
      * @param Response $response

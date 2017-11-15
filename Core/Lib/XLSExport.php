@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\ExportInterface;
@@ -34,7 +35,7 @@ class XLSExport implements ExportInterface
     const LIST_LIMIT = 1000;
 
     /**
-     * New document
+     * Nuevo documento
      *
      * @param $model
      *
@@ -57,7 +58,7 @@ class XLSExport implements ExportInterface
     }
 
     /**
-     * New document list
+     * Nueva lista de documentos
      *
      * @param $model
      * @param array $where
@@ -72,26 +73,20 @@ class XLSExport implements ExportInterface
         $writer = new \XLSXWriter();
         $writer->setAuthor('FacturaScripts');
 
-        /// Get the columns
+        /// obtenemos las columnas
         $tableCols = [];
         $sheetHeaders = [];
-        $tableData = [];
-
-        /// Get the columns
         foreach ($columns as $col) {
             $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
             $sheetHeaders[$col->widget->fieldName] = 'string';
         }
 
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
-        if (empty($cursor)) {
-            $writer->writeSheet($tableData, '', $sheetHeaders);
-        }
         while (!empty($cursor)) {
             $tableData = $this->getTableData($cursor, $tableCols);
             $writer->writeSheet($tableData, '', $sheetHeaders);
 
-            /// Advance within the results
+            /// avanzamos en los resultados
             $offset += self::LIST_LIMIT;
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
@@ -100,7 +95,7 @@ class XLSExport implements ExportInterface
     }
 
     /**
-     * Returns the table data
+     * Devuelvo los datos de la tabla
      *
      * @param array $cursor
      * @param array $tableCols
@@ -111,17 +106,12 @@ class XLSExport implements ExportInterface
     {
         $tableData = [];
 
-        /// Get the data
+        /// obtenemos los datos
         foreach ($cursor as $key => $row) {
             foreach ($tableCols as $col) {
-                $value = '';
-                if (isset($row->{$col})) {
-                    $value = $row->{$col};
-                    if (is_string($value)) {
-                        $value = $this->fixHtml($value);
-                    } elseif (is_null($value)) {
-                        $value = '';
-                    }
+                $value = $row->{$col};
+                if (is_string($value)) {
+                    $value = $this->fixHtml($value);
                 }
 
                 $tableData[$key][$col] = $value;
@@ -132,7 +122,7 @@ class XLSExport implements ExportInterface
     }
 
     /**
-     * Assigns the header
+     * Asigna la cabecera
      *
      * @param Response $response
      */

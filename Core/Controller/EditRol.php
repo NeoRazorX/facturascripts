@@ -16,69 +16,45 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Controller to edit a single item from the EditRol model
+ * Description of EditRol
  *
  *
  * @author Artex Trading sa <jferrer@artextrading.com>
  */
-class EditRol extends ExtendedController\PanelController
+class EditRol extends ExtendedController\EditController
 {
-
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addEditView('FacturaScripts\Core\Model\Rol', 'EditRol', 'rol', 'fa-id-card');
-
-        $this->addEditListView('FacturaScripts\Core\Model\RolUser', 'EditRolUser', 'rol-user', 'fa-address-card-o');
-        $this->views['EditRolUser']->disableColumn('role', TRUE);
-
-        $this->addListView('FacturaScripts\Core\Model\RolAccess', 'ListRolAccess', 'page-rule', 'fa fa-check-square');
-        $this->views['ListRolAccess']->disableColumn('role', TRUE);
-    }
-
-    /**
-     * Load view data
+     * EditRol constructor.
      *
-     * @param string $keyView
-     * @param ExtendedController\EditView $view
+     * @param Base\Cache $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog $miniLog
+     * @param string $className
      */
-    protected function loadData($keyView, $view)
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
-        switch ($keyView) {
-            case 'EditRol':
-                $value = $this->request->get('code');
-                $view->loadData($value);
-                break;
+        parent::__construct($cache, $i18n, $miniLog, $className);
 
-            case 'EditRolUser':
-                $where = [new DataBase\DataBaseWhere('codrol', $this->getViewModelValue('EditRol', 'codrol'))];
-                $view->loadData($where);
-                break;
-
-            case 'ListRolAccess':
-                $where = [new DataBase\DataBaseWhere('codrol', $this->getViewModelValue('EditRol', 'codrol'))];
-                $view->loadData($where);
-                break;
-        }
+        // Establecemos el modelo de datos
+        $this->modelName = 'FacturaScripts\Core\Model\Rol';
     }
 
     /**
-     * Returns basic page attributes
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'rol';
+        $pagedata['title'] = 'roles';
         $pagedata['menu'] = 'admin';
         $pagedata['icon'] = 'fa-id-card-o';
         $pagedata['showonmenu'] = false;

@@ -16,12 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controller to edit a single item from the Almacen model
+ * Controlador para la edición de un registro del modelo Almacen
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -29,17 +31,24 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class EditAlmacen extends ExtendedController\EditController
 {
-
     /**
-     * Returns the model name
+     * EditAlmacen constructor.
+     *
+     * @param Base\Cache $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog $miniLog
+     * @param string $className
      */
-    public function getModelName()
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
-        return 'FacturaScripts\Core\Model\Almacen';
+        parent::__construct($cache, $i18n, $miniLog, $className);
+
+        // Establecemos el modelo de datos
+        $this->modelName = 'FacturaScripts\Core\Model\Almacen';
     }
 
     /**
-     * Returns basic page attributes
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */

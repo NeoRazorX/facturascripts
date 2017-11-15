@@ -16,15 +16,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\Cache;
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseTools;
 use FacturaScripts\Core\Base\DefaultItems;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator;
-use FacturaScripts\Core\Base\Utils;
 
 /**
  * La clase de la que heredan todos los modelos, conecta a la base de datos,
@@ -35,7 +35,7 @@ use FacturaScripts\Core\Base\Utils;
 trait ModelTrait
 {
 
-    use Utils;
+    use Base\Utils;
 
     /**
      * Lista de campos de la tabla.
@@ -122,7 +122,7 @@ trait ModelTrait
 
         if (self::$checkedTables === null) {
             self::$checkedTables = $this->cache->get('fs_checked_tables');
-            if (self::$checkedTables === null || self::$checkedTables === false) {
+            if (self::$checkedTables === null) {
                 self::$checkedTables = [];
             }
 
@@ -209,39 +209,19 @@ trait ModelTrait
     public function checkArrayData(&$data)
     {
         foreach (self::$fields as $field => $values) {
-            if ($values['type'] === 'boolean' || $values['type'] === 'tinyint(1)') {
+            if ($values['type'] === 'boolean') {
                 if (!isset($data[$field])) {
                     $data[$field] = FALSE;
                 }
-            }
+            }    
         }
-    }
-
-    /**
-     * Devuelve el valor integer controlando casos especiales para las PK y FK
-     *
-     * @param array $field
-     * @param string $value
-     * @return integer|NULL
-     */
-    private function getIntergerValueForField($field, $value)
-    {
-        if (!empty($value)) {
-            return (int) $value;
-        }
-
-        if ($field['name'] === $this->primaryColumn()) {
-            return NULL;
-        }
-
-        return ($field['is_nullable'] === 'NO') ? 0 : NULL;
     }
 
     /**
      * Asigna a las propiedades del modelo los valores del array $data
      *
      * @param array $data
-     * @param string[] $exclude
+     * @param array $exclude
      */
     public function loadFromData(array $data = [], array $exclude = [])
     {
@@ -264,7 +244,7 @@ trait ModelTrait
 
                     case 'integer':
                     case 'int':
-                        $this->{$key} = $this->getIntergerValueForField($field, $value);
+                        $this->{$key} = empty($value) ? 0 : (int) $value;
                         break;
 
                     case 'double':
@@ -278,7 +258,7 @@ trait ModelTrait
                         break;
 
                     default:
-                        if ($value === null) {
+                        if (empty($value)) {
                             $value = ($field['is_nullable'] === 'NO') ? '' : null;
                         }
                         $this->{$key} = $value;
@@ -306,7 +286,7 @@ trait ModelTrait
      * Devuelve True si existe el registro y False en caso contrario.
      *
      * @param string $cod
-     * @param DataBase\DataBaseWhere[] $where
+     * @param array|null $where
      * @param array $orderby
      *
      * @return bool
@@ -354,7 +334,7 @@ trait ModelTrait
         }
 
         $sql = 'SELECT 1 FROM ' . $this->tableName()
-            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->dataBase->var2str($this->primaryColumnValue()) . ';';
+            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->primaryColumnValue()) . ';';
 
         return (bool) $this->dataBase->select($sql);
     }
@@ -399,7 +379,7 @@ trait ModelTrait
             $this->cleanCache();
         }
         $sql = 'DELETE FROM ' . $this->tableName()
-            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->dataBase->var2str($this->primaryColumnValue()) . ';';
+            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->primaryColumnValue()) . ';';
 
         return $this->dataBase->exec($sql);
     }
@@ -449,6 +429,39 @@ trait ModelTrait
     }
 
     /**
+     * Transforma una variable en una cadena de texto válida para ser
+     * utilizada en una consulta SQL.
+     *
+     * @param mixed $val
+     *
+     * @return string
+     */
+    public function var2str($val)
+    {
+        if ($val === null) {
+            return 'NULL';
+        }
+
+        if (is_bool($val)) {
+            if ($val) {
+                return 'TRUE';
+            }
+
+            return 'FALSE';
+        }
+
+        if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4})$/i", $val)) {
+            return "'" . date($this->dataBase->dateStyle(), strtotime($val)) . "'"; /// es una fecha
+        }
+
+        if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4}) ([\d]{1,2}):([\d]{1,2}):([\d]{1,2})$/i", $val)) {
+            return "'" . date($this->dataBase->dateStyle() . ' H:i:s', strtotime($val)) . "'"; /// es una fecha+hora
+        }
+
+        return "'" . $this->dataBase->escapeString($val) . "'";
+    }
+
+    /**
      * Devuelve el siguiente código para el campo informado o de la primary key del modelo
      *
      * @param string $field
@@ -470,6 +483,18 @@ trait ModelTrait
     }
 
     /**
+     * Escapa las comillas de una cadena de texto.
+     *
+     * @param string $str cadena de texto a escapar
+     *
+     * @return string cadena de texto resultante
+     */
+    protected function escapeString($str)
+    {
+        return $this->dataBase->escapeString($str);
+    }
+
+    /**
      * Comprueba y actualiza la estructura de la tabla si es necesario
      *
      * @param string $tableName
@@ -478,13 +503,12 @@ trait ModelTrait
      */
     protected function checkTable($tableName)
     {
-        $dbTools = new DataBaseTools();
         $done = true;
         $sql = '';
         $xmlCols = [];
         $xmlCons = [];
 
-        if ($dbTools->getXmlTable($tableName, $xmlCols, $xmlCons)) {
+        if ($this->getXmlTable($tableName, $xmlCols, $xmlCons)) {
             if ($this->dataBase->tableExists($tableName)) {
                 if (!$this->dataBase->checkTableAux($tableName)) {
                     $this->miniLog->critical($this->i18n->trans('error-to-innodb'));
@@ -530,6 +554,65 @@ trait ModelTrait
     }
 
     /**
+     * Obtiene las columnas y restricciones del fichero xml para una tabla
+     *
+     * @param string $tableName
+     * @param array  $columns
+     * @param array  $constraints
+     *
+     * @return bool
+     */
+    protected function getXmlTable($tableName, &$columns, &$constraints)
+    {
+        $return = false;
+
+        $filename = FS_FOLDER . '/Dinamic/Table/' . $tableName . '.xml';
+        if (file_exists($filename)) {
+            $xml = simplexml_load_string(file_get_contents($filename, FILE_USE_INCLUDE_PATH));
+            if ($xml) {
+                if ($xml->columna) {
+                    $key = 0;
+                    foreach ($xml->columna as $col) {
+                        $columns[$key]['nombre'] = (string) $col->nombre;
+                        $columns[$key]['tipo'] = (string) $col->tipo;
+
+                        $columns[$key]['nulo'] = 'YES';
+                        if ($col->nulo && strtolower($col->nulo) === 'no') {
+                            $columns[$key]['nulo'] = 'NO';
+                        }
+
+                        if ($col->defecto === '') {
+                            $columns[$key]['defecto'] = null;
+                        } else {
+                            $columns[$key]['defecto'] = (string) $col->defecto;
+                        }
+
+                        ++$key;
+                    }
+
+                    /// debe de haber columnas, sino es un fallo
+                    $return = true;
+                }
+
+                if ($xml->restriccion) {
+                    $key = 0;
+                    foreach ($xml->restriccion as $col) {
+                        $constraints[$key]['nombre'] = (string) $col->nombre;
+                        $constraints[$key]['consulta'] = (string) $col->consulta;
+                        ++$key;
+                    }
+                }
+            } else {
+                $this->miniLog->critical($this->i18n->trans('error-reading-file', [$filename]));
+            }
+        } else {
+            $this->miniLog->critical($this->i18n->trans('file-not-found', [$filename]));
+        }
+
+        return $return;
+    }
+
+    /**
      * Lee el registro cuya columna primaria corresponda al valor $cod
      * o el primero que cumple la condición indicada
      *
@@ -541,7 +624,7 @@ trait ModelTrait
      */
     private function getRecord($cod, $where = null, $orderby = [])
     {
-        $sqlWhere = empty($where) ? ' WHERE ' . $this->primaryColumn() . ' = ' . $this->dataBase->var2str($cod) : DataBase\DataBaseWhere::getSQLWhere($where);
+        $sqlWhere = empty($where) ? ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($cod) : DataBase\DataBaseWhere::getSQLWhere($where);
 
         $sql = 'SELECT * FROM ' . $this->tableName() . $sqlWhere . $this->getOrderBy($orderby);
         return $this->dataBase->selectLimit($sql, 1);
@@ -559,14 +642,14 @@ trait ModelTrait
 
         foreach (self::$fields as $field) {
             if ($field['name'] !== $this->primaryColumn()) {
-                $sql .= $coma . ' ' . $field['name'] . ' = ' . $this->dataBase->var2str($this->{$field['name']});
+                $sql .= $coma . ' ' . $field['name'] . ' = ' . $this->var2str($this->{$field['name']});
                 if ($coma === ' SET') {
                     $coma = ', ';
                 }
             }
         }
 
-        $sql .= ' WHERE ' . $this->primaryColumn() . ' = ' . $this->dataBase->var2str($this->primaryColumnValue()) . ';';
+        $sql .= ' WHERE ' . $this->primaryColumn() . ' = ' . $this->var2str($this->primaryColumnValue()) . ';';
 
         return $this->dataBase->exec($sql);
     }
@@ -583,7 +666,7 @@ trait ModelTrait
         foreach (self::$fields as $field) {
             if (isset($this->{$field['name']})) {
                 $insertFields[] = $field['name'];
-                $insertValues[] = $this->dataBase->var2str($this->{$field['name']});
+                $insertValues[] = $this->var2str($this->{$field['name']});
             }
         }
 
@@ -624,7 +707,7 @@ trait ModelTrait
     /**
      * Devuelve la url donde ver/modificar los datos
      *
-     * @param string $type
+     * @param mixed $type
      *
      * @return string
      */

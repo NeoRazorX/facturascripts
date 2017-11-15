@@ -27,14 +27,14 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 class WidgetItemRadio extends WidgetItem
 {
     /**
-     * Accepted values for the field associated to the widget
+     * Valores aceptados por el campo asociado al widget
      *
      * @var array
      */
     public $values;
 
     /**
-     * Class constructor
+     * Constructor de la clase
      */
     public function __construct()
     {
@@ -45,19 +45,18 @@ class WidgetItemRadio extends WidgetItem
     }
 
     /**
-     * Loads the attributes structure from a XML file
+     * Carga la estructura de atributos en base a un archivo XML
      *
      * @param \SimpleXMLElement $column
      * @param \SimpleXMLElement $widgetAtributes
      */
-    protected function loadFromXMLColumn($column, $widgetAtributes)
-    {
+    protected function loadFromXMLColumn($column, $widgetAtributes) {
         parent::loadFromXMLColumn($column, $widgetAtributes);
         $this->getAttributesGroup($this->values, $column->widget->values);
     }
 
     /**
-     * Loads the attributes structure from the database
+     * Carga la estructura de atributos en base a la base de datos
      *
      * @param array $column
      */
@@ -68,7 +67,8 @@ class WidgetItemRadio extends WidgetItem
     }
 
     /**
-     * Generates the HTML code to display the data in the List controller
+     * Genera el código html para la visualización de los datos en el
+     * controlador List
      *
      * @param string $value
      *
@@ -80,7 +80,8 @@ class WidgetItemRadio extends WidgetItem
     }
 
     /**
-     * Generates the HTML code to display and edit  the data in the Edit / EditList controller
+     * Genera el código html para la visualización y edición de los datos
+     * en el controlador Edit / EditList
      *
      * @param string $value
      *

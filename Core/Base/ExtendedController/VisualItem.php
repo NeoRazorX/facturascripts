@@ -22,42 +22,42 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base;
 
 /**
- * Basic/common structure for the visual header
+ * Estructura básica/común para cabecera visual
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class VisualItem
 {
     /**
-     * Translation engine
+     * Motor de traducción.
      *
      * @var Base\Translator
      */
     protected $i18n;
 
     /**
-     * Column identifier
+     * Identificador de la columna
      *
      * @var string
      */
     public $name;
 
     /**
-     * Group tag or title
+     * Etiqueta o título del grupo
      *
      * @var string
      */
     public $title;
 
     /**
-     * $tile link URL
+     * URL de salto si hacen click en $title
      *
      * @var string
      */
     public $titleURL;
 
     /**
-     * Number of columns that it occupies on display
+     * Número de columnas que ocupa en su visualización
      * ([1, 2, 4, 6, 8, 10, 12])
      *
      * @var int
@@ -65,15 +65,14 @@ class VisualItem
     public $numColumns;
 
     /**
-     * Posición en la que se visualizá ( from lowes to highest )
-     * Display positoin (
+     * Posición en la que se visualizá ( de menor a mayor )
      *
      * @var int
      */
     public $order;
 
     /**
-     * Class construct and initialization
+     * Construye e inicializa la clase.
      */
     public function __construct()
     {
@@ -86,7 +85,7 @@ class VisualItem
     }
 
     /**
-     * Loads the attributes structure from a XML file
+     * Carga la estructura de atributos en base a un archivo XML
      *
      * @param \SimpleXMLElement $items
      */
@@ -109,7 +108,7 @@ class VisualItem
     }
 
     /**
-     * Loads the attributes structure from a JSON file
+     * Carga la estructura de atributos en base un archivo JSON
      *
      * @param array $items
      */
@@ -123,7 +122,7 @@ class VisualItem
     }
 
     /**
-     * Generates the HTML code to display the header for the visual element
+     * Genera el código html para visualizar la cabecera del elemento visual
      *
      * @param string $value
      *

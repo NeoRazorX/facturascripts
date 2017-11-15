@@ -16,36 +16,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controller to list the items in the Asiento model
+ * Description of ListAsiento
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class ListAsiento extends ExtendedController\ListController
 {
-
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addView('FacturaScripts\Core\Model\Asiento', 'ListAsiento');
-        $this->addSearchFields('ListAsiento', ['numero', 'concepto']);
-
-        $this->addFilterDatePicker('ListAsiento', 'date', 'date', 'fecha');
-        $this->addFilterNumber('ListAsiento', 'amount', 'amount', 'importe');
-        $this->addFilterSelect('ListAsiento', 'codejercicio', 'ejercicios', '', 'nombre');
-
-        $this->addOrderBy('ListAsiento', 'numero', 'number');
-        $this->addOrderBy('ListAsiento', 'fecha', 'date', 2); /// forzamos el orden por defecto fecha desc
-    }
-
-    /**
-     * Returns basic page attributes
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */
@@ -57,5 +41,19 @@ class ListAsiento extends ExtendedController\ListController
         $pagedata['menu'] = 'accounting';
 
         return $pagedata;
+    }
+
+    /**
+     * Procedimiento para insertar vistas en el controlador
+     */
+    protected function createViews()
+    {
+        $this->addView('FacturaScripts\Core\Model\Asiento', 'ListAsiento');
+        $this->addSearchFields('ListAsiento', ['numero', 'concepto']);
+        
+        $this->addFilterSelect('ListAsiento', 'codejercicio', 'ejercicios', '', 'nombre');
+
+        $this->addOrderBy('ListAsiento', 'numero', 'number');
+        $this->addOrderBy('ListAsiento', 'fecha', 'date', 2); /// forzamos el orden por defecto fecha desc
     }
 }

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Initial description for the controller ListRol
+ * Definición inicial para el controlador ListRol
  *
  * @author Artex Trading sa <jferrer@artextrading.com>  
 -->
@@ -31,4 +31,4 @@
             <widget type="text" fieldname="descripcion" />
         </column>
     </columns>
-</view>
+ </view>

@@ -20,14 +20,14 @@
 namespace FacturaScripts\Core\App;
 
 /**
- * App description
+ * Description of App
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class AppCron extends App
 {
     /**
-     * Runs cron.
+     * Ejecuta el cron.
      *
      * @return boolean
      */
@@ -35,8 +35,8 @@ class AppCron extends App
     {
         $this->response->headers->set('Content-Type', 'text/plain');
         if ($this->dataBase->connected()) {
-            /// implement here
-            /// return true for test purposes
+            /// implementar aquí
+            /// devolvemos true, para los test
             return true;
         }
 

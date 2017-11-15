@@ -53,10 +53,12 @@ class IPFilter
 
     /**
      * IPFilter constructor.
+     *
+     * @param string $folder
      */
-    public function __construct()
+    public function __construct($folder = '')
     {
-        $this->filePath = FS_FOLDER . '/Cache/ip.list';
+        $this->filePath = $folder . '/Cache/ip.list';
         $this->ipList = [];
 
         if (file_exists($this->filePath)) {

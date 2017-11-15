@@ -29,42 +29,43 @@ use FacturaScripts\Core\Base\NumberTools;
 class WidgetItemNumber extends WidgetItem
 {
     /**
-     * Class that formats the display and provides tools to manage numeric values
+     * Clase para formatear las visualizaciones y herramientas
+     * para tratar los valores numéricos
      *
      * @var NumberTools
      */
     private static $numberTools;
 
     /**
-     * Number of decimals for numeric types
+     * Numero de decimales para tipos numéricos
      *
      * @var int
      */
     public $decimal;
 
     /**
-     * Increment/decrement value
+     * Valor del incremento/decremento
      *
      * @var string
      */
     public $step;
 
     /**
-     * Maximum value
+     * Valor máximo
      *
      * @var string
      */
     public $max;
 
     /**
-     * Minimum value
+     * Valor mínimo
      *
      * @var string
      */
     public $min;
 
     /**
-     * Class constructor
+     * Constructor de la clase
      */
     public function __construct()
     {
@@ -82,13 +83,12 @@ class WidgetItemNumber extends WidgetItem
     }
 
     /**
-     * Loads the attributes structure from a XML file
+     * Carga la estructura de atributos en base a un archivo XML
      *
      * @param \SimpleXMLElement $column
      * @param \SimpleXMLElement $widgetAtributes
      */
-    protected function loadFromXMLColumn($column, $widgetAtributes)
-    {
+    protected function loadFromXMLColumn($column, $widgetAtributes) {
         parent::loadFromXMLColumn($column, $widgetAtributes);
 
         $this->decimal = (int) $widgetAtributes->decimal;
@@ -98,7 +98,7 @@ class WidgetItemNumber extends WidgetItem
     }
 
     /**
-     * Loads the attributes structure from a the database
+     * Carga la estructura de atributos en base a la base de datos
      *
      * @param \SimpleXMLElement $column
      */
@@ -113,10 +113,10 @@ class WidgetItemNumber extends WidgetItem
     }
 
     /**
-     * Generates the HTML code for widget special attributes such as:
+     * Genera el código html para atributos especiales de widgets numericos como:
      * step
-     * maximum value
-     * minimum value
+     * valor mínimo
+     * valor máximo
      *
      * @return string
      */
@@ -130,7 +130,8 @@ class WidgetItemNumber extends WidgetItem
     }
 
     /**
-     * Generates the HTML code to display the data in the List controller
+     * Genera el código html para la visualización de los datos en el
+     * controlador List
      *
      * @param string $value
      *
@@ -148,7 +149,8 @@ class WidgetItemNumber extends WidgetItem
     }
 
     /**
-     * Generates the HTML code to display and edit  the data in the Edit / EditList controller
+     * Genera el código html para la visualización y edición de los datos
+     * en el controlador Edit / EditList
      *
      * @param string $value
      *

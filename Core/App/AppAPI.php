@@ -22,14 +22,14 @@ namespace FacturaScripts\Core\App;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * App description
+ * Description of App
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class AppAPI extends App
 {
     /**
-     * Runs the API.
+     * Ejecuta la API.
      *
      * @return boolean
      */
@@ -53,7 +53,7 @@ class AppAPI extends App
     }
 
     /**
-     * Selects the API version if it is supported
+     * Selecciona la versión de API si está soportada
      *
      * @return bool
      */
@@ -70,7 +70,7 @@ class AppAPI extends App
     }
 
     /**
-     * Selects the resource
+     * Selecciona recurso
      *
      * @return bool
      */
@@ -95,7 +95,7 @@ class AppAPI extends App
     }
 
     /**
-     * Process the resource, allowing POST/PUT/DELETE/GET ALL actions
+     * Procesa recurso, permitiendo hacer POST/PUT/DELETE/GET ALL
      *
      * @param string $modelName
      *
@@ -138,7 +138,7 @@ class AppAPI extends App
     }
 
     /**
-     * Process resource with parameters
+     * Procesa recurso con parametro
      *
      * @param string $modelName
      * @param string $cod
@@ -179,14 +179,14 @@ class AppAPI extends App
     }
 
     /**
-     * Load resource map
+     * Obtiene mapa de recursos
      *
      * @return array
      */
     private function getResourcesMap()
     {
         $resources = [];
-        foreach (scandir(FS_FOLDER . '/Dinamic/Model', SCANDIR_SORT_ASCENDING) as $fName) {
+        foreach (scandir($this->folder . '/Dinamic/Model', SCANDIR_SORT_ASCENDING) as $fName) {
             if (substr($fName, -4) == '.php') {
                 $modelName = substr($fName, 0, -4);
 
@@ -209,7 +209,7 @@ class AppAPI extends App
     }
 
     /**
-     * Expose resource
+     * Expone recurso
      *
      * @param array $map
      */

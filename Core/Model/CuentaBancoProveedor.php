@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Model;
  */
 class CuentaBancoProveedor
 {
-
     use Base\ModelTrait {
         save as private saveTrait;
     }
@@ -65,7 +65,7 @@ class CuentaBancoProveedor
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'cuentasbcopro';
     }
@@ -111,8 +111,8 @@ class CuentaBancoProveedor
                 /// si esta cuenta es la principal, desmarcamos las demás
                 $sql = 'UPDATE ' . $this->tableName()
                     . ' SET principal = false'
-                    . ' WHERE codproveedor = ' . $this->dataBase->var2str($this->codproveedor)
-                    . ' AND codcuenta <> ' . $this->dataBase->var2str($this->codcuenta) . ';';
+                    . ' WHERE codproveedor = ' . $this->var2str($this->codproveedor)
+                    . ' AND codcuenta <> ' . $this->var2str($this->codcuenta) . ';';
                 $allOK = $this->dataBase->exec($sql);
             }
 
@@ -131,7 +131,7 @@ class CuentaBancoProveedor
     {
         $this->descripcion = self::noHtml($this->descripcion);
         if (!$this->testBankAccount()) {
-            ///$this->miniLog->alert($this->i18n->trans('error-incorrect-bank-details'));
+            $this->miniLog->alert($this->i18n->trans('error-incorrect-bank-details'));
 
             return false;
         }

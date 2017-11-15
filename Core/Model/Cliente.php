@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -27,7 +28,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class Cliente extends Base\Persona
 {
-
     use Base\ModelTrait {
         __construct as private traitConstruct;
         clear as private traitClear;
@@ -72,7 +72,7 @@ class Cliente extends Base\Persona
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'clientes';
     }
@@ -126,10 +126,10 @@ class Cliente extends Base\Persona
         if ($cifnif === '' && $razon !== '') {
             $razon = self::noHtml(mb_strtolower($razon, 'UTF8'));
             $sql = 'SELECT * FROM ' . $this->tableName()
-                . " WHERE cifnif = '' AND lower(razonsocial) = " . $this->dataBase->var2str($razon) . ';';
+                . " WHERE cifnif = '' AND lower(razonsocial) = " . $this->var2str($razon) . ';';
         } else {
             $cifnif = mb_strtolower($cifnif, 'UTF8');
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE lower(cifnif) = ' . $this->dataBase->var2str($cifnif) . ';';
+            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE lower(cifnif) = ' . $this->var2str($cifnif) . ';';
         }
 
         $data = $this->dataBase->select($sql);
@@ -316,5 +316,33 @@ class Cliente extends Base\Persona
         }
 
         return $clilist;
+    }
+    
+    /**
+     * Devuelve la url donde ver/modificar los datos
+     *
+     * @param mixed $type
+     *
+     * @return string
+     */
+    public function url($type = 'auto')
+    {
+        $result = 'index.php?page=';
+        switch ($type) {
+            case 'edit':
+                $value = $this->primaryColumnValue();
+                $result .= 'PanelCliente' . '&code=' . $value;
+                break;
+
+            case 'new':
+                $result .= 'PanelCliente';
+                break;
+
+            default:
+                $result = $this->traitURL($type);
+                break;
+        }
+
+        return $result;
     }
 }

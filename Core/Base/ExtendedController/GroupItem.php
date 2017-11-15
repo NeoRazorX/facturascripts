@@ -27,47 +27,21 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 class GroupItem extends VisualItem implements VisualItemInterface
 {
     /**
-     * Icon used as the value or accompaining the group title
+     * Icono que se usa como valor o acompañante del título de grupo
      *
      * @var string
      */
     public $icon;
 
     /**
-     * Define the columns that the group includes
+     * Definición de columnas que incluye el grupo
      *
      * @var array
      */
     public $columns;
 
     /**
-     * Create and load the group structure from a XML file
-     *
-     * @param \SimpleXMLElement $group
-     * @return GroupItem
-     */
-    public static function newFromXMLGroup($group)
-    {
-        $result = new GroupItem();
-        $result->loadFromXML($group);
-        return $result;
-    }
-
-    /**
-     * Create and load the group structure from the database
-     *
-     * @param array $group
-     * @return GroupItem
-     */
-    public static function newFromJSONGroup($group)
-    {
-        $result = new GroupItem();
-        $result->loadFromJSON($group);
-        return $result;
-    }    
-    
-    /**
-     * Class construct and initialization
+     * Construye e inicializa la clase.
      */
     public function __construct()
     {
@@ -76,9 +50,9 @@ class GroupItem extends VisualItem implements VisualItemInterface
         $this->icon = null;
         $this->columns = [];
     }
-
+    
     /**
-     * Sorts the columns
+     * Función para la ordenación de columnas
      *
      * @param ColumnItem $column1
      * @param ColumnItem $column2
@@ -89,31 +63,29 @@ class GroupItem extends VisualItem implements VisualItemInterface
         if ($column1->order == $column2->order) {
             return 0;
         }
-
+        
         return ($column1->order < $column2->order) ? -1 : 1;
     }
 
     /**
-     * Loads the groups from the columns
+     * Carga los grupos desde las columnas
      *
      * @param \SimpleXMLElement $group
      */
     public function loadFromXMLColumns($group)
     {
-        if (isset($group->column)) {
-            foreach ($group->column as $column) {
-                $columnItem = new ColumnItem();
-                $columnItem->loadFromXML($column);
+        foreach ($group->column as $column) {
+            $columnItem = new ColumnItem();
+            $columnItem->loadFromXML($column);
 
-                $this->columns[$columnItem->name] = $columnItem;
-                unset($columnItem);
-            }
-            uasort($this->columns, ['self', 'sortColumns']);
+            $this->columns[$columnItem->name] = $columnItem;
+            unset($columnItem);
         }
+        uasort($this->columns, ['self', 'sortColumns']);
     }
 
     /**
-     * Loads the attributes structure from a XML file
+     * Carga la estructura de atributos en base a un archivo XML
      *
      * @param \SimpleXMLElement $group
      */
@@ -127,7 +99,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Loads the attributes structure from a JSON file
+     * Carga la estructura de atributos en base un archivo JSON
      *
      * @param array $group
      */
@@ -147,7 +119,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Returns the HTML code to display an icon
+     * Obtiene el código html para visualizar un icono
      *
      * @return string
      */
@@ -165,7 +137,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Generates the HTML code to display the visual element's header
+     * Genera el código html para visualizar la cabecera del elemento visual
      *
      * @param string $value
      *

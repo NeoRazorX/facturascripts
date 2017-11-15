@@ -27,14 +27,14 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 class WidgetItemSelect extends WidgetItem
 {
     /**
-     * Accepted values for the field associated to the widget
+     * Valores aceptados por el campo asociado al widget
      *
      * @var array
      */
     public $values;
 
     /**
-     * Class constructor
+     * Constructor de la clase
      */
     public function __construct()
     {
@@ -45,19 +45,18 @@ class WidgetItemSelect extends WidgetItem
     }
 
     /**
-     * Loads the attributes structure from a XML file
+     * Carga la estructura de atributos en base a un archivo XML
      *
      * @param \SimpleXMLElement $column
      * @param \SimpleXMLElement $widgetAtributes
      */
-    protected function loadFromXMLColumn($column, $widgetAtributes)
-    {
+    protected function loadFromXMLColumn($column, $widgetAtributes) {
         parent::loadFromXMLColumn($column, $widgetAtributes);
         $this->getAttributesGroup($this->values, $column->widget->values);
     }
 
     /**
-     * Loads the attributes structure from the database
+     * Carga la estructura de atributos en base a la base de datos
      *
      * @param array $column
      */
@@ -68,7 +67,7 @@ class WidgetItemSelect extends WidgetItem
     }
 
     /**
-     * Loads the value list from an array with value and title (description)
+     * Carga la lista de valores según un array con codigo y descripción
      *
      * @param array $rows
      */
@@ -85,10 +84,7 @@ class WidgetItemSelect extends WidgetItem
     }
 
     /**
-     * Loads the value list from a given array.
-     * The array must have one of the two following structures:
-     * - If it's a value array, it must uses the value of each element as title and value
-     * - If it's a multidimensional array, the indexes value and title must be set for each element
+     * Carga la lista de valores según un array de valores
      *
      * @param array $values
      */
@@ -96,11 +92,6 @@ class WidgetItemSelect extends WidgetItem
     {
         $this->values = [];
         foreach ($values as $value) {
-            if (is_array($value)) {
-                $this->values[] = ['title' => $value['title'], 'value' => $value['value']];
-                continue;
-            }
-
             $item = [];
             $item['value'] = $value;
             $item['title'] = $value;
@@ -110,7 +101,8 @@ class WidgetItemSelect extends WidgetItem
     }
 
     /**
-     * Generates the HTML code to display the data in the List controller
+     * Genera el código html para la visualización de los datos en el
+     * controlador List
      *
      * @param string $value
      *
@@ -126,7 +118,8 @@ class WidgetItemSelect extends WidgetItem
     }
 
     /**
-     * Generates the HTML code to display and edit  the data in the Edit / EditList controller
+     * Genera el código html para la visualización y edición de los datos
+     * en el controlador Edit / EditList
      *
      * @param string $value
      *
@@ -135,11 +128,6 @@ class WidgetItemSelect extends WidgetItem
     public function getEditHTML($value)
     {
         $specialAttributes = $this->specialAttributes();
-
-        if ($this->readOnly) {
-            return $this->standardEditHTMLWidget($value, $specialAttributes, '', 'text');
-        }
-
         $fieldName = '"' . $this->fieldName . '"';
         $html = $this->getIconHTML()
             . '<select name=' . $fieldName . ' id=' . $fieldName

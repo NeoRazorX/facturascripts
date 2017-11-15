@@ -17,11 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// preliminary checks
+/// comprobaciones previas
 if (file_exists(__DIR__ . '/config.php')) {
     /**
-     * If the configuration file exists it means that it is already installed,
-     * redirects to the index.
+     * Si hay fichero de configuración significa que ya se ha instalado,
+     * así que redirigimos al index.
      */
     header('Location: index.php');
     die('');
@@ -34,13 +34,12 @@ if (!file_exists(__DIR__ . '/vendor')) {
 }
 
 require_once __DIR__ . '/vendor/autoload.php';
-define('FS_FOLDER', __DIR__);
 
 use FacturaScripts\Core\Base\Translator;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Returns an error array with the known situations
+ * Devuelve un array de errores con las situaciones conocidas
  *
  * @param $errors
  * @param $i18n
@@ -63,33 +62,42 @@ function searchErrors(&$errors, &$i18n)
 }
 
 /**
- * Returns the corresponding font-awesome value to the @param parameter (true or false)
+ * Devuelve un array de idiomas, donde la key es el nombre del archivo JSON y
+ * el value es su correspondiente traducción.
  *
- * @param boolean $isOk
- * @return string
+ * @param $i18n
+ *
+ * @return array
  */
-function checkRequirement($isOk)
+function getLanguages(&$i18n)
 {
-    return $isOk ? 'fa-check text-success' : 'fa-ban text-danger';
+    $languages = [];
+
+    foreach (scandir(__DIR__ . '/Core/Translation', SCANDIR_SORT_ASCENDING) as $fileName) {
+        if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
+            $key = substr($fileName, 0, -5);
+            $languages[$key] = $i18n->trans('languages-' . substr($fileName, 0, -5));
+        }
+    }
+
+    return $languages;
 }
 
 /**
- * Returns the user language to show the proper installation language in the selector.
- * When the JSON file doesn't exist, returns en_EN
- *
+ * Devuelve el lenguaje del usuario para mostrar en el selector el idioma correcto
+ * para la instalación
  * @return string
  */
 function getUserLanguage()
 {
     $dataLanguage = explode(';', \filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'));
-    $userLanguage = str_replace('-', '_', explode(',', $dataLanguage[0])[0]);
-    $translationExists = file_exists(__DIR__ . '/Core/Translation/' . $userLanguage . '.json');
-    return ($translationExists) ? $userLanguage : 'en_EN';
+    $userLanguage = explode(',', $dataLanguage[0])[0];
+    return str_replace('-', '_', $userLanguage);
 }
 
 /**
  * Timezones list with GMT offset
- *
+ * 
  * @return array
  * @link http://stackoverflow.com/a/9328760
  */
@@ -106,9 +114,9 @@ function get_timezone_list()
 }
 
 /**
- * Tries to perform the database connection,
- * if succeeded returns true, false if not.
- * When false, the error is stored in $errors
+ * Se intenta realizar la conexión a la base de datos,
+ * si se ha realizado se devuelve true, sino false.
+ * En el caso que sea false, $errors contiene el error
  *
  * @param $errors
  * @param $i18n
@@ -152,9 +160,9 @@ function dbConnect(&$errors, &$i18n)
 }
 
 /**
- * Tries to perform the MYSQL database connection,
- * if succeeded returns true, false if not.
- * When false, the error is stored in $errors
+ * Se intenta realizar la conexión a la base de datos MySQL,
+ * si se ha realizado se devuelve true, sino false.
+ * En el caso que sea false, $errors contiene el error
  *
  * @param $errors
  * @param $dbData
@@ -169,12 +177,12 @@ function testMysql(&$errors, $dbData)
         ini_set('mysqli.default_socket', filter_input(INPUT_POST, 'mysql_socket'));
     }
 
-    // Omit the DB name because it will be checked on a later stage
+    // Omitimos el valor del nombre de la BD porque lo comprobaremos más tarde
     $connection = new mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', (int) $dbData['port']);
     if ($connection->connect_error) {
         $errors[] = (string) $connection->connect_error;
     } else {
-        // Check that the DB exists, if it doesn't, we create a new one
+        // Comprobamos que la BD exista, de lo contrario la creamos
         $dbSelected = mysqli_select_db($connection, $dbData['name']);
         if ($dbSelected) {
             $done = true;
@@ -192,9 +200,9 @@ function testMysql(&$errors, $dbData)
 }
 
 /**
- * Tries to perform the PostgreSQL database connection,
- * if succeeded returns true, false if not.
- * When false, the error is stored in $errors
+ * Se intenta realizar la conexión a la base de datos PostgreSQL,
+ * si se ha realizado se devuelve true, sino false.
+ * En el caso que sea false, $errors contiene el error
  *
  * @param $errors
  * @param $dbData
@@ -207,7 +215,7 @@ function testPostgreSql(&$errors, $dbData)
 
     $connection = pg_connect('host=' . $dbData['host'] . ' port=' . $dbData['port'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass']);
     if ($connection) {
-        // Check that the DB exists, if it doesn't, we create a new one
+        // Comprobamos que la BD exista, de lo contrario la creamos
         $connection2 = pg_connect('host=' . $dbData['host'] . ' port=' . $dbData['port'] . ' dbname=' . $dbData['name'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass']);
         if ($connection2) {
             $done = true;
@@ -225,13 +233,14 @@ function testPostgreSql(&$errors, $dbData)
 }
 
 /**
- * If the needed directories are created or already exist, returns true. False when not.
+ * Si se han creado las carpetas necesarias, o ya existen
+ * se devuelve true, sino false
  *
  * @return bool
  */
 function createFolders()
 {
-    // If they already exist, we can return true
+    // En caso que ya existan previamente, podemos devolver true
     if (is_dir('Plugins') && is_dir('Dinamic') && is_dir('Cache')) {
         return true;
     }
@@ -243,8 +252,8 @@ function createFolders()
 }
 
 /**
- * Saves the configuration to config.php
- * returns true when succeeded, false when not.
+ * Guarda la configuración en config.php,
+ * devuelve true en caso afirmativo, y sino false.
  *
  * @return bool
  */
@@ -263,15 +272,8 @@ function saveInstall()
         fwrite($file, "define('FS_DB_NAME', '" . filter_input(INPUT_POST, 'db_name') . "');\n");
         fwrite($file, "define('FS_DB_USER', '" . filter_input(INPUT_POST, 'db_user') . "');\n");
         fwrite($file, "define('FS_DB_PASS', '" . filter_input(INPUT_POST, 'db_pass') . "');\n");
-        fwrite($file, "define('FS_DB_FOREIGN_KEYS', true);\n");
-        fwrite($file, "define('FS_DB_INTEGER', 'INTEGER');\n");
-        fwrite($file, "define('FS_DB_TYPE_CHECK', true);\n");
-        fwrite($file, "define('FS_CACHE_HOST', '" . filter_input(INPUT_POST, 'memcache_host') . "');\n");
-        fwrite($file, "define('FS_CACHE_PORT', '" . filter_input(INPUT_POST, 'memcache_port') . "');\n");
-        fwrite($file, "define('FS_CACHE_PREFIX', '" . filter_input(INPUT_POST, 'memcache_prefix') . "');\n");
-        fwrite($file, "define('FS_MYDOCS', '');\n");
         if (filter_input(INPUT_POST, 'db_type') === 'MYSQL' && filter_input(INPUT_POST, 'mysql_socket') !== '') {
-            fwrite($file, "\nini_set('mysqli.default_socket', '" . filter_input(INPUT_POST, 'mysql_socket') . "');\n");
+            fwrite($file, "ini_set('mysqli.default_socket', '" . filter_input(INPUT_POST, 'mysql_socket') . "');\n");
         }
         fwrite($file, "\n");
         fclose($file);
@@ -283,50 +285,38 @@ function saveInstall()
 }
 
 /**
- * Renders the views and returns the response
+ * Renderiza la vista y devuelve la respuesta
  *
  * @param $templateVars
  */
 function renderHTML(&$templateVars)
 {
-    /// Load the template engine
+    /// cargamos el motor de plantillas
     $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/Core/View');
     $twig = new Twig_Environment($twigLoader);
 
-    /// Generate and return the HTML
+    /// generamos y volcamos el html
     $response = new Response($twig->render('Installer/Install.html', $templateVars), Response::HTTP_OK);
     $response->send();
 }
 
 /**
- * Return a random string
- *
- * @param int $length
- *
- * @return bool|string
- */
-function randomString($length = 20)
-{
-    return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
-}
-
-/**
- * Main installer function
+ * Función principal del instalador
  *
  * @return int
  */
 function installerMain()
 {
+    $errors = [];
+
     if (filter_input(INPUT_POST, 'fs_lang')) {
-        define('FS_LANG', filter_input(INPUT_POST, 'fs_lang'));
+        $i18n = new Translator(__DIR__, filter_input(INPUT_POST, 'fs_lang'));
     } elseif (filter_input(INPUT_GET, 'fs_lang')) {
-        define('FS_LANG', filter_input(INPUT_GET, 'fs_lang'));
+        $i18n = new Translator(__DIR__, filter_input(INPUT_GET, 'fs_lang'));
     } else {
-        define('FS_LANG', getUserLanguage());
+        $i18n = new Translator(__DIR__, getUserLanguage());
     }
 
-    $i18n = new Translator();
-    $errors = [];
     searchErrors($errors, $i18n);
 
     if (empty($errors) && filter_input(INPUT_POST, 'db_type')) {
@@ -337,20 +327,13 @@ function installerMain()
         }
     }
 
-    /// Pack the variables to handover to the template engine
+    /// empaquetamos las variables a pasar el motor de plantillas
     $templateVars = [
         'errors' => $errors,
-        'requirements' => [
-            'mb_substr' => checkRequirement(function_exists('mb_substr')),
-            'SimpleXML' => checkRequirement(extension_loaded('simplexml')),
-            'openSSL' => checkRequirement(extension_loaded('openssl')),
-            'Zip' => checkRequirement(extension_loaded('zip'))
-        ],
         'i18n' => $i18n,
-        'languages' => $i18n->getAvailableLanguages(),
+        'languages' => getLanguages($i18n),
         'timezone' => get_timezone_list(),
         'license' => file_get_contents(__DIR__ . '/COPYING'),
-        'memcache_prefix' => randomString(8),
     ];
     renderHTML($templateVars);
 }

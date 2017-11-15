@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Model;
  */
 class Atributo
 {
-
     use Base\ModelTrait {
         save as private saveTrait;
     }
@@ -49,7 +49,7 @@ class Atributo
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'atributos';
     }
@@ -86,10 +86,10 @@ class Atributo
      */
     public function getByNombre($nombre, $minusculas = false)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE nombre = ' . $this->dataBase->var2str($nombre) . ';';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE nombre = ' . $this->var2str($nombre) . ';';
         if ($minusculas) {
             $sql = 'SELECT * FROM ' . $this->tableName()
-                . ' WHERE lower(nombre) = ' . $this->dataBase->var2str(mb_strtolower($nombre, 'UTF8') . ';');
+                . ' WHERE lower(nombre) = ' . $this->var2str(mb_strtolower($nombre, 'UTF8') . ';');
         }
 
         $data = $this->dataBase->select($sql);

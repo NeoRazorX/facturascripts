@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\ExportInterface;
 use FacturaScripts\Core\Base\NumberTools;
-use FacturaScripts\Core\Base\Translator;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -36,18 +36,11 @@ class PDFExport implements ExportInterface
     const LIST_LIMIT = 1000;
 
     /**
-     * Class with number tools (to format numbers)
+     * Clase para formatear números
      *
      * @var NumberTools
      */
     private $numberTools;
-
-    /**
-     * Translator object
-     *
-     * @var Translator
-     */
-    private $i18n;
 
     /**
      * PDFExport constructor.
@@ -55,11 +48,10 @@ class PDFExport implements ExportInterface
     public function __construct()
     {
         $this->numberTools = new NumberTools();
-        $this->i18n = new Translator();
     }
 
     /**
-     * New document
+     * Nuevo documento
      *
      * @param $model
      * @return string
@@ -81,7 +73,7 @@ class PDFExport implements ExportInterface
     }
 
     /**
-     * New document list
+     * Nueva lista de documentos
      *
      * @param $model
      * @param array $where
@@ -95,15 +87,12 @@ class PDFExport implements ExportInterface
     {
         $orientation = 'portrait';
         $tableCols = [];
-        $tableColsTitle = [];
         $tableOptions = ['cols' => []];
-        $tableData = [];
 
-        /// Get the columns
+        /// obtenemos las columnas
         foreach ($columns as $col) {
             if ($col->display != 'none') {
                 $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
-                $tableColsTitle[$col->widget->fieldName] = $this->i18n->trans($col->title);
                 $tableOptions['cols'][$col->widget->fieldName] = [
                     'justification' => $col->display,
                     'col-type' => $col->widget->type,
@@ -120,14 +109,11 @@ class PDFExport implements ExportInterface
         $pdf->addInfo('Producer', 'FacturaScripts');
 
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
-        if (empty($cursor)) {
-            $pdf->ezTable($tableData, $tableColsTitle, '', $tableOptions);
-        }
         while (!empty($cursor)) {
             $tableData = $this->getTableData($cursor, $tableCols, $tableOptions);
-            $pdf->ezTable($tableData, $tableColsTitle, '', $tableOptions);
+            $pdf->ezTable($tableData, $tableCols, '', $tableOptions);
 
-            /// Advance within the results
+            /// avanzamos en los resultados
             $offset += self::LIST_LIMIT;
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
@@ -136,7 +122,7 @@ class PDFExport implements ExportInterface
     }
 
     /**
-     * Returns the table data
+     * Devuelvo los datos de la tabla
      *
      * @param array $cursor
      * @param array $tableCols
@@ -148,22 +134,15 @@ class PDFExport implements ExportInterface
     {
         $tableData = [];
 
-        /// Get the data
+        /// obtenemos los datos
         foreach ($cursor as $key => $row) {
             foreach ($tableCols as $col) {
-                $value = '';
-                if (isset($row->{$col})) {
-                    $value = $row->{$col};
+                $value = $row->{$col};
 
-                    if (in_array($tableOptions['cols'][$col]['col-type'], ['money', 'number'])) {
-                        $value = $this->numberTools->format($value, 2);
-                    } elseif (is_string($value)) {
-                        $value = $this->fixHtml($value);
-                    } elseif (is_bool($value)) {
-                        $value = $value == 1 ? $this->i18n->trans('enabled') : $this->i18n->trans('disabled');
-                    } elseif (is_null($value)) {
-                        $value = '';
-                    }
+                if (in_array($tableOptions['cols'][$col]['col-type'], ['money', 'number'])) {
+                    $value = $this->numberTools->format($value, 2);
+                } elseif (is_string($value)) {
+                    $value = $this->fixHtml($value);
                 }
 
                 $tableData[$key][$col] = $value;
@@ -174,7 +153,7 @@ class PDFExport implements ExportInterface
     }
 
     /**
-     * Assigns the header
+     * Asigna la cabecera
      *
      * @param Response $response
      */

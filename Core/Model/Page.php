@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Model;
  */
 class Page
 {
-
     use Base\ModelTrait;
 
     /**
@@ -84,7 +84,7 @@ class Page
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'fs_pages';
     }
@@ -121,5 +121,25 @@ class Page
     public function url()
     {
         return 'index.php?page=' . $this->name;
+    }
+
+    /**
+     * Devuelve True si es la página por defecto, sino False
+     *
+     * @return bool
+     */
+    public function isDefault()
+    {
+        return $this->name === $this->defaultItems->defaultPage();
+    }
+
+    /**
+     * Devuelve True si es la página que se está mostrando, sino False
+     *
+     * @return bool
+     */
+    public function showing()
+    {
+        return $this->name === $this->defaultItems->showingPage();
     }
 }

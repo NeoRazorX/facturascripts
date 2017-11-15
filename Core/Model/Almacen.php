@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,7 +27,6 @@ namespace FacturaScripts\Core\Model;
  */
 class Almacen
 {
-
     use Base\ModelTrait;
     use Base\ContactInformation;
 
@@ -63,7 +63,7 @@ class Almacen
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'almacenes';
     }

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Model\Base;
  */
 trait LineaDocumentoVenta
 {
-
     use ModelTrait {
         clear as private clearTrait;
     }
@@ -188,7 +188,7 @@ trait LineaDocumentoVenta
     /**
      * Devuelve el PVP total (con IVA, IRPF y recargo)
      *
-     * @return integer
+     * @return float|int
      */
     public function totalIva()
     {

@@ -16,39 +16,41 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controller to list the items in the User model
+ * Description of AdminUsers
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class ListUser extends ExtendedController\ListController
 {
-
+   
     /**
      * Procedimiento para insertar vistas en el controlador
      */
     protected function createViews()
     {
-        $this->addView('FacturaScripts\Core\Model\User', 'ListUser', 'users', 'fa-users');
+        $this->addView('FacturaScripts\Core\Model\User', 'ListUser', 'users');
         $this->addSearchFields('ListUser', ['nick', 'email']);
 
         $this->addOrderBy('ListUser', 'nick');
         $this->addOrderBy('ListUser', 'email');
-
+        
         /* Roles */
-        $this->addView('FacturaScripts\Core\Model\Rol', 'ListRol', 'roles', 'fa-address-card-o');
+        $this->addView('FacturaScripts\Core\Model\Rol', 'ListRol', 'roles');
         $this->addSearchFields('ListRol', ['codrol', 'descripcion']);
 
-        $this->addOrderBy('ListRol', 'descripcion', 'description');
-        $this->addOrderBy('ListRol', 'codrol', 'code');
-    }
+        $this->addOrderBy('ListRol', 'descripcion');
+        $this->addOrderBy('ListRol', 'codrol');
 
-    /**
-     * Returns basic page attributes
+    }
+    
+     /**
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */
@@ -56,7 +58,7 @@ class ListUser extends ExtendedController\ListController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'users';
-        $pagedata['icon'] = 'fa-users';
+        $pagedata['icon'] = 'fa-user-circle-o';
         $pagedata['menu'] = 'admin';
 
         return $pagedata;

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 /**
@@ -25,9 +26,8 @@ namespace FacturaScripts\Core\Lib;
  */
 class IDFiscal
 {
-
     /**
-     * Returns the default value
+     * Devuelve el valor por defecto
      *
      * @return string
      */
@@ -37,7 +37,7 @@ class IDFiscal
     }
 
     /**
-     * Returns all the available options
+     * Devuelve todas las opciones disponibles
      *
      * @return array
      */

@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -27,7 +28,6 @@ namespace FacturaScripts\Core\Model;
  */
 class Familia
 {
-
     use Base\ModelTrait;
 
     /**
@@ -63,7 +63,7 @@ class Familia
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'familias';
     }
@@ -146,7 +146,7 @@ class Familia
         }
 
         $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE madre = ' . $this->dataBase->var2str($codmadre) . ' ORDER BY descripcion ASC;';
+            . ' WHERE madre = ' . $this->var2str($codmadre) . ' ORDER BY descripcion ASC;';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
@@ -171,7 +171,7 @@ class Familia
                 if (!$fam) {
                     /// si no existe, desvinculamos
                     $sql = 'UPDATE ' . $this->tableName() . ' SET madre = null WHERE codfamilia = '
-                        . $this->dataBase->var2str($d['codfamilia']) . ':';
+                        . $this->var2str($d['codfamilia']) . ':';
                     $this->dataBase->exec($sql);
                 }
             }

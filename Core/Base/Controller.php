@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Model;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -31,7 +31,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Controller
 {
-
     /**
      * Gestor de acceso a cache.
      *
@@ -62,12 +61,6 @@ class Controller
     protected $dispatcher;
 
     /**
-     * Herramientas para trabajar con divisas.
-     * @var DivisaTools 
-     */
-    public $divisaTools;
-
-    /**
      * Empresa seleccionada.
      *
      * @var Model\Empresa|false
@@ -87,12 +80,6 @@ class Controller
      * @var MiniLog
      */
     protected $miniLog;
-
-    /**
-     * Herramientas para trabajar con números.
-     * @var NumberTools 
-     */
-    public $numberTools;
 
     /**
      * Request sobre la que podemos hacer consultas.
@@ -141,12 +128,14 @@ class Controller
     {
         $this->cache = $cache;
         $this->className = $className;
-        $this->dataBase = new DataBase();
         $this->dispatcher = new EventDispatcher();
-        $this->divisaTools = new DivisaTools();
+        $this->dataBase = new DataBase();
+
+        $empresa = new Model\Empresa();
+        $this->empresa = $empresa->getDefault();
+
         $this->i18n = $i18n;
         $this->miniLog = $miniLog;
-        $this->numberTools = new NumberTools();
         $this->request = Request::createFromGlobals();
         $this->template = $this->className . '.html';
 
@@ -190,7 +179,7 @@ class Controller
             $this->template = false;
             return true;
         }
-
+        
         $this->template = $template . '.html';
         return true;
     }
@@ -245,23 +234,6 @@ class Controller
     {
         $this->response = $response;
         $this->user = $user;
-
-        /// seleccionamos la empresa predeterminada del usuario
-        $empresaModel = new Model\Empresa();
-        $this->empresa = $empresaModel->get($user->idempresa);
-
-        /// ¿Ha marcado el usuario la página como página de inicio?
-        $defaultPage = $this->request->query->get('defaultPage', '');
-        if ($defaultPage == 'TRUE') {
-            $this->user->homepage = $this->className;
-            $this->response->headers->setCookie(new Cookie('fsHomepage', $this->user->homepage, time() + FS_COOKIES_EXPIRE));
-            $this->user->save();
-        } else if ($defaultPage == 'FALSE') {
-            $this->user->homepage = null;
-            $this->response->headers->setCookie(new Cookie('fsHomepage', $this->user->homepage, time() - FS_COOKIES_EXPIRE));
-            $this->user->save();
-        }
-
         $this->dispatcher->dispatch('pre-privateCore');
     }
 }

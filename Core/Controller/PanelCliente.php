@@ -16,45 +16,44 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Controller to edit a single item from the User model
+ * Description of PanelSettings
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class EditUser extends ExtendedController\PanelController
+class PanelCliente extends ExtendedController\PanelController
 {
-
     /**
-     * Load views
+     * Procedimiento para insertar vistas en el controlador
      */
     protected function createViews()
     {
-        /// Add all views
-        $this->addEditView('FacturaScripts\Core\Model\User', 'EditUser', 'user', 'fa-user');
-        $this->addEditListView('FacturaScripts\Core\Model\RolUser', 'EditRolUser', 'rol-user', 'fa-address-card-o');
-        $this->addListView('FacturaScripts\Core\Model\PageRule', 'ListPageRule', 'page-rule', 'fa fa-check-square');
-
-        /// Load values option to Language select input
-        $columnLangCode = $this->views['EditUser']->columnForName('lang-code');
-        $langs = [];
-        foreach ($this->i18n->getAvailableLanguages() as $key => $value) {
-            $langs[] = ['value' => $key, 'title' => $value];
-        }
-        $columnLangCode->widget->setValuesFromArray($langs);
-
-        /// Disable columns
-        $this->views['EditRolUser']->disableColumn('nick', TRUE);
-        $this->views['ListPageRule']->disableColumn('nick', TRUE);
+        $this->addEditView('FacturaScripts\Core\Model\Cliente', 'EditCliente', 'customer');
+        $this->addEditListView('FacturaScripts\Core\Model\DireccionCliente', 'EditDireccionCliente', 'addresses', 'fa-road');
+        $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'same-group');
     }
 
     /**
-     * Load view data proedure
+     * Devuele el campo $fieldName del cliente
+     *
+     * @param string $fieldName
+     *
+     * @return mixed
+     */
+    private function getClientFieldValue($fieldName)
+    {
+        $model = $this->views['EditCliente']->getModel();
+        return $model->{$fieldName};
+    }
+
+    /**
+     * Procedimiento encargado de cargar los datos a visualizar
      *
      * @param string $keyView
      * @param ExtendedController\EditView $view
@@ -62,34 +61,37 @@ class EditUser extends ExtendedController\PanelController
     protected function loadData($keyView, $view)
     {
         switch ($keyView) {
-            case 'EditUser':
+            case 'EditCliente':
                 $value = $this->request->get('code');
                 $view->loadData($value);
                 break;
 
-            case 'EditRolUser':
-                $where = [new DataBase\DataBaseWhere('nick', $this->getViewModelValue('EditUser', 'nick'))];
+            case 'EditDireccionCliente':
+                $where = [new DataBase\DataBaseWhere('codcliente', $this->getClientFieldValue('codcliente'))];
                 $view->loadData($where);
                 break;
+            
+            case 'ListCliente':
+                $codgroup = $this->getClientFieldValue('codgrupo');
 
-            case 'ListPageRule':
-                $where = [new DataBase\DataBaseWhere('nick', $this->getViewModelValue('EditUser', 'nick'))];
-                $view->loadData($where);
+                if (!empty($codgroup)) {
+                    $where = [new DataBase\DataBaseWhere('codgrupo', $codgroup)];
+                    $view->loadData($where);
+                }
                 break;
         }
     }
 
     /**
-     * Returns basic page attributes
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'user';
-        $pagedata['icon'] = 'fa-user';
-        $pagedata['menu'] = 'admin';
+        $pagedata['title'] = 'customers';
+        $pagedata['icon'] = 'fa-users';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

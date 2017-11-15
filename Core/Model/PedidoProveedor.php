@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -26,7 +27,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class PedidoProveedor
 {
-
     use Base\DocumentoCompra;
 
     /**
@@ -62,7 +62,7 @@ class PedidoProveedor
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'pedidosprov';
     }
@@ -75,19 +75,6 @@ class PedidoProveedor
     public function primaryColumn()
     {
         return 'idpedido';
-    }
-
-    /**
-     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        new Serie();
-        new Ejercicio();
-        
-        return '';
     }
 
     /**
@@ -119,10 +106,10 @@ class PedidoProveedor
     {
         $versiones = [];
 
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idoriginal = ' . $this->dataBase->var2str($this->idpedido);
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idoriginal = ' . $this->var2str($this->idpedido);
         if ($this->idoriginal) {
-            $sql .= ' OR idoriginal = ' . $this->dataBase->var2str($this->idoriginal);
-            $sql .= ' OR idpedido = ' . $this->dataBase->var2str($this->idoriginal);
+            $sql .= ' OR idoriginal = ' . $this->var2str($this->idoriginal);
+            $sql .= ' OR idpedido = ' . $this->var2str($this->idoriginal);
         }
         $sql .= 'ORDER BY fecha DESC, hora DESC;';
 
@@ -161,8 +148,8 @@ class PedidoProveedor
      */
     public function cronJob()
     {
-        $sql = 'UPDATE ' . static::tableName() . ' SET idalbaran = NULL, editable = TRUE'
-            . ' WHERE idalbaran IS NOT NULL AND NOT EXISTS(SELECT 1 FROM albaranesprov t1 WHERE t1.idalbaran = ' . static::tableName() . '.idalbaran);';
+        $sql = 'UPDATE ' . $this->tableName() . ' SET idalbaran = NULL, editable = TRUE'
+            . ' WHERE idalbaran IS NOT NULL AND NOT EXISTS(SELECT 1 FROM albaranesprov t1 WHERE t1.idalbaran = ' . $this->tableName() . '.idalbaran);';
         $this->dataBase->exec($sql);
     }
 }

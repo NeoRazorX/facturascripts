@@ -32,7 +32,7 @@ use Twig_Environment;
 use Twig_Loader_Filesystem;
 
 /**
- * App description
+ * Description of App
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -40,7 +40,7 @@ class AppController extends App
 {
 
     /**
-     * Controller loaded
+     * Controlador cargado.
      *
      * @var Controller
      */
@@ -54,7 +54,7 @@ class AppController extends App
     private $debugBar;
 
     /**
-     * Load user's menu
+     * Para gestionar el menú del usuario
      *
      * @var MenuManager
      */
@@ -79,7 +79,7 @@ class AppController extends App
     }
 
     /**
-     * Select and run the corresponding controller.
+     * Selecciona y ejecuta el controlador pertinente.
      *
      * @return boolean
      */
@@ -96,7 +96,7 @@ class AppController extends App
             $this->renderHtml('Login/Login.html');
         } else {
             /// Obtenemos el nombre del controlador a cargar
-            $pageName = $this->request->query->get('page', $this->getDefaultController());
+            $pageName = $this->request->query->get('page', 'AdminHome');
             $this->loadController($pageName);
 
             /// devolvemos true, para los test
@@ -107,20 +107,9 @@ class AppController extends App
     }
 
     /**
-     * Devuelve el controlador por defecto, si no hay ninguno asignado, devuelve AdminHome.
+     * Carga y procesa el controlador $pageName.
      *
-     * @return mixed
-     */
-    private function getDefaultController()
-    {
-        $homePage = $this->settings->get('default', 'homepage', 'AdminHome');
-        return $this->request->cookies->get('fsHomepage', $homePage);
-    }
-
-    /**
-     * Load and process the $pageName controller.
-     *
-     * @param string $pageName name of the controller
+     * @param string $pageName nombre del controlador
      */
     private function loadController($pageName)
     {
@@ -133,7 +122,7 @@ class AppController extends App
         $template = 'Error/ControllerNotFound.html';
         $httpStatus = Response::HTTP_NOT_FOUND;
 
-        /// If we found a controller, load it
+        /// Si hemos encontrado el controlador, lo cargamos
         if (class_exists($controllerName)) {
             $this->miniLog->debug($this->i18n->trans('loading-controller', [$controllerName]));
             $user = $this->userAuth();
@@ -167,7 +156,7 @@ class AppController extends App
     }
 
     /**
-     * Returns the controllers full name
+     * Devuelve el nombre completo del controlador
      *
      * @param string $pageName
      *
@@ -185,26 +174,26 @@ class AppController extends App
     }
 
     /**
-     * Creates HTML with the selected template. The data will not be inserted in it
-     * until render() is executed
+     * Crea el HTML con la plantilla seleccionada. Aunque los datos no se volcarán
+     * hasta ejecutar render()
      *
      * @param string $template       archivo html a utilizar
-     * @param string $controllerName
+     * @param mixed $controllerName
      */
     private function renderHtml($template, $controllerName = '')
     {
-        /// Load the template engine
-        $twigLoader = new Twig_Loader_Filesystem(FS_FOLDER . '/Core/View');
+        /// cargamos el motor de plantillas
+        $twigLoader = new Twig_Loader_Filesystem($this->folder . '/Core/View');
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
-            if (file_exists(FS_FOLDER . '/Plugins/' . $pluginName . '/View')) {
-                $twigLoader->prependPath(FS_FOLDER . '/Plugins/' . $pluginName . '/View');
+            if (file_exists($this->folder . '/Plugins/' . $pluginName . '/View')) {
+                $twigLoader->prependPath($this->folder . '/Plugins/' . $pluginName . '/View');
             }
         }
 
-        /// Twig options
-        $twigOptions = ['cache' => FS_FOLDER . '/Cache/Twig'];
+        /// opciones de twig
+        $twigOptions = ['cache' => $this->folder . '/Cache/Twig'];
 
-        /// HTML template variables
+        /// variables para la plantilla HTML
         $templateVars = [
             'controllerName' => $controllerName,
             'debugBarRender' => false,
@@ -225,7 +214,7 @@ class AppController extends App
             $baseUrl = 'vendor/maximebf/debugbar/src/DebugBar/Resources/';
             $templateVars['debugBarRender'] = $this->debugBar->getJavascriptRenderer($baseUrl);
 
-            /// add log data to the debugBar
+            /// añadimos del log a debugBar
             foreach ($this->miniLog->read(['debug']) as $msg) {
                 $this->debugBar['messages']->info($msg['message']);
             }
@@ -243,7 +232,7 @@ class AppController extends App
     }
 
     /**
-     * User authentication, returns the user when successful, or false when not.
+     * Autentica al usuario, devuelve el usuario en caso afirmativo o false.
      *
      * @return User|false
      */
@@ -260,9 +249,6 @@ class AppController extends App
                     $user->save();
                     $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, time() + FS_COOKIES_EXPIRE));
                     $this->response->headers->setCookie(new Cookie('fsLogkey', $logKey, time() + FS_COOKIES_EXPIRE));
-                    $this->response->headers->setCookie(new Cookie('fsHomepage', $user->homepage, time() + FS_COOKIES_EXPIRE));
-                    $this->response->headers->setCookie(new Cookie('fsLang', $user->langcode, time() + FS_COOKIES_EXPIRE));
-                    $this->response->headers->setCookie(new Cookie('fsCompany', $user->idempresa, time() + FS_COOKIES_EXPIRE));
                     $this->miniLog->debug($this->i18n->trans('login-ok', [$nick]));
                     return $user;
                 }
@@ -281,7 +267,7 @@ class AppController extends App
     }
 
     /**
-     * Authenticate the user using the cookie.
+     * Autentica al usuario usando la cookie.
      * 
      * @param User $user0
      * @return boolean
@@ -309,7 +295,7 @@ class AppController extends App
     }
 
     /**
-     * Log out the user
+     * Desautentica al usuario
      */
     private function userLogout()
     {
@@ -319,11 +305,11 @@ class AppController extends App
     }
 
     /**
-     * Load plugins
+     * Carga los plugins
      */
     private function deployPlugins()
     {
-        $pluginManager = new PluginManager();
+        $pluginManager = new PluginManager($this->folder);
         $pluginManager->deploy();
     }
 }

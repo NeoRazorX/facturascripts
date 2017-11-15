@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
@@ -23,37 +24,36 @@ use FacturaScripts\Core\Model;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Controller to perform searches on the page
+ * Description of MegaSearch
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class MegaSearch extends Base\Controller
 {
-
     /**
-     * This variable contains the input text as the $query parameter
-     * to be used to filter the model data
+     * Esta variable contiene el texto enviado como parámetro query
+     * usado para el filtrado de datos del modelo
      *
      * @var string|false
      */
     public $query;
 
     /**
-     * Results by page
+     * Resultados por página
      *
      * @var array
      */
     public $results;
 
     /**
-     * More sections to search in
+     * Más secciones donde buscar
      *
      * @var array
      */
     public $sections;
 
     /**
-     * Runs the controller's private logic.
+     * Ejecuta la lógica privada del controlador.
      *
      * @param Response $response
      * @param Model\User|null $user
@@ -71,7 +71,7 @@ class MegaSearch extends Base\Controller
     }
 
     /**
-     * Returns basic page attributes
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */
@@ -84,19 +84,19 @@ class MegaSearch extends Base\Controller
     }
 
     /**
-     * Proceeds to search in the whole page
+     * Realiza la búsqueda por página
      */
     private function pageSearch()
     {
         $pageModel = new Model\Page();
         foreach ($pageModel->all() as $page) {
-            /// Does the page title coincide with the search $query?
+            /// ¿El título de la página coincide con la búsuqeda?
             $title = mb_strtolower($this->i18n->trans($page->title), 'UTF8');
             if ($page->showonmenu && strpos($title, $this->query) !== false) {
                 $this->results['pages'][] = $page;
             }
 
-            /// Is it a ListController that could return more results?
+            /// ¿Es un ListController que podría devolver más resultados?
             if ($page->showonmenu && strpos($page->name, 'List') === 0) {
                 $this->sections[$page->name] = [
                     'icon' => $page->icon,

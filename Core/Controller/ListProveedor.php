@@ -16,20 +16,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controller to list the items in the Proveedor model
+ * Description of ListProveedor
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class ListProveedor extends ExtendedController\ListController
 {
-
     /**
-     * Returns basic page attributes
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */
@@ -44,7 +44,7 @@ class ListProveedor extends ExtendedController\ListController
     }
 
     /**
-     * Load views
+     * Procedimiento encargado de insertar las vistas a visualizar
      */
     protected function createViews()
     {

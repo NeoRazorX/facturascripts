@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,7 +27,6 @@ namespace FacturaScripts\Core\Model;
  */
 class ArticuloPropiedad
 {
-
     use Base\ModelTrait;
 
     /**
@@ -55,7 +55,7 @@ class ArticuloPropiedad
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'articulo_propiedades';
     }
@@ -81,7 +81,7 @@ class ArticuloPropiedad
     {
         $vlist = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($ref) . ';';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref) . ';';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
@@ -128,8 +128,8 @@ class ArticuloPropiedad
      */
     public function simpleGet($ref, $name)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($ref)
-            . ' AND name = ' . $this->dataBase->var2str($name) . ';';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref)
+            . ' AND name = ' . $this->var2str($name) . ';';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return $data[0]['text'];
@@ -148,8 +148,8 @@ class ArticuloPropiedad
      */
     public function simpleGetRef($name, $text)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE text = ' . $this->dataBase->var2str($text)
-            . ' AND name = ' . $this->dataBase->var2str($name) . ';';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE text = ' . $this->var2str($text)
+            . ' AND name = ' . $this->var2str($name) . ';';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return $data[0]['referencia'];
@@ -168,8 +168,8 @@ class ArticuloPropiedad
      */
     public function simpleDelete($ref, $name)
     {
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($ref)
-            . ' AND name = ' . $this->dataBase->var2str($name) . ';';
+        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref)
+            . ' AND name = ' . $this->var2str($name) . ';';
 
         return $this->dataBase->exec($sql);
     }

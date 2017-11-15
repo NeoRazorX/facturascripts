@@ -1,4 +1,5 @@
 <?php
+
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -6,7 +7,6 @@ namespace FacturaScripts\Core\Base;
  */
 class MiniLogTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var MiniLog
      */
@@ -27,7 +27,6 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        
     }
 
     /**
@@ -179,7 +178,6 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase
      */
     public function testLog()
     {
-        
     }
 
     /**
@@ -187,7 +185,6 @@ class MiniLogTest extends \PHPUnit_Framework_TestCase
      */
     public function testRead()
     {
-        
     }
 
     public function testClear()

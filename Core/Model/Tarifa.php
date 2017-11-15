@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Model;
  */
 class Tarifa
 {
-
     use Base\ModelTrait {
         clear as clearTrait;
     }
@@ -84,7 +84,7 @@ class Tarifa
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'tarifas';
     }
@@ -121,9 +121,11 @@ class Tarifa
      */
     private function applyFormula($value)
     {
-        return ($this->aplicar_a === 'pvp') ? (0 - $value) : $value;
+        return ($this->aplicar_a === 'pvp')
+            ? (0 - $value)
+            : $value;
     }
-
+    
     /**
      * Devuelve un incremento porcentual
      *

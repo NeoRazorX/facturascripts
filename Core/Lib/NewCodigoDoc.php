@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 /**
@@ -25,9 +26,8 @@ namespace FacturaScripts\Core\Lib;
  */
 class NewCodigoDoc
 {
-
     /**
-     * Code option
+     * Opción del código
      *
      * @var string
      */
@@ -44,7 +44,7 @@ class NewCodigoDoc
     }
 
     /**
-     * Returns the option
+     * Devuelve la opción
      *
      * @return string
      */
@@ -54,7 +54,7 @@ class NewCodigoDoc
     }
 
     /**
-     * Assigns the option
+     * Asigna la opción
      *
      * @param string $value
      */
@@ -64,9 +64,9 @@ class NewCodigoDoc
     }
 
     /**
-     * Returns the available options for the code
+     * Devuelve las opciones disponibles para el código
      *
-     * @return string[]
+     * @return array
      */
     public function options()
     {
@@ -74,7 +74,7 @@ class NewCodigoDoc
     }
 
     /**
-     * Returns the document number
+     * Devuelve el número del documento
      *
      * @param string $tableName
      * @param string $codejercicio
@@ -88,7 +88,7 @@ class NewCodigoDoc
     }
 
     /**
-     * Returns the document code
+     * Devuelve el código del documento
      *
      * @param string $tableName
      * @param int $numero
@@ -99,7 +99,7 @@ class NewCodigoDoc
      */
     public function getCodigo($tableName, $numero, $codserie, $codejercicio)
     {
-        /// Temporary - provisional
-        return $codejercicio . $codserie . $numero;
+        /// provisional
+        return $codejercicio.$codserie.$numero;
     }
 }

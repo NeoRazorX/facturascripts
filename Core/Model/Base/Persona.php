@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DefaultItems;
@@ -107,7 +108,6 @@ abstract class Persona
      * @var string
      */
     public $fax;
-
     /**
      * Fecha en la que se dió de alta al cliente.
      *

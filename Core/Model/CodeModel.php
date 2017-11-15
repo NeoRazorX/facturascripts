@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -27,7 +28,6 @@ use FacturaScripts\Core\Base\DataBase;
  */
 class CodeModel
 {
-
     /**
      * Proporciona acceso directo a la base de datos.
      *
@@ -84,7 +84,7 @@ class CodeModel
             }
 
             $sql = 'SELECT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM ' . $tableName . ' ORDER BY 2 ASC';
-            $data = self::$dataBase->selectLimit($sql, 1000);
+            $data = self::$dataBase->select($sql);
             if (!empty($data)) {
                 foreach ($data as $d) {
                     $result[] = new self($d);

@@ -16,68 +16,62 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Controller that lists the data in table mode
+ * Controlador para listado de datos en modo tabla
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 abstract class ListController extends Base\Controller
 {
+
     /**
-     * Indicates the active view
+     * Indica cual es la vista activa
      *
      * @var string
      */
     public $active;
 
     /**
-     * Object to export data
+     * Objeto para exportar datos
      *
      * @var Base\ExportManager
      */
     public $exportManager;
 
     /**
-     * First row to select from the database
+     * Primer registro a seleccionar de la base de datos
      * @var int
      */
     protected $offset;
 
     /**
-     * This string contains the text sent as a query parameter, used to filter the model data
+     * Esta variable contiene el texto enviado como parámetro query
+     * usado para el filtrado de datos del modelo
      *
      * @var string|false
      */
     public $query;
 
     /**
-     * List of views displayed by the controller
+     * Lista de vistas mostradas por el controlador
      *
      * @var ListView[]
      */
     public $views;
 
     /**
-     * List of icons for each of the views
-     *
-     * @var array
-     */
-    public $icons;
-
-    /**
-     * Inserts the views to display
+     * Procedimiento encargado de insertar las vistas a visualizar
      */
     abstract protected function createViews();
 
     /**
-     * Initializes all the objects and properties
+     * Inicia todos los objetos y propiedades.
      *
      * @param Base\Cache      $cache
      * @param Base\Translator $i18n
@@ -95,11 +89,10 @@ abstract class ListController extends Base\Controller
         $this->offset = (int) $this->request->get('offset', 0);
         $this->query = $this->request->get('query', '');
         $this->views = [];
-        $this->icons = [];
     }
 
     /**
-     * Runs the controller's private logic
+     * Ejecuta la lógica privada del controlador.
      *
      * @param mixed $response
      * @param mixed $user
@@ -140,7 +133,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Runs the actions that alter the data before reading it
+     * Ejecuta las acciones que alteran los datos antes de leerlos
      *
      * @param string $action
      */
@@ -154,7 +147,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Runs the controller actions
+     * Ejecuta las acciones del controlador
      *
      * @param string $action
      */
@@ -175,9 +168,9 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Delete data action
+     * Acción de borrado de datos
      *
-     * @param BaseView $view     View upon which the action is made
+     * @param BaseView $view     Vista sobre la que se realiza la acción
      * @return boolean
      */
     protected function deleteAction($view)
@@ -192,7 +185,7 @@ abstract class ListController extends Base\Controller
             return false;
         }
 
-        /// multiple delete
+        /// borrado múltiple
         $numDeletes = 0;
         foreach (explode(',', $code) as $cod) {
             if ($view->delete($cod)) {
@@ -211,36 +204,19 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Devuelve el texto de las columnas.
-     *
-     * @param ListView $view
-     * @param int $maxColumns
-     *
-     * @return array
-     */
-    private function getTextColumns($view, $maxColumns)
-    {
-        $result = [];
-        foreach ($view->getColumns() as $col) {
-            if ($col->display !== 'none' && $col->widget->type === 'text') {
-                $result[] = $col->widget->fieldName;
-                if (count($result) === $maxColumns) {
-                    break;
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * Returns a JSON response
+     * Devuelve una respuesta JSON
      *
      * @param ListView $view
      */
     protected function jsonAction($view)
     {
         $this->setTemplate(false);
-        $cols = $this->getTextColumns($view, 4);
+        $cols = [];
+        foreach ($view->getColumns() as $col) {
+            if ($col->display !== 'none' && $col->widget->type === 'text' && count($cols) < 4) {
+                $cols[] = $col->widget->fieldName;
+            }
+        }
         $json = [];
         foreach ($view->getCursor() as $item) {
             $jItem = ['url' => $item->url()];
@@ -256,7 +232,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Establishes the WHERE clause according to the defined filters
+     * Establece la clausula WHERE según los filtros definidos
      *
      * @return array
      */
@@ -269,35 +245,52 @@ abstract class ListController extends Base\Controller
             $result[] = new DataBase\DataBaseWhere($fields, $this->query, "LIKE");
         }
 
-        foreach ($this->views[$this->active]->getFilters() as $key => $filter) {
-            $filter->getDataBaseWhere($result, $key);
+        $filters = $this->views[$this->active]->getFilters();
+        foreach ($filters as $key => $value) {
+            if ($value['value'] != '') {
+                $field = $value['options']['field'];
+                switch ($value['type']) {
+                    case 'select':
+                        // we use the key value because the field value indicate is the text field of the source data
+                        $result[] = new DataBase\DataBaseWhere($key, $value['value']);
+                        break;
+
+                    case 'checkbox':
+                        $checked = (bool) (($value['options']['inverse']) ? !$value['value'] : $value['value']);
+                        $result[] = new DataBase\DataBaseWhere($field, $checked);
+                        break;
+                    
+                    default:
+                        $operator = $value['options']['operator'];
+                        $result[] = new DataBase\DataBaseWhere($field, $value['value'], $operator);
+                }
+            }
         }
 
         return $result;
     }
 
     /**
-     * Creates and adds a view to the controller
+     * Crea y añade una vista al controlador.
      *
      * @param string $modelName
      * @param string $viewName
      * @param string $viewTitle
-     * @param string $icon
      */
-    protected function addView($modelName, $viewName, $viewTitle = 'search', $icon = 'fa-search')
+    protected function addView($modelName, $viewName, $viewTitle = 'search')
     {
         $this->views[$viewName] = new ListView($viewTitle, $modelName, $viewName, $this->user->nick);
-        $this->icons[$viewName] = $icon;
         if (empty($this->active)) {
             $this->active = $viewName;
         }
     }
 
     /**
-     * Adds a list of fields (separated by "|") to the search fields list so that data can be filtered
+     * Añade una lista de campos (separados por |) a lista de campos de búsqueda
+     * para el filtrado de datos.
      *
      * @param string $indexView
-     * @param string[] $fields
+     * @param array $fields
      */
     protected function addSearchFields($indexView, $fields)
     {
@@ -305,7 +298,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Adds a field to a view's Order By list
+     * Añade un campo a la lista de Order By de una vista.
      *
      * @param string $indexView
      * @param string $field
@@ -318,7 +311,8 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Add a select type filter to a table
+     * Add a filter type data table selection
+     * Añade un filtro de tipo selección en tabla.
      *
      * @param string $indexView
      * @param string $key      (Filter field name identifier)
@@ -329,88 +323,84 @@ abstract class ListController extends Base\Controller
     protected function addFilterSelect($indexView, $key, $table, $where = '', $field = '')
     {
         $value = $this->request->get($key);
-        $this->views[$indexView]->addFilter($key, ListFilter::newSelectFilter($field, $value, $table, $where));
+        $this->views[$indexView]->addFilterSelect($key, $value, $table, $where, $field);
     }
 
     /**
-     * Adds a boolean condition type filter
+     * Añade un filtro del tipo condición boleana.
      *
      * @param string $indexView
-     * @param string $key     (Filter identifier)
-     * @param string $label   (Human reader description)
-     * @param string $field   (Field of the table to apply filter)
-     * @param bool $inverse   (If you need to invert the selected value)
+     * @param string  $key     (Filter identifier)
+     * @param string  $label   (Human reader description)
+     * @param string  $field   (Field of the table to apply filter)
+     * @param bool $inverse (If you need to invert the selected value)
      */
     protected function addFilterCheckbox($indexView, $key, $label, $field = '', $inverse = false)
     {
         $value = $this->request->get($key);
-        $this->views[$indexView]->addFilter($key, ListFilter::newCheckboxFilter($field, $value, $label, $inverse));
+        $this->views[$indexView]->addFilterCheckBox($key, $value, $label, $field, $inverse);
+    }
+
+    private function addFilterFromType($indexView, $options)
+    {
+        $key = $options['key'];
+        $keyValue = $this->request->get($key);
+        $operatorValue = $this->request->get($key . '-operator');
+        if (empty($operatorValue)) {
+            $operatorValue = $options['operator'];
+        }
+        
+        $this->views[$indexView]->addFilterFromType(
+            $options['type'], $key, $keyValue, $options['label'], $options['field'], $operatorValue
+        );
     }
 
     /**
-     * Añade un filtro a un tipo de campo.
+     * Añade un filtro del tipo fecha.
      *
      * @param string $indexView
-     * @param string $key
-     * @param string $type
-     * @param string $label
-     * @param string $field
+     * @param string $key     (Filter identifier)
+     * @param string $label   (Human reader description)
+     * @param string $field   (Field of the table to apply filter)
+     * @param string $operator
      */
-    private function addFilterFromType($indexView, $key, $type, $label, $field)
+    protected function addFilterDatePicker($indexView, $key, $label, $field = '', $operator = '=')
     {
-        $config = [
+        $options = [
+            'type' => 'datepicker',
+            'key' => $key,
+            'label' => $label, 
             'field' => $field,
-            'label' => $label,
-            'valueFrom' => $this->request->get($key . '-from'),
-            'operatorFrom' => $this->request->get($key . '-from-operator', '>='),
-            'valueTo' => $this->request->get($key . '-to'),
-            'operatorTo' => $this->request->get($key . '-to-operator', '<=')
+            'operator' => $operator
         ];
 
-        $this->views[$indexView]->addFilter($key, ListFilter::newStandardFilter($type, $config));
+        $this->addFilterFromType($indexView, $options);
     }
 
     /**
-     * Adds a date type filter
+     * Añade un filtro del tipo texto.
      *
      * @param string $indexView
      * @param string $key     (Filter identifier)
      * @param string $label   (Human reader description)
      * @param string $field   (Field of the table to apply filter)
+     * @param string $operator
      */
-    protected function addFilterDatePicker($indexView, $key, $label, $field = '')
+    protected function addFilterText($indexView, $key, $label, $field = '', $operator = '=')
     {
-        $this->addFilterFromType($indexView, $key, 'datepicker', $label, $field);
+        $options = [
+            'type' => 'text',
+            'key' => $key,
+            'label' => $label, 
+            'field' => $field,
+            'operator' => $operator
+        ];
+
+        $this->addFilterFromType($indexView, $options);
     }
 
     /**
-     * Adds a text type filter
-     *
-     * @param string $indexView
-     * @param string $key     (Filter identifier)
-     * @param string $label   (Human reader description)
-     * @param string $field   (Field of the table to apply filter)
-     */
-    protected function addFilterText($indexView, $key, $label, $field = '')
-    {
-        $this->addFilterFromType($indexView, $key, 'text', $label, $field);
-    }
-
-    /**
-     * Adds a numeric type filter
-     *
-     * @param string $indexView
-     * @param string $key     (Filter identifier)
-     * @param string $label   (Human reader description)
-     * @param string $field   (Field of the table to apply filter)
-     */
-    protected function addFilterNumber($indexView, $key, $label, $field = '')
-    {
-        $this->addFilterFromType($indexView, $key, 'number', $label, $field);
-    }
-
-    /**
-     * Creates a list of data from a table
+     * Carga una lista de datos desde una tabla.
      *
      * @param string $field : Field name with real value
      * @param array $options : Array with configuration values [field = Field description, table = table name, where = SQL Where clausule]
@@ -435,8 +425,8 @@ abstract class ListController extends Base\Controller
                 $value = $item[$options['field']];
                 if ($value !== '') {
                     /**
-                     * If the key is  mb_strtolower($item[$field], 'UTF8') then we can't filter by codserie, codalmacen,
-                     * etc.
+                     * Si la key es mb_strtolower($item[$field], 'UTF8') entonces
+                     * no podemos filtrar por codserie, codalmacen, etc...
                      */
                     $result[$item[$field]] = $value;
                 }
@@ -447,7 +437,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Returns the offset value for the specified view
+     * Devuelve el valor de offset para la vista indicada.
      *
      * @param string $indexView
      * @return int
@@ -458,7 +448,8 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Returns a string with the parameters in the controller call url
+     * Construye un string con los parámetros pasados en la url
+     * de la llamada al controlador.
      *
      * @param string $indexView
      * @return string
@@ -471,8 +462,11 @@ abstract class ListController extends Base\Controller
                 $result = '&query=' . $this->query;
             }
 
-            foreach ($this->views[$this->active]->getFilters() as $key => $filter) {
-                $result .= $filter->getParams($key);
+            $filters = $this->views[$this->active]->getFilters();
+            foreach ($filters as $key => $value) {
+                if ($value['value'] !== '') {
+                    $result .= '&' . $key . '=' . $value['value'];
+                }
             }
         }
 
@@ -480,7 +474,8 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Creates an array with the available "jumps" to paginate the model data with the specified view
+     * Crea un array con los "saltos" disponibles para paginar los datos
+     * del modelo de la vista indicada.
      *
      * @param string $indexView
      * @return array
@@ -499,7 +494,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Returns an array for JS of URLs for the elements in a view
+     * Devuelve una array para JS de URLs para los elementos de una vista
      *
      * @param string $type
      *

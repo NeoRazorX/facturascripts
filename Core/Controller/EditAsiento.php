@@ -16,57 +16,39 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Controller to edit a single item from the Asiento model
+ * Controlador para la edición de un registro del modelo Asiento
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Fco Antonio Moreno Pérez <famphuelva@gmail.com>
- * @author PC REDNET S.L. <luismi@pcrednet.com>
  */
-class EditAsiento extends ExtendedController\PanelController
+class EditAsiento extends ExtendedController\EditController
 {
-
     /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
-        $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
-    }
-
-    /**
-     * Load data view procedure
+     * EditAsiento constructor.
      *
-     * @param string $keyView
-     * @param ExtendedController\EditView $view
+     * @param Base\Cache $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog $miniLog
+     * @param string $className
      */
-    protected function loadData($keyView, $view)
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
-        switch ($keyView) {
-            case 'EditAsiento':
-                $value = $this->request->get('code');
-                $view->loadData($value);
-                break;
+        parent::__construct($cache, $i18n, $miniLog, $className);
 
-            case 'ListPartida':
-                $idasiento = $this->getViewModelValue('EditAsiento', 'idasiento');
-                if (!empty($idasiento)) {
-                    $where = [new DataBase\DataBaseWhere('idasiento', $idasiento)];
-                    $view->loadData($where);
-                }
-                break;
-        }
+        // Establecemos el modelo de datos
+        $this->modelName = 'FacturaScripts\Core\Model\Asiento';
     }
 
     /**
-     * Returns basic page attributes
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */

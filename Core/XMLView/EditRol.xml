@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Initial description for the controller EditRol
+ * Definición inicial para el controlador EditRol
  *
  * @author Artex Trading sa <jferrer@artextrading.com>  
 -->
@@ -30,5 +30,5 @@
         <column name="description" order="100" numcolumns="6" required="true">
             <widget type="text" fieldname="descripcion" />
         </column>
-    </columns>
-</view>
+     </columns>
+ </view>

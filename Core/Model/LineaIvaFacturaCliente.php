@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,7 +27,6 @@ namespace FacturaScripts\Core\Model;
  */
 class LineaIvaFacturaCliente
 {
-
     use Base\ModelTrait;
 
     /**
@@ -97,7 +97,7 @@ class LineaIvaFacturaCliente
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'lineasivafactcli';
     }
@@ -199,7 +199,7 @@ class LineaIvaFacturaCliente
     {
         $linealist = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idfactura = ' . $this->dataBase->var2str($idfac)
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idfactura = ' . $this->var2str($idfac)
             . ' ORDER BY iva DESC;';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {

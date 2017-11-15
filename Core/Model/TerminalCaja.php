@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,7 +27,6 @@ namespace FacturaScripts\Core\Model;
  */
 class TerminalCaja
 {
-
     use Base\ModelTrait;
 
     /**
@@ -104,7 +104,7 @@ class TerminalCaja
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'cajas_terminales';
     }
@@ -143,7 +143,7 @@ class TerminalCaja
      */
     public function disponible()
     {
-        $sql = 'SELECT * FROM cajas WHERE f_fin IS NULL AND fs_id = ' . $this->dataBase->var2str($this->id) . ';';
+        $sql = 'SELECT * FROM cajas WHERE f_fin IS NULL AND fs_id = ' . $this->var2str($this->id) . ';';
         if ($this->dataBase->select($sql)) {
             return false;
         }

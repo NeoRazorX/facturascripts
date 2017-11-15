@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Model;
  */
 class CuentaBanco
 {
-
     use Base\ModelTrait;
     use Base\BankAccount;
 
@@ -55,7 +55,7 @@ class CuentaBanco
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'cuentasbanco';
     }
@@ -78,44 +78,11 @@ class CuentaBanco
     public function test()
     {
         if (!$this->testBankAccount()) {
-            ///$this->miniLog->alert($this->i18n->trans('error-incorrect-bank-details'));
+            $this->miniLog->alert($this->i18n->trans('error-incorrect-bank-details'));
 
             return false;
         }
 
         return true;
-    }
-
-    /**
-     * Devuelve la url donde ver/modificar los datos.
-     *
-     * @param string $type
-     *
-     * @return string
-     */
-    public function url($type = 'auto')
-    {
-        $value = $this->primaryColumnValue();
-        $model = $this->modelClassName();
-        $result = 'index.php?page=';
-        switch ($type) {
-            case 'list':
-                $result .= 'ListFormaPago&active=List' . $model;
-                break;
-
-            case 'edit':
-                $result .= 'Edit' . $model . '&code=' . $value;
-                break;
-
-            case 'new':
-                $result .= 'Edit' . $model;
-                break;
-
-            default:
-                $result .= empty($value) ? 'ListFormaPago&active=List' . $model : 'Edit' . $model . '&code=' . $value;
-                break;
-        }
-
-        return $result;
     }
 }

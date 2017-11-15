@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -27,11 +28,9 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class Proveedor extends Base\Persona
 {
-
     use Base\ModelTrait {
         __construct as private traitConstruct;
         clear as private traitClear;
-        url as private traitURL;
     }
 
     /**
@@ -58,7 +57,7 @@ class Proveedor extends Base\Persona
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'proveedores';
     }
@@ -99,10 +98,10 @@ class Proveedor extends Base\Persona
         if ($cifnif === '' && $razon !== '') {
             $razon = mb_strtolower(self::noHtml($razon), 'UTF8');
             $sql = 'SELECT * FROM ' . $this->tableName() . " WHERE cifnif = ''"
-                . ' AND lower(razonsocial) = ' . $this->dataBase->var2str($razon) . ';';
+                . ' AND lower(razonsocial) = ' . $this->var2str($razon) . ';';
         } else {
             $cifnif = mb_strtolower($cifnif, 'UTF8');
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE lower(cifnif) = ' . $this->dataBase->var2str($cifnif) . ';';
+            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE lower(cifnif) = ' . $this->var2str($cifnif) . ';';
         }
 
         $data = $this->dataBase->select($sql);

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Model;
  */
 class RegularizacionIva
 {
-
     use Base\ModelTrait;
 
     /**
@@ -82,7 +82,7 @@ class RegularizacionIva
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'co_regiva';
     }
@@ -126,8 +126,8 @@ class RegularizacionIva
      */
     public function getFechaInside($fecha)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fechainicio <= ' . $this->dataBase->var2str($fecha)
-            . ' AND fechafin >= ' . $this->dataBase->var2str($fecha) . ';';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fechainicio <= ' . $this->var2str($fecha)
+            . ' AND fechafin >= ' . $this->var2str($fecha) . ';';
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
@@ -144,7 +144,7 @@ class RegularizacionIva
      */
     public function delete()
     {
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idregiva = ' . $this->dataBase->var2str($this->idregiva) . ';';
+        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idregiva = ' . $this->var2str($this->idregiva) . ';';
         if ($this->dataBase->exec($sql)) {
             /// si hay un asiento asociado lo eliminamos
             if ($this->idasiento !== null) {

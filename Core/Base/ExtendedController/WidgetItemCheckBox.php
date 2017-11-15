@@ -27,7 +27,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 class WidgetItemCheckBox extends WidgetItem
 {
     /**
-     * Class constructor
+     * Constructor de la clase
      */
     public function __construct()
     {
@@ -37,10 +37,10 @@ class WidgetItemCheckBox extends WidgetItem
     }
 
     /**
-     * Generates the HTML code for special attributes like:
+     * Genera el código html para atributos especiales como:
      * hint
-     * read only
-     * mandatory value
+     * sólo lectura
+     * valor obligatorio
      *
      * @return string
      */
@@ -49,9 +49,10 @@ class WidgetItemCheckBox extends WidgetItem
         $readOnly = empty($this->readOnly) ? '' : ' disabled';
         return parent::specialAttributes() . $readOnly;
     }
-
+    
     /**
-     * Generates the HTML code to display the data in the List controller
+     * Genera el código html para la visualización de los datos en el
+     * controlador List
      *
      * @param string $value
      *
@@ -71,7 +72,8 @@ class WidgetItemCheckBox extends WidgetItem
     }
 
     /**
-     * Generates the HTML code to display and edit  the data in the List / Edit controller
+     * Genera el código html para la visualización y edición de los datos
+     * en el controlador List / Edit
      *
      * @param string $value
      *

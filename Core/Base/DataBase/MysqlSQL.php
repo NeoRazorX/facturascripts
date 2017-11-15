@@ -20,7 +20,8 @@
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
- * Class that gathers all the needed SQL sentences by the database engine
+ * Clase que recopila las sentencias SQL necesarias
+ * por el motor de base de datos
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -28,7 +29,7 @@ namespace FacturaScripts\Core\Base\DataBase;
 class MysqlSQL implements DataBaseSQL
 {
     /**
-     * Generates the SQL with the field type and the DEFAULT and null constraints
+     * Genera el SQL con el tipo de campo y las constraints DEFAULT y null
      *
      * @param array $colData
      *
@@ -36,10 +37,10 @@ class MysqlSQL implements DataBaseSQL
      */
     private function getTypeAndConstraints($colData)
     {
-        $type = stripos('integer,serial', $colData['type']) === false ? strtolower($colData['type']) : FS_DB_INTEGER;
+        $type = stripos('integer,serial', $colData['tipo']) === false ? strtolower($colData['tipo']) : FS_DB_INTEGER;
         switch (true) {
             case $type == 'serial':
-            case stripos($colData['default'], 'nextval(') !== false:
+            case stripos($colData['defecto'], 'nextval(') !== false:
                 $contraints = ' NOT NULL AUTO_INCREMENT';
                 break;
 
@@ -52,26 +53,25 @@ class MysqlSQL implements DataBaseSQL
     }
 
     /**
-     * Returns a string with the columns constraints
-     *
+     * Devuelve una string con las restricciones dels columnas.
      * @param array $colData
      *
      * @return string
      */
     private function getConstraints($colData)
     {
-        $notNull = ($colData['null'] === 'NO');
+        $notNull = ($colData['nulo'] === 'NO');
         $result = ' NULL';
         if ($notNull) {
             $result = ' NOT' . $result;
         }
 
-        $defaultNull = ($colData['default'] === null);
+        $defaultNull = ($colData['defecto'] === null);
         if ($defaultNull && !$notNull) {
             $result .= ' DEFAULT NULL';
         } else {
-            if ($colData['default'] !== '') {
-                $result .= ' DEFAULT ' . $colData['default'];
+            if ($colData['defecto'] !== '') {
+                $result .= ' DEFAULT ' . $colData['defecto'];
             }
         }
 
@@ -79,7 +79,7 @@ class MysqlSQL implements DataBaseSQL
     }
 
     /**
-     * Removes PostgreSQL's problematic code
+     * Elimina código problemático de postgresql.
      *
      * @param string $sql
      *
@@ -94,7 +94,7 @@ class MysqlSQL implements DataBaseSQL
     }
 
     /**
-     * Returns the needed SQL to convert a column to integer
+     * Devuelve el SQL necesario para convertir la columna a entero.
      *
      * @param string $colName
      *
@@ -106,7 +106,9 @@ class MysqlSQL implements DataBaseSQL
     }
 
     /**
-     * Returns the SQL to get last ID assigned when performing an INSERT in the database
+     * Devuleve el SQL para averiguar
+     * el último ID asignado al hacer un INSERT
+     * en la base de datos.
      *
      * @return string
      */
@@ -116,7 +118,8 @@ class MysqlSQL implements DataBaseSQL
     }
 
     /**
-     * Returns the SQL needed to get the list of columns in a table
+     * Devuelve el SQL para averiguar
+     * la lista de las columnas de una tabla.
      *
      * @param string $tableName
      *
@@ -128,7 +131,8 @@ class MysqlSQL implements DataBaseSQL
     }
 
     /**
-     * Returns the SQL needed to get the list of constraints in a table
+     * Devuelve el SQL para averiguar
+     * la lista de restricciones de una tabla.
      *
      * @param string $tableName
      *
@@ -145,7 +149,8 @@ class MysqlSQL implements DataBaseSQL
     }
 
     /**
-     * Returns the SQL needed to get the list of advanced constraints in a table
+     * Devuelve el SQL para averiguar
+     * la lista de restricciones avanzadas de una tabla.
      *
      * @param string $tableName
      *
@@ -176,7 +181,7 @@ class MysqlSQL implements DataBaseSQL
     }
 
     /**
-     * Generates the needed SQL to establish the given constraints
+     * Genera el SQL para establecer las restricciones proporcionadas.
      *
      * @param array $xmlCons
      *
@@ -186,14 +191,15 @@ class MysqlSQL implements DataBaseSQL
     {
         $sql = '';
         foreach ($xmlCons as $res) {
-            $sql .= ', CONSTRAINT ' . $res['name'] . ' ' . $res['constraint'];
+            $sql .= ', CONSTRAINT ' . $res['nombre'] . ' ' . $res['consulta'];
         }
 
         return $this->fixPostgresql($sql);
     }
 
     /**
-     * Returns the SQL needed to get the list of indexes in a table
+     * Devuelve el SQL para averiguar
+     * la lista de indices de una tabla.
      *
      * @param string $tableName
      *
@@ -205,7 +211,7 @@ class MysqlSQL implements DataBaseSQL
     }
 
     /**
-     * Returns the SQL needed to create a table with the given structure
+     * Devuelve la sentencia SQL necesaria para crear una tabla con la estructura proporcionada.
      *
      * @param string $tableName
      * @param array  $columns
@@ -217,7 +223,7 @@ class MysqlSQL implements DataBaseSQL
     {
         $fields = '';
         foreach ($columns as $col) {
-            $fields .= ', `' . $col['name'] . '` ' . $this->getTypeAndConstraints($col);
+            $fields .= ', `' . $col['nombre'] . '` ' . $this->getTypeAndConstraints($col);
         }
 
         $sql = $this->fixPostgresql(substr($fields, 2));
@@ -228,7 +234,7 @@ class MysqlSQL implements DataBaseSQL
     }
 
     /**
-     * Returns the SQL needed to add a column to a table
+     * Sentencia SQL para añadir una columna a una tabla
      *
      * @param string $tableName
      * @param array  $colData
@@ -237,14 +243,14 @@ class MysqlSQL implements DataBaseSQL
      */
     public function sqlAlterAddColumn($tableName, $colData)
     {
-        $sql = 'ALTER TABLE ' . $tableName . ' ADD `' . $colData['name'] . '` '
+        $sql = 'ALTER TABLE ' . $tableName . ' ADD `' . $colData['nombre'] . '` '
             . $this->getTypeAndConstraints($colData) . ';';
 
         return $sql;
     }
 
     /**
-     * Returns the SQL needed to alter a column in a table
+     * Sentencia SQL para modificar una columna de una tabla
      *
      * @param string $tableName
      * @param array  $colData
@@ -254,14 +260,14 @@ class MysqlSQL implements DataBaseSQL
     public function sqlAlterModifyColumn($tableName, $colData)
     {
         $sql = 'ALTER TABLE ' . $tableName
-            . ' MODIFY `' . $colData['name'] . '` '
+            . ' MODIFY `' . $colData['nombre'] . '` '
             . $this->getTypeAndConstraints($colData) . ';';
 
         return $this->fixPostgresql($sql);
     }
 
     /**
-     * Returns the needed SQL to alter a column default constraint
+     * Sentencia SQL para modificar una constraint de una tabla
      *
      * @param string $tableName
      * @param array  $colData
@@ -271,7 +277,7 @@ class MysqlSQL implements DataBaseSQL
     public function sqlAlterConstraintDefault($tableName, $colData)
     {
         $result = '';
-        if ($colData['type'] != 'serial') {
+        if ($colData['tipo'] != 'serial') {
             $result = $this->sqlAlterModifyColumn($tableName, $colData);
         }
 
@@ -279,7 +285,7 @@ class MysqlSQL implements DataBaseSQL
     }
 
     /**
-     * SQL statement to alter a null constraint in a table column
+     * Sentencia SQL para modificar una constraint null de un campo de una tabla
      *
      * @param string $tableName
      * @param array  $colData
@@ -292,7 +298,7 @@ class MysqlSQL implements DataBaseSQL
     }
 
     /**
-     * Returns the SQL needed to remove a constraint from a table
+     * Sentencia SQL para eliminar una constraint de una tabla
      *
      * @param string $tableName
      * @param array  $colData
@@ -319,7 +325,7 @@ class MysqlSQL implements DataBaseSQL
     }
 
     /**
-     * Returns the SQL needed to add a constraint to a table
+     * Sentencia SQL para añadir una constraint a una tabla
      *
      * @param string $tableName
      * @param string $constraintName
@@ -335,7 +341,7 @@ class MysqlSQL implements DataBaseSQL
     }
 
     /**
-     * SQL statement to check a sequence
+     * Sentencia SQL para comprobar una secuencia
      *
      * @param string $seqName
      *

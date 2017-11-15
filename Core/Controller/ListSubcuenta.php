@@ -16,21 +16,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controller to list the items in the Subcuenta model
+ * Controlador para la lista de Subcuentas
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class ListSubcuenta extends ExtendedController\ListController
 {
-
     /**
-     * Returns basic page attributes
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */
@@ -45,13 +45,13 @@ class ListSubcuenta extends ExtendedController\ListController
     }
 
     /**
-     * Load views
+     * Procedimiento encargado de insertar las vistas a visualizar
      */
     protected function createViews()
     {
         $this->addView('FacturaScripts\Core\Model\Subcuenta', 'ListSubcuenta');
         $this->addSearchFields('ListSubcuenta', ['codsubcuenta', 'descripcion']);
-
+        
         $this->addFilterSelect('ListSubcuenta', 'codejercicio', 'ejercicios', '', 'nombre');
 
         $this->addOrderBy('ListSubcuenta', 'codejercicio desc, codsubcuenta', 'code');

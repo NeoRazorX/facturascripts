@@ -22,7 +22,8 @@ namespace FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Structure that defines a WHERE condition to filter the model data
+ * Estructura para definir una condición WHERE de uso en el
+ * filtrado de datos desde los modelos
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -33,35 +34,35 @@ class DataBaseWhere
     const MATCH_DATETIME = "/^([\d]{1,2})-([\d]{1,2})-([\d]{4}) ([\d]{1,2}):([\d]{1,2}):([\d]{1,2})$/i";
 
     /**
-     * Link with the active database
+     * Enlace con la base de datos activa
      *
      * @var DataBase
      */
     private $dataBase;
 
     /**
-     * Field list to apply the filters to, separated by '|'
+     * Lista de campos, separados por '|' a los que se aplica el filtro
      *
      * @var string
      */
     private $fields;
 
     /**
-     * Arithmetic operator that is being used
+     * Operador aritmético que se aplica
      *
      * @var string
      */
     private $operator;
 
     /**
-     * Filter value
+     * Valor por el que se filtra
      *
      * @var string|bool
      */
     private $value;
 
     /**
-     * Logic operator that will be applied to the condition
+     * Operador lógico que se aplicará a la condición
      *
      * @var string
      */
@@ -85,7 +86,7 @@ class DataBaseWhere
     }
 
     /**
-     * Formats the date value with the database format
+     * Formatea el valor fecha al formato de la base de datos
      *
      * @param bool $addTime
      *
@@ -99,7 +100,7 @@ class DataBaseWhere
     }
 
     /**
-     * Returns the value for the operator
+     * Devuelve el valor para el operador
      *
      * @return string
      */
@@ -107,28 +108,13 @@ class DataBaseWhere
     {
         switch ($this->operator) {
             case 'LIKE':
-                if (is_bool($this->value)) {
-                    $result = $this->value ? 'TRUE' : 'FALSE';
-                } else {
-                    $result = "LOWER('%" . $this->dataBase->escapeString($this->value) . "%')";
-                }
+                $result = "LOWER('%" . $this->dataBase->escapeString($this->value) . "%')";
                 break;
 
             case 'IS':
                 $result = $this->value;
                 break;
 
-            case 'IN':
-                $values = explode(',', $this->value);
-                $result = '(';
-                $comma = '';
-                foreach ($values as $value) {
-                    $result .= $comma . "'" . $this->dataBase->escapeString($value) . "'";
-                    $comma = ',';
-                }
-                $result .= ')';
-                break;
-            
             default:
                 $result = '';
         }
@@ -137,7 +123,7 @@ class DataBaseWhere
     }
 
     /**
-     * Returns the value for the type
+     * Devuelve el valor por el tipo
      *
      * @return string
      */
@@ -172,17 +158,17 @@ class DataBaseWhere
     }
 
     /**
-     * Returns the filter value formatted according to the type
+     * Devuelve el valor del filtro formateado según el tipo
      *
      * @return string
      */
     private function getValue()
     {
-        return (in_array($this->operator, ['LIKE', 'IS', 'IN'])) ? $this->getValueFromOperator() : $this->getValueFromType();
+        return (in_array($this->operator, ['LIKE', 'IS'])) ? $this->getValueFromOperator() : $this->getValueFromType();
     }
 
     /**
-     * Returns a string to apply to the WHERE clause
+     * Devuelve un string para aplicar en la clausula WHERE
      *
      * @param bool $applyOperation
      *
@@ -195,7 +181,7 @@ class DataBaseWhere
         $value = $this->getValue();
         $fields = explode('|', $this->fields);
         foreach ($fields as $field) {
-            if ($this->operator === 'LIKE') {
+            if ($this->operator == 'LIKE') {
                 $field = 'LOWER(' . $field . ')';
             }
             $result .= $union . $field . ' ' . $this->operator . ' ' . $value;
@@ -216,13 +202,13 @@ class DataBaseWhere
     }
 
     /**
-     * Given a DataBaseWhere array, it returns the full WHERE clause
+     * Dado un array de DataBaseWhere devuelve la clausula WHERE completa
      *
-     * @param DataBaseWhere[] $whereItems
+     * @param array $whereItems
      *
      * @return string
      */
-    public static function getSQLWhere($whereItems)
+    public static function getSQLWhere(array $whereItems)
     {
         $result = '';
         $join = false;
@@ -237,10 +223,10 @@ class DataBaseWhere
 
         return $result;
     }
-
+    
     /**
-     * Given a DataBaseWhere array, it returns the field list with  with their values
-     * that will be applied as a filter. (It only returns filters with the '=' operator)
+     * Dado un array de DataBaseWhere devuelve la lista de campos y sus valores
+     * que se aplicarán como filtro. (Sólo devuelve filtros con operador '='
      *
      * @param array $whereItems
      *

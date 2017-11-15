@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -27,7 +28,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class FacturaProveedor
 {
-
     use Base\DocumentoCompra;
     use Base\Factura;
 
@@ -36,7 +36,7 @@ class FacturaProveedor
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'facturasprov';
     }
@@ -49,20 +49,6 @@ class FacturaProveedor
     public function primaryColumn()
     {
         return 'idfactura';
-    }
-
-    /**
-     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        new Serie();
-        new Ejercicio();
-        new Asiento();
-        
-        return '';
     }
 
     /**
@@ -210,8 +196,8 @@ class FacturaProveedor
 
         /// desvincular albaranes asociados y eliminar factura
         $sql = 'UPDATE albaranesprov SET idfactura = NULL, ptefactura = TRUE'
-            . ' WHERE idfactura = ' . $this->dataBase->var2str($this->idfactura) . ';'
-            . 'DELETE FROM ' . static::tableName() . ' WHERE idfactura = ' . $this->dataBase->var2str($this->idfactura) . ';';
+            . ' WHERE idfactura = ' . $this->var2str($this->idfactura) . ';'
+            . 'DELETE FROM ' . $this->tableName() . ' WHERE idfactura = ' . $this->var2str($this->idfactura) . ';';
 
         if ($bloquear) {
             return false;

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -64,7 +65,7 @@ class DireccionCliente
      *
      * @return string
      */
-    public static function tableName()
+    public function tableName()
     {
         return 'dirclientes';
     }
@@ -130,7 +131,7 @@ class DireccionCliente
         if ($this->test()) {
             /// ¿Desmarcamos las demás direcciones principales?
             $sql = '';
-            $where = 'WHERE codcliente = ' . $this->dataBase->var2str($this->codcliente);
+            $where = 'WHERE codcliente = ' . $this->var2str($this->codcliente);
             if ($this->domenvio) {
                 $sql .= 'UPDATE ' . $this->tableName() . ' SET domenvio = false ' . $where . ' AND domenvio = TRUE;';
             }

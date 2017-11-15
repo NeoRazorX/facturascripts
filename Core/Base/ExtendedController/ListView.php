@@ -23,77 +23,75 @@ use FacturaScripts\Core\Base;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * View definition for its use in ListController
+ * Definición de vista para uso en ListController
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class ListView extends BaseView
 {
+
     /**
-     * Order constants
+     * Constantes para ordenación
      */
     const ICON_ASC = 'fa-sort-amount-asc';
     const ICON_DESC = 'fa-sort-amount-desc';
 
     /**
-     * Cursor with data from the model display
+     * Cursor con los datos del modelo a mostrar
      *
      * @var array
      */
     private $cursor;
 
     /**
-     * Filter configuration preset by the user
+     * Configuración de filtros predefinidos por usuario
      *
      * @var array
      */
     private $filters;
 
     /**
-     * List of fields where to search in when a search is made
+     * Lista de campos donde buscar cuando se aplica una búsqueda
      *
      * @var array
      */
     private $searchIn;
 
     /**
-     * List of fields available to order by
-     * Example: orderby[key] = ["label" => "Etiqueta", "icon" => ICON_ASC]
+     * Lista de campos disponibles en el order by
+     * Ejemplo: orderby[key] = ["label" => "Etiqueta", "icon" => ICON_ASC]
      *          key = field_asc | field_desc
      * @var array
      */
     private $orderby;
 
     /**
-     * Selected element in the Order By list
+     * Elemento seleccionado en el lista de order by
      * @var string
      */
     public $selectedOrderBy;
 
     /**
-     * Stores the offset for the cursor
-     *
+     * Almacena el offset para el cursor
      * @var int
      */
     private $offset;
 
     /**
-     * Stores the order for the cursor
-     *
+     * Almacena el order para el cursor
      * @var array
      */
     private $order;
 
     /**
-     * Stores the where parameters for the cursor
-     *
+     * Almacena los parámetros del where del cursor
      * @var array
      */
     private $where;
 
     /**
-     * Class constructor and initialization
+     * Constructor e inicializador de la clase
      *
      * @param string $title
      * @param string $modelName
@@ -116,7 +114,7 @@ class ListView extends BaseView
     }
 
     /**
-     * Returns the link text for a given model
+     * Devuelve el texto de un enlace para un modelo dado.
      *
      * @param $data
      *
@@ -134,7 +132,7 @@ class ListView extends BaseView
     }
 
     /**
-     * Returns the read data list in Model format
+     * Devuelve la lista de datos leidos en formato Model
      *
      * @return array
      */
@@ -144,7 +142,7 @@ class ListView extends BaseView
     }
 
     /**
-     * Returns the list of defined filters
+     * Devuelve la lista de filtros definidos
      *
      * @return array
      */
@@ -154,7 +152,7 @@ class ListView extends BaseView
     }
 
     /**
-     * Returns the field list for the search, in WhereDatabase format
+     * Devuelve la lista de campos para la búsqueda en formato para WhereDatabase
      *
      * @return string
      */
@@ -164,7 +162,7 @@ class ListView extends BaseView
     }
 
     /**
-     * Returns the list of defined Order By
+     * Devuelve la lista de order by definidos
      *
      * @return array
      */
@@ -174,9 +172,8 @@ class ListView extends BaseView
     }
 
     /**
-     * List of columns and its configuration
+     * Lista de columnas y su configuración
      * (Array of ColumnItem)
-     *
      * @return array
      */
     public function getColumns()
@@ -186,9 +183,10 @@ class ListView extends BaseView
     }
 
     /**
-     * Returns the indicated Order By in array format
+     * Devuelve el Order By indicado en formato array
      *
      * @param string $orderKey
+     *
      * @return array
      */
     public function getSQLOrderBy($orderKey = '')
@@ -206,7 +204,7 @@ class ListView extends BaseView
     }
 
     /**
-     * Checks and establishes the selected value in the Order By
+     * Comprueba y establece el valor seleccionado en el order by
      *
      * @param string $orderKey
      */
@@ -215,7 +213,7 @@ class ListView extends BaseView
         $keys = array_keys($this->orderby);
         if (empty($orderKey) || !in_array($orderKey, $keys)) {
             if (empty($this->selectedOrderBy)) {
-                $this->selectedOrderBy = (string) $keys[0]; // We force the first element when there is no default
+                $this->selectedOrderBy = $keys[0]; // Forzamos el primer elemento cuando no hay valor por defecto
             }
         } else {
             $this->selectedOrderBy = $orderKey;
@@ -223,7 +221,7 @@ class ListView extends BaseView
     }
 
     /**
-     * Adds the given fields to the list of fields to search in
+     * Añade a la lista de campos para la búsqueda los campos informados
      *
      * @param array $fields
      */
@@ -231,12 +229,15 @@ class ListView extends BaseView
     {
         if (is_array($fields)) {
             $this->searchIn += $fields;
+            //$this->searchIn = array_merge($this->searchIn, $fields);
+
+            // TODO: First comment on http://php.net/manual/es/function.array-merge.php
+            // With += Can have duplicate items in diferent positions, with array_merge can't.
         }
     }
 
     /**
-     * Adds a field to the Order By list
-     *
+     * Añade un campo a la lista de Order By
      * @param string $field
      * @param string $label
      * @param int $default    (0 = None, 1 = ASC, 2 = DESC)
@@ -246,7 +247,7 @@ class ListView extends BaseView
         $key1 = strtolower($field) . '_asc';
         $key2 = strtolower($field) . '_desc';
         if (empty($label)) {
-            $label = $field;
+            $label = ucfirst($field);
         }
 
         $this->orderby[$key1] = ['icon' => self::ICON_ASC, 'label' => static::$i18n->trans($label)];
@@ -267,46 +268,73 @@ class ListView extends BaseView
     }
 
     /**
-     * Defines a new option to filter the data with
+     * Define una nueva opción de filtrado para los datos
+     * @param string $type    (option: 'select', 'checkbox')
+     * @param string $key     (Filter identification)
+     * @param string $value   (Value introduced by user, if there are)
+     * @param array  $options (Filter options needed for run)
+     */
+    private function addFilter($type, $key, $value, $options)
+    {
+        if (empty($options['field'])) {
+            $options['field'] = $key;
+        }
+
+        $this->filters[$key] = ['type' => $type, 'value' => $value, 'options' => $options];
+    }
+
+    /**
+     * Add a filter type data table selection
+     * Añade un filtro de tipo selección en tabla
+     * @param string $key      (Filter identifier)
+     * @param string $value    (Value introduced by user, if there are)
+     * @param string $table    (Table name)
+     * @param string $where    (Where condition for table)
+     * @param string $field    (Field of the table with the data to show)
+     */
+    public function addFilterSelect($key, $value, $table, $where = '', $field = '')
+    {
+        $options = ['field' => $field, 'table' => $table, 'where' => $where];
+        $this->addFilter('select', $key, $value, $options);
+    }
+
+    /**
+     * Añade un filtro del tipo condición boleana
+     * @param string  $key     (Filter identifier)
+     * @param string  $value    (Value introduced by user, if there are)
+     * @param string  $label   (Human reader description)
+     * @param string  $field   (Field of the table to apply filter)
+     * @param bool $inverse (If you need to invert the selected value)
+     */
+    public function addFilterCheckbox($key, $value, $label, $field = '', $inverse = false)
+    {
+        $options = ['label' => static::$i18n->trans($label), 'field' => $field, 'inverse' => $inverse];
+        $this->addFilter('checkbox', $key, $value, $options);
+    }
+
+    /**
+     * Añade filtro del tipo indicado
      *
+     * @param string $type     (text, datepicker)
      * @param string $key
-     * @param ListFilter $filter
+     * @param string $value
+     * @param string $label
+     * @param string $field
      */
-    public function addFilter($key, $filter)
+    public function addFilterFromType($type, $key, $value, $label, $field = '', $operator = '=')
     {
-        if (empty($filter->options['field'])) {
-            $filter->options['field'] = $key;
-        }
-
-        if (isset($filter->options['label'])) {
-            $filter->options['label'] = static::$i18n->trans($filter->options['label']);
-        }
-
-        $this->filters[$key] = $filter;
+        $options = ['label' => static::$i18n->trans($label), 'field' => $field, 'operator' => $operator];
+        $this->addFilter($type, $key, $value, $options);
     }
 
     /**
-     * Establishes a column's display state
-     * 
-     * @param string $columnName
-     * @param boolean $disabled
-     */
-    public function disableColumn($columnName, $disabled)
-    {
-        $column = $this->columnForName($columnName);
-        if (!empty($column)) {
-            $column->display = $disabled ? 'none' : 'left';
-        }
-    }
-
-    /**
-     * Load data
+     * Carga los datos
      *
      * @param array $where
      * @param int $offset
      * @param int $limit
      */
-    public function loadData($where, $offset = 0, $limit = FS_ITEM_LIMIT)
+    public function loadData($where, $offset = 0, $limit = 50)
     {
         $order = $this->getSQLOrderBy($this->selectedOrderBy);
         $this->count = $this->model->count($where);
@@ -321,7 +349,7 @@ class ListView extends BaseView
     }
 
     /**
-     * Method o export the view data
+     * Método para la exportación de los datos de la vista
      *
      * @param Base\ExportManager $exportManager
      * @param Response $response

@@ -26,8 +26,9 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 class WidgetItemText extends WidgetItem
 {
+
     /**
-     * Class constructor
+     * Constructor de la clase
      *
      * @param string $type
      */
@@ -39,7 +40,7 @@ class WidgetItemText extends WidgetItem
     }
 
     /**
-     * Formats text to a given maximum length
+     * Formatea un texto a una longitud máxima
      *
      * @param string $txt
      * @param int $len
@@ -55,8 +56,8 @@ class WidgetItemText extends WidgetItem
     }
 
     /**
-     * Generates the HTML code to display the data in the List controller
-     *
+     * Genera el código html para la visualización de los datos en el
+     * controlador List
      *
      * @param string $value
      *
@@ -72,7 +73,8 @@ class WidgetItemText extends WidgetItem
     }
 
     /**
-     * Generates the HTML code to display and edit  the data in the Edit / EditList controller
+     * Genera el código html para la visualización y edición de los datos
+     * en el controlador Edit / EditList
      *
      * @param string $value
      *
