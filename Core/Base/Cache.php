@@ -31,14 +31,14 @@ class Cache
 {
 
     /**
-     * El motor utilizado para la cache.
+     * The engine used for cache
      *
      * @var FileCache|APCAdapter|MemcacheAdapter
      */
     private static $engine;
 
     /**
-     * Constructor por defecto.
+     * Default constructor
      */
     public function __construct()
     {
@@ -59,7 +59,7 @@ class Cache
     }
 
     /**
-     * Devuelve el contenido asociado a esa $key que hay en la cache.
+     * Returns the contents in the cache associated to $key
      *
      * @param string $key
      *
@@ -71,7 +71,7 @@ class Cache
     }
 
     /**
-     * Guarda en la cache el contenido y lo asocia a $key
+     * Saves contents in the cache and associates them to $key
      *
      * @param string $key
      * @param mixed  $content
@@ -84,7 +84,7 @@ class Cache
     }
 
     /**
-     * Elimina de la cache el contenido asociado a la $key
+     * Deletes the contents from the cache associated to $key
      *
      * @param string $key
      *
@@ -96,7 +96,7 @@ class Cache
     }
 
     /**
-     * Limpia el contenido de la cache al completo.
+     * Cleans all the cache contents
      *
      * @return bool
      */

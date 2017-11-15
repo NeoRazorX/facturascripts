@@ -27,14 +27,14 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 class WidgetItemSelect extends WidgetItem
 {
     /**
-     * Valores aceptados por el campo asociado al widget
+     * Accepted values for the field associated to the widget
      *
      * @var array
      */
     public $values;
 
     /**
-     * Constructor de la clase
+     * Class constructor
      */
     public function __construct()
     {
@@ -45,7 +45,7 @@ class WidgetItemSelect extends WidgetItem
     }
 
     /**
-     * Carga la estructura de atributos en base a un archivo XML
+     * Loads the attributes structure from a XML file
      *
      * @param \SimpleXMLElement $column
      * @param \SimpleXMLElement $widgetAtributes
@@ -57,7 +57,7 @@ class WidgetItemSelect extends WidgetItem
     }
 
     /**
-     * Carga la estructura de atributos en base a la base de datos
+     * Loads the attributes structure from the database
      *
      * @param array $column
      */
@@ -68,7 +68,7 @@ class WidgetItemSelect extends WidgetItem
     }
 
     /**
-     * Carga la lista de valores según un array con codigo y descripción
+     * Loads the value list from an array with value and title (description)
      *
      * @param array $rows
      */
@@ -85,10 +85,10 @@ class WidgetItemSelect extends WidgetItem
     }
 
     /**
-     * Carga la lista de valores según un array de valores.
-     * Si el array informado:
-     * - es un array de valores, usa como title y value el valor de cada elemento
-     * - es un array de array, se usa los indices title y value para cada elemento
+     * Loads the value list from a given array.
+     * The array must have one of the two following structures:
+     * - If it's a value array, it must uses the value of each element as title and value
+     * - If it's a multidimensional array, the indexes value and title must be set for each element
      *
      * @param array $values
      */
@@ -110,8 +110,7 @@ class WidgetItemSelect extends WidgetItem
     }
 
     /**
-     * Genera el código html para la visualización de los datos en el
-     * controlador List
+     * Generates the HTML code to display the data in the List controller
      *
      * @param string $value
      *
@@ -127,8 +126,7 @@ class WidgetItemSelect extends WidgetItem
     }
 
     /**
-     * Genera el código html para la visualización y edición de los datos
-     * en el controlador Edit / EditList
+     * Generates the HTML code to display and edit  the data in the Edit / EditList controller
      *
      * @param string $value
      *

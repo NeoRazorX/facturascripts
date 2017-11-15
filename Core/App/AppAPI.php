@@ -22,14 +22,14 @@ namespace FacturaScripts\Core\App;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Description of App
+ * App description
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class AppAPI extends App
 {
     /**
-     * Ejecuta la API.
+     * Runs the API.
      *
      * @return boolean
      */
@@ -53,7 +53,7 @@ class AppAPI extends App
     }
 
     /**
-     * Selecciona la versión de API si está soportada
+     * Selects the API version if it is supported
      *
      * @return bool
      */
@@ -70,7 +70,7 @@ class AppAPI extends App
     }
 
     /**
-     * Selecciona recurso
+     * Selects the resource
      *
      * @return bool
      */
@@ -95,7 +95,7 @@ class AppAPI extends App
     }
 
     /**
-     * Procesa recurso, permitiendo hacer POST/PUT/DELETE/GET ALL
+     * Process the resource, allowing POST/PUT/DELETE/GET ALL actions
      *
      * @param string $modelName
      *
@@ -138,7 +138,7 @@ class AppAPI extends App
     }
 
     /**
-     * Procesa recurso con parametro
+     * Process resource with parameters
      *
      * @param string $modelName
      * @param string $cod
@@ -179,7 +179,7 @@ class AppAPI extends App
     }
 
     /**
-     * Obtiene mapa de recursos
+     * Load resource map
      *
      * @return array
      */
@@ -209,7 +209,7 @@ class AppAPI extends App
     }
 
     /**
-     * Expone recurso
+     * Expose resource
      *
      * @param array $map
      */

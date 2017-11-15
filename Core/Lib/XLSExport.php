@@ -34,7 +34,7 @@ class XLSExport implements ExportInterface
     const LIST_LIMIT = 1000;
 
     /**
-     * Nuevo documento
+     * New document
      *
      * @param $model
      *
@@ -57,7 +57,7 @@ class XLSExport implements ExportInterface
     }
 
     /**
-     * Nueva lista de documentos
+     * New document list
      *
      * @param $model
      * @param array $where
@@ -72,12 +72,12 @@ class XLSExport implements ExportInterface
         $writer = new \XLSXWriter();
         $writer->setAuthor('FacturaScripts');
 
-        /// obtenemos las columnas
+        /// Get the columns
         $tableCols = [];
         $sheetHeaders = [];
         $tableData = [];
 
-        /// obtenemos las columnas
+        /// Get the columns
         foreach ($columns as $col) {
             $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
             $sheetHeaders[$col->widget->fieldName] = 'string';
@@ -91,7 +91,7 @@ class XLSExport implements ExportInterface
             $tableData = $this->getTableData($cursor, $tableCols);
             $writer->writeSheet($tableData, '', $sheetHeaders);
 
-            /// avanzamos en los resultados
+            /// Advance within the results
             $offset += self::LIST_LIMIT;
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
@@ -100,7 +100,7 @@ class XLSExport implements ExportInterface
     }
 
     /**
-     * Devuelvo los datos de la tabla
+     * Returns the table data
      *
      * @param array $cursor
      * @param array $tableCols
@@ -111,7 +111,7 @@ class XLSExport implements ExportInterface
     {
         $tableData = [];
 
-        /// obtenemos los datos
+        /// Get the data
         foreach ($cursor as $key => $row) {
             foreach ($tableCols as $col) {
                 $value = '';
@@ -132,7 +132,7 @@ class XLSExport implements ExportInterface
     }
 
     /**
-     * Asigna la cabecera
+     * Assigns the header
      *
      * @param Response $response
      */

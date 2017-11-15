@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Definición inicial para el controlador EditUser
+ * Initial description for the controller EditUser
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
 -->
@@ -31,7 +31,7 @@
             <column name="homepage" numcolumns="4" order="110">
                 <widget type="select" fieldname="homepage">
                     <values source="fs_pages" fieldcode="name" fieldtitle="title"></values>
-                </widget>    
+                </widget>
             </column>
             <column name="email" numcolumns="5" order="120">
                 <widget type="email" fieldname="email" icon="fa-envelope" />
@@ -39,7 +39,7 @@
             <column name="company" numcolumns="3" order="210">
                 <widget type="select" fieldname="idempresa">
                     <values source="empresas" fieldcode="id" fieldtitle="nombre"></values>
-                </widget>    
+                </widget>
             </column>
             <column name="lang-code" numcolumns="3" order="210">
                 <widget type="select" fieldname="langcode">
@@ -63,6 +63,6 @@
             <column name="last-ip" order="120">
                 <widget type="text" fieldname="lastip" readonly="true" />
             </column>
-        </group>    
+        </group>
     </columns>
 </view>

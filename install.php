@@ -17,11 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// comprobaciones previas
+/// preliminary checks
 if (file_exists(__DIR__ . '/config.php')) {
     /**
-     * Si hay fichero de configuración significa que ya se ha instalado,
-     * así que redirigimos al index.
+     * If the configuration file exists it means that it is already installed,
+     * redirects to the index.
      */
     header('Location: index.php');
     die('');
@@ -40,7 +40,7 @@ use FacturaScripts\Core\Base\Translator;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Devuelve un array de errores con las situaciones conocidas
+ * Returns an error array with the known situations
  *
  * @param $errors
  * @param $i18n
@@ -63,7 +63,8 @@ function searchErrors(&$errors, &$i18n)
 }
 
 /**
- * Regresa un valor de font-awesome si el parametro es true o false
+ * Returns the corresponding font-awesome value to the @param parameter (true or false)
+ *
  * @param boolean $isOk
  * @return string
  */
@@ -73,8 +74,9 @@ function checkRequirement($isOk)
 }
 
 /**
- * Devuelve el lenguaje del usuario para mostrar en el selector el idioma correcto
- * para la instalación. En caso de que no exista el archivo json devuelve en_EN
+ * Returns the user language to show the proper installation language in the selector.
+ * When the JSON file doesn't exist, returns en_EN
+ *
  * @return string
  */
 function getUserLanguage()
@@ -104,9 +106,9 @@ function get_timezone_list()
 }
 
 /**
- * Se intenta realizar la conexión a la base de datos,
- * si se ha realizado se devuelve true, sino false.
- * En el caso que sea false, $errors contiene el error
+ * Tries to perform the database connection,
+ * if succeeded returns true, false if not.
+ * When false, the error is stored in $errors
  *
  * @param $errors
  * @param $i18n
@@ -150,9 +152,9 @@ function dbConnect(&$errors, &$i18n)
 }
 
 /**
- * Se intenta realizar la conexión a la base de datos MySQL,
- * si se ha realizado se devuelve true, sino false.
- * En el caso que sea false, $errors contiene el error
+ * Tries to perform the MYSQL database connection,
+ * if succeeded returns true, false if not.
+ * When false, the error is stored in $errors
  *
  * @param $errors
  * @param $dbData
@@ -167,12 +169,12 @@ function testMysql(&$errors, $dbData)
         ini_set('mysqli.default_socket', filter_input(INPUT_POST, 'mysql_socket'));
     }
 
-    // Omitimos el valor del nombre de la BD porque lo comprobaremos más tarde
+    // Omit the DB name because it will be checked on a later stage
     $connection = new mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', (int) $dbData['port']);
     if ($connection->connect_error) {
         $errors[] = (string) $connection->connect_error;
     } else {
-        // Comprobamos que la BD exista, de lo contrario la creamos
+        // Check that the DB exists, if it doesn't, we create a new one
         $dbSelected = mysqli_select_db($connection, $dbData['name']);
         if ($dbSelected) {
             $done = true;
@@ -190,9 +192,9 @@ function testMysql(&$errors, $dbData)
 }
 
 /**
- * Se intenta realizar la conexión a la base de datos PostgreSQL,
- * si se ha realizado se devuelve true, sino false.
- * En el caso que sea false, $errors contiene el error
+ * Tries to perform the PostgreSQL database connection,
+ * if succeeded returns true, false if not.
+ * When false, the error is stored in $errors
  *
  * @param $errors
  * @param $dbData
@@ -205,7 +207,7 @@ function testPostgreSql(&$errors, $dbData)
 
     $connection = pg_connect('host=' . $dbData['host'] . ' port=' . $dbData['port'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass']);
     if ($connection) {
-        // Comprobamos que la BD exista, de lo contrario la creamos
+        // Check that the DB exists, if it doesn't, we create a new one
         $connection2 = pg_connect('host=' . $dbData['host'] . ' port=' . $dbData['port'] . ' dbname=' . $dbData['name'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass']);
         if ($connection2) {
             $done = true;
@@ -223,14 +225,13 @@ function testPostgreSql(&$errors, $dbData)
 }
 
 /**
- * Si se han creado las carpetas necesarias, o ya existen
- * se devuelve true, sino false
+ * If the needed directories are created or already exist, returns true. False when not.
  *
  * @return bool
  */
 function createFolders()
 {
-    // En caso que ya existan previamente, podemos devolver true
+    // If they already exist, we can return true
     if (is_dir('Plugins') && is_dir('Dinamic') && is_dir('Cache')) {
         return true;
     }
@@ -242,8 +243,8 @@ function createFolders()
 }
 
 /**
- * Guarda la configuración en config.php,
- * devuelve true en caso afirmativo, y sino false.
+ * Saves the configuration to config.php
+ * returns true when succeeded, false when not.
  *
  * @return bool
  */
@@ -262,11 +263,15 @@ function saveInstall()
         fwrite($file, "define('FS_DB_NAME', '" . filter_input(INPUT_POST, 'db_name') . "');\n");
         fwrite($file, "define('FS_DB_USER', '" . filter_input(INPUT_POST, 'db_user') . "');\n");
         fwrite($file, "define('FS_DB_PASS', '" . filter_input(INPUT_POST, 'db_pass') . "');\n");
+        fwrite($file, "define('FS_DB_FOREIGN_KEYS', true);\n");
+        fwrite($file, "define('FS_DB_INTEGER', 'INTEGER');\n");
+        fwrite($file, "define('FS_DB_TYPE_CHECK', true);\n");
         fwrite($file, "define('FS_CACHE_HOST', '" . filter_input(INPUT_POST, 'memcache_host') . "');\n");
         fwrite($file, "define('FS_CACHE_PORT', '" . filter_input(INPUT_POST, 'memcache_port') . "');\n");
         fwrite($file, "define('FS_CACHE_PREFIX', '" . filter_input(INPUT_POST, 'memcache_prefix') . "');\n");
+        fwrite($file, "define('FS_MYDOCS', '');\n");
         if (filter_input(INPUT_POST, 'db_type') === 'MYSQL' && filter_input(INPUT_POST, 'mysql_socket') !== '') {
-            fwrite($file, "ini_set('mysqli.default_socket', '" . filter_input(INPUT_POST, 'mysql_socket') . "');\n");
+            fwrite($file, "\nini_set('mysqli.default_socket', '" . filter_input(INPUT_POST, 'mysql_socket') . "');\n");
         }
         fwrite($file, "\n");
         fclose($file);
@@ -278,17 +283,17 @@ function saveInstall()
 }
 
 /**
- * Renderiza la vista y devuelve la respuesta
+ * Renders the views and returns the response
  *
  * @param $templateVars
  */
 function renderHTML(&$templateVars)
 {
-    /// cargamos el motor de plantillas
+    /// Load the template engine
     $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/Core/View');
     $twig = new Twig_Environment($twigLoader);
 
-    /// generamos y volcamos el html
+    /// Generate and return the HTML
     $response = new Response($twig->render('Installer/Install.html', $templateVars), Response::HTTP_OK);
     $response->send();
 }
@@ -306,7 +311,7 @@ function randomString($length = 20)
 }
 
 /**
- * Función principal del instalador
+ * Main installer function
  *
  * @return int
  */
@@ -332,7 +337,7 @@ function installerMain()
         }
     }
 
-    /// empaquetamos las variables a pasar el motor de plantillas
+    /// Pack the variables to handover to the template engine
     $templateVars = [
         'errors' => $errors,
         'requirements' => [

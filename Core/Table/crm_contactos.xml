@@ -2,7 +2,7 @@
 <!--
     Document   : crm_contactos.xml
     Description:
-        Estructura de la tabla crm_contactos.
+        Structure for the crm_contactos table.
 -->
 <table>
     <column>

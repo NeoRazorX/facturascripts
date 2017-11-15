@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator;
 
 /**
- * Clase para conectar e interactuar con APC.
+ * Class to connect and interact with APC.
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  * @author Carlos García Gómez <carlos@facturascripts.com>
@@ -32,14 +32,14 @@ class APCAdapter implements AdaptorInterface
 {
 
     /**
-     * Objeto traductor
+     * Translator object
      *
      * @var Translator
      */
     private $i18n;
 
     /**
-     * Objeto del minilog
+     * MiniLog Object
      *
      * @var MiniLog
      */

@@ -17,8 +17,7 @@
  */
 
 /**
- * Estilo personalizado para tener en la pestaña Database de
- * PHP Debug Bar las líneas enumeradas
+ * Customized style to have numbered lines in PHP Debug Bar's Database tab
  */
 (function ($) {
 

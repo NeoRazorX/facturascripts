@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la edición de un registro del modelo Asiento
+ * Controller to edit a single item from the Asiento model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>

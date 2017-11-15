@@ -3,7 +3,7 @@
     Document   : articulos.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla articulos.
+        Structure for the articulos table.
         Algunas columnas de la tabla no se utilizan en FacturaScripts,
         pero las añado para dar compatilidad con Abanq/Eneboo.
 -->

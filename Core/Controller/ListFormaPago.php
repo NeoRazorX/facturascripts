@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controlador para la lista de Formas de Pago
+ * Controller to list the items in the FormaPago model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -30,7 +30,7 @@ class ListFormaPago extends ExtendedController\ListController
 {
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */
@@ -45,7 +45,7 @@ class ListFormaPago extends ExtendedController\ListController
     }
 
     /**
-     * Procedimiento encargado de insertar las vistas a visualizar
+     * Load views
      */
     protected function createViews()
     {

@@ -3,7 +3,7 @@
     Document   : articulo_trazas
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla articulo_trazas
+        Structure for the articulo_trazas table
 -->
 <table>
     <column>

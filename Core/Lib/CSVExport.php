@@ -22,8 +22,8 @@ use FacturaScripts\Core\Base\ExportInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Clase para exportar a CSV
- * Sigue el estilo de XLSExport para tener un código más uniforme
+ * Class to export to CSV
+ * Follow the XLSExport style to have a more uniform code
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -35,21 +35,21 @@ class CSVExport implements ExportInterface
     const LIST_LIMIT = 1000;
 
     /**
-     * Contiene los datos del CSV en formato array
+     * Contains the CSV data in array format
      *
      * @var array
      */
     private $csv;
 
     /**
-     * Valor del separador
+     * Separator value
      *
      * @var string
      */
     private $separator;
 
     /**
-     * Valor del delimitador de texto
+     * Text delimiter value
      *
      * @var string
      */
@@ -65,8 +65,8 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * Asigna el separador recibido.
-     * Por defecto utiliza ';'.
+     * Assigns the received separator.
+     * By default it will use ';' semicolons.
      *
      * @param $sep
      */
@@ -76,8 +76,8 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * Asigna el delimitador de texto recibido
-     * Por defecto utiliza '"'.
+     * Assigns the received text delimiter
+     * By default it will use '"' quotes.
      * @param $del
      */
     public function setDelimiter($del)
@@ -86,7 +86,7 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * Devuelve el separador asignado
+     * Returns the assigned separator
      *
      * @return string
      */
@@ -96,7 +96,7 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * Devuelve el delimitador de texto recibido asignado
+     * Returns the received text delimiter assigned
      *
      * @return string
      */
@@ -106,7 +106,7 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * Nuevo documento
+     * New document
      *
      * @param $model
      *
@@ -129,7 +129,7 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * Nueva lista de documentos
+     * New document list
      *
      * @param $model
      * @param array $where
@@ -141,12 +141,12 @@ class CSVExport implements ExportInterface
      */
     public function newListDoc($model, $where, $order, $offset, $columns)
     {
-        /// obtenemos las columnas
+        /// get the columns
         $tableCols = [];
         $sheetHeaders = [];
         $tableData = [];
 
-        /// obtenemos las columnas
+        /// Get the columns
         foreach ($columns as $col) {
             $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
             $sheetHeaders[$col->widget->fieldName] = 'string';
@@ -160,7 +160,7 @@ class CSVExport implements ExportInterface
             $tableData = $this->getTableData($cursor, $tableCols);
             $this->writeSheet($tableData, $sheetHeaders);
 
-            /// avanzamos en los resultados
+            /// Advance within the results
             $offset += self::LIST_LIMIT;
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
@@ -169,7 +169,7 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * Devuelvo los datos de la tabla
+     * Returns the table data
      *
      * @param array $cursor
      * @param array $tableCols
@@ -180,7 +180,7 @@ class CSVExport implements ExportInterface
     {
         $tableData = [];
 
-        /// obtenemos los datos
+        /// Get the data
         foreach ($cursor as $key => $row) {
             foreach ($tableCols as $col) {
                 $value = '';
@@ -201,7 +201,7 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * Asigna la cabecera
+     * Assigns the header
      *
      * @param Response $response
      */
@@ -212,7 +212,7 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * Rellena los datos del CSV en un array
+     * Fills an array with the CSV data
      *
      * @param $tableData
      * @param $sheetHeaders
@@ -235,7 +235,7 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * Devuelve el CSV como texto plano
+     * Retrurns the CSV as plain text
      *
      * @return string
      */

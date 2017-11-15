@@ -3,7 +3,7 @@
     Document   : albaranesprov.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla albaranesprov.
+        Structure for the albaranesprov table.
 -->
 <table>
     <column>

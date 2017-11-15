@@ -3,7 +3,7 @@
     Document   : ejercicios.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla ejercicios.
+        Structure for the ejercicios table.
 -->
 <table>
     <column>

@@ -30,7 +30,7 @@ class Pagination
     /**
      * Constantes para paginación
      */
-    const FS_ITEM_LIMIT = 50;
+    const FS_ITEM_LIMIT = FS_ITEM_LIMIT;
     const FS_PAGE_MARGIN = 5;
 
     /**

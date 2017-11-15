@@ -3,7 +3,7 @@
     Document   : stocks.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla stocks.
+        Structure for the stocks table.
 -->
 <table>
     <column>
