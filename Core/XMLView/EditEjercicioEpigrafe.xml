@@ -30,10 +30,9 @@
                 <widget type="text" fieldname="codejercicio"/>
                     
             </column>
-             <column name="heading-account-group-id" numcolumns="2" order="110">
-                <widget type="select" fieldname="idgrupo" onclick="">
-                    <values></values>
-                </widget>   
+             <column name="heading-account-group-id" numcolumns="2" order="110" display="none">
+                <widget type="text" fieldname="idgrupo" onclick=""/>
+                    
             </column>
             <column name="accounting-heading-id" numcolumns="2" order="120" >
                 <widget type="text" fieldname="codepigrafe" onclick="" />
