@@ -64,7 +64,7 @@ class EditArticulo extends ExtendedController\PanelController
                 break;
 
             case 'ListFamilia':
-                $codfamilia = $this->getArticuloFieldValue('codfamilia');
+                $codfamilia = $this->getViewModelValue('EditArticulo', 'codfamilia');
 
                 if (!empty($codfamilia)) {
                     $where = [new DataBase\DataBaseWhere('codfamilia', $codfamilia)];
