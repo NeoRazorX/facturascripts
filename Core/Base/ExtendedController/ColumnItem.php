@@ -155,6 +155,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      * Generates the HTML code to display the data from the model for Edit controllers
      *
      * @param string $value
+     * @param bool $withLabel
      *
      * @return string
      */

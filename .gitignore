@@ -11,6 +11,8 @@
 .htaccess
 composer.lock
 config.php
+config-mysql.php
+config-postgresql.php
 generateDoc.sh
 plugin.list
 package-lock.json

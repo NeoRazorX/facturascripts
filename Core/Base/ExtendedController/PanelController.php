@@ -96,6 +96,11 @@ abstract class PanelController extends Base\Controller
         $this->views = [];
     }
 
+    /**
+     * Asigna la posición de la pestaña.
+     *
+     * @param string $position
+     */
     public function setTabsPosition($position)
     {
         $this->tabsPosition = $position;

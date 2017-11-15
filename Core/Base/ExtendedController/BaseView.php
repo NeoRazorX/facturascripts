@@ -158,7 +158,7 @@ abstract class BaseView
      *
      * @param string $columnName
      *
-     * @return ExtendedController\ColumnItem
+     * @return ColumnItem
      */
     public function columnForName($columnName)
     {

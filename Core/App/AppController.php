@@ -106,6 +106,11 @@ class AppController extends App
         return false;
     }
 
+    /**
+     * Devuelve el controlador por defecto, si no hay ninguno asignado, devuelve AdminHome.
+     *
+     * @return mixed
+     */
     private function getDefaultController()
     {
         $homePage = $this->settings->get('default', 'homepage', 'AdminHome');

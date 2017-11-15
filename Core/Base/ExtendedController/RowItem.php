@@ -87,12 +87,21 @@ abstract class RowItem implements VisualItemInterface
     
     /**
      * RowItem constructor.
+     *
+     * @param string $type
      */
     public function __construct($type)
     {
         $this->type = $type;
     }
-    
+
+    /**
+     * Devuelve los atributos de un elemento desde el XML.
+     *
+     * @param \SimpleXMLElement $item
+     *
+     * @return array
+     */
     protected function getAttributesFromXML($item)
     {
         $result = [];
@@ -103,6 +112,13 @@ abstract class RowItem implements VisualItemInterface
         return $result;
     }
 
+    /**
+     * Devuelve una lista de WidgetButton desde el XML.
+     *
+     * @param \SimpleXMLElement[] $buttonsXML
+     *
+     * @return WidgetButton[]
+     */
     protected function loadButtonsFromXML($buttonsXML)
     {
         $buttons = [];

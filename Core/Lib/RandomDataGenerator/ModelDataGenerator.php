@@ -418,6 +418,11 @@ class ModelDataGenerator
         return $num;
     }
 
+    /**
+     * Rellena un cliente con datos aleatorios.
+     *
+     * @param Model\Cliente|Model\Proveedor $cliente
+     */
     private function fillCliente(&$cliente)
     {
         $cliente->cifnif = (mt_rand(0, 14) === 0) ? '' : mt_rand(0, 99999999);
@@ -456,6 +461,12 @@ class ModelDataGenerator
         $cliente->email = (mt_rand(0, 2) > 0) ? $this->tools->email() : null;
     }
 
+    /**
+     * Rellena direcciones de un cliente con datos aleatorios.
+     *
+     * @param Model\Cliente $cliente
+     * @param int $max
+     */
     private function direccionesCliente($cliente, $max = 3)
     {
         while ($max > 0) {
@@ -478,6 +489,12 @@ class ModelDataGenerator
         }
     }
 
+    /**
+     * Rellena cuentas bancarias de un cliente con datos aleatorios.
+     *
+     * @param Model\Cliente $cliente
+     * @param int $max
+     */
     private function cuentasBancoCliente($cliente, $max = 3)
     {
         while ($max > 0) {
@@ -538,6 +555,12 @@ class ModelDataGenerator
         return $num;
     }
 
+    /**
+     * Rellena direcciones de un proveedor con datos aleatorios.
+     *
+     * @param Model\Proveedor $proveedor
+     * @param int $max
+     */
     private function direccionesProveedor($proveedor, $max = 3)
     {
         while ($max) {
@@ -568,6 +591,12 @@ class ModelDataGenerator
         }
     }
 
+    /**
+     * Rellena cuentas bancarias de un proveedor con datos aleatorios.
+     *
+     * @param Model\Proveedor $proveedor
+     * @param int $max
+     */
     private function cuentasBancoProveedor($proveedor, $max = 3)
     {
         while ($max > 0) {
@@ -591,16 +620,21 @@ class ModelDataGenerator
     }
 
     /**
+     * Devuelve listados de datos del model indicado.
+     *
      * @param string $modelName
      * @param string $tableName
      * @param string $functionName
+     * @param bool $recursivo
+     *
+     * @return array
      */
     protected function randomModel($modelName, $tableName, $functionName, $recursivo = true)
     {
         $lista = [];
 
         $sql = 'SELECT * FROM ' . $tableName . ' ORDER BY ';
-        $sql .= strtolower(FS_DB_TYPE) == 'mysql' ? 'RAND()' : 'random()';
+        $sql .= strtolower(FS_DB_TYPE) === 'mysql' ? 'RAND()' : 'random()';
 
         $data = $this->db->selectLimit($sql, 100, 0);
         if (!empty($data)) {

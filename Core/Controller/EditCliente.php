@@ -91,6 +91,13 @@ class EditCliente extends ExtendedController\PanelController
         return $pagedata;
     }
 
+    /**
+     * Devuelve la suma del total de albaranes del cliente.
+     *
+     * @param ExtendedController\EditView $view
+     *
+     * @return string
+     */
     public function calcClientDeliveryNotes($view)
     {
         $where = [];
@@ -101,6 +108,13 @@ class EditCliente extends ExtendedController\PanelController
         return $this->divisaTools->format($totalModel->totals['total'], 2);
     }
 
+    /**
+     * Devuelve la suma del total de facturas pendientes del cliente.
+     *
+     * @param ExtendedController\EditView $view
+     *
+     * @return string
+     */
     public function calcClientInvoicePending($view)
     {
         $where = [];

@@ -83,11 +83,17 @@ abstract class WidgetItem
     public $options;
 
     /**
+     * Genera el código html para visualizar el dato del modelo
+     * para controladores List
+     *
      * @param string $value
      */
     abstract public function getListHTML($value);
 
     /**
+     * Genera el código html para visualizar el dato del modelo
+     * para controladores Edit
+     *
      * @param string $value
      */
     abstract public function getEditHTML($value);
@@ -174,7 +180,7 @@ abstract class WidgetItem
      * Loads the attribute dictionary for a widget's group of options or values
      *
      * @param array            $property
-     * @param \SimpleXMLElement $group
+     * @param \SimpleXMLElement[] $group
      */
     protected function getAttributesGroup(&$property, $group)
     {
@@ -266,7 +272,7 @@ abstract class WidgetItem
             if ($this->canApplyOptions($option['value'], $valueItem)) {
                 $html = ' style="';
                 foreach ($option as $key => $value) {
-                    if ($key != 'value') {
+                    if ($key !== 'value') {
                         $html .= $key . ':' . $value . '; ';
                     }
                 }
@@ -355,6 +361,7 @@ abstract class WidgetItem
      * @param string $value
      * @param string $specialAttributes
      * @param string $extraClass
+     * @param string $type
      *
      * @return string
      */

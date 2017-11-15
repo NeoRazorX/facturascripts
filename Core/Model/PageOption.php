@@ -263,7 +263,7 @@ class PageOption
      * Carga las condiciones especiales para las filas
      * desde el XML
      *
-     * @param \SimpleXMLElement[] $rows
+     * @param \SimpleXMLElement $rows
      */
     private function getXMLRows($rows)
     {
