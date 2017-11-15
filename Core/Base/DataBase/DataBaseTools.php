@@ -30,8 +30,25 @@ use FacturaScripts\Core\Base\Translator;
 class DataBaseTools
 {
 
+    /**
+     * DataBase object.
+     * 
+     * @var db 
+     */
     private static $dataBase;
+
+    /**
+     * System Log.
+     * 
+     * @var MiniLog 
+     */
     private static $i18n;
+
+    /**
+     * Translator.
+     * 
+     * @var Translator 
+     */
     private static $miniLog;
 
     public function __construct()
@@ -44,7 +61,7 @@ class DataBaseTools
     }
 
     /**
-     * Obtiene las columnas y restricciones del fichero xml para una tabla
+     * Extract columns and restrictions form the XML definition file of a Table.
      *
      * @param string $tableName
      * @param array  $columns
@@ -55,46 +72,20 @@ class DataBaseTools
     public function getXmlTable($tableName, &$columns, &$constraints)
     {
         $return = false;
-
-        $filename = FS_FOLDER . '/Dinamic/Table/' . $tableName . '.xml';
-        if (!file_exists($filename)) {
-            $filename = FS_FOLDER . '/Core/Table/' . $tableName . '.xml';
-        }
+        $filename = $this->getXmlTableLocation($tableName);
 
         if (file_exists($filename)) {
             $xml = simplexml_load_string(file_get_contents($filename, FILE_USE_INCLUDE_PATH));
             if ($xml) {
                 if ($xml->column) {
-                    $key = 0;
-                    foreach ($xml->column as $col) {
-                        $columns[$key]['name'] = (string) $col->name;
-                        $columns[$key]['type'] = (string) $col->type;
+                    $this->checkXmlColumns($columns, $xml);
 
-                        $columns[$key]['null'] = 'YES';
-                        if ($col->null && strtolower($col->null) === 'no') {
-                            $columns[$key]['null'] = 'NO';
-                        }
-
-                        if ($col->default === '') {
-                            $columns[$key]['default'] = null;
-                        } else {
-                            $columns[$key]['default'] = (string) $col->default;
-                        }
-
-                        ++$key;
-                    }
-
-                    /// debe de haber columnas, sino es un fallo
+                    /// columns must exists or function must return false
                     $return = true;
                 }
 
                 if ($xml->constraint) {
-                    $key = 0;
-                    foreach ($xml->constraint as $col) {
-                        $constraints[$key]['name'] = (string) $col->name;
-                        $constraints[$key]['constraint'] = (string) $col->type;
-                        ++$key;
-                    }
+                    $this->checkXmlConstraints($constraints, $xml);
                 }
             } else {
                 self::$miniLog->critical(self::$i18n->trans('error-reading-file', [$filename]));
@@ -104,5 +95,47 @@ class DataBaseTools
         }
 
         return $return;
+    }
+
+    private function getXmlTableLocation($tableName)
+    {
+        $filename = FS_FOLDER . '/Dinamic/Table/' . $tableName . '.xml';
+        if (!file_exists($filename)) {
+            $filename = FS_FOLDER . '/Core/Table/' . $tableName . '.xml';
+        }
+
+        return $filename;
+    }
+
+    private function checkXmlColumns(&$columns, $xml)
+    {
+        $key = 0;
+        foreach ($xml->column as $col) {
+            $columns[$key]['name'] = (string) $col->name;
+            $columns[$key]['type'] = (string) $col->type;
+
+            $columns[$key]['null'] = 'YES';
+            if ($col->null && strtolower($col->null) === 'no') {
+                $columns[$key]['null'] = 'NO';
+            }
+
+            if ($col->default === '') {
+                $columns[$key]['default'] = null;
+            } else {
+                $columns[$key]['default'] = (string) $col->default;
+            }
+
+            ++$key;
+        }
+    }
+
+    private function checkXmlConstraints(&$constraints, $xml)
+    {
+        $key = 0;
+        foreach ($xml->constraint as $col) {
+            $constraints[$key]['name'] = (string) $col->name;
+            $constraints[$key]['constraint'] = (string) $col->type;
+            ++$key;
+        }
     }
 }
