@@ -93,6 +93,13 @@ abstract class App
     protected $response;
 
     /**
+     * Stored defaut configuration with the application settings.
+     * 
+     * @var AppSettings 
+     */
+    protected $settings;
+
+    /**
      * Initializes the app.
      *
      * @param string $folder FacturaScripts working directory
@@ -112,13 +119,13 @@ abstract class App
             $this->i18n = new Base\Translator();
         }
 
-        $this->appSettings = new AppSettings();
         $this->cache = new Base\Cache();
         $this->dataBase = new Base\DataBase();
         $this->ipFilter = new Base\IPFilter();
         $this->miniLog = new Base\MiniLog();
         $this->pluginManager = new Base\PluginManager();
         $this->response = new Response();
+        $this->settings = new AppSettings();
     }
 
     /**
@@ -129,7 +136,7 @@ abstract class App
     public function connect()
     {
         if ($this->dataBase->connect()) {
-            $this->appSettings->load();
+            $this->settings->load();
             return TRUE;
         }
 

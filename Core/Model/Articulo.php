@@ -353,13 +353,12 @@ class Articulo
         $sql = 'SELECT referencia FROM ' . $this->tableName() . ' WHERE referencia ';
         $sql .= (strtolower(FS_DB_TYPE) === 'postgresql') ? "~ '^\d+$' ORDER BY referencia::BIGINT DESC" : "REGEXP '^\d+$' ORDER BY ABS(referencia) DESC";
 
-        $ref = 1;
         $data = $this->dataBase->selectLimit($sql, 1);
         if (!empty($data)) {
-            $ref = sprintf(1 + (int) $data[0]['referencia']);
+            return sprintf(1 + (int) $data[0]['referencia']);
         }
 
-        return $ref;
+        return '1';
     }
 
     /**
