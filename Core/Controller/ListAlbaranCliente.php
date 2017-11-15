@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controlador para la lista de albaranes de cliente
+ * Controller to list the items in the AlbaranCliente model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -30,13 +30,13 @@ class ListAlbaranCliente extends ExtendedController\ListController
 {
 
     /**
-     * Procedimiento encargado de insertar las vistas a visualizar
+     * Load views
      */
     protected function createViews()
     {
         $this->addView('FacturaScripts\Core\Model\AlbaranCliente', 'ListAlbaranCliente');
         $this->addSearchFields('ListAlbaranCliente', ['codigo', 'numero2', 'nombrecliente', 'observaciones']);
-        
+
         $this->addFilterDatePicker('ListAlbaranCliente', 'date', 'date', 'fecha');
         $this->addFilterNumber('ListAlbaranCliente', 'total', 'total');
         $this->addFilterSelect('ListAlbaranCliente', 'codalmacen', 'almacenes', '', 'nombre');
@@ -50,7 +50,7 @@ class ListAlbaranCliente extends ExtendedController\ListController
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */

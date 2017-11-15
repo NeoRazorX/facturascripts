@@ -10,14 +10,14 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSºE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Definición inicial para el controlador EditCliente
+ * Initial description for the controller EditCliente
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
 -->
@@ -28,12 +28,12 @@
             <column name="code" numcolumns="2" order="100">
                 <widget type="text" fieldname="codcliente" onclick="" icon="fa-user" required="true" />
             </column>
-            
+
             <column name="name" numcolumns="3" order="110"
                     description="desc-custommer-name">
                 <widget type="text" fieldname="nombre" required="true" hint="desc-custommer-name-2" />
             </column>
-            
+
             <column name="fiscal type" title="fiscal-id" numcolumns="2" order="130">
                 <widget type="select" fieldname="tipoidfiscal">
                     <values title="CIF/NIF">CIF/NIF</values>
@@ -59,7 +59,7 @@
                 <widget type="checkbox" fieldname="personafisica" />
             </column>
         </group>
-        
+
         <group name="comercial" title="commercial-terms" numcolumns="4">
             <column name="group" numcolumns="6" titleurl="?page=ListGrupoCliente" order="100">
                 <widget type="select" fieldname="codgrupo">
@@ -82,7 +82,7 @@
                     <values source="agentes" fieldcode="codagente" fieldtitle="nombre || ' ' || apellidos"></values>
                 </widget>
             </column>
-            
+
             <column name="vat type" title="vat-regime" order="150">
                 <widget type="radio" fieldname="regimeniva">
                     <values title="general">General</values>
@@ -90,20 +90,20 @@
                 </widget>
             </column>
         </group>
-        
+
         <group name="contact" title="contact-info" numcolumns="4">
             <column name="phone" numcolumns="4" order="100">
                 <widget type="tel" fieldname="telefono1" />
             </column>
-            
+
             <column name="phone2" numcolumns="4" order="110">
                 <widget type="tel" fieldname="telefono2" />
             </column>
-            
+
             <column name="fax" numcolumns="4" order="120">
                 <widget type="tel" fieldname="fax" />
             </column>
-            
+
             <column name="email" numcolumns="12" order="200">
                 <widget type="email" fieldname="email" />
             </column>
@@ -126,32 +126,46 @@
                 <widget type="checkbox" fieldname="debaja" />
             </column>
         </group>
-        
+
         <group name="notes">
             <column name="notes" order="170">
                 <widget type="textarea" fieldname="observaciones" />
             </column>
         </group>
     </columns>
-    
+
     <rows>
         <row type="header">
-            <option icon="fa-files-o" label="delivery-notes-button" calculateby="calcClientDeliveryNotes" onclick="#"></option>
-            <option icon="fa-money" label="pending-invoices-button" calculateby="calcClientInvoicePending" onclick="#"></option>
-        </row>   
-             
-        <row type="footer">
-            <option>
-                <action color="primary" onclick="#">Action 1</action>
-                <action color="info" onclick="#">Action 2</action>
-                <action onclick="#">Action 3</action>
-            </option>
-            <option label="Danger Actions" color="danger">
-                Estas son acciones peligrosas
-                <action color="danger" onclick="#">Alert 1</action>
-                <action color="danger" onclick="#">Alert 2</action>
-            </option>
-        </row>    
-    </rows>    
-</view>
+            <button type="calculate" icon="fa-files-o" label="delivery-notes-button" action="calcClientDeliveryNotes" />
+            <button type="calculate" icon="fa-money" label="pending-invoices-button" action="calcClientInvoicePending" />
+        </row>
 
+        <row type="footer">
+            <group>
+                <button type="modal" label="Action1" color="primary" action="test" icon="fa-users" />
+                <button type="action" label="Action2" color="info" action="process1" icon="fa-book" hint="Ejecuta el controlador con action=process1" />
+                <button type="action" label="Action3" action="process2" />
+            </group>
+        </row>
+    </rows>
+
+    <modals>
+        <group name="test" title="other-data" icon="fa-users">
+            <column name="name" numcolumns="12" description="desc-custommer-name">
+                <widget type="text" fieldname="nombre" required="true" hint="desc-custommer-name-2" />
+            </column>
+
+            <column name="create-date" numcolumns="6">
+                <widget type="datepicker" fieldname="fechaalta" readonly="true" />
+            </column>
+
+            <column name="blocked-date" numcolumns="6">
+                <widget type="datepicker" fieldname="fechabaja" />
+            </column>
+
+            <column name="blocked">
+                <widget type="checkbox" fieldname="debaja" />
+            </column>
+        </group>
+    </modals>
+</view>

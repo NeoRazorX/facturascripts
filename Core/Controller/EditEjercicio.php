@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model;
@@ -28,7 +27,7 @@ use FacturaScripts\Core\Model\Epigrafe;
 use FacturaScripts\Core\Model\Cuenta;
 
 /**
- * Controlador para la edición de un registro del modelo Familia
+ * Controller to edit a single item from the Familia model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -48,15 +47,11 @@ class EditEjercicio extends ExtendedController\PanelController
     {
         $groups = [];
         $group_model = new GrupoEpigrafes();
-
         $obj_groups = $group_model->all([new DataBase\DataBaseWhere('codejercicio' , $exercise_code)]);   
-      
         foreach ($obj_groups as $group_item) {
-          
-            $item['value'] = $group_item -> idgrupo;
-            $item['title'] = $group_item -> descripcion;
+            $item['value'] = $group_item->idgrupo;
+            $item['title'] = $group_item->descripcion;
             $groups[] = $item;
-   
         }
         
         return $groups;
@@ -72,15 +67,11 @@ class EditEjercicio extends ExtendedController\PanelController
     {
         $epigrafes = [];
         $epigrafe_model = new Epigrafe();
-
-        $obj_epigrafes = $epigrafe_model->all([new DataBase\DataBaseWhere('codejercicio' , $exercise_code)]);   
-      
+        $obj_epigrafes = $epigrafe_model->all([new DataBase\DataBaseWhere('codejercicio' , $exercise_code)]);
         foreach ($obj_epigrafes as $epigrafe_item) {
-          
-            $item['value'] = $epigrafe_item -> idepigrafe;
-            $item['title'] = $epigrafe_item -> descripcion;
+            $item['value'] = $epigrafe_item->idepigrafe;
+            $item['title'] = $epigrafe_item->descripcion;
             $epigrafes[] = $item;
-   
         }
         
         return $epigrafes;
@@ -184,7 +175,7 @@ class EditEjercicio extends ExtendedController\PanelController
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */

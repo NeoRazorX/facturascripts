@@ -18,48 +18,67 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la edición de un registro del modelo Asiento
+ * Controller to edit a single item from the Asiento model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Fco Antonio Moreno Pérez <famphuelva@gmail.com>
+ * @author PC REDNET S.L. <luismi@pcrednet.com>
  */
-class EditAsiento extends ExtendedController\EditController
+class EditAsiento extends ExtendedController\PanelController
 {
 
-    /**
-     * EditAsiento constructor.
+   /**
+    * Procedimiento para insertar vistas en el controlador
+    */
+   protected function createViews()
+   {
+      $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
+      $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
+   }
+   
+   /**
+     * Procedimiento encargado de cargar los datos a visualizar
      *
-     * @param Base\Cache $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
-     * @param string $className
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    protected function loadData($keyView, $view)
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
+        switch ($keyView) {
+            case 'EditAsiento':
+                $value = $this->request->get('code');
+                $view->loadData($value);
+                break;
 
-        // Establecemos el modelo de datos
-        $this->modelName = 'FacturaScripts\Core\Model\Asiento';
+            case 'ListPartida':
+                $idasiento = $this->getViewModelValue('EditAsiento', 'idasiento');
+                if (!empty($idasiento)) {
+                    $where = [new DataBase\DataBaseWhere('idasiento', $idasiento)];
+                    $view->loadData($where);
+                }
+                break;
+        }
     }
 
-    /**
-     * Devuelve los datos básicos de la página
-     *
-     * @return array
-     */
-    public function getPageData()
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'accounting-entries';
-        $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fa-balance-scale';
-        $pagedata['showonmenu'] = false;
+   /**
+    * Devuelve los datos básicos de la página
+    *
+    * @return array
+    */
+   public function getPageData()
+   {
+      $pagedata = parent::getPageData();
+      $pagedata['title'] = 'accounting-entries';
+      $pagedata['menu'] = 'accounting';
+      $pagedata['icon'] = 'fa-balance-scale';
+      $pagedata['showonmenu'] = false;
 
-        return $pagedata;
-    }
+      return $pagedata;
+   }
 }

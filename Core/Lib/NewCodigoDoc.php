@@ -27,7 +27,7 @@ class NewCodigoDoc
 {
 
     /**
-     * Opción del código
+     * Code option
      *
      * @var string
      */
@@ -44,7 +44,7 @@ class NewCodigoDoc
     }
 
     /**
-     * Devuelve la opción
+     * Returns the option
      *
      * @return string
      */
@@ -54,7 +54,7 @@ class NewCodigoDoc
     }
 
     /**
-     * Asigna la opción
+     * Assigns the option
      *
      * @param string $value
      */
@@ -64,7 +64,7 @@ class NewCodigoDoc
     }
 
     /**
-     * Devuelve las opciones disponibles para el código
+     * Returns the available options for the code
      *
      * @return string[]
      */
@@ -74,7 +74,7 @@ class NewCodigoDoc
     }
 
     /**
-     * Devuelve el número del documento
+     * Returns the document number
      *
      * @param string $tableName
      * @param string $codejercicio
@@ -88,7 +88,7 @@ class NewCodigoDoc
     }
 
     /**
-     * Devuelve el código del documento
+     * Returns the document code
      *
      * @param string $tableName
      * @param int $numero
@@ -99,7 +99,7 @@ class NewCodigoDoc
      */
     public function getCodigo($tableName, $numero, $codserie, $codejercicio)
     {
-        /// provisional
+        /// Temporary - provisional
         return $codejercicio . $codserie . $numero;
     }
 }

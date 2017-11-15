@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Definición inicial para el controlador ListSubcuenta
+ * Initial description for the controller ListSubcuenta
  *
  * @author Artex Trading sa <jcuello@artextrading.com>  
 -->
@@ -30,13 +30,21 @@
         <column name="fiscal-exercise" order="110">
             <widget type="text" fieldname="codejercicio" />
         </column>
-        <column name="account" order="120">
-            <widget type="text" fieldname="codcuenta" />
+        <column name="subaccount" order="120">
+            <widget type="text" fieldname="codsubcuenta" />
         </column>
         <column name="description" order="130">
             <widget type="text" fieldname="descripcion" />
         </column>
+        <column name="ammount" order="140" display="right">
+            <widget type="money" fieldname="saldo" />
+        </column>
     </columns>
-    <filters>
-    </filters>
+    <rows>
+        <row type="status" fieldname="saldo">
+            <option color="table-warning">0</option>
+            <option color="table-danger">&lt;0</option>
+            <option color="table-success">&gt;0</option>
+        </row>
+    </rows>
 </view>

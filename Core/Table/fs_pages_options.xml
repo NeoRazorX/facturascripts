@@ -4,7 +4,7 @@
     Created on : 27 de julio de 2017
     Author     : jcuello@artextrading.com
     Description:
-        Estructura de la tabla fs_pages_options.
+        Structure for the fs_pages_options table.
 -->
 <table>
     <column>
@@ -24,12 +24,17 @@
         <null>YES</null>
     </column>
     <column>
+        <name>columns</name>
+        <type>text</type>
+        <null>YES</null>
+    </column>
+    <column>
         <name>rows</name>
         <type>text</type>
         <null>YES</null>
     </column>
     <column>
-        <name>columns</name>
+        <name>modals</name>
         <type>text</type>
         <null>YES</null>
     </column>

@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Description of ListArticulo
+ * Controller to list the items in the Articulo model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -29,22 +29,7 @@ class ListArticulo extends ExtendedController\ListController
 {
 
     /**
-     * Devuelve los datos básicos de la página
-     *
-     * @return array
-     */
-    public function getPageData()
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'products';
-        $pagedata['icon'] = 'fa-cubes';
-        $pagedata['menu'] = 'warehouse';
-
-        return $pagedata;
-    }
-
-    /**
-     * Procedimiento para insertar vistas en el controlador
+     * Load views
      */
     protected function createViews()
     {
@@ -82,5 +67,20 @@ class ListArticulo extends ExtendedController\ListController
         $this->addOrderBy('ListStock', 'referencia', 'reference');
         $this->addOrderBy('ListStock', 'cantidad', 'quantity');
         $this->addOrderBy('ListStock', 'disponible', 'available');
+    }
+
+    /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'products';
+        $pagedata['icon'] = 'fa-cubes';
+        $pagedata['menu'] = 'warehouse';
+
+        return $pagedata;
     }
 }

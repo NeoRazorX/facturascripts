@@ -10,6 +10,9 @@
         document.insert_form.action = url[tabActive];
         document.insert_form.submit();
     }
+    function goToOptions() {
+        window.location.href = 'index.php?page=EditPageOption&code=' + tabActive;
+    }
     function doAction(action) {
         var url = '{{ fsc.url() }}';
         window.location.href = url + '&active=' + tabActive + '&action=' + action;
@@ -27,18 +30,18 @@
                 message: "{{ i18n.trans('are-you-sure') }}",
                 closeButton: false,
                 buttons: {
-                cancel: {
-                label: '<i class="fa fa-times"></i> {{ i18n.trans("cancel") }}'
-                },
+                    cancel: {
+                        label: '<i class="fa fa-times"></i> {{ i18n.trans("cancel") }}'
+                    },
                     confirm: {
-                    label: '<i class="fa fa-check"></i> {{ i18n.trans("confirm") }}'
+                        label: '<i class="fa fa-check"></i> {{ i18n.trans("confirm") }}'
                     }
                 },
                 callback: function (result) {
-                if (result) {
-                    document.f_list_delete.active.value = tabActive;
-                    document.f_list_delete.code.value = deleteCodes.join();
-                    document.f_list_delete.submit();
+                    if (result) {
+                        document.f_list_delete.active.value = tabActive;
+                        document.f_list_delete.code.value = deleteCodes.join();
+                        document.f_list_delete.submit();
                     }
                 }
             });
@@ -115,12 +118,12 @@
                 <a class="btn btn-sm btn-outline-secondary" href="{{ list_url }}" {{ popoverTitle(refresh, 'bottom') }}>
                    <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
-                {% if fsc.getPageData()['isDefault'] %}
-                <a class="btn btn-sm btn-outline-secondary active" href="{{ list_url }}&amp;default_page=FALSE" {{ popoverTitle(defaultF, 'bottom') }}>
+                {% if fsc.getPageData()['name'] == fsc.user.homepage %}
+                <a class="btn btn-sm btn-outline-secondary active" href="{{ list_url }}&amp;defaultPage=FALSE" {{ popoverTitle(defaultF, 'bottom') }}>
                    <i class="fa fa-bookmark" aria-hidden="true"></i>
                 </a>
                 {% else %}
-                <a class="btn btn-sm btn-outline-secondary" href="{{ list_url }}&amp;default_page=TRUE" {{ popoverTitle(defaultT, 'bottom') }}>
+                <a class="btn btn-sm btn-outline-secondary" href="{{ list_url }}&amp;defaultPage=TRUE" {{ popoverTitle(defaultT, 'bottom') }}>
                    <i class="fa fa-bookmark-o" aria-hidden="true"></i>
                 </a>
                 {% endif %}
@@ -130,11 +133,11 @@
                    <i class="fa fa-plus" aria-hidden="true"></i>
                    <span class="d-none d-sm-inline-block">&nbsp;{{ new_record }}</span>
                 </a>
-                <a href="index.php?page=EditPageOption" id="b_options" class="btn btn-sm btn-secondary" {{ popoverTitle(options_title, 'bottom') }}>
+                <a href="#" id="b_options" class="btn btn-sm btn-secondary" onclick="goToOptions()" {{ popoverTitle(options_title, 'bottom') }}>
                    <i class="fa fa-wrench" aria-hidden="true"></i>
                    <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
                 </a>
-                <!-- Añadimos opciones de impresión y exportación -->
+                <!-- Adds print and export options -->
                 {{ exportData(fsc, i18n) }}
             </div>
         </div>
@@ -157,7 +160,7 @@
             <a href="#{{ modelID }}" class="nav-link {{ active }}" id="{{ modelID }}-tab" data-toggle="tab" role="tab" aria-controls="{{ modelID }}">
                 <i class="fa {{ fsc.icons[indexView] }}" aria-hidden="true"></i>
                 <span class="d-none d-sm-inline-block">&nbsp;{{ view.title }}</span>
-                <span class="badge badge-secondary">{{ view.count }}</span>
+                <span class="badge badge-secondary">{{ fsc.numberTools.format(view.count) }}</span>
             </a>
         </li>
         {% endfor %}

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\Cache;
@@ -278,7 +277,7 @@ trait ModelTrait
                         break;
 
                     default:
-                        if (empty($value)) {
+                        if ($value === null) {
                             $value = ($field['is_nullable'] === 'NO') ? '' : null;
                         }
                         $this->{$key} = $value;
@@ -587,6 +586,10 @@ trait ModelTrait
         $return = false;
 
         $filename = FS_FOLDER . '/Dinamic/Table/' . $tableName . '.xml';
+        if (!file_exists($filename)) {
+            $filename = FS_FOLDER . '/Core/Table/' . $tableName . '.xml';
+        }
+        
         if (file_exists($filename)) {
             $xml = simplexml_load_string(file_get_contents($filename, FILE_USE_INCLUDE_PATH));
             if ($xml) {

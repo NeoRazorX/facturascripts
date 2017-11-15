@@ -3,7 +3,7 @@
     Document   : cliente_propiedades.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla cliente_propiedades.
+        Structure for the cliente_propiedades table.
 -->
 <table>
     <column>

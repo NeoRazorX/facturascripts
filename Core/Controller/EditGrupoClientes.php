@@ -18,36 +18,51 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Controlador para la edición de un registro del modelo Grupo Clientes
+ * Controller to edit a single item from the GrupoClientes model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Nazca Networks <comercial@nazcanetworks.com>
  */
-class EditGrupoClientes extends ExtendedController\EditController
+class EditGrupoClientes extends ExtendedController\PanelController
 {
 
     /**
-     * EditGrupoClientes constructor.
-     *
-     * @param Base\Cache $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
-     * @param string $className
+     * Load views
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    protected function createViews()
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
-
-        // Establecemos el modelo de datos
-        $this->modelName = 'FacturaScripts\Core\Model\GrupoClientes';
+        $this->addEditView('FacturaScripts\Core\Model\GrupoClientes', 'EditGrupoClientes', 'customer-group');
+        $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'customers', 'fa-users');
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Procedimiento encargado de cargar los datos a visualizar
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        switch ($keyView) {
+            case 'EditGrupoClientes':
+                $value = $this->request->get('code');
+                $view->loadData($value);
+                break;
+
+            case 'ListCliente':
+                $where = [new DataBase\DataBaseWhere('codgrupo', $this->request->get('code'))];
+                $view->loadData($where);
+                break;
+        }
+    }
+
+    /**
+     * Returns basic page attributes
      *
      * @return array
      */

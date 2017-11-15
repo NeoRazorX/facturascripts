@@ -18,37 +18,54 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Controlador para la edición de un registro del modelo Fabricante
+ * Controller to edit a single item from the Epigrafe model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author PC REDNET S.L. <luismi@pcrednet.com>
  */
-class EditEpigrafe extends ExtendedController\EditController
+class EditEpigrafe extends ExtendedController\PanelController
 {
 
     /**
-     * EditCuenta constructor.
-     *
-     * @param Base\Cache $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
-     * @param string $className
+     * Load views
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    protected function createViews()
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
-
-        // Establecemos el modelo de datos
-        $this->modelName = 'FacturaScripts\Core\Model\Epigrafe';
+        $this->addEditView('FacturaScripts\Core\Model\Epigrafe', 'EditEpigrafe', 'accounting-heading');
+        $this->addListView('FacturaScripts\Core\Model\Cuenta', 'ListCuenta', 'accounts', 'fa-book');
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Load view data procedure
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        switch ($keyView) {
+            case 'EditEpigrafe':
+                $value = $this->request->get('code');
+                $view->loadData($value);
+                break;
+
+            case 'ListCuenta':
+                $idepigrafe = $this->getViewModelValue('EditEpigrafe', 'idepigrafe');
+                if (!empty($idepigrafe)) {
+                    $where = [new DataBase\DataBaseWhere('idepigrafe', $idepigrafe)];
+                    $view->loadData($where);
+                }
+                break;
+        }
+    }
+
+    /**
+     * Returns basic page attributes
      *
      * @return array
      */

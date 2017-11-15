@@ -25,14 +25,14 @@ use DebugBar\DataCollector\Renderable;
 use FacturaScripts\Core\Base\MiniLog;
 
 /**
- * Clase para "tracear" las consultas SQL.
+ * This class traces the SQL queries
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
 class DataBaseCollector extends DataCollector implements Renderable, AssetProvider
 {
     /**
-     * Gestor del log de la app.
+     * App log manager
      *
      * @var MiniLog
      */
@@ -107,7 +107,7 @@ class DataBaseCollector extends DataCollector implements Renderable, AssetProvid
     }
 
     /**
-     * Devuelve los assets necesarios
+     * Returns the needed assets
      *
      * @return array
      */

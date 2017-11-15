@@ -1,5 +1,5 @@
 <!--
-    Carga y visualiza la lista de mensajes de los tipos indicados
+    Loads and displays a list of messages from the given types
 -->
 {% macro message(log, types, style) %}
 {% set messages = log.read(types) %}
@@ -17,14 +17,14 @@
 {% endmacro %}
 
 <!--
-    Devuelve el código CSS para la visualización de la ayuda al usuario
+    Returns the CSS code to display the user help
 -->
 {% macro popoverTitle(msg, position = 'auto') %}
 {% if msg|length > 0 %}data-toggle="popover" data-placement="{{ position }}" data-trigger="hover" data-content="{{ msg }}"{% endif %}
 {% endmacro %}
 
 <!--
-    Devuelve el código html para la gestión de impresión y exportación de datos
+    Returns the HTML code to manage printing and exporting data
 -->
 {% macro exportData(fsc, i18n, type = 'list') %}
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}

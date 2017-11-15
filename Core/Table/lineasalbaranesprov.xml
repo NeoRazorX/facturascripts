@@ -3,7 +3,7 @@
     Document   : lineasalbaranesprov.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla lineasalbaranesprov.
+        Structure for the lineasalbaranesprov table.
 -->
 <table>
     <column>

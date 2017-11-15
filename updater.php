@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// comprobamos que se haya instalado y haya configuración
+/// Check that the configuration is installed
 if (!file_exists(__DIR__ . '/config.php')) {
     die('ERROR - NO_CONFIG -');
 }
@@ -25,4 +25,4 @@ if (!file_exists(__DIR__ . '/config.php')) {
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
 
-/// a implementar
+/// Pending implementation

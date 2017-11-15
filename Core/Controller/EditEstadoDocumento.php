@@ -19,10 +19,9 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base;
 
 /**
- * Controlador para la edición de un registro del modelo de EstadoDocumento
+ * Controller to edit a single item from the EstadoDocumento model
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -30,21 +29,15 @@ class EditEstadoDocumento extends ExtendedController\EditController
 {
 
     /**
-     * EditDivisa constructor.
-     *
-     * @param Base\Cache $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
-     * @param string $className
+     * Returns the model name
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, &$className)
+    public function getModelName()
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
-        $this->modelName = 'FacturaScripts\Core\Model\EstadoDocumento';
+        return 'FacturaScripts\Core\Model\EstadoDocumento';
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */

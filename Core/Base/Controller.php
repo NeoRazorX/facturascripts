@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Model;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -31,6 +31,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Controller
 {
+
     /**
      * Gestor de acceso a cache.
      *
@@ -59,7 +60,7 @@ class Controller
      * @var EventDispatcher
      */
     protected $dispatcher;
-    
+
     /**
      * Herramientas para trabajar con divisas.
      * @var DivisaTools 
@@ -86,7 +87,7 @@ class Controller
      * @var MiniLog
      */
     protected $miniLog;
-    
+
     /**
      * Herramientas para trabajar con números.
      * @var NumberTools 
@@ -143,10 +144,6 @@ class Controller
         $this->dataBase = new DataBase();
         $this->dispatcher = new EventDispatcher();
         $this->divisaTools = new DivisaTools();
-
-        $empresa = new Model\Empresa();
-        $this->empresa = $empresa->getDefault();
-
         $this->i18n = $i18n;
         $this->miniLog = $miniLog;
         $this->numberTools = new NumberTools();
@@ -248,6 +245,23 @@ class Controller
     {
         $this->response = $response;
         $this->user = $user;
+
+        /// seleccionamos la empresa predeterminada del usuario
+        $empresaModel = new Model\Empresa();
+        $this->empresa = $empresaModel->get($user->idempresa);
+
+        /// ¿Ha marcado el usuario la página como página de inicio?
+        $defaultPage = $this->request->query->get('defaultPage', '');
+        if ($defaultPage == 'TRUE') {
+            $this->user->homepage = $this->className;
+            $this->response->headers->setCookie(new Cookie('fsHomepage', $this->user->homepage, time() + FS_COOKIES_EXPIRE));
+            $this->user->save();
+        } else if ($defaultPage == 'FALSE') {
+            $this->user->homepage = null;
+            $this->response->headers->setCookie(new Cookie('fsHomepage', $this->user->homepage, time() - FS_COOKIES_EXPIRE));
+            $this->user->save();
+        }
+
         $this->dispatcher->dispatch('pre-privateCore');
     }
 }

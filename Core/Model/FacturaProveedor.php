@@ -50,6 +50,15 @@ class FacturaProveedor
     {
         return 'idfactura';
     }
+    
+    public function install()
+    {
+        new Serie();
+        new Ejercicio();
+        new Asiento();
+        
+        return '';
+    }
 
     /**
      * Resetea los valores de todas las propiedades modelo.

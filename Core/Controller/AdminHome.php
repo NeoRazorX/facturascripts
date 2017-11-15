@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
@@ -28,6 +27,7 @@ use FacturaScripts\Core\Base;
  */
 class AdminHome extends Base\Controller
 {
+
     /**
      * AdminHome constructor.
      *
@@ -40,10 +40,10 @@ class AdminHome extends Base\Controller
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        /// comprobamos el .htaccess
+        /// Check for .htaccess
         $this->checkHtaccess();
 
-        /// por ahora desplegamos siempre el contenido de Dinamic, para las pruebas
+        /// For now, always deploy the contents of Dinamic, for testing purposes
         $pluginManager = new Base\PluginManager();
         $pluginManager->deploy(true);
 
@@ -51,7 +51,7 @@ class AdminHome extends Base\Controller
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */
@@ -66,7 +66,7 @@ class AdminHome extends Base\Controller
     }
 
     /**
-     * Reestablece el .htaccess por defecto
+     * Restores .htaccess to default settings
      */
     private function checkHtaccess()
     {

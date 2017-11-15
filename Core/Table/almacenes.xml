@@ -3,7 +3,7 @@
     Document   : almacenes.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla almacenes.
+        Structure for the almacenes table.
 -->
 <table>
     <column>
