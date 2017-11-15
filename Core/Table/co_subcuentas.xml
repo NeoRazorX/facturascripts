@@ -3,7 +3,7 @@
     Document   : co_subcuentas.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla co_subcuentas.
+        Structure for the co_subcuentas table.
 -->
 <table>
     <column>

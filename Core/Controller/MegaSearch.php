@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Description of MegaSearch
+ * Controller to perform searches on the page
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -31,29 +31,29 @@ class MegaSearch extends Base\Controller
 {
 
     /**
-     * Esta variable contiene el texto enviado como parámetro query
-     * usado para el filtrado de datos del modelo
+     * This variable contains the input text as the $query parameter
+     * to be used to filter the model data
      *
      * @var string|false
      */
     public $query;
 
     /**
-     * Resultados por página
+     * Results by page
      *
      * @var array
      */
     public $results;
 
     /**
-     * Más secciones donde buscar
+     * More sections to search in
      *
      * @var array
      */
     public $sections;
 
     /**
-     * Ejecuta la lógica privada del controlador.
+     * Runs the controller's private logic.
      *
      * @param Response $response
      * @param Model\User|null $user
@@ -71,7 +71,7 @@ class MegaSearch extends Base\Controller
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */
@@ -84,19 +84,19 @@ class MegaSearch extends Base\Controller
     }
 
     /**
-     * Realiza la búsqueda por página
+     * Proceeds to search in the whole page
      */
     private function pageSearch()
     {
         $pageModel = new Model\Page();
         foreach ($pageModel->all() as $page) {
-            /// ¿El título de la página coincide con la búsuqeda?
+            /// Does the page title coincide with the search $query?
             $title = mb_strtolower($this->i18n->trans($page->title), 'UTF8');
             if ($page->showonmenu && strpos($title, $this->query) !== false) {
                 $this->results['pages'][] = $page;
             }
 
-            /// ¿Es un ListController que podría devolver más resultados?
+            /// Is it a ListController that could return more results?
             if ($page->showonmenu && strpos($page->name, 'List') === 0) {
                 $this->sections[$page->name] = [
                     'icon' => $page->icon,

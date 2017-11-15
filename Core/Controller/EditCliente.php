@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model;
 
 /**
- * Description of EditCliente
+ * Controller to edit a single item from the Cliente model
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -31,7 +31,7 @@ class EditCliente extends ExtendedController\PanelController
 {
 
     /**
-     * Procedimiento para insertar vistas en el controlador
+     * Load views
      */
     protected function createViews()
     {
@@ -42,7 +42,7 @@ class EditCliente extends ExtendedController\PanelController
     }
 
     /**
-     * Procedimiento encargado de cargar los datos a visualizar
+     * Load view data procedure
      *
      * @param string $keyView
      * @param ExtendedController\EditView $view
@@ -59,7 +59,7 @@ class EditCliente extends ExtendedController\PanelController
                 $where = [new DataBase\DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente'))];
                 $view->loadData($where);
                 break;
-            
+
             case 'EditCuentaBancoCliente':
                 $where = [new DataBase\DataBaseWhere('codcliente', $this->request->get('code'))];
                 $view->loadData($where);
@@ -77,7 +77,7 @@ class EditCliente extends ExtendedController\PanelController
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */

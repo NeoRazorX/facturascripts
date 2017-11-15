@@ -3,7 +3,7 @@
     Document   : lineasivafactprov.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla lineasivafactprov.
+        Structure for the lineasivafactprov table.
 -->
 <table>
     <column>

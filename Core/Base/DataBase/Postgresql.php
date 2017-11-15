@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Base\DataBase;
 use Exception;
 
 /**
- * Clase para conectar a PostgreSQL.
+ * Class to connect with PostgreSQL..
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -30,21 +30,21 @@ use Exception;
 class Postgresql implements DataBaseEngine
 {
     /**
-     * El enlace con las utilidades comunes entre motores de base de datos.
+     * The link with the common utilities between database engines.
      *
      * @var DataBaseUtils
      */
     private $utils;
 
     /**
-     * Enlace al conjunto de sentencias SQL de la base de datos conectada
+     * Link to the SQL statements for the connected database
      *
      * @var DataBaseSQL;
      */
     private $utilsSQL;
 
     /**
-     * Ultimo mensaje de error
+     * Last error message
      *
      * @var string
      */
@@ -73,7 +73,7 @@ class Postgresql implements DataBaseEngine
     }
 
     /**
-     * Convierte los datos leidos del sqlColumns a estructura de trabajo
+     * Converts the sqlColumns return data to a working structure
      *
      * @param array $colData
      *
@@ -91,7 +91,7 @@ class Postgresql implements DataBaseEngine
     }
 
     /**
-     * Conecta a la base de datos.
+     * Connects to the database
      *
      * @param string $error
      *
@@ -120,7 +120,7 @@ class Postgresql implements DataBaseEngine
     }
 
     /**
-     * Desconecta de la base de datos.
+     * Disconnect from the database
      *
      * @param resource $link
      *
@@ -132,7 +132,7 @@ class Postgresql implements DataBaseEngine
     }
 
     /**
-     * Devuelve el error de la ultima sentencia ejecutada
+     * Returns the last run statement error
      *
      * @param resource $link
      *
@@ -146,7 +146,7 @@ class Postgresql implements DataBaseEngine
     }
 
     /**
-     * Inicia una transacción SQL.
+     * Starts a SQL transaction
      *
      * @param resource $link
      *
@@ -158,7 +158,7 @@ class Postgresql implements DataBaseEngine
     }
 
     /**
-     * Guarda los cambios de una transacción SQL.
+     * Commits changes in a SQL transaction
      *
      * @param resource $link
      *
@@ -170,7 +170,7 @@ class Postgresql implements DataBaseEngine
     }
 
     /**
-     * Deshace los cambios de una transacción SQL.
+     * Rolls back a transaction
      *
      * @param resource $link
      *
@@ -182,7 +182,7 @@ class Postgresql implements DataBaseEngine
     }
 
     /**
-     * Indica si la conexión está en transacción
+     * Indicates if the connection has an active transaction
      *
      * @param resource $link
      *
@@ -207,8 +207,8 @@ class Postgresql implements DataBaseEngine
     }
 
     /**
-     * Ejecuta una sentencia SQL y devuelve un array con los resultados en
-     * caso de $selectRows = true, o array vacío en caso de fallo.
+     * Runs a SELECT SQL statement, and returns an array with the results when $selectRows= true,
+     * or an empty array if it fails.
      *
      * @param resource $link
      * @param string   $sql
@@ -236,7 +236,7 @@ class Postgresql implements DataBaseEngine
     }
 
     /**
-     * Ejecuta una sentencia SQL de tipo select
+     * Runs a SELECT SQL statement
      *
      * @param resource $link
      * @param string   $sql
@@ -249,8 +249,8 @@ class Postgresql implements DataBaseEngine
     }
 
     /**
-     * Ejecuta sentencias SQL sobre la base de datos
-     * (inserts, updates o deletes).
+     * Runs SQL statement in the database
+     * (inserts, updates or deletes)
      *
      * @param resource $link
      * @param string   $sql
@@ -263,7 +263,7 @@ class Postgresql implements DataBaseEngine
     }
 
     /**
-     * Escapa las comillas de la cadena de texto.
+     * Escapes quotes from a text string
      *
      * @param resource $link
      * @param string   $str
@@ -276,7 +276,7 @@ class Postgresql implements DataBaseEngine
     }
 
     /**
-     * Devuelve el estilo de fecha del motor de base de datos.
+     * Returns the date format from the database engine
      *
      * @return string
      */
@@ -286,7 +286,7 @@ class Postgresql implements DataBaseEngine
     }
 
     /**
-     * Compara los tipos de datos de una columna. Devuelve True si son iguales.
+     * Compares the data types from a numeric column. Returns true if they are equal
      *
      * @param string $dbType
      * @param string $xmlType
@@ -299,7 +299,7 @@ class Postgresql implements DataBaseEngine
     }
 
     /**
-     * Devuelve un array con los nombres de las tablas de la base de datos.
+     * Returns an array with the database table names
      *
      * @param resource $link
      *
@@ -324,10 +324,9 @@ class Postgresql implements DataBaseEngine
     }
 
     /**
-     * A partir del campo default de una tabla
-     * comprueba si se refiere a una secuencia, y si es así
-     * comprueba la existencia de la secuencia. Si no la encuentra
-     * la crea.
+     * With the default field in a table
+     * it checks whether it refers to a sequence and if a
+     * sequence exists. If it can't find it, i will create one.
      *
      * @param resource $link
      * @param string   $tableName
@@ -347,7 +346,7 @@ class Postgresql implements DataBaseEngine
     }
 
     /**
-     * Realiza comprobaciones extra a la tabla.
+     * Runs extra checks in the table
      *
      * @param resource $link
      * @param string   $tableName
@@ -361,7 +360,7 @@ class Postgresql implements DataBaseEngine
     }
 
     /**
-     * Devuelve el enlace a la clase de Utilidades del engine
+     * Returns the link to the Utils class from the engine
      *
      * @return DataBaseUtils
      */
@@ -371,7 +370,7 @@ class Postgresql implements DataBaseEngine
     }
 
     /**
-     * Devuelve el enlace a la clase de SQL del engine
+     * Returns the link to the SQL class from the engine
      *
      * @return DataBaseSQL
      */

@@ -22,42 +22,42 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base;
 
 /**
- * Estructura básica/común para cabecera visual
+ * Basic/common structure for the visual header
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class VisualItem
 {
     /**
-     * Motor de traducción.
+     * Translation engine
      *
      * @var Base\Translator
      */
     protected $i18n;
 
     /**
-     * Identificador de la columna
+     * Column identifier
      *
      * @var string
      */
     public $name;
 
     /**
-     * Etiqueta o título del grupo
+     * Group tag or title
      *
      * @var string
      */
     public $title;
 
     /**
-     * URL de salto si hacen click en $title
+     * $tile link URL
      *
      * @var string
      */
     public $titleURL;
 
     /**
-     * Número de columnas que ocupa en su visualización
+     * Number of columns that it occupies on display
      * ([1, 2, 4, 6, 8, 10, 12])
      *
      * @var int
@@ -65,14 +65,15 @@ class VisualItem
     public $numColumns;
 
     /**
-     * Posición en la que se visualizá ( de menor a mayor )
+     * Posición en la que se visualizá ( from lowes to highest )
+     * Display positoin (
      *
      * @var int
      */
     public $order;
 
     /**
-     * Construye e inicializa la clase.
+     * Class construct and initialization
      */
     public function __construct()
     {
@@ -85,7 +86,7 @@ class VisualItem
     }
 
     /**
-     * Carga la estructura de atributos en base a un archivo XML
+     * Loads the attributes structure from a XML file
      *
      * @param \SimpleXMLElement $items
      */
@@ -108,7 +109,7 @@ class VisualItem
     }
 
     /**
-     * Carga la estructura de atributos en base un archivo JSON
+     * Loads the attributes structure from a JSON file
      *
      * @param array $items
      */
@@ -122,7 +123,7 @@ class VisualItem
     }
 
     /**
-     * Genera el código html para visualizar la cabecera del elemento visual
+     * Generates the HTML code to display the header for the visual element
      *
      * @param string $value
      *

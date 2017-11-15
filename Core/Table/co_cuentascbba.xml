@@ -3,7 +3,7 @@
     Document   : co_cuentascbba.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla co_cuentascbba.
+        Structure for the co_cuentascbba table.
 -->
 <table>
     <column>

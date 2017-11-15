@@ -3,7 +3,7 @@
     Document   : co_subcuentascli.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla co_subcuentascli.
+        Structure for the co_subcuentascli table.
 -->
 <table>
     <column>

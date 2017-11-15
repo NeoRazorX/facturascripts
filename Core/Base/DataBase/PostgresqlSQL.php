@@ -20,8 +20,7 @@
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
- * Clase que recopila las sentencias SQL necesarias
- * por el motor de base de datos
+ * Class that gathers all the needed SQL sentences by the database engine
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -29,8 +28,7 @@ namespace FacturaScripts\Core\Base\DataBase;
 class PostgresqlSQL implements DataBaseSQL
 {
     /**
-     * Devuelve el SQL necesario para convertir
-     * la columna a entero.
+     * Returns the needed SQL to convert a column to integer
      *
      * @param string $colName
      *
@@ -42,9 +40,7 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Devuleve el SQL para averiguar
-     * el último ID asignado al hacer un INSERT
-     * en la base de datos.
+     * Returns the SQL to get last ID assigned when performing an INSERT in the database
      *
      * @return string
      */
@@ -54,8 +50,7 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Devuelve el SQL para averiguar
-     * la lista de las columnas de una tabla.
+     * Returns the SQL needed to get the list of columns in a table
      *
      * @param string $tableName
      *
@@ -75,8 +70,7 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Devuelve el SQL para averiguar
-     * la lista de restricciones de una tabla.
+     * Returns the SQL needed to get the list of constraints in a table
      *
      * @param string $tableName
      *
@@ -94,8 +88,7 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Devuelve el SQL para averiguar
-     * la lista de restricciones avanzadas de una tabla.
+     * Returns the SQL needed to get the list of advanced constraints in a table
      *
      * @param string $tableName
      *
@@ -129,7 +122,7 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Genera el SQL para establecer las restricciones proporcionadas.
+     * Generates the needed SQL to establish the given constraints
      *
      * @param array $xmlCons
      *
@@ -155,8 +148,7 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Devuelve el SQL para averiguar
-     * la lista de indices de una tabla.
+     * Returns the SQL needed to get the list of indexes in a table
      *
      * @param string $tableName
      *
@@ -168,7 +160,7 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Devuelve la sentencia SQL necesaria para crear una tabla con la estructura proporcionada.
+     * Returns the SQL needed to create a table with the given structure
      *
      * @param string $tableName
      * @param array  $columns
@@ -203,7 +195,7 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Sentencia SQL para añadir una columna a una tabla
+     * Returns the SQL needed to add a column to a table
      *
      * @param string $tableName
      * @param array  $colData
@@ -227,7 +219,7 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Sentencia SQL para modificar una columna a una tabla
+     * Returns the SQL needed to alter a column in a table
      *
      * @param string $tableName
      * @param array  $colData
@@ -243,7 +235,7 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Sentencia SQL para modificar un valor por defecto de un campo de una tabla
+     * Returns the needed SQL to alter a column default constraint
      *
      * @param string $tableName
      * @param array  $colData
@@ -258,7 +250,7 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Sentencia SQL para modificar una constraint null de un campo de una tabla
+     * SQL statement to alter a null constraint in a table column
      *
      * @param string $tableName
      * @param array  $colData
@@ -273,7 +265,7 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Sentencia SQL para eliminar una constraint a una tabla
+     * Returns the SQL needed to remove a constraint from a table
      *
      * @param string $tableName
      * @param array  $colData
@@ -286,7 +278,7 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Sentencia SQL para añadir una constraint a una tabla
+     * Returns the SQL needed to add a constraint to a table
      *
      * @param string $tableName
      * @param string $constraintName
@@ -300,7 +292,7 @@ class PostgresqlSQL implements DataBaseSQL
     }
 
     /**
-     * Sentencia SQL para comprobar una secuencia
+     * SQL statement to check a sequence
      *
      * @param string $seqName
      *

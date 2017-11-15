@@ -27,7 +27,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 class WidgetItemDateTime extends WidgetItem
 {
     /**
-     * Constructor de la clase
+     * Class constructor
      */
     public function __construct()
     {
@@ -37,8 +37,7 @@ class WidgetItemDateTime extends WidgetItem
     }
 
     /**
-     * Genera el código html para la visualización de los datos en el
-     * controlador List
+     * Generates the HTML code to display the data in the List controller
      *
      * @param string $value
      *
@@ -50,8 +49,7 @@ class WidgetItemDateTime extends WidgetItem
     }
 
     /**
-     * Genera el código html para la visualización y edición de los datos
-     * en el controlador Edit / EditList
+     * Generates the HTML code to display and edit  the data in the Edit / EditList controller
      *
      * @param string $value
      *
