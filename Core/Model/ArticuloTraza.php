@@ -29,7 +29,9 @@ namespace FacturaScripts\Core\Model;
 class ArticuloTraza
 {
 
-    use Base\ModelTrait;
+    use Base\ModelTrait {
+        clear as clearTrait;
+    }
 
     /**
      * Clave primaria
@@ -251,11 +253,11 @@ class ArticuloTraza
     public function install()
     {
         /// forzamos la comprobación de las tablas necesarias
-        //new Articulo();
-        //new LineaAlbaranCliente();
-        //new LineaAlbaranProveedor();
-        //new LineaFacturaCliente();
-        //new LineaFacturaProveedor();
+        new Articulo();
+        new LineaAlbaranCliente();
+        new LineaAlbaranProveedor();
+        new LineaFacturaCliente();
+        new LineaFacturaProveedor();
 
         return '';
     }
