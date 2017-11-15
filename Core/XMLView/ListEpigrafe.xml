@@ -34,7 +34,7 @@
             <widget type="text" fieldname="codejercicio" />
         </column>
         <column name="group" order="130">
-            <widget type="text" fieldname="codgrupo" />
+            <widget type="text" fieldname="idgrupo" />
         </column>
         <column name="description" order="140">
             <widget type="text" fieldname="descripcion" />

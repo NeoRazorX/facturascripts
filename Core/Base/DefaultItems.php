@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -28,19 +27,6 @@ namespace FacturaScripts\Core\Base;
  */
 class DefaultItems
 {
-    /**
-     * Página por defecto
-     *
-     * @var string
-     */
-    private static $defaultPage;
-
-    /**
-     * Página que se está mostrando
-     *
-     * @var string
-     */
-    private static $showingPage;
 
     /**
      * Código de ejercicio
@@ -229,45 +215,5 @@ class DefaultItems
     public function setCodSerie($cod)
     {
         self::$codSerie = $cod;
-    }
-
-    /**
-     * Devuelve la página por defecto
-     *
-     * @return string|null
-     */
-    public function defaultPage()
-    {
-        return self::$defaultPage;
-    }
-
-    /**
-     * Asigna la página por defecto
-     *
-     * @param string $name
-     */
-    public function setDefaultPage($name)
-    {
-        self::$defaultPage = $name;
-    }
-
-    /**
-     * Devuelve la página que se está mostrando
-     *
-     * @return string|null
-     */
-    public function showingPage()
-    {
-        return self::$showingPage;
-    }
-
-    /**
-     * Asigna la página que se está mostrando
-     *
-     * @param string $name
-     */
-    public function setShowingPage($name)
-    {
-        self::$showingPage = $name;
     }
 }

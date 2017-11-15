@@ -198,21 +198,6 @@ class Empresa
     }
 
     /**
-     * Devuelve la empresa predeterminada (la primera, por ahora).
-     *
-     * @return Empresa|false
-     */
-    public function getDefault()
-    {
-        $emp = $this->all();
-        if (!empty($emp)) {
-            return $emp[0];
-        }
-
-        return false;
-    }
-
-    /**
      * Comprueba los datos de la empresa, devuelve TRUE si es correcto
      *
      * @return bool

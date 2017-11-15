@@ -18,8 +18,9 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Model;
 
 /**
  * Controlador para la edición de un registro del modelo Fabricante
@@ -28,38 +29,69 @@ use FacturaScripts\Core\Base\ExtendedController;
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author PC REDNET S.L. <luismi@pcrednet.com>
  */
-class EditEpigrafe extends ExtendedController\EditController
+class EditEpigrafe extends ExtendedController\PanelController
 {
 
-    /**
-     * EditCuenta constructor.
-     *
-     * @param Base\Cache $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
-     * @param string $className
-     */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
-    {
-        parent::__construct($cache, $i18n, $miniLog, $className);
+   /**
+    * Procedimiento para insertar vistas en el controlador
+    */
+   protected function createViews()
+   {
+      $this->addEditView('FacturaScripts\Core\Model\Epigrafe', 'EditEpigrafe', 'accounting-heading');
+      $this->addListView('FacturaScripts\Core\Model\Cuenta', 'ListCuenta', 'accounts', 'fa-book');
+   }
 
-        // Establecemos el modelo de datos
-        $this->modelName = 'FacturaScripts\Core\Model\Epigrafe';
-    }
+   /**
+    * Devuele el campo $fieldName del epigrafe
+    *
+    * @param string $fieldName
+    *
+    * @return mixed
+    */
+   private function getEpigrafeFieldValue($fieldName)
+   {
+      $model = $this->views['EditEpigrafe']->getModel();
+      return $model->{$fieldName};
+   }
 
-    /**
-     * Devuelve los datos básicos de la página
-     *
-     * @return array
-     */
-    public function getPageData()
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'accounting-heading';
-        $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fa-bar-chart';
-        $pagedata['showonmenu'] = false;
+   /**
+    * Procedimiento encargado de cargar los datos a visualizar
+    *
+    * @param string $keyView
+    * @param ExtendedController\EditView $view
+    */
+   protected function loadData($keyView, $view)
+   {
+      switch ($keyView) {
+         case 'EditEpigrafe':
+            $value = $this->request->get('code');
+            $view->loadData($value);
+            break;
 
-        return $pagedata;
-    }
+         case 'ListCuenta':
+            $idepigrafe = $this->getEpigrafeFieldValue('idepigrafe');
+
+            if (!empty($idepigrafe)) {
+               $where = [new DataBase\DataBaseWhere('idepigrafe', $idepigrafe)];
+               $view->loadData($where);
+            }
+            break;
+      }
+   }
+
+   /**
+    * Devuelve los datos básicos de la página
+    *
+    * @return array
+    */
+   public function getPageData()
+   {
+      $pagedata = parent::getPageData();
+      $pagedata['title'] = 'accounting-heading';
+      $pagedata['menu'] = 'accounting';
+      $pagedata['icon'] = 'fa-bar-chart';
+      $pagedata['showonmenu'] = false;
+
+      return $pagedata;
+   }
 }

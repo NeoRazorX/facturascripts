@@ -29,21 +29,6 @@ class ListArticulo extends ExtendedController\ListController
 {
 
     /**
-     * Devuelve los datos básicos de la página
-     *
-     * @return array
-     */
-    public function getPageData()
-    {
-        $pagedata = parent::getPageData();
-        $pagedata['title'] = 'products';
-        $pagedata['icon'] = 'fa-cubes';
-        $pagedata['menu'] = 'warehouse';
-
-        return $pagedata;
-    }
-
-    /**
      * Procedimiento para insertar vistas en el controlador
      */
     protected function createViews()
@@ -82,5 +67,20 @@ class ListArticulo extends ExtendedController\ListController
         $this->addOrderBy('ListStock', 'referencia', 'reference');
         $this->addOrderBy('ListStock', 'cantidad', 'quantity');
         $this->addOrderBy('ListStock', 'disponible', 'available');
+    }
+
+    /**
+     * Devuelve los datos básicos de la página
+     *
+     * @return array
+     */
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'products';
+        $pagedata['icon'] = 'fa-cubes';
+        $pagedata['menu'] = 'warehouse';
+
+        return $pagedata;
     }
 }

@@ -147,6 +147,14 @@ class Stock
     {
         return 'idstock';
     }
+    
+    public function install()
+    {
+        new Almacen();
+        new Articulo();
+        
+        return '';
+    }
 
     /**
      * Resetea los valores de todas las propiedades modelo.
@@ -269,7 +277,7 @@ class Stock
 
         if ($codalmacen) {
             $sql .= ' AND codalmacen = ' . $this->var2str($codalmacen);
-        }
+}
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {

@@ -130,6 +130,23 @@ class User
     }
 
     /**
+     * Inserta valores por defecto a la tabla, en el proceso de creación de la misma.
+     *
+     * @return string
+     */
+    public function install()
+    {
+        /// hay una clave ajena a fs_pages, así que cargamos el modelo necesario
+        new Page();
+        new Empresa();
+
+        $this->miniLog->info($this->i18n->trans('created-default-admin-account'));
+
+        return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled,idempresa,langcode,homepage)"
+            . " VALUES ('admin','" . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE,'1','" . FS_LANG . "','AdminHome');";
+    }
+
+    /**
      * Resetea los valores de todas las propiedades modelo.
      */
     public function clear()
@@ -227,21 +244,5 @@ class User
         }
 
         return true;
-    }
-
-    /**
-     * Inserta valores por defecto a la tabla, en el proceso de creación de la misma.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        /// hay una clave ajena a fs_pages, así que cargamos el modelo necesario
-        new Page();
-
-        $this->miniLog->info($this->i18n->trans('created-default-admin-account'));
-
-        return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled,idempresa) VALUES ('admin','"
-            . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE,NULL);";
     }
 }

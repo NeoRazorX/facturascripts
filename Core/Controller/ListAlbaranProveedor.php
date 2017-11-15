@@ -36,7 +36,7 @@ class ListAlbaranProveedor extends ExtendedController\ListController
     {
         $this->addView('FacturaScripts\Core\Model\AlbaranProveedor', 'ListAlbaranProveedor');
         $this->addSearchFields('ListAlbaranProveedor', ['codigo', 'numproveedor', 'observaciones']);
-        
+
         $this->addFilterDatePicker('ListAlbaranProveedor', 'date', 'date', 'fecha');
         $this->addFilterNumber('ListAlbaranProveedor', 'total', 'total');
         $this->addFilterSelect('ListAlbaranProveedor', 'codalmacen', 'almacenes', '', 'nombre');

@@ -24,12 +24,17 @@
         <null>YES</null>
     </column>
     <column>
+        <name>columns</name>
+        <type>text</type>
+        <null>YES</null>
+    </column>
+    <column>
         <name>rows</name>
         <type>text</type>
         <null>YES</null>
     </column>
     <column>
-        <name>columns</name>
+        <name>modals</name>
         <type>text</type>
         <null>YES</null>
     </column>
