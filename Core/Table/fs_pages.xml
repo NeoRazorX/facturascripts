@@ -4,7 +4,7 @@
     Created on : 24 de enero de 2012, 19:57
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla fs_pages.
+        Structure for the fs_pages table.
 -->
 <table>
     <column>

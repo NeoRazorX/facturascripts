@@ -3,7 +3,7 @@
     Document   : secuencias.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla secuencias.
+        Structure for the secuencias table.
 -->
 <table>
     <column>

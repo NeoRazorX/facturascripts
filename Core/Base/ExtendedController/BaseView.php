@@ -24,7 +24,7 @@ use FacturaScripts\Core\Base;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Definición base para vistas de uso en ExtendedControllers
+ * Base definition for the views used in ExtendedControllers
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -32,42 +32,43 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class BaseView
 {
     /**
-     * Modelo necesario para llamadas a los métodos del modelo
-     * o en el caso del EditController contiene los datos visualizados.
+     * Needed model to for the model method calls.
+     * In the scope of EditController it contains the view data.
      *
      * @var mixed
      */
     protected $model;
 
     /**
-     * Configuración de columnas y filtros
+     * Columns and filters configuration
      *
      * @var Model\PageOption
      */
     protected $pageOption;
 
     /**
-     * Título identificativo de la vista
+     * View title
      *
      * @var string
      */
     public $title;
 
     /**
-     * Número total de registros leídos
+     * Total count of read rows
+     *
      * @var int
      */
     public $count;
 
     /**
-     * Contiene el traductor
+     * Contains the translator
      *
      * @var Base\Translator
      */
     public static $i18n;
 
     /**
-     * Establece el estado de visualización/edición de una columna
+     * Establishes de view/edit state of a column
      *
      * @param string $columnName
      * @param boolean $disabled
@@ -75,7 +76,7 @@ abstract class BaseView
     abstract public function disableColumn($columnName, $disabled);
 
     /**
-     * Método para la exportación de los datos de la vista
+     * Method to export the view data
      *
      * @param Base\ExportManager $exportManager
      * @param Response $response
@@ -84,7 +85,7 @@ abstract class BaseView
     abstract public function export(&$exportManager, &$response, $action);
 
     /**
-     * Constructor e inicializador de la clase
+     * Construct and initialize the class
      *
      * @param string $title
      * @param string $modelName
@@ -100,7 +101,7 @@ abstract class BaseView
     }
 
     /**
-     * Verifica la estructura y carga en el modelo los datos informados en un array
+     * Verifies the structure and loads into the model the given data array
      *
      * @param array $data
      */
@@ -117,7 +118,7 @@ abstract class BaseView
     }
 
     /**
-     * Persiste los datos del modelo en la base de datos
+     * Saves the model data into the database for persistence
      *
      * @return boolean
      */
@@ -127,7 +128,7 @@ abstract class BaseView
     }
 
     /**
-     * Elimina el registro con el código indicado de la base de datos
+     * Deletes from the database the row with the given code
      *
      * @param string $code
      * @return boolean
@@ -142,7 +143,8 @@ abstract class BaseView
     }
 
     /**
-     * Devuelve el puntero al modelo de datos
+     * Returns the pointer to the data model
+     *
      *
      * @return mixed
      */
@@ -152,7 +154,7 @@ abstract class BaseView
     }
 
     /**
-     * Obtiene la columna por el nombre de la columna
+     * Gets the column by the column name
      *
      * @param string $columnName
      *
@@ -177,7 +179,7 @@ abstract class BaseView
     }
 
     /**
-     * Obtiene la columna para el nombre de campo informado
+     * Gets the column by the given field name
      *
      * @param string $fieldName
      *
@@ -202,7 +204,7 @@ abstract class BaseView
     }
 
     /**
-     * Si existe, devuelve el tipo de row especificado
+     * If it exists, return the specified row type
      *
      * @param string $key
      *
@@ -214,7 +216,7 @@ abstract class BaseView
     }
 
     /**
-     * Devuelve la lista de formaularios modales
+     * Returns the list of modal forms
      * 
      * @return array
      */
@@ -224,7 +226,7 @@ abstract class BaseView
     }
     
     /**
-     * Devuelve la url del modelo del tipo solicitado
+     * Returns the url for the requested model type
      *
      * @param string $type      (edit / list / auto)
      * @return string
@@ -235,7 +237,7 @@ abstract class BaseView
     }
 
     /**
-     * Devuelve el identificador del modelo
+     * Returns the model identifier
      *
      * @return string
      */

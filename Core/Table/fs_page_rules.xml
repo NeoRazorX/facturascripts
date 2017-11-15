@@ -4,7 +4,7 @@
     Created on : 2 de febrero de 2012, 18:41
     Author     : Carlos García Gómez
     Description:
-        Estructura de la tabla fs_page_rules.
+        Structure for the fs_page_rules table.
 -->
 <table>
     <column>

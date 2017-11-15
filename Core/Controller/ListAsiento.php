@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Description of ListAsiento
+ * Controller to list the items in the Asiento model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -29,7 +29,7 @@ class ListAsiento extends ExtendedController\ListController
 {
 
     /**
-     * Procedimiento para insertar vistas en el controlador
+     * Load views
      */
     protected function createViews()
     {
@@ -45,7 +45,7 @@ class ListAsiento extends ExtendedController\ListController
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */

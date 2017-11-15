@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controlador para la edición de un registro del modelo de EstadoDocumento
+ * Controller to edit a single item from the EstadoDocumento model
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -29,7 +29,7 @@ class EditEstadoDocumento extends ExtendedController\EditController
 {
 
     /**
-     * Devuelve el nombre del modelo
+     * Returns the model name
      */
     public function getModelName()
     {
@@ -37,7 +37,7 @@ class EditEstadoDocumento extends ExtendedController\EditController
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */

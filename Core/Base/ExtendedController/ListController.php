@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Controlador para listado de datos en modo tabla
+ * Controller that lists the data in table mode
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -31,54 +31,53 @@ use FacturaScripts\Core\Base\DataBase;
 abstract class ListController extends Base\Controller
 {
     /**
-     * Indica cual es la vista activa
+     * Indicates the active view
      *
      * @var string
      */
     public $active;
 
     /**
-     * Objeto para exportar datos
+     * Object to export data
      *
      * @var Base\ExportManager
      */
     public $exportManager;
 
     /**
-     * Primer registro a seleccionar de la base de datos
+     * First row to select from the database
      * @var int
      */
     protected $offset;
 
     /**
-     * Esta variable contiene el texto enviado como parámetro query
-     * usado para el filtrado de datos del modelo
+     * This string contains the text sent as a query parameter, used to filter the model data
      *
      * @var string|false
      */
     public $query;
 
     /**
-     * Lista de vistas mostradas por el controlador
+     * List of views displayed by the controller
      *
      * @var ListView[]
      */
     public $views;
 
     /**
-     * Lista de iconos para cada una de las vistas
+     * List of icons for each of the views
      *
      * @var array
      */
     public $icons;
 
     /**
-     * Procedimiento encargado de insertar las vistas a visualizar
+     * Inserts the views to display
      */
     abstract protected function createViews();
 
     /**
-     * Inicia todos los objetos y propiedades.
+     * Initializes all the objects and properties
      *
      * @param Base\Cache      $cache
      * @param Base\Translator $i18n
@@ -100,7 +99,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Ejecuta la lógica privada del controlador.
+     * Runs the controller's private logic
      *
      * @param mixed $response
      * @param mixed $user
@@ -141,7 +140,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Ejecuta las acciones que alteran los datos antes de leerlos
+     * Runs the actions that alter the data before reading it
      *
      * @param string $action
      */
@@ -155,7 +154,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Ejecuta las acciones del controlador
+     * Runs the controller actions
      *
      * @param string $action
      */
@@ -176,9 +175,9 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Acción de borrado de datos
+     * Delete data action
      *
-     * @param BaseView $view     Vista sobre la que se realiza la acción
+     * @param BaseView $view     View upon which the action is made
      * @return boolean
      */
     protected function deleteAction($view)
@@ -193,7 +192,7 @@ abstract class ListController extends Base\Controller
             return false;
         }
 
-        /// borrado múltiple
+        /// multiple delete
         $numDeletes = 0;
         foreach (explode(',', $code) as $cod) {
             if ($view->delete($cod)) {
@@ -234,7 +233,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Devuelve una respuesta JSON
+     * Returns a JSON response
      *
      * @param ListView $view
      */
@@ -257,7 +256,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Establece la clausula WHERE según los filtros definidos
+     * Establishes the WHERE clause according to the defined filters
      *
      * @return array
      */
@@ -278,7 +277,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Crea y añade una vista al controlador.
+     * Creates and adds a view to the controller
      *
      * @param string $modelName
      * @param string $viewName
@@ -295,8 +294,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Añade una lista de campos (separados por |) a lista de campos de búsqueda
-     * para el filtrado de datos.
+     * Adds a list of fields (separated by "|") to the search fields list so that data can be filtered
      *
      * @param string $indexView
      * @param string[] $fields
@@ -307,7 +305,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Añade un campo a la lista de Order By de una vista.
+     * Adds a field to a view's Order By list
      *
      * @param string $indexView
      * @param string $field
@@ -320,8 +318,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Add a filter type data table selection
-     * Añade un filtro de tipo selección en tabla.
+     * Add a select type filter to a table
      *
      * @param string $indexView
      * @param string $key      (Filter field name identifier)
@@ -336,7 +333,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Añade un filtro del tipo condición boleana.
+     * Adds a boolean condition type filter
      *
      * @param string $indexView
      * @param string $key     (Filter identifier)
@@ -374,7 +371,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Añade un filtro del tipo fecha.
+     * Adds a date type filter
      *
      * @param string $indexView
      * @param string $key     (Filter identifier)
@@ -387,7 +384,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Añade un filtro del tipo texto.
+     * Adds a text type filter
      *
      * @param string $indexView
      * @param string $key     (Filter identifier)
@@ -400,7 +397,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Añade un filtro del tipo numérico.
+     * Adds a numeric type filter
      *
      * @param string $indexView
      * @param string $key     (Filter identifier)
@@ -413,7 +410,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Carga una lista de datos desde una tabla.
+     * Creates a list of data from a table
      *
      * @param string $field : Field name with real value
      * @param array $options : Array with configuration values [field = Field description, table = table name, where = SQL Where clausule]
@@ -438,8 +435,8 @@ abstract class ListController extends Base\Controller
                 $value = $item[$options['field']];
                 if ($value !== '') {
                     /**
-                     * Si la key es mb_strtolower($item[$field], 'UTF8') entonces
-                     * no podemos filtrar por codserie, codalmacen, etc...
+                     * If the key is  mb_strtolower($item[$field], 'UTF8') then we can't filter by codserie, codalmacen,
+                     * etc.
                      */
                     $result[$item[$field]] = $value;
                 }
@@ -450,7 +447,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Devuelve el valor de offset para la vista indicada.
+     * Returns the offset value for the specified view
      *
      * @param string $indexView
      * @return int
@@ -461,8 +458,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Construye un string con los parámetros pasados en la url
-     * de la llamada al controlador.
+     * Returns a string with the parameters in the controller call url
      *
      * @param string $indexView
      * @return string
@@ -484,8 +480,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Crea un array con los "saltos" disponibles para paginar los datos
-     * del modelo de la vista indicada.
+     * Creates an array with the available "jumps" to paginate the model data with the specified view
      *
      * @param string $indexView
      * @return array
@@ -504,7 +499,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Devuelve una array para JS de URLs para los elementos de una vista
+     * Returns an array for JS of URLs for the elements in a view
      *
      * @param string $type
      *

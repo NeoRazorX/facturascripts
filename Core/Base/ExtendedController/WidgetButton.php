@@ -84,7 +84,7 @@ class WidgetButton
     }
 
     /**
-     * Devuelve el código html para el icono
+     * Returns the HTML code for the icon
      *
      * @return string
      */
@@ -97,7 +97,7 @@ class WidgetButton
     }
 
     /**
-     * Devuelve el código html para el evento onclick
+     * Returns the HTML code for the onclick event
      *
      * @return string
      */
@@ -110,7 +110,7 @@ class WidgetButton
     }
 
     /**
-     * Devuelve el código html para el pintado de un botón estadístico
+     * Returns the HTML code to display a statistic button
      *
      * @param string $label
      * @param string $value
@@ -128,7 +128,7 @@ class WidgetButton
     }
 
     /**
-     * Devuelve el código html para el pintado de un botón de acción
+     * Returns the HTML code to display an action button
      *
      * @param string $label
      * @param string $indexView
@@ -155,8 +155,7 @@ class WidgetButton
     }
 
     /**
-     * Devuelve el código html para el pintado de un botón que llama a un
-     * formulario modal
+     * Returns the HTML code to display a button that links to a modal form
      *
      * @param string $label
      * @return string
@@ -172,7 +171,7 @@ class WidgetButton
     }
 
     /**
-     * Devuelve el código html para el pintado de un botón
+     * Returns the HTML code to display a button
      *
      * @param string $label
      * @param string $value

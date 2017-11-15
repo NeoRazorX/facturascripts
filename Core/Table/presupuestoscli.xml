@@ -3,7 +3,7 @@
     Document   : presupuestoscli.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla presupuestoscli.
+        Structure for the presupuestoscli table.
 -->
 <table>
     <column>

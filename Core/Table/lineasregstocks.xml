@@ -3,7 +3,7 @@
     Document   : lineasregstocks.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla lineasregstocks.
+        Structure for the lineasregstocks table.
 -->
 <table>
     <column>

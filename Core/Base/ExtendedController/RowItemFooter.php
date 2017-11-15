@@ -38,7 +38,7 @@ class RowItemFooter extends RowItem
     public $buttons;
 
     /**
-     * Constructor de la clase
+     * Class constructor
      */
     public function __construct()
     {

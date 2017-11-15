@@ -36,14 +36,14 @@ class PDFExport implements ExportInterface
     const LIST_LIMIT = 1000;
 
     /**
-     * Clase para formatear números
+     * Class with number tools (to format numbers)
      *
      * @var NumberTools
      */
     private $numberTools;
 
     /**
-     * Objeto traductor
+     * Translator object
      *
      * @var Translator
      */
@@ -59,7 +59,7 @@ class PDFExport implements ExportInterface
     }
 
     /**
-     * Nuevo documento
+     * New document
      *
      * @param $model
      * @return string
@@ -81,7 +81,7 @@ class PDFExport implements ExportInterface
     }
 
     /**
-     * Nueva lista de documentos
+     * New document list
      *
      * @param $model
      * @param array $where
@@ -99,7 +99,7 @@ class PDFExport implements ExportInterface
         $tableOptions = ['cols' => []];
         $tableData = [];
 
-        /// obtenemos las columnas
+        /// Get the columns
         foreach ($columns as $col) {
             if ($col->display != 'none') {
                 $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
@@ -127,7 +127,7 @@ class PDFExport implements ExportInterface
             $tableData = $this->getTableData($cursor, $tableCols, $tableOptions);
             $pdf->ezTable($tableData, $tableColsTitle, '', $tableOptions);
 
-            /// avanzamos en los resultados
+            /// Advance within the results
             $offset += self::LIST_LIMIT;
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
@@ -136,7 +136,7 @@ class PDFExport implements ExportInterface
     }
 
     /**
-     * Devuelvo los datos de la tabla
+     * Returns the table data
      *
      * @param array $cursor
      * @param array $tableCols
@@ -148,7 +148,7 @@ class PDFExport implements ExportInterface
     {
         $tableData = [];
 
-        /// obtenemos los datos
+        /// Get the data
         foreach ($cursor as $key => $row) {
             foreach ($tableCols as $col) {
                 $value = '';
@@ -174,7 +174,7 @@ class PDFExport implements ExportInterface
     }
 
     /**
-     * Asigna la cabecera
+     * Assigns the header
      *
      * @param Response $response
      */

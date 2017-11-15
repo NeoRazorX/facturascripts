@@ -29,19 +29,19 @@ class AccountingGenerator
 {
 
     /**
-     * Listado de ejercicios disponibles.
+     * List of available periods
      * @var Model\Ejercicio[] 
      */
     protected $ejercicios;
 
     /**
-     * Empresa por defecto.
+     * Default company
      * @var Model\Empresa 
      */
     protected $empresa;
 
     /**
-     * Proporciona acceso al generador de datos.
+     * Provides access to the data generator
      * @var DataGeneratorTools
      */
     protected $tools;

@@ -3,7 +3,7 @@
     Document   : cuentasbcocli.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla cuentasbcocli.
+        Structure for the cuentasbcocli table.
 -->
 <table>
     <column>

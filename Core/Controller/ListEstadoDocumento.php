@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controlador para la lista de Familias
+ * Controller to list the items in the EstadoDocumento model
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
@@ -29,7 +29,7 @@ class ListEstadoDocumento extends ExtendedController\ListController
 {
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */
@@ -44,7 +44,7 @@ class ListEstadoDocumento extends ExtendedController\ListController
     }
 
     /**
-     * Procedimiento para insertar vistas en el controlador
+     * Load views
      */
     protected function createViews()
     {
