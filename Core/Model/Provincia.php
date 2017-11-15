@@ -107,12 +107,7 @@ class Provincia
      */
     public function install()
     {
-        $filePath = \realpath('Core/Model/DefaultData/ES-provincias.csv');
-
-        if (\file_exists($filePath)) {
-            $sql = $this->dataBase->sqlLoadFromCSV($filePath, self::tableName());
-            return $sql;
-        }
+        // TODO: Load from CSV realpath('Core/Model/DefaultData/ES-provincias.csv')
         return '';
     }
 

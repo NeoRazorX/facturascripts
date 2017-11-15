@@ -345,49 +345,4 @@ class MysqlSQL implements DataBaseSQL
     {
         return $seqName;
     }
-
-    /**
-     * Devuelve la string para la carga registros desde un archivo CSV a una tabla
-     *
-     * @param string $filePath
-     * @param string $tableName
-     * @param string $delimiter
-     * @param string $enclosed
-     * @param string $escaped
-     * @param string $lineEnd
-     *
-     * @return string
-     */
-    public function sqlLoadFromCSV($filePath, $tableName, $delimiter = ';', $enclosed = '"', $escaped = '\\', $lineEnd = PHP_EOL)
-    {
-        return "LOAD DATA LOCAL INFILE '" . $filePath . "'"
-            . " REPLACE INTO TABLE " . $tableName
-            . " FIELDS TERMINATED BY '" . $delimiter . "'"
-            . " ENCLOSED BY '" . $enclosed . "'"
-            //. " ESCAPED BY '" . $escaped . "'"
-            . " LINES TERMINATED BY '" . $lineEnd . "';";
-    }
-
-    /**
-     * Devuelve la string para guardar los registros desde una tabla a un archivo CSV
-     *
-     * @param string $filePath
-     * @param string $tableName
-     * @param string $delimiter
-     * @param string $enclosed
-     * @param string $escaped
-     * @param string $lineEnd
-     *
-     * @return string
-     */
-    public function sqlSaveToCSV($filePath, $tableName, $delimiter = ';', $enclosed = '"', $escaped = '\\', $lineEnd = PHP_EOL)
-    {
-        // TODO: Por probar
-        return "SELECT * FROM " . $tableName
-            . " INTO OUTFILE '" . $filePath . "'"
-            . " FIELDS TERMINATED BY '" . $delimiter . "'"
-            . " ENCLOSED BY '" . $enclosed . "'"
-            //. " ESCAPED BY '" . $escaped . "'"
-            . " LINES TERMINATED BY '" . $lineEnd . "';";
-    }
 }
