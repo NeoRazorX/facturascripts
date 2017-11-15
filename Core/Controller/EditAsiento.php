@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the Asiento model
@@ -33,17 +32,17 @@ use FacturaScripts\Core\Model;
 class EditAsiento extends ExtendedController\PanelController
 {
 
-   /**
-    * Procedimiento para insertar vistas en el controlador
-    */
-   protected function createViews()
-   {
-      $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
-      $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
-   }
-   
-   /**
-     * Procedimiento encargado de cargar los datos a visualizar
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
+        $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
+    }
+
+    /**
+     * Load data view procedure
      *
      * @param string $keyView
      * @param ExtendedController\EditView $view
@@ -66,19 +65,19 @@ class EditAsiento extends ExtendedController\PanelController
         }
     }
 
-   /**
-    * Devuelve los datos básicos de la página
-    *
-    * @return array
-    */
-   public function getPageData()
-   {
-      $pagedata = parent::getPageData();
-      $pagedata['title'] = 'accounting-entries';
-      $pagedata['menu'] = 'accounting';
-      $pagedata['icon'] = 'fa-balance-scale';
-      $pagedata['showonmenu'] = false;
+    /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'accounting-entries';
+        $pagedata['menu'] = 'accounting';
+        $pagedata['icon'] = 'fa-balance-scale';
+        $pagedata['showonmenu'] = false;
 
-      return $pagedata;
-   }
+        return $pagedata;
+    }
 }

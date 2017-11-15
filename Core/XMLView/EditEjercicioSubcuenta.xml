@@ -27,33 +27,26 @@
         <group name="exercise" numcolumns="10">
             <column name="fiscal-exercise" numcolumns="2" order="100" display="none">
                 <widget type="text" fieldname="codejercicio"/>
-                    
             </column>
             <column name="account-id" numcolumns="2" order="110">
-                <widget type="select" fieldname="idcuenta" onclick=""  >
-                    <values></values>
-                </widget>   
+                <widget type="select" fieldname="idcuenta" />
             </column>
             <column name="divisa" numcolumns="2" order="120">
-                <widget type="select" fieldname="coddivisa" onclick=""  >
+                <widget type="select" fieldname="coddivisa">
                     <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
-                </widget>   
+                </widget>
             </column>
-            
-            
             <column name="sub-account" numcolumns="2" order="130">
-                <widget type="text" fieldname="codcuenta" required="true"/>
-                    
+                <widget type="text" fieldname="codcuenta" required="true" />
             </column>
             <column name="taxes" numcolumns="2" order="140">
                 <widget type="select" fieldname="codimpuesto" required="true">
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
-                </widget>    
+                </widget>
             </column>
-            <column name="description" numcolumns="4"  order="150">
+            <column name="description" numcolumns="4" order="150">
                 <widget type="text" fieldname="descripcion"/>
             </column>
-        </group> 
-
+        </group>
     </columns>
 </view>

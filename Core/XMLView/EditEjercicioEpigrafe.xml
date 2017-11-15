@@ -27,23 +27,17 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="fiscal-exercise" numcolumns="2" order="100" display="none">
-                <widget type="text" fieldname="codejercicio"/>
-                    
+                <widget type="text" fieldname="codejercicio" />
             </column>
-             <column name="heading-account-group-id" numcolumns="2" order="110">
-                <widget type="select" fieldname="idgrupo" onclick="">
-                    <values></values>
-                </widget>   
+            <column name="heading-account-group-id" numcolumns="2" order="110">
+                <widget type="select" fieldname="idgrupo" />
             </column>
             <column name="accounting-heading-id" numcolumns="2" order="120" >
-                <widget type="text" fieldname="codepigrafe" onclick="" />
+                <widget type="text" fieldname="codepigrafe" />
             </column>
-            
             <column name="description" numcolumns="4" order="130">
-                <widget type="text" fieldname="descripcion" onclick="" />
+                <widget type="text" fieldname="descripcion" />
             </column>
-            
-           
         </group>
     </columns>
 </view>

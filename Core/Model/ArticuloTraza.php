@@ -29,9 +29,7 @@ namespace FacturaScripts\Core\Model;
 class ArticuloTraza
 {
 
-    use Base\ModelTrait {
-        clear as clearTrait;
-    }
+    use Base\ModelTrait;
 
     /**
      * Clave primaria
