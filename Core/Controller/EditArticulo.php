@@ -36,8 +36,6 @@ class EditArticulo extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('FacturaScripts\Core\Model\Articulo', 'EditArticulo', 'products', 'fa-cubes');
-        $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListFabricante', 'same-suppliers', 'fa-users');
-        $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListFamilia', 'same-families', 'fa-object-group');
         $this->addListView('FacturaScripts\Core\Model\ArticuloTraza', 'ListArticuloTraza', 'traceability', 'fa-barcode');
     }
 
@@ -55,24 +53,6 @@ class EditArticulo extends ExtendedController\PanelController
                 $view->loadData($value);
                 break;
 
-            case 'ListFabricante':
-                $codfabricante = $this->getViewModelValue('EditArticulo', 'codfabricante');
-
-                if (!empty($codfabricante)) {
-                    $where = [new DataBase\DataBaseWhere('codfabricante', $codfabricante)];
-                    $view->loadData($where);
-                }
-                break;
-
-            case 'ListFamilia':
-                $codfamilia = $this->getViewModelValue('EditArticulo', 'codfamilia');
-
-                if (!empty($codfamilia)) {
-                    $where = [new DataBase\DataBaseWhere('codfamilia', $codfamilia)];
-                    $view->loadData($where);
-                }
-                break;
-            
             case 'ListArticuloTraza':
                 $referencia = $this->getViewModelValue('EditArticulo', 'referencia');
 
