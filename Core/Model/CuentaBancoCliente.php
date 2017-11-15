@@ -138,7 +138,7 @@ class CuentaBancoCliente
     {
         $this->descripcion = self::noHtml($this->descripcion);
         if (!$this->testBankAccount()) {
-            $this->miniLog->alert($this->i18n->trans('error-incorrect-bank-details'));
+            ///$this->miniLog->alert($this->i18n->trans('error-incorrect-bank-details'));
 
             return false;
         }
