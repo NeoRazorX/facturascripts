@@ -268,10 +268,10 @@ class Stock
     public function totalFromArticulo($ref, $codalmacen = false)
     {
         $sql = 'SELECT SUM(cantidad) AS total FROM ' . static::tableName()
-            . ' WHERE referencia = ' . $this->var2str($ref);
+            . ' WHERE referencia = ' . $this->dataBase->var2str($ref);
 
         if ($codalmacen) {
-            $sql .= ' AND codalmacen = ' . $this->var2str($codalmacen);
+            $sql .= ' AND codalmacen = ' . $this->dataBase->var2str($codalmacen);
 }
 
         $data = $this->dataBase->select($sql);
@@ -324,7 +324,7 @@ class Stock
         $stocklist = array();
 
         $sql = 'SELECT * FROM ' . static::tableName()
-            . ' WHERE referencia = ' . $this->var2str($ref) . ' ORDER BY codalmacen ASC;';
+            . ' WHERE referencia = ' . $this->dataBase->var2str($ref) . ' ORDER BY codalmacen ASC;';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $s) {

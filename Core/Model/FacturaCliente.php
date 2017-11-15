@@ -112,8 +112,8 @@ class FacturaCliente
         if ($this->numero === null) { /// nueva factura
             /// buscamos la última fecha usada en una factura en esta serie y ejercicio
             $sql = 'SELECT MAX(fecha) AS fecha FROM ' . static::tableName()
-                . ' WHERE codserie = ' . $this->var2str($this->codserie)
-                . ' AND codejercicio = ' . $this->var2str($this->codejercicio) . ';';
+                . ' WHERE codserie = ' . $this->dataBase->var2str($this->codserie)
+                . ' AND codejercicio = ' . $this->dataBase->var2str($this->codejercicio) . ';';
 
             $data = $this->dataBase->select($sql);
             if (!empty($data)) {
@@ -128,9 +128,9 @@ class FacturaCliente
 
             /// ahora buscamos la última hora usada para esa fecha, serie y ejercicio
             $sql = 'SELECT MAX(hora) AS hora FROM ' . static::tableName()
-                . ' WHERE codserie = ' . $this->var2str($this->codserie)
-                . ' AND codejercicio = ' . $this->var2str($this->codejercicio)
-                . ' AND fecha = ' . $this->var2str($fecha) . ';';
+                . ' WHERE codserie = ' . $this->dataBase->var2str($this->codserie)
+                . ' AND codejercicio = ' . $this->dataBase->var2str($this->codejercicio)
+                . ' AND fecha = ' . $this->dataBase->var2str($fecha) . ';';
 
             $data = $this->dataBase->select($sql);
             if (!empty($data)) {
@@ -238,8 +238,8 @@ class FacturaCliente
 
         /// desvincular albaranes asociados y eliminar factura
         $sql = 'UPDATE albaranescli'
-            . ' SET idfactura = NULL, ptefactura = TRUE WHERE idfactura = ' . $this->var2str($this->idfactura) . ';'
-            . 'DELETE FROM ' . static::tableName() . ' WHERE idfactura = ' . $this->var2str($this->idfactura) . ';';
+            . ' SET idfactura = NULL, ptefactura = TRUE WHERE idfactura = ' . $this->dataBase->var2str($this->idfactura) . ';'
+            . 'DELETE FROM ' . static::tableName() . ' WHERE idfactura = ' . $this->dataBase->var2str($this->idfactura) . ';';
 
         if ($bloquear) {
             return false;

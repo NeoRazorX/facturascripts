@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseEngine;
@@ -31,6 +30,7 @@ use FacturaScripts\Core\Base\DataBase\Postgresql;
  */
 class DataBase
 {
+
     /**
      * El enlace con la base de datos.
      *
@@ -53,20 +53,6 @@ class DataBase
     private static $miniLog;
 
     /**
-     * Nº de selects ejecutados.
-     *
-     * @var integer
-     */
-    private static $totalSelects;
-
-    /**
-     * Nº de transacciones ejecutadas.
-     *
-     * @var integer
-     */
-    private static $totalTransactions;
-
-    /**
      * Lista de tablas de la base de datos
      *
      * @var array
@@ -80,8 +66,6 @@ class DataBase
     {
         if (self::$link === null) {
             self::$miniLog = new MiniLog();
-            self::$totalSelects = 0;
-            self::$totalTransactions = 0;
             self::$tables = [];
 
             switch (strtolower(FS_DB_TYPE)) {
@@ -100,26 +84,6 @@ class DataBase
                     break;
             }
         }
-    }
-
-    /**
-     * Devuelve el número de selects ejecutados
-     *
-     * @return integer
-     */
-    public function getTotalSelects()
-    {
-        return self::$totalSelects;
-    }
-
-    /**
-     * Devuele le número de transacciones realizadas
-     *
-     * @return integer
-     */
-    public function getTotalTransactions()
-    {
-        return self::$totalTransactions;
     }
 
     /**
@@ -287,7 +251,6 @@ class DataBase
         $result = self::$engine->commit(self::$link);
         if ($result) {
             self::$miniLog->sql('Commit Transaction');
-            self::$totalTransactions++;
         }
 
         return $result;
@@ -344,12 +307,10 @@ class DataBase
         self::$miniLog->sql($sql); /// añadimos la consulta sql al historial
         $result = self::$engine->select(self::$link, $sql);
         if (empty($result)) {
-            self::$miniLog->sql(self::$engine->errorMessage(self::$link));
+            self::$miniLog->critical(self::$engine->errorMessage(self::$link));
 
             return [];
         }
-
-        self::$totalSelects++;
 
         return $result;
     }
@@ -491,6 +452,39 @@ class DataBase
     public function compareColumns($tableName, $xmlCols, $dbCols)
     {
         return self::$engine->getUtils()->compareColumns($tableName, $xmlCols, $dbCols);
+    }
+
+    /**
+     * Transforma una variable en una cadena de texto válida para ser
+     * utilizada en una consulta SQL.
+     *
+     * @param mixed $val
+     *
+     * @return string
+     */
+    public function var2str($val)
+    {
+        if ($val === null) {
+            return 'NULL';
+        }
+
+        if (is_bool($val)) {
+            if ($val) {
+                return 'TRUE';
+            }
+
+            return 'FALSE';
+        }
+
+        if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4})$/i", $val)) {
+            return "'" . date($this->dateStyle(), strtotime($val)) . "'"; /// es una fecha
+        }
+
+        if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4}) ([\d]{1,2}):([\d]{1,2}):([\d]{1,2})$/i", $val)) {
+            return "'" . date($this->dateStyle() . ' H:i:s', strtotime($val)) . "'"; /// es una fecha+hora
+        }
+
+        return "'" . $this->escapeString($val) . "'";
     }
 
     /**

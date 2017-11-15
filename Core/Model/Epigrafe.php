@@ -135,7 +135,7 @@ class Epigrafe
     public function hijos()
     {
         $epilist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idpadre = ' . $this->var2str($this->idepigrafe)
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idpadre = ' . $this->dataBase->var2str($this->idepigrafe)
             . ' ORDER BY codepigrafe ASC;';
 
         $data = $this->dataBase->select($sql);
@@ -170,8 +170,8 @@ class Epigrafe
      */
     public function getByCodigo($cod, $codejercicio)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codepigrafe = ' . $this->var2str($cod)
-            . ' AND codejercicio = ' . $this->var2str($codejercicio) . ';';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codepigrafe = ' . $this->dataBase->var2str($cod)
+            . ' AND codejercicio = ' . $this->dataBase->var2str($codejercicio) . ';';
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
@@ -208,7 +208,7 @@ class Epigrafe
     public function superFromEjercicio($codejercicio)
     {
         $epilist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($codejercicio)
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->dataBase->var2str($codejercicio)
             . ' AND idpadre IS NULL AND idgrupo IS NULL ORDER BY codepigrafe ASC;';
 
         $data = $this->dataBase->select($sql);

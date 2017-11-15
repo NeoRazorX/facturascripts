@@ -119,8 +119,8 @@ class CuentaBancoCliente
                 /// si esta cuenta es la principal, desmarcamos las demás
                 $sql = 'UPDATE ' . $this->tableName()
                     . ' SET principal = false'
-                    . ' WHERE codcliente = ' . $this->var2str($this->codcliente)
-                    . ' AND codcuenta <> ' . $this->var2str($this->codcuenta) . ';';
+                    . ' WHERE codcliente = ' . $this->dataBase->var2str($this->codcliente)
+                    . ' AND codcuenta <> ' . $this->dataBase->var2str($this->codcuenta) . ';';
                 $allOK = $this->dataBase->exec($sql);
             }
             return $allOK;

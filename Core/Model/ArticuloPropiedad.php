@@ -81,7 +81,7 @@ class ArticuloPropiedad
     {
         $vlist = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref) . ';';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($ref) . ';';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
@@ -128,8 +128,8 @@ class ArticuloPropiedad
      */
     public function simpleGet($ref, $name)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref)
-            . ' AND name = ' . $this->var2str($name) . ';';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($ref)
+            . ' AND name = ' . $this->dataBase->var2str($name) . ';';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return $data[0]['text'];
@@ -148,8 +148,8 @@ class ArticuloPropiedad
      */
     public function simpleGetRef($name, $text)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE text = ' . $this->var2str($text)
-            . ' AND name = ' . $this->var2str($name) . ';';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE text = ' . $this->dataBase->var2str($text)
+            . ' AND name = ' . $this->dataBase->var2str($name) . ';';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return $data[0]['referencia'];
@@ -168,8 +168,8 @@ class ArticuloPropiedad
      */
     public function simpleDelete($ref, $name)
     {
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref)
-            . ' AND name = ' . $this->var2str($name) . ';';
+        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($ref)
+            . ' AND name = ' . $this->dataBase->var2str($name) . ';';
 
         return $this->dataBase->exec($sql);
     }

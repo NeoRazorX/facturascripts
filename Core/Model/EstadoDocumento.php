@@ -145,11 +145,11 @@ class EstadoDocumento
             $sql .= 'INSERT INTO ' . $this->tableName()
                 . ' (id, documento, status, nombre, bloqueado)'
                 . ' VALUES ('
-                . $this->var2str($pos + 1)
-                . ',' . $this->var2str($estado['documento'])
-                . ',' . $this->var2str($estado['status'])
-                . ',' . $this->var2str($estado['nombre'])
-                . ',' . $this->var2str($estado['bloqueado'])
+                . $this->dataBase->var2str($pos + 1)
+                . ',' . $this->dataBase->var2str($estado['documento'])
+                . ',' . $this->dataBase->var2str($estado['status'])
+                . ',' . $this->dataBase->var2str($estado['nombre'])
+                . ',' . $this->dataBase->var2str($estado['bloqueado'])
                 . ');';
         }
 
@@ -168,7 +168,7 @@ class EstadoDocumento
         $list = [];
 
         $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE documento = ' . $this->var2str($doc) . ' ORDER BY id ASC;';
+            . ' WHERE documento = ' . $this->dataBase->var2str($doc) . ' ORDER BY id ASC;';
         $data = $this->dataBase->select($sql);
         if ($data) {
             foreach ($data as $d) {

@@ -195,7 +195,7 @@ class Caja
     {
         $cajalist = [];
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codagente = '
-            . $this->var2str($codagente) . ' ORDER BY id DESC';
+            . $this->dataBase->var2str($codagente) . ' ORDER BY id DESC';
 
         $data = $this->dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {

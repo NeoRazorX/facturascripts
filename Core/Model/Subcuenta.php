@@ -330,8 +330,8 @@ class Subcuenta
     public function getCuentaesp($idcuesp, $codeje)
     {
         $sql = 'SELECT * FROM co_subcuentas WHERE idcuenta IN '
-            . '(SELECT idcuenta FROM co_cuentas WHERE idcuentaesp = ' . $this->var2str($idcuesp)
-            . ' AND codejercicio = ' . $this->var2str($codeje) . ') ORDER BY codsubcuenta ASC;';
+            . '(SELECT idcuenta FROM co_cuentas WHERE idcuentaesp = ' . $this->dataBase->var2str($idcuesp)
+            . ' AND codejercicio = ' . $this->dataBase->var2str($codeje) . ') ORDER BY codsubcuenta ASC;';
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
@@ -421,8 +421,8 @@ class Subcuenta
     {
         $cuentas = [];
         $sql = 'SELECT * FROM co_subcuentas WHERE idcuenta IN '
-            . '(SELECT idcuenta FROM co_cuentas WHERE idcuentaesp = ' . $this->var2str($idcuesp)
-            . ' AND codejercicio = ' . $this->var2str($codeje) . ') ORDER BY codsubcuenta ASC;';
+            . '(SELECT idcuenta FROM co_cuentas WHERE idcuentaesp = ' . $this->dataBase->var2str($idcuesp)
+            . ' AND codejercicio = ' . $this->dataBase->var2str($codeje) . ') ORDER BY codsubcuenta ASC;';
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
@@ -476,7 +476,7 @@ class Subcuenta
 
         $sublist = $this->cache->get('search_subcuenta_ejercicio_' . $codejercicio . '_' . $query);
         if (count($sublist) < 1) {
-            $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codejercicio = ' . $this->var2str($codejercicio)
+            $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codejercicio = ' . $this->dataBase->var2str($codejercicio)
                 . " AND (codsubcuenta LIKE '" . $query . "%' OR codsubcuenta LIKE '%" . $query . "'"
                 . " OR lower(descripcion) LIKE '%" . $query . "%') ORDER BY codcuenta ASC;";
 

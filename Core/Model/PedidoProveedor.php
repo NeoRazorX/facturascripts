@@ -119,10 +119,10 @@ class PedidoProveedor
     {
         $versiones = [];
 
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idoriginal = ' . $this->var2str($this->idpedido);
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idoriginal = ' . $this->dataBase->var2str($this->idpedido);
         if ($this->idoriginal) {
-            $sql .= ' OR idoriginal = ' . $this->var2str($this->idoriginal);
-            $sql .= ' OR idpedido = ' . $this->var2str($this->idoriginal);
+            $sql .= ' OR idoriginal = ' . $this->dataBase->var2str($this->idoriginal);
+            $sql .= ' OR idpedido = ' . $this->dataBase->var2str($this->idoriginal);
         }
         $sql .= 'ORDER BY fecha DESC, hora DESC;';
 

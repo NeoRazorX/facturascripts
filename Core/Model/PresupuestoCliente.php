@@ -148,10 +148,10 @@ class PresupuestoCliente
     {
         $versiones = [];
 
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idoriginal = ' . $this->var2str($this->idpresupuesto);
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idoriginal = ' . $this->dataBase->var2str($this->idpresupuesto);
         if ($this->idoriginal) {
-            $sql .= ' OR idoriginal = ' . $this->var2str($this->idoriginal);
-            $sql .= ' OR idpresupuesto = ' . $this->var2str($this->idoriginal);
+            $sql .= ' OR idoriginal = ' . $this->dataBase->var2str($this->idoriginal);
+            $sql .= ' OR idpresupuesto = ' . $this->dataBase->var2str($this->idoriginal);
         }
         $sql .= 'ORDER BY fecha DESC, hora DESC;';
 
@@ -200,7 +200,7 @@ class PresupuestoCliente
 
         /// marcamos como rechazados todos los presupuestos con finoferta ya pasada
         $this->dataBase->exec('UPDATE ' . static::tableName() . " SET status = '2' WHERE finoferta IS NOT NULL AND"
-            . ' finoferta < ' . $this->var2str(date('d-m-Y')) . ' AND idpedido IS NULL;');
+            . ' finoferta < ' . $this->dataBase->var2str(date('d-m-Y')) . ' AND idpedido IS NULL;');
 
         /// marcamos como rechazados todos los presupuestos no editables y sin pedido asociado
         $this->dataBase->exec("UPDATE " . static::tableName() . " SET status = '2' WHERE idpedido IS NULL AND"
