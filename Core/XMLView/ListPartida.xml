@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Definición inicial para el controlador ListGrupoEpigrafe
+ *
+ * @author Artex Trading sa <jcuello@artextrading.com>  
+ * @author PC REDNET S.L. <luismi@pcrednet.com
+-->
+
+<view>
+    <columns>
+        <column name="id" order="100" display="none">
+            <widget type="text" fieldname="idpartida" onclick="EditCuenta" />
+        </column>
+        <column name="subaccount" order="100">
+            <widget type="text" fieldname="idsubcuenta" />
+        </column>
+        <column name="description" order="110">
+            <widget type="text" fieldname="concepto" />
+        </column>
+        <column name="have" order="120">
+            <widget type="text" fieldname="haberme" />
+        </column>
+        <column name="debit" order="130">
+            <widget type="text" fieldname="debeme" />
+        </column>
+        <column name="credit" order="140">
+            <widget type="text" fieldname="haberme" />
+        </column>
+        <column name="invoice" order="150">
+            <widget type="text" fieldname="factura" />
+        </column>
+        <column name="amount" order="160">
+            <widget type="text" fieldname="baseimponible" />
+        </column>
+    </columns>
+</view>
