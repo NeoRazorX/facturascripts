@@ -39,6 +39,7 @@ class PanelArticulo extends ExtendedController\PanelController
         $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListFabricante', 'same-suppliers', 'fa-users');
         $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListFamilia', 'same-families', 'fa-object-group');
         $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListImpuesto', 'same-taxes', 'fa-plus-square-o'); 
+        $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListArticuloProveedor', 'supplier-products', 'fa-cubes'); 
         
     }
 
@@ -87,11 +88,18 @@ class PanelArticulo extends ExtendedController\PanelController
                 }
                 break;
             
-             case 'ListImpuesto':
+            case 'ListImpuesto':
                 $codimpuesto = $this->getArticuFieldValue('codimpuesto');
 
                 if (!empty($codimpuesto)) {
                     $where = [new DataBase\DataBaseWhere('codimpuesto', $codimpuesto)];
+                    $view->loadData($where);
+                }
+            case 'ListArticuloProveedor':
+                $referencia = $this->getArticuFieldValue('referencia');
+
+                if (!empty($referencia)) {
+                    $where = [new DataBase\DataBaseWhere('referencia', $referencia)];
                     $view->loadData($where);
                 }
                 
