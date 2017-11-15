@@ -115,8 +115,7 @@ class ListFilter
      * Adds $where to the informed filters in DataBaseWhere format
      * 
      * @param array $where
-     * @param type $key
-     * @return \FacturaScripts\Core\Base\DataBase\DataBaseWhere
+     * @param string $key
      */
     public function getDataBaseWhere(&$where, $key = '')
     {
@@ -190,8 +189,7 @@ class ListFilter
     public static function newSelectFilter($field, $value, $table, $where)
     {
         $options = ['field' => $field, 'value' => $value, 'table' => $table, 'where' => $where];
-        $result = new ListFilter('select', $options);
-        return $result;
+        return new ListFilter('select', $options);
     }
 
     /**
@@ -206,10 +204,16 @@ class ListFilter
     public static function newCheckboxFilter($field, $value, $label, $inverse)
     {
         $options = ['label' => $label, 'field' => $field, 'value' => $value, 'inverse' => $inverse];
-        $result = new ListFilter('checkbox', $options);
-        return $result;
+        return new ListFilter('checkbox', $options);
     }
 
+    /**
+     * TODO: Por completar
+     *
+     * @param $value
+     *
+     * @return string
+     */
     private static function checkNumberValue($value)
     {
         $values = explode('.', $value, 1);
@@ -230,7 +234,6 @@ class ListFilter
             $options['valueTo'] = self::checkNumberValue($options['valueTo']);
         }
 
-        $result = new ListFilter($type, $options);
-        return $result;
+        return new ListFilter($type, $options);
     }
 }

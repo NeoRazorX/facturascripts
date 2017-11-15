@@ -49,13 +49,19 @@ class ListPais extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\Pais', $className);
-        $this->addSearchFields($className, ['nombre', 'codiso', 'codpais']);
+        $this->addView('FacturaScripts\Core\Model\Pais', 'ListPais', 'countries', 'fa-globe');
+        $this->addSearchFields('ListPais', ['nombre', 'codiso', 'codpais']);
 
-        $this->addFilterCheckbox($className, 'validarprov', 'validate-states');
-        $this->addOrderBy($className, 'codpais', 'code');
-        $this->addOrderBy($className, 'nombre', 'name');
-        $this->addOrderBy($className, 'codiso', 'codiso');
+        $this->addFilterCheckbox('ListPais', 'validarprov', 'validate-states');
+        $this->addOrderBy('ListPais', 'codpais', 'code');
+        $this->addOrderBy('ListPais', 'nombre', 'name');
+        $this->addOrderBy('ListPais', 'codiso', 'codiso');
+
+        $this->addView('FacturaScripts\Core\Model\Provincia', 'ListProvincia', 'province', 'fa-map-signs');
+        $this->addSearchFields('ListProvincia', ['provincia', 'codisoprov'], ['codpostal2d']);
+
+        $this->addOrderBy('ListProvincia', 'provincia', 'province');
+        $this->addOrderBy('ListProvincia', 'codpais', 'alfa-code-3', 1);
+        $this->addOrderBy('ListProvincia', 'codpostal2d', 'postalcode');
     }
 }

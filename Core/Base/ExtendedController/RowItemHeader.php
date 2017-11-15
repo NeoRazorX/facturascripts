@@ -25,6 +25,10 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 class RowItemHeader extends RowItem
 {
+    /**
+     * Lista de botones
+     * @var array
+     */
     public $buttons;
     
     /**
@@ -39,7 +43,7 @@ class RowItemHeader extends RowItem
     /**
      * Creates the attributes structure from a XML file
      *
-     * @param \SimpleXMLElement $row
+     * @param \SimpleXMLElement[] $row
      */
     public function loadFromXML($row)
     {

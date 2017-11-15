@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017  Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,30 +16,29 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controller to list the items in the Tarifa model
+ * Controlador para la lista de provincias
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class ListTarifa extends ExtendedController\ListController
+class ListProvincia extends ExtendedController\ListController
 {
-
     /**
-     * Returns basic page attributes
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'rates';
-        $pagedata['icon'] = 'fa-money';
-        $pagedata['menu'] = 'sales';
+        $pagedata['title'] = 'province';
+        $pagedata['icon'] = 'fa-map-signs';
+        $pagedata['menu'] = 'admin';
 
         return $pagedata;
     }
@@ -50,10 +49,11 @@ class ListTarifa extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\Tarifa', $className);
-        $this->addSearchFields($className, ['nombre', 'codtarifa']);
+        $this->addView('FacturaScripts\Core\Model\Provincia', 'ListProvincia');
+        $this->addSearchFields($className, ['provincia', 'codisoprov', 'codpostal2d']);
 
-        $this->addOrderBy($className, 'codtarifa', 'code');
-        $this->addOrderBy($className, 'nombre', 'name', 1);
+        $this->addOrderBy($className, 'provincia', 'province');
+        $this->addOrderBy($className, 'codpais', 'alfa-code-3', 1);
+        $this->addOrderBy($className, 'codpostal2d', 'postalcode');
     }
 }

@@ -132,6 +132,11 @@ class ArticuloProveedor
         return 'id';
     }
 
+    /**
+     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
+     *
+     * @return string
+     */
     public function install()
     {
         /// forzamos la comprobación de la tabla de proveedores
@@ -159,6 +164,11 @@ class ArticuloProveedor
         $this->partnumber = null;
     }
 
+    /**
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     *
+     * @return bool
+     */
     public function test()
     {
         $this->descripcion = self::noHtml($this->descripcion);
@@ -175,6 +185,13 @@ class ArticuloProveedor
         return true;
     }
 
+    /**
+     * Devuelve la url donde ver/modificar los datos
+     *
+     * @param string $type
+     *
+     * @return string
+     */
     public function url($type = 'auto')
     {
         $value = $this->primaryColumnValue();

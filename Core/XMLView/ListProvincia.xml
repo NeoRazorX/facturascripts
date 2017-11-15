@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017  Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Definición inicial para el controlador ListDivisa
+ *
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+-->
+
+<view>
+    <columns>
+        <column name="id" order="100">
+            <widget type="text" fieldname="id" onclick="EditProvincia" />
+        </column>
+        <column name="iso" order="100" titleurl="https://es.wikipedia.org/wiki/Provincia_de_España#Denominaci.C3.B3n_y_lista_de_las_provincias">
+            <widget type="text" fieldname="codisoprov" />
+        </column>
+        <column name="postalcode" order="110" titleurl="https://upload.wikimedia.org/wikipedia/commons/5/5c/2_digit_postcode_spain.png">
+            <widget type="text" fieldname="codpostal2d" />
+        </column>
+        <column name="alfa-code-3" order="120" titleurl="https://es.wikipedia.org/wiki/ISO_4217">
+            <widget type="text" fieldname="codpais" />
+        </column>
+        <column name="province" order="130">
+            <widget type="text" fieldname="provincia" />
+        </column>
+        <column name="latitude" display="right" order="140">
+            <widget type="number" decimal="4" fieldname="latitud">
+                <option>&lt;1</option>
+            </widget>
+        </column>
+        <column name="longitude" display="right" order="150">
+            <widget type="number" decimal="4" fieldname="longitud">
+                <option>&lt;1</option>
+            </widget>
+        </column>
+        <column name="review-date" order="160">
+            <widget type="text" fieldname="fecha_revision" />
+        </column>
+    </columns>
+</view>
