@@ -472,7 +472,7 @@ class Subcuenta
      */
     public function searchByEjercicio($codejercicio, $query)
     {
-        $query = $this->escapeString(mb_strtolower(trim($query), 'UTF8'));
+        $query = $this->dataBase->escapeString(mb_strtolower(trim($query), 'UTF8'));
 
         $sublist = $this->cache->get('search_subcuenta_ejercicio_' . $codejercicio . '_' . $query);
         if (count($sublist) < 1) {

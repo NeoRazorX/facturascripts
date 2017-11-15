@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
@@ -31,6 +30,7 @@ use FacturaScripts\Core\Base\Translator;
  */
 class Mysql implements DataBaseEngine
 {
+
     /**
      * The link with the common utilities between database engines.
      *
@@ -293,7 +293,7 @@ class Mysql implements DataBaseEngine
                     $more = ($link->more_results() && $link->next_result());
                 } while ($more);
             }
-            $result = (!$link->errno);
+            $result = ($link->errno === 0);
         } catch (Exception $e) {
             $this->lastErrorMsg = $e->getMessage();
             $result = false;

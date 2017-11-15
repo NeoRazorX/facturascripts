@@ -214,7 +214,7 @@ class Postgresql implements DataBaseEngine
      * @param string   $sql
      * @param bool     $selectRows
      *
-     * @return array
+     * @return array|bool
      */
     private function runSql($link, $sql, $selectRows = true)
     {
@@ -242,7 +242,7 @@ class Postgresql implements DataBaseEngine
      * @param resource $link
      * @param string   $sql
      *
-     * @return resource
+     * @return array
      */
     public function select($link, $sql)
     {

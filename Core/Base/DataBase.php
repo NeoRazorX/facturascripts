@@ -288,7 +288,7 @@ class DataBase
      * Limit es el número de elementos que quieres que devuelva.
      * Offset es el número de resultado desde el que quieres que empiece.
      *
-     * @param string  $sql
+     * @param string $sql
      * @param int $limit
      * @param int $offset
      *

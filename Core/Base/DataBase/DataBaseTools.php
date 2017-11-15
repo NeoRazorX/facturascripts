@@ -100,7 +100,7 @@ class DataBaseTools
                 self::$miniLog->critical(self::$i18n->trans('error-reading-file', [$filename]));
             }
         } else {
-            self::$miniLog->critical(self::$i18n->i18n->trans('file-not-found', [$filename]));
+            self::$miniLog->critical(self::$i18n->trans('file-not-found', [$filename]));
         }
 
         return $return;
