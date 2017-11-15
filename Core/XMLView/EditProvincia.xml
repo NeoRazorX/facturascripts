@@ -25,7 +25,7 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="id" numcolumns="2" order="100" display="none">
-                <widget type="text" fieldname="id" icon="fa-globe" required="true" />
+                <widget type="text" fieldname="idprovincia" icon="fa-globe" required="true" />
             </column>
             <column name="iso" numcolumns="2" order="110" titleurl="https://es.wikipedia.org/wiki/Provincia_de_España#Denominaci.C3.B3n_y_lista_de_las_provincias">
                 <widget type="text" fieldname="codisoprov" icon="fa-globe" required="true" />

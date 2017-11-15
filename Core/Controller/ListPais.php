@@ -30,6 +30,29 @@ class ListPais extends ExtendedController\ListController
 {
 
     /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        /// Countries
+        $this->addView('FacturaScripts\Core\Model\Pais', 'ListPais', 'countries', 'fa-globe');
+        $this->addSearchFields('ListPais', ['nombre', 'codiso', 'codpais']);
+
+        $this->addFilterCheckbox('ListPais', 'validarprov', 'validate-states');
+        $this->addOrderBy('ListPais', 'codpais', 'code');
+        $this->addOrderBy('ListPais', 'nombre', 'name');
+        $this->addOrderBy('ListPais', 'codiso', 'codiso');
+
+        /// States
+        $this->addView('FacturaScripts\Core\Model\Provincia', 'ListProvincia', 'province', 'fa-map-signs');
+        $this->addSearchFields('ListProvincia', ['provincia', 'codisoprov']);
+
+        $this->addOrderBy('ListProvincia', 'provincia', 'province');
+        $this->addOrderBy('ListProvincia', 'codpais', 'alfa-code-3', 1);
+        $this->addOrderBy('ListProvincia', 'codpostal2d', 'postalcode');
+    }
+
+    /**
      * Returns basic page attributes
      *
      * @return array
@@ -42,26 +65,5 @@ class ListPais extends ExtendedController\ListController
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
-    }
-
-    /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->addView('FacturaScripts\Core\Model\Pais', 'ListPais', 'countries', 'fa-globe');
-        $this->addSearchFields('ListPais', ['nombre', 'codiso', 'codpais']);
-
-        $this->addFilterCheckbox('ListPais', 'validarprov', 'validate-states');
-        $this->addOrderBy('ListPais', 'codpais', 'code');
-        $this->addOrderBy('ListPais', 'nombre', 'name');
-        $this->addOrderBy('ListPais', 'codiso', 'codiso');
-
-        $this->addView('FacturaScripts\Core\Model\Provincia', 'ListProvincia', 'province', 'fa-map-signs');
-        $this->addSearchFields('ListProvincia', ['provincia', 'codisoprov'], ['codpostal2d']);
-
-        $this->addOrderBy('ListProvincia', 'provincia', 'province');
-        $this->addOrderBy('ListProvincia', 'codpais', 'alfa-code-3', 1);
-        $this->addOrderBy('ListProvincia', 'codpostal2d', 'postalcode');
     }
 }

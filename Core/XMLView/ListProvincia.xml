@@ -25,7 +25,7 @@
 <view>
     <columns>
         <column name="id" order="100">
-            <widget type="text" fieldname="id" onclick="EditProvincia" />
+            <widget type="text" fieldname="idprovincia" onclick="EditProvincia" />
         </column>
         <column name="iso" order="100" titleurl="https://es.wikipedia.org/wiki/Provincia_de_España#Denominaci.C3.B3n_y_lista_de_las_provincias">
             <widget type="text" fieldname="codisoprov" />

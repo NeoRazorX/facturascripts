@@ -1,7 +1,8 @@
 <?php
 /**
  * This file is part of facturacion_base
- * Copyright (C) 2017  Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017       Francesc Pineda Segarra     <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez         <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,7 +33,7 @@ class Provincia
      *
      * @var string
      */
-    public $id;
+    public $idprovincia;
 
     /**
      * Código de país asociado a la provincia.
@@ -95,7 +96,7 @@ class Provincia
      */
     public function primaryColumn()
     {
-        return 'id';
+        return 'idprovincia';
     }
 
     /**
@@ -109,63 +110,5 @@ class Provincia
     {
         // TODO: Load from CSV realpath('Core/Model/DefaultData/ES-provincias.csv')
         return '';
-    }
-
-    /**
-     * Devuelve las provincias asociadas a un país ordenas alfabeticamente.
-     *
-     * @param $codpais
-     *
-     * @return self[]
-     */
-    public function getProvincias($codpais)
-    {
-        $list = [];
-
-        $query = 'SELECT * FROM ' . self::tableName()
-            . ' WHERE codpais = ' . $this->var2str($codpais)
-            . ' ORDER BY lower(provincia) ASC';
-
-        $data = $this->dataBase->select($query);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $list[] = new self($d);
-            }
-        }
-
-        return $list;
-    }
-
-    /**
-     * Devuelve un array con las combinaciones que contienen $query en su provincia
-     * o codisoprov.
-     *
-     * @param string $search
-     * @param int    $offset
-     *
-     * @return self[]
-     */
-    public function search($search, $offset = 0)
-    {
-        $list = [];
-        $search = mb_strtolower(self::noHtml($search), 'UTF8');
-
-        $query = 'SELECT * FROM ' . self::tableName() . ' WHERE ';
-        if (is_numeric($search)) {
-            $query .= "codpostal2d LIKE '%" . $search . "%'";
-        } else {
-            $search = str_replace(' ', '%', $search);
-            $query .= "lower(provincia) LIKE '%" . $search . "%' OR lower(codisoprov) LIKE '%" . $search . "%'";
-        }
-        $query .= ' ORDER BY lower(provincia) ASC';
-
-        $data = $this->dataBase->selectLimit($query, FS_ITEM_LIMIT, $offset);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $list[] = new self($d);
-            }
-        }
-
-        return $list;
     }
 }
