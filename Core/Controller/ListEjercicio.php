@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controlador para la lista de ejercicios contables
+ * Controller to list the items in the Ejercicio model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -30,7 +30,7 @@ class ListEjercicio extends ExtendedController\ListController
 {
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */
@@ -45,7 +45,7 @@ class ListEjercicio extends ExtendedController\ListController
     }
 
     /**
-     * Procedimiento para insertar vistas en el controlador
+     * Load views
      */
     protected function createViews()
     {

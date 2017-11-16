@@ -78,7 +78,7 @@ class CuentaBanco
     public function test()
     {
         if (!$this->testBankAccount()) {
-            $this->miniLog->alert($this->i18n->trans('error-incorrect-bank-details'));
+            ///$this->miniLog->alert($this->i18n->trans('error-incorrect-bank-details'));
 
             return false;
         }
@@ -86,6 +86,13 @@ class CuentaBanco
         return true;
     }
 
+    /**
+     * Devuelve la url donde ver/modificar los datos.
+     *
+     * @param string $type
+     *
+     * @return string
+     */
     public function url($type = 'auto')
     {
         $value = $this->primaryColumnValue();

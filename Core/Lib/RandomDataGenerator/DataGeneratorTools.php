@@ -27,10 +27,11 @@ class DataGeneratorTools
 {
 
     /**
-     * Metodo de apoyo para el constructor de modelos e inicializacion de datos
-     * @param array $variable    -> destino de los datos
-     * @param $modelo   -> modelo de cada uno de los items del array
-     * @param bool $shuffle   -> ordenar aleatoriamente la lista
+     * Support method for the model constructor and data initialisation
+     *
+     * @param array $variable    -> data destination
+     * @param $modelo   -> model for each array item
+     * @param bool $shuffle   -> Randomly sort the list
      */
     public function loadData(&$variable, $modelo, $shuffle)
     {
@@ -41,7 +42,8 @@ class DataGeneratorTools
     }
 
     /**
-     * Acorta un string hasta $len y sustituye caracteres especiales.
+     * Shortens a string to $len and replaces special characters
+     *
      * Devuelve el string acortado.
      * @param string $txt
      * @param int $len
@@ -59,7 +61,8 @@ class DataGeneratorTools
     }
 
     /**
-     * Devuelve una descripción de producto aleatoria.
+     * Returns a random product description
+     *
      * @return string
      */
     public function descripcion()
@@ -125,9 +128,10 @@ class DataGeneratorTools
     }
 
     /**
-     * Devuelve un número aleatorio entre $min y $max1.
-     * 1 de cada 10 veces lo devuelve entre $min y $max2.
-     * 1 de cada 5 veces lo devuelve con decimales.
+     * Returns a random number between $min and $max1
+     * 1 out of 10 times returns a value between $min and $max2
+     * 1 out of 5 times it returns a value with decimal points
+     *
      * @param int $min
      * @param int $max1
      * @param int $max2
@@ -148,9 +152,10 @@ class DataGeneratorTools
     }
 
     /**
-     * Devuelve un número aleatorio entre $min y $max1.
-     * 1 de cada 10 veces lo devuelve entre $min y $max2.
-     * 1 de cada 3 veces lo devuelve con decimales.
+     * Returns a random number between $min and $max1
+     * 1 out of 10 times returns a value between $min and $max2
+     * 1 out of 3 times it returns a value with decimal points
+     *
      * @param int $min
      * @param int $max1
      * @param int $max2
@@ -171,7 +176,8 @@ class DataGeneratorTools
     }
 
     /**
-     * Devuelve un nombre aleatorio.
+     * Returns a random name
+     *
      * @return string
      */
     public function nombre()
@@ -191,7 +197,8 @@ class DataGeneratorTools
     }
 
     /**
-     * Devuelve dos apellidos aleatorios.
+     * Returns two random surnames
+     *
      * @return string
      */
     public function apellidos()
@@ -210,7 +217,8 @@ class DataGeneratorTools
     }
 
     /**
-     * Devuelve un cargo.
+     * Returns a job position
+     *
      * @return string
      */
     public function cargo()
@@ -222,7 +230,8 @@ class DataGeneratorTools
     }
 
     /**
-     * Devuelve un nombre comercial aleatorio.
+     * Returns a random commercial name
+     *
      * @return string
      */
     public function empresa()
@@ -247,7 +256,8 @@ class DataGeneratorTools
     }
 
     /**
-     * Devuelve un email aleatorio.
+     * Returns a random email
+     *
      * @return string
      */
     public function email()
@@ -263,7 +273,8 @@ class DataGeneratorTools
     }
 
     /**
-     * Devuelve una provincia aleatoria.
+     * Returns a random province
+     *
      * @return string
      */
     public function provincia()
@@ -282,7 +293,8 @@ class DataGeneratorTools
     }
 
     /**
-     * Devuelve una ciudad aleatoria.
+     * Returns a random city
+     *
      * @return string
      */
     public function ciudad()
@@ -301,7 +313,8 @@ class DataGeneratorTools
     }
 
     /**
-     * Devuelve una dirección aleatoria.
+     * Returns a random address
+     *
      * @return string
      */
     public function direccion()
@@ -323,7 +336,8 @@ class DataGeneratorTools
     }
 
     /**
-     * Devuelve unas observaciones aleatorias.
+     * Returns random comments
+     *
      * @param string|bool $fecha
      * @return string
      */
@@ -335,14 +349,14 @@ class DataGeneratorTools
             'La parte contratante de la primera parte será la parte contratante de la primera parte.'
         ];
 
-        /// añadimos muchos blas como otra opción
+        /// Add a lot of Blas as an option
         $bla = 'Bla';
         while (mt_rand(0, 29) > 0) {
             $bla .= ', bla';
         }
         $observaciones[] = $bla . '.';
 
-        /// randomizamos (es posible que me haya inventado esta palabra)
+        /// Randomize
         shuffle($observaciones);
 
         if ($fecha && mt_rand(0, 2) == 0) {
@@ -357,7 +371,7 @@ class DataGeneratorTools
                 return $observaciones[0];
             }
 
-            # Hacemos la peticion al servidor
+            /// Perform the request to the server
             $array__ = unserialize(stream_get_contents($sock));
             $texto_final = strip_tags($array__['parse']['text']['*']);
             $texto_final = str_replace("\n\n\n\n", "\n", $texto_final);
@@ -369,7 +383,8 @@ class DataGeneratorTools
     }
 
     /**
-     * Devuelve un string aleatorio de longitud $length
+     * Returns a random string of $length length
+     *
      * @param string $length la longitud del string
      * @return string la cadena aleatoria
      */

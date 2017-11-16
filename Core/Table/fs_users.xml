@@ -3,7 +3,7 @@
     Document   : fs_users.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla fs_users.
+        Structure for the fs_users table.
 -->
 <table>
     <column>

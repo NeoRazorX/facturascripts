@@ -3,7 +3,7 @@
     Document   : co_subcuentasprov.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla co_subcuentasprov.
+        Structure for the co_subcuentasprov table.
 -->
 <table>
     <column>

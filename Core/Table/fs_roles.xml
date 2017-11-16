@@ -3,7 +3,7 @@
     Document   : fs_roles.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla fs_roles.
+        Structure for the fs_roles table.
 -->
 <table>
     <column>

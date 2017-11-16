@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Definición de vista para uso en ListController
+ * View definition for its use in ListController
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -31,66 +31,69 @@ use Symfony\Component\HttpFoundation\Response;
 class ListView extends BaseView
 {
     /**
-     * Constantes para ordenación
+     * Order constants
      */
     const ICON_ASC = 'fa-sort-amount-asc';
     const ICON_DESC = 'fa-sort-amount-desc';
 
     /**
-     * Cursor con los datos del modelo a mostrar
+     * Cursor with data from the model display
      *
      * @var array
      */
     private $cursor;
 
     /**
-     * Configuración de filtros predefinidos por usuario
+     * Filter configuration preset by the user
      *
      * @var array
      */
     private $filters;
 
     /**
-     * Lista de campos donde buscar cuando se aplica una búsqueda
+     * List of fields where to search in when a search is made
      *
      * @var array
      */
     private $searchIn;
 
     /**
-     * Lista de campos disponibles en el order by
-     * Ejemplo: orderby[key] = ["label" => "Etiqueta", "icon" => ICON_ASC]
+     * List of fields available to order by
+     * Example: orderby[key] = ["label" => "Etiqueta", "icon" => ICON_ASC]
      *          key = field_asc | field_desc
      * @var array
      */
     private $orderby;
 
     /**
-     * Elemento seleccionado en el lista de order by
+     * Selected element in the Order By list
      * @var string
      */
     public $selectedOrderBy;
 
     /**
-     * Almacena el offset para el cursor
+     * Stores the offset for the cursor
+     *
      * @var int
      */
     private $offset;
 
     /**
-     * Almacena el order para el cursor
+     * Stores the order for the cursor
+     *
      * @var array
      */
     private $order;
 
     /**
-     * Almacena los parámetros del where del cursor
+     * Stores the where parameters for the cursor
+     *
      * @var array
      */
     private $where;
 
     /**
-     * Constructor e inicializador de la clase
+     * Class constructor and initialization
      *
      * @param string $title
      * @param string $modelName
@@ -113,7 +116,7 @@ class ListView extends BaseView
     }
 
     /**
-     * Devuelve el texto de un enlace para un modelo dado.
+     * Returns the link text for a given model
      *
      * @param $data
      *
@@ -131,7 +134,7 @@ class ListView extends BaseView
     }
 
     /**
-     * Devuelve la lista de datos leidos en formato Model
+     * Returns the read data list in Model format
      *
      * @return array
      */
@@ -141,7 +144,7 @@ class ListView extends BaseView
     }
 
     /**
-     * Devuelve la lista de filtros definidos
+     * Returns the list of defined filters
      *
      * @return array
      */
@@ -151,7 +154,7 @@ class ListView extends BaseView
     }
 
     /**
-     * Devuelve la lista de campos para la búsqueda en formato para WhereDatabase
+     * Returns the field list for the search, in WhereDatabase format
      *
      * @return string
      */
@@ -161,7 +164,7 @@ class ListView extends BaseView
     }
 
     /**
-     * Devuelve la lista de order by definidos
+     * Returns the list of defined Order By
      *
      * @return array
      */
@@ -171,8 +174,9 @@ class ListView extends BaseView
     }
 
     /**
-     * Lista de columnas y su configuración
+     * List of columns and its configuration
      * (Array of ColumnItem)
+     *
      * @return array
      */
     public function getColumns()
@@ -182,7 +186,7 @@ class ListView extends BaseView
     }
 
     /**
-     * Devuelve el Order By indicado en formato array
+     * Returns the indicated Order By in array format
      *
      * @param string $orderKey
      * @return array
@@ -202,7 +206,7 @@ class ListView extends BaseView
     }
 
     /**
-     * Comprueba y establece el valor seleccionado en el order by
+     * Checks and establishes the selected value in the Order By
      *
      * @param string $orderKey
      */
@@ -219,7 +223,7 @@ class ListView extends BaseView
     }
 
     /**
-     * Añade a la lista de campos para la búsqueda los campos informados
+     * Adds the given fields to the list of fields to search in
      *
      * @param array $fields
      */
@@ -231,7 +235,7 @@ class ListView extends BaseView
     }
 
     /**
-     * Añade un campo a la lista de Order By
+     * Adds a field to the Order By list
      *
      * @param string $field
      * @param string $label
@@ -263,7 +267,7 @@ class ListView extends BaseView
     }
 
     /**
-     * Define una nueva opción de filtrado para los datos
+     * Defines a new option to filter the data with
      *
      * @param string $key
      * @param ListFilter $filter
@@ -282,7 +286,7 @@ class ListView extends BaseView
     }
 
     /**
-     * Establece el estado de visualización de una columna
+     * Establishes a column's display state
      * 
      * @param string $columnName
      * @param boolean $disabled
@@ -296,13 +300,13 @@ class ListView extends BaseView
     }
 
     /**
-     * Carga los datos
+     * Load data
      *
      * @param array $where
      * @param int $offset
      * @param int $limit
      */
-    public function loadData($where, $offset = 0, $limit = 50)
+    public function loadData($where, $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         $order = $this->getSQLOrderBy($this->selectedOrderBy);
         $this->count = $this->model->count($where);
@@ -317,7 +321,7 @@ class ListView extends BaseView
     }
 
     /**
-     * Método para la exportación de los datos de la vista
+     * Method o export the view data
      *
      * @param Base\ExportManager $exportManager
      * @param Response $response

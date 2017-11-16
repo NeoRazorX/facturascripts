@@ -143,7 +143,7 @@ class TerminalCaja
      */
     public function disponible()
     {
-        $sql = 'SELECT * FROM cajas WHERE f_fin IS NULL AND fs_id = ' . $this->var2str($this->id) . ';';
+        $sql = 'SELECT * FROM cajas WHERE f_fin IS NULL AND fs_id = ' . $this->dataBase->var2str($this->id) . ';';
         if ($this->dataBase->select($sql)) {
             return false;
         }

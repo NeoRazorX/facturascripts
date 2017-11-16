@@ -16,28 +16,28 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
- * Clase engloba utilidades para el control y manejo de objetos en la base de
- * datos. Necesita el enlace con el tipo de base de datos (MySQL o PostgreSQL)
- * usado al crear la clase DataBase. (DataBase::$engine)
+ * This class has utilities for the control and management of objects in the
+ * database. It needs the link to to the database with its type (MYSQL or
+ * PostreSQL) used used when the DataBase class was created. (DataBase::$engine)
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class DataBaseUtils
 {
+
     /**
-     * Enlace al motor de base de datos seleccionado en la configuración
+     * Link to the database engine selected in the configuration
      *
      * @var DataBaseEngine
      */
     private $engine;
 
     /**
-     * Construye y prepara la clase para su uso
+     * Builds and prepares the class to use it
      *
      * @param DataBaseEngine $engine
      */
@@ -69,8 +69,8 @@ class DataBaseUtils
     }
 
     /**
-     * Compara los tipos de datos de una columna.
-     * Devuelve True si son iguales.
+     * Compares data types from a column.
+     * Returns True if they are the same.
      *
      * @param string $dbType
      * @param string $xmlType
@@ -83,7 +83,7 @@ class DataBaseUtils
         $xml = strtolower($xmlType);
 
         $result = (
-            (FS_CHECK_DB_TYPES !== '1') ||
+            (FS_DB_TYPE_CHECK) ||
             $this->engine->compareDataTypes($db0, $xml) ||
             ($xml === 'serial') ||
             (
@@ -96,7 +96,7 @@ class DataBaseUtils
     }
 
     /**
-     * Compara dos arrays de columnas, devuelve una sentencia sql en caso de encontrar diferencias.
+     * Compares two column arrays, returns a SQL statement if there are any differences.
      *
      * @param string $tableName
      * @param array  $xmlCols
@@ -110,8 +110,8 @@ class DataBaseUtils
         foreach ($xmlCols as $xml_col) {
             if (strtolower($xml_col['type']) === 'integer') {
                 /**
-                 * Desde la pestaña avanzado el panel de control se puede cambiar
-                 * el tipo de entero a usar en las columnas.
+                 *
+                 * The integer type used in columns can be changed in the control panel tab
                  */
                 $xml_col['type'] = FS_DB_INTEGER;
             }
@@ -139,7 +139,7 @@ class DataBaseUtils
     }
 
     /**
-     * Compara dos arrays de restricciones, devuelve una sentencia SQL en caso de encontrar diferencias.
+     * Compares two constraint arrays, returns a SQL statement if there are any differences.
      *
      * @param string $tableName
      * @param array  $xmlCons
@@ -161,7 +161,7 @@ class DataBaseUtils
             }
         }
 
-        if (!empty($xmlCons) && !$deleteOnly && FS_FOREIGN_KEYS === '1') {
+        if (!empty($xmlCons) && !$deleteOnly && FS_DB_FOREIGN_KEYS) {
             foreach ($xmlCons as $xml_con) {
                 if (strpos($xml_con['constraint'], 'PRIMARY') === 0) {
                     continue;
@@ -178,7 +178,7 @@ class DataBaseUtils
     }
 
     /**
-     * Devuelve la sentencia SQL necesaria para crear una tabla con la estructura proporcionada.
+     * Returns the needed SQL statement to create a table with the given structure.
      *
      * @param string $tableName
      * @param array  $xmlCols

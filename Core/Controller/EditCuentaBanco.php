@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controlador para la edición de un registro del modelo Fabricante
+ * Controller to edit a single item from the CuentaBanco model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jferrer@artextrading.com>
@@ -30,7 +30,7 @@ class EditCuentaBanco extends ExtendedController\EditController
 {
 
     /**
-     * Devuelve el nombre del modelo
+     * Returns the model name
      */
     public function getModelName()
     {
@@ -38,7 +38,7 @@ class EditCuentaBanco extends ExtendedController\EditController
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */

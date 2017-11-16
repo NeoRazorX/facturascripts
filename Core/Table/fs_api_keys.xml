@@ -3,7 +3,7 @@
     Document   : fs_api_keys.xml
     Author     : Joe Nilson Zegarra Galvez
     Description:
-        Estructura de la tabla fs_api_keys.
+        Structure for the fs_api_keys table.
 -->
 <table>
     <column>

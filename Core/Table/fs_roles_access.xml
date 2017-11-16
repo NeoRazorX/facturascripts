@@ -3,7 +3,7 @@
     Document   : fs_roles_access.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla fs_roles_access.
+        Structure for the fs_roles_access table.
 -->
 <table>
     <column>

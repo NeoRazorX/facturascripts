@@ -26,21 +26,21 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 class RowItemStatus extends RowItem
 {
     /**
-     * Nombre del campo que al que se aplica las opciones
+     * Field name to which the options are applied to
      *
      * @var string
      */
     public $fieldName;
 
     /**
-     * Opciones para configurar la fila
+     * Options for the field configuration
      *
      * @var array
      */
     public $options;
     
     /**
-     * Constructor de la clase
+     * Class constructor
      */
     public function __construct()
     {
@@ -67,7 +67,7 @@ class RowItemStatus extends RowItem
     }    
     
     /**
-     * Carga la estructura de atributos en base un archivo JSON
+     * Loads the attributes structure from a JSON file
      *
      * @param array $row
      */
@@ -79,7 +79,7 @@ class RowItemStatus extends RowItem
     }    
     
     /**
-     * Devuelve el estado del valor
+     * Returns the status for a given value
      *
      * @param string $value
      *

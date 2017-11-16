@@ -3,7 +3,7 @@
     Document   : dirproveedores.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla dirproveedores.
+        Structure for the dirproveedores table.
 -->
 <table>
     <column>

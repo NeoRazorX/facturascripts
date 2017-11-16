@@ -17,68 +17,52 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Definición inicial para el controlador EditFabricante
+ * Initial description for the controller EditFabricante
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
 -->
 
 <view>
     <columns>
-        <group name="numericformat" title="numeric-formats" numcolumns="6" icon="fa-info-circle fa-lg">
+        <group name="numericformat" title="numeric-formats" numcolumns="12" icon="fa-info-circle fa-lg">
             <column name="name" display="none" order="0">
                 <widget type="text" fieldname="name" readonly="true" required="true" />
             </column>
-
             <column name="decimals" numcolumns="3" order="100">
                 <widget type="select" fieldname="decimals" required="true" icon="fa-sort-numeric-asc">
                     <values start="0" end="6" step="1"></values>
                 </widget>
             </column>
-            
             <column name="product_decimals" title="product" numcolumns="3" order="110">
                 <widget type="select" fieldname="product_decimals" required="true" icon="fa-sort-numeric-asc">
                     <values start="0" end="6" step="1"></values>
                 </widget>
             </column>
-
             <column name="decimal_separator" title="decimal" numcolumns="3" order="120">
                 <widget type="select" fieldname="decimal_separator" required="true" icon="fa-calculator">
-                    <values title="symbol-comma">,</values>
-                    <values title="symbol-dot">.</values>
+                    <values title=",">,</values>
+                    <values title=".">.</values>
                 </widget>
             </column>
-
             <column name="thousands_separator" title="thousands" numcolumns="3" order="120">
                 <widget type="select" fieldname="thousands_separator" required="true" icon="fa-calculator">
-                    <values title="symbol-comma">,</values>
-                    <values title="symbol-dot">.</values>
+                    <values title=",">,</values>
+                    <values title=".">.</values>
+                    <values title=" "> </values>
                 </widget>
             </column>
         </group>
-
-        <group name="dateformat" title="date-formats" numcolumns="6" icon="fa-calendar fa-lg">
-            <column name="short" numcolumns="4" order="100">
-                <widget type="select" fieldname="dateshort" required="true" icon="fa-calendar">
-                    <values title="dd-mm-yy">dd-mm-yy</values>
-                    <values title="dd-mm-yyyy">dd-mm-yyyy</values>
-                    <values title="mm/dd/yy">mm/dd/yy</values>
-                    <values title="mm/dd/yyyy">mm/dd/yyyy</values>
+        <group name="advanced" title="advanced" numcolumns="12" icon="fa-database fa-lg">
+            <column name="name" display="none" order="0">
+                <widget type="text" fieldname="name" readonly="true" required="true" />
+            </column>
+            <column name="homepage" numcolumns="3" order="100">
+                <widget type="select" fieldname="homepage">
+                    <values source="fs_pages" fieldcode="name" fieldtitle="title"></values>
                 </widget>
             </column>
-
-            <column name="long" numcolumns="4" order="100">
-                <widget type="select" fieldname="datelong" required="true" icon="fa-calendar-check-o">
-                    <values title="dd mmm yy">dd mmm yy</values>
-                    <values title="dd mmm yyyy">dd mmm yyyy</values>
-                    <values title="mm dd yy">mmm dd yy</values>
-                    <values title="mm dd yyyy">mmm dd yyyy</values>
-                </widget>
-            </column>
-
-            <column name="maxtoday" numcolumns="4" order="100">
-                <widget type="select" fieldname="datemaxtoday" required="true" icon="fa-calendar-minus-o">
-                    <values start="0" end="7" step="1"></values>
-                </widget>
+            <column name="item_limit" numcolumns="3" order="100">
+                <widget type="number" fieldname="item_limit" required="true" />
             </column>
         </group>
     </columns>

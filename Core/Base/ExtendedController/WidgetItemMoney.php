@@ -29,28 +29,20 @@ use FacturaScripts\Core\Base\DivisaTools;
 class WidgetItemMoney extends WidgetItem
 {
     /**
-     * Clase para formatear monedas
+     * Class that formats currency
      *
      * @var DivisaTools
      */
     private static $divisaTools;
 
     /**
-     * Numero de decimales para las divisas
-     *
-     * @var int
-     */
-    public $decimal;
-
-    /**
-     * Constructor de la clase
+     * Class constructor
      */
     public function __construct()
     {
         parent::__construct();
 
         $this->type = 'money';
-        $this->decimal = 2;
 
         if (!isset(self::$divisaTools)) {
             self::$divisaTools = new DivisaTools();
@@ -58,8 +50,7 @@ class WidgetItemMoney extends WidgetItem
     }
 
     /**
-     * Genera el código html para la visualización de los datos en el
-     * controlador List
+     * Generates the HTML code to display the data in the List controller
      *
      * @param string $value
      *
@@ -72,14 +63,12 @@ class WidgetItemMoney extends WidgetItem
         }
 
         $style = $this->getTextOptionsHTML($value);
-        $aux = empty($this->decimal) ? self::$divisaTools->format($value) : self::$divisaTools->format($value, $this->decimal);
-        $html = '<span' . $style . '>' . $aux . '</span>';
+        $html = '<span' . $style . '>' . self::$divisaTools->format($value) . '</span>';
         return $html;
     }
 
     /**
-     * Genera el código html para la visualización y edición de los datos
-     * en el controlador Edit / EditList
+     * Generates the HTML code to display and edit  the data in the Edit / EditList controller
      *
      * @param string $value
      *

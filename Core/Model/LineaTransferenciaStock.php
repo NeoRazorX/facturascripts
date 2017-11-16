@@ -148,18 +148,18 @@ class LineaTransferenciaStock
 
         $sql = 'SELECT l.idlinea,l.idtrans,l.referencia,l.cantidad,l.descripcion,t.fecha,t.hora FROM lineastransstock l'
             . ' LEFT JOIN transstock t ON l.idtrans = t.idtrans'
-            . ' WHERE l.referencia = ' . $this->var2str($ref);
+            . ' WHERE l.referencia = ' . $this->dataBase->var2str($ref);
         if (!empty($codalmaorigen)) {
-            $sql .= ' AND t.codalmaorigen = ' . $this->var2str($codalmaorigen);
+            $sql .= ' AND t.codalmaorigen = ' . $this->dataBase->var2str($codalmaorigen);
         }
         if (!empty($codalmadestino)) {
-            $sql .= ' AND t.codalmadestino = ' . $this->var2str($codalmadestino);
+            $sql .= ' AND t.codalmadestino = ' . $this->dataBase->var2str($codalmadestino);
         }
         if (!empty($desde)) {
-            $sql .= ' AND t.fecha >= ' . $this->var2str($desde);
+            $sql .= ' AND t.fecha >= ' . $this->dataBase->var2str($desde);
         }
         if (!empty($hasta)) {
-            $sql .= ' AND t.fecha >= ' . $this->var2str($hasta);
+            $sql .= ' AND t.fecha >= ' . $this->dataBase->var2str($hasta);
         }
         $sql .= ' ORDER BY t.fecha ASC, t.hora ASC;';
 

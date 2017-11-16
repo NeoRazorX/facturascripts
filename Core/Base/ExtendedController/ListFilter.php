@@ -29,21 +29,21 @@ use FacturaScripts\Core\Base\DataBase;
 class ListFilter
 {
     /**
-     * Indica el tipo de filtro
+     * Indicates the filter type
      *
      * @var string
      */
     public $type;
 
     /**
-     * Valores y opciones de configuración del filtro
+     * Values and configuration options for the filter
      *
      * @var array
      */
     public $options;
 
     /**
-     * Constructor de la clase
+     * Class constructor
      *
      * @param string $type
      * @param array $options
@@ -55,7 +55,7 @@ class ListFilter
     }
 
     /**
-     * Lista de operadores disponibles
+     * List of available operators
      * 
      * @return array
      */
@@ -70,7 +70,7 @@ class ListFilter
     }
 
     /**
-     * Devuelve la clase especial a aplicar al input del formulario de filtros
+     * Returns the special class to add to the input in the filters form
      * 
      * @return string
      */
@@ -86,8 +86,7 @@ class ListFilter
     }
 
     /**
-     * Devuelve la función onkeypress (JavaScript)
-     * en caso de que el input acepte sólo un conjunto de valores
+     * Returns the onekeypress JavaScript function in case the inputs accept only a value set
      * 
      * @return string
      */
@@ -113,11 +112,10 @@ class ListFilter
     }
 
     /**
-     * Añade a $where los filtros informados en formato de DataBaseWhere
+     * Adds $where to the informed filters in DataBaseWhere format
      * 
      * @param array $where
-     * @param type $key
-     * @return \FacturaScripts\Core\Base\DataBase\DataBaseWhere
+     * @param string $key
      */
     public function getDataBaseWhere(&$where, $key = '')
     {
@@ -149,8 +147,7 @@ class ListFilter
     }
 
     /**
-     * Construye un string con los parámetros pasados en la url
-     * de la llamada al controlador.
+     * Builds a string with the parameters contained in the URL of the controller call
      *
      * @param string $key
      * @return string
@@ -181,7 +178,7 @@ class ListFilter
     }
 
     /**
-     * Crea y devuelve un filtro de tipo select
+     * Creates and returns a select type filter
      *
      * @param string $field
      * @param string $value
@@ -192,12 +189,11 @@ class ListFilter
     public static function newSelectFilter($field, $value, $table, $where)
     {
         $options = ['field' => $field, 'value' => $value, 'table' => $table, 'where' => $where];
-        $result = new ListFilter('select', $options);
-        return $result;
+        return new ListFilter('select', $options);
     }
 
     /**
-     * Crea y devuelve un filtro de tipo checkbox
+     * Creates and returns a checkbox type filter
      *
      * @param string $field
      * @param string $value
@@ -208,10 +204,16 @@ class ListFilter
     public static function newCheckboxFilter($field, $value, $label, $inverse)
     {
         $options = ['label' => $label, 'field' => $field, 'value' => $value, 'inverse' => $inverse];
-        $result = new ListFilter('checkbox', $options);
-        return $result;
+        return new ListFilter('checkbox', $options);
     }
 
+    /**
+     * TODO: Por completar
+     *
+     * @param $value
+     *
+     * @return string
+     */
     private static function checkNumberValue($value)
     {
         $values = explode('.', $value, 1);
@@ -219,7 +221,7 @@ class ListFilter
     }
 
     /**
-     * Crea y devuelve un filtro de tipo indicado [text|number|datepicker]
+     * Creates and returns a filter of the specified type [text|number|datepicker]
      *
      * @param string $type    ('text' | 'datepicker' | 'number')
      * @param array $options  (['field', 'label', 'valueFrom', 'operatorFrom', 'valueTo', 'operatorTo'])
@@ -232,7 +234,6 @@ class ListFilter
             $options['valueTo'] = self::checkNumberValue($options['valueTo']);
         }
 
-        $result = new ListFilter($type, $options);
-        return $result;
+        return new ListFilter($type, $options);
     }
 }

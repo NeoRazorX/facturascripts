@@ -22,7 +22,7 @@ use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Controlador para la edición de un registro del modelo Fabricante
+ * Controller to edit a single item from the Cuenta model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -32,7 +32,7 @@ class EditCuenta extends ExtendedController\PanelController
 {
 
     /**
-     * Procedimiento para insertar vistas en el controlador
+     * Load views
      */
     protected function createViews()
     {
@@ -41,20 +41,7 @@ class EditCuenta extends ExtendedController\PanelController
     }
 
     /**
-     * Devuele el campo $fieldName del modelo Cuenta
-     *
-     * @param string $fieldName
-     *
-     * @return string|boolean
-     */
-    private function getCuentaFieldValue($fieldName)
-    {
-        $model = $this->views['EditCuenta']->getModel();
-        return $model->{$fieldName};
-    }
-
-    /**
-     * Procedimiento encargado de cargar los datos a visualizar
+     * Load view data procedure
      *
      * @param string $keyView
      * @param ExtendedController\EditView $view
@@ -68,14 +55,14 @@ class EditCuenta extends ExtendedController\PanelController
                 break;
 
             case 'ListSubcuenta':
-                $where = [new DataBase\DataBaseWhere('idcuenta', $this->getCuentaFieldValue('idcuenta'))];
+                $where = [new DataBase\DataBaseWhere('idcuenta', $this->getViewModelValue('EditCuenta', 'idcuenta'))];
                 $view->loadData($where);
                 break;
         }
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */

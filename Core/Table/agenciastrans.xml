@@ -3,7 +3,7 @@
     Document   : agenciastrans.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla agenciastrans.
+        Structure for the agenciastrans table.
 -->
 <table>
     <column>

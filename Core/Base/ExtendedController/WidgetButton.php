@@ -25,17 +25,52 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 class WidgetButton
 {
+    /**
+     * Tipo de botón
+     * @var string
+     */
     public $type;
+
+    /**
+     * Icono asociado al botón
+     * @var string
+     */
     public $icon;
+
+    /**
+     * Texto asociado al botón
+     * @var string
+     */
     public $label;
+
+    /**
+     * Acción asociada al botón
+     * @var string
+     */
     public $action;
+
+    /**
+     * Acción JS asociada al botón
+     * @var string
+     */
     public $onClick;
+
+    /**
+     * Color asociado al botón
+     * @var string
+     */
     public $color;
+
+    /**
+     * Código adicional asociado al botón
+     * @var string
+     */
     public $hint;
 
     /**
+     * WidgetButton constructor.
      *
-     * @param array $values
+     * @param $values
      */
     public function __construct($values)
     {
@@ -49,7 +84,7 @@ class WidgetButton
     }
 
     /**
-     * Devuelve el código html para el icono
+     * Returns the HTML code for the icon
      *
      * @return string
      */
@@ -62,7 +97,7 @@ class WidgetButton
     }
 
     /**
-     * Devuelve el código html para el evento onclick
+     * Returns the HTML code for the onclick event
      *
      * @return string
      */
@@ -75,7 +110,7 @@ class WidgetButton
     }
 
     /**
-     * Devuelve el código html para el pintado de un botón estadístico
+     * Returns the HTML code to display a statistic button
      *
      * @param string $label
      * @param string $value
@@ -84,7 +119,7 @@ class WidgetButton
      */
     private function getCalculateHTML($label, $value, $hint)
     {
-        $html = '<button type="button" class="btn btn-' . $this->color . '"'
+        $html = '<button type="button" class="btn btn-' . $this->color . '" '
             . $this->getOnClickHTML() . ' style="margin-right: 5px;" ' . $hint . '>'
             . $this->getIconHTML()
             . '<span class="cust-text">' . $label . ' ' . $value . '</span></button>';
@@ -93,7 +128,7 @@ class WidgetButton
     }
 
     /**
-     * Devuelve el código html para el pintado de un botón de acción
+     * Returns the HTML code to display an action button
      *
      * @param string $label
      * @param string $indexView
@@ -120,8 +155,7 @@ class WidgetButton
     }
 
     /**
-     * Devuelve el código html para el pintado de un botón que llama a un
-     * formulario modal
+     * Returns the HTML code to display a button that links to a modal form
      *
      * @param string $label
      * @return string
@@ -137,7 +171,7 @@ class WidgetButton
     }
 
     /**
-     * Devuelve el código html para el pintado de un botón
+     * Returns the HTML code to display a button
      *
      * @param string $label
      * @param string $value

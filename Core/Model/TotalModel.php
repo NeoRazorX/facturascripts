@@ -68,6 +68,11 @@ class TotalModel
         }
     }
 
+    /**
+     * Resetea los totales a 0.
+     *
+     * @param array $totalFields
+     */
     private function clearTotals($totalFields)
     {
         foreach ($totalFields as $fieldName) {
@@ -75,6 +80,14 @@ class TotalModel
         }
     }
 
+    /**
+     * Devuelve el/los campos como parte de consulta SQL.
+     *
+     * @param string $fieldCode
+     * @param array $fieldList
+     *
+     * @return string
+     */
     private static function getFieldSQL($fieldCode, $fieldList)
     {
         $result = '';
@@ -97,7 +110,7 @@ class TotalModel
      * Carga una lista de TotalModel (código y campos de estadisticos) para la tabla indicada
      *
      * @param string  $tableName
-     * @param DataBaseWhere $where
+     * @param DataBase\DataBaseWhere[] $where
      * @param array  $fieldList      (['key' => 'SUM(total)', 'key2' => 'MAX(total)' ...])
      * @param string $fieldCode      (for multiples rows agruped by field code)
      *

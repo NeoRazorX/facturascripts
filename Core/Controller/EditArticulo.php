@@ -22,7 +22,7 @@ use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Description of EditArticulo
+ * Controller to edit a single item from the EditArticulo model
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
@@ -31,30 +31,16 @@ class EditArticulo extends ExtendedController\PanelController
 {
 
     /**
-     * Procedimiento para insertar vistas en el controlador
+     * Load views
      */
     protected function createViews()
     {
         $this->addEditView('FacturaScripts\Core\Model\Articulo', 'EditArticulo', 'products', 'fa-cubes');
-        $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListFabricante', 'same-suppliers', 'fa-users');
-        $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListFamilia', 'same-families', 'fa-object-group');
+        $this->addListView('FacturaScripts\Core\Model\ArticuloTraza', 'ListArticuloTraza', 'traceability', 'fa-barcode');
     }
 
     /**
-     * Devuele el campo $fieldName del articulo
-     *
-     * @param string $fieldName
-     *
-     * @return mixed
-     */
-    private function getArticuloFieldValue($fieldName)
-    {
-        $model = $this->views['EditArticulo']->getModel();
-        return $model->{$fieldName};
-    }
-
-    /**
-     * Procedimiento encargado de cargar los datos a visualizar
+     * Load view data procedure
      *
      * @param string $keyView
      * @param ExtendedController\EditView $view
@@ -67,20 +53,11 @@ class EditArticulo extends ExtendedController\PanelController
                 $view->loadData($value);
                 break;
 
-            case 'ListFabricante':
-                $codfabricante = $this->getArticuloFieldValue('codfabricante');
+            case 'ListArticuloTraza':
+                $referencia = $this->getViewModelValue('EditArticulo', 'referencia');
 
-                if (!empty($codfabricante)) {
-                    $where = [new DataBase\DataBaseWhere('codfabricante', $codfabricante)];
-                    $view->loadData($where);
-                }
-                break;
-
-            case 'ListFamilia':
-                $codfamilia = $this->getArticuloFieldValue('codfamilia');
-
-                if (!empty($codfamilia)) {
-                    $where = [new DataBase\DataBaseWhere('codfamilia', $codfamilia)];
+                if (!empty($referencia)) {
+                    $where = [new DataBase\DataBaseWhere('referencia', $referencia)];
                     $view->loadData($where);
                 }
                 break;
@@ -88,7 +65,7 @@ class EditArticulo extends ExtendedController\PanelController
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Definición de vista para PanelProveedor, grupo articulos proveedor
+ * Initial description for the controller EditProveedorArticulo
  *
  * @author Nazca Networks <comercial@nazcanetworks.com>
 -->
@@ -48,9 +48,7 @@
         </group>
         <group name="price" numcolumns="12">   
             <column name="precio" numcolumns="2" display="left" order="110">
-                <widget type="number" fieldname="precio" >
-               
-                </widget>
+                <widget type="number" fieldname="precio" />
             </column>
             <column name="dto" order="120" numcolumns="2">
                 <widget type="number" fieldname="dto"/>

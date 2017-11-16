@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controlador para la lista tarifas utilizadas
+ * Controller to list the items in the Tarifa model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -30,7 +30,7 @@ class ListTarifa extends ExtendedController\ListController
 {
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */
@@ -51,7 +51,7 @@ class ListTarifa extends ExtendedController\ListController
     {
         $className = $this->getClassName();
         $this->addView('FacturaScripts\Core\Model\Tarifa', $className);
-        $this->addSearchFields($className, ['nombre', 'codtarfa']);
+        $this->addSearchFields($className, ['nombre', 'codtarifa']);
 
         $this->addOrderBy($className, 'codtarifa', 'code');
         $this->addOrderBy($className, 'nombre', 'name', 1);

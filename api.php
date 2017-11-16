@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// comprobamos que se haya instalado y haya configuración
+/// Check that the configuration is installed
 if (!file_exists(__DIR__ . '/config.php')) {
     die('ERROR - NO_CONFIG -');
 }
@@ -25,15 +25,15 @@ if (!file_exists(__DIR__ . '/config.php')) {
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
 
-/// iniciamos la aplicación
+/// Initialise the application
 $app = new FacturaScripts\Core\App\AppAPI(__DIR__);
 
-/// conectamos a la base de datos, cache, etc
+/// Connect to the database, cache, etc.
 $app->connect();
 
-/// ejecutamos la API
+/// Run the API
 $app->run();
 $app->render();
 
-/// cerramos la aplicación
+/// Close the application
 $app->close();

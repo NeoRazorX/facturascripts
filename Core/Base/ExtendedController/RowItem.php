@@ -27,17 +27,17 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 abstract class RowItem implements VisualItemInterface
 {
     /**
-     * Tipo de row que se visualiza
+     * Displayed row type
      *
      * @var string
      */
     public $type;
 
     /**
-     * Constructor dinámico de la clase.
-     * Crea un objeto RowItem del tipo informado
+     * Dynamic class constructor. Creates a RowItem objec of the given type.
      *
      * @param string $type
+     * @return RowItem|null
      */
     private static function rowItemFromType($type)
     {
@@ -57,7 +57,7 @@ abstract class RowItem implements VisualItemInterface
     }
     
     /**
-     * Crea y carga la estructura del row en base a un archivo XML
+     * Creates and loads the row structure from an XML file
      *
      * @param \SimpleXMLElement $row
      * @return RowItem
@@ -72,7 +72,7 @@ abstract class RowItem implements VisualItemInterface
     }
 
     /**
-     * Crea y carga la estructura del row en base a la base de datos
+     * Creates and loads the row structure from the database
      *
      * @param array $row
      * @return RowItem
@@ -87,12 +87,21 @@ abstract class RowItem implements VisualItemInterface
     
     /**
      * RowItem constructor.
+     *
+     * @param string $type
      */
     public function __construct($type)
     {
         $this->type = $type;
     }
-    
+
+    /**
+     * Devuelve los atributos de un elemento desde el XML.
+     *
+     * @param \SimpleXMLElement $item
+     *
+     * @return array
+     */
     protected function getAttributesFromXML($item)
     {
         $result = [];
@@ -103,6 +112,13 @@ abstract class RowItem implements VisualItemInterface
         return $result;
     }
 
+    /**
+     * Devuelve una lista de WidgetButton desde el XML.
+     *
+     * @param \SimpleXMLElement[] $buttonsXML
+     *
+     * @return WidgetButton[]
+     */
     protected function loadButtonsFromXML($buttonsXML)
     {
         $buttons = [];
@@ -115,14 +131,15 @@ abstract class RowItem implements VisualItemInterface
     }
     
     /**
-     * Carga la estructura de atributos en base a un archivo XML
+     * Creates and loads the attributes structure from a XML file
+     *
      *
      * @param \SimpleXMLElement $row
      */
     abstract public function loadFromXML($row);
 
     /**
-     * Carga la estructura de atributos en base un archivo JSON
+     * Creates and loads the attributes structure from JSON file
      *
      * @param array $row
      */
@@ -130,7 +147,7 @@ abstract class RowItem implements VisualItemInterface
 
 
     /**
-     * Genera el código html para visualizar la cabecera del elemento visual
+     * Generates the HTML code to display the header for the visual element
      *
      * @param string $value
      *

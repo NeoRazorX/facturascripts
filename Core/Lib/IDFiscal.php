@@ -27,7 +27,7 @@ class IDFiscal
 {
 
     /**
-     * Devuelve el valor por defecto
+     * Returns the default value
      *
      * @return string
      */
@@ -37,7 +37,7 @@ class IDFiscal
     }
 
     /**
-     * Devuelve todas las opciones disponibles
+     * Returns all the available options
      *
      * @return array
      */
