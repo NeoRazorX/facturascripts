@@ -3,7 +3,7 @@
     Document   : estados_documentos.xml
     Author     : Francesc Pineda Segarra
     Description:
-        Estructura de la tabla estados_documentos.
+        Structure for the estados_documentos table.
 -->
 <table>
     <column>

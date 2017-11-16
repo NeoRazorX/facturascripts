@@ -22,7 +22,7 @@ use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Description of EditProveedor
+ * Controller to edit a single item from the Proveedor model
  *
  * @author Nazca Networks <comercial@nazcanetworks.com>
  */
@@ -30,7 +30,7 @@ class EditProveedor extends ExtendedController\PanelController
 {
 
     /**
-     * Procedimiento para insertar vistas en el controlador
+     * Load views
      */
     protected function createViews()
     {
@@ -41,20 +41,7 @@ class EditProveedor extends ExtendedController\PanelController
     }
 
     /**
-     * Devuele el campo $fieldName del cliente
-     *
-     * @param string $fieldName
-     *
-     * @return mixed
-     */
-    private function getProviderFieldValue($fieldName)
-    {
-        $model = $this->views['EditProveedor']->getModel();
-        return $model->{$fieldName};
-    }
-
-    /**
-     * Procedimiento encargado de cargar los datos a visualizar
+     * Load view data
      *
      * @param string $keyView
      * @param ExtendedController\EditView $view
@@ -68,24 +55,24 @@ class EditProveedor extends ExtendedController\PanelController
                 break;
 
             case 'EditDireccionProveedor':
-                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getProviderFieldValue('codproveedor'))];
+                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'))];
                 $view->loadData($where);
                 break;
 
             case 'EditCuentaBancoProveedor':
-                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getProviderFieldValue('codproveedor'))];
+                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'))];
                 $view->loadData($where);
                 break;
 
             case 'EditProveedorArticulo':
-                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getProviderFieldValue('codproveedor'))];
+                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'))];
                 $view->loadData($where);
                 break;
         }
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */

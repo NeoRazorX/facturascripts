@@ -3,7 +3,7 @@
     Document   : impuestos.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla impuestos.
+        Structure for the impuestos table.
 -->
 <table>
     <column>

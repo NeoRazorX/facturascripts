@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Definición de vista para uso en ExtendedControllers
+ * View definition for its use in ExtendedControllers
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -31,7 +31,7 @@ use Symfony\Component\HttpFoundation\Response;
 class EditView extends BaseView
 {
     /**
-     * Constructor e inicializador de la clase
+     * Class constructor and initialization
      *
      * @param string $title
      * @param string $modelName
@@ -42,12 +42,13 @@ class EditView extends BaseView
     {
         parent::__construct($title, $modelName);
 
-        // Carga configuración de la vista para el usuario
+        // Loads the view configuration for the user
         $this->pageOption->getForUser($viewName, $userNick);
     }
 
     /**
-     * Devuelve el texto para la cabecera del panel de datos
+     * Returns the text for the data panel header
+     * Returns the
      *
      * @return string
      */
@@ -57,7 +58,8 @@ class EditView extends BaseView
     }
 
     /**
-     * Devuelve el texto para el pie del panel de datos
+     * Returns the text for the data panel footer
+     *
      *
      * @return string
      */
@@ -67,7 +69,7 @@ class EditView extends BaseView
     }
 
     /**
-     * Devuelve la configuración de columnas
+     * Returns the column configuration
      *
      * @return array
      */
@@ -77,7 +79,7 @@ class EditView extends BaseView
     }
 
     /**
-     * Establece el estado de edición de una columna
+     * Establishes the column edit state
      * 
      * @param string $columnName
      * @param boolean $disabled
@@ -91,7 +93,7 @@ class EditView extends BaseView
     }
 
     /**
-     * Establece y carga los datos del modelo en base a su PK
+     * Establishes and loads the model data according to its Primary Key
      *
      * @param string|array $code
      */
@@ -110,7 +112,7 @@ class EditView extends BaseView
     }
 
     /**
-     * Método para la exportación de los datos de la vista
+     * Method to export the view data
      *
      * @param Base\ExportManager $exportManager
      * @param Response $response

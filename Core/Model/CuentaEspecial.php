@@ -27,7 +27,9 @@ namespace FacturaScripts\Core\Model;
 class CuentaEspecial
 {
 
-    use Base\ModelTrait;
+    use Base\ModelTrait {
+        url as private traitURL;
+    }
 
     /**
      * Identificador de la cuenta especial.
@@ -103,4 +105,9 @@ class CuentaEspecial
          ('IVARXP','Cuentas de IVA repercutido en exportaciones'),
          ('IVASIM','Cuentas de IVA soportado en importaciones')";
     }
-}
+    
+    public function url($type = 'auto')
+    {
+        return $this->traitURL($type, 'ListCuenta&active=List');
+    }
+ }

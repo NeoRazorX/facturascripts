@@ -24,7 +24,7 @@ use FacturaScripts\Core\Base\Translator;
 
 /**
  * Simple file cache
- * This class is great for those who can't use apc or memcached in their proyects.
+ * This class is great for those who can't use apc or memcached in their projects.
  *
  * @author Emilio Cobos (emiliocobos.net) <ecoal95@gmail.com> and github contributors
  * @author Carlos García Gómez <carlos@facturascripts.com>
@@ -37,21 +37,21 @@ use FacturaScripts\Core\Base\Translator;
 class FileCache implements AdaptorInterface
 {
     /**
-     * Configuración de la cache.
+     * Cache configuration
      *
      * @var array
      */
     private static $config;
 
     /**
-     * Objeto traductor
+     * Translator object
      *
      * @var Translator
      */
     private $i18n;
 
     /**
-     * Objeto del minilog
+     * MiniLog object
      *
      * @var MiniLog
      */

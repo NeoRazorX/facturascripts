@@ -3,7 +3,7 @@
     Document   : co_gruposepigrafes.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla co_gruposepigrafes.
+        Structure for the co_gruposepigrafes table.
 -->
 <table>
     <column>

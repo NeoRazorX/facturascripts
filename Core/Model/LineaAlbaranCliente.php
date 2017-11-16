@@ -58,6 +58,13 @@ class LineaAlbaranCliente
     {
         return 'lineasalbaranescli';
     }
+    
+    public function install()
+    {
+        new AlbaranCliente();
+        
+        return '';
+    }
 
     /**
      * Resetea los valores de todas las propiedades modelo.

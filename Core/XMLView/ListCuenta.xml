@@ -17,26 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Definición inicial para el controlador ListGrupoEpigrafe
+ * Initial description for the controller ListGrupoEpigrafe
  *
  * @author Artex Trading sa <jcuello@artextrading.com>  
 -->
 
 <view>
     <columns>
-        <column name="id" order="100">
+        <column name="id" order="100" display="none">
             <widget type="text" fieldname="idcuenta" onclick="EditCuenta" />
         </column>
-        <column name="fiscal-exercise" order="110">
+        <column name="fiscal-exercise" order="100">
             <widget type="text" fieldname="codejercicio" />
         </column>
-        <column name="epigraph" order="120">
-            <widget type="text" fieldname="codepigrafe" />
+        <column name="account" order="110">
+            <widget type="text" fieldname="codcuenta" />
         </column>
-        <column name="description" order="130">
+        <column name="description" order="120">
             <widget type="text" fieldname="descripcion" />
         </column>
     </columns>
-    <filters>
-    </filters>
 </view>

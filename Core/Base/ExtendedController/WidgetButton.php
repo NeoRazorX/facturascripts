@@ -25,12 +25,46 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 class WidgetButton implements VisualItemInterface, WidgetInterface
 {
+    /**
+     * Tipo de botón
+     * @var string
+     */
     public $type;
+
+    /**
+     * Icono asociado al botón
+     * @var string
+     */
     public $icon;
+
+    /**
+     * Texto asociado al botón
+     * @var string
+     */
     public $label;
+
+    /**
+     * Acción asociada al botón
+     * @var string
+     */
     public $action;
+
+    /**
+     * Acción JS asociada al botón
+     * @var string
+     */
     public $onClick;
+
+    /**
+     * Color asociado al botón
+     * @var string
+     */
     public $color;
+
+    /**
+     * Código adicional asociado al botón
+     * @var string
+     */
     public $hint;
 
     /**
@@ -44,15 +78,15 @@ class WidgetButton implements VisualItemInterface, WidgetInterface
         $widget = new WidgetButton();
         $widget->loadFromXML($button);
         return $widget;
-    }    
-        
+    }
+
     public static function newFromJSON($button)
     {
         $widget = new WidgetButton();
         $widget->loadFromJSON($button);
         return $widget;
     }
-    
+
     public function __construct()
     {
         $this->type = 'action';
@@ -75,13 +109,13 @@ class WidgetButton implements VisualItemInterface, WidgetInterface
 
         if (!empty($widget_atributes->color)) {
             $this->color = (string) $widget_atributes->color;
-        }    
-        
+        }
+
         if (!empty($widget_atributes->onclick)) {
             $this->onClick = (string) $widget_atributes->onclick;
-        }    
+        }
     }
-    
+
     public function loadFromJSON($column)
     {
         $this->type = (string) $column['button']['type'];
@@ -91,10 +125,10 @@ class WidgetButton implements VisualItemInterface, WidgetInterface
         $this->hint = (string) $column['button']['hint'];
         $this->color = (string) $column['button']['color'];
         $this->onClick = (string) $column['button']['onClick'];
-    }    
-    
+    }
+
     /**
-     * Devuelve el código html para el icono
+     * Returns the HTML code for the icon
      *
      * @return string
      */
@@ -107,7 +141,7 @@ class WidgetButton implements VisualItemInterface, WidgetInterface
     }
 
     /**
-     * Devuelve el código html para el evento onclick
+     * Returns the HTML code for the onclick event
      *
      * @return string
      */
@@ -120,7 +154,7 @@ class WidgetButton implements VisualItemInterface, WidgetInterface
     }
 
     /**
-     * Devuelve el código html para el pintado de un botón estadístico
+     * Returns the HTML code to display a statistic button
      *
      * @param string $label
      * @param string $value
@@ -129,7 +163,7 @@ class WidgetButton implements VisualItemInterface, WidgetInterface
      */
     private function getCalculateHTML($label, $value, $hint)
     {
-        $html = '<button type="button" class="btn btn-' . $this->color . '"'
+        $html = '<button type="button" class="btn btn-' . $this->color . '" '
             . $this->getOnClickHTML() . ' style="margin-right: 5px;" ' . $hint . '>'
             . $this->getIconHTML()
             . '<span class="cust-text">' . $label . ' ' . $value . '</span></button>';
@@ -138,7 +172,7 @@ class WidgetButton implements VisualItemInterface, WidgetInterface
     }
 
     /**
-     * Devuelve el código html para el pintado de un botón de acción
+     * Returns the HTML code to display an action button
      *
      * @param string $label
      * @param string $indexView
@@ -165,8 +199,7 @@ class WidgetButton implements VisualItemInterface, WidgetInterface
     }
 
     /**
-     * Devuelve el código html para el pintado de un botón que llama a un
-     * formulario modal
+     * Returns the HTML code to display a button that links to a modal form
      *
      * @param string $label
      * @return string
@@ -182,7 +215,7 @@ class WidgetButton implements VisualItemInterface, WidgetInterface
     }
 
     /**
-     * Devuelve el código html para el pintado de un botón
+     * Returns the HTML code to display a button
      *
      * @param string $label
      * @param string $value
@@ -218,9 +251,9 @@ class WidgetButton implements VisualItemInterface, WidgetInterface
 
     public function getListHTML($value)
     {
-        return '';        
+        return '';
     }
-    
+
     /**
      * Devuelve el código HTML para la visualización de un popover
      * con el texto indicado.

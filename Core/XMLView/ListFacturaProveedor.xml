@@ -17,15 +17,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Definición inicial para el controlador ListFacturaProveedor
+ * Initial description for the controller ListFacturaProveedor
  *
  * @author Artex Trading sa <jcuello@artextrading.com>  
 -->
 
 <view>
     <columns>
-        <column name="id" order="100">
-            <widget type="text" fieldname="codigo" onclick="EditFacturaProveedor" />
+        <column name="id" display="none" order="100">
+            <widget type="text" fieldname="idfactura" onclick="EditFacturaProveedor" />
+        </column>
+        <column name="code" order="100">
+            <widget type="text" fieldname="codigo" />
         </column>
         <column name="numsupplier" order="110">
             <widget type="text" fieldname="numproveedor" />

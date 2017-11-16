@@ -58,6 +58,13 @@ class LineaAlbaranProveedor
     {
         return 'lineasalbaranesprov';
     }
+    
+    public function install()
+    {
+        new AlbaranProveedor();
+        
+        return '';
+    }
 
     /**
      * Resetea los valores de todas las propiedades modelo.

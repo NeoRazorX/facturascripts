@@ -3,7 +3,7 @@
     Document   : lineasfacturascli.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla lineasfacturascli.
+        Structure for the lineasfacturascli table.
 -->
 <table>
     <column>

@@ -113,8 +113,8 @@ class GrupoEpigrafes
      */
     public function getByCodigo($cod, $codejercicio)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codgrupo = ' . $this->var2str($cod)
-            . ' AND codejercicio = ' . $this->var2str($codejercicio) . ';';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codgrupo = ' . $this->dataBase->var2str($cod)
+            . ' AND codejercicio = ' . $this->dataBase->var2str($codejercicio) . ';';
 
         $grupo = $this->dataBase->select($sql);
         if (!empty($grupo)) {

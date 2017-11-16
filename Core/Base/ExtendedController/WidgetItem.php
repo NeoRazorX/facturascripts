@@ -27,7 +27,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 abstract class WidgetItem implements VisualItemInterface, WidgetInterface
 {
     /**
-     * Nombre del campo con los datos que visualiza el widget
+     * Field name with the data that the widget displays
      *
      * @var string
      */
@@ -48,55 +48,61 @@ abstract class WidgetItem implements VisualItemInterface, WidgetInterface
     public $hint;
 
     /**
-     * Indica que el campo es no editable
+     * Indicates that the field is read only
      *
      * @var boolean
      */
     public $readOnly;
 
     /**
-     * Indica que el campo es obligatorio y debe contener un valor
+     * Indicates that the field is mandatory and it must have a value
      *
      * @var boolean
      */
     public $required;
 
     /**
-     * Icono que se usa como valor o acompañante del widget
+     * Icon used as a value or to accompany the widget
      *
      * @var string
      */
     public $icon;
 
     /**
-     * Controlador destino al hacer click sobre los datos visualizados
+     * Destination controller to go to when the displayed data is clicked
      *
      * @var string
      */
     public $onClick;
 
     /**
-     * Opciones visuales para configurar el widget
+     * Visual options to configure the widget
      *
      * @var array
      */
     public $options;
 
     /**
+     * Genera el código html para visualizar el dato del modelo
+     * para controladores List
+     *
      * @param string $value
      */
     abstract public function getListHTML($value);
 
     /**
+     * Genera el código html para visualizar el dato del modelo
+     * para controladores Edit
+     *
      * @param string $value
      */
     abstract public function getEditHTML($value);
 
     /**
-     * Constructor dinámico de la clase.
-     * Crea un objeto Widget del tipo informado
+     * Class dynamic constructor. It creates a widget of the given type
      *
      * @param string $type
+     * @return WidgetItem
      */
     private static function widgetItemFromType($type)
     {
@@ -128,7 +134,7 @@ abstract class WidgetItem implements VisualItemInterface, WidgetInterface
     }
 
     /**
-     * Crea y carga la estructura de atributos en base a un archivo XML
+     * Creates and loads the attributes structure from a XML file
      *
      * @param \SimpleXMLElement $column
      * @return WidgetItem
@@ -143,7 +149,7 @@ abstract class WidgetItem implements VisualItemInterface, WidgetInterface
     }
 
     /**
-     * Crea y carga la estructura de atributos en base a la base de datos
+     * Creates and loads the attributes structure from the database
      *
      * @param array $column
      * @return WidgetItem
@@ -157,7 +163,7 @@ abstract class WidgetItem implements VisualItemInterface, WidgetInterface
     }
 
     /**
-     * Constructor de la clase
+     * Class constructor
      */
     public function __construct()
     {
@@ -174,20 +180,18 @@ abstract class WidgetItem implements VisualItemInterface, WidgetInterface
      * Genera el código html para visualizar la cabecera del elemento visual
      *
      * @param string $value
-     *
      * @return string
      */
     public function getHeaderHTML($value)
     {
         return '<span title="' . $value . '"></span>';
     }
-    
+
     /**
-     * Carga el diccionario de atributos de un grupo de opciones o valores
-     * del widget
+     * Loads the attribute dictionary for a widget's group of options or values
      *
      * @param array            $property
-     * @param \SimpleXMLElement $group
+     * @param \SimpleXMLElement[] $group
      */
     protected function getAttributesGroup(&$property, $group)
     {
@@ -204,14 +208,14 @@ abstract class WidgetItem implements VisualItemInterface, WidgetInterface
     }
 
     /**
-     * Carga la estructura de atributos en base a un archivo XML
+     * Loads the attributes structure from a XML file
      *
      * @param \SimpleXMLElement $column
      * @param \SimpleXMLElement $widgetAtributes
      */
     public function loadFromXML($column)
     {
-        $widgetAtributes = $column->widget->attributes();        
+        $widgetAtributes = $column->widget->attributes();
         $this->fieldName = (string) $widgetAtributes->fieldname;
         $this->hint = (string) $widgetAtributes->hint;
         $this->readOnly = (bool) $widgetAtributes->readonly;
@@ -223,7 +227,7 @@ abstract class WidgetItem implements VisualItemInterface, WidgetInterface
     }
 
     /**
-     * Carga la estructura de atributos en base a la base de datos
+     * Loads the attributes structure from the database
      *
      * @param array $column
      */
@@ -236,10 +240,10 @@ abstract class WidgetItem implements VisualItemInterface, WidgetInterface
         $this->icon = (string) $column['widget']['icon'];
         $this->onClick = (string) $column['widget']['onClick'];
         $this->options = (array) $column['widget']['options'];
-    }    
-    
+    }
+
     /**
-     * Indica si se cumple la condición para aplicar un Option Text
+     * Indicates if the conditions to apply an Option Text are met
      *
      * @param string $optionValue
      * @param string $valueItem
@@ -266,7 +270,7 @@ abstract class WidgetItem implements VisualItemInterface, WidgetInterface
     }
 
     /**
-     * Genera el código CSS para el style del widget en base a los options
+     * Generates the CSS code for the widget style from the options
      *
      * @param string $valueItem
      *
@@ -279,7 +283,7 @@ abstract class WidgetItem implements VisualItemInterface, WidgetInterface
             if ($this->canApplyOptions($option['value'], $valueItem)) {
                 $html = ' style="';
                 foreach ($option as $key => $value) {
-                    if ($key != 'value') {
+                    if ($key !== 'value') {
                         $html .= $key . ':' . $value . '; ';
                     }
                 }
@@ -292,9 +296,7 @@ abstract class WidgetItem implements VisualItemInterface, WidgetInterface
     }
 
     /**
-     * Devuelve el código HTML para la visualización de un popover
-     * con el texto indicado.
-     *
+     * Returns the HTML code to display a popover with the given text
      * @param string $hint
      *
      * @return string
@@ -305,8 +307,7 @@ abstract class WidgetItem implements VisualItemInterface, WidgetInterface
     }
 
     /**
-     * General el código html para la visualización del icono en el lado
-     * izquierda de los datos
+     * Generates the HTML code to display an icon on the left side of the data
      *
      * @return string
      */
@@ -325,10 +326,10 @@ abstract class WidgetItem implements VisualItemInterface, WidgetInterface
     }
 
     /**
-     * Genera el código html para atributos especiales como:
+     * Generates the HTML code for special attributes like:
      * hint
-     * sólo lectura
-     * valor obligatorio
+     * read only
+     * mandatory value
      *
      * @return string
      */
@@ -342,7 +343,8 @@ abstract class WidgetItem implements VisualItemInterface, WidgetInterface
     }
 
     /**
-     * Devuelve el código HTML para lista de controles no especiales
+     * Returns the HTML code for the list of non special controls
+     *
      * @param string $value
      * @param string $text
      *
@@ -365,10 +367,12 @@ abstract class WidgetItem implements VisualItemInterface, WidgetInterface
     }
 
     /**
-     * Devuelve el código HTML para edición de controles no especiales
+     * Returns the HTML code to edit non special controls
+     *
      * @param string $value
      * @param string $specialAttributes
      * @param string $extraClass
+     * @param string $type
      *
      * @return string
      */

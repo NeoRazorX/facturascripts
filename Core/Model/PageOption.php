@@ -188,10 +188,10 @@ class PageOption
         $rows = json_encode($this->rows);
 
         $sql = 'UPDATE ' . $this->tableName() . ' SET '
-            . '  columns = ' . $this->var2str($columns)
-            . ' ,modals = ' . $this->var2str($modals)
-            . ' ,filters = ' . $this->var2str($filters)
-            . ' ,rows = ' . $this->var2str($rows)
+            . '  columns = ' . $this->dataBase->var2str($columns)
+            . ' ,modals = ' . $this->dataBase->var2str($modals)
+            . ' ,filters = ' . $this->dataBase->var2str($filters)
+            . ' ,rows = ' . $this->dataBase->var2str($rows)
             . ' WHERE id = ' . $this->id . ';';
 
         return $this->dataBase->exec($sql);
@@ -212,12 +212,12 @@ class PageOption
         $sql = 'INSERT INTO ' . $this->tableName()
             . ' (id, name, nick, columns, modals, filters, rows) VALUES ('
             . "nextval('fs_pages_options_id_seq')" . ','
-            . $this->var2str($this->name) . ','
-            . $this->var2str($this->nick) . ','
-            . $this->var2str($columns) . ','
-            . $this->var2str($modals) . ','
-            . $this->var2str($filters) . ','
-            . $this->var2str($rows)
+            . $this->dataBase->var2str($this->name) . ','
+            . $this->dataBase->var2str($this->nick) . ','
+            . $this->dataBase->var2str($columns) . ','
+            . $this->dataBase->var2str($modals) . ','
+            . $this->dataBase->var2str($filters) . ','
+            . $this->dataBase->var2str($rows)
             . ');';
 
         if ($this->dataBase->exec($sql)) {
@@ -266,7 +266,7 @@ class PageOption
      * Carga las condiciones especiales para las filas
      * desde el XML
      *
-     * @param \SimpleXMLElement[] $rows
+     * @param \SimpleXMLElement $rows
      */
     private function getXMLRows($rows)
     {

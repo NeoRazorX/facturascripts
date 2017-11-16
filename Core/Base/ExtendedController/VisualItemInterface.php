@@ -20,42 +20,42 @@
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Interfaz para elementos visuales
+ * Visual elements interface
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 interface VisualItemInterface
 {
     /**
-     * Crea y carga la estructura de un elemento en base a un archivo XML
+     * Create and load element structure from XML file
      *
      * @param \SimpleXMLElement $item
      */
     public static function newFromXML($item);
-    
+
     /**
-     * Crea y carga la estructura de un elemento en base a la base de datos
+     * Create and load element structure from JSON file
      *
      * @param array $item
      */
     public static function newFromJSON($item);
-    
+
     /**
-     * Carga la estructura de atributos en base a un archivo XML
+     * Loads the attributes structure from a XML file
      *
      * @param \SimpleXMLElement $items
      */
     public function loadFromXML($items);
 
     /**
-     * Carga la estructura de atributos en base un archivo JSON
+     * Loads the attributes structure from a JSON file
      *
      * @param array $items
      */
     public function loadFromJSON($items);
 
     /**
-     * Genera el código html para visualizar la cabecera del elemento visual
+     * Generates the HTML code to display the header for the visual element
      *
      * @param string $value
      */

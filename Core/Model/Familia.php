@@ -146,7 +146,7 @@ class Familia
         }
 
         $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE madre = ' . $this->var2str($codmadre) . ' ORDER BY descripcion ASC;';
+            . ' WHERE madre = ' . $this->dataBase->var2str($codmadre) . ' ORDER BY descripcion ASC;';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
@@ -171,7 +171,7 @@ class Familia
                 if (!$fam) {
                     /// si no existe, desvinculamos
                     $sql = 'UPDATE ' . $this->tableName() . ' SET madre = null WHERE codfamilia = '
-                        . $this->var2str($d['codfamilia']) . ':';
+                        . $this->dataBase->var2str($d['codfamilia']) . ':';
                     $this->dataBase->exec($sql);
                 }
             }

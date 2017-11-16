@@ -3,7 +3,7 @@
     Document   : co_partidas.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla co_partidas.
+        Structure for the co_partidas table.
 -->
 <table>
     <column>

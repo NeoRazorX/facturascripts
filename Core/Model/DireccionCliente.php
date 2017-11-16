@@ -130,7 +130,7 @@ class DireccionCliente
         if ($this->test()) {
             /// ¿Desmarcamos las demás direcciones principales?
             $sql = '';
-            $where = 'WHERE codcliente = ' . $this->var2str($this->codcliente);
+            $where = 'WHERE codcliente = ' . $this->dataBase->var2str($this->codcliente);
             if ($this->domenvio) {
                 $sql .= 'UPDATE ' . $this->tableName() . ' SET domenvio = false ' . $where . ' AND domenvio = TRUE;';
             }

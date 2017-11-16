@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator;
 
 /**
- * Clase para concectar e interactuar con memcache.
+ * Class to connect and interact with memcache.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
@@ -32,28 +32,28 @@ class MemcacheAdapter implements AdaptorInterface
 {
 
     /**
-     * Objeto Memcache
+     * Memcache object
      *
      * @var \Memcache
      */
     private static $memcache;
 
     /**
-     * Si está conectado True, sino False
+     * True if connected, or False when not
      *
      * @var bool
      */
     private static $connected;
 
     /**
-     * Objeto traductor
+     * Translator object
      *
      * @var Translator
      */
     private $i18n;
 
     /**
-     * Objeto del minilog
+     * MiniLog object
      *
      * @var MiniLog
      */

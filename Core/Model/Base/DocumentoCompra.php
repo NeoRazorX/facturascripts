@@ -364,10 +364,13 @@ trait DocumentoCompra
     }
 
     /**
+     * Calcula los subtotales de neto, impuestos y recargo, por tipo de impuesto, además del irpf, neto e impuestos con el cálculo anterior.
+     *
      * @param boolean $status
-     * @param integer $irpf
-     * @param integer $netoAlt
-     * @param integer $ivaAlt
+     * @param array $subtotales
+     * @param int $irpf
+     * @param int $netoAlt
+     * @param int $ivaAlt
      */
     private function getSubtotales(&$status, &$subtotales, &$irpf, &$netoAlt, &$ivaAlt)
     {

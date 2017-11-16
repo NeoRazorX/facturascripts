@@ -3,7 +3,7 @@
     Document   : lineaspedidosprov.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla lineaspedidosprov.
+        Structure for the lineaspedidosprov table.
 -->
 <table>
     <column>

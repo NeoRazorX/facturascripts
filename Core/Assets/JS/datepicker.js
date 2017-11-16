@@ -949,9 +949,9 @@
         },
         headTemplate: '<thead>' +
                 '<tr>' +
-                '<th class="prev"><i class="glyphicon glyphicon-chevron-left"></i></th>' +
+                '<th class="prev"><i class="fa fa-chevron-left" aria-hidden="true"></i></th>' +
                 '<th colspan="5" class="switch"></th>' +
-                '<th class="next"><i class="glyphicon glyphicon-chevron-right"></i></th>' +
+                '<th class="next"><i class="fa fa-chevron-right" aria-hidden="true"></i></th>' +
                 '</tr>' +
                 '</thead>',
         contTemplate: '<tbody><tr><td colspan="7"></td></tr></tbody>',

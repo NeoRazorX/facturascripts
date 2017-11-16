@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
- * Interface para cada uno de los motores de base de datos compatibles
+ * Interface for each of the compatible database engines
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -28,28 +28,28 @@ namespace FacturaScripts\Core\Base\DataBase;
 interface DataBaseEngine
 {
     /**
-     * Devuelve el enlace a la clase de Utilidades del engine
+     * Returns the link to the engine's DatabaseUtils class
      *
      * @return DataBaseUtils
      */
     public function getUtils();
 
     /**
-     * Devuelve el enlace a la clase de SQL del engine
+     * Returns the link to the engine's SQL class
      *
      * @return DataBaseSQL
      */
     public function getSQL();
 
     /**
-     * Convierte los datos leidos del sqlColumns a estructura de trabajo
+     * Converts the sqlColumns returned data to a working structure
      *
      * @param array $colData
      */
     public function columnFromData($colData);
 
     /**
-     * Información sobre el motor de base de datos
+     * Database engine information
      *
      * @param \mysqli|resource $link
      *
@@ -58,77 +58,77 @@ interface DataBaseEngine
     public function version($link);
 
     /**
-     * Conecta con la base de datos
+     * Connects to the database
      *
      * @param string $error
      */
     public function connect(&$error);
 
     /**
-     * Cierra la conexión con la base de datos
+     * Closes the connection to the database
      *
      * @param \mysqli|resource $link
      */
     public function close($link);
 
     /**
-     * Último mensaje de error generado un operación con la BD
+     * Last generated error message in a database operation
      *
      * @param \mysqli|resource $link
      */
     public function errorMessage($link);
 
     /**
-     * Inicia una transacción sobre la conexión
+     * Starts a transaction with the $link connection
      *
      * @param \mysqli|resource $link
      */
     public function beginTransaction($link);
 
     /**
-     * Confirma las operaciones realizadas sobre la conexión
-     * desde el beginTransaction
+     * Commits operations done in the connection since beginTransaction
      *
      * @param \mysqli|resource $link
      */
     public function commit($link);
 
     /**
-     * Deshace las operaciones realizadas sobre la conexión
-     * desde el beginTransaction
+     * Rolls back operations done in the connection since beginTransaction
      *
      * @param \mysqli|resource $link
      */
     public function rollback($link);
 
     /**
-     * Indica si la conexión tiene una transacción abierta
+     * Indicates if the connection has an open transaction
      *
      * @param \mysqli|resource $link
      */
     public function inTransaction($link);
 
     /**
-     * Ejecuta una sentencia de datos sobre la conexión
+     * Runs a database statement on the connection
      *
      * @param \mysqli|resource $link
-     * @param string          $sql
+     * @param string           $sql
      *
      * @return array
      */
     public function select($link, $sql);
 
     /**
-     * Ejecuta una sentencia DDL sobre la conexión.
-     * Si no hay transacción abierta crea una y la finaliza
+     * Runs a DDL statement on the connection.
+     * If there is no open transaction, it will create one and end it after the DDL
      *
      * @param \mysqli|resource $link
-     * @param string          $sql
+     * @param string           $sql
+     * 
+     * @return bool
      */
     public function exec($link, $sql);
 
     /**
-     * Compara las columnas indicadas en los arrays
+     * Compares the columns set in the arrays
      *
      * @param string $dbType
      * @param string $xmlType
@@ -136,41 +136,41 @@ interface DataBaseEngine
     public function compareDataTypes($dbType, $xmlType);
 
     /**
-     * Lista de tablas existentes en la conexión
+     * List the existing tables in the connection
      *
      * @param \mysqli|resource $link
      */
     public function listTables($link);
 
     /**
-     * Escapa la cadena indicada
+     * Escape the given string
      *
      * @param \mysqli|resource $link
-     * @param string          $str
+     * @param string           $str
      */
     public function escapeString($link, $str);
 
     /**
-     * Indica el formato de fecha que utiliza la BD
+     * Returns the database date format
      */
     public function dateStyle();
 
     /**
-     * Comprueba la existencia de una secuencia
+     * Checks if a sequence exists
      *
      * @param \mysqli|resource $link
-     * @param string          $tableName
-     * @param string          $default
-     * @param string          $colname
+     * @param string           $tableName
+     * @param string           $default
+     * @param string           $colname
      */
     public function checkSequence($link, $tableName, $default, $colname);
 
     /**
-     * Comprobación adicional a la existencia de una tabla
+     * Additional check to see if a table exists
      *
      * @param \mysqli|resource $link
-     * @param string          $tableName
-     * @param string          $error
+     * @param string           $tableName
+     * @param string           $error
      */
     public function checkTableAux($link, $tableName, &$error);
 }

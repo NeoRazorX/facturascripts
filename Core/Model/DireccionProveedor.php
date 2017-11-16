@@ -112,7 +112,7 @@ class DireccionProveedor
             /// ¿Desmarcamos las demás direcciones principales?
             if ($this->direccionppal) {
                 $sql = 'UPDATE ' . $this->tableName() . ' SET direccionppal = false'
-                    . ' WHERE codproveedor = ' . $this->var2str($this->codproveedor) . ';';
+                    . ' WHERE codproveedor = ' . $this->dataBase->var2str($this->codproveedor) . ';';
                 $this->dataBase->exec($sql);
             }
 

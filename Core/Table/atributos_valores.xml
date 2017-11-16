@@ -3,7 +3,7 @@
     Document   : atributos_valores.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla atributos_valores.
+        Structure for the atributos_valores table.
 -->
 <table>
     <column>

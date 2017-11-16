@@ -90,7 +90,7 @@
                 </a>
             </div>
 
-            {# -- Añadimos opciones de impresión y exportación -- #}
+            {# -- Adds print and export options  -- #}
             {{ exportData(fsc, i18n, 'edit') }}
         </div>
 
@@ -145,9 +145,7 @@
                             {% endif %}
 
                             {% if viewType == 'HtmlView' %}
-                            <div class="row">
-                                {% include view.fileName ignore missing %}
-                            </div>
+                            <div>{% include view.fileName ignore missing %}</div>
                             {% endif %}
                         </div>
                     </div>

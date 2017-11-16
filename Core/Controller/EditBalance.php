@@ -22,7 +22,7 @@ use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Description of EditBalance
+ * Controller to edit a single item from the Balance model
  *
  * @author PC REDNET S.L. <luismi@pcrednet.com>
  */
@@ -30,7 +30,7 @@ class EditBalance extends ExtendedController\PanelController
 {
 
     /**
-     * Procedimiento para insertar vistas en el controlador
+     * Load views
      */
     protected function createViews()
     {
@@ -40,7 +40,7 @@ class EditBalance extends ExtendedController\PanelController
     }
 
     /**
-     * Procedimiento encargado de cargar los datos a visualizar
+     * Load view data procedure
      *
      * @param string $keyView
      * @param ExtendedController\EditView $view
@@ -54,32 +54,19 @@ class EditBalance extends ExtendedController\PanelController
                 break;
 
             case 'EditBalanceCuenta':
-                $where = [new DataBase\DataBaseWhere('codbalance', $this->getBalanceFieldValue('codbalance'))];
+                $where = [new DataBase\DataBaseWhere('codbalance', $this->getViewModelValue('EditBalance', 'codbalance'))];
                 $view->loadData($where);
                 break;
 
             case 'EditBalanceCuentaA':
-                $where = [new DataBase\DataBaseWhere('codbalance', $this->getBalanceFieldValue('codbalance'))];
+                $where = [new DataBase\DataBaseWhere('codbalance', $this->getViewModelValue('EditBalance', 'codbalance'))];
                 $view->loadData($where);
                 break;
         }
     }
 
     /**
-     * Devuele el campo $fieldName del balance
-     *
-     * @param string $fieldName
-     *
-     * @return mixed
-     */
-    private function getBalanceFieldValue($fieldName)
-    {
-        $model = $this->views['EditBalance']->getModel();
-        return $model->{$fieldName};
-    }
-
-    /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */

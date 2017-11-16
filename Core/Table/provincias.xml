@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : provincias.xml
+    Author     : Francesc Pineda Segarra
+    Description:
+        Estructura de la tabla provincias.
+-->
+<table>
+    <column>
+        <name>idprovincia</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('provincias_idprovincia_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>codpais</name>
+        <type>character varying(20)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>provincia</name>
+        <type>character varying(100)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>codisoprov</name>
+        <type>character varying(10)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>codpostal2d</name>
+        <type>character varying(2)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>latitud</name>
+        <type>double precision</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>longitud</name>
+        <type>double precision</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
+    <column>
+        <name>fecha_revision</name>
+        <type>character varying(10)</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>provincias_pkey</name>
+        <type>PRIMARY KEY (idprovincia)</type>
+    </constraint>
+</table>

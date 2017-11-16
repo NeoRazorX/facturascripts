@@ -3,7 +3,7 @@
     Document   : cajas.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla cajas.
+        Structure for the cajas table.
 -->
 <table>
     <column>

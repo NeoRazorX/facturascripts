@@ -199,7 +199,7 @@ class LineaIvaFacturaCliente
     {
         $linealist = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idfactura = ' . $this->var2str($idfac)
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idfactura = ' . $this->dataBase->var2str($idfac)
             . ' ORDER BY iva DESC;';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
