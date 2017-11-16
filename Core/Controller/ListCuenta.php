@@ -62,6 +62,16 @@ class ListCuenta extends ExtendedController\ListController
         $this->addOrderBy('ListGrupoEpigrafes', 'codejercicio desc,descripcion', 'description');
 
         $this->addFilterSelect('ListGrupoEpigrafes', 'codejercicio', 'ejercicios', '', 'nombre');
+             
+        /* Cuenta Especial */
+        $this->addView('FacturaScripts\Core\Model\CuentaEspecial', 'ListCuentaEspecial', 'special-account', 'fa-newspaper-o');
+        $this->addSearchFields('ListCuentaEspecial', ['descripcion', 'codcuenta']);
+        
+        $this->addOrderBy('ListCuentaEspecial', 'descripcion');
+        $this->addOrderBy('ListCuentaEspecial', 'codsubcuenta');
+        
+        $this->addFilterSelect('ListCuentaEspecial', 'codsubcuenta', '', 'descripcion');
+        
     }
 
     /**
