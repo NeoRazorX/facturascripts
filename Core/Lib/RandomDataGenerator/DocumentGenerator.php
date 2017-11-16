@@ -29,7 +29,7 @@ class DocumentGenerator extends ModelDataGenerator
 {
 
     /**
-     * Genera un documento aleatorio.
+     * Generates a random document
      *
      * @param $doc
      */
@@ -80,7 +80,7 @@ class DocumentGenerator extends ModelDataGenerator
     }
 
     /**
-     * Genera un documento de compra aleatorio
+     * Generates a random purchase document
      *
      * @param $doc
      * @param Model\Ejercicio $eje
@@ -100,7 +100,7 @@ class DocumentGenerator extends ModelDataGenerator
             $doc->cifnif = $proveedores[$num]->cifnif;
             $regimeniva = $proveedores[$num]->regimeniva;
         } else {
-            /// de vez en cuando generamos un sin proveedor, para ver si peta ;-)
+            /// Every once in a while, generate one without provider, to check if it breaks ;-)
             $doc->nombre = $this->tools->empresa();
             $doc->cifnif = mt_rand(1111111, 9999999999) . 'Z';
         }
@@ -109,7 +109,7 @@ class DocumentGenerator extends ModelDataGenerator
     }
 
     /**
-     * Genera un documento de venta aleatorio
+     * Generates a random sale document
      *
      * @param $doc
      * @param Model\Ejercicio $eje
@@ -151,7 +151,7 @@ class DocumentGenerator extends ModelDataGenerator
                 }
             }
         } else {
-            /// de vez en cuando creamos uno sin cliente asociado para ver si peta ;-)
+            /// Every once in a while, generate one without the client, to check if it breaks ;-)
             $doc->nombrecliente = $this->tools->nombre() . ' ' . $this->tools->apellidos();
             $doc->cifnif = mt_rand(1111, 999999999) . 'J';
         }
@@ -160,7 +160,7 @@ class DocumentGenerator extends ModelDataGenerator
     }
 
     /**
-     * Genera líneas  aleatorias
+     * Generates random document lines
      *
      * @param $doc
      * @param string $iddoc
@@ -173,7 +173,7 @@ class DocumentGenerator extends ModelDataGenerator
     {
         $articulos = $this->randomArticulos();
 
-        /// una de cada 15 veces usamos cantidades negativas
+        /// 1 out of 15 times we use negative quantities
         $modcantidad = 1;
         if (mt_rand(0, 4) == 0) {
             $modcantidad = -1;
@@ -243,8 +243,9 @@ class DocumentGenerator extends ModelDataGenerator
     }
 
     /**
-     * Genera $max albaranes de venta aleatorios.
-     * Devuelve el número de albaranes generados.
+     * Generates $max random sale delivery notes.
+     * Returns the number of generated delivery notes
+     *
      * @param int $max
      * @return int
      */
@@ -281,8 +282,9 @@ class DocumentGenerator extends ModelDataGenerator
     }
 
     /**
-     * Genera $max albaranes de compra aleatorios.
-     * Devuelve el número de albaranes generados.
+     * Generates $max random purchase delivery notes.
+     * Returns the number of generated delivery notes
+     *
      * @param int $max
      * @return int
      */
@@ -319,8 +321,9 @@ class DocumentGenerator extends ModelDataGenerator
     }
 
     /**
-     * Genera $max pedidos de venta aleatorios.
-     * Devuelve el número de pedidos generados.
+     * Generates $max random sale orders.
+     * Returns the number of generated orders.
+     *
      * @param int $max
      * @return int
      */
@@ -360,8 +363,9 @@ class DocumentGenerator extends ModelDataGenerator
     }
 
     /**
-     * Genera $max pedidos de compra aleatorios.
-     * Devuelve el número de pedidos generados.
+     * Generates $max random purchase orders.
+     * Returns the number of generated orders.
+     *
      * @param int $max
      * @return int
      */
@@ -398,8 +402,9 @@ class DocumentGenerator extends ModelDataGenerator
     }
 
     /**
-     * Genera $max presupuestos de venta aleatorios.
-     * Devuelve el número de presupuestos generados.
+     * Generates $max random sale estimates.
+     * Returns the number of generated estimates.
+     *
      * @param int $max
      * @return int
      */

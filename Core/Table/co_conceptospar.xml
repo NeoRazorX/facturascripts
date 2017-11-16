@@ -3,7 +3,7 @@
     Document   : co_conceptospar.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla co_conceptospar.
+        Structure for the co_conceptospar table.
 -->
 <table>
     <column>

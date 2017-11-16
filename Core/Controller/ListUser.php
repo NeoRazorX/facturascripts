@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Description of AdminUsers
+ * Controller to list the items in the User model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -48,7 +48,7 @@ class ListUser extends ExtendedController\ListController
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */

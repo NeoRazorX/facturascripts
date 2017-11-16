@@ -89,32 +89,32 @@ class BalanceCuentaA
     {
         $extra = '';
         if ($ejercicio->idasientopyg !== null) {
-            $extra = ' AND idasiento != ' . $this->var2str($ejercicio->idasientopyg);
+            $extra = ' AND idasiento != ' . $this->dataBase->var2str($ejercicio->idasientopyg);
             if ($ejercicio->idasientocierre !== null) {
-                $extra = ' AND idasiento NOT IN (' . $this->var2str($ejercicio->idasientocierre)
-                    . ', ' . $this->var2str($ejercicio->idasientopyg) . ')';
+                $extra = ' AND idasiento NOT IN (' . $this->dataBase->var2str($ejercicio->idasientocierre)
+                    . ', ' . $this->dataBase->var2str($ejercicio->idasientopyg) . ')';
             }
         } elseif ($ejercicio->idasientocierre !== null) {
-            $extra = ' AND idasiento != ' . $this->var2str($ejercicio->idasientocierre);
+            $extra = ' AND idasiento != ' . $this->dataBase->var2str($ejercicio->idasientocierre);
         }
 
         if ($desde && $hasta) {
             $extra .= ' AND idasiento IN (SELECT idasiento FROM co_asientos WHERE '
-                . 'fecha >= ' . $this->var2str($desde) . ' AND '
-                . 'fecha <= ' . $this->var2str($hasta) . ')';
+                . 'fecha >= ' . $this->dataBase->var2str($desde) . ' AND '
+                . 'fecha <= ' . $this->dataBase->var2str($hasta) . ')';
         }
 
         if ($this->codcuenta === '129') {
             $sql = "SELECT SUM(debe) AS debe, SUM(haber) AS haber FROM co_partidas
             WHERE idsubcuenta IN (SELECT idsubcuenta FROM co_subcuentas
               WHERE (codcuenta LIKE '6%' OR codcuenta LIKE '7%') 
-                AND codejercicio = " . $this->var2str($ejercicio->codejercicio) . ')' . $extra . ';';
+                AND codejercicio = " . $this->dataBase->var2str($ejercicio->codejercicio) . ')' . $extra . ';';
             $data = $this->dataBase->select($sql);
         } else {
             $sql = "SELECT SUM(debe) AS debe, SUM(haber) AS haber FROM co_partidas
             WHERE idsubcuenta IN (SELECT idsubcuenta FROM co_subcuentas
                WHERE codcuenta LIKE '" . self::noHtml($this->codcuenta) . "%'"
-                . ' AND codejercicio = ' . $this->var2str($ejercicio->codejercicio) . ')' . $extra . ';';
+                . ' AND codejercicio = ' . $this->dataBase->var2str($ejercicio->codejercicio) . ')' . $extra . ';';
             $data = $this->dataBase->select($sql);
         }
 
@@ -136,7 +136,7 @@ class BalanceCuentaA
     {
         $balist = [];
         $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE codbalance = ' . $this->var2str($cod) . ' ORDER BY codcuenta ASC;';
+            . ' WHERE codbalance = ' . $this->dataBase->var2str($cod) . ' ORDER BY codcuenta ASC;';
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {

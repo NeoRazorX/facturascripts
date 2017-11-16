@@ -21,16 +21,16 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Description of EditAgente
+ * Controller to edit a single item from the Agente model
  *
  * @author Raul
- * Clase edit Agente basada en la funcionalidad de Editcliente
+ *  Edit Agente class based upon Editcliente's functionality
  */
 class EditAgente extends ExtendedController\EditController
 {
 
     /**
-     * Devuelve el nombre del modelo
+     * Returns the model name
      */
     public function getModelName()
     {
@@ -38,7 +38,7 @@ class EditAgente extends ExtendedController\EditController
     }
 
     /**
-     * Devuelve el texto para el pie del panel de datos
+     * Returns the text for the data panel footer
      *
      * @return string
      */
@@ -49,7 +49,7 @@ class EditAgente extends ExtendedController\EditController
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */

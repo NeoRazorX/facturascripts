@@ -126,10 +126,10 @@ class Cliente extends Base\Persona
         if ($cifnif === '' && $razon !== '') {
             $razon = self::noHtml(mb_strtolower($razon, 'UTF8'));
             $sql = 'SELECT * FROM ' . $this->tableName()
-                . " WHERE cifnif = '' AND lower(razonsocial) = " . $this->var2str($razon) . ';';
+                . " WHERE cifnif = '' AND lower(razonsocial) = " . $this->dataBase->var2str($razon) . ';';
         } else {
             $cifnif = mb_strtolower($cifnif, 'UTF8');
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE lower(cifnif) = ' . $this->var2str($cifnif) . ';';
+            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE lower(cifnif) = ' . $this->dataBase->var2str($cifnif) . ';';
         }
 
         $data = $this->dataBase->select($sql);

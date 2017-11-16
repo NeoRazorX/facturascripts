@@ -20,8 +20,7 @@
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
- * Interface para gestionar las sentencias SQL necesarias
- * por el motor de base de datos
+ * Interface to manage the SQL statements needed by the database
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -29,7 +28,7 @@ namespace FacturaScripts\Core\Base\DataBase;
 interface DataBaseSQL
 {
     /**
-     * Sentencia necesaria para convertir la columna a entero.
+     * Statement needed to convert a column to integer
      *
      * @param string $colName
      *
@@ -38,47 +37,47 @@ interface DataBaseSQL
     public function sql2Int($colName);
 
     /**
-     * Sentencia SQL para obtener el último valor de una secuencia o ID
+     * SQL statement to get the last value of a sequence or ID
      */
     public function sqlLastValue();
 
     /**
-     * Sentencia SQL para obtener las columnas de una tabla
+     * SQL statement to get the columns in a table
      *
      * @param string $tableName
      */
     public function sqlColumns($tableName);
 
     /**
-     * Sentencia SQL para obtener las constraints de una tabla
+     * SQL statement to get the table constraints
      *
      * @param string $tableName
      */
     public function sqlConstraints($tableName);
 
     /**
-     * Sentencia SQL para obtener las constraints (extendidas) de una tabla
+     * SQL statement to get the table extended constraints
      *
      * @param string $tableName
      */
     public function sqlConstraintsExtended($tableName);
 
     /**
-     * Genera el SQL para establecer las restricciones proporcionadas.
+     * Generates the SQL to establish the given restrictions.
      *
      * @param array $xmlCons
      */
     public function sqlTableConstraints($xmlCons);
 
     /**
-     * Sentencia SQL para obtener los indices de una tabla
+     * SQL statement to get a given table's indexes
      *
      * @param string $tableName
      */
     public function sqlIndexes($tableName);
 
     /**
-     * Sentencia SQL para crear una tabla
+     * SQL statement to create a table
      *
      * @param string $tableName
      * @param array  $columns
@@ -87,7 +86,7 @@ interface DataBaseSQL
     public function sqlCreateTable($tableName, $columns, $constraints);
 
     /**
-     * Sentencia SQL para añadir una columna a una tabla
+     * SQL statement to add a given table column
      *
      * @param string $tableName
      * @param array  $colData
@@ -95,7 +94,7 @@ interface DataBaseSQL
     public function sqlAlterAddColumn($tableName, $colData);
 
     /**
-     * Sentencia SQL para modificar la definición de una columna de una tabla
+     * SQL statement to alter a given table column's definition
      *
      * @param string $tableName
      * @param array  $colData
@@ -103,7 +102,7 @@ interface DataBaseSQL
     public function sqlAlterModifyColumn($tableName, $colData);
 
     /**
-     * Sentencia SQL para modificar valor por defecto de una columna de una tabla
+     * SQL statement to alter a given table column's default value
      *
      * @param string $tableName
      * @param array  $colData
@@ -111,7 +110,7 @@ interface DataBaseSQL
     public function sqlAlterConstraintDefault($tableName, $colData);
 
     /**
-     * Sentencia SQL para modificar un constraint null de una columna de una tabla
+     * SQL statement to alter a given table column's null constraint
      *
      * @param string $tableName
      * @param array  $colData
@@ -119,7 +118,7 @@ interface DataBaseSQL
     public function sqlAlterConstraintNull($tableName, $colData);
 
     /**
-     * Sentencia SQL para eliminar una constraint de una tabla
+     * SQL statement to delete a given table column's constraint
      *
      * @param string $tableName
      * @param array  $colData
@@ -127,7 +126,7 @@ interface DataBaseSQL
     public function sqlDropConstraint($tableName, $colData);
 
     /**
-     * Sentencia SQL para añadir una constraint de una tabla
+     * SQL statement to add a constraint to a given table
      *
      * @param string $tableName
      * @param string $constraintName
@@ -136,7 +135,7 @@ interface DataBaseSQL
     public function sqlAddConstraint($tableName, $constraintName, $sql);
 
     /**
-     * Sentencia para crear una secuencia
+     * SQL statement to create a sequence
      *
      * @param string $seqName
      */

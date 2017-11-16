@@ -93,7 +93,12 @@ class PresupuestoCliente
     {
         return 'idpresupuesto';
     }
-    
+
+    /**
+     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
+     *
+     * @return string
+     */
     public function install()
     {
         new Serie();
@@ -143,10 +148,10 @@ class PresupuestoCliente
     {
         $versiones = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idoriginal = ' . $this->var2str($this->idpresupuesto);
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idoriginal = ' . $this->dataBase->var2str($this->idpresupuesto);
         if ($this->idoriginal) {
-            $sql .= ' OR idoriginal = ' . $this->var2str($this->idoriginal);
-            $sql .= ' OR idpresupuesto = ' . $this->var2str($this->idoriginal);
+            $sql .= ' OR idoriginal = ' . $this->dataBase->var2str($this->idoriginal);
+            $sql .= ' OR idpresupuesto = ' . $this->dataBase->var2str($this->idoriginal);
         }
         $sql .= 'ORDER BY fecha DESC, hora DESC;';
 
@@ -186,19 +191,19 @@ class PresupuestoCliente
     public function cronJob()
     {
         /// marcamos como aprobados los presupuestos con idpedido
-        $this->dataBase->exec('UPDATE ' . $this->tableName() . " SET status = '1', editable = FALSE"
+        $this->dataBase->exec('UPDATE ' . static::tableName() . " SET status = '1', editable = FALSE"
             . " WHERE status != '1' AND idpedido IS NOT NULL;");
 
         /// devolvemos al estado pendiente a los presupuestos con estado 1 a los que se haya borrado el pedido
-        $this->dataBase->exec('UPDATE ' . $this->tableName() . " SET status = '0', idpedido = NULL, editable = TRUE"
+        $this->dataBase->exec('UPDATE ' . static::tableName() . " SET status = '0', idpedido = NULL, editable = TRUE"
             . " WHERE status = '1' AND idpedido NOT IN (SELECT idpedido FROM pedidoscli);");
 
         /// marcamos como rechazados todos los presupuestos con finoferta ya pasada
-        $this->dataBase->exec('UPDATE ' . $this->tableName() . " SET status = '2' WHERE finoferta IS NOT NULL AND"
-            . ' finoferta < ' . $this->var2str(date('d-m-Y')) . ' AND idpedido IS NULL;');
+        $this->dataBase->exec('UPDATE ' . static::tableName() . " SET status = '2' WHERE finoferta IS NOT NULL AND"
+            . ' finoferta < ' . $this->dataBase->var2str(date('d-m-Y')) . ' AND idpedido IS NULL;');
 
         /// marcamos como rechazados todos los presupuestos no editables y sin pedido asociado
-        $this->dataBase->exec("UPDATE " . $this->tableName() . " SET status = '2' WHERE idpedido IS NULL AND"
+        $this->dataBase->exec("UPDATE " . static::tableName() . " SET status = '2' WHERE idpedido IS NULL AND"
             . ' editable = false;');
     }
 }

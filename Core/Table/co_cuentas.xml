@@ -3,7 +3,7 @@
     Document   : co_cuentas.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla co_cuentas.
+        Structure for the co_cuentas table.
 -->
 <table>
     <column>

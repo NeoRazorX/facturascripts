@@ -3,7 +3,7 @@
     Document   : co_cuentasesp.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla co_cuentasesp.
+        Structure for the co_cuentasesp table.
 -->
 <table>
     <column>

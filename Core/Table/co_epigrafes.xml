@@ -3,7 +3,7 @@
     Document   : co_epigrafes.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla co_epigrafes.
+        Structure for the co_epigrafes table.
 -->
 <table>
     <column>

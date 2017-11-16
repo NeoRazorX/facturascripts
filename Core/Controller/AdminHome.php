@@ -40,10 +40,10 @@ class AdminHome extends Base\Controller
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        /// comprobamos el .htaccess
+        /// Check for .htaccess
         $this->checkHtaccess();
 
-        /// por ahora desplegamos siempre el contenido de Dinamic, para las pruebas
+        /// For now, always deploy the contents of Dinamic, for testing purposes
         $pluginManager = new Base\PluginManager();
         $pluginManager->deploy(true);
 
@@ -51,7 +51,7 @@ class AdminHome extends Base\Controller
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */
@@ -66,7 +66,7 @@ class AdminHome extends Base\Controller
     }
 
     /**
-     * Reestablece el .htaccess por defecto
+     * Restores .htaccess to default settings
      */
     private function checkHtaccess()
     {

@@ -19,27 +19,54 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Controlador para la edición de un registro del modelo Asiento
+ * Controller to edit a single item from the Asiento model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Fco Antonio Moreno Pérez <famphuelva@gmail.com>
+ * @author PC REDNET S.L. <luismi@pcrednet.com>
  */
-class EditAsiento extends ExtendedController\EditController
+class EditAsiento extends ExtendedController\PanelController
 {
 
     /**
-     * Devuelve el nombre del modelo
+     * Load views
      */
-    public function getModelName()
+    protected function createViews()
     {
-        return 'FacturaScripts\Core\Model\Asiento';
+        $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
+        $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Load data view procedure
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        switch ($keyView) {
+            case 'EditAsiento':
+                $value = $this->request->get('code');
+                $view->loadData($value);
+                break;
+
+            case 'ListPartida':
+                $idasiento = $this->getViewModelValue('EditAsiento', 'idasiento');
+                if (!empty($idasiento)) {
+                    $where = [new DataBase\DataBaseWhere('idasiento', $idasiento)];
+                    $view->loadData($where);
+                }
+                break;
+        }
+    }
+
+    /**
+     * Returns basic page attributes
      *
      * @return array
      */

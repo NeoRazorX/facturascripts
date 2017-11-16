@@ -3,7 +3,7 @@
     Document   : proveedores.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Estructura de la tabla proveedores.
+        Structure for the proveedores table.
 -->
 <table>
     <column>

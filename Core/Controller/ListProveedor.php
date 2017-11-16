@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Description of ListProveedor
+ * Controller to list the items in the Proveedor model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -29,7 +29,7 @@ class ListProveedor extends ExtendedController\ListController
 {
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */
@@ -44,7 +44,7 @@ class ListProveedor extends ExtendedController\ListController
     }
 
     /**
-     * Procedimiento encargado de insertar las vistas a visualizar
+     * Load views
      */
     protected function createViews()
     {

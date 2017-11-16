@@ -27,14 +27,14 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 class ColumnItem extends VisualItem implements VisualItemInterface
 {
     /**
-     * Texto adicional que explica el campo al usuario
+     * Additional text that explains the field to the user
      *
      * @var string
      */
     public $description;
 
     /**
-     * Configuración del estado y alineamiento de la visualización
+     * State and alignment of the display configuration
      * (left|right|center|none)
      *
      * @var string
@@ -42,14 +42,15 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     public $display;
 
     /**
-     * Configuración del objeto de visualización del campo
+     * Field display object configuration
+     *
      *
      * @var mixed
      */
     public $widget;
 
     /**
-     * Construye e inicializa la clase.
+     * Constructs and initializes the class
      */
     public function __construct()
     {
@@ -61,7 +62,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Carga la estructura de atributos en base a un archivo XML
+     * Loads the attributes structure from a XML file
      *
      * @param \SimpleXMLElement $column
      */
@@ -84,7 +85,8 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Carga la estructura de atributos en base un archivo JSON
+     * Loads the attributes structure from a JSON file
+     *
      *
      * @param array $column
      */
@@ -101,7 +103,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Carga un grupo de columnas en base a la base de datos
+     * Loads a group of database columns from a JSON file
      *
      * @param array $columns
      *
@@ -120,7 +122,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Genera el código html para visualizar la cabecera del elemento visual
+     * Generates HTML code for the element's header display
      *
      * @param string $value
      *
@@ -138,8 +140,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Genera el código html para visualizar el dato del modelo
-     * para controladores List
+     * Generates the HTML code to display the model data for the List controllers
      *
      * @param string $value
      *
@@ -151,10 +152,10 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Genera el código html para visualizar el dato del modelo
-     * para controladores Edit
+     * Generates the HTML code to display the data from the model for Edit controllers
      *
      * @param string $value
+     * @param bool $withLabel
      *
      * @return string
      */
@@ -182,7 +183,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Devuelve el código HTML para el visionado de un campo no especial
+     * Returns the HTML code to display a non special field
      *
      * @param string $header
      * @param string $input
@@ -200,7 +201,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Devuelve el código HTML para el visionado de un campo checkbox
+     * Returns the HTML code to display a checkbox field
      *
      * @param string $header
      * @param string $input
@@ -221,7 +222,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Devuelve el código HTML para el visionado de una lista de opciones
+     * Returns the HTML code to display a list of options
      *
      * @param string $header
      * @param string $input
@@ -256,9 +257,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Ejecuta la lista de funciones ($properties)
-     * para obtener las propiedades de la columna
-     *
+     * Executes the function list ($properties) to get the column properties
      * @param string[] $properties
      *
      * @return array
@@ -275,7 +274,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Devuelve la clase de la columna
+     * Returns the column class
      *
      * @return string
      */
@@ -285,8 +284,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Devuelve el código HTML para la visualización de un popover
-     * con el texto indicado.
+     * Returns the HTML code to display a popover with the specified string
      *
      * @return string
      */
@@ -296,8 +294,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Devuelve el código HTML para la visualización de si es una columna
-     * requerida o no.
+     * Returns the HTML code to display if a column is required or not
      *
      * @return string
      */
@@ -307,7 +304,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Devuelve el código HTML para la visualización de una descripción.
+     * Returns the HTML code to display a description
      *
      * @return string
      */

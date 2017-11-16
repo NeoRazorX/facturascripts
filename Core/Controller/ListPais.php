@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controlador para la lista de paises
+ * Controller to list the items in the Pais model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -30,7 +30,30 @@ class ListPais extends ExtendedController\ListController
 {
 
     /**
-     * Devuelve los datos básicos de la página
+     * Load views
+     */
+    protected function createViews()
+    {
+        /// Countries
+        $this->addView('FacturaScripts\Core\Model\Pais', 'ListPais', 'countries', 'fa-globe');
+        $this->addSearchFields('ListPais', ['nombre', 'codiso', 'codpais']);
+
+        $this->addFilterCheckbox('ListPais', 'validarprov', 'validate-states');
+        $this->addOrderBy('ListPais', 'codpais', 'code');
+        $this->addOrderBy('ListPais', 'nombre', 'name');
+        $this->addOrderBy('ListPais', 'codiso', 'codiso');
+
+        /// States
+        $this->addView('FacturaScripts\Core\Model\Provincia', 'ListProvincia', 'province', 'fa-map-signs');
+        $this->addSearchFields('ListProvincia', ['provincia', 'codisoprov']);
+
+        $this->addOrderBy('ListProvincia', 'provincia', 'province');
+        $this->addOrderBy('ListProvincia', 'codpais', 'alfa-code-3', 1);
+        $this->addOrderBy('ListProvincia', 'codpostal2d', 'postalcode');
+    }
+
+    /**
+     * Returns basic page attributes
      *
      * @return array
      */
@@ -42,20 +65,5 @@ class ListPais extends ExtendedController\ListController
         $pagedata['menu'] = 'admin';
 
         return $pagedata;
-    }
-
-    /**
-     * Procedimiento para insertar vistas en el controlador
-     */
-    protected function createViews()
-    {
-        $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\Pais', $className);
-        $this->addSearchFields($className, ['nombre', 'codiso', 'codpais']);
-
-        $this->addFilterCheckbox($className, 'validarprov', 'validate-states');
-        $this->addOrderBy($className, 'codpais', 'code');
-        $this->addOrderBy($className, 'nombre', 'name');
-        $this->addOrderBy($className, 'codiso', 'codiso');
     }
 }
