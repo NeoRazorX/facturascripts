@@ -57,7 +57,7 @@
 
             <column name="fiscal mode" title="is-person" order="200">
                 <widget type="checkbox" fieldname="personafisica" />
-            </column>
+            </column>            
         </group>
 
         <group name="comercial" title="commercial-terms" numcolumns="4">
@@ -124,6 +124,18 @@
 
             <column name="blocked" numcolumns="4" order="100">
                 <widget type="checkbox" fieldname="debaja" />
+            </column>
+
+            <column name="action1" order="210">
+                <button type="modal" label="Action1" color="primary" action="test" icon="fa-users" hint="Solo pulsar en caso de emergencia" />
+            </column>
+
+            <column name="action2" order="210">
+                <button type="action" label="Action2" color="info" action="process1" icon="fa-book" hint="Ejecuta el controlador con action=process1" />
+            </column>
+
+            <column name="action3" order="210">
+                <button type="action" label="Action3" action="process2" />
             </column>
         </group>
 

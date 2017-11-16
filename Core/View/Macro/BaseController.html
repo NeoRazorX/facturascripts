@@ -178,12 +178,12 @@
                 <legend>{{ group.getHeaderHTML(group.title)|raw }}</legend>
                 {% endif %}
                 {% for column in group.columns %}
-                {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
-                {% if column.display == 'none' %}
+                    {% set value = column.widget.fieldName is null ? '' : context.fsc.getFieldValue(model, column.widget.fieldName) %}
+                    {% if column.display == 'none' %}
                 <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
-                {% else %}
-                {{ column.getEditHTML(value)|raw }}
-                {% endif %}
+                    {% else %}
+                        {{ column.getEditHTML(value)|raw }}
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>

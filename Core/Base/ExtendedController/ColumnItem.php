@@ -197,7 +197,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     {
         $header = $withLabel ? $this->getHeaderHTML($this->title) : '';
         $input = $this->widget->getEditHTML($value);
-        $data = $this->getColumnData(['ColumnClass', 'ColumnHint', 'ColumnRequired', 'ColumnDescription']);
+        $data = $this->getColumnData( $this->widget->columnFunction() );
 
         switch ($this->widget->type) {
             case 'checkbox':
@@ -208,6 +208,12 @@ class ColumnItem extends VisualItem implements VisualItemInterface
                 $html = $this->radioHTMLColumn($header, $input, $data, $value);
                 break;
 
+            case 'calculate':
+            case 'action':
+            case 'modal':
+                $html = $this->buttonHTMLColumn($data);
+                break;
+            
             default:
                 $html = $this->standardHTMLColumn($header, $input, $data);
                 break;
@@ -234,6 +240,14 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             . '</div>';
     }
 
+    private function buttonHTMLColumn($data)
+    {
+        return '<div class="form-group' . $data['ColumnClass'] . '">'
+            . $this->widget->getHTML($this->widget->label, '', $data['ColumnHint'])
+            . $data['ColumnDescription'] 
+            . '</div>';
+    }
+    
     /**
      * Returns the HTML code to display a checkbox field
      *
@@ -314,7 +328,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      */
     private function getColumnClass()
     {
-        return ($this->numColumns > 0) ? (' col-md-' . $this->numColumns) : ' col';
+        return ($this->numColumns > 0) ? (' col-md-' . $this->numColumns) : ' col-sm-auto';
     }
 
     /**

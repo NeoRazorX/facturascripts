@@ -40,4 +40,9 @@ interface WidgetInterface
      * @param string $value
      */
     public function getEditHTML($value);
+    
+    /**
+     * Array con la lista de funciones de personalización de la columna
+     */
+    public function columnFunction();
 }
