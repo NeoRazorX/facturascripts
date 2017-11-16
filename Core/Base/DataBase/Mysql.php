@@ -32,13 +32,6 @@ class Mysql implements DataBaseEngine
 {
 
     /**
-     * The link with the common utilities between database engines.
-     *
-     * @var DataBaseUtils
-     */
-    private $utils;
-
-    /**
      * Link to the SQL statements for the connected database
      *
      * @var DataBaseSQL;
@@ -71,7 +64,6 @@ class Mysql implements DataBaseEngine
      */
     public function __construct()
     {
-        $this->utils = new DataBaseUtils($this);
         $this->utilsSQL = new MysqlSQL();
         $this->transactions = [];
         $this->lastErrorMsg = '';
@@ -466,16 +458,6 @@ class Mysql implements DataBaseEngine
         unset($result['null'], $result['field']);
 
         return $result;
-    }
-
-    /**
-     * Returns the link to the Utils class from the engine
-     *
-     * @return DataBaseUtils
-     */
-    public function getUtils()
-    {
-        return $this->utils;
     }
 
     /**

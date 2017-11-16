@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
@@ -27,12 +26,6 @@ namespace FacturaScripts\Core\Base\DataBase;
  */
 interface DataBaseEngine
 {
-    /**
-     * Returns the link to the engine's DatabaseUtils class
-     *
-     * @return DataBaseUtils
-     */
-    public function getUtils();
 
     /**
      * Returns the link to the engine's SQL class
