@@ -143,7 +143,7 @@ class PageOption
     {
         if (!empty($groups)) {
             foreach ($groups as $item) {
-                $groupItem = ExtendedController\GroupItem::newFromJSONGroup($item);
+                $groupItem = ExtendedController\GroupItem::newFromJSON($item);
                 $target[$groupItem->name] = $groupItem;
                 unset($groupItem);
             }
@@ -168,7 +168,7 @@ class PageOption
         $rows = json_decode($data['rows'], true);
         if (!empty($rows)) {
             foreach ($rows as $item) {
-                $rowItem = ExtendedController\RowItem::newFromJSONRow($item);
+                $rowItem = ExtendedController\RowItem::newFromJSON($item);
                 $this->rows[$rowItem->type] = $rowItem;
                 unset($rowItem);
             }
@@ -241,19 +241,22 @@ class PageOption
      */
     private function getXMLGroupsColumns($columns, &$target)
     {
-        // No hay agrupación de columnas
-        if (empty($columns->group)) {
-            $groupItem = new ExtendedController\GroupItem();
-            $groupItem->loadFromXMLColumns($columns);
+        // if group dont have elements
+        if ($columns->count() === 0) {
+            return;
+        }
+        
+        // if have elements but dont have groups
+        if (!isset($columns->group)) {
+            $groupItem = ExtendedController\GroupItem::newFromXML($columns);
             $target[$groupItem->name] = $groupItem;
             unset($groupItem);
             return;
         }
 
-        // Con agrupación de columnas
+        // exists columns grouped
         foreach ($columns->group as $group) {
-            $groupItem = new ExtendedController\GroupItem();
-            $groupItem->loadFromXML($group);
+            $groupItem = ExtendedController\GroupItem::newFromXML($group);
             $target[$groupItem->name] = $groupItem;
             unset($groupItem);
         }
@@ -269,7 +272,7 @@ class PageOption
     {
         if (!empty($rows)) {
             foreach ($rows->row as $row) {
-                $rowItem = ExtendedController\RowItem::newFromXMLRow($row);
+                $rowItem = ExtendedController\RowItem::newFromXML($row);
                 $this->rows[$rowItem->type] = $rowItem;
                 unset($rowItem);
             }

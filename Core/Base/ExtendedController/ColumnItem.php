@@ -49,6 +49,32 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     public $widget;
 
     /**
+     * Crea y carga la estructura de una columna en base a un archivo XML
+     *
+     * @param \SimpleXMLElement $column
+     * @return GroupItem
+     */
+    public static function newFromXML($column)
+    {
+        $result = new ColumnItem();
+        $result->loadFromXML($column);
+        return $result;
+    }
+
+    /**
+     * Crea y carga la estructura de una columna en base a la base de datos
+     *
+     * @param array $group
+     * @return GroupItem
+     */
+    public static function newFromJSON($column)
+    {
+        $result = new ColumnItem();
+        $result->loadFromJSON($column);
+        return $result;
+    }    
+    
+    /**
      * Construye e inicializa la clase.
      */
     public function __construct()
@@ -80,7 +106,15 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             $this->display = (string) $column_atributes->display;
         }
 
-        $this->widget = WidgetItem::newFromXMLColumn($column);
+        switch (TRUE) {
+            case isset($column->widget):
+                $this->widget = WidgetItem::newFromXML($column);
+                break;
+
+            case isset($column->button):
+                $this->widget = WidgetButton::newFromXML($column->button);
+                break;
+        }
     }
 
     /**
@@ -97,7 +131,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         if (!empty($this->widget)) {
             unset($this->widget);
         }
-        $this->widget = WidgetItem::newFromJSONColumn($column);
+        $this->widget = WidgetItem::newFromJSON($column);
     }
 
     /**
@@ -303,7 +337,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      */
     private function getColumnRequired()
     {
-        return $this->widget->required ? '<div class="invalid-feedback">' . $this->i18n->trans('please-enter-value') . '</div>' : '';
+        return $this->widget->required ? '<div class="invalid-feedback">' . $this->i18n->trans('please-enter-value') . '</div>' : '';       
     }
 
     /**

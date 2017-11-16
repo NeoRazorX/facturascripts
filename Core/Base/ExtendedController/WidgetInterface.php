@@ -16,48 +16,28 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Interfaz para elementos visuales
+ * Interfaz para elementos de formularios
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-interface VisualItemInterface
+interface WidgetInterface
 {
     /**
-     * Crea y carga la estructura de un elemento en base a un archivo XML
-     *
-     * @param \SimpleXMLElement $item
-     */
-    public static function newFromXML($item);
-    
-    /**
-     * Crea y carga la estructura de un elemento en base a la base de datos
-     *
-     * @param array $item
-     */
-    public static function newFromJSON($item);
-    
-    /**
-     * Carga la estructura de atributos en base a un archivo XML
-     *
-     * @param \SimpleXMLElement $items
-     */
-    public function loadFromXML($items);
-
-    /**
-     * Carga la estructura de atributos en base un archivo JSON
-     *
-     * @param array $items
-     */
-    public function loadFromJSON($items);
-
-    /**
-     * Genera el código html para visualizar la cabecera del elemento visual
+     * Genera el código html para la visualización de los datos en el
+     * controlador List
      *
      * @param string $value
      */
-    public function getHeaderHTML($value);
+    public function getListHTML($value);
+
+    /**
+     * Genera el código html para la visualización y edición de los datos
+     * en el controlador Edit / EditList
+     *
+     * @param string $value
+     */
+    public function getEditHTML($value);
 }

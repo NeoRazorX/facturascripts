@@ -24,7 +24,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-abstract class WidgetItem
+abstract class WidgetItem implements VisualItemInterface, WidgetInterface
 {
     /**
      * Nombre del campo con los datos que visualiza el widget
@@ -133,12 +133,12 @@ abstract class WidgetItem
      * @param \SimpleXMLElement $column
      * @return WidgetItem
      */
-    public static function newFromXMLColumn($column)
+    public static function newFromXML($column)
     {
         $widgetAtributes = $column->widget->attributes();
         $type = (string) $widgetAtributes->type;
         $widget = self::widgetItemFromType($type);
-        $widget->loadFromXMLColumn($column, $widgetAtributes);
+        $widget->loadFromXML($column);
         return $widget;
     }
 
@@ -148,11 +148,11 @@ abstract class WidgetItem
      * @param array $column
      * @return WidgetItem
      */
-    public static function newFromJSONColumn($column)
+    public static function newFromJSON($column)
     {
         $type = (string) $column['widget']['type'];
         $widget = self::widgetItemFromType($type);
-        $widget->loadFromJSONColumn($column);
+        $widget->loadFromJSON($column);
         return $widget;
     }
 
@@ -170,6 +170,18 @@ abstract class WidgetItem
         $this->options = [];
     }
 
+    /**
+     * Genera el código html para visualizar la cabecera del elemento visual
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    public function getHeaderHTML($value)
+    {
+        return '<span title="' . $value . '"></span>';
+    }
+    
     /**
      * Carga el diccionario de atributos de un grupo de opciones o valores
      * del widget
@@ -197,8 +209,9 @@ abstract class WidgetItem
      * @param \SimpleXMLElement $column
      * @param \SimpleXMLElement $widgetAtributes
      */
-    protected function loadFromXMLColumn($column, $widgetAtributes)
+    public function loadFromXML($column)
     {
+        $widgetAtributes = $column->widget->attributes();        
         $this->fieldName = (string) $widgetAtributes->fieldname;
         $this->hint = (string) $widgetAtributes->hint;
         $this->readOnly = (bool) $widgetAtributes->readonly;
@@ -214,7 +227,7 @@ abstract class WidgetItem
      *
      * @param array $column
      */
-    protected function loadFromJSONColumn($column)
+    public function loadFromJSON($column)
     {
         $this->fieldName = (string) $column['widget']['fieldName'];
         $this->hint = (string) $column['widget']['hint'];
@@ -223,8 +236,8 @@ abstract class WidgetItem
         $this->icon = (string) $column['widget']['icon'];
         $this->onClick = (string) $column['widget']['onClick'];
         $this->options = (array) $column['widget']['options'];
-    }
-
+    }    
+    
     /**
      * Indica si se cumple la condición para aplicar un Option Text
      *
