@@ -19,8 +19,8 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Permite relacionar cuentas especiales (VENTAS, por ejemplo)
- * con la cuenta o subcuenta real.
+ * Allows to relate special accounts (SALES, for example)
+ * with the real account or sub-account.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -32,21 +32,21 @@ class CuentaEspecial
     }
 
     /**
-     * Identificador de la cuenta especial.
+     * Special account identifier.
      *
      * @var string
      */
     public $idcuentaesp;
 
     /**
-     * Descripción de la cuenta especial.
+     * Description of the special account.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Return the name of the tabel that this model uses.
      *
      * @return string
      */
@@ -56,7 +56,7 @@ class CuentaEspecial
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Return the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -66,10 +66,9 @@ class CuentaEspecial
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
-     *
+     * This function is called when creating the tale of the model.
+     * Returns SQL that will be exectuted after the creation of the table.
+     * useful to insert values default.
      * @return string
      */
     public function install()

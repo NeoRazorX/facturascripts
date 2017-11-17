@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model;
 
 /**
- * Controlador para la edición de un registro del modelo EditCuentaEspecial
+ * Controller to edit a single item from the CuentaEspecial model
  *
  * @author Artex Trading sa <jferrer@artextrading.com>
  */
@@ -31,7 +31,7 @@ class EditCuentaEspecial extends ExtendedController\EditController
 {
    
     /**
-     * Devuelve el nombre del modelo
+     * Returns the model name
      */
     public function getModelName()
     {
@@ -39,7 +39,7 @@ class EditCuentaEspecial extends ExtendedController\EditController
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */
