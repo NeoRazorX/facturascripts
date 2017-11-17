@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class WidgetButton
+class WidgetButton implements VisualItemInterface, WidgetInterface
 {
     /**
      * Tipo de botón
@@ -68,19 +68,63 @@ class WidgetButton
     public $hint;
 
     /**
-     * WidgetButton constructor.
+     * Crea y carga la estructura de atributos en base a un archivo XML
      *
-     * @param $values
+     * @param \SimpleXMLElement $button
+     * @return WidgetButton
      */
-    public function __construct($values)
+    public static function newFromXML($button)
     {
-        $this->type = $values['type'];
-        $this->label = $values['label'];
-        $this->icon = isset($values['icon']) ? $values['icon'] : '';
-        $this->action = isset($values['action']) ? $values['action'] : '';
-        $this->onClick = isset($values['onclick']) ? $values['onclick'] : '#';
-        $this->color = isset($values['color']) ? $values['color'] : 'light';
-        $this->hint = isset($values['hint']) ? $values['hint'] : '';
+        $widget = new WidgetButton();
+        $widget->loadFromXML($button);
+        return $widget;
+    }
+
+    public static function newFromJSON($button)
+    {
+        $widget = new WidgetButton();
+        $widget->loadFromJSON($button);
+        return $widget;
+    }
+
+    public function __construct()
+    {
+        $this->type = 'action';
+        $this->label = '';
+        $this->icon = '';
+        $this->action = '';
+        $this->onClick = '#';
+        $this->color = 'light';
+        $this->hint = '';
+    }
+
+    public function loadFromXML($button)
+    {
+        $widget_atributes = $button->attributes();
+        $this->type = (string) $widget_atributes->type;
+        $this->label = (string) $widget_atributes->label;
+        $this->icon = (string) $widget_atributes->icon;
+        $this->action = (string) $widget_atributes->action;
+        $this->hint = (string) $widget_atributes->hint;
+
+        if (!empty($widget_atributes->color)) {
+            $this->color = (string) $widget_atributes->color;
+        }
+
+        if (!empty($widget_atributes->onclick)) {
+            $this->onClick = (string) $widget_atributes->onclick;
+        }
+    }
+
+    public function loadFromJSON($column)
+    {
+        $this->type = (string) $column['button']['type'];
+        $this->label = (string) $column['button']['label'];
+        $this->icon = (string) $column['button']['icon'];
+        $this->action = (string) $column['button']['action'];
+        $this->hint = (string) $column['button']['hint'];
+        $this->color = (string) $column['button']['color'];
+        $this->onClick = (string) $column['button']['onClick'];
     }
 
     /**
@@ -193,5 +237,33 @@ class WidgetButton
             default:
                 return '';
         }
+    }
+
+    public function getEditHTML($value)
+    {
+        return $this->getHTML($value);
+    }
+
+    public function getHeaderHTML($value)
+    {
+        return '';
+    }
+
+    public function getListHTML($value)
+    {
+        return '';
+    }
+
+    /**
+     * Devuelve el código HTML para la visualización de un popover
+     * con el texto indicado.
+     *
+     * @param string $hint
+     *
+     * @return string
+     */
+    public function getHintHTML($hint)
+    {
+        return empty($hint) ? '' : ' data-toggle="popover" data-placement="auto" data-trigger="hover" data-content="' . $hint . '" ';
     }
 }

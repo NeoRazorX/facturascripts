@@ -63,7 +63,7 @@ class RowItemFooter extends RowItem
             }
             
             $this->panels[$values['name']] = $values;            
-            $this->buttons[$values['name']] = $this->loadButtonsFromXML($item->button);
+            $this->buttons[$values['name']] = $this->loadButtonsFromXML($item);
             unset($values);
         }
     }

@@ -604,14 +604,14 @@ trait ModelTrait
      *
      * @return string
      */
-    public function url($type = 'auto')
+    public function url($type = 'auto', $list = 'List')
     {
         $value = $this->primaryColumnValue();
         $model = $this->modelClassName();
         $result = 'index.php?page=';
         switch ($type) {
             case 'list':
-                $result .= 'List' . $model;
+                $result .= $list . $model;
                 break;
 
             case 'edit':
@@ -623,7 +623,7 @@ trait ModelTrait
                 break;
 
             default:
-                $result .= empty($value) ? 'List' . $model : 'Edit' . $model . '&code=' . $value;
+                $result .= empty($value) ? $list . $model : 'Edit' . $model . '&code=' . $value;
                 break;
         }
 
