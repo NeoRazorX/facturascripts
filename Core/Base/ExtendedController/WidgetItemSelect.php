@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 class WidgetItemSelect extends WidgetItem
 {
+
     /**
      * Accepted values for the field associated to the widget
      *
@@ -48,11 +48,10 @@ class WidgetItemSelect extends WidgetItem
      * Loads the attributes structure from a XML file
      *
      * @param \SimpleXMLElement $column
-     * @param \SimpleXMLElement $widgetAtributes
      */
-    protected function loadFromXMLColumn($column, $widgetAtributes)
+    public function loadFromXML($column)
     {
-        parent::loadFromXMLColumn($column, $widgetAtributes);
+        parent::loadFromXML($column);
         $this->getAttributesGroup($this->values, $column->widget->values);
     }
 
@@ -61,9 +60,9 @@ class WidgetItemSelect extends WidgetItem
      *
      * @param array $column
      */
-    protected function loadFromJSONColumn($column)
+    public function loadFromJSON($column)
     {
-        parent::loadFromJSONColumn($column);
+        parent::loadFromJSON($column);
         $this->values = (array) $column['widget']['values'];
     }
 
@@ -76,11 +75,10 @@ class WidgetItemSelect extends WidgetItem
     {
         $this->values = [];
         foreach ($rows as $codeModel) {
-            $item = [];
-            $item['value'] = $codeModel->code;
-            $item['title'] = $codeModel->description;
-            $this->values[] = $item;
-            unset($item);
+            $this->values[] = [
+                'value' => $codeModel->code,
+                'title' => $codeModel->description,
+            ];
         }
     }
 
@@ -101,11 +99,10 @@ class WidgetItemSelect extends WidgetItem
                 continue;
             }
 
-            $item = [];
-            $item['value'] = $value;
-            $item['title'] = $value;
-            $this->values[] = $item;
-            unset($item);
+            $this->values[] = [
+                'value' => $value,
+                'title' => $value,
+            ];
         }
     }
 

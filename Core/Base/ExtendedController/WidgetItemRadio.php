@@ -48,11 +48,10 @@ class WidgetItemRadio extends WidgetItem
      * Loads the attributes structure from a XML file
      *
      * @param \SimpleXMLElement $column
-     * @param \SimpleXMLElement $widgetAtributes
      */
-    protected function loadFromXMLColumn($column, $widgetAtributes)
+    public function loadFromXML($column)
     {
-        parent::loadFromXMLColumn($column, $widgetAtributes);
+        parent::loadFromXML($column);
         $this->getAttributesGroup($this->values, $column->widget->values);
     }
 
@@ -61,9 +60,9 @@ class WidgetItemRadio extends WidgetItem
      *
      * @param array $column
      */
-    protected function loadFromJSONColumn($column)
+    public function loadFromJSON($column)
     {
-        parent::loadFromJSONColumn($column);
+        parent::loadFromJSON($column);
         $this->values = (array) $column['widget']['values'];
     }
 

@@ -211,7 +211,6 @@ abstract class WidgetItem implements VisualItemInterface, WidgetInterface
      * Loads the attributes structure from a XML file
      *
      * @param \SimpleXMLElement $column
-     * @param \SimpleXMLElement $widgetAtributes
      */
     public function loadFromXML($column)
     {
