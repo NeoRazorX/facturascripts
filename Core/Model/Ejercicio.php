@@ -180,16 +180,6 @@ class Ejercicio
     }
 
     /**
-     * Devuelve True si este es el ejercicio predeterminado de la empresa
-     *
-     * @return bool
-     */
-    public function isDefault()
-    {
-        return $this->codejercicio === $this->defaultItems->codEjercicio();
-    }
-
-    /**
      * Devuelve la fecha más próxima a $fecha que esté dentro del intervalo de este ejercicio
      *
      * @param string $fecha

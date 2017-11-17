@@ -29,22 +29,21 @@ class AppSettings
 {
 
     private static $data;
-    private $save;
+    private static $save;
 
     public function __construct()
     {
         if (!isset(self::$data)) {
             self::$data = [];
+            self::$save = false;
         }
-
-        $this->save = false;
     }
 
-    public function get($group, $property, $default = null)
+    public static function get($group, $property, $default = null)
     {
         if (!isset(self::$data[$group][$property])) {
             self::$data[$group][$property] = $default;
-            $this->save = true;
+            self::$save = true;
         }
 
         return self::$data[$group][$property];
@@ -68,7 +67,7 @@ class AppSettings
         $this->setConstants($constants);
         $this->get('default', 'homepage', 'AdminHome');
 
-        if ($this->save) {
+        if (self::$save) {
             $this->save();
         }
     }
@@ -82,7 +81,7 @@ class AppSettings
             $settings->save();
         }
 
-        $this->save = false;
+        self::$save = false;
     }
 
     private function setConstants($data)

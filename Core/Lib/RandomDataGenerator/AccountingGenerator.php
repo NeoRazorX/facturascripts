@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model;
 
 /**
@@ -196,7 +197,7 @@ class AccountingGenerator
         for ($num = 0; $num < $max; ++$num) {
             $subcuenta = new Model\Subcuenta();
             $subcuenta->codcuenta = $cuentas[0]->codcuenta;
-            $subcuenta->coddivisa = $this->empresa->coddivisa;
+            $subcuenta->coddivisa = AppSettings::get('default', 'coddivisa');
             $subcuenta->codejercicio = $cuentas[0]->codejercicio;
             $subcuenta->codsubcuenta = $cuentas[0]->codcuenta . mt_rand(0, 9999);
             $subcuenta->descripcion = $this->tools->descripcion();

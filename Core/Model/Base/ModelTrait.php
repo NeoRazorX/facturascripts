@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\Base\Cache;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseTools;
-use FacturaScripts\Core\Base\DefaultItems;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Base\Utils;
@@ -73,14 +72,6 @@ trait ModelTrait
     protected $cache;
 
     /**
-     * Clase que se utiliza para definir algunos valores por defecto:
-     * codejercicio, codserie, coddivisa, etc...
-     *
-     * @var DefaultItems
-     */
-    protected $defaultItems;
-
-    /**
      * Traductor multi-idioma.
      *
      * @var Translator
@@ -116,7 +107,6 @@ trait ModelTrait
     {
         $this->cache = new Cache();
         $this->dataBase = new DataBase();
-        $this->defaultItems = new DefaultItems();
         $this->i18n = new Translator();
         $this->miniLog = new MiniLog();
 

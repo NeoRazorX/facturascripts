@@ -37,28 +37,6 @@ class Empresa
     public $id;
 
     /**
-     * Identificador único de empresa
-     *
-     * @var string
-     */
-    public $xid;
-
-    /**
-     * Todavía sin uso.
-     *
-     * @var bool
-     */
-    public $stockpedidos;
-
-    /**
-     * TRUE -> activa la contabilidad integrada. Se genera el asiento correspondiente
-     * cada vez que se crea/modifica una factura.
-     *
-     * @var bool
-     */
-    public $contintegrada;
-
-    /**
      * TRUE -> activa el uso de recargo de equivalencia en los albaranes y facturas de compra.
      *
      * @var bool
@@ -66,53 +44,11 @@ class Empresa
     public $recequivalencia;
 
     /**
-     * Código de la serie por defecto.
-     *
-     * @var string
-     */
-    public $codserie;
-
-    /**
-     * Código del almacén predeterminado.
-     *
-     * @var string
-     */
-    public $codalmacen;
-
-    /**
-     * Código de la forma de pago predeterminada.
-     *
-     * @var string
-     */
-    public $codpago;
-
-    /**
-     * Código de la divisa predeterminada.
-     *
-     * @var string
-     */
-    public $coddivisa;
-
-    /**
-     * Código del ejercicio predeterminado.
-     *
-     * @var string
-     */
-    public $codejercicio;
-
-    /**
      * Nombre del administrador de la empresa.
      *
      * @var string
      */
     public $administrador;
-
-    /**
-     * Actualmente sin uso.
-     *
-     * @var string
-     */
-    public $codedi;
 
     /**
      * Código de identificación fiscal dela empresa.
@@ -136,27 +72,6 @@ class Empresa
     public $nombrecorto;
 
     /**
-     * Lema de la empresa
-     *
-     * @var string
-     */
-    public $lema;
-
-    /**
-     * Horario de apertura
-     *
-     * @var string
-     */
-    public $horario;
-
-    /**
-     * Texto al pié de las facturas de venta.
-     *
-     * @var string
-     */
-    public $pie_factura;
-
-    /**
      * Fecha de inicio de la actividad.
      *
      * @var string
@@ -169,13 +84,6 @@ class Empresa
      * @var string
      */
     public $regimeniva;
-
-    /**
-     * Configuración de email de la empresa.
-     *
-     * @var string
-     * ] */
-    public $email_config;
 
     /**
      * Devuelve el nombre de la tabla que usa este modelo.
@@ -214,9 +122,6 @@ class Empresa
         $this->direccion = self::noHtml($this->direccion);
         $this->email = self::noHtml($this->email);
         $this->fax = self::noHtml($this->fax);
-        $this->horario = self::noHtml($this->horario);
-        $this->lema = self::noHtml($this->lema);
-        $this->pie_factura = self::noHtml($this->pie_factura);
         $this->provincia = self::noHtml($this->provincia);
         $this->telefono = self::noHtml($this->telefono);
         $this->web = self::noHtml($this->web);
@@ -246,11 +151,10 @@ class Empresa
     {
         $num = mt_rand(1, 9999);
 
-        return 'INSERT INTO ' . $this->tableName() . ' (stockpedidos,contintegrada,recequivalencia,codserie,'
-            . 'codalmacen,codpago,coddivisa,codejercicio,web,email,fax,telefono,codpais,apartado,provincia,'
-            . 'ciudad,codpostal,direccion,administrador,codedi,cifnif,nombre,nombrecorto,lema,horario)'
-            . "VALUES (NULL,FALSE,NULL,'A','ALG','CONT','EUR','0001','https://www.facturascripts.com',"
-            . "NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','',NULL,'00000014Z',"
-            . "'Empresa " . $num . " S.L.','E-" . $num . "','','');";
+        return 'INSERT INTO ' . $this->tableName() . ' (recequivalencia,web,email,fax,telefono,codpais,apartado,provincia,'
+            . 'ciudad,codpostal,direccion,administrador,cifnif,nombre,nombrecorto)'
+            . "VALUES (NULL,'https://www.facturascripts.com',"
+            . "NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','','00000014Z',"
+            . "'Empresa " . $num . " S.L.','E-" . $num . "');";
     }
 }
