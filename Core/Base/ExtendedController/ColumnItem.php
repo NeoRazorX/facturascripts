@@ -242,8 +242,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
 
     private function buttonHTMLColumn($data)
     {
-        $columClass = $data['ColumnClass'] === ' col' ? ' col' : $data['ColumnClass'];
-        return '<div class="form-group' . $columClass . '"><label>&nbsp;</label>'
+        return '<div class="form-group' . $data['ColumnClass'] . '"><label>&nbsp;</label>'
             . $this->widget->getHTML($this->widget->label, '', $data['ColumnHint'], 'col')
             . $data['ColumnDescription'] 
             . '</div>';

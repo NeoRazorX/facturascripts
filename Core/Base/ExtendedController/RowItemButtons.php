@@ -19,30 +19,51 @@
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Interfaz para elementos de formularios
+ * Description of RowItemButtons
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-interface WidgetInterface
+class RowItemButtons extends RowItem
 {
     /**
-     * Genera el código html para la visualización de los datos en el
-     * controlador List
-     *
-     * @param string $value
+     * Lista de botones
+     * @var array
      */
-    public function getListHTML($value);
-
-    /**
-     * Genera el código html para la visualización y edición de los datos
-     * en el controlador Edit / EditList
-     *
-     * @param string $value
-     */
-    public function getEditHTML($value);
+    public $buttons;
     
     /**
-     * Array con la lista de funciones de personalización de la columna
+     * Class constructor
      */
-    public function columnFunction();
+    public function __construct($type)
+    {
+        parent::__construct($type);
+        $this->buttons = [];
+    }
+
+    /**
+     * Creates the attributes structure from a XML file
+     *
+     * @param \SimpleXMLElement[] $row
+     */
+    public function loadFromXML($row)
+    {
+        $this->buttons = $this->loadButtonsFromXML($row);
+    }
+    
+    /**
+     * Creates the attributes structure from a JSON file
+     *
+     * @param array $row
+     */
+    public function loadFromJSON($row)
+    {
+        $this->type = (string) $row['type'];
+        
+        foreach ($row['buttons'] as $button) {
+            $values = $button;
+            $buttomItem = new WidgetButton($values);
+            $this->buttons[] = $buttomItem;
+            unset($buttomItem);
+        }        
+    }    
 }
