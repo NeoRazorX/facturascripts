@@ -476,57 +476,33 @@ trait ModelTrait
      *
      * @return bool
      */
-    protected function checkTable($tableName)
+    private function checkTable($tableName)
     {
         $dbTools = new DataBaseTools();
-        $done = true;
         $sql = '';
         $xmlCols = [];
         $xmlCons = [];
 
-        if ($dbTools->getXmlTable($tableName, $xmlCols, $xmlCons)) {
-            if ($this->dataBase->tableExists($tableName)) {
-                if (!$this->dataBase->checkTableAux($tableName)) {
-                    $this->miniLog->critical($this->i18n->trans('error-to-innodb'));
-                }
-
-                /**
-                 * Si hay que hacer cambios en las restricciones, eliminamos todas las restricciones,
-                 * luego añadiremos las correctas. Lo hacemos así porque evita problemas en MySQL.
-                 */
-                $dbCons = $this->dataBase->getConstraints($tableName);
-                $sql2 = $this->dataBase->compareConstraints($tableName, $xmlCons, $dbCons, true);
-                if ($sql2 !== '') {
-                    if (!$this->dataBase->exec($sql2)) {
-                        $this->miniLog->critical($this->i18n->trans('check-table', [$tableName]));
-                    }
-
-                    /// leemos de nuevo las restricciones
-                    $dbCons = $this->dataBase->getConstraints($tableName);
-                }
-
-                /// comparamos las columnas
-                $dbCols = $this->dataBase->getColumns($tableName);
-                $sql .= $this->dataBase->compareColumns($tableName, $xmlCols, $dbCols);
-
-                /// comparamos las restricciones
-                $sql .= $this->dataBase->compareConstraints($tableName, $xmlCons, $dbCons);
-            } else {
-                /// generamos el sql para crear la tabla
-                $sql .= $this->dataBase->generateTable($tableName, $xmlCols, $xmlCons);
-                $sql .= $this->install();
-            }
-            if ($sql !== '' && !$this->dataBase->exec($sql)) {
-                $this->miniLog->critical($this->i18n->trans('check-table', [$tableName]));
-                $this->cache->clear();
-                $done = false;
-            }
-        } else {
+        if (!$dbTools->getXmlTable($tableName, $xmlCols, $xmlCons)) {
             $this->miniLog->critical($this->i18n->trans('error-on-xml-file'));
-            $done = false;
+            return false;
         }
 
-        return $done;
+        if ($this->dataBase->tableExists($tableName)) {
+            $sql .= $dbTools->checkTable($tableName, $xmlCols, $xmlCons);
+        } else {
+            /// generamos el sql para crear la tabla
+            $sql .= $dbTools->generateTable($tableName, $xmlCols, $xmlCons);
+            $sql .= $this->install();
+        }
+
+        if ($sql !== '' && !$this->dataBase->exec($sql)) {
+            $this->miniLog->critical($this->i18n->trans('check-table', [$tableName]));
+            $this->cache->clear();
+            return false;
+        }
+
+        return true;
     }
 
     /**

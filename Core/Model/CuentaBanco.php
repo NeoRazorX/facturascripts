@@ -26,7 +26,9 @@ namespace FacturaScripts\Core\Model;
 class CuentaBanco
 {
 
-    use Base\ModelTrait;
+    use Base\ModelTrait {
+        url as private urlTrait;
+    }
     use Base\BankAccount;
 
     /**
@@ -95,27 +97,6 @@ class CuentaBanco
      */
     public function url($type = 'auto')
     {
-        $value = $this->primaryColumnValue();
-        $model = $this->modelClassName();
-        $result = 'index.php?page=';
-        switch ($type) {
-            case 'list':
-                $result .= 'ListFormaPago&active=List' . $model;
-                break;
-
-            case 'edit':
-                $result .= 'Edit' . $model . '&code=' . $value;
-                break;
-
-            case 'new':
-                $result .= 'Edit' . $model;
-                break;
-
-            default:
-                $result .= empty($value) ? 'ListFormaPago&active=List' . $model : 'Edit' . $model . '&code=' . $value;
-                break;
-        }
-
-        return $result;
+        return $this->urlTrait($type, 'ListFormaPago&active=List');
     }
 }

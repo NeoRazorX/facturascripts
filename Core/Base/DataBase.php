@@ -412,49 +412,6 @@ class DataBase
     }
 
     /**
-     * Crea la tabla con la estructura indicada.
-     *
-     * @param string $tableName
-     * @param array  $xmlCols
-     * @param array  $xmlCons
-     *
-     * @return bool
-     */
-    public function generateTable($tableName, $xmlCols, $xmlCons)
-    {
-        return self::$engine->getUtils()->generateTable($tableName, $xmlCols, $xmlCons);
-    }
-
-    /**
-     * Compara dos arrays de restricciones, devuelve una sentencia SQL en caso de encontrar diferencias.
-     *
-     * @param string $tableName
-     * @param array  $xmlCons
-     * @param array  $dbCons
-     * @param bool   $deleteOnly
-     *
-     * @return bool
-     */
-    public function compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly = false)
-    {
-        return self::$engine->getUtils()->compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly);
-    }
-
-    /**
-     * Compara dos arrays de columnas, devuelve una sentencia sql en caso de encontrar diferencias.
-     *
-     * @param string $tableName
-     * @param array  $xmlCols
-     * @param array  $dbCols
-     *
-     * @return string
-     */
-    public function compareColumns($tableName, $xmlCols, $dbCols)
-    {
-        return self::$engine->getUtils()->compareColumns($tableName, $xmlCols, $dbCols);
-    }
-
-    /**
      * Transforma una variable en una cadena de texto válida para ser
      * utilizada en una consulta SQL.
      *
@@ -523,5 +480,14 @@ class DataBase
     public function sql2Int($colName)
     {
         return self::$engine->getSQL()->sql2Int($colName);
+    }
+
+    /**
+     * 
+     * @return DataBaseEngine
+     */
+    public function getEngine()
+    {
+        return self::$engine;
     }
 }

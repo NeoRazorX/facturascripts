@@ -102,9 +102,9 @@ class WidgetItemNumber extends WidgetItem
      *
      * @param \SimpleXMLElement $column
      */
-    protected function loadFromJSONColumn($column)
+    public function loadFromJSON($column)
     {
-        parent::loadFromJSONColumn($column);
+        parent::loadFromJSON($column);
 
         $this->decimal = (int) $column['widget']['decimal'];
         $this->step = (string) $column['widget']['step'];

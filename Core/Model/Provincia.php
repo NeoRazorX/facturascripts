@@ -26,7 +26,10 @@ namespace FacturaScripts\Core\Model;
  */
 class Provincia
 {
-    use Base\ModelTrait;
+
+    use Base\ModelTrait {
+        url as private urlTrait;
+    }
 
     /**
      * Identificar del registro.
@@ -110,5 +113,10 @@ class Provincia
     {
         // TODO: Load from CSV realpath('Core/Model/DefaultData/ES-provincias.csv')
         return '';
+    }
+
+    public function url($type = 'auto')
+    {
+        return $this->urlTrait($type, 'ListPais&active=List');
     }
 }
