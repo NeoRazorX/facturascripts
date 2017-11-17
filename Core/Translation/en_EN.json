@@ -904,7 +904,7 @@
     "incorrect-seat-amount": "Incorrect seat amount.",
     "seat-within-regularization": "The seat is within a regularization of 0. It cann't be deleted.",
     "seat-date-not-in-exercise-range": "Seat date not in <a target='_blank' href='0'>exercise</a> range.",
-    "seat-possible duplicated": "Seat possible duplicated of <a href='index.php?page=ContabilidadAsiento&id=0'>this other</a>. If there isn't, to avoid this message, simply change the concept.",
+    "seat-possible-duplicated": "Seat possible duplicated of <a href='index.php?page=ContabilidadAsiento&id=0'>this other</a>. If there isn't, to avoid this message, simply change the concept.",
     "closed-exercise": "Exercise 0 is closed.",
     "error-while-renumbering-seats": "An error occurred while renumbering seats in financial year ",
     "renumbering-seats": "\nRenumbering seats...",

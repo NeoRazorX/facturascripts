@@ -84,6 +84,30 @@ class PageOption
      * @var array
      */
     public $filters;
+    
+    /**
+     * Propiedad para la carga del formulario en EditPageOption
+     * @var string
+     */
+    public $rows2;
+    
+    /**
+     * Propiedad para la carga del formulario en EditPageOption
+     * @var string
+     */
+    public $columns2;
+    
+    /**
+     * Propiedad para la carga del formulario en EditPageOption
+     * @var string
+     */
+    public $modals2;
+    
+    /**
+     * Propiedad para la carga del formulario en EditPageOption
+     * @var string
+     */
+    public $filters2;
 
     /**
      * Devuelve el nombre de la tabla que usa este modelo.
@@ -131,6 +155,10 @@ class PageOption
         $this->modals = [];
         $this->filters = [];
         $this->rows = [];
+        $this->columns2 = null;
+        $this->modals2 = null;
+        $this->filters2 = null;
+        $this->rows2 = null;
     }
 
     /**
@@ -143,7 +171,7 @@ class PageOption
     {
         if (!empty($groups)) {
             foreach ($groups as $item) {
-                $groupItem = ExtendedController\GroupItem::newFromJSON($item);
+                $groupItem = ExtendedController\GroupItem::newFromJSONGroup($item);
                 $target[$groupItem->name] = $groupItem;
                 unset($groupItem);
             }
@@ -157,18 +185,27 @@ class PageOption
      */
     public function loadFromData($data)
     {
-        $this->loadFromDataTrait($data, ['columns', 'modals', 'filters', 'rows']);
-
-        $groups = json_decode($data['columns'], true);
-        $this->getJSONGroupsColumns($groups, $this->columns);
-
+        $this->loadFromDataTrait($data, ['columns2','rows2','filters2','modals2']);
+       
+        $this->columns2 = json_encode($data['columns']);
+        $this->rows2 = $data['rows'];
+        $this->filters2 = $data['filters'];
+        $this->modals2 = $data['modals'];
+        
+        $columns = json_decode($data['columns'], true);
+        $this->getJSONGroupsColumns($columns, $this->columns);
+        
         $modals = json_decode($data['modals'], true);
         $this->getJSONGroupsColumns($modals, $this->modals);
+        
+        $filters = json_decode($data['filters'], true);
+        $this->getJSONGroupsColumns($filters, $this->filters);
 
         $rows = json_decode($data['rows'], true);
+        $rows = null;
         if (!empty($rows)) {
             foreach ($rows as $item) {
-                $rowItem = ExtendedController\RowItem::newFromJSON($item);
+                $rowItem = ExtendedController\RowItem::newFromJSONRow($item);
                 $this->rows[$rowItem->type] = $rowItem;
                 unset($rowItem);
             }
@@ -186,12 +223,14 @@ class PageOption
         $modals = json_encode($this->modals);
         $filters = json_encode($this->filters);
         $rows = json_encode($this->rows);
+        $nick = json_encode($this->nick);
 
         $sql = 'UPDATE ' . $this->tableName() . ' SET '
-            . '  columns = ' . $this->dataBase->var2str($columns)
-            . ' ,modals = ' . $this->dataBase->var2str($modals)
-            . ' ,filters = ' . $this->dataBase->var2str($filters)
-            . ' ,rows = ' . $this->dataBase->var2str($rows)
+            . '  columns = ' . $this->var2str($columns)
+            . ' ,modals = ' . $this->var2str($modals)
+            . ' ,filters = ' . $this->var2str($filters)
+            . ' ,rows = ' . $this->var2str($rows)
+            . ' ,nick = ' . $this->var2str($nick)
             . ' WHERE id = ' . $this->id . ';';
 
         return $this->dataBase->exec($sql);
@@ -212,12 +251,12 @@ class PageOption
         $sql = 'INSERT INTO ' . $this->tableName()
             . ' (id, name, nick, columns, modals, filters, rows) VALUES ('
             . "nextval('fs_pages_options_id_seq')" . ','
-            . $this->dataBase->var2str($this->name) . ','
-            . $this->dataBase->var2str($this->nick) . ','
-            . $this->dataBase->var2str($columns) . ','
-            . $this->dataBase->var2str($modals) . ','
-            . $this->dataBase->var2str($filters) . ','
-            . $this->dataBase->var2str($rows)
+            . $this->var2str($this->name) . ','
+            . $this->var2str($this->nick) . ','
+            . $this->var2str($columns) . ','
+            . $this->var2str($modals) . ','
+            . $this->var2str($filters) . ','
+            . $this->var2str($rows)
             . ');';
 
         if ($this->dataBase->exec($sql)) {
@@ -241,22 +280,19 @@ class PageOption
      */
     private function getXMLGroupsColumns($columns, &$target)
     {
-        // if group dont have elements
-        if ($columns->count() === 0) {
-            return;
-        }
-        
-        // if have elements but dont have groups
-        if (!isset($columns->group)) {
-            $groupItem = ExtendedController\GroupItem::newFromXML($columns);
+        // No hay agrupación de columnas
+        if (empty($columns->group)) {
+            $groupItem = new ExtendedController\GroupItem();
+            $groupItem->loadFromXMLColumns($columns);
             $target[$groupItem->name] = $groupItem;
             unset($groupItem);
             return;
         }
 
-        // exists columns grouped
+        // Con agrupación de columnas
         foreach ($columns->group as $group) {
-            $groupItem = ExtendedController\GroupItem::newFromXML($group);
+            $groupItem = new ExtendedController\GroupItem();
+            $groupItem->loadFromXML($group);
             $target[$groupItem->name] = $groupItem;
             unset($groupItem);
         }
@@ -266,13 +302,13 @@ class PageOption
      * Carga las condiciones especiales para las filas
      * desde el XML
      *
-     * @param \SimpleXMLElement $rows
+     * @param \SimpleXMLElement[] $rows
      */
     private function getXMLRows($rows)
     {
         if (!empty($rows)) {
             foreach ($rows->row as $row) {
-                $rowItem = ExtendedController\RowItem::newFromXML($row);
+                $rowItem = ExtendedController\RowItem::newFromXMLRow($row);
                 $this->rows[$rowItem->type] = $rowItem;
                 unset($rowItem);
             }
@@ -335,7 +371,7 @@ class PageOption
         }
 
         // Aplicamos sobre los widgets Select dinámicos sus valores
-        $this->dynamicSelectValues();
+        //$this->dynamicSelectValues();
     }
 
     /**

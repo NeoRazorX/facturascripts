@@ -904,7 +904,7 @@
     "incorrect-seat-amount": "Importe del asiento incorrecto.",
     "seat-within-regularization": "El asiento se encuentra dentro de una regularización de 0. No se puede eliminar.",
     "seat-date-not-in-exercise-range": "La fecha de este asiento está fuera del rango del <a target='_blank' href='0'>ejercicio</a>.",
-    "seat-possible duplicated": "Este asiento es un posible duplicado de <a href='index.php?page=ContabilidadAsiento&id=0'>este otro</a>. Si no lo es, para evitar este mensaje, simplemente modifica el concepto.",
+    "seat-possible-duplicated": "Este asiento es un posible duplicado de <a href='index.php?page=ContabilidadAsiento&id=0'>este otro</a>. Si no lo es, para evitar este mensaje, simplemente modifica el concepto.",
     "closed-exercise": "El ejercicio 0 está cerrado.",
     "error-while-renumbering-seats": "Se ha producido un error mientras se renumeraban los asientos del ejercicio ",
     "renumbering-seats": "\nRenumerando asientos...",
