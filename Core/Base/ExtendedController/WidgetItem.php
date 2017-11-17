@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -24,8 +23,9 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-abstract class WidgetItem implements VisualItemInterface, WidgetInterface
+abstract class WidgetItem implements VisualItemInterface
 {
+
     /**
      * Field name with the data that the widget displays
      *
@@ -34,14 +34,14 @@ abstract class WidgetItem implements VisualItemInterface, WidgetInterface
     public $fieldName;
 
     /**
-     * Tipo de widget que se visualiza
+     * Type of widget displayed
      *
      * @var string
      */
     public $type;
 
     /**
-     * Información adicional para el usuario
+     * Additional information for the user
      *
      * @var string
      */
@@ -83,16 +83,14 @@ abstract class WidgetItem implements VisualItemInterface, WidgetInterface
     public $options;
 
     /**
-     * Genera el código html para visualizar el dato del modelo
-     * para controladores List
+     * Generates the html code to display the model data for List controller
      *
      * @param string $value
      */
     abstract public function getListHTML($value);
 
     /**
-     * Genera el código html para visualizar el dato del modelo
-     * para controladores Edit
+     * Generates the html code to display the model data for Edit controller
      *
      * @param string $value
      */
@@ -144,7 +142,7 @@ abstract class WidgetItem implements VisualItemInterface, WidgetInterface
         $widgetAtributes = $column->widget->attributes();
         $type = (string) $widgetAtributes->type;
         $widget = self::widgetItemFromType($type);
-        $widget->loadFromXML($column);
+        $widget->loadFromXML($column, $widgetAtributes);
         return $widget;
     }
 
@@ -177,7 +175,15 @@ abstract class WidgetItem implements VisualItemInterface, WidgetInterface
     }
 
     /**
-     * Genera el código html para visualizar la cabecera del elemento visual
+     * Array with list of personalization functions of the column
+     */
+    public function columnFunction()
+    {
+        return ['ColumnClass', 'ColumnHint', 'ColumnRequired', 'ColumnDescription'];
+    }
+
+    /**
+     * Generate the html code to visualize the visual element header
      *
      * @param string $value
      * @return string

@@ -95,6 +95,25 @@
 </div>
 {% endmacro %}
 
+<!--
+    Generate the code for the row of actions buttons
+-->
+{% macro rowActionsForEditView(context, view) %}
+
+{% set actions = view.getRow('actions') %}
+{% if actions is not empty %}
+{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+<div class="col">
+    {% for button in actions.buttons %}
+        {% set label = context.i18n.trans(button.label) %}
+        {% set hint = context.i18n.trans(button.hint) %}
+        {% set hint = popoverTitle(hint, 'bottom') %}
+        {{ button.getHTML(label, context.indexView, hint, 'btn-sm')|raw }}
+    {% endfor %}
+</div>    
+{% endif %}
+{% endmacro %}
+
 
 <!--
     Generate the code for the List view according to the indicated columns
@@ -178,24 +197,25 @@
                 <legend>{{ group.getHeaderHTML(group.title)|raw }}</legend>
                 {% endif %}
                 {% for column in group.columns %}
-                {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
-                {% if column.display == 'none' %}
+                    {% set value = column.widget.fieldName is null ? '' : context.fsc.getFieldValue(model, column.widget.fieldName) %}
+                    {% if column.display == 'none' %}
                 <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
-                {% else %}
-                {{ column.getEditHTML(value)|raw }}
-                {% endif %}
+                    {% else %}
+                        {{ column.getEditHTML(value)|raw }}
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>
         {% endfor %}
 
     {% if withForm == TRUE %}
+    {% from 'Macro/BaseController.html' import rowActionsForEditView as rowActionsForEditView %}
     {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
     {% set save, save_title = context.i18n.trans('save'), context.i18n.trans('save-data') %}
     {% set undo, undo_title = context.i18n.trans('undo'), context.i18n.trans('restore-data') %}
     </div>
     <div class="row">
-        <div class="col-6">
+        <div class="col">
             {% if keyValue is not empty %}
             {% set remove, remove_title = context.i18n.trans('delete'), context.i18n.trans('delete-record') %}
             <a id="b_remove" class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
@@ -205,7 +225,9 @@
             {% endif %}
         </div>
 
-        <div class="col-6 text-right">
+        {{ rowActionsForEditView(context, view) }}            
+
+        <div class="col text-right">
             <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
                     <i class="fa fa-undo" aria-hidden="true"></i>&nbsp; {{ undo }}
             </button>
