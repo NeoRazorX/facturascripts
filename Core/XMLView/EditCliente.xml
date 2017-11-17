@@ -122,11 +122,7 @@
                 <widget type="datepicker" fieldname="fechabaja" />
             </column>
 
-            <column name="blocked" numcolumns="4" order="100">
-                <widget type="checkbox" fieldname="debaja" />
-            </column>
-
-            <column name="action1" order="210">
+            <column name="action1" order="210" numcolumns="4">
                 <button type="modal" label="Action1" color="primary" action="test" icon="fa-users" hint="Solo pulsar en caso de emergencia" />
             </column>
 
@@ -136,6 +132,10 @@
 
             <column name="action3" order="210">
                 <button type="action" label="Action3" action="process2" />
+            </column>
+
+            <column name="blocked" numcolumns="4" order="990">
+                <widget type="checkbox" fieldname="debaja" />
             </column>
         </group>
 

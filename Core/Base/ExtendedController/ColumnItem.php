@@ -196,16 +196,15 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     public function getEditHTML($value, $withLabel = TRUE)
     {
         $header = $withLabel ? $this->getHeaderHTML($this->title) : '';
-        $input = $this->widget->getEditHTML($value);
         $data = $this->getColumnData( $this->widget->columnFunction() );
 
         switch ($this->widget->type) {
             case 'checkbox':
-                $html = $this->checkboxHTMLColumn($header, $input, $data);
+                $html = $this->checkboxHTMLColumn($header, $value, $data);
                 break;
 
             case 'radio':
-                $html = $this->radioHTMLColumn($header, $input, $data, $value);
+                $html = $this->radioHTMLColumn($header, $data, $value);
                 break;
 
             case 'calculate':
@@ -215,7 +214,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
                 break;
             
             default:
-                $html = $this->standardHTMLColumn($header, $input, $data);
+                $html = $this->standardHTMLColumn($header, $value, $data);
                 break;
         }
 
@@ -226,14 +225,15 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      * Returns the HTML code to display a non special field
      *
      * @param string $header
-     * @param string $input
+     * @param string $value
      * @param array $data
      *
      * @return string
      */
-    private function standardHTMLColumn($header, $input, $data)
+    private function standardHTMLColumn($header, $value, $data)
     {
         $label = ($header != null) ? '<label for="' . $this->widget->fieldName . '" ' . $data['ColumnHint'] . '>' . $header . '</label>' : '';
+        $input = $this->widget->getEditHTML($value);
 
         return '<div class="form-group' . $data['ColumnClass'] . '">'
             . $label . $input . $data['ColumnDescription'] . $data['ColumnRequired']
@@ -242,8 +242,9 @@ class ColumnItem extends VisualItem implements VisualItemInterface
 
     private function buttonHTMLColumn($data)
     {
-        return '<div class="form-group' . $data['ColumnClass'] . '">'
-            . $this->widget->getHTML($this->widget->label, '', $data['ColumnHint'])
+        $columClass = $data['ColumnClass'] === ' col' ? ' col' : $data['ColumnClass'];
+        return '<div class="form-group' . $columClass . '"><label>&nbsp;</label>'
+            . $this->widget->getHTML($this->widget->label, '', $data['ColumnHint'], 'col')
             . $data['ColumnDescription'] 
             . '</div>';
     }
@@ -252,13 +253,14 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      * Returns the HTML code to display a checkbox field
      *
      * @param string $header
-     * @param string $input
+     * @param string $value
      * @param array $data
      *
      * @return string
      */
-    private function checkboxHTMLColumn($header, $input, $data)
+    private function checkboxHTMLColumn($header, $value, $data)
     {
+        $input = $this->widget->getEditHTML($value);
         $label = ($header != null) ? '<label class="form-check-label custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0" ' . $data['ColumnHint'] . '>' . $input . '&nbsp;' . $header . '</label>' : '';
 
         $result = '<div class="form-row align-items-center' . $data['ColumnClass'] . '">'
@@ -273,13 +275,12 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      * Returns the HTML code to display a list of options
      *
      * @param string $header
-     * @param string $input
      * @param array $data
      * @param string $value
      *
      * @return string
      */
-    private function radioHTMLColumn($header, $input, $data, $value)
+    private function radioHTMLColumn($header, $data, $value)
     {
         $html = '';
         $index = 0;
@@ -288,6 +289,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         $result = '<div class="' . $data['ColumnClass'] . '">'
             . '<label>' . $header . '</label>';
 
+        $input = $this->widget->getEditHTML($value);
         foreach ($this->widget->values as $optionValue) {
             $checked = ($optionValue['value'] == $value) ? ' checked="checked"' : '';
             ++$index;
@@ -328,7 +330,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      */
     private function getColumnClass()
     {
-        return ($this->numColumns > 0) ? (' col-md-' . $this->numColumns) : ' col-sm-auto';
+        return ($this->numColumns > 0) ? (' col-md-' . $this->numColumns) : ' col';
     }
 
     /**

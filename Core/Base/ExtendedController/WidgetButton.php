@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class WidgetButton implements VisualItemInterface, WidgetInterface
+class WidgetButton implements VisualItemInterface
 {
 
     /**
@@ -184,11 +184,11 @@ class WidgetButton implements VisualItemInterface, WidgetInterface
      * @param string $hint
      * @return string
      */
-    private function getActionHTML($label, $indexView, $hint)
+    private function getActionHTML($label, $indexView, $hint, $class = 'col-sm-auto')
     {
         $active = '<input type="hidden" name="active" value="' . $indexView . '">';
         $action = '<input type="hidden" name="action" value="' . $this->action . '">';
-        $button = '<button class="col-sm-auto btn btn-' . $this->color . '" type="submit"'
+        $button = '<button class="' . $class . ' btn btn-' . $this->color . '" type="submit"'
             . ' onclick="this.disabled = true; this.form.submit();" ' . $hint . '>'
             . $this->getIconHTML()
             . $label
@@ -209,9 +209,9 @@ class WidgetButton implements VisualItemInterface, WidgetInterface
      * @param string $label
      * @return string
      */
-    private function getModalHTML($label)
+    private function getModalHTML($label, $class = 'col-sm-auto')
     {
-        $html = '<button type="button" class="col-sm-auto btn btn-' . $this->color . '"'
+        $html = '<button type="button" class="' . $class . ' btn btn-' . $this->color . '"'
             . ' data-toggle="modal" data-target="#' . $this->action . '">'
             . $this->getIconHTML()
             . $label
@@ -227,31 +227,21 @@ class WidgetButton implements VisualItemInterface, WidgetInterface
      * @param string $hint
      * @return string
      */
-    public function getHTML($label, $value = '', $hint = '')
+    public function getHTML($label, $value = '', $hint = '', $class = 'col-sm-auto')
     {
         switch ($this->type) {
             case 'calculate':
                 return $this->getCalculateHTML($label, $value, $hint);
 
             case 'action':
-                return $this->getActionHTML($label, $value, $hint);
+                return $this->getActionHTML($label, $value, $hint, $class);
 
             case 'modal':
-                return $this->getModalHTML($label);
+                return $this->getModalHTML($label, $class);
 
             default:
                 return '';
         }
-    }
-
-    /**
-     * Generates the html code to display the model data for Edit controller
-     *
-     * @param string $value
-     */
-    public function getEditHTML($value)
-    {
-        return '';
     }
 
     /**
@@ -261,16 +251,6 @@ class WidgetButton implements VisualItemInterface, WidgetInterface
      * @return string
      */
     public function getHeaderHTML($value)
-    {
-        return '';
-    }
-
-    /**
-     * Generates the html code to display the model data for List controller
-     *
-     * @param string $value
-     */
-    public function getListHTML($value)
     {
         return '';
     }

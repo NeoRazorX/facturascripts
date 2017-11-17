@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-abstract class WidgetItem implements VisualItemInterface, WidgetInterface
+abstract class WidgetItem implements VisualItemInterface
 {
 
     /**
@@ -142,7 +142,7 @@ abstract class WidgetItem implements VisualItemInterface, WidgetInterface
         $widgetAtributes = $column->widget->attributes();
         $type = (string) $widgetAtributes->type;
         $widget = self::widgetItemFromType($type);
-        $widget->loadFromXML($column);
+        $widget->loadFromXML($column, $widgetAtributes);
         return $widget;
     }
 
@@ -217,7 +217,6 @@ abstract class WidgetItem implements VisualItemInterface, WidgetInterface
      * Loads the attributes structure from a XML file
      *
      * @param \SimpleXMLElement $column
-     * @param \SimpleXMLElement $widgetAtributes
      */
     public function loadFromXML($column)
     {
