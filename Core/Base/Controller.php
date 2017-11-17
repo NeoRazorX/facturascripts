@@ -252,15 +252,14 @@ class Controller
 
         /// ¿Ha marcado el usuario la página como página de inicio?
         $defaultPage = $this->request->query->get('defaultPage', '');
-        if ($defaultPage == 'TRUE') {
+        if ($defaultPage === 'TRUE') {
             $this->user->homepage = $this->className;
-            $this->response->headers->setCookie(new Cookie('fsHomepage', $this->user->homepage, time() + FS_COOKIES_EXPIRE));
-            $this->user->save();
-        } else if ($defaultPage == 'FALSE') {
+        } elseif ($defaultPage === 'FALSE') {
             $this->user->homepage = null;
-            $this->response->headers->setCookie(new Cookie('fsHomepage', $this->user->homepage, time() - FS_COOKIES_EXPIRE));
-            $this->user->save();
         }
+        $cookie = new Cookie('fsHomepage', $this->user->homepage, time() - FS_COOKIES_EXPIRE);
+        $this->response->headers->setCookie($cookie);
+        $this->user->save();
 
         $this->dispatcher->dispatch('pre-privateCore');
     }
