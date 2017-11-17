@@ -24,20 +24,14 @@
 
 <view>
     <columns>
-        <column name="id" order="100">
+        <column name="id" order="100" display="none">
             <widget type="text" fieldname="idprovincia" onclick="EditProvincia" />
         </column>
-        <column name="iso" order="100" titleurl="https://es.wikipedia.org/wiki/Provincia_de_España#Denominaci.C3.B3n_y_lista_de_las_provincias">
-            <widget type="text" fieldname="codisoprov" />
-        </column>
-        <column name="postalcode" order="110" titleurl="https://upload.wikimedia.org/wikipedia/commons/5/5c/2_digit_postcode_spain.png">
-            <widget type="text" fieldname="codpostal2d" />
-        </column>
-        <column name="alfa-code-3" order="120" titleurl="https://es.wikipedia.org/wiki/ISO_4217">
-            <widget type="text" fieldname="codpais" />
-        </column>
-        <column name="province" order="130">
+        <column name="province" order="110">
             <widget type="text" fieldname="provincia" />
+        </column>
+        <column name="country" order="120">
+            <widget type="text" fieldname="codpais" />
         </column>
         <column name="latitude" display="right" order="140">
             <widget type="number" decimal="4" fieldname="latitud">

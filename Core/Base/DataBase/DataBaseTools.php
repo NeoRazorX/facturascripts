@@ -40,14 +40,14 @@ class DataBaseTools
     /**
      * System Log.
      * 
-     * @var MiniLog 
+     * @var Translator 
      */
     private static $i18n;
 
     /**
      * Translator.
      * 
-     * @var Translator 
+     * @var MiniLog 
      */
     private static $miniLog;
 
@@ -70,7 +70,7 @@ class DataBaseTools
     public function checkTable($tableName, $xmlCols, $xmlCons)
     {
         if (!self::$dataBase->checkTableAux($tableName)) {
-            $this->miniLog->critical($this->i18n->trans('error-to-innodb'));
+            self::$miniLog->critical($this->i18n->trans('error-to-innodb'));
         }
 
         /**
@@ -81,7 +81,7 @@ class DataBaseTools
         $sql2 = $this->compareConstraints($tableName, $xmlCons, $dbCons, true);
         if ($sql2 !== '') {
             if (!self::$dataBase->exec($sql2)) {
-                $this->miniLog->critical(self::$i18n->trans('check-table', [$tableName]));
+                self::$miniLog->critical(self::$i18n->trans('check-table', [$tableName]));
             }
 
             /// leemos de nuevo las restricciones

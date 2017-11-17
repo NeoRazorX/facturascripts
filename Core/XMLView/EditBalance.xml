@@ -26,7 +26,7 @@
     <columns>
         <group name="data" numcolumns="12">    
             <column name="code" order="100" numcolumns="2">
-                <widget type="text" fieldname="codbalance" onclick="EditBalance" />
+                <widget type="text" fieldname="codbalance" />
             </column>           
             <column name="nature" numcolumns="2" order="110">
                 <widget type="select" fieldname="naturaleza">

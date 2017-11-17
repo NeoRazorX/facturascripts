@@ -226,6 +226,8 @@ class Postgresql implements DataBaseEngine
             if ($aux) {
                 if ($selectRows) {
                     $result = pg_fetch_all($aux);
+                } else {
+                    $result = true;
                 }
                 pg_free_result($aux);
             }
@@ -261,7 +263,7 @@ class Postgresql implements DataBaseEngine
      */
     public function exec($link, $sql)
     {
-        return $this->runSql($link, $sql, false) === false;
+        return $this->runSql($link, $sql, false) === true;
     }
 
     /**
