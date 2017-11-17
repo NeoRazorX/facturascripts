@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
+
 /**
  * La línea de un asiento.
  * Se relaciona con un asiento y una subcuenta.
@@ -268,7 +270,7 @@ class Partida
         $this->codcontrapartida = null;
         $this->punteada = false;
         $this->tasaconv = 1.0;
-        $this->coddivisa = $this->defaultItems->codDivisa();
+        $this->coddivisa = AppSettings::get('default', 'coddivisa');
         $this->haberme = 0.0;
         $this->debeme = 0.0;
         $this->recargo = 0.0;

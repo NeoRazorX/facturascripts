@@ -23,8 +23,9 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class WidgetButton implements VisualItemInterface, WidgetInterface
+class WidgetButton implements VisualItemInterface
 {
+
     /**
      * Tipo de botón
      * @var string
@@ -32,10 +33,22 @@ class WidgetButton implements VisualItemInterface, WidgetInterface
     public $type;
 
     /**
+     * Código adicional asociado al botón
+     * @var string
+     */
+    public $hint;
+
+    /**
      * Icono asociado al botón
      * @var string
      */
     public $icon;
+
+    /**
+     * Acción JS asociada al botón
+     * @var string
+     */
+    public $onClick;
 
     /**
      * Texto asociado al botón
@@ -50,22 +63,10 @@ class WidgetButton implements VisualItemInterface, WidgetInterface
     public $action;
 
     /**
-     * Acción JS asociada al botón
-     * @var string
-     */
-    public $onClick;
-
-    /**
      * Color asociado al botón
      * @var string
      */
     public $color;
-
-    /**
-     * Código adicional asociado al botón
-     * @var string
-     */
-    public $hint;
 
     /**
      * Crea y carga la estructura de atributos en base a un archivo XML
@@ -96,6 +97,14 @@ class WidgetButton implements VisualItemInterface, WidgetInterface
         $this->onClick = '#';
         $this->color = 'light';
         $this->hint = '';
+    }
+
+    /**
+     * Array with list of personalization functions of the column
+     */
+    public function columnFunction()
+    {
+        return ['ColumnClass', 'ColumnHint', 'ColumnDescription'];
     }
 
     public function loadFromXML($button)
@@ -134,9 +143,7 @@ class WidgetButton implements VisualItemInterface, WidgetInterface
      */
     private function getIconHTML()
     {
-        $html = empty($this->icon)
-            ? ''
-            : '<i class="fa ' . $this->icon . '"></i>&nbsp;&nbsp;';
+        $html = empty($this->icon) ? '' : '<i class="fa ' . $this->icon . '"></i>&nbsp;&nbsp;';
         return $html;
     }
 
@@ -147,9 +154,7 @@ class WidgetButton implements VisualItemInterface, WidgetInterface
      */
     private function getOnClickHTML()
     {
-        $html = empty($this->onClick)
-            ? ''
-            : ' onclick="' . $this->onClick . '"';
+        $html = empty($this->onClick) ? '' : ' onclick="' . $this->onClick . '"';
         return $html;
     }
 
@@ -179,11 +184,11 @@ class WidgetButton implements VisualItemInterface, WidgetInterface
      * @param string $hint
      * @return string
      */
-    private function getActionHTML($label, $indexView, $hint)
+    private function getActionHTML($label, $indexView, $hint, $class = 'col-sm-auto')
     {
         $active = '<input type="hidden" name="active" value="' . $indexView . '">';
         $action = '<input type="hidden" name="action" value="' . $this->action . '">';
-        $button = '<button class="btn btn-' . $this->color . '" type="submit"'
+        $button = '<button class="' . $class . ' btn btn-' . $this->color . '" type="submit"'
             . ' onclick="this.disabled = true; this.form.submit();" ' . $hint . '>'
             . $this->getIconHTML()
             . $label
@@ -204,9 +209,9 @@ class WidgetButton implements VisualItemInterface, WidgetInterface
      * @param string $label
      * @return string
      */
-    private function getModalHTML($label)
+    private function getModalHTML($label, $class = 'col-sm-auto')
     {
-        $html = '<button type="button" class="btn btn-' . $this->color . '"'
+        $html = '<button type="button" class="' . $class . ' btn btn-' . $this->color . '"'
             . ' data-toggle="modal" data-target="#' . $this->action . '">'
             . $this->getIconHTML()
             . $label
@@ -222,34 +227,30 @@ class WidgetButton implements VisualItemInterface, WidgetInterface
      * @param string $hint
      * @return string
      */
-    public function getHTML($label, $value = '', $hint = '')
+    public function getHTML($label, $value = '', $hint = '', $class = 'col-sm-auto')
     {
         switch ($this->type) {
             case 'calculate':
                 return $this->getCalculateHTML($label, $value, $hint);
 
             case 'action':
-                return $this->getActionHTML($label, $value, $hint);
+                return $this->getActionHTML($label, $value, $hint, $class);
 
             case 'modal':
-                return $this->getModalHTML($label);
+                return $this->getModalHTML($label, $class);
 
             default:
                 return '';
         }
     }
 
-    public function getEditHTML($value)
-    {
-        return $this->getHTML($value);
-    }
-
+    /**
+     * Generate the html code to visualize the visual element header
+     *
+     * @param string $value
+     * @return string
+     */
     public function getHeaderHTML($value)
-    {
-        return '';
-    }
-
-    public function getListHTML($value)
     {
         return '';
     }

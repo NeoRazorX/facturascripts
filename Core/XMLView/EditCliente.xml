@@ -122,14 +122,22 @@
                 <widget type="datepicker" fieldname="fechabaja" />
             </column>
 
-            <column name="blocked" numcolumns="4" order="100">
+            <column name="action1" order="210">
+                <button type="modal" label="Modal" color="primary" action="test" icon="fa-users" hint="Solo pulsar en caso de emergencia" />
+            </column>
+
+            <column name="blocked" numcolumns="4" order="990">
                 <widget type="checkbox" fieldname="debaja" />
             </column>
         </group>
 
         <group name="notes">
-            <column name="notes" order="170">
+            <column name="notes" order="170" numcolumns="10">
                 <widget type="textarea" fieldname="observaciones" />
+            </column>
+
+            <column name="action2" order="210">
+                <button type="action" label="Action" color="info" action="process1" icon="fa-book" hint="Ejecuta el controlador con action=process1" />
             </column>
         </group>
     </columns>
@@ -140,11 +148,15 @@
             <button type="calculate" icon="fa-money" label="pending-invoices-button" action="calcClientInvoicePending" />
         </row>
 
+        <row type="actions">
+            <button type="modal" label="Modal" color="primary" action="test" icon="fa-users" />
+            <button type="action" label="Action" color="info" action="process1" icon="fa-book" hint="Ejecuta el controlador con action=process1" />
+        </row>
+
         <row type="footer">
-            <group>
-                <button type="modal" label="Action1" color="primary" action="test" icon="fa-users" />
-                <button type="action" label="Action2" color="info" action="process1" icon="fa-book" hint="Ejecuta el controlador con action=process1" />
-                <button type="action" label="Action3" action="process2" />
+            <group name="footer1" footer="specials-actions" label="Esto es una muestra de botones en un 'bootstrap card'">
+                <button type="modal" label="Modal" color="primary" action="test" icon="fa-users" />
+                <button type="action" label="Action" color="info" action="process1" icon="fa-book" hint="Ejecuta el controlador con action=process1" />
             </group>
         </row>
     </rows>

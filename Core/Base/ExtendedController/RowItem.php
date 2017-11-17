@@ -45,8 +45,9 @@ abstract class RowItem implements VisualItemInterface
             case 'status':
                 return new RowItemStatus();
 
+            case 'actions':
             case 'header':
-                return new RowItemHeader();
+                return new RowItemButtons($type);
 
             case 'footer':
                 return new RowItemFooter();

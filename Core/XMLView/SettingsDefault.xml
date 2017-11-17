@@ -24,6 +24,38 @@
 
 <view>
     <columns>
+        <group name="default" title="default-data" numcolumns="12" icon="fa-cogs fa-lg">
+            <column name="country" numcolumns="3" order="100">
+                <widget type="select" fieldname="codpais">
+                    <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="currency" numcolumns="3" order="100">
+                <widget type="select" fieldname="coddivisa"> 
+                    <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="warehouse" numcolumns="3" order="100">
+                <widget type="select" fieldname="codalmacen">
+                    <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="serie" numcolumns="3" order="110">
+                <widget type="select" fieldname="codserie"> 
+                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="payment-method" numcolumns="3" order="120">
+                <widget type="select" fieldname="codpago"> 
+                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="codimpuesto" title="default-tax" numcolumns="3" order="130">
+                <widget type="select" fieldname="codimpuesto">
+                    <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+        </group>
         <group name="numericformat" title="numeric-formats" numcolumns="12" icon="fa-info-circle fa-lg">
             <column name="name" display="none" order="0">
                 <widget type="text" fieldname="name" readonly="true" required="true" />

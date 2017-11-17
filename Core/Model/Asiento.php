@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
+
 /**
  * El asiento contable. Se relaciona con un ejercicio y se compone de partidas.
  *
@@ -215,7 +217,7 @@ class Asiento
     public function codDivisa()
     {
         if ($this->coddivisa === null) {
-            $this->coddivisa = $this->defaultItems->codDivisa();
+            $this->coddivisa = AppSettings::get('default', 'coddivisa');
 
             foreach ($this->getPartidas() as $par) {
                 if ($par->coddivisa) {

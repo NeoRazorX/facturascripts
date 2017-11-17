@@ -75,34 +75,9 @@
                 <widget type="text" fieldname="web" />
             </column>
         </group>
-        <group name="management" columns="12" icon="fa-cog" title="default-data">
-            <column name="warehouse" numcolumns="2">
-                <widget type="select" fieldname="codalmacen">
-                    <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
-                </widget>
-            </column>
+        <group name="management" columns="12" icon="fa-cog" title="advanced">
             <column name="startdate" numcolumns="2" order="180">
                 <widget type="datepicker" fieldname="inicioact"/>
-            </column>
-            <column name="default-exercise" numcolumns="2" order="190">
-                <widget type="select" fieldname="codejercicio"> 
-                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
-                </widget>
-            </column>
-            <column name="default-currency" numcolumns="2" order="200">
-                <widget type="select" fieldname="coddivisa"> 
-                    <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
-                </widget>
-            </column>
-            <column name="default-serie" numcolumns="2" order="210">
-                <widget type="select" fieldname="codserie"> 
-                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
-                </widget>
-            </column>
-            <column name="default-payment-method" numcolumns="2" order="220">
-                <widget type="select" fieldname="codpago"> 
-                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
-                </widget>
             </column>
             <column name="surcharge" columns="2" order="240">
                 <widget type="checkbox" fieldname="recequivalencia"/>
