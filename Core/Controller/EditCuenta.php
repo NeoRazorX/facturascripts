@@ -38,6 +38,7 @@ class EditCuenta extends ExtendedController\PanelController
     {
         $this->addEditView('FacturaScripts\Core\Model\Cuenta', 'EditCuenta', 'account');
         $this->addListView('FacturaScripts\Core\Model\Subcuenta', 'ListSubcuenta', 'subaccounts');
+        $this->setTabsPosition('bottom');
     }
 
     /**
