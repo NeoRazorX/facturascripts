@@ -1102,5 +1102,11 @@
     "precio": "Prive",
     "dto": "Disc.",
     "concepto": "Concept",
-    "importe": "Amount"
+    "importe": "Amount",
+    "page-option":"Options",
+    "page-option-header":"Options Config",
+    "page-option-rows":"Rows",
+    "page-option-columns":"Columns",
+    "page-option-filters":"Filters",
+    "page-option-modals":"Popup Windows"
 }

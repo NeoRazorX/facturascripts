@@ -1102,5 +1102,11 @@
     "precio": "Precio",
     "dto": "Dto",
     "concepto": "Concepto",
-    "importe": "Importe"
+    "importe": "Importe",
+    "page-option": "Opciones",
+    "page-option-header": "Configuración de Opciones",
+    "page-option-rows": "Filas",
+    "page-option-columns": "Columnas",
+    "page-option-filters": "Filtros",
+    "page-option-modals": "Ventanas Emergentes"
 }
