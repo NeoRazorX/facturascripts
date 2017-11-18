@@ -21,7 +21,6 @@
  *
  * @author Nazca Networks <comercial@nazcanetworks.com>
 -->
-
 <view>
     <columns>
         <group name="exercise" numcolumns="10">
