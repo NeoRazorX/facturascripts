@@ -26,7 +26,9 @@ namespace FacturaScripts\Core\Model;
 class Epigrafe
 {
 
-    use Base\ModelTrait;
+    use Base\ModelTrait {
+        url as private traitURL;
+    }
 
     /**
      * Lista de grupos

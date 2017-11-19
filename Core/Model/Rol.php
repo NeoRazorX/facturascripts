@@ -28,7 +28,9 @@ namespace FacturaScripts\Core\Model;
 class Rol
 {
 
-    use Base\ModelTrait;
+    use Base\ModelTrait {
+        url as private traitURL;
+    }
 
     /**
      * Código de rol

@@ -27,8 +27,9 @@ class CuentaBanco
 {
 
     use Base\ModelTrait {
-        url as private urlTrait;
+        url as private traitURL;
     }
+
     use Base\BankAccount;
 
     /**

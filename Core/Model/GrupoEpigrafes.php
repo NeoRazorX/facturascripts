@@ -26,7 +26,9 @@ namespace FacturaScripts\Core\Model;
 class GrupoEpigrafes
 {
 
-    use Base\ModelTrait;
+    use Base\ModelTrait {
+        url as private traitURL;
+    }
 
     /**
      * Clave primaria

@@ -26,7 +26,9 @@ namespace FacturaScripts\Core\Model;
 class ArticuloProveedor
 {
 
-    use Base\ModelTrait;
+    use Base\ModelTrait {
+        url as private traitURL;
+    }
 
     /**
      * Clave primaria.

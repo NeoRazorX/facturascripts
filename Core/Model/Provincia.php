@@ -28,7 +28,7 @@ class Provincia
 {
 
     use Base\ModelTrait {
-        url as private urlTrait;
+        url as private traitURL;
     }
 
     /**
