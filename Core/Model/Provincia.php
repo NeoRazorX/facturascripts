@@ -28,7 +28,7 @@ class Provincia
 {
 
     use Base\ModelTrait {
-        url as private urlTrait;
+        url as private traitURL;
     }
 
     /**
@@ -117,6 +117,6 @@ class Provincia
 
     public function url($type = 'auto')
     {
-        return $this->urlTrait($type, 'ListPais&active=List');
+        return $this->traitURL($type, 'ListPais&active=List');
     }
 }
