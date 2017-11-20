@@ -33,7 +33,6 @@ use FacturaScripts\Core\Model\Cuenta;
  */
 class EditEjercicio extends ExtendedController\PanelController
 {
-
     /**
      * Load views.
      */

@@ -22,7 +22,6 @@
  *
  * @author Nazca Networks <comercial@nazcanetworks.com>
 -->
-
 <view>
     <columns>
         <group name="data" numcolumns="12">

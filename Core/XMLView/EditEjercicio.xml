@@ -21,7 +21,6 @@
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
 -->
-
 <view>
     <columns>
         <group name="data" title="exercise" numcolumns="12">
