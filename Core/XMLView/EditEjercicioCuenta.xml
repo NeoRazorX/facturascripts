@@ -27,19 +27,19 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="fiscal-exercise" numcolumns="2" order="100" display="none">
-                <widget type="text" fieldname="codejercicio"/>
+                <widget type="text" fieldname="codejercicio"/>   
             </column>
             <column name="accounting-heading" numcolumns="2" order="110">
-                <widget type="select" fieldname="idepigrafe">
-                </widget>
+                <widget type="text" fieldname="idepigrafe" onclick="" />
             </column>
             <column name="account-code" numcolumns="2" order="120">
-                <widget type="text" fieldname="codcuenta" icon="fa-bar-chart" />
+                <widget type="text" fieldname="codcuenta" icon="fa-bar-chart" onclick="" />
             </column>
             <column name="description" numcolumns="4" order="130">
-                <widget type="text" fieldname="descripcion" />
+                <widget type="text" fieldname="descripcion" onclick="" />
             </column>
+            
+         
         </group>
     </columns>
 </view>
-

@@ -18,36 +18,54 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Model;
+
 use FacturaScripts\Core\Model\GrupoEpigrafes;
 use FacturaScripts\Core\Model\Epigrafe;
 use FacturaScripts\Core\Model\Cuenta;
 
 /**
- * Controller to edit a single item from the Familia model
+ * Controlador para la edición de un registro del modelo Familia
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Raúl JIménez <comercial@nazcanetworks.com>
  */
 class EditEjercicio extends ExtendedController\PanelController
 {
 
     /**
-     * Load views.
+     * Procedimiento para insertar vistas en el controlador
      */
     protected function createViews()
     {
         $this->addEditView('FacturaScripts\Core\Model\Ejercicio', 'EditEjercicio', 'exercise');
-        $this->addEditListView('FacturaScripts\Core\Model\GrupoEpigrafes', 'EditEjercicioGrupoEpigrafes', 'Grupo epigrafe');
-        $this->addEditListView('FacturaScripts\Core\Model\Epigrafe', 'EditEjercicioEpigrafe', 'Epigrafes');
-        $this->addEditListView('FacturaScripts\Core\Model\Cuenta', 'EditEjercicioCuenta', 'account', 'fa-book');
-        $this->addEditListView('FacturaScripts\Core\Model\Subcuenta', 'EditEjercicioSubcuenta', 'subaccount');
+        $this->addListView('FacturaScripts\Core\Model\GrupoEpigrafes', 'EditEjercicioGrupoEpigrafes', 'Grupo epigrafe');
+        $this->addListView('FacturaScripts\Core\Model\Epigrafe', 'EditEjercicioEpigrafe', 'Epigrafes');
+        $this->addListView('FacturaScripts\Core\Model\Cuenta', 'EditEjercicioCuenta', 'account','fa-book');
+        $this->addListView('FacturaScripts\Core\Model\SubCuenta', 'EditEjercicioSubCuenta', 'sub-account','fa-th-list fa-fw');
+           
     }
 
     /**
-     * Load view data procedure
+     * Devuele el campo $fieldName del modelo Ejercicio
+     *
+     * @param string $fieldName
+     *
+     * @return string|boolean
+     */
+    private function getEjercicioFieldValue($fieldName)
+    {
+        $model = $this->views['EditEjercicio']->getModel();
+        return $model->{$fieldName};
+    }
+
+    /**
+     * Procedimiento encargado de cargar los datos a visualizar
      *
      * @param string $keyView
      * @param ExtendedController\EditView $view
@@ -59,31 +77,27 @@ class EditEjercicio extends ExtendedController\PanelController
                 $value = $this->request->get('code');
                 $view->loadData($value);
                 break;
-
             case 'EditEjercicioGrupoEpigrafes':
-                $where = [new DataBase\DataBaseWhere('codejercicio', $this->request->get('code'))];
+                $where = [new DataBase\DataBaseWhere('codejercicio', $this->getEjercicioFieldValue('codejercicio'))];
                 $view->loadData($where);
                 break;
-
-            case 'EditEjercicioEpigrafe':
-                $where = [new DataBase\DataBaseWhere('codejercicio', $this->request->get('code'))];
+           case 'EditEjercicioEpigrafe':
+                $where = [new DataBase\DataBaseWhere('codejercicio', $this->getEjercicioFieldValue('codejercicio'))];
                 $view->loadData($where);
-                break;
-
+               break;
             case 'EditEjercicioCuenta':
-                $where = [new DataBase\DataBaseWhere('codejercicio', $this->request->get('code'))];
+                $where = [new DataBase\DataBaseWhere('codejercicio', $this->getEjercicioFieldValue('codejercicio'))];
                 $view->loadData($where);
                 break;
-
-            case 'EditEjercicioSubcuenta':
-                $where = [new DataBase\DataBaseWhere('codejercicio', $this->request->get('code'))];
+            case 'EditEjercicioSubCuenta':
+                $where = [new DataBase\DataBaseWhere('codejercicio', $this->getEjercicioFieldValue('codejercicio'))];
                 $view->loadData($where);
                 break;
         }
     }
 
     /**
-     * Returns basic page attributes
+     * Devuelve los datos básicos de la página
      *
      * @return array
      */
