@@ -135,7 +135,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
         $this->icon = (string) $group['icon'];
 
         foreach ($group['columns'] as $column) {
-            $columnItem = ColumnItem::newFromXML($column);
+            $columnItem = ColumnItem::newFromJSON($column);
             $this->columns[$columnItem->name] = $columnItem;
             unset($columnItem);
         }

@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\Base\DefaultItems;
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Lib\IDFiscal;
 use FacturaScripts\Core\Lib\RegimenIVA;
 
@@ -85,14 +85,6 @@ abstract class Persona
      * @var boolean
      */
     public $debaja;
-
-    /**
-     * Clase que se utiliza para definir algunos valores por defecto:
-     * codejercicio, codserie, coddivisa, etc...
-     *
-     * @var DefaultItems
-     */
-    private static $defaultItems;
 
     /**
      * Email de la persona.
@@ -207,8 +199,7 @@ abstract class Persona
      */
     public function __construct()
     {
-        if (self::$defaultItems === null) {
-            self::$defaultItems = new DefaultItems();
+        if (self::$idFiscal === null) {
             self::$idFiscal = new IDFiscal();
             self::$regimenIVA = new RegimenIVA();
         }
@@ -220,8 +211,8 @@ abstract class Persona
     public function clear()
     {
         $this->cifnif = '';
-        $this->coddivisa = self::$defaultItems->codDivisa();
-        $this->codpago = self::$defaultItems->codPago();
+        $this->coddivisa = AppSettings::get('default', 'coddivisa');
+        $this->codpago = AppSettings::get('default', 'codpago');
         $this->debaja = false;
         $this->email = '';
         $this->fax = '';

@@ -38,6 +38,7 @@ class EditCuenta extends ExtendedController\PanelController
     {
         $this->addEditView('FacturaScripts\Core\Model\Cuenta', 'EditCuenta', 'account');
         $this->addListView('FacturaScripts\Core\Model\Subcuenta', 'ListSubcuenta', 'subaccounts');
+        $this->setTabsPosition('bottom');
     }
 
     /**
@@ -48,14 +49,15 @@ class EditCuenta extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
+        $value = $this->request->get('code');
+        
         switch ($keyView) {
             case 'EditCuenta':
-                $value = $this->request->get('code');
                 $view->loadData($value);
                 break;
 
             case 'ListSubcuenta':
-                $where = [new DataBase\DataBaseWhere('idcuenta', $this->getViewModelValue('EditCuenta', 'idcuenta'))];
+                $where = [new DataBase\DataBaseWhere('idcuenta', $value)];
                 $view->loadData($where);
                 break;
         }

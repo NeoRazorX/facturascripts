@@ -27,8 +27,9 @@ class CuentaBanco
 {
 
     use Base\ModelTrait {
-        url as private urlTrait;
+        url as private traitURL;
     }
+
     use Base\BankAccount;
 
     /**
@@ -97,6 +98,6 @@ class CuentaBanco
      */
     public function url($type = 'auto')
     {
-        return $this->urlTrait($type, 'ListFormaPago&active=List');
+        return $this->traitUrl($type, 'ListFormaPago&active=List');
     }
 }

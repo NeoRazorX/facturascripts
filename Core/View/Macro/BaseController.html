@@ -131,7 +131,8 @@
             <th class="text-right">
                 {% if view.getCursor() is not empty %}
                 <label class="custom-checkbox-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
-                    <input class="custom-control-input" type="checkbox" id="listDeleteCB"><span class="custom-control-indicator"></span>
+                    <input class="custom-control-input" type="checkbox" id="listDeleteCB" />
+                    <span class="custom-control-indicator"></span>
                 </label>
                 {% endif %}
             </th>
@@ -161,7 +162,8 @@
             {% endfor %}
             <td class="text-right cancelClickable">
                 <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
-                    <input class="custom-control-input listDelete" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}"><span class="custom-control-indicator"></span>
+                    <input class="custom-control-input listDelete" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}" />
+                    <span class="custom-control-indicator"></span>
                 </label>
             </td>
         </tr>

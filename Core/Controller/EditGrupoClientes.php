@@ -38,6 +38,7 @@ class EditGrupoClientes extends ExtendedController\PanelController
     {
         $this->addEditView('FacturaScripts\Core\Model\GrupoClientes', 'EditGrupoClientes', 'customer-group');
         $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'customers', 'fa-users');
+        $this->setTabsPosition('bottom');
     }
 
     /**

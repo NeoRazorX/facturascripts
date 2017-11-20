@@ -133,6 +133,11 @@ class PageOption
         $this->rows = [];
     }
 
+    public function columns()
+    {
+        return json_encode($this->columns);
+    }
+
     /**
      * Carga la estructura de columnas desde el JSON
      *
@@ -187,12 +192,11 @@ class PageOption
         $filters = json_encode($this->filters);
         $rows = json_encode($this->rows);
 
-        $sql = 'UPDATE ' . $this->tableName() . ' SET '
-            . '  columns = ' . $this->dataBase->var2str($columns)
-            . ' ,modals = ' . $this->dataBase->var2str($modals)
-            . ' ,filters = ' . $this->dataBase->var2str($filters)
-            . ' ,rows = ' . $this->dataBase->var2str($rows)
-            . ' WHERE id = ' . $this->id . ';';
+        $sql = 'UPDATE ' . $this->tableName() . ' SET columns = ' . $this->dataBase->var2str($columns)
+            . ', modals = ' . $this->dataBase->var2str($modals)
+            . ', filters = ' . $this->dataBase->var2str($filters)
+            . ', rows = ' . $this->dataBase->var2str($rows)
+            . '  WHERE id = ' . $this->id . ';';
 
         return $this->dataBase->exec($sql);
     }
@@ -245,7 +249,7 @@ class PageOption
         if ($columns->count() === 0) {
             return;
         }
-        
+
         // if have elements but dont have groups
         if (!isset($columns->group)) {
             $groupItem = ExtendedController\GroupItem::newFromXML($columns);

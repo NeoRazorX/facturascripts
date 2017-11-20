@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
+
 /**
  * El almacén donde están físicamente los artículos.
  *
@@ -85,7 +87,7 @@ class Almacen
      */
     public function isDefault()
     {
-        return $this->codalmacen === $this->defaultItems->codAlmacen();
+        return $this->codalmacen === AppSettings::get('default', 'codalmacen');
     }
 
     /**

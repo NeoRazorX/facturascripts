@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
+
 /**
  * Una serie de facturación o contabilidad, para tener distinta numeración
  * en cada serie.
@@ -111,7 +113,7 @@ class Serie
      */
     public function isDefault()
     {
-        return $this->codserie === $this->defaultItems->codSerie();
+        return $this->codserie === AppSettings::get('default', 'codserie');
     }
 
     /**

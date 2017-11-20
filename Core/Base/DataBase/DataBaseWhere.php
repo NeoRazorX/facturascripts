@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -29,6 +28,7 @@ use FacturaScripts\Core\Base\DataBase;
  */
 class DataBaseWhere
 {
+
     const MATCH_DATE = "/^([\d]{1,2})-([\d]{1,2})-([\d]{4})$/i";
     const MATCH_DATETIME = "/^([\d]{1,2})-([\d]{1,2})-([\d]{4}) ([\d]{1,2}):([\d]{1,2}):([\d]{1,2})$/i";
 
@@ -119,16 +119,19 @@ class DataBaseWhere
                 break;
 
             case 'IN':
-                $values = explode(',', $this->value);
                 $result = '(';
-                $comma = '';
-                foreach ($values as $value) {
-                    $result .= $comma . "'" . $this->dataBase->escapeString($value) . "'";
-                    $comma = ',';
+                if (substr(strtolower($this->value), 0, 7) == 'select ') {
+                    $result .= $this->value;
+                } else {
+                    $comma = '';
+                    foreach (explode(',', $this->value) as $value) {
+                        $result .= $comma . "'" . $this->dataBase->escapeString($value) . "'";
+                        $comma = ',';
+                    }
                 }
                 $result .= ')';
                 break;
-            
+
             default:
                 $result = '';
         }

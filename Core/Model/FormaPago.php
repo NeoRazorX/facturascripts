@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
+
 /**
  * Forma de pago de una factura, albarán, pedido o presupuesto.
  *
@@ -119,7 +121,7 @@ class FormaPago
      */
     public function isDefault()
     {
-        return $this->codpago === $this->defaultItems->codPago();
+        return $this->codpago === AppSettings::get('default', 'codpago');
     }
 
     /**

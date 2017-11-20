@@ -38,6 +38,7 @@ class EditGrupoEpigrafes extends ExtendedController\PanelController
     {
         $this->addEditView('FacturaScripts\Core\Model\GrupoEpigrafes', 'EditGrupoEpigrafes', 'epigraphs-group');
         $this->addListView('FacturaScripts\Core\Model\Epigrafe', 'ListEpigrafe', 'epigraphs', 'fa-book');
+        $this->setTabsPosition('bottom');
     }
 
     /**

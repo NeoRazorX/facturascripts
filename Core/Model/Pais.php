@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
+
 /**
  * Un país, por ejemplo España.
  *
@@ -78,7 +80,7 @@ class Pais
      */
     public function isDefault()
     {
-        return $this->codpais === $this->defaultItems->codPais();
+        return $this->codpais === AppSettings::get('default', 'codpais');
     }
 
     /**
