@@ -1,18 +1,18 @@
-========
+########
 Overview
-========
+########
 
-Requirements
-============
+Requerimientos
+==============
 Para instalación y uso
-    #. Servidor web Apache2 Server or similar
-    #. PHP 7.0
-    #. Motor de bases de datos MySql, MariaDB o Postgresql
+    1. Servidor web Apache2 Server or similar
+    2. PHP 7.0
+    3. Motor de bases de datos MySql, MariaDB o Postgresql
 
 Para desarrollo
-    #. Requerimientos de uso
-    #. Entorno de desarrollo PHP: NetBeens, PHPStorm o similar
-    #. Composer y NPM: Para la instalación de requerimientos.
+    1. Requerimientos de uso
+    2. Entorno de desarrollo PHP: NetBeens, PHPStorm o similar
+    3. Composer y NPM: Para la instalación de requerimientos.
 
 
 .. _instalación:
@@ -25,17 +25,17 @@ Para instalar un entorno de desarrollo, los pasos a seguir pueden variar según 
 donde desee trabajar. A continuación se detallan un método genérico.
 
 .. code-block:: bash
-    # Instalando Facturascripts
-    git clone https://github.com/NeoRazorX/facturascripts.git
-    cd facturascripts
-    composer install
-    npm install
+        # Instalando Facturascripts
+        git clone https://github.com/NeoRazorX/facturascripts.git
+        cd facturascripts
+        composer install
+        npm install
 
 En caso de no instalarse correctamente el paquete Composer, podemos instalarlo manualmente
 
 .. code-block:: bash
-    # Install Composer
-    curl -sS https://getcomposer.org/installer | php
+      # Install Composer
+      curl -sS https://getcomposer.org/installer | php
 
 
 

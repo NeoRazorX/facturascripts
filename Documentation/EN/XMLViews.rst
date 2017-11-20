@@ -1,19 +1,47 @@
-==================
-Building XML Views
-==================
+#####
+Views
+#####
 
-We will use a file with **XML** structure and with the name of the
-controller that defines it to establish the visual composition of the
-fields and options of the view.
+The views, in *Facturascripts 2018* are classified according to their representation
+on screen both in the form of visualization and in the number of data records.
 
-The root element of the XML file will be_<view>\_ and the following
-groups may be included:
+-  **List**: Views that show a list of data in rows and columns format
+   can navigate, search and/or filter the data but where the data are from
+   read only, that is, editing is not allowed.
+
+-  **Edit**: Views that show a form for editing a single record of data, these data can be grouped.
+
+-  **EditList**: Result resulting from the "union" of the previous types. That is to say,
+   a list of records displayed in rows and columns but where each of the
+   rows is an edit form that allows us to edit the data of that record.
+   This view contains two viewing modes. A basic system like columns, when
+   the view has less than 6 columns, or the entire viewing system if the view contains
+   6 or more columns of data.
+
+The naming of the views, when we create them, follows the rule: *List* or *Edit* followed
+from the *name of the model*. This is true even if the view is of type *EditList* in which case
+it will be named as if it were of type *Edit*.
+
+
+*********
+XML Views
+*********
+
+To create the views we will use a file with structure **XML** and, as indicated
+previously, with the name of the type of view and the model, where we will establish the
+Visual composition of the fields, actions and visual options of the view.
+
+The root element of the XML file will be *<view>* and may include the following
+tags as group:
 
 -  **<columns>**: (required) To define the list of fields that are
    displayed in the view.
+
 -  **<rows>**: (optional) Defines special conditions for the rows.
--  **<filters>**: (optional) To define the list of available filters in
-   the view.
+
+-  **<modals>**: (optional) Defines a modal form that will be displayed
+   by interacting with a button defined in the view.
+
 
 COLUMNS
 =======
@@ -22,7 +50,7 @@ You can define by means of the tag *<column>* each one of the fields
 that will be visualized in the view being able, in the *Edit* views, to
 group the columns by *<group>* tag. The columns are complemented by
 the mandatory *<widget>* tag, which serves to customize the type of
-object used in the display / editing of the data.
+object used in the display/editing of the data.
 
 Both *<group>*, *<column>* and *<widget>* tags have a set of
 attributes that allow customization and vary according to the context in
@@ -83,8 +111,10 @@ EditController view example:
 column
 ------
 
-We understand that it is each of the fields of the model that make up
-the view and with which the user can interact.
+We understand that it is each of the fields of the model and buttons that make up
+the view and with which the user can interact. The tag *column* requires to contain one
+of the tags *<widget>* or *<button>* for correct operation and is customized by
+the following properties:
 
 -  **name**: Internal identifier of the column. Its use is obligatory.
    As a rule, the use of lowercase and English identifiers is
@@ -103,7 +133,7 @@ the view and with which the user can interact.
 
 -  **display**: Indicates whether or not to display the field and its
    alignment. If not reported, it takes *left* as its value. Values:
-   **[*left|center|right|none*]**
+   *[left|center|right|none]*
 
 -  **order**: Position that occupies the column. Indicates the order in
    which they are displayed. If not reported take the value *100* When
@@ -114,6 +144,7 @@ the view and with which the user can interact.
    using the Bootstrap grid system being minimum 1 and maximum 12. If it
    is not reported, it takes *0* by applying Bootstrap’s automatic size
    system.
+
 
 widget
 ------
@@ -126,9 +157,9 @@ equivalent to be applied and the value of the tag is the value when the
 format will be applied. To decide whether the format is applied or not
 the following criteria will be applied to the value entered in the *<option>* tag:
 
--  If the value starts with ‘>’ (>): Applies if the value of the model
+-  If the value starts with ``>``: Applies if the value of the model
    field is greater than the value indicated after the operator.
--  If the value starts with ‘<’ (<): Applies if the field value of the
+-  If the value starts with ``<``: Applies if the field value of the
    model is less than the value indicated after the operator.
 -  In any other case an equality check will be made.
 
@@ -191,14 +222,14 @@ Examples:
    a table in the database or by defining a range.
    For the case of values ​​of a table will be used a single tag *<values>* indicating
    the attributes:
-      -  **source***: Indicates the name of the source table of the data
-      -  **fieldcode**: Indicates the field containing the value to be recorded in the column field
-      -  **fieldtitle**: Indicates the field containing the value that will be displayed on the screen
+          -  *source*: Indicates the name of the source table of the data
+          -  *fieldcode*: Indicates the field containing the value to be recorded in the column field
+          -  *fieldtitle*: Indicates the field containing the value that will be displayed on the screen
 
    For the case of values ​​by definition of range a single tag *<values>* indicating the attributes:
-      -  *start*: Indicates the initial value (numeric or alphabetical)
-      -  *end*: Indicates the final value (numeric or alphabetical)
-      -  *step*: Indicates the increment value (numeric)
+          -  *start*: Indicates the initial value (numeric or alphabetical)
+          -  *end*: Indicates the final value (numeric or alphabetical)
+          -  *step*: Indicates the increment value (numeric)
 
 .. code:: xml
 
@@ -217,9 +248,9 @@ Examples:
     </widget>
 
 
-    -  **radio**: List of values ​​where we can select one of them. The various
-   options are indicated by the tag system *<values>* described in the group *<widget>*,
-   in the style of the *select* type.
+   -  **radio**: List of values ​​where we can select one of them. The various
+      options are indicated by the tag system *<values>* described in the group *<widget>*,
+      in the style of the *select* type.
 
    .. code:: xml
 
@@ -247,6 +278,44 @@ Examples:
 -  **hint**: (optional) Explanatory text that is displayed by placing
    the mouse over the title in the Edit controller.
 
+
+
+button
+------
+This visual element is available only in views of type *Edit* and *EditList* and
+As its name suggests it allows to include a button in one of the editing columns.
+There are three types of buttons declared by the ``type`` attribute and with functions
+different:
+
+-  **type**: indicates the type of button.
+
+-  **icon**: icon that will be displayed to the left of the label.
+
+-  **label**: text or label that will be displayed on the button.
+
+-  **color**: indicates the color of the button, according to the colors of Bootstrap for buttons.
+
+-  **hint**: help displayed to the user when placing the mouse pointer over the button.
+    This option is only available for buttons of type ``action``.
+
+-  **action**: this property varies according to the type. For ``action`` buttons indicates the action
+    which is sent to the controller, so that it performs some kind of special process.
+    For buttons of type ``modal`` indicates the modal form that should be shown to the user.
+
+
+Example:
+
+.. code:: xml
+
+        <column name="action1" order="100">
+            <button type="action" label="Action" color="info" action="process1" icon="fa-book" hint="Run the controller with action=process1" />
+        </column>
+
+        <column name="action2" order="100">
+            <button type="modal" label="Modal" color="primary" action="test" icon="fa-users" />
+        </column>
+
+
 group
 -----
 
@@ -271,9 +340,9 @@ the following attributes:
 -  **numcolumns**: Force the size to the indicated value, using the
    Bootstrap grid system being minimum 1 and maximum 12. If it is not
    reported, it takes *0* by applying Bootstrap’s automatic size system.
-   It is important to remember that a group always has 12 columns
-   available in its *interior*, regardless of the size defined by the
-   group.
+   It is important to remember that a group always has 12 columns available
+   *inside*, regardless of the size of the group.
+
 
 ROWS
 ====
@@ -284,9 +353,11 @@ functionalities, in a unique way (that is, we can not include twice the
 same type of row) and using the *type* attribute to indicate the action
 performed, each type having its own requirements.
 
--  **status**: Colorize rows based on the value of a field in the
-   record. Requires one or more registers *<option>* indicating the
-   bootstrap configuration for panels that we want for the row.
+status
+------
+This type colorize rows based on the value of a field in the record.
+Requires one or more registers *<option>* indicating the bootstrap color
+configuration for panels that we want for the row.
 
 Example:
 
@@ -302,9 +373,23 @@ Example:
             </row>
         </rows>
 
--  **<header>**: Defines a list of statistical and relational buttons
-   with other models that give information to the user and allows
-   consult when you click.
+
+header
+------
+Defines a list of statistical and relational buttons with other models that give
+information to the user and allows consult when you click.
+Each of the buttons are defined by the label * <button> * followed by the properties:
+
+-  **type** : for this case always have ``calculate`` value.
+
+-  **icon**: icon that will be displayed to the left of the label.
+
+-  **label**: text or label that will be displayed on the button.
+
+-  **calculateby**: name of the function of the controller that is executed to calculate the amount to be displayed.
+
+-  **onclick**: destination URL, where the user will be redirected when clicking on the button.
+
 
 Example:
 
@@ -312,13 +397,36 @@ Example:
 
         <rows>
             <row type="header">
-                <option icon="fa-files-o" label="Pending delivery notes:" calculateby="function_name" onclick="#url"></option>
-                <option icon="fa-files-o" label="Pending collection:" calculateby="function_name" onclick="#url"></option>
+                <button icon="fa-files-o" label="Pending delivery notes:" calculateby="function_name" onclick="#url"></option>
+                <button icon="fa-files-o" label="Pending collection:" calculateby="function_name" onclick="#url"></option>
             </row>
         </rows>
 
--  **<footer>**: Allows you to add additional information to be
-   displayed to the user at the foot of the view.
+
+actions
+-------
+It allows to define a group of buttons of types *action* and *modal* that will be displayed
+at the bottom of the edit form, enter the delete and record buttons. This *row*
+it is specific to the *Edit* views. The declaration of the buttons is done in a
+similar to the one described in the `button`__ section except that the label *column*
+is not necessary.
+
+Example:
+
+.. code:: xml
+
+        <rows>
+            <row type="actions">
+                <button type="modal" label="Modal" color="primary" action="test" icon="fa-users" />
+                <button type="action" label="Action" color="info" action="process1" icon="fa-book" hint="Ejecuta el controlador con action=process1" />
+            </row>
+        </rows>
+
+
+
+footer
+------
+Allows you to add additional information to be displayed to the user at the foot of the view.
 
 Example:
 
@@ -332,3 +440,7 @@ Example:
                 <option footer="Text in footer" color="success">This is an example without header</option>
             </row>
         </rows>
+
+
+MODALS
+======
