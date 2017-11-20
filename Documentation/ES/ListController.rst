@@ -1,3 +1,4 @@
+==========================
 Controlador ListController
 ==========================
 
@@ -15,7 +16,7 @@ XML, tal y como se describe en el documento
 incluido en la documentación de **Facturascripts**.
 
 Cómo usar el controlador
-------------------------
+========================
 
 Para utilizar *ListController* debemos crearnos una nueva clase PHP que
 herede o extienda de ListController, debiendo implementar los siguientes
@@ -29,7 +30,7 @@ métodos:
    *createViews*).
 
 createViews
-~~~~~~~~~~~
+===========
 
 Dentro de este método, en nuestra nueva clase, debemos ir creando las
 distintas vistas que se visualizarán, y para cada vista debemos indicar
@@ -52,7 +53,7 @@ búsqueda y la ordenación mediante los métodos ***addSearchFields*** y
 ***addOrderBy***.
 
 addSearchFields
-^^^^^^^^^^^^^^^
+---------------
 
 Al añadir los campos de búsqueda debemos indicar el nombre de la vista
 al que añadimos los campos y un array con los nombre de los campos.
@@ -68,13 +69,13 @@ Ejemplo de creación y adición de campos para búsqueda
         /* Clientes */
         $this->addView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'customers', 'fa-users');
         $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente', 'email']);
-            
+
         /* Grupos */
         $this->addView('FacturaScripts\Core\Model\GrupoClientes', 'ListGrupoClientes', 'groups', 'fa-folder-open');
         $this->addSearchFields('ListGrupoClientes', ['nombre', 'codgrupo']);
 
 addOrderBy
-^^^^^^^^^^
+----------
 
 Podemos añadir todos los campos de ordenación, no confundir con los
 campos de búsqueda, realizando distintas llamadas al método *addOrderBy*
@@ -112,7 +113,7 @@ ordenación por código descendente
         $this->addOrderBy('ListGrupoClientes', 'nombre', 'name', 1);
 
 Adición de filtros
-^^^^^^^^^^^^^^^^^^
+==================
 
 El controlador *ListController* integra un sistema de filtrado de datos
 que permite personalizar de manera sencilla las opciones de filtrado que
@@ -167,7 +168,7 @@ Ejemplos de filtros
         $this->addFilterDatePicker(ListArticulo, 'fecha', 'Fec. Alta');
 
 getPageData
-~~~~~~~~~~~
+===========
 
 Este método es el encargado de devolver un array con los datos para la
 instalación y configuración del controlador dentro del entorno de

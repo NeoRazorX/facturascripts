@@ -1,3 +1,4 @@
+==============
 ListController
 ==============
 
@@ -14,7 +15,7 @@ format, as described in the document [XMLViews]
 included in the documentation for **Facturascripts**.
 
 Using the Controller
---------------------
+====================
 
 To use *ListController* we must create a new PHP class that inherits or
 extends from ListController, having to implement the following methods:
@@ -26,7 +27,7 @@ extends from ListController, having to implement the following methods:
    the main view (the first one we added in *createViews*).
 
 createViews
-~~~~~~~~~~~
+===========
 
 Within this method, in our new class, we must create the different views
 to be visualized, and for each view we must indicate the search fields
@@ -46,7 +47,7 @@ search and the ordering through the methods ***addSearchFields*** and
 ***addOrderBy***.
 
 addSearchFields
-^^^^^^^^^^^^^^^
+---------------
 
 When adding the fields of search we must indicate the index name for the
 view to which we add the fields and a array with the field names.
@@ -62,13 +63,13 @@ Example of creating and adding fields for search.
         /* Clientes */
         $this->addView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'customers', 'fa-users');
         $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente', 'email']);
-            
+
         /* Grupos */
         $this->addView('FacturaScripts\Core\Model\GrupoClientes', 'ListGrupoClientes', 'groups', 'fa-folder-open');
         $this->addSearchFields('ListGrupoClientes', ['nombre', 'codgrupo']);
 
 addOrderBy
-^^^^^^^^^^
+----------
 
 We can add all the sorting fields, not to be confused with the search
 fields, making different calls to the *addOrderBy* method and indicating
@@ -104,7 +105,7 @@ by descending code
         $this->addOrderBy('ListGrupoClientes', 'nombre', 'name', 1);
 
 Adding Filters
-^^^^^^^^^^^^^^
+==============
 
 The *ListController* controller integrates a data filtering system that
 allows easy customization the filtering options that are presented to
@@ -153,7 +154,7 @@ Examples of filters
         $this->addFilterDatePicker(ListArticulo, 'fecha', 'Fec. Alta');
 
 getPageData
-~~~~~~~~~~~
+===========
 
 This method is responsible for returning an array with the data for the
 installation and configuration of the controller within the environment

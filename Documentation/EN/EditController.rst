@@ -1,5 +1,6 @@
-Controller EditController
-=========================
+==============
+EditController
+==============
 
 It is a **universal controller** for views that want to display the
 complete data of a record of data of a model, in format “tab” or by a
@@ -15,7 +16,7 @@ XML format, as described in the document [XMLViews]
 included in the documentation of **Facturascripts**.
 
 Using the Controller
---------------------
+====================
 
 To use *EditController* we must create a new PHP class that inherits or
 extends from EditController, establishing in the constructor of our new
@@ -40,7 +41,7 @@ the new class we created. There are also general methods that we can
 override to customize the screen, (see below).
 
 getPageData
-~~~~~~~~~~~
+===========
 
 This method is responsible for returning an array with the data for the
 installation and configuration of the controller within the environment
@@ -67,7 +68,7 @@ menu system to place our controller higher or lower
         }
 
 Customization
--------------
+=============
 
 There are two methods that allow us to customize the data to be
 displayed in the header and footer of the data sheet.
@@ -98,11 +99,11 @@ Examples:
             <row type="header">
                 <option icon="fa-files-o" label="Alb. Pdtes:" calculateby="nombre_function" onclick="#url"></option>
                 <option icon="fa-files-o" label="Pdte Cobro:" calculateby="nombre_function" onclick="#url"></option>
-            </row>        
+            </row>
 
             <row type="footer">
                 <option label="Panel Footer" footer="Panel footer" color="warning">This is an example with header and footer</option>
                 <option label="Esto es un info" color="info">This is an example with header and without footer</option>
                 <option footer="Texto en el footer" color="success">This is an example without header</option>
-            </row>  
+            </row>
         </rows>

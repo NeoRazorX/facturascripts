@@ -172,7 +172,7 @@ abstract class PanelController extends Base\Controller
     public function getViewModelValue($viewName, $fieldName)
     {
         $model = $this->views[$viewName]->getModel();
-        return $model->{$fieldName};
+        return $this->getFieldValue($model, $fieldName);
     }
 
     /**
