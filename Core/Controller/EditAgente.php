@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Model\PresupuestoCliente;
+use FacturaScripts\Core\Model\PedidoCliente;
 use FacturaScripts\Core\Model\AlbaranCliente;
 use FacturaScripts\Core\Model\FacturaCliente;
 
@@ -47,9 +48,10 @@ class EditAgente extends ExtendedController\PanelController
     {
         $this->addEditView('FacturaScripts\Core\Model\Agente', 'EditAgente', 'agent');
         $this->addListView('FacturaScripts\Core\Model\PresupuestoCliente', 'EditAgentePresupuestos', 'Presupuestos');
+        $this->addListView('FacturaScripts\Core\Model\PedidoCliente', 'EditAgentePedidos', 'Pedidos');
         $this->addListView('FacturaScripts\Core\Model\AlbaranCliente', 'EditAgenteAlbaranes', 'Albaranes');
         $this->addListView('FacturaScripts\Core\Model\FacturaCliente', 'EditAgenteFacturas', 'Facturas', 'fa-book');
-        //$this->addEditListView('FacturaScripts\Core\Model\Subcuenta', 'EditEjercicioSubcuenta', 'subaccount');
+       
     }
     
      /**
@@ -70,7 +72,10 @@ class EditAgente extends ExtendedController\PanelController
                 $where = [new DataBase\DataBaseWhere('codagente', $this->request->get('code'))];
                 $view->loadData($where);
                 break;
-
+            case 'EditAgentePedidos':
+                $where = [new DataBase\DataBaseWhere('codagente', $this->request->get('code'))];
+                $view->loadData($where);
+                break;
             case 'EditAgenteAlbaranes':
                 $where = [new DataBase\DataBaseWhere('codagente', $this->request->get('code'))];
                 $view->loadData($where);
