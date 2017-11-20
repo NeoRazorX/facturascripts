@@ -109,7 +109,7 @@ abstract class PanelController extends Base\Controller
             case 'bottom':
                 $this->setTemplate('Master/PanelControllerBottom');
                 break;
-            
+
             case 'top':
                 $this->setTemplate('Master/PanelControllerTop');
                 break;
@@ -159,7 +159,11 @@ abstract class PanelController extends Base\Controller
      */
     public function getFieldValue($model, $fieldName)
     {
-        return $model->{$fieldName};
+        if (isset($model->{$fieldName})) {
+            return $model->{$fieldName};
+        }
+
+        return null;
     }
 
     /**
