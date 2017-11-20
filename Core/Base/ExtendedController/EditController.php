@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -29,6 +28,7 @@ use FacturaScripts\Core\Base;
  */
 class EditController extends Base\Controller
 {
+
     /**
      * Export data object
      *
@@ -43,15 +43,13 @@ class EditController extends Base\Controller
      */
     public $view;
 
-  
-
     /**
      * Initializes all the objects and properties
      *
      * @param Base\Cache      $cache
      * @param Base\Translator $i18n
      * @param Base\MiniLog    $miniLog
-     * @param string     $className
+     * @param string          $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
