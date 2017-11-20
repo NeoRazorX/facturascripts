@@ -50,6 +50,9 @@ class APCAdapter implements AdaptorInterface
      */
     public function __construct()
     {
+        $this->i18n = new Translator();
+        $this->minilog = new MiniLog();
+
         $this->minilog->debug($this->i18n->trans('using-apc'));
     }
 

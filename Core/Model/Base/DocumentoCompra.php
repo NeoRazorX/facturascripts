@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Lib\NewCodigoDoc;
 
 /**
@@ -211,9 +212,9 @@ trait DocumentoCompra
     private function clearDocumentoCompra()
     {
         $this->clearTrait();
-        $this->codserie = $this->defaultItems->codSerie();
-        $this->codpago = $this->defaultItems->codPago();
-        $this->codalmacen = $this->defaultItems->codAlmacen();
+        $this->codserie = AppSettings::get('default', 'codserie');
+        $this->codpago = AppSettings::get('default', 'codpago');
+        $this->codalmacen = AppSettings::get('default', 'codalmacen');
         $this->fecha = date('d-m-Y');
         $this->hora = date('H:i:s');
         $this->irpf = 0.0;

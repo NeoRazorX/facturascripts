@@ -142,7 +142,7 @@ abstract class WidgetItem implements VisualItemInterface
         $widgetAtributes = $column->widget->attributes();
         $type = (string) $widgetAtributes->type;
         $widget = self::widgetItemFromType($type);
-        $widget->loadFromXML($column, $widgetAtributes);
+        $widget->loadFromXML($column);
         return $widget;
     }
 

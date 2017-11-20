@@ -79,7 +79,7 @@ class EditSettings extends ExtendedController\PanelController
     public function getFieldValue($model, $field)
     {
         $properties = parent::getFieldValue($model, 'properties');
-        if (array_key_exists($field, $properties)) {
+        if (is_array($properties) && array_key_exists($field, $properties)) {
             return $properties[$field];
         }
 
@@ -88,17 +88,6 @@ class EditSettings extends ExtendedController\PanelController
         }
 
         return null;
-    }
-
-    /**
-     * Returns the view id with the KEYSETTINGS constant as a prefix
-     *
-     * @param string $key
-     * @return string
-     */
-    private function getViewNameFromKey($key)
-    {
-        return self::KEYSETTINGS . ucfirst($key);
     }
 
     /**
@@ -118,17 +107,10 @@ class EditSettings extends ExtendedController\PanelController
     protected function createViews()
     {
         $modelName = 'FacturaScripts\Core\Model\Settings';
-        $title = 'general';
         $icon = $this->getPageData()['icon'];
-        $this->addEditView($modelName, $this->getViewNameFromKey('Default'), $title, $icon);
-
-        $model = new Model\Settings();
-        $where = [new DataBase\DataBaseWhere('name', 'default', '<>')];
-        $rows = $model->all($where, ['name' => 'ASC'], 0, 0);
-        foreach ($rows as $setting) {
-            $title = $setting->name;
-            $viewName = $this->getViewNameFromKey($setting->name);
-            $this->addEditView($modelName, $viewName, $title, $setting->icon);
+        foreach ($this->allSettingsXMLViews() as $name) {
+            $title = substr($name, 8);
+            $this->addEditView($modelName, $name, $title, $icon);
         }
 
         $title2 = 'about';
@@ -149,5 +131,23 @@ class EditSettings extends ExtendedController\PanelController
 
         $code = $this->getKeyFromViewName($keyView);
         $view->loadData($code);
+
+        $model = $view->getModel();
+        if ($model->name === null) {
+            $model->name = substr(strtolower($keyView), 8);
+            $model->save();
+        }
+    }
+
+    private function allSettingsXMLViews()
+    {
+        $names = [];
+        foreach (scandir(FS_FOLDER . '/Dinamic/XMLView', SCANDIR_SORT_ASCENDING) as $fileName) {
+            if ($fileName != '.' && $fileName != '..' && substr($fileName, 0, 8) == self::KEYSETTINGS) {
+                $names[] = substr($fileName, 0, -4);
+            }
+        }
+
+        return $names;
     }
 }

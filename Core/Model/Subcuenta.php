@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
@@ -164,7 +165,7 @@ class Subcuenta
         $this->idcuenta = null;
         $this->codcuenta = null;
         $this->codejercicio = null;
-        $this->coddivisa = $this->defaultItems->codDivisa();
+        $this->coddivisa = AppSettings::get('default', 'coddivisa');
         $this->codimpuesto = null;
         $this->descripcion = '';
         $this->debe = 0.0;

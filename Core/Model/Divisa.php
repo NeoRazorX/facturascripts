@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
+
 /**
  * Una divisa (moneda) con su símbolo y su tasa de conversión respecto al euro.
  *
@@ -110,7 +112,7 @@ class Divisa
      */
     public function isDefault()
     {
-        return $this->coddivisa === $this->defaultItems->codDivisa();
+        return $this->coddivisa === AppSettings::get('default', 'coddivisa');
     }
 
     /**

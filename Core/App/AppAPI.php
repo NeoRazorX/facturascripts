@@ -16,9 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\App;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -28,6 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AppAPI extends App
 {
+
     /**
      * Runs the API.
      *
@@ -60,7 +61,7 @@ class AppAPI extends App
     private function selectVersion()
     {
         $version = $this->request->get('v', '');
-        if ($version == '3') {
+        if ($version === '3') {
             return $this->selectResource();
         }
 
@@ -87,7 +88,7 @@ class AppAPI extends App
         $modelName = "FacturaScripts\\Dinamic\\Model\\" . $map[$resourceName];
         $cod = $this->request->get('cod', '');
 
-        if ($cod == '') {
+        if ($cod === '') {
             return $this->processResource($modelName);
         }
 
@@ -105,10 +106,24 @@ class AppAPI extends App
     {
         try {
             $model = new $modelName();
-            $where = [];
-            $order = [];
+            $defaultOperation = 'AND';
+            $operationArray = $this->request->get('operation', '');
+            $filterArray = $this->request->get('filter', '');
+            $orderArray = $this->request->get('sort', '');
             $offset = (int) $this->request->get('offset', 0);
             $limit = (int) $this->request->get('limit', 50);
+
+            $operation = is_array($operationArray) ? $operationArray : []; /// if is string has bad format
+            $filter = is_array($filterArray) ? $filterArray : []; /// if is string has bad format
+            $order = is_array($orderArray) ? $orderArray : []; /// if is string has bad format
+
+            $where = [];
+            foreach ($filter as $key => $value) {
+                if (!isset($operation[$key])) {
+                    $operation[$key] = $defaultOperation;
+                }
+                $where[] = new DataBaseWhere($key, $value, 'LIKE', $operation[$key]);
+            }
 
             switch ($this->request->getMethod()) {
                 case 'POST':
@@ -187,13 +202,13 @@ class AppAPI extends App
     {
         $resources = [];
         foreach (scandir(FS_FOLDER . '/Dinamic/Model', SCANDIR_SORT_ASCENDING) as $fName) {
-            if (substr($fName, -4) == '.php') {
+            if (substr($fName, -4) === '.php') {
                 $modelName = substr($fName, 0, -4);
 
                 /// convertimos en plural
-                if (substr($modelName, -1) == 's') {
+                if (substr($modelName, -1) === 's') {
                     $plural = strtolower($modelName);
-                } elseif (substr($modelName, -3) == 'ser' || substr($modelName, -4) == 'tion') {
+                } elseif (substr($modelName, -3) === 'ser' || substr($modelName, -4) === 'tion') {
                     $plural = strtolower($modelName) . 's';
                 } elseif (in_array(substr($modelName, -1), ['a', 'e', 'i', 'o', 'u', 'k'])) {
                     $plural = strtolower($modelName) . 's';

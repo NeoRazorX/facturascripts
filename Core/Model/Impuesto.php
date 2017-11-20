@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
+
 /**
  * Un impuesto (IVA) que puede estar asociado a artículos, líneas de albaranes,
  * facturas, etc.
@@ -111,7 +113,7 @@ class Impuesto
      */
     public function isDefault()
     {
-        return $this->codimpuesto === $this->defaultItems->codImpuesto();
+        return $this->codimpuesto === AppSettings::get('default', 'codimpuesto');
     }
 
     /**

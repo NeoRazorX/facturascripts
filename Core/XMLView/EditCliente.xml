@@ -57,7 +57,7 @@
 
             <column name="fiscal mode" title="is-person" order="200">
                 <widget type="checkbox" fieldname="personafisica" />
-            </column>            
+            </column>
         </group>
 
         <group name="comercial" title="commercial-terms" numcolumns="4">

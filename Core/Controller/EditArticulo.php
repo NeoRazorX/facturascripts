@@ -37,7 +37,9 @@ class EditArticulo extends ExtendedController\PanelController
     {
         $this->addEditView('FacturaScripts\Core\Model\Articulo', 'EditArticulo', 'products', 'fa-cubes');
         $this->addListView('FacturaScripts\Core\Model\ArticuloTraza', 'ListArticuloTraza', 'traceability', 'fa-barcode');
+        $this->addListView('FacturaScripts\Core\Model\ArticuloCombinacion', 'ListArticuloCombinacion', 'combinate-article', 'fa-qrcode');
     }
+        
 
     /**
      * Load view data procedure
@@ -59,7 +61,19 @@ class EditArticulo extends ExtendedController\PanelController
                 if (!empty($referencia)) {
                     $where = [new DataBase\DataBaseWhere('referencia', $referencia)];
                     $view->loadData($where);
+                break;
                 }
+                
+            case 'ListArticuloCombinacion':
+                $tipo = $this->getViewModelValue('EditArticulo', 'tipo');
+                
+                if ($tipo === 'atributos') {
+                    $referencia = $this->getViewModelValue('EditArticulo', 'referencia');
+                    if (!empty($referencia)) {
+                        $where = [new DataBase\DataBaseWhere('referencia', $referencia)];
+                        $view->loadData($where);
+                    }
+                }    
                 break;
         }
     }

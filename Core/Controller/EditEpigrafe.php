@@ -38,6 +38,7 @@ class EditEpigrafe extends ExtendedController\PanelController
     {
         $this->addEditView('FacturaScripts\Core\Model\Epigrafe', 'EditEpigrafe', 'accounting-heading');
         $this->addListView('FacturaScripts\Core\Model\Cuenta', 'ListCuenta', 'accounts', 'fa-book');
+        $this->setTabsPosition('bottom');
     }
 
     /**

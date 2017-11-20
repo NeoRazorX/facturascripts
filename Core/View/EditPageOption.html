@@ -1,0 +1,34 @@
+{% extends "Master/MenuTemplate.html" %}
+
+{% block body %}
+<form action="{{ fsc.url() }}" method="post">
+    <input type="hidden" name="code" value="{{ fsc.pageOption.name }}"/>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-9">
+                <h1>
+                    <i class="fa fa-wrench" aria-hidden="true"></i> {{ i18n.trans('options') }}
+                    <small>{{ fsc.pageOption.name }}</small>
+                </h1>
+            </div>
+            <div class="col-3 text-right">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-floppy-o fa-fw" aria-hidden="true"></i> {{ i18n.trans('save') }}
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">{{ i18n.trans('columns') }}</div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <textarea name="columns" rows="10" class="form-control">{{ fsc.pageOption.columns() }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

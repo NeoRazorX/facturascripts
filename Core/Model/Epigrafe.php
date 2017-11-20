@@ -26,7 +26,9 @@ namespace FacturaScripts\Core\Model;
 class Epigrafe
 {
 
-    use Base\ModelTrait;
+    use Base\ModelTrait {
+        url as private traitURL;
+    }
 
     /**
      * Lista de grupos
@@ -255,27 +257,6 @@ class Epigrafe
      */
     public function url($type = 'auto')
     {
-        $value = $this->primaryColumnValue();
-        $model = $this->modelClassName();
-        $result = 'index.php?page=';
-        switch ($type) {
-            case 'list':
-                $result .= 'ListCuenta&active=List' . $model;
-                break;
-
-            case 'edit':
-                $result .= 'Edit' . $model . '&code=' . $value;
-                break;
-
-            case 'new':
-                $result .= 'Edit' . $model;
-                break;
-
-            default:
-                $result .= empty($value) ? 'ListCuenta&active=List' . $model : 'Edit' . $model . '&code=' . $value;
-                break;
-        }
-
-        return $result;
+        return $this->traitURL($type, 'ListCuenta&active=List');
     }
 }

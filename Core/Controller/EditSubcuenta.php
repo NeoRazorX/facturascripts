@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -37,6 +38,7 @@ class EditSubcuenta extends ExtendedController\PanelController
     {
         $this->addEditView('FacturaScripts\Core\Model\Subcuenta', 'EditSubcuenta', 'subaccount');
         $this->addListView('FacturaScripts\Core\Model\Asiento', 'ListAsiento', 'accounting-entries', 'fa-balance-scale');
+        $this->setTabsPosition('bottom');
     }
 
     /**
@@ -47,14 +49,18 @@ class EditSubcuenta extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
+        $value = $this->request->get('code');
+
         switch ($keyView) {
             case 'EditSubcuenta':
-                $value = $this->request->get('code');
                 $view->loadData($value);
                 break;
 
             case 'ListAsiento':
                 /// TODO: cargar los asientos relacionados (a través de la tabla co_partidas).
+                $inSQL = 'SELECT idasiento FROM co_partidas WHERE idsubcuenta = ' . $this->dataBase->var2str($value);
+                $where = [new DataBase\DataBaseWhere('idasiento', $inSQL, 'IN')];
+                $view->loadData($where);
                 break;
         }
     }
