@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,6 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AppAPI extends App
 {
+
     /**
      * Runs the API.
      *
@@ -107,11 +107,16 @@ class AppAPI extends App
         try {
             $model = new $modelName();
             $defaultOperation = 'AND';
-            $operation = $this->request->get('operation', $defaultOperation);
-            $operation = is_string($operation) ? [] : $operation; /// if is string has bad format
+            $operationArray = $this->request->get('operation', '');
+            $filterArray = $this->request->get('filter', '');
+            $orderArray = $this->request->get('sort', '');
+            $offset = (int) $this->request->get('offset', 0);
+            $limit = (int) $this->request->get('limit', 50);
 
-            $filter = $this->request->get('filter', '');
-            $filter = is_string($filter) ? [] : $filter; /// if is string has bad format
+            $operation = is_array($operationArray) ? $operationArray : []; /// if is string has bad format
+            $filter = is_array($filterArray) ? $filterArray : []; /// if is string has bad format
+            $order = is_array($orderArray) ? $orderArray : []; /// if is string has bad format
+
             $where = [];
             foreach ($filter as $key => $value) {
                 if (!isset($operation[$key])) {
@@ -119,12 +124,6 @@ class AppAPI extends App
                 }
                 $where[] = new DataBaseWhere($key, $value, 'LIKE', $operation[$key]);
             }
-
-            $order = $this->request->get('sort', '');
-            $order = is_string($order) ? [] : $order; /// if is string has bad format
-
-            $offset = (int) $this->request->get('offset', 0);
-            $limit = (int) $this->request->get('limit', 50);
 
             switch ($this->request->getMethod()) {
                 case 'POST':
