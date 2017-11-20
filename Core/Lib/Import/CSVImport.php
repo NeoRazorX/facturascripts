@@ -16,46 +16,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-namespace FacturaScripts\Core\Base;
-
-use Symfony\Component\HttpFoundation\Response;
+namespace FacturaScripts\Core\Lib\Import;
 
 /**
- * Description of ExportInterface
+ * Description of CSVImport
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Carlos García Gómez
  */
-interface ExportInterface
+class CSVImport
 {
-    /**
-     * Asigna la cabecera
-     *
-     * @param Response $response
-     *
-     * @return mixed
-     */
-    public function setHeaders(&$response);
 
-    /**
-     * Nuevo documento
-     *
-     * @param $model
-     *
-     * @return mixed
-     */
-    public function newDoc($model);
+    public static function importTable($table)
+    {
+        $filePath = FS_FOLDER . '/Core/Data/' . FS_CODPAIS . '/' . $table . '.csv';
 
-    /**
-     * Nueva lista de documentos
-     *
-     * @param $model
-     * @param array $where
-     * @param array $order
-     * @param int $offset
-     * @param array $columns
-     *
-     * @return mixed
-     */
-    public function newListDoc($model, $where, $order, $offset, $columns);
+        return '';
+    }
 }

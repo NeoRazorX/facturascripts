@@ -82,7 +82,7 @@ abstract class PanelController extends Base\Controller
      * @param Base\Cache $cache
      * @param Base\Translator $i18n
      * @param Base\MiniLog    $miniLog
-     * @param string     $className
+     * @param string          $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {

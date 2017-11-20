@@ -19,6 +19,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Lib\Import\CSVImport;
+
 /**
  * Una provincia.
  *
@@ -111,8 +113,7 @@ class Provincia
      */
     public function install()
     {
-        // TODO: Load from CSV realpath('Core/Model/DefaultData/ES-provincias.csv')
-        return '';
+        return CSVImport::importTable($this->tableName());
     }
 
     public function url($type = 'auto')
