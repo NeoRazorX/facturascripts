@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\App;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -60,7 +61,7 @@ class AppAPI extends App
     private function selectVersion()
     {
         $version = $this->request->get('v', '');
-        if ($version == '3') {
+        if ($version === '3') {
             return $this->selectResource();
         }
 
@@ -87,7 +88,7 @@ class AppAPI extends App
         $modelName = "FacturaScripts\\Dinamic\\Model\\" . $map[$resourceName];
         $cod = $this->request->get('cod', '');
 
-        if ($cod == '') {
+        if ($cod === '') {
             return $this->processResource($modelName);
         }
 
@@ -105,8 +106,23 @@ class AppAPI extends App
     {
         try {
             $model = new $modelName();
+            $defaultOperation = 'AND';
+            $operation = $this->request->get('operation', $defaultOperation);
+            $operation = is_string($operation) ? [] : $operation; /// if is string has bad format
+
+            $filter = $this->request->get('filter', '');
+            $filter = is_string($filter) ? [] : $filter; /// if is string has bad format
             $where = [];
-            $order = [];
+            foreach ($filter as $key => $value) {
+                if (!isset($operation[$key])) {
+                    $operation[$key] = $defaultOperation;
+                }
+                $where[] = new DataBaseWhere($key, $value, 'LIKE', $operation[$key]);
+            }
+
+            $order = $this->request->get('sort', '');
+            $order = is_string($order) ? [] : $order; /// if is string has bad format
+
             $offset = (int) $this->request->get('offset', 0);
             $limit = (int) $this->request->get('limit', 50);
 
@@ -187,13 +203,13 @@ class AppAPI extends App
     {
         $resources = [];
         foreach (scandir(FS_FOLDER . '/Dinamic/Model', SCANDIR_SORT_ASCENDING) as $fName) {
-            if (substr($fName, -4) == '.php') {
+            if (substr($fName, -4) === '.php') {
                 $modelName = substr($fName, 0, -4);
 
                 /// convertimos en plural
-                if (substr($modelName, -1) == 's') {
+                if (substr($modelName, -1) === 's') {
                     $plural = strtolower($modelName);
-                } elseif (substr($modelName, -3) == 'ser' || substr($modelName, -4) == 'tion') {
+                } elseif (substr($modelName, -3) === 'ser' || substr($modelName, -4) === 'tion') {
                     $plural = strtolower($modelName) . 's';
                 } elseif (in_array(substr($modelName, -1), ['a', 'e', 'i', 'o', 'u', 'k'])) {
                     $plural = strtolower($modelName) . 's';
