@@ -1,3 +1,4 @@
+==========================
 Controlador EditController
 ==========================
 
@@ -15,7 +16,7 @@ XML, tal y como se describe en el documento
 incluido en la documentación de **Facturascripts**.
 
 Cómo usar el controlador
-------------------------
+========================
 
 Para utilizar *EditController* debemos crearnos una nueva clase PHP que
 herede o extienda de EditController, estableciendo en el constructor de
@@ -41,7 +42,7 @@ generales que podemos sobreescribir para personalizar la pantalla, (ver
 más abajo).
 
 getPageData
-~~~~~~~~~~~
+===========
 
 Este método es el encargado de devolver un array con los datos para la
 instalación y configuración del controlador dentro del entorno de
@@ -69,8 +70,9 @@ o abajo
             return $pagedata;
         }
 
-## Personalización Existen dos métodos que nos permiten personalizar los
-datos a visualizar en la cabecera y pie de la ficha de datos.
+Personalización
+===============
+Existen dos métodos que nos permiten personalizar los datos a visualizar en la cabecera y pie de la ficha de datos.
 
 .. code:: php
 
@@ -84,11 +86,10 @@ datos a visualizar en la cabecera y pie de la ficha de datos.
             return $this->i18n->trans('footer-data');
         }
 
-También podemos personalizar la vista mediante la inclusión en el
-fichero XML del grupo *<rows>* y crear *<row type=“”>* de las clases
-**header**, para definir una lista de botones estadísticos y
-relacionales con otros modelos, y **footer**, para añadir información
-adicional a visualizar al usuario justo después de la ficha de datos.
+También podemos personalizar la vista mediante la inclusión en el fichero XML del grupo *<rows>*
+y crear *<row type=“”>* de las clases **header**, para definir una lista de botones estadísticos y
+relacionales con otros modelos, y **footer**, para añadir información adicional a visualizar al
+usuario justo después de la ficha de datos.
 
 Ejemplos:
 
@@ -98,11 +99,11 @@ Ejemplos:
             <row type="header">
                 <option icon="fa-files-o" label="Alb. Pdtes:" calculateby="nombre_function" onclick="#url"></option>
                 <option icon="fa-files-o" label="Pdte Cobro:" calculateby="nombre_function" onclick="#url"></option>
-            </row>        
+            </row>
 
             <row type="footer">
                 <option label="Panel Footer" footer="Panel footer" color="warning">Este es un ejemplo con cabecera y footer</option>
                 <option label="Esto es un info" color="info">Este es un ejemplo con cabecera y sin footer</option>
                 <option footer="Texto en el footer" color="success">Este es un ejemplo sin cabecera</option>
-            </row>  
+            </row>
         </rows>

@@ -1,3 +1,4 @@
+==============================
 Construcción de vistas por XML
 ==============================
 
@@ -16,7 +17,7 @@ siguientes grupos:
    disponibles en la vista.
 
 COLUMNS
--------
+=======
 
 Permite definir mediante la etiqueta *<column>* cada uno de los campos
 que se visualizarán en la vista pudiendo, en las vistas *Edit*, agrupar
@@ -82,7 +83,7 @@ Ejemplo de vista para EditController:
         </columns>
 
 column
-~~~~~~
+------
 
 Entendemos que es cada uno de los campos del modelo que componen la
 vista y con los que el usuario puede interactuar.
@@ -117,7 +118,7 @@ vista y con los que el usuario puede interactuar.
    automático de Bootstrap.
 
 widget
-~~~~~~
+------
 
 Complemento visual que se utiliza para la visualización y/o edición del
 campo/columna. En las vistas List, se puede completar la clusula html
@@ -136,7 +137,7 @@ en la etiqueta *<option>*:
 
 Ejemplos:
 
-*Pintar de color rojo cuando el valor del campo **pendiente es cero***
+*Pintar de color rojo cuando el valor del campo ``pendiente`` es cero*
 
 .. code:: xml
 
@@ -144,9 +145,8 @@ Ejemplos:
             <option color="red">0</option>
         </widget>
 
-*Pintar de color rojo y negrita cuando el valor del campo **estado es
-ABIERTO*** *Pintar de color azul cuando el valor del campo **estado es
-CERRADO***
+*Pintar de color rojo y negrita cuando el valor del campo ``estado`` es ``ABIERTO``*
+*Pintar de color azul cuando el valor del campo ``estado`` es ``CERRADO``*
 
 .. code:: xml
 
@@ -155,8 +155,7 @@ CERRADO***
             <option color="blue">CERRADO</option>
         </widget>
 
-*Pintar de color rojo cuando el valor del campo **cantidad es menor de
-0***
+*Pintar de color rojo cuando el valor del campo ``cantidad`` es menor de 0*
 
 .. code:: xml
 
@@ -164,8 +163,7 @@ CERRADO***
             <option color="red">&lt;0</option>
         </widget>
 
-*Pintar de color rojo cuando el valor del campo **importe es mayor de
-treinta mil***
+*Pintar de color rojo cuando el valor del campo ``importe`` es mayor de treinta mil*
 
 .. code:: xml
 
@@ -199,49 +197,44 @@ treinta mil***
       definición de un rango. Para el caso de valores de una tabla se
       utilizará una sóla etiqueta *<values>* indicando los atributos:
 
-      -  ***source***: Indica el nombre de la tabla origen de los datos
-      -  ***fieldcode***: Indica el campo que contiene el valor a grabar
+      -  *source*: Indica el nombre de la tabla origen de los datos
+      -  *fieldcode*: Indica el campo que contiene el valor a grabar
          en el campo de la columna
-      -  ***fieldtitle***: Indica el campo que contiene el valor que se
+      -  *fieldtitle*: Indica el campo que contiene el valor que se
          visualizará en pantalla
 
-Para el caso de valores por definición de rango una sóla etiqueta
-*<values>* indicando los atributos: \* *start*: Indica el valor inicial
-(numérico o alfabético) \* *end*: Indica el valor final (numérico o
-alfabético) \* *step*: Indica el valor del incremento (numérico)
+      Para el caso de valores por definición de rango una sóla etiqueta *<values>*
+      indicando los atributos:
+          -  *start*: Indica el valor inicial (numérico o alfabético)
+          -  *end*: Indica el valor final (numérico o alfabético)
+          -  *step*: Indica el valor del incremento (numérico)
 
-::
+.. code:: xml
 
-        ```XML
-            <widget type="select" fieldname="documentacion">
-                <values title="Pasaporte">PASAPORTE</values>
-                <values title="D.N.I.">DNI</values>
-                <values title="N.I.E.">NIE</values>
-            </widget>
+        <widget type="select" fieldname="documentacion">
+            <values title="Pasaporte">PASAPORTE</values>
+            <values title="D.N.I.">DNI</values>
+            <values title="N.I.E.">NIE</values>
+        </widget>
 
-            <widget type="select" fieldname="codgrupo">
-                <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
-            </widget>
+        <widget type="select" fieldname="codgrupo">
+            <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
+        </widget>
 
-            <widget type="select" fieldname="codgrupo">
-                <values start="0" end="6" step="1"></values>
-            </widget>
-        ```
+        <widget type="select" fieldname="codgrupo">
+            <values start="0" end="6" step="1"></values>
+        </widget>
 
-    * radio: Lista de valores donde podemos seleccionar una de ellas.
+    -  **radio**: Lista de valores donde podemos seleccionar una de ellas.
+    Se indican las distintas opciones mediante sistema de etiquetas
+    *<values>* descritas dentro del grupo *<widget>*, al estilo del tipo *select*.
 
-Se indican las distintas opciones mediante sistema de etiquetas
-*<values>* descritas dentro del grupo *<widget>*, al estilo del tipo
-*select*.
+.. code:: xml
 
-::
-
-        ```XML
-                <widget type="radio" fieldname="regimeniva">
-                    <values title="general">General</values>
-                    <values title="exempt">Exento</values>
-                </widget>
-        ```
+        <widget type="radio" fieldname="regimeniva">
+            <values title="general">General</values>
+            <values title="exempt">Exento</values>
+        </widget>
 
 -  **fieldname** : (obligatorio) Nombre del campo que contiene la
    información.
@@ -264,7 +257,7 @@ Se indican las distintas opciones mediante sistema de etiquetas
    el ratón sobre el título en el controlador Edit.
 
 group
-~~~~~
+-----
 
 Crea una rejilla bootstrap donde incluirá cada una de las columnas
 *<column>* declaradas dentro del grupo. Se puede personalizar el grupo
@@ -295,7 +288,7 @@ mediante los siguientes atributos:
    que tenga definido el grupo.
 
 ROWS
-----
+====
 
 Este grupo permite añadir funcionalidad a cada una de las filas o añadir
 filas con procesos especiales. Así mediante la etiqueta *<row>* podemos
@@ -310,8 +303,8 @@ propios.
 
 Ejemplo:
 
-*pinta la fila de color “info” si el campo **estado es Pendiente***
-*pinta la fila de color “warning” si el campo **estado es Parcial***
+*pinta la fila de color “info” si el campo ``estado`` es ``Pendiente``*
+*pinta la fila de color “warning” si el campo ``estado++ es ``Parcial``*
 
 .. code:: xml
 
@@ -334,7 +327,7 @@ Ejemplo:
             <row type="header">
                 <option icon="fa-files-o" label="Alb. Pdtes:" calculateby="nombre_function" onclick="#url"></option>
                 <option icon="fa-files-o" label="Pdte Cobro:" calculateby="nombre_function" onclick="#url"></option>
-            </row>        
+            </row>
         </rows>
 
 -  **<footer>** : Permite añadir información adicional a visualizar al
@@ -350,11 +343,5 @@ Ejemplo:
                 <option label="Panel Footer" footer="Panel footer" color="warning">Este es un ejemplo con cabecera y footer</option>
                 <option label="Esto es un info" color="info">Este es un ejemplo con cabecera y sin footer</option>
                 <option footer="Texto en el footer" color="success">Este es un ejemplo sin cabecera</option>
-            </row>    
+            </row>
         </rows>
-
-FILTERS
--------
-
-Para definir la lista de filtros disponibles en la vista (Futuras
-versiones).
