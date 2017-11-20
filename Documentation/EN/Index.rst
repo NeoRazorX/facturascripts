@@ -27,10 +27,10 @@ It is free software under the GNU / LGPL license.
    :maxdepth: 1
 
    Overview
-   GuideStyle
+   StyleGuide
 
    Translations
    XMLViews
-   Listcontroller
+   ListController
    EditController
    PanelController
