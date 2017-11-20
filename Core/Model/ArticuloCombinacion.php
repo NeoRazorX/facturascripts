@@ -340,7 +340,7 @@ class ArticuloCombinacion
     {
         /// nos aseguramos de que existan las tablas necesarias
         //new Atributo();
-        //new AtributoValor();
+        new AtributoValor();
 
         return '';
     }

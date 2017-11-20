@@ -1,5 +1,6 @@
-PanelController Controller
-==========================
+===============
+PanelController
+===============
 
 This controller, like the *ListController*, is a **universal
 controller** for multiple views although in this case the use of
@@ -16,7 +17,7 @@ XML format, as described in the document [XMLViews]
 included in the documentation of **Facturascripts**.
 
 Using the Controller
---------------------
+====================
 
 To use *PanelController* we must create a new PHP class that inherits or
 extends from PanelController, having to implement the following methods:
@@ -30,7 +31,7 @@ extends from PanelController, having to implement the following methods:
    the main view (the first one we added in *createViews*).
 
 createViews
-~~~~~~~~~~~
+===========
 
 Within this method, in our new class, we must create the different views
 to be visualized, using different methods depending on the type of view
@@ -54,7 +55,7 @@ This method has a visibility of *protected* so that plugins can extend
 our class and add new views, or modify existing ones.
 
 loadData
-~~~~~~~~
+========
 
 This method is called by each of the views so that we can load the data
 specific information. In the call we are informed of the identifier of
@@ -77,7 +78,7 @@ Example of loading data for different types of views.
             case 'EditDireccionCliente':
                 // we create a where filter to collect the records belonging to the informed code
                 $where = [new DataBase\DataBaseWhere('codcliente', $this->getClientFieldValue('codcliente'))];
-                $view->loadData($where);                
+                $view->loadData($where);
                 break;
 
             case 'ListCliente':
@@ -92,13 +93,13 @@ Example of loading data for different types of views.
         }
 
 setTabsPosition
-~~~~~~~~~~~~~~~
+===============
 
 This method let you put tabs on left, bottom or on top of the page. Left
 is the default position.
 
 getPageData
-~~~~~~~~~~~
+===========
 
 This method is responsible for returning an array with the data for the
 installation and configuration of the controller within the environment

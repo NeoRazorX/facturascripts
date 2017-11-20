@@ -1,3 +1,4 @@
+===========================
 Controlador PanelController
 ===========================
 
@@ -16,7 +17,7 @@ XML, tal y como se describe en el documento
 incluido en la documentación de **Facturascripts**.
 
 Cómo usar el controlador
-------------------------
+========================
 
 Para utilizar *PanelController* debemos crearnos una nueva clase PHP que
 herede o extienda de PanelController, debiendo implementar los
@@ -33,7 +34,7 @@ siguientes métodos:
    *createViews*).
 
 createViews
-~~~~~~~~~~~
+===========
 
 Dentro de este método, en nuestra nueva clase, debemos ir creando las
 distintas vistas que se visualizarán, debiendo usar distintos métodos
@@ -60,7 +61,7 @@ plugins pueden ir extendiendo nuestra clase y añadir nuevas vistas, o
 modificar las existentes.
 
 loadData
-~~~~~~~~
+========
 
 Este método es llamado por cada una de las vistas para que podamos
 cargar los datos específicos de la misma. En la llamada se nos informa
@@ -84,7 +85,7 @@ Ejemplo de carga de datos para distintos tipos de vistas.
             case 'EditDireccionCliente':
                 // creamos un filtro where para recoger los registros pertenecientes al código informado
                 $where = [new DataBase\DataBaseWhere('codcliente', $this->getClientFieldValue('codcliente'))];
-                $view->loadData($where);                
+                $view->loadData($where);
                 break;
 
             case 'ListCliente':
@@ -99,13 +100,13 @@ Ejemplo de carga de datos para distintos tipos de vistas.
         }
 
 setTabsPosition
-~~~~~~~~~~~~~~~
+===============
 
 Este método permite poner las pestaña a la izquierda (left), abajo
 (bottom) o arriba (top). Por defecto están colocadas a la izquierda.
 
 getPageData
-~~~~~~~~~~~
+===========
 
 Este método es el encargado de devolver un array con los datos para la
 instalación y configuración del controlador dentro del entorno de
