@@ -23,14 +23,20 @@ Facturascripts
 Billing and accounting software for SMEs, easy, free and with constant updates. It is compatible with FacturaLux, Abanq and Eneboo.
 It is free software under the GNU / LGPL license.
 
+
+Table of Contents
+=================
+
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    Overview
    StyleGuide
 
    Translations
+
    XMLViews
+
    ListController
    EditController
    PanelController

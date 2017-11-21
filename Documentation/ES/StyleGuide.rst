@@ -1,8 +1,8 @@
 .. highlight:: rst
 
-**************
+##############
 Guía de Estilo
-**************
+##############
 
 Esta página cubre las convenciones para la escritura y el uso de la sintaxis de
 marcado reStructuredText (RST) y más concretamente para la creación y mantenimiento

@@ -331,7 +331,7 @@
 -->
 {% macro modalFormFromColumns(context, view) %}
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
-{% set save, save_title = context.i18n.trans('save'), context.i18n.trans('save-data') %}
+{% set accept, accept_title = context.i18n.trans('accept'), context.i18n.trans('accept-data') %}
 {% set cancel, cancel_title = context.i18n.trans('cancel'), context.i18n.trans('cancel-data') %}
 
 {% for group in view.getModals() %}
@@ -366,8 +366,8 @@
                         <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal" {{ popoverTitle(cancel_title, 'bottom') }}>
                             <i class="fa fa-ban" aria-hidden="true"></i>&nbsp; {{ cancel }}
                         </button>
-                        <button type="submit" class="btn btn-sm btn-primary" onclick="this.disabled = true; this.form.submit();" {{ popoverTitle(save_title, 'bottom') }}>
-                            <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
+                        <button type="submit" class="btn btn-sm btn-primary" onclick="this.disabled = true; this.form.submit();" {{ popoverTitle(accept_title, 'bottom') }}>
+                            <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ accept }}
                         </button>
                     </div>
                 </form>

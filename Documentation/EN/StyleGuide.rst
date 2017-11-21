@@ -1,8 +1,8 @@
 .. highlight:: rst
 
-***********
+###########
 Style Guide
-***********
+###########
 
 This page covers the conventions for writing and using the syntax of
 marked reStructuredText (RST) and more specifically for the creation and maintenance

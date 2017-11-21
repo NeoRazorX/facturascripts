@@ -1,18 +1,19 @@
-========
+########
 Overview
-========
+########
 
-Requirements
-============
+Requerimientos
+==============
+
 Para instalación y uso
-    #. Servidor web Apache2 Server or similar
-    #. PHP 7.0
-    #. Motor de bases de datos MySql, MariaDB o Postgresql
+    1. Servidor web Apache2 Server or similar
+    2. PHP 7.0
+    3. Motor de bases de datos MySql, MariaDB o Postgresql
 
 Para desarrollo
-    #. Requerimientos de uso
-    #. Entorno de desarrollo PHP: NetBeens, PHPStorm o similar
-    #. Composer y NPM: Para la instalación de requerimientos.
+    1. Requerimientos de uso
+    2. Entorno de desarrollo PHP: NetBeens, PHPStorm o similar
+    3. Composer y NPM: Para la instalación de requerimientos.
 
 
 .. _instalación:
@@ -25,17 +26,17 @@ Para instalar un entorno de desarrollo, los pasos a seguir pueden variar según 
 donde desee trabajar. A continuación se detallan un método genérico.
 
 .. code-block:: bash
-    # Instalando Facturascripts
-    git clone https://github.com/NeoRazorX/facturascripts.git
-    cd facturascripts
-    composer install
-    npm install
+        # Instalando Facturascripts
+        git clone https://github.com/NeoRazorX/facturascripts.git
+        cd facturascripts
+        composer install
+        npm install
 
 En caso de no instalarse correctamente el paquete Composer, podemos instalarlo manualmente
 
 .. code-block:: bash
-    # Install Composer
-    curl -sS https://getcomposer.org/installer | php
+      # Install Composer
+      curl -sS https://getcomposer.org/installer | php
 
 
 
@@ -74,12 +75,16 @@ Directrices
 -----------
 
 1. Facturascripts utiliza PSR-1 y PSR-2.
+
 2. Facturascripts está diseñado para utilizar las menos dependencias y mayor simplicidad posibles.
 Esto significa que no todas las solicitudes de funciones serán aceptadas.
+
 3. Facturascripts tiene un requisito de versión PHP mínimo de 7.0. Las solicitudes de PR deben respetar
 este requerimiento. Se negará la integración con otros requerimientos de versión de PHP.
+
 4. Todas las solicitudes de PR deben incluir pruebas unitarias para garantizar que el cambio funcione como
 esperado y para evitar regresiones.
+
 
 Issues (Problemas)
 ------------------
@@ -88,8 +93,8 @@ Cualquier duda, pregunta o error que encuentres lo puedes comentar en el chat: h
 o crear el tema correspondiente en https://github.com/NeoRazorX/facturascripts/issues
 
 
-Pull Requests (Incorporación de cambios)
-----------------------------------------
+Pull Requests
+-------------
 
 Todas las colaboraciones son bien recibidas en FacturaScripts, pero por favor, lee lo siguiente antes:
 
@@ -98,7 +103,7 @@ Contenido
 
 Documentación
     La documentación es algo que nos resulta imprescindible a todos para entender mejor como utilizar
-el código realizado por otros, o incluso para entender que hicimos nosotros mismos hace algún tiempo.
+    el código realizado por otros, o incluso para entender que hicimos nosotros mismos hace algún tiempo.
 
 
 Escribiendo un Pull Request
@@ -106,12 +111,12 @@ Escribiendo un Pull Request
 
 Título
     Idealmente, un Pull Request debe referirse a sólo un objetivo, así los cambios independendientes se pueden combinar con rapidez.
-Si quieres por ejemplo, corregir un error tipográfico y mejorar el rendimiento de un proceso, debes intentar en lo posible hacerlo
-en PR separados, así podemos incorporar uno rápidamente mientras el otro puede que se discuta.
-El objetivo es obtener un registro de cambios limpio y hacer que una reversión sea fácil.
-Si has encontrado un fallo/error tipográfico al escribir tus cambios que no están relacionados con tu trabajo, por favor haz otro
-Pull Request para ello. En algunos casos raros, te verás forzado a hacerlo en el mismo PR. En este tipo de situaciones,
-por favor añade un comentario en tu PR explicando porque debe ser así.
+    Si quieres por ejemplo, corregir un error tipográfico y mejorar el rendimiento de un proceso, debes intentar en lo posible hacerlo
+    en PR separados, así podemos incorporar uno rápidamente mientras el otro puede que se discuta.
+    El objetivo es obtener un registro de cambios limpio y hacer que una reversión sea fácil.
+    Si has encontrado un fallo/error tipográfico al escribir tus cambios que no están relacionados con tu trabajo, por favor haz otro
+    Pull Request para ello. En algunos casos raros, te verás forzado a hacerlo en el mismo PR. En este tipo de situaciones,
+    por favor añade un comentario en tu PR explicando porque debe ser así.
 
 Registro de cambios
     Por cada PR, se debe proporcionar un registro de cambios.
@@ -125,4 +130,4 @@ Registro de cambios
     #. ``Seguridad`` para invitar a los usuarios a actualizar en caso de vulnerabilidades.
 
     Esto facilita que cualquier usuario entienda facilmente todos los cambios que le ofrece la actualización,
-  y así tener más claro si le resulta urgente o no actualizar.
+    y así tener más claro si le resulta urgente o no actualizar.

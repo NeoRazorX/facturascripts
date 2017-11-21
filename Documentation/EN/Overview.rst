@@ -4,15 +4,16 @@ Overview
 
 Requirements
 ============
+
 For installation and use
-    #. Apache2 Server web server or similar
-    #. PHP 7.0
-    #. Database engine MySql, MariaDB or Postgresql
+    1. Apache2 Server web server or similar
+    2. PHP 7.0
+    3. Database engine MySql, MariaDB or Postgresql
 
 For development
-    #. Requirements for use
-    #. PHP development environment: NetBeens, PHPStorm or similar
-    #. Composer and NPM: For the installation of requirements.
+    1. Requirements for use
+    2. PHP development environment: NetBeens, PHPStorm or similar
+    3. Composer and NPM: For the installation of requirements.
 
 
 .. _installation:
@@ -74,12 +75,16 @@ Guidelines
 -----------
 
 1. Facturascripts uses PSR-1 and PSR-2.
+
 2. Facturascripts is designed to use the least possible dependencies and simplicity.
 This means that not all feature requests will be accepted.
+
 3. Facturascripts has a minimum PHP version requirement of 7.0. PR applications must respect
 this requirement. Integration with other PHP version requirements will be denied.
+
 4. All PR requests must include unit tests to ensure that the change works as
 expected and to avoid regressions.
+
 
 Issues (Problems)
 ------------------
@@ -88,8 +93,8 @@ Any questions, questions or errors you may find you can comment in the chat: htt
 or create the corresponding topic at https://github.com/NeoRazorX/facturascripts/issues
 
 
-Pull Requests (Incorporation of changes)
-----------------------------------------
+Pull Requests
+-------------
 
 All contributions are well received in FacturaScripts, but please read the following before:
 
@@ -98,7 +103,7 @@ Content
 
 Documentation
     Documentation is something that is essential for everyone to better understand how to use
-the code made by others, or even to understand what we did ourselves some time ago.
+    the code made by others, or even to understand what we did ourselves some time ago.
 
 
 Writing a Pull Request
@@ -106,12 +111,12 @@ Writing a Pull Request
 
 Title
     Ideally, a Pull Request should refer to only one objective, so independent changes can be combined quickly.
-If you want, for example, to correct a typographical error and improve the performance of a process, you should try as much as possible to do it
-in separate PR, so we can incorporate one quickly while the other one can be discussed.
-The objective is to obtain a clean change record and make a reversal easy.
-If you have found a typo / bug when writing your changes that are not related to your work, please do another
-Pull Request for it. In some rare cases, you will be forced to do it in the same PR. In these types of situations,
-please add a comment in your PR explaining why it should be like this.
+    If you want, for example, to correct a typographical error and improve the performance of a process, you should try as much as possible to do it
+    in separate PR, so we can incorporate one quickly while the other one can be discussed.
+    The objective is to obtain a clean change record and make a reversal easy.
+    If you have found a typo / bug when writing your changes that are not related to your work, please do another
+    Pull Request for it. In some rare cases, you will be forced to do it in the same PR. In these types of situations,
+    please add a comment in your PR explaining why it should be like this.
 
 Change Log
     For each PR, a change log must be provided.
