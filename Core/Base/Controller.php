@@ -33,18 +33,17 @@ class Controller
 {
 
     /**
+     * Contiene la lista de archivos extra a cargar: javascript, css, etc.
+     * @var array 
+     */
+    public $assets;
+
+    /**
      * Gestor de acceso a cache.
      *
      * @var Cache
      */
     protected $cache;
-
-    /**
-     * Proporciona acceso directo a la base de datos.
-     *
-     * @var DataBase
-     */
-    protected $dataBase;
 
     /**
      * Nombre de la clase del controlador (aunque se herede de esta clase, el nombre
@@ -53,6 +52,13 @@ class Controller
      * @var string __CLASS__
      */
     private $className;
+
+    /**
+     * Proporciona acceso directo a la base de datos.
+     *
+     * @var DataBase
+     */
+    protected $dataBase;
 
     /**
      * Gestor de eventos.
@@ -139,6 +145,7 @@ class Controller
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
+        $this->assets = AssetManager::getAssetsForPage($className);
         $this->cache = $cache;
         $this->className = $className;
         $this->dataBase = new DataBase();

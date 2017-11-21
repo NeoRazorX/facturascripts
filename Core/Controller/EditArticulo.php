@@ -36,10 +36,11 @@ class EditArticulo extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('FacturaScripts\Core\Model\Articulo', 'EditArticulo', 'products', 'fa-cubes');
+        $this->addEditListView('FacturaScripts\Core\Model\Stock', 'EditStock', 'stock');
+        $this->addListView('FacturaScripts\Core\Model\ArticuloProveedor', 'ListArticuloProveedor', 'suppliers', 'fa-ship');
+        $this->addListView('FacturaScripts\Core\Model\ArticuloCombinacion', 'ListArticuloCombinacion', 'combinations', 'fa-sliders');
         $this->addListView('FacturaScripts\Core\Model\ArticuloTraza', 'ListArticuloTraza', 'traceability', 'fa-barcode');
-        $this->addListView('FacturaScripts\Core\Model\ArticuloCombinacion', 'ListArticuloCombinacion', 'combinate-article', 'fa-qrcode');
     }
-        
 
     /**
      * Load view data procedure
@@ -49,31 +50,42 @@ class EditArticulo extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
+        if ($this->getViewModelValue('EditArticulo', 'secompra') === false) {
+            unset($this->views['ListArticuloProveedor']);
+        }
+        
+        if ($this->getViewModelValue('EditArticulo', 'tipo') !== 'atributos') {
+            unset($this->views['ListArticuloCombinacion']);
+        }
+        
+        if ($this->getViewModelValue('EditArticulo', 'trazabilidad') === false) {
+            unset($this->views['ListArticuloTraza']);
+        }
+
+        $referencia = $this->request->get('code');
         switch ($keyView) {
             case 'EditArticulo':
-                $value = $this->request->get('code');
-                $view->loadData($value);
+                $view->loadData($referencia);
+                break;
+
+            case 'EditStock':
+                $where = [new DataBase\DataBaseWhere('referencia', $referencia)];
+                $view->loadData($where);
+                break;
+
+            case 'ListArticuloProveedor':
+                $where = [new DataBase\DataBaseWhere('referencia', $referencia)];
+                $view->loadData($where);
+                break;
+
+            case 'ListArticuloCombinacion':
+                $where = [new DataBase\DataBaseWhere('referencia', $referencia)];
+                $view->loadData($where);
                 break;
 
             case 'ListArticuloTraza':
-                $referencia = $this->getViewModelValue('EditArticulo', 'referencia');
-
-                if (!empty($referencia)) {
-                    $where = [new DataBase\DataBaseWhere('referencia', $referencia)];
-                    $view->loadData($where);
-                break;
-                }
-                
-            case 'ListArticuloCombinacion':
-                $tipo = $this->getViewModelValue('EditArticulo', 'tipo');
-                
-                if ($tipo === 'atributos') {
-                    $referencia = $this->getViewModelValue('EditArticulo', 'referencia');
-                    if (!empty($referencia)) {
-                        $where = [new DataBase\DataBaseWhere('referencia', $referencia)];
-                        $view->loadData($where);
-                    }
-                }    
+                $where = [new DataBase\DataBaseWhere('referencia', $referencia)];
+                $view->loadData($where);
                 break;
         }
     }

@@ -82,7 +82,7 @@ abstract class PanelController extends Base\Controller
      * @param Base\Cache $cache
      * @param Base\Translator $i18n
      * @param Base\MiniLog    $miniLog
-     * @param string     $className
+     * @param string          $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
@@ -109,7 +109,7 @@ abstract class PanelController extends Base\Controller
             case 'bottom':
                 $this->setTemplate('Master/PanelControllerBottom');
                 break;
-            
+
             case 'top':
                 $this->setTemplate('Master/PanelControllerTop');
                 break;
@@ -159,7 +159,11 @@ abstract class PanelController extends Base\Controller
      */
     public function getFieldValue($model, $fieldName)
     {
-        return $model->{$fieldName};
+        if (isset($model->{$fieldName})) {
+            return $model->{$fieldName};
+        }
+
+        return null;
     }
 
     /**
