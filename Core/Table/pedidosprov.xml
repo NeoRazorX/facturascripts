@@ -161,6 +161,11 @@
         <name>idoriginal</name>
         <type>integer</type>
     </column>
+    <column>
+        <name>idempresa</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
     <constraint>
         <name>pedidosprov_pkey</name>
         <type>PRIMARY KEY (idpedido)</type>
