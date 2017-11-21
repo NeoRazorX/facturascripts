@@ -216,20 +216,24 @@ Examples:
       choose it.
    -  **color**: For color selections.
    -  **select**: List of values ​​set by a set of tags *<values>* described
-   within the group *<widget>*. The values ​​can be fixed, including as many
-   *<values>* as we need and indicating the attribute *title* and assigning a
-   value, as dynamic, either calculated based on the contents of the records of
-   a table in the database or by defining a range.
-   For the case of values ​​of a table will be used a single tag *<values>* indicating
-   the attributes:
+      within the group *<widget>*. The values ​​can be fixed, including as many
+      *<values>* as we need and indicating the attribute *title* and assigning a
+      value, as dynamic, either calculated based on the contents of the records of
+      a table in the database or by defining a range.
+      For the case of values ​​of a table will be used a single tag *<values>* indicating
+      the attributes:
           -  *source*: Indicates the name of the source table of the data
           -  *fieldcode*: Indicates the field containing the value to be recorded in the column field
           -  *fieldtitle*: Indicates the field containing the value that will be displayed on the screen
 
-   For the case of values ​​by definition of range a single tag *<values>* indicating the attributes:
+      For the case of values ​​by definition of range a single tag *<values>* indicating the attributes:
           -  *start*: Indicates the initial value (numeric or alphabetical)
           -  *end*: Indicates the final value (numeric or alphabetical)
           -  *step*: Indicates the increment value (numeric)
+
+    -  **radio**: List of values ​​where we can select one of them. The various
+       options are indicated by the tag system *<values>* described in the group *<widget>*,
+       in the style of the *select* type.
 
 .. code:: xml
 
@@ -247,17 +251,10 @@ Examples:
         <values start="0" end="6" step="1"></values>
     </widget>
 
-
-   -  **radio**: List of values ​​where we can select one of them. The various
-      options are indicated by the tag system *<values>* described in the group *<widget>*,
-      in the style of the *select* type.
-
-   .. code:: xml
-
-           <widget type="radio" fieldname="regimeniva">
-               <values title="general">General</values>
-               <values title="exempt">Exento</values>
-           </widget>
+    <widget type="radio" fieldname="regimeniva">
+         <values title="general">General</values>
+         <values title="exempt">Exento</values>
+    </widget>
 
 -  **fieldname**: (required) Name of the field containing the
    information.
@@ -282,6 +279,7 @@ Examples:
 
 button
 ------
+
 This visual element is available only in views of type *Edit* and *EditList* and
 As its name suggests it allows to include a button in one of the editing columns.
 There are three types of buttons declared by the ``type`` attribute and with functions
@@ -355,6 +353,7 @@ performed, each type having its own requirements.
 
 status
 ------
+
 This type colorize rows based on the value of a field in the record.
 Requires one or more registers *<option>* indicating the bootstrap color
 configuration for panels that we want for the row.
@@ -376,6 +375,7 @@ Example:
 
 header
 ------
+
 Defines a list of statistical and relational buttons with other models that give
 information to the user and allows consult when you click.
 Each of the buttons are defined by the label * <button> * followed by the properties:
@@ -405,10 +405,11 @@ Example:
 
 actions
 -------
+
 It allows to define a group of buttons of types *action* and *modal* that will be displayed
 at the bottom of the edit form, enter the delete and record buttons. This *row*
 it is specific to the *Edit* views. The declaration of the buttons is done in a
-similar to the one described in the `button`__ section except that the label *column*
+similar to the one described in the `button`_ section except that the label *column*
 is not necessary.
 
 Example:
@@ -426,21 +427,75 @@ Example:
 
 footer
 ------
-Allows you to add additional information to be displayed to the user at the foot of the view.
+
+It allows adding additional information to visualize the user at the bottom of the view.
+The information is displayed in the form of panels ("Bootstrap cards") where we can
+include messages and buttons for both action and modals. To declare a panel we will use
+the tag *<group>* in which we will include tags *button* (if we need them).
+We can customize each of the section of the panel as the header, the body
+and/or the footer with attributes:
+
+-  **name**: set the identifier for the panel.
+
+-  **title**: indicates a text for the panel header.
+
+-  **label**: indicates a text for the body of the panel.
+
+-  **footer**: indicates a text for the foot of the panel.
 
 Example:
 
 .. code:: xml
 
-        <rows>
-            <row type="footer">
-                <option>This is an example with only text</option>
-                <option label="Panel Footer" footer="Panel footer" color="warning">This is an example with header and footer</option>
-                <option label="This is info" color="info">This is an example with header and without footer</option>
-                <option footer="Text in footer" color="success">This is an example without header</option>
-            </row>
-        </rows>
+        <row type="footer">
+            <group name="footer1" footer="specials-actions" label="This is a sample of buttons on a 'bootstrap card'">
+                <button type="modal" label="Modal" color="primary" action="test" icon="fa-users" />
+                <button type="action" label="Action" color="info" action="process1" icon="fa-book" hint="Run the controller with action=process1" />
+            </group>
+        </row>
 
 
 MODALS
 ======
+
+Modal forms are complementary views to the main view, which remain hidden until they
+are necessary for the accomplishment of a specific task. These forms they are declared
+in a very similar way to what is detailed in the section `COLUMNS`_.
+
+To create a modal form, we must include a *group* tag with a unique *name* identifier.
+Within this group we can define and customize the columns we need, but can not be created
+new groups as you could in the COLUMNS section.
+
+We can declare all the modal forms that we need, stating different *group* tags inside
+of the group *modals*, and respecting the uniqueness of their identifiers. To display any of the forms
+declared manners, we will have to define a modal type button in the main view, either in a column or
+in a *row* of type ``actions`` or ``footer``, where the ``action`` attribute of the *button* is equal
+to the identifier of the modal form.
+
+The modal form will show the list of columns declared together with some buttons
+of ``Accept`` and ``Cancel`` so that the user can confirm or cancel the process to
+be performed.
+
+Example:
+
+.. code:: xml
+
+        <modals>
+            <group name="test" title="other-data" icon="fa-users">
+                <column name="name" numcolumns="12" description="desc-custommer-name">
+                    <widget type="text" fieldname="nombre" required="true" hint="desc-custommer-name-2" />
+                </column>
+
+                <column name="create-date" numcolumns="6">
+                    <widget type="datepicker" fieldname="fechaalta" readonly="true" />
+                </column>
+
+                <column name="blocked-date" numcolumns="6">
+                    <widget type="datepicker" fieldname="fechabaja" />
+                </column>
+
+                <column name="blocked">
+                    <widget type="checkbox" fieldname="debaja" />
+                </column>
+            </group>
+        </modals>

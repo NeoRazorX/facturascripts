@@ -241,6 +241,10 @@ Ejemplos:
           -  *end*: Indica el valor final (numérico o alfabético)
           -  *step*: Indica el valor del incremento (numérico)
 
+   -  **radio**: Lista de valores donde podemos seleccionar una de ellas.
+      Se indican las distintas opciones mediante sistema de etiquetas
+      *<values>* descritas dentro del grupo *<widget>*, al estilo del tipo *select*.
+
 .. code:: xml
 
         <widget type="select" fieldname="documentacion">
@@ -256,13 +260,6 @@ Ejemplos:
         <widget type="select" fieldname="codgrupo">
             <values start="0" end="6" step="1"></values>
         </widget>
-
-
-   -  **radio**: Lista de valores donde podemos seleccionar una de ellas.
-      Se indican las distintas opciones mediante sistema de etiquetas
-      *<values>* descritas dentro del grupo *<widget>*, al estilo del tipo *select*.
-
-.. code:: xml
 
         <widget type="radio" fieldname="regimeniva">
             <values title="general">General</values>
@@ -292,6 +289,7 @@ Ejemplos:
 
 button
 ------
+
 Este elemento visual está disponible sólo en vistas de tipo *Edit* y *EditList* y
 como su nombre indica permite incluir un botón en una de las columnas de edición.
 Existen tres tipos de botones declarados mediante el atributo ``type`` y con funciones
@@ -399,6 +397,7 @@ Ejemplo:
 
 header
 ------
+
 Permite definir una lista de botones estadísticos y relacionales con otros modelos
 que dan información al usuario y le permite consultar al hacer click.
 Cada uno de los botones se definen mediante la etiqueta *<button>* seguido de las propiedades:
@@ -428,10 +427,11 @@ Ejemplo:
 
 actions
 -------
+
 Permite definir un grupo de botones de tipos *action* y *modal* que se visualizarán
 en el pié del formulario de edición, entre los botones de eliminar y grabar. Este *row*
 es específico de las vistas *Edit*. La declaración de los botones se realiza de manera
-similar a lo descripto en el apartado `button`__ con la salvedad de que no es necesaria
+similar a lo descripto en el apartado `button`_ con la salvedad de que no es necesaria
 la etiqueta *column*.
 
 Ejemplo:
@@ -448,21 +448,74 @@ Ejemplo:
 
 footer
 ------
+
 Permite añadir información adicional a visualizar al usuario en el pie de la vista.
+La información se muestra en forma de paneles ("cards" de Bootstrap) donde podemos
+incluir mensajes y botones tanto de acción como modales. Para declarar un panel usaremos
+la etiqueta *<group>* en la que incluiremos etiquetas *button* (si los necesitamos).
+Podemos personalizar cada uno de los apartado del panel como la cabecera, el cuerpo
+y/o el pie con atributos:
+
+-  **name** : establece el identificador para el panel.
+
+-  **title** : indica un texto para la cabecera del panel.
+
+-  **label** : indica un texto para el cuerpo del panel.
+
+-  **footer** : indica un texto para el pie del panel.
 
 Ejemplo:
 
 .. code:: xml
 
-        <rows>
-            <row type="footer">
-                <option>Este es un ejemplo con sólo texto</option>
-                <option label="Panel Footer" footer="Panel footer" color="warning">Este es un ejemplo con cabecera y footer</option>
-                <option label="Esto es un info" color="info">Este es un ejemplo con cabecera y sin footer</option>
-                <option footer="Texto en el footer" color="success">Este es un ejemplo sin cabecera</option>
-            </row>
-        </rows>
+        <row type="footer">
+            <group name="footer1" footer="specials-actions" label="Esto es una muestra de botones en un 'bootstrap card'">
+                <button type="modal" label="Modal" color="primary" action="test" icon="fa-users" />
+                <button type="action" label="Action" color="info" action="process1" icon="fa-book" hint="Ejecuta el controlador con action=process1" />
+            </group>
+        </row>
 
 
 MODALS
 ======
+
+Los formularios modales son vistas complementarias a la vista principal, que permanecen
+ocultas hasta que son necesarias para la realización de una tarea específica. Estos formularios
+se declaran de manera muy similar a lo detallado en la sección `COLUMNS`_.
+
+Para crear un formulario modal, debemos incluir una etiqueta *group* con un identificador *name* único.
+Dentro de este grupo podemos definir y personalizar las columnas que necesitemos, pero no se pueden crear
+nuevos grupos como se podía en la sección COLUMNS.
+
+Podemos declarar todos los formularios modales que necesitemos, declarando distintas etiquetas *group* dentro
+del grupo *modals*, y respetando la unicidad de sus identificadores. Para mostrar cualquera de los formularios
+modales declarados, tendremos que definir un botón de tipo modal en la vista principal, ya sea en una columna o
+en un *row* de tipo ```actions`` o ``footer``, donde el atributo ``action`` del *button* sea igual al identificador
+del formulario modal.
+
+El formulario modal mostrará la relación de columnas declaradas junto con unos botones de ``Aceptar`` y ``Cancelar``
+para que el usuario pueda confirmar o cancelar el proceso a realizar.
+
+Ejemplo:
+
+.. code:: xml
+
+        <modals>
+            <group name="test" title="other-data" icon="fa-users">
+                <column name="name" numcolumns="12" description="desc-custommer-name">
+                    <widget type="text" fieldname="nombre" required="true" hint="desc-custommer-name-2" />
+                </column>
+
+                <column name="create-date" numcolumns="6">
+                    <widget type="datepicker" fieldname="fechaalta" readonly="true" />
+                </column>
+
+                <column name="blocked-date" numcolumns="6">
+                    <widget type="datepicker" fieldname="fechabaja" />
+                </column>
+
+                <column name="blocked">
+                    <widget type="checkbox" fieldname="debaja" />
+                </column>
+            </group>
+        </modals>

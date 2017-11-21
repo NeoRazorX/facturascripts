@@ -23,14 +23,20 @@ Facturascripts
 Software de facturación y contabilidad para PYMES, fácil, libre y con actualizaciones constantes. Es compatible con FacturaLux, Abanq y Eneboo.
 Es software libre bajo licencia GNU/LGPL.
 
+
+Tabla de Contenidos
+===================
+
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    Overview
    StyleGuide
 
    Translations
+
    XMLViews
+
    ListController
    EditController
    PanelController
