@@ -35,6 +35,7 @@ Table of Contents
 
    Translations
 
+   Models
    XMLViews
 
    ListController
