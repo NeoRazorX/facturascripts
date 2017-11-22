@@ -488,9 +488,9 @@ Dentro de este grupo podemos definir y personalizar las columnas que necesitemos
 nuevos grupos como se podía en la sección COLUMNS.
 
 Podemos declarar todos los formularios modales que necesitemos, declarando distintas etiquetas *group* dentro
-del grupo *modals*, y respetando la unicidad de sus identificadores. Para mostrar cualquera de los formularios
+del grupo *modals*, y respetando la unicidad de sus identificadores. Para mostrar cualquiera de los formularios
 modales declarados, tendremos que definir un botón de tipo modal en la vista principal, ya sea en una columna o
-en un *row* de tipo ```actions`` o ``footer``, donde el atributo ``action`` del *button* sea igual al identificador
+en un *row* de tipo ``actions`` o ``footer``, donde el atributo ``action`` del *button* sea igual al identificador
 del formulario modal.
 
 El formulario modal mostrará la relación de columnas declaradas junto con unos botones de ``Aceptar`` y ``Cancelar``
