@@ -186,8 +186,8 @@ class WidgetButton implements VisualItemInterface
      */
     private function getActionHTML($label, $indexView, $hint, $class = 'col-sm-auto')
     {
-        $active = '<input type="hidden" name="active" value="' . $indexView . '">';
-        $action = '<input type="hidden" name="action" value="' . $this->action . '">';
+        $active = '<input type="hidden" name="active" value="' . $indexView . '"/>';
+        $action = '<input type="hidden" name="action" value="' . $this->action . '"/>';
         $button = '<button class="' . $class . ' btn btn-' . $this->color . '" type="submit"'
             . ' onclick="this.disabled = true; this.form.submit();" ' . $hint . '>'
             . $this->getIconHTML()
