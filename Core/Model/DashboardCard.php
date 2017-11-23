@@ -27,6 +27,7 @@ class DashboardCard
 {
 
     use Base\ModelTrait {
+        clear as private traitClear;
         url as private traitURL;
     }
 
@@ -57,6 +58,20 @@ class DashboardCard
      * @var string
      */
     public $descripcion;
+    
+    /**
+     * Card color.
+     * 
+     * @var string 
+     */
+    public $color;
+    
+    /**
+     * Optional link for actions.
+     * 
+     * @var string 
+     */
+    public $link;
 
     /**
      * Returns the name of the table that uses this model.
@@ -83,10 +98,8 @@ class DashboardCard
      */
     public function clear()
     {
-        $this->id = null;
-        $this->nick = null;
+        $this->traitClear();
         $this->fecha = date('d-m-Y');
-        $this->descripcion = null;
     }
 
     /**
@@ -98,6 +111,27 @@ class DashboardCard
      */
     public function url($type = 'auto')
     {
-        return $this->traitURL($type, 'EditDashboardCard');
+        $value = $this->primaryColumnValue();
+        $model = $this->modelClassName();
+        $result = 'index.php?page=';
+        switch ($type) {
+            case 'list':
+                $result .= 'Dashboard';
+                break;
+
+            case 'edit':
+                $result .= 'Edit' . $model . '&code=' . $value;
+                break;
+
+            case 'new':
+                $result .= 'Edit' . $model;
+                break;
+
+            default:
+                $result .= empty($value) ? 'Dashboard' : 'Edit' . $model . '&code=' . $value;
+                break;
+        }
+
+        return $result;
     }
 }

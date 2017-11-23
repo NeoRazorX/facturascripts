@@ -47,6 +47,7 @@ class EditDashboardCard extends ExtendedController\EditController
         $pagedata['title'] = 'dashboard-card';
         $pagedata['menu'] = 'reports';
         $pagedata['icon'] = 'fa-dashboard';
+        $pagedata['showonmenu'] = false;
 
         return $pagedata;
     }
