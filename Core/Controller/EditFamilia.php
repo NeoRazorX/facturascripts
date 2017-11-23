@@ -19,22 +19,52 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-
+use FacturaScripts\Core\Base\DataBase;
 /**
  * Controller to edit a single item from the Familia model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Fco. Antobnio Moreno Pérez <famphuelva@gmail.com>
  */
-class EditFamilia extends ExtendedController\EditController
+class EditFamilia extends ExtendedController\PanelController
 {
 
     /**
-     * Returns the model name
+     * Load views
      */
-    public function getModelName()
+    protected function createViews()
     {
-        return 'FacturaScripts\Core\Model\Familia';
+        $this->addEditView('FacturaScripts\Core\Model\Familia', 'EditFamilia', 'family');
+        $this->addListView('FacturaScripts\Core\Model\Familia', 'ListFamilia', 'families-children', 'fa-level-down');
+        $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListArticulo', 'products', 'fa-cubes');
+    }
+
+    /**
+     * Load view data procedure
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        $value = $this->request->get('code');
+
+        switch ($keyView) {
+            case 'EditFamilia':
+                $view->loadData($value);
+                break;
+            
+            case 'ListArticulo':
+                $where = [new DataBase\DataBaseWhere('codfamilia', $value)];
+                $view->loadData($where);
+                break;
+            
+            case 'ListFamilia':
+               $where = [new DataBase\DataBaseWhere('madre', $value)];
+               $view->loadData($where);
+               break;
+        }
     }
 
     /**
