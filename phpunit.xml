@@ -1,17 +1,28 @@
-<?xml version="1.0"?>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
+<?xml version="1.0" encoding="UTF-8"?>
 
-<!-- see http://www.phpunit.de/wiki/Documentation -->
-<!--phpunit bootstrap="/path/to/bootstrap.php"
-         colors="false"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         stopOnFailure="true">
-</phpunit-->
-
-<phpunit bootstrap="Test/bootstrap.php" colors="false" />
+<phpunit
+        bootstrap="Test/bootstrap.php"
+        colors="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+        stopOnError="false"
+        stopOnFailure="false"
+        stopOnIncomplete="false"
+        stopOnSkipped="false">
+    <testsuites>
+        <testsuite name="FacturaScripts Test Suite">
+            <directory
+                    suffix="Test.php"
+                    phpVersion="5.6"
+                    phpVersionOperator=">=">
+                Test/Core/App/
+            </directory>
+            <directory
+                    suffix="Test.php"
+                    phpVersion="5.6"
+                    phpVersionOperator=">=">
+                Test/Core/Base/
+            </directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
