@@ -58,14 +58,14 @@ class DashboardCard
      * @var string
      */
     public $descripcion;
-    
+
     /**
      * Card color.
      * 
      * @var string 
      */
     public $color;
-    
+
     /**
      * Optional link for actions.
      * 
@@ -133,5 +133,14 @@ class DashboardCard
         }
 
         return $result;
+    }
+
+    public function cardClass()
+    {
+        if ($this->color !== null) {
+            return 'border-' . $this->color;
+        }
+
+        return 'border-secondary';
     }
 }

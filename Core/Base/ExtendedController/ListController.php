@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -30,6 +29,7 @@ use FacturaScripts\Core\Base\DataBase;
  */
 abstract class ListController extends Base\Controller
 {
+
     /**
      * Indicates the active view
      *
@@ -168,8 +168,8 @@ abstract class ListController extends Base\Controller
                 $this->response->setContent($document);
                 break;
 
-            case 'json':
-                $this->jsonAction($this->views[$this->active]);
+            case 'megasearch':
+                $this->megaSearchAction($this->views[$this->active]);
                 break;
         }
     }
@@ -237,7 +237,7 @@ abstract class ListController extends Base\Controller
      *
      * @param ListView $view
      */
-    protected function jsonAction($view)
+    protected function megaSearchAction($view)
     {
         $this->setTemplate(false);
         $cols = $this->getTextColumns($view, 4);

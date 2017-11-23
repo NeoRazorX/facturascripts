@@ -27,15 +27,24 @@
     <div class="row">
         {% for card in fsc.cursor %}
         <div class="col-3">
-            <div class="card border-{{ card.color }}">
+            <div class="card {{ card.cardClass() }}">
                 <div class="card-body">
                     <p class="card-text">{{ card.descripcion }}</p>
-                    {% if card.link %}
-                    <a href="{{ card.link }}" class="btn btn-{{ card.color }}">link</a>
-                    {% endif %}
                 </div>
                 <div class="card-footer">
-                    {{ card.fecha }} <a href="{{ card.url() }}" class="card-link">{{ i18n.trans('edit') }}</a>
+                    {% if card.link %}
+                    <a href="{{ card.link }}" class="btn btn-{{ card.color }} btn-sm float-right">link</a>
+                    {% endif %}
+                    <div class="btn-group">
+                        <a href="{{ card.url() }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fa fa-edit" aria-hidden="true"></i>
+                        </a>
+                        <a href="{{ card.url() }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fa fa-star" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                    &nbsp;
+                    <small>{{ card.fecha }}</small>
                 </div>
             </div>
             <br/>

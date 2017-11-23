@@ -101,7 +101,7 @@ class MegaSearch extends Base\Controller
                 $this->sections[$page->name] = [
                     'icon' => $page->icon,
                     'title' => $page->title,
-                    'search' => $page->url() . '&action=json&query=' . $this->query,
+                    'search' => $page->url() . '&action=megasearch&query=' . $this->query,
                 ];
             }
         }
