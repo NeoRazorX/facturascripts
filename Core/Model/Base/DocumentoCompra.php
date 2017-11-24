@@ -205,6 +205,13 @@ trait DocumentoCompra
      * @var string
      */
     public $observaciones;
+    
+    /**
+     * Idempresa del documento
+     * 
+     * @var type 
+     */
+    public $idempresa;
 
     /**
      * Inicializa los valores del documento.
@@ -215,6 +222,7 @@ trait DocumentoCompra
         $this->codserie = AppSettings::get('default', 'codserie');
         $this->codpago = AppSettings::get('default', 'codpago');
         $this->codalmacen = AppSettings::get('default', 'codalmacen');
+        $this->idempresa = AppSettings::get('default', 'idempresa');
         $this->fecha = date('d-m-Y');
         $this->hora = date('H:i:s');
         $this->irpf = 0.0;

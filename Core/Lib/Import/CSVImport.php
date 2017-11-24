@@ -26,10 +26,30 @@ namespace FacturaScripts\Core\Lib\Import;
 class CSVImport
 {
 
-    public static function importTable($table)
-    {
-        $filePath = FS_FOLDER . '/Core/Data/' . FS_CODPAIS . '/' . $table . '.csv';
+   public static function importTable($table)
+   {
+      $filePath = FS_FOLDER . '/Core/Data/' . FS_CODPAIS . '/' . $table . '.csv';
 
-        return '';
-    }
+      $csv = new \parseCSV();
+      $csv->auto($filePath);
+
+      $sql = 'INSERT INTO ' . $table . ' (' . implode(', ', $csv->titles) . ') VALUES ';
+      $sep = '';
+      
+      foreach ($csv->data as $key => $row) {
+         $sql .= $sep . '(';
+         $sep2 = '';
+         
+         foreach ($row as $value) {
+            $sql .= $sep2 . "'" . $value . "'";
+            $sep2 = ', ';
+         }
+         
+         $sql .= ')';
+         $sep = ', ';
+      }
+      $sql .= ';';
+
+      return $sql;
+   }
 }

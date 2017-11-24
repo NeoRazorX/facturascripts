@@ -1,4 +1,4 @@
-"id";"codpais";"provincia";"codisoprov";"codpostal2d";"latitud";"longitud";"fecha_revision"
+"idprovincia";"codpais";"provincia";"codisoprov";"codpostal2d";"latitud";"longitud";"fecha_revision"
 1;"ESP";"Álava (Vitoria-Gasteiz)";"VI";"01";42.8442527;-3.320137;"04-11-2017"
 2;"ESP";"Albacete";"AB";"02";38.9922607;-1.8956088;"04-11-2017"
 3;"ESP";"Alicante/Alacant";"A";"03";38.3579546;-0.5425638;"04-11-2017"
