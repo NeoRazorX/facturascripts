@@ -90,8 +90,8 @@ abstract class ListController extends Base\Controller
 
         $this->setTemplate('Master/ListController');
 
-        $this->active = $this->request->get('active', '');
         $this->exportManager = new Base\ExportManager();
+        $this->active = $this->request->get('active', '');
         $this->offset = (int) $this->request->get('offset', 0);
         $this->query = $this->request->get('query', '');
         $this->views = [];
@@ -183,16 +183,6 @@ abstract class ListController extends Base\Controller
     protected function deleteAction($view)
     {
         $code = $this->request->get('code');
-        if (strpos($code, ',') === false) {
-            if ($view->delete($code)) {
-                $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
-                return true;
-            }
-
-            return false;
-        }
-
-        /// multiple delete
         $numDeletes = 0;
         foreach (explode(',', $code) as $cod) {
             if ($view->delete($cod)) {

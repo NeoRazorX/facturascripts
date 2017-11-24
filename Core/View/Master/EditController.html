@@ -17,8 +17,9 @@
 
     function deleteRecord() {
         bootbox.confirm({
-            title: "{{ i18n.trans('confirm-delete') }}",
+            title: "{{ i18n.trans('confirm-delete')|raw }}",
             message: "{{ i18n.trans('are-you-sure') }}",
+            closeButton: false,
             buttons: {
                 cancel: {
                     label: '<i class="fa fa-times"></i> {{ i18n.trans("cancel") }}'
@@ -45,7 +46,7 @@
 {% block messages %}
 <div class="container-fluid">
     <div id="messages" class="row">
-        <div class="col-12">            
+        <div class="col-12">
             {{ parent() }}
         </div>
     </div>
@@ -108,13 +109,13 @@
 
         <div class="col-3 text-right d-print-none">
             <form action="{{ model.url('new') }}" method=post name="insert_form">
-                <input type="hidden" name="action" value="insert"> 
-            </form>             
+                <input type="hidden" name="action" value="insert">
+            </form>
 
             <form action="{{ model.url('list') }}" method=post name="delete_form">
-                <input type="hidden" name="action" value="delete"> 
-                <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"> 
-            </form>             
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}">
+            </form>
 
             <a id="b_new" class="btn btn-sm btn-success" onclick="insertRecord();" href="#" {{ popoverTitle((insert_title ~ ' ' ~ title), 'bottom') }}>
                 <i class="fa fa-plus" aria-hidden="true"></i>
@@ -131,7 +132,7 @@
     <div id="data" class="row">
         <div class="col-12">
             <form name="mainform" action="" method="post" class="form" role="form">
-                <input type="hidden" name="action" value="save"> 
+                <input type="hidden" name="action" value="save">
                 <div class="card">
                     <div class="card-header">
                         <span class="card-title">{{ panel_header }}</span>
@@ -143,7 +144,7 @@
 
                         <!-- Main Form -->
                         <div id="main_row" class="row">
-                            {% set model = fsc.view.getModel() %}                            
+                            {% set model = fsc.view.getModel() %}
                             {{ columnsForEditView(_context, fsc.view, model, FALSE) }}
                         </div>
                     </div>
@@ -164,7 +165,7 @@
 
     <!-- Footer Row -->
     {{ rowFooterForEditView(_context, fsc.view) }}
-    
+
     <!-- Modals Forms -->
     {{ modalFormFromColumns(_context, fsc.view) }}
 </div>
