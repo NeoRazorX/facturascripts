@@ -113,7 +113,7 @@ class Provincia
      */
     public function install()
     {
-        return CSVImport::importTable($this->tableName());
+        return CSVImport::importTableSQL($this->tableName());
     }
 
     public function url($type = 'auto')

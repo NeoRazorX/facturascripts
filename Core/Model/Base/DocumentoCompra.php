@@ -109,6 +109,13 @@ trait DocumentoCompra
      * @var string
      */
     public $hora;
+    
+    /**
+     * Idempresa del documento
+     * 
+     * @var int 
+     */
+    public $idempresa;
 
     /**
      * % de retención IRPF del albarán. Se obtiene de la serie.
@@ -205,13 +212,6 @@ trait DocumentoCompra
      * @var string
      */
     public $observaciones;
-    
-    /**
-     * Idempresa del documento
-     * 
-     * @var type 
-     */
-    public $idempresa;
 
     /**
      * Inicializa los valores del documento.
