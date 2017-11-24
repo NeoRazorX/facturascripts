@@ -19,8 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
-use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Lib\EmailTools;
 
 /**
  * Controller to edit main settings
@@ -31,6 +30,20 @@ class EditSettings extends ExtendedController\PanelController
 {
 
     const KEYSETTINGS = 'Settings';
+
+    protected function execAfterAction($view, $action)
+    {
+        if ($action === 'testmail') {
+            $emailTools = new EmailTools();
+            if ($emailTools->test()) {
+                $this->miniLog->info($this->i18n->trans('mail-test-ok'));
+            } else {
+                $this->miniLog->error($this->i18n->trans('mail-test-error'));
+            }
+        } else {
+            parent::execAfterAction($view, $action);
+        }
+    }
 
     /**
      * Returns basic page attributes

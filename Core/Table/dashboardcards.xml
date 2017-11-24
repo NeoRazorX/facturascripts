@@ -27,6 +27,16 @@
         <type>text</type>
         <null>NO</null>
     </column>
+    <column>
+        <name>color</name>
+        <type>character varying(20)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>link</name>
+        <type>character varying(300)</type>
+        <null>YES</null>
+    </column>
     <constraint>
         <name>id_pkey</name>
         <type>PRIMARY KEY (id)</type>

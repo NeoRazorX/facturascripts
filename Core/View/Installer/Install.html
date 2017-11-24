@@ -85,25 +85,35 @@ $(document).ready(function () {
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     {{ i18n.trans('select-language') }}:
-                                    <select id="fs_lang" name="fs_lang" class="form-control">
-                                        {% for langCode, langName in languages %}
-                                        {% if langCode == i18n.getLangCode() %}
-                                        <option value="{{ langCode }}" selected="">{{ langName }}</option>
-                                        {% else %}
-                                        <option value="{{ langCode }}">{{ langName }}</option>
-                                        {% endif %}
-                                        {% endfor %}
-                                    </select>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-language"></i>
+                                        </span>
+                                        <select id="fs_lang" name="fs_lang" class="form-control">
+                                            {% for langCode, langName in languages %}
+                                            {% if langCode == i18n.getLangCode() %}
+                                            <option value="{{ langCode }}" selected="">{{ langName }}</option>
+                                            {% else %}
+                                            <option value="{{ langCode }}">{{ langName }}</option>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     {{ i18n.trans('select-timezone') }}:
-                                    <select name="fs_timezone" class="form-control">
-                                        {% for tz in timezone %}
-                                        <option value="{{ tz['zone'] }}">{{ tz['zone'] }} - {{ tz['diff_from_GMT']}}</option>
-                                        {% endfor %}
-                                    </select>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-clock-o"></i>
+                                        </span>
+                                        <select name="fs_timezone" class="form-control">
+                                            {% for tz in timezone %}
+                                            <option value="{{ tz['zone'] }}">{{ tz['zone'] }} - {{ tz['diff_from_GMT']}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-sm-4">
@@ -130,7 +140,12 @@ $(document).ready(function () {
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     {{ i18n.trans('db-name') }}:
-                                    <input type="text" name="db_name" value="facturascripts" class="form-control" required=""/>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-database"></i>
+                                        </span>
+                                        <input type="text" name="db_name" value="facturascripts" class="form-control" required=""/>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-sm-4">
@@ -142,7 +157,12 @@ $(document).ready(function () {
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     {{ i18n.trans('db-password') }}:
-                                    <input type="password" name="db_pass" class="form-control"/>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-key"></i>
+                                        </span>
+                                        <input type="password" name="db_pass" class="form-control"/>
+                                    </div>
                                 </div>
                             </div>
                             <div id="mysql_socket_div" class="col-sm-4">
