@@ -98,11 +98,7 @@ class MegaSearch extends Base\Controller
 
             /// Is it a ListController that could return more results?
             if ($page->showonmenu && strpos($page->name, 'List') === 0) {
-                $this->sections[$page->name] = [
-                    'icon' => $page->icon,
-                    'title' => $page->title,
-                    'search' => $page->url() . '&action=megasearch&query=' . $this->query,
-                ];
+                $this->sections[$page->name] = $page->url() . '&action=megasearch&query=' . $this->query;
             }
         }
     }

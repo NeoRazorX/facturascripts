@@ -6,32 +6,10 @@
 {% endblock %}
 
 {% block body %}
-{% for key, section in fsc.sections %}
+{% for section in fsc.sections %}
 <script type="text/javascript">
     $(document).ready(function () {
-        $.getJSON('{{ section.search|raw }}', function (json) {
-            var items = json2tr(json);
-
-            if (items.length > 0) {
-                $("#v-pills-tab").append("<a class='nav-link' id='v-pills-{{ key }}-tab' data-toggle='pill' href='#v-pills-{{ key }}' role='tab' aria-controls='v-pills-{{ key }}' aria-expanded='true'>\n\
-                    <span class='badge badge-secondary float-right'>" + (items.length - 1) + "</span>\n\
-                    <i class='fa {{ section.icon }} fa-fw'></i>\n\
-                    {{ i18n.trans(section.title) | capitalize }}\n\
-                </a>");
-                var tableHTML = '';
-                $.each(items, function (key3, val3) {
-                    tableHTML += val3;
-                });
-                $("#v-pills-tabContent").append("<div class='tab-pane fade' id='v-pills-{{ key }}' role='tabpanel' aria-labelledby='v-pills-{{ key }}-tab'>\n\
-                    <div class='card'><div class='table-responsive'>\n\
-                    <table class='table table-striped table-hover'>" + tableHTML + "</table>\n\
-                    </div>\n\</div>\n\</div>");
-                $('#v-pills-tab a:first').tab('show');
-                reloadClickableRow();
-
-                $("#no-data-msg").hide();
-            }
-        });
+        searchOnSection("{{ section|raw }}");
     });
 </script>
 {% endfor %}
