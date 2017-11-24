@@ -26,32 +26,30 @@ namespace FacturaScripts\Core\Lib\Import;
 class CSVImport
 {
 
-    public static function importTable($table)
-    {
-        $filePath = FS_FOLDER . '/Core/Data/' . FS_CODPAIS . '/' . $table . '.csv';
+   public static function importTable($table)
+   {
+      $filePath = FS_FOLDER . '/Core/Data/' . FS_CODPAIS . '/' . $table . '.csv';
 
-        $csv = new \parseCSV();
-        $csv->auto($filePath);
+      $csv = new \parseCSV();
+      $csv->auto($filePath);
 
-        $sql = 'INSERT INTO ' . $table . ' (' . implode(', ',$csv->titles) . ') VALUES ';
-        $sep = '';
-        foreach ($csv->data as $key => $row) {
-            $sql .= $sep . '(';
-            $sep2 = '';
-            foreach ($row as $value) {
-                if (is_string($value)) {
-                    $sql .= $sep2 . "'" . $value. "'";
-                } else {
-                    $sql .= $sep2 . $value;
-                }
+      $sql = 'INSERT INTO ' . $table . ' (' . implode(', ', $csv->titles) . ') VALUES ';
+      $sep = '';
+      
+      foreach ($csv->data as $key => $row) {
+         $sql .= $sep . '(';
+         $sep2 = '';
+         
+         foreach ($row as $value) {
+            $sql .= $sep2 . "'" . $value . "'";
+            $sep2 = ', ';
+         }
+         
+         $sql .= ')';
+         $sep = ', ';
+      }
+      $sql .= ';';
 
-                $sep2 = ', ';
-            }
-            $sql .= ')';
-            $sep = ', ';
-        }
-        $sql .= ';';
-
-        return $sql;
-    }
+      return $sql;
+   }
 }
