@@ -247,7 +247,7 @@ abstract class ListController extends Base\Controller
             ]
         ];
 
-        // Lanzamos la carga de datos para cada una de las vistas
+        /// we search in all listviews
         foreach ($this->views as $key => $listView) {
             if (!isset($json[$key])) {
                 $json[$key] = [
@@ -258,11 +258,8 @@ abstract class ListController extends Base\Controller
                 ];
             }
 
-            $where = $this->getWhere();
-            $this->views[$key]->setSelectedOrderBy('');
-
-            // Cargamos los datos según filtro y orden
-            $listView->loadData($where, $this->getOffSet($key), Base\Pagination::FS_ITEM_LIMIT);
+            $fields = $listView->getSearchIn();
+            $listView->loadData([new DataBase\DataBaseWhere($fields, $this->query, 'LIKE')], 0, Base\Pagination::FS_ITEM_LIMIT);
 
             $cols = $this->getTextColumns($listView, 6);
             $json[$key]['columns'] = $cols;
