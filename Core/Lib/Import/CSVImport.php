@@ -54,7 +54,7 @@ class CSVImport
         return $sql;
     }
 
-    private static function getTableFilePath($table)
+    protected static function getTableFilePath($table)
     {
         $filePath = FS_FOLDER . '/Core/Data/Codpais/' . FS_CODPAIS . '/' . $table . '.csv';
         if (file_exists($filePath)) {
