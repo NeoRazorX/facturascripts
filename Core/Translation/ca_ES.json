@@ -265,5 +265,6 @@
     "new-female": "Nova",
     "new-male": "Nou",
     "password": "Clau",
-    "tradename": "Nom comercial"
+    "tradename": "Nom comercial",
+    "access-denied": "Accés denegat"
 }

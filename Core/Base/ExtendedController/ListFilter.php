@@ -56,7 +56,7 @@ class ListFilter
 
     /**
      * List of available operators
-     * 
+     *
      * @return array
      */
     public function getFilterOperators()
@@ -71,7 +71,7 @@ class ListFilter
 
     /**
      * Returns the special class to add to the input in the filters form
-     * 
+     *
      * @return string
      */
     public function getSpecialClass()
@@ -87,7 +87,7 @@ class ListFilter
 
     /**
      * Returns the onekeypress JavaScript function in case the inputs accept only a value set
-     * 
+     *
      * @return string
      */
     public function getKeyboardFilter()
@@ -113,7 +113,7 @@ class ListFilter
 
     /**
      * Adds $where to the informed filters in DataBaseWhere format
-     * 
+     *
      * @param array $where
      * @param string $key
      */
