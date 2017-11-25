@@ -73,6 +73,14 @@ class EditProveedor extends ExtendedController\PanelController
                 $where = [new DataBase\DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'))];
                 $view->loadData($where);
                 break;
+
+            case 'ListFacturaProveedor':
+            case 'ListAlbaranProveedor':
+            case 'ListPedidoProveedor':
+            case 'ListPresupuestoProveedor':
+                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'))];
+                $view->loadData($where);
+                break;
         }
     }
 

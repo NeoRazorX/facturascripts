@@ -79,6 +79,14 @@ class EditCliente extends ExtendedController\PanelController
                     $view->loadData($where);
                 }
                 break;
+
+            case 'ListFacturaCliente':
+            case 'ListAlbaranCliente':
+            case 'ListPedidoCliente':
+            case 'ListPresupuestoCliente':
+                $where = [new DataBase\DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente'))];
+                $view->loadData($where);
+                break;
         }
     }
 
