@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -42,7 +43,7 @@ class Cliente extends Base\Persona
     public $codgrupo;
 
     /**
-     * TRUE -> al cliente se le aplica recargo de equivalencia.
+     * If this client applies equivalencia surcharge contains True, otherwhise false.
      *
      * @var boolean
      */
@@ -125,11 +126,12 @@ class Cliente extends Base\Persona
     {
         if ($cifnif === '' && $razon !== '') {
             $razon = self::noHtml(mb_strtolower($razon, 'UTF8'));
-            $sql = 'SELECT * FROM ' . $this->tableName()
+            $sql = 'SELECT * FROM ' . static::tableName()
                 . " WHERE cifnif = '' AND lower(razonsocial) = " . $this->dataBase->var2str($razon) . ';';
         } else {
             $cifnif = mb_strtolower($cifnif, 'UTF8');
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE lower(cifnif) = ' . $this->dataBase->var2str($cifnif) . ';';
+            $sql = 'SELECT * FROM ' . static::tableName()
+                . ' WHERE lower(cifnif) = ' . $this->dataBase->var2str($cifnif) . ';';
         }
 
         $data = $this->dataBase->select($sql);
@@ -228,7 +230,7 @@ class Cliente extends Base\Persona
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -258,8 +260,8 @@ class Cliente extends Base\Persona
         /// validamos los dias de pago
         $arrayDias = [];
         foreach (str_getcsv($this->diaspago) as $d) {
-            if ((int) $d >= 1 && (int) $d <= 31) {
-                $arrayDias[] = (int) $d;
+            if ((int)$d >= 1 && (int)$d <= 31) {
+                $arrayDias[] = (int)$d;
             }
         }
         $this->diaspago = null;
@@ -268,11 +270,14 @@ class Cliente extends Base\Persona
         }
 
         if (!preg_match('/^[A-Z0-9]{1,6}$/i', $this->codcliente)) {
-            $this->miniLog->alert($this->i18n->trans('not-valid-client-code', [$this->codcliente]), ['fieldname' => 'codcliente']);
+            $this->miniLog->alert($this->i18n->trans('not-valid-client-code', [$this->codcliente]),
+                ['fieldname' => 'codcliente']);
         } elseif (empty($this->nombre) || strlen($this->nombre) > 100) {
-            $this->miniLog->alert($this->i18n->trans('not-valid-client-name', [$this->nombre]), ['fieldname' => 'nombre']);
+            $this->miniLog->alert($this->i18n->trans('not-valid-client-name', [$this->nombre]),
+                ['fieldname' => 'nombre']);
         } elseif (empty($this->razonsocial) || strlen($this->razonsocial) > 100) {
-            $this->miniLog->alert($this->i18n->trans('not-valid-client-business-name', [$this->razonsocial]), ['fieldname' => 'razonsocial']);
+            $this->miniLog->alert($this->i18n->trans('not-valid-client-business-name', [$this->razonsocial]),
+                ['fieldname' => 'razonsocial']);
         } else {
             $status = true;
         }
@@ -285,7 +290,7 @@ class Cliente extends Base\Persona
      * o razonsocial o codcliente o cifnif o telefono1 o telefono2 o observaciones.
      *
      * @param string $query
-     * @param int    $offset
+     * @param int $offset
      *
      * @return self[]
      */
@@ -294,7 +299,7 @@ class Cliente extends Base\Persona
         $clilist = [];
         $query = mb_strtolower(self::noHtml($query), 'UTF8');
 
-        $consulta = 'SELECT * FROM ' . $this->tableName() . ' WHERE debaja = FALSE AND ';
+        $consulta = 'SELECT * FROM ' . static::tableName() . ' WHERE debaja = FALSE AND ';
         if (is_numeric($query)) {
             $consulta .= "(nombre LIKE '%" . $query . "%' OR razonsocial LIKE '%" . $query . "%'"
                 . " OR codcliente LIKE '%" . $query . "%' OR cifnif LIKE '%" . $query . "%'"

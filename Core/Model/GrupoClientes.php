@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -79,23 +80,23 @@ class GrupoClientes
     public function getNewCodigo()
     {
         if (strtolower(FS_DB_TYPE) === 'postgresql') {
-            $sql = "SELECT codgrupo from " . $this->tableName() . " where codgrupo ~ '^\d+$'"
-                . " ORDER BY codgrupo::integer DESC";
+            $sql = 'SELECT codgrupo from ' . static::tableName() . " WHERE codgrupo ~ '^\d+$'"
+                . ' ORDER BY codgrupo::integer DESC';
         } else {
-            $sql = "SELECT codgrupo from " . $this->tableName() . " where codgrupo REGEXP '^[0-9]+$'"
-                . " ORDER BY CAST(`codgrupo` AS decimal) DESC";
+            $sql = 'SELECT codgrupo from ' . static::tableName() . " WHERE codgrupo REGEXP '^[0-9]+$'"
+                . ' ORDER BY CAST(`codgrupo` AS decimal) DESC';
         }
 
-        $data = $this->dataBase->selectLimit($sql, 1, 0);
+        $data = $this->dataBase->selectLimit($sql, 1);
         if (!empty($data)) {
-            return sprintf('%06s', (1 + (int) $data[0]['codgrupo']));
+            return sprintf('%06s', 1 + (int)$data[0]['codgrupo']);
         }
 
         return '000001';
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */

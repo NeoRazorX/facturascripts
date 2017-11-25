@@ -91,25 +91,25 @@ class WidgetItemNumber extends WidgetItem
         parent::loadFromXML($column);
 
         $widgetAtributes = $column->widget->attributes();
-        $this->decimal = (int) $widgetAtributes->decimal;
-        $this->step = (string) $widgetAtributes->step;
-        $this->min = (string) $widgetAtributes->min;
-        $this->max = (string) $widgetAtributes->max;
+        $this->decimal = (int)$widgetAtributes->decimal;
+        $this->step = (string)$widgetAtributes->step;
+        $this->min = (string)$widgetAtributes->min;
+        $this->max = (string)$widgetAtributes->max;
     }
 
     /**
-     * Loads the attributes structure from a the database
+     * Loads the attributes structure from a JSON file
      *
-     * @param \SimpleXMLElement $column
+     * @param \SimpleXMLElement[] $column
      */
     public function loadFromJSON($column)
     {
         parent::loadFromJSON($column);
 
-        $this->decimal = (int) $column['widget']['decimal'];
-        $this->step = (string) $column['widget']['step'];
-        $this->min = (string) $column['widget']['min'];
-        $this->max = (string) $column['widget']['max'];
+        $this->decimal = (int)$column['widget']['decimal'];
+        $this->step = (string)$column['widget']['step'];
+        $this->min = (string)$column['widget']['min'];
+        $this->max = (string)$column['widget']['max'];
     }
 
     /**
@@ -123,9 +123,9 @@ class WidgetItemNumber extends WidgetItem
     protected function specialAttributes()
     {
         $base = parent::specialAttributes();
-        $step = (empty($this->step)) ? '' : ' step="' . $this->step . '"';
-        $min = (empty($this->min)) ? '' : ' min="' . $this->min . '"';
-        $max = (empty($this->max)) ? '' : ' max="' . $this->max . '"';
+        $step = empty($this->step) ? '' : ' step="' . $this->step . '"';
+        $min = empty($this->min) ? '' : ' min="' . $this->min . '"';
+        $max = empty($this->max) ? '' : ' max="' . $this->max . '"';
         return $base . $step . $min . $max;
     }
 

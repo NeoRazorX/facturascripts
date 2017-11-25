@@ -16,9 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -90,7 +91,7 @@ class PageOption
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'fs_pages_options';
     }
@@ -133,6 +134,11 @@ class PageOption
         $this->rows = [];
     }
 
+    /**
+     * Returns the columns encoded in JSON format.
+     *
+     * @return string
+     */
     public function columns()
     {
         return json_encode($this->columns);
@@ -192,7 +198,7 @@ class PageOption
         $filters = json_encode($this->filters);
         $rows = json_encode($this->rows);
 
-        $sql = 'UPDATE ' . $this->tableName() . ' SET columns = ' . $this->dataBase->var2str($columns)
+        $sql = 'UPDATE ' . static::tableName() . ' SET columns = ' . $this->dataBase->var2str($columns)
             . ', modals = ' . $this->dataBase->var2str($modals)
             . ', filters = ' . $this->dataBase->var2str($filters)
             . ', rows = ' . $this->dataBase->var2str($rows)
@@ -213,7 +219,7 @@ class PageOption
         $filters = json_encode($this->filters);
         $rows = json_encode($this->rows);
 
-        $sql = 'INSERT INTO ' . $this->tableName()
+        $sql = 'INSERT INTO ' . static::tableName()
             . ' (id, name, nick, columns, modals, filters, rows) VALUES ('
             . "nextval('fs_pages_options_id_seq')" . ','
             . $this->dataBase->var2str($this->name) . ','
@@ -226,7 +232,7 @@ class PageOption
 
         if ($this->dataBase->exec($sql)) {
             $lastVal = $this->dataBase->lastval();
-            if ($lastVal === FALSE) {
+            if ($lastVal === false) {
                 return false;
             }
 
@@ -240,7 +246,7 @@ class PageOption
     /**
      * Carga la estructura de columnas desde el XML
      *
-     * @param \SimpleXMLElement $columns
+     * @param \SimpleXMLElement|\SimpleXMLElement[] $columns
      * @param array $target
      */
     private function getXMLGroupsColumns($columns, &$target)
@@ -270,7 +276,7 @@ class PageOption
      * Carga las condiciones especiales para las filas
      * desde el XML
      *
-     * @param \SimpleXMLElement $rows
+     * @param \SimpleXMLElement[] $rows
      */
     private function getXMLRows($rows)
     {
@@ -290,7 +296,7 @@ class PageOption
      */
     public function installXML($name)
     {
-        if ($this->name != $name) {
+        if ($this->name !== $name) {
             $this->miniLog->critical($this->i18n->trans('error-install-name-xmlview'));
             return;
         }
@@ -322,9 +328,9 @@ class PageOption
     public function getForUser($name, $nick)
     {
         $where = [];
-        $where[] = new DataBase\DataBaseWhere('nick', $nick);
-        $where[] = new DataBase\DataBaseWhere('nick', 'NULL', 'IS', 'OR');
-        $where[] = new DataBase\DataBaseWhere('name', $name);
+        $where[] = new DataBaseWhere('nick', $nick);
+        $where[] = new DataBaseWhere('nick', 'NULL', 'IS', 'OR');
+        $where[] = new DataBaseWhere('name', $name);
 
         $orderby = ['nick' => 'ASC'];
 

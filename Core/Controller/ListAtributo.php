@@ -16,9 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Model\Atributo;
 
 /**
  * Controller to list the items in the Atributo model
@@ -51,7 +53,7 @@ class ListAtributo extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\Atributo', $className);
+        $this->addView(Atributo::class, $className);
         $this->addSearchFields($className, ['nombre', 'codatributo']);
 
         $this->addOrderBy($className, 'codatributo', 'code');

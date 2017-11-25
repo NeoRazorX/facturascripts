@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -80,8 +81,8 @@ class BalanceCuentaA
      * Devuelve el saldo del balance de un ejercicio.
      *
      * @param ejercicio $ejercicio
-     * @param bool      $desde
-     * @param bool      $hasta
+     * @param bool $desde
+     * @param bool $hasta
      *
      * @return float|int
      */
@@ -119,7 +120,7 @@ class BalanceCuentaA
         }
 
         if (!empty($data)) {
-            return (float) $data[0]['haber'] - (float) $data[0]['debe'];
+            return (float)$data[0]['haber'] - (float)$data[0]['debe'];
         }
 
         return 0;
@@ -135,7 +136,7 @@ class BalanceCuentaA
     public function allFromCodbalance($cod)
     {
         $balist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName()
+        $sql = 'SELECT * FROM ' . static::tableName()
             . ' WHERE codbalance = ' . $this->dataBase->var2str($cod) . ' ORDER BY codcuenta ASC;';
 
         $data = $this->dataBase->select($sql);
@@ -158,7 +159,7 @@ class BalanceCuentaA
     public function searchByCodbalance($cod)
     {
         $balist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName()
+        $sql = 'SELECT * FROM ' . static::tableName()
             . " WHERE codbalance LIKE '" . self::noHtml($cod) . "%' ORDER BY codcuenta ASC;";
 
         $data = $this->dataBase->select($sql);

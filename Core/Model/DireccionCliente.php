@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -93,7 +94,7 @@ class DireccionCliente
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -118,7 +119,7 @@ class DireccionCliente
     }
 
     /**
-     * Almacena los datos del modelo en la base de datos.
+     * Store the model data in the database.
      *
      * @return bool
      */
@@ -132,10 +133,11 @@ class DireccionCliente
             $sql = '';
             $where = 'WHERE codcliente = ' . $this->dataBase->var2str($this->codcliente);
             if ($this->domenvio) {
-                $sql .= 'UPDATE ' . $this->tableName() . ' SET domenvio = false ' . $where . ' AND domenvio = TRUE;';
+                $sql .= 'UPDATE ' . static::tableName() . ' SET domenvio = false ' . $where . ' AND domenvio = TRUE;';
             }
             if ($this->domfacturacion) {
-                $sql .= 'UPDATE ' . $this->tableName() . ' SET domfacturacion = false ' . $where . ' AND domfacturacion = TRUE;';
+                $sql .= 'UPDATE ' . static::tableName() . ' SET domfacturacion = false '
+                    . $where . ' AND domfacturacion = TRUE;';
             }
 
             if (empty($sql)) {

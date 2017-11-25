@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -79,7 +80,7 @@ class Familia
     }
 
     /**
-     * Comprueba los datos de la familia, devuelve TRUE si son correctos
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -113,7 +114,7 @@ class Familia
     {
         $famlist = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE madre IS NULL ORDER BY lower(descripcion) ASC;';
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE madre IS NULL ORDER BY lower(descripcion) ASC;';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
@@ -123,7 +124,7 @@ class Familia
 
         if (empty($famlist)) {
             /// si la lista está vacía, ponemos madre a null en todas por si el usuario ha estado jugando
-            $sql = 'UPDATE ' . $this->tableName() . ' SET madre = NULL;';
+            $sql = 'UPDATE ' . static::tableName() . ' SET madre = NULL;';
             $this->dataBase->exec($sql);
         }
 
@@ -145,7 +146,7 @@ class Familia
             $codmadre = $this->codfamilia;
         }
 
-        $sql = 'SELECT * FROM ' . $this->tableName()
+        $sql = 'SELECT * FROM ' . static::tableName()
             . ' WHERE madre = ' . $this->dataBase->var2str($codmadre) . ' ORDER BY descripcion ASC;';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
@@ -163,14 +164,14 @@ class Familia
     public function fixDb()
     {
         /// comprobamos que las familias con madre, su madre exista.
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE madre IS NOT NULL;';
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE madre IS NOT NULL;';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $fam = $this->get($d['madre']);
                 if (!$fam) {
                     /// si no existe, desvinculamos
-                    $sql = 'UPDATE ' . $this->tableName() . ' SET madre = null WHERE codfamilia = '
+                    $sql = 'UPDATE ' . static::tableName() . ' SET madre = null WHERE codfamilia = '
                         . $this->dataBase->var2str($d['codfamilia']) . ':';
                     $this->dataBase->exec($sql);
                 }
@@ -187,13 +188,13 @@ class Familia
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName() . " (codfamilia,descripcion) VALUES ('VARI','VARIOS');";
+        return 'INSERT INTO ' . static::tableName() . " (codfamilia,descripcion) VALUES ('VARI','VARIOS');";
     }
 
     /**
      * Completa los datos de la lista de familias con el nivel
      *
-     * @param array  $familias
+     * @param array $familias
      * @param string $madre
      * @param string $nivel
      *

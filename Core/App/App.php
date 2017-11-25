@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base;
@@ -23,7 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * App description
+ * App class is used for encapsulate common parts of code for the normal App execution.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -94,8 +95,8 @@ abstract class App
 
     /**
      * Stored defaut configuration with the application settings.
-     * 
-     * @var AppSettings 
+     *
+     * @var AppSettings
      */
     protected $settings;
 
@@ -137,7 +138,7 @@ abstract class App
     {
         if ($this->dataBase->connect()) {
             $this->settings->load();
-            return TRUE;
+            return true;
         }
 
         return false;

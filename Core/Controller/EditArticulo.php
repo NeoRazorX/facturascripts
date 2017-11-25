@@ -16,10 +16,16 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Model\Articulo;
+use FacturaScripts\Core\Model\ArticuloCombinacion;
+use FacturaScripts\Core\Model\ArticuloProveedor;
+use FacturaScripts\Core\Model\ArticuloTraza;
+use FacturaScripts\Core\Model\Stock;
 
 /**
  * Controller to edit a single item from the EditArticulo model
@@ -35,11 +41,11 @@ class EditArticulo extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('FacturaScripts\Core\Model\Articulo', 'EditArticulo', 'products', 'fa-cubes');
-        $this->addEditListView('FacturaScripts\Core\Model\Stock', 'EditStock', 'stock');
-        $this->addListView('FacturaScripts\Core\Model\ArticuloProveedor', 'ListArticuloProveedor', 'suppliers', 'fa-ship');
-        $this->addListView('FacturaScripts\Core\Model\ArticuloCombinacion', 'ListArticuloCombinacion', 'combinations', 'fa-sliders');
-        $this->addListView('FacturaScripts\Core\Model\ArticuloTraza', 'ListArticuloTraza', 'traceability', 'fa-barcode');
+        $this->addEditView(Articulo::class, 'EditArticulo', 'products', 'fa-cubes');
+        $this->addEditListView(Stock::class, 'EditStock', 'stock');
+        $this->addListView(ArticuloProveedor::class, 'ListArticuloProveedor', 'suppliers', 'fa-ship');
+        $this->addListView(ArticuloCombinacion::class, 'ListArticuloCombinacion', 'combinations', 'fa-sliders');
+        $this->addListView(ArticuloTraza::class, 'ListArticuloTraza', 'traceability', 'fa-barcode');
     }
 
     /**
@@ -53,11 +59,11 @@ class EditArticulo extends ExtendedController\PanelController
         if ($this->getViewModelValue('EditArticulo', 'secompra') === false) {
             unset($this->views['ListArticuloProveedor']);
         }
-        
+
         if ($this->getViewModelValue('EditArticulo', 'tipo') !== 'atributos') {
             unset($this->views['ListArticuloCombinacion']);
         }
-        
+
         if ($this->getViewModelValue('EditArticulo', 'trazabilidad') === false) {
             unset($this->views['ListArticuloTraza']);
         }
@@ -69,22 +75,22 @@ class EditArticulo extends ExtendedController\PanelController
                 break;
 
             case 'EditStock':
-                $where = [new DataBase\DataBaseWhere('referencia', $referencia)];
+                $where = [new DataBaseWhere('referencia', $referencia)];
                 $view->loadData($where);
                 break;
 
             case 'ListArticuloProveedor':
-                $where = [new DataBase\DataBaseWhere('referencia', $referencia)];
+                $where = [new DataBaseWhere('referencia', $referencia)];
                 $view->loadData($where);
                 break;
 
             case 'ListArticuloCombinacion':
-                $where = [new DataBase\DataBaseWhere('referencia', $referencia)];
+                $where = [new DataBaseWhere('referencia', $referencia)];
                 $view->loadData($where);
                 break;
 
             case 'ListArticuloTraza':
-                $where = [new DataBase\DataBaseWhere('referencia', $referencia)];
+                $where = [new DataBaseWhere('referencia', $referencia)];
                 $view->loadData($where);
                 break;
         }

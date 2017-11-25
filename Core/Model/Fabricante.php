@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -64,7 +65,7 @@ class Fabricante
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -95,6 +96,6 @@ class Fabricante
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName() . " (codfabricante,nombre) VALUES ('OEM','OEM');";
+        return 'INSERT INTO ' . static::tableName() . " (codfabricante,nombre) VALUES ('OEM','OEM');";
     }
 }

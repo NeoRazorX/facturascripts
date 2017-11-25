@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -117,7 +118,7 @@ class Impuesto
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -148,7 +149,7 @@ class Impuesto
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName() . ' (codimpuesto,descripcion,iva,recargo) VALUES '
+        return 'INSERT INTO ' . static::tableName() . ' (codimpuesto,descripcion,iva,recargo) VALUES '
             . "('IVA0','IVA 0%','0','0'),('IVA21','IVA 21%','21','5.2'),"
             . "('IVA10','IVA 10%','10','1.4'),('IVA4','IVA 4%','4','0.5');";
     }

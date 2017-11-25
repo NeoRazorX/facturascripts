@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
@@ -31,10 +32,16 @@ class EditPageOption extends Controller
 
     /**
      * Loads and save selected PageOption.
-     * @var Model\PageOption 
+     * @var Model\PageOption
      */
     public $pageOption;
 
+    /**
+     * Runs the controller's private logic
+     *
+     * @param \Symfony\Component\HttpFoundation\Response $response
+     * @param Model\User|null $user
+     */
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
@@ -43,11 +50,15 @@ class EditPageOption extends Controller
         $this->pageOption = new Model\PageOption();
         $this->pageOption->getForUser($code, $user->nick);
 
-        if ($this->request->getMethod() == 'POST') {
+        if ($this->request->getMethod() === 'POST') {
             $this->saveData();
         }
     }
 
+    /**
+     * Persiste los datos en la base de datos, modificando si existía el registro
+     * o insertando en caso de no existir la clave primaria.
+     */
     private function saveData()
     {
         $this->pageOption->columns = json_decode($this->request->request->get('columns'), true);

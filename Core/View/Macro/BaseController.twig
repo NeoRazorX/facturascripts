@@ -30,7 +30,7 @@
 {% macro rowFooterForEditView(context, view) %}
 {% set footer = view.getRow('footer') %}
 {% if footer is not empty %}
-{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+{% from 'Macro/Utils.twig' import popoverTitle as popoverTitle %}
 
     <br />
     <div id="footer" class="row">
@@ -73,7 +73,7 @@
     Generate the code for the row of statistical buttons
 -->
 {% macro rowHeaderForEditView(context, view) %}
-{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+{% from 'Macro/Utils.twig' import popoverTitle as popoverTitle %}
 
 <div class="row" style="margin-top: -.5rem">
     <div class="col-12">
@@ -102,7 +102,7 @@
 
 {% set actions = view.getRow('actions') %}
 {% if actions is not empty %}
-{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+{% from 'Macro/Utils.twig' import popoverTitle as popoverTitle %}
 <div class="col">
     {% for button in actions.buttons %}
         {% set label = context.i18n.trans(button.label) %}
@@ -211,8 +211,8 @@
         {% endfor %}
 
     {% if withForm == TRUE %}
-    {% from 'Macro/BaseController.html' import rowActionsForEditView as rowActionsForEditView %}
-    {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+    {% from 'Macro/BaseController.twig' import rowActionsForEditView as rowActionsForEditView %}
+    {% from 'Macro/Utils.twig' import popoverTitle as popoverTitle %}
     {% set save, save_title = context.i18n.trans('save'), context.i18n.trans('save-data') %}
     {% set undo, undo_title = context.i18n.trans('undo'), context.i18n.trans('restore-data') %}
     </div>
@@ -246,7 +246,7 @@
     Generate the code for the Basic in Line Edit view according to the indicated columns
 -->
 {% macro columnsForBasicEditView(context, view, model, needTitle) %}
-{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+{% from 'Macro/Utils.twig' import popoverTitle as popoverTitle %}
 {% set remove_title = context.i18n.trans('delete-record') %}
 {% set undo_title = context.i18n.trans('restore-data') %}
 {% set save_title = context.i18n.trans('save-data') %}
@@ -295,8 +295,8 @@
     Generate the code for the EditList view according to the indicated columns
 -->
 {% macro columnsForEditListView(context, view) %}
-{% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
-{% from 'Macro/BaseController.html' import columnsForBasicEditView as columnsForBasicEditView %}
+{% from 'Macro/BaseController.twig' import columnsForEditView as columnsForEditView %}
+{% from 'Macro/BaseController.twig' import columnsForBasicEditView as columnsForBasicEditView %}
 {% set new_record, new_record_title = context.i18n.trans('new'), context.i18n.trans('create-new-record') %}
 {% set isBasic = view.isBasicEditList() %}
 
@@ -330,7 +330,7 @@
     Generates the code for a Modal Form
 -->
 {% macro modalFormFromColumns(context, view) %}
-{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+{% from 'Macro/Utils.twig' import popoverTitle as popoverTitle %}
 {% set accept, accept_title = context.i18n.trans('accept'), context.i18n.trans('accept-data') %}
 {% set cancel, cancel_title = context.i18n.trans('cancel'), context.i18n.trans('cancel-data') %}
 

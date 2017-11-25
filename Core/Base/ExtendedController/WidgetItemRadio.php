@@ -56,14 +56,14 @@ class WidgetItemRadio extends WidgetItem
     }
 
     /**
-     * Loads the attributes structure from the database
+     * Loads the attributes structure from a JSON file
      *
-     * @param array $column
+     * @param \SimpleXMLElement[] $column
      */
     public function loadFromJSON($column)
     {
         parent::loadFromJSON($column);
-        $this->values = (array) $column['widget']['values'];
+        $this->values = (array)$column['widget']['values'];
     }
 
     /**

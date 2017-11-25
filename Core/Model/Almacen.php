@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -81,7 +82,7 @@ class Almacen
     }
 
     /**
-     * Devuelve TRUE si este es almacén predeterminado de la empresa.
+     * Returns True if is the default wharehouse for the company.
      *
      * @return bool
      */
@@ -91,7 +92,7 @@ class Almacen
     }
 
     /**
-     * Comprueba los datos del almacén, devuelve TRUE si son correctos
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -127,7 +128,7 @@ class Almacen
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName() . ' (codalmacen,nombre,poblacion,'
+        return 'INSERT INTO ' . static::tableName() . ' (codalmacen,nombre,poblacion,'
             . "direccion,codpostal,telefono,fax,contacto) VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
     }
 }

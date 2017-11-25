@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -48,7 +49,7 @@ class RowItemFooter extends RowItem
     }
 
     /**
-     * Carga la estructura del row en base a un archivo XML.
+     * Loads the attributes structure from a XML file
      *
      * @param \SimpleXMLElement $row
      */
@@ -61,8 +62,8 @@ class RowItemFooter extends RowItem
                 $values['name'] = 'basic' . $groupCount;
                 ++$groupCount;
             }
-            
-            $this->panels[$values['name']] = $values;            
+
+            $this->panels[$values['name']] = $values;
             $this->buttons[$values['name']] = $this->loadButtonsFromXML($item);
             unset($values);
         }
@@ -75,7 +76,6 @@ class RowItemFooter extends RowItem
      */
     public function loadFromJSON($items)
     {
-
     }
 
     /**

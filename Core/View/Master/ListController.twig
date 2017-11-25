@@ -1,4 +1,4 @@
-{% extends "Master/MenuTemplate.html" %}
+{% extends "Master/MenuTemplate.twig" %}
 
 {% block javascript %}
 {{ parent() }}
@@ -94,14 +94,14 @@
 {% set list_url = fsc.views[fsc.active].getURL('list') %}
 
 <!-- Macros Template Imports -->
-{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
-{% from 'Macro/Utils.html' import message as show_message %}
-{% from 'Macro/Utils.html' import exportData as exportData %}
-{% from 'Macro/BaseController.html' import buttonOrderBy as buttonOrderBy %}
-{% from 'Macro/BaseController.html' import columnsForListView as columnsForListView %}
-{% from 'Macro/BaseController.html' import filterForSelectInput as filterForSelectInput %}
-{% from 'Macro/BaseController.html' import filterForCheckBoxInput as filterForCheckBoxInput %}
-{% from 'Macro/BaseController.html' import filterForTextInput as filterForTextInput %}
+{% from 'Macro/Utils.twig' import popoverTitle as popoverTitle %}
+{% from 'Macro/Utils.twig' import message as show_message %}
+{% from 'Macro/Utils.twig' import exportData as exportData %}
+{% from 'Macro/BaseController.twig' import buttonOrderBy as buttonOrderBy %}
+{% from 'Macro/BaseController.twig' import columnsForListView as columnsForListView %}
+{% from 'Macro/BaseController.twig' import filterForSelectInput as filterForSelectInput %}
+{% from 'Macro/BaseController.twig' import filterForCheckBoxInput as filterForCheckBoxInput %}
+{% from 'Macro/BaseController.twig' import filterForTextInput as filterForTextInput %}
 
 <!-- Page Header -->
 <div class="container-fluid d-print-none">

@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -97,8 +98,8 @@ class ApiKey
         $this->id = null;
         $this->apikey = '';
         $this->descripcion = '';
-        $this->enabled = FALSE;
-        $this->f_alta = \date('d-m-Y');
+        $this->enabled = false;
+        $this->f_alta = date('d-m-Y');
         $this->f_baja = null;
         $this->nick = null;
     }

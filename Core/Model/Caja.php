@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -186,15 +187,15 @@ class Caja
      * Devuelve todas las cajas usadas por el agente
      *
      * @param string $codagente
-     * @param int    $offset
-     * @param int    $limit
+     * @param int $offset
+     * @param int $limit
      *
      * @return self[]
      */
     public function allByAgente($codagente, $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         $cajalist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codagente = '
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codagente = '
             . $this->dataBase->var2str($codagente) . ' ORDER BY id DESC';
 
         $data = $this->dataBase->selectLimit($sql, $limit, $offset);

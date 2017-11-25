@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -165,15 +166,15 @@ class Ejercicio
      */
     public function newCodigo($cod = '0001')
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->dataBase->var2str($cod) . ';';
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codejercicio = ' . $this->dataBase->var2str($cod) . ';';
         if (!$this->dataBase->select($sql)) {
             return $cod;
         }
 
-        $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codejercicio') . ') as cod FROM ' . $this->tableName() . ';';
+        $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codejercicio') . ') as cod FROM ' . static::tableName() . ';';
         $newCod = $this->dataBase->select($sql);
         if (!empty($newCod)) {
-            return sprintf('%04s', 1 + (int) $newCod[0]['cod']);
+            return sprintf('%04s', 1 + (int)$newCod[0]['cod']);
         }
 
         return '0001';
@@ -183,7 +184,7 @@ class Ejercicio
      * Devuelve la fecha más próxima a $fecha que esté dentro del intervalo de este ejercicio
      *
      * @param string $fecha
-     * @param bool   $showError
+     * @param bool $showError
      *
      * @return string
      */
@@ -215,14 +216,14 @@ class Ejercicio
      * Si no existe, lo crea.
      *
      * @param string $fecha
-     * @param bool   $soloAbierto
-     * @param bool   $crear
+     * @param bool $soloAbierto
+     * @param bool $crear
      *
      * @return bool|ejercicio
      */
     public function getByFecha($fecha, $soloAbierto = true, $crear = true)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fechainicio <= '
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE fechainicio <= '
             . $this->dataBase->var2str($fecha) . ' AND fechafin >= ' . $this->dataBase->var2str($fecha) . ';';
 
         $data = $this->dataBase->select($sql);
@@ -249,7 +250,7 @@ class Ejercicio
     }
 
     /**
-     * Comprueba los datos del ejercicio, devuelve True si son correctos
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -283,7 +284,7 @@ class Ejercicio
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName() . ' (codejercicio,nombre,fechainicio,fechafin,'
+        return 'INSERT INTO ' . static::tableName() . ' (codejercicio,nombre,fechainicio,fechafin,'
             . 'estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre) '
             . "VALUES ('" . date('Y') . "','" . date('Y') . "'," . $this->dataBase->var2str(date('01-01-Y'))
             . ', ' . $this->dataBase->var2str(date('31-12-Y')) . ",'ABIERTO',10,'08',null,null,null);";

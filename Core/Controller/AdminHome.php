@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
@@ -31,10 +32,10 @@ class AdminHome extends Base\Controller
     /**
      * AdminHome constructor.
      *
-     * @param Base\Cache      $cache
+     * @param Base\Cache $cache
      * @param Base\Translator $i18n
-     * @param Base\MiniLog    $miniLog
-     * @param string          $className
+     * @param Base\MiniLog $miniLog
+     * @param string $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
@@ -45,7 +46,7 @@ class AdminHome extends Base\Controller
 
         /// For now, always deploy the contents of Dinamic, for testing purposes
         $pluginManager = new Base\PluginManager();
-        $pluginManager->deploy(true);
+        $pluginManager->deploy();
 
         $this->cache->clear();
     }
@@ -71,8 +72,7 @@ class AdminHome extends Base\Controller
     private function checkHtaccess()
     {
         if (!file_exists(FS_FOLDER . '/.htaccess')) {
-            // TODO: Don't assume that the example exists
-            $txt = file_get_contents(FS_FOLDER . '/htaccess-sample');
+            $txt = file_get_contents(FS_FOLDER . '/htaccess-sample') ?: '';
             file_put_contents('.htaccess', $txt);
         }
     }

@@ -80,7 +80,7 @@ class EditView extends BaseView
 
     /**
      * Establishes the column edit state
-     * 
+     *
      * @param string $columnName
      * @param boolean $disabled
      */

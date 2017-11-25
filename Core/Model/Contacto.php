@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -258,7 +259,7 @@ class Contacto
      */
     public function observacionesResume()
     {
-        if ($this->observaciones == '') {
+        if ($this->observaciones === '') {
             return '-';
         }
         if (strlen($this->observaciones) < 60) {

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -56,14 +57,14 @@ class WidgetItemSelect extends WidgetItem
     }
 
     /**
-     * Loads the attributes structure from the database
+     * Loads the attributes structure from a JSON file
      *
-     * @param array $column
+     * @param \SimpleXMLElement[] $column
      */
     public function loadFromJSON($column)
     {
         parent::loadFromJSON($column);
-        $this->values = (array) $column['widget']['values'];
+        $this->values = (array)$column['widget']['values'];
     }
 
     /**
@@ -144,7 +145,7 @@ class WidgetItemSelect extends WidgetItem
 
         foreach ($this->values as $selectValue) {
             $selected = ($selectValue['value'] == $value) ? ' selected="selected" ' : '';
-            $html .= '<option value="' . $selectValue['value'] . '"' . $selected . '>' . $selectValue['title'] . '</option>';
+            $html .= '<option value="' . $selectValue['value'] . '" ' . $selected . '>' . $selectValue['title'] . '</option>';
         }
         $html .= '</select>';
 

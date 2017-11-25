@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\Cache;
@@ -119,7 +120,8 @@ trait ModelTrait
             self::$modelName = get_class($this);
         }
 
-        if ($this->tableName() !== '' && !in_array($this->tableName(), self::$checkedTables, false) && $this->checkTable($this->tableName())) {
+        if ($this->tableName() !== '' && !in_array($this->tableName(),
+                self::$checkedTables) && $this->checkTable($this->tableName())) {
             $this->miniLog->debug($this->i18n->trans('table-checked', [$this->tableName()]));
             self::$checkedTables[] = $this->tableName();
             $this->cache->set('fs_checked_tables', self::$checkedTables);
@@ -201,7 +203,7 @@ trait ModelTrait
         foreach (self::$fields as $field => $values) {
             if ($values['type'] === 'boolean' || $values['type'] === 'tinyint(1)') {
                 if (!isset($data[$field])) {
-                    $data[$field] = FALSE;
+                    $data[$field] = false;
                 }
             }
         }
@@ -212,19 +214,20 @@ trait ModelTrait
      *
      * @param array $field
      * @param string $value
-     * @return integer|NULL
+     *
+     * @return integer|null
      */
     private function getIntergerValueForField($field, $value)
     {
         if (!empty($value)) {
-            return (int) $value;
+            return (int)$value;
         }
 
         if ($field['name'] === $this->primaryColumn()) {
-            return NULL;
+            return null;
         }
 
-        return ($field['is_nullable'] === 'NO') ? 0 : NULL;
+        return ($field['is_nullable'] === 'NO') ? 0 : null;
     }
 
     /**
@@ -244,7 +247,8 @@ trait ModelTrait
                 $field = self::$fields[$key];
 
                 // Comprobamos si es un varchar (con longitud establecida) u otro tipo de dato
-                $type = (strpos($field['type'], '(') === false) ? $field['type'] : substr($field['type'], 0, strpos($field['type'], '('));
+                $type = (strpos($field['type'], '(') === false) ? $field['type'] : substr($field['type'], 0,
+                    strpos($field['type'], '('));
 
                 switch ($type) {
                     case 'tinyint':
@@ -260,7 +264,7 @@ trait ModelTrait
                     case 'double':
                     case 'double precision':
                     case 'float':
-                        $this->{$key} = empty($value) ? 0.00 : (float) $value;
+                        $this->{$key} = empty($value) ? 0.00 : (float)$value;
                         break;
 
                     case 'date':
@@ -346,12 +350,11 @@ trait ModelTrait
         $sql = 'SELECT 1 FROM ' . $this->tableName()
             . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->dataBase->var2str($this->primaryColumnValue()) . ';';
 
-        return (bool) $this->dataBase->select($sql);
+        return (bool)$this->dataBase->select($sql);
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
-     * Se ejecuta dentro del método save.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -361,7 +364,7 @@ trait ModelTrait
     }
 
     /**
-     * Almacena los datos del modelo en la base de datos.
+     * Store the model data in the database.
      *
      * @return bool
      */
@@ -415,8 +418,8 @@ trait ModelTrait
     /**
      * Devuelve todos los modelos que se correspondan con los filtros seleccionados.
      *
-     * @param array   $where  filtros a aplicar a los registros del modelo. (Array de DataBaseWhere)
-     * @param array   $order  campos a utilizar en la ordenación. Por ejemplo ['codigo' => 'ASC']
+     * @param array $where filtros a aplicar a los registros del modelo. (Array de DataBaseWhere)
+     * @param array $order campos a utilizar en la ordenación. Por ejemplo ['codigo' => 'ASC']
      * @param int $offset
      * @param int $limit
      *
@@ -456,7 +459,7 @@ trait ModelTrait
             return 1;
         }
 
-        return 1 + (int) $cod[0]['cod'];
+        return 1 + (int)$cod[0]['cod'];
     }
 
     /**
@@ -507,7 +510,8 @@ trait ModelTrait
      */
     private function getRecord($cod, $where = null, $orderby = [])
     {
-        $sqlWhere = empty($where) ? ' WHERE ' . $this->primaryColumn() . ' = ' . $this->dataBase->var2str($cod) : DataBase\DataBaseWhere::getSQLWhere($where);
+        $sqlWhere = empty($where) ? ' WHERE ' . $this->primaryColumn() . ' = '
+            . $this->dataBase->var2str($cod) : DataBase\DataBaseWhere::getSQLWhere($where);
 
         $sql = 'SELECT * FROM ' . $this->tableName() . $sqlWhere . $this->getOrderBy($orderby);
         return $this->dataBase->selectLimit($sql, 1);
@@ -532,7 +536,8 @@ trait ModelTrait
             }
         }
 
-        $sql .= ' WHERE ' . $this->primaryColumn() . ' = ' . $this->dataBase->var2str($this->primaryColumnValue()) . ';';
+        $sql .= ' WHERE ' . $this->primaryColumn() . ' = ' . $this->dataBase->var2str($this->primaryColumnValue())
+            . ';';
 
         return $this->dataBase->exec($sql);
     }
@@ -591,6 +596,7 @@ trait ModelTrait
      * Devuelve la url donde ver/modificar los datos
      *
      * @param string $type
+     * @param string $list
      *
      * @return string
      */

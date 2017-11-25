@@ -21,7 +21,7 @@
     </head>
     <body>
         {% block messages %}
-        {% from 'Macro/Utils.html' import message as show_message %}
+        {% from 'Macro/Utils.twig' import message as show_message %}
         {{ show_message(log, ['error', 'critical', 'alert', 'emergency'], 'danger') }}
         {{ show_message(log, ['warning'], 'warning') }}
         {{ show_message(log, ['notice'], 'success') }}

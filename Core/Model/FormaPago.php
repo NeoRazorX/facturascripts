@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -125,7 +126,7 @@ class FormaPago
     }
 
     /**
-     * Comprueba la validez de los datos de la forma de pago.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -150,7 +151,7 @@ class FormaPago
      * Si se proporciona $diasDePago se usarán para la nueva fecha.
      *
      * @param string $fechaInicio
-     * @param string $diasDePago  dias de pago específicos para el cliente (separados por comas).
+     * @param string $diasDePago dias de pago específicos para el cliente (separados por comas).
      *
      * @return string
      */
@@ -161,8 +162,8 @@ class FormaPago
         /// validamos los días de pago
         $arrayDias = [];
         foreach (str_getcsv($diasDePago) as $d) {
-            if ((int) $d >= 1 && (int) $d <= 31) {
-                $arrayDias[] = (int) $d;
+            if ((int)$d >= 1 && (int)$d <= 31) {
+                $arrayDias[] = (int)$d;
             }
         }
 
@@ -190,7 +191,7 @@ class FormaPago
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName()
+        return 'INSERT INTO ' . static::tableName()
             . ' (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)'
             . " VALUES ('CONT','Al contado','Pagados',null,false,'+0day')"
             . ",('TRANS','Transferencia bancaria','Emitidos',null,false,'+1month')"
@@ -201,7 +202,7 @@ class FormaPago
     /**
      * Función recursiva auxiliar para calcularVencimiento()
      *
-     * @param string  $fechaInicio
+     * @param string $fechaInicio
      * @param int $diaDePago
      *
      * @return string
@@ -225,7 +226,7 @@ class FormaPago
         }
 
         /// ahora elegimos un dia, pero que quepa en el mes, no puede ser 31 de febrero
-        $tmpDia = min([$diaDePago, (int) date('t', strtotime($fecha))]);
+        $tmpDia = min([$diaDePago, (int)date('t', strtotime($fecha))]);
 
         /// y por último generamos la fecha
         return date('d-m-Y', strtotime($tmpDia . '-' . $tmpMes . '-' . $tmpAnyo));

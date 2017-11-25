@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -80,15 +81,15 @@ class Atributo
      * Obtener atributo por nombre
      *
      * @param string $nombre
-     * @param bool   $minusculas
+     * @param bool $minusculas
      *
      * @return Atributo|bool
      */
     public function getByNombre($nombre, $minusculas = false)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE nombre = ' . $this->dataBase->var2str($nombre) . ';';
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE nombre = ' . $this->dataBase->var2str($nombre) . ';';
         if ($minusculas) {
-            $sql = 'SELECT * FROM ' . $this->tableName()
+            $sql = 'SELECT * FROM ' . static::tableName()
                 . ' WHERE lower(nombre) = ' . $this->dataBase->var2str(mb_strtolower($nombre, 'UTF8') . ';');
         }
 
@@ -102,7 +103,7 @@ class Atributo
     }
 
     /**
-     * Almacena los datos del modelo en la base de datos.
+     * Store the model data in the database.
      *
      * @return bool
      */

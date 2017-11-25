@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base\NumberTools;
@@ -61,12 +62,13 @@ class PDFExport implements ExportInterface
      * New document
      *
      * @param $model
+     *
      * @return string
      */
     public function newDoc($model)
     {
         $tableData = [];
-        foreach ((array) $model as $key => $value) {
+        foreach ((array)$model as $key => $value) {
             if (is_string($value)) {
                 $tableData[] = ['key' => $key, 'value' => $this->fixHtml($value)];
             }
@@ -100,7 +102,7 @@ class PDFExport implements ExportInterface
 
         /// Get the columns
         foreach ($columns as $col) {
-            if ($col->display != 'none') {
+            if ($col->display !== 'none') {
                 $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
                 $tableColsTitle[$col->widget->fieldName] = $this->i18n->trans($col->title);
                 $tableOptions['cols'][$col->widget->fieldName] = [
@@ -159,8 +161,8 @@ class PDFExport implements ExportInterface
                     } elseif (is_string($value)) {
                         $value = $this->fixHtml($value);
                     } elseif (is_bool($value)) {
-                        $value = $value == 1 ? $this->i18n->trans('enabled') : $this->i18n->trans('disabled');
-                    } elseif (is_null($value)) {
+                        $value = $this->i18n->trans($value === true ? 'enabled' : 'disabled');
+                    } elseif (null === $value) {
                         $value = '';
                     }
                 }

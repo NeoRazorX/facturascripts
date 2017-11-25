@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -46,7 +47,7 @@ class AgenciaTransporte
     public $nombre;
 
     /**
-     * TRUE => activo.
+     * Contains True if is enabled.
      *
      * @var bool
      */
@@ -93,7 +94,7 @@ class AgenciaTransporte
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName() . ' (codtrans, nombre, web, activo) VALUES ' .
+        return 'INSERT INTO ' . static::tableName() . ' (codtrans, nombre, web, activo) VALUES ' .
             "('ASM', 'ASM', 'http://es.asmred.com/', true)," .
             "('TIPSA', 'TIPSA', 'http://www.tip-sa.com/', true)," .
             "('SEUR', 'SEUR', 'http://www.seur.com', true);";

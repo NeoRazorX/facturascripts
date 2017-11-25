@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -109,7 +110,7 @@ class AlbaranCliente
     }
 
     /**
-     * Comprueba los datos del albarán, devuelve True si son correctos
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -127,7 +128,7 @@ class AlbaranCliente
          * Ponemos a Null todos los idfactura que no están en facturascli.
          * ¿Por qué? Porque muchos usuarios se dedican a tocar la base de datos.
          */
-        $this->dataBase->exec('UPDATE ' . $this->tableName() . ' SET idfactura = NULL WHERE idfactura IS NOT NULL'
+        $this->dataBase->exec('UPDATE ' . static::tableName() . ' SET idfactura = NULL WHERE idfactura IS NOT NULL'
             . ' AND idfactura NOT IN (SELECT idfactura FROM facturascli);');
     }
 }

@@ -43,7 +43,8 @@ class GroupItem extends VisualItem implements VisualItemInterface
     /**
      * Create and load the group structure from a XML file
      *
-     * @param \SimpleXMLElement $group
+     * @param \SimpleXMLElement|\SimpleXMLElement[] $group
+     *
      * @return GroupItem
      */
     public static function newFromXML($group)
@@ -57,6 +58,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
      * Create and load the group structure from the database
      *
      * @param array $group
+     *
      * @return GroupItem
      */
     public static function newFromJSON($group)
@@ -64,8 +66,8 @@ class GroupItem extends VisualItem implements VisualItemInterface
         $result = new GroupItem();
         $result->loadFromJSON($group);
         return $result;
-    }    
-    
+    }
+
     /**
      * Class construct and initialization
      */
@@ -82,11 +84,12 @@ class GroupItem extends VisualItem implements VisualItemInterface
      *
      * @param ColumnItem $column1
      * @param ColumnItem $column2
+     *
      * @return int
      */
     public static function sortColumns($column1, $column2)
     {
-        if ($column1->order == $column2->order) {
+        if ($column1->order === $column2->order) {
             return 0;
         }
 
@@ -120,7 +123,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
         parent::loadFromXML($group);
 
         $group_atributes = $group->attributes();
-        $this->icon = (string) $group_atributes->icon;
+        $this->icon = (string)$group_atributes->icon;
         $this->loadFromXMLColumns($group);
     }
 
@@ -132,7 +135,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
     public function loadFromJSON($group)
     {
         parent::loadFromJSON($group);
-        $this->icon = (string) $group['icon'];
+        $this->icon = (string)$group['icon'];
 
         foreach ($group['columns'] as $column) {
             $columnItem = ColumnItem::newFromJSON($column);

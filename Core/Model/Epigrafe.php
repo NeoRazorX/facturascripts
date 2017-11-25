@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -137,7 +138,8 @@ class Epigrafe
     public function hijos()
     {
         $epilist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idpadre = ' . $this->dataBase->var2str($this->idepigrafe)
+        $sql = 'SELECT * FROM ' . static::tableName()
+            . ' WHERE idpadre = ' . $this->dataBase->var2str($this->idepigrafe)
             . ' ORDER BY codepigrafe ASC;';
 
         $data = $this->dataBase->select($sql);
@@ -172,7 +174,7 @@ class Epigrafe
      */
     public function getByCodigo($cod, $codejercicio)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codepigrafe = ' . $this->dataBase->var2str($cod)
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codepigrafe = ' . $this->dataBase->var2str($cod)
             . ' AND codejercicio = ' . $this->dataBase->var2str($codejercicio) . ';';
 
         $data = $this->dataBase->select($sql);
@@ -184,7 +186,7 @@ class Epigrafe
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -210,7 +212,8 @@ class Epigrafe
     public function superFromEjercicio($codejercicio)
     {
         $epilist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->dataBase->var2str($codejercicio)
+        $sql = 'SELECT * FROM ' . static::tableName()
+            . ' WHERE codejercicio = ' . $this->dataBase->var2str($codejercicio)
             . ' AND idpadre IS NULL AND idgrupo IS NULL ORDER BY codepigrafe ASC;';
 
         $data = $this->dataBase->select($sql);
@@ -228,7 +231,7 @@ class Epigrafe
      */
     public function fixDb()
     {
-        $sql = 'UPDATE ' . $this->tableName()
+        $sql = 'UPDATE ' . static::tableName()
             . ' SET idgrupo = NULL WHERE idgrupo NOT IN (SELECT idgrupo FROM co_gruposepigrafes);';
         $this->dataBase->exec($sql);
     }

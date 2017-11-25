@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -80,7 +81,7 @@ abstract class Persona
     public $codserie;
 
     /**
-     * TRUE -> el cliente ya no nos compra o no queremos nada con él.
+     * If client is suspended True, else False.
      *
      * @var boolean
      */

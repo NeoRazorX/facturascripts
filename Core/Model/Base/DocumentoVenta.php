@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -231,8 +232,8 @@ trait DocumentoVenta
 
     /**
      * Idempresa del documento
-     * 
-     * @var int 
+     *
+     * @var int
      */
     public $idempresa;
 
@@ -369,7 +370,7 @@ trait DocumentoVenta
     }
 
     /**
-     * Almacena los datos del modelo en la base de datos.
+     * Store the model data in the database.
      *
      * @return bool
      */
@@ -384,7 +385,7 @@ trait DocumentoVenta
             return $this->saveInsert();
         }
 
-        return FALSE;
+        return false;
     }
 
     /**
@@ -412,7 +413,8 @@ trait DocumentoVenta
     {
         $newCodigoDoc = new NewCodigoDoc();
         $this->numero = $newCodigoDoc->getNumero($this->tableName(), $this->codejercicio, $this->codserie);
-        $this->codigo = $newCodigoDoc->getCodigo($this->tableName(), $this->numero, $this->codserie, $this->codejercicio);
+        $this->codigo = $newCodigoDoc->getCodigo($this->tableName(), $this->numero, $this->codserie,
+            $this->codejercicio);
     }
 
     /**
@@ -423,7 +425,7 @@ trait DocumentoVenta
     private function testTrait()
     {
         $this->nombrecliente = static::noHtml($this->nombrecliente);
-        if ($this->nombrecliente == '') {
+        if ($this->nombrecliente === '') {
             $this->nombrecliente = '-';
         }
         $this->direccion = static::noHtml($this->direccion);
@@ -443,7 +445,8 @@ trait DocumentoVenta
          * muchos decimales.
          */
         $this->totaleuros = round($this->total / $this->tasaconv, 5);
-        if (static::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true)) {
+        if (static::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo,
+            FS_NF0, true)) {
             return true;
         }
 
@@ -484,28 +487,36 @@ trait DocumentoVenta
         $total = $neto + $iva - $irpf + $recargo;
         $total_alt = $netoAlt + $ivaAlt - $irpf + $recargo;
 
-        if (!static::floatcmp($this->neto, $neto, FS_NF0, true) && !static::floatcmp($this->neto, $netoAlt, FS_NF0, true)) {
-            $this->miniLog->alert($this->i18n->trans('neto-value-error', [$tipoDoc, $this->codigo, $this->neto, $neto]));
+        if (!static::floatcmp($this->neto, $neto, FS_NF0, true) && !static::floatcmp($this->neto, $netoAlt, FS_NF0,
+                true)) {
+            $this->miniLog->alert($this->i18n->trans('neto-value-error',
+                [$tipoDoc, $this->codigo, $this->neto, $neto]));
             $status = false;
         }
 
-        if (!static::floatcmp($this->totaliva, $iva, FS_NF0, true) && !static::floatcmp($this->totaliva, $ivaAlt, FS_NF0, true)) {
-            $this->miniLog->alert($this->i18n->trans('totaliva-value-error', [$tipoDoc, $this->codigo, $this->totaliva, $iva]));
+        if (!static::floatcmp($this->totaliva, $iva, FS_NF0, true) && !static::floatcmp($this->totaliva, $ivaAlt,
+                FS_NF0, true)) {
+            $this->miniLog->alert($this->i18n->trans('totaliva-value-error',
+                [$tipoDoc, $this->codigo, $this->totaliva, $iva]));
             $status = false;
         }
 
         if (!static::floatcmp($this->totalirpf, $irpf, FS_NF0, true)) {
-            $this->miniLog->alert($this->i18n->trans('totaliva-value-error', [$tipoDoc, $this->codigo, $this->totalirpf, $irpf]));
+            $this->miniLog->alert($this->i18n->trans('totaliva-value-error',
+                [$tipoDoc, $this->codigo, $this->totalirpf, $irpf]));
             $status = false;
         }
 
         if (!static::floatcmp($this->totalrecargo, $recargo, FS_NF0, true)) {
-            $this->miniLog->alert($this->i18n->trans('totalrecargp-value-error', [$tipoDoc, $this->codigo, $this->totalrecargo, $recargo]));
+            $this->miniLog->alert($this->i18n->trans('totalrecargp-value-error',
+                [$tipoDoc, $this->codigo, $this->totalrecargo, $recargo]));
             $status = false;
         }
 
-        if (!static::floatcmp($this->total, $total, FS_NF0, true) && !static::floatcmp($this->total, $total_alt, FS_NF0, true)) {
-            $this->miniLog->alert($this->i18n->trans('total-value-error', [$tipoDoc, $this->codigo, $this->total, $total]));
+        if (!static::floatcmp($this->total, $total, FS_NF0, true) && !static::floatcmp($this->total, $total_alt, FS_NF0,
+                true)) {
+            $this->miniLog->alert($this->i18n->trans('total-value-error',
+                [$tipoDoc, $this->codigo, $this->total, $total]));
             $status = false;
         }
 
@@ -513,7 +524,8 @@ trait DocumentoVenta
     }
 
     /**
-     * Calcula los subtotales de neto, impuestos y recargo, por tipo de impuesto, además del irpf, neto e impuestos con el cálculo anterior.
+     * Calcula los subtotales de neto, impuestos y recargo, por tipo de impuesto, además del irpf, neto e impuestos con
+     * el cálculo anterior.
      *
      * @param boolean $status
      * @param array $subtotales
@@ -529,11 +541,11 @@ trait DocumentoVenta
             }
             $codimpuesto = ($lin->codimpuesto === null) ? 0 : $lin->codimpuesto;
             if (!array_key_exists($codimpuesto, $subtotales)) {
-                $subtotales[$codimpuesto] = array(
+                $subtotales[$codimpuesto] = [
                     'neto' => 0,
                     'iva' => 0, // Total IVA
                     'recargo' => 0, // Total Recargo
-                );
+                ];
             }
             /// Acumulamos por tipos de IVAs
             $subtotales[$codimpuesto]['neto'] += $lin->pvptotal;

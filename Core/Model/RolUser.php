@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -81,12 +82,12 @@ class RolUser
     public function install()
     {
         new Rol();
-        
+
         return '';
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -107,12 +108,12 @@ class RolUser
             new DataBaseWhere('codrol', $this->codrol)
         ];
 
-        $rolUser = new RolUser();
-        if ($rolUser->loadFromCode(NULL, $where) && $rolUser->id !== $this->id) {
+        $rolUser = new self();
+        if ($rolUser->loadFromCode(null, $where) && $rolUser->id !== $this->id) {
             $this->miniLog->alert($this->i18n->trans('rol-user-exists'));
             return false;
         }
 
-        return TRUE;
+        return true;
     }
 }

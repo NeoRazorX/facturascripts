@@ -86,13 +86,16 @@ class MenuManager
      * Devuelve si la página debe ser guardada
      *
      * @param Model\Page $pageModel
-     * @param array      $pageData
+     * @param array $pageData
      *
      * @return bool
      */
     private function pageNeedSave($pageModel, $pageData)
     {
-        return ($pageModel->menu != $pageData['menu']) || ($pageModel->title != $pageData['title']) || ($pageModel->icon != $pageData['icon']) || ($pageModel->showonmenu != $pageData['showonmenu']);
+        return (
+            ($pageModel->menu !== $pageData['menu']) || ($pageModel->title !== $pageData['title']) ||
+            ($pageModel->icon !== $pageData['icon']) || ($pageModel->showonmenu !== $pageData['showonmenu'])
+        );
     }
 
     /**
@@ -132,7 +135,7 @@ class MenuManager
     private function setActiveMenu($pageModel)
     {
         foreach (self::$menu as $key => $menuItem) {
-            if ($menuItem->name == $pageModel->menu) {
+            if ($menuItem->name === $pageModel->menu) {
                 self::$menu[$key]->active = true;
                 $this->setActiveMenuItem(self::$menu[$key]->menu, $pageModel);
                 break;
@@ -149,7 +152,7 @@ class MenuManager
     private function setActiveMenuItem(&$menu, $pageModel)
     {
         foreach ($menu as $key => $menuItem) {
-            if ($menuItem->name == $pageModel->name) {
+            if ($menuItem->name === $pageModel->name) {
                 $menu[$key]->active = true;
                 break;
             }
@@ -173,7 +176,7 @@ class MenuManager
         $pages = $this->loadPages();
         $sortMenu = [];
         foreach ($pages as $page) {
-            if ($page->menu == '') {
+            if ($page->menu === '') {
                 continue;
             }
 

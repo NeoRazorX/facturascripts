@@ -16,11 +16,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model;
+use FacturaScripts\Core\Model\Cliente;
+use FacturaScripts\Core\Model\CuentaBancoCliente;
+use FacturaScripts\Core\Model\DireccionCliente;
 
 /**
  * Controller to edit a single item from the Cliente model
@@ -35,10 +39,11 @@ class EditCliente extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('FacturaScripts\Core\Model\Cliente', 'EditCliente', 'customer');
-        $this->addEditListView('FacturaScripts\Core\Model\DireccionCliente', 'EditDireccionCliente', 'addresses', 'fa-road');
-        $this->addEditListView('FacturaScripts\Core\Model\CuentaBancoCliente', 'EditCuentaBancoCliente', 'customer-banking-accounts', 'fa-bank');
-        $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'same-group');
+        $this->addEditView(Cliente::class, 'EditCliente', 'customer');
+        $this->addEditListView(DireccionCliente::class, 'EditDireccionCliente', 'addresses', 'fa-road');
+        $this->addEditListView(CuentaBancoCliente::class, 'EditCuentaBancoCliente', 'customer-banking-accounts',
+            'fa-bank');
+        $this->addListView(Cliente::class, 'ListCliente', 'same-group');
     }
 
     /**
@@ -56,12 +61,12 @@ class EditCliente extends ExtendedController\PanelController
                 break;
 
             case 'EditDireccionCliente':
-                $where = [new DataBase\DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente'))];
+                $where = [new DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente'))];
                 $view->loadData($where);
                 break;
 
             case 'EditCuentaBancoCliente':
-                $where = [new DataBase\DataBaseWhere('codcliente', $this->request->get('code'))];
+                $where = [new DataBaseWhere('codcliente', $this->request->get('code'))];
                 $view->loadData($where);
                 break;
 
@@ -69,7 +74,7 @@ class EditCliente extends ExtendedController\PanelController
                 $codgroup = $this->getViewModelValue('EditCliente', 'codgrupo');
 
                 if (!empty($codgroup)) {
-                    $where = [new DataBase\DataBaseWhere('codgrupo', $codgroup)];
+                    $where = [new DataBaseWhere('codgrupo', $codgroup)];
                     $view->loadData($where);
                 }
                 break;
@@ -101,10 +106,10 @@ class EditCliente extends ExtendedController\PanelController
     public function calcClientDeliveryNotes($view)
     {
         $where = [];
-        $where[] = new DataBase\DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente'));
-        $where[] = new DataBase\DataBaseWhere('ptefactura', TRUE);
+        $where[] = new DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente'));
+        $where[] = new DataBaseWhere('ptefactura', true);
 
-        $totalModel = Model\TotalModel::all('albaranescli', $where, ['total' => 'SUM(total)'], '')[0];
+        $totalModel = Model\TotalModel::all('albaranescli', $where, ['total' => 'SUM(total)'])[0];
         return $this->divisaTools->format($totalModel->totals['total'], 2);
     }
 
@@ -118,10 +123,10 @@ class EditCliente extends ExtendedController\PanelController
     public function calcClientInvoicePending($view)
     {
         $where = [];
-        $where[] = new DataBase\DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente'));
-        $where[] = new DataBase\DataBaseWhere('estado', 'Pagado', '<>');
+        $where[] = new DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente'));
+        $where[] = new DataBaseWhere('estado', 'Pagado', '<>');
 
-        $totalModel = Model\TotalModel::all('reciboscli', $where, ['total' => 'SUM(importe)'], '')[0];
+        $totalModel = Model\TotalModel::all('reciboscli', $where, ['total' => 'SUM(importe)'])[0];
         return $this->divisaTools->format($totalModel->totals['total'], 2);
     }
 }

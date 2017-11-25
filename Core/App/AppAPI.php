@@ -16,13 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * App description
+ * AppAPI is the class used for API.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -80,7 +81,7 @@ class AppAPI extends App
         $map = $this->getResourcesMap();
 
         $resourceName = $this->request->get('resource', '');
-        if ($resourceName == '') {
+        if ($resourceName === '') {
             $this->exposeResources($map);
             return true;
         }
@@ -110,8 +111,8 @@ class AppAPI extends App
             $operationArray = $this->request->get('operation', '');
             $filterArray = $this->request->get('filter', '');
             $orderArray = $this->request->get('sort', '');
-            $offset = (int) $this->request->get('offset', 0);
-            $limit = (int) $this->request->get('limit', 50);
+            $offset = (int)$this->request->get('offset', 0);
+            $limit = (int)$this->request->get('limit', 50);
 
             $operation = is_array($operationArray) ? $operationArray : []; /// if is string has bad format
             $filter = is_array($filterArray) ? $filterArray : []; /// if is string has bad format

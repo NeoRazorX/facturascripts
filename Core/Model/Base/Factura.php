@@ -16,9 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\Model\Asiento;
+use FacturaScripts\Core\Model;
 
 /**
  * Description of Factura
@@ -64,14 +65,14 @@ trait Factura
     public $codigorect;
 
     /**
-     * TRUE => pagada
+     * If payed True, else False
      *
      * @var bool
      */
     public $pagada;
 
     /**
-     * TRUE => anulada
+     * If cancelled True, else False
      *
      * @var bool
      */
@@ -87,11 +88,11 @@ trait Factura
     /**
      * Devuelve el asiento asociado
      *
-     * @return bool|Asiento
+     * @return bool|Model\Asiento
      */
     public function getAsiento()
     {
-        $asiento = new Asiento();
+        $asiento = new Model\Asiento();
 
         return $asiento->get($this->idasiento);
     }
@@ -103,7 +104,7 @@ trait Factura
      */
     public function getAsientoPago()
     {
-        $asiento = new Asiento();
+        $asiento = new Model\Asiento();
 
         return $asiento->get($this->idasientop);
     }
@@ -136,13 +137,13 @@ trait Factura
             foreach ($lineas as $lin) {
                 $codimpuesto = ($lin->codimpuesto === null) ? 0 : $lin->codimpuesto;
                 if (!array_key_exists($codimpuesto, $subtotales)) {
-                    $subtotales[$codimpuesto] = array(
+                    $subtotales[$codimpuesto] = [
                         'neto' => 0,
                         'iva' => 0,
                         'ivapor' => $lin->iva,
                         'recargo' => 0,
                         'recargopor' => $lin->recargo
-                    );
+                    ];
                 }
                 // Acumulamos por tipos de IVAs
                 $subtotales[$codimpuesto]['neto'] += $lin->pvptotal * $dueTotales;
@@ -175,7 +176,7 @@ trait Factura
     /**
      * Devuelve las líneas asociadas al documento.
      *
-     * @return LineaFacturaCliente[]|LineaFacturaProveedor[]
+     * @return Model\LineaFacturaCliente[]|Model\LineaFacturaProveedor[]
      */
     abstract public function getLineas();
 }

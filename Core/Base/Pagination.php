@@ -38,7 +38,6 @@ class Pagination
      */
     public function __construct()
     {
-
     }
 
     /**
@@ -78,11 +77,13 @@ class Pagination
 
     /**
      * Devuelve un item de paginación
+     *
      * @param string $url
      * @param int $page
      * @param int $offset
      * @param string|bool $icon
      * @param bool $active
+     *
      * @return array
      */
     private function addPaginationItem($url, $page, $offset, $icon = false, $active = false)
@@ -140,7 +141,7 @@ class Pagination
         $recordMiddleLeft = ($recordMin > self::FS_ITEM_LIMIT) ? ($offset / 2) : $recordMin;
         if ($recordMiddleLeft < $recordMin) {
             $page = floor($recordMiddleLeft / self::FS_ITEM_LIMIT);
-            $result[$index] = $this->addPaginationItem($url, ($page + 1), ($page * self::FS_ITEM_LIMIT), 'fa-backward');
+            $result[$index] = $this->addPaginationItem($url, $page + 1, $this->offset($page), 'fa-backward');
             $index++;
         }
 
@@ -148,7 +149,7 @@ class Pagination
         for ($record = $recordMin; $record < $recordMax; $record += self::FS_ITEM_LIMIT) {
             if (($record >= $recordMin && $record <= $offset) || ($record <= $recordMax && $record >= $offset)) {
                 $page = ($record / self::FS_ITEM_LIMIT) + 1;
-                $result[$index] = $this->addPaginationItem($url, $page, $record, false, ($record == $offset));
+                $result[$index] = $this->addPaginationItem($url, $page, $record, false, $record === $offset);
                 $index++;
             }
         }
@@ -158,17 +159,29 @@ class Pagination
         $recordMiddleRight = $offset + (($count - $offset) / 2);
         if ($recordMiddleRight > $recordMax) {
             $page = floor($recordMiddleRight / self::FS_ITEM_LIMIT);
-            $result[$index] = $this->addPaginationItem($url, ($page + 1), ($page * self::FS_ITEM_LIMIT), 'fa-forward');
+            $result[$index] = $this->addPaginationItem($url, $page + 1, $this->offset($page), 'fa-forward');
             $index++;
         }
 
         // Añadimos la última página, si no está incluida en el margen de páginas
         if ($recordMax < $count) {
             $pageMax = floor($count / self::FS_ITEM_LIMIT);
-            $result[$index] = $this->addPaginationItem($url, ($pageMax + 1), ($pageMax * self::FS_ITEM_LIMIT), 'fa-step-forward');
+            $result[$index] = $this->addPaginationItem($url, $pageMax + 1, $this->offset($pageMax), 'fa-step-forward');
         }
 
         /// si solamente hay una página, no merece la pena mostrar un único botón
         return (count($result) > 1) ? $result : [];
+    }
+
+    /**
+     * Returns the offset for the page.
+     *
+     * @param float $page
+     *
+     * @return int
+     */
+    private function offset($page)
+    {
+        return $page * self::FS_ITEM_LIMIT;
     }
 }

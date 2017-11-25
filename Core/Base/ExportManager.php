@@ -93,14 +93,21 @@ class ExportManager
 
         return $docClass->newListDoc($model, $where, $order, $offset, $columns);
     }
-    
+
+    /**
+     * Return the complete classname for export
+     *
+     * @param string $option
+     *
+     * @return string
+     */
     private function getExportClassName($option)
     {
         $className = "FacturaScripts\\Dinamic\\Lib\\Export\\" . $option . 'Export';
-        if(!class_exists($className)) {
+        if (!class_exists($className)) {
             $className = "FacturaScripts\\Core\\Lib\\Export\\" . $option . 'Export';
         }
-        
+
         return $className;
     }
 }

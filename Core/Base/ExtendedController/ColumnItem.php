@@ -53,7 +53,8 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      * Crea y carga la estructura de una columna en base a un archivo XML
      *
      * @param \SimpleXMLElement $column
-     * @return GroupItem
+     *
+     * @return GroupItem|ColumnItem
      */
     public static function newFromXML($column)
     {
@@ -65,8 +66,9 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     /**
      * Crea y carga la estructura de una columna en base a la base de datos
      *
-     * @param array $group
-     * @return GroupItem
+     * @param array $column
+     *
+     * @return ColumnItem
      */
     public static function newFromJSON($column)
     {
@@ -84,7 +86,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
 
         $this->description = '';
         $this->display = 'left';
-        $this->widget = NULL;
+        $this->widget = null;
     }
 
     /**
@@ -101,13 +103,13 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         }
 
         $column_atributes = $column->attributes();
-        $this->description = (string) $column_atributes->description;
+        $this->description = (string)$column_atributes->description;
 
         if (!empty($column_atributes->display)) {
-            $this->display = (string) $column_atributes->display;
+            $this->display = (string)$column_atributes->display;
         }
 
-        switch (TRUE) {
+        switch (true) {
             case isset($column->widget):
                 $this->widget = WidgetItem::newFromXML($column);
                 break;
@@ -121,14 +123,13 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     /**
      * Loads the attributes structure from a JSON file
      *
-     *
      * @param array $column
      */
     public function loadFromJSON($column)
     {
         parent::loadFromJSON($column);
-        $this->description = (string) $column['description'];
-        $this->display = (string) $column['display'];
+        $this->description = (string)$column['description'];
+        $this->display = (string)$column['display'];
 
         if (!empty($this->widget)) {
             unset($this->widget);
@@ -193,10 +194,10 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      *
      * @return string
      */
-    public function getEditHTML($value, $withLabel = TRUE)
+    public function getEditHTML($value, $withLabel = true)
     {
         $header = $withLabel ? $this->getHeaderHTML($this->title) : '';
-        $data = $this->getColumnData( $this->widget->columnFunction() );
+        $data = $this->getColumnData($this->widget->columnFunction());
 
         switch ($this->widget->type) {
             case 'checkbox':
@@ -212,7 +213,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             case 'modal':
                 $html = $this->buttonHTMLColumn($data);
                 break;
-            
+
             default:
                 $html = $this->standardHTMLColumn($header, $value, $data);
                 break;
@@ -240,14 +241,21 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             . '</div>';
     }
 
+    /**
+     * Returns the HTML code to display a button field.
+     *
+     * @param $data
+     *
+     * @return string
+     */
     private function buttonHTMLColumn($data)
     {
         return '<div class="form-group' . $data['ColumnClass'] . '"><label>&nbsp;</label>'
             . $this->widget->getHTML($this->widget->label, '', $data['ColumnHint'], 'col')
-            . $data['ColumnDescription'] 
+            . $data['ColumnDescription']
             . '</div>';
     }
-    
+
     /**
      * Returns the HTML code to display a checkbox field
      *
@@ -292,9 +300,10 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         foreach ($this->widget->values as $optionValue) {
             $checked = ($optionValue['value'] == $value) ? ' checked="checked"' : '';
             ++$index;
-            $values = [($index . '"'), $optionValue['value'], $checked];
+            $values = [$index . '"', $optionValue['value'], $checked];
             $html .= '<div class="form-check">'
-                . '<label class="form-check-label custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0" ' . $data['ColumnHint'] . '>'
+                . '<label class="form-check-label custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0" '
+                . $data['ColumnHint'] . '>'
                 . str_replace($template_var, $values, $input)
                 . '&nbsp;' . $optionValue['title']
                 . '</label>'
@@ -307,6 +316,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
 
     /**
      * Executes the function list ($properties) to get the column properties
+     *
      * @param string[] $properties
      *
      * @return array

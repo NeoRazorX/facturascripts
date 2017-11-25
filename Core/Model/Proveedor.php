@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -98,11 +99,12 @@ class Proveedor extends Base\Persona
     {
         if ($cifnif === '' && $razon !== '') {
             $razon = mb_strtolower(self::noHtml($razon), 'UTF8');
-            $sql = 'SELECT * FROM ' . $this->tableName() . " WHERE cifnif = ''"
+            $sql = 'SELECT * FROM ' . static::tableName() . " WHERE cifnif = ''"
                 . ' AND lower(razonsocial) = ' . $this->dataBase->var2str($razon) . ';';
         } else {
             $cifnif = mb_strtolower($cifnif, 'UTF8');
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE lower(cifnif) = ' . $this->dataBase->var2str($cifnif) . ';';
+            $sql = 'SELECT * FROM ' . static::tableName()
+                . ' WHERE lower(cifnif) = ' . $this->dataBase->var2str($cifnif) . ';';
         }
 
         $data = $this->dataBase->select($sql);
@@ -210,7 +212,7 @@ class Proveedor extends Base\Persona
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -247,7 +249,7 @@ class Proveedor extends Base\Persona
      * o razonsocial o codproveedor o cifnif o telefono1 o telefono2 o observaciones.
      *
      * @param string $query
-     * @param int    $offset
+     * @param int $offset
      *
      * @return self[]
      */
@@ -256,7 +258,7 @@ class Proveedor extends Base\Persona
         $prolist = [];
         $query = mb_strtolower(self::noHtml($query), 'UTF8');
 
-        $consulta = 'SELECT * FROM ' . $this->tableName() . ' WHERE ';
+        $consulta = 'SELECT * FROM ' . static::tableName() . ' WHERE ';
         if (is_numeric($query)) {
             $consulta .= "nombre LIKE '%" . $query . "%' OR razonsocial LIKE '%" . $query . "%'"
                 . " OR codproveedor LIKE '%" . $query . "%' OR cifnif LIKE '%" . $query . "%'"

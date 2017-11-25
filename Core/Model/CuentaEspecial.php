@@ -16,11 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
  * Allows to relate special accounts (SALES, for example)
- * with the real account or sub-account.
+ *  * with the real account or sub-account.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -104,9 +105,16 @@ class CuentaEspecial
          ('IVARXP','Cuentas de IVA repercutido en exportaciones'),
          ('IVASIM','Cuentas de IVA soportado en importaciones')";
     }
-    
+
+    /**
+     * Devuelve la url donde ver/modificar los datos
+     *
+     * @param string $type
+     *
+     * @return string
+     */
     public function url($type = 'auto')
     {
         return $this->traitURL($type, 'ListCuenta&active=List');
     }
- }
+}

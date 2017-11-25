@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -157,7 +158,7 @@ class Stock
     {
         new Almacen();
         new Articulo();
-        
+
         return '';
     }
 
@@ -205,7 +206,7 @@ class Stock
      */
     public function setCantidad($cant = 0)
     {
-        $this->cantidad = (float) $cant;
+        $this->cantidad = (float)$cant;
         $this->disponible = $this->cantidad - $this->reservada;
     }
 
@@ -217,7 +218,7 @@ class Stock
     public function sumCantidad($cant = 0)
     {
         /// convertimos a flot por si acaso nos ha llegado un string
-        $this->cantidad += (float) $cant;
+        $this->cantidad += (float)$cant;
         $this->disponible = $this->cantidad - $this->reservada;
     }
 
@@ -225,7 +226,7 @@ class Stock
      * Devuelve el stock por referencia y adicionalmente por almacén
      *
      * @param string $ref
-     * @param bool   $codalmacen
+     * @param bool $codalmacen
      *
      * @return Stock|false
      */
@@ -244,7 +245,7 @@ class Stock
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -261,7 +262,7 @@ class Stock
      * Devuelve el stock total por referencia y adicionalmente por almacén
      *
      * @param string $ref
-     * @param bool   $codalmacen
+     * @param bool $codalmacen
      *
      * @return float|int
      */
@@ -272,11 +273,11 @@ class Stock
 
         if ($codalmacen) {
             $sql .= ' AND codalmacen = ' . $this->dataBase->var2str($codalmacen);
-}
+        }
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
-            return round((float) $data[0]['total'], 3);
+            return round((float)$data[0]['total'], 3);
         }
 
         return 0;
@@ -285,18 +286,18 @@ class Stock
     /**
      * Devuelve el stock total
      *
-     * @param string $column
+     * @param array|string $column
      *
      * @return int
      */
     public function count($column = 'idstock')
     {
         $num = 0;
-
-        $sql = 'SELECT COUNT(idstock) AS total FROM ' . static::tableName() . ';';
+        $column = is_array($column) ? '*' : $column;
+        $sql = 'SELECT COUNT(' . $column . ') AS total FROM ' . static::tableName() . ';';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
-            $num = (int) $data[0]['total'];
+            $num = (int)$data[0]['total'];
         }
 
         return $num;
@@ -321,7 +322,7 @@ class Stock
      */
     public function allFromArticulo($ref)
     {
-        $stocklist = array();
+        $stocklist = [];
 
         $sql = 'SELECT * FROM ' . static::tableName()
             . ' WHERE referencia = ' . $this->dataBase->var2str($ref) . ' ORDER BY codalmacen ASC;';

@@ -74,7 +74,7 @@ trait Utils
             return null;
         }
 
-        return (int) $str;
+        return (int)$str;
     }
 
     /**
@@ -83,8 +83,8 @@ trait Utils
      *
      * @param double $f1
      * @param double $f2
-     * @param int    $precision
-     * @param bool   $round
+     * @param int $precision
+     * @param bool $round
      *
      * @return bool
      */
@@ -94,7 +94,7 @@ trait Utils
             return abs($f1 - $f2) < 6 / 10 ** ($precision + 1);
         }
 
-        return bccomp((string) $f1, (string) $f2, $precision) === 0;
+        return bccomp((string)$f1, (string)$f2, $precision) === 0;
     }
 
     /**
@@ -150,7 +150,9 @@ trait Utils
     public static function noHtml($txt)
     {
         $newt = str_replace(
-            ['<', '>', '"', "'"], ['&lt;', '&gt;', '&quot;', '&#39;'], $txt
+            ['<', '>', '"', "'"],
+            ['&lt;', '&gt;', '&quot;', '&#39;'],
+            $txt
         );
 
         return trim($newt);

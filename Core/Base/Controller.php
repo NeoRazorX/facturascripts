@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Model;
@@ -34,7 +35,7 @@ class Controller
 
     /**
      * Contiene la lista de archivos extra a cargar: javascript, css, etc.
-     * @var array 
+     * @var array
      */
     public $assets;
 
@@ -69,7 +70,7 @@ class Controller
 
     /**
      * Herramientas para trabajar con divisas.
-     * @var DivisaTools 
+     * @var DivisaTools
      */
     public $divisaTools;
 
@@ -96,7 +97,7 @@ class Controller
 
     /**
      * Herramientas para trabajar con números.
-     * @var NumberTools 
+     * @var NumberTools
      */
     public $numberTools;
 
@@ -117,7 +118,7 @@ class Controller
     /**
      * Nombre del archivo html para el motor de plantillas.
      *
-     * @var string|false nombre_archivo.html
+     * @var string|false nombre_archivo.twig
      */
     private $template;
 
@@ -138,10 +139,10 @@ class Controller
     /**
      * Inicia todos los objetos y propiedades.
      *
-     * @param Cache      $cache
+     * @param Cache $cache
      * @param Translator $i18n
-     * @param MiniLog    $miniLog
-     * @param string     $className
+     * @param MiniLog $miniLog
+     * @param string $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
@@ -155,7 +156,7 @@ class Controller
         $this->miniLog = $miniLog;
         $this->numberTools = new NumberTools();
         $this->request = Request::createFromGlobals();
-        $this->template = $this->className . '.html';
+        $this->template = $this->className . '.twig';
 
         $this->title = $this->className;
         $pageData = $this->getPageData();
@@ -198,7 +199,7 @@ class Controller
             return true;
         }
 
-        $this->template = $template . '.html';
+        $this->template = $template . '.twig';
         return true;
     }
 
@@ -238,14 +239,14 @@ class Controller
     public function publicCore(&$response)
     {
         $this->response = $response;
-        $this->template = 'Login/Login.html';
+        $this->template = 'Login/Login.twig';
         $this->dispatcher->dispatch('pre-publicCore');
     }
 
     /**
      * Ejecuta la lógica privada del controlador.
      *
-     * @param Response        $response
+     * @param Response $response
      * @param Model\User|null $user
      */
     public function privateCore(&$response, $user)
@@ -261,11 +262,13 @@ class Controller
         $defaultPage = $this->request->query->get('defaultPage', '');
         if ($defaultPage === 'TRUE') {
             $this->user->homepage = $this->className;
-            $this->response->headers->setCookie(new Cookie('fsHomepage', $this->user->homepage, time() + FS_COOKIES_EXPIRE));
+            $expire = time() + FS_COOKIES_EXPIRE;
+            $this->response->headers->setCookie(new Cookie('fsHomepage', $this->user->homepage, $expire));
             $this->user->save();
         } elseif ($defaultPage === 'FALSE') {
             $this->user->homepage = null;
-            $this->response->headers->setCookie(new Cookie('fsHomepage', $this->user->homepage, time() - FS_COOKIES_EXPIRE));
+            $expire = time() + FS_COOKIES_EXPIRE;
+            $this->response->headers->setCookie(new Cookie('fsHomepage', $this->user->homepage, $expire));
             $this->user->save();
         }
 

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 use FacturaScripts\Core\Base\DataBase as db;
@@ -32,45 +33,59 @@ class DataBaseTools
 
     /**
      * DataBase object.
-     * 
-     * @var db 
+     *
+     * @var db
      */
     private static $dataBase;
 
     /**
      * System Log.
-     * 
-     * @var Translator 
+     *
+     * @var Translator
      */
     private static $i18n;
 
     /**
      * Translator.
-     * 
-     * @var MiniLog 
+     *
+     * @var MiniLog
      */
     private static $miniLog;
 
     /**
+     * The DataBaseSQL object.
      *
      * @var DataBaseSQL
      */
     private static $sql;
 
+    /**
+     * DataBaseTools constructor.
+     */
     public function __construct()
     {
         if (!isset(self::$dataBase)) {
             self::$dataBase = new db();
             self::$i18n = new Translator();
             self::$miniLog = new MiniLog();
-            self::$sql = self::$dataBase->getEngine()->getSQL();
+            self::$sql = self::$dataBase->getEngine()
+                                        ->getSQL();
         }
     }
 
+    /**
+     * Checks to the database table
+     *
+     * @param $tableName
+     * @param $xmlCols
+     * @param $xmlCons
+     *
+     * @return string
+     */
     public function checkTable($tableName, $xmlCols, $xmlCons)
     {
         if (!self::$dataBase->checkTableAux($tableName)) {
-            self::$miniLog->critical($this->i18n->trans('error-to-innodb'));
+            self::$miniLog->critical(self::$i18n->trans('error-to-innodb'));
         }
 
         /**
@@ -102,8 +117,8 @@ class DataBaseTools
      * Crea la tabla con la estructura indicada.
      *
      * @param string $tableName
-     * @param array  $xmlCols
-     * @param array  $xmlCons
+     * @param array $xmlCols
+     * @param array $xmlCons
      *
      * @return bool
      */
@@ -116,9 +131,9 @@ class DataBaseTools
      * Compara dos arrays de restricciones, devuelve una sentencia SQL en caso de encontrar diferencias.
      *
      * @param string $tableName
-     * @param array  $xmlCons
-     * @param array  $dbCons
-     * @param bool   $deleteOnly
+     * @param array $xmlCons
+     * @param array $dbCons
+     * @param bool $deleteOnly
      *
      * @return bool
      */
@@ -154,7 +169,7 @@ class DataBaseTools
     /**
      * Busca una columna con un valor por su nombre en un array
      *
-     * @param array  $items
+     * @param array $items
      * @param string $index
      * @param string $value
      *
@@ -177,8 +192,8 @@ class DataBaseTools
      * Compara dos arrays de columnas, devuelve una sentencia sql en caso de encontrar diferencias.
      *
      * @param string $tableName
-     * @param array  $xmlCols
-     * @param array  $dbCols
+     * @param array $xmlCols
+     * @param array $dbCols
      *
      * @return string
      */
@@ -232,13 +247,14 @@ class DataBaseTools
 
         $result = (
             (FS_DB_TYPE_CHECK) ||
-            self::$dataBase->getEngine()->compareDataTypes($db0, $xml) ||
+            self::$dataBase->getEngine()
+                           ->compareDataTypes($db0, $xml) ||
             ($xml === 'serial') ||
             (
-            strpos($db0, 'time') === 0 &&
-            strpos($xml, 'time') === 0
+                strpos($db0, 'time') === 0 &&
+                strpos($xml, 'time') === 0
             )
-            );
+        );
 
         return $result;
     }
@@ -247,8 +263,8 @@ class DataBaseTools
      * Extract columns and restrictions form the XML definition file of a Table.
      *
      * @param string $tableName
-     * @param array  $columns
-     * @param array  $constraints
+     * @param array $columns
+     * @param array $constraints
      *
      * @return bool
      */
@@ -280,6 +296,13 @@ class DataBaseTools
         return $return;
     }
 
+    /**
+     * Return the full file path for table XML file.
+     *
+     * @param string $tableName
+     *
+     * @return string
+     */
     private function getXmlTableLocation($tableName)
     {
         $filename = FS_FOLDER . '/Dinamic/Table/' . $tableName . '.xml';
@@ -290,12 +313,18 @@ class DataBaseTools
         return $filename;
     }
 
+    /**
+     * Update the name and type foreach column from the XML
+     *
+     * @param $columns
+     * @param $xml
+     */
     private function checkXmlColumns(&$columns, $xml)
     {
         $key = 0;
         foreach ($xml->column as $col) {
-            $columns[$key]['name'] = (string) $col->name;
-            $columns[$key]['type'] = (string) $col->type;
+            $columns[$key]['name'] = (string)$col->name;
+            $columns[$key]['type'] = (string)$col->type;
 
             $columns[$key]['null'] = 'YES';
             if ($col->null && strtolower($col->null) === 'no') {
@@ -305,19 +334,25 @@ class DataBaseTools
             if ($col->default === '') {
                 $columns[$key]['default'] = null;
             } else {
-                $columns[$key]['default'] = (string) $col->default;
+                $columns[$key]['default'] = (string)$col->default;
             }
 
             ++$key;
         }
     }
 
+    /**
+     * Update the name and constraint foreach constraint from the XML
+     *
+     * @param array $constraints
+     * @param \SimpleXMLElement $xml
+     */
     private function checkXmlConstraints(&$constraints, $xml)
     {
         $key = 0;
         foreach ($xml->constraint as $col) {
-            $constraints[$key]['name'] = (string) $col->name;
-            $constraints[$key]['constraint'] = (string) $col->type;
+            $constraints[$key]['name'] = (string)$col->name;
+            $constraints[$key]['constraint'] = (string)$col->type;
             ++$key;
         }
     }

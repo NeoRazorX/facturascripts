@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -70,7 +71,7 @@ class FacturaCliente
         new Serie();
         new Ejercicio();
         new Asiento();
-        
+
         return '';
     }
 
@@ -92,7 +93,7 @@ class FacturaCliente
      */
     public function vencida()
     {
-        return ($this->pagada) ? false : strtotime($this->vencimiento) < strtotime(date('d-m-Y'));
+        return $this->pagada ? false : strtotime($this->vencimiento) < strtotime(date('d-m-Y'));
     }
 
     /**
@@ -153,7 +154,8 @@ class FacturaCliente
                 } elseif ($fecha === $ejercicio->get_best_fecha($fecha)) {
                     $regiva0 = new RegularizacionIva();
                     if ($regiva0->getFechaInside($fecha)) {
-                        $this->miniLog->alert($this->i18n->trans('cant-assign-date-already-regularized', [$fecha, FS_IVA]));
+                        $this->miniLog->alert($this->i18n->trans('cant-assign-date-already-regularized',
+                            [$fecha, FS_IVA]));
                     } elseif ($regiva0->getFechaInside($this->fecha)) {
                         $this->miniLog->alert($this->i18n->trans('invoice-regularized-cant-change-date', [FS_IVA]));
                     } else {
@@ -197,7 +199,7 @@ class FacturaCliente
     }
 
     /**
-     * Comprueba los datos de la factura, devuelve True si está correcto
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -238,8 +240,10 @@ class FacturaCliente
 
         /// desvincular albaranes asociados y eliminar factura
         $sql = 'UPDATE albaranescli'
-            . ' SET idfactura = NULL, ptefactura = TRUE WHERE idfactura = ' . $this->dataBase->var2str($this->idfactura) . ';'
-            . 'DELETE FROM ' . static::tableName() . ' WHERE idfactura = ' . $this->dataBase->var2str($this->idfactura) . ';';
+            . ' SET idfactura = NULL, ptefactura = TRUE'
+            . ' WHERE idfactura = ' . $this->dataBase->var2str($this->idfactura) . ';'
+            . 'DELETE FROM ' . static::tableName()
+            . ' WHERE idfactura = ' . $this->dataBase->var2str($this->idfactura) . ';';
 
         if ($bloquear) {
             return false;

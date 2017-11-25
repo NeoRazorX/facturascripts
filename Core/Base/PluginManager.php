@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use Exception;
@@ -187,7 +188,7 @@ class PluginManager
         $menuManager->init();
 
         foreach (scandir(FS_FOLDER . '/Dinamic/Controller', SCANDIR_SORT_ASCENDING) as $fileName) {
-            if ($fileName != '.' && $fileName != '..' && substr($fileName, -3) == 'php') {
+            if ($fileName !== '.' && $fileName !== '..' && substr($fileName, -3) === 'php') {
                 $controllerName = substr($fileName, 0, -4);
                 $controllerNamespace = 'FacturaScripts\\Dinamic\\Controller\\' . $controllerName;
 

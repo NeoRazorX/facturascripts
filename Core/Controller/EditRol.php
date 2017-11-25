@@ -16,10 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Model\Rol;
+use FacturaScripts\Core\Model\RolAccess;
+use FacturaScripts\Core\Model\RolUser;
 
 /**
  * Controller to edit a single item from the EditRol model
@@ -35,13 +39,13 @@ class EditRol extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('FacturaScripts\Core\Model\Rol', 'EditRol', 'rol', 'fa-id-card');
+        $this->addEditView(Rol::class, 'EditRol', 'rol', 'fa-id-card');
 
-        $this->addEditListView('FacturaScripts\Core\Model\RolUser', 'EditRolUser', 'rol-user', 'fa-address-card-o');
-        $this->views['EditRolUser']->disableColumn('role', TRUE);
+        $this->addEditListView(RolUser::class, 'EditRolUser', 'rol-user', 'fa-address-card-o');
+        $this->views['EditRolUser']->disableColumn('role', true);
 
-        $this->addListView('FacturaScripts\Core\Model\RolAccess', 'ListRolAccess', 'page-rule', 'fa fa-check-square');
-        $this->views['ListRolAccess']->disableColumn('role', TRUE);
+        $this->addListView(RolAccess::class, 'ListRolAccess', 'page-rule', 'fa fa-check-square');
+        $this->views['ListRolAccess']->disableColumn('role', true);
     }
 
     /**
@@ -59,12 +63,12 @@ class EditRol extends ExtendedController\PanelController
                 break;
 
             case 'EditRolUser':
-                $where = [new DataBase\DataBaseWhere('codrol', $this->getViewModelValue('EditRol', 'codrol'))];
+                $where = [new DataBaseWhere('codrol', $this->getViewModelValue('EditRol', 'codrol'))];
                 $view->loadData($where);
                 break;
 
             case 'ListRolAccess':
-                $where = [new DataBase\DataBaseWhere('codrol', $this->getViewModelValue('EditRol', 'codrol'))];
+                $where = [new DataBaseWhere('codrol', $this->getViewModelValue('EditRol', 'codrol'))];
                 $view->loadData($where);
                 break;
         }

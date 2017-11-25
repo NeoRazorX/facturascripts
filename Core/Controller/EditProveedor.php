@@ -16,10 +16,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Model\ArticuloProveedor;
+use FacturaScripts\Core\Model\CuentaBancoProveedor;
+use FacturaScripts\Core\Model\DireccionProveedor;
+use FacturaScripts\Core\Model\Proveedor;
 
 /**
  * Controller to edit a single item from the Proveedor model
@@ -34,10 +39,11 @@ class EditProveedor extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('FacturaScripts\Core\Model\Proveedor', 'EditProveedor', 'supplier');
-        $this->addEditListView('FacturaScripts\Core\Model\DireccionProveedor', 'EditDireccionProveedor', 'addresses', 'fa-road');
-        $this->addEditListView('FacturaScripts\Core\Model\CuentaBancoProveedor', 'EditCuentaBancoProveedor', 'bank-accounts', 'fa-university');
-        $this->addEditListView('FacturaScripts\Core\Model\ArticuloProveedor', 'EditProveedorArticulo', 'products', 'fa-cubes');
+        $this->addEditView(Proveedor::class, 'EditProveedor', 'supplier');
+        $this->addEditListView(DireccionProveedor::class, 'EditDireccionProveedor', 'addresses', 'fa-road');
+        $this->addEditListView(CuentaBancoProveedor::class, 'EditCuentaBancoProveedor', 'bank-accounts',
+            'fa-university');
+        $this->addEditListView(ArticuloProveedor::class, 'EditProveedorArticulo', 'products', 'fa-cubes');
     }
 
     /**
@@ -55,17 +61,17 @@ class EditProveedor extends ExtendedController\PanelController
                 break;
 
             case 'EditDireccionProveedor':
-                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'))];
+                $where = [new DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'))];
                 $view->loadData($where);
                 break;
 
             case 'EditCuentaBancoProveedor':
-                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'))];
+                $where = [new DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'))];
                 $view->loadData($where);
                 break;
 
             case 'EditProveedorArticulo':
-                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'))];
+                $where = [new DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'))];
                 $view->loadData($where);
                 break;
         }

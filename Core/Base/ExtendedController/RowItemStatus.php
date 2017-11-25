@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -38,7 +39,7 @@ class RowItemStatus extends RowItem
      * @var array
      */
     public $options;
-    
+
     /**
      * Class constructor
      */
@@ -48,24 +49,24 @@ class RowItemStatus extends RowItem
         $this->fieldName = '';
         $this->options = [];
     }
-    
+
     /**
-     * Carga la estructura de atributos en base a un archivo XML
+     * Loads the attributes structure from a XML file
      *
      * @param \SimpleXMLElement $row
      */
     public function loadFromXML($row)
     {
         $row_atributes = $row->attributes();
-        $this->fieldName = (string) $row_atributes->fieldname;
+        $this->fieldName = (string)$row_atributes->fieldname;
 
         foreach ($row->option as $option) {
             $values = $this->getAttributesFromXML($option);
             $this->options[] = $values;
             unset($values);
         }
-    }    
-    
+    }
+
     /**
      * Loads the attributes structure from a JSON file
      *
@@ -73,11 +74,11 @@ class RowItemStatus extends RowItem
      */
     public function loadFromJSON($row)
     {
-        $this->type = (string) $row['type'];
-        $this->fieldName = (string) $row['fieldName'];
-        $this->options = (array) $row['options'];
-    }    
-    
+        $this->type = (string)$row['type'];
+        $this->fieldName = (string)$row['fieldName'];
+        $this->options = (array)$row['options'];
+    }
+
     /**
      * Returns the status for a given value
      *
@@ -93,16 +94,16 @@ class RowItemStatus extends RowItem
             }
 
             $operator = $option['value'][0];
-            $value2 = (float) substr($option['value'], 1);
-            if ($operator == '>' && $value > $value2) {
+            $value2 = (float)substr($option['value'], 1);
+            if ($operator === '>' && $value > $value2) {
                 return $option['color'];
             }
 
-            if ($operator == '<' && $value < $value2) {
+            if ($operator === '<' && $value < $value2) {
                 return $option['color'];
             }
         }
 
         return 'table-light';
-    }    
+    }
 }

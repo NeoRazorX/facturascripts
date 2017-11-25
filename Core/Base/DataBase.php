@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseEngine;
@@ -110,7 +111,8 @@ class DataBase
     public function getColumns($tableName)
     {
         $result = [];
-        $data = $this->select(self::$engine->getSQL()->sqlColumns($tableName));
+        $data = $this->select(self::$engine->getSQL()
+                                           ->sqlColumns($tableName));
         if (is_array($data) && !empty($data)) {
             foreach ($data as $dataCol) {
                 $column = self::$engine->columnFromData($dataCol);
@@ -125,16 +127,18 @@ class DataBase
      * Devuelve una array con las restricciones de una tabla.
      *
      * @param string $tableName
-     * @param bool   $extended
+     * @param bool $extended
      *
      * @return array
      */
     public function getConstraints($tableName, $extended = false)
     {
         if ($extended) {
-            $sql = self::$engine->getSQL()->sqlConstraintsExtended($tableName);
+            $sql = self::$engine->getSQL()
+                                ->sqlConstraintsExtended($tableName);
         } else {
-            $sql = self::$engine->getSQL()->sqlConstraints($tableName);
+            $sql = self::$engine->getSQL()
+                                ->sqlConstraints($tableName);
         }
 
         $data = $this->select($sql);
@@ -152,7 +156,8 @@ class DataBase
     public function getIndexes($tableName)
     {
         $result = [];
-        $data = $this->select(self::$engine->getSQL()->sqlIndexes($tableName));
+        $data = $this->select(self::$engine->getSQL()
+                                           ->sqlIndexes($tableName));
         if (is_array($data) && !empty($data)) {
             foreach ($data as $row) {
                 $result[] = ['name' => $row['Key_name']];
@@ -169,7 +174,7 @@ class DataBase
      */
     public function connected()
     {
-        return (bool) self::$link;
+        return (bool)self::$link;
     }
 
     /**
@@ -279,7 +284,7 @@ class DataBase
      */
     public function select($sql)
     {
-        return $this->selectLimit($sql, 0, 0);
+        return $this->selectLimit($sql, 0);
     }
 
     /**
@@ -346,7 +351,7 @@ class DataBase
             }
         }
 
-        return (bool) $result;
+        return $result;
     }
 
     /**
@@ -357,7 +362,8 @@ class DataBase
      */
     public function lastval()
     {
-        $aux = $this->select(self::$engine->getSQL()->sqlLastValue());
+        $aux = $this->select(self::$engine->getSQL()
+                                          ->sqlLastValue());
 
         return $aux ? $aux[0]['num'] : false;
     }
@@ -380,7 +386,7 @@ class DataBase
      * Devuelve True si la tabla existe, False en caso contrario.
      *
      * @param string $tableName
-     * @param array  $list
+     * @param array $list
      *
      * @return bool
      */
@@ -479,11 +485,13 @@ class DataBase
      */
     public function sql2Int($colName)
     {
-        return self::$engine->getSQL()->sql2Int($colName);
+        return self::$engine->getSQL()
+                            ->sql2Int($colName);
     }
 
     /**
-     * 
+     * Return the database engine used
+     *
      * @return DataBaseEngine
      */
     public function getEngine()

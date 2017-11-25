@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use Symfony\Component\Translation\Loader\JsonFileLoader;
@@ -79,7 +80,7 @@ class Translator
     public function trans($txt, array $parameters = [])
     {
         $catalogue = self::$translator->getCatalogue(self::$lang);
-        self::$usedStrings[$txt] = $catalogue->get($txt, 'messages');
+        self::$usedStrings[$txt] = $catalogue->get($txt);
 
         return self::$translator->trans($txt, $parameters);
     }

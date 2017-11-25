@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -93,7 +94,7 @@ class CuentaBancoProveedor
     }
 
     /**
-     * Almacena los datos del modelo en la base de datos.
+     * Store the model data in the database.
      *
      * @return bool
      */
@@ -109,7 +110,7 @@ class CuentaBancoProveedor
 
             if ($allOK) {
                 /// si esta cuenta es la principal, desmarcamos las demás
-                $sql = 'UPDATE ' . $this->tableName()
+                $sql = 'UPDATE ' . static::tableName()
                     . ' SET principal = false'
                     . ' WHERE codproveedor = ' . $this->dataBase->var2str($this->codproveedor)
                     . ' AND codcuenta <> ' . $this->dataBase->var2str($this->codcuenta) . ';';
@@ -123,7 +124,7 @@ class CuentaBancoProveedor
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return boolean
      */

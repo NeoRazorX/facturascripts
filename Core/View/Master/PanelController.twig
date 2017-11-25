@@ -1,4 +1,4 @@
-{% extends "Master/MenuTemplate.html" %}
+{% extends "Master/MenuTemplate.twig" %}
 
 {% block css %}
 {{ parent() }}
@@ -65,14 +65,14 @@
 {% set edit_url = fsc.getURL('edit') %}
 
 {# -- Visual macros -- #}
-{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
-{% from 'Macro/Utils.html' import exportData as exportData %}
-{% from 'Macro/BaseController.html' import columnsForListView as columnsForListView %}
-{% from 'Macro/BaseController.html' import columnsForEditListView as columnsForEditListView %}
-{% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
-{% from 'Macro/BaseController.html' import rowHeaderForEditView as rowHeaderForEditView %}
-{% from 'Macro/BaseController.html' import rowFooterForEditView as rowFooterForEditView %}
-{% from 'Macro/BaseController.html' import modalFormFromColumns as modalFormFromColumns %}
+{% from 'Macro/Utils.twig' import popoverTitle as popoverTitle %}
+{% from 'Macro/Utils.twig' import exportData as exportData %}
+{% from 'Macro/BaseController.twig' import columnsForListView as columnsForListView %}
+{% from 'Macro/BaseController.twig' import columnsForEditListView as columnsForEditListView %}
+{% from 'Macro/BaseController.twig' import columnsForEditView as columnsForEditView %}
+{% from 'Macro/BaseController.twig' import rowHeaderForEditView as rowHeaderForEditView %}
+{% from 'Macro/BaseController.twig' import rowFooterForEditView as rowFooterForEditView %}
+{% from 'Macro/BaseController.twig' import modalFormFromColumns as modalFormFromColumns %}
 
 {# -- Main Body -- #}
 <div class="container-fluid">
@@ -104,50 +104,57 @@
         </div>
     </div>
 
-    <p>&nbsp;</p>
-
     {# -- Data Row -- #}
-    <div id="data" class="row">
-        <div class="col-sm-12">
-            <div class="nav nav-tabs" id="optionsindex" role="tablist">
+    <div id="data" class="row" style="margin-top: 15px;">
+        {# -- Left Panel -- #}
+        <div class="col-sm-2">
+            <div class="nav flex-column nav-pills" id="optionsindex" role="tablist">
                 {% for indexView, view in fsc.views %}
-                    {% set active = (indexView == fsc.active) ? ' active' : '' %}
-                    <a class="nav-link{{ active }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
-                        <i class="fa {{ fsc.icons[indexView] }} fa-fw" aria-hidden="true"></i>
-                        &nbsp;{{ view.title }}
-                    </a>
+                {% set active = (indexView == fsc.active) ? ' active' : '' %}
+                <a class="nav-link{{ active }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
+                    <i class="fa {{ fsc.icons[indexView] }} fa-fw" aria-hidden="true"></i>
+                    &nbsp;{{ view.title }}
+                </a>
                 {% endfor %}
             </div>
+        </div>
+
+        {# -- Right Panel -- #}
+        <div class="col-sm-10">
             <div class="tab-content" id="optionsindex-tabContent">
                 {% for indexView, view in fsc.views %}
                     {% set active = (indexView == fsc.active) ? ' show active' : '' %}
                     <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
-                        {% set viewType = fsc.viewClass(view) %}
-                        {% if viewType == 'ListView' %}
-                            {{ columnsForListView(_context, view) }}
-                        {% else %}
-                            <br/>
-                        {% endif %}
+                        <div class="card">
+                            <div class="card-body">
+                            {% set viewType = fsc.viewClass(view) %}
+                            {% if viewType == 'ListView' %}
+                                {{ columnsForListView(_context, view) }}
+                            {% endif %}
 
-                        {% if viewType == 'EditView' %}
-                            <!-- Statistical buttons bar -->
-                            {{ rowHeaderForEditView(_context, view) }}
-                            <!-- Main Form -->
-                            {% set model = view.getModel() %}
-                            {{ columnsForEditView(_context, view, model, TRUE) }}
-                        {% endif %}
+                            {% if viewType == 'EditView' %}
+                                <!-- Statistical buttons bar -->
+                                {{ rowHeaderForEditView(_context, view) }}
 
-                        {% if viewType == 'EditListView' %}
-                            {{ columnsForEditListView(_context, view) }}
-                        {% endif %}
+                                <!-- Main Form -->
+                                {% set model = view.getModel() %}
+                                {{ columnsForEditView(_context, view, model, TRUE) }}
+                            {% endif %}
 
-                        {% if viewType == 'HtmlView' %}
+                            {% if viewType == 'EditListView' %}
+                                {{ columnsForEditListView(_context, view) }}
+                            {% endif %}
+
+                            {% if viewType == 'HtmlView' %}
                             <div>{% include view.fileName ignore missing %}</div>
-                        {% else %}
-                            {{ rowFooterForEditView(_context, view) }}
-                            {{ modalFormFromColumns(_context, view) }}
-                        {% endif %}
+                            {% endif %}
+                        </div>
                     </div>
+                    {% if viewType in ['ListView','EditView','EditListView'] %}
+                        {{ rowFooterForEditView(_context, view) }}
+                        {{ modalFormFromColumns(_context, view) }}
+                    {% endif %}
+                </div>
                 {% endfor %}
             </div>
         </div>

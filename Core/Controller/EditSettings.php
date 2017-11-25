@@ -16,10 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Lib\EmailTools;
+use FacturaScripts\Core\Model\Settings;
 
 /**
  * Controller to edit main settings
@@ -31,6 +33,12 @@ class EditSettings extends ExtendedController\PanelController
 
     const KEYSETTINGS = 'Settings';
 
+    /**
+     * Run the controller after actions
+     *
+     * @param ExtendedController\EditView $view
+     * @param string $action
+     */
     protected function execAfterAction($view, $action)
     {
         if ($action === 'testmail') {
@@ -64,6 +72,7 @@ class EditSettings extends ExtendedController\PanelController
      * Returns the url for a specified $type
      *
      * @param string $type
+     *
      * @return string
      */
     public function getURL($type)
@@ -87,6 +96,7 @@ class EditSettings extends ExtendedController\PanelController
      *
      * @param mixed $model
      * @param string $field
+     *
      * @return mixed
      */
     public function getFieldValue($model, $field)
@@ -107,6 +117,7 @@ class EditSettings extends ExtendedController\PanelController
      * Returns the view id for a specified $viewName
      *
      * @param string $viewName
+     *
      * @return string
      */
     private function getKeyFromViewName($viewName)
@@ -119,7 +130,7 @@ class EditSettings extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $modelName = 'FacturaScripts\Core\Model\Settings';
+        $modelName = Settings::class;
         $icon = $this->getPageData()['icon'];
         foreach ($this->allSettingsXMLViews() as $name) {
             $title = substr($name, 8);
@@ -127,7 +138,7 @@ class EditSettings extends ExtendedController\PanelController
         }
 
         $title2 = 'about';
-        $this->addHtmlView('Block/About.html', null, 'about', $title2);
+        $this->addHtmlView('Block/About.twig', null, 'about', $title2);
     }
 
     /**
@@ -152,11 +163,16 @@ class EditSettings extends ExtendedController\PanelController
         }
     }
 
+    /**
+     * Return a list of all XML view files on XMLView folder
+     *
+     * @return array
+     */
     private function allSettingsXMLViews()
     {
         $names = [];
         foreach (scandir(FS_FOLDER . '/Dinamic/XMLView', SCANDIR_SORT_ASCENDING) as $fileName) {
-            if ($fileName != '.' && $fileName != '..' && substr($fileName, 0, 8) == self::KEYSETTINGS) {
+            if ($fileName !== '.' && $fileName !== '..' && substr($fileName, 0, 8) == self::KEYSETTINGS) {
                 $names[] = substr($fileName, 0, -4);
             }
         }

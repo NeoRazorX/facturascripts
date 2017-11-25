@@ -72,6 +72,5 @@ class HtmlView extends BaseView
      */
     public function disableColumn($columnName, $disabled)
     {
-        
     }
 }

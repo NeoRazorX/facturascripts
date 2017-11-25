@@ -16,9 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Model\Divisa;
 
 /**
  * Controller to list the items in the Divisa model
@@ -50,7 +52,7 @@ class ListDivisa extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\Divisa', $className);
+        $this->addView(Divisa::class, $className);
         $this->addSearchFields($className, ['descripcion', 'coddivisa']);
 
         $this->addOrderBy($className, 'coddivisa', 'code');

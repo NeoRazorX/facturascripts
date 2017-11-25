@@ -16,9 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Model\Cliente;
+use FacturaScripts\Core\Model\GrupoClientes;
 
 /**
  * Controller to list the items in the Cliente model
@@ -50,7 +53,7 @@ class ListCliente extends ExtendedController\ListController
     protected function createViews()
     {
         /* Clientes */
-        $this->addView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'customers', 'fa-users');
+        $this->addView(Cliente::class, 'ListCliente', 'customers', 'fa-users');
         $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente', 'email']);
 
         $this->addOrderBy('ListCliente', 'codcliente', 'code');
@@ -61,7 +64,7 @@ class ListCliente extends ExtendedController\ListController
         $this->addFilterCheckbox('ListCliente', 'debaja', 'suspended');
 
         /* Grupos */
-        $this->addView('FacturaScripts\Core\Model\GrupoClientes', 'ListGrupoClientes', 'groups', 'fa-folder-open');
+        $this->addView(GrupoClientes::class, 'ListGrupoClientes', 'groups', 'fa-folder-open');
         $this->addSearchFields('ListGrupoClientes', ['nombre', 'codgrupo']);
 
         $this->addOrderBy('ListGrupoClientes', 'codgrupo', 'code');

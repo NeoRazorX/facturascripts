@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -180,7 +181,8 @@ class ArticuloTraza
      */
     public function getByNumserie($numserie)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE numserie = ' . $this->dataBase->var2str($numserie) . ';';
+        $sql = 'SELECT * FROM ' . static::tableName()
+            . ' WHERE numserie = ' . $this->dataBase->var2str($numserie) . ';';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return new self($data[0]);
@@ -193,7 +195,7 @@ class ArticuloTraza
      * Devuelve todas las trazas de un artículo.
      *
      * @param string $ref
-     * @param bool   $sololibre
+     * @param bool $sololibre
      *
      * @return self[]
      */
@@ -201,7 +203,7 @@ class ArticuloTraza
     {
         $lista = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($ref);
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($ref);
         if ($sololibre) {
             $sql .= ' AND idlalbventa IS NULL AND idlfacventa IS NULL';
         }
@@ -229,7 +231,7 @@ class ArticuloTraza
     {
         $lista = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName()
+        $sql = 'SELECT * FROM ' . static::tableName()
             . ' WHERE ' . $tipo . ' = ' . $this->dataBase->var2str($idlinea) . ' ORDER BY id DESC;';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {

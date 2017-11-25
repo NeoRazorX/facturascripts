@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -110,7 +111,7 @@ class AlbaranProveedor
     }
 
     /**
-     * Comprueba los datos del albarán, devuelve True si está correcto
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -136,7 +137,8 @@ class AlbaranProveedor
      */
     public function delete()
     {
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idalbaran = ' . $this->dataBase->var2str($this->idalbaran) . ';';
+        $sql = 'DELETE FROM ' . static::tableName()
+            . ' WHERE idalbaran = ' . $this->dataBase->var2str($this->idalbaran) . ';';
         if ($this->dataBase->exec($sql)) {
             if ($this->idfactura) {
                 /**
@@ -164,7 +166,7 @@ class AlbaranProveedor
         /**
          * Ponemos a null todos los idfactura que no están en facturasprov
          */
-        $sql = 'UPDATE ' . $this->tableName() . ' SET idfactura = NULL WHERE idfactura IS NOT NULL'
+        $sql = 'UPDATE ' . static::tableName() . ' SET idfactura = NULL WHERE idfactura IS NOT NULL'
             . ' AND idfactura NOT IN (SELECT idfactura FROM facturasprov);';
         $this->dataBase->exec($sql);
     }

@@ -16,9 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Model\Tarifa;
 
 /**
  * Controller to list the items in the Tarifa model
@@ -50,7 +52,7 @@ class ListTarifa extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\Tarifa', $className);
+        $this->addView(Tarifa::class, $className);
         $this->addSearchFields($className, ['nombre', 'codtarifa']);
 
         $this->addOrderBy($className, 'codtarifa', 'code');

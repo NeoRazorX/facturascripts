@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Export;
 
 use Symfony\Component\HttpFoundation\Response;
@@ -45,7 +46,7 @@ class XLSExport implements ExportInterface
         $writer->setAuthor('FacturaScripts');
 
         $tableData = [];
-        foreach ((array) $model as $key => $value) {
+        foreach ((array)$model as $key => $value) {
             if (is_string($value)) {
                 $tableData[] = ['key' => $key, 'value' => $this->fixHtml($value)];
             }
@@ -118,7 +119,7 @@ class XLSExport implements ExportInterface
                     $value = $row->{$col};
                     if (is_string($value)) {
                         $value = $this->fixHtml($value);
-                    } elseif (is_null($value)) {
+                    } elseif (null === $value) {
                         $value = '';
                     }
                 }

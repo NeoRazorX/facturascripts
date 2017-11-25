@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -85,7 +86,7 @@ class Pais
     }
 
     /**
-     * Comprueba los datos del pais, devuelve True si son correctos
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -116,6 +117,6 @@ class Pais
      */
     public function install()
     {
-        return CSVImport::importTableSQL($this->tableName());
+        return CSVImport::importTableSQL(static::tableName());
     }
 }

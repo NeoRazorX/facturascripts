@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -61,7 +62,7 @@ class FacturaProveedor
         new Serie();
         new Ejercicio();
         new Asiento();
-        
+
         return '';
     }
 
@@ -105,9 +106,11 @@ class FacturaProveedor
                             /// ¿La factura está dentro de alguna regularización?
                             $regiva0 = new RegularizacionIva();
                             if ($regiva0->getFechaInside($this->fecha)) {
-                                $this->miniLog->alert($this->i18n->trans('invoice-regularized-cant-change-date', [FS_IVA]));
+                                $this->miniLog->alert($this->i18n->trans('invoice-regularized-cant-change-date',
+                                    [FS_IVA]));
                             } elseif ($regiva0->getFechaInside($fecha)) {
-                                $this->miniLog->alert($this->i18n->trans('cant-assign-date-already-regularized', [$fecha, FS_IVA]));
+                                $this->miniLog->alert($this->i18n->trans('cant-assign-date-already-regularized',
+                                    [$fecha, FS_IVA]));
                             } else {
                                 $cambio = false;
                                 $this->fecha = $fecha;
@@ -120,7 +123,8 @@ class FacturaProveedor
                                 }
                             }
                         } else {
-                            $this->miniLog->alert($this->i18n->trans('closed-exercise-cant-change-date', [$eje2->nombre]));
+                            $this->miniLog->alert($this->i18n->trans('closed-exercise-cant-change-date',
+                                [$eje2->nombre]));
                         }
                     }
                 } else {
@@ -159,7 +163,7 @@ class FacturaProveedor
     }
 
     /**
-     * Comprueba los datos de la factura, devuelve TRUE si está correcto
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -211,7 +215,8 @@ class FacturaProveedor
         /// desvincular albaranes asociados y eliminar factura
         $sql = 'UPDATE albaranesprov SET idfactura = NULL, ptefactura = TRUE'
             . ' WHERE idfactura = ' . $this->dataBase->var2str($this->idfactura) . ';'
-            . 'DELETE FROM ' . static::tableName() . ' WHERE idfactura = ' . $this->dataBase->var2str($this->idfactura) . ';';
+            . 'DELETE FROM ' . static::tableName()
+            . ' WHERE idfactura = ' . $this->dataBase->var2str($this->idfactura) . ';';
 
         if ($bloquear) {
             return false;

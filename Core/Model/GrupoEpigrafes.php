@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -115,7 +116,7 @@ class GrupoEpigrafes
      */
     public function getByCodigo($cod, $codejercicio)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codgrupo = ' . $this->dataBase->var2str($cod)
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codgrupo = ' . $this->dataBase->var2str($cod)
             . ' AND codejercicio = ' . $this->dataBase->var2str($codejercicio) . ';';
 
         $grupo = $this->dataBase->select($sql);
@@ -127,7 +128,7 @@ class GrupoEpigrafes
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */

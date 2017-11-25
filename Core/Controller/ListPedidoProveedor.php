@@ -16,9 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Model\PedidoProveedor;
 
 /**
  * Controller to list the items in the PedidoProveedor model
@@ -34,7 +36,7 @@ class ListPedidoProveedor extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('FacturaScripts\Core\Model\PedidoProveedor', 'ListPedidoProveedor');
+        $this->addView(PedidoProveedor::class, 'ListPedidoProveedor');
         $this->addSearchFields('ListPedidoProveedor', ['codigo', 'numproveedor', 'observaciones']);
 
         $this->addFilterDatePicker('ListPedidoProveedor', 'date', 'date', 'fecha');

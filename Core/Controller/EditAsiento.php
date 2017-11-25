@@ -16,10 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Model\Asiento;
+use FacturaScripts\Core\Model\Partida;
 
 /**
  * Controller to edit a single item from the Asiento model
@@ -37,8 +40,8 @@ class EditAsiento extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
-        $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
+        $this->addEditView(Asiento::class, 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
+        $this->addListView(Partida::class, 'ListPartida', 'accounting-items', 'fa-book');
         $this->setTabsPosition('bottom');
     }
 
@@ -59,7 +62,7 @@ class EditAsiento extends ExtendedController\PanelController
             case 'ListPartida':
                 $idasiento = $this->getViewModelValue('EditAsiento', 'idasiento');
                 if (!empty($idasiento)) {
-                    $where = [new DataBase\DataBaseWhere('idasiento', $idasiento)];
+                    $where = [new DataBaseWhere('idasiento', $idasiento)];
                     $view->loadData($where);
                 }
                 break;

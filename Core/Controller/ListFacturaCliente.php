@@ -16,9 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Model\FacturaCliente;
 
 /**
  * Controller to list the items in the FacturaCliente model
@@ -34,7 +36,7 @@ class ListFacturaCliente extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView('FacturaScripts\Core\Model\FacturaCliente', 'ListFacturaCliente');
+        $this->addView(FacturaCliente::class, 'ListFacturaCliente');
         $this->addSearchFields('ListFacturaCliente', ['codigo', 'numero2', 'observaciones']);
 
         $this->addFilterDatePicker('ListFacturaCliente', 'date', 'date', 'fecha');

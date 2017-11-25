@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 /**
@@ -125,7 +126,8 @@ trait BankAccount
     private function calcularIBAN($ccc, $codpais = '')
     {
         $pais = substr($codpais, 0, 2);
-        $pesos = ['A' => '10', 'B' => '11', 'C' => '12', 'D' => '13', 'E' => '14', 'F' => '15',
+        $pesos = [
+            'A' => '10', 'B' => '11', 'C' => '12', 'D' => '13', 'E' => '14', 'F' => '15',
             'G' => '16', 'H' => '17', 'I' => '18', 'J' => '19', 'K' => '20', 'L' => '21', 'M' => '22',
             'N' => '23', 'O' => '24', 'P' => '25', 'Q' => '26', 'R' => '27', 'S' => '28', 'T' => '29',
             'U' => '30', 'V' => '31', 'W' => '32', 'X' => '33', 'Y' => '34', 'Z' => '35',
@@ -134,7 +136,7 @@ trait BankAccount
         $dividendo = $ccc . $pesos[$pais[0]] . $pesos[$pais[1]] . '00';
         $digitoControl = 98 - bcmod($dividendo, '97');
 
-        if (strlen($digitoControl) == 1) {
+        if (strlen($digitoControl) === 1) {
             $digitoControl = '0' . $digitoControl;
         }
 
@@ -145,7 +147,7 @@ trait BankAccount
      * Calcula el DC para la cadena en base 11 con los pesos indicados
      *
      * @param string $cadena
-     * @param array  $pesos
+     * @param array $pesos
      *
      * @return string
      */
@@ -153,22 +155,22 @@ trait BankAccount
     {
         $totPeso = 0;
         for ($i = 0; $i < $len = strlen($cadena); ++$i) {
-            $val = (int) $cadena[$i];
+            $val = (int)$cadena[$i];
             $totPeso += ($pesos[$i] * $val);
         }
 
         $result = 11 - bcmod($totPeso, '11');
-        switch (TRUE) {
-            case $result == 11:
+        switch ($result) {
+            case 11:
                 $result = 0;
                 break;
 
-            case $result == 10:
+            case 10:
                 $result = 1;
                 break;
         }
 
-        return (string) $result;
+        return (string)$result;
     }
 
     /**
@@ -183,7 +185,7 @@ trait BankAccount
     private function calcularCCC($entidad, $oficina, $cuenta)
     {
         $banco = $entidad . $oficina;
-        if ((strlen($banco) != 8) || (strlen($cuenta) != 10)) {
+        if ((strlen($banco) !== 8) || (strlen($cuenta) !== 10)) {
             return '';
         }
 
@@ -202,7 +204,7 @@ trait BankAccount
      */
     public function verificarCCC($ccc)
     {
-        if (strlen($ccc) != 20) {
+        if (strlen($ccc) !== 20) {
             return false;
         }
 
@@ -210,7 +212,7 @@ trait BankAccount
         $oficina = substr($ccc, 4, 4);
         $cuenta = substr($ccc, 10, 10);
 
-        return $ccc == $this->calcularCCC($entidad, $oficina, $cuenta);
+        return $ccc === $this->calcularCCC($entidad, $oficina, $cuenta);
     }
 
     /**
@@ -222,13 +224,13 @@ trait BankAccount
      */
     public function verificarIBAN($iban)
     {
-        if (strlen($iban) != 24) {
+        if (strlen($iban) !== 24) {
             return false;
         }
 
         $codpais = substr($iban, 0, 2);
         $ccc = substr($iban, -20);
 
-        return $iban == $this->calcularIBAN($ccc, $codpais);
+        return $iban === $this->calcularIBAN($ccc, $codpais);
     }
 }

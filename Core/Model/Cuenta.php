@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -148,7 +149,7 @@ class Cuenta
      */
     public function getByCodigo($cod, $codejercicio)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codcuenta = ' . $this->dataBase->var2str($cod) .
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codcuenta = ' . $this->dataBase->var2str($cod) .
             ' AND codejercicio = ' . $this->dataBase->var2str($codejercicio) . ';';
 
         $data = $this->dataBase->select($sql);
@@ -162,14 +163,14 @@ class Cuenta
     /**
      * Obtiene la primera cuenta especial seleccionada.
      *
-     * @param int    $idcuesp
+     * @param int $idcuesp
      * @param string $codejercicio
      *
      * @return bool|Cuenta
      */
     public function getCuentaesp($idcuesp, $codejercicio)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idcuentaesp = ' . $this->dataBase->var2str($idcuesp) .
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idcuentaesp = ' . $this->dataBase->var2str($idcuesp) .
             ' AND codejercicio = ' . $this->dataBase->var2str($codejercicio) . ' ORDER BY codcuenta ASC;';
 
         $data = $this->dataBase->select($sql);
@@ -181,7 +182,7 @@ class Cuenta
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -207,7 +208,7 @@ class Cuenta
     public function fullFromEpigrafe($idepi)
     {
         $cuenlist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idepigrafe = ' . $this->dataBase->var2str($idepi)
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idepigrafe = ' . $this->dataBase->var2str($idepi)
             . ' ORDER BY codcuenta ASC;';
 
         $data = $this->dataBase->select($sql);
@@ -224,14 +225,15 @@ class Cuenta
      * Devuelve todas las cuentas del ejercicio para el offset indicado
      *
      * @param string $codejercicio
-     * @param int    $offset
+     * @param int $offset
      *
      * @return self[]
      */
     public function allFromEjercicio($codejercicio, $offset = 0)
     {
         $cuenlist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->dataBase->var2str($codejercicio) .
+        $sql = 'SELECT * FROM ' . static::tableName()
+            . ' WHERE codejercicio = ' . $this->dataBase->var2str($codejercicio) .
             ' ORDER BY codcuenta ASC';
 
         $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
@@ -254,7 +256,8 @@ class Cuenta
     public function fullFromEjercicio($codejercicio)
     {
         $cuenlist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->dataBase->var2str($codejercicio)
+        $sql = 'SELECT * FROM ' . static::tableName()
+            . ' WHERE codejercicio = ' . $this->dataBase->var2str($codejercicio)
             . ' ORDER BY codcuenta ASC;';
 
         $data = $this->dataBase->select($sql);
@@ -270,7 +273,7 @@ class Cuenta
     /**
      * Devuelve todas las cuentas especiales del ejercicio
      *
-     * @param int    $idcuesp
+     * @param int $idcuesp
      * @param string $codejercicio
      *
      * @return self[]
@@ -278,7 +281,7 @@ class Cuenta
     public function allFromCuentaesp($idcuesp, $codejercicio)
     {
         $cuenlist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idcuentaesp = ' . $this->dataBase->var2str($idcuesp)
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idcuentaesp = ' . $this->dataBase->var2str($idcuesp)
             . ' AND codejercicio = ' . $this->dataBase->var2str($codejercicio) . ' ORDER BY codcuenta ASC;';
 
         $data = $this->dataBase->select($sql);
@@ -296,7 +299,7 @@ class Cuenta
      * o que coincide con su código de cuenta.
      *
      * @param string $query
-     * @param int    $offset
+     * @param int $offset
      *
      * @return self[]
      */
@@ -304,7 +307,7 @@ class Cuenta
     {
         $cuenlist = [];
         $query = mb_strtolower(self::noHtml($query), 'UTF8');
-        $sql = 'SELECT * FROM ' . $this->tableName() .
+        $sql = 'SELECT * FROM ' . static::tableName() .
             " WHERE codcuenta LIKE '" . $query . "%' OR lower(descripcion) LIKE '%" . $query . "%'" .
             ' ORDER BY codejercicio DESC, codcuenta ASC';
 
@@ -330,7 +333,7 @@ class Cuenta
         $ejercicio = new Ejercicio();
         $eje0 = $ejercicio->get($this->codejercicio);
         if ($eje0) {
-            $codsubcuenta = (float) sprintf('%-0' . $eje0->longsubcuenta . 's', $this->codcuenta) + $sumaCodigo;
+            $codsubcuenta = (float)sprintf('%-0' . $eje0->longsubcuenta . 's', $this->codcuenta) + $sumaCodigo;
             $subcuenta = new Subcuenta();
             $subc0 = $subcuenta->getByCodigo($codsubcuenta, $this->codejercicio);
             if ($subc0) {
