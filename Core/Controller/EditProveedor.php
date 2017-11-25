@@ -38,6 +38,11 @@ class EditProveedor extends ExtendedController\PanelController
         $this->addEditListView('FacturaScripts\Core\Model\DireccionProveedor', 'EditDireccionProveedor', 'addresses', 'fa-road');
         $this->addEditListView('FacturaScripts\Core\Model\CuentaBancoProveedor', 'EditCuentaBancoProveedor', 'bank-accounts', 'fa-university');
         $this->addEditListView('FacturaScripts\Core\Model\ArticuloProveedor', 'EditProveedorArticulo', 'products', 'fa-cubes');
+
+        // TODO: How we indicate that we want apply a filter by codproveedor to this list?
+        $this->addListView('FacturaScripts\Core\Model\FacturaProveedor', 'ListFacturaProveedor', 'invoices');
+        $this->addListView('FacturaScripts\Core\Model\AlbaranProveedor', 'ListAlbaranProveedor', 'delivery-notes');
+        $this->addListView('FacturaScripts\Core\Model\PedidoProveedor', 'ListPedidoProveedor', 'orders');
     }
 
     /**
