@@ -1,0 +1,242 @@
+codpais;codiso;nombre
+ABW;AW;Aruba
+AFG;AF;Afganistán
+AGO;AO;Angola
+AIA;AI;Anguila
+ALA;AX;Islas Gland
+ALB;AL;Albania
+AND;AD;Andorra
+ANT;AN;Antillas Holandesas
+ARE;AE;Emiratos Árabes Unidos
+ARG;AR;Argentina
+ARM;AM;Armenia
+ASM;AS;Samoa Americana
+ATA;AQ;Antártida
+ATF;TF;Territorios Australes Franceses
+ATG;AG;Antigua y Barbuda
+AUS;AU;Australia
+AUT;AT;Austria
+AZE;AZ;Azerbaiyán
+BDI;BI;Burundi
+BEL;BE;Bélgica
+BEN;BJ;Benín
+BFA;BF;Burkina Faso
+BGD;BD;Bangladesh
+BGR;BG;Bulgaria
+BHR;BH;Bahréin
+BHS;BS;Bahamas
+BIH;BA;Bosnia y Herzegovina
+BLR;BY;Bielorrusia
+BLZ;BZ;Belice
+BMU;BM;Bermudas
+BOL;BO;Bolivia
+BRA;BR;Brasil
+BRB;BB;Barbados
+BRN;BN;Brunéi
+BTN;BT;Bhután
+BVT;BV;Isla Bouvet
+BWA;BW;Botsuana
+CAF;CF;República Centroafricana
+CAN;CA;Canadá
+CCK;CC;Islas Cocos
+CHE;CH;Suiza
+CHL;CL;Chile
+CHN;CN;China
+CIV;CI;Costa de Marfil
+CMR;CM;Camerún
+COD;CD;República Democrática del Congo
+COG;CG;Congo
+COK;CK;Islas Cook
+COL;CO;Colombia
+COM;KM;Comoras
+CPV;CV;Cabo Verde
+CRI;CR;Costa Rica
+CUB;CU;Cuba
+CXR;CX;Isla de Navidad
+CYM;KY;Islas Caimán
+CYP;CY;Chipre
+CZE;CZ;República Checa
+DEU;DE;Alemania
+DJI;DJ;Yibuti
+DMA;DM;Dominica
+DNK;DK;Dinamarca
+DOM;DO;República Dominicana
+DZA;DZ;Argelia
+ECU;EC;Ecuador
+EGY;EG;Egipto
+ERI;ER;Eritrea
+ESH;EH;Sahara Occidental
+ESP;ES;España
+EST;EE;Estonia
+ETH;ET;Etiopía
+FIN;FI;Finlandia
+FJI;FJ;Fiyi
+FLK;FK;Islas Malvinas
+FRA;FR;Francia
+FRO;FO;Islas Feroe
+FSM;FM;Micronesia
+GAB;GA;Gabón
+GBR;GB;Reino Unido
+GEO;GE;Georgia
+GHA;GH;Ghana
+GIB;GI;Gibraltar
+GIN;GN;Guinea
+GLP;GP;Guadalupe
+GMB;GM;Gambia
+GNB;GW;Guinea-Bissau
+GNQ;GQ;Guinea Ecuatorial
+GRC;GR;Grecia
+GRD;GD;Granada
+GRL;GL;Groenlandia
+GTM;GT;Guatemala
+GUF;GF;Guayana Francesa
+GUM;GU;Guam
+GUY;GY;Guyana
+HKG;HK;Hong Kong
+HMD;HM;Islas Heard y McDonald
+HND;HN;Honduras
+HRV;HR;Croacia
+HTI;HT;Haití
+HUN;HU;Hungría
+IDN;ID;Indonesia
+IND;IN;India
+IOT;IO;Territorio Británico del Océano Índico
+IRL;IE;Irlanda
+IRN;IR;Irán
+IRQ;IQ;Iraq
+ISL;IS;Islandia
+ISR;IL;Israel
+ITA;IT;Italia
+JAM;JM;Jamaica
+JOR;JO;Jordania
+JPN;JP;Japón
+KAZ;KZ;Kazajstán
+KEN;KE;Kenia
+KGZ;KG;Kirguistán
+KHM;KH;Camboya
+KIR;KI;Kiribati
+KNA;KN;San Cristóbal y Nieves
+KOR;KR;Corea del Sur
+KWT;KW;Kuwait
+LAO;LA;Laos
+LBN;LB;Líbano
+LBR;LR;Liberia
+LBY;LY;Libia
+LCA;LC;Santa Lucía
+LIE;LI;Liechtenstein
+LKA;LK;Sri Lanka
+LSO;LS;Lesotho
+LTU;LT;Lituania
+LUX;LU;Luxemburgo
+LVA;LV;Letonia
+MAC;MO;Macao
+MAR;MA;Marruecos
+MCO;MC;Mónaco
+MDA;MD;Moldavia
+MDG;MG;Madagascar
+MDV;MV;Maldivas
+MEX;MX;México
+MHL;MH;Islas Marshall
+MKD;MK;Macedonia
+MLI;ML;Malí
+MLT;MT;Malta
+MMR;MM;Myanmar
+MNE;ME;Montenegro
+MNG;MN;Mongolia
+MNP;MP;Islas Marianas del Norte
+MOZ;MZ;Mozambique
+MRT;MR;Mauritania
+MSR;MS;Montserrat
+MTQ;MQ;Martinica
+MUS;MU;Mauricio
+MWI;MW;Malaui
+MYS;MY;Malasia
+MYT;YT;Mayotte
+NAM;NA;Namibia
+NCL;NC;Nueva Caledonia
+NER;NE;Níger
+NFK;NF;Isla Norfolk
+NGA;NG;Nigeria
+NIC;NI;Nicaragua
+NIU;NU;Niue
+NLD;NL;Países Bajos
+NOR;NO;Noruega
+NPL;NP;Nepal
+NRU;NR;Nauru
+NZL;NZ;Nueva Zelanda
+OMN;OM;Omán
+PAK;PK;Pakistán
+PAN;PA;Panamá
+PCN;PN;Islas Pitcairn
+PER;PE;Perú
+PHL;PH;Filipinas
+PLW;PW;Palaos
+PNG;PG;Papúa Nueva Guinea
+POL;PL;Polonia
+PRI;PR;Puerto Rico
+PRK;KP;Corea del Norte
+PRT;PT;Portugal
+PRY;PY;Paraguay
+PSE;PS;Palestina
+PYF;PF;Polinesia Francesa
+QAT;QA;Qatar
+REU;RE;Reunión
+ROU;RO;Rumania
+RUS;RU;Rusia
+RWA;RW;Ruanda
+SAU;SA;Arabia Saudí
+SDN;SD;Sudán
+SEN;SN;Senegal
+SGP;SG;Singapur
+SGS;GS;Islas Georgias del Sur y Sandwich del Sur
+SHN;SH;Santa Helena
+SJM;SJ;Svalbard y Jan Mayen
+SLB;SB;Islas Salomón
+SLE;SL;Sierra Leona
+SLV;SV;El Salvador
+SMR;SM;San Marino
+SOM;SO;Somalia
+SPM;PM;San Pedro y Miquelón
+SRB;RS;Serbia
+STP;ST;Santo Tomé y Príncipe
+SUR;SR;Surinam
+SVK;SK;Eslovaquia
+SVN;SI;Eslovenia
+SWE;SE;Suecia
+SWZ;SZ;Suazilandia
+SYC;SC;Seychelles
+SYR;SY;Siria
+TCA;TC;Islas Turcas y Caicos
+TCD;TD;Chad
+TGO;TG;Togo
+THA;TH;Tailandia
+TJK;TJ;Tayikistán
+TKL;TK;Tokelau
+TKM;TM;Turkmenistán
+TLS;TL;Timor Oriental
+TON;TO;Tonga
+TTO;TT;Trinidad y Tobago
+TUN;TN;Túnez
+TUR;TR;Turquía
+TUV;TV;Tuvalu
+TWN;TW;Taiwán
+TZA;TZ;Tanzania
+UGA;UG;Uganda
+UKR;UA;Ucrania
+UMI;UM;Islas Ultramarinas de Estados Unidos
+URY;UY;Uruguay
+USA;US;Estados Unidos
+UZB;UZ;Uzbekistán
+VAT;VA;Ciudad del Vaticano
+VCT;VC;San Vicente y las Granadinas
+VEN;VE;Venezuela
+VGB;VG;Islas Vírgenes Británicas
+VIR;VI;Islas Vírgenes de los Estados Unidos
+VNM;VN;Vietnam
+VUT;VU;Vanuatu
+WLF;WF;Wallis y Futuna
+WSM;WS;Samoa
+YEM;YE;Yemen
+ZAF;ZA;Sudáfrica
+ZMB;ZM;Zambia
+ZWE;ZW;Zimbabue
