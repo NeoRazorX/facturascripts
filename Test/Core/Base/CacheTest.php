@@ -58,11 +58,12 @@ class CacheTest extends \PHPUnit_Framework_TestCase
     {
         $this->object->set('TEST', 1234);
         $data = $this->object->get('TEST');
+        echo "\n" . 'Loaded data "' . $data . '" of type ' . gettype($data);
+        $this->assertEquals(1234, $data);
         $this->assertSame(1234, $data);
         $this->assertNotSame('1234', $data);
         $this->assertNotEquals(null, $data);
         $this->assertNotEquals(false, $data);
-        $this->assertEquals(1234, $data);
     }
 
     /**
