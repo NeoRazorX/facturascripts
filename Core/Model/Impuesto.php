@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Lib\Import\CSVImport;
 
 /**
  * Un impuesto (IVA) que puede estar asociado a artículos, líneas de albaranes,

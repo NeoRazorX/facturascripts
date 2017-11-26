@@ -18,9 +18,11 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Lib\Import\CSVImport;
+
 /**
  * Allows to relate special accounts (SALES, for example)
- * with the real account or sub-account.
+   * with the real account or sub-account.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -75,9 +77,9 @@ class CuentaEspecial
     {
         return CSVImport::importTableSQL($this->tableName());
     }
-    
+
     public function url($type = 'auto')
     {
         return $this->traitURL($type, 'ListCuenta&active=List');
     }
- }
+}
