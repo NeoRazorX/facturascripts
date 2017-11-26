@@ -190,10 +190,11 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      *
      * @param string $value
      * @param bool $withLabel
+     * @param string $formName
      *
      * @return string
      */
-    public function getEditHTML($value, $withLabel = TRUE)
+    public function getEditHTML($value, $withLabel = TRUE, $formName = 'main_form')
     {
         $header = $withLabel ? $this->getHeaderHTML($this->title) : '';
         $data = $this->getColumnData( $this->widget->columnFunction() );
@@ -210,9 +211,9 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             case 'calculate':
             case 'action':
             case 'modal':
-                $html = $this->buttonHTMLColumn($data);
+                $html = $this->buttonHTMLColumn($data, $formName);
                 break;
-            
+
             default:
                 $html = $this->standardHTMLColumn($header, $value, $data);
                 break;
@@ -240,14 +241,21 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             . '</div>';
     }
 
-    private function buttonHTMLColumn($data)
+    /**
+     * Returns the HTML code to display a button
+     *
+     * @param type $data
+     * @param type $formName
+     * @return type
+     */
+    private function buttonHTMLColumn($data, $formName)
     {
         return '<div class="form-group' . $data['ColumnClass'] . '"><label>&nbsp;</label>'
-            . $this->widget->getHTML($this->widget->label, '', $data['ColumnHint'], 'col')
-            . $data['ColumnDescription'] 
+            . $this->widget->getHTML($this->widget->label, $formName, $data['ColumnHint'], 'col')
+            . $data['ColumnDescription']
             . '</div>';
     }
-    
+
     /**
      * Returns the HTML code to display a checkbox field
      *

@@ -46,12 +46,19 @@
                     {% if panel.label is not empty %}
                     <p><i>{{ context.i18n.trans(panel.label) }}</i></p>
                     {% endif %}
-                    {% for button in footer.getButtons(panel.name) %}
-                        {% set label = context.i18n.trans(button.label) %}
-                        {% set hint = context.i18n.trans(button.hint) %}
-                        {% set hint = popoverTitle(hint, 'bottom') %}
-                        {{ button.getHTML(label, context.indexView, hint)|raw }}
-                    {% endfor %}
+                    {% set buttons = footer.getButtons(panel.name) %}
+                    {% if buttons|length > 0 %}
+                    {% set formName = panel.name ~ '_form' %}
+                    <form action="#" method=post name="{{ formName }}">
+                        <input type="hidden" name="active" value="{{ context.indexView }}">
+                        {% for button in buttons %}
+                            {% set label = context.i18n.trans(button.label) %}
+                            {% set hint = context.i18n.trans(button.hint) %}
+                            {% set hint = popoverTitle(hint, 'bottom') %}
+                            {{ button.getHTML(label, formName, hint)|raw }}
+                        {% endfor %}
+                    </form>
+                    {% endif %}
                 </div>
 
                 {% if panel.footer is not empty %}
@@ -98,7 +105,7 @@
 <!--
     Generate the code for the row of actions buttons
 -->
-{% macro rowActionsForEditView(context, view) %}
+{% macro rowActionsForEditView(context, view, formName) %}
 
 {% set actions = view.getRow('actions') %}
 {% if actions is not empty %}
@@ -108,9 +115,9 @@
         {% set label = context.i18n.trans(button.label) %}
         {% set hint = context.i18n.trans(button.hint) %}
         {% set hint = popoverTitle(hint, 'bottom') %}
-        {{ button.getHTML(label, context.indexView, hint, 'btn-sm')|raw }}
+        {{ button.getHTML(label, formName, hint, 'btn-sm')|raw }}
     {% endfor %}
-</div>    
+</div>
 {% endif %}
 {% endmacro %}
 
@@ -183,7 +190,7 @@
 -->
 {% macro columnsForEditView(context, view, model, withForm) %}
 {% set keyValue = context.fsc.getFieldValue(model, model.primaryColumn()) %}
-{% set formName = context.indexView ~ '-' ~ keyValue %}
+{% set formName = (withForm == TRUE) ? context.indexView ~ '-' ~ keyValue : 'main_form' %}
 
 {% if withForm == TRUE %}
 <form name="{{ formName }}" action="#" method="post" class="form" role="form">
@@ -203,14 +210,14 @@
                     {% if column.display == 'none' %}
                 <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
                     {% else %}
-                        {{ column.getEditHTML(value)|raw }}
+                        {{ column.getEditHTML(value, TRUE, formName)|raw }}
                     {% endif %}
                 {% endfor %}
             </div>
         </div>
         {% endfor %}
 
-    {% if withForm == TRUE %}
+{% if withForm == TRUE %}
     {% from 'Macro/BaseController.html' import rowActionsForEditView as rowActionsForEditView %}
     {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
     {% set save, save_title = context.i18n.trans('save'), context.i18n.trans('save-data') %}
@@ -227,7 +234,7 @@
             {% endif %}
         </div>
 
-        {{ rowActionsForEditView(context, view) }}            
+        {{ rowActionsForEditView(context, view, formName) }}
 
         <div class="col text-right">
             <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
@@ -337,9 +344,9 @@
 {% for group in view.getModals() %}
     {% set formName = context.indexView ~ '-' ~ group.name %}
     {% set model = view.getModel() %}
-    
+
     <div class="modal fade" id="{{ group.name }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">            
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form name="{{ formName }}" action="#" method="post" class="form" role="form">
                     <input type="hidden" name="action" value="{{ group.name }}">
@@ -359,7 +366,7 @@
                             {% else %}
                                 {{ column.getEditHTML(value)|raw }}
                             {% endif %}
-                        {% endfor %}                        
+                        {% endfor %}
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -440,7 +447,7 @@
         </div>
         <input type="hidden" name="{{ key }}-from-operator" id="{{ key }}-from-operator" value="{{ filter.options.operatorFrom }}" />
         <input type="text" name="{{ key }}-from" value="{% if indexView == fsc.active %}{{ filter.options.valueFrom }}{% endif %}"
-               class="form-control {{ filter.getSpecialClass() }}" placeholder="{{ filter.options.label }}" 
+               class="form-control {{ filter.getSpecialClass() }}" placeholder="{{ filter.options.label }}"
                autocomplete="off" onchange="this.form.submit()" {{ filter.getKeyboardFilter()|raw }}/>
     </div>
 </div>

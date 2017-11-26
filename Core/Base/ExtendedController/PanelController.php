@@ -52,7 +52,7 @@ abstract class PanelController extends Base\Controller
 
     /**
      * Tabs position in page: left, bottom.
-     * @var string 
+     * @var string
      */
     public $tabsPosition;
 
@@ -88,11 +88,11 @@ abstract class PanelController extends Base\Controller
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
+        $this->exportManager = new Base\ExportManager();
         $this->setTemplate('Master/PanelController');
         $this->active = $this->request->get('active', '');
-        $this->exportManager = new Base\ExportManager();
-        $this->icons = [];
         $this->tabsPosition = 'left';
+        $this->icons = [];
         $this->views = [];
     }
 
@@ -255,7 +255,7 @@ abstract class PanelController extends Base\Controller
      */
     protected function insertAction($view)
     {
-        
+
     }
 
     /**

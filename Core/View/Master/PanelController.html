@@ -17,6 +17,12 @@
         });
     });
 
+    function execActionForm(formName, actionValue) {
+        var form = document.forms[formName];
+        form.action.value = actionValue;
+        form.submit();
+    }
+
     function deleteRecord(formName) {
         bootbox.confirm({
             title: "{{ i18n.trans('confirm-delete')|raw }}",
@@ -33,9 +39,7 @@
             },
             callback: function (result) {
                 if (result) {
-                    var form = document.forms[formName];
-                    form.action.value = 'delete';
-                    form.submit();
+                    execActionForm(formName, 'delete');
                 }
             }
         });
