@@ -56,8 +56,15 @@ class IPFilter
      */
     public function __construct()
     {
-        $this->filePath = FS_FOLDER . '/Cache/ip.list';
+        $this->basePath = FS_FOLDER . '/Cache';
+        $this->filePath = $this->basePath . '/ip.list';
         $this->ipList = [];
+
+        if (!file_exists($this->basePath) && !@mkdir($this->basePath, 0775, true) && !is_dir($this->basePath)) {
+            $minilog = new MiniLog();
+            $i18n = new Translator();
+            $minilog->critical($i18n->trans('cant-create-folder', [$this->basePath]));
+        }
 
         if (file_exists($this->filePath)) {
             /// leemos la lista de direcciones de IP del archivo

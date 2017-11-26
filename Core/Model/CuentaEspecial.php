@@ -76,7 +76,7 @@ class CuentaEspecial
      */
     public function install()
     {
-        return CSVImport::importTableSQL($this->tableName());
+        return CSVImport::importTableSQL(static::tableName());
     }
 
     /**
