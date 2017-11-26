@@ -39,6 +39,12 @@ class EditCliente extends ExtendedController\PanelController
         $this->addEditListView('FacturaScripts\Core\Model\DireccionCliente', 'EditDireccionCliente', 'addresses', 'fa-road');
         $this->addEditListView('FacturaScripts\Core\Model\CuentaBancoCliente', 'EditCuentaBancoCliente', 'customer-banking-accounts', 'fa-bank');
         $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'same-group');
+
+        // TODO: How we indicate that we want apply a filter by codcliente to this list?
+        $this->addListView('FacturaScripts\Core\Model\FacturaCliente', 'ListFacturaCliente', 'invoices');
+        $this->addListView('FacturaScripts\Core\Model\AlbaranCliente', 'ListAlbaranCliente', 'delivery-notes');
+        $this->addListView('FacturaScripts\Core\Model\PedidoCliente', 'ListPedidoCliente', 'orders');
+        $this->addListView('FacturaScripts\Core\Model\PresupuestoCliente', 'ListPresupuestoCliente', 'estimations');
     }
 
     /**
@@ -72,6 +78,14 @@ class EditCliente extends ExtendedController\PanelController
                     $where = [new DataBase\DataBaseWhere('codgrupo', $codgroup)];
                     $view->loadData($where);
                 }
+                break;
+
+            case 'ListFacturaCliente':
+            case 'ListAlbaranCliente':
+            case 'ListPedidoCliente':
+            case 'ListPresupuestoCliente':
+                $where = [new DataBase\DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente'))];
+                $view->loadData($where);
                 break;
         }
     }
