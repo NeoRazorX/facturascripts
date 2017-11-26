@@ -176,7 +176,7 @@ class Pagination
     /**
      * Returns the offset for the page.
      *
-     * @param float $page
+     * @param float|int $page
      *
      * @return int
      */

@@ -29,6 +29,10 @@ use FacturaScripts\Core\App\AppSettings;
  */
 class Partida
 {
+    /**
+     * Constantes para paginación
+     */
+    const FS_ITEM_LIMIT = FS_ITEM_LIMIT;
 
     use Base\ModelTrait;
 
@@ -416,7 +420,7 @@ class Partida
                 $saldo += (float)$po['debe'] - (float)$po['haber'];
                 $sumDebe += (float)$po['debe'];
                 $sumHaber += (float)$po['haber'];
-                if ($i >= $offset && $i < ($offset + FS_ITEM_LIMIT)) {
+                if ($i >= $offset && $i < ($offset + self::FS_ITEM_LIMIT)) {
                     $aux = $partida->get($po['idpartida']);
                     if ($aux) {
                         $aux->numero = (int)$po['numero'];
@@ -488,7 +492,7 @@ class Partida
      *
      * @return array
      */
-    public function fullFromEjercicio($eje, $offset = 0, $limit = FS_ITEM_LIMIT)
+    public function fullFromEjercicio($eje, $offset = 0, $limit = self::FS_ITEM_LIMIT)
     {
         $sql = 'SELECT a.numero,a.fecha,s.codsubcuenta,s.descripcion,p.concepto,p.debe,p.haber'
             . ' FROM co_asientos a, co_subcuentas s, co_partidas p'
@@ -590,22 +594,14 @@ class Partida
     {
         $totales = ['debe' => 0, 'haber' => 0, 'saldo' => 0];
 
-        if ($excluir) {
-            $sql = 'SELECT COALESCE(SUM(p.debe), 0) AS debe, '
-                . 'COALESCE(SUM(p.haber), 0) AS haber FROM co_partidas p, co_asientos a '
-                . 'WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ' . $this->dataBase->var2str($idsubc)
-                . ' AND a.fecha BETWEEN ' . $this->dataBase->var2str($fechaini)
-                . ' AND ' . $this->dataBase->var2str($fechafin)
-                . " AND p.idasiento NOT IN ('" . implode("','", $excluir) . "');";
-            $resultados = $this->dataBase->select($sql);
-        } else {
-            $sql = 'SELECT COALESCE(SUM(p.debe), 0) AS debe,'
-                . 'COALESCE(SUM(p.haber), 0) AS haber FROM co_partidas p, co_asientos a '
-                . 'WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ' . $this->dataBase->var2str($idsubc)
-                . ' AND a.fecha BETWEEN ' . $this->dataBase->var2str($fechaini)
-                . ' AND ' . $this->dataBase->var2str($fechafin) . ';';
-            $resultados = $this->dataBase->select($sql);
-        }
+        $sql = 'SELECT COALESCE(SUM(p.debe), 0) AS debe, '
+            . 'COALESCE(SUM(p.haber), 0) AS haber FROM co_partidas p, co_asientos a '
+            . 'WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ' . $this->dataBase->var2str($idsubc)
+            . ' AND a.fecha BETWEEN ' . $this->dataBase->var2str($fechaini)
+            . ' AND ' . $this->dataBase->var2str($fechafin);
+
+        $sql .= $excluir ? " AND p.idasiento NOT IN ('" . implode("','", $excluir) . "');" : ';';
+        $resultados = $this->dataBase->select($sql);
 
         if (!empty($resultados)) {
             $totales['debe'] = (float)$resultados[0]['debe'];
@@ -614,5 +610,17 @@ class Partida
         }
 
         return $totales;
+    }
+
+    /**
+     * TODO: Uncomplete
+     *
+     * @param int $idasiento
+     *
+     * @return array
+     */
+    public function allFromAsiento($idasiento)
+    {
+        return [];
     }
 }

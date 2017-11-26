@@ -21,11 +21,11 @@ namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model;
-use FacturaScripts\Dinamic\Model\LineaAlbaranCliente;
-use FacturaScripts\Dinamic\Model\LineaAlbaranProveedor;
-use FacturaScripts\Dinamic\Model\LineaPedidoCliente;
-use FacturaScripts\Dinamic\Model\LineaPedidoProveedor;
-use FacturaScripts\Dinamic\Model\LineaPresupuestoCliente;
+use FacturaScripts\Core\Model\LineaAlbaranCliente;
+use FacturaScripts\Core\Model\LineaAlbaranProveedor;
+use FacturaScripts\Core\Model\LineaPedidoCliente;
+use FacturaScripts\Core\Model\LineaPedidoProveedor;
+use FacturaScripts\Core\Model\LineaPresupuestoCliente;
 
 /**
  * Description of DocumentGenerator

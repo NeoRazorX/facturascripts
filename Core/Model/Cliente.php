@@ -124,14 +124,13 @@ class Cliente extends Base\Persona
      */
     public function getByCifnif($cifnif, $razon = '')
     {
+        $sql = 'SELECT * FROM ' . static::tableName();
         if ($cifnif === '' && $razon !== '') {
             $razon = self::noHtml(mb_strtolower($razon, 'UTF8'));
-            $sql = 'SELECT * FROM ' . static::tableName()
-                . " WHERE cifnif = '' AND lower(razonsocial) = " . $this->dataBase->var2str($razon) . ';';
+            $sql.= " WHERE cifnif = '' AND lower(razonsocial) = " . $this->dataBase->var2str($razon) . ';';
         } else {
             $cifnif = mb_strtolower($cifnif, 'UTF8');
-            $sql = 'SELECT * FROM ' . static::tableName()
-                . ' WHERE lower(cifnif) = ' . $this->dataBase->var2str($cifnif) . ';';
+            $sql.= ' WHERE lower(cifnif) = ' . $this->dataBase->var2str($cifnif) . ';';
         }
 
         $data = $this->dataBase->select($sql);
@@ -270,14 +269,11 @@ class Cliente extends Base\Persona
         }
 
         if (!preg_match('/^[A-Z0-9]{1,6}$/i', $this->codcliente)) {
-            $this->miniLog->alert($this->i18n->trans('not-valid-client-code', [$this->codcliente]),
-                ['fieldname' => 'codcliente']);
+            $this->miniLog->alert($this->i18n->trans('not-valid-client-code', [$this->codcliente]), ['fieldname' => 'codcliente']);
         } elseif (empty($this->nombre) || strlen($this->nombre) > 100) {
-            $this->miniLog->alert($this->i18n->trans('not-valid-client-name', [$this->nombre]),
-                ['fieldname' => 'nombre']);
+            $this->miniLog->alert($this->i18n->trans('not-valid-client-name', [$this->nombre]), ['fieldname' => 'nombre']);
         } elseif (empty($this->razonsocial) || strlen($this->razonsocial) > 100) {
-            $this->miniLog->alert($this->i18n->trans('not-valid-client-business-name', [$this->razonsocial]),
-                ['fieldname' => 'razonsocial']);
+            $this->miniLog->alert($this->i18n->trans('not-valid-client-business-name', [$this->razonsocial]), ['fieldname' => 'razonsocial']);
         } else {
             $status = true;
         }
@@ -321,5 +317,13 @@ class Cliente extends Base\Persona
         }
 
         return $clilist;
+    }
+
+    /**
+     * TODO: Uncomplete
+     */
+    private function getNewCodigo()
+    {
+
     }
 }

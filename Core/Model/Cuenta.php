@@ -163,7 +163,7 @@ class Cuenta
     /**
      * Obtiene la primera cuenta especial seleccionada.
      *
-     * @param int $idcuesp
+     * @param string $idcuesp
      * @param string $codejercicio
      *
      * @return bool|Cuenta
@@ -324,7 +324,7 @@ class Cuenta
     /**
      * Devuelve una nueva cuenta para el ejercicio
      *
-     * @param int $sumaCodigo
+     * @param int|float $sumaCodigo
      *
      * @return bool|Subcuenta
      */
@@ -333,7 +333,7 @@ class Cuenta
         $ejercicio = new Ejercicio();
         $eje0 = $ejercicio->get($this->codejercicio);
         if ($eje0) {
-            $codsubcuenta = (float)sprintf('%-0' . $eje0->longsubcuenta . 's', $this->codcuenta) + $sumaCodigo;
+            $codsubcuenta = (float) sprintf('%-0' . $eje0->longsubcuenta . 's', $this->codcuenta) + $sumaCodigo;
             $subcuenta = new Subcuenta();
             $subc0 = $subcuenta->getByCodigo($codsubcuenta, $this->codejercicio);
             if ($subc0) {

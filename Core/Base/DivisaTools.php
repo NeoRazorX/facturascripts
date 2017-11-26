@@ -39,7 +39,7 @@ class DivisaTools
         $symbol = '€';
         $txt = number_format($number, $decimals, FS_NF1, FS_NF2);
 
-        if (FS_POS_DIVISA == 'right') {
+        if (FS_POS_DIVISA === 'right') {
             return $txt . ' ' . $symbol;
         }
 

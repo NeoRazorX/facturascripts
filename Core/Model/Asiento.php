@@ -324,7 +324,8 @@ class Asiento
         $ejercicio = new Ejercicio();
         $eje0 = $ejercicio->get($this->codejercicio);
         if ($eje0) {
-            if (strtotime($this->fecha) < strtotime($eje0->fechainicio) || strtotime($this->fecha) > strtotime($eje0->fechafin)) {
+            $timestamp = strtotime($this->fecha);
+            if ($timestamp < strtotime($eje0->fechainicio) || $timestamp > strtotime($eje0->fechafin)) {
                 $this->miniLog->alert($this->i18n->trans('seat-date-not-in-exercise-range', [$eje0->url()]));
                 $status = false;
             }
@@ -603,8 +604,7 @@ class Asiento
 
                 if ($sql !== '') {
                     if (!$this->dataBase->exec($sql)) {
-                        $this->miniLog->alert($this->i18n->trans('error-while-renumbering-seats',
-                            [$eje->codejercicio]));
+                        $this->miniLog->alert($this->i18n->trans('error-while-renumbering-seats', [$eje->codejercicio]));
                         $continuar = false;
                     }
                     $sql = '';

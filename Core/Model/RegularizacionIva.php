@@ -162,4 +162,14 @@ class RegularizacionIva
 
         return false;
     }
+
+    /**
+     * TODO: Uncomplete
+     *
+     * @param string $codejercicio
+     */
+    public function allFromEjercicio($codejercicio)
+    {
+        return [];
+    }
 }

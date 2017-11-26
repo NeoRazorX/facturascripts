@@ -154,8 +154,7 @@ class FacturaCliente
                 } elseif ($fecha === $ejercicio->get_best_fecha($fecha)) {
                     $regiva0 = new RegularizacionIva();
                     if ($regiva0->getFechaInside($fecha)) {
-                        $this->miniLog->alert($this->i18n->trans('cant-assign-date-already-regularized',
-                            [$fecha, FS_IVA]));
+                        $this->miniLog->alert($this->i18n->trans('cant-assign-date-already-regularized', [$fecha, FS_IVA]));
                     } elseif ($regiva0->getFechaInside($this->fecha)) {
                         $this->miniLog->alert($this->i18n->trans('invoice-regularized-cant-change-date', [FS_IVA]));
                     } else {
@@ -283,5 +282,15 @@ class FacturaCliente
     public function huecos()
     {
         return [];
+    }
+
+    /**
+     * TODO: Uncomplete
+     *
+     * @param string $cod
+     */
+    public function getByCodigo($cod)
+    {
+        return false;
     }
 }

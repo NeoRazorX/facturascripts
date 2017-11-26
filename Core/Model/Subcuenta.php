@@ -308,8 +308,7 @@ class Subcuenta
                     return false;
                 }
 
-                $this->miniLog->alert($this->i18n->trans('equivalent-account-not-found',
-                    [$oldSc->codcuenta, $codejercicio, 'index.php?page=ContabilidadEjercicio&cod=' . $codejercicio]));
+                $this->miniLog->alert($this->i18n->trans('equivalent-account-not-found', [$oldSc->codcuenta, $codejercicio, 'index.php?page=ContabilidadEjercicio&cod=' . $codejercicio]));
 
                 return false;
             }
@@ -496,5 +495,15 @@ class Subcuenta
         }
 
         return $sublist;
+    }
+
+    /**
+     * TODO: Uncomplete
+     *
+     * @param int $idcuenta
+     */
+    public function allFromCuenta($idcuenta)
+    {
+        return [];
     }
 }

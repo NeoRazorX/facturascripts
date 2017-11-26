@@ -213,7 +213,7 @@ class ModelDataGenerator
             $art->descripcion = $this->tools->descripcion();
             $art->codimpuesto = $this->impuestos[0]->codimpuesto;
             $art->setPvpIva($this->tools->precio(1, 49, 699));
-            $art->costemedio = $art->preciocoste = $this->tools->cantidad(0, $art->pvp, $art->pvp + 1);
+            $art->costemedio = $art->preciocoste = $this->tools->cantidad(0, (int) $art->pvp, (int) $art->pvp + 1);
             $art->stockmin = mt_rand(0, 10);
             $art->stockmax = mt_rand($art->stockmin + 1, $art->stockmin + 1000);
 
@@ -224,7 +224,7 @@ class ModelDataGenerator
 
                 case 1:
                     $aux = explode(':', $art->descripcion);
-                    if ($aux) {
+                    if (!empty($aux)) {
                         $art->referencia = $this->tools->txt2codigo($aux[0], 18);
                     } else {
                         $art->referencia = $art->getNewReferencia();

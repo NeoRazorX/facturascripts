@@ -106,11 +106,9 @@ class FacturaProveedor
                             /// ¿La factura está dentro de alguna regularización?
                             $regiva0 = new RegularizacionIva();
                             if ($regiva0->getFechaInside($this->fecha)) {
-                                $this->miniLog->alert($this->i18n->trans('invoice-regularized-cant-change-date',
-                                    [FS_IVA]));
+                                $this->miniLog->alert($this->i18n->trans('invoice-regularized-cant-change-date', [FS_IVA]));
                             } elseif ($regiva0->getFechaInside($fecha)) {
-                                $this->miniLog->alert($this->i18n->trans('cant-assign-date-already-regularized',
-                                    [$fecha, FS_IVA]));
+                                $this->miniLog->alert($this->i18n->trans('cant-assign-date-already-regularized', [$fecha, FS_IVA]));
                             } else {
                                 $cambio = false;
                                 $this->fecha = $fecha;
@@ -123,8 +121,7 @@ class FacturaProveedor
                                 }
                             }
                         } else {
-                            $this->miniLog->alert($this->i18n->trans('closed-exercise-cant-change-date',
-                                [$eje2->nombre]));
+                            $this->miniLog->alert($this->i18n->trans('closed-exercise-cant-change-date', [$eje2->nombre]));
                         }
                     }
                 } else {
@@ -243,6 +240,16 @@ class FacturaProveedor
             return true;
         }
 
+        return false;
+    }
+
+    /**
+     * TODO: Uncomplete
+     *
+     * @param string $cod
+     */
+    public function getByCodigo($cod)
+    {
         return false;
     }
 }

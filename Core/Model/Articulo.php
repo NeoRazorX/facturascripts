@@ -420,13 +420,7 @@ class Articulo
             $this->iva = null;
         }
 
-        if (!isset(self::$impuestos)) {
-            self::$impuestos = [];
-            $impuestoModel = new Impuesto();
-            foreach ($impuestoModel->all() as $imp) {
-                self::$impuestos[$imp->codimpuesto] = $imp;
-            }
-        }
+        $this->checkTaxes();
 
         if ($this->iva === null) {
             $this->iva = 0;
@@ -552,13 +546,7 @@ class Articulo
             $this->codimpuesto = $codimpuesto;
             $this->iva = null;
 
-            if (!isset(self::$impuestos)) {
-                self::$impuestos = [];
-                $impuestoModel = new Impuesto();
-                foreach ($impuestoModel->all() as $imp) {
-                    self::$impuestos[$imp->codimpuesto] = $imp;
-                }
-            }
+            $this->checkTaxes();
         }
     }
 
@@ -794,6 +782,20 @@ class Articulo
         ];
         foreach ($fixes as $sql) {
             $this->dataBase->exec($sql);
+        }
+    }
+
+    /**
+     * Check list of taxes, and if is not set load all values.
+     */
+    public function checkTaxes()
+    {
+        if (!isset(self::$impuestos)) {
+            self::$impuestos = [];
+            $impuestoModel = new Impuesto();
+            foreach ($impuestoModel->all() as $imp) {
+                self::$impuestos[$imp->codimpuesto] = $imp;
+            }
         }
     }
 }

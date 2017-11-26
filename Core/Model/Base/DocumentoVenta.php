@@ -21,6 +21,10 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Lib\NewCodigoDoc;
+use FacturaScripts\Core\Model\LineaAlbaranCliente;
+use FacturaScripts\Core\Model\LineaFacturaCliente;
+use FacturaScripts\Core\Model\LineaPedidoCliente;
+use FacturaScripts\Core\Model\LineaPresupuestoCliente;
 
 /**
  * Description of DocumentoVenta
@@ -33,7 +37,7 @@ trait DocumentoVenta
     use ModelTrait {
         clear as clearTrait;
     }
-
+    
     /**
      * Apartado de correos del cliente
      *
@@ -445,8 +449,8 @@ trait DocumentoVenta
          * muchos decimales.
          */
         $this->totaleuros = round($this->total / $this->tasaconv, 5);
-        if (static::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo,
-            FS_NF0, true)) {
+        $total = $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo;
+        if (static::floatcmp($this->total, $total, FS_NF0, true)) {
             return true;
         }
 
@@ -487,36 +491,28 @@ trait DocumentoVenta
         $total = $neto + $iva - $irpf + $recargo;
         $total_alt = $netoAlt + $ivaAlt - $irpf + $recargo;
 
-        if (!static::floatcmp($this->neto, $neto, FS_NF0, true) && !static::floatcmp($this->neto, $netoAlt, FS_NF0,
-                true)) {
-            $this->miniLog->alert($this->i18n->trans('neto-value-error',
-                [$tipoDoc, $this->codigo, $this->neto, $neto]));
+        if (!static::floatcmp($this->neto, $neto, FS_NF0, true) && !static::floatcmp($this->neto, $netoAlt, FS_NF0, true)) {
+            $this->miniLog->alert($this->i18n->trans('neto-value-error', [$tipoDoc, $this->codigo, $this->neto, $neto]));
             $status = false;
         }
 
-        if (!static::floatcmp($this->totaliva, $iva, FS_NF0, true) && !static::floatcmp($this->totaliva, $ivaAlt,
-                FS_NF0, true)) {
-            $this->miniLog->alert($this->i18n->trans('totaliva-value-error',
-                [$tipoDoc, $this->codigo, $this->totaliva, $iva]));
+        if (!static::floatcmp($this->totaliva, $iva, FS_NF0, true) && !static::floatcmp($this->totaliva, $ivaAlt, FS_NF0, true)) {
+            $this->miniLog->alert($this->i18n->trans('totaliva-value-error', [$tipoDoc, $this->codigo, $this->totaliva, $iva]));
             $status = false;
         }
 
         if (!static::floatcmp($this->totalirpf, $irpf, FS_NF0, true)) {
-            $this->miniLog->alert($this->i18n->trans('totaliva-value-error',
-                [$tipoDoc, $this->codigo, $this->totalirpf, $irpf]));
+            $this->miniLog->alert($this->i18n->trans('totaliva-value-error', [$tipoDoc, $this->codigo, $this->totalirpf, $irpf]));
             $status = false;
         }
 
         if (!static::floatcmp($this->totalrecargo, $recargo, FS_NF0, true)) {
-            $this->miniLog->alert($this->i18n->trans('totalrecargp-value-error',
-                [$tipoDoc, $this->codigo, $this->totalrecargo, $recargo]));
+            $this->miniLog->alert($this->i18n->trans('totalrecargp-value-error', [$tipoDoc, $this->codigo, $this->totalrecargo, $recargo]));
             $status = false;
         }
 
-        if (!static::floatcmp($this->total, $total, FS_NF0, true) && !static::floatcmp($this->total, $total_alt, FS_NF0,
-                true)) {
-            $this->miniLog->alert($this->i18n->trans('total-value-error',
-                [$tipoDoc, $this->codigo, $this->total, $total]));
+        if (!static::floatcmp($this->total, $total, FS_NF0, true) && !static::floatcmp($this->total, $total_alt, FS_NF0, true)) {
+            $this->miniLog->alert($this->i18n->trans('total-value-error', [$tipoDoc, $this->codigo, $this->total, $total]));
             $status = false;
         }
 
@@ -562,7 +558,7 @@ trait DocumentoVenta
     /**
      * Devuelve las líneas asociadas al documento.
      *
-     * @return array
+     * @return LineaPresupuestoCliente[]|LineaPedidoCliente[]|LineaAlbaranCliente[]|LineaFacturaCliente[]
      */
     abstract public function getLineas();
 }

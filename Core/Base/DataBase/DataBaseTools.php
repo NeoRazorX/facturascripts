@@ -274,7 +274,7 @@ class DataBaseTools
         $filename = $this->getXmlTableLocation($tableName);
 
         if (file_exists($filename)) {
-            $xml = simplexml_load_string(file_get_contents($filename, FILE_USE_INCLUDE_PATH));
+            $xml = simplexml_load_string(file_get_contents($filename, true));
             if ($xml) {
                 if ($xml->column) {
                     $this->checkXmlColumns($columns, $xml);

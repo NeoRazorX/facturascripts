@@ -289,4 +289,12 @@ class Ejercicio
             . "VALUES ('" . date('Y') . "','" . date('Y') . "'," . $this->dataBase->var2str(date('01-01-Y'))
             . ', ' . $this->dataBase->var2str(date('31-12-Y')) . ",'ABIERTO',10,'08',null,null,null);";
     }
+
+    /**
+     * TODO: Uncomplete
+     */
+    public function allAbiertos()
+    {
+        return [];
+    }
 }
