@@ -56,14 +56,14 @@ class IPFilter
      */
     public function __construct()
     {
-        $this->basePath = FS_FOLDER . '/Cache';
-        $this->filePath = $this->basePath . '/ip.list';
+        $basePath = FS_FOLDER . '/Cache';
+        $this->filePath = $basePath . '/ip.list';
         $this->ipList = [];
 
-        if (!file_exists($this->basePath) && !@mkdir($this->basePath, 0775, true) && !is_dir($this->basePath)) {
+        if (!file_exists($basePath) && !@mkdir($basePath, 0775, true) && !is_dir($basePath)) {
             $minilog = new MiniLog();
             $i18n = new Translator();
-            $minilog->critical($i18n->trans('cant-create-folder', [$this->basePath]));
+            $minilog->critical($i18n->trans('cant-create-folder', [$basePath]));
         }
 
         if (file_exists($this->filePath)) {
