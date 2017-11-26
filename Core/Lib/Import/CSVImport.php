@@ -61,7 +61,8 @@ class CSVImport
             return $filePath;
         }
 
-        $filePath = FS_FOLDER . '/Core/Data/Lang/' . FS_LANG . '/' . $table . '.csv';
+        $lang = substr(strtoupper(FS_LANG), 0, 2);
+        $filePath = FS_FOLDER . '/Core/Data/Lang/' . $lang . '/' . $table . '.csv';
         if (file_exists($filePath)) {
             return $filePath;
         }

@@ -26,7 +26,7 @@
         });
         if (deleteCodes.length) {
             bootbox.confirm({
-            title: "{{ i18n.trans('warning')|raw }}",
+            title: "{{ i18n.trans('confirm-delete')|raw }}",
                 message: "{{ i18n.trans('are-you-sure') }}",
                 closeButton: false,
                 buttons: {
@@ -46,7 +46,7 @@
                 }
             });
         }
-        
+
         return false;
     }
     function setOperator(buttonID, operator) {
