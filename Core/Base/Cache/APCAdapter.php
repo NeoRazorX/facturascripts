@@ -66,7 +66,11 @@ class APCAdapter implements AdaptorInterface
     public function get($key)
     {
         $this->minilog->debug($this->i18n->trans('apc-get-key-item', [$key]));
-        return apc_fetch($key);
+        if (apc_exists($key)) {
+            $result = apc_fetch($key);
+            return ($result === false) ? null : $result;
+        }
+        return null;
     }
 
     /**
@@ -105,6 +109,6 @@ class APCAdapter implements AdaptorInterface
     public function clear()
     {
         $this->minilog->debug($this->i18n->trans('apc-clear'));
-        return apc_clear_cache();
+        return apc_clear_cache('user');
     }
 }
