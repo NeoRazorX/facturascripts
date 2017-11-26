@@ -30,9 +30,9 @@ class DataGeneratorTools
     /**
      * Support method for the model constructor and data initialisation
      *
-     * @param array $variable -> data destination
-     * @param $modelo -> model for each array item
-     * @param bool $shuffle -> Randomly sort the list
+     * @param array $variable data destination
+     * @param mixed $modelo model for each array item
+     * @param bool $shuffle Randomly sort the list
      */
     public function loadData(&$variable, $modelo, $shuffle)
     {

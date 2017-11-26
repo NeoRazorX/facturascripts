@@ -92,14 +92,14 @@ class ArticuloTraza
     /**
      * Fecha de entrada del artículo
      *
-     * @var |DateTime
+     * @var \DateTime
      */
     public $fecha_entrada;
 
     /**
      * Fecha de salida del artículo
      *
-     * @var |DateTime
+     * @var \DateTime
      */
     public $fecha_salida;
 

@@ -42,8 +42,8 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Returns an error array with the known situations
  *
- * @param $errors
- * @param $i18n
+ * @param array $errors
+ * @param Translator $i18n
  */
 function searchErrors(&$errors, &$i18n)
 {
@@ -63,9 +63,10 @@ function searchErrors(&$errors, &$i18n)
 }
 
 /**
- * Returns the corresponding font-awesome value to the @param parameter (true or false)
+ * Returns the corresponding font-awesome value to the parameter (true or false)
  *
  * @param boolean $isOk
+ *
  * @return string
  */
 function checkRequirement($isOk)
@@ -110,8 +111,8 @@ function get_timezone_list()
  * if succeeded returns true, false if not.
  * When false, the error is stored in $errors
  *
- * @param $errors
- * @param $i18n
+ * @param array $errors
+ * @param Translator $i18n
  *
  * @return bool
  */
@@ -156,8 +157,8 @@ function dbConnect(&$errors, &$i18n)
  * if succeeded returns true, false if not.
  * When false, the error is stored in $errors
  *
- * @param $errors
- * @param $dbData
+ * @param array $errors
+ * @param array $dbData
  *
  * @return bool
  */
@@ -196,8 +197,8 @@ function testMysql(&$errors, $dbData)
  * if succeeded returns true, false if not.
  * When false, the error is stored in $errors
  *
- * @param $errors
- * @param $dbData
+ * @param array $errors
+ * @param array $dbData
  *
  * @return bool
  */
@@ -285,7 +286,7 @@ function saveInstall()
 /**
  * Renders the views and returns the response
  *
- * @param $templateVars
+ * @param array $templateVars
  */
 function renderHTML(&$templateVars)
 {
@@ -354,4 +355,5 @@ function installerMain()
     ];
     renderHTML($templateVars);
 }
+
 installerMain();

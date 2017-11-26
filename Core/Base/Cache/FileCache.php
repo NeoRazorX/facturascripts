@@ -95,7 +95,7 @@ class FileCache implements AdaptorInterface
      *
      * @param string $key
      * @param bool   $raw
-     * @param null   $custom_time
+     * @param int|null   $custom_time
      *
      * @return mixed the content you put in, or null if expired or not found
      */

@@ -55,7 +55,7 @@ class Settings
     /**
      * Conjunto de valores de configuración
      *
-     * @var array
+     * @var string|array
      */
     public $properties;
 

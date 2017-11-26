@@ -82,7 +82,8 @@ trait BankAccount
         $iban = str_replace(' ', '', $this->iban);
         if ($espacios) {
             $txt = '';
-            for ($i = 0; $i < $len = strlen($iban); $i += 4) {
+            $len = strlen($iban);
+            for ($i = 0; $i < $len; $i += 4) {
                 $txt .= substr($iban, $i, 4) . ' ';
             }
 
@@ -154,7 +155,8 @@ trait BankAccount
     private function calcularDC($cadena, $pesos)
     {
         $totPeso = 0;
-        for ($i = 0; $i < $len = strlen($cadena); ++$i) {
+        $len = strlen($cadena);
+        for ($i = 0; $i < $len; ++$i) {
             $val = (int)$cadena[$i];
             $totPeso += ($pesos[$i] * $val);
         }

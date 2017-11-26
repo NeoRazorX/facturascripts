@@ -530,7 +530,7 @@ class Asiento
         } elseif (preg_match('/^(\d{1,2})-(\d{1,2})-(\d{4})$/i', $query)) {
             $consulta .= 'fecha = ' . $this->dataBase->var2str($query) . " OR concepto LIKE '%" . $query . "%'";
         } else {
-            $consulta .= "lower(concepto) LIKE '%" . $buscar = str_replace(' ', '%', $query) . "%'";
+            $consulta .= "lower(concepto) LIKE '%" . str_replace(' ', '%', $query) . "%'";
         }
         $consulta .= ' ORDER BY fecha DESC';
 
