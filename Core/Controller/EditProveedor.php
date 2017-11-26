@@ -25,6 +25,9 @@ use FacturaScripts\Core\Model\ArticuloProveedor;
 use FacturaScripts\Core\Model\CuentaBancoProveedor;
 use FacturaScripts\Core\Model\DireccionProveedor;
 use FacturaScripts\Core\Model\Proveedor;
+use FacturaScripts\Core\Model\FacturaProveedor;
+use FacturaScripts\Core\Model\AlbaranProveedor;
+use FacturaScripts\Core\Model\PedidoProveedor;
 
 /**
  * Controller to edit a single item from the Proveedor model
@@ -41,9 +44,11 @@ class EditProveedor extends ExtendedController\PanelController
     {
         $this->addEditView(Proveedor::class, 'EditProveedor', 'supplier');
         $this->addEditListView(DireccionProveedor::class, 'EditDireccionProveedor', 'addresses', 'fa-road');
-        $this->addEditListView(CuentaBancoProveedor::class, 'EditCuentaBancoProveedor', 'bank-accounts',
-            'fa-university');
+        $this->addEditListView(CuentaBancoProveedor::class, 'EditCuentaBancoProveedor', 'bank-accounts', 'fa-university');
         $this->addEditListView(ArticuloProveedor::class, 'EditProveedorArticulo', 'products', 'fa-cubes');
+        $this->addListView(FacturaProveedor::class, 'ListFacturaProveedor', 'invoices', 'fa-files-o');
+        $this->addListView(AlbaranProveedor::class, 'ListAlbaranProveedor', 'delivery-notes', 'fa-files-o');
+        $this->addListView(PedidoProveedor::class, 'ListPedidoProveedor', 'orders', 'fa-files-o');
     }
 
     /**
@@ -54,24 +59,21 @@ class EditProveedor extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
+        $codproveedor = $this->request->get('code');
+
         switch ($keyView) {
             case 'EditProveedor':
-                $value = $this->request->get('code');
-                $view->loadData($value);
+                $view->loadData($codproveedor);
                 break;
 
             case 'EditDireccionProveedor':
-                $where = [new DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'))];
-                $view->loadData($where);
-                break;
-
             case 'EditCuentaBancoProveedor':
-                $where = [new DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'))];
-                $view->loadData($where);
-                break;
-
             case 'EditProveedorArticulo':
-                $where = [new DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'))];
+            case 'ListFacturaProveedor':
+            case 'ListAlbaranProveedor':
+            case 'ListPedidoProveedor':
+            case 'ListPresupuestoProveedor':
+                $where = [new DataBase\DataBaseWhere('codproveedor', $codproveedor)];
                 $view->loadData($where);
                 break;
         }
