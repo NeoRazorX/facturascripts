@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * This file is part of FacturaScripts
  * Copyright (C) 2017  Carlos Garcia Gomez  carlos@facturascripts.com
  *
@@ -17,15 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @author Carlos García Gómez
- */
-require_once __DIR__ . '/../vendor/autoload.php';
-if (!file_exists(__DIR__ . 'config.php')) {
-    require_once __DIR__ . '/config-scrutinizer.php';
-} else {
-    require_once __DIR__ . '/../config.php';
-}
-
-define('PHPUNIT_PATH', dirname(__DIR__));
-define('FS_FOLDER', dirname(__DIR__));
+define('FS_COOKIES_EXPIRE', 604800);
+define('FS_DEBUG', true);
+define('FS_LANG', 'es_ES');
+define('FS_TIMEZONE', 'Europe/Madrid');
+define('FS_DB_TYPE', 'postgresql');
+define('FS_DB_HOST', 'localhost');
+define('FS_DB_PORT', '5432');
+define('FS_DB_NAME', 'scrutinizer');
+define('FS_DB_USER', 'scrutinizer');
+define('FS_DB_PASS', 'scrutinizer');
+define('FS_DB_FOREIGN_KEYS', true);
+define('FS_DB_INTEGER', 'INTEGER');
+define('FS_DB_TYPE_CHECK', true);
+define('FS_CACHE_HOST', 'localhost');
+define('FS_CACHE_PORT', '11211');
+define('FS_CACHE_PREFIX', 'tFlqb1s1');
+define('FS_MYDOCS', '');
