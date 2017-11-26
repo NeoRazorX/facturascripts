@@ -58,6 +58,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
     {
         $this->object->set('TEST', 1234);
         $data = $this->object->get('TEST');
+        echo "\n" . $this->object->getEngineType();
         echo "\n" . 'Loaded data "' . $data . '" of type ' . gettype($data);
         $this->assertEquals(1234, $data);
         $this->assertSame(1234, $data);

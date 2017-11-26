@@ -105,4 +105,18 @@ class Cache
     {
         return self::$engine->clear();
     }
+
+    /**
+     * Return the type of the engine
+     *
+     * @return string
+     */
+    public function getEngineType()
+    {
+        $classname = get_class(self::$engine);
+        if ($pos = strrpos($classname, '\\')) {
+            return substr($classname, $pos + 1);
+        }
+        return $classname;
+    }
 }
