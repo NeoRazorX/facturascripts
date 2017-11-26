@@ -62,7 +62,7 @@ class EditCliente extends ExtendedController\PanelController
                 break;
 
             case 'ListCliente':
-                if (!empty($codgroup)) {
+                if (!empty($codgrupo)) {
                     $where = [new DataBase\DataBaseWhere('codgrupo', $codgrupo)];
                     $view->loadData($where);
                 }
