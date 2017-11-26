@@ -607,7 +607,7 @@
     "help-php-version-1-point": "Muchos hostings ofrecen varias versiones de PHP. Ve al Panel de control de tu hosting y selecciona la versión de PHP más alta.",
     "help-php-version-2-point": "Busca un proveedor de hosting más completo, que son la mayoría. Mira en nuestra sección de <a href='https://www.facturascripts.com/descargar?nube=TRUE' target='_blank'>Hostings recomendados</a>",
     "minimum-required-characters": "Requiere mínimo {0} carácteres!",
-    "answer-1-installed-on-hosting": "Se ha bloqueado 0. Contacta con tu proveedor para que lo reinicie.",
+    "answer-1-installed-on-hosting": " Se ha bloqueado %1$s. Contacta con tu proveedor para que lo reinicie.",
     "answer-1-installed-on-pc": "Se ha desconectado 0. Para solucionarlo debes reiniciar 0. Si estás usando FacturaScripts portable, ve a la carpeta de FacturaScripts, haz clic en <b>xampp-control</b> y pulsa el botón <b>start</b>, al lado de 0.",
     "error-reading-ini": "Error al leer el archivo plugins/0/facturascripts.ini",
     "cant-save-user": "Imposible guardar el usuario!",
