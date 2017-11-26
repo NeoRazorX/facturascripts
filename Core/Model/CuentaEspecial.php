@@ -73,36 +73,7 @@ class CuentaEspecial
      */
     public function install()
     {
-        return "INSERT INTO co_cuentasesp (idcuentaesp,descripcion) VALUES 
-         ('IVAREP','Cuentas de IVA repercutido'),
-         ('IVASOP','Cuentas de IVA soportado'),
-         ('IVARUE','Cuentas de IVA soportado UE'),
-         ('IVASUE','Cuentas de IVA soportado UE'),
-         ('IVAACR','Cuentas acreedoras de IVA en la regularización'),
-         ('IVADEU','Cuentas deudoras de IVA en la regularización'),
-         ('PYG','Pérdidas y ganancias'),
-         ('PREVIO','Cuentas relativas al ejercicio previo'),
-         ('CAMPOS','Cuentas de diferencias positivas de cambio'),
-         ('CAMNEG','Cuentas de diferencias negativas de cambio'),
-         ('DIVPOS','Cuentas por diferencias positivas en divisa extranjera'),
-         ('EURPOS','Cuentas por diferencias positivas de conversión a la moneda local'),
-         ('EURNEG','Cuentas por diferencias negativas de conversión a la moneda local'),
-         ('CLIENT','Cuentas de clientes'),
-         ('PROVEE','Cuentas de proveedores'),
-         ('ACREED','Cuentas de acreedores'),
-         ('COMPRA','Cuentas de compras'),
-         ('VENTAS','Cuentas de ventas'),
-         ('CAJA','Cuentas de caja'),
-         ('IRPFPR','Cuentas de retenciones para proveedores IRPFPR'),
-         ('IRPF','Cuentas de retenciones IRPF'),
-         ('GTORF','Gastos por recargo financiero'),
-         ('INGRF','Ingresos por recargo financiero'),
-         ('DEVCOM','Devoluciones de compras'),
-         ('DEVVEN','Devoluciones de ventas'),
-         ('IVAEUE','IVA en entregas intracomunitarias U.E.'),
-         ('IVAREX','Cuentas de IVA repercutido para clientes exentos de IVA'),
-         ('IVARXP','Cuentas de IVA repercutido en exportaciones'),
-         ('IVASIM','Cuentas de IVA soportado en importaciones')";
+        return CSVImport::importTableSQL($this->tableName());
     }
     
     public function url($type = 'auto')

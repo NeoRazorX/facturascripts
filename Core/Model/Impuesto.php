@@ -148,8 +148,6 @@ class Impuesto
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName() . ' (codimpuesto,descripcion,iva,recargo) VALUES '
-            . "('IVA0','IVA 0%','0','0'),('IVA21','IVA 21%','21','5.2'),"
-            . "('IVA10','IVA 10%','10','1.4'),('IVA4','IVA 4%','4','0.5');";
+        return CSVImport::importTableSQL($this->tableName());
     }
 }
