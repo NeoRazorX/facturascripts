@@ -127,7 +127,8 @@ Las pestañas cuando están colocadas abajo, muestra ventana principal y debajo
 de esta mostrara la información de la pestaña seleccionada.
 seleccionada.
 
-Ejemplo:
+Ejemplo.
+
 .. code:: php
 
     $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
@@ -137,7 +138,8 @@ Ejemplo:
 Las pestañas cuando están colocadas arriba, mostrara la información de
 la pestaña seleccionada.
 
-Ejemplo:
+Ejemplo.
+
 .. code:: php
 
     $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
