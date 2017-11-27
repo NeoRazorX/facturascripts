@@ -101,14 +101,15 @@ is the default position.
 The tabs when they are placed on the left, the information will be displayed
 of the selected tab. In these cases it is not necessary to specify the method.
 
-Example without specifying the method:
-.. code :: php
+Example without specifying the method.
 
+..code :: php
         $ this-> addEditView ('FacturaScripts \ Core \ Model \ Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
         $ this-> addListView ('FacturaScripts \ Core \ Model \ Partida', 'ListPartida', 'accounting-items', 'fa-book');
         
-Example with the method:
-    ..code :: php
+Example with the method.
+
+..code :: php
     
         $ this-> addEditView ('FacturaScripts \ Core \ Model \ Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
         $ this-> addListView ('FacturaScripts \ Core \ Model \ Partida', 'ListPartida', 'accounting-items', 'fa-book');
@@ -117,8 +118,9 @@ Example with the method:
 The tabs when placed below, shows main window and below
 This will show the information of the selected tab.
 
-Example:
-.. code :: php
+Example.
+
+..code :: php
 
         $ this-> addEditView ('FacturaScripts \ Core \ Model \ Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
         $ this-> addListView ('FacturaScripts \ Core \ Model \ Partida', 'ListPartida', 'accounting-items', 'fa-book');
@@ -127,8 +129,9 @@ Example:
 The tabs when they are placed above, will show the information of
 the selected tab.
 
-Example:
-.. code :: php
+Example.
+
+..code :: php
 
         $ this-> addEditView ('FacturaScripts \ Core \ Model \ Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
         $ this-> addListView ('FacturaScripts \ Core \ Model \ Partida', 'ListPartida', 'accounting-items', 'fa-book');
