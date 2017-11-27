@@ -116,6 +116,7 @@ Ejemplo sin especificar el método.
     $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
         
 Ejemplo con el método.
+
 .. code:: php
     
     $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
