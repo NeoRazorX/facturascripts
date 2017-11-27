@@ -19,6 +19,8 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the Atributo model
@@ -26,16 +28,38 @@ use FacturaScripts\Core\Base\ExtendedController;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Ramiro Salvador Mamani <ramiro@solsun.pe>
+ * @author Carlos Jiménez Gómez <carlos@evolunext.es>
  */
-class EditAtributo extends ExtendedController\EditController
+class EditAtributo extends ExtendedController\PanelController
 {
-
     /**
-     * Returns the model name
+     * Load views
      */
-    public function getModelName()
+    protected function createViews()
     {
-        return 'FacturaScripts\Core\Model\Atributo';
+        $this->addEditView('FacturaScripts\Core\Model\Atributo', 'EditAtributo', 'attribute');
+        $this->addEditListView('FacturaScripts\Core\Model\AtributoValor', 'EditAtributoValor', 'attribute values', 'fa-road');
+    }
+    
+    /**
+     * Load view data procedure
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        switch ($keyView) {
+            case 'EditAtributo':
+                $value = $this->request->get('code');
+                $view->loadData($value);
+                break;
+
+            case 'EditAtributoValor':
+                $where = [new DataBase\DataBaseWhere('codatributo', $this->getViewModelValue('EditAtributo', 'codatributo'))];
+                $view->loadData($where);
+                break;
+        }
     }
 
     /**
