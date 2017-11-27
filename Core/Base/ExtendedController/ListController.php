@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -30,6 +29,7 @@ use FacturaScripts\Core\Base\DataBase;
  */
 abstract class ListController extends Base\Controller
 {
+
     /**
      * Indicates the active view
      *
@@ -168,8 +168,8 @@ abstract class ListController extends Base\Controller
                 $this->response->setContent($document);
                 break;
 
-            case 'json':
-                $this->jsonAction($this->views[$this->active]);
+            case 'megasearch':
+                $this->megaSearchAction();
                 break;
         }
     }
@@ -201,7 +201,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Devuelve el texto de las columnas.
+     * Returns columns title for megaSearchAction function.
      *
      * @param ListView $view
      * @param int $maxColumns
@@ -212,7 +212,7 @@ abstract class ListController extends Base\Controller
     {
         $result = [];
         foreach ($view->getColumns() as $col) {
-            if ($col->display !== 'none' && $col->widget->type === 'text') {
+            if ($col->display !== 'none' && in_array($col->widget->type, ['text', 'money'])) {
                 $result[] = $col->widget->fieldName;
                 if (count($result) === $maxColumns) {
                     break;
@@ -223,25 +223,46 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Returns a JSON response
-     *
-     * @param ListView $view
+     * Returns a JSON response to MegaSearch.
      */
-    protected function jsonAction($view)
+    protected function megaSearchAction()
     {
         $this->setTemplate(false);
-        $cols = $this->getTextColumns($view, 4);
-        $json = [];
-        foreach ($view->getCursor() as $item) {
-            $jItem = ['url' => $item->url()];
-            foreach ($cols as $col) {
-                $jItem[$col] = $item->{$col};
+        $json = [
+            $this->active => [
+                'title' => $this->i18n->trans($this->title),
+                'icon' => $this->getPageData()['icon'],
+                'columns' => [],
+                'results' => [],
+            ]
+        ];
+
+        /// we search in all listviews
+        foreach ($this->views as $key => $listView) {
+            if (!isset($json[$key])) {
+                $json[$key] = [
+                    'title' => $listView->title,
+                    'icon' => $this->icons[$key],
+                    'columns' => [],
+                    'results' => [],
+                ];
             }
-            $json[] = $jItem;
+
+            $fields = $listView->getSearchIn();
+            $listView->loadData([new DataBase\DataBaseWhere($fields, $this->query, 'LIKE')], 0, Base\Pagination::FS_ITEM_LIMIT);
+
+            $cols = $this->getTextColumns($listView, 6);
+            $json[$key]['columns'] = $cols;
+
+            foreach ($listView->getCursor() as $item) {
+                $jItem = ['url' => $item->url()];
+                foreach ($cols as $col) {
+                    $jItem[$col] = $item->{$col};
+                }
+                $json[$key]['results'][] = $jItem;
+            }
         }
-        if (!empty($json)) {
-            \array_unshift($json, $cols);
-        }
+
         $this->response->setContent(json_encode($json));
     }
 

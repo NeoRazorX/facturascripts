@@ -19,15 +19,13 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
+
 /**
- * Controller to edit a single item from the Familia model
+ * Controller to edit a single item from the AlbaranCliente model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Fco. Antobnio Moreno Pérez <famphuelva@gmail.com>
  */
-class EditFamilia extends ExtendedController\PanelController
+class EditAlbaranCliente extends ExtendedController\DocumentController
 {
 
     /**
@@ -35,35 +33,23 @@ class EditFamilia extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('FacturaScripts\Core\Model\Familia', 'EditFamilia', 'family');
-        $this->addListView('FacturaScripts\Core\Model\Familia', 'ListFamilia', 'families-children', 'fa-level-down');
-        $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListArticulo', 'products', 'fa-cubes');
+        $this->addEditView('FacturaScripts\Core\Model\AlbaranCliente', 'EditAlbaranCliente', 'delivery-note');
+        $this->setTabsPosition('bottom');
     }
 
     /**
-     * Load view data procedure
+     * Load data view procedure
      *
      * @param string $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)
     {
-        $value = $this->request->get('code');
-
         switch ($keyView) {
-            case 'EditFamilia':
+            case 'EditAlbaranCliente':
+                $value = $this->request->get('code');
                 $view->loadData($value);
                 break;
-            
-            case 'ListArticulo':
-                $where = [new DataBase\DataBaseWhere('codfamilia', $value)];
-                $view->loadData($where);
-                break;
-            
-            case 'ListFamilia':
-               $where = [new DataBase\DataBaseWhere('madre', $value)];
-               $view->loadData($where);
-               break;
         }
     }
 
@@ -75,9 +61,9 @@ class EditFamilia extends ExtendedController\PanelController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'family';
-        $pagedata['menu'] = 'warehouse';
-        $pagedata['icon'] = 'fa-object-group';
+        $pagedata['title'] = 'delivery-note';
+        $pagedata['menu'] = 'sales';
+        $pagedata['icon'] = 'fa-files-o';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

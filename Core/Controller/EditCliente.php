@@ -38,7 +38,11 @@ class EditCliente extends ExtendedController\PanelController
         $this->addEditView('FacturaScripts\Core\Model\Cliente', 'EditCliente', 'customer');
         $this->addEditListView('FacturaScripts\Core\Model\DireccionCliente', 'EditDireccionCliente', 'addresses', 'fa-road');
         $this->addEditListView('FacturaScripts\Core\Model\CuentaBancoCliente', 'EditCuentaBancoCliente', 'customer-banking-accounts', 'fa-bank');
-        $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'same-group');
+        $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'same-group', 'fa-users');
+        $this->addListView('FacturaScripts\Core\Model\FacturaCliente', 'ListFacturaCliente', 'invoices', 'fa-files-o');
+        $this->addListView('FacturaScripts\Core\Model\AlbaranCliente', 'ListAlbaranCliente', 'delivery-notes', 'fa-files-o');
+        $this->addListView('FacturaScripts\Core\Model\PedidoCliente', 'ListPedidoCliente', 'orders', 'fa-files-o');
+        $this->addListView('FacturaScripts\Core\Model\PresupuestoCliente', 'ListPresupuestoCliente', 'estimations', 'fa-files-o');
     }
 
     /**
@@ -49,29 +53,29 @@ class EditCliente extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
+        $codcliente = $this->request->get('code');
+        $codgrupo = $this->getViewModelValue('EditCliente', 'codgrupo');
+
         switch ($keyView) {
             case 'EditCliente':
-                $value = $this->request->get('code');
-                $view->loadData($value);
-                break;
-
-            case 'EditDireccionCliente':
-                $where = [new DataBase\DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente'))];
-                $view->loadData($where);
-                break;
-
-            case 'EditCuentaBancoCliente':
-                $where = [new DataBase\DataBaseWhere('codcliente', $this->request->get('code'))];
-                $view->loadData($where);
+                $view->loadData($codcliente);
                 break;
 
             case 'ListCliente':
-                $codgroup = $this->getViewModelValue('EditCliente', 'codgrupo');
-
-                if (!empty($codgroup)) {
-                    $where = [new DataBase\DataBaseWhere('codgrupo', $codgroup)];
+                if (!empty($codgrupo)) {
+                    $where = [new DataBase\DataBaseWhere('codgrupo', $codgrupo)];
                     $view->loadData($where);
                 }
+                break;
+
+            case 'EditDireccionCliente':
+            case 'EditCuentaBancoCliente':
+            case 'ListFacturaCliente':
+            case 'ListAlbaranCliente':
+            case 'ListPedidoCliente':
+            case 'ListPresupuestoCliente':
+                $where = [new DataBase\DataBaseWhere('codcliente', $codcliente)];
+                $view->loadData($where);
                 break;
         }
     }

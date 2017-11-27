@@ -230,6 +230,13 @@ trait DocumentoVenta
     public $hora;
 
     /**
+     * Idempresa del documento
+     * 
+     * @var int 
+     */
+    public $idempresa;
+
+    /**
      * % de retención IRPF del albarán. Se obtiene de la serie.
      * Cada línea puede tener un % distinto.
      *
@@ -347,6 +354,7 @@ trait DocumentoVenta
         $this->codserie = AppSettings::get('default', 'codserie');
         $this->codalmacen = AppSettings::get('default', 'codalmacen');
         $this->codpago = AppSettings::get('default', 'codpago');
+        $this->idempresa = AppSettings::get('default', 'idempresa');
         $this->fecha = date('d-m-Y');
         $this->hora = date('H:i:s');
         $this->irpf = 0.0;

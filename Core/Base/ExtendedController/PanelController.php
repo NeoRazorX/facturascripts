@@ -197,7 +197,7 @@ abstract class PanelController extends Base\Controller
      * @param BaseView $view
      * @param string $action
      */
-    private function execPreviousAction($view, $action)
+    protected function execPreviousAction($view, $action)
     {
         switch ($action) {
             case 'save':
@@ -218,7 +218,7 @@ abstract class PanelController extends Base\Controller
      * @param EditView $view
      * @param string $action
      */
-    private function execAfterAction($view, $action)
+    protected function execAfterAction($view, $action)
     {
         switch ($action) {
             case 'insert':

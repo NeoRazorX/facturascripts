@@ -69,20 +69,8 @@ class EditArticulo extends ExtendedController\PanelController
                 break;
 
             case 'EditStock':
-                $where = [new DataBase\DataBaseWhere('referencia', $referencia)];
-                $view->loadData($where);
-                break;
-
             case 'ListArticuloProveedor':
-                $where = [new DataBase\DataBaseWhere('referencia', $referencia)];
-                $view->loadData($where);
-                break;
-
             case 'ListArticuloCombinacion':
-                $where = [new DataBase\DataBaseWhere('referencia', $referencia)];
-                $view->loadData($where);
-                break;
-
             case 'ListArticuloTraza':
                 $where = [new DataBase\DataBaseWhere('referencia', $referencia)];
                 $view->loadData($where);

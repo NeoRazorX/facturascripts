@@ -31,8 +31,8 @@
             <column name="email" numcolumns="3" order="100">
                 <widget type="text" fieldname="email" />
             </column>
-            <column name="passw" title="password" numcolumns="3" order="100">
-                <widget type="password" fieldname="passw" />
+            <column name="password" numcolumns="3" order="100">
+                <widget type="password" fieldname="password" />
             </column>
         </group>
         <group name="advanced" title="advanced" numcolumns="12" icon="fa-server fa-lg">
@@ -64,4 +64,11 @@
             </column> 
         </group>
     </columns>
+    <rows>
+        <row type="footer">
+            <group name="footer1" footer="specials-actions">
+                <button type="action" label="test" color="info" action="testmail" icon="fa-envelope" />
+            </group>
+        </row>
+    </rows>
 </view>

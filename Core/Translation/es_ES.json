@@ -769,6 +769,7 @@
     "manufacturer": "Fabricante",
     "attribute": "Atributo",
     "family": "Família",
+    "families-children": "Famílias hijo",
     "stock": "Stock",
     "codiso": "Código ISO",
     "general": "General",

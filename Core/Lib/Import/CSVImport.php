@@ -26,9 +26,46 @@ namespace FacturaScripts\Core\Lib\Import;
 class CSVImport
 {
 
-    public static function importTable($table)
+    public static function importTableSQL($table)
     {
-        $filePath = FS_FOLDER . '/Core/Data/' . FS_CODPAIS . '/' . $table . '.csv';
+        $filePath = static::getTableFilePath($table);
+        if ($filePath === '') {
+            return '';
+        }
+
+        $csv = new \parseCSV();
+        $csv->auto($filePath);
+
+        $sql = 'INSERT INTO ' . $table . ' (' . implode(', ', $csv->titles) . ') VALUES ';
+        $sep = '';
+        foreach ($csv->data as $key => $row) {
+            $sql .= $sep . '(';
+            $sep2 = '';
+            foreach ($row as $value) {
+                $sql .= $sep2 . "'" . $value . "'";
+                $sep2 = ', ';
+            }
+
+            $sql .= ')';
+            $sep = ', ';
+        }
+        $sql .= ';';
+
+        return $sql;
+    }
+
+    protected static function getTableFilePath($table)
+    {
+        $filePath = FS_FOLDER . '/Core/Data/Codpais/' . FS_CODPAIS . '/' . $table . '.csv';
+        if (file_exists($filePath)) {
+            return $filePath;
+        }
+
+        $lang = substr(strtoupper(FS_LANG), 0, 2);
+        $filePath = FS_FOLDER . '/Core/Data/Lang/' . $lang . '/' . $table . '.csv';
+        if (file_exists($filePath)) {
+            return $filePath;
+        }
 
         return '';
     }

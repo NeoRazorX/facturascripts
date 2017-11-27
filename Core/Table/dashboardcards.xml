@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : dashboardcards.xml
+    Author     : Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+    Description:
+        Structure for the dashboardcards table.
+-->
+<table>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+        <default>nextval('dashboardcards_id_seq'::regclass)</default>
+    </column>
+    <column>
+        <name>nick</name>
+        <type>character varying(50)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>fecha</name>
+        <type>date</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>descripcion</name>
+        <type>text</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>color</name>
+        <type>character varying(20)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>link</name>
+        <type>character varying(300)</type>
+        <null>YES</null>
+    </column>
+    <constraint>
+        <name>id_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>ca_dashboardcards_fs_users</name>
+        <type>FOREIGN KEY (nick)
+            REFERENCES fs_users (nick)
+            ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+</table>

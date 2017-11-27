@@ -19,6 +19,8 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\DashboardCard;
 
 /**
  * Description of Dashboard
@@ -27,6 +29,24 @@ use FacturaScripts\Core\Base;
  */
 class Dashboard extends Base\Controller
 {
+
+    /**
+     * List of cards.
+     * @var DashboardCard[] 
+     */
+    public $cursor;
+
+    public function privateCore(&$response, $user)
+    {
+        parent::privateCore($response, $user);
+
+        $dashboardCardModel = new DashboardCard();
+        $this->cursor = $dashboardCardModel->all([new DataBaseWhere('nick', $user->nick)]);
+
+        if (empty($this->cursor)) {
+            $this->genetareRandomCards();
+        }
+    }
 
     /**
      * Returns basic page attributes
@@ -41,5 +61,41 @@ class Dashboard extends Base\Controller
         $pageData['icon'] = 'fa-dashboard';
 
         return $pageData;
+    }
+
+    private function genetareRandomCards()
+    {
+        $colors = ['info', 'warning', 'success', 'danger', 'secondary', 'primary', 'light', 'dark'];
+
+        for ($key = 1; $key < 29; $key++) {
+            shuffle($colors);
+
+            $newCard = new DashboardCard();
+            $newCard->nick = $this->user->nick;
+            $newCard->descripcion = $this->getRandomText();
+            $newCard->color = $colors[0];
+
+            if (mt_rand(0, 2) == 0) {
+                $newCard->link = 'https://www.' . mt_rand(999, 99999) . '.com';
+            }
+
+            $newCard->save();
+        }
+
+        $dashboardCardModel = new DashboardCard();
+        $this->cursor = $dashboardCardModel->all([new DataBaseWhere('nick', $this->user->nick)]);
+    }
+
+    private function getRandomText()
+    {
+        $words = ['lorem', 'ipsum', 'trastis', 'tus', 'turum', 'maruk', 'tartor', 'isis', 'osiris', 'morowik'];
+        $txt = $words[mt_rand(0, 8)];
+
+        while (mt_rand(0, 8) > 0) {
+            shuffle($words);
+            $txt .= $words[0] . ' ';
+        }
+
+        return $txt;
     }
 }
