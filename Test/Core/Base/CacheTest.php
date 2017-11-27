@@ -83,5 +83,6 @@ class CacheTest extends \PHPUnit_Framework_TestCase
         $this->object->set('TEST_1', 12345);
         $this->object->clear();
         $this->assertEmpty($this->object->get('TEST_1'));
+        $this->assertNull($this->object->get('TEST_1'));
     }
 }

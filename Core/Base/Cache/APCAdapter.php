@@ -85,7 +85,10 @@ class APCAdapter implements AdaptorInterface
     public function set($key, $content, $expire = 5400)
     {
         $this->minilog->debug($this->i18n->trans('apc-set-key-item', [$key]));
-        return apc_store($key, $content, $expire);
+        if ($result = apc_fetch($key) ) {
+            return apc_store($key, $content, $expire);
+        }
+        return apc_add($key, $content, $expire);
     }
 
     /**
