@@ -105,6 +105,11 @@ Example without specifying the method.
 
 .. code:: php
 
+        $this->addEditView('FacturaScripts\Core\Model\Cliente', 'EditCliente', 'Cliente');
+        $this->addEditListView('FacturaScripts\Core\Model\DireccionCliente', 'EditDireccionCliente', 'Direcciones', 'fa-road');
+        $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'Mismo Grupo');
+.. code:: php
+
         $this-> addEditView ('FacturaScripts \ Core \ Model \ Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
         $this-> addListView ('FacturaScripts \ Core \ Model \ Partida', 'ListPartida', 'accounting-items', 'fa-book');
         
