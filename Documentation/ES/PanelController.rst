@@ -108,14 +108,16 @@ Este método permite poner las pestaña a la izquierda (left), abajo
 Las pestañas cuando están colocadas a la izquierda, se mostrara la información
 de la pestaña seleccionada. En estos caso no es necesario especificar el método.
 
-Ejemplo sin especificar el método:
+Ejemplo sin especificar el método.
+
 .. code:: php
 
     $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
     $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
         
-Ejemplo con el método:
-..code:: php
+Ejemplo con el método.
+
+.. code:: php
     
     $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
     $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
@@ -125,7 +127,8 @@ Las pestañas cuando están colocadas abajo, muestra ventana principal y debajo
 de esta mostrara la información de la pestaña seleccionada.
 seleccionada.
 
-Ejemplo:
+Ejemplo.
+
 .. code:: php
 
     $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
@@ -135,7 +138,8 @@ Ejemplo:
 Las pestañas cuando están colocadas arriba, mostrara la información de
 la pestaña seleccionada.
 
-Ejemplo:
+Ejemplo.
+
 .. code:: php
 
     $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
