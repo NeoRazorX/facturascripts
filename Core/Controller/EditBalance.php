@@ -21,9 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Balance;
-use FacturaScripts\Core\Model\BalanceCuenta;
-use FacturaScripts\Core\Model\BalanceCuentaA;
+use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the Balance model
@@ -38,9 +36,9 @@ class EditBalance extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView(Balance::class, 'EditBalance', 'Balance');
-        $this->addEditListView(BalanceCuenta::class, 'EditBalanceCuenta', 'balance-account');
-        $this->addEditListView(BalanceCuentaA::class, 'EditBalanceCuentaA', 'balance-account-abreviated');
+        $this->addEditView(Model\Balance::class, 'EditBalance', 'Balance');
+        $this->addEditListView(Model\BalanceCuenta::class, 'EditBalanceCuenta', 'balance-account');
+        $this->addEditListView(Model\BalanceCuentaA::class, 'EditBalanceCuentaA', 'balance-account-abreviated');
     }
 
     /**

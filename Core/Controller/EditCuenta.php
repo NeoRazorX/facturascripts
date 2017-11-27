@@ -21,8 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Cuenta;
-use FacturaScripts\Core\Model\Subcuenta;
+use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the Cuenta model
@@ -39,8 +38,8 @@ class EditCuenta extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView(Cuenta::class, 'EditCuenta', 'account');
-        $this->addListView(Subcuenta::class, 'ListSubcuenta', 'subaccounts');
+        $this->addEditView(Model\Cuenta::class, 'EditCuenta', 'account');
+        $this->addListView(Model\Subcuenta::class, 'ListSubcuenta', 'subaccounts');
         $this->setTabsPosition('bottom');
     }
 

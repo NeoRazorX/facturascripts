@@ -20,8 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\CuentaBanco;
-use FacturaScripts\Core\Model\FormaPago;
+use FacturaScripts\Core\Model;
 
 /**
  * Controller to list the items in the FormaPago model
@@ -53,7 +52,7 @@ class ListFormaPago extends ExtendedController\ListController
     protected function createViews()
     {
         /* Formas de pago */
-        $this->addView(FormaPago::class, 'ListFormaPago', 'payment-methods', 'fa-credit-card');
+        $this->addView(Model\FormaPago::class, 'ListFormaPago', 'payment-methods', 'fa-credit-card');
         $this->addSearchFields('ListFormaPago', ['descripcion', 'codpago', 'codcuenta']);
 
         $this->addOrderBy('ListFormaPago', 'codpago', 'code');
@@ -65,7 +64,7 @@ class ListFormaPago extends ExtendedController\ListController
         $this->addFilterCheckbox('ListFormaPago', 'imprimir', 'print');
 
         /* Cuentas bancarias */
-        $this->addView(CuentaBanco::class, 'ListCuentaBanco', 'bank-accounts', 'fa-university');
+        $this->addView(Model\CuentaBanco::class, 'ListCuentaBanco', 'bank-accounts', 'fa-university');
         $this->addSearchFields('ListCuentaBanco', ['descripcion', 'codcuenta']);
 
         $this->addOrderBy('ListCuentaBanco', 'codcuenta', 'code');

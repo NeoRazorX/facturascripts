@@ -22,13 +22,6 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Model;
-use FacturaScripts\Core\Model\Cliente;
-use FacturaScripts\Core\Model\CuentaBancoCliente;
-use FacturaScripts\Core\Model\DireccionCliente;
-use FacturaScripts\Core\Model\FacturaCliente;
-use FacturaScripts\Core\Model\AlbaranCliente;
-use FacturaScripts\Core\Model\PedidoCliente;
-use FacturaScripts\Core\Model\PresupuestoCliente;
 
 /**
  * Controller to edit a single item from the Cliente model
@@ -43,14 +36,14 @@ class EditCliente extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView(Cliente::class, 'EditCliente', 'customer');
-        $this->addEditListView(DireccionCliente::class, 'EditDireccionCliente', 'addresses', 'fa-road');
-        $this->addEditListView(CuentaBancoCliente::class, 'EditCuentaBancoCliente', 'customer-banking-accounts', 'fa-bank');
-        $this->addListView(Cliente::class, 'ListCliente', 'same-group');
-        $this->addListView(FacturaCliente::class, 'ListFacturaCliente', 'invoices', 'fa-files-o');
-        $this->addListView(AlbaranCliente::class, 'ListAlbaranCliente', 'delivery-notes', 'fa-files-o');
-        $this->addListView(PedidoCliente::class, 'ListPedidoCliente', 'orders', 'fa-files-o');
-        $this->addListView(PresupuestoCliente::class, 'ListPresupuestoCliente', 'estimations', 'fa-files-o');
+        $this->addEditView(Model\Cliente::class, 'EditCliente', 'customer');
+        $this->addEditListView(Model\DireccionCliente::class, 'EditDireccionCliente', 'addresses', 'fa-road');
+        $this->addEditListView(Model\CuentaBancoCliente::class, 'EditCuentaBancoCliente', 'customer-banking-accounts', 'fa-bank');
+        $this->addListView(Model\Cliente::class, 'ListCliente', 'same-group');
+        $this->addListView(Model\FacturaCliente::class, 'ListFacturaCliente', 'invoices', 'fa-files-o');
+        $this->addListView(Model\AlbaranCliente::class, 'ListAlbaranCliente', 'delivery-notes', 'fa-files-o');
+        $this->addListView(Model\PedidoCliente::class, 'ListPedidoCliente', 'orders', 'fa-files-o');
+        $this->addListView(Model\PresupuestoCliente::class, 'ListPresupuestoCliente', 'estimations', 'fa-files-o');
     }
 
     /**

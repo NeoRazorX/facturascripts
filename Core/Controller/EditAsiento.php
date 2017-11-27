@@ -21,8 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Asiento;
-use FacturaScripts\Core\Model\Partida;
+use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the Asiento model
@@ -40,8 +39,8 @@ class EditAsiento extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView(Asiento::class, 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
-        $this->addListView(Partida::class, 'ListPartida', 'accounting-items', 'fa-book');
+        $this->addEditView(Model\Asiento::class, 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
+        $this->addListView(Model\Partida::class, 'ListPartida', 'accounting-items', 'fa-book');
         $this->setTabsPosition('bottom');
     }
 

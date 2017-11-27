@@ -21,8 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Cuenta;
-use FacturaScripts\Core\Model\Epigrafe;
+use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the Epigrafe model
@@ -39,8 +38,8 @@ class EditEpigrafe extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView(Epigrafe::class, 'EditEpigrafe', 'accounting-heading');
-        $this->addListView(Cuenta::class, 'ListCuenta', 'accounts', 'fa-book');
+        $this->addEditView(Model\Epigrafe::class, 'EditEpigrafe', 'accounting-heading');
+        $this->addListView(Model\Cuenta::class, 'ListCuenta', 'accounts', 'fa-book');
         $this->setTabsPosition('bottom');
     }
 

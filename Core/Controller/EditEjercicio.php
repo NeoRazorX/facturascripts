@@ -21,11 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Cuenta;
-use FacturaScripts\Core\Model\Ejercicio;
-use FacturaScripts\Core\Model\Epigrafe;
-use FacturaScripts\Core\Model\GrupoEpigrafes;
-use FacturaScripts\Core\Model\Subcuenta;
+use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the Familia model
@@ -42,11 +38,11 @@ class EditEjercicio extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView(Ejercicio::class, 'EditEjercicio', 'exercise');
-        $this->addEditListView(GrupoEpigrafes::class, 'EditEjercicioGrupoEpigrafes', 'Grupo epigrafe');
-        $this->addEditListView(Epigrafe::class, 'EditEjercicioEpigrafe', 'Epigrafes');
-        $this->addEditListView(Cuenta::class, 'EditEjercicioCuenta', 'account', 'fa-book');
-        $this->addEditListView(Subcuenta::class, 'EditEjercicioSubcuenta', 'subaccount');
+        $this->addEditView(Model\Ejercicio::class, 'EditEjercicio', 'exercise');
+        $this->addEditListView(Model\GrupoEpigrafes::class, 'EditEjercicioGrupoEpigrafes', 'Grupo epigrafe');
+        $this->addEditListView(Model\Epigrafe::class, 'EditEjercicioEpigrafe', 'Epigrafes');
+        $this->addEditListView(Model\Cuenta::class, 'EditEjercicioCuenta', 'account', 'fa-book');
+        $this->addEditListView(Model\Subcuenta::class, 'EditEjercicioSubcuenta', 'subaccount');
     }
 
     /**

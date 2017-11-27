@@ -21,9 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\PageRule;
-use FacturaScripts\Core\Model\RolUser;
-use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the User model
@@ -40,9 +38,9 @@ class EditUser extends ExtendedController\PanelController
     protected function createViews()
     {
         /// Add all views
-        $this->addEditView(User::class, 'EditUser', 'user', 'fa-user');
-        $this->addEditListView(RolUser::class, 'EditRolUser', 'rol-user', 'fa-address-card-o');
-        $this->addListView(PageRule::class, 'ListPageRule', 'page-rule', 'fa fa-check-square');
+        $this->addEditView(Model\User::class, 'EditUser', 'user', 'fa-user');
+        $this->addEditListView(Model\RolUser::class, 'EditRolUser', 'rol-user', 'fa-address-card-o');
+        $this->addListView(Model\PageRule::class, 'ListPageRule', 'page-rule', 'fa fa-check-square');
 
         /// Load values option to Language select input
         $columnLangCode = $this->views['EditUser']->columnForName('lang-code');

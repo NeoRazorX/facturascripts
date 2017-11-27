@@ -21,9 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Rol;
-use FacturaScripts\Core\Model\RolAccess;
-use FacturaScripts\Core\Model\RolUser;
+use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the EditRol model
@@ -39,12 +37,12 @@ class EditRol extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView(Rol::class, 'EditRol', 'rol', 'fa-id-card');
+        $this->addEditView(Model\Rol::class, 'EditRol', 'rol', 'fa-id-card');
 
-        $this->addEditListView(RolUser::class, 'EditRolUser', 'rol-user', 'fa-address-card-o');
+        $this->addEditListView(Model\RolUser::class, 'EditRolUser', 'rol-user', 'fa-address-card-o');
         $this->views['EditRolUser']->disableColumn('role', true);
 
-        $this->addListView(RolAccess::class, 'ListRolAccess', 'page-rule', 'fa fa-check-square');
+        $this->addListView(Model\RolAccess::class, 'ListRolAccess', 'page-rule', 'fa fa-check-square');
         $this->views['ListRolAccess']->disableColumn('role', true);
     }
 

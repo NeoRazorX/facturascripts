@@ -20,8 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Rol;
-use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Model;
 
 /**
  * Controller to list the items in the User model
@@ -36,14 +35,14 @@ class ListUser extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView(User::class, 'ListUser', 'users', 'fa-users');
+        $this->addView(Model\User::class, 'ListUser', 'users', 'fa-users');
         $this->addSearchFields('ListUser', ['nick', 'email']);
 
         $this->addOrderBy('ListUser', 'nick');
         $this->addOrderBy('ListUser', 'email');
 
         /* Roles */
-        $this->addView(Rol::class, 'ListRol', 'roles', 'fa-address-card-o');
+        $this->addView(Model\Rol::class, 'ListRol', 'roles', 'fa-address-card-o');
         $this->addSearchFields('ListRol', ['codrol', 'descripcion']);
 
         $this->addOrderBy('ListRol', 'descripcion', 'description');

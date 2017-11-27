@@ -21,13 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\ArticuloProveedor;
-use FacturaScripts\Core\Model\CuentaBancoProveedor;
-use FacturaScripts\Core\Model\DireccionProveedor;
-use FacturaScripts\Core\Model\Proveedor;
-use FacturaScripts\Core\Model\FacturaProveedor;
-use FacturaScripts\Core\Model\AlbaranProveedor;
-use FacturaScripts\Core\Model\PedidoProveedor;
+use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the Proveedor model
@@ -42,13 +36,13 @@ class EditProveedor extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView(Proveedor::class, 'EditProveedor', 'supplier');
-        $this->addEditListView(DireccionProveedor::class, 'EditDireccionProveedor', 'addresses', 'fa-road');
-        $this->addEditListView(CuentaBancoProveedor::class, 'EditCuentaBancoProveedor', 'bank-accounts', 'fa-university');
-        $this->addEditListView(ArticuloProveedor::class, 'EditProveedorArticulo', 'products', 'fa-cubes');
-        $this->addListView(FacturaProveedor::class, 'ListFacturaProveedor', 'invoices', 'fa-files-o');
-        $this->addListView(AlbaranProveedor::class, 'ListAlbaranProveedor', 'delivery-notes', 'fa-files-o');
-        $this->addListView(PedidoProveedor::class, 'ListPedidoProveedor', 'orders', 'fa-files-o');
+        $this->addEditView(Model\Proveedor::class, 'EditProveedor', 'supplier');
+        $this->addEditListView(Model\DireccionProveedor::class, 'EditDireccionProveedor', 'addresses', 'fa-road');
+        $this->addEditListView(Model\CuentaBancoProveedor::class, 'EditCuentaBancoProveedor', 'bank-accounts', 'fa-university');
+        $this->addEditListView(Model\ArticuloProveedor::class, 'EditProveedorArticulo', 'products', 'fa-cubes');
+        $this->addListView(Model\FacturaProveedor::class, 'ListFacturaProveedor', 'invoices', 'fa-files-o');
+        $this->addListView(Model\AlbaranProveedor::class, 'ListAlbaranProveedor', 'delivery-notes', 'fa-files-o');
+        $this->addListView(Model\PedidoProveedor::class, 'ListPedidoProveedor', 'orders', 'fa-files-o');
     }
 
     /**
@@ -73,7 +67,7 @@ class EditProveedor extends ExtendedController\PanelController
             case 'ListAlbaranProveedor':
             case 'ListPedidoProveedor':
             case 'ListPresupuestoProveedor':
-                $where = [new DataBase\DataBaseWhere('codproveedor', $codproveedor)];
+                $where = [new DataBaseWhere('codproveedor', $codproveedor)];
                 $view->loadData($where);
                 break;
         }
