@@ -31,7 +31,7 @@ class PresupuestoCliente
     use Base\DocumentoVenta;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var integer
      */
@@ -76,7 +76,7 @@ class PresupuestoCliente
     public $idoriginal;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -86,7 +86,7 @@ class PresupuestoCliente
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -109,7 +109,7 @@ class PresupuestoCliente
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -170,7 +170,7 @@ class PresupuestoCliente
     /**
      * Returns True if there is no erros on properties values.
      *
-     * @return boolean
+     * @return bool
      */
     public function test()
     {

@@ -292,7 +292,7 @@ class ListView extends BaseView
      * Establishes a column's display state
      *
      * @param string $columnName
-     * @param boolean $disabled
+     * @param bool $disabled
      */
     public function disableColumn($columnName, $disabled)
     {

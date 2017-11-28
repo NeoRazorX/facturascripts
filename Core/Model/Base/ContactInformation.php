@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 /**
- * Esta clase agrupa los datos de contacto para un uso genérico.
+ * This class group all contact data for a generic use.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -29,84 +29,84 @@ trait ContactInformation
 {
 
     /**
-     * Teléfono de contacto.
+     * Telephone contact.
      *
      * @var string
      */
     public $telefono;
 
     /**
-     * Número de fax del contacto.
+     * Fax number of the contact.
      *
      * @var string
      */
     public $fax;
 
     /**
-     * Email de contacto.
+     * Contact email.
      *
      * @var string
      */
     public $email;
 
     /**
-     * Página web del contacto.
+     * Contact's website.
      *
      * @var string
      */
     public $web;
 
     /**
-     * Dirección del contacto.
+     * Address of the contact.
      *
      * @var string
      */
     public $direccion;
 
     /**
-     * Código postal del contacto.
+     * Postal code of the contact.
      *
      * @var string
      */
     public $codpostal;
 
     /**
-     * Apartado de correos del contacto.
+     * Post box of the contact.
      *
      * @var string
      */
     public $apartado;
 
     /**
-     * Ciudad del contacto.
+     * Contact city.
      *
      * @var string
      */
     public $ciudad;
 
     /**
-     * Nombre de la población del contacto.
+     * Name of the contact population.
      *
      * @var string
      */
     public $poblacion;
 
     /**
-     * Provincia del contacto.
+     * Contact province.
      *
      * @var string
      */
     public $provincia;
 
     /**
-     * Código que representa al páis donde está el contacto.
+     * Code that represents the country where the contact is.
      *
      * @var string
      */
     public $codpais;
 
     /**
-     * Inicializa los valores del contacto.
+     * Initializes the contact's values.
      */
     private function clearContactInformation()
     {

@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 /**
- * Description of AssetManager
+ * Asset Manager for easy add extra assets.
  *
  * @author Carlos García Gómez
  */

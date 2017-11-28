@@ -51,7 +51,7 @@ class ListFormaPago extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        /* Formas de pago */
+        /* Payment Methods */
         $this->addView(Model\FormaPago::class, 'ListFormaPago', 'payment-methods', 'fa-credit-card');
         $this->addSearchFields('ListFormaPago', ['descripcion', 'codpago', 'codcuenta']);
 
@@ -63,7 +63,7 @@ class ListFormaPago extends ExtendedController\ListController
         $this->addFilterCheckbox('ListFormaPago', 'domiciliado', 'domicilied');
         $this->addFilterCheckbox('ListFormaPago', 'imprimir', 'print');
 
-        /* Cuentas bancarias */
+        /* Bank accounts */
         $this->addView(Model\CuentaBanco::class, 'ListCuentaBanco', 'bank-accounts', 'fa-university');
         $this->addSearchFields('ListCuentaBanco', ['descripcion', 'codcuenta']);
 

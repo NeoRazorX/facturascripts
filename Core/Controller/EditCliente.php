@@ -97,7 +97,7 @@ class EditCliente extends ExtendedController\PanelController
     }
 
     /**
-     * Devuelve la suma del total de albaranes del cliente.
+     * Returns the sum of the customer's total delivery notes.
      *
      * @param ExtendedController\EditView $view
      *
@@ -114,7 +114,7 @@ class EditCliente extends ExtendedController\PanelController
     }
 
     /**
-     * Devuelve la suma del total de facturas pendientes del cliente.
+     * Returns the sum of the client's total outstanding invoices.
      *
      * @param ExtendedController\EditView $view
      *

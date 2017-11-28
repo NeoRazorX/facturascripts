@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base;
 
 /**
- * Description of admin_home
+ * AdminHome manage the basic settings.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

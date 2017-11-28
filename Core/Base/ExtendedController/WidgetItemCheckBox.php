@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Description of WidgetItemCheckBox
+ * This class manage all specific method for a WidgetItem of Checkbox type.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -38,9 +38,9 @@ class WidgetItemCheckBox extends WidgetItem
 
     /**
      * Generates the HTML code for special attributes like:
-     * hint
-     * read only
-     * mandatory value
+     *  - hint
+     *  - read only
+     *  - mandatory value
      *
      * @return string
      */

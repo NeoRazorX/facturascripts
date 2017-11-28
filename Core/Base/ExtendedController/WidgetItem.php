@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Description of WidgetItem
+ * This WidgetItem class modelises the common data and method of a WidgetItem element.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -51,14 +51,14 @@ abstract class WidgetItem implements VisualItemInterface
     /**
      * Indicates that the field is read only
      *
-     * @var boolean
+     * @var bool
      */
     public $readOnly;
 
     /**
      * Indicates that the field is mandatory and it must have a value
      *
-     * @var boolean
+     * @var bool
      */
     public $required;
 
@@ -258,7 +258,7 @@ abstract class WidgetItem implements VisualItemInterface
      * @param string $optionValue
      * @param string $valueItem
      *
-     * @return boolean
+     * @return bool
      */
     private function canApplyOptions($optionValue, $valueItem)
     {

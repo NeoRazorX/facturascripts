@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Base;
 use Exception;
 
 /**
- * Gestor de plugins de FacturaScripts.
+ * FacturaScripts plugins manager.
  *
  * @package FacturaScripts\Core\Base
  *
@@ -32,35 +32,35 @@ class PluginManager
 {
 
     /**
-     * Previene de bucles infinitos desplegando controladores.
+     * Prevents infinite loops by deploying plugins.
      *
-     * @var boolean
+     * @var bool
      */
     private static $deployedControllers;
 
     /**
-     * Lista de plugins activos.
+     * List of active plugins.
      *
      * @var array
      */
     private static $enabledPlugins;
 
     /**
-     * Traductor del sistema.
+     * System translator.
      *
      * @var Translator
      */
     private static $i18n;
 
     /**
-     * Gestiona el log de toda la aplicación.
+     * Manage the log of the entire application.
      *
      * @var MiniLog
      */
     private static $minilog;
 
     /**
-     * Ruta del archivo plugin.list
+     * Path of the plugin.list file
      *
      * @var string
      */
@@ -81,7 +81,7 @@ class PluginManager
     }
 
     /**
-     * Devuelve un array con la lista de plugins del archivo plugin.list
+     * Returns an array with the list of plugins in the plugin.list file.
      *
      * @return array
      */
@@ -95,7 +95,7 @@ class PluginManager
     }
 
     /**
-     * Guarda la lista de plugins en un archivo
+     * Save the list of plugins in a file.
      */
     private function save()
     {
@@ -103,7 +103,7 @@ class PluginManager
     }
 
     /**
-     * Devuelve la lista de plugins activos.
+     * Returns the list of active plugins.
      *
      * @return array
      */
@@ -113,7 +113,7 @@ class PluginManager
     }
 
     /**
-     * Activa el plugin indicado.
+     * Activate the indicated plugin.
      *
      * @param string $pluginName
      */
@@ -126,7 +126,7 @@ class PluginManager
     }
 
     /**
-     * Desactiva el plugin indicado.
+     * Disable the indicated plugin.
      *
      * @param string $pluginName
      */
@@ -142,9 +142,8 @@ class PluginManager
     }
 
     /**
-     * Despliega todos los archivos necesarios en la carpeta Dinamic para poder
-     * usar controladores y modelos de plugins con el autoloader, pero siguiendo
-     * el sistema de prioridades de FacturaScripts.
+     * Display all the necessary files in the Dinamic folder to be able to use plugins
+     * and plugin models with the autoloader, but following the priority system of FacturaScripts.
      *
      * @param bool $clean
      */
@@ -158,27 +157,27 @@ class PluginManager
 
             $this->createFolder(FS_FOLDER . '/Dinamic/' . $folder);
 
-            /// examinamos los plugins
+            /// we examine the plugins
             foreach (self::$enabledPlugins as $pluginName) {
                 if (file_exists(FS_FOLDER . '/Plugins/' . $pluginName . '/' . $folder)) {
                     $this->linkFiles($folder, 'Plugins', $pluginName);
                 }
             }
 
-            /// examinamos el core
+            /// we examine the core
             if (file_exists(FS_FOLDER . '/Core/' . $folder)) {
                 $this->linkFiles($folder);
             }
         }
 
         if (self::$deployedControllers === false) {
-            /// por último iniciamos los controlador para completar el menú
+            /// finally we started the drivers to complete the menu
             $this->deployControllers();
         }
     }
 
     /**
-     * Prepara los controladores de forma dinámica
+     * Prepare the controllers dynamically
      */
     private function deployControllers()
     {
@@ -193,7 +192,7 @@ class PluginManager
                 $controllerNamespace = 'FacturaScripts\\Dinamic\\Controller\\' . $controllerName;
 
                 if (!class_exists($controllerNamespace)) {
-                    /// forzamos la carga del archivo porque en este punto el autoloader no lo encontrará
+                    /// we force the loading of the file because at this point the autoloader will not find it
                     require FS_FOLDER . '/Dinamic/Controller/' . $controllerName . '.php';
                 }
 
@@ -208,11 +207,11 @@ class PluginManager
     }
 
     /**
-     * Elimina la carpeta $folder y sus archivos.
+     * Delete the $folder and its files.
      *
      * @param string $folder
      *
-     * @return boolean
+     * @return bool
      */
     private function cleanFolder($folder)
     {
@@ -236,7 +235,7 @@ class PluginManager
     }
 
     /**
-     * Crea la carpeta
+     * Create the folder.
      *
      * @param string $folder
      *
@@ -254,7 +253,7 @@ class PluginManager
     }
 
     /**
-     * Enlazamos los archivos
+     * Link the files
      *
      * @param string $folder
      * @param string $place
@@ -270,9 +269,9 @@ class PluginManager
             $namespace = "\FacturaScripts\Plugins\\" . $pluginName . '\\';
         }
 
-        // Añadimos los archivos que no son '.' ni '..'
+        // We add the files that are not '.' neither '..'
         $filesPath = array_diff(scandir($path, SCANDIR_SORT_ASCENDING), ['.', '..']);
-        // Ahora recorremos solo archivos o carpetas
+        // Now we go through only files or folders
         foreach ($filesPath as $fileName) {
             $infoFile = pathinfo($fileName);
             if (is_file($path . '/' . $fileName) && $infoFile['filename'] !== '') {
@@ -287,7 +286,7 @@ class PluginManager
     }
 
     /**
-     * Enlaza las classes de forma dinamica
+     * Link classes dynamically.
      *
      * @param string $fileName
      * @param string $folder
@@ -310,7 +309,7 @@ class PluginManager
     }
 
     /**
-     * Enlaza los XML de forma dinamica
+     * Link the XML dynamically.
      *
      * @param string $fileName
      * @param string $folder

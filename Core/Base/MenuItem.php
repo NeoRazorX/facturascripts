@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 /**
- * Estructura para cada uno de los items del menú de Facturascripts
+ * Structure for each of the items in the FacturaScripts menu.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -28,49 +28,49 @@ namespace FacturaScripts\Core\Base;
 class MenuItem
 {
     /**
-     * Indica si está activado o no.
+     * Indicates whether it is activated or not.
      *
      * @var bool
      */
     public $active;
 
     /**
-     * Icono de la fuente Fontawesome de la opción de menú.
+     * Fontawesome font icon of the menu option.
      *
      * @var string
      */
     public $icon;
 
     /**
-     * Lista de opciones de menú para el item.
+     * List of menu options for the item.
      *
      * @var MenuItem[]
      */
     public $menu;
 
     /**
-     * Nombre identificativo del elemento.
+     * Identifying name of the element.
      *
      * @var string
      */
     public $name;
 
     /**
-     * Título de la opción de menú.
+     * Title of the menu option.
      *
      * @var string
      */
     public $title;
 
     /**
-     * URL para el href de la opción de menú.
+     * URL for the href of the menu option.
      *
      * @var string
      */
     public $url;
 
     /**
-     * Contruye y rellena los valores principales del Item
+     * Build and fill the main values of the Item.
      *
      * @param string $name
      * @param string $title
@@ -88,7 +88,7 @@ class MenuItem
     }
 
     /**
-     * Devuelve el html para el icono del item
+     * Returns the HTML for the icon of the item.
      *
      * @return string
      */
@@ -98,7 +98,7 @@ class MenuItem
     }
 
     /**
-     * Devuelve el indintificador del menu
+     * Returns the indintifier of the menu.
      *
      * @param string $parent
      *
@@ -110,7 +110,7 @@ class MenuItem
     }
 
     /**
-     * Devuelve el html para el menú / submenú
+     * Returns the html for the menu / submenu.
      *
      * @param string $parent
      *

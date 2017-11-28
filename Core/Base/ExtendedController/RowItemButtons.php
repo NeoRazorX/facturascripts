@@ -27,7 +27,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 class RowItemButtons extends RowItem
 {
     /**
-     * Lista de botones
+     * Buttons list.
      * @var array
      */
     public $buttons;

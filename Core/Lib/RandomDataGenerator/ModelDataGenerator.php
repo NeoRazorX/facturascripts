@@ -427,11 +427,11 @@ class ModelDataGenerator
                 break;
             }
 
-            /// añadimos direcciones
+            /// add addresses
             $numDirs = mt_rand(0, 3);
             $this->direccionesCliente($cliente, $numDirs);
 
-            /// Añadimos cuentas bancarias
+            /// add bank accounts
             $numCuentas = mt_rand(0, 3);
             $this->cuentasBancoCliente($cliente, $numCuentas);
         }
@@ -440,7 +440,7 @@ class ModelDataGenerator
     }
 
     /**
-     * Rellena un cliente con datos aleatorios.
+     * Fill a client with random data.
      *
      * @param Model\Cliente|Model\Proveedor $cliente
      */
@@ -483,7 +483,7 @@ class ModelDataGenerator
     }
 
     /**
-     * Rellena direcciones de un cliente con datos aleatorios.
+     * Fill in addresses of a client with random data.
      *
      * @param Model\Cliente $cliente
      * @param int $max
@@ -511,7 +511,7 @@ class ModelDataGenerator
     }
 
     /**
-     * Rellena cuentas bancarias de un cliente con datos aleatorios.
+     * Fill a customer's bank accounts with random data.
      *
      * @param Model\Cliente $cliente
      * @param int $max
@@ -564,11 +564,11 @@ class ModelDataGenerator
             if ($proveedor->save()) {
                 $num++;
 
-                /// añadimos direcciones
+                /// add addresses
                 $numDirs = mt_rand(0, 3);
                 $this->direccionesProveedor($proveedor, $numDirs);
 
-                /// Añadimos cuentas bancarias
+                /// add bank accounts
                 $numCuentas = mt_rand(0, 3);
                 $this->cuentasBancoProveedor($proveedor, $numCuentas);
             } else {
@@ -580,7 +580,7 @@ class ModelDataGenerator
     }
 
     /**
-     * Rellena direcciones de un proveedor con datos aleatorios.
+     * Fill in addresses of a provider with random data.
      *
      * @param Model\Proveedor $proveedor
      * @param int $max
@@ -616,7 +616,7 @@ class ModelDataGenerator
     }
 
     /**
-     * Rellena cuentas bancarias de un proveedor con datos aleatorios.
+     * Fill bank accounts of a provider with random data.
      *
      * @param Model\Proveedor $proveedor
      * @param int $max
@@ -644,7 +644,7 @@ class ModelDataGenerator
     }
 
     /**
-     * Devuelve listados de datos del model indicado.
+     * Returns data listings of the indicated model.
      *
      * @param string $modelName
      * @param string $tableName

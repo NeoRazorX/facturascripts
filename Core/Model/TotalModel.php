@@ -31,7 +31,7 @@ class TotalModel
 {
 
     /**
-     * Proporciona acceso directo a la base de datos.
+     * Provides direct access to the database.
      *
      * @var DataBase
      */

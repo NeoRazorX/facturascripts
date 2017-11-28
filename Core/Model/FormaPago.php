@@ -32,7 +32,7 @@ class FormaPago
     use Base\ModelTrait;
 
     /**
-     * Clave primaria. Varchar (10).
+     * Primary key. Varchar (10).
      *
      * @var string
      */
@@ -82,7 +82,7 @@ class FormaPago
     public $vencimiento;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -92,7 +92,7 @@ class FormaPago
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -102,7 +102,7 @@ class FormaPago
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {

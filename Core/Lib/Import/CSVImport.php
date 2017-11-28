@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Lib\Import;
 
 /**
- * Description of CSVImport
+ * Common CSV import actions.
  *
  * @author Carlos García Gómez
  */

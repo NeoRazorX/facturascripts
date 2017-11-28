@@ -31,7 +31,7 @@ class EditArticuloTraza extends ExtendedController\EditController
 {
 
     /**
-     * Devuelve el nombre del modelo
+     * Returns the model name
      */
     public function getModelName()
     {
@@ -39,7 +39,7 @@ class EditArticuloTraza extends ExtendedController\EditController
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */

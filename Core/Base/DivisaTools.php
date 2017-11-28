@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 /**
- * Description of DivisaTools
+ * DivisaTools give us some basic and common methods for currency numbers.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -28,7 +28,7 @@ class DivisaTools
 {
 
     /**
-     * Devuelve el valor de la divisa formateada
+     * Returns the value of the formatted currency.
      *
      * @param float $number
      * @param int $decimals

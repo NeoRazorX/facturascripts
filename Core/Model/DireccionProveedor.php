@@ -31,7 +31,7 @@ class DireccionProveedor
     use Base\Direccion;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var integer
      */
@@ -47,12 +47,12 @@ class DireccionProveedor
     /**
      * True -> dirección principal
      *
-     * @var boolean
+     * @var bool
      */
     public $direccionppal;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -62,7 +62,7 @@ class DireccionProveedor
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -72,7 +72,7 @@ class DireccionProveedor
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {

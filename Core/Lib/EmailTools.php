@@ -25,7 +25,7 @@ use FacturaScripts\Core\Model\Settings;
 use PHPMailer\PHPMailer\PHPMailer;
 
 /**
- * Description of EmailTools
+ * Tools for send emails.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

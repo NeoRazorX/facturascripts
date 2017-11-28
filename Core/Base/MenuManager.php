@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
 
 /**
- * Gestiona el uso del menú de Facturascripts
+ * Manage the use of the Facturascripts menu.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -30,35 +30,35 @@ use FacturaScripts\Core\Model;
 class MenuManager
 {
     /**
-     * Contiene la estructura del menú para el usuario.
+     * Contains the structure of the menu for the user.
      *
      * @var MenuItem[]
      */
     private static $menu;
 
     /**
-     * Es true si es el menú activo, sino false
+     * True if it is the active menu, but False
      *
      * @var bool
      */
     private static $menuActive;
 
     /**
-     * Controlador asociado a la página
+     * Controller associated with the page
      *
      * @var Model\Page
      */
     private static $pageModel;
 
     /**
-     * Usuario para quien se ha creado el menú.
+     * User for whom the menu has been created.
      *
      * @var Model\User|false
      */
     private static $user = false;
 
     /**
-     * Llamar solamente cuando se ha conectado a la base de datos.
+     * Call only when you have connected to the database.
      */
     public function init()
     {
@@ -72,7 +72,7 @@ class MenuManager
     }
 
     /**
-     * Asigna el usuario para cargar su menú.
+     * Assign the user to load their menu.
      *
      * @param Model\User|false $user
      */
@@ -83,7 +83,7 @@ class MenuManager
     }
 
     /**
-     * Devuelve si la página debe ser guardada
+     * Returns if the page should be saved.
      *
      * @param Model\Page $pageModel
      * @param array $pageData
@@ -99,8 +99,7 @@ class MenuManager
     }
 
     /**
-     * Actualiza los datos en el modelo Model\Page en base los datos
-     * del getPageData() del controlador
+     * Update the data in the Model\Page model based on the data in the getPageData() of the controller.
      *
      * @param array $pageData
      */
@@ -128,7 +127,7 @@ class MenuManager
     }
 
     /**
-     * Asignar menú activo
+     * Set the active menu.
      *
      * @param Model\Page $pageModel
      */
@@ -144,7 +143,7 @@ class MenuManager
     }
 
     /**
-     * Asignar elemento de menú activo
+     * Assign active menu item.
      *
      * @param MenuItem[] $menu
      * @param Model\Page $pageModel
@@ -160,7 +159,7 @@ class MenuManager
     }
 
     /**
-     * Carga la estructura de menú para el usuario
+     * Load the menu structure for the user.
      *
      * @return array
      */
@@ -172,7 +171,7 @@ class MenuManager
         $menuItem = null;
         $i18n = new Translator();
 
-        /// Cargamos la lista de paginas para el usuario
+        /// We load the list of pages for the user
         $pages = $this->loadPages();
         $sortMenu = [];
         foreach ($pages as $page) {
@@ -180,7 +179,7 @@ class MenuManager
                 continue;
             }
 
-            /// Control de ruptura de menu
+            /// Menu break control
             if ($menuValue !== $page->menu) {
                 $menuValue = $page->menu;
                 $submenuValue = null;
@@ -189,7 +188,7 @@ class MenuManager
                 $sortMenu[$menuValue][] = $result[$menuValue]->title;
             }
 
-            /// Control de ruptura de submenu
+            /// Submenu break control
             if ($submenuValue !== $page->submenu) {
                 $submenuValue = $page->submenu;
                 $menuItem = &$result[$menuValue]->menu;
@@ -217,7 +216,7 @@ class MenuManager
     }
 
     /**
-     * Carga la lista de páginas para el usuario
+     * Load the list of pages for the user.
      *
      * @return Model\Page[]
      */
@@ -253,7 +252,7 @@ class MenuManager
     }
 
     /**
-     * Devuelve el menú del usuario, el conjunto de páginas a las que tiene acceso.
+     * Returns the user's menu, the set of pages to which he has access.
      *
      * @return array
      */

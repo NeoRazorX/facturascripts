@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 /**
- * Description of NumberTools
+ * NumberTools give us some basic and common methods for numbers.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -28,7 +28,7 @@ class NumberTools
 {
 
     /**
-     * Devuelve el numero formato con la cantida de decimales indicada
+     * Returns the number format with the number of decimals indicated.
      *
      * @param float $number
      * @param int $decimals

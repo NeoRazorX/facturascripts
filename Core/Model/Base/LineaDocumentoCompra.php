@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 /**
- * Description of LineaDocumentoCompra
+ * This class group all data and method of purchase line documents.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -32,98 +32,98 @@ trait LineaDocumentoCompra
     }
 
     /**
-     * Cantidad
+     * Quantity.
      *
      * @var float|int
      */
     public $cantidad;
 
     /**
-     * Código de la combinación seleccionada, en el caso de los artículos con atributos.
+     * Code of the selected combination, in the case of articles with attributes.
      *
      * @var string
      */
     public $codcombinacion;
 
     /**
-     * Código del impuesto relacionado.
+     * Code of the related tax.
      *
      * @var string
      */
     public $codimpuesto;
 
     /**
-     * Descripción de la línea.
+     * Line description.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * % del impuesto relacionado.
+     *% of the related tax.
      *
      * @var float|int
      */
     public $iva;
 
     /**
-     * % de descuento.
+     * % discount.
      *
      * @var float|int
      */
     public $dtopor;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
     public $idlinea;
 
     /**
-     * % de IRPF de la línea.
+     *% of IRPF of the line.
      *
      * @var float|int
      */
     public $irpf;
 
     /**
-     * Importe neto de la línea, sin impuestos.
+     * Net amount of the line, without taxes.
      *
      * @var float|int
      */
     public $pvptotal;
 
     /**
-     * Importe neto sin descuentos.
+     * Net amount without discounts.
      *
      * @var float|int
      */
     public $pvpsindto;
 
     /**
-     * Precio del artículo, una unidad.
+     * Price of the item, one unit.
      *
      * @var float|int
      */
     public $pvpunitario;
 
     /**
-     * % de recargo de equivalencia de la línea.
+     * % surcharge of line equivalence.
      *
      * @var float|int
      */
     public $recargo;
 
     /**
-     * Referencia del artículo.
+     * Reference of the article.
      *
      * @var string
      */
     public $referencia;
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -133,7 +133,7 @@ trait LineaDocumentoCompra
     }
 
     /**
-     * Inicializa los valores de la línea.
+     * Initializes the values of the line.
      */
     private function clearLinea()
     {
@@ -154,7 +154,7 @@ trait LineaDocumentoCompra
     }
 
     /**
-     * Devuelve el PVP con IVA
+     * Returns the PVP with VAT.
      *
      * @return float|int
      */
@@ -164,7 +164,7 @@ trait LineaDocumentoCompra
     }
 
     /**
-     * Devuelve el PVP total (con IVA, IRPF y recargo)
+     * Returns the total retail price (with VAT, IRPF and surcharge).
      *
      * @return float|int
      */
@@ -174,7 +174,7 @@ trait LineaDocumentoCompra
     }
 
     /**
-     * Devuelve el PVP total por producto (sin IRPF ni recargo)
+     * Returns the total retail price per product (no PIT or surcharge).
      *
      * @return float|int
      */
@@ -188,7 +188,7 @@ trait LineaDocumentoCompra
     }
 
     /**
-     * Devuelve la descripción
+     * Returns the description.
      *
      * @return string
      */

@@ -71,7 +71,7 @@ abstract class BaseView
      * Establishes de view/edit state of a column
      *
      * @param string $columnName
-     * @param boolean $disabled
+     * @param bool $disabled
      */
     abstract public function disableColumn($columnName, $disabled);
 
@@ -120,7 +120,7 @@ abstract class BaseView
     /**
      * Saves the model data into the database for persistence
      *
-     * @return boolean
+     * @return bool
      */
     public function save()
     {
@@ -132,7 +132,7 @@ abstract class BaseView
      *
      * @param string $code
      *
-     * @return boolean
+     * @return bool
      */
     public function delete($code)
     {

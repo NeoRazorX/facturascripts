@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * Description of ListFilter
+ * LisFilter definition for its use in ListController.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -136,12 +136,10 @@ class ListFilter
 
             default:
                 if ($this->options['valueFrom'] != '') {
-                    $where[] = new DataBaseWhere($this->options['field'], $this->options['valueFrom'],
-                        $this->options['operatorFrom']);
+                    $where[] = new DataBaseWhere($this->options['field'], $this->options['valueFrom'], $this->options['operatorFrom']);
                 }
                 if ($this->options['valueTo'] != '') {
-                    $where[] = new DataBaseWhere($this->options['field'], $this->options['valueTo'],
-                        $this->options['operatorTo']);
+                    $where[] = new DataBaseWhere($this->options['field'], $this->options['valueTo'], $this->options['operatorTo']);
                 }
         }
     }
@@ -200,7 +198,7 @@ class ListFilter
      * @param string $field
      * @param string $value
      * @param string $label
-     * @param boolean $inverse
+     * @param bool $inverse
      *
      * @return ListFilter
      */

@@ -24,7 +24,7 @@ use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator;
 
 /**
- * Description of DataBaseTools
+ * This class group all method for DataBase, tools like check/generate table, compare constraints/columns, ...
  *
  * @author Carlos García Gómez
  */
@@ -114,7 +114,7 @@ class DataBaseTools
     }
 
     /**
-     * Crea la tabla con la estructura indicada.
+     * Create the table with the structure received.
      *
      * @param string $tableName
      * @param array $xmlCols
@@ -128,7 +128,7 @@ class DataBaseTools
     }
 
     /**
-     * Compara dos arrays de restricciones, devuelve una sentencia SQL en caso de encontrar diferencias.
+     * Compare two arrays with restrictions, return a SQL statement if founded differencies.
      *
      * @param string $tableName
      * @param array $xmlCons
@@ -167,7 +167,7 @@ class DataBaseTools
     }
 
     /**
-     * Busca una columna con un valor por su nombre en un array
+     * Look for a column with a value by his name in array.
      *
      * @param array $items
      * @param string $index
@@ -189,7 +189,7 @@ class DataBaseTools
     }
 
     /**
-     * Compara dos arrays de columnas, devuelve una sentencia sql en caso de encontrar diferencias.
+     * Compare two arrays of columns, return a SQL statement if founded differencies.
      *
      * @param string $tableName
      * @param array $xmlCols
@@ -203,7 +203,6 @@ class DataBaseTools
         foreach ($xmlCols as $xml_col) {
             if (strtolower($xml_col['type']) === 'integer') {
                 /**
-                 *
                  * The integer type used in columns can be changed in the control panel tab
                  */
                 $xml_col['type'] = FS_DB_INTEGER;

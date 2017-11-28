@@ -27,13 +27,13 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 class RowItemFooter extends RowItem
 {
     /**
-     * Lista de paneles
+     * Panels lists.
      * @var array
      */
     public $panels;
 
     /**
-     * Lista de botones
+     * Buttons lists.
      * @var array
      */
     public $buttons;
@@ -70,7 +70,7 @@ class RowItemFooter extends RowItem
     }
 
     /**
-     * Carga la estructura del row en base a un archivo JSON.
+     * Load the row structurefrom a JSON file.
      *
      * @param array $items
      */
@@ -79,9 +79,9 @@ class RowItemFooter extends RowItem
     }
 
     /**
-     * Devuelve los botones para el valor indicado.
+     * Return the buttons for the received key.
      *
-     * @param $key
+     * @param string $key
      *
      * @return mixed
      */

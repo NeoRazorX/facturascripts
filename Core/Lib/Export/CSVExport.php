@@ -142,7 +142,6 @@ class CSVExport implements ExportInterface
      */
     public function newListDoc($model, $where, $order, $offset, $columns)
     {
-        /// get the columns
         $tableCols = [];
         $sheetHeaders = [];
         $tableData = [];

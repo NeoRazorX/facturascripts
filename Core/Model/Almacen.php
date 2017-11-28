@@ -34,7 +34,7 @@ class Almacen
     use Base\ContactInformation;
 
     /**
-     * Clave primaria. Varchar (4).
+     * Primary key. Varchar (4).
      *
      * @var string
      */
@@ -62,7 +62,7 @@ class Almacen
     public $observaciones;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -72,7 +72,7 @@ class Almacen
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */

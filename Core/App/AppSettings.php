@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\App;
 use FacturaScripts\Core\Model\Settings;
 
 /**
- * Description of AppSettings
+ * AppSettings manage the essential data settings of the app.
  *
  * @author Carlos García Gómez
  */

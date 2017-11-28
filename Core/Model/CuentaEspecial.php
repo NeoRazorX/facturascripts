@@ -80,7 +80,7 @@ class CuentaEspecial
     }
 
     /**
-     * Devuelve la url donde ver/modificar los datos
+     * Returns the url where to see / modify the data.
      *
      * @param string $type
      *

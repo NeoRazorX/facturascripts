@@ -36,7 +36,7 @@ class ListCuenta extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        /* Cuentas */
+        /* Accounts */
         $this->addView(Model\Cuenta::class, 'ListCuenta', 'accounts', 'fa-book');
         $this->addSearchFields('ListCuenta', ['descripcion', 'codcuenta', 'codejercicio', 'codepigrafe']);
 
@@ -46,7 +46,7 @@ class ListCuenta extends ExtendedController\ListController
         $this->addFilterSelect('ListCuenta', 'codejercicio', 'ejercicios', '', 'nombre');
         $this->addFilterSelect('ListCuenta', 'codepigrafe', 'co_epigrafes', '', 'descripcion');
 
-        /* Epigrafes */
+        /* Epigraphs */
         $this->addView(Model\Epigrafe::class, 'ListEpigrafe', 'epigraphs', 'fa-list-alt');
         $this->addSearchFields('ListEpigrafe', ['descripcion', 'codepigrafe', 'codejercicio']);
 
@@ -56,7 +56,7 @@ class ListCuenta extends ExtendedController\ListController
         $this->addFilterSelect('ListEpigrafe', 'codejercicio', 'ejercicios', '', 'nombre');
         $this->addFilterSelect('ListEpigrafe', 'codgrupo', 'co_gruposepigrafes', '', 'descripcion');
 
-        /* Grupo Epígrafes */
+        /* Epigraphs groups */
         $this->addView(Model\GrupoEpigrafes::class, 'ListGrupoEpigrafes', 'epigraphs-group', 'fa-bars');
         $this->addSearchFields('ListGrupoEpigrafes', ['descripcion', 'codgrupo', 'codejercicio']);
 
@@ -65,7 +65,7 @@ class ListCuenta extends ExtendedController\ListController
 
         $this->addFilterSelect('ListGrupoEpigrafes', 'codejercicio', 'ejercicios', '', 'nombre');
 
-        /* Cuenta Especial */
+        /* Special account */
         $this->addView(Model\CuentaEspecial::class, 'ListCuentaEspecial', 'special-account', 'fa-newspaper-o');
         $this->addSearchFields('ListCuentaEspecial', ['descripcion', 'codcuenta']);
 

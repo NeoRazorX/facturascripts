@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Description of WidgetItemSelect
+ * This class manage all specific method for a WidgetItem of Select type.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */

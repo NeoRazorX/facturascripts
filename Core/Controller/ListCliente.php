@@ -51,7 +51,7 @@ class ListCliente extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        /* Clientes */
+        /* Customers */
         $this->addView(Model\Cliente::class, 'ListCliente', 'customers', 'fa-users');
         $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente', 'email']);
 
@@ -62,7 +62,7 @@ class ListCliente extends ExtendedController\ListController
         $this->addFilterSelect('ListCliente', 'codgrupo', 'gruposclientes', '', 'nombre');
         $this->addFilterCheckbox('ListCliente', 'debaja', 'suspended');
 
-        /* Grupos */
+        /* Groups */
         $this->addView(Model\GrupoClientes::class, 'ListGrupoClientes', 'groups', 'fa-folder-open');
         $this->addSearchFields('ListGrupoClientes', ['nombre', 'codgrupo']);
 

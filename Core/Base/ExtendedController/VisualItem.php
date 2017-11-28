@@ -50,7 +50,7 @@ class VisualItem
     public $title;
 
     /**
-     * $tile link URL
+     * Title link URL
      *
      * @var string
      */
@@ -65,8 +65,7 @@ class VisualItem
     public $numColumns;
 
     /**
-     * Posición en la que se visualizá ( from lowes to highest )
-     * Display positoin (
+     * Position to render ( from lowes to highest )
      *
      * @var int
      */

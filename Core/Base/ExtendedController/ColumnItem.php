@@ -50,7 +50,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     public $widget;
 
     /**
-     * Crea y carga la estructura de una columna en base a un archivo XML
+     * Create and load the structure of a column from a XML file.
      *
      * @param \SimpleXMLElement $column
      *
@@ -64,7 +64,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Crea y carga la estructura de una columna en base a la base de datos
+     * Create and load the structure of a column from a database
      *
      * @param array $column
      *

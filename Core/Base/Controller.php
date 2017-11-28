@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Clase de la que deben heredar todos los controladores de FacturaScripts.
+ * Class from which all FacturaScripts controllers must inherit.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -34,110 +34,110 @@ class Controller
 {
 
     /**
-     * Contiene la lista de archivos extra a cargar: javascript, css, etc.
+     * Contains a list of extra files to load: javascript, css, etc.
      * @var array
      */
     public $assets;
 
     /**
-     * Gestor de acceso a cache.
+     * Cache access manager.
      *
      * @var Cache
      */
     protected $cache;
 
     /**
-     * Nombre de la clase del controlador (aunque se herede de esta clase, el nombre
-     * de la clase final lo tendremos aquí).
+     * Name of the class of the controller (although its in inheritance from this class,
+     * the name of the final class we will have here)
      *
      * @var string __CLASS__
      */
     private $className;
 
     /**
-     * Proporciona acceso directo a la base de datos.
+     * It provides direct access to the database.
      *
      * @var DataBase
      */
     protected $dataBase;
 
     /**
-     * Gestor de eventos.
+     * Event manager.
      *
      * @var EventDispatcher
      */
     protected $dispatcher;
 
     /**
-     * Herramientas para trabajar con divisas.
+     * Tools to work with currencies.
      * @var DivisaTools
      */
     public $divisaTools;
 
     /**
-     * Empresa seleccionada.
+     * Selected company.
      *
      * @var Model\Empresa|false
      */
     public $empresa;
 
     /**
-     * Motor de traducción.
+     * Translator engine.
      *
      * @var Translator
      */
     protected $i18n;
 
     /**
-     * Gestor de log de la app.
+     * App log manager.
      *
      * @var MiniLog
      */
     protected $miniLog;
 
     /**
-     * Herramientas para trabajar con números.
+     * Tools to work with numbers.
      * @var NumberTools
      */
     public $numberTools;
 
     /**
-     * Request sobre la que podemos hacer consultas.
+     * Request on which we can get data.
      *
      * @var Request
      */
     public $request;
 
     /**
-     * Objeto respuesta HTTP.
+     * HTTP Response object.
      *
      * @var Response
      */
     protected $response;
 
     /**
-     * Nombre del archivo html para el motor de plantillas.
+     * Name of the file for the template.
      *
      * @var string|false nombre_archivo.twig
      */
     private $template;
 
     /**
-     * Título de la página.
+     * Title of the page.
      *
      * @var string título de la página.
      */
     public $title;
 
     /**
-     * Usuario que ha iniciado sesión.
+     * User logged in.
      *
      * @var Model\User|null
      */
     public $user;
 
     /**
-     * Inicia todos los objetos y propiedades.
+     * Initialize all objects and properties.
      *
      * @param Cache $cache
      * @param Translator $i18n
@@ -166,7 +166,7 @@ class Controller
     }
 
     /**
-     * Devuelve el nombre del controlador
+     * Return the name of the controller.
      *
      * @return string
      */
@@ -176,7 +176,7 @@ class Controller
     }
 
     /**
-     * Devuelve el template HTML a utilizar para este controlador.
+     * Return the template to use for this controller.
      *
      * @return string|false
      */
@@ -186,7 +186,7 @@ class Controller
     }
 
     /**
-     * Establece el template HTML a utilizar para este controlador.
+     * Set the template to use for this controller.
      *
      * @param string|false $template
      *
@@ -204,7 +204,7 @@ class Controller
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Return the basic data for this page.
      *
      * @return array
      */
@@ -222,7 +222,7 @@ class Controller
     }
 
     /**
-     * Devuelve la url del controlador actual.
+     * Return the URL of the actual controller.
      *
      * @return string
      */
@@ -232,7 +232,7 @@ class Controller
     }
 
     /**
-     * Ejecuta la lógica pública del controlador.
+     * Execute the public part of the controller.
      *
      * @param Response $response
      */
@@ -244,7 +244,7 @@ class Controller
     }
 
     /**
-     * Ejecuta la lógica privada del controlador.
+     * Execute the private part of the controller.
      *
      * @param Response $response
      * @param Model\User|null $user
@@ -254,11 +254,11 @@ class Controller
         $this->response = $response;
         $this->user = $user;
 
-        /// seleccionamos la empresa predeterminada del usuario
+        /// Select the default company for the user
         $empresaModel = new Model\Empresa();
         $this->empresa = $empresaModel->get($user->idempresa);
 
-        /// ¿Ha marcado el usuario la página como página de inicio?
+        /// This user have default page setted?
         $defaultPage = $this->request->query->get('defaultPage', '');
         if ($defaultPage === 'TRUE') {
             $this->user->homepage = $this->className;

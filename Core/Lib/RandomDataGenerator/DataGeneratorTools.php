@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
 /**
- * Description of DataGeneratorTools
+ * DataGeneratorTools generate some random data to be able to test the code without do it by hang.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

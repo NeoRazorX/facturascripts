@@ -31,7 +31,7 @@ class ListArticuloTraza extends ExtendedController\ListController
 {
 
     /**
-     * Procedimiento para insertar vistas en el controlador
+     * Load views
      */
     protected function createViews()
     {
@@ -45,7 +45,7 @@ class ListArticuloTraza extends ExtendedController\ListController
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */

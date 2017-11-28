@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Description of WidgetItemDateTime
+ * This class manage all specific method for a WidgetItem of Date Time type.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */

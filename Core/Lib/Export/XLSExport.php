@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Lib\Export;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Description of XLSExport
+ * XLS export data.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -72,7 +72,6 @@ class XLSExport implements ExportInterface
         $writer = new \XLSXWriter();
         $writer->setAuthor('FacturaScripts');
 
-        /// Get the columns
         $tableCols = [];
         $sheetHeaders = [];
         $tableData = [];

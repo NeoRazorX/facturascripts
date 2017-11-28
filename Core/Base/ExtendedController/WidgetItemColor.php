@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Description of WidgetItemColor
+ * This class manage all specific method for a WidgetItem of Color Picker type.
  *
  * @author Artex Trading sa <jferrer@artextrading.com>
  */

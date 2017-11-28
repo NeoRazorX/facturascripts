@@ -47,7 +47,7 @@ class ListEmpresa extends ExtendedController\ListController
     }
 
     /**
-     * Procedimiento para insertar vistas en el controlador
+     * Load views
      */
     protected function createViews()
     {

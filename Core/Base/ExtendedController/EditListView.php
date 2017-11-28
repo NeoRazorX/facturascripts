@@ -59,8 +59,7 @@ class EditListView extends BaseView
     private $where;
 
     /**
-     * Constructor e inicializador de la clase
-     * Clos constructor and initialization
+     * Class constructor and initialization
      *
      * @param string $title
      * @param string $modelName
@@ -102,7 +101,7 @@ class EditListView extends BaseView
     }
 
     /**
-     * Devuelve True si tiene menos de 5 columnas, sino False.
+     * Returns True if have less than 5 columns, else returns False.
      */
     public function isBasicEditList()
     {
@@ -119,7 +118,7 @@ class EditListView extends BaseView
      * Establishes the column's edit state
      *
      * @param string $columnName
-     * @param boolean $disabled
+     * @param bool $disabled
      */
     public function disableColumn($columnName, $disabled)
     {

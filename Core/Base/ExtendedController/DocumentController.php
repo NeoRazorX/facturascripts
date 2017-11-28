@@ -27,11 +27,17 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 class DocumentController extends PanelController
 {
 
+    /**
+     * TODO: Incomplete
+     */
     protected function createViews()
     {
         ;
     }
 
+    /**
+     * TODO: Incomplete
+     */
     protected function loadData($keyView, $view)
     {
         ;

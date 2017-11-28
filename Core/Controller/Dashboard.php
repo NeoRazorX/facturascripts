@@ -24,7 +24,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\DashboardCard;
 
 /**
- * Description of Dashboard
+ * Dashboard that contains some Cards with data to the end user.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

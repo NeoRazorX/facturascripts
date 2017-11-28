@@ -24,7 +24,7 @@ use FacturaScripts\Core\Base\Translator;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Description of PDF
+ * PDF export data.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

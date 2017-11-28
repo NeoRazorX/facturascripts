@@ -65,7 +65,7 @@ class HtmlView extends BaseView
     }
 
     /**
-     * Permite desactivar una columna de una tabla.
+     * Allow disable a column from a table.
      *
      * @param string $columnName
      * @param bool $disabled

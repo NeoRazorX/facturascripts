@@ -47,7 +47,7 @@ class ListFabricante extends ExtendedController\ListController
     }
 
     /**
-     * Procedimiento encargado de insertar las vistas a visualizar
+     * Load views
      */
     protected function createViews()
     {

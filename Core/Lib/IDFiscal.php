@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Lib;
 
 /**
- * Description of IDFiscal
+ * This class centralizes all common method for fiscal id.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

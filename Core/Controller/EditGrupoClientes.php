@@ -44,7 +44,7 @@ class EditGrupoClientes extends ExtendedController\PanelController
     }
 
     /**
-     * Procedimiento encargado de cargar los datos a visualizar
+     * Procedure responsible for loading the data to be displayed.
      *
      * @param string $keyView
      * @param ExtendedController\EditView $view

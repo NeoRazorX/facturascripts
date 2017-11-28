@@ -109,34 +109,34 @@ abstract class ListController extends Base\Controller
     {
         parent::privateCore($response, $user);
 
-        // Creamos las vistas a visualizar
+        // Create views to show
         $this->createViews();
 
-        // Guardamos si hay operaciones por realizar
+        // Store action to execute
         $action = $this->request->get('action', '');
 
-        // Operaciones sobre los datos antes de leerlos
+        // Operations with data, before execute action
         $this->execPreviousAction($action);
 
-        // Lanzamos la carga de datos para cada una de las vistas
+        // Load data for every view
         foreach ($this->views as $key => $listView) {
             $where = [];
             $orderKey = '';
 
-            // Si estamos procesando la vista seleccionada, calculamos el orden y los filtros
+            // If processing the selected view, calculate order and filters
             if ($this->active == $key) {
                 $orderKey = $this->request->get('order', '');
                 $where = $this->getWhere();
             }
 
-            // Establecemos el orderby seleccionado
+            // Set selected order by
             $this->views[$key]->setSelectedOrderBy($orderKey);
 
-            // Cargamos los datos según filtro y orden
+            // Load data using filter and order
             $listView->loadData($where, $this->getOffSet($key), Base\Pagination::FS_ITEM_LIMIT);
         }
 
-        // Operaciones generales con los datos cargados
+        // Operations with data, after execute action
         $this->execAfterAction($action);
     }
 
@@ -180,7 +180,7 @@ abstract class ListController extends Base\Controller
      *
      * @param BaseView $view View upon which the action is made
      *
-     * @return boolean
+     * @return bool
      */
     protected function deleteAction($view)
     {
@@ -362,7 +362,7 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Añade un filtro a un tipo de campo.
+     * Adds a filter to a type of field.
      *
      * @param string $indexView
      * @param string $key

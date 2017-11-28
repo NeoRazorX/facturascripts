@@ -22,14 +22,14 @@ namespace FacturaScripts\Core\Lib\Export;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Description of ExportInterface
+ * Export interface.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 interface ExportInterface
 {
     /**
-     * Asigna la cabecera
+     * Set headers
      *
      * @param Response $response
      *
@@ -38,7 +38,7 @@ interface ExportInterface
     public function setHeaders(&$response);
 
     /**
-     * Nuevo documento
+     * New document
      *
      * @param $model
      *
@@ -47,7 +47,7 @@ interface ExportInterface
     public function newDoc($model);
 
     /**
-     * Nueva lista de documentos
+     * New document list
      *
      * @param $model
      * @param array $where

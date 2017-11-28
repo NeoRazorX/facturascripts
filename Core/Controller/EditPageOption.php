@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Model;
 
 /**
- * Description of EditPageOption
+ * Edit option for any page.
  *
  * @author Carlos García Gómez
  */
@@ -56,8 +56,8 @@ class EditPageOption extends Controller
     }
 
     /**
-     * Persiste los datos en la base de datos, modificando si existía el registro
-     * o insertando en caso de no existir la clave primaria.
+     * Data persists in the database, modifying if the record existed or inserting
+     * in case the primary key does not exist.
      */
     private function saveData()
     {

@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\NumberTools;
 
 /**
- * Description of WidgetItemNumber
+ * This class manage all specific method for a WidgetItem of Number type.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -114,9 +114,9 @@ class WidgetItemNumber extends WidgetItem
 
     /**
      * Generates the HTML code for widget special attributes such as:
-     * step
-     * maximum value
-     * minimum value
+     *  - 'step': difference to increase/decrease
+     *  - 'max': maximum value
+     *  - 'min': minimum value
      *
      * @return string
      */

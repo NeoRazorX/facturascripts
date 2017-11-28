@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Description of crm_contacto
+ * This class group all data and method for a contact.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -30,7 +30,7 @@ class Contacto
     use Base\ModelTrait;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var string
      */
@@ -191,7 +191,7 @@ class Contacto
     public $codgrupo;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -201,7 +201,7 @@ class Contacto
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -211,7 +211,7 @@ class Contacto
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {

@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Lib;
 
 /**
- * Description of NewCodigoDoc
+ * This class centralizes the generation of the document code.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

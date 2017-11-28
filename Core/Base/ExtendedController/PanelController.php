@@ -98,7 +98,7 @@ abstract class PanelController extends Base\Controller
     }
 
     /**
-     * Asigna la posición de la pestaña.
+     * Sets the tabs position, by default is setted to 'left', also supported 'bottom' and 'top'.
      *
      * @param string $position
      */
@@ -169,7 +169,7 @@ abstract class PanelController extends Base\Controller
     }
 
     /**
-     * Devuelve el valor para un campo del modelo de datos de la vista
+     * Return the value for a field in the model of the view.
      *
      * @param string $viewName
      * @param string $fieldName
@@ -242,7 +242,7 @@ abstract class PanelController extends Base\Controller
      *
      * @param BaseView $view
      *
-     * @return boolean
+     * @return bool
      */
     protected function editAction($view)
     {
@@ -267,7 +267,7 @@ abstract class PanelController extends Base\Controller
      *
      * @param BaseView $view
      *
-     * @return boolean
+     * @return bool
      */
     protected function deleteAction($view)
     {

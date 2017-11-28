@@ -22,14 +22,14 @@ namespace FacturaScripts\Core\Base;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Description of ExportManager
+ * ExportManager is the class we interact to generate an exported file of a supported type.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class ExportManager
 {
     /**
-     * Devuelve la opción por defecto
+     * Returns the default option.
      *
      * @return string
      */
@@ -39,7 +39,7 @@ class ExportManager
     }
 
     /**
-     * Devuelve las opciones disponibles para exportar
+     * Returns the options available for export.
      *
      * @return array
      */
@@ -53,7 +53,7 @@ class ExportManager
     }
 
     /**
-     * Genera el documento
+     * Generate the document.
      *
      * @param Response $response
      * @param string $option
@@ -63,7 +63,7 @@ class ExportManager
      */
     public function generateDoc(&$response, $option, $model)
     {
-        /// llamar a la clase apropiada para generar el archivo en función de la opción elegida
+        /// call the appropriate class to generate the file based on the chosen option
         $className = $this->getExportClassName($option);
         $docClass = new $className();
         $docClass->setHeaders($response);
@@ -72,7 +72,7 @@ class ExportManager
     }
 
     /**
-     * Genera una lista
+     * Generate a list
      *
      * @param Response $response
      * @param string $option
@@ -86,7 +86,7 @@ class ExportManager
      */
     public function generateList(&$response, $option, $model, $where, $order, $offset, $columns)
     {
-        /// llamar a la clase apropiada para generar el archivo en función de la opción elegida
+        /// call the appropriate class to generate the file based on the chosen option
         $className = $this->getExportClassName($option);
         $docClass = new $className();
         $docClass->setHeaders($response);

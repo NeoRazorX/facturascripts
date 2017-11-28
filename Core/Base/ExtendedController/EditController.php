@@ -141,7 +141,7 @@ class EditController extends Base\Controller
     /**
      * Run the data edits
      *
-     * @return boolean
+     * @return bool
      */
     protected function editAction()
     {

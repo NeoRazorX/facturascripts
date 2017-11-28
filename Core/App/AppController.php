@@ -84,7 +84,7 @@ class AppController extends App
     /**
      * Select and run the corresponding controller.
      *
-     * @return boolean
+     * @return bool
      */
     public function run()
     {
@@ -298,7 +298,7 @@ class AppController extends App
      *
      * @param User $user0
      *
-     * @return boolean
+     * @return bool
      */
     private function cookieAuth(&$user0)
     {

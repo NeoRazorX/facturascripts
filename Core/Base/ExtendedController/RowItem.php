@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Description of RowItem
+ * This RowItem class modelises the common data and method of a RowItem element.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -100,7 +100,7 @@ abstract class RowItem implements VisualItemInterface
     }
 
     /**
-     * Devuelve los atributos de un elemento desde el XML.
+     * Return the attributes of an element from the XML.
      *
      * @param \SimpleXMLElement $item
      *
@@ -117,7 +117,7 @@ abstract class RowItem implements VisualItemInterface
     }
 
     /**
-     * Devuelve una lista de WidgetButton desde el XML.
+     * Return a list of WidgetButtons from the XML.
      *
      * @param \SimpleXMLElement|\SimpleXMLElement[] $buttonsXML
      *

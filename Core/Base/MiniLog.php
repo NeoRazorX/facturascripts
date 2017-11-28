@@ -20,14 +20,14 @@
 namespace FacturaScripts\Core\Base;
 
 /**
- * Description of MiniLog class
+ * Manage all log message information types.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class MiniLog
 {
     /**
-     * Contiene los datos del log
+     * Contains the log data.
      *
      * @var array
      */
@@ -193,7 +193,7 @@ class MiniLog
     }
 
     /**
-     * Limpia el log.
+     * Clean the log.
      */
     public function clear()
     {

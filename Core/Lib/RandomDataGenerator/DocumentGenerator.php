@@ -45,8 +45,7 @@ class DocumentGenerator extends ModelDataGenerator
         $doc->fecha = mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, date('Y'));
         $doc->hora = mt_rand(10, 20) . ':' . mt_rand(10, 59) . ':' . mt_rand(10, 59);
         $doc->codpago = $this->formasPago[0]->codpago;
-        $doc->codalmacen = (mt_rand(0, 2) === 0) ? $this->almacenes[0]->codalmacen : AppSettings::get('default',
-            'codalmacen');
+        $doc->codalmacen = (mt_rand(0, 2) === 0) ? $this->almacenes[0]->codalmacen : AppSettings::get('default', 'codalmacen');
 
         foreach ($this->divisas as $div) {
             if ($div->coddivisa == AppSettings::get('default', 'coddivisa')) {
@@ -234,7 +233,7 @@ class DocumentGenerator extends ModelDataGenerator
 
             if ($lin->save()) {
                 if (isset($articulos[$numlineas])) {
-                    /// descontamos del stock
+                    /// deduct from the stock
                     $articulos[$numlineas]->sumStock($doc->codalmacen, $lin->cantidad * $modStock);
                 }
 
@@ -247,7 +246,7 @@ class DocumentGenerator extends ModelDataGenerator
             $numlineas--;
         }
 
-        /// redondeamos
+        /// rounding values
         $doc->neto = round($doc->neto, FS_NF0);
         $doc->totaliva = round($doc->totaliva, FS_NF0);
         $doc->totalirpf = round($doc->totalirpf, FS_NF0);

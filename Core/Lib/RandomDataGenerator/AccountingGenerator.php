@@ -63,7 +63,7 @@ class AccountingGenerator
     }
 
     /**
-     * Genera asiendos con datos aleatorios.
+     * Generates seats with random data.
      *
      * @param int $max
      *
@@ -89,7 +89,7 @@ class AccountingGenerator
     }
 
     /**
-     * Genera cuentas con datos aleatorios.
+     * Generate accounts with random data.
      *
      * @param int $max
      *
@@ -116,7 +116,7 @@ class AccountingGenerator
     }
 
     /**
-     * Genera epigrafes con datos aleatorios.
+     * Generates epigraphs with random data.
      *
      * @param int $max
      *
@@ -143,7 +143,7 @@ class AccountingGenerator
     }
 
     /**
-     * Genera grupos de epigrafes con datos aleatorios.
+     * Generates groups of epigraphs with random data.
      *
      * @param int $max
      *
@@ -167,8 +167,8 @@ class AccountingGenerator
     }
 
     /**
-     * Obtiene todos los datos de un modelo, los mezcla y los devuelve.
-     * Si el modelo no tiene datos, devuelve un array vacío.
+     * It obtains all the data of a model, mixes them and returns them.
+     * If the model has no data, it returns an empty array.
      *
      * @param string $modelName
      *
@@ -187,7 +187,7 @@ class AccountingGenerator
     }
 
     /**
-     * Genera subcuentas con datos aleatorios.
+     * Generates sub-accounts with random data.
      *
      * @param int $max
      *

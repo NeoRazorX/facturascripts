@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Description of linea_transferencia_stock
+ * Description of LineaTransferenciaStock
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -30,7 +30,7 @@ class LineaTransferenciaStock
     use Base\ModelTrait;
 
     /**
-     * Clave primaria. integer
+     * Primary key. integer
      *
      * @var int
      */
@@ -79,7 +79,7 @@ class LineaTransferenciaStock
     private $hora;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -89,7 +89,7 @@ class LineaTransferenciaStock
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -99,7 +99,7 @@ class LineaTransferenciaStock
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -175,9 +175,9 @@ class LineaTransferenciaStock
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */

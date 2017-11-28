@@ -59,7 +59,7 @@ class ListBalance extends ExtendedController\ListController
         $this->addSearchFields($className, $fields);
 
         $this->addOrderBy($className, 'codbalance', 'code');
-        /// forzamos el orden por defecto
+        /// force default order
         $this->addOrderBy($className, 'descripcion1', 'description-1', 2);
         $this->addOrderBy($className, 'descripcion2', 'description-2', 3);
         $this->addOrderBy($className, 'descripcion3', 'description-3', 4);

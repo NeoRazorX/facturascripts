@@ -23,7 +23,7 @@ use Exception;
 use FacturaScripts\Core\Base\Translator;
 
 /**
- * Class to connect with PostgreSQL..
+ * Class to connect with PostgreSQL.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -53,7 +53,7 @@ class Postgresql implements DataBaseEngine
     private $i18n;
 
     /**
-     * Contructor e inicializador de la clase
+     * Class constructor and initialization
      */
     public function __construct()
     {
@@ -63,7 +63,7 @@ class Postgresql implements DataBaseEngine
     }
 
     /**
-     * Devuelve el motor de base de datos y la versión.
+     * Return the used engine and the version.
      *
      * @param resource $link
      *

@@ -28,49 +28,49 @@ class WidgetButton implements VisualItemInterface
 {
 
     /**
-     * Tipo de botón
+     * Type of button.
      * @var string
      */
     public $type;
 
     /**
-     * Código adicional asociado al botón
+     * Aditional code for the button.
      * @var string
      */
     public $hint;
 
     /**
-     * Icono asociado al botón
+     * Icon for the button.
      * @var string
      */
     public $icon;
 
     /**
-     * Acción JS asociada al botón
+     * JavaScritp action for the button.
      * @var string
      */
     public $onClick;
 
     /**
-     * Texto asociado al botón
+     * Label for the button.
      * @var string
      */
     public $label;
 
     /**
-     * Acción asociada al botón
+     * Action for the button.
      * @var string
      */
     public $action;
 
     /**
-     * Color asociado al botón
+     * Color for the button.
      * @var string
      */
     public $color;
 
     /**
-     * Crea y carga la estructura de atributos en base a un archivo XML
+     * Create and load the structure of attributes from a XML file.
      *
      * @param \SimpleXMLElement|\SimpleXMLElement[] $button
      *
@@ -284,8 +284,7 @@ class WidgetButton implements VisualItemInterface
     }
 
     /**
-     * Devuelve el código HTML para la visualización de un popover
-     * con el texto indicado.
+     * Returns the HTML code to show a popover with the received text.
      *
      * @param string $hint
      *
