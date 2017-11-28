@@ -25,10 +25,10 @@
 <view>
     <columns>
         <column name="code" order="100">
-            <widget type="text" fieldname="codatributo" onclick="EditAtributo" />
+            <widget type="text" fieldname="codatributo" onclick="EditAtributo"/>
         </column>
         <column name="name" order="110">
-            <widget type="text" fieldname="nombre" />
+            <widget type="text" fieldname="nombre"/>
         </column>
     </columns>
     <rows>

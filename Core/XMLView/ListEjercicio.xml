@@ -25,16 +25,16 @@
 <view>
     <columns>
         <column name="code" order="100">
-            <widget type="text" fieldname="codejercicio" onclick="EditEjercicio" />
+            <widget type="text" fieldname="codejercicio" onclick="EditEjercicio"/>
         </column>
         <column name="name" order="110">
-            <widget type="text" fieldname="nombre" />
+            <widget type="text" fieldname="nombre"/>
         </column>
         <column name="start-date" display="center" order="120">
-            <widget type="text" fieldname="fechainicio" />
+            <widget type="text" fieldname="fechainicio"/>
         </column>
         <column name="end-date" display="center" order="130">
-            <widget type="text" fieldname="fechafin" />
+            <widget type="text" fieldname="fechafin"/>
         </column>
         <column name="state" display="center" order="140">
             <widget type="text" fieldname="estado">
@@ -43,10 +43,10 @@
             </widget>
         </column>
         <column name="plan" display="center" order="150">
-            <widget type="text" fieldname="plancontable" />
+            <widget type="text" fieldname="plancontable"/>
         </column>
         <column name="account-length" display="center" order="160">
-            <widget type="text" fieldname="longsubcuenta" />
+            <widget type="text" fieldname="longsubcuenta"/>
         </column>
     </columns>
 </view>

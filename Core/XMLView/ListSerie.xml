@@ -25,16 +25,16 @@
 <view>
     <columns>
         <column name="code" order="100">
-            <widget type="text" fieldname="codserie" onclick="EditSerie" />
+            <widget type="text" fieldname="codserie" onclick="EditSerie"/>
         </column>
         <column name="description" order="110">
-            <widget type="text" fieldname="descripcion" />
+            <widget type="text" fieldname="descripcion"/>
         </column>
         <column name="vat" title="%-vat" display="right" order="120">
-            <widget type="number" decimal="2" fieldname="iva" />
+            <widget type="number" decimal="2" fieldname="iva"/>
         </column>
         <column name="surcharge" title="%-surcharge" display="right" order="130">
-            <widget type="number" decimal="2" fieldname="recargo" />
+            <widget type="number" decimal="2" fieldname="recargo"/>
         </column>
         <column name="without-taxation" display="center" order="140">
             <widget type="checkbox" fieldname="siniva">
@@ -42,13 +42,13 @@
             </widget>
         </column>
         <column name="account" order="150">
-            <widget type="text" fieldname="codcuenta" />
+            <widget type="text" fieldname="codcuenta"/>
         </column>
         <column name="fiscal-exercise" display="center" order="160">
-            <widget type="text" fieldname="codejercicio" />
+            <widget type="text" fieldname="codejercicio"/>
         </column>
         <column name="first-invoice-number" display="right" order="170">
-            <widget type="number" fieldname="numfactura" />
+            <widget type="number" fieldname="numfactura"/>
         </column>
     </columns>
     <filters>

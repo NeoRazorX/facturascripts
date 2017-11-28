@@ -127,18 +127,18 @@ class WidgetButton implements VisualItemInterface
     public function loadFromXML($button)
     {
         $widget_atributes = $button->attributes();
-        $this->type = (string)$widget_atributes->type;
-        $this->label = (string)$widget_atributes->label;
-        $this->icon = (string)$widget_atributes->icon;
-        $this->action = (string)$widget_atributes->action;
-        $this->hint = (string)$widget_atributes->hint;
+        $this->type = (string) $widget_atributes->type;
+        $this->label = (string) $widget_atributes->label;
+        $this->icon = (string) $widget_atributes->icon;
+        $this->action = (string) $widget_atributes->action;
+        $this->hint = (string) $widget_atributes->hint;
 
         if (!empty($widget_atributes->color)) {
-            $this->color = (string)$widget_atributes->color;
+            $this->color = (string) $widget_atributes->color;
         }
 
         if (!empty($widget_atributes->onclick)) {
-            $this->onClick = (string)$widget_atributes->onclick;
+            $this->onClick = (string) $widget_atributes->onclick;
         }
     }
 
@@ -149,13 +149,13 @@ class WidgetButton implements VisualItemInterface
      */
     public function loadFromJSON($column)
     {
-        $this->type = (string)$column['button']['type'];
-        $this->label = (string)$column['button']['label'];
-        $this->icon = (string)$column['button']['icon'];
-        $this->action = (string)$column['button']['action'];
-        $this->hint = (string)$column['button']['hint'];
-        $this->color = (string)$column['button']['color'];
-        $this->onClick = (string)$column['button']['onClick'];
+        $this->type = (string) $column['button']['type'];
+        $this->label = (string) $column['button']['label'];
+        $this->icon = (string) $column['button']['icon'];
+        $this->action = (string) $column['button']['action'];
+        $this->hint = (string) $column['button']['hint'];
+        $this->color = (string) $column['button']['color'];
+        $this->onClick = (string) $column['button']['onClick'];
     }
 
     /**

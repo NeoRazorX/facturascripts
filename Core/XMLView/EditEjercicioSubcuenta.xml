@@ -29,7 +29,7 @@
                 <widget type="text" fieldname="codejercicio"/>
             </column>
             <column name="account-id" numcolumns="2" order="110">
-                <widget type="select" fieldname="idcuenta" />
+                <widget type="select" fieldname="idcuenta"/>
             </column>
             <column name="divisa" numcolumns="2" order="120">
                 <widget type="select" fieldname="coddivisa">
@@ -37,7 +37,7 @@
                 </widget>
             </column>
             <column name="sub-account" numcolumns="2" order="130">
-                <widget type="text" fieldname="codcuenta" required="true" />
+                <widget type="text" fieldname="codcuenta" required="true"/>
             </column>
             <column name="taxes" numcolumns="2" order="140">
                 <widget type="select" fieldname="codimpuesto" required="true">

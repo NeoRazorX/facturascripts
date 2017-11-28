@@ -26,23 +26,23 @@
     <columns>
         <group name="bankaccount" numcolumns="12">
             <column name="account" numcolumns="2" order="100">
-                <widget type="text" fieldname="codcuenta" onclick="" icon="fa-university" required="true" />
+                <widget type="text" fieldname="codcuenta" onclick="" icon="fa-university" required="true"/>
             </column>
-            
+
             <column name="codsubcuenta" numcolumns="2" order="110">
-                <widget type="text" fieldname="codsubcuenta" required="true" />
+                <widget type="text" fieldname="codsubcuenta" required="true"/>
             </column>
-            
+
             <column name="description" numcolumns="4" order="110">
-                <widget type="text" fieldname="descripcion" required="true" />
+                <widget type="text" fieldname="descripcion" required="true"/>
             </column>
-            
+
             <column name="swift" numcolumns="2" order="110">
                 <widget type="text" fieldname="swift"/>
             </column>
-            
+
             <column name="iban" numcolumns="2" order="110">
-                <widget type="text" fieldname="iban" required="true" />
+                <widget type="text" fieldname="iban" required="true"/>
             </column>
         </group>
     </columns>

@@ -111,8 +111,8 @@ class AppAPI extends App
             $operationArray = $this->request->get('operation', '');
             $filterArray = $this->request->get('filter', '');
             $orderArray = $this->request->get('sort', '');
-            $offset = (int)$this->request->get('offset', 0);
-            $limit = (int)$this->request->get('limit', 50);
+            $offset = (int) $this->request->get('offset', 0);
+            $limit = (int) $this->request->get('limit', 50);
 
             $operation = is_array($operationArray) ? $operationArray : []; /// if is string has bad format
             $filter = is_array($filterArray) ? $filterArray : []; /// if is string has bad format

@@ -129,13 +129,15 @@
         <name>ca_co_partidas_co_asientos2</name>
         <type>FOREIGN KEY (idasiento)
             REFERENCES co_asientos (idasiento)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>ca_co_partidas_subcuentas</name>
         <type>FOREIGN KEY (idsubcuenta)
             REFERENCES co_subcuentas (idsubcuenta)
-            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+            ON DELETE RESTRICT ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>co_partidas_pkey</name>

@@ -157,7 +157,7 @@ trait BankAccount
         $totPeso = 0;
         $len = strlen($cadena);
         for ($i = 0; $i < $len; ++$i) {
-            $val = (int)$cadena[$i];
+            $val = (int) $cadena[$i];
             $totPeso += ($pesos[$i] * $val);
         }
 
@@ -172,7 +172,7 @@ trait BankAccount
                 break;
         }
 
-        return (string)$result;
+        return (string) $result;
     }
 
     /**

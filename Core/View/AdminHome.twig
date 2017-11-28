@@ -1,27 +1,27 @@
 {% extends "Master/MenuTemplate.twig" %}
 
 {% block body %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-12">
-            <h1>
-                <i class="fa fa-whrench" aria-hidden="true"></i> {{ i18n.trans('control-panel') }}
-                <span class="btn-group d-xs-none">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <h1>
+                    <i class="fa fa-whrench" aria-hidden="true"></i> {{ i18n.trans('control-panel') }}
+                    <span class="btn-group d-xs-none">
                     <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}">
                        <i class="fa fa-refresh" aria-hidden="true"></i>
                     </a>
-                    {% if fsc.getPageData()['name'] == fsc.user.homepage %}
-                    <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}&amp;defaultPage=FALSE">
+                        {% if fsc.getPageData()['name'] == fsc.user.homepage %}
+                            <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}&amp;defaultPage=FALSE">
                        <i class="fa fa-bookmark" aria-hidden="true"></i>
                     </a>
                     {% else %}
-                    <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}&amp;defaultPage=TRUE">
+                            <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}&amp;defaultPage=TRUE">
                        <i class="fa fa-bookmark-o" aria-hidden="true"></i>
                     </a>
-                    {% endif %}
+                        {% endif %}
                 </span>
-            </h1>
+                </h1>
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}

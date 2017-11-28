@@ -25,13 +25,13 @@
 <view>
     <columns>
         <column name="code" order="100">
-            <widget type="text" fieldname="codfamilia" onclick="EditFamilia" />
+            <widget type="text" fieldname="codfamilia" onclick="EditFamilia"/>
         </column>
         <column name="description" order="110">
-            <widget type="text" fieldname="descripcion" />
+            <widget type="text" fieldname="descripcion"/>
         </column>
         <column name="parent" order="200">
-            <widget type="text" fieldname="madre" />
+            <widget type="text" fieldname="madre"/>
         </column>
     </columns>
 </view>

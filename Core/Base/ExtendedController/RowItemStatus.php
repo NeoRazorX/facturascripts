@@ -58,7 +58,7 @@ class RowItemStatus extends RowItem
     public function loadFromXML($row)
     {
         $row_atributes = $row->attributes();
-        $this->fieldName = (string)$row_atributes->fieldname;
+        $this->fieldName = (string) $row_atributes->fieldname;
 
         foreach ($row->option as $option) {
             $values = $this->getAttributesFromXML($option);
@@ -74,9 +74,9 @@ class RowItemStatus extends RowItem
      */
     public function loadFromJSON($row)
     {
-        $this->type = (string)$row['type'];
-        $this->fieldName = (string)$row['fieldName'];
-        $this->options = (array)$row['options'];
+        $this->type = (string) $row['type'];
+        $this->fieldName = (string) $row['fieldName'];
+        $this->options = (array) $row['options'];
     }
 
     /**
@@ -94,7 +94,7 @@ class RowItemStatus extends RowItem
             }
 
             $operator = $option['value'][0];
-            $value2 = (float)substr($option['value'], 1);
+            $value2 = (float) substr($option['value'], 1);
             if ($operator === '>' && $value > $value2) {
                 return $option['color'];
             }

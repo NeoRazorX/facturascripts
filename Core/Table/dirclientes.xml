@@ -79,6 +79,7 @@
         <name>ca_dirclientes_clientes</name>
         <type>FOREIGN KEY (codcliente)
             REFERENCES clientes (codcliente)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
 </table>

@@ -25,16 +25,16 @@
 <view>
     <columns>
         <column name="code" order="100">
-            <widget type="text" fieldname="coddivisa" onclick="EditDivisa" />
+            <widget type="text" fieldname="coddivisa" onclick="EditDivisa"/>
         </column>
         <column name="description" order="110">
-            <widget type="text" fieldname="descripcion" />
+            <widget type="text" fieldname="descripcion"/>
         </column>
         <column name="iso" order="120" titleurl="https://es.wikipedia.org/wiki/ISO_4217">
-            <widget type="text" fieldname="codiso" />
+            <widget type="text" fieldname="codiso"/>
         </column>
         <column name="date" order="130">
-            <widget type="text" fieldname="fecha" />
+            <widget type="text" fieldname="fecha"/>
         </column>
         <column name="sales-rate" display="right" order="140">
             <widget type="number" decimal="4" fieldname="tasaconv">
@@ -47,10 +47,10 @@
             </widget>
         </column>
         <column name="symbol" display="center" order="160">
-            <widget type="text" fieldname="simbolo" />
+            <widget type="text" fieldname="simbolo"/>
         </column>
         <column name="flag" display="none" order="170">
-            <widget type="text" fieldname="bandera" />
+            <widget type="text" fieldname="bandera"/>
         </column>
     </columns>
 </view>

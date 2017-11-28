@@ -129,7 +129,7 @@ class ListFilter
 
             case 'checkbox':
                 if ($this->options['value'] != '') {
-                    $checked = (bool)($this->options['inverse'] ? !$this->options['value'] : $this->options['value']);
+                    $checked = (bool) ($this->options['inverse'] ? !$this->options['value'] : $this->options['value']);
                     $where[] = new DataBaseWhere($this->options['field'], $checked);
                 }
                 break;

@@ -127,10 +127,10 @@ class Cliente extends Base\Persona
         $sql = 'SELECT * FROM ' . static::tableName();
         if ($cifnif === '' && $razon !== '') {
             $razon = self::noHtml(mb_strtolower($razon, 'UTF8'));
-            $sql.= " WHERE cifnif = '' AND lower(razonsocial) = " . $this->dataBase->var2str($razon) . ';';
+            $sql .= " WHERE cifnif = '' AND lower(razonsocial) = " . $this->dataBase->var2str($razon) . ';';
         } else {
             $cifnif = mb_strtolower($cifnif, 'UTF8');
-            $sql.= ' WHERE lower(cifnif) = ' . $this->dataBase->var2str($cifnif) . ';';
+            $sql .= ' WHERE lower(cifnif) = ' . $this->dataBase->var2str($cifnif) . ';';
         }
 
         $data = $this->dataBase->select($sql);
@@ -259,8 +259,8 @@ class Cliente extends Base\Persona
         /// validamos los dias de pago
         $arrayDias = [];
         foreach (str_getcsv($this->diaspago) as $d) {
-            if ((int)$d >= 1 && (int)$d <= 31) {
-                $arrayDias[] = (int)$d;
+            if ((int) $d >= 1 && (int) $d <= 31) {
+                $arrayDias[] = (int) $d;
             }
         }
         $this->diaspago = null;

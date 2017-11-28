@@ -314,20 +314,20 @@ class ModelDataGenerator
             $agente = new Model\Agente();
             $agente->f_nacimiento = date(mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(1970, 1997));
             $agente->f_alta = date(mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, 2016));
-            $agente->dnicif = (mt_rand(0, 9) === 0) ? '' : (string)mt_rand(0, 99999999);
+            $agente->dnicif = (mt_rand(0, 9) === 0) ? '' : (string) mt_rand(0, 99999999);
             $agente->nombre = $this->tools->nombre();
             $agente->apellidos = $this->tools->apellidos();
             $agente->provincia = $this->tools->provincia();
             $agente->ciudad = $this->tools->ciudad();
             $agente->direccion = $this->tools->direccion();
-            $agente->codpostal = (string)mt_rand(11111, 99999);
+            $agente->codpostal = (string) mt_rand(11111, 99999);
 
             if (mt_rand(0, 24) === 0) {
                 $agente->f_baja = date('d-m-Y');
             }
 
             if (mt_rand(0, 1) === 0) {
-                $agente->telefono = (string)mt_rand(555555555, 999999999);
+                $agente->telefono = (string) mt_rand(555555555, 999999999);
             }
 
             if (mt_rand(0, 2) > 0) {
@@ -339,7 +339,7 @@ class ModelDataGenerator
             }
 
             if (mt_rand(0, 1) === 0) {
-                $agente->seg_social = (string)mt_rand(111111, 9999999999);
+                $agente->seg_social = (string) mt_rand(111111, 9999999999);
             }
 
             if (mt_rand(0, 5) === 0) {
@@ -498,7 +498,7 @@ class ModelDataGenerator
             $dir->ciudad = $this->tools->ciudad();
             $dir->direccion = $this->tools->direccion();
             $dir->codpostal = mt_rand(1234, 99999);
-            $dir->apartado = (mt_rand(0, 3) === 0) ? (string)mt_rand(1234, 99999) : null;
+            $dir->apartado = (mt_rand(0, 3) === 0) ? (string) mt_rand(1234, 99999) : null;
             $dir->domenvio = (mt_rand(0, 1) === 1);
             $dir->domfacturacion = (mt_rand(0, 1) === 1);
             $dir->descripcion = 'Dirección #' . $max;
@@ -602,7 +602,7 @@ class ModelDataGenerator
             $dir->codpostal = mt_rand(1234, 99999);
 
             if (mt_rand(0, 3) === 0) {
-                $dir->apartado = (string)mt_rand(1234, 99999);
+                $dir->apartado = (string) mt_rand(1234, 99999);
             }
 
             if (mt_rand(0, 1) === 0) {

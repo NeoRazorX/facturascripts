@@ -24,23 +24,23 @@
 
 <view>
     <columns>
-       <column name="id" order="100" display="" >
+        <column name="id" order="100" display="">
             <widget type="text" fieldname="id" icon="" onclick="EditArticuloTraza"/>
         </column>
         <column name="reference" order="110">
             <widget type="text" fieldname="referencia" icon="fa-barcode" onclick=""/>
         </column>
         <column name="serial-number" display="left" order="120">
-            <widget type="text" fieldname="numserie" />
+            <widget type="text" fieldname="numserie"/>
         </column>
         <column name="lot" display="left" order="130">
-            <widget type="text" fieldname="lote" />
+            <widget type="text" fieldname="lote"/>
         </column>
         <column name="date-in" display="right" order="140">
-            <widget type="text" fieldname="fecha_entrada" />
+            <widget type="text" fieldname="fecha_entrada"/>
         </column>
         <column name="date-out" display="right" order="150">
-            <widget type="text" fieldname="fecha_salida" />
+            <widget type="text" fieldname="fecha_salida"/>
         </column>
     </columns>
 </view>

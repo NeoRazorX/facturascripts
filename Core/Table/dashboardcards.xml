@@ -45,6 +45,7 @@
         <name>ca_dashboardcards_fs_users</name>
         <type>FOREIGN KEY (nick)
             REFERENCES fs_users (nick)
-            ON DELETE SET NULL ON UPDATE CASCADE</type>
+            ON DELETE SET NULL ON UPDATE CASCADE
+        </type>
     </constraint>
 </table>

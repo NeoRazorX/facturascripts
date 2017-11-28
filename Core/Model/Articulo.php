@@ -356,7 +356,7 @@ class Articulo
 
         $data = $this->dataBase->selectLimit($sql, 1);
         if (!empty($data)) {
-            return sprintf(1 + (int)$data[0]['referencia']);
+            return sprintf(1 + (int) $data[0]['referencia']);
         }
 
         return '1';

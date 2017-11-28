@@ -143,7 +143,7 @@ abstract class WidgetItem implements VisualItemInterface
     public static function newFromXML($column)
     {
         $widgetAtributes = $column->widget->attributes();
-        $type = (string)$widgetAtributes->type;
+        $type = (string) $widgetAtributes->type;
         $widget = self::widgetItemFromType($type);
         $widget->loadFromXML($column);
         return $widget;
@@ -158,7 +158,7 @@ abstract class WidgetItem implements VisualItemInterface
      */
     public static function newFromJSON($column)
     {
-        $type = (string)$column['widget']['type'];
+        $type = (string) $column['widget']['type'];
         $widget = self::widgetItemFromType($type);
         $widget->loadFromJSON($column);
         return $widget;
@@ -210,9 +210,9 @@ abstract class WidgetItem implements VisualItemInterface
         foreach ($group as $item) {
             $values = [];
             foreach ($item->attributes() as $attributeKey => $attributeValue) {
-                $values[$attributeKey] = (string)$attributeValue;
+                $values[$attributeKey] = (string) $attributeValue;
             }
-            $values['value'] = (string)$item;
+            $values['value'] = (string) $item;
             $property[] = $values;
             unset($values);
         }
@@ -226,12 +226,12 @@ abstract class WidgetItem implements VisualItemInterface
     public function loadFromXML($column)
     {
         $widgetAtributes = $column->widget->attributes();
-        $this->fieldName = (string)$widgetAtributes->fieldname;
-        $this->hint = (string)$widgetAtributes->hint;
-        $this->readOnly = (bool)$widgetAtributes->readonly;
-        $this->required = (bool)$widgetAtributes->required;
-        $this->icon = (string)$widgetAtributes->icon;
-        $this->onClick = (string)$widgetAtributes->onclick;
+        $this->fieldName = (string) $widgetAtributes->fieldname;
+        $this->hint = (string) $widgetAtributes->hint;
+        $this->readOnly = (bool) $widgetAtributes->readonly;
+        $this->required = (bool) $widgetAtributes->required;
+        $this->icon = (string) $widgetAtributes->icon;
+        $this->onClick = (string) $widgetAtributes->onclick;
 
         $this->getAttributesGroup($this->options, $column->widget->option);
     }
@@ -243,13 +243,13 @@ abstract class WidgetItem implements VisualItemInterface
      */
     public function loadFromJSON($column)
     {
-        $this->fieldName = (string)$column['widget']['fieldName'];
-        $this->hint = (string)$column['widget']['hint'];
-        $this->readOnly = (bool)$column['widget']['readOnly'];
-        $this->required = (bool)$column['widget']['required'];
-        $this->icon = (string)$column['widget']['icon'];
-        $this->onClick = (string)$column['widget']['onClick'];
-        $this->options = (array)$column['widget']['options'];
+        $this->fieldName = (string) $column['widget']['fieldName'];
+        $this->hint = (string) $column['widget']['hint'];
+        $this->readOnly = (bool) $column['widget']['readOnly'];
+        $this->required = (bool) $column['widget']['required'];
+        $this->icon = (string) $column['widget']['icon'];
+        $this->onClick = (string) $column['widget']['onClick'];
+        $this->options = (array) $column['widget']['options'];
     }
 
     /**
@@ -265,12 +265,12 @@ abstract class WidgetItem implements VisualItemInterface
         switch ($optionValue[0]) {
             case '<':
                 $optionValue = substr($optionValue, 1);
-                $result = ((float)$valueItem < (float)$optionValue);
+                $result = ((float) $valueItem < (float) $optionValue);
                 break;
 
             case '>':
                 $optionValue = substr($optionValue, 1);
-                $result = ((float)$valueItem > (float)$optionValue);
+                $result = ((float) $valueItem > (float) $optionValue);
                 break;
 
             default:

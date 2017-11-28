@@ -59,12 +59,14 @@
         <name>ca_co_cuentas_ejercicios</name>
         <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>ca_co_cuentas_epigrafes2</name>
         <type>FOREIGN KEY (idepigrafe)
             REFERENCES co_epigrafes (idepigrafe)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
 </table>

@@ -37,7 +37,7 @@ trait DocumentoVenta
     use ModelTrait {
         clear as clearTrait;
     }
-    
+
     /**
      * Apartado de correos del cliente
      *

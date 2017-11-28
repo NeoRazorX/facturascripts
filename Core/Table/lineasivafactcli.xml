@@ -62,7 +62,8 @@
         <name>ca_lineaiva_facturascli2</name>
         <type>FOREIGN KEY (idfactura)
             REFERENCES facturascli (idfactura)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>lineasivafactcli_pkey</name>

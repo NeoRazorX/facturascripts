@@ -116,7 +116,7 @@ class CSVExport implements ExportInterface
     public function newDoc($model)
     {
         $tableData = [];
-        foreach ((array)$model as $key => $value) {
+        foreach ((array) $model as $key => $value) {
             if (is_string($value)) {
                 $tableData[] = [
                     'key' => $this->delimiter . $key . $this->delimiter,

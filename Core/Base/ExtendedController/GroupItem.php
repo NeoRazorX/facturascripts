@@ -123,7 +123,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
         parent::loadFromXML($group);
 
         $group_atributes = $group->attributes();
-        $this->icon = (string)$group_atributes->icon;
+        $this->icon = (string) $group_atributes->icon;
         $this->loadFromXMLColumns($group);
     }
 
@@ -135,7 +135,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
     public function loadFromJSON($group)
     {
         parent::loadFromJSON($group);
-        $this->icon = (string)$group['icon'];
+        $this->icon = (string) $group['icon'];
 
         foreach ($group['columns'] as $column) {
             $columnItem = ColumnItem::newFromJSON($column);

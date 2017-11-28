@@ -94,17 +94,17 @@ class VisualItem
     {
         $items_atributes = $items->attributes();
         if (!empty($items_atributes->name)) {
-            $this->name = (string)$items_atributes->name;
+            $this->name = (string) $items_atributes->name;
         }
-        $this->title = (string)$items_atributes->title;
-        $this->titleURL = (string)$items_atributes->titleurl;
+        $this->title = (string) $items_atributes->title;
+        $this->titleURL = (string) $items_atributes->titleurl;
 
         if (!empty($items_atributes->numcolumns)) {
-            $this->numColumns = (int)$items_atributes->numcolumns;
+            $this->numColumns = (int) $items_atributes->numcolumns;
         }
 
         if (!empty($items_atributes->order)) {
-            $this->order = (int)$items_atributes->order;
+            $this->order = (int) $items_atributes->order;
         }
     }
 
@@ -115,11 +115,11 @@ class VisualItem
      */
     public function loadFromJSON($items)
     {
-        $this->name = (string)$items['name'];
-        $this->title = (string)$items['title'];
-        $this->titleURL = (string)$items['titleURL'];
-        $this->numColumns = (int)$items['numColumns'];
-        $this->order = (int)$items['order'];
+        $this->name = (string) $items['name'];
+        $this->title = (string) $items['title'];
+        $this->titleURL = (string) $items['titleURL'];
+        $this->numColumns = (int) $items['numColumns'];
+        $this->order = (int) $items['order'];
     }
 
     /**

@@ -87,13 +87,15 @@
         <name>ca_stocks_articulos2</name>
         <type>FOREIGN KEY (referencia)
             REFERENCES articulos (referencia)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>ca_stocks_almacenes3</name>
         <type>FOREIGN KEY (codalmacen)
             REFERENCES almacenes (codalmacen)
-            ON DELETE CASCADE ON UPDATE CASCADE </type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>uniq_stocks_almacen_referencia</name>

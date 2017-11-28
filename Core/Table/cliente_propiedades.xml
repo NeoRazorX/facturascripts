@@ -28,6 +28,7 @@
         <name>ca_cliente_propiedades_clientes</name>
         <type>FOREIGN KEY (codcliente)
             REFERENCES clientes (codcliente)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
 </table>

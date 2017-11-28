@@ -28,10 +28,10 @@
                 <widget type="text" fieldname="coddivisa" onclick="" icon="fa-object-group" required="true"/>
             </column>
             <column name="symbol" numcolumns="2" order="110" description="symbol">
-                <widget type="text" fieldname="simbolo" onclick="" />
+                <widget type="text" fieldname="simbolo" onclick=""/>
             </column>
             <column name="desc" numcolumns="4" order="110">
-                <widget type="text" fieldname="descripcion" onclick="" />
+                <widget type="text" fieldname="descripcion" onclick=""/>
             </column>
         </group>
     </columns>

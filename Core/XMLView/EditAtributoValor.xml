@@ -25,15 +25,15 @@ View to edit a single item from the AtributoValor model
     <columns>
         <group name="data" numcolumns="12">
             <column name="id" display="none" order="90">
-                <widget type="number" decimal="0" fieldname="id" readonly="true" required="true" />
+                <widget type="number" decimal="0" fieldname="id" readonly="true" required="true"/>
             </column>
             <column name="codatributo" display="none" order="100">
-                <widget type="text" fieldname="codatributo" readonly="true" required="true" />
+                <widget type="text" fieldname="codatributo" readonly="true" required="true"/>
             </column>
         </group>
         <group name="attribute-values" numcolumns="12">
             <column name="valor" numcolumns="5" order="130">
-                <widget type="text" fieldname="valor" />
+                <widget type="text" fieldname="valor"/>
             </column>
         </group>
     </columns>

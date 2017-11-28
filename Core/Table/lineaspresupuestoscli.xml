@@ -104,6 +104,7 @@
         <name>ca_lineaspresupuestoscli_presupuestoscli</name>
         <type>FOREIGN KEY (idpresupuesto)
             REFERENCES presupuestoscli (idpresupuesto)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
 </table>

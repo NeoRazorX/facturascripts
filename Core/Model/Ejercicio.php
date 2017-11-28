@@ -174,7 +174,7 @@ class Ejercicio
         $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codejercicio') . ') as cod FROM ' . static::tableName() . ';';
         $newCod = $this->dataBase->select($sql);
         if (!empty($newCod)) {
-            return sprintf('%04s', 1 + (int)$newCod[0]['cod']);
+            return sprintf('%04s', 1 + (int) $newCod[0]['cod']);
         }
 
         return '0001';

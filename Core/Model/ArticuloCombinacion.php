@@ -324,7 +324,7 @@ class ArticuloCombinacion
     private function saveInsert()
     {
         if ($this->codigo === null) {
-            $this->codigo = (string)$this->getNewCodigo();
+            $this->codigo = (string) $this->getNewCodigo();
         }
 
         return $this->saveInsertTrait();
@@ -356,7 +356,7 @@ class ArticuloCombinacion
         $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codigo') . ') as cod FROM ' . static::tableName() . ';';
         $cod = $this->dataBase->select($sql);
         if (!empty($cod)) {
-            return 1 + (int)$cod[0]['cod'];
+            return 1 + (int) $cod[0]['cod'];
         }
 
         return 1;

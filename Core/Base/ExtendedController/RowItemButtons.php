@@ -60,7 +60,7 @@ class RowItemButtons extends RowItem
      */
     public function loadFromJSON($row)
     {
-        $this->type = (string)$row['type'];
+        $this->type = (string) $row['type'];
 
         foreach ($row['buttons'] as $button) {
             $values = $button;

@@ -26,18 +26,18 @@
     <columns>
         <column name="id" display="none" order="100">
             <widget type="text" fieldname="id"/>
-        </column>    
+        </column>
         <column name="role" order="100">
-            <widget type="text" fieldname="codrol" />
-        </column>            
+            <widget type="text" fieldname="codrol"/>
+        </column>
         <column name="pagename" order="110">
-            <widget type="text" fieldname="pagename" />
+            <widget type="text" fieldname="pagename"/>
         </column>
         <column name="allow-delete" order="110">
-            <widget type="checkbox" fieldname="allow-delete" />
+            <widget type="checkbox" fieldname="allow-delete"/>
         </column>
         <column name="allow-update" order="110">
-            <widget type="checkbox" fieldname="allow-update" />
+            <widget type="checkbox" fieldname="allow-update"/>
         </column>
     </columns>
 </view>

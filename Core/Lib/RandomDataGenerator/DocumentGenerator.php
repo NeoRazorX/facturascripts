@@ -193,7 +193,7 @@ class DocumentGenerator extends ModelDataGenerator
             $modcantidad = -1;
         }
 
-        $numlineas = (int)$this->tools->cantidad(0, 10, 200);
+        $numlineas = (int) $this->tools->cantidad(0, 10, 200);
         while ($numlineas > 0) {
             $lin = new $lineaClass();
             $lin->{$iddoc} = $doc->{$iddoc};

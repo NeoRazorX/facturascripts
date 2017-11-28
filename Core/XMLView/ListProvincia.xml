@@ -25,13 +25,13 @@
 <view>
     <columns>
         <column name="id" order="100" display="none">
-            <widget type="text" fieldname="idprovincia" onclick="EditProvincia" />
+            <widget type="text" fieldname="idprovincia" onclick="EditProvincia"/>
         </column>
         <column name="province" order="110">
-            <widget type="text" fieldname="provincia" />
+            <widget type="text" fieldname="provincia"/>
         </column>
         <column name="country" order="120">
-            <widget type="text" fieldname="codpais" />
+            <widget type="text" fieldname="codpais"/>
         </column>
         <column name="latitude" display="right" order="140">
             <widget type="number" decimal="4" fieldname="latitud">
@@ -44,7 +44,7 @@
             </widget>
         </column>
         <column name="review-date" order="160">
-            <widget type="text" fieldname="fecha_revision" />
+            <widget type="text" fieldname="fecha_revision"/>
         </column>
     </columns>
 </view>

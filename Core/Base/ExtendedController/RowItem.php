@@ -68,7 +68,7 @@ abstract class RowItem implements VisualItemInterface
     public static function newFromXML($row)
     {
         $rowAtributes = $row->attributes();
-        $type = (string)$rowAtributes->type;
+        $type = (string) $rowAtributes->type;
         $result = self::rowItemFromType($type);
         $result->loadFromXML($row);
         return $result;
@@ -83,7 +83,7 @@ abstract class RowItem implements VisualItemInterface
      */
     public static function newFromJSON($row)
     {
-        $type = (string)$row['type'];
+        $type = (string) $row['type'];
         $result = self::rowItemFromType($type);
         $result->loadFromJSON($row);
         return $result;
@@ -110,9 +110,9 @@ abstract class RowItem implements VisualItemInterface
     {
         $result = [];
         foreach ($item->attributes() as $key => $value) {
-            $result[$key] = (string)$value;
+            $result[$key] = (string) $value;
         }
-        $result['value'] = trim((string)$item);
+        $result['value'] = trim((string) $item);
         return $result;
     }
 

@@ -40,18 +40,21 @@
         <name>ca_co_subcuentasprov_ejercicios</name>
         <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>ca_co_subcuentasprov_proveedores</name>
         <type>FOREIGN KEY (codproveedor)
             REFERENCES proveedores (codproveedor)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>ca_co_subcuentasprov_subcuentas</name>
         <type>FOREIGN KEY (idsubcuenta)
             REFERENCES co_subcuentas (idsubcuenta)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
 </table>

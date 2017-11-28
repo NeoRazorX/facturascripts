@@ -103,10 +103,10 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         }
 
         $column_atributes = $column->attributes();
-        $this->description = (string)$column_atributes->description;
+        $this->description = (string) $column_atributes->description;
 
         if (!empty($column_atributes->display)) {
-            $this->display = (string)$column_atributes->display;
+            $this->display = (string) $column_atributes->display;
         }
 
         switch (true) {
@@ -128,8 +128,8 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     public function loadFromJSON($column)
     {
         parent::loadFromJSON($column);
-        $this->description = (string)$column['description'];
-        $this->display = (string)$column['display'];
+        $this->description = (string) $column['description'];
+        $this->display = (string) $column['display'];
 
         if (!empty($this->widget)) {
             unset($this->widget);

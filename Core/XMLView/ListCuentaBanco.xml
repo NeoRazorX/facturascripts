@@ -25,7 +25,7 @@
 <view>
     <columns>
         <column name="account" numcolumns="2">
-            <widget type="text" fieldname="codcuenta" onclick="EditCuentaBanco" />
+            <widget type="text" fieldname="codcuenta" onclick="EditCuentaBanco"/>
         </column>
         <column name="subaccount" numcolumns="2">
             <widget type="text" fieldname="codsubcuenta"/>

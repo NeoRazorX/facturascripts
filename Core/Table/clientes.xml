@@ -200,6 +200,7 @@
         <name>ca_clientes_grupos</name>
         <type>FOREIGN KEY (codgrupo)
             REFERENCES gruposclientes (codgrupo)
-            ON DELETE SET NULL ON UPDATE CASCADE</type>
+            ON DELETE SET NULL ON UPDATE CASCADE
+        </type>
     </constraint>
 </table>

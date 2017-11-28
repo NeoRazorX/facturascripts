@@ -323,8 +323,8 @@ class DataBaseTools
     {
         $key = 0;
         foreach ($xml->column as $col) {
-            $columns[$key]['name'] = (string)$col->name;
-            $columns[$key]['type'] = (string)$col->type;
+            $columns[$key]['name'] = (string) $col->name;
+            $columns[$key]['type'] = (string) $col->type;
 
             $columns[$key]['null'] = 'YES';
             if ($col->null && strtolower($col->null) === 'no') {
@@ -334,7 +334,7 @@ class DataBaseTools
             if ($col->default === '') {
                 $columns[$key]['default'] = null;
             } else {
-                $columns[$key]['default'] = (string)$col->default;
+                $columns[$key]['default'] = (string) $col->default;
             }
 
             ++$key;
@@ -351,8 +351,8 @@ class DataBaseTools
     {
         $key = 0;
         foreach ($xml->constraint as $col) {
-            $constraints[$key]['name'] = (string)$col->name;
-            $constraints[$key]['constraint'] = (string)$col->type;
+            $constraints[$key]['name'] = (string) $col->name;
+            $constraints[$key]['constraint'] = (string) $col->type;
             ++$key;
         }
     }

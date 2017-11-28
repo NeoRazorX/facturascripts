@@ -30,6 +30,7 @@
         <name>ca_atributos_valores</name>
         <type>FOREIGN KEY (codatributo)
             REFERENCES atributos (codatributo)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
 </table>

@@ -37,7 +37,6 @@ class WidgetItemColor extends WidgetItem
     }
 
     /**
-
      * Generates the HTML code to display the data in the List controller
      *
      * @param string $value

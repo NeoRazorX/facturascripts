@@ -93,7 +93,7 @@ abstract class ListController extends Base\Controller
 
         $this->exportManager = new Base\ExportManager();
         $this->active = $this->request->get('active', '');
-        $this->offset = (int)$this->request->get('offset', 0);
+        $this->offset = (int) $this->request->get('offset', 0);
         $this->query = $this->request->get('query', '');
         $this->views = [];
         $this->icons = [];

@@ -25,22 +25,22 @@
 <view>
     <columns>
         <column name="id" display="none" order="100">
-            <widget type="text" fieldname="id" onclick="EditArticuloProveedor" />
+            <widget type="text" fieldname="id" onclick="EditArticuloProveedor"/>
         </column>
         <column name="reference" order="100">
-            <widget type="text" fieldname="referencia" icon="fa-barcode" required="true" />
+            <widget type="text" fieldname="referencia" icon="fa-barcode" required="true"/>
         </column>
         <column name="supplier" display="left" order="100">
-            <widget type="text" fieldname="codproveedor" onclick="EditProveedor" />
+            <widget type="text" fieldname="codproveedor" onclick="EditProveedor"/>
         </column>
         <column name="supplier-reference" order="110">
-            <widget type="text" fieldname="refproveedor" icon="fa-barcode" required="true" />
+            <widget type="text" fieldname="refproveedor" icon="fa-barcode" required="true"/>
         </column>
         <column name="description" display="left" order="110">
-            <widget type="text" fieldname="descripcion" />
+            <widget type="text" fieldname="descripcion"/>
         </column>
         <column name="price" title="pvp" display="right" order="150">
-            <widget type="money" fieldname="precio" />
+            <widget type="money" fieldname="precio"/>
         </column>
         <column name="dto" title="dto%" display="right" order="160">
             <widget type="number" fieldname="dto">

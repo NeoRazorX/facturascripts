@@ -202,25 +202,29 @@
         <name>ca_facturasprov_series2</name>
         <type>FOREIGN KEY (codserie)
             REFERENCES series (codserie)
-            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+            ON DELETE RESTRICT ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>ca_facturasprov_ejercicios2</name>
         <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+            ON DELETE RESTRICT ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>ca_facturasprov_asiento2</name>
         <type>FOREIGN KEY (idasiento)
             REFERENCES co_asientos (idasiento)
-            ON DELETE SET NULL ON UPDATE CASCADE</type>
+            ON DELETE SET NULL ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>ca_facturasprov_asientop</name>
         <type>FOREIGN KEY (idasientop)
             REFERENCES co_asientos (idasiento)
-            ON DELETE SET NULL ON UPDATE CASCADE</type>
+            ON DELETE SET NULL ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>uniq_codigo_facturasprov</name>

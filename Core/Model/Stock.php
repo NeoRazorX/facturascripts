@@ -206,7 +206,7 @@ class Stock
      */
     public function setCantidad($cant = 0)
     {
-        $this->cantidad = (float)$cant;
+        $this->cantidad = (float) $cant;
         $this->disponible = $this->cantidad - $this->reservada;
     }
 
@@ -218,7 +218,7 @@ class Stock
     public function sumCantidad($cant = 0)
     {
         /// convertimos a flot por si acaso nos ha llegado un string
-        $this->cantidad += (float)$cant;
+        $this->cantidad += (float) $cant;
         $this->disponible = $this->cantidad - $this->reservada;
     }
 
@@ -277,7 +277,7 @@ class Stock
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
-            return round((float)$data[0]['total'], 3);
+            return round((float) $data[0]['total'], 3);
         }
 
         return 0;
@@ -297,7 +297,7 @@ class Stock
         $sql = 'SELECT COUNT(' . $column . ') AS total FROM ' . static::tableName() . ';';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
-            $num = (int)$data[0]['total'];
+            $num = (int) $data[0]['total'];
         }
 
         return $num;

@@ -25,16 +25,16 @@
 <view>
     <columns>
         <column name="code" order="100">
-            <widget type="text" fieldname="codpago" onclick="EditFormaPago" />
+            <widget type="text" fieldname="codpago" onclick="EditFormaPago"/>
         </column>
         <column name="description" order="110">
-            <widget type="text" fieldname="descripcion" />
+            <widget type="text" fieldname="descripcion"/>
         </column>
         <column name="expiration" display="center" order="120">
-            <widget type="text" fieldname="vencimiento" />
+            <widget type="text" fieldname="vencimiento"/>
         </column>
         <column name="account-code" titleurl="?page=ListEmpresa" order="125">
-            <widget type="text" fieldname="codcuenta" />
+            <widget type="text" fieldname="codcuenta"/>
         </column>
         <column name="generate-receipt" display="center" order="130">
             <widget type="text" fieldname="genrecibos">
@@ -43,10 +43,10 @@
             </widget>
         </column>
         <column name="domicilied" display="center" order="140">
-            <widget type="checkbox" fieldname="domiciliado" />
+            <widget type="checkbox" fieldname="domiciliado"/>
         </column>
         <column name="print" display="center" order="150">
-            <widget type="checkbox" fieldname="imprimir" />
+            <widget type="checkbox" fieldname="imprimir"/>
         </column>
     </columns>
 </view>

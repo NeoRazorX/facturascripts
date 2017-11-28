@@ -101,6 +101,7 @@ class MenuItem
      * Devuelve el indintificador del menu
      *
      * @param string $parent
+     *
      * @return string
      */
     private function getMenuId($parent)
@@ -110,7 +111,9 @@ class MenuItem
 
     /**
      * Devuelve el html para el menú / submenú
+     *
      * @param string $parent
+     *
      * @return string
      */
     public function getHTML($parent = '')

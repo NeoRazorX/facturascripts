@@ -174,7 +174,7 @@ class DataBase
      */
     public function connected()
     {
-        return (bool)self::$link;
+        return (bool) self::$link;
     }
 
     /**

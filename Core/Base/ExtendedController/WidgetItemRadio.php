@@ -63,7 +63,7 @@ class WidgetItemRadio extends WidgetItem
     public function loadFromJSON($column)
     {
         parent::loadFromJSON($column);
-        $this->values = (array)$column['widget']['values'];
+        $this->values = (array) $column['widget']['values'];
     }
 
     /**

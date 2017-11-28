@@ -24,10 +24,10 @@
 
 <view>
     <columns>
-        <group name="data" numcolumns="12">    
+        <group name="data" numcolumns="12">
             <column name="code" order="100" numcolumns="2">
-                <widget type="text" fieldname="codbalance" />
-            </column>           
+                <widget type="text" fieldname="codbalance"/>
+            </column>
             <column name="nature" numcolumns="2" order="110">
                 <widget type="select" fieldname="naturaleza">
                     <values title="A = Activo">A</values>
@@ -37,19 +37,19 @@
                 </widget>
             </column>
             <column name="description-1" order="120" numcolumns="4">
-                <widget type="text" fieldname="descripcion1" />
+                <widget type="text" fieldname="descripcion1"/>
             </column>
             <column name="description-2" order="130" numcolumns="4">
-                <widget type="text" fieldname="descripcion2" />
+                <widget type="text" fieldname="descripcion2"/>
             </column>
             <column name="description-3" order="140" numcolumns="4">
-                <widget type="text" fieldname="descripcion3" />
+                <widget type="text" fieldname="descripcion3"/>
             </column>
             <column name="description-4" order="150" numcolumns="4">
-                <widget type="text" fieldname="descripcion4" />
+                <widget type="text" fieldname="descripcion4"/>
             </column>
             <column name="description-4ba" order="160" numcolumns="4">
-                <widget type="text" fieldname="descripcion4ba" />
+                <widget type="text" fieldname="descripcion4ba"/>
             </column>
         </group>
     </columns>

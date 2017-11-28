@@ -417,13 +417,13 @@ class Partida
             $sumDebe = 0;
             $sumHaber = 0;
             foreach ($ordenadas as $po) {
-                $saldo += (float)$po['debe'] - (float)$po['haber'];
-                $sumDebe += (float)$po['debe'];
-                $sumHaber += (float)$po['haber'];
+                $saldo += (float) $po['debe'] - (float) $po['haber'];
+                $sumDebe += (float) $po['debe'];
+                $sumHaber += (float) $po['haber'];
                 if ($i >= $offset && $i < ($offset + self::FS_ITEM_LIMIT)) {
                     $aux = $partida->get($po['idpartida']);
                     if ($aux) {
-                        $aux->numero = (int)$po['numero'];
+                        $aux->numero = (int) $po['numero'];
                         $aux->fecha = date('d-m-Y', strtotime($po['fecha']));
                         $aux->saldo = $saldo;
                         $aux->sum_debe = $sumDebe;
@@ -463,7 +463,7 @@ class Partida
             foreach ($data as $po) {
                 $aux = $partida->get($po['idpartida']);
                 if ($aux) {
-                    $aux->numero = (int)$po['numero'];
+                    $aux->numero = (int) $po['numero'];
                     $aux->fecha = date('d-m-Y', strtotime($po['fecha']));
                     $saldo += $aux->debe - $aux->haber;
                     $sumDebe += $aux->debe;
@@ -572,9 +572,9 @@ class Partida
         $totales = ['debe' => 0, 'haber' => 0, 'saldo' => 0];
         $resultados = $this->dataBase->select($sql);
         if (!empty($resultados)) {
-            $totales['debe'] = (float)$resultados[0]['debe'];
-            $totales['haber'] = (float)$resultados[0]['haber'];
-            $totales['saldo'] = (float)$resultados[0]['debe'] - (float)$resultados[0]['haber'];
+            $totales['debe'] = (float) $resultados[0]['debe'];
+            $totales['haber'] = (float) $resultados[0]['haber'];
+            $totales['saldo'] = (float) $resultados[0]['debe'] - (float) $resultados[0]['haber'];
         }
 
         return $totales;
@@ -604,9 +604,9 @@ class Partida
         $resultados = $this->dataBase->select($sql);
 
         if (!empty($resultados)) {
-            $totales['debe'] = (float)$resultados[0]['debe'];
-            $totales['haber'] = (float)$resultados[0]['haber'];
-            $totales['saldo'] = (float)$resultados[0]['debe'] - (float)$resultados[0]['haber'];
+            $totales['debe'] = (float) $resultados[0]['debe'];
+            $totales['haber'] = (float) $resultados[0]['haber'];
+            $totales['saldo'] = (float) $resultados[0]['debe'] - (float) $resultados[0]['haber'];
         }
 
         return $totales;

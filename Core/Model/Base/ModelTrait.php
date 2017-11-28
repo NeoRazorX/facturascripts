@@ -220,7 +220,7 @@ trait ModelTrait
     private function getIntergerValueForField($field, $value)
     {
         if (!empty($value)) {
-            return (int)$value;
+            return (int) $value;
         }
 
         if ($field['name'] === $this->primaryColumn()) {
@@ -264,7 +264,7 @@ trait ModelTrait
                     case 'double':
                     case 'double precision':
                     case 'float':
-                        $this->{$key} = empty($value) ? 0.00 : (float)$value;
+                        $this->{$key} = empty($value) ? 0.00 : (float) $value;
                         break;
 
                     case 'date':
@@ -350,7 +350,7 @@ trait ModelTrait
         $sql = 'SELECT 1 FROM ' . $this->tableName()
             . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->dataBase->var2str($this->primaryColumnValue()) . ';';
 
-        return (bool)$this->dataBase->select($sql);
+        return (bool) $this->dataBase->select($sql);
     }
 
     /**
@@ -459,7 +459,7 @@ trait ModelTrait
             return 1;
         }
 
-        return 1 + (int)$cod[0]['cod'];
+        return 1 + (int) $cod[0]['cod'];
     }
 
     /**
