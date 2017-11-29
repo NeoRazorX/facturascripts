@@ -89,7 +89,7 @@ class PluginManager
     private function loadFromFile()
     {
         if (file_exists(self::$pluginListFile)) {
-            return explode(',', file_get_contents(self::$pluginListFile));
+            return explode(',', trim(file_get_contents(self::$pluginListFile)));
         }
 
         return [];
