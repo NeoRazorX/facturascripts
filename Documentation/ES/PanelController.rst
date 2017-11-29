@@ -105,6 +105,47 @@ setTabsPosition
 Este método permite poner las pestaña a la izquierda (left), abajo
 (bottom) o arriba (top). Por defecto están colocadas a la izquierda.
 
+Las pestañas cuando están colocadas a la izquierda, se mostrara la información
+de la pestaña seleccionada. En estos caso no es necesario especificar el método.
+
+Ejemplo sin especificar el método.
+
+.. code:: php
+
+    $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
+    $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
+        
+Ejemplo con el método.
+
+.. code:: php
+    
+    $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
+    $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
+    $this->setTabsPosition('left');    
+
+Las pestañas cuando están colocadas abajo, muestra ventana principal y debajo
+de esta mostrara la información de la pestaña seleccionada.
+seleccionada.
+
+Ejemplo.
+
+.. code:: php
+
+    $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
+    $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
+    $this->setTabsPosition('bottom');
+        
+Las pestañas cuando están colocadas arriba, mostrara la información de
+la pestaña seleccionada.
+
+Ejemplo.
+
+.. code:: php
+
+    $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
+    $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
+    $this->setTabsPosition('top');
+        
 getPageData
 ===========
 

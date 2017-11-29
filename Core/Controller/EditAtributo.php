@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the Atributo model
@@ -32,6 +31,7 @@ use FacturaScripts\Core\Model;
  */
 class EditAtributo extends ExtendedController\PanelController
 {
+
     /**
      * Load views
      */
@@ -40,7 +40,7 @@ class EditAtributo extends ExtendedController\PanelController
         $this->addEditView('FacturaScripts\Core\Model\Atributo', 'EditAtributo', 'attribute');
         $this->addEditListView('FacturaScripts\Core\Model\AtributoValor', 'EditAtributoValor', 'attribute values', 'fa-road');
     }
-    
+
     /**
      * Load view data procedure
      *
@@ -49,14 +49,15 @@ class EditAtributo extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
+        $codatributo = $this->request->get('code');
+
         switch ($keyView) {
             case 'EditAtributo':
-                $value = $this->request->get('code');
-                $view->loadData($value);
+                $view->loadData($codatributo);
                 break;
 
             case 'EditAtributoValor':
-                $where = [new DataBase\DataBaseWhere('codatributo', $this->getViewModelValue('EditAtributo', 'codatributo'))];
+                $where = [new DataBase\DataBaseWhere('codatributo', $codatributo)];
                 $view->loadData($where);
                 break;
         }

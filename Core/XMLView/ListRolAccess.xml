@@ -19,17 +19,17 @@
  *
  * Initial description for the controller ListRolAccess
  *
- * @author Artex Trading sa <jcuello@artextrading.com>  
+ * @author Artex Trading sa <jcuello@artextrading.com>
 -->
 
 <view>
     <columns>
         <column name="id" display="none" order="100">
             <widget type="text" fieldname="id"/>
-        </column>    
+        </column>
         <column name="role" order="100">
             <widget type="text" fieldname="codrol" />
-        </column>            
+        </column>
         <column name="pagename" order="110">
             <widget type="text" fieldname="pagename" />
         </column>
@@ -40,5 +40,28 @@
             <widget type="checkbox" fieldname="allow-update" />
         </column>
     </columns>
-</view>
 
+    <rows>
+        <row type="footer">
+            <group name="footer_actions" footer="specials-actions">
+                <button type="modal" label="add" color="info" action="add-rol-access" icon="fa-user-plus" />
+            </group>
+        </row>
+    </rows>
+
+    <modals>
+        <group name="add-rol-access" icon="fa-user-plus">
+            <column name="select-menu" title="menu">
+                <widget type="select">
+                    <values source="fs_pages" fieldcode="menu" fieldtitle="menu"></values>
+                </widget>
+            </column>
+
+            <column name="select-submenu" title="submenu">
+                <widget type="select">
+                    <values source="fs_pages" fieldcode="submenu" fieldtitle="submenu"></values>
+                </widget>
+            </column>
+        </group>
+    </modals>
+</view>

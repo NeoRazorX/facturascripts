@@ -26,7 +26,7 @@ use FacturaScripts\Core\Base;
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class VisualItem
+abstract class VisualItem
 {
     /**
      * Translation engine
@@ -71,6 +71,11 @@ class VisualItem
      * @var int
      */
     public $order;
+
+    /**
+     * Check and apply special operations on the items
+     */
+    abstract public function applySpecialOperations();
 
     /**
      * Class construct and initialization

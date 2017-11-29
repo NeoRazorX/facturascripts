@@ -37,6 +37,12 @@
         });
     }
 
+    function execActionForm(formName, actionValue) {
+        var form = document.forms[formName];
+        form.action.value = actionValue;
+        form.submit();
+    }
+
     $(document).ready(function () {
         $('#main_row :text:first').focus();
     });
@@ -131,7 +137,7 @@
     <!-- Data Row -->
     <div id="data" class="row">
         <div class="col-12">
-            <form name="mainform" action="" method="post" class="form" role="form">
+            <form action="#" method="post" class="form" role="form" name="main_form">
                 <input type="hidden" name="action" value="save">
                 <div class="card">
                     <div class="card-header">
