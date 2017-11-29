@@ -64,8 +64,8 @@ class GroupItem extends VisualItem implements VisualItemInterface
         $result = new GroupItem();
         $result->loadFromJSON($group);
         return $result;
-    }    
-    
+    }
+
     /**
      * Class construct and initialization
      */
@@ -170,5 +170,15 @@ class GroupItem extends VisualItem implements VisualItemInterface
     public function getHeaderHTML($value)
     {
         return $this->getIconHTML() . parent::getHeaderHTML($value);
+    }
+
+    /**
+     * Check and apply special operations on the group
+     */
+    public function applySpecialOperations()
+    {
+        foreach ($this->columns as $column) {
+            $column->applySpecialOperations();
+        }
     }
 }

@@ -180,25 +180,18 @@ class WidgetButton implements VisualItemInterface
      * Returns the HTML code to display an action button
      *
      * @param string $label
-     * @param string $indexView
      * @param string $hint
+     * @param string $formName
+     * @param string $class
      * @return string
      */
-    private function getActionHTML($label, $indexView, $hint, $class = 'col-sm-auto')
+    private function getActionHTML($label, $hint, $formName = 'main_form', $class = 'col-sm-auto')
     {
-        $active = '<input type="hidden" name="active" value="' . $indexView . '"/>';
-        $action = '<input type="hidden" name="action" value="' . $this->action . '"/>';
-        $button = '<button class="' . $class . ' btn btn-' . $this->color . '" type="submit"'
-            . ' onclick="this.disabled = true; this.form.submit();" ' . $hint . '>'
+        $html = '<button class="' . $class . ' btn btn-' . $this->color . '"'
+            . ' onclick="execActionForm(\'' . $formName . '\',\'' . $this->action . '\');" ' . $hint . '>'
             . $this->getIconHTML()
             . $label
             . '</button>';
-
-        $html = '<form action="#" method="post" style="display:inline-block">'
-            . $active
-            . $action
-            . $button
-            . '</form>';
 
         return $html;
     }
@@ -234,7 +227,7 @@ class WidgetButton implements VisualItemInterface
                 return $this->getCalculateHTML($label, $value, $hint);
 
             case 'action':
-                return $this->getActionHTML($label, $value, $hint, $class);
+                return $this->getActionHTML($label, $hint, $value, $class);
 
             case 'modal':
                 return $this->getModalHTML($label, $class);
