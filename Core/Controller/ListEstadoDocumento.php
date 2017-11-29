@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\EstadoDocumento;
 
 /**
  * Controller to list the items in the EstadoDocumento model
@@ -51,7 +50,7 @@ class ListEstadoDocumento extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView(EstadoDocumento::class, $className);
+        $this->addView('FacturaScripts\Core\Model\EstadoDocumento', $className);
         $this->addSearchFields($className, ['nombre', 'status']);
 
         $this->addOrderBy($className, 'id', 'id');

@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\AlbaranCliente;
 
 /**
  * Controller to list the items in the AlbaranCliente model
@@ -36,7 +35,7 @@ class ListAlbaranCliente extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView(AlbaranCliente::class, 'ListAlbaranCliente');
+        $this->addView('FacturaScripts\Core\Model\AlbaranCliente', 'ListAlbaranCliente');
         $this->addSearchFields('ListAlbaranCliente', ['codigo', 'numero2', 'nombrecliente', 'observaciones']);
 
         $this->addFilterDatePicker('ListAlbaranCliente', 'date', 'date', 'fecha');

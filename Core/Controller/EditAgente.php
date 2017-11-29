@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Agente;
 
 /**
  * Controller to edit a single item from the Agente model
@@ -36,7 +35,7 @@ class EditAgente extends ExtendedController\EditController
      */
     public function getModelName()
     {
-        return Agente::class;
+        return 'FacturaScripts\Core\Model\Agente';
     }
 
     /**

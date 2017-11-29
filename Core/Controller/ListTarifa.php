@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Tarifa;
 
 /**
  * Controller to list the items in the Tarifa model
@@ -52,7 +51,7 @@ class ListTarifa extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView(Tarifa::class, $className);
+        $this->addView('FacturaScripts\Core\Model\Tarifa', $className);
         $this->addSearchFields($className, ['nombre', 'codtarifa']);
 
         $this->addOrderBy($className, 'codtarifa', 'code');

@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Lib\EmailTools;
-use FacturaScripts\Core\Model\Settings;
 
 /**
  * Controller to edit main settings
@@ -130,7 +129,7 @@ class EditSettings extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $modelName = Settings::class;
+        $modelName = 'FacturaScripts\Core\Model\Settings';
         $icon = $this->getPageData()['icon'];
         foreach ($this->allSettingsXMLViews() as $name) {
             $title = substr($name, 8);

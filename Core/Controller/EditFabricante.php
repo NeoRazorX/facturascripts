@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Fabricante;
 
 /**
  * Controller to edit a single item from the Fabricante model
@@ -36,7 +35,7 @@ class EditFabricante extends ExtendedController\EditController
      */
     public function getModelName()
     {
-        return Fabricante::class;
+        return 'FacturaScripts\Core\Model\Fabricante';
     }
 
     /**

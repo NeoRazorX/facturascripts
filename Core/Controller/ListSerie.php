@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Serie;
 
 /**
  * Controller to list the items in the Serie model
@@ -52,7 +51,7 @@ class ListSerie extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView(Serie::class, $className);
+        $this->addView('FacturaScripts\Core\Model\Serie', $className);
         $this->addSearchFields($className, ['descripcion', 'codserie', 'codcuenta']);
 
         $this->addOrderBy($className, 'codserie', 'code');

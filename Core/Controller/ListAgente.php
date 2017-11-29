@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Agente;
 
 /**
  * Controller to list the items in the Agentes model
@@ -52,7 +51,7 @@ class ListAgente extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView(Agente::class, $className);
+        $this->addView('FacturaScripts\Core\Model\Agente', $className);
         $this->addSearchFields($className, ['nombre', 'apellidos', 'codagente', 'email']);
 
         $this->addOrderBy($className, 'codagente', 'code');

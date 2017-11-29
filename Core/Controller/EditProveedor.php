@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the Proveedor model
@@ -36,13 +35,13 @@ class EditProveedor extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView(Model\Proveedor::class, 'EditProveedor', 'supplier');
-        $this->addEditListView(Model\DireccionProveedor::class, 'EditDireccionProveedor', 'addresses', 'fa-road');
-        $this->addEditListView(Model\CuentaBancoProveedor::class, 'EditCuentaBancoProveedor', 'bank-accounts', 'fa-university');
-        $this->addEditListView(Model\ArticuloProveedor::class, 'EditProveedorArticulo', 'products', 'fa-cubes');
-        $this->addListView(Model\FacturaProveedor::class, 'ListFacturaProveedor', 'invoices', 'fa-files-o');
-        $this->addListView(Model\AlbaranProveedor::class, 'ListAlbaranProveedor', 'delivery-notes', 'fa-files-o');
-        $this->addListView(Model\PedidoProveedor::class, 'ListPedidoProveedor', 'orders', 'fa-files-o');
+        $this->addEditView('FacturaScripts\Core\Model\Proveedor', 'EditProveedor', 'supplier');
+        $this->addEditListView('FacturaScripts\Core\Model\DireccionProveedor', 'EditDireccionProveedor', 'addresses', 'fa-road');
+        $this->addEditListView('FacturaScripts\Core\Model\CuentaBancoProveedor', 'EditCuentaBancoProveedor', 'bank-accounts', 'fa-university');
+        $this->addEditListView('FacturaScripts\Core\Model\ArticuloProveedor', 'EditProveedorArticulo', 'products', 'fa-cubes');
+        $this->addListView('FacturaScripts\Core\Model\FacturaProveedor', 'ListFacturaProveedor', 'invoices', 'fa-files-o');
+        $this->addListView('FacturaScripts\Core\Model\AlbaranProveedor', 'ListAlbaranProveedor', 'delivery-notes', 'fa-files-o');
+        $this->addListView('FacturaScripts\Core\Model\PedidoProveedor', 'ListPedidoProveedor', 'orders', 'fa-files-o');
     }
 
     /**

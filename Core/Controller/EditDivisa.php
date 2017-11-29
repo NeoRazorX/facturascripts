@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Divisa;
 
 /**
  * Controller to edit a single item from the Divisa model
@@ -35,7 +34,7 @@ class EditDivisa extends ExtendedController\EditController
      */
     public function getModelName()
     {
-        return Divisa::class;
+        return 'FacturaScripts\Core\Model\Divisa';
     }
 
     /**

@@ -113,6 +113,12 @@ class APCAdapter implements AdaptorInterface
     public function clear()
     {
         $this->minilog->debug($this->i18n->trans('apc-clear'));
+        /**
+         * If cache_type is "user", the user cache will be cleared;
+         * otherwise, the system cache (cached files) will be cleared.
+         * On shared hostings, users only have perms to his own apache user.
+         * @source: http://php.net/manual/function.apc-clear-cache.php
+         */
         return apc_clear_cache('user');
     }
 }

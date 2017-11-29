@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Divisa;
 
 /**
  * Controller to list the items in the Divisa model
@@ -52,7 +51,7 @@ class ListDivisa extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView(Divisa::class, $className);
+        $this->addView('FacturaScripts\Core\Model\Divisa', $className);
         $this->addSearchFields($className, ['descripcion', 'coddivisa']);
 
         $this->addOrderBy($className, 'coddivisa', 'code');

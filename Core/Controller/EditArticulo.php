@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the EditArticulo model
@@ -37,11 +36,11 @@ class EditArticulo extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView(Model\Articulo::class, 'EditArticulo', 'products', 'fa-cubes');
-        $this->addEditListView(Model\Stock::class, 'EditStock', 'stock');
-        $this->addListView(Model\ArticuloProveedor::class, 'ListArticuloProveedor', 'suppliers', 'fa-ship');
-        $this->addListView(Model\ArticuloCombinacion::class, 'ListArticuloCombinacion', 'combinations', 'fa-sliders');
-        $this->addListView(Model\ArticuloTraza::class, 'ListArticuloTraza', 'traceability', 'fa-barcode');
+        $this->addEditView('FacturaScripts\Core\Model\Articulo', 'EditArticulo', 'products', 'fa-cubes');
+        $this->addEditListView('FacturaScripts\Core\Model\Stock', 'EditStock', 'stock');
+        $this->addListView('FacturaScripts\Core\Model\ArticuloProveedor', 'ListArticuloProveedor', 'suppliers', 'fa-ship');
+        $this->addListView('FacturaScripts\Core\Model\ArticuloCombinacion', 'ListArticuloCombinacion', 'combinations', 'fa-sliders');
+        $this->addListView('FacturaScripts\Core\Model\ArticuloTraza', 'ListArticuloTraza', 'traceability', 'fa-barcode');
     }
 
     /**

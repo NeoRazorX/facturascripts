@@ -22,10 +22,6 @@ namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
-use FacturaScripts\Core\Model\Agente;
-use FacturaScripts\Core\Model\Articulo;
-use FacturaScripts\Core\Model\Cliente;
-use FacturaScripts\Core\Model\Proveedor;
 
 /**
  * Class that contains the functions to generate random data
@@ -682,7 +678,7 @@ class ModelDataGenerator
      */
     protected function randomClientes($recursivo = true)
     {
-        return $this->randomModel(Cliente::class, 'clientes', 'clientes', $recursivo);
+        return $this->randomModel('FacturaScripts\Core\Model\Cliente', 'clientes', 'clientes', $recursivo);
     }
 
     /**
@@ -694,7 +690,7 @@ class ModelDataGenerator
      */
     protected function randomProveedores($recursivo = true)
     {
-        return $this->randomModel(Proveedor::class, 'proveedores', 'proveedores', $recursivo);
+        return $this->randomModel('FacturaScripts\Core\Model\Proveedor', 'proveedores', 'proveedores', $recursivo);
     }
 
     /**
@@ -706,7 +702,7 @@ class ModelDataGenerator
      */
     protected function randomAgentes($recursivo = true)
     {
-        return $this->randomModel(Agente::class, 'agentes', 'agentes', $recursivo);
+        return $this->randomModel('FacturaScripts\Core\Model\Agente', 'agentes', 'agentes', $recursivo);
     }
 
     /**
@@ -718,6 +714,6 @@ class ModelDataGenerator
      */
     protected function randomArticulos($recursivo = true)
     {
-        return $this->randomModel(Articulo::class, 'articulos', 'articulos', $recursivo);
+        return $this->randomModel('FacturaScripts\Core\Model\Articulo', 'articulos', 'articulos', $recursivo);
     }
 }

@@ -36,14 +36,14 @@ class EditCliente extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView(Model\Cliente::class, 'EditCliente', 'customer');
-        $this->addEditListView(Model\DireccionCliente::class, 'EditDireccionCliente', 'addresses', 'fa-road');
-        $this->addEditListView(Model\CuentaBancoCliente::class, 'EditCuentaBancoCliente', 'customer-banking-accounts', 'fa-bank');
-        $this->addListView(Model\Cliente::class, 'ListCliente', 'same-group');
-        $this->addListView(Model\FacturaCliente::class, 'ListFacturaCliente', 'invoices', 'fa-files-o');
-        $this->addListView(Model\AlbaranCliente::class, 'ListAlbaranCliente', 'delivery-notes', 'fa-files-o');
-        $this->addListView(Model\PedidoCliente::class, 'ListPedidoCliente', 'orders', 'fa-files-o');
-        $this->addListView(Model\PresupuestoCliente::class, 'ListPresupuestoCliente', 'estimations', 'fa-files-o');
+        $this->addEditView('FacturaScripts\Core\Model\Cliente', 'EditCliente', 'customer');
+        $this->addEditListView('FacturaScripts\Core\Model\DireccionCliente', 'EditDireccionCliente', 'addresses', 'fa-road');
+        $this->addEditListView('FacturaScripts\Core\Model\CuentaBancoCliente', 'EditCuentaBancoCliente', 'customer-banking-accounts', 'fa-bank');
+        $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'same-group');
+        $this->addListView('FacturaScripts\Core\Model\FacturaCliente', 'ListFacturaCliente', 'invoices', 'fa-files-o');
+        $this->addListView('FacturaScripts\Core\Model\AlbaranCliente', 'ListAlbaranCliente', 'delivery-notes', 'fa-files-o');
+        $this->addListView('FacturaScripts\Core\Model\PedidoCliente', 'ListPedidoCliente', 'orders', 'fa-files-o');
+        $this->addListView('FacturaScripts\Core\Model\PresupuestoCliente', 'ListPresupuestoCliente', 'estimations', 'fa-files-o');
     }
 
     /**

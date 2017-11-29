@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the GrupoClientes model
@@ -38,8 +37,8 @@ class EditGrupoClientes extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView(Model\GrupoClientes::class, 'EditGrupoClientes', 'customer-group');
-        $this->addListView(Model\Cliente::class, 'ListCliente', 'customers', 'fa-users');
+        $this->addEditView('FacturaScripts\Core\Model\GrupoClientes', 'EditGrupoClientes', 'customer-group');
+        $this->addListView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'customers', 'fa-users');
         $this->setTabsPosition('bottom');
     }
 

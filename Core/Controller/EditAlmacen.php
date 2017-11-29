@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Almacen;
 
 /**
  * Controller to edit a single item from the Almacen model
@@ -37,7 +36,7 @@ class EditAlmacen extends ExtendedController\EditController
      */
     public function getModelName()
     {
-        return Almacen::class;
+        return 'FacturaScripts\Core\Model\Almacen';
     }
 
     /**

@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the Familia model
@@ -38,9 +37,9 @@ class EditFamilia extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView(Model\Familia::class, 'EditFamilia', 'family');
-        $this->addListView(Model\Familia::class, 'ListFamilia', 'families-children', 'fa-level-down');
-        $this->addListView(Model\Articulo::class, 'ListArticulo', 'products', 'fa-cubes');
+        $this->addEditView('FacturaScripts\Core\Model\Familia', 'EditFamilia', 'family');
+        $this->addListView('FacturaScripts\Core\Model\Familia', 'ListFamilia', 'families-children', 'fa-level-down');
+        $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListArticulo', 'products', 'fa-cubes');
     }
 
     /**

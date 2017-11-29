@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Balance;
 
 /**
  * Controller to list the items in the Balance model
@@ -52,7 +51,7 @@ class ListBalance extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView(Balance::class, $className);
+        $this->addView('FacturaScripts\Core\Model\Balance', $className);
         $fields = [
             'codbalance', 'naturaleza', 'descripcion1', 'descripcion2', 'descripcion3', 'descripcion4', 'descripcion4ba'
         ];

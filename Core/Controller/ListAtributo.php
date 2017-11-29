@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Atributo;
 
 /**
  * Controller to list the items in the Atributo model
@@ -53,7 +52,7 @@ class ListAtributo extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView(Atributo::class, $className);
+        $this->addView('FacturaScripts\Core\Model\Atributo', $className);
         $this->addSearchFields($className, ['nombre', 'codatributo']);
 
         $this->addOrderBy($className, 'codatributo', 'code');

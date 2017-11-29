@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\ArticuloTraza;
 
 /**
  * Controlador para la edición de un registro del modelo ArticuloTraza
@@ -35,7 +34,7 @@ class EditArticuloTraza extends ExtendedController\EditController
      */
     public function getModelName()
     {
-        return ArticuloTraza::class;
+        return 'FacturaScripts\Core\Model\ArticuloTraza';
     }
 
     /**

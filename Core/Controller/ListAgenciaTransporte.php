@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\AgenciaTransporte;
 
 /**
  * Controller to list the items in the AgenciaTransporte model
@@ -52,7 +51,7 @@ class ListAgenciaTransporte extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView(AgenciaTransporte::class, $className);
+        $this->addView('FacturaScripts\Core\Model\AgenciaTransporte', $className);
         $this->addSearchFields($className, ['nombre', 'codtrans']);
 
         $this->addOrderBy($className, 'codtrans', 'code');

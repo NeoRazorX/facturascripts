@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controller to list the items in the Pais model
@@ -37,7 +36,7 @@ class ListPais extends ExtendedController\ListController
     protected function createViews()
     {
         /// Countries
-        $this->addView(Model\Pais::class, 'ListPais', 'countries', 'fa-globe');
+        $this->addView('FacturaScripts\Core\Model\Pais', 'ListPais', 'countries', 'fa-globe');
         $this->addSearchFields('ListPais', ['nombre', 'codiso', 'codpais']);
 
         $this->addFilterCheckbox('ListPais', 'validarprov', 'validate-states');
@@ -46,7 +45,7 @@ class ListPais extends ExtendedController\ListController
         $this->addOrderBy('ListPais', 'codiso', 'codiso');
 
         /// States
-        $this->addView(Model\Provincia::class, 'ListProvincia', 'province', 'fa-map-signs');
+        $this->addView('FacturaScripts\Core\Model\Provincia', 'ListProvincia', 'province', 'fa-map-signs');
         $this->addSearchFields('ListProvincia', ['provincia', 'codisoprov']);
 
         $this->addOrderBy('ListProvincia', 'provincia', 'province');

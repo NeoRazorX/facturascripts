@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Ejercicio;
 
 /**
  * Controller to list the items in the Ejercicio model
@@ -52,7 +51,7 @@ class ListEjercicio extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView(Ejercicio::class, $className);
+        $this->addView('FacturaScripts\Core\Model\Ejercicio', $className);
         $this->addSearchFields($className, ['nombre', 'codejercicio']);
 
         $this->addOrderBy($className, 'fechainicio', 'start-date', 2);

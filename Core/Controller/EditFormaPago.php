@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\FormaPago;
 
 /**
  * Controller to edit a single item from the FormaPago model
@@ -37,7 +36,7 @@ class EditFormaPago extends ExtendedController\EditController
      */
     public function getModelName()
     {
-        return FormaPago::class;
+        return 'FacturaScripts\Core\Model\FormaPago';
     }
 
     /**

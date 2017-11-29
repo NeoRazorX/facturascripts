@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Fabricante;
 
 /**
  * Controller to list the items in the Fabricante model
@@ -52,7 +51,7 @@ class ListFabricante extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView(Fabricante::class, $className);
+        $this->addView('FacturaScripts\Core\Model\Fabricante', $className);
         $this->addSearchFields($className, ['nombre', 'codfabricante']);
 
         $this->addOrderBy($className, 'codfabricante', 'code');

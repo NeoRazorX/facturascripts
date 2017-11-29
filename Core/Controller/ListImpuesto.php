@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Impuesto;
 
 /**
  * Controller to list the items in the Impuesto model
@@ -52,7 +51,7 @@ class ListImpuesto extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView(Impuesto::class, $className);
+        $this->addView('FacturaScripts\Core\Model\Impuesto', $className);
         $this->addSearchFields($className, ['descripcion', 'codimpuesto']);
 
         $this->addOrderBy($className, 'codimpuesto', 'code');

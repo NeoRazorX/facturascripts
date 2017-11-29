@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\PedidoCliente;
 
 /**
  * Controller to list the items in the PedidoCliente model
@@ -36,7 +35,7 @@ class ListPedidoCliente extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView(PedidoCliente::class, 'ListPedidoCliente');
+        $this->addView('FacturaScripts\Core\Model\PedidoCliente', 'ListPedidoCliente');
         $this->addSearchFields('ListPedidoCliente', ['codigo', 'numero2', 'observaciones']);
 
         $this->addFilterDatePicker('ListPedidoCliente', 'date', 'date', 'fecha');

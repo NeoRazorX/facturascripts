@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Asiento;
 
 /**
  * Controller to list the items in the Asiento model
@@ -35,7 +34,7 @@ class ListAsiento extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView(Asiento::class, 'ListAsiento');
+        $this->addView('FacturaScripts\Core\Model\Asiento', 'ListAsiento');
         $this->addSearchFields('ListAsiento', ['numero', 'concepto']);
 
         $this->addFilterDatePicker('ListAsiento', 'date', 'date', 'fecha');

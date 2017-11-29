@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Empresa;
 
 /**
  * Controller to list the items in the Empresa model
@@ -52,7 +51,7 @@ class ListEmpresa extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView(Empresa::class, $className);
+        $this->addView('FacturaScripts\Core\Model\Empresa', $className);
         $this->addSearchFields($className, ['nombre', 'nombrecorto', 'CAST(id AS VARCHAR)']);
 
         $this->addOrderBy($className, 'id', 'code');

@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\FacturaProveedor;
 
 /**
  * Controller to list the items in the FacturaProveedor model
@@ -36,7 +35,7 @@ class ListFacturaProveedor extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView(FacturaProveedor::class, 'ListFacturaProveedor');
+        $this->addView('FacturaScripts\Core\Model\FacturaProveedor', 'ListFacturaProveedor');
         $this->addSearchFields('ListFacturaProveedor', ['codigo', 'numproveedor', 'observaciones']);
 
         $this->addFilterDatePicker('ListFacturaProveedor', 'date', 'date', 'fecha');

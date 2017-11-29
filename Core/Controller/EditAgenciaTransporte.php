@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\AgenciaTransporte;
 
 /**
  * Controller to edit a single item from the AgenciaTransporte model
@@ -37,7 +36,7 @@ class EditAgenciaTransporte extends ExtendedController\EditController
      */
     public function getModelName()
     {
-        return AgenciaTransporte::class;
+        return 'FacturaScripts\Core\Model\AgenciaTransporte';
     }
 
     /**

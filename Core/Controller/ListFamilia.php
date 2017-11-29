@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Familia;
 
 /**
  * Controller to list the items in the Familia model
@@ -52,7 +51,7 @@ class ListFamilia extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView(Familia::class, $className);
+        $this->addView('FacturaScripts\Core\Model\Familia', $className);
         $this->addSearchFields($className, ['descripcion', 'codfamilia', 'madre']);
 
         $this->addOrderBy($className, 'codfamilia', 'code');

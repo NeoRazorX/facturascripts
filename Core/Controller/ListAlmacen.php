@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Almacen;
 
 /**
  *  Controller to list the items in the Almacen model
@@ -52,7 +51,7 @@ class ListAlmacen extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView(Almacen::class, $className);
+        $this->addView('FacturaScripts\Core\Model\Almacen', $className);
         $this->addSearchFields($className, ['nombre', 'codalmacen', 'contacto']);
 
         $this->addOrderBy($className, 'codalmacen', 'code');

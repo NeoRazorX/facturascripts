@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Proveedor;
 
 /**
  * Controller to list the items in the Proveedor model
@@ -51,7 +50,7 @@ class ListProveedor extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView(Proveedor::class, $className);
+        $this->addView('FacturaScripts\Core\Model\Proveedor', $className);
         $this->addSearchFields($className, ['nombre', 'razonsocial', 'codproveedor', 'email']);
 
         $this->addOrderBy($className, 'codproveedor', 'code');

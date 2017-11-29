@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controller to list the items in the Articulo model
@@ -36,7 +35,7 @@ class ListArticulo extends ExtendedController\ListController
     protected function createViews()
     {
         /* Artículos */
-        $this->addView(Model\Articulo::class, 'ListArticulo', 'products');
+        $this->addView('FacturaScripts\Core\Model\Articulo', 'ListArticulo', 'products');
         $this->addSearchFields('ListArticulo', ['referencia', 'descripcion']);
 
         $this->addFilterSelect('ListArticulo', 'codfabricante', 'fabricantes', '', 'nombre');
@@ -50,7 +49,7 @@ class ListArticulo extends ExtendedController\ListController
         $this->addOrderBy('ListArticulo', 'stockfis', 'stock');
 
         /* Artículos de proveedor */
-        $this->addView(Model\ArticuloProveedor::class, 'ListArticuloProveedor', 'supplier-products');
+        $this->addView('FacturaScripts\Core\Model\ArticuloProveedor', 'ListArticuloProveedor', 'supplier-products');
         $this->addSearchFields('ListArticuloProveedor', ['referencia', 'descripcion']);
 
         $this->addFilterSelect('ListArticuloProveedor', 'codproveedor', 'proveedores', '', 'nombre');
@@ -61,7 +60,7 @@ class ListArticulo extends ExtendedController\ListController
         $this->addOrderBy('ListArticuloProveedor', 'stockfis', 'stock');
 
         /* Stock */
-        $this->addView(Model\Stock::class, 'ListStock', 'stock');
+        $this->addView('FacturaScripts\Core\Model\Stock', 'ListStock', 'stock');
         $this->addSearchFields('ListStock', ['referencia', 'ubicacion']);
 
         $this->addFilterSelect('ListStock', 'codalmacen', 'almacenes', '', 'nombre');

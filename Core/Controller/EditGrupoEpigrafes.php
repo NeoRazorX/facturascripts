@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the GrupoEpigrafes model
@@ -38,8 +37,8 @@ class EditGrupoEpigrafes extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView(Model\GrupoEpigrafes::class, 'EditGrupoEpigrafes', 'epigraphs-group');
-        $this->addListView(Model\Epigrafe::class, 'ListEpigrafe', 'epigraphs', 'fa-book');
+        $this->addEditView('FacturaScripts\Core\Model\GrupoEpigrafes', 'EditGrupoEpigrafes', 'epigraphs-group');
+        $this->addListView('FacturaScripts\Core\Model\Epigrafe', 'ListEpigrafe', 'epigraphs', 'fa-book');
         $this->setTabsPosition('bottom');
     }
 

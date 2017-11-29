@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\ArticuloTraza;
 
 /**
  * Description of ListArticuloTraza
@@ -36,7 +35,7 @@ class ListArticuloTraza extends ExtendedController\ListController
     protected function createViews()
     {
         /* Artículos */
-        $this->addView(ArticuloTraza::class, 'ListArticuloTraza', 'traceability');
+        $this->addView('FacturaScripts\Core\Model\ArticuloTraza', 'ListArticuloTraza', 'traceability');
         $this->addSearchFields('ListArticuloTraza', ['referencia', 'numserie']);
 
         $this->addOrderBy('ListArticuloTraza', 'referencia', 'reference');

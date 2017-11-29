@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\DashboardCard;
 
 /**
  * Controller to edit a single item from the DashboardCard model
@@ -35,7 +34,7 @@ class EditDashboardCard extends ExtendedController\EditController
      */
     public function getModelName()
     {
-        return DashboardCard::class;
+        return 'FacturaScripts\Core\Model\DashboardCard';
     }
 
     /**

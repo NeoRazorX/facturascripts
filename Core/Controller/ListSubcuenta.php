@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Subcuenta;
 
 /**
  * Controller to list the items in the Subcuenta model
@@ -51,7 +50,7 @@ class ListSubcuenta extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        $this->addView(Subcuenta::class, 'ListSubcuenta');
+        $this->addView('FacturaScripts\Core\Model\Subcuenta', 'ListSubcuenta');
         $this->addSearchFields('ListSubcuenta', ['codsubcuenta', 'descripcion']);
 
         $this->addFilterSelect('ListSubcuenta', 'codejercicio', 'ejercicios', '', 'nombre');

@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model;
 
 /**
  * Controller to list the items in the Cuenta model
@@ -37,7 +36,7 @@ class ListCuenta extends ExtendedController\ListController
     protected function createViews()
     {
         /* Accounts */
-        $this->addView(Model\Cuenta::class, 'ListCuenta', 'accounts', 'fa-book');
+        $this->addView('FacturaScripts\Core\Model\Cuenta', 'ListCuenta', 'accounts', 'fa-book');
         $this->addSearchFields('ListCuenta', ['descripcion', 'codcuenta', 'codejercicio', 'codepigrafe']);
 
         $this->addOrderBy('ListCuenta', 'codejercicio desc,codcuenta', 'code');
@@ -47,7 +46,7 @@ class ListCuenta extends ExtendedController\ListController
         $this->addFilterSelect('ListCuenta', 'codepigrafe', 'co_epigrafes', '', 'descripcion');
 
         /* Epigraphs */
-        $this->addView(Model\Epigrafe::class, 'ListEpigrafe', 'epigraphs', 'fa-list-alt');
+        $this->addView('FacturaScripts\Core\Model\Epigrafe', 'ListEpigrafe', 'epigraphs', 'fa-list-alt');
         $this->addSearchFields('ListEpigrafe', ['descripcion', 'codepigrafe', 'codejercicio']);
 
         $this->addOrderBy('ListEpigrafe', 'codejercicio desc,descripcion', 'description');
@@ -57,7 +56,7 @@ class ListCuenta extends ExtendedController\ListController
         $this->addFilterSelect('ListEpigrafe', 'codgrupo', 'co_gruposepigrafes', '', 'descripcion');
 
         /* Epigraphs groups */
-        $this->addView(Model\GrupoEpigrafes::class, 'ListGrupoEpigrafes', 'epigraphs-group', 'fa-bars');
+        $this->addView('FacturaScripts\Core\Model\GrupoEpigrafes', 'ListGrupoEpigrafes', 'epigraphs-group', 'fa-bars');
         $this->addSearchFields('ListGrupoEpigrafes', ['descripcion', 'codgrupo', 'codejercicio']);
 
         $this->addOrderBy('ListGrupoEpigrafes', 'codejercicio desc,codgrupo', 'code');
@@ -66,7 +65,7 @@ class ListCuenta extends ExtendedController\ListController
         $this->addFilterSelect('ListGrupoEpigrafes', 'codejercicio', 'ejercicios', '', 'nombre');
 
         /* Special account */
-        $this->addView(Model\CuentaEspecial::class, 'ListCuentaEspecial', 'special-account', 'fa-newspaper-o');
+        $this->addView('FacturaScripts\Core\Model\CuentaEspecial', 'ListCuentaEspecial', 'special-account', 'fa-newspaper-o');
         $this->addSearchFields('ListCuentaEspecial', ['descripcion', 'codcuenta']);
 
         $this->addOrderBy('ListCuentaEspecial', 'descripcion');

@@ -21,11 +21,6 @@ namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model;
-use FacturaScripts\Core\Model\LineaAlbaranCliente;
-use FacturaScripts\Core\Model\LineaAlbaranProveedor;
-use FacturaScripts\Core\Model\LineaPedidoCliente;
-use FacturaScripts\Core\Model\LineaPedidoProveedor;
-use FacturaScripts\Core\Model\LineaPresupuestoCliente;
 
 /**
  * Description of DocumentGenerator
@@ -179,7 +174,7 @@ class DocumentGenerator extends ModelDataGenerator
     private function randomLineas(
         &$doc,
         $iddoc = 'idalbaran',
-        $lineaClass = LineaAlbaranCliente::class,
+        $lineaClass = 'FacturaScripts\Core\Model\LineaAlbaranCliente',
         $regimeniva,
         $recargo,
         $modStock = 0
@@ -282,7 +277,7 @@ class DocumentGenerator extends ModelDataGenerator
                 $regimeniva = $this->randomizeDocumentVenta($alb, $eje, $clientes, $num);
 
                 if ($alb->save()) {
-                    $this->randomLineas($alb, 'idalbaran', LineaAlbaranCliente::class, $regimeniva, $recargo, -1);
+                    $this->randomLineas($alb, 'idalbaran', 'FacturaScripts\Core\Model\LineaAlbaranCliente', $regimeniva, $recargo, -1);
                     $num++;
                 } else {
                     break;
@@ -322,7 +317,7 @@ class DocumentGenerator extends ModelDataGenerator
                 $regimeniva = $this->randomizeDocumentCompra($alb, $eje, $proveedores, $num);
 
                 if ($alb->save()) {
-                    $this->randomLineas($alb, 'idalbaran', LineaAlbaranProveedor::class, $regimeniva, $recargo, 1);
+                    $this->randomLineas($alb, 'idalbaran', 'FacturaScripts\Core\Model\LineaAlbaranProveedor', $regimeniva, $recargo, 1);
                     $num++;
                 } else {
                     break;
@@ -365,7 +360,7 @@ class DocumentGenerator extends ModelDataGenerator
                 }
 
                 if ($ped->save()) {
-                    $this->randomLineas($ped, 'idpedido', LineaPedidoCliente::class, $regimeniva, $recargo);
+                    $this->randomLineas($ped, 'idpedido', 'FacturaScripts\Core\Model\LineaPedidoCliente', $regimeniva, $recargo);
                     $num++;
                 } else {
                     break;
@@ -405,7 +400,7 @@ class DocumentGenerator extends ModelDataGenerator
                 $regimeniva = $this->randomizeDocumentCompra($ped, $eje, $proveedores, $num);
 
                 if ($ped->save()) {
-                    $this->randomLineas($ped, 'idpedido', LineaPedidoProveedor::class, $regimeniva, $recargo);
+                    $this->randomLineas($ped, 'idpedido', 'FacturaScripts\Core\Model\LineaPedidoProveedor', $regimeniva, $recargo);
                     $num++;
                 } else {
                     break;
@@ -446,7 +441,7 @@ class DocumentGenerator extends ModelDataGenerator
                 $presu->finoferta = date('d-m-Y', strtotime($presu->fecha . ' +' . mt_rand(1, 18) . ' months'));
 
                 if ($presu->save()) {
-                    $this->randomLineas($presu, 'idpresupuesto', LineaPresupuestoCliente::class, $regimeniva, $recargo);
+                    $this->randomLineas($presu, 'idpresupuesto', 'FacturaScripts\Core\Model\LineaPresupuestoCliente', $regimeniva, $recargo);
                     $num++;
                 } else {
                     break;

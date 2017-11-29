@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Provincia;
 
 /**
  * Controlador para la edición de un registro del modelo de Provincia
@@ -35,7 +34,7 @@ class EditProvincia extends ExtendedController\EditController
      */
     public function getModelName()
     {
-        return Provincia::class;
+        return 'FacturaScripts\Core\Model\Provincia';
     }
 
     /**

@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\Empresa;
 
 /**
  * Controller to edit a single item from the  Empresa model
@@ -36,7 +35,7 @@ class EditEmpresa extends ExtendedController\EditController
      */
     public function getModelName()
     {
-        return Empresa::class;
+        return 'FacturaScripts\Core\Model\Empresa';
     }
 
     /**

@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the Atributo model
@@ -38,8 +37,8 @@ class EditAtributo extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView(Model\Atributo::class, 'EditAtributo', 'attribute');
-        $this->addEditListView(Model\AtributoValor::class, 'EditAtributoValor', 'attribute values', 'fa-road');
+        $this->addEditView('FacturaScripts\Core\Model\Atributo', 'EditAtributo', 'attribute');
+        $this->addEditListView('FacturaScripts\Core\Model\AtributoValor', 'EditAtributoValor', 'attribute values', 'fa-road');
     }
 
     /**

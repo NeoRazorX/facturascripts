@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\ArticuloProveedor;
 
 /**
  * Controller to edit a single item from the ArticuloProveedor model
@@ -37,7 +36,7 @@ class EditArticuloProveedor extends ExtendedController\EditController
      */
     public function getModelName()
     {
-        return ArticuloProveedor::class;
+        return 'FacturaScripts\Core\Model\ArticuloProveedor';
     }
 
     /**

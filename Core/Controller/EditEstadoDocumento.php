@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\EstadoDocumento;
 
 /**
  * Controller to edit a single item from the EstadoDocumento model
@@ -35,7 +34,7 @@ class EditEstadoDocumento extends ExtendedController\EditController
      */
     public function getModelName()
     {
-        return EstadoDocumento::class;
+        return 'FacturaScripts\Core\Model\EstadoDocumento';
     }
 
     /**

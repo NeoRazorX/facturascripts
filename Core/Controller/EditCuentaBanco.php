@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\CuentaBanco;
 
 /**
  * Controller to edit a single item from the CuentaBanco model
@@ -36,7 +35,7 @@ class EditCuentaBanco extends ExtendedController\EditController
      */
     public function getModelName()
     {
-        return CuentaBanco::class;
+        return 'FacturaScripts\Core\Model\CuentaBanco';
     }
 
     /**
