@@ -18,7 +18,12 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\Database;
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Model\PresupuestoCliente;
+use FacturaScripts\Core\Model\PedidoCliente;
+use FacturaScripts\Core\Model\AlbaranCliente;
+use FacturaScripts\Core\Model\FacturaCliente;
 
 /**
  * Controller to edit a single item from the Agente model
@@ -26,7 +31,7 @@ use FacturaScripts\Core\Base\ExtendedController;
  * @author Raul
  *  Edit Agente class based upon Editcliente's functionality
  */
-class EditAgente extends ExtendedController\EditController
+class EditAgente extends ExtendedController\PanelController
 {
 
     /**
@@ -35,6 +40,41 @@ class EditAgente extends ExtendedController\EditController
     public function getModelName()
     {
         return 'FacturaScripts\Core\Model\Agente';
+    }
+
+    /**
+     * Load Views
+     */
+    protected function createViews()
+    {
+        $this->addEditView('FacturaScripts\Core\Model\Agente', 'EditAgente', 'agent');
+        $this->addListView('\FacturaScripts\Core\Model\PresupuestoCliente', 'EditAgentePresupuestos', 'budgets');
+        $this->addListView('\FacturaScripts\Core\Model\PedidoCliente', 'EditAgentePedidos', 'orders');
+        $this->addListView('\FacturaScripts\Core\Model\AlbaranCliente', 'EditAgenteAlbaranes', 'delivery-notes');
+        $this->addListView('\FacturaScripts\Core\Model\FacturaCliente', 'EditAgenteFacturas', 'invoice', 'fa-book');
+    }
+
+    /**
+     * Load view data procedure
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        $code = $this->request->get('code');
+        switch ($keyView) {
+            case 'EditAgente':
+                $view->loadData($code);
+                break;
+            case 'EditAgentePresupuestos':
+            case 'EditAgentePedidos':
+            case 'EditAgenteAlbaranes':
+            case 'EditAgenteFacturas':
+                $where = [new DataBase\DataBaseWhere('codagente', $code)];
+                $view->loadData($where);
+                break;
+        }
     }
 
     /**
