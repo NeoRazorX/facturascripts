@@ -1,4 +1,4 @@
-{% extends "Master/MenuTemplate.html" %}
+{% extends "Master/MenuTemplate.twig" %}
 
 {% block css %}
     {{ parent() }}
@@ -69,14 +69,14 @@
     {% set edit_url = fsc.getURL('edit') %}
 
     {# -- Visual macros -- #}
-    {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
-    {% from 'Macro/Utils.html' import exportData as exportData %}
-    {% from 'Macro/BaseController.html' import columnsForListView as columnsForListView %}
-    {% from 'Macro/BaseController.html' import columnsForEditListView as columnsForEditListView %}
-    {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
-    {% from 'Macro/BaseController.html' import rowHeaderForEditView as rowHeaderForEditView %}
-    {% from 'Macro/BaseController.html' import rowFooterForEditView as rowFooterForEditView %}
-    {% from 'Macro/BaseController.html' import modalFormFromColumns as modalFormFromColumns %}
+    {% from 'Macro/Utils.twig' import popoverTitle as popoverTitle %}
+    {% from 'Macro/Utils.twig' import exportData as exportData %}
+    {% from 'Macro/BaseController.twig' import columnsForListView as columnsForListView %}
+    {% from 'Macro/BaseController.twig' import columnsForEditListView as columnsForEditListView %}
+    {% from 'Macro/BaseController.twig' import columnsForEditView as columnsForEditView %}
+    {% from 'Macro/BaseController.twig' import rowHeaderForEditView as rowHeaderForEditView %}
+    {% from 'Macro/BaseController.twig' import rowFooterForEditView as rowFooterForEditView %}
+    {% from 'Macro/BaseController.twig' import modalFormFromColumns as modalFormFromColumns %}
 
     {# -- Main Body -- #}
     <div class="container-fluid">
