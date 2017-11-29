@@ -50,7 +50,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     public $widget;
 
     /**
-     * Crea y carga la estructura de una columna en base a un archivo XML
+     * Create and load the structure of a column based on an XML file
      *
      * @param \SimpleXMLElement $column
      * @return GroupItem
@@ -63,7 +63,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Crea y carga la estructura de una columna en base a la base de datos
+     * Create and load the structure of a column based on the database
      *
      * @param array $group
      * @return GroupItem
@@ -153,6 +153,25 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         }
 
         return $result;
+    }
+
+    /**
+     * check and apply special operations on the columns
+     *
+     * @return None
+     */
+    public function applySpecialOperations()
+    {
+        if ($this->widget->type === 'select') {
+            if (isset($this->widget->values[0]['source'])) {
+                $this->widget->loadValuesFromModel();
+                return;
+            }
+
+            if (isset($this->widget->values[0]['start'])) {
+                $this->widget->loadFromRange();
+            }
+        }
     }
 
     /**
