@@ -118,7 +118,7 @@ class PluginManager
      */
     public function enable($pluginName)
     {
-        if (file_exists(FS_FOLDER . '/plugins/' . $pluginName)) {
+        if (file_exists(FS_FOLDER . '/Plugins/' . $pluginName)) {
             self::$enabledPlugins[] = $pluginName;
             $this->save();
         }
