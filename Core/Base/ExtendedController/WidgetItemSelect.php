@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Base\ExtendedController;
 
+use FacturaScripts\Core\Model;
+
 /**
  * Description of WidgetItemSelect
  *
@@ -105,6 +107,27 @@ class WidgetItemSelect extends WidgetItem
             ];
         }
     }
+
+    public function loadValuesFromModel()
+    {
+        $tableName = $this->values[0]['source'];
+        $fieldCode = $this->values[0]['fieldcode'];
+        $fieldDesc = $this->values[0]['fieldtitle'];
+        $allowEmpty = !$this->required;
+        $rows = Model\CodeModel::all($tableName, $fieldCode, $fieldDesc, $allowEmpty);
+        $this->setValuesFromCodeModel($rows);
+        unset($rows);
+    }
+
+    public function loadValuesFromRange()
+    {
+        $start = $this->values[0]['start'];
+        $end = $this->values[0]['end'];
+        $step = $this->values[0]['step'];
+        $values = range($start, $end, $step);
+        $this->setValuesFromArray($values);
+    }
+
 
     /**
      * Generates the HTML code to display the data in the List controller
