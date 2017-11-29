@@ -36,7 +36,7 @@ class EditAlbaranProveedor extends ExtendedController\DocumentController
     protected function createViews()
     {
         $this->addEditView('FacturaScripts\Core\Model\AlbaranProveedor', 'EditAlbaranProveedor', 'delivery-note');
-        $this->addEditListView('FacturaScripts\Core\Model\LineaAlbaranProveedor', 'CommonLineasDocumento', 'lines');
+        $this->addListView('FacturaScripts\Core\Model\LineaAlbaranProveedor', 'CommonLineasDocumento', 'lines');
     }
 
     /**
@@ -48,12 +48,12 @@ class EditAlbaranProveedor extends ExtendedController\DocumentController
     protected function loadData($keyView, $view)
     {
         $idalbaran = $this->request->get('code');
-        
+
         switch ($keyView) {
             case 'EditAlbaranProveedor':
                 $view->loadData($idalbaran);
                 break;
-            
+
             case 'CommonLineasDocumento':
                 $where = [new DataBaseWhere('idalbaran', $idalbaran)];
                 $view->loadData($where);

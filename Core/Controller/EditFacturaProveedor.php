@@ -36,7 +36,7 @@ class EditFacturaProveedor extends ExtendedController\DocumentController
     protected function createViews()
     {
         $this->addEditView('FacturaScripts\Core\Model\FacturaProveedor', 'EditFacturaProveedor', 'delivery-note');
-        $this->addEditListView('FacturaScripts\Core\Model\LineaFacturaProveedor', 'CommonLineasDocumento', 'lines');
+        $this->addListView('FacturaScripts\Core\Model\LineaFacturaProveedor', 'CommonLineasDocumento', 'lines');
     }
 
     /**
@@ -47,15 +47,15 @@ class EditFacturaProveedor extends ExtendedController\DocumentController
      */
     protected function loadData($keyView, $view)
     {
-        $idalbaran = $this->request->get('code');
-        
+        $idfactura = $this->request->get('code');
+
         switch ($keyView) {
             case 'EditFacturaProveedor':
-                $view->loadData($idalbaran);
+                $view->loadData($idfactura);
                 break;
-            
+
             case 'CommonLineasDocumento':
-                $where = [new DataBaseWhere('idfactura', $idalbaran)];
+                $where = [new DataBaseWhere('idfactura', $idfactura)];
                 $view->loadData($where);
                 break;
         }

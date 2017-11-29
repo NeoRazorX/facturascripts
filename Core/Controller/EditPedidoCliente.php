@@ -36,7 +36,7 @@ class EditPedidoCliente extends ExtendedController\DocumentController
     protected function createViews()
     {
         $this->addEditView('FacturaScripts\Core\Model\PedidoCliente', 'EditPedidoCliente', 'delivery-note');
-        $this->addEditListView('FacturaScripts\Core\Model\LineaPedidoCliente', 'CommonLineasDocumento', 'lines');
+        $this->addListView('FacturaScripts\Core\Model\LineaPedidoCliente', 'CommonLineasDocumento', 'lines');
     }
 
     /**
@@ -47,15 +47,15 @@ class EditPedidoCliente extends ExtendedController\DocumentController
      */
     protected function loadData($keyView, $view)
     {
-        $idalbaran = $this->request->get('code');
-        
+        $idpedido = $this->request->get('code');
+
         switch ($keyView) {
             case 'EditPedidoCliente':
-                $view->loadData($idalbaran);
+                $view->loadData($idpedido);
                 break;
-            
+
             case 'CommonLineasDocumento':
-                $where = [new DataBaseWhere('idpedido', $idalbaran)];
+                $where = [new DataBaseWhere('idpedido', $idpedido)];
                 $view->loadData($where);
                 break;
         }
