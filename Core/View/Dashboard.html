@@ -25,8 +25,8 @@
         </div>
     </div>
     <div class="row">
+        <div class="card-columns" style="padding-left: 10px; padding-right: 10px;">
         {% for card in fsc.cursor %}
-        <div class="col-3">
             <div class="card {{ card.cardClass() }}">
                 <div class="card-body">
                     <p class="card-text">{{ card.descripcion }}</p>
@@ -47,9 +47,8 @@
                     <small>{{ card.fecha }}</small>
                 </div>
             </div>
-            <br/>
-        </div>
         {% endfor %}
+        </div>
     </div>
 </div>
 {% endblock %}

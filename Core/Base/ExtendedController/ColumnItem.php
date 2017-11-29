@@ -169,7 +169,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             }
 
             if (isset($this->widget->values[0]['start'])) {
-                $this->widget->loadFromRange();
+                $this->widget->loadValuesFromRange();
             }
         }
     }
