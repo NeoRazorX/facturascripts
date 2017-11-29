@@ -30,8 +30,7 @@ class WidgetItemSelect extends WidgetItem
 {
 
     /**
-     * Accepted values for the field associated to the widget.
-     * Values are loaded from Model\PageOption::getForUser()
+     * Accepted values for the field associated to the widget
      *
      * @var array
      */
@@ -148,8 +147,7 @@ class WidgetItemSelect extends WidgetItem
     }
 
     /**
-     * Generates the HTML code to display and edit  the data in the Edit / EditList controller.
-     * Values are loaded from Model\PageOption::getForUser()
+     * Generates the HTML code to display and edit  the data in the Edit / EditList controller
      *
      * @param string $value
      *
