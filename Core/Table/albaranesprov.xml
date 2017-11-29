@@ -106,6 +106,10 @@
         <null>YES</null>
     </column>
     <column>
+        <name>femail</name>
+        <type>date</type>
+    </column>
+    <column>
         <name>ptefactura</name>
         <type>boolean</type>
         <null>NO</null>

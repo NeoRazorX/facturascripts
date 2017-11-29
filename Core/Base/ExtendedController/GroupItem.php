@@ -174,4 +174,14 @@ class GroupItem extends VisualItem implements VisualItemInterface
     {
         return $this->getIconHTML() . parent::getHeaderHTML($value);
     }
+
+    /**
+     * Check and apply special operations on the group
+     */
+    public function applySpecialOperations()
+    {
+        foreach ($this->columns as $column) {
+            $column->applySpecialOperations();
+        }
+    }
 }

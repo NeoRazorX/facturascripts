@@ -50,7 +50,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     public $widget;
 
     /**
-     * Create and load the structure of a column from a XML file.
+     * Create and load the structure of a column based on an XML file
      *
      * @param \SimpleXMLElement $column
      *
@@ -64,7 +64,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Create and load the structure of a column from a database
+     * Create and load the structure of a column based on the database
      *
      * @param array $column
      *
@@ -157,6 +157,25 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
+     * Check and apply special operations on the columns
+     *
+     * @return None
+     */
+    public function applySpecialOperations()
+    {
+        if ($this->widget->type === 'select') {
+            if (isset($this->widget->values[0]['source'])) {
+                $this->widget->loadValuesFromModel();
+                return;
+            }
+
+            if (isset($this->widget->values[0]['start'])) {
+                $this->widget->loadFromRange();
+            }
+        }
+    }
+
+    /**
      * Generates HTML code for the element's header display
      *
      * @param string $value
@@ -191,10 +210,11 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      *
      * @param string $value
      * @param bool $withLabel
+     * @param string $formName
      *
      * @return string
      */
-    public function getEditHTML($value, $withLabel = true)
+    public function getEditHTML($value, $withLabel = true, $formName = 'main_form')
     {
         $header = $withLabel ? $this->getHeaderHTML($this->title) : '';
         $data = $this->getColumnData($this->widget->columnFunction());
@@ -211,7 +231,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             case 'calculate':
             case 'action':
             case 'modal':
-                $html = $this->buttonHTMLColumn($data);
+                $html = $this->buttonHTMLColumn($data, $formName);
                 break;
 
             default:
@@ -242,16 +262,16 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Returns the HTML code to display a button field.
+     * Returns the HTML code to display a button
      *
-     * @param $data
-     *
+     * @param array $data
+     * @param string $formName
      * @return string
      */
-    private function buttonHTMLColumn($data)
+    private function buttonHTMLColumn($data, $formName)
     {
         return '<div class="form-group' . $data['ColumnClass'] . '"><label>&nbsp;</label>'
-            . $this->widget->getHTML($this->widget->label, '', $data['ColumnHint'], 'col')
+            . $this->widget->getHTML($this->widget->label, $formName, $data['ColumnHint'], 'col')
             . $data['ColumnDescription']
             . '</div>';
     }
@@ -302,8 +322,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             ++$index;
             $values = [$index . '"', $optionValue['value'], $checked];
             $html .= '<div class="form-check">'
-                . '<label class="form-check-label custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0" '
-                . $data['ColumnHint'] . '>'
+                . '<label class="form-check-label custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0" ' . $data['ColumnHint'] . '>'
                 . str_replace($template_var, $values, $input)
                 . '&nbsp;' . $optionValue['title']
                 . '</label>'
