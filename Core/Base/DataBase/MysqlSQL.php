@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
@@ -27,6 +26,7 @@ namespace FacturaScripts\Core\Base\DataBase;
  */
 class MysqlSQL implements DataBaseSQL
 {
+
     /**
      * Generates the SQL with the field type and the DEFAULT and null constraints
      *

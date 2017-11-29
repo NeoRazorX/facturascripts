@@ -37,24 +37,11 @@ class EditRol extends ExtendedController\PanelController
     {
         $this->addEditView('FacturaScripts\Core\Model\Rol', 'EditRol', 'rol', 'fa-id-card');
 
-        $this->addEditListView('FacturaScripts\Core\Model\RolUser', 'EditRolUser', 'rol-user', 'fa-address-card-o');
-        $this->views['EditRolUser']->disableColumn('role', TRUE);
-
         $this->addListView('FacturaScripts\Core\Model\RolAccess', 'ListRolAccess', 'page-rule', 'fa fa-check-square');
         $this->views['ListRolAccess']->disableColumn('role', TRUE);
-    }
 
-    /**
-     * Returns the $fieldName value from the Rol model
-     *
-     * @param string $fieldName
-     *
-     * @return string|boolean
-     */
-    private function getRolFieldValue($fieldName)
-    {
-        $model = $this->views['EditRol']->getModel();
-        return $model->{$fieldName};
+        $this->addEditListView('FacturaScripts\Core\Model\RolUser', 'EditRolUser', 'rol-user', 'fa-address-card-o');
+        $this->views['EditRolUser']->disableColumn('role', TRUE);
     }
 
     /**
@@ -72,12 +59,12 @@ class EditRol extends ExtendedController\PanelController
                 break;
 
             case 'EditRolUser':
-                $where = [new DataBase\DataBaseWhere('codrol', $this->getRolFieldValue('codrol'))];
+                $where = [new DataBase\DataBaseWhere('codrol', $this->getViewModelValue('EditRol', 'codrol'))];
                 $view->loadData($where);
                 break;
 
             case 'ListRolAccess':
-                $where = [new DataBase\DataBaseWhere('codrol', $this->getRolFieldValue('codrol'))];
+                $where = [new DataBase\DataBaseWhere('codrol', $this->getViewModelValue('EditRol', 'codrol'))];
                 $view->loadData($where);
                 break;
         }

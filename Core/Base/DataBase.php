@@ -16,16 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseEngine;
 use FacturaScripts\Core\Base\DataBase\Mysql;
 use FacturaScripts\Core\Base\DataBase\Postgresql;
-
-define('FS_FOREIGN_KEYS', '1');
-define('FS_DB_INTEGER', 'INTEGER');
-define('FS_CHECK_DB_TYPES', '1');
 
 /**
  * Clase genérica de acceso a la base de datos, ya sea MySQL o PostgreSQL.
@@ -35,6 +30,7 @@ define('FS_CHECK_DB_TYPES', '1');
  */
 class DataBase
 {
+
     /**
      * El enlace con la base de datos.
      *
@@ -57,20 +53,6 @@ class DataBase
     private static $miniLog;
 
     /**
-     * Nº de selects ejecutados.
-     *
-     * @var integer
-     */
-    private static $totalSelects;
-
-    /**
-     * Nº de transacciones ejecutadas.
-     *
-     * @var integer
-     */
-    private static $totalTransactions;
-
-    /**
      * Lista de tablas de la base de datos
      *
      * @var array
@@ -84,8 +66,6 @@ class DataBase
     {
         if (self::$link === null) {
             self::$miniLog = new MiniLog();
-            self::$totalSelects = 0;
-            self::$totalTransactions = 0;
             self::$tables = [];
 
             switch (strtolower(FS_DB_TYPE)) {
@@ -104,26 +84,6 @@ class DataBase
                     break;
             }
         }
-    }
-
-    /**
-     * Devuelve el número de selects ejecutados
-     *
-     * @return integer
-     */
-    public function getTotalSelects()
-    {
-        return self::$totalSelects;
-    }
-
-    /**
-     * Devuele le número de transacciones realizadas
-     *
-     * @return integer
-     */
-    public function getTotalTransactions()
-    {
-        return self::$totalTransactions;
     }
 
     /**
@@ -291,7 +251,6 @@ class DataBase
         $result = self::$engine->commit(self::$link);
         if ($result) {
             self::$miniLog->sql('Commit Transaction');
-            self::$totalTransactions++;
         }
 
         return $result;
@@ -329,7 +288,7 @@ class DataBase
      * Limit es el número de elementos que quieres que devuelva.
      * Offset es el número de resultado desde el que quieres que empiece.
      *
-     * @param string  $sql
+     * @param string $sql
      * @param int $limit
      * @param int $offset
      *
@@ -348,12 +307,10 @@ class DataBase
         self::$miniLog->sql($sql); /// añadimos la consulta sql al historial
         $result = self::$engine->select(self::$link, $sql);
         if (empty($result)) {
-            self::$miniLog->sql(self::$engine->errorMessage(self::$link));
+            self::$miniLog->critical(self::$engine->errorMessage(self::$link));
 
             return [];
         }
-
-        self::$totalSelects++;
 
         return $result;
     }
@@ -455,46 +412,36 @@ class DataBase
     }
 
     /**
-     * Crea la tabla con la estructura indicada.
+     * Transforma una variable en una cadena de texto válida para ser
+     * utilizada en una consulta SQL.
      *
-     * @param string $tableName
-     * @param array  $xmlCols
-     * @param array  $xmlCons
-     *
-     * @return bool
-     */
-    public function generateTable($tableName, $xmlCols, $xmlCons)
-    {
-        return self::$engine->getUtils()->generateTable($tableName, $xmlCols, $xmlCons);
-    }
-
-    /**
-     * Compara dos arrays de restricciones, devuelve una sentencia SQL en caso de encontrar diferencias.
-     *
-     * @param string $tableName
-     * @param array  $xmlCons
-     * @param array  $dbCons
-     * @param bool   $deleteOnly
-     *
-     * @return bool
-     */
-    public function compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly = false)
-    {
-        return self::$engine->getUtils()->compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly);
-    }
-
-    /**
-     * Compara dos arrays de columnas, devuelve una sentencia sql en caso de encontrar diferencias.
-     *
-     * @param string $tableName
-     * @param array  $xmlCols
-     * @param array  $dbCols
+     * @param mixed $val
      *
      * @return string
      */
-    public function compareColumns($tableName, $xmlCols, $dbCols)
+    public function var2str($val)
     {
-        return self::$engine->getUtils()->compareColumns($tableName, $xmlCols, $dbCols);
+        if ($val === null) {
+            return 'NULL';
+        }
+
+        if (is_bool($val)) {
+            if ($val) {
+                return 'TRUE';
+            }
+
+            return 'FALSE';
+        }
+
+        if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4})$/i", $val)) {
+            return "'" . date($this->dateStyle(), strtotime($val)) . "'"; /// es una fecha
+        }
+
+        if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4}) ([\d]{1,2}):([\d]{1,2}):([\d]{1,2})$/i", $val)) {
+            return "'" . date($this->dateStyle() . ' H:i:s', strtotime($val)) . "'"; /// es una fecha+hora
+        }
+
+        return "'" . $this->escapeString($val) . "'";
     }
 
     /**
@@ -533,5 +480,14 @@ class DataBase
     public function sql2Int($colName)
     {
         return self::$engine->getSQL()->sql2Int($colName);
+    }
+
+    /**
+     * 
+     * @return DataBaseEngine
+     */
+    public function getEngine()
+    {
+        return self::$engine;
     }
 }

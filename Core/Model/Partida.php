@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
+
 /**
  * La línea de un asiento.
  * Se relaciona con un asiento y una subcuenta.
@@ -245,6 +247,14 @@ class Partida
         return 'idpartida';
     }
 
+    public function install()
+    {
+        new Asiento();
+        new Subcuenta();
+
+        return '';
+    }
+
     /**
      * Resetea los valores de todas las propiedades modelo.
      */
@@ -260,7 +270,7 @@ class Partida
         $this->codcontrapartida = null;
         $this->punteada = false;
         $this->tasaconv = 1.0;
-        $this->coddivisa = $this->defaultItems->codDivisa();
+        $this->coddivisa = AppSettings::get('default', 'coddivisa');
         $this->haberme = 0.0;
         $this->debeme = 0.0;
         $this->recargo = 0.0;
@@ -358,7 +368,7 @@ class Partida
      */
     public function delete()
     {
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idpartida = ' . $this->var2str($this->idpartida) . ';';
+        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idpartida = ' . $this->dataBase->var2str($this->idpartida) . ';';
         if ($this->dataBase->exec($sql)) {
             $subc = $this->getSubcuenta();
             if ($subc) {
@@ -383,7 +393,7 @@ class Partida
     {
         $plist = [];
         $sql = 'SELECT a.numero,a.fecha,p.idpartida,p.debe,p.haber FROM co_asientos a, co_partidas p'
-            . ' WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ' . $this->var2str($idsubc)
+            . ' WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ' . $this->dataBase->var2str($idsubc)
             . ' ORDER BY a.numero ASC, p.idpartida ASC;';
 
         $ordenadas = $this->dataBase->select($sql);
@@ -426,7 +436,7 @@ class Partida
     {
         $plist = [];
         $sql = 'SELECT a.numero,a.fecha,p.idpartida FROM co_asientos a, co_partidas p'
-            . ' WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ' . $this->var2str($idsubc)
+            . ' WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ' . $this->dataBase->var2str($idsubc)
             . ' ORDER BY a.numero ASC, p.idpartida ASC';
 
         $saldo = 0;
@@ -473,7 +483,7 @@ class Partida
     {
         $sql = 'SELECT a.numero,a.fecha,s.codsubcuenta,s.descripcion,p.concepto,p.debe,p.haber'
             . ' FROM co_asientos a, co_subcuentas s, co_partidas p'
-            . ' WHERE a.codejercicio = ' . $this->var2str($eje)
+            . ' WHERE a.codejercicio = ' . $this->dataBase->var2str($eje)
             . ' AND p.idasiento = a.idasiento AND p.idsubcuenta = s.idsubcuenta'
             . ' ORDER BY a.numero ASC, p.codsubcuenta ASC';
 
@@ -495,7 +505,7 @@ class Partida
     public function countFromSubcuenta($idsubc)
     {
         $sql = 'SELECT a.numero,a.fecha,p.idpartida FROM co_asientos a, co_partidas p'
-            . ' WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ' . $this->var2str($idsubc)
+            . ' WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ' . $this->dataBase->var2str($idsubc)
             . ' ORDER BY a.numero ASC, p.idpartida ASC;';
 
         $ordenadas = $this->dataBase->select($sql);
@@ -516,7 +526,7 @@ class Partida
     public function totalesFromSubcuenta($idsubc)
     {
         $sql = 'SELECT COALESCE(SUM(debe), 0) as debe,COALESCE(SUM(haber), 0) as haber'
-            . ' FROM ' . $this->tableName() . ' WHERE idsubcuenta = ' . $this->var2str($idsubc) . ';';
+            . ' FROM ' . $this->tableName() . ' WHERE idsubcuenta = ' . $this->dataBase->var2str($idsubc) . ';';
 
         return $this->getTotalesFromSQL($sql);
     }
@@ -532,7 +542,7 @@ class Partida
     {
         $sql = 'SELECT COALESCE(SUM(p.debe), 0) as debe,COALESCE(SUM(p.haber), 0) as haber'
             . ' FROM co_partidas p, co_asientos a'
-            . ' WHERE p.idasiento = a.idasiento AND a.codejercicio = ' . $this->var2str($cod) . ';';
+            . ' WHERE p.idasiento = a.idasiento AND a.codejercicio = ' . $this->dataBase->var2str($cod) . ';';
 
         return $this->getTotalesFromSQL($sql);
     }
@@ -574,15 +584,15 @@ class Partida
         if ($excluir) {
             $sql = 'SELECT COALESCE(SUM(p.debe), 0) AS debe,
             COALESCE(SUM(p.haber), 0) AS haber FROM co_partidas p, co_asientos a
-            WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ' . $this->var2str($idsubc) . '
-               AND a.fecha BETWEEN ' . $this->var2str($fechaini) . ' AND ' . $this->var2str($fechafin) . "
+            WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ' . $this->dataBase->var2str($idsubc) . '
+               AND a.fecha BETWEEN ' . $this->dataBase->var2str($fechaini) . ' AND ' . $this->dataBase->var2str($fechafin) . "
                AND p.idasiento NOT IN ('" . implode("','", $excluir) . "');";
             $resultados = $this->dataBase->select($sql);
         } else {
             $sql = 'SELECT COALESCE(SUM(p.debe), 0) AS debe,
             COALESCE(SUM(p.haber), 0) AS haber FROM co_partidas p, co_asientos a
-            WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ' . $this->var2str($idsubc) . '
-               AND a.fecha BETWEEN ' . $this->var2str($fechaini) . ' AND ' . $this->var2str($fechafin) . ';';
+            WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ' . $this->dataBase->var2str($idsubc) . '
+               AND a.fecha BETWEEN ' . $this->dataBase->var2str($fechaini) . ' AND ' . $this->dataBase->var2str($fechafin) . ';';
             $resultados = $this->dataBase->select($sql);
         }
 

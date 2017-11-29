@@ -32,7 +32,7 @@ use Twig_Environment;
 use Twig_Loader_Filesystem;
 
 /**
- * App description
+ * Class to manage selected controller.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -95,28 +95,42 @@ class AppController extends App
             $this->userLogout();
             $this->renderHtml('Login/Login.html');
         } else {
-            /// Obtenemos el nombre del controlador a cargar
-            $pageName = $this->request->query->get('page', $this->getDefaultController());
-            $this->loadController($pageName);
+            $user = $this->userAuth();
 
-            /// devolvemos true, para los test
+            /// returns the name of the controller to load
+            $pageName = $this->request->query->get('page', $this->getDefaultController($user));
+            $this->loadController($pageName, $user);
+
+            /// returns true for testing purpose
             return true;
         }
 
         return false;
     }
-    
-    private function getDefaultController()
+
+    /**
+     * Returns the name of the default controller for the current user or for all users.
+     * 
+     * @param User|false $user
+     * @return string
+     */
+    private function getDefaultController($user)
     {
-        return $this->request->cookies->get('fsHomepage', 'AdminHome');
+        if ($user && $user->homepage !== null && $user->homepage !== '') {
+            return $user->homepage;
+        }
+
+        $homePage = $this->settings->get('default', 'homepage', 'AdminHome');
+        return $this->request->cookies->get('fsHomepage', $homePage);
     }
 
     /**
      * Load and process the $pageName controller.
-     *
-     * @param string $pageName name of the controller
+     * 
+     * @param string $pageName
+     * @param User $user
      */
-    private function loadController($pageName)
+    private function loadController($pageName, $user)
     {
         if (FS_DEBUG) {
             $this->debugBar['time']->stopMeasure('init');
@@ -130,7 +144,6 @@ class AppController extends App
         /// If we found a controller, load it
         if (class_exists($controllerName)) {
             $this->miniLog->debug($this->i18n->trans('loading-controller', [$controllerName]));
-            $user = $this->userAuth();
             $this->menuManager->setUser($user);
 
             try {
@@ -182,7 +195,7 @@ class AppController extends App
      * Creates HTML with the selected template. The data will not be inserted in it
      * until render() is executed
      *
-     * @param string $template       archivo html a utilizar
+     * @param string $template       html file to use
      * @param string $controllerName
      */
     private function renderHtml($template, $controllerName = '')

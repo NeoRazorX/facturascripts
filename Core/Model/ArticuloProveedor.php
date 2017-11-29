@@ -26,7 +26,9 @@ namespace FacturaScripts\Core\Model;
 class ArticuloProveedor
 {
 
-    use Base\ModelTrait;
+    use Base\ModelTrait {
+        url as private traitURL;
+    }
 
     /**
      * Clave primaria.
@@ -132,6 +134,11 @@ class ArticuloProveedor
         return 'id';
     }
 
+    /**
+     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
+     *
+     * @return string
+     */
     public function install()
     {
         /// forzamos la comprobación de la tabla de proveedores
@@ -159,6 +166,11 @@ class ArticuloProveedor
         $this->partnumber = null;
     }
 
+    /**
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     *
+     * @return bool
+     */
     public function test()
     {
         $this->descripcion = self::noHtml($this->descripcion);
@@ -175,30 +187,16 @@ class ArticuloProveedor
         return true;
     }
 
+    /**
+     * Devuelve la url donde ver/modificar los datos
+     *
+     * @param string $type
+     *
+     * @return string
+     */
     public function url($type = 'auto')
     {
-        $value = $this->primaryColumnValue();
-        $model = $this->modelClassName();
-        $result = 'index.php?page=';
-        switch ($type) {
-            case 'list':
-                $result .= 'ListArticulo&active=List' . $model;
-                break;
-
-            case 'edit':
-                $result .= 'Edit' . $model . '&code=' . $value;
-                break;
-
-            case 'new':
-                $result .= 'Edit' . $model;
-                break;
-
-            default:
-                $result .= empty($value) ? 'ListArticulo&active=List' . $model : 'Edit' . $model . '&code=' . $value;
-                break;
-        }
-
-        return $result;
+        return $this->traitURL($type, 'ListArticulo&active=List');
     }
 
     /**

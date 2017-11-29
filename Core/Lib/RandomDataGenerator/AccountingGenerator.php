@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model;
 
 /**
@@ -47,8 +48,9 @@ class AccountingGenerator
     protected $tools;
 
     /**
-     * 
-     * @param Model\Empresa $empresa
+     * AccountingGenerator constructor.
+     *
+     * @param $empresa
      */
     public function __construct($empresa)
     {
@@ -59,6 +61,13 @@ class AccountingGenerator
         $this->tools = new DataGeneratorTools();
     }
 
+    /**
+     * Genera asiendos con datos aleatorios.
+     *
+     * @param int $max
+     *
+     * @return int
+     */
     public function asientos($max = 50)
     {
         for ($num = 0; $num < $max; ++$num) {
@@ -77,6 +86,13 @@ class AccountingGenerator
         return $num;
     }
 
+    /**
+     * Genera cuentas con datos aleatorios.
+     *
+     * @param int $max
+     *
+     * @return int
+     */
     public function cuentas($max = 50)
     {
         $epigrafes = $this->randomModel("\FacturaScripts\Core\Model\Epigrafe");
@@ -97,6 +113,13 @@ class AccountingGenerator
         return $num;
     }
 
+    /**
+     * Genera epigrafes con datos aleatorios.
+     *
+     * @param int $max
+     *
+     * @return int
+     */
     public function epigrafes($max = 50)
     {
         $grupos = $this->randomModel("\FacturaScripts\Core\Model\GrupoEpigrafes");
@@ -117,6 +140,13 @@ class AccountingGenerator
         return $num;
     }
 
+    /**
+     * Genera grupos de epigrafes con datos aleatorios.
+     *
+     * @param int $max
+     *
+     * @return int
+     */
     public function gruposEpigrafes($max = 50)
     {
         for ($num = 0; $num < $max; ++$num) {
@@ -134,6 +164,14 @@ class AccountingGenerator
         return $num;
     }
 
+    /**
+     * Obtiene todos los datos de un modelo, los mezcla y los devuelve.
+     * Si el modelo no tiene datos, devuelve un array vacío.
+     *
+     * @param string $modelName
+     *
+     * @return array
+     */
     protected function randomModel($modelName = "\FacturaScripts\Core\Model\Cuenta")
     {
         $model = new $modelName();
@@ -146,13 +184,20 @@ class AccountingGenerator
         return $data;
     }
 
+    /**
+     * Genera subcuentas con datos aleatorios.
+     *
+     * @param int $max
+     *
+     * @return int
+     */
     public function subcuentas($max = 50)
     {
         $cuentas = $this->randomModel("\FacturaScripts\Core\Model\Cuenta");
         for ($num = 0; $num < $max; ++$num) {
             $subcuenta = new Model\Subcuenta();
             $subcuenta->codcuenta = $cuentas[0]->codcuenta;
-            $subcuenta->coddivisa = $this->empresa->coddivisa;
+            $subcuenta->coddivisa = AppSettings::get('default', 'coddivisa');
             $subcuenta->codejercicio = $cuentas[0]->codejercicio;
             $subcuenta->codsubcuenta = $cuentas[0]->codcuenta . mt_rand(0, 9999);
             $subcuenta->descripcion = $this->tools->descripcion();

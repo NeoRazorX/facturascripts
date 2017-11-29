@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
@@ -27,6 +26,7 @@ namespace FacturaScripts\Core\Base\DataBase;
  */
 class PostgresqlSQL implements DataBaseSQL
 {
+
     /**
      * Returns the needed SQL to convert a column to integer
      *
@@ -139,7 +139,7 @@ class PostgresqlSQL implements DataBaseSQL
                 continue;
             }
 
-            if (FS_FOREIGN_KEYS === '1' || 0 !== strpos($res['constraint'], 'FOREIGN KEY')) {
+            if (FS_DB_FOREIGN_KEYS || 0 !== strpos($res['constraint'], 'FOREIGN KEY')) {
                 $sql .= ', CONSTRAINT ' . $res['name'] . ' ' . $res['constraint'];
             }
         }

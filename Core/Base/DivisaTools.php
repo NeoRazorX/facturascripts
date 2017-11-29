@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -26,10 +25,6 @@ namespace FacturaScripts\Core\Base;
  */
 class DivisaTools
 {
-    const NF0 = 2;
-    const NF1 = ',';
-    const NF2 = ' ';
-    const POSITION = 'right';
 
     /**
      * Devuelve el valor de la divisa formateada
@@ -39,12 +34,12 @@ class DivisaTools
      *
      * @return string
      */
-    public function format($number, $decimals = self::NF0)
+    public function format($number, $decimals = FS_NF0)
     {
         $symbol = '€';
-        $txt = number_format($number, $decimals, self::NF1, self::NF2);
+        $txt = number_format($number, $decimals, FS_NF1, FS_NF2);
 
-        if (self::POSITION == 'right') {
+        if (FS_POS_DIVISA == 'right') {
             return $txt . ' ' . $symbol;
         }
 

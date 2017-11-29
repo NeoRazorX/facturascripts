@@ -18,12 +18,9 @@
  */
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
-
-define('FS_NF0', 2);
-define('FS_NF0_ART', 2);
-define('FS_STOCK_NEGATIVO', true);
 
 /**
  * Class that contains the functions to generate random data
@@ -197,10 +194,7 @@ class ModelDataGenerator
             if (mt_rand(0, 2) == 0) {
                 shuffle($fabricantes);
                 shuffle($familias);
-
-                if ($this->impuestos[0]->iva <= 10) {
-                    shuffle($this->impuestos);
-                }
+                shuffle($this->impuestos);
             }
 
             $art = new Model\Articulo();
@@ -425,6 +419,11 @@ class ModelDataGenerator
         return $num;
     }
 
+    /**
+     * Rellena un cliente con datos aleatorios.
+     *
+     * @param Model\Cliente|Model\Proveedor $cliente
+     */
     private function fillCliente(&$cliente)
     {
         $cliente->cifnif = (mt_rand(0, 14) === 0) ? '' : mt_rand(0, 99999999);
@@ -463,12 +462,18 @@ class ModelDataGenerator
         $cliente->email = (mt_rand(0, 2) > 0) ? $this->tools->email() : null;
     }
 
+    /**
+     * Rellena direcciones de un cliente con datos aleatorios.
+     *
+     * @param Model\Cliente $cliente
+     * @param int $max
+     */
     private function direccionesCliente($cliente, $max = 3)
     {
         while ($max > 0) {
             $dir = new Model\DireccionCliente();
             $dir->codcliente = $cliente->codcliente;
-            $dir->codpais = (mt_rand(0, 2) === 0) ? $this->paises[0]->codpais : $this->empresa->codpais;
+            $dir->codpais = (mt_rand(0, 2) === 0) ? $this->paises[0]->codpais : AppSettings::get('default', 'codpais');;
             $dir->provincia = $this->tools->provincia();
             $dir->ciudad = $this->tools->ciudad();
             $dir->direccion = $this->tools->direccion();
@@ -485,6 +490,12 @@ class ModelDataGenerator
         }
     }
 
+    /**
+     * Rellena cuentas bancarias de un cliente con datos aleatorios.
+     *
+     * @param Model\Cliente $cliente
+     * @param int $max
+     */
     private function cuentasBancoCliente($cliente, $max = 3)
     {
         while ($max > 0) {
@@ -545,12 +556,18 @@ class ModelDataGenerator
         return $num;
     }
 
+    /**
+     * Rellena direcciones de un proveedor con datos aleatorios.
+     *
+     * @param Model\Proveedor $proveedor
+     * @param int $max
+     */
     private function direccionesProveedor($proveedor, $max = 3)
     {
         while ($max) {
             $dir = new Model\DireccionProveedor();
             $dir->codproveedor = $proveedor->codproveedor;
-            $dir->codpais = $this->empresa->codpais;
+            $dir->codpais = AppSettings::get('default', 'codpais');;
 
             if (mt_rand(0, 2) == 0) {
                 $dir->codpais = $this->paises[0]->codpais;
@@ -575,6 +592,12 @@ class ModelDataGenerator
         }
     }
 
+    /**
+     * Rellena cuentas bancarias de un proveedor con datos aleatorios.
+     *
+     * @param Model\Proveedor $proveedor
+     * @param int $max
+     */
     private function cuentasBancoProveedor($proveedor, $max = 3)
     {
         while ($max > 0) {
@@ -598,16 +621,21 @@ class ModelDataGenerator
     }
 
     /**
+     * Devuelve listados de datos del model indicado.
+     *
      * @param string $modelName
      * @param string $tableName
      * @param string $functionName
+     * @param bool $recursivo
+     *
+     * @return array
      */
     protected function randomModel($modelName, $tableName, $functionName, $recursivo = true)
     {
         $lista = [];
 
         $sql = 'SELECT * FROM ' . $tableName . ' ORDER BY ';
-        $sql .= strtolower(FS_DB_TYPE) == 'mysql' ? 'RAND()' : 'random()';
+        $sql .= strtolower(FS_DB_TYPE) === 'mysql' ? 'RAND()' : 'random()';
 
         $data = $this->db->selectLimit($sql, 100, 0);
         if (!empty($data)) {

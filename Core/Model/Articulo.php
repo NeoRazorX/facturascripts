@@ -20,8 +20,6 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
-define('FS_MYDOCS', '');
-
 /**
  * Almacena los datos de un artículos.
  *
@@ -355,13 +353,12 @@ class Articulo
         $sql = 'SELECT referencia FROM ' . $this->tableName() . ' WHERE referencia ';
         $sql .= (strtolower(FS_DB_TYPE) === 'postgresql') ? "~ '^\d+$' ORDER BY referencia::BIGINT DESC" : "REGEXP '^\d+$' ORDER BY ABS(referencia) DESC";
 
-        $ref = 1;
         $data = $this->dataBase->selectLimit($sql, 1);
         if (!empty($data)) {
-            $ref = sprintf(1 + (int) $data[0]['referencia']);
+            return sprintf(1 + (int) $data[0]['referencia']);
         }
 
-        return $ref;
+        return '1';
     }
 
     /**
@@ -528,8 +525,8 @@ class Articulo
         if ($ref === null || empty($ref) || strlen($ref) > 18) {
             $this->miniLog->alert($this->i18n->trans('product-reference-not-valid', [$this->referencia]));
         } elseif ($ref !== $this->referencia && !$this->referencia === null) {
-            $sql = 'UPDATE ' . $this->tableName() . ' SET referencia = ' . $this->var2str($ref)
-                . ' WHERE referencia = ' . $this->var2str($this->referencia) . ';';
+            $sql = 'UPDATE ' . $this->tableName() . ' SET referencia = ' . $this->dataBase->var2str($ref)
+                . ' WHERE referencia = ' . $this->dataBase->var2str($this->referencia) . ';';
             if ($this->dataBase->exec($sql)) {
                 /// renombramos la imagen, si la hay
                 if ($oldImage = $this->imagenUrl()) {
@@ -608,8 +605,8 @@ class Articulo
 
                 if ($this->exists()) {
                     $sql = 'UPDATE ' . $this->tableName()
-                        . ' SET stockfis = ' . $this->var2str($this->stockfis)
-                        . ' WHERE referencia = ' . $this->var2str($this->referencia) . ';';
+                        . ' SET stockfis = ' . $this->dataBase->var2str($this->stockfis)
+                        . ' WHERE referencia = ' . $this->dataBase->var2str($this->referencia) . ';';
                     $result = $this->dataBase->exec($sql);
                 } elseif (!$this->save()) {
                     $this->miniLog->alert($this->i18n->trans('error-updating-product-stock'));
@@ -649,8 +646,8 @@ class Articulo
                 /// este código está muy optimizado para guardar solamente los cambios
                 if ($this->exists()) {
                     $sql = 'UPDATE ' . $this->tableName()
-                        . '  SET costemedio = ' . $this->var2str($this->costemedio)
-                        . '  WHERE referencia = ' . $this->var2str($this->referencia) . ';';
+                        . '  SET costemedio = ' . $this->dataBase->var2str($this->costemedio)
+                        . '  WHERE referencia = ' . $this->dataBase->var2str($this->referencia) . ';';
                     $result = $this->dataBase->exec($sql);
                 } elseif (!$this->save()) {
                     $this->miniLog->alert($this->i18n->trans('error-updating-product-stock'));
@@ -685,9 +682,9 @@ class Articulo
 
                     if ($this->exists()) {
                         $sql = 'UPDATE ' . $this->tableName()
-                            . '  SET stockfis = ' . $this->var2str($this->stockfis)
-                            . ', costemedio = ' . $this->var2str($this->costemedio)
-                            . '  WHERE referencia = ' . $this->var2str($this->referencia) . ';';
+                            . '  SET stockfis = ' . $this->dataBase->var2str($this->stockfis)
+                            . ', costemedio = ' . $this->dataBase->var2str($this->costemedio)
+                            . '  WHERE referencia = ' . $this->dataBase->var2str($this->referencia) . ';';
                         $result = $this->dataBase->exec($sql);
                     } elseif (!$this->save()) {
                         $this->miniLog->alert($this->i18n->trans('error-updating-product-stock'));
@@ -759,8 +756,8 @@ class Articulo
      */
     public function delete()
     {
-        $sql = 'DELETE FROM articulosprov WHERE referencia = ' . $this->var2str($this->referencia) . ';';
-        $sql .= 'DELETE FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($this->referencia) . ';';
+        $sql = 'DELETE FROM articulosprov WHERE referencia = ' . $this->dataBase->var2str($this->referencia) . ';';
+        $sql .= 'DELETE FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($this->referencia) . ';';
         if ($this->dataBase->exec($sql)) {
             $this->setImagen(false);
 

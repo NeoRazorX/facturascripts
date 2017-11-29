@@ -46,7 +46,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
      * @param \SimpleXMLElement $group
      * @return GroupItem
      */
-    public static function newFromXMLGroup($group)
+    public static function newFromXML($group)
     {
         $result = new GroupItem();
         $result->loadFromXML($group);
@@ -59,13 +59,13 @@ class GroupItem extends VisualItem implements VisualItemInterface
      * @param array $group
      * @return GroupItem
      */
-    public static function newFromJSONGroup($group)
+    public static function newFromJSON($group)
     {
         $result = new GroupItem();
         $result->loadFromJSON($group);
         return $result;
-    }    
-    
+    }
+
     /**
      * Class construct and initialization
      */
@@ -102,9 +102,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
     {
         if (isset($group->column)) {
             foreach ($group->column as $column) {
-                $columnItem = new ColumnItem();
-                $columnItem->loadFromXML($column);
-
+                $columnItem = ColumnItem::newFromXML($column);
                 $this->columns[$columnItem->name] = $columnItem;
                 unset($columnItem);
             }
@@ -137,9 +135,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
         $this->icon = (string) $group['icon'];
 
         foreach ($group['columns'] as $column) {
-            $columnItem = new ColumnItem();
-            $columnItem->loadFromJSON($column);
-
+            $columnItem = ColumnItem::newFromJSON($column);
             $this->columns[$columnItem->name] = $columnItem;
             unset($columnItem);
         }
@@ -174,5 +170,15 @@ class GroupItem extends VisualItem implements VisualItemInterface
     public function getHeaderHTML($value)
     {
         return $this->getIconHTML() . parent::getHeaderHTML($value);
+    }
+
+    /**
+     * Check and apply special operations on the group
+     */
+    public function applySpecialOperations()
+    {
+        foreach ($this->columns as $column) {
+            $column->applySpecialOperations();
+        }
     }
 }

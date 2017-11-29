@@ -52,7 +52,7 @@ abstract class PanelController extends Base\Controller
 
     /**
      * Tabs position in page: left, bottom.
-     * @var string 
+     * @var string
      */
     public $tabsPosition;
 
@@ -82,20 +82,25 @@ abstract class PanelController extends Base\Controller
      * @param Base\Cache $cache
      * @param Base\Translator $i18n
      * @param Base\MiniLog    $miniLog
-     * @param string     $className
+     * @param string          $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
+        $this->exportManager = new Base\ExportManager();
         $this->setTemplate('Master/PanelController');
         $this->active = $this->request->get('active', '');
-        $this->exportManager = new Base\ExportManager();
-        $this->icons = [];
         $this->tabsPosition = 'left';
+        $this->icons = [];
         $this->views = [];
     }
 
+    /**
+     * Asigna la posición de la pestaña.
+     *
+     * @param string $position
+     */
     public function setTabsPosition($position)
     {
         $this->tabsPosition = $position;
@@ -104,7 +109,7 @@ abstract class PanelController extends Base\Controller
             case 'bottom':
                 $this->setTemplate('Master/PanelControllerBottom');
                 break;
-            
+
             case 'top':
                 $this->setTemplate('Master/PanelControllerTop');
                 break;
@@ -149,12 +154,29 @@ abstract class PanelController extends Base\Controller
      * Returns a field value for the loaded data model
      *
      * @param mixed $model
-     * @param string $field
+     * @param string $fieldName
      * @return mixed
      */
-    public function getFieldValue($model, $field)
+    public function getFieldValue($model, $fieldName)
     {
-        return $model->{$field};
+        if (isset($model->{$fieldName})) {
+            return $model->{$fieldName};
+        }
+
+        return null;
+    }
+
+    /**
+     * Devuelve el valor para un campo del modelo de datos de la vista
+     *
+     * @param string $viewName
+     * @param string $fieldName
+     * @return mixed
+     */
+    public function getViewModelValue($viewName, $fieldName)
+    {
+        $model = $this->views[$viewName]->getModel();
+        return $this->getFieldValue($model, $fieldName);
     }
 
     /**
@@ -175,7 +197,7 @@ abstract class PanelController extends Base\Controller
      * @param BaseView $view
      * @param string $action
      */
-    private function execPreviousAction($view, $action)
+    protected function execPreviousAction($view, $action)
     {
         switch ($action) {
             case 'save':
@@ -196,7 +218,7 @@ abstract class PanelController extends Base\Controller
      * @param EditView $view
      * @param string $action
      */
-    private function execAfterAction($view, $action)
+    protected function execAfterAction($view, $action)
     {
         switch ($action) {
             case 'insert':
@@ -233,7 +255,7 @@ abstract class PanelController extends Base\Controller
      */
     protected function insertAction($view)
     {
-        
+
     }
 
     /**

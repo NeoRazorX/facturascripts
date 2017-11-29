@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -30,6 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ListView extends BaseView
 {
+
     /**
      * Order constants
      */
@@ -125,7 +125,7 @@ class ListView extends BaseView
     public function getClickEvent($data)
     {
         foreach ($this->getColumns() as $col) {
-            if (isset($col->widget->onClick)) {
+            if ($col->widget->onClick !== null && $col->widget->onClick !== '') {
                 return '?page=' . $col->widget->onClick . '&code=' . $data->{$col->widget->fieldName};
             }
         }
@@ -306,12 +306,15 @@ class ListView extends BaseView
      * @param int $offset
      * @param int $limit
      */
-    public function loadData($where, $offset = 0, $limit = 50)
+    public function loadData($where, $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         $order = $this->getSQLOrderBy($this->selectedOrderBy);
         $this->count = $this->model->count($where);
         if ($this->count > 0) {
             $this->cursor = $this->model->all($where, $order, $offset, $limit);
+        } else {
+            /// needed when mesasearch force data reload
+            $this->cursor = [];
         }
 
         /// nos guardamos los valores where y offset para la exportación

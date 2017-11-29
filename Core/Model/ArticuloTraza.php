@@ -180,7 +180,7 @@ class ArticuloTraza
      */
     public function getByNumserie($numserie)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE numserie = ' . $this->var2str($numserie) . ';';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE numserie = ' . $this->dataBase->var2str($numserie) . ';';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return new self($data[0]);
@@ -201,7 +201,7 @@ class ArticuloTraza
     {
         $lista = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->var2str($ref);
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($ref);
         if ($sololibre) {
             $sql .= ' AND idlalbventa IS NULL AND idlfacventa IS NULL';
         }
@@ -230,7 +230,7 @@ class ArticuloTraza
         $lista = [];
 
         $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE ' . $tipo . ' = ' . $this->var2str($idlinea) . ' ORDER BY id DESC;';
+            . ' WHERE ' . $tipo . ' = ' . $this->dataBase->var2str($idlinea) . ' ORDER BY id DESC;';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
@@ -251,11 +251,11 @@ class ArticuloTraza
     public function install()
     {
         /// forzamos la comprobación de las tablas necesarias
-        //new Articulo();
-        //new LineaAlbaranCliente();
-        //new LineaAlbaranProveedor();
-        //new LineaFacturaCliente();
-        //new LineaFacturaProveedor();
+        new Articulo();
+        new LineaAlbaranCliente();
+        new LineaAlbaranProveedor();
+        new LineaFacturaCliente();
+        new LineaFacturaProveedor();
 
         return '';
     }

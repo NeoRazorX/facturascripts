@@ -4,103 +4,50 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-12">
-            <div class="page-header">
-                <h1>
-                    <i class="fa fa-tachometer" aria-hidden="true"></i> {{ i18n.trans('dashboard') }}
-                    <a href="{{ fsc.url() }}" class="btn btn-sm btn-secondary">
+            <h1>
+                <i class="fa fa-tachometer" aria-hidden="true"></i> {{ i18n.trans('dashboard') }}
+                <span class="btn-group d-xs-none">
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}">
                         <i class="fa fa-refresh" aria-hidden="true"></i>
                     </a>
-                </h1>
-            </div>
-            <ul class="nav nav-tabs" role="tablist">
-                <li role="presentation" class="nav-item">
-                    <a class="nav-link active" href="#dash_tab_1" aria-controls="dash_tab_1" role="tab" data-toggle="tab">{{ i18n.trans('this-month') }}</a>
-                </li>
-                <li role="presentation" class="nav-item">
-                    <a class="nav-link" href="#dash_tab_2" aria-controls="dash_tab_2" role="tab" data-toggle="tab">{{ i18n.trans('quarter') }}</a>
-                </li>
-                <li role="presentation" class="nav-item">
-                    <a class="nav-link" href="#dash_tab_3" aria-controls="dash_tab_3" role="tab" data-toggle="tab">{{ i18n.trans('year') }}</a>
-                </li>
-                <li role="presentation" class="nav-item">
-                    <a class="nav-link" href="#dash_tab_4" aria-controls="dash_tab_4" role="tab" data-toggle="tab">{{ i18n.trans('configuration') }}</a>
-                </li>
-            </ul>
-            <br/>
+                    {% if fsc.getPageData()['name'] == fsc.user.homepage %}
+                    <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}&amp;defaultPage=FALSE">
+                        <i class="fa fa-bookmark" aria-hidden="true"></i>
+                    </a>
+                    {% else %}
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}&amp;defaultPage=TRUE">
+                        <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                    </a>
+                    {% endif %}
+                </span>
+            </h1>
+            <hr/>
         </div>
     </div>
-    <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active" id="dash_tab_1">
-            <div class="row">
-                <div class="col-sm-3">
-                    <a href="#" class="btn btn-lg btn-block btn-info">
-                        {{ i18n.trans('card') }} 1
-                        <p class="help-block">{{ i18n.trans('card-text') }} 1</p>
-                        <small>{{ i18n.trans('date-time') }}</small>
-                    </a>
-                    <br/>
+    <div class="row">
+        <div class="card-columns" style="padding-left: 10px; padding-right: 10px;">
+        {% for card in fsc.cursor %}
+            <div class="card {{ card.cardClass() }}">
+                <div class="card-body">
+                    <p class="card-text">{{ card.descripcion }}</p>
                 </div>
-                <div class="col-sm-3">
-                    <a href="#" class="btn btn-lg btn-block btn-warning">
-                        {{ i18n.trans('card') }} 2
-                        <p class="help-block">{{ i18n.trans('card-text') }} 2</p>
-                        <small>{{ i18n.trans('date-time') }}</small>
-                    </a>
-                </div>
-                <div class="col-sm-3">
-                    <a href="#" class="btn btn-lg btn-block btn-info">
-                        {{ i18n.trans('card') }} 3
-                        <p class="help-block">{{ i18n.trans('card-text') }} 3</p>
-                        <small>{{ i18n.trans('date-time') }}</small>
-                    </a>
-                </div>
-                <div class="col-sm-3">
-                    <a href="#" class="btn btn-lg btn-block btn-default">
-                        {{ i18n.trans('card') }} 4
-                        <p class="help-block">{{ i18n.trans('card-text') }} 4</p>
-                        <small>{{ i18n.trans('date-time') }}</small>
-                    </a>
+                <div class="card-footer">
+                    {% if card.link %}
+                    <a href="{{ card.link }}" class="btn btn-{{ card.color }} btn-sm float-right">link</a>
+                    {% endif %}
+                    <div class="btn-group">
+                        <a href="{{ card.url() }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fa fa-edit" aria-hidden="true"></i>
+                        </a>
+                        <a href="{{ card.url() }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fa fa-star" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                    &nbsp;
+                    <small>{{ card.fecha }}</small>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-sm-3">
-                    <a href="#" class="btn btn-lg btn-block btn-default">
-                        {{ i18n.trans('card') }} 5
-                        <p class="help-block">{{ i18n.trans('card-text') }} 5</p>
-                        <small>{{ i18n.trans('date-time') }}</small>
-                    </a>
-                </div>
-                <div class="col-sm-3">
-                    <a href="#" class="btn btn-lg btn-block btn-default">
-                        {{ i18n.trans('card') }} 6
-                        <p class="help-block">{{ i18n.trans('card-text') }} 6</p>
-                        <small>{{ i18n.trans('date-time') }}</small>
-                    </a>
-                </div>
-                <div class="col-sm-3">
-                    <a href="#" class="btn btn-lg btn-block btn-default">
-                        {{ i18n.trans('card') }} 7
-                        <p class="help-block">{{ i18n.trans('card-text') }} 7</p>
-                        <small>{{ i18n.trans('date-time') }}</small>
-                    </a>
-                </div>
-                <div class="col-sm-3">
-                    <a href="#" class="btn btn-lg btn-block btn-default">
-                        {{ i18n.trans('card') }} 8
-                        <p class="help-block">{{ i18n.trans('card-text') }} 8</p>
-                        <small>{{ i18n.trans('date-time') }}</small>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div role="tabpanel" class="tab-pane" id="dash_tab_2">
-            ...
-        </div>
-        <div role="tabpanel" class="tab-pane" id="dash_tab_3">
-            ...
-        </div>
-        <div role="tabpanel" class="tab-pane" id="dash_tab_4">
-            ...
+        {% endfor %}
         </div>
     </div>
 </div>

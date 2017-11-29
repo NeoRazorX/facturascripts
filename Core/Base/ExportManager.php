@@ -64,7 +64,7 @@ class ExportManager
     public function generateDoc(&$response, $option, $model)
     {
         /// llamar a la clase apropiada para generar el archivo en función de la opción elegida
-        $className = "FacturaScripts\\Core\\Lib\\" . $option . 'Export';
+        $className = $this->getExportClassName($option);
         $docClass = new $className();
         $docClass->setHeaders($response);
 
@@ -87,10 +87,20 @@ class ExportManager
     public function generateList(&$response, $option, $model, $where, $order, $offset, $columns)
     {
         /// llamar a la clase apropiada para generar el archivo en función de la opción elegida
-        $className = "FacturaScripts\\Core\\Lib\\" . $option . 'Export';
+        $className = $this->getExportClassName($option);
         $docClass = new $className();
         $docClass->setHeaders($response);
 
         return $docClass->newListDoc($model, $where, $order, $offset, $columns);
+    }
+    
+    private function getExportClassName($option)
+    {
+        $className = "FacturaScripts\\Dinamic\\Lib\\Export\\" . $option . 'Export';
+        if(!class_exists($className)) {
+            $className = "FacturaScripts\\Core\\Lib\\Export\\" . $option . 'Export';
+        }
+        
+        return $className;
     }
 }

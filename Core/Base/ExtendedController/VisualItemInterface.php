@@ -26,6 +26,19 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 interface VisualItemInterface
 {
+    /**
+     * Create and load element structure from XML file
+     *
+     * @param \SimpleXMLElement $item
+     */
+    public static function newFromXML($item);
+
+    /**
+     * Create and load element structure from JSON file
+     *
+     * @param array $item
+     */
+    public static function newFromJSON($item);
 
     /**
      * Loads the attributes structure from a XML file

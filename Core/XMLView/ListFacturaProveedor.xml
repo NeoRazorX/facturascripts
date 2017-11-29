@@ -24,8 +24,11 @@
 
 <view>
     <columns>
-        <column name="id" order="100">
-            <widget type="text" fieldname="codigo" onclick="EditFacturaProveedor" />
+        <column name="id" display="none" order="100">
+            <widget type="text" fieldname="idfactura" onclick="EditFacturaProveedor" />
+        </column>
+        <column name="code" order="100">
+            <widget type="text" fieldname="codigo" />
         </column>
         <column name="numsupplier" order="110">
             <widget type="text" fieldname="numproveedor" />
@@ -45,6 +48,10 @@
             <widget type="text" fieldname="fecha" />
         </column>
     </columns>
-    <filters>
-    </filters>
+    <rows>
+        <row type="status" fieldname="pagada">
+            <option color="table-warning">0</option>
+            <option color="table-success">1</option>
+        </row>
+    </rows>
 </view>

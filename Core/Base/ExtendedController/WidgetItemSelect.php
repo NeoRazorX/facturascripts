@@ -16,8 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
+
+use FacturaScripts\Core\Model;
 
 /**
  * Description of WidgetItemSelect
@@ -26,8 +27,10 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 class WidgetItemSelect extends WidgetItem
 {
+
     /**
-     * Accepted values for the field associated to the widget
+     * Accepted values for the field associated to the widget.
+     * Values are loaded from Model\PageOption::getForUser()
      *
      * @var array
      */
@@ -48,11 +51,10 @@ class WidgetItemSelect extends WidgetItem
      * Loads the attributes structure from a XML file
      *
      * @param \SimpleXMLElement $column
-     * @param \SimpleXMLElement $widgetAtributes
      */
-    protected function loadFromXMLColumn($column, $widgetAtributes)
+    public function loadFromXML($column)
     {
-        parent::loadFromXMLColumn($column, $widgetAtributes);
+        parent::loadFromXML($column);
         $this->getAttributesGroup($this->values, $column->widget->values);
     }
 
@@ -61,9 +63,9 @@ class WidgetItemSelect extends WidgetItem
      *
      * @param array $column
      */
-    protected function loadFromJSONColumn($column)
+    public function loadFromJSON($column)
     {
-        parent::loadFromJSONColumn($column);
+        parent::loadFromJSON($column);
         $this->values = (array) $column['widget']['values'];
     }
 
@@ -76,11 +78,10 @@ class WidgetItemSelect extends WidgetItem
     {
         $this->values = [];
         foreach ($rows as $codeModel) {
-            $item = [];
-            $item['value'] = $codeModel->code;
-            $item['title'] = $codeModel->description;
-            $this->values[] = $item;
-            unset($item);
+            $this->values[] = [
+                'value' => $codeModel->code,
+                'title' => $codeModel->description,
+            ];
         }
     }
 
@@ -101,13 +102,33 @@ class WidgetItemSelect extends WidgetItem
                 continue;
             }
 
-            $item = [];
-            $item['value'] = $value;
-            $item['title'] = $value;
-            $this->values[] = $item;
-            unset($item);
+            $this->values[] = [
+                'value' => $value,
+                'title' => $value,
+            ];
         }
     }
+
+    public function loadValuesFromModel()
+    {
+        $tableName = $this->values[0]['source'];
+        $fieldCode = $this->values[0]['fieldcode'];
+        $fieldDesc = $this->values[0]['fieldtitle'];
+        $allowEmpty = !$this->required;
+        $rows = Model\CodeModel::all($tableName, $fieldCode, $fieldDesc, $allowEmpty);
+        $this->setValuesFromCodeModel($rows);
+        unset($rows);
+    }
+
+    public function loadValuesFromRange()
+    {
+        $start = $this->values[0]['start'];
+        $end = $this->values[0]['end'];
+        $step = $this->values[0]['step'];
+        $values = range($start, $end, $step);
+        $this->setValuesFromArray($values);
+    }
+
 
     /**
      * Generates the HTML code to display the data in the List controller
@@ -126,7 +147,8 @@ class WidgetItemSelect extends WidgetItem
     }
 
     /**
-     * Generates the HTML code to display and edit  the data in the Edit / EditList controller
+     * Generates the HTML code to display and edit  the data in the Edit / EditList controller.
+     * Values are loaded from Model\PageOption::getForUser()
      *
      * @param string $value
      *

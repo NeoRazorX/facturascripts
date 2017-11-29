@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
+
 /**
  * El asiento contable. Se relaciona con un ejercicio y se compone de partidas.
  *
@@ -215,7 +217,7 @@ class Asiento
     public function codDivisa()
     {
         if ($this->coddivisa === null) {
-            $this->coddivisa = $this->defaultItems->codDivisa();
+            $this->coddivisa = AppSettings::get('default', 'coddivisa');
 
             foreach ($this->getPartidas() as $par) {
                 if ($par->coddivisa) {
@@ -247,7 +249,7 @@ class Asiento
     {
         $this->numero = 1;
         $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('numero') . ') as num FROM ' . $this->tableName()
-            . ' WHERE codejercicio = ' . $this->var2str($this->codejercicio) . ';';
+            . ' WHERE codejercicio = ' . $this->dataBase->var2str($this->codejercicio) . ';';
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
@@ -329,29 +331,29 @@ class Asiento
 
         if ($status && $duplicados) {
             /// comprobamos si es un duplicado
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fecha = ' . $this->var2str($this->fecha) . '
-            AND concepto = ' . $this->var2str($this->concepto) . ' AND importe = ' . $this->var2str($this->importe) . '
-            AND idasiento != ' . $this->var2str($this->idasiento) . ';';
+            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fecha = ' . $this->dataBase->var2str($this->fecha) . '
+            AND concepto = ' . $this->dataBase->var2str($this->concepto) . ' AND importe = ' . $this->dataBase->var2str($this->importe) . '
+            AND idasiento != ' . $this->dataBase->var2str($this->idasiento) . ';';
             $asientos = $this->dataBase->select($sql);
             if (!empty($asientos)) {
                 foreach ($asientos as $as) {
                     /// comprobamos las líneas
                     if (strtolower(FS_DB_TYPE) === 'mysql') {
                         $sql = 'SELECT codsubcuenta,debe,haber,codcontrapartida,concepto
-                     FROM co_partidas WHERE idasiento = ' . $this->var2str($this->idasiento) . '
+                     FROM co_partidas WHERE idasiento = ' . $this->dataBase->var2str($this->idasiento) . '
                      AND NOT EXISTS(SELECT codsubcuenta,debe,haber,codcontrapartida,concepto FROM co_partidas
-                     WHERE idasiento = ' . $this->var2str($as['idasiento']) . ');';
+                     WHERE idasiento = ' . $this->dataBase->var2str($as['idasiento']) . ');';
                         $aux = $this->dataBase->select($sql);
                     } else {
                         $sql = 'SELECT codsubcuenta,debe,haber,codcontrapartida,concepto
-                     FROM co_partidas WHERE idasiento = ' . $this->var2str($this->idasiento) . '
+                     FROM co_partidas WHERE idasiento = ' . $this->dataBase->var2str($this->idasiento) . '
                      EXCEPT SELECT codsubcuenta,debe,haber,codcontrapartida,concepto FROM co_partidas
-                     WHERE idasiento = ' . $this->var2str($as['idasiento']) . ';';
+                     WHERE idasiento = ' . $this->dataBase->var2str($as['idasiento']) . ';';
                         $aux = $this->dataBase->select($sql);
                     }
 
                     if (empty($aux)) {
-                        $this->miniLog->alert($this->i18n->trans('seat-possible duplicated', [$as['idasiento']]));
+                        $this->miniLog->alert($this->i18n->trans('seat-possible-duplicated', [$as['idasiento']]));
                         $status = false;
                     }
                 }
@@ -494,7 +496,7 @@ class Asiento
             $p->delete();
         }
 
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idasiento = ' . $this->var2str($this->idasiento) . ';';
+        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idasiento = ' . $this->dataBase->var2str($this->idasiento) . ';';
 
         return $this->dataBase->exec($sql);
     }
@@ -523,7 +525,7 @@ class Asiento
             $consulta .= 'numero' . $auxSql . " LIKE '%" . $query . "%' OR concepto LIKE '%" . $query
                 . "%' OR importe BETWEEN " . ($query - .01) . ' AND ' . ($query + .01);
         } elseif (preg_match('/^(\d{1,2})-(\d{1,2})-(\d{4})$/i', $query)) {
-            $consulta .= 'fecha = ' . $this->var2str($query) . " OR concepto LIKE '%" . $query . "%'";
+            $consulta .= 'fecha = ' . $this->dataBase->var2str($query) . " OR concepto LIKE '%" . $query . "%'";
         } else {
             $consulta .= "lower(concepto) LIKE '%" . $buscar = str_replace(' ', '%', $query) . "%'";
         }
@@ -582,15 +584,15 @@ class Asiento
             $sql = '';
             $continuar = true;
             $consulta = 'SELECT idasiento,numero,fecha FROM ' . $this->tableName()
-                . ' WHERE codejercicio = ' . $this->var2str($eje->codejercicio)
+                . ' WHERE codejercicio = ' . $this->dataBase->var2str($eje->codejercicio)
                 . ' ORDER BY codejercicio ASC, fecha ASC, idasiento ASC';
 
             $asientos = $this->dataBase->selectLimit($consulta, 1000, $posicion);
             while (!empty($asientos) && $continuar) {
                 foreach ($asientos as $col) {
                     if ($col['numero'] !== $numero) {
-                        $sql .= 'UPDATE ' . $this->tableName() . ' SET numero = ' . $this->var2str($numero)
-                            . ' WHERE idasiento = ' . $this->var2str($col['idasiento']) . ';';
+                        $sql .= 'UPDATE ' . $this->tableName() . ' SET numero = ' . $this->dataBase->var2str($numero)
+                            . ' WHERE idasiento = ' . $this->dataBase->var2str($col['idasiento']) . ';';
                     }
 
                     ++$numero;
@@ -626,14 +628,14 @@ class Asiento
             if ($ej instanceof Ejercicio && $ej->abierto()) {
                 foreach ($regiva0->allFromEjercicio($ej->codejercicio) as $reg) {
                     $sql = 'UPDATE ' . $this->tableName() . ' SET editable = false WHERE editable = true'
-                        . ' AND codejercicio = ' . $this->var2str($ej->codejercicio)
-                        . ' AND fecha >= ' . $this->var2str($reg->fechainicio)
-                        . ' AND fecha <= ' . $this->var2str($reg->fechafin) . ';';
+                        . ' AND codejercicio = ' . $this->dataBase->var2str($ej->codejercicio)
+                        . ' AND fecha >= ' . $this->dataBase->var2str($reg->fechainicio)
+                        . ' AND fecha <= ' . $this->dataBase->var2str($reg->fechafin) . ';';
                     $this->dataBase->exec($sql);
                 }
             } else {
                 $sql = 'UPDATE ' . $this->tableName() . ' SET editable = false WHERE editable = true'
-                    . ' AND codejercicio = ' . $this->var2str($ej->codejercicio) . ';';
+                    . ' AND codejercicio = ' . $this->dataBase->var2str($ej->codejercicio) . ';';
                 $this->dataBase->exec($sql);
             }
         }

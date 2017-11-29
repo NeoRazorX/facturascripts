@@ -36,21 +36,10 @@ class EditArticulo extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('FacturaScripts\Core\Model\Articulo', 'EditArticulo', 'products', 'fa-cubes');
-        $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListFabricante', 'same-suppliers', 'fa-users');
-        $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListFamilia', 'same-families', 'fa-object-group');
-    }
-
-    /**
-     * Returns the Articulo's field $fieldName value
-     *
-     * @param string $fieldName
-     *
-     * @return mixed
-     */
-    private function getArticuloFieldValue($fieldName)
-    {
-        $model = $this->views['EditArticulo']->getModel();
-        return $model->{$fieldName};
+        $this->addEditListView('FacturaScripts\Core\Model\Stock', 'EditStock', 'stock');
+        $this->addListView('FacturaScripts\Core\Model\ArticuloProveedor', 'ListArticuloProveedor', 'suppliers', 'fa-ship');
+        $this->addListView('FacturaScripts\Core\Model\ArticuloCombinacion', 'ListArticuloCombinacion', 'combinations', 'fa-sliders');
+        $this->addListView('FacturaScripts\Core\Model\ArticuloTraza', 'ListArticuloTraza', 'traceability', 'fa-barcode');
     }
 
     /**
@@ -61,28 +50,30 @@ class EditArticulo extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
+        if ($this->getViewModelValue('EditArticulo', 'secompra') === false) {
+            unset($this->views['ListArticuloProveedor']);
+        }
+        
+        if ($this->getViewModelValue('EditArticulo', 'tipo') !== 'atributos') {
+            unset($this->views['ListArticuloCombinacion']);
+        }
+        
+        if ($this->getViewModelValue('EditArticulo', 'trazabilidad') === false) {
+            unset($this->views['ListArticuloTraza']);
+        }
+
+        $referencia = $this->request->get('code');
         switch ($keyView) {
             case 'EditArticulo':
-                $value = $this->request->get('code');
-                $view->loadData($value);
+                $view->loadData($referencia);
                 break;
 
-            case 'ListFabricante':
-                $codfabricante = $this->getArticuloFieldValue('codfabricante');
-
-                if (!empty($codfabricante)) {
-                    $where = [new DataBase\DataBaseWhere('codfabricante', $codfabricante)];
-                    $view->loadData($where);
-                }
-                break;
-
-            case 'ListFamilia':
-                $codfamilia = $this->getArticuloFieldValue('codfamilia');
-
-                if (!empty($codfamilia)) {
-                    $where = [new DataBase\DataBaseWhere('codfamilia', $codfamilia)];
-                    $view->loadData($where);
-                }
+            case 'EditStock':
+            case 'ListArticuloProveedor':
+            case 'ListArticuloCombinacion':
+            case 'ListArticuloTraza':
+                $where = [new DataBase\DataBaseWhere('referencia', $referencia)];
+                $view->loadData($where);
                 break;
         }
     }

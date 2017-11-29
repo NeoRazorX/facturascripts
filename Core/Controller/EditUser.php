@@ -31,27 +31,6 @@ class EditUser extends ExtendedController\PanelController
 {
 
     /**
-     * Returns an Array of languages, where the key is the JSON filename and the value is its translation
-     *
-     * @return array
-     */
-    private function getLanguages()
-    {
-        $languages = [];
-        $dir = __DIR__ . '/../Translation';
-        foreach (scandir($dir, SCANDIR_SORT_ASCENDING) as $fileName) {
-            if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
-                $languages[] = [
-                    'value' => substr($fileName, 0, -5),
-                    'title' => $this->i18n->trans('languages-' . substr($fileName, 0, -5))
-                ];
-            }
-        }
-
-        return $languages;
-    }
-
-    /**
      * Load views
      */
     protected function createViews()
@@ -63,25 +42,15 @@ class EditUser extends ExtendedController\PanelController
 
         /// Load values option to Language select input
         $columnLangCode = $this->views['EditUser']->columnForName('lang-code');
-        $langs = $this->getLanguages();
+        $langs = [];
+        foreach ($this->i18n->getAvailableLanguages() as $key => $value) {
+            $langs[] = ['value' => $key, 'title' => $value];
+        }
         $columnLangCode->widget->setValuesFromArray($langs);
 
         /// Disable columns
         $this->views['EditRolUser']->disableColumn('nick', TRUE);
         $this->views['ListPageRule']->disableColumn('nick', TRUE);
-    }
-
-    /**
-     *Returns the $fieldName value from the User model
-     *
-     * @param string $fieldName
-     *
-     * @return string|boolean
-     */
-    private function getUserFieldValue($fieldName)
-    {
-        $model = $this->views['EditUser']->getModel();
-        return $model->{$fieldName};
     }
 
     /**
@@ -99,12 +68,12 @@ class EditUser extends ExtendedController\PanelController
                 break;
 
             case 'EditRolUser':
-                $where = [new DataBase\DataBaseWhere('nick', $this->getUserFieldValue('nick'))];
+                $where = [new DataBase\DataBaseWhere('nick', $this->getViewModelValue('EditUser', 'nick'))];
                 $view->loadData($where);
                 break;
 
             case 'ListPageRule':
-                $where = [new DataBase\DataBaseWhere('nick', $this->getUserFieldValue('nick'))];
+                $where = [new DataBase\DataBaseWhere('nick', $this->getViewModelValue('EditUser', 'nick'))];
                 $view->loadData($where);
                 break;
         }

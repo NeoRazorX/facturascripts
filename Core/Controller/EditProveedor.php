@@ -38,19 +38,9 @@ class EditProveedor extends ExtendedController\PanelController
         $this->addEditListView('FacturaScripts\Core\Model\DireccionProveedor', 'EditDireccionProveedor', 'addresses', 'fa-road');
         $this->addEditListView('FacturaScripts\Core\Model\CuentaBancoProveedor', 'EditCuentaBancoProveedor', 'bank-accounts', 'fa-university');
         $this->addEditListView('FacturaScripts\Core\Model\ArticuloProveedor', 'EditProveedorArticulo', 'products', 'fa-cubes');
-    }
-
-    /**
-     * Returns the $fieldName value from the Proveedor model
-     *
-     * @param string $fieldName
-     *
-     * @return mixed
-     */
-    private function getProviderFieldValue($fieldName)
-    {
-        $model = $this->views['EditProveedor']->getModel();
-        return $model->{$fieldName};
+        $this->addListView('FacturaScripts\Core\Model\FacturaProveedor', 'ListFacturaProveedor', 'invoices', 'fa-files-o');
+        $this->addListView('FacturaScripts\Core\Model\AlbaranProveedor', 'ListAlbaranProveedor', 'delivery-notes', 'fa-files-o');
+        $this->addListView('FacturaScripts\Core\Model\PedidoProveedor', 'ListPedidoProveedor', 'orders', 'fa-files-o');
     }
 
     /**
@@ -61,24 +51,21 @@ class EditProveedor extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
+        $codproveedor = $this->request->get('code');
+
         switch ($keyView) {
             case 'EditProveedor':
-                $value = $this->request->get('code');
-                $view->loadData($value);
+                $view->loadData($codproveedor);
                 break;
 
             case 'EditDireccionProveedor':
-                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getProviderFieldValue('codproveedor'))];
-                $view->loadData($where);
-                break;
-
             case 'EditCuentaBancoProveedor':
-                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getProviderFieldValue('codproveedor'))];
-                $view->loadData($where);
-                break;
-
             case 'EditProveedorArticulo':
-                $where = [new DataBase\DataBaseWhere('codproveedor', $this->getProviderFieldValue('codproveedor'))];
+            case 'ListFacturaProveedor':
+            case 'ListAlbaranProveedor':
+            case 'ListPedidoProveedor':
+            case 'ListPresupuestoProveedor':
+                $where = [new DataBase\DataBaseWhere('codproveedor', $codproveedor)];
                 $view->loadData($where);
                 break;
         }

@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Lib\NewCodigoDoc;
 
 /**
@@ -108,6 +109,13 @@ trait DocumentoCompra
      * @var string
      */
     public $hora;
+    
+    /**
+     * Idempresa del documento
+     * 
+     * @var int 
+     */
+    public $idempresa;
 
     /**
      * % de retención IRPF del albarán. Se obtiene de la serie.
@@ -211,9 +219,10 @@ trait DocumentoCompra
     private function clearDocumentoCompra()
     {
         $this->clearTrait();
-        $this->codserie = $this->defaultItems->codSerie();
-        $this->codpago = $this->defaultItems->codPago();
-        $this->codalmacen = $this->defaultItems->codAlmacen();
+        $this->codserie = AppSettings::get('default', 'codserie');
+        $this->codpago = AppSettings::get('default', 'codpago');
+        $this->codalmacen = AppSettings::get('default', 'codalmacen');
+        $this->idempresa = AppSettings::get('default', 'idempresa');
         $this->fecha = date('d-m-Y');
         $this->hora = date('H:i:s');
         $this->irpf = 0.0;
@@ -364,10 +373,13 @@ trait DocumentoCompra
     }
 
     /**
+     * Calcula los subtotales de neto, impuestos y recargo, por tipo de impuesto, además del irpf, neto e impuestos con el cálculo anterior.
+     *
      * @param boolean $status
-     * @param integer $irpf
-     * @param integer $netoAlt
-     * @param integer $ivaAlt
+     * @param array $subtotales
+     * @param int $irpf
+     * @param int $netoAlt
+     * @param int $ivaAlt
      */
     private function getSubtotales(&$status, &$subtotales, &$irpf, &$netoAlt, &$ivaAlt)
     {

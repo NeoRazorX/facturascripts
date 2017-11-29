@@ -106,6 +106,10 @@
         <null>YES</null>
     </column>
     <column>
+        <name>femail</name>
+        <type>date</type>
+    </column>
+    <column>
         <name>ptefactura</name>
         <type>boolean</type>
         <null>NO</null>
@@ -156,6 +160,11 @@
         <name>numdocs</name>
         <type>integer</type>
         <default>0</default>
+    </column>
+    <column>
+        <name>idempresa</name>
+        <type>integer</type>
+        <null>YES</null>
     </column>
     <constraint>
         <name>ca_albaranesprov_series2</name>

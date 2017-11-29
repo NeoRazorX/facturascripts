@@ -31,6 +31,12 @@ abstract class App
 {
 
     /**
+     * Stored defaut configuration with the default application settings.
+     * @var AppSettings
+     */
+    protected $appSettings;
+
+    /**
      * Cache access manager.
      *
      * @var Base\Cache
@@ -87,6 +93,13 @@ abstract class App
     protected $response;
 
     /**
+     * Stored defaut configuration with the application settings.
+     * 
+     * @var AppSettings 
+     */
+    protected $settings;
+
+    /**
      * Initializes the app.
      *
      * @param string $folder FacturaScripts working directory
@@ -112,16 +125,22 @@ abstract class App
         $this->miniLog = new Base\MiniLog();
         $this->pluginManager = new Base\PluginManager();
         $this->response = new Response();
+        $this->settings = new AppSettings();
     }
 
     /**
-     * Connects to the database.
+     * Connects to the database and loads the configuration.
      *
      * @return bool
      */
     public function connect()
     {
-        return $this->dataBase->connect();
+        if ($this->dataBase->connect()) {
+            $this->settings->load();
+            return TRUE;
+        }
+
+        return false;
     }
 
     /**

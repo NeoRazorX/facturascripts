@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -24,8 +23,9 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-abstract class WidgetItem
+abstract class WidgetItem implements VisualItemInterface
 {
+
     /**
      * Field name with the data that the widget displays
      *
@@ -34,14 +34,14 @@ abstract class WidgetItem
     public $fieldName;
 
     /**
-     * Tipo de widget que se visualiza
+     * Type of widget displayed
      *
      * @var string
      */
     public $type;
 
     /**
-     * Información adicional para el usuario
+     * Additional information for the user
      *
      * @var string
      */
@@ -83,11 +83,15 @@ abstract class WidgetItem
     public $options;
 
     /**
+     * Generates the html code to display the model data for List controller
+     *
      * @param string $value
      */
     abstract public function getListHTML($value);
 
     /**
+     * Generates the html code to display the model data for Edit controller
+     *
      * @param string $value
      */
     abstract public function getEditHTML($value);
@@ -133,12 +137,12 @@ abstract class WidgetItem
      * @param \SimpleXMLElement $column
      * @return WidgetItem
      */
-    public static function newFromXMLColumn($column)
+    public static function newFromXML($column)
     {
         $widgetAtributes = $column->widget->attributes();
         $type = (string) $widgetAtributes->type;
         $widget = self::widgetItemFromType($type);
-        $widget->loadFromXMLColumn($column, $widgetAtributes);
+        $widget->loadFromXML($column);
         return $widget;
     }
 
@@ -148,11 +152,11 @@ abstract class WidgetItem
      * @param array $column
      * @return WidgetItem
      */
-    public static function newFromJSONColumn($column)
+    public static function newFromJSON($column)
     {
         $type = (string) $column['widget']['type'];
         $widget = self::widgetItemFromType($type);
-        $widget->loadFromJSONColumn($column);
+        $widget->loadFromJSON($column);
         return $widget;
     }
 
@@ -171,10 +175,29 @@ abstract class WidgetItem
     }
 
     /**
+     * Array with list of personalization functions of the column
+     */
+    public function columnFunction()
+    {
+        return ['ColumnClass', 'ColumnHint', 'ColumnRequired', 'ColumnDescription'];
+    }
+
+    /**
+     * Generate the html code to visualize the visual element header
+     *
+     * @param string $value
+     * @return string
+     */
+    public function getHeaderHTML($value)
+    {
+        return '<span title="' . $value . '"></span>';
+    }
+
+    /**
      * Loads the attribute dictionary for a widget's group of options or values
      *
      * @param array            $property
-     * @param \SimpleXMLElement $group
+     * @param \SimpleXMLElement[] $group
      */
     protected function getAttributesGroup(&$property, $group)
     {
@@ -193,12 +216,11 @@ abstract class WidgetItem
     /**
      * Loads the attributes structure from a XML file
      *
-     *
      * @param \SimpleXMLElement $column
-     * @param \SimpleXMLElement $widgetAtributes
      */
-    protected function loadFromXMLColumn($column, $widgetAtributes)
+    public function loadFromXML($column)
     {
+        $widgetAtributes = $column->widget->attributes();
         $this->fieldName = (string) $widgetAtributes->fieldname;
         $this->hint = (string) $widgetAtributes->hint;
         $this->readOnly = (bool) $widgetAtributes->readonly;
@@ -214,7 +236,7 @@ abstract class WidgetItem
      *
      * @param array $column
      */
-    protected function loadFromJSONColumn($column)
+    public function loadFromJSON($column)
     {
         $this->fieldName = (string) $column['widget']['fieldName'];
         $this->hint = (string) $column['widget']['hint'];
@@ -266,7 +288,7 @@ abstract class WidgetItem
             if ($this->canApplyOptions($option['value'], $valueItem)) {
                 $html = ' style="';
                 foreach ($option as $key => $value) {
-                    if ($key != 'value') {
+                    if ($key !== 'value') {
                         $html .= $key . ':' . $value . '; ';
                     }
                 }
@@ -355,6 +377,7 @@ abstract class WidgetItem
      * @param string $value
      * @param string $specialAttributes
      * @param string $extraClass
+     * @param string $type
      *
      * @return string
      */

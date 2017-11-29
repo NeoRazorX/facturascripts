@@ -16,10 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
+use FacturaScripts\Core\Base\Translator;
 
 /**
  * Class to connect with PostgreSQL..
@@ -29,12 +29,6 @@ use Exception;
  */
 class Postgresql implements DataBaseEngine
 {
-    /**
-     * The link with the common utilities between database engines.
-     *
-     * @var DataBaseUtils
-     */
-    private $utils;
 
     /**
      * Link to the SQL statements for the connected database
@@ -51,13 +45,20 @@ class Postgresql implements DataBaseEngine
     private $lastErrorMsg;
 
     /**
+     * Contains the translator
+     *
+     * @var Translator
+     */
+    private $i18n;
+
+    /**
      * Contructor e inicializador de la clase
      */
     public function __construct()
     {
-        $this->utils = new DataBaseUtils($this);
         $this->utilsSQL = new PostgresqlSQL();
         $this->lastErrorMsg = '';
+        $this->i18n = new Translator();
     }
 
     /**
@@ -100,7 +101,7 @@ class Postgresql implements DataBaseEngine
     public function connect(&$error)
     {
         if (!function_exists('pg_connect')) {
-            $error = 'No tienes instalada la extensión de PHP para PostgreSQL.';
+            $error = $this->i18n->trans('php-postgresql-not-found');
 
             return null;
         }
@@ -214,22 +215,25 @@ class Postgresql implements DataBaseEngine
      * @param string   $sql
      * @param bool     $selectRows
      *
-     * @return array
+     * @return array|bool
      */
     private function runSql($link, $sql, $selectRows = true)
     {
-        $result = [];
+        $result = $selectRows ? [] : false;
+
         try {
-            $aux = pg_query($link, $sql);
+            $aux = @pg_query($link, $sql);
             if ($aux) {
                 if ($selectRows) {
                     $result = pg_fetch_all($aux);
+                } else {
+                    $result = true;
                 }
                 pg_free_result($aux);
             }
         } catch (Exception $e) {
             $this->lastErrorMsg = $e->getMessage();
-            $result = $selectRows ? [] : ['ok' => 'false'];
+            $result = $selectRows ? [] : false;
         }
 
         return $result;
@@ -241,7 +245,7 @@ class Postgresql implements DataBaseEngine
      * @param resource $link
      * @param string   $sql
      *
-     * @return resource
+     * @return array
      */
     public function select($link, $sql)
     {
@@ -259,7 +263,7 @@ class Postgresql implements DataBaseEngine
      */
     public function exec($link, $sql)
     {
-        return empty($this->runSql($link, $sql, false));
+        return $this->runSql($link, $sql, false) === true;
     }
 
     /**
@@ -357,16 +361,6 @@ class Postgresql implements DataBaseEngine
     public function checkTableAux($link, $tableName, &$error)
     {
         return true;
-    }
-
-    /**
-     * Returns the link to the Utils class from the engine
-     *
-     * @return DataBaseUtils
-     */
-    public function getUtils()
-    {
-        return $this->utils;
     }
 
     /**

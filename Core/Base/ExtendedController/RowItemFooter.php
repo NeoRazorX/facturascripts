@@ -25,7 +25,16 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 class RowItemFooter extends RowItem
 {
+    /**
+     * Lista de paneles
+     * @var array
+     */
     public $panels;
+
+    /**
+     * Lista de botones
+     * @var array
+     */
     public $buttons;
 
     /**
@@ -38,6 +47,11 @@ class RowItemFooter extends RowItem
         $this->buttons = [];
     }
 
+    /**
+     * Carga la estructura del row en base a un archivo XML.
+     *
+     * @param \SimpleXMLElement $row
+     */
     public function loadFromXML($row)
     {
         $groupCount = 1;
@@ -49,16 +63,28 @@ class RowItemFooter extends RowItem
             }
             
             $this->panels[$values['name']] = $values;            
-            $this->buttons[$values['name']] = $this->loadButtonsFromXML($item->button);
+            $this->buttons[$values['name']] = $this->loadButtonsFromXML($item);
             unset($values);
         }
     }
 
+    /**
+     * Carga la estructura del row en base a un archivo JSON.
+     *
+     * @param array $items
+     */
     public function loadFromJSON($items)
     {
 
     }
-    
+
+    /**
+     * Devuelve los botones para el valor indicado.
+     *
+     * @param $key
+     *
+     * @return mixed
+     */
     public function getButtons($key)
     {
         return $this->buttons[$key];

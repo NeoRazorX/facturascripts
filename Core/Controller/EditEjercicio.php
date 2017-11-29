@@ -19,6 +19,10 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Model\GrupoEpigrafes;
+use FacturaScripts\Core\Model\Epigrafe;
+use FacturaScripts\Core\Model\Cuenta;
 
 /**
  * Controller to edit a single item from the Familia model
@@ -27,15 +31,55 @@ use FacturaScripts\Core\Base\ExtendedController;
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class EditEjercicio extends ExtendedController\EditController
+class EditEjercicio extends ExtendedController\PanelController
 {
 
     /**
-     * Returns the model name
+     * Load views.
      */
-    public function getModelName()
+    protected function createViews()
     {
-        return 'FacturaScripts\Core\Model\Ejercicio';
+        $this->addEditView('FacturaScripts\Core\Model\Ejercicio', 'EditEjercicio', 'exercise');
+        $this->addEditListView('FacturaScripts\Core\Model\GrupoEpigrafes', 'EditEjercicioGrupoEpigrafes', 'Grupo epigrafe');
+        $this->addEditListView('FacturaScripts\Core\Model\Epigrafe', 'EditEjercicioEpigrafe', 'Epigrafes');
+        $this->addEditListView('FacturaScripts\Core\Model\Cuenta', 'EditEjercicioCuenta', 'account', 'fa-book');
+        $this->addEditListView('FacturaScripts\Core\Model\Subcuenta', 'EditEjercicioSubcuenta', 'subaccount');
+    }
+
+    /**
+     * Load view data procedure
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        switch ($keyView) {
+            case 'EditEjercicio':
+                $value = $this->request->get('code');
+                $view->loadData($value);
+                break;
+
+            case 'EditEjercicioGrupoEpigrafes':
+                $where = [new DataBase\DataBaseWhere('codejercicio', $this->request->get('code'))];
+                $view->loadData($where);
+                break;
+
+            case 'EditEjercicioEpigrafe':
+                $where = [new DataBase\DataBaseWhere('codejercicio', $this->request->get('code'))];
+                $view->loadData($where);
+                break;
+
+            case 'EditEjercicioCuenta':
+                $where = [new DataBase\DataBaseWhere('codejercicio', $this->request->get('code'))];
+                $view->loadData($where);
+                break;
+
+            case 'EditEjercicioSubcuenta':
+                $where = [new DataBase\DataBaseWhere('codejercicio', $this->request->get('code'))];
+                $view->loadData($where);
+                break;
+        }
     }
 
     /**

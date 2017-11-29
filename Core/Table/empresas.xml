@@ -27,36 +27,6 @@
         <null>YES</null>
     </column>
     <column>
-        <name>codalmacen</name>
-        <type>character varying(4)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>codcuentarem</name>
-        <type>character varying(10)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>coddivisa</name>
-        <type>character varying(3)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>codedi</name>
-        <type>character varying(17)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>codejercicio</name>
-        <type>character varying(4)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>codpago</name>
-        <type>character varying(10)</type>
-        <null>YES</null>
-    </column>
-    <column>
         <name>codpais</name>
         <type>character varying(20)</type>
         <null>YES</null>
@@ -64,16 +34,6 @@
     <column>
         <name>codpostal</name>
         <type>character varying(10)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>codserie</name>
-        <type>character varying(4)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>contintegrada</name>
-        <type>boolean</type>
         <null>YES</null>
     </column>
     <column>
@@ -92,11 +52,6 @@
         <null>YES</null>
     </column>
     <column>
-        <name>horario</name>
-        <type>character varying(100)</type>
-        <null>YES</null>
-    </column>
-    <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
@@ -105,21 +60,6 @@
     <column>
         <name>idprovincia</name>
         <type>integer</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>xid</name>
-        <type>character varying(30)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>lema</name>
-        <type>character varying(100)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>logo</name>
-        <type>text</type>
         <null>YES</null>
     </column>
     <column>
@@ -133,22 +73,12 @@
         <null>YES</null>
     </column>
     <column>
-        <name>pie_factura</name>
-        <type>text</type>
-        <null>YES</null>
-    </column>
-    <column>
         <name>provincia</name>
         <type>character varying(100)</type>
         <null>YES</null>
     </column>
     <column>
         <name>recequivalencia</name>
-        <type>boolean</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>stockpedidos</name>
         <type>boolean</type>
         <null>YES</null>
     </column>

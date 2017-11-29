@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
@@ -31,12 +30,6 @@ use FacturaScripts\Core\Base\Translator;
  */
 class Mysql implements DataBaseEngine
 {
-    /**
-     * The link with the common utilities between database engines.
-     *
-     * @var DataBaseUtils
-     */
-    private $utils;
 
     /**
      * Link to the SQL statements for the connected database
@@ -71,7 +64,6 @@ class Mysql implements DataBaseEngine
      */
     public function __construct()
     {
-        $this->utils = new DataBaseUtils($this);
         $this->utilsSQL = new MysqlSQL();
         $this->transactions = [];
         $this->lastErrorMsg = '';
@@ -152,7 +144,7 @@ class Mysql implements DataBaseEngine
         $result->autocommit(false);
 
         /// desactivamos las claves ajenas
-        if (FS_FOREIGN_KEYS !== '1') {
+        if (FS_DB_FOREIGN_KEYS) {
             $this->exec($result, 'SET foreign_key_checks = 0;');
         }
 
@@ -293,7 +285,7 @@ class Mysql implements DataBaseEngine
                     $more = ($link->more_results() && $link->next_result());
                 } while ($more);
             }
-            $result = (!$link->errno);
+            $result = ($link->errno === 0);
         } catch (Exception $e) {
             $this->lastErrorMsg = $e->getMessage();
             $result = false;
@@ -466,16 +458,6 @@ class Mysql implements DataBaseEngine
         unset($result['null'], $result['field']);
 
         return $result;
-    }
-
-    /**
-     * Returns the link to the Utils class from the engine
-     *
-     * @return DataBaseUtils
-     */
-    public function getUtils()
-    {
-        return $this->utils;
     }
 
     /**

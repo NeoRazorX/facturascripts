@@ -19,8 +19,9 @@
 
     function deleteRecord(formName) {
         bootbox.confirm({
-            title: "{{ i18n.trans('confirm-delete') }}",
+            title: "{{ i18n.trans('confirm-delete')|raw }}",
             message: "{{ i18n.trans('are-you-sure') }}",
+            closeButton: false,
             buttons: {
                 cancel: {
                     label: "<i class='fa fa-times'></i> {{ i18n.trans('cancel') }}"
@@ -79,7 +80,7 @@
 
     {# -- Header Row -- #}
     <div id="header" class="row">
-        <div class="col-3 d-print-none">
+        <div class="col-6 d-print-none">
             <div class="btn-group" aria-label="Button group with navigation actions">
                 <a href="{{ list_url }}" class="btn btn-sm btn-outline-secondary">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i>
@@ -93,8 +94,7 @@
             {# -- Adds print and export options  -- #}
             {{ exportData(fsc, i18n, 'edit') }}
         </div>
-
-        <div class="col-6 text-center">
+        <div class="col-6 text-right">
             <div class="page-header">
                 <h2>
                     <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
@@ -127,7 +127,7 @@
                         {% else %}
                             <br/>
                         {% endif %}
-                        
+
                         {% if viewType == 'EditView' %}
                             <!-- Statistical buttons bar -->
                             {{ rowHeaderForEditView(_context, view) }}
@@ -135,14 +135,14 @@
                             {% set model = view.getModel() %}
                             {{ columnsForEditView(_context, view, model, TRUE) }}
                         {% endif %}
-                        
+
                         {% if viewType == 'EditListView' %}
                             {{ columnsForEditListView(_context, view) }}
                         {% endif %}
-                        
+
                         {% if viewType == 'HtmlView' %}
                             <div>{% include view.fileName ignore missing %}</div>
-                        {% elseif viewType in ['EditView','EditListView'] %}
+                        {% else %}
                             {{ rowFooterForEditView(_context, view) }}
                             {{ modalFormFromColumns(_context, view) }}
                         {% endif %}

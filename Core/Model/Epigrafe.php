@@ -26,7 +26,9 @@ namespace FacturaScripts\Core\Model;
 class Epigrafe
 {
 
-    use Base\ModelTrait;
+    use Base\ModelTrait {
+        url as private traitURL;
+    }
 
     /**
      * Lista de grupos
@@ -135,7 +137,7 @@ class Epigrafe
     public function hijos()
     {
         $epilist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idpadre = ' . $this->var2str($this->idepigrafe)
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idpadre = ' . $this->dataBase->var2str($this->idepigrafe)
             . ' ORDER BY codepigrafe ASC;';
 
         $data = $this->dataBase->select($sql);
@@ -170,8 +172,8 @@ class Epigrafe
      */
     public function getByCodigo($cod, $codejercicio)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codepigrafe = ' . $this->var2str($cod)
-            . ' AND codejercicio = ' . $this->var2str($codejercicio) . ';';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codepigrafe = ' . $this->dataBase->var2str($cod)
+            . ' AND codejercicio = ' . $this->dataBase->var2str($codejercicio) . ';';
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
@@ -208,7 +210,7 @@ class Epigrafe
     public function superFromEjercicio($codejercicio)
     {
         $epilist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($codejercicio)
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->dataBase->var2str($codejercicio)
             . ' AND idpadre IS NULL AND idgrupo IS NULL ORDER BY codepigrafe ASC;';
 
         $data = $this->dataBase->select($sql);
@@ -255,27 +257,6 @@ class Epigrafe
      */
     public function url($type = 'auto')
     {
-        $value = $this->primaryColumnValue();
-        $model = $this->modelClassName();
-        $result = 'index.php?page=';
-        switch ($type) {
-            case 'list':
-                $result .= 'ListCuenta&active=List' . $model;
-                break;
-
-            case 'edit':
-                $result .= 'Edit' . $model . '&code=' . $value;
-                break;
-
-            case 'new':
-                $result .= 'Edit' . $model;
-                break;
-
-            default:
-                $result .= empty($value) ? 'ListCuenta&active=List' . $model : 'Edit' . $model . '&code=' . $value;
-                break;
-        }
-
-        return $result;
+        return $this->traitURL($type, 'ListCuenta&active=List');
     }
 }

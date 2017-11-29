@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
@@ -140,7 +141,12 @@ class Subcuenta
     {
         return 'idsubcuenta';
     }
-    
+
+    /**
+     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
+     *
+     * @return string
+     */
     public function install()
     {
         new Ejercicio();
@@ -159,7 +165,7 @@ class Subcuenta
         $this->idcuenta = null;
         $this->codcuenta = null;
         $this->codejercicio = null;
-        $this->coddivisa = $this->defaultItems->codDivisa();
+        $this->coddivisa = AppSettings::get('default', 'coddivisa');
         $this->codimpuesto = null;
         $this->descripcion = '';
         $this->debe = 0.0;
@@ -325,8 +331,8 @@ class Subcuenta
     public function getCuentaesp($idcuesp, $codeje)
     {
         $sql = 'SELECT * FROM co_subcuentas WHERE idcuenta IN '
-            . '(SELECT idcuenta FROM co_cuentas WHERE idcuentaesp = ' . $this->var2str($idcuesp)
-            . ' AND codejercicio = ' . $this->var2str($codeje) . ') ORDER BY codsubcuenta ASC;';
+            . '(SELECT idcuenta FROM co_cuentas WHERE idcuentaesp = ' . $this->dataBase->var2str($idcuesp)
+            . ' AND codejercicio = ' . $this->dataBase->var2str($codeje) . ') ORDER BY codsubcuenta ASC;';
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
@@ -416,8 +422,8 @@ class Subcuenta
     {
         $cuentas = [];
         $sql = 'SELECT * FROM co_subcuentas WHERE idcuenta IN '
-            . '(SELECT idcuenta FROM co_cuentas WHERE idcuentaesp = ' . $this->var2str($idcuesp)
-            . ' AND codejercicio = ' . $this->var2str($codeje) . ') ORDER BY codsubcuenta ASC;';
+            . '(SELECT idcuenta FROM co_cuentas WHERE idcuentaesp = ' . $this->dataBase->var2str($idcuesp)
+            . ' AND codejercicio = ' . $this->dataBase->var2str($codeje) . ') ORDER BY codsubcuenta ASC;';
 
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
@@ -441,7 +447,7 @@ class Subcuenta
     {
         $sublist = [];
         $query = mb_strtolower(self::noHtml($query), 'UTF8');
-        $sql = 'SELECT * FROM ' . $this->tableName() . " WHERE codsubcuenta LIKE '" . $query . "%'"
+        $sql = 'SELECT * FROM ' . static::tableName() . " WHERE codsubcuenta LIKE '" . $query . "%'"
             . " OR codsubcuenta LIKE '%" . $query . "'"
             . " OR lower(descripcion) LIKE '%" . $query . "%'"
             . ' ORDER BY codejercicio DESC, codcuenta ASC;';
@@ -467,11 +473,11 @@ class Subcuenta
      */
     public function searchByEjercicio($codejercicio, $query)
     {
-        $query = $this->escapeString(mb_strtolower(trim($query), 'UTF8'));
+        $query = $this->dataBase->escapeString(mb_strtolower(trim($query), 'UTF8'));
 
         $sublist = $this->cache->get('search_subcuenta_ejercicio_' . $codejercicio . '_' . $query);
         if (count($sublist) < 1) {
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->var2str($codejercicio)
+            $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codejercicio = ' . $this->dataBase->var2str($codejercicio)
                 . " AND (codsubcuenta LIKE '" . $query . "%' OR codsubcuenta LIKE '%" . $query . "'"
                 . " OR lower(descripcion) LIKE '%" . $query . "%') ORDER BY codcuenta ASC;";
 

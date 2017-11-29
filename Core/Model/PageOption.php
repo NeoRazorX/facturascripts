@@ -22,8 +22,8 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Configuración visual de las vistas de FacturaScripts,
- * cada PageOption se corresponde con un controlador.
+ * Visual configuration of the FacturaScripts views,
+ * each PageOption corresponds to a controller.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -36,57 +36,57 @@ class PageOption
     }
 
     /**
-     * Identificador
+     * Identifier
      *
      * @var int
      */
     public $id;
 
     /**
-     * Nombre de la página (controlador).
+     * Name of the page (controller).
      *
      * @var string
      */
     public $name;
 
     /**
-     * Identificador del Usuario.
+     * User Identifier.
      *
      * @var string
      */
     public $nick;
 
     /**
-     * Definición para tratamiento especial de filas
+     * Definition for special treatment of rows
      *
      * @var array
      */
     public $rows;
 
     /**
-     * Definición de los formularios modales
+     * Definition of modal forms
      *
      * @var array
      */
     public $modals;
 
     /**
-     * Definición de las columnas. Se denomina columns pero contiene
-     * siempre GroupItem, el cual contiene las columnas.
+     * Definition of the columns. It is called columns but it always
+     * contains GroupItem, which contains the columns.
      *
      * @var array
      */
     public $columns;
 
     /**
-     * Definición de filtros personalizados
+     * Defining custom filters
      *
      * @var array
      */
     public $filters;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -96,7 +96,7 @@ class PageOption
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -106,15 +106,14 @@ class PageOption
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table.
+     * Returns the SQL that will be executed after the creation of the table,
+     * useful to insert default values.
      *
      * @return string
      */
     public function install()
     {
-        /// necesitamos estas clase para las claves ajenas
         new Page();
         new User();
 
@@ -122,7 +121,7 @@ class PageOption
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset values of all model properties.
      */
     public function clear()
     {
@@ -133,8 +132,18 @@ class PageOption
         $this->rows = [];
     }
 
+    public function modals()
+    {
+        return json_encode($this->modals);
+    }
+
+    public function columns()
+    {
+        return json_encode($this->columns);
+    }
+
     /**
-     * Carga la estructura de columnas desde el JSON
+     * Load the column structure from the JSON
      *
      * @param \SimpleXMLElement $groups
      * @param array $target
@@ -143,7 +152,7 @@ class PageOption
     {
         if (!empty($groups)) {
             foreach ($groups as $item) {
-                $groupItem = ExtendedController\GroupItem::newFromJSONGroup($item);
+                $groupItem = ExtendedController\GroupItem::newFromJSON($item);
                 $target[$groupItem->name] = $groupItem;
                 unset($groupItem);
             }
@@ -151,7 +160,7 @@ class PageOption
     }
 
     /**
-     * Carga los datos desde un array
+     * Load the data from an array
      *
      * @param array $data
      */
@@ -168,7 +177,7 @@ class PageOption
         $rows = json_decode($data['rows'], true);
         if (!empty($rows)) {
             foreach ($rows as $item) {
-                $rowItem = ExtendedController\RowItem::newFromJSONRow($item);
+                $rowItem = ExtendedController\RowItem::newFromJSON($item);
                 $this->rows[$rowItem->type] = $rowItem;
                 unset($rowItem);
             }
@@ -176,7 +185,7 @@ class PageOption
     }
 
     /**
-     * Actualiza los datos del modelo en la base de datos.
+     * Update the model data in the database.
      *
      * @return bool
      */
@@ -187,18 +196,17 @@ class PageOption
         $filters = json_encode($this->filters);
         $rows = json_encode($this->rows);
 
-        $sql = 'UPDATE ' . $this->tableName() . ' SET '
-            . '  columns = ' . $this->var2str($columns)
-            . ' ,modals = ' . $this->var2str($modals)
-            . ' ,filters = ' . $this->var2str($filters)
-            . ' ,rows = ' . $this->var2str($rows)
-            . ' WHERE id = ' . $this->id . ';';
+        $sql = 'UPDATE ' . $this->tableName() . ' SET columns = ' . $this->dataBase->var2str($columns)
+            . ', modals = ' . $this->dataBase->var2str($modals)
+            . ', filters = ' . $this->dataBase->var2str($filters)
+            . ', rows = ' . $this->dataBase->var2str($rows)
+            . '  WHERE id = ' . $this->id . ';';
 
         return $this->dataBase->exec($sql);
     }
 
     /**
-     * Inserta los datos del modelo en la base de datos.
+     * Insert the model data in the database.
      *
      * @return bool
      */
@@ -212,12 +220,12 @@ class PageOption
         $sql = 'INSERT INTO ' . $this->tableName()
             . ' (id, name, nick, columns, modals, filters, rows) VALUES ('
             . "nextval('fs_pages_options_id_seq')" . ','
-            . $this->var2str($this->name) . ','
-            . $this->var2str($this->nick) . ','
-            . $this->var2str($columns) . ','
-            . $this->var2str($modals) . ','
-            . $this->var2str($filters) . ','
-            . $this->var2str($rows)
+            . $this->dataBase->var2str($this->name) . ','
+            . $this->dataBase->var2str($this->nick) . ','
+            . $this->dataBase->var2str($columns) . ','
+            . $this->dataBase->var2str($modals) . ','
+            . $this->dataBase->var2str($filters) . ','
+            . $this->dataBase->var2str($rows)
             . ');';
 
         if ($this->dataBase->exec($sql)) {
@@ -234,42 +242,44 @@ class PageOption
     }
 
     /**
-     * Carga la estructura de columnas desde el XML
+     * Load the column structure from the XML
      *
      * @param \SimpleXMLElement $columns
      * @param array $target
      */
     private function getXMLGroupsColumns($columns, &$target)
     {
-        // No hay agrupación de columnas
-        if (empty($columns->group)) {
-            $groupItem = new ExtendedController\GroupItem();
-            $groupItem->loadFromXMLColumns($columns);
+        // if group dont have elements
+        if ($columns->count() === 0) {
+            return;
+        }
+
+        // if have elements but dont have groups
+        if (!isset($columns->group)) {
+            $groupItem = ExtendedController\GroupItem::newFromXML($columns);
             $target[$groupItem->name] = $groupItem;
             unset($groupItem);
             return;
         }
 
-        // Con agrupación de columnas
+        // exists columns grouped
         foreach ($columns->group as $group) {
-            $groupItem = new ExtendedController\GroupItem();
-            $groupItem->loadFromXML($group);
+            $groupItem = ExtendedController\GroupItem::newFromXML($group);
             $target[$groupItem->name] = $groupItem;
             unset($groupItem);
         }
     }
 
     /**
-     * Carga las condiciones especiales para las filas
-     * desde el XML
+     * Load the special conditions for the rows from XML file
      *
-     * @param \SimpleXMLElement[] $rows
+     * @param \SimpleXMLElement $rows
      */
     private function getXMLRows($rows)
     {
         if (!empty($rows)) {
             foreach ($rows->row as $row) {
-                $rowItem = ExtendedController\RowItem::newFromXMLRow($row);
+                $rowItem = ExtendedController\RowItem::newFromXML($row);
                 $this->rows[$rowItem->type] = $rowItem;
                 unset($rowItem);
             }
@@ -277,7 +287,7 @@ class PageOption
     }
 
     /**
-     * Añade a la configuración de un controlador
+     * Add to the configuration of a controller
      *
      * @param string $name
      */
@@ -307,7 +317,7 @@ class PageOption
     }
 
     /**
-     * Obtiene la configuración para el controlador y usuario
+     * Get the settings for the driver and user
      *
      * @param string $name
      * @param string $nick
@@ -331,39 +341,23 @@ class PageOption
             $this->installXML($name);
         }
 
-        // Aplicamos sobre los widgets Select dinámicos sus valores
-        $this->dynamicSelectValues();
+        // Apply values to dynamic Select widgets
+        $this->dynamicSelectValues($this->columns);
+
+        // Apply values to dynamic Select widgets for modals forms
+        if (!empty($this->modals)) {
+            $this->dynamicSelectValues($this->modals);
+        }
     }
 
     /**
-     * Carga la lista de valores para un widget de tipo select dinámico
-     * con un modelo de la base de datos o un rango de valores
+     * Load the list of values for a dynamic select type widget with
+     *  a database model or a range of values
      */
-    private function dynamicSelectValues()
+    private function dynamicSelectValues($items)
     {
-        foreach ($this->columns as $group) {
-            foreach ($group->columns as $column) {
-                if ($column->widget->type === 'select') {
-                    if (isset($column->widget->values[0]['source'])) {
-                        $tableName = $column->widget->values[0]['source'];
-                        $fieldCode = $column->widget->values[0]['fieldcode'];
-                        $fieldDesc = $column->widget->values[0]['fieldtitle'];
-                        $allowEmpty = !$column->widget->required;
-                        $rows = CodeModel::all($tableName, $fieldCode, $fieldDesc, $allowEmpty);
-                        $column->widget->setValuesFromCodeModel($rows);
-                        unset($rows);
-                    }
-
-                    /// para los bucles como este <values start="0" end="5" step="1"></values>
-                    if (isset($column->widget->values[0]['start'])) {
-                        $start = $column->widget->values[0]['start'];
-                        $end = $column->widget->values[0]['end'];
-                        $step = $column->widget->values[0]['step'];
-                        $values = range($start, $end, $step);
-                        $column->widget->setValuesFromArray($values);
-                    }
-                }
-            }
+        foreach ($items as $group) {
+            $group->applySpecialOperations();
         }
     }
 }

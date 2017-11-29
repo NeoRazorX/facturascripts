@@ -37,7 +37,7 @@
         </group>
         <group name="descripcion" numcolumns="10">
             <column name="description" numcolumns="12" order="110">
-                <widget type="textarea" fieldname="descripcion"  required="true" />
+                <widget type="textarea" fieldname="descripcion" required="true" />
             </column>
         </group>
         <group name="varios" numcolumns="12">
@@ -90,12 +90,12 @@
             </column> 
             <column name="trazabilidad" title="traceability" numcolumns="6" order="110">
                 <widget type="checkbox" fieldname="trazabilidad"/>
-            </column>  
+            </column>
             <column name="bloqueado" title="blocked" numcolumns="6" order="120">
                 <widget type="checkbox" fieldname="bloqueado"/>
             </column>
-        </group>  
-        <group name="precios" numcolumns="12">
+        </group>
+        <group name="precios" title="price" numcolumns="12">
             <column name="preciocoste" title="cost-price" numcolumns="3" order="100">
                 <widget type="number" fieldname="preciocoste" readonly="readonly"/>
             </column>
@@ -105,10 +105,15 @@
             <column name="pvp" title="pvp" numcolumns="3" order="130">
                 <widget type="number" fieldname="pvp"/>
             </column>
-            <column name="codimpuesto" title="tax-code" numcolumns="3" order="140">
+            <column name="codimpuesto" title="tax" numcolumns="3" order="140">
                 <widget type="select" fieldname="codimpuesto">
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
                 </widget>
+            </column>
+        </group>
+        <group name="observations" numcolumns="12">
+            <column name="observations" numcolumns="12" order="110">
+                <widget type="textarea" fieldname="observaciones" />
             </column>
         </group>
     </columns>

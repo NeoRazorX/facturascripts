@@ -1,6 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
+ * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  * Copyright (C) 2017  Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -122,41 +123,6 @@ class EstadoDocumento
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        $estados = [
-            ['documento' => 'ventas_presupuesto', 'status' => 0, 'nombre' => 'Pendiente', 'bloqueado' => true],
-            ['documento' => 'ventas_presupuesto', 'status' => 1, 'nombre' => 'Aprobado', 'bloqueado' => true],
-            ['documento' => 'ventas_presupuesto', 'status' => 2, 'nombre' => 'Rechazado', 'bloqueado' => true],
-            ['documento' => 'ventas_pedido', 'status' => 0, 'nombre' => 'Pendiente', 'bloqueado' => true],
-            ['documento' => 'ventas_pedido', 'status' => 1, 'nombre' => 'Aprobado', 'bloqueado' => true],
-            ['documento' => 'ventas_pedido', 'status' => 2, 'nombre' => 'Rechazado', 'bloqueado' => true],
-            ['documento' => 'ventas_pedido', 'status' => 3, 'nombre' => 'En trámite', 'bloqueado' => false],
-            ['documento' => 'ventas_pedido', 'status' => 4, 'nombre' => 'Back orders', 'bloqueado' => false]
-        ];
-        $sql = '';
-        foreach ($estados as $pos => $estado) {
-            $sql .= 'INSERT INTO ' . $this->tableName()
-                . ' (id, documento, status, nombre, bloqueado)'
-                . ' VALUES ('
-                . $this->var2str($pos + 1)
-                . ',' . $this->var2str($estado['documento'])
-                . ',' . $this->var2str($estado['status'])
-                . ',' . $this->var2str($estado['nombre'])
-                . ',' . $this->var2str($estado['bloqueado'])
-                . ');';
-        }
-
-        return $sql;
-    }
-
-    /**
      * Devuelve una array con los estados para el tipo de documento indicado
      *
      * @param $doc
@@ -168,7 +134,7 @@ class EstadoDocumento
         $list = [];
 
         $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE documento = ' . $this->var2str($doc) . ' ORDER BY id ASC;';
+            . ' WHERE documento = ' . $this->dataBase->var2str($doc) . ' ORDER BY id ASC;';
         $data = $this->dataBase->select($sql);
         if ($data) {
             foreach ($data as $d) {

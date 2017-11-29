@@ -12,7 +12,7 @@
         </button>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuOrder{{ context.indexView }}">
             {% for key, orderby in orderbylist %}
-            <a class="dropdown-item" href="{{ context.list_url }}&order={{ key }}">
+            <a class="dropdown-item" href="{{ view.getURL('list') }}&order={{ key }}">
                 <i class="fa {{ orderby['icon'] }}" aria-hidden="true"></i>&nbsp; {{ orderby['label'] }} &nbsp;
                 {% if view.selectedOrderBy == key %}
                 <i class="fa fa-check" aria-hidden="true"></i>
@@ -46,12 +46,19 @@
                     {% if panel.label is not empty %}
                     <p><i>{{ context.i18n.trans(panel.label) }}</i></p>
                     {% endif %}
-                    {% for button in footer.getButtons(panel.name) %}
-                        {% set label = context.i18n.trans(button.label) %}
-                        {% set hint = context.i18n.trans(button.hint) %}
-                        {% set hint = popoverTitle(hint, 'bottom') %}
-                        {{ button.getHTML(label, context.indexView, hint)|raw }}
-                    {% endfor %}
+                    {% set buttons = footer.getButtons(panel.name) %}
+                    {% if buttons|length > 0 %}
+                    {% set formName = panel.name ~ '_form' %}
+                    <form action="#" method=post name="{{ formName }}">
+                        <input type="hidden" name="active" value="{{ context.indexView }}">
+                        {% for button in buttons %}
+                            {% set label = context.i18n.trans(button.label) %}
+                            {% set hint = context.i18n.trans(button.hint) %}
+                            {% set hint = popoverTitle(hint, 'bottom') %}
+                            {{ button.getHTML(label, formName, hint)|raw }}
+                        {% endfor %}
+                    </form>
+                    {% endif %}
                 </div>
 
                 {% if panel.footer is not empty %}
@@ -95,6 +102,25 @@
 </div>
 {% endmacro %}
 
+<!--
+    Generate the code for the row of actions buttons
+-->
+{% macro rowActionsForEditView(context, view, formName) %}
+
+{% set actions = view.getRow('actions') %}
+{% if actions is not empty %}
+{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+<div class="col">
+    {% for button in actions.buttons %}
+        {% set label = context.i18n.trans(button.label) %}
+        {% set hint = context.i18n.trans(button.hint) %}
+        {% set hint = popoverTitle(hint, 'bottom') %}
+        {{ button.getHTML(label, formName, hint, 'btn-sm')|raw }}
+    {% endfor %}
+</div>
+{% endif %}
+{% endmacro %}
+
 
 <!--
     Generate the code for the List view according to the indicated columns
@@ -112,7 +138,8 @@
             <th class="text-right">
                 {% if view.getCursor() is not empty %}
                 <label class="custom-checkbox-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
-                    <input class="custom-control-input" type="checkbox" id="listDeleteCB"><span class="custom-control-indicator"></span>
+                    <input class="custom-control-input" type="checkbox" id="listDeleteCB" />
+                    <span class="custom-control-indicator"></span>
                 </label>
                 {% endif %}
             </th>
@@ -142,7 +169,8 @@
             {% endfor %}
             <td class="text-right cancelClickable">
                 <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
-                    <input class="custom-control-input listDelete" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}"><span class="custom-control-indicator"></span>
+                    <input class="custom-control-input listDelete" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}" />
+                    <span class="custom-control-indicator"></span>
                 </label>
             </td>
         </tr>
@@ -162,7 +190,7 @@
 -->
 {% macro columnsForEditView(context, view, model, withForm) %}
 {% set keyValue = context.fsc.getFieldValue(model, model.primaryColumn()) %}
-{% set formName = context.indexView ~ '-' ~ keyValue %}
+{% set formName = (withForm == TRUE) ? context.indexView ~ '-' ~ keyValue : 'main_form' %}
 
 {% if withForm == TRUE %}
 <form name="{{ formName }}" action="#" method="post" class="form" role="form">
@@ -178,24 +206,25 @@
                 <legend>{{ group.getHeaderHTML(group.title)|raw }}</legend>
                 {% endif %}
                 {% for column in group.columns %}
-                {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
-                {% if column.display == 'none' %}
+                    {% set value = column.widget.fieldName is null ? '' : context.fsc.getFieldValue(model, column.widget.fieldName) %}
+                    {% if column.display == 'none' %}
                 <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
-                {% else %}
-                {{ column.getEditHTML(value)|raw }}
-                {% endif %}
+                    {% else %}
+                        {{ column.getEditHTML(value, TRUE, formName)|raw }}
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>
         {% endfor %}
 
-    {% if withForm == TRUE %}
+{% if withForm == TRUE %}
+    {% from 'Macro/BaseController.html' import rowActionsForEditView as rowActionsForEditView %}
     {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
     {% set save, save_title = context.i18n.trans('save'), context.i18n.trans('save-data') %}
     {% set undo, undo_title = context.i18n.trans('undo'), context.i18n.trans('restore-data') %}
     </div>
     <div class="row">
-        <div class="col-6">
+        <div class="col">
             {% if keyValue is not empty %}
             {% set remove, remove_title = context.i18n.trans('delete'), context.i18n.trans('delete-record') %}
             <a id="b_remove" class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
@@ -205,7 +234,9 @@
             {% endif %}
         </div>
 
-        <div class="col-6 text-right">
+        {{ rowActionsForEditView(context, view, formName) }}
+
+        <div class="col text-right">
             <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
                     <i class="fa fa-undo" aria-hidden="true"></i>&nbsp; {{ undo }}
             </button>
@@ -307,15 +338,15 @@
 -->
 {% macro modalFormFromColumns(context, view) %}
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
-{% set save, save_title = context.i18n.trans('save'), context.i18n.trans('save-data') %}
+{% set accept, accept_title = context.i18n.trans('accept'), context.i18n.trans('accept-data') %}
 {% set cancel, cancel_title = context.i18n.trans('cancel'), context.i18n.trans('cancel-data') %}
 
 {% for group in view.getModals() %}
     {% set formName = context.indexView ~ '-' ~ group.name %}
     {% set model = view.getModel() %}
-    
+
     <div class="modal fade" id="{{ group.name }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">            
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form name="{{ formName }}" action="#" method="post" class="form" role="form">
                     <input type="hidden" name="action" value="{{ group.name }}">
@@ -335,15 +366,15 @@
                             {% else %}
                                 {{ column.getEditHTML(value)|raw }}
                             {% endif %}
-                        {% endfor %}                        
+                        {% endfor %}
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal" {{ popoverTitle(cancel_title, 'bottom') }}>
                             <i class="fa fa-ban" aria-hidden="true"></i>&nbsp; {{ cancel }}
                         </button>
-                        <button type="submit" class="btn btn-sm btn-primary" onclick="this.disabled = true; this.form.submit();" {{ popoverTitle(save_title, 'bottom') }}>
-                            <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
+                        <button type="submit" class="btn btn-sm btn-primary" onclick="this.disabled = true; this.form.submit();" {{ popoverTitle(accept_title, 'bottom') }}>
+                            <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ accept }}
                         </button>
                     </div>
                 </form>
@@ -416,7 +447,7 @@
         </div>
         <input type="hidden" name="{{ key }}-from-operator" id="{{ key }}-from-operator" value="{{ filter.options.operatorFrom }}" />
         <input type="text" name="{{ key }}-from" value="{% if indexView == fsc.active %}{{ filter.options.valueFrom }}{% endif %}"
-               class="form-control {{ filter.getSpecialClass() }}" placeholder="{{ filter.options.label }}" 
+               class="form-control {{ filter.getSpecialClass() }}" placeholder="{{ filter.options.label }}"
                autocomplete="off" onchange="this.form.submit()" {{ filter.getKeyboardFilter()|raw }}/>
     </div>
 </div>

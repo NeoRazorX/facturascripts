@@ -74,27 +74,6 @@ function checkRequirement($isOk)
 }
 
 /**
- * Returns a language array, where the key is the JSON file name and the value is
- * its corresponding translation.
- *
- * @param $i18n
- *
- * @return array
- */
-function getLanguages(&$i18n)
-{
-    $languages = [];
-    foreach (scandir(__DIR__ . '/Core/Translation', SCANDIR_SORT_ASCENDING) as $fileName) {
-        if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
-            $key = substr($fileName, 0, -5);
-            $languages[$key] = $i18n->trans('languages-' . substr($fileName, 0, -5));
-        }
-    }
-
-    return $languages;
-}
-
-/**
  * Returns the user language to show the proper installation language in the selector.
  * When the JSON file doesn't exist, returns en_EN
  *
@@ -284,11 +263,15 @@ function saveInstall()
         fwrite($file, "define('FS_DB_NAME', '" . filter_input(INPUT_POST, 'db_name') . "');\n");
         fwrite($file, "define('FS_DB_USER', '" . filter_input(INPUT_POST, 'db_user') . "');\n");
         fwrite($file, "define('FS_DB_PASS', '" . filter_input(INPUT_POST, 'db_pass') . "');\n");
+        fwrite($file, "define('FS_DB_FOREIGN_KEYS', true);\n");
+        fwrite($file, "define('FS_DB_INTEGER', 'INTEGER');\n");
+        fwrite($file, "define('FS_DB_TYPE_CHECK', true);\n");
         fwrite($file, "define('FS_CACHE_HOST', '" . filter_input(INPUT_POST, 'memcache_host') . "');\n");
         fwrite($file, "define('FS_CACHE_PORT', '" . filter_input(INPUT_POST, 'memcache_port') . "');\n");
         fwrite($file, "define('FS_CACHE_PREFIX', '" . filter_input(INPUT_POST, 'memcache_prefix') . "');\n");
+        fwrite($file, "define('FS_MYDOCS', '');\n");
         if (filter_input(INPUT_POST, 'db_type') === 'MYSQL' && filter_input(INPUT_POST, 'mysql_socket') !== '') {
-            fwrite($file, "ini_set('mysqli.default_socket', '" . filter_input(INPUT_POST, 'mysql_socket') . "');\n");
+            fwrite($file, "\nini_set('mysqli.default_socket', '" . filter_input(INPUT_POST, 'mysql_socket') . "');\n");
         }
         fwrite($file, "\n");
         fclose($file);
@@ -364,7 +347,7 @@ function installerMain()
             'Zip' => checkRequirement(extension_loaded('zip'))
         ],
         'i18n' => $i18n,
-        'languages' => getLanguages($i18n),
+        'languages' => $i18n->getAvailableLanguages(),
         'timezone' => get_timezone_list(),
         'license' => file_get_contents(__DIR__ . '/COPYING'),
         'memcache_prefix' => randomString(8),

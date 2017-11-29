@@ -85,12 +85,12 @@ class WidgetItemNumber extends WidgetItem
      * Loads the attributes structure from a XML file
      *
      * @param \SimpleXMLElement $column
-     * @param \SimpleXMLElement $widgetAtributes
      */
-    protected function loadFromXMLColumn($column, $widgetAtributes)
+    public function loadFromXML($column)
     {
-        parent::loadFromXMLColumn($column, $widgetAtributes);
+        parent::loadFromXML($column);
 
+        $widgetAtributes = $column->widget->attributes();
         $this->decimal = (int) $widgetAtributes->decimal;
         $this->step = (string) $widgetAtributes->step;
         $this->min = (string) $widgetAtributes->min;
@@ -102,9 +102,9 @@ class WidgetItemNumber extends WidgetItem
      *
      * @param \SimpleXMLElement $column
      */
-    protected function loadFromJSONColumn($column)
+    public function loadFromJSON($column)
     {
-        parent::loadFromJSONColumn($column);
+        parent::loadFromJSON($column);
 
         $this->decimal = (int) $column['widget']['decimal'];
         $this->step = (string) $column['widget']['step'];

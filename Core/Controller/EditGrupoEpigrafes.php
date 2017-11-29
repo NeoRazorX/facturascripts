@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the GrupoEpigrafes model
@@ -31,54 +30,41 @@ use FacturaScripts\Core\Model;
  */
 class EditGrupoEpigrafes extends ExtendedController\PanelController
 {
+
     /**
-    * Load views
-    */
-   protected function createViews()
-   {
-      $this->addEditView('FacturaScripts\Core\Model\GrupoEpigrafes', 'EditGrupoEpigrafes', 'accounting-heading');
-      $this->addListView('FacturaScripts\Core\Model\Epigrafe', 'ListEpigrafe', 'sub-accounts', 'fa-book');
-   }
-   
-   /**
-    * Returns the $fieldName value from the GrupoEpigrafe model
-    *
-    * @param string $fieldName
-    *
-    * @return mixed
-    */
-   private function getGrupoEpigrafeFieldValue($fieldName)
-   {
-      $model = $this->views['EditGrupoEpigrafes']->getModel();
-      return $model->{$fieldName};
-   }
-   
-   
-   /**
-    * Load view data
-    *
-    * @param string $keyView
-    * @param ExtendedController\EditView $view
-    */
-   protected function loadData($keyView, $view)
-   {
-      switch ($keyView) {
-         case 'EditGrupoEpigrafes':
-            $value = $this->request->get('code');
-            $view->loadData($value);
-            break;
+     * Load views
+     */
+    protected function createViews()
+    {
+        $this->addEditView('FacturaScripts\Core\Model\GrupoEpigrafes', 'EditGrupoEpigrafes', 'epigraphs-group');
+        $this->addListView('FacturaScripts\Core\Model\Epigrafe', 'ListEpigrafe', 'epigraphs', 'fa-book');
+        $this->setTabsPosition('bottom');
+    }
 
-         case 'ListEpigrafe':
-            $idgrupo = $this->getGrupoEpigrafeFieldValue('idgrupo');
+    /**
+     * Load view data
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        switch ($keyView) {
+            case 'EditGrupoEpigrafes':
+                $value = $this->request->get('code');
+                $view->loadData($value);
+                break;
 
-            if (!empty($idgrupo)) {
-               $where = [new DataBase\DataBaseWhere('idgrupo', $idgrupo)];
-               $view->loadData($where);
-            }
-            break;
-      }
-   }
-        
+            case 'ListEpigrafe':
+                $idgrupo = $this->getViewModelValue('EditGrupoEpigrafes', 'idgrupo');
+                if (!empty($idgrupo)) {
+                    $where = [new DataBase\DataBaseWhere('idgrupo', $idgrupo)];
+                    $view->loadData($where);
+                }
+                break;
+        }
+    }
+
     /**
      * Returns basic page attributes
      *

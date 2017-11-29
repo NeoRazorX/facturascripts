@@ -45,8 +45,9 @@ abstract class RowItem implements VisualItemInterface
             case 'status':
                 return new RowItemStatus();
 
+            case 'actions':
             case 'header':
-                return new RowItemHeader();
+                return new RowItemButtons($type);
 
             case 'footer':
                 return new RowItemFooter();
@@ -62,7 +63,7 @@ abstract class RowItem implements VisualItemInterface
      * @param \SimpleXMLElement $row
      * @return RowItem
      */
-    public static function newFromXMLRow($row)
+    public static function newFromXML($row)
     {
         $rowAtributes = $row->attributes();
         $type = (string) $rowAtributes->type;
@@ -77,7 +78,7 @@ abstract class RowItem implements VisualItemInterface
      * @param array $row
      * @return RowItem
      */
-    public static function newFromJSONRow($row)
+    public static function newFromJSON($row)
     {
         $type = (string) $row['type'];
         $result = self::rowItemFromType($type);
@@ -87,12 +88,21 @@ abstract class RowItem implements VisualItemInterface
     
     /**
      * RowItem constructor.
+     *
+     * @param string $type
      */
     public function __construct($type)
     {
         $this->type = $type;
     }
-    
+
+    /**
+     * Devuelve los atributos de un elemento desde el XML.
+     *
+     * @param \SimpleXMLElement $item
+     *
+     * @return array
+     */
     protected function getAttributesFromXML($item)
     {
         $result = [];
@@ -103,13 +113,20 @@ abstract class RowItem implements VisualItemInterface
         return $result;
     }
 
+    /**
+     * Devuelve una lista de WidgetButton desde el XML.
+     *
+     * @param \SimpleXMLElement[] $buttonsXML
+     *
+     * @return WidgetButton[]
+     */
     protected function loadButtonsFromXML($buttonsXML)
     {
         $buttons = [];
-        foreach ($buttonsXML as $item) {
-            $values = $this->getAttributesFromXML($item);
-            $buttons[] = new WidgetButton($values);
-            unset($values);
+        foreach ($buttonsXML->button as $item) {
+            $widgetButton = WidgetButton::newFromXML($item);
+            $buttons[] = $widgetButton;
+            unset($widgetButton);
         }
         return $buttons;
     }

@@ -30,7 +30,7 @@ class Pagination
     /**
      * Constantes para paginación
      */
-    const FS_ITEM_LIMIT = 50;
+    const FS_ITEM_LIMIT = FS_ITEM_LIMIT;
     const FS_PAGE_MARGIN = 5;
 
     /**
@@ -38,7 +38,7 @@ class Pagination
      */
     public function __construct()
     {
-        
+
     }
 
     /**
@@ -87,24 +87,18 @@ class Pagination
      */
     private function addPaginationItem($url, $page, $offset, $icon = false, $active = false)
     {
-        /// ¿La url lleva #?
-        if (strpos($url, '#') !== false) {
-            $auxUrl = explode('#', $url);
-
-            return [
-                'url' => $auxUrl[0] . '&offset=' . $offset . '#' . $auxUrl[1],
-                'icon' => $icon,
-                'page' => $page,
-                'active' => $active
-            ];
-        }
-
-        return [
-            'url' => $url . '&offset=' . $offset,
+        $auxUrl = explode('#', $url);
+        $result = [
+            'url' => $auxUrl[0] . '&offset=' . $offset,
             'icon' => $icon,
             'page' => $page,
             'active' => $active
         ];
+
+        if (count($auxUrl) > 1) {
+            $result['url'] = $result['url'] . '#' . $auxUrl[1];
+        }
+        return $result;
     }
 
     /**

@@ -18,6 +18,9 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Lib\Import\CSVImport;
+
 /**
  * Un impuesto (IVA) que puede estar asociado a artículos, líneas de albaranes,
  * facturas, etc.
@@ -111,7 +114,7 @@ class Impuesto
      */
     public function isDefault()
     {
-        return $this->codimpuesto === $this->defaultItems->codImpuesto();
+        return $this->codimpuesto === AppSettings::get('default', 'codimpuesto');
     }
 
     /**
@@ -146,8 +149,6 @@ class Impuesto
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName() . ' (codimpuesto,descripcion,iva,recargo) VALUES '
-            . "('IVA0','IVA 0%','0','0'),('IVA21','IVA 21%','21','5.2'),"
-            . "('IVA10','IVA 10%','10','1.4'),('IVA4','IVA 4%','4','0.5');";
+        return CSVImport::importTableSQL($this->tableName());
     }
 }

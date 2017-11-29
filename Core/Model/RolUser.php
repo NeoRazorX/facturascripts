@@ -72,7 +72,12 @@ class RolUser
     {
         return 'id';
     }
-    
+
+    /**
+     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
+     *
+     * @return string
+     */
     public function install()
     {
         new Rol();
@@ -80,6 +85,11 @@ class RolUser
         return '';
     }
 
+    /**
+     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     *
+     * @return bool
+     */
     public function test()
     {
         if (empty($this->nick)) {

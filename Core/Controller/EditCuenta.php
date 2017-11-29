@@ -38,19 +38,7 @@ class EditCuenta extends ExtendedController\PanelController
     {
         $this->addEditView('FacturaScripts\Core\Model\Cuenta', 'EditCuenta', 'account');
         $this->addListView('FacturaScripts\Core\Model\Subcuenta', 'ListSubcuenta', 'subaccounts');
-    }
-
-    /**
-     * Returns the $fieldName value from the Cuenta model
-     *
-     * @param string $fieldName
-     *
-     * @return string|boolean
-     */
-    private function getCuentaFieldValue($fieldName)
-    {
-        $model = $this->views['EditCuenta']->getModel();
-        return $model->{$fieldName};
+        $this->setTabsPosition('bottom');
     }
 
     /**
@@ -61,14 +49,15 @@ class EditCuenta extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
+        $value = $this->request->get('code');
+        
         switch ($keyView) {
             case 'EditCuenta':
-                $value = $this->request->get('code');
                 $view->loadData($value);
                 break;
 
             case 'ListSubcuenta':
-                $where = [new DataBase\DataBaseWhere('idcuenta', $this->getCuentaFieldValue('idcuenta'))];
+                $where = [new DataBase\DataBaseWhere('idcuenta', $value)];
                 $view->loadData($where);
                 break;
         }

@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the Epigrafe model
@@ -32,66 +31,53 @@ use FacturaScripts\Core\Model;
 class EditEpigrafe extends ExtendedController\PanelController
 {
 
-   /**
-    * Load views
-    */
-   protected function createViews()
-   {
-      $this->addEditView('FacturaScripts\Core\Model\Epigrafe', 'EditEpigrafe', 'accounting-heading');
-      $this->addListView('FacturaScripts\Core\Model\Cuenta', 'ListCuenta', 'accounts', 'fa-book');
-   }
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $this->addEditView('FacturaScripts\Core\Model\Epigrafe', 'EditEpigrafe', 'accounting-heading');
+        $this->addListView('FacturaScripts\Core\Model\Cuenta', 'ListCuenta', 'accounts', 'fa-book');
+        $this->setTabsPosition('bottom');
+    }
 
-   /**
-    * Returns the $fieldName value from the Epigrafe model
-    *
-    * @param string $fieldName
-    *
-    * @return mixed
-    */
-   private function getEpigrafeFieldValue($fieldName)
-   {
-      $model = $this->views['EditEpigrafe']->getModel();
-      return $model->{$fieldName};
-   }
+    /**
+     * Load view data procedure
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        switch ($keyView) {
+            case 'EditEpigrafe':
+                $value = $this->request->get('code');
+                $view->loadData($value);
+                break;
 
-   /**
-    * Load view data procedure
-    *
-    * @param string $keyView
-    * @param ExtendedController\EditView $view
-    */
-   protected function loadData($keyView, $view)
-   {
-      switch ($keyView) {
-         case 'EditEpigrafe':
-            $value = $this->request->get('code');
-            $view->loadData($value);
-            break;
+            case 'ListCuenta':
+                $idepigrafe = $this->getViewModelValue('EditEpigrafe', 'idepigrafe');
+                if (!empty($idepigrafe)) {
+                    $where = [new DataBase\DataBaseWhere('idepigrafe', $idepigrafe)];
+                    $view->loadData($where);
+                }
+                break;
+        }
+    }
 
-         case 'ListCuenta':
-            $idepigrafe = $this->getEpigrafeFieldValue('idepigrafe');
+    /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData()
+    {
+        $pagedata = parent::getPageData();
+        $pagedata['title'] = 'accounting-heading';
+        $pagedata['menu'] = 'accounting';
+        $pagedata['icon'] = 'fa-bar-chart';
+        $pagedata['showonmenu'] = false;
 
-            if (!empty($idepigrafe)) {
-               $where = [new DataBase\DataBaseWhere('idepigrafe', $idepigrafe)];
-               $view->loadData($where);
-            }
-            break;
-      }
-   }
-
-   /**
-    * Returns basic page attributes
-    *
-    * @return array
-    */
-   public function getPageData()
-   {
-      $pagedata = parent::getPageData();
-      $pagedata['title'] = 'accounting-heading';
-      $pagedata['menu'] = 'accounting';
-      $pagedata['icon'] = 'fa-bar-chart';
-      $pagedata['showonmenu'] = false;
-
-      return $pagedata;
-   }
+        return $pagedata;
+    }
 }

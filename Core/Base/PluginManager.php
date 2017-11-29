@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 use Exception;
@@ -30,6 +29,7 @@ use Exception;
  */
 class PluginManager
 {
+
     /**
      * Previene de bucles infinitos desplegando controladores.
      *
@@ -118,7 +118,7 @@ class PluginManager
      */
     public function enable($pluginName)
     {
-        if (file_exists(FS_FOLDER . '/plugins/' . $pluginName)) {
+        if (file_exists(FS_FOLDER . '/Plugins/' . $pluginName)) {
             self::$enabledPlugins[] = $pluginName;
             $this->save();
         }
@@ -149,7 +149,7 @@ class PluginManager
      */
     public function deploy($clean = true)
     {
-        $folders = ['Controller', 'Model', 'Lib', 'Table'];
+        $folders = ['Assets', 'Controller', 'Model', 'Lib', 'Table', 'View', 'XMLView'];
         foreach ($folders as $folder) {
             if ($clean) {
                 $this->cleanFolder(FS_FOLDER . '/Dinamic/' . $folder);
@@ -270,7 +270,7 @@ class PluginManager
         }
 
         // Añadimos los archivos que no son '.' ni '..'
-        $filesPath = array_diff(scandir($path, SCANDIR_SORT_ASCENDING), ['.', '..']);
+        $filesPath = $this->scanFolders(FS_FOLDER . DIRECTORY_SEPARATOR .$place. DIRECTORY_SEPARATOR . $folder);
         // Ahora recorremos solo archivos o carpetas
         foreach ($filesPath as $fileName) {
             $infoFile = pathinfo($fileName);
@@ -320,5 +320,29 @@ class PluginManager
         if (!file_exists(FS_FOLDER . '/Dinamic/' . $folder . '/' . $fileName)) {
             copy($filePath, FS_FOLDER . '/Dinamic/' . $folder . '/' . $fileName);
         }
+    }
+
+    /**
+     * Makes a recursive scan in folders inside a root folder and extracts the list of files
+     * and pass its to an array as result
+     * 
+     * @param string $folder
+     */
+    private function scanFolders($folder)
+    {
+        $root = array_diff(scandir($folder,SCANDIR_SORT_ASCENDING), ['.', '..']);
+        foreach ($root as $value) {
+            if ($value === '.' || $value === '..') {
+                continue;
+            }
+            if (is_file($folder.DIRECTORY_SEPARATOR.$value)) {
+                $result[] = $folder.DIRECTORY_SEPARATOR.$value;
+                continue;
+            }
+            foreach ($this->scanFolders($folder.DIRECTORY_SEPARATOR.$value) as $value) {
+                $result[] = $value;
+            }
+        }
+        return $result;
     }
 }
