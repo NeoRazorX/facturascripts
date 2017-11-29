@@ -29,5 +29,10 @@
                 <widget type="datepicker" fieldname="fecha" required="true" />
             </column>
         </group>
+        <group name="observations" numcolumns="12">
+            <column name="observations" numcolumns="12" order="110">
+                <widget type="textarea" fieldname="observaciones" required="true" />
+            </column>
+        </group>
     </columns>
 </view>
