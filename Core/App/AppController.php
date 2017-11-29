@@ -116,7 +116,7 @@ class AppController extends App
      */
     private function getDefaultController($user)
     {
-        if ($user) {
+        if ($user && $user->homepage !== null && $user->homepage !== '') {
             return $user->homepage;
         }
 
