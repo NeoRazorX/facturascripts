@@ -1,9 +1,9 @@
-{% extends "Master/MenuTemplate.twig" %}
+{% extends "Master/MenuTemplate.html" %}
 
 {% block css %}
     {{ parent() }}
 
-    <link rel="stylesheet" href="Core/Assets/CSS/extendedcontroller.css"/>
+    <link rel="stylesheet" href="Core/Assets/CSS/extendedcontroller.css" />
 {% endblock %}
 
 
@@ -37,6 +37,12 @@
             });
         }
 
+        function execActionForm(formName, actionValue) {
+            var form = document.forms[formName];
+            form.action.value = actionValue;
+            form.submit();
+        }
+
         $(document).ready(function () {
             $('#main_row :text:first').focus();
         });
@@ -68,12 +74,12 @@
     {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
 
     <!-- Visual macros -->
-    {% from 'Macro/Utils.twig' import popoverTitle as popoverTitle %}
-    {% from 'Macro/Utils.twig' import exportData as exportData %}
-    {% from 'Macro/BaseController.twig' import columnsForEditView as columnsForEditView %}
-    {% from 'Macro/BaseController.twig' import rowHeaderForEditView as rowHeaderForEditView %}
-    {% from 'Macro/BaseController.twig' import rowFooterForEditView as rowFooterForEditView %}
-    {% from 'Macro/BaseController.twig' import modalFormFromColumns as modalFormFromColumns %}
+    {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+    {% from 'Macro/Utils.html' import exportData as exportData %}
+    {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
+    {% from 'Macro/BaseController.html' import rowHeaderForEditView as rowHeaderForEditView %}
+    {% from 'Macro/BaseController.html' import rowFooterForEditView as rowFooterForEditView %}
+    {% from 'Macro/BaseController.html' import modalFormFromColumns as modalFormFromColumns %}
 
     <!-- Aux Objects -->
     {% set model = fsc.view.getModel() %}
@@ -131,7 +137,7 @@
         <!-- Data Row -->
         <div id="data" class="row">
             <div class="col-12">
-                <form name="mainform" action="" method="post" class="form" role="form">
+                <form action="#" method="post" class="form" role="form" name="main_form">
                     <input type="hidden" name="action" value="save">
                     <div class="card">
                         <div class="card-header">

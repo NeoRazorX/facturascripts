@@ -30,9 +30,9 @@
 {% macro rowFooterForEditView(context, view) %}
     {% set footer = view.getRow('footer') %}
     {% if footer is not empty %}
-        {% from 'Macro/Utils.twig' import popoverTitle as popoverTitle %}
+        {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 
-        <br/>
+        <br />
         <div id="footer" class="row">
             {% for panel in footer.panels %}
                 <div class="col">
@@ -46,12 +46,19 @@
                             {% if panel.label is not empty %}
                                 <p><i>{{ context.i18n.trans(panel.label) }}</i></p>
                             {% endif %}
-                            {% for button in footer.getButtons(panel.name) %}
-                                {% set label = context.i18n.trans(button.label) %}
-                                {% set hint = context.i18n.trans(button.hint) %}
-                                {% set hint = popoverTitle(hint, 'bottom') %}
-                                {{ button.getHTML(label, context.indexView, hint)|raw }}
-                            {% endfor %}
+                            {% set buttons = footer.getButtons(panel.name) %}
+                            {% if buttons|length > 0 %}
+                                {% set formName = panel.name ~ '_form' %}
+                                <form action="#" method=post name="{{ formName }}">
+                                    <input type="hidden" name="active" value="{{ context.indexView }}">
+                                    {% for button in buttons %}
+                                        {% set label = context.i18n.trans(button.label) %}
+                                        {% set hint = context.i18n.trans(button.hint) %}
+                                        {% set hint = popoverTitle(hint, 'bottom') %}
+                                        {{ button.getHTML(label, formName, hint)|raw }}
+                                    {% endfor %}
+                                </form>
+                            {% endif %}
                         </div>
 
                         {% if panel.footer is not empty %}
@@ -61,7 +68,7 @@
                         {% endif %}
                     </div>
                     {% if not loop.last %}
-                        <br/>
+                        <br />
                     {% endif %}
                 </div>
             {% endfor %}
@@ -73,7 +80,7 @@
     Generate the code for the row of statistical buttons
 -->
 {% macro rowHeaderForEditView(context, view) %}
-    {% from 'Macro/Utils.twig' import popoverTitle as popoverTitle %}
+    {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 
     <div class="row" style="margin-top: -.5rem">
         <div class="col-12">
@@ -98,17 +105,17 @@
 <!--
     Generate the code for the row of actions buttons
 -->
-{% macro rowActionsForEditView(context, view) %}
+{% macro rowActionsForEditView(context, view, formName) %}
 
     {% set actions = view.getRow('actions') %}
     {% if actions is not empty %}
-        {% from 'Macro/Utils.twig' import popoverTitle as popoverTitle %}
+        {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
         <div class="col">
             {% for button in actions.buttons %}
                 {% set label = context.i18n.trans(button.label) %}
                 {% set hint = context.i18n.trans(button.hint) %}
                 {% set hint = popoverTitle(hint, 'bottom') %}
-                {{ button.getHTML(label, context.indexView, hint, 'btn-sm')|raw }}
+                {{ button.getHTML(label, formName, hint, 'btn-sm')|raw }}
             {% endfor %}
         </div>
     {% endif %}
@@ -131,7 +138,7 @@
             <th class="text-right">
                 {% if view.getCursor() is not empty %}
                     <label class="custom-checkbox-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
-                        <input class="custom-control-input" type="checkbox" id="listDeleteCB"/>
+                        <input class="custom-control-input" type="checkbox" id="listDeleteCB" />
                         <span class="custom-control-indicator"></span>
                     </label>
                 {% endif %}
@@ -162,7 +169,7 @@
                 {% endfor %}
                 <td class="text-right cancelClickable">
                     <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
-                        <input class="custom-control-input listDelete" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}"/>
+                        <input class="custom-control-input listDelete" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}" />
                         <span class="custom-control-indicator"></span>
                     </label>
                 </td>
@@ -183,7 +190,7 @@
 -->
 {% macro columnsForEditView(context, view, model, withForm) %}
     {% set keyValue = context.fsc.getFieldValue(model, model.primaryColumn()) %}
-    {% set formName = context.indexView ~ '-' ~ keyValue %}
+    {% set formName = (withForm == TRUE) ? context.indexView ~ '-' ~ keyValue : 'main_form' %}
 
     {% if withForm == TRUE %}
         <form name="{{ formName }}" action="#" method="post" class="form" role="form">
@@ -203,7 +210,7 @@
                     {% if column.display == 'none' %}
                         <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
                     {% else %}
-                        {{ column.getEditHTML(value)|raw }}
+                        {{ column.getEditHTML(value, TRUE, formName)|raw }}
                     {% endif %}
                 {% endfor %}
             </div>
@@ -211,8 +218,8 @@
     {% endfor %}
 
     {% if withForm == TRUE %}
-        {% from 'Macro/BaseController.twig' import rowActionsForEditView as rowActionsForEditView %}
-        {% from 'Macro/Utils.twig' import popoverTitle as popoverTitle %}
+        {% from 'Macro/BaseController.html' import rowActionsForEditView as rowActionsForEditView %}
+        {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
         {% set save, save_title = context.i18n.trans('save'), context.i18n.trans('save-data') %}
         {% set undo, undo_title = context.i18n.trans('undo'), context.i18n.trans('restore-data') %}
         </div>
@@ -227,7 +234,7 @@
                 {% endif %}
             </div>
 
-            {{ rowActionsForEditView(context, view) }}
+            {{ rowActionsForEditView(context, view, formName) }}
 
             <div class="col text-right">
                 <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
@@ -246,7 +253,7 @@
     Generate the code for the Basic in Line Edit view according to the indicated columns
 -->
 {% macro columnsForBasicEditView(context, view, model, needTitle) %}
-    {% from 'Macro/Utils.twig' import popoverTitle as popoverTitle %}
+    {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
     {% set remove_title = context.i18n.trans('delete-record') %}
     {% set undo_title = context.i18n.trans('restore-data') %}
     {% set save_title = context.i18n.trans('save-data') %}
@@ -295,8 +302,8 @@
     Generate the code for the EditList view according to the indicated columns
 -->
 {% macro columnsForEditListView(context, view) %}
-    {% from 'Macro/BaseController.twig' import columnsForEditView as columnsForEditView %}
-    {% from 'Macro/BaseController.twig' import columnsForBasicEditView as columnsForBasicEditView %}
+    {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
+    {% from 'Macro/BaseController.html' import columnsForBasicEditView as columnsForBasicEditView %}
     {% set new_record, new_record_title = context.i18n.trans('new'), context.i18n.trans('create-new-record') %}
     {% set isBasic = view.isBasicEditList() %}
 
@@ -306,7 +313,7 @@
         {% else %}
             {{ columnsForEditView(context, view, model, TRUE) }}
         {% endif %}
-        <hr/>
+        <hr />
     {% endfor %}
 
     {% set newModel = view.newEmptyModel() %}
@@ -330,7 +337,7 @@
     Generates the code for a Modal Form
 -->
 {% macro modalFormFromColumns(context, view) %}
-    {% from 'Macro/Utils.twig' import popoverTitle as popoverTitle %}
+    {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
     {% set accept, accept_title = context.i18n.trans('accept'), context.i18n.trans('accept-data') %}
     {% set cancel, cancel_title = context.i18n.trans('cancel'), context.i18n.trans('cancel-data') %}
 
@@ -427,7 +434,9 @@
     <div class="col-md-2">
         <div class="input-group">
             <div class="input-group-btn">
-                <input name="{{ key }}-from-btn" id="{{ key }}-from-btn" type="button" value="{{ filter.options.operatorFrom }}" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"/>
+                <input name="{{ key }}-from-btn" id="{{ key }}-from-btn" type="button" value="{{ filter.options.operatorFrom }}"
+                       class="btn btn-outline-secondary dropdown-toggle"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
 
                 <div class="dropdown-menu">
                     <h6 class="dropdown-header">{{ context.i18n.trans('filter-method') }}</h6>
@@ -436,14 +445,18 @@
                     {% endfor %}
                 </div>
             </div>
-            <input type="hidden" name="{{ key }}-from-operator" id="{{ key }}-from-operator" value="{{ filter.options.operatorFrom }}"/>
-            <input type="text" name="{{ key }}-from" value="{% if indexView == fsc.active %}{{ filter.options.valueFrom }}{% endif %}" class="form-control {{ filter.getSpecialClass() }}" placeholder="{{ filter.options.label }}" autocomplete="off" onchange="this.form.submit()" {{ filter.getKeyboardFilter()|raw }}/>
+            <input type="hidden" name="{{ key }}-from-operator" id="{{ key }}-from-operator" value="{{ filter.options.operatorFrom }}" />
+            <input type="text" name="{{ key }}-from" value="{% if indexView == fsc.active %}{{ filter.options.valueFrom }}{% endif %}"
+                   class="form-control {{ filter.getSpecialClass() }}" placeholder="{{ filter.options.label }}"
+                   autocomplete="off" onchange="this.form.submit()" {{ filter.getKeyboardFilter()|raw }}/>
         </div>
     </div>
     <div class="col-md-2">
         <div class="input-group">
             <div class="input-group-btn">
-                <input name="{{ key }}-to-btn" id="{{ key }}-to-btn" type="button" value="{{ filter.options.operatorTo }}" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"/>
+                <input name="{{ key }}-to-btn" id="{{ key }}-to-btn" type="button" value="{{ filter.options.operatorTo }}"
+                       class="btn btn-outline-secondary dropdown-toggle"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
 
                 <div class="dropdown-menu">
                     <h6 class="dropdown-header">{{ context.i18n.trans('filter-method') }}</h6>
@@ -452,8 +465,10 @@
                     {% endfor %}
                 </div>
             </div>
-            <input type="hidden" name="{{ key }}-to-operator" id="{{ key }}-to-operator" value="{{ filter.options.operatorTo }}"/>
-            <input type="text" name="{{ key }}-to" value="{% if indexView == fsc.active %}{{ filter.options.valueTo }}{% endif %}" class="form-control {{ filter.getSpecialClass() }}" placeholder="{{ filter.options.label }}" autocomplete="off" onchange="this.form.submit()" {{ filter.getKeyboardFilter()|raw }}/>
+            <input type="hidden" name="{{ key }}-to-operator" id="{{ key }}-to-operator" value="{{ filter.options.operatorTo }}" />
+            <input type="text" name="{{ key }}-to" value="{% if indexView == fsc.active %}{{ filter.options.valueTo }}{% endif %}"
+                   class="form-control {{ filter.getSpecialClass() }}" placeholder="{{ filter.options.label }}"
+                   autocomplete="off" onchange="this.form.submit()" {{ filter.getKeyboardFilter()|raw }}/>
         </div>
     </div>
 {% endmacro %}
