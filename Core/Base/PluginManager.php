@@ -185,9 +185,9 @@ class PluginManager
         $cache = new Cache();
         $menuManager = new MenuManager();
         $menuManager->init();
-
-        foreach (scandir(FS_FOLDER . '/Dinamic/Controller', SCANDIR_SORT_ASCENDING) as $fileName) {
-            if ($fileName !== '.' && $fileName !== '..' && substr($fileName, -3) === 'php') {
+        $filesPath = array_diff(scandir(FS_FOLDER . '/Dinamic/Controller', SCANDIR_SORT_ASCENDING), ['.', '..']);
+        foreach ($filesPath as $fileName) {
+            if (substr($fileName, -3) === 'php') {
                 $controllerName = substr($fileName, 0, -4);
                 $controllerNamespace = 'FacturaScripts\\Dinamic\\Controller\\' . $controllerName;
 
@@ -269,9 +269,9 @@ class PluginManager
             $namespace = "\FacturaScripts\Plugins\\" . $pluginName . '\\';
         }
 
-        // We add the files that are not '.' neither '..'
-        $filesPath = array_diff(scandir($path, SCANDIR_SORT_ASCENDING), ['.', '..']);
-        // Now we go through only files or folders
+        // Añadimos los archivos que no son '.' ni '..'
+        $filesPath = $this->scanFolders(FS_FOLDER . DIRECTORY_SEPARATOR .$place. DIRECTORY_SEPARATOR . $folder);
+        // Ahora recorremos solo archivos o carpetas
         foreach ($filesPath as $fileName) {
             $infoFile = pathinfo($fileName);
             if (is_file($path . '/' . $fileName) && $infoFile['filename'] !== '') {
@@ -320,5 +320,29 @@ class PluginManager
         if (!file_exists(FS_FOLDER . '/Dinamic/' . $folder . '/' . $fileName)) {
             copy($filePath, FS_FOLDER . '/Dinamic/' . $folder . '/' . $fileName);
         }
+    }
+
+    /**
+     * Makes a recursive scan in folders inside a root folder and extracts the list of files
+     * and pass its to an array as result
+     *
+     * @param string $folder
+     */
+    private function scanFolders($folder)
+    {
+        $root = array_diff(scandir($folder,SCANDIR_SORT_ASCENDING), ['.', '..']);
+        foreach ($root as $value) {
+            if ($value === '.' || $value === '..') {
+                continue;
+            }
+            if (is_file($folder.DIRECTORY_SEPARATOR.$value)) {
+                $result[] = $folder.DIRECTORY_SEPARATOR.$value;
+                continue;
+            }
+            foreach ($this->scanFolders($folder.DIRECTORY_SEPARATOR.$value) as $value) {
+                $result[] = $value;
+            }
+        }
+        return $result;
     }
 }

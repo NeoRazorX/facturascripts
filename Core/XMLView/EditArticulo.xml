@@ -95,7 +95,7 @@
                 <widget type="checkbox" fieldname="bloqueado"/>
             </column>
         </group>
-        <group name="precios" numcolumns="12">
+        <group name="precios" title="price" numcolumns="12">
             <column name="preciocoste" title="cost-price" numcolumns="3" order="100">
                 <widget type="number" fieldname="preciocoste" readonly="readonly"/>
             </column>
@@ -105,10 +105,15 @@
             <column name="pvp" title="pvp" numcolumns="3" order="130">
                 <widget type="number" fieldname="pvp"/>
             </column>
-            <column name="codimpuesto" title="tax-code" numcolumns="3" order="140">
+            <column name="codimpuesto" title="tax" numcolumns="3" order="140">
                 <widget type="select" fieldname="codimpuesto">
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
                 </widget>
+            </column>
+        </group>
+        <group name="observations" numcolumns="12">
+            <column name="observations" numcolumns="12" order="110">
+                <widget type="textarea" fieldname="observaciones" />
             </column>
         </group>
     </columns>
