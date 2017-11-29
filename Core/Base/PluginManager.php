@@ -27,6 +27,8 @@ use Exception;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
+const DS = DIRECTORY_SEPARATOR;
+
 class PluginManager
 {
 
@@ -245,7 +247,6 @@ class PluginManager
     {
         if (!file_exists($folder) && !@mkdir($folder, 0775, true)) {
             self::$minilog->critical(self::$i18n->trans('cant-create-folder', [$folder]));
-
             return false;
         }
 
@@ -269,20 +270,35 @@ class PluginManager
             $namespace = "\FacturaScripts\Plugins\\" . $pluginName . '\\';
         }
 
-        // Añadimos los archivos que no son '.' ni '..'
+        //We scan the files filtering the system base names '.' and '..'
         $filesPath = $this->scanFolders($path);
-        // Ahora recorremos solo archivos o carpetas
         foreach ($filesPath as $fileName) {
             $infoFile = pathinfo($fileName);
             if (is_file($path . '/' . $fileName) && $infoFile['filename'] !== '') {
-                $this->verifyFolder($folder,$infoFile['dirname']);
-                if ($infoFile['extension'] === 'php') {
-                    $this->linkClassFile($fileName, $folder, $namespace);
-                } elseif ($infoFile['extension'] === 'xml') {
-                    $filePath = FS_FOLDER . '/' . $place . '/' . $folder . '/' . $fileName;
-                    $this->linkXmlFile($fileName, $folder, $filePath);
-                }
+                //If the folder dont exists, it will be created
+                $this->createFolder(FS_FOLDER . DS . 'Dinamic' . DS . $folder . DS . $infoFile['dirname']);
+                //Depending of the file extension or type it will be processed or ignored
+                $this->chooseLinkFiles($fileName, $folder, $namespace, $place);
             }
+        }
+    }
+
+    /**
+     * Function to impersonate the decisión to choose which link will be generated
+     * 
+     * @param string $fileName
+     * @param string $folder
+     * @param string $namespace
+     * @param string $place
+     */
+    private function chooseLinkFiles($fileName, $folder, $namespace, $place)
+    {
+        $infoFile = pathinfo($fileName);
+        if ($infoFile['extension'] === 'php') {
+            $this->linkClassFile($fileName, $folder, $namespace);
+        } elseif ($infoFile['extension'] === 'xml') {
+            $filePath = FS_FOLDER . '/' . $place . '/' . $folder . '/' . $fileName;
+            $this->linkXmlFile($fileName, $folder, $filePath);
         }
     }
 
@@ -296,7 +312,7 @@ class PluginManager
     private function linkClassFile($fileName, $folder, $namespace = "\FacturaScripts\Core\\")
     {
         if (!file_exists(FS_FOLDER . '/Dinamic/' . $folder . '/' . $fileName)) {
-            $className = str_replace("/","\\",substr($fileName, 0, -4));
+            $className = str_replace("/", "\\", substr($fileName, 0, -4));
             $txt = '<?php namespace FacturaScripts\Dinamic\\' . $folder . ";\n\n"
                 . '/**' . "\n"
                 . ' * Clase cargada dinámicamente' . "\n"
@@ -327,36 +343,21 @@ class PluginManager
      * and pass its to an array as result
      * 
      * @param string $folder
+     * @return array $result
      */
-    private function scanFolders($folder)
+    private function scanFolders($folder, $origin = '')
     {
         $result = [];
-        $rootFolder = array_diff(scandir($folder,SCANDIR_SORT_ASCENDING), ['.', '..']);
+        $rootFolder = array_diff(scandir($folder, SCANDIR_SORT_ASCENDING), ['.', '..']);
         foreach ($rootFolder as $item) {
-            if (is_file($folder.DIRECTORY_SEPARATOR.$item)) {
-                $result[] = $item;
+            if (is_file($folder . DS . $item)) {
+                $result[] = ($origin)?$origin.DS.$item:$item;
                 continue;
-            }elseif(is_dir($folder.DIRECTORY_SEPARATOR.$item)){
-                $leafFolder = $item;
-                foreach ($this->scanFolders($folder.DIRECTORY_SEPARATOR.$item) as $item2) {
-                    $result[] = $leafFolder.DIRECTORY_SEPARATOR.$item2;
-                }
+            } 
+            foreach($this->scanFolders($folder . DS . $item) as $item2) {
+                $result[] = $item . DS . $item2;
             }
         }
         return $result;
-    }
-    
-    /**
-     * Verify if a folder exists, if not then create the directory
-     * @param string $folder
-     * @param string $innerFolder
-     */
-    private function verifyFolder($folder, $innerFolder)
-    {
-        if($innerFolder != "."){
-            if(!file_exists(FS_FOLDER.DIRECTORY_SEPARATOR.'Dinamic'.DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR.$innerFolder)){
-                mkdir(FS_FOLDER.DIRECTORY_SEPARATOR.'Dinamic'.DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR.$innerFolder);
-            }
-        }
     }
 }
