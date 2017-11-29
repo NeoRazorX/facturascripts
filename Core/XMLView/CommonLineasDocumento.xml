@@ -30,16 +30,18 @@
         <column name="description" order="100">
             <widget type="text" fieldname="descripcion" />
         </column>
-        <column name="quantity" order="100">
-            <widget type="number" fieldname="cantidad" />
+        <column name="quantity" display="right" order="100">
+            <widget type="number" fieldname="cantidad">
+                <option color="red">&lt;0</option>
+            </widget>
         </column>
-        <column name="price" order="100">
+        <column name="price" display="right" order="100">
             <widget type="money" fieldname="pvpunitario" />
         </column>
-        <column name="dto" order="100">
+        <column name="dto" display="right" order="100">
             <widget type="number" fieldname="dtopor" />
         </column>
-        <column name="neto" order="100">
+        <column name="neto" display="right" order="100">
             <widget type="money" fieldname="pvptotal" />
         </column>
     </columns>
