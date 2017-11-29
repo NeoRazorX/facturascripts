@@ -98,6 +98,46 @@ setTabsPosition
 This method let you put tabs on left, bottom or on top of the page. Left
 is the default position.
 
+The tabs when they are placed on the left, the information will be displayed
+of the selected tab. In these cases it is not necessary to specify the method.
+
+Example without specifying the method.
+
+.. code:: php
+
+    $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
+    $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
+    
+Example with the method.
+
+.. code:: php
+    
+    $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
+    $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
+    $this->setTabsPosition('left'); 
+    
+The tabs when placed below, shows main window and below
+This will show the information of the selected tab.
+
+Example.
+
+.. code:: php
+
+    $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
+    $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
+    $this->setTabsPosition('bottom');
+    
+The tabs when they are placed above, will show the information of
+the selected tab.
+
+Example.
+
+.. code:: php
+
+    $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
+    $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
+    $this->setTabsPosition('top');
+    
 getPageData
 ===========
 
