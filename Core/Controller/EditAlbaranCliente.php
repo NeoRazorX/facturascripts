@@ -36,7 +36,7 @@ class EditAlbaranCliente extends ExtendedController\DocumentController
     protected function createViews()
     {
         $this->addEditView('FacturaScripts\Core\Model\AlbaranCliente', 'EditAlbaranCliente', 'delivery-note');
-        $this->addEditListView('FacturaScripts\Core\Model\LineaAlbaranCliente', 'CommonLineasDocumento', 'lines');
+        $this->addListView('FacturaScripts\Core\Model\LineaAlbaranCliente', 'CommonLineasDocumento', 'lines');
     }
 
     /**
