@@ -36,7 +36,6 @@ class EditAlbaranCliente extends ExtendedController\DocumentController
     {
         $this->addEditView('FacturaScripts\Core\Model\AlbaranCliente', 'EditAlbaranCliente', 'delivery-note');
         $this->addEditListView('FacturaScripts\Core\Model\LineaAlbaranCliente', 'CommonLineasDocumento', 'lines');
-        $this->setTabsPosition('bottom');
     }
 
     /**

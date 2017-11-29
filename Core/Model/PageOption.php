@@ -341,10 +341,8 @@ class PageOption
             $this->installXML($name);
         }
 
-        // Apply values to dynamic Select widgets for the family of 'Edit' controllers
-        if (substr($name, 0, 4) === 'Edit') {
-            $this->dynamicSelectValues($this->columns);
-        }
+        // Apply values to dynamic Select widgets
+        $this->dynamicSelectValues($this->columns);
 
         // Apply values to dynamic Select widgets for modals forms
         if (!empty($this->modals)) {
