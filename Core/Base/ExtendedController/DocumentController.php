@@ -26,6 +26,11 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 class DocumentController extends PanelController
 {
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    {
+        parent::__construct($cache, $i18n, $miniLog, $className);
+        $this->setTemplate('Master/DocumentController');
+    }
 
     /**
      * TODO: Incomplete
