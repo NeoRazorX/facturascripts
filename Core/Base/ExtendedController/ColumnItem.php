@@ -348,4 +348,44 @@ class ColumnItem extends VisualItem implements VisualItemInterface
 
         return $result;
     }
+
+    /**
+     * Returns the column class
+     *
+     * @return string
+     */
+    protected function getColumnClass()
+    {
+        return ($this->numColumns > 0) ? (' col-md-' . $this->numColumns) : ' col';
+    }
+
+    /**
+     * Returns the HTML code to display a popover with the specified string
+     *
+     * @return string
+     */
+    protected function getColumnHint()
+    {
+        return $this->widget->getHintHTML($this->i18n->trans($this->widget->hint));
+    }
+
+    /**
+     * Returns the HTML code to display if a column is required or not
+     *
+     * @return string
+     */
+    protected function getColumnRequired()
+    {
+        return $this->widget->required ? '<div class="invalid-feedback">' . $this->i18n->trans('please-enter-value') . '</div>' : '';
+    }
+
+    /**
+     * Returns the HTML code to display a description
+     *
+     * @return string
+     */
+    protected function getColumnDescription()
+    {
+        return empty($this->description) ? '' : '<small class="form-text text-muted">' . $this->i18n->trans($this->description) . '</small>';
+    }
 }
