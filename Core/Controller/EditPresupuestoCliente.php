@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -36,8 +35,16 @@ class EditPresupuestoCliente extends ExtendedController\DocumentController
     protected function createViews()
     {
         $this->addEditView('FacturaScripts\Core\Model\PresupuestoCliente', 'EditPresupuestoCliente', 'budget');
-        $this->addListView('FacturaScripts\Core\Model\LineaPresupuestoCliente', 'CommonLineasDocumento', 'lines');
-        $this->setTabsPosition('bottom');
+    }
+
+    protected function getDocumentClassName()
+    {
+        return 'FacturaScripts\Core\Model\PresupuestoCliente';
+    }
+
+    protected function getDocumentLineClassName()
+    {
+        return 'FacturaScripts\Core\Model\LineaPresupuestoCliente';
     }
 
     /**
@@ -49,15 +56,10 @@ class EditPresupuestoCliente extends ExtendedController\DocumentController
     protected function loadData($keyView, $view)
     {
         $idpresupuesto = $this->request->get('code');
-        
+
         switch ($keyView) {
             case 'EditPresupuestoCliente':
                 $view->loadData($idpresupuesto);
-                break;
-            
-            case 'CommonLineasDocumento':
-                $where = [new DataBaseWhere('idpresupuesto', $idpresupuesto)];
-                $view->loadData($where);
                 break;
         }
     }
