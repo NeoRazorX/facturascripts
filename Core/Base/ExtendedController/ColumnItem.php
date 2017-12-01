@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 class ColumnItem extends VisualItem implements VisualItemInterface
 {
+
     /**
      * Additional text that explains the field to the user
      *
@@ -50,7 +50,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     public $widget;
 
     /**
-     * Crea y carga la estructura de una columna en base a un archivo XML
+     * Create and load the structure of a column based on an XML file
      *
      * @param \SimpleXMLElement $column
      * @return GroupItem
@@ -63,7 +63,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Crea y carga la estructura de una columna en base a la base de datos
+     * Create and load the structure of a column based on the database
      *
      * @param array $group
      * @return GroupItem
@@ -156,6 +156,25 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     }
 
     /**
+     * check and apply special operations on the columns
+     *
+     * @return mixed
+     */
+    public function applySpecialOperations()
+    {
+        if ($this->widget->type === 'select') {
+            if (isset($this->widget->values[0]['source'])) {
+                $this->widget->loadValuesFromModel();
+                return;
+            }
+
+            if (isset($this->widget->values[0]['start'])) {
+                $this->widget->loadValuesFromRange();
+            }
+        }
+    }
+
+    /**
      * Generates HTML code for the element's header display
      *
      * @param string $value
@@ -190,13 +209,14 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      *
      * @param string $value
      * @param bool $withLabel
+     * @param string $formName
      *
      * @return string
      */
-    public function getEditHTML($value, $withLabel = TRUE)
+    public function getEditHTML($value, $withLabel = TRUE, $formName = 'main_form')
     {
         $header = $withLabel ? $this->getHeaderHTML($this->title) : '';
-        $data = $this->getColumnData( $this->widget->columnFunction() );
+        $data = $this->getColumnData($this->widget->columnFunction());
 
         switch ($this->widget->type) {
             case 'checkbox':
@@ -210,9 +230,9 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             case 'calculate':
             case 'action':
             case 'modal':
-                $html = $this->buttonHTMLColumn($data);
+                $html = $this->buttonHTMLColumn($data, $formName);
                 break;
-            
+
             default:
                 $html = $this->standardHTMLColumn($header, $value, $data);
                 break;
@@ -240,14 +260,21 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             . '</div>';
     }
 
-    private function buttonHTMLColumn($data)
+    /**
+     * Returns the HTML code to display a button
+     *
+     * @param array $data
+     * @param string $formName
+     * @return string
+     */
+    private function buttonHTMLColumn($data, $formName)
     {
         return '<div class="form-group' . $data['ColumnClass'] . '"><label>&nbsp;</label>'
-            . $this->widget->getHTML($this->widget->label, '', $data['ColumnHint'], 'col')
-            . $data['ColumnDescription'] 
+            . $this->widget->getHTML($this->widget->label, $formName, $data['ColumnHint'], 'col')
+            . $data['ColumnDescription']
             . '</div>';
     }
-    
+
     /**
      * Returns the HTML code to display a checkbox field
      *
@@ -327,7 +354,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      *
      * @return string
      */
-    private function getColumnClass()
+    protected function getColumnClass()
     {
         return ($this->numColumns > 0) ? (' col-md-' . $this->numColumns) : ' col';
     }
@@ -337,7 +364,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      *
      * @return string
      */
-    private function getColumnHint()
+    protected function getColumnHint()
     {
         return $this->widget->getHintHTML($this->i18n->trans($this->widget->hint));
     }
@@ -347,7 +374,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      *
      * @return string
      */
-    private function getColumnRequired()
+    protected function getColumnRequired()
     {
         return $this->widget->required ? '<div class="invalid-feedback">' . $this->i18n->trans('please-enter-value') . '</div>' : '';
     }
@@ -357,7 +384,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      *
      * @return string
      */
-    private function getColumnDescription()
+    protected function getColumnDescription()
     {
         return empty($this->description) ? '' : '<small class="form-text text-muted">' . $this->i18n->trans($this->description) . '</small>';
     }

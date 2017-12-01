@@ -17,16 +17,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Initial description for the controller EditAlbaranCliente
+ * Initial description for the controller EditAlbaranProveedor
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
 -->
 
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="customer" title="customer" numcolumns="3" order="100">
-                <widget type="text" fieldname="nombrecliente" required="true" />
+            <column name="supplier" title="supplier" numcolumns="3" order="100">
+                <widget type="text" fieldname="nombre" required="true" />
             </column>
             <column name="serie" numcolumns="2" order="100">
                 <widget type="select" fieldname="codserie">
@@ -49,23 +50,4 @@
             </column>
         </group>
     </columns>
-    <rows>
-        <row type="actions">
-            <button type="modal" label="more-data" color="info" action="more-data-modal" icon="fa-edit" />
-        </row>
-    </rows>
-    <modals>
-        <group name="more-data-modal" title="more-data" icon="fa-edit">
-            <column name="warehouse" numcolumns="12">
-                <widget type="select" fieldname="codalmacen">
-                    <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
-                </widget>
-            </column>
-            <column name="payment" title="method-payment" numcolumns="12" titleurl="?page=ListFormaPago" order="120">
-                <widget type="select" fieldname="codpago">
-                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
-                </widget>
-            </column>
-        </group>
-    </modals>
 </view>

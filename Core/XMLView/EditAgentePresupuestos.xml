@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Initial description for the controller EditAgente
+ *
+ * @author Artex Trading sa <jcuello@artextrading.com>
+-->
+
+<view>
+    <columns>
+        <group name="data" numcolumns="12">
+            <column name="code" numcolumns="2" order="100">
+                <widget type="text" fieldname="codagente" onclick="" icon="fa-user" required="true" />
+            </column>
+            <column name="name" numcolumns="4" order="110">
+                <widget type="text" fieldname="nombre" required="true" />
+            </column>
+            <column name="surname" numcolumns="6" order="110">
+                <widget type="text" fieldname="apellidos" />
+            </column>
+            <column name="cifnif" numcolumns="2" order="110">
+                <widget type="text" fieldname="dnicif" />
+            </column>
+            <column name="phone" numcolumns="2" order="110">
+                <widget type="text" fieldname="telefono" />
+            </column>
+            <column name="email" numcolumns="4" order="110">
+                <widget type="text" fieldname="email" />
+            </column>
+            <column name="position" numcolumns="4" order="110">
+                <widget type="text" fieldname="cargo" />
+            </column>
+        </group>
+        <group name="address" title="address" numcolumns="12">
+            <column name="state" numcolumns="3" order="110">
+                <widget type="text" fieldname="provincia" />
+            </column>
+            <column name="city" numcolumns="3" order="110">
+                <widget type="text" fieldname="ciudad" />
+            </column>
+            <column name="address" numcolumns="4" order="110">
+                <widget type="text" fieldname="direccion" />
+            </column>
+            <column name="postalcode" numcolumns="2" order="110">
+                <widget type="text" fieldname="codpostal" />
+            </column>
+        </group>
+    </columns>
+</view>

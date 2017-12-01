@@ -18,18 +18,16 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Controller to edit a single item from the Asiento model
+ * Controller to edit a single item from the AlbaranCliente model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
- * @author Fco Antonio Moreno Pérez <famphuelva@gmail.com>
- * @author PC REDNET S.L. <luismi@pcrednet.com>
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class EditAsiento extends ExtendedController\PanelController
+class EditAlbaranProveedor extends ExtendedController\DocumentController
 {
 
     /**
@@ -37,9 +35,8 @@ class EditAsiento extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
-        $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
-        $this->setTabsPosition('bottom');
+        $this->addEditView('FacturaScripts\Core\Model\AlbaranProveedor', 'EditAlbaranProveedor', 'delivery-note');
+        $this->addEditListView('FacturaScripts\Core\Model\LineaAlbaranProveedor', 'CommonLineasDocumento', 'lines');
     }
 
     /**
@@ -50,18 +47,16 @@ class EditAsiento extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
+        $idalbaran = $this->request->get('code');
+        
         switch ($keyView) {
-            case 'EditAsiento':
-                $value = $this->request->get('code');
-                $view->loadData($value);
+            case 'EditAlbaranProveedor':
+                $view->loadData($idalbaran);
                 break;
-
-            case 'ListPartida':
-                $idasiento = $this->getViewModelValue('EditAsiento', 'idasiento');
-                if (!empty($idasiento)) {
-                    $where = [new DataBase\DataBaseWhere('idasiento', $idasiento)];
-                    $view->loadData($where);
-                }
+            
+            case 'CommonLineasDocumento':
+                $where = [new DataBaseWhere('idalbaran', $idalbaran)];
+                $view->loadData($where);
                 break;
         }
     }
@@ -74,9 +69,9 @@ class EditAsiento extends ExtendedController\PanelController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'accounting-entry';
-        $pagedata['menu'] = 'accounting';
-        $pagedata['icon'] = 'fa-balance-scale';
+        $pagedata['title'] = 'delivery-note';
+        $pagedata['menu'] = 'sales';
+        $pagedata['icon'] = 'fa-files-o';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

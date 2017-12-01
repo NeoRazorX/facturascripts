@@ -102,7 +102,7 @@
             </div>
         </div>
     </div>
-
+    
     <br/>
 
     {# -- Data Row -- #}
@@ -111,8 +111,15 @@
         <div class="col-12">
             {% for indexView, view in fsc.views %}
                 {% if loop.index == 1 %}
+                {% set model = view.getModel() %}
                     <div class="card">
                         <div class="card-body">
+                            <nav aria-label="breadcrumb" role="navigation">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="{{ list_url }}">Home</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">{{ model.codigo }}</li>
+                                </ol>
+                            </nav>
                             {% set viewType = fsc.viewClass(view) %}
                             {% if viewType == 'ListView' %}
                                 {{ columnsForListView(_context, view) }}
@@ -123,7 +130,6 @@
                                 {{ rowHeaderForEditView(_context, view) }}
 
                                 <!-- Main Form -->
-                                {% set model = view.getModel() %}
                                 {{ columnsForEditView(_context, view, model, TRUE) }}
                             {% endif %}
 
