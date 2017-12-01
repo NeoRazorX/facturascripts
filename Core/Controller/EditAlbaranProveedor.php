@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -35,8 +34,18 @@ class EditAlbaranProveedor extends ExtendedController\DocumentController
      */
     protected function createViews()
     {
+        parent::createViews();
         $this->addEditView('FacturaScripts\Core\Model\AlbaranProveedor', 'EditAlbaranProveedor', 'delivery-note');
-        $this->addListView('FacturaScripts\Core\Model\LineaAlbaranProveedor', 'CommonLineasDocumento', 'lines');
+    }
+
+    protected function getDocumentClassName()
+    {
+        return 'FacturaScripts\Core\Model\AlbaranProveedor';
+    }
+
+    protected function getDocumentLineClassName()
+    {
+        return 'FacturaScripts\Core\Model\LineaAlbaranProveedor';
     }
 
     /**
@@ -52,11 +61,6 @@ class EditAlbaranProveedor extends ExtendedController\DocumentController
         switch ($keyView) {
             case 'EditAlbaranProveedor':
                 $view->loadData($idalbaran);
-                break;
-
-            case 'CommonLineasDocumento':
-                $where = [new DataBaseWhere('idalbaran', $idalbaran)];
-                $view->loadData($where);
                 break;
         }
     }

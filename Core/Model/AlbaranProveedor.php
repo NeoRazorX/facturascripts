@@ -106,7 +106,7 @@ class AlbaranProveedor
     public function getLineas()
     {
         $lineaModel = new LineaAlbaranProveedor();
-        return $lineaModel->all(new DataBaseWhere('idalbaran', $this->idalbaran));
+        return $lineaModel->all([new DataBaseWhere('idalbaran', $this->idalbaran)]);
     }
 
     /**

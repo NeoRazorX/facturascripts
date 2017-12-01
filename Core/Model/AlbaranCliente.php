@@ -105,7 +105,7 @@ class AlbaranCliente
     public function getLineas()
     {
         $lineaModel = new LineaAlbaranCliente();
-        return $lineaModel->all(new DataBaseWhere('idalbaran', $this->idalbaran));
+        return $lineaModel->all([new DataBaseWhere('idalbaran', $this->idalbaran)]);
     }
 
     /**

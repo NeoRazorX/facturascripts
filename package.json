@@ -1,7 +1,7 @@
 {
   "name": "facturascripts",
   "version": "1.0.0",
-  "description": "ERP open source. Built on PHP. Easy and powerful.",
+  "description": "Open source ERP software. Built on PHP, symfony componentes and bootstrap 4. Easy and powerful.",
   "main": "index.php",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -28,6 +28,7 @@
     "font-awesome": "^4.x",
     "jquery": "^3.x",
     "jscolor-picker": "^2.0.4",
-    "popper.js": "^1.12.6"
+    "popper.js": "^1.12.6",
+    "handsontable": "^0.34.x"
   }
 }

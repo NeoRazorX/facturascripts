@@ -18,12 +18,8 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\Database;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Model\PresupuestoCliente;
-use FacturaScripts\Core\Model\PedidoCliente;
-use FacturaScripts\Core\Model\AlbaranCliente;
-use FacturaScripts\Core\Model\FacturaCliente;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * Controller to edit a single item from the Agente model
@@ -35,23 +31,15 @@ class EditAgente extends ExtendedController\PanelController
 {
 
     /**
-     * Returns the model name
-     */
-    public function getModelName()
-    {
-        return 'FacturaScripts\Core\Model\Agente';
-    }
-
-    /**
      * Load Views
      */
     protected function createViews()
     {
         $this->addEditView('FacturaScripts\Core\Model\Agente', 'EditAgente', 'agent');
-        $this->addListView('\FacturaScripts\Core\Model\PresupuestoCliente', 'EditAgentePresupuestos', 'budgets');
-        $this->addListView('\FacturaScripts\Core\Model\PedidoCliente', 'EditAgentePedidos', 'orders');
-        $this->addListView('\FacturaScripts\Core\Model\AlbaranCliente', 'EditAgenteAlbaranes', 'delivery-notes');
-        $this->addListView('\FacturaScripts\Core\Model\FacturaCliente', 'EditAgenteFacturas', 'invoice', 'fa-book');
+        $this->addListView('FacturaScripts\Core\Model\FacturaCliente', 'EditAgenteFacturas', 'invoices', 'fa-files-o');
+        $this->addListView('FacturaScripts\Core\Model\AlbaranCliente', 'EditAgenteAlbaranes', 'delivery-notes', 'fa-files-o');
+        $this->addListView('FacturaScripts\Core\Model\PedidoCliente', 'EditAgentePedidos', 'orders', 'fa-files-o');
+        $this->addListView('FacturaScripts\Core\Model\PresupuestoCliente', 'EditAgentePresupuestos', 'estimations', 'fa-files-o');
     }
 
     /**
@@ -63,29 +51,20 @@ class EditAgente extends ExtendedController\PanelController
     protected function loadData($keyView, $view)
     {
         $code = $this->request->get('code');
+
         switch ($keyView) {
             case 'EditAgente':
                 $view->loadData($code);
                 break;
+
             case 'EditAgentePresupuestos':
             case 'EditAgentePedidos':
             case 'EditAgenteAlbaranes':
             case 'EditAgenteFacturas':
-                $where = [new DataBase\DataBaseWhere('codagente', $code)];
+                $where = [new DataBaseWhere('codagente', $code)];
                 $view->loadData($where);
                 break;
         }
-    }
-
-    /**
-     * Returns the text for the data panel footer
-     *
-     * @return string
-     */
-    public function getPanelFooter()
-    {
-        $model = $this->getModel();
-        return $this->i18n->trans('discharge-date', [$model->f_alta]);
     }
 
     /**

@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -35,8 +34,18 @@ class EditFacturaProveedor extends ExtendedController\DocumentController
      */
     protected function createViews()
     {
-        $this->addEditView('FacturaScripts\Core\Model\FacturaProveedor', 'EditFacturaProveedor', 'delivery-note');
-        $this->addListView('FacturaScripts\Core\Model\LineaFacturaProveedor', 'CommonLineasDocumento', 'lines');
+        parent::createViews();
+        $this->addEditView('FacturaScripts\Core\Model\FacturaProveedor', 'EditFacturaProveedor', 'invoice');
+    }
+
+    protected function getDocumentClassName()
+    {
+        return 'FacturaScripts\Core\Model\FacturaProveedor';
+    }
+
+    protected function getDocumentLineClassName()
+    {
+        return 'FacturaScripts\Core\Model\LineaFacturaProveedor';
     }
 
     /**
@@ -52,11 +61,6 @@ class EditFacturaProveedor extends ExtendedController\DocumentController
         switch ($keyView) {
             case 'EditFacturaProveedor':
                 $view->loadData($idfactura);
-                break;
-
-            case 'CommonLineasDocumento':
-                $where = [new DataBaseWhere('idfactura', $idfactura)];
-                $view->loadData($where);
                 break;
         }
     }
