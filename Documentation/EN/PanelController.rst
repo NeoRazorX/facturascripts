@@ -105,16 +105,16 @@ Example without specifying the method.
 
 .. code :: php
 
-        $ this-> addEditView ('FacturaScripts \ Core \ Model \ Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
-        $ this-> addListView ('FacturaScripts \ Core \ Model \ Partida', 'ListPartida', 'accounting-items', 'fa-book');
+        $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
+        $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
         
 Example with the method.
 
 ..code :: php
     
-        $ this-> addEditView ('FacturaScripts \ Core \ Model \ Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
-        $ this-> addListView ('FacturaScripts \ Core \ Model \ Partida', 'ListPartida', 'accounting-items', 'fa-book');
-        $ this-> setTabsPosition ('left');
+        $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
+        $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
+        $this->setTabsPosition('left');    
 
 The tabs when placed below, shows main window and below
 This will show the information of the selected tab.
@@ -123,9 +123,9 @@ Example.
 
 .. code :: php
 
-        $ this-> addEditView ('FacturaScripts \ Core \ Model \ Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
-        $ this-> addListView ('FacturaScripts \ Core \ Model \ Partida', 'ListPartida', 'accounting-items', 'fa-book');
-        $ this-> setTabsPosition ('bottom');
+         $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
+         $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
+         $this->setTabsPosition('bottom');
         
 The tabs when they are placed above, will show the information of
 the selected tab.
@@ -134,9 +134,9 @@ Example.
 
 .. code :: php
 
-        $ this-> addEditView ('FacturaScripts \ Core \ Model \ Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
-        $ this-> addListView ('FacturaScripts \ Core \ Model \ Partida', 'ListPartida', 'accounting-items', 'fa-book');
-        $ this-> setTabsPosition ('top');
+        $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
+        $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
+        $this->setTabsPosition('top');
 
 getPageData
 ===========
