@@ -28,7 +28,9 @@
             <widget type="text" fieldname="referencia" onclick="EditArticulo" />
         </column>
         <column name="warehouse" display="left" order="120">
-            <widget type="text" fieldname="codalmacen" />
+            <widget type="select" fieldname="codalmacen">
+                <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
+            </widget>
         </column>
         <column name="quantity" display="right" order="130">
             <widget type="number" fieldname="cantidad" />
