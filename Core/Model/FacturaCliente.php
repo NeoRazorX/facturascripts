@@ -183,7 +183,7 @@ class FacturaCliente
     public function getLineas()
     {
         $lineaModel = new LineaFacturaCliente();
-        return $lineaModel->all(new DataBaseWhere('idfactura', $this->idfactura));
+        return $lineaModel->all([new DataBaseWhere('idfactura', $this->idfactura)]);
     }
 
     /**

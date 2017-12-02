@@ -16,26 +16,52 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controller to edit a single item from the CuentaBanco model
+ * Controller to edit a single item from the PresupuestoCliente model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jferrer@artextrading.com>
+ * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
  */
-class EditCuentaBanco extends ExtendedController\EditController
+class EditPresupuestoCliente extends ExtendedController\DocumentController
 {
 
     /**
-     * Returns the model name
+     * Load views
      */
-    public function getModelClassName()
+    protected function createViews()
     {
-        return 'FacturaScripts\Core\Model\CuentaBanco';
+        $this->addEditView('FacturaScripts\Core\Model\PresupuestoCliente', 'EditPresupuestoCliente', 'budget');
+    }
+
+    protected function getDocumentClassName()
+    {
+        return 'FacturaScripts\Core\Model\PresupuestoCliente';
+    }
+
+    protected function getDocumentLineClassName()
+    {
+        return 'FacturaScripts\Core\Model\LineaPresupuestoCliente';
+    }
+
+    /**
+     * Load data view procedure
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        $idpresupuesto = $this->request->get('code');
+
+        switch ($keyView) {
+            case 'EditPresupuestoCliente':
+                $view->loadData($idpresupuesto);
+                break;
+        }
     }
 
     /**
@@ -46,9 +72,9 @@ class EditCuentaBanco extends ExtendedController\EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'bank-account';
-        $pagedata['icon'] = 'fa-university';
-        $pagedata['menu'] = 'accounting';
+        $pagedata['title'] = 'budget';
+        $pagedata['menu'] = 'sales';
+        $pagedata['icon'] = 'fa-files-o';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

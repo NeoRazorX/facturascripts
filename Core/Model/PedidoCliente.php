@@ -128,7 +128,7 @@ class PedidoCliente
     public function getLineas()
     {
         $lineaModel = new LineaPedidoCliente();
-        return $lineaModel->all(new DataBaseWhere('idpedido', $this->idpedido));
+        return $lineaModel->all([new DataBaseWhere('idpedido', $this->idpedido)]);
     }
 
     /**

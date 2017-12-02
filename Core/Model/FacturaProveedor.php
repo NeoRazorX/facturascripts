@@ -145,7 +145,7 @@ class FacturaProveedor
     public function getLineas()
     {
         $lineaModel = new LineaFacturaProveedor();
-        return $lineaModel->all(new DataBaseWhere('idfactura', $this->idfactura));
+        return $lineaModel->all([new DataBaseWhere('idfactura', $this->idfactura)]);
     }
 
     /**

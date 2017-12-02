@@ -21,6 +21,8 @@ namespace FacturaScripts\Core\Base;
 
 use Exception;
 
+const DS = DIRECTORY_SEPARATOR;
+
 /**
  * FacturaScripts plugins manager.
  *
@@ -88,7 +90,7 @@ class PluginManager
     private function loadFromFile()
     {
         if (file_exists(self::$pluginListFile)) {
-            return explode(',', file_get_contents(self::$pluginListFile));
+            return explode(',', trim(file_get_contents(self::$pluginListFile)));
         }
 
         return [];
@@ -157,14 +159,14 @@ class PluginManager
 
             $this->createFolder(FS_FOLDER . '/Dinamic/' . $folder);
 
-            /// we examine the plugins
+            /// examine the plugins
             foreach (self::$enabledPlugins as $pluginName) {
                 if (file_exists(FS_FOLDER . '/Plugins/' . $pluginName . '/' . $folder)) {
                     $this->linkFiles($folder, 'Plugins', $pluginName);
                 }
             }
 
-            /// we examine the core
+            /// examine the core
             if (file_exists(FS_FOLDER . '/Core/' . $folder)) {
                 $this->linkFiles($folder);
             }
@@ -172,22 +174,23 @@ class PluginManager
 
         if (self::$deployedControllers === false) {
             /// finally we started the drivers to complete the menu
-            $this->deployControllers();
+            $this->initControllers();
         }
     }
 
     /**
-     * Prepare the controllers dynamically
+     * Initialize the controllers dynamically.
      */
-    private function deployControllers()
+    private function initControllers()
     {
         self::$deployedControllers = true;
         $cache = new Cache();
         $menuManager = new MenuManager();
         $menuManager->init();
 
-        foreach (scandir(FS_FOLDER . '/Dinamic/Controller', SCANDIR_SORT_ASCENDING) as $fileName) {
-            if ($fileName !== '.' && $fileName !== '..' && substr($fileName, -3) === 'php') {
+        $files = array_diff(scandir(FS_FOLDER . '/Dinamic/Controller', SCANDIR_SORT_ASCENDING), ['.', '..']);
+        foreach ($files as $fileName) {
+            if (substr($fileName, -3) === 'php') {
                 $controllerName = substr($fileName, 0, -4);
                 $controllerNamespace = 'FacturaScripts\\Dinamic\\Controller\\' . $controllerName;
 
@@ -245,15 +248,13 @@ class PluginManager
     {
         if (!file_exists($folder) && !@mkdir($folder, 0775, true)) {
             self::$minilog->critical(self::$i18n->trans('cant-create-folder', [$folder]));
-
             return false;
         }
-
         return true;
     }
 
     /**
-     * Link the files
+     * Link the files.
      *
      * @param string $folder
      * @param string $place
@@ -263,23 +264,25 @@ class PluginManager
     {
         if (empty($pluginName)) {
             $path = FS_FOLDER . '/' . $place . '/' . $folder;
+            $newPath = FS_FOLDER . '/Dinamic/' . $folder;
             $namespace = "\FacturaScripts\Core\\";
         } else {
             $path = FS_FOLDER . '/Plugins/' . $pluginName . '/' . $folder;
+            $newPath = FS_FOLDER . '/Dinamic/Plugins/' . $pluginName . '/' . $folder;
             $namespace = "\FacturaScripts\Plugins\\" . $pluginName . '\\';
         }
 
-        // We add the files that are not '.' neither '..'
-        $filesPath = array_diff(scandir($path, SCANDIR_SORT_ASCENDING), ['.', '..']);
-        // Now we go through only files or folders
+        $filesPath = $this->scanFolders($path);
         foreach ($filesPath as $fileName) {
             $infoFile = pathinfo($fileName);
-            if (is_file($path . '/' . $fileName) && $infoFile['filename'] !== '') {
+            if (is_dir($path . DS . $fileName)) {
+                $this->createFolder($newPath . '/' . $fileName);
+            } elseif ($infoFile['filename'] !== '' && is_file($path . DS . $fileName)) {
                 if ($infoFile['extension'] === 'php') {
                     $this->linkClassFile($fileName, $folder, $namespace);
-                } elseif ($infoFile['extension'] === 'xml') {
-                    $filePath = FS_FOLDER . '/' . $place . '/' . $folder . '/' . $fileName;
-                    $this->linkXmlFile($fileName, $folder, $filePath);
+                } else {
+                    $filePath = FS_FOLDER . DS . $place . DS . $folder . DS . $fileName;
+                    $this->linkFile($fileName, $folder, $filePath);
                 }
             }
         }
@@ -295,7 +298,7 @@ class PluginManager
     private function linkClassFile($fileName, $folder, $namespace = "\FacturaScripts\Core\\")
     {
         if (!file_exists(FS_FOLDER . '/Dinamic/' . $folder . '/' . $fileName)) {
-            $className = substr($fileName, 0, -4);
+            $className = str_replace('/', '\\', substr($fileName, 0, -4));
             $txt = '<?php namespace FacturaScripts\Dinamic\\' . $folder . ";\n\n"
                 . '/**' . "\n"
                 . ' * Clase cargada dinámicamente' . "\n"
@@ -309,16 +312,43 @@ class PluginManager
     }
 
     /**
-     * Link the XML dynamically.
+     * Link other static files.
      *
      * @param string $fileName
      * @param string $folder
      * @param string $filePath
      */
-    private function linkXmlFile($fileName, $folder, $filePath)
+    private function linkFile($fileName, $folder, $filePath)
     {
         if (!file_exists(FS_FOLDER . '/Dinamic/' . $folder . '/' . $fileName)) {
-            copy($filePath, FS_FOLDER . '/Dinamic/' . $folder . '/' . $fileName);
+            @copy($filePath, FS_FOLDER . '/Dinamic/' . $folder . '/' . $fileName);
         }
+    }
+
+    /**
+     * Makes a recursive scan in folders inside a root folder and extracts the list of files
+     * and pass its to an array as result.
+     *
+     * @param string $folder
+     * @param string $origin
+     *
+     * @return array $result
+     */
+    private function scanFolders($folder)
+    {
+        $result = [];
+        $rootFolder = array_diff(scandir($folder, SCANDIR_SORT_ASCENDING), ['.', '..']);
+        foreach ($rootFolder as $item) {
+            $newItem = $folder . DS . $item;
+            if (is_file($newItem)) {
+                $result[] = $item;
+                continue;
+            }
+            $result[] = $item;
+            foreach ($this->scanFolders($newItem) as $item2) {
+                $result[] = $item . DS . $item2;
+            }
+        }
+        return $result;
     }
 }

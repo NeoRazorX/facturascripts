@@ -4,16 +4,39 @@
 {{ parent() }}
 
 <link rel="stylesheet" href="Core/Assets/CSS/extendedcontroller.css" />
+<link rel="stylesheet" href="node_modules/handsontable/dist/handsontable.full.min.css" />
 {% endblock %}
 
 {% block javascript %}
 {{ parent() }}
+<script src="node_modules/handsontable/dist/handsontable.full.min.js"></script>
 
 <script type="text/javascript">
+    var documentLineHeaders = {{ fsc.getLineHeaders()|raw }};
+    var documentLineColumns = {{ fsc.getLineColumns()|raw }};
+    var documentLines = {{ fsc.getLineData()|raw }};
     var tabActive = '{{ fsc.active }}';
     $(document).ready(function () {
         $('#mainTabs').on('shown.bs.tab', function (e) {
             tabActive = e.target.hash.substring(1);
+        });
+        
+        var container = document.getElementById('document-lines');
+        var hot = new Handsontable(container, {
+            data: documentLines,
+            columns: documentLineColumns,
+            rowHeaders: true,
+            colHeaders: documentLineHeaders,
+            stretchH: 'all',
+            autoWrapRow: true,
+            manualRowResize: true,
+            manualColumnResize: true,
+            manualRowMove: true,
+            manualColumnMove: true,
+            contextMenu: true,
+            filters: true,
+            dropdownMenu: true,
+            preventOverflow: 'horizontal'
         });
     });
 
@@ -57,6 +80,8 @@
 {# -- Calculate texts according to language -- #}
 {% set go_back = i18n.trans('back') %}
 {% set refresh_title = i18n.trans('refresh') %}
+{% set remove = i18n.trans('delete') %}
+{% set save = i18n.trans('save') %}
 
 {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
 
@@ -95,98 +120,110 @@
             {{ exportData(fsc, i18n, 'edit') }}
         </div>
         <div class="col-6 text-right">
-            <div class="page-header">
-                <h2>
-                    <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
-                </h2>
+            <div class="btn-group">
+                <a href="#" class="btn btn-sm btn-danger">
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline-block">&nbsp;{{ remove }}</span>
+                </a>
+                <button type="submit" class="btn btn-sm btn-primary">
+                    <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
+                </button>
             </div>
         </div>
     </div>
-    
+
     <br/>
 
     {# -- Data Row -- #}
     <div id="data" class="row">
-        {# -- First View Panel -- #}
-        <div class="col-12">
-            {% for indexView, view in fsc.views %}
-                {% if loop.index == 1 %}
-                {% set model = view.getModel() %}
-                    <div class="card">
-                        <div class="card-body">
-                            <nav aria-label="breadcrumb" role="navigation">
-                                <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="{{ list_url }}">Home</a></li>
-                                    <li class="breadcrumb-item active" aria-current="page">{{ model.codigo }}</li>
-                                </ol>
-                            </nav>
-                            {% set viewType = fsc.viewClass(view) %}
-                            {% if viewType == 'ListView' %}
-                                {{ columnsForListView(_context, view) }}
-                            {% endif %}
-
-                            {% if viewType == 'EditView' %}
-                                <!-- Statistical buttons bar -->
-                                {{ rowHeaderForEditView(_context, view) }}
-
-                                <!-- Main Form -->
-                                {{ columnsForEditView(_context, view, model, TRUE) }}
-                            {% endif %}
-
-                            {% if viewType == 'EditListView' %}
-                                {{ columnsForEditListView(_context, view) }}
-                            {% endif %}
-
-                            {% if viewType == 'HtmlView' %}
-                            <div>{% include view.fileName ignore missing %}</div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% if viewType in ['ListView','EditView','EditListView'] %}
-                        {{ rowFooterForEditView(_context, view) }}
-                        {{ modalFormFromColumns(_context, view) }}
-                    {% endif %}
-                {% endif %}
-            {% endfor %}
-            <br/>
+        <div class="col-sm-12">
             <div class="nav nav-tabs" id="optionsindex" role="tablist">
-                {% for indexView, view in fsc.views %}
-                {% set active = (loop.index == 2) ? ' active' : '' %}
-                {% if loop.index > 1 %}
-                <a class="nav-link{{ active }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
-                    <i class="fa {{ fsc.icons[indexView] }} fa-fw" aria-hidden="true"></i>
-                    &nbsp;{{ view.title }}
+                <a class="nav-link active" id="document-primary-tab" data-toggle="pill" href="#document-primary" role="tab" aria-controls="document-primary" aria-expanded="true">
+                    <i class="fa fa-file fa-fw" aria-hidden="true"></i>
                 </a>
-                {% endif %}
+                {% for indexView, view in fsc.views %}
+                    <a class="nav-link" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
+                        <i class="fa {{ fsc.icons[indexView] }} fa-fw" aria-hidden="true"></i>
+                        &nbsp;{{ view.title }}
+                    </a>
                 {% endfor %}
             </div>
             <div class="tab-content" id="optionsindex-tabContent">
+                <div class="tab-pane fade show active" id="document-primary" role="tabpanel" aria-labelledby="document-primary-tab">
+                    <div class="table-responsive">
+                        <table class="table table-condensed">
+                            <tr class="table-info">
+                                <td colspan="4">
+                                    <span>Empresa /</span>
+                                    <span>{{ fsc.document.codalmacen }} /</span>
+                                    <span>{{ fsc.document.nombrecliente }} /</span>
+                                    <span>{{ fsc.document.codserie }} /</span>
+                                    <span>{{ fsc.document.fecha }} /</span>
+                                    <span>{{ fsc.document.hora }} /</span>
+                                    <span>{{ fsc.document.codigo }}</span>
+                                </td>
+                            </tr>
+                            <tr class="table-info">
+                                <td>
+                                    <div class="input-group">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-secondary" type="button">
+                                                <i class="fa fa-search" aria-hidden="true"></i>
+                                            </button>
+                                        </span>
+                                        <input type="text" class="form-control" placeholder="Buscar..." autocomplete="off" autofocus=""/>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">Subtotal</span>
+                                        <input type="text" value="{{ fsc.document.neto }}" class="form-control text-right" readonly=""/>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">Dto.</span>
+                                        <input type="text" value="0.00" class="form-control text-right" autocomplete="off"/>
+                                        <span class="input-group-addon">%</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">Total</span>
+                                        <input type="text" value="{{ fsc.document.total }}" class="form-control text-right" readonly=""/>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="document-lines"></div>
+                </div>
                 {% for indexView, view in fsc.views %}
-                    {% set active = (loop.index == 2) ? ' show active' : '' %}
-                    <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
+                    <div class="tab-pane fade" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
                         {% set viewType = fsc.viewClass(view) %}
                         {% if viewType == 'ListView' %}
-                        {{ columnsForListView(_context, view) }}
+                            {{ columnsForListView(_context, view) }}
                         {% else %}
-                        <br/>
+                            <br/>
                         {% endif %}
 
                         {% if viewType == 'EditView' %}
-                        <!-- Statistical buttons bar -->
-                        {{ rowHeaderForEditView(_context, view) }}
-                        <!-- Main Form -->
-                        {% set model = view.getModel() %}
-                        {{ columnsForEditView(_context, view, model, TRUE) }}
+                            <!-- Statistical buttons bar -->
+                            {{ rowHeaderForEditView(_context, view) }}
+                            <!-- Main Form -->
+                            {% set model = view.getModel() %}
+                            {{ columnsForEditView(_context, view, model, TRUE) }}
                         {% endif %}
 
                         {% if viewType == 'EditListView' %}
-                        {{ columnsForEditListView(_context, view) }}
+                            {{ columnsForEditListView(_context, view) }}
                         {% endif %}
 
                         {% if viewType == 'HtmlView' %}
-                        <div>{% include view.fileName ignore missing %}</div>
-                        {% elseif viewType in ['EditView','EditListView'] %}
-                        {{ rowFooterForEditView(_context, view) }}
+                            <div>{% include view.fileName ignore missing %}</div>
+                        {% else %}
+                            {{ rowFooterForEditView(_context, view) }}
+                            {{ modalFormFromColumns(_context, view) }}
                         {% endif %}
                     </div>
                 {% endfor %}

@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -35,8 +34,18 @@ class EditAlbaranCliente extends ExtendedController\DocumentController
      */
     protected function createViews()
     {
-        $this->addEditView('FacturaScripts\Core\Model\AlbaranCliente', 'EditAlbaranCliente', 'delivery-note');
-        $this->addListView('FacturaScripts\Core\Model\LineaAlbaranCliente', 'CommonLineasDocumento', 'lines');
+        parent::createViews();
+        $this->addEditView('FacturaScripts\Core\Model\AlbaranCliente', 'EditAlbaranCliente', 'detail', 'fa-edit');
+    }
+
+    protected function getDocumentClassName()
+    {
+        return 'FacturaScripts\Core\Model\AlbaranCliente';
+    }
+
+    protected function getDocumentLineClassName()
+    {
+        return 'FacturaScripts\Core\Model\LineaAlbaranCliente';
     }
 
     /**
@@ -48,15 +57,10 @@ class EditAlbaranCliente extends ExtendedController\DocumentController
     protected function loadData($keyView, $view)
     {
         $idalbaran = $this->request->get('code');
-        
+
         switch ($keyView) {
             case 'EditAlbaranCliente':
                 $view->loadData($idalbaran);
-                break;
-            
-            case 'CommonLineasDocumento':
-                $where = [new DataBaseWhere('idalbaran', $idalbaran)];
-                $view->loadData($where);
                 break;
         }
     }

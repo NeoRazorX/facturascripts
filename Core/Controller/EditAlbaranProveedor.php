@@ -16,26 +16,53 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Controller to edit a single item from the CuentaBanco model
+ * Controller to edit a single item from the AlbaranCliente model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jferrer@artextrading.com>
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class EditCuentaBanco extends ExtendedController\EditController
+class EditAlbaranProveedor extends ExtendedController\DocumentController
 {
 
     /**
-     * Returns the model name
+     * Load views
      */
-    public function getModelClassName()
+    protected function createViews()
     {
-        return 'FacturaScripts\Core\Model\CuentaBanco';
+        parent::createViews();
+        $this->addEditView('FacturaScripts\Core\Model\AlbaranProveedor', 'EditAlbaranProveedor', 'delivery-note');
+    }
+
+    protected function getDocumentClassName()
+    {
+        return 'FacturaScripts\Core\Model\AlbaranProveedor';
+    }
+
+    protected function getDocumentLineClassName()
+    {
+        return 'FacturaScripts\Core\Model\LineaAlbaranProveedor';
+    }
+
+    /**
+     * Load data view procedure
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        $idalbaran = $this->request->get('code');
+
+        switch ($keyView) {
+            case 'EditAlbaranProveedor':
+                $view->loadData($idalbaran);
+                break;
+        }
     }
 
     /**
@@ -46,9 +73,9 @@ class EditCuentaBanco extends ExtendedController\EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'bank-account';
-        $pagedata['icon'] = 'fa-university';
-        $pagedata['menu'] = 'accounting';
+        $pagedata['title'] = 'delivery-note';
+        $pagedata['menu'] = 'sales';
+        $pagedata['icon'] = 'fa-files-o';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
