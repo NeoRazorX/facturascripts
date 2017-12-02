@@ -32,7 +32,7 @@
     {% if footer is not empty %}
         {% from 'Macro/Utils.twig' import popoverTitle as popoverTitle %}
 
-        <br />
+        <br/>
         <div id="footer" class="row">
             {% for panel in footer.panels %}
                 <div class="col">
@@ -68,7 +68,7 @@
                         {% endif %}
                     </div>
                     {% if not loop.last %}
-                        <br />
+                        <br/>
                     {% endif %}
                 </div>
             {% endfor %}
@@ -138,7 +138,7 @@
             <th class="text-right">
                 {% if view.getCursor() is not empty %}
                     <label class="custom-checkbox-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
-                        <input class="custom-control-input" type="checkbox" id="listDeleteCB" />
+                        <input class="custom-control-input" type="checkbox" id="listDeleteCB"/>
                         <span class="custom-control-indicator"></span>
                     </label>
                 {% endif %}
@@ -169,7 +169,7 @@
                 {% endfor %}
                 <td class="text-right cancelClickable">
                     <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
-                        <input class="custom-control-input listDelete" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}" />
+                        <input class="custom-control-input listDelete" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}"/>
                         <span class="custom-control-indicator"></span>
                     </label>
                 </td>
@@ -227,7 +227,7 @@
             <div class="col">
                 {% if keyValue is not empty %}
                     {% set remove, remove_title = context.i18n.trans('delete'), context.i18n.trans('delete-record') %}
-                    <a id="b_remove" class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
+                    <a class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
                         <i class="fa fa-trash" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">&nbsp;{{ remove }}</span>
                     </a>
@@ -278,7 +278,7 @@
 
                         <div class="col">
                             {% if keyValue is not empty %}
-                                <a id="b_remove" class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
+                                <a class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
                                     &nbsp;<i class="fa fa-trash" aria-hidden="true"></i>&nbsp;
                                 </a>
                             {% endif %}
@@ -313,7 +313,7 @@
         {% else %}
             {{ columnsForEditView(context, view, model, TRUE) }}
         {% endif %}
-        <hr />
+        <hr/>
     {% endfor %}
 
     {% set newModel = view.newEmptyModel() %}
@@ -436,7 +436,7 @@
             <div class="input-group-btn">
                 <input name="{{ key }}-from-btn" id="{{ key }}-from-btn" type="button" value="{{ filter.options.operatorFrom }}"
                        class="btn btn-outline-secondary dropdown-toggle"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"/>
 
                 <div class="dropdown-menu">
                     <h6 class="dropdown-header">{{ context.i18n.trans('filter-method') }}</h6>
@@ -445,7 +445,7 @@
                     {% endfor %}
                 </div>
             </div>
-            <input type="hidden" name="{{ key }}-from-operator" id="{{ key }}-from-operator" value="{{ filter.options.operatorFrom }}" />
+            <input type="hidden" name="{{ key }}-from-operator" id="{{ key }}-from-operator" value="{{ filter.options.operatorFrom }}"/>
             <input type="text" name="{{ key }}-from" value="{% if indexView == fsc.active %}{{ filter.options.valueFrom }}{% endif %}"
                    class="form-control {{ filter.getSpecialClass() }}" placeholder="{{ filter.options.label }}"
                    autocomplete="off" onchange="this.form.submit()" {{ filter.getKeyboardFilter()|raw }}/>
@@ -456,7 +456,7 @@
             <div class="input-group-btn">
                 <input name="{{ key }}-to-btn" id="{{ key }}-to-btn" type="button" value="{{ filter.options.operatorTo }}"
                        class="btn btn-outline-secondary dropdown-toggle"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"/>
 
                 <div class="dropdown-menu">
                     <h6 class="dropdown-header">{{ context.i18n.trans('filter-method') }}</h6>
@@ -465,7 +465,7 @@
                     {% endfor %}
                 </div>
             </div>
-            <input type="hidden" name="{{ key }}-to-operator" id="{{ key }}-to-operator" value="{{ filter.options.operatorTo }}" />
+            <input type="hidden" name="{{ key }}-to-operator" id="{{ key }}-to-operator" value="{{ filter.options.operatorTo }}"/>
             <input type="text" name="{{ key }}-to" value="{% if indexView == fsc.active %}{{ filter.options.valueTo }}{% endif %}"
                    class="form-control {{ filter.getSpecialClass() }}" placeholder="{{ filter.options.label }}"
                    autocomplete="off" onchange="this.form.submit()" {{ filter.getKeyboardFilter()|raw }}/>
