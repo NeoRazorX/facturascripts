@@ -31,8 +31,8 @@ class PageOption
 {
 
     use Base\ModelTrait {
-        clear as clearTrait;
-        loadFromData as loadFromDataTrait;
+        clear as traitClear;
+        loadFromData as traitLoadFromData;
     }
 
     /**
@@ -125,7 +125,7 @@ class PageOption
      */
     public function clear()
     {
-        $this->clearTrait();
+        $this->traitClear();
         $this->columns = [];
         $this->modals = [];
         $this->filters = [];
@@ -166,7 +166,7 @@ class PageOption
      */
     public function loadFromData($data)
     {
-        $this->loadFromDataTrait($data, ['columns', 'modals', 'filters', 'rows']);
+        $this->traitLoadFromData($data, ['columns', 'modals', 'filters', 'rows']);
 
         $groups = json_decode($data['columns'], true);
         $this->getJSONGroupsColumns($groups, $this->columns);
