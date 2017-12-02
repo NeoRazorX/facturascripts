@@ -27,8 +27,8 @@ class Settings
 {
 
     use Base\ModelTrait {
-        clear as clearTrait;
-        loadFromData as loadFromDataTrait;
+        clear as traitClear;
+        loadFromData as traitLoadFromData;
     }
 
     /**
@@ -53,14 +53,14 @@ class Settings
     public $icon;
 
     /**
-     * Conjunto de valores de configuración
+     * Set of configuration values
      *
      * @var array
      */
     public $properties;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -70,7 +70,7 @@ class Settings
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -80,16 +80,16 @@ class Settings
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
-        $this->clearTrait();
+        $this->traitClear();
         $this->properties = [];
     }
 
     /**
-     * Comprueba un array de datos para que tenga la estructura correcta del modelo
+     * Check that a data array have correct struct of model
      *
      * @param array $data
      */
@@ -107,13 +107,13 @@ class Settings
     }
 
     /**
-     * Carga los datos desde un array
+     * Load data from array
      *
      * @param array $data
      */
     public function loadFromData($data)
     {
-        $this->loadFromDataTrait($data, ['properties', 'action']);
+        $this->traitLoadFromData($data, ['properties', 'action']);
         $this->properties = isset($data['properties']) ? json_decode($data['properties'], true) : [];
     }
 

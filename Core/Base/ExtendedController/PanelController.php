@@ -221,10 +221,6 @@ abstract class PanelController extends Base\Controller
     protected function execAfterAction($view, $action)
     {
         switch ($action) {
-            case 'insert':
-                $this->insertAction($view);
-                break;
-
             case 'export':
                 $this->setTemplate(false);
                 $document = $view->export($this->exportManager, $this->response, $this->request->get('option'));
@@ -246,16 +242,6 @@ abstract class PanelController extends Base\Controller
             return true;
         }
         return false;
-    }
-
-    /**
-     * Prepare the insertion of a new row
-     *
-     * @param EditView $view
-     */
-    protected function insertAction($view)
-    {
-
     }
 
     /**
