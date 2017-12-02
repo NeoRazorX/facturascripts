@@ -114,7 +114,7 @@ class ListFilter
     /**
      * Adds $where to the informed filters in DataBaseWhere format
      *
-     * @param array $where
+     * @param DataBaseWhere[] $where
      * @param string $key
      */
     public function getDataBaseWhere(&$where, $key = '')

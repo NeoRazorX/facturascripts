@@ -272,7 +272,7 @@ abstract class ListController extends Base\Controller
     /**
      * Establishes the WHERE clause according to the defined filters
      *
-     * @return array
+     * @return DataBaseWhere[]
      */
     protected function getWhere()
     {

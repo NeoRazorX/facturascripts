@@ -130,7 +130,7 @@ class EstadoDocumento
      *
      * @param $doc
      *
-     * @return array
+     * @return self[]
      */
     public function getByDocument($doc)
     {

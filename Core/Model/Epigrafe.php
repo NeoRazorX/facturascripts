@@ -133,7 +133,7 @@ class Epigrafe
     /**
      * Devuelve los epígrafes hijo
      *
-     * @return array
+     * @return self[]
      */
     public function hijos()
     {

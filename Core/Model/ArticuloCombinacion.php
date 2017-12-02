@@ -268,7 +268,7 @@ class ArticuloCombinacion
      *
      * @param string $ref
      *
-     * @return array
+     * @return self[] with field codigo on array key
      */
     public function combinacionesFromRef($ref)
     {

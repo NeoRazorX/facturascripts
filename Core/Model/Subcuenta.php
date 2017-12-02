@@ -471,7 +471,7 @@ class Subcuenta
      * @param string $codejercicio
      * @param string $query
      *
-     * @return Subcuenta
+     * @return self[]
      */
     public function searchByEjercicio($codejercicio, $query)
     {
