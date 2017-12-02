@@ -16,9 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -220,7 +221,7 @@ class PageOption
 
         if ($this->dataBase->exec($sql)) {
             $lastVal = $this->dataBase->lastval();
-            if ($lastVal === FALSE) {
+            if ($lastVal === false) {
                 return false;
             }
 
@@ -234,7 +235,7 @@ class PageOption
     /**
      * Load the column structure from the XML
      *
-     * @param \SimpleXMLElement $columns
+     * @param \SimpleXMLElement|\SimpleXMLElement[] $columns
      * @param array $target
      */
     private function getXMLGroupsColumns($columns, &$target)
@@ -263,7 +264,7 @@ class PageOption
     /**
      * Load the special conditions for the rows from XML file
      *
-     * @param \SimpleXMLElement $rows
+     * @param \SimpleXMLElement[] $rows
      */
     private function getXMLRows($rows)
     {
@@ -283,7 +284,7 @@ class PageOption
      */
     public function installXML($name)
     {
-        if ($this->name != $name) {
+        if ($this->name !== $name) {
             $this->miniLog->critical($this->i18n->trans('error-install-name-xmlview'));
             return;
         }
@@ -315,9 +316,9 @@ class PageOption
     public function getForUser($name, $nick)
     {
         $where = [];
-        $where[] = new DataBase\DataBaseWhere('nick', $nick);
-        $where[] = new DataBase\DataBaseWhere('nick', 'NULL', 'IS', 'OR');
-        $where[] = new DataBase\DataBaseWhere('name', $name);
+        $where[] = new DataBaseWhere('nick', $nick);
+        $where[] = new DataBaseWhere('nick', 'NULL', 'IS', 'OR');
+        $where[] = new DataBaseWhere('name', $name);
 
         $orderby = ['nick' => 'ASC'];
 

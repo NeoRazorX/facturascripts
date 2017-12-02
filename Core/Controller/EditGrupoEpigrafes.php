@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
 
 /**
  * Controller to edit a single item from the GrupoEpigrafes model
@@ -58,7 +59,7 @@ class EditGrupoEpigrafes extends ExtendedController\PanelController
             case 'ListEpigrafe':
                 $idgrupo = $this->getViewModelValue('EditGrupoEpigrafes', 'idgrupo');
                 if (!empty($idgrupo)) {
-                    $where = [new DataBase\DataBaseWhere('idgrupo', $idgrupo)];
+                    $where = [new DataBaseWhere('idgrupo', $idgrupo)];
                     $view->loadData($where);
                 }
                 break;

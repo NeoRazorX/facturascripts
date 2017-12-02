@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
- * Description of cliente_propiedad
+ * Manage custom key => value fields for a simple data.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -50,7 +51,7 @@ class ClientePropiedad
     public $text;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -60,7 +61,7 @@ class ClientePropiedad
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -76,8 +77,9 @@ class ClientePropiedad
      */
     public function delete()
     {
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE name = ' .
-            $this->dataBase->var2str($this->name) . ' AND codcliente = ' . $this->dataBase->var2str($this->codcliente) . ';';
+        $sql = 'DELETE FROM ' . static::tableName()
+            . ' WHERE name = ' . $this->dataBase->var2str($this->name)
+            . ' AND codcliente = ' . $this->dataBase->var2str($this->codcliente) . ';';
 
         return $this->dataBase->exec($sql);
     }
@@ -93,7 +95,7 @@ class ClientePropiedad
     {
         $vlist = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codcliente = ' . $this->dataBase->var2str($cod) . ';';
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codcliente = ' . $this->dataBase->var2str($cod) . ';';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
@@ -108,7 +110,7 @@ class ClientePropiedad
      * Guardar array de propiedades del cliente
      *
      * @param string $cod
-     * @param array  $values
+     * @param array $values
      *
      * @return bool
      */

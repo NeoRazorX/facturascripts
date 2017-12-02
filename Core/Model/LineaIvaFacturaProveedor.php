@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -30,7 +31,7 @@ class LineaIvaFacturaProveedor
     use Base\ModelTrait;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
@@ -79,7 +80,7 @@ class LineaIvaFacturaProveedor
     public $iva;
 
     /**
-     * Código del impuesto relacionado.
+     * Code of the related tax.
      *
      * @var string
      */
@@ -93,7 +94,7 @@ class LineaIvaFacturaProveedor
     public $neto;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -103,7 +104,7 @@ class LineaIvaFacturaProveedor
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -113,7 +114,7 @@ class LineaIvaFacturaProveedor
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -129,7 +130,7 @@ class LineaIvaFacturaProveedor
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -138,7 +139,8 @@ class LineaIvaFacturaProveedor
         if (static::floatcmp($this->totallinea, $this->neto + $this->totaliva + $this->totalrecargo, FS_NF0, true)) {
             return true;
         }
-        $this->miniLog->alert($this->i18n->trans('totallinea-value-error', [$this->codimpuesto, round($this->neto + $this->totaliva + $this->totalrecargo, FS_NF0)]));
+        $total = round($this->neto + $this->totaliva + $this->totalrecargo, FS_NF0);
+        $this->miniLog->alert($this->i18n->trans('totallinea-value-error', [$this->codimpuesto, $total]));
 
         return false;
     }
@@ -146,7 +148,7 @@ class LineaIvaFacturaProveedor
     /**
      * Comprueba que las líneas de Iva de la factura sean correctas
      *
-     * @param int   $idfactura
+     * @param int $idfactura
      * @param float $neto
      * @param float $totaliva
      * @param float $totalrecargo
@@ -199,7 +201,7 @@ class LineaIvaFacturaProveedor
     {
         $linealist = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName()
+        $sql = 'SELECT * FROM ' . static::tableName()
             . ' WHERE idfactura = ' . $this->dataBase->var2str($idfac) . ' ORDER BY iva DESC;';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {

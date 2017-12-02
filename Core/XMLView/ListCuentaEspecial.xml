@@ -25,19 +25,19 @@
 <view>
     <columns>
         <column name="id-account-special" order="100">
-            <widget type="text" fieldname="idcuentaesp" onclick="EditCuentaEspecial" />
+            <widget type="text" fieldname="idcuentaesp" onclick="EditCuentaEspecial"/>
         </column>
-        
+
         <column name="account" order="110">
-            <widget type="text" fieldname="codcuenta" />
+            <widget type="text" fieldname="codcuenta"/>
         </column>
-        
+
         <column name="sub-account" order="120">
-            <widget type="text" fieldname="codsubcuenta" />
+            <widget type="text" fieldname="codsubcuenta"/>
         </column>
-        
+
         <column name="description" order="130">
-            <widget type="text" fieldname="descripcion" />
+            <widget type="text" fieldname="descripcion"/>
         </column>
     </columns>
 </view>

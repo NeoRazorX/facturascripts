@@ -25,16 +25,16 @@
 <view>
     <columns>
         <column name="register-symbol" order="100">
-            <widget type="text" fieldname="id" onclick="EditEstadoDocumento" />
+            <widget type="text" fieldname="id" onclick="EditEstadoDocumento"/>
         </column>
         <column name="document" order="110">
-            <widget type="text" fieldname="documento" />
+            <widget type="text" fieldname="documento"/>
         </column>
         <column name="status" order="120">
-            <widget type="number" decimal="0" fieldname="status" />
+            <widget type="number" decimal="0" fieldname="status"/>
         </column>
         <column name="name" order="130">
-            <widget type="text" fieldname="nombre" />
+            <widget type="text" fieldname="nombre"/>
         </column>
         <column name="blocked" display="center" order="140">
             <widget type="checkbox" fieldname="bloqueado"></widget>

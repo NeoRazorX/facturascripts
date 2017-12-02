@@ -16,13 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * App description
+ * AppAPI is the class used for API.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -32,7 +33,7 @@ class AppAPI extends App
     /**
      * Runs the API.
      *
-     * @return boolean
+     * @return bool
      */
     public function run()
     {
@@ -80,7 +81,7 @@ class AppAPI extends App
         $map = $this->getResourcesMap();
 
         $resourceName = $this->request->get('resource', '');
-        if ($resourceName == '') {
+        if ($resourceName === '') {
             $this->exposeResources($map);
             return true;
         }

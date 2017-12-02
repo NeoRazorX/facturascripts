@@ -30,59 +30,59 @@
                     <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            
+
             <column name="account" numcolumns="4" order="100">
                 <widget type="select" fieldname="codcuenta" required="true">
                     <values source="co_cuentas" fieldcode="codcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            
+
             <column name="idsubaccount" numcolumns="2" display="none" order="100">
                 <widget type="text" fieldname="idsubcuenta"/>
             </column>
-        </group> 
-        
+        </group>
+
         <group name="Sub-accounts" numcolumns="6">
             <column name="Subcuenta" numcolumns="3" order="105">
-                <widget type="text" fieldname="codsubcuenta" required="true" />
+                <widget type="text" fieldname="codsubcuenta" required="true"/>
             </column>
-            
+
             <column name="description" numcolumns="5" order="110">
-                <widget type="text" fieldname="descripcion" required="true" />
-            </column> 
-             
+                <widget type="text" fieldname="descripcion" required="true"/>
+            </column>
+
             <column name="taxes" numcolumns="3" order="195">
                 <widget type="select" fieldname="codimpuesto" required="true">
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
-                </widget>    
+                </widget>
             </column>
-            
+
             <column name="vat" numcolumns="1" order="195" display="none">
                 <widget type="text" fieldname="iva" readonly="true"/>
             </column>
-            
+
             <column name="recargo" numcolumns="1" order="195" display="none">
-                <widget type="text" fieldname="recargo" required="true" />
-            </column>     
+                <widget type="text" fieldname="recargo" required="true"/>
+            </column>
         </group>
-        
+
         <group name="saldos-accounts" numcolumns="6">
             <column name="divisa" numcolumns="6" order="190">
                 <widget type="select" fieldname="coddivisa" required="true">
                     <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
-                </widget> 
+                </widget>
             </column>
-            
+
             <column name="debe" numcolumns="2" order="190">
-                <widget type="money" fieldname="debe" readonly="true" />
+                <widget type="money" fieldname="debe" readonly="true"/>
             </column>
-            
+
             <column name="haber" numcolumns="2" order="190">
-                <widget type="money" fieldname="haber" readonly="true" />
+                <widget type="money" fieldname="haber" readonly="true"/>
             </column>
-            
+
             <column name="saldo" numcolumns="2" order="190">
-                <widget type="money" fieldname="saldo" readonly="true" />
+                <widget type="money" fieldname="saldo" readonly="true"/>
             </column>
         </group>
     </columns>

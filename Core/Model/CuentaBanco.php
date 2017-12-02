@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -33,7 +34,7 @@ class CuentaBanco
     use Base\BankAccount;
 
     /**
-     * Clave primaria. Varchar (6).
+     * Primary key. Varchar (6).
      *
      * @var string
      */
@@ -54,7 +55,7 @@ class CuentaBanco
     public $codsubcuenta;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -64,7 +65,7 @@ class CuentaBanco
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -74,9 +75,9 @@ class CuentaBanco
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
-     * @return boolean
+     * @return bool
      */
     public function test()
     {
@@ -90,7 +91,7 @@ class CuentaBanco
     }
 
     /**
-     * Devuelve la url donde ver/modificar los datos.
+     * Returns the url where to see / modify the data..
      *
      * @param string $type
      *
@@ -98,6 +99,6 @@ class CuentaBanco
      */
     public function url($type = 'auto')
     {
-        return $this->traitUrl($type, 'ListFormaPago&active=List');
+        return $this->traitURL($type, 'ListFormaPago&active=List');
     }
 }

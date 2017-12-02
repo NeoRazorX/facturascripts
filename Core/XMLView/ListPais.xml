@@ -25,19 +25,20 @@
 <view>
     <columns>
         <column name="code" title="alfa-code-3" order="100" titleurl="https://es.wikipedia.org/wiki/ISO_3166-1">
-            <widget type="text" fieldname="codpais" onclick="EditPais" />
+            <widget type="text" fieldname="codpais" onclick="EditPais"/>
         </column>
-        <column name="code2" title="alfa-code-2" order="110" titleurl="https://es.wikipedia.org/wiki/ISO_3166-1#C.C3.B3digos_ISO_3166-1">
-            <widget type="text" fieldname="codiso" />
+        <column name="code2" title="alfa-code-2" order="110"
+                titleurl="https://es.wikipedia.org/wiki/ISO_3166-1#C.C3.B3digos_ISO_3166-1">
+            <widget type="text" fieldname="codiso"/>
         </column>
         <column name="name" order="120">
-            <widget type="text" fieldname="nombre" />
+            <widget type="text" fieldname="nombre"/>
         </column>
         <column name="validate-provider" title="validate-prov" display="center" order="130">
-            <widget type="checkbox" fieldname="validarprov" />
+            <widget type="checkbox" fieldname="validarprov"/>
         </column>
         <column name="flag" display="none" order="140">
-            <widget type="text" fieldname="bandera" />
+            <widget type="text" fieldname="bandera"/>
         </column>
     </columns>
 </view>

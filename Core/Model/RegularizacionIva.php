@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -29,7 +30,7 @@ class RegularizacionIva
     use Base\ModelTrait;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
@@ -78,7 +79,7 @@ class RegularizacionIva
     public $periodo;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -88,7 +89,7 @@ class RegularizacionIva
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -126,7 +127,7 @@ class RegularizacionIva
      */
     public function getFechaInside($fecha)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fechainicio <= ' . $this->dataBase->var2str($fecha)
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE fechainicio <= ' . $this->dataBase->var2str($fecha)
             . ' AND fechafin >= ' . $this->dataBase->var2str($fecha) . ';';
 
         $data = $this->dataBase->select($sql);
@@ -144,7 +145,8 @@ class RegularizacionIva
      */
     public function delete()
     {
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idregiva = ' . $this->dataBase->var2str($this->idregiva) . ';';
+        $sql = 'DELETE FROM ' . static::tableName()
+            . ' WHERE idregiva = ' . $this->dataBase->var2str($this->idregiva) . ';';
         if ($this->dataBase->exec($sql)) {
             /// si hay un asiento asociado lo eliminamos
             if ($this->idasiento !== null) {
@@ -159,5 +161,15 @@ class RegularizacionIva
         }
 
         return false;
+    }
+
+    /**
+     * TODO: Uncomplete
+     *
+     * @param string $codejercicio
+     */
+    public function allFromEjercicio($codejercicio)
+    {
+        return [];
     }
 }

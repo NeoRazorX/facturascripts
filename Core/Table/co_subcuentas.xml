@@ -84,12 +84,14 @@
         <name>ca_co_subcuentas_ejercicios</name>
         <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>ca_co_subcuentas_cuentas2</name>
         <type>FOREIGN KEY (idcuenta)
             REFERENCES co_cuentas (idcuenta)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
 </table>

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -31,7 +32,7 @@ class FormaPago
     use Base\ModelTrait;
 
     /**
-     * Clave primaria. Varchar (10).
+     * Primary key. Varchar (10).
      *
      * @var string
      */
@@ -81,7 +82,7 @@ class FormaPago
     public $vencimiento;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -91,7 +92,7 @@ class FormaPago
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -101,7 +102,7 @@ class FormaPago
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -125,7 +126,7 @@ class FormaPago
     }
 
     /**
-     * Comprueba la validez de los datos de la forma de pago.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -150,7 +151,7 @@ class FormaPago
      * Si se proporciona $diasDePago se usarán para la nueva fecha.
      *
      * @param string $fechaInicio
-     * @param string $diasDePago  dias de pago específicos para el cliente (separados por comas).
+     * @param string $diasDePago dias de pago específicos para el cliente (separados por comas).
      *
      * @return string
      */
@@ -190,7 +191,7 @@ class FormaPago
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName()
+        return 'INSERT INTO ' . static::tableName()
             . ' (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)'
             . " VALUES ('CONT','Al contado','Pagados',null,false,'+0day')"
             . ",('TRANS','Transferencia bancaria','Emitidos',null,false,'+1month')"
@@ -201,7 +202,7 @@ class FormaPago
     /**
      * Función recursiva auxiliar para calcularVencimiento()
      *
-     * @param string  $fechaInicio
+     * @param string $fechaInicio
      * @param int $diaDePago
      *
      * @return string

@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -47,7 +48,7 @@ class Rol
     public $descripcion;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -57,7 +58,7 @@ class Rol
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -67,8 +68,7 @@ class Rol
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
-     * Se ejecuta dentro del método save.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -80,7 +80,7 @@ class Rol
     }
 
     /**
-     * Devuelve la url donde ver/modificar los datos
+     * Returns the url where to see / modify the data.
      *
      * @param string $type
      *

@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -23,7 +24,7 @@ use FacturaScripts\Core\Lib\IDFiscal;
 use FacturaScripts\Core\Lib\RegimenIVA;
 
 /**
- * Description of Persona
+ * Persona contains all common code for person, like customer or provider.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -31,164 +32,164 @@ abstract class Persona
 {
 
     /**
-     * Identificador fiscal del cliente.
+     * Tax identifier of the client.
      *
      * @var string
      */
     public $cifnif;
 
     /**
-     * Empleado/agente asignado al cliente.
+     * Employee / agent assigned to the client.
      *
      * @var string
      */
     public $codagente;
 
     /**
-     * Código identificador del cliente.
+     * Identifier code of the client.
      *
      * @var string
      */
     public $codcliente;
 
     /**
-     * Divisa predeterminada para este cliente.
+     * Default currency for this customer.
      *
      * @var string
      */
     public $coddivisa;
 
     /**
-     * Forma de pago predeterminada para este cliente.
+     * Default payment method for this client.
      *
      * @var string
      */
     public $codpago;
 
     /**
-     * Código identificador del proveedor.
+     * Identifier code of the provider.
      *
      * @var string
      */
     public $codproveedor;
 
     /**
-     * Serie predeterminada para este cliente.
+     * Default series for this client.
      *
      * @var string
      */
     public $codserie;
 
     /**
-     * TRUE -> el cliente ya no nos compra o no queremos nada con él.
+     * If client is suspended True, else False.
      *
-     * @var boolean
+     * @var bool
      */
     public $debaja;
 
     /**
-     * Email de la persona.
+     * Email of the person.
      *
      * @var string
      */
     public $email;
 
     /**
-     * Fax de la persona.
+     * Fax of the person.
      *
      * @var string
      */
     public $fax;
 
     /**
-     * Fecha en la que se dió de alta al cliente.
+     * Date on which the client was registered.
      *
      * @var string
      */
     public $fechaalta;
 
     /**
-     * Fecha en la que se dió de baja al cliente.
+     * Date on which the customer was discharged.
      *
      * @var string
      */
     public $fechabaja;
 
     /**
-     * Tipo de identificador fiscal
+     * Type of fiscal identifier.
      *
      * @var IDFiscal
      */
     private static $idFiscal;
 
     /**
-     * Nombre por el que conocemos al cliente, no necesariamente el oficial.
+     * Name by which we know the client, not necessarily the official.
      *
      * @var string
      */
     public $nombre;
 
     /**
-     * Observaciones de la persona.
+     * Observations of the person.
      *
      * @var string
      */
     public $observaciones;
 
     /**
-     * True  -> el cliente es una persona física.
-     * False -> el cliente es una persona jurídica (empresa).
+     * True -> the customer is a natural person.
+     * False -> the client is a legal person (company).
      *
-     * @var boolean
+     * @var bool
      */
     public $personafisica;
 
     /**
-     * Razón social del cliente, es decir, el nombre oficial. El que aparece en las facturas.
+     * Social reason of the client, that is, the official name. The one that appears on the invoices.
      *
      * @var string
      */
     public $razonsocial;
 
     /**
-     * Régimen de fiscalidad del proveedor. Por ahora solo están implementados
-     * general y exento.
+     * Taxation regime of the provider. For now they are only implemented.
+     * general and exempt.
      *
      * @var string
      */
     public $regimeniva;
 
     /**
-     * Tipo de régimen de IVA
+     * Type of VAT regime.
      *
      * @var RegimenIVA
      */
     private static $regimenIVA;
 
     /**
-     * Teléfono de la persona.
+     * Phone of the person.
      *
      * @var string
      */
     public $telefono1;
 
     /**
-     * Teléfono de la persona.
+     * Phone of the person.
      *
      * @var string
      */
     public $telefono2;
 
     /**
-     * Tipo de identificador fiscal del cliente.
-     * Ejemplos: CIF, NIF, CUIT...
+     * Type of tax identification of the client.
+     * Examples: CIF, NIF, CUIT ...
      *
      * @var string
      */
     public $tipoidfiscal;
 
     /**
-     * Página web de la persona.
+     * Website of the person.
      *
      * @var string
      */
@@ -206,7 +207,7 @@ abstract class Persona
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -229,7 +230,7 @@ abstract class Persona
     }
 
     /**
-     * Devuelve la persona por cifnif
+     * Returns the person by cifnif.
      *
      * @param string $cifnif
      * @param string $razon
@@ -239,21 +240,21 @@ abstract class Persona
     abstract public function getByCifnif($cifnif, $razon = '');
 
     /**
-     * Devuelve las direcciones de la persona
+     * Returns the addresses of the person.
      *
      * @return mixed
      */
     abstract public function getDirecciones();
 
     /**
-     * Devuelve las subcuentas de la persona
+     * Returns the sub-accounts of the person.
      *
      * @return mixed
      */
     abstract public function getSubcuentas();
 
     /**
-     * Devuelve la subcuenta de la persona para el ejercicio dado
+     * Returns the sub-account of the person for the given year.
      *
      * @param string $codejercicio
      *
@@ -262,7 +263,7 @@ abstract class Persona
     abstract public function getSubcuenta($codejercicio);
 
     /**
-     * Acorta el texto de observaciones
+     * Shorten the text of observations.
      *
      * @return string
      */
@@ -279,7 +280,7 @@ abstract class Persona
     }
 
     /**
-     * Devuelve un array con los regimenes de iva disponibles.
+     * Returns an array with available VAT regimes.
      *
      * @return RegimenIVA
      */

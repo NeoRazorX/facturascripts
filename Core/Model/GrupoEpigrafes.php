@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -59,7 +60,7 @@ class GrupoEpigrafes
     public $descripcion;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -69,7 +70,7 @@ class GrupoEpigrafes
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -79,9 +80,9 @@ class GrupoEpigrafes
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
@@ -115,7 +116,7 @@ class GrupoEpigrafes
      */
     public function getByCodigo($cod, $codejercicio)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codgrupo = ' . $this->dataBase->var2str($cod)
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codgrupo = ' . $this->dataBase->var2str($cod)
             . ' AND codejercicio = ' . $this->dataBase->var2str($codejercicio) . ';';
 
         $grupo = $this->dataBase->select($sql);
@@ -127,7 +128,7 @@ class GrupoEpigrafes
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -144,7 +145,7 @@ class GrupoEpigrafes
     }
 
     /**
-     * Devuelve la url donde ver/modificar los datos
+     * Returns the url where to see / modify the data.
      *
      * @param string $type
      *

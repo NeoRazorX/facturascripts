@@ -25,16 +25,16 @@
 <view>
     <columns>
         <column name="code" order="100">
-            <widget type="text" fieldname="codimpuesto" onclick="EditImpuesto" />
+            <widget type="text" fieldname="codimpuesto" onclick="EditImpuesto"/>
         </column>
         <column name="description" order="110">
-            <widget type="text" fieldname="descripcion" />
+            <widget type="text" fieldname="descripcion"/>
         </column>
         <column name="vat" title="%-vat" display="right" order="120">
-            <widget type="number" decimal="2" fieldname="iva" />
+            <widget type="number" decimal="2" fieldname="iva"/>
         </column>
         <column name="surcharge" title="%-surcharge" display="right" order="130">
-            <widget type="number" decimal="2" fieldname="recargo" />
+            <widget type="number" decimal="2" fieldname="recargo"/>
         </column>
     </columns>
     <filters>

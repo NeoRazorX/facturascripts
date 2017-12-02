@@ -74,6 +74,7 @@
         <name>ca_dirproveedores_proveedores</name>
         <type>FOREIGN KEY (codproveedor)
             REFERENCES proveedores (codproveedor)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
 </table>

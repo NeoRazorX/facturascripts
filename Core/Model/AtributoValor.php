@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -53,7 +54,7 @@ class AtributoValor
     public $valor;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -63,7 +64,7 @@ class AtributoValor
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -91,7 +92,7 @@ class AtributoValor
     }
 
     /**
-     * Almacena los datos del modelo en la base de datos.
+     * Store the model data in the database.
      *
      * @return bool
      */
@@ -112,7 +113,7 @@ class AtributoValor
     public function allFromAtributo($cod)
     {
         $lista = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codatributo = ' . $this->dataBase->var2str($cod)
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codatributo = ' . $this->dataBase->var2str($cod)
             . ' ORDER BY valor ASC;';
 
         $data = $this->dataBase->select($sql);
@@ -149,7 +150,7 @@ class AtributoValor
         if ($this->id === null) {
             $this->id = 1;
 
-            $sql = 'SELECT MAX(id) AS max FROM ' . $this->tableName() . ';';
+            $sql = 'SELECT MAX(id) AS max FROM ' . static::tableName() . ';';
             $data = $this->dataBase->select($sql);
             if (!empty($data)) {
                 $this->id = 1 + (int) $data[0]['max'];

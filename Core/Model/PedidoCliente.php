@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -30,7 +31,7 @@ class PedidoCliente
     use Base\DocumentoVenta;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var integer
      */
@@ -75,7 +76,7 @@ class PedidoCliente
     public $idoriginal;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -85,7 +86,7 @@ class PedidoCliente
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -103,12 +104,12 @@ class PedidoCliente
     {
         new Serie();
         new Ejercicio();
-        
+
         return '';
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -139,7 +140,8 @@ class PedidoCliente
     {
         $versiones = [];
 
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idoriginal = ' . $this->dataBase->var2str($this->idpedido);
+        $sql = 'SELECT * FROM ' . static::tableName()
+            . ' WHERE idoriginal = ' . $this->dataBase->var2str($this->idpedido);
         if ($this->idoriginal) {
             $sql .= ' OR idoriginal = ' . $this->dataBase->var2str($this->idoriginal);
             $sql .= ' OR idpedido = ' . $this->dataBase->var2str($this->idoriginal);
@@ -157,9 +159,9 @@ class PedidoCliente
     }
 
     /**
-     * Comprueba los datos del pedido, devuelve True si es correcto
+     * Returns True if there is no erros on properties values.
      *
-     * @return boolean
+     * @return bool
      */
     public function test()
     {
@@ -167,9 +169,9 @@ class PedidoCliente
         if ($this->idalbaran) {
             $this->status = 1;
             $this->editable = false;
-        } elseif ($this->status == 0) {
+        } elseif ($this->status === 0) {
             $this->editable = true;
-        } elseif ($this->status == 2) {
+        } elseif ($this->status === 2) {
             $this->editable = false;
         }
 
@@ -180,11 +182,12 @@ class PedidoCliente
      * Elimina el pedido de la base de datos.
      * Devuelve False en caso de fallo.
      *
-     * @return boolean
+     * @return bool
      */
     public function delete()
     {
-        if ($this->dataBase->exec('DELETE FROM ' . static::tableName() . ' WHERE idpedido = ' . $this->dataBase->var2str($this->idpedido) . ';')) {
+        if ($this->dataBase->exec('DELETE FROM ' . static::tableName()
+            . ' WHERE idpedido = ' . $this->dataBase->var2str($this->idpedido) . ';')) {
             /// modificamos el presupuesto relacionado
             $this->dataBase->exec('UPDATE presupuestoscli SET idpedido = NULL, editable = TRUE,'
                 . ' status = 0 WHERE idpedido = ' . $this->dataBase->var2str($this->idpedido) . ';');

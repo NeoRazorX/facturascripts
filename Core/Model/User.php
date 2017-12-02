@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -32,7 +33,7 @@ class User
     }
 
     /**
-     * Clave primaria. Varchar (50).
+     * Primary key. Varchar (50).
      *
      * @var string
      */
@@ -51,14 +52,14 @@ class User
     public $email;
 
     /**
-     * TRUE -> el usuario es un administrador.
+     * If users is admin contains True, otherwise False.
      *
      * @var bool
      */
     public $admin;
 
     /**
-     * TRUE -> el usuario esta activo.
+     * If user is enabled contains True, otherwise False.
      *
      * @var bool
      */
@@ -110,7 +111,7 @@ class User
     private $logkey;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -120,7 +121,7 @@ class User
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -142,12 +143,13 @@ class User
 
         $this->miniLog->info($this->i18n->trans('created-default-admin-account'));
 
-        return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled,idempresa,langcode,homepage)"
-            . " VALUES ('admin','" . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE,'1','" . FS_LANG . "','AdminHome');";
+        return 'INSERT INTO ' . static::tableName() . " (nick,password,admin,enabled,idempresa,langcode,homepage)"
+            . " VALUES ('admin','" . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE,'1','"
+            . FS_LANG . "','AdminHome');";
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -228,8 +230,7 @@ class User
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
-     * Se ejecuta dentro del método save.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */

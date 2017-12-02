@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -31,7 +32,7 @@ class Atributo
     }
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var string
      */
@@ -45,7 +46,7 @@ class Atributo
     public $nombre;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -55,7 +56,7 @@ class Atributo
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -80,15 +81,15 @@ class Atributo
      * Obtener atributo por nombre
      *
      * @param string $nombre
-     * @param bool   $minusculas
+     * @param bool $minusculas
      *
      * @return Atributo|bool
      */
     public function getByNombre($nombre, $minusculas = false)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE nombre = ' . $this->dataBase->var2str($nombre) . ';';
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE nombre = ' . $this->dataBase->var2str($nombre) . ';';
         if ($minusculas) {
-            $sql = 'SELECT * FROM ' . $this->tableName()
+            $sql = 'SELECT * FROM ' . static::tableName()
                 . ' WHERE lower(nombre) = ' . $this->dataBase->var2str(mb_strtolower($nombre, 'UTF8') . ';');
         }
 
@@ -102,7 +103,7 @@ class Atributo
     }
 
     /**
-     * Almacena los datos del modelo en la base de datos.
+     * Store the model data in the database.
      *
      * @return bool
      */

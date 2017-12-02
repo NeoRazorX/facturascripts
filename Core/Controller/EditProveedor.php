@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
 
 /**
  * Controller to edit a single item from the Proveedor model
@@ -65,7 +66,7 @@ class EditProveedor extends ExtendedController\PanelController
             case 'ListAlbaranProveedor':
             case 'ListPedidoProveedor':
             case 'ListPresupuestoProveedor':
-                $where = [new DataBase\DataBaseWhere('codproveedor', $codproveedor)];
+                $where = [new DataBaseWhere('codproveedor', $codproveedor)];
                 $view->loadData($where);
                 break;
         }

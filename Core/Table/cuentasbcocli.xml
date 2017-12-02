@@ -65,6 +65,7 @@
         <name>ca_cuentasbcocli_clientes</name>
         <type>FOREIGN KEY (codcliente)
             REFERENCES clientes (codcliente)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
 </table>

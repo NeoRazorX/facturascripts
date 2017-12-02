@@ -24,11 +24,11 @@
 
 <view>
     <columns>
-        <column name="code" order="100" numcolumns="2" >
+        <column name="code" order="100" numcolumns="2">
             <widget type="text" fieldname="codrol" icon="fa-id-card-o"/>
         </column>
         <column name="description" order="100" numcolumns="6" required="true">
-            <widget type="text" fieldname="descripcion" />
+            <widget type="text" fieldname="descripcion"/>
         </column>
     </columns>
 </view>

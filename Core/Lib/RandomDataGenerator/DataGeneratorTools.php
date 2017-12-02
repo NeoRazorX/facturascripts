@@ -12,14 +12,15 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
 /**
- * Description of DataGeneratorTools
+ * DataGeneratorTools generate some random data to be able to test the code without do it by hang.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -29,9 +30,9 @@ class DataGeneratorTools
     /**
      * Support method for the model constructor and data initialisation
      *
-     * @param array $variable    -> data destination
-     * @param $modelo   -> model for each array item
-     * @param bool $shuffle   -> Randomly sort the list
+     * @param array $variable data destination
+     * @param mixed $modelo model for each array item
+     * @param bool $shuffle Randomly sort the list
      */
     public function loadData(&$variable, $modelo, $shuffle)
     {
@@ -45,13 +46,19 @@ class DataGeneratorTools
      * Shortens a string to $len and replaces special characters
      *
      * Devuelve el string acortado.
+     *
      * @param string $txt
      * @param int $len
+     *
      * @return string
      */
     public function txt2codigo($txt, $len = 8)
     {
-        $result = str_replace([' ', '-', '_', '&', 'ó', ':', 'ñ', '"', "'", '*'], ['', '', '', '', 'O', '', 'N', '', '', '-'], strtoupper($txt));
+        $result = str_replace(
+            [' ', '-', '_', '&', 'ó', ':', 'ñ', '"', "'", '*'],
+            ['', '', '', '', 'O', '', 'N', '', '', '-'],
+            strtoupper($txt)
+        );
 
         if (strlen($result) > $len) {
             $result = substr($result, 0, $len - 1) . mt_rand(0, 9);
@@ -112,15 +119,18 @@ class DataGeneratorTools
                 break;
 
             case 2:
-                $texto .= ': ' . $descripciones1[0] . ' con ' . $descripciones2[0] . ', ' . $descripciones2[1] . ', ' . $descripciones2[2] . ' y ' . $descripciones2[3] . '.';
+                $texto .= ': ' . $descripciones1[0] . ' con ' . $descripciones2[0] . ', ' . $descripciones2[1] . ', '
+                    . $descripciones2[2] . ' y ' . $descripciones2[3] . '.';
                 break;
 
             case 3:
-                $texto .= ': ' . $descripciones1[0] . " con:\n- " . $descripciones2[0] . "\n- " . $descripciones2[1] . "\n- " . $descripciones2[2] . "\n- " . $descripciones2[3] . '.';
+                $texto .= ': ' . $descripciones1[0] . " con:\n- " . $descripciones2[0] . "\n- " . $descripciones2[1]
+                    . "\n- " . $descripciones2[2] . "\n- " . $descripciones2[3] . '.';
                 break;
 
             default:
-                $texto .= ': ' . $descripciones1[0] . ' con ' . $descripciones2[0] . ', ' . $descripciones2[1] . ' y ' . $descripciones2[2] . '.';
+                $texto .= ': ' . $descripciones1[0] . ' con ' . $descripciones2[0] . ', ' . $descripciones2[1] . ' y '
+                    . $descripciones2[2] . '.';
                 break;
         }
 
@@ -135,15 +145,16 @@ class DataGeneratorTools
      * @param int $min
      * @param int $max1
      * @param int $max2
+     *
      * @return float
      */
     public function cantidad($min, $max1, $max2)
     {
         $cantidad = mt_rand($min, $max1);
 
-        if (mt_rand(0, 9) == 0) {
+        if (mt_rand(0, 9) === 0) {
             $cantidad = mt_rand($min, $max2);
-        } elseif ($cantidad < $max1 && mt_rand(0, 4) == 0) {
+        } elseif ($cantidad < $max1 && mt_rand(0, 4) === 0) {
             $cantidad += round(mt_rand(1, 5) / mt_rand(1, 10), mt_rand(0, 3));
             $cantidad = min([$max1, $cantidad]);
         }
@@ -159,15 +170,16 @@ class DataGeneratorTools
      * @param int $min
      * @param int $max1
      * @param int $max2
+     *
      * @return float
      */
     public function precio($min, $max1, $max2)
     {
         $precio = mt_rand($min, $max1);
 
-        if (mt_rand(0, 9) == 0) {
+        if (mt_rand(0, 9) === 0) {
             $precio = mt_rand($min, $max2);
-        } elseif ($precio < $max1 && mt_rand(0, 2) == 0) {
+        } elseif ($precio < $max1 && mt_rand(0, 2) === 0) {
             $precio += round(mt_rand(1, 5) / mt_rand(1, 10), FS_NF0_ART);
             $precio = min([$max1, $precio]);
         }
@@ -283,9 +295,9 @@ class DataGeneratorTools
             'A Coruña', 'Alava', 'Albacete', 'Alicante', 'Almería', 'Asturias', 'Ávila', 'Badajoz', 'Barcelona',
             'Burgos', 'Cáceres', 'Cádiz', 'Cantabria', 'Castellón', 'Ceuta', 'Ciudad Real', 'Córdoba', 'Cuenca',
             'Girona', 'Granada', 'Guadalajara', 'Guipuzcoa', 'Huelva', 'Huesca', 'Jaen', 'León', 'Lleida', 'La Rioja',
-            'Lugo', 'Madrid', 'Málaga', 'Melilla', 'Murcia', 'Navarra', 'Ourense', 'Palencia', 'Las Palmas', 'Pontevedra',
-            'Salamanca', 'Segovia', 'Sevilla', 'Soria', 'Tarragona', 'Tenerife', 'Teruel', 'Toledo', 'Valencia',
-            'Valladolid', 'Vizcaya', 'Zamora', 'Zaragoza'
+            'Lugo', 'Madrid', 'Málaga', 'Melilla', 'Murcia', 'Navarra', 'Ourense', 'Palencia', 'Las Palmas',
+            'Pontevedra', 'Salamanca', 'Segovia', 'Sevilla', 'Soria', 'Tarragona', 'Tenerife', 'Teruel', 'Toledo',
+            'Valencia', 'Valladolid', 'Vizcaya', 'Zamora', 'Zaragoza'
         ];
 
         shuffle($nombres);
@@ -303,9 +315,9 @@ class DataGeneratorTools
             'A Coruña', 'Alava', 'Albacete', 'Alicante', 'Almería', 'Asturias', 'Ávila', 'Badajoz', 'Barcelona',
             'Burgos', 'Cáceres', 'Cádiz', 'Cantabria', 'Castellón', 'Ceuta', 'Ciudad Real', 'Córdoba', 'Cuenca',
             'Girona', 'Granada', 'Guadalajara', 'Guipuzcoa', 'Huelva', 'Huesca', 'Jaen', 'León', 'Lleida', 'La Rioja',
-            'Lugo', 'Madrid', 'Málaga', 'Melilla', 'Murcia', 'Navarra', 'Ourense', 'Palencia', 'Las Palmas', 'Pontevedra',
-            'Salamanca', 'Segovia', 'Sevilla', 'Soria', 'Tarragona', 'Tenerife', 'Teruel', 'Toledo', 'Valencia',
-            'Valladolid', 'Vizcaya', 'Zamora', 'Zaragoza', 'Torrevieja', 'Elche'
+            'Lugo', 'Madrid', 'Málaga', 'Melilla', 'Murcia', 'Navarra', 'Ourense', 'Palencia', 'Las Palmas',
+            'Pontevedra', 'Salamanca', 'Segovia', 'Sevilla', 'Soria', 'Tarragona', 'Tenerife', 'Teruel', 'Toledo',
+            'Valencia', 'Valladolid', 'Vizcaya', 'Zamora', 'Zaragoza', 'Torrevieja', 'Elche'
         ];
 
         shuffle($nombres);
@@ -328,7 +340,7 @@ class DataGeneratorTools
         shuffle($tipos);
         shuffle($nombres);
 
-        if (mt_rand(0, 2) == 0) {
+        if (mt_rand(0, 2) === 0) {
             return $tipos[0] . ' ' . $nombres[0] . ', nº' . mt_rand(1, 199) . ', puerta ' . mt_rand(1, 99);
         }
 
@@ -339,6 +351,7 @@ class DataGeneratorTools
      * Returns random comments
      *
      * @param string|bool $fecha
+     *
      * @return string
      */
     public function observaciones($fecha = false)
@@ -359,7 +372,7 @@ class DataGeneratorTools
         /// Randomize
         shuffle($observaciones);
 
-        if ($fecha && mt_rand(0, 2) == 0) {
+        if ($fecha && mt_rand(0, 2) === 0) {
             $semana = date('D', strtotime($fecha));
             $semanaArray = [
                 'Mon' => 'lunes', 'Tue' => 'martes', 'Wed' => 'miércoles', 'Thu' => 'jueves',
@@ -385,7 +398,8 @@ class DataGeneratorTools
     /**
      * Returns a random string of $length length
      *
-     * @param string $length la longitud del string
+     * @param int $length la longitud del string
+     *
      * @return string la cadena aleatoria
      */
     public function randomString($length = 30)

@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -41,7 +42,7 @@ class ArticuloCombinacion
     }
 
     /**
-     * Clave primaria. Identificador de este par atributo-valor, no de la combinación.
+     * Primary key. Identificador de este par atributo-valor, no de la combinación.
      *
      * @var int
      */
@@ -120,7 +121,7 @@ class ArticuloCombinacion
     public $stockfis;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -130,7 +131,7 @@ class ArticuloCombinacion
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -140,7 +141,7 @@ class ArticuloCombinacion
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -168,7 +169,7 @@ class ArticuloCombinacion
      */
     public function getByCodigo($cod)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codigo = ' . $this->dataBase->var2str($cod) . ';';
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codigo = ' . $this->dataBase->var2str($cod) . ';';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
             return new self($data[0]);
@@ -186,7 +187,7 @@ class ArticuloCombinacion
      */
     public function deleteFromRef($ref)
     {
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($ref) . ';';
+        $sql = 'DELETE FROM ' . static::tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($ref) . ';';
 
         return $this->dataBase->exec($sql);
     }
@@ -202,7 +203,7 @@ class ArticuloCombinacion
     {
         $lista = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($ref)
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($ref)
             . ' ORDER BY codigo ASC, nombreatributo ASC;';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
@@ -226,7 +227,7 @@ class ArticuloCombinacion
     {
         $lista = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codigo = ' . $this->dataBase->var2str($cod)
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codigo = ' . $this->dataBase->var2str($cod)
             . ' ORDER BY nombreatributo ASC;';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
@@ -250,7 +251,7 @@ class ArticuloCombinacion
     {
         $lista = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codigo2 = ' . $this->dataBase->var2str($cod)
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codigo2 = ' . $this->dataBase->var2str($cod)
             . ' ORDER BY nombreatributo ASC;';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
@@ -267,13 +268,13 @@ class ArticuloCombinacion
      *
      * @param string $ref
      *
-     * @return array
+     * @return self[] with field codigo on array key
      */
     public function combinacionesFromRef($ref)
     {
         $lista = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($ref)
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($ref)
             . ' ORDER BY codigo ASC, nombreatributo ASC;';
         $data = $this->dataBase->select($sql);
         if (!empty($data)) {
@@ -302,7 +303,7 @@ class ArticuloCombinacion
         $artilist = [];
         $query = self::noHtml(mb_strtolower($query, 'UTF8'));
 
-        $sql = 'SELECT * FROM ' . $this->tableName() . " WHERE referencia LIKE '" . $query . "%'"
+        $sql = 'SELECT * FROM ' . static::tableName() . " WHERE referencia LIKE '" . $query . "%'"
             . ' OR codbarras = ' . $this->dataBase->var2str($query);
 
         $data = $this->dataBase->selectLimit($sql, 200);
@@ -330,9 +331,9 @@ class ArticuloCombinacion
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
@@ -352,7 +353,7 @@ class ArticuloCombinacion
      */
     private function getNewCodigo()
     {
-        $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codigo') . ') as cod FROM ' . $this->tableName() . ';';
+        $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codigo') . ') as cod FROM ' . static::tableName() . ';';
         $cod = $this->dataBase->select($sql);
         if (!empty($cod)) {
             return 1 + (int) $cod[0]['cod'];

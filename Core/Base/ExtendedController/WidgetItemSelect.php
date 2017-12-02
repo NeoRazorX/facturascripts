@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Model;
 
 /**
- * Description of WidgetItemSelect
+ * This class manage all specific method for a WidgetItem of Select type.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -29,8 +30,7 @@ class WidgetItemSelect extends WidgetItem
 {
 
     /**
-     * Accepted values for the field associated to the widget.
-     * Values are loaded from Model\PageOption::getForUser()
+     * Accepted values for the field associated to the widget
      *
      * @var array
      */
@@ -59,9 +59,9 @@ class WidgetItemSelect extends WidgetItem
     }
 
     /**
-     * Loads the attributes structure from the database
+     * Loads the attributes structure from a JSON file
      *
-     * @param array $column
+     * @param \SimpleXMLElement[] $column
      */
     public function loadFromJSON($column)
     {
@@ -147,8 +147,7 @@ class WidgetItemSelect extends WidgetItem
     }
 
     /**
-     * Generates the HTML code to display and edit  the data in the Edit / EditList controller.
-     * Values are loaded from Model\PageOption::getForUser()
+     * Generates the HTML code to display and edit  the data in the Edit / EditList controller
      *
      * @param string $value
      *
@@ -169,7 +168,7 @@ class WidgetItemSelect extends WidgetItem
 
         foreach ($this->values as $selectValue) {
             $selected = ($selectValue['value'] == $value) ? ' selected="selected" ' : '';
-            $html .= '<option value="' . $selectValue['value'] . '"' . $selected . '>' . $selectValue['title'] . '</option>';
+            $html .= '<option value="' . $selectValue['value'] . '" ' . $selected . '>' . $selectValue['title'] . '</option>';
         }
         $html .= '</select>';
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -28,11 +29,15 @@ use FacturaScripts\Core\App\AppSettings;
  */
 class Partida
 {
+    /**
+     * Constantes para paginación
+     */
+    const FS_ITEM_LIMIT = FS_ITEM_LIMIT;
 
     use Base\ModelTrait;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
@@ -228,7 +233,7 @@ class Partida
     public $sum_haber;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -238,7 +243,7 @@ class Partida
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -247,6 +252,13 @@ class Partida
         return 'idpartida';
     }
 
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
     public function install()
     {
         new Asiento();
@@ -256,7 +268,7 @@ class Partida
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -348,7 +360,7 @@ class Partida
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -368,7 +380,8 @@ class Partida
      */
     public function delete()
     {
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idpartida = ' . $this->dataBase->var2str($this->idpartida) . ';';
+        $sql = 'DELETE FROM ' . static::tableName()
+            . ' WHERE idpartida = ' . $this->dataBase->var2str($this->idpartida) . ';';
         if ($this->dataBase->exec($sql)) {
             $subc = $this->getSubcuenta();
             if ($subc) {
@@ -407,7 +420,7 @@ class Partida
                 $saldo += (float) $po['debe'] - (float) $po['haber'];
                 $sumDebe += (float) $po['debe'];
                 $sumHaber += (float) $po['haber'];
-                if ($i >= $offset && $i < ($offset + FS_ITEM_LIMIT)) {
+                if ($i >= $offset && $i < ($offset + self::FS_ITEM_LIMIT)) {
                     $aux = $partida->get($po['idpartida']);
                     if ($aux) {
                         $aux->numero = (int) $po['numero'];
@@ -474,12 +487,12 @@ class Partida
      * Devuelve todas las partidas del ejercici con offset
      *
      * @param string $eje
-     * @param int    $offset
-     * @param int    $limit
+     * @param int $offset
+     * @param int $limit
      *
      * @return array
      */
-    public function fullFromEjercicio($eje, $offset = 0, $limit = FS_ITEM_LIMIT)
+    public function fullFromEjercicio($eje, $offset = 0, $limit = self::FS_ITEM_LIMIT)
     {
         $sql = 'SELECT a.numero,a.fecha,s.codsubcuenta,s.descripcion,p.concepto,p.debe,p.haber'
             . ' FROM co_asientos a, co_subcuentas s, co_partidas p'
@@ -526,7 +539,7 @@ class Partida
     public function totalesFromSubcuenta($idsubc)
     {
         $sql = 'SELECT COALESCE(SUM(debe), 0) as debe,COALESCE(SUM(haber), 0) as haber'
-            . ' FROM ' . $this->tableName() . ' WHERE idsubcuenta = ' . $this->dataBase->var2str($idsubc) . ';';
+            . ' FROM ' . static::tableName() . ' WHERE idsubcuenta = ' . $this->dataBase->var2str($idsubc) . ';';
 
         return $this->getTotalesFromSQL($sql);
     }
@@ -570,10 +583,10 @@ class Partida
     /**
      * Devuelve los totales de las subcuentas de las partidas entre fechas
      *
-     * @param int          $idsubc
-     * @param string       $fechaini
-     * @param string       $fechafin
-     * @param array|bool   $excluir
+     * @param int $idsubc
+     * @param string $fechaini
+     * @param string $fechafin
+     * @param array|bool $excluir
      *
      * @return array
      */
@@ -581,20 +594,14 @@ class Partida
     {
         $totales = ['debe' => 0, 'haber' => 0, 'saldo' => 0];
 
-        if ($excluir) {
-            $sql = 'SELECT COALESCE(SUM(p.debe), 0) AS debe,
-            COALESCE(SUM(p.haber), 0) AS haber FROM co_partidas p, co_asientos a
-            WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ' . $this->dataBase->var2str($idsubc) . '
-               AND a.fecha BETWEEN ' . $this->dataBase->var2str($fechaini) . ' AND ' . $this->dataBase->var2str($fechafin) . "
-               AND p.idasiento NOT IN ('" . implode("','", $excluir) . "');";
-            $resultados = $this->dataBase->select($sql);
-        } else {
-            $sql = 'SELECT COALESCE(SUM(p.debe), 0) AS debe,
-            COALESCE(SUM(p.haber), 0) AS haber FROM co_partidas p, co_asientos a
-            WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ' . $this->dataBase->var2str($idsubc) . '
-               AND a.fecha BETWEEN ' . $this->dataBase->var2str($fechaini) . ' AND ' . $this->dataBase->var2str($fechafin) . ';';
-            $resultados = $this->dataBase->select($sql);
-        }
+        $sql = 'SELECT COALESCE(SUM(p.debe), 0) AS debe, '
+            . 'COALESCE(SUM(p.haber), 0) AS haber FROM co_partidas p, co_asientos a '
+            . 'WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ' . $this->dataBase->var2str($idsubc)
+            . ' AND a.fecha BETWEEN ' . $this->dataBase->var2str($fechaini)
+            . ' AND ' . $this->dataBase->var2str($fechafin);
+
+        $sql .= $excluir ? " AND p.idasiento NOT IN ('" . implode("','", $excluir) . "');" : ';';
+        $resultados = $this->dataBase->select($sql);
 
         if (!empty($resultados)) {
             $totales['debe'] = (float) $resultados[0]['debe'];
@@ -603,5 +610,17 @@ class Partida
         }
 
         return $totales;
+    }
+
+    /**
+     * TODO: Uncomplete
+     *
+     * @param int $idasiento
+     *
+     * @return array
+     */
+    public function allFromAsiento($idasiento)
+    {
+        return [];
     }
 }

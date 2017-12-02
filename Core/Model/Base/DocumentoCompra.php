@@ -16,13 +16,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Lib\NewCodigoDoc;
+use FacturaScripts\Core\Model\LineaAlbaranProveedor;
+use FacturaScripts\Core\Model\LineaFacturaProveedor;
+use FacturaScripts\Core\Model\LineaPedidoProveedor;
 
 /**
- * Description of DocumentoCompra
+ * This class group all data and method for purchase documents.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -34,187 +38,187 @@ trait DocumentoCompra
     }
 
     /**
-     * CIF/NIF del proveedor
+     * VAT number of the supplier.
      *
      * @var string
      */
     public $cifnif;
 
     /**
-     * Empleado que ha creado este documento.
+     * Employee who created this document.
      *
      * @var string
      */
     public $codagente;
 
     /**
-     * Almacén en el que entra la mercancía.
+     * Store in which the merchandise enters.
      *
      * @var string
      */
     public $codalmacen;
 
     /**
-     * Divisa del albarán.
+     * Currency of the delivery note.
      *
      * @var string
      */
     public $coddivisa;
 
     /**
-     * Ejercicio relacionado. El que corresponde a la fecha.
+     * Related exercise. The one that corresponds to the date.
      *
      * @var string
      */
     public $codejercicio;
 
     /**
-     * Identificador único de cara a humanos.
+     * Unique identifier facing humans.
      *
      * @var string
      */
     public $codigo;
 
     /**
-     * Forma de pago asociada.
+     * Payment method associated.
      *
      * @var string
      */
     public $codpago;
 
     /**
-     * Código del proveedor de este albarán.
+     * Supplier code for this delivery note.
      *
      * @var string
      */
     public $codproveedor;
 
     /**
-     * Serie relacionada.
+     * Related series.
      *
      * @var string
      */
     public $codserie;
 
     /**
-     * Fecha del albarán
+     * Date of the delivery note.
      *
      * @var string
      */
     public $fecha;
 
     /**
-     * Hora del albarán
+     * Delivery note time.
      *
      * @var string
      */
     public $hora;
-    
+
     /**
-     * Idempresa del documento
-     * 
-     * @var int 
+     * Id company of the document.
+     *
+     * @var int
      */
     public $idempresa;
 
     /**
-     * % de retención IRPF del albarán. Se obtiene de la serie.
-     * Cada línea puede tener un % distinto.
+     *% IRPF retention of the delivery note. It is obtained from the series.
+     * Each line can have a different%.
      *
      * @var float|int
      */
     public $irpf;
 
     /**
-     * Nombre del proveedor
+     * Provider's name.
      *
      * @var string
      */
     public $nombre;
 
     /**
-     * Número del albarán.
-     * Único dentro de la serie+ejercicio.
+     * Number of the delivery note.
+     * Unique within the series + exercise.
      *
      * @var string
      */
     public $numero;
 
     /**
-     * Número de albarán de proveedor, si lo hay.
-     * Puede contener letras.
+     * Supplier's delivery note number, if any.
+     * May contain letters.
      *
      * @var string
      */
     public $numproveedor;
 
     /**
-     * Número de documentos adjuntos.
+     * Number of documents attached.
      *
      * @var int
      */
     public $numdocs;
 
     /**
-     * Suma del pvptotal de líneas. Total del albarán antes de impuestos.
+     * Sum of the total retail price of lines. Total of the invoice before taxes.
      *
      * @var float|int
      */
     public $neto;
 
     /**
-     * Tasa de conversión a Euros de la divisa seleccionada.
+     * Rate of conversion to Euros of the selected currency.
      *
      * @var float|int
      */
     public $tasaconv;
 
     /**
-     * Suma total del albarán, con impuestos.
+     * Total sum of the delivery note, with taxes.
      *
      * @var float|int
      */
     public $total;
 
     /**
-     * Suma del IVA de las líneas.
+     * Sum of the VAT of the lines.
      *
      * @var float|int
      */
     public $totaliva;
 
     /**
-     * Total expresado en euros, por si no fuese la divisa del albarán.
-     * totaleuros = total/tasaconv
-     * No hace falta rellenarlo, al hacer save() se calcula el valor.
+     * Total expressed in euros, if it were not the currency of the delivery note.
+     * totaleuros = total / tasaconv
+     * It is not necessary to fill it, when doing save() the value is calculated.
      *
      * @var float|int
      */
     public $totaleuros;
 
     /**
-     * Suma total de las retenciones IRPF de las líneas.
+     * Total sum of the IRPF withholdings of the lines.
      *
      * @var float|int
      */
     public $totalirpf;
 
     /**
-     * Suma total del recargo de equivalencia de las líneas.
+     * Total sum of the equivalence surcharge of the lines.
      *
      * @var float|int
      */
     public $totalrecargo;
 
     /**
-     * Observaciones del albarán
+     * Notes of the delivery note
      *
      * @var string
      */
     public $observaciones;
 
     /**
-     * Inicializa los valores del documento.
+     * Initializes document values.
      */
     private function clearDocumentoCompra()
     {
@@ -237,7 +241,7 @@ trait DocumentoCompra
     }
 
     /**
-     * Almacena los datos del modelo en la base de datos.
+     * Store the model data in the database.
      *
      * @return bool
      */
@@ -252,17 +256,17 @@ trait DocumentoCompra
             return $this->saveInsert();
         }
 
-        return FALSE;
+        return false;
     }
 
     /**
-     * Acorta el texto de observaciones
+     * Shorten the text of observations.
      *
      * @return string
      */
     public function observacionesResume()
     {
-        if ($this->observaciones == '') {
+        if ($this->observaciones === '') {
             return '-';
         }
 
@@ -274,17 +278,18 @@ trait DocumentoCompra
     }
 
     /**
-     * Genera un nuevo código
+     * Generates a new code.
      */
     private function newCodigo()
     {
         $newCodigoDoc = new NewCodigoDoc();
         $this->numero = $newCodigoDoc->getNumero($this->tableName(), $this->codejercicio, $this->codserie);
-        $this->codigo = $newCodigoDoc->getCodigo($this->tableName(), $this->numero, $this->codserie, $this->codejercicio);
+        $this->codigo = $newCodigoDoc->getCodigo($this->tableName(), $this->numero, $this->codserie,
+            $this->codejercicio);
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there are no errors in the values of the model properties.
      *
      * @return bool
      */
@@ -298,12 +303,13 @@ trait DocumentoCompra
         $this->observaciones = static::noHtml($this->observaciones);
 
         /**
-         * Usamos el euro como divisa puente a la hora de sumar, comparar
-         * o convertir cantidades en varias divisas. Por este motivo necesimos
-         * muchos decimales.
+         * We use the euro as a bridge currency when adding, compare
+         * or convert amounts in several currencies. For this reason we need
+         * many decimals.
          */
         $this->totaleuros = round($this->total / $this->tasaconv, 5);
-        if (static::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, TRUE)) {
+        $total = $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo;
+        if (static::floatcmp($this->total, $total, FS_NF0, true)) {
             return true;
         }
 
@@ -312,7 +318,7 @@ trait DocumentoCompra
     }
 
     /**
-     * Ejecuta un test completo de pruebas
+     * Run a complete test of tests
      *
      * @param string $tipoDoc
      *
@@ -373,9 +379,10 @@ trait DocumentoCompra
     }
 
     /**
-     * Calcula los subtotales de neto, impuestos y recargo, por tipo de impuesto, además del irpf, neto e impuestos con el cálculo anterior.
+     * Calculates the subtotals of net, taxes and surcharge, by type of tax,
+     * in addition to the irpf, net and taxes with the previous calculation.
      *
-     * @param boolean $status
+     * @param bool $status
      * @param array $subtotales
      * @param int $irpf
      * @param int $netoAlt
@@ -389,28 +396,28 @@ trait DocumentoCompra
             }
             $codimpuesto = ($lin->codimpuesto === null) ? 0 : $lin->codimpuesto;
             if (!array_key_exists($codimpuesto, $subtotales)) {
-                $subtotales[$codimpuesto] = array(
+                $subtotales[$codimpuesto] = [
                     'neto' => 0,
-                    'iva' => 0, // Total IVA
-                    'recargo' => 0, // Total Recargo
-                );
+                    'iva' => 0, // Total TAX
+                    'recargo' => 0, // Total Surcharge
+                ];
             }
-            /// Acumulamos por tipos de IVAs
+            /// We accumulate by VAT rates
             $subtotales[$codimpuesto]['neto'] += $lin->pvptotal;
             $subtotales[$codimpuesto]['iva'] += $lin->pvptotal * $lin->iva / 100;
             $subtotales[$codimpuesto]['recargo'] += $lin->pvptotal * $lin->recargo / 100;
             $irpf += $lin->pvptotal * $lin->irpf / 100;
 
-            /// Cálculo anterior
+            /// Previous calculation
             $netoAlt += $lin->pvptotal;
             $ivaAlt += $lin->pvptotal * $lin->iva / 100;
         }
     }
 
     /**
-     * Devuelve las líneas asociadas al documento.
+     * Returns the lines associated with the document.
      *
-     * @return array
+     * @return LineaPedidoProveedor[]|LineaAlbaranProveedor[]|LineaFacturaProveedor[]
      */
     abstract public function getLineas();
 }

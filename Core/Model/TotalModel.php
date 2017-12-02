@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -30,7 +31,7 @@ class TotalModel
 {
 
     /**
-     * Proporciona acceso directo a la base de datos.
+     * Provides direct access to the database.
      *
      * @var DataBase
      */
@@ -109,10 +110,10 @@ class TotalModel
     /**
      * Carga una lista de TotalModel (código y campos de estadisticos) para la tabla indicada
      *
-     * @param string  $tableName
+     * @param string $tableName
      * @param DataBase\DataBaseWhere[] $where
-     * @param array  $fieldList      (['key' => 'SUM(total)', 'key2' => 'MAX(total)' ...])
-     * @param string $fieldCode      (for multiples rows agruped by field code)
+     * @param array $fieldList (['key' => 'SUM(total)', 'key2' => 'MAX(total)' ...])
+     * @param string $fieldCode (for multiples rows agruped by field code)
      *
      * @return self[]
      */

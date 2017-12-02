@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -31,7 +32,7 @@ class ArticuloProveedor
     }
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
@@ -115,7 +116,7 @@ class ArticuloProveedor
     public $partnumber;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -125,7 +126,7 @@ class ArticuloProveedor
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -148,7 +149,7 @@ class ArticuloProveedor
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -167,7 +168,7 @@ class ArticuloProveedor
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -188,7 +189,7 @@ class ArticuloProveedor
     }
 
     /**
-     * Devuelve la url donde ver/modificar los datos
+     * Returns the url where to see / modify the data.
      *
      * @param string $type
      *

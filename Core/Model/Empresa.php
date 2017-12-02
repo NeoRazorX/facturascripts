@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -30,14 +31,14 @@ class Empresa
     use Base\ContactInformation;
 
     /**
-     * Clave primaria. Integer.
+     * Primary key. Integer.
      *
      * @var int
      */
     public $id;
 
     /**
-     * TRUE -> activa el uso de recargo de equivalencia en los albaranes y facturas de compra.
+     * If True, enable the use for equivalence surcharge on delivery notes and invocies for customers.
      *
      * @var bool
      */
@@ -86,7 +87,7 @@ class Empresa
     public $regimeniva;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -96,7 +97,7 @@ class Empresa
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -106,7 +107,7 @@ class Empresa
     }
 
     /**
-     * Comprueba los datos de la empresa, devuelve TRUE si es correcto
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -127,7 +128,7 @@ class Empresa
         $this->web = self::noHtml($this->web);
 
         $lenName = strlen($this->nombre);
-        if (($lenName == 0) || ($lenName > 99)) {
+        if (($lenName === 0) || ($lenName > 99)) {
             $this->miniLog->alert($this->i18n->trans('company-name-invalid'));
 
             return false;
@@ -151,8 +152,8 @@ class Empresa
     {
         $num = mt_rand(1, 9999);
 
-        return 'INSERT INTO ' . $this->tableName() . ' (recequivalencia,web,email,fax,telefono,codpais,apartado,provincia,'
-            . 'ciudad,codpostal,direccion,administrador,cifnif,nombre,nombrecorto)'
+        return 'INSERT INTO ' . static::tableName() . ' (recequivalencia,web,email,fax,telefono,codpais,apartado,'
+            . 'provincia,ciudad,codpostal,direccion,administrador,cifnif,nombre,nombrecorto)'
             . "VALUES (NULL,'https://www.facturascripts.com',"
             . "NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','','00000014Z',"
             . "'Empresa " . $num . " S.L.','E-" . $num . "');";

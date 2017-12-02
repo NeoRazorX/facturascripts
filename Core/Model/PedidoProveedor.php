@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -30,7 +31,7 @@ class PedidoProveedor
     use Base\DocumentoCompra;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
@@ -58,7 +59,7 @@ class PedidoProveedor
     public $idoriginal;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -68,7 +69,7 @@ class PedidoProveedor
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -91,7 +92,7 @@ class PedidoProveedor
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -119,7 +120,8 @@ class PedidoProveedor
     {
         $versiones = [];
 
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idoriginal = ' . $this->dataBase->var2str($this->idpedido);
+        $sql = 'SELECT * FROM ' . static::tableName()
+            . ' WHERE idoriginal = ' . $this->dataBase->var2str($this->idpedido);
         if ($this->idoriginal) {
             $sql .= ' OR idoriginal = ' . $this->dataBase->var2str($this->idoriginal);
             $sql .= ' OR idpedido = ' . $this->dataBase->var2str($this->idoriginal);
@@ -137,9 +139,9 @@ class PedidoProveedor
     }
 
     /**
-     * Comprueba los daros del pedido, devuelve True si está correcto
+     * Returns True if there is no erros on properties values.
      *
-     * @return boolean
+     * @return bool
      */
     public function test()
     {
@@ -162,7 +164,8 @@ class PedidoProveedor
     public function cronJob()
     {
         $sql = 'UPDATE ' . static::tableName() . ' SET idalbaran = NULL, editable = TRUE'
-            . ' WHERE idalbaran IS NOT NULL AND NOT EXISTS(SELECT 1 FROM albaranesprov t1 WHERE t1.idalbaran = ' . static::tableName() . '.idalbaran);';
+            . ' WHERE idalbaran IS NOT NULL AND NOT EXISTS(SELECT 1 FROM albaranesprov t1'
+            . ' WHERE t1.idalbaran = ' . static::tableName() . '.idalbaran);';
         $this->dataBase->exec($sql);
     }
 }

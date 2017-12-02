@@ -27,21 +27,21 @@
         <group name="data" numcolumns="12" title="rates">
             <column name="codtarifa" title="code-rate" numcolumns="2" order="100"
                     description="desc-rate-code">
-                <widget type="text" fieldname="codtarifa" onclick="" icon="fa-money" required="true" />
+                <widget type="text" fieldname="codtarifa" onclick="" icon="fa-money" required="true"/>
             </column>
             <column name="nombre" title="name" numcolumns="4" order="110">
-                <widget type="text" fieldname="nombre" required="true" />
+                <widget type="text" fieldname="nombre" required="true"/>
             </column>
             <column name="aplicar_a" title="formula-to-apply" numcolumns="2" order="120">
-                <widget type="text" fieldname="aplicar_a" required="false" />
+                <widget type="text" fieldname="aplicar_a" required="false"/>
             </column>
         </group>
         <group name="check" numcolumns="12" title="check">
             <column name="mincoste" title="dont-sell-below-cost" numcolumns="4" order="130">
-                <widget type="checkbox" fieldname="mincoste" />
+                <widget type="checkbox" fieldname="mincoste"/>
             </column>
             <column name="maxpvp" title="dont-sell-above-pvp" numcolumns="4" order="140">
-                <widget type="checkbox" fieldname="maxpvp" />
+                <widget type="checkbox" fieldname="maxpvp"/>
             </column>
         </group>
     </columns>

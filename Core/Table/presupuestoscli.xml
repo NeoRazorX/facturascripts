@@ -259,13 +259,15 @@
         <name>ca_presupuestoscli_series</name>
         <type>FOREIGN KEY (codserie)
             REFERENCES series (codserie)
-            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+            ON DELETE RESTRICT ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>ca_presupuestoscli_ejercicios</name>
         <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+            ON DELETE RESTRICT ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>uniq_codigo_presupuestoscli</name>

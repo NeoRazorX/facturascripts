@@ -103,7 +103,8 @@
         <name>ca_linea_facturasprov2</name>
         <type>FOREIGN KEY (idfactura)
             REFERENCES facturasprov (idfactura)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>lineasfacturasprov_pkey</name>

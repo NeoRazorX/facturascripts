@@ -24,21 +24,21 @@
 
 <view>
     <columns>
-        <group name="Special-Account" numcolumns="10">          
+        <group name="Special-Account" numcolumns="10">
             <column name="idaccount" order="100">
-                <widget type="text" fieldname="idcuentaesp" />
+                <widget type="text" fieldname="idcuentaesp"/>
             </column>
-            
+
             <column name="account" order="110">
-                <widget type="text" fieldname="codcuenta" />
+                <widget type="text" fieldname="codcuenta"/>
             </column>
-            
+
             <column name="sub-account" order="120">
-                <widget type="text" fieldname="codsubcuenta" />
+                <widget type="text" fieldname="codsubcuenta"/>
             </column>
-            
+
             <column name="description" order="130">
-                <widget type="text" fieldname="descripcion" />
+                <widget type="text" fieldname="descripcion"/>
             </column>
         </group>
     </columns>

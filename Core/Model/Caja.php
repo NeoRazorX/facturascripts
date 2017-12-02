@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -36,7 +37,7 @@ class Caja
     private static $agentes;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
@@ -107,7 +108,7 @@ class Caja
     public $agente;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -117,7 +118,7 @@ class Caja
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -127,7 +128,7 @@ class Caja
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -186,15 +187,15 @@ class Caja
      * Devuelve todas las cajas usadas por el agente
      *
      * @param string $codagente
-     * @param int    $offset
-     * @param int    $limit
+     * @param int $offset
+     * @param int $limit
      *
      * @return self[]
      */
     public function allByAgente($codagente, $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         $cajalist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codagente = '
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codagente = '
             . $this->dataBase->var2str($codagente) . ' ORDER BY id DESC';
 
         $data = $this->dataBase->selectLimit($sql, $limit, $offset);

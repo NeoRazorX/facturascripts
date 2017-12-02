@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 /**
- * Description of Direccion
+ * This class group all data and method for addresses.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -27,63 +28,63 @@ trait Direccion
 {
 
     /**
-     * País de la dirección.
+     * Country of the address.
      *
      * @var string
      */
     public $codpais;
 
     /**
-     * Apartado de correos de la dirección.
+     * Post office box of the address.
      *
      * @var string
      */
     public $apartado;
 
     /**
-     * Provincia de la dirección.
+     * Province of the address.
      *
      * @var string
      */
     public $provincia;
 
     /**
-     * Ciudad de la dirección.
+     * City of the address.
      *
      * @var string
      */
     public $ciudad;
 
     /**
-     * Código postal de la dirección.
+     * Postal code of the address.
      *
      * @var string
      */
     public $codpostal;
 
     /**
-     * Dirección.
+     * Address.
      *
      * @var string
      */
     public $direccion;
 
     /**
-     * Descripción de la dirección.
+     * Address description.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * Fecha de la última modificación.
+     * Date of last modification.
      *
      * @var string
      */
     public $fecha;
 
     /**
-     * Test de la dirección
+     * Address test.
      *
      * @return bool
      */

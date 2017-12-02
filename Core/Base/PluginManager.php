@@ -252,10 +252,10 @@ class PluginManager
         }
         return true;
     }
-    
+
     /**
      * Link the files.
-     * 
+     *
      * @param string $folder
      * @param string $place
      * @param string $pluginName
@@ -290,7 +290,7 @@ class PluginManager
 
     /**
      * Link classes dynamically.
-     * 
+     *
      * @param string $fileName
      * @param string $folder
      * @param string $namespace
@@ -328,7 +328,7 @@ class PluginManager
     /**
      * Makes a recursive scan in folders inside a root folder and extracts the list of files
      * and pass its to an array as result.
-     * 
+     *
      * @param string $folder
      * @param string $origin
      *

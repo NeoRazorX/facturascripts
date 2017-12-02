@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -33,21 +34,21 @@ class Agente
     use Base\ContactInformation;
 
     /**
-     * Clave primaria. Varchar (10).
+     * Primary key. Varchar (10).
      *
      * @var int
      */
     public $codagente;
 
     /**
-     * Identificador fiscal (CIF/NIF).
+     * Tax Identifier (CIF / NIF).
      *
      * @var string
      */
     public $dnicif;
 
     /**
-     * Nombre del agente o empleado.
+     * Name of the agent or employee.
      *
      * @var string
      */
@@ -110,7 +111,7 @@ class Agente
     public $porcomision;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -120,7 +121,7 @@ class Agente
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -130,7 +131,7 @@ class Agente
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -160,7 +161,7 @@ class Agente
     }
 
     /**
-     * Comprueba los datos del empleado/agente, devuelve TRUE si son correctos
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -199,7 +200,7 @@ class Agente
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName() . ' (codagente,nombre,apellidos,dnicif)'
+        return 'INSERT INTO ' . static::tableName() . ' (codagente,nombre,apellidos,dnicif)'
             . " VALUES ('1','Paco','Pepe','00000014Z');";
     }
 }

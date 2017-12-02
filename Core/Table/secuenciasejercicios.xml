@@ -65,6 +65,7 @@
         <name>ca_secuenciasejercicios_ejercicios</name>
         <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
 </table>

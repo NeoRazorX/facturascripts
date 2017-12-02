@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseEngine;
@@ -23,7 +24,8 @@ use FacturaScripts\Core\Base\DataBase\Mysql;
 use FacturaScripts\Core\Base\DataBase\Postgresql;
 
 /**
- * Clase genérica de acceso a la base de datos, ya sea MySQL o PostgreSQL.
+ *
+ * Generic class of access to the database, either MySQL or PostgreSQL.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -32,35 +34,35 @@ class DataBase
 {
 
     /**
-     * El enlace con la base de datos.
+     * The link with de database.
      *
      * @var resource
      */
     private static $link;
 
     /**
-     * Enlace al motor de base de datos seleccionado en la configuración
+     * Link to the database engine selected in the configuration.
      *
      * @var DataBaseEngine
      */
     private static $engine;
 
     /**
-     * Gestiona el log de todos los controladores, modelos y base de datos.
+     * Manage the log of all controllers, models and database.
      *
      * @var MiniLog
      */
     private static $miniLog;
 
     /**
-     * Lista de tablas de la base de datos
+     * List of tables in the database.
      *
      * @var array
      */
     private static $tables;
 
     /**
-     * Construye y prepara la clase para su uso
+     * DataBase constructor and prepare the class to use it.
      */
     public function __construct()
     {
@@ -87,7 +89,7 @@ class DataBase
     }
 
     /**
-     * Devuelve un array con los nombres de las tablas de la base de datos.
+     * Returns an array with the names of the tables in the database.
      *
      * @return array
      */
@@ -101,7 +103,7 @@ class DataBase
     }
 
     /**
-     * Devuelve un array con las columnas de una tabla dada.
+     * Returns an array with the columns of a given table.
      *
      * @param string $tableName
      *
@@ -110,7 +112,8 @@ class DataBase
     public function getColumns($tableName)
     {
         $result = [];
-        $data = $this->select(self::$engine->getSQL()->sqlColumns($tableName));
+        $data = $this->select(self::$engine->getSQL()
+                                           ->sqlColumns($tableName));
         if (is_array($data) && !empty($data)) {
             foreach ($data as $dataCol) {
                 $column = self::$engine->columnFromData($dataCol);
@@ -122,19 +125,21 @@ class DataBase
     }
 
     /**
-     * Devuelve una array con las restricciones de una tabla.
+     * Returns an array with the constraints of a table.
      *
      * @param string $tableName
-     * @param bool   $extended
+     * @param bool $extended
      *
      * @return array
      */
     public function getConstraints($tableName, $extended = false)
     {
         if ($extended) {
-            $sql = self::$engine->getSQL()->sqlConstraintsExtended($tableName);
+            $sql = self::$engine->getSQL()
+                                ->sqlConstraintsExtended($tableName);
         } else {
-            $sql = self::$engine->getSQL()->sqlConstraints($tableName);
+            $sql = self::$engine->getSQL()
+                                ->sqlConstraints($tableName);
         }
 
         $data = $this->select($sql);
@@ -143,7 +148,7 @@ class DataBase
     }
 
     /**
-     * Devuelve una array con los indices de una tabla dada.
+     * Returns an array with the indices of a given table.
      *
      * @param string $tableName
      *
@@ -152,7 +157,8 @@ class DataBase
     public function getIndexes($tableName)
     {
         $result = [];
-        $data = $this->select(self::$engine->getSQL()->sqlIndexes($tableName));
+        $data = $this->select(self::$engine->getSQL()
+                                           ->sqlIndexes($tableName));
         if (is_array($data) && !empty($data)) {
             foreach ($data as $row) {
                 $result[] = ['name' => $row['Key_name']];
@@ -163,7 +169,7 @@ class DataBase
     }
 
     /**
-     * Devuelve True si se está conestado a la base de datos.
+     * Returns True if it is connected to the database.
      *
      * @return bool
      */
@@ -173,7 +179,7 @@ class DataBase
     }
 
     /**
-     * Conecta a la base de datos.
+     * Connect to the database.
      *
      * @return bool
      */
@@ -194,7 +200,7 @@ class DataBase
     }
 
     /**
-     * Desconecta de la base de datos.
+     * Disconnect from the database.
      *
      * @return bool
      */
@@ -216,7 +222,7 @@ class DataBase
     }
 
     /**
-     * Indica hay una transacción abierta
+     * Indicates if there is an open transaction.
      *
      * @return bool
      */
@@ -226,7 +232,7 @@ class DataBase
     }
 
     /**
-     * Inicia una transaccion en la base de datos
+     * Start a transaction in the database.
      *
      * @return bool
      */
@@ -242,7 +248,7 @@ class DataBase
     }
 
     /**
-     * Graba las sentencias ejecutadas en la base de datos
+     * Record the statements executed in the database.
      *
      * @return bool
      */
@@ -257,7 +263,7 @@ class DataBase
     }
 
     /**
-     * Deshace las sentencias ejecutadas en la base de datos
+     * Undo the statements executed in the database.
      *
      * @return bool
      */
@@ -270,8 +276,8 @@ class DataBase
     }
 
     /**
-     * Ejecuta una sentencia SQL de tipo select, y devuelve un array con los resultados,
-     * o false en caso de fallo.
+     * Execute a SQL statement of type select, and return
+     * an array with the results, or false in case of failure.
      *
      * @param string $sql
      *
@@ -279,14 +285,14 @@ class DataBase
      */
     public function select($sql)
     {
-        return $this->selectLimit($sql, 0, 0);
+        return $this->selectLimit($sql, 0);
     }
 
     /**
-     * Ejecuta una sentencia SQL de tipo select, pero con paginación,
-     * y devuelve un array con los resultados o array vació en caso de fallo.
-     * Limit es el número de elementos que quieres que devuelva.
-     * Offset es el número de resultado desde el que quieres que empiece.
+     * Execute a SQL statement of type select, but with pagination,
+     * and return an array with the results or empty array in case of failure.
+     * Limit is the number of items you want to return. Offset is the result
+     * number from which you want it to start.
      *
      * @param string $sql
      * @param int $limit
@@ -301,10 +307,12 @@ class DataBase
         }
 
         if ($limit > 0) {
-            $sql .= ' LIMIT ' . $limit . ' OFFSET ' . $offset . ';'; /// añadimos limit y offset a la consulta sql
+            /// add limit and offset to sql query
+            $sql .= ' LIMIT ' . $limit . ' OFFSET ' . $offset . ';';
         }
 
-        self::$miniLog->sql($sql); /// añadimos la consulta sql al historial
+        /// add the sql query to the history
+        self::$miniLog->sql($sql);
         $result = self::$engine->select(self::$link, $sql);
         if (empty($result)) {
             self::$miniLog->critical(self::$engine->errorMessage(self::$link));
@@ -316,11 +324,11 @@ class DataBase
     }
 
     /**
-     * Ejecuta sentencias SQL sobre la base de datos (inserts, updates o deletes).
-     * Para hacer selects, mejor usar select() o selecLimit().
-     * Si no hay transacción abierta se inicia una, se ejecutan las consultas
-     * Si la transaccion la ha abierto en la llamada la cierra confirmando o descartando
-     * según haya ido bien o haya dado algún error
+     * Execute SQL statements on the database (inserts, updates or deletes).
+     * To make selects, it is better to use select () or selecLimit ().
+     * If there is no open transaction, one starts, queries are executed
+     * If the transaction has opened it in the call, it closes it confirming
+     * or discarding according to whether it has gone well or has given an error
      *
      * @param string $sql
      *
@@ -330,14 +338,17 @@ class DataBase
     {
         $result = $this->connected();
         if ($result) {
-            self::$tables = []; /// limpiamos la lista de tablas, ya que podría haber cambios al ejecutar este sql.
+            /// clean the list of tables, since there could be changes when executing this sql.
+            self::$tables = [];
 
             $inTransaction = $this->inTransaction();
             $this->beginTransaction();
 
-            self::$miniLog->sql($sql); /// añadimos la consulta sql al historial
+            /// add the sql query to the history
+            self::$miniLog->sql($sql);
             $result = self::$engine->exec(self::$link, $sql);
-            if (!$inTransaction) { /// Sólo operamos si la transacción la hemos iniciado en esta llamada
+            if (!$inTransaction) {
+                /// We only operate if the transaction has been initiated in this call
                 if ($result) {
                     $result = $this->commit();
                 } else {
@@ -346,24 +357,24 @@ class DataBase
             }
         }
 
-        return (bool) $result;
+        return $result;
     }
 
     /**
-     * Devuelve el último ID asignado al hacer un INSERT
-     * en la base de datos.
+     * Returns the last ID assigned when doing an INSERT in the database.
      *
      * @return integer|bool
      */
     public function lastval()
     {
-        $aux = $this->select(self::$engine->getSQL()->sqlLastValue());
+        $aux = $this->select(self::$engine->getSQL()
+                                          ->sqlLastValue());
 
         return $aux ? $aux[0]['num'] : false;
     }
 
     /**
-     * Devuelve el motor de base de datos usado y la versión.
+     * Returns the used database engine and the version.
      *
      * @return string
      */
@@ -377,10 +388,10 @@ class DataBase
     }
 
     /**
-     * Devuelve True si la tabla existe, False en caso contrario.
+     * Returns True if the table exists, False otherwise.
      *
      * @param string $tableName
-     * @param array  $list
+     * @param array $list
      *
      * @return bool
      */
@@ -394,7 +405,7 @@ class DataBase
     }
 
     /**
-     * Realiza comprobaciones extra a la tabla.
+     * Make extra checks on the table.
      *
      * @param string $tableName
      *
@@ -412,8 +423,7 @@ class DataBase
     }
 
     /**
-     * Transforma una variable en una cadena de texto válida para ser
-     * utilizada en una consulta SQL.
+     * Transforms a variable into a valid text string to be used in a SQL query.
      *
      * @param mixed $val
      *
@@ -433,19 +443,21 @@ class DataBase
             return 'FALSE';
         }
 
+        /// If its a date
         if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4})$/i", $val)) {
-            return "'" . date($this->dateStyle(), strtotime($val)) . "'"; /// es una fecha
+            return "'" . date($this->dateStyle(), strtotime($val)) . "'";
         }
 
+        /// It its a date time
         if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4}) ([\d]{1,2}):([\d]{1,2}):([\d]{1,2})$/i", $val)) {
-            return "'" . date($this->dateStyle() . ' H:i:s', strtotime($val)) . "'"; /// es una fecha+hora
+            return "'" . date($this->dateStyle() . ' H:i:s', strtotime($val)) . "'";
         }
 
         return "'" . $this->escapeString($val) . "'";
     }
 
     /**
-     * Escapa las comillas de la cadena de texto.
+     * Escape the quotes from the text string.
      *
      * @param string $str
      *
@@ -461,7 +473,7 @@ class DataBase
     }
 
     /**
-     * Devuelve el estilo de fecha del motor de base de datos.
+     * Returns the date style of the database engine.
      *
      * @return string
      */
@@ -471,7 +483,7 @@ class DataBase
     }
 
     /**
-     * Devuelve el SQL necesario para convertir la columna a entero.
+     * Returns the SQL needed to convert the column to integer.
      *
      * @param string $colName
      *
@@ -479,11 +491,13 @@ class DataBase
      */
     public function sql2Int($colName)
     {
-        return self::$engine->getSQL()->sql2Int($colName);
+        return self::$engine->getSQL()
+                            ->sql2Int($colName);
     }
 
     /**
-     * 
+     * Return the database engine used
+     *
      * @return DataBaseEngine
      */
     public function getEngine()

@@ -170,19 +170,22 @@
         <name>ca_albaranesprov_series2</name>
         <type>FOREIGN KEY (codserie)
             REFERENCES series (codserie)
-            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+            ON DELETE RESTRICT ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>ca_albaranesprov_ejercicios2</name>
         <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+            ON DELETE RESTRICT ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>ca_albaranesprov_facturas</name>
         <type>FOREIGN KEY (idfactura)
             REFERENCES facturasprov (idfactura)
-            ON DELETE SET NULL ON UPDATE CASCADE</type>
+            ON DELETE SET NULL ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>uniq_codigo_albaranesprov</name>

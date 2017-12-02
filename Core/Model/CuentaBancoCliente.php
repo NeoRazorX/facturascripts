@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -33,7 +34,7 @@ class CuentaBancoCliente
     use Base\BankAccount;
 
     /**
-     * Clave primaria. Varchar(6).
+     * Primary key. Varchar(6).
      *
      * @var int
      */
@@ -56,7 +57,7 @@ class CuentaBancoCliente
     /**
      * ¿Es la cuenta principal del cliente?
      *
-     * @var boolean
+     * @var bool
      */
     public $principal;
 
@@ -68,7 +69,7 @@ class CuentaBancoCliente
     public $fmandato;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -78,7 +79,7 @@ class CuentaBancoCliente
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -88,7 +89,7 @@ class CuentaBancoCliente
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -101,7 +102,7 @@ class CuentaBancoCliente
     }
 
     /**
-     * Almacena los datos del modelo en la base de datos.
+     * Store the model data in the database.
      *
      * @return bool
      */
@@ -117,7 +118,7 @@ class CuentaBancoCliente
 
             if ($allOK) {
                 /// si esta cuenta es la principal, desmarcamos las demás
-                $sql = 'UPDATE ' . $this->tableName()
+                $sql = 'UPDATE ' . static::tableName()
                     . ' SET principal = false'
                     . ' WHERE codcliente = ' . $this->dataBase->var2str($this->codcliente)
                     . ' AND codcuenta <> ' . $this->dataBase->var2str($this->codcuenta) . ';';
@@ -130,9 +131,9 @@ class CuentaBancoCliente
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
-     * @return boolean
+     * @return bool
      */
     public function test()
     {

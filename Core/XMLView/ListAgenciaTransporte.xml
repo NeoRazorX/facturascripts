@@ -25,19 +25,19 @@
 <view>
     <columns>
         <column name="code" order="100">
-            <widget type="text" fieldname="codtrans" onclick="EditAgenciaTransporte" />
+            <widget type="text" fieldname="codtrans" onclick="EditAgenciaTransporte"/>
         </column>
         <column name="name" order="110">
-            <widget type="text" fieldname="nombre" />
+            <widget type="text" fieldname="nombre"/>
         </column>
         <column name="phone" order="120">
-            <widget type="text" fieldname="telefono" />
+            <widget type="text" fieldname="telefono"/>
         </column>
         <column name="web" order="130">
-            <widget type="text" fieldname="web" />
+            <widget type="text" fieldname="web"/>
         </column>
         <column name="active" display="center" order="140">
-            <widget type="checkbox" fieldname="activo" />
+            <widget type="checkbox" fieldname="activo"/>
         </column>
     </columns>
 </view>

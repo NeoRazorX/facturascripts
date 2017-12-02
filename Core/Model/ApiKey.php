@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -28,7 +29,7 @@ class ApiKey
     use Base\ModelTrait;
 
     /**
-     * Clave primaria. Id autoincremental
+     * Primary key. Id autoincremental
      * @var int
      */
     public $id;
@@ -70,7 +71,7 @@ class ApiKey
     public $nick;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -80,7 +81,7 @@ class ApiKey
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -90,15 +91,15 @@ class ApiKey
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
         $this->id = null;
         $this->apikey = '';
         $this->descripcion = '';
-        $this->enabled = FALSE;
-        $this->f_alta = \date('d-m-Y');
+        $this->enabled = false;
+        $this->f_alta = date('d-m-Y');
         $this->f_baja = null;
         $this->nick = null;
     }

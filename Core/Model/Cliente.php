@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -42,9 +43,9 @@ class Cliente extends Base\Persona
     public $codgrupo;
 
     /**
-     * TRUE -> al cliente se le aplica recargo de equivalencia.
+     * If this client applies equivalencia surcharge contains True, otherwhise false.
      *
-     * @var boolean
+     * @var bool
      */
     public $recargo;
 
@@ -68,7 +69,7 @@ class Cliente extends Base\Persona
     }
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -78,7 +79,7 @@ class Cliente extends Base\Persona
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -88,9 +89,9 @@ class Cliente extends Base\Persona
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      */
     public function install()
     {
@@ -101,7 +102,7 @@ class Cliente extends Base\Persona
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -123,13 +124,13 @@ class Cliente extends Base\Persona
      */
     public function getByCifnif($cifnif, $razon = '')
     {
+        $sql = 'SELECT * FROM ' . static::tableName();
         if ($cifnif === '' && $razon !== '') {
             $razon = self::noHtml(mb_strtolower($razon, 'UTF8'));
-            $sql = 'SELECT * FROM ' . $this->tableName()
-                . " WHERE cifnif = '' AND lower(razonsocial) = " . $this->dataBase->var2str($razon) . ';';
+            $sql .= " WHERE cifnif = '' AND lower(razonsocial) = " . $this->dataBase->var2str($razon) . ';';
         } else {
             $cifnif = mb_strtolower($cifnif, 'UTF8');
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE lower(cifnif) = ' . $this->dataBase->var2str($cifnif) . ';';
+            $sql .= ' WHERE lower(cifnif) = ' . $this->dataBase->var2str($cifnif) . ';';
         }
 
         $data = $this->dataBase->select($sql);
@@ -228,7 +229,7 @@ class Cliente extends Base\Persona
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -285,7 +286,7 @@ class Cliente extends Base\Persona
      * o razonsocial o codcliente o cifnif o telefono1 o telefono2 o observaciones.
      *
      * @param string $query
-     * @param int    $offset
+     * @param int $offset
      *
      * @return self[]
      */
@@ -294,7 +295,7 @@ class Cliente extends Base\Persona
         $clilist = [];
         $query = mb_strtolower(self::noHtml($query), 'UTF8');
 
-        $consulta = 'SELECT * FROM ' . $this->tableName() . ' WHERE debaja = FALSE AND ';
+        $consulta = 'SELECT * FROM ' . static::tableName() . ' WHERE debaja = FALSE AND ';
         if (is_numeric($query)) {
             $consulta .= "(nombre LIKE '%" . $query . "%' OR razonsocial LIKE '%" . $query . "%'"
                 . " OR codcliente LIKE '%" . $query . "%' OR cifnif LIKE '%" . $query . "%'"
@@ -316,5 +317,13 @@ class Cliente extends Base\Persona
         }
 
         return $clilist;
+    }
+
+    /**
+     * TODO: Uncomplete
+     */
+    private function getNewCodigo()
+    {
+
     }
 }

@@ -25,19 +25,19 @@
 <view>
     <columns>
         <column name="id" display="none" order="100">
-            <widget type="text" fieldname="idpresupuesto" onclick="EditPresupuestoCliente" />
+            <widget type="text" fieldname="idpresupuesto" onclick="EditPresupuestoCliente"/>
         </column>
         <column name="code" order="100">
-            <widget type="text" fieldname="codigo" />
+            <widget type="text" fieldname="codigo"/>
         </column>
         <column name="number2" order="110">
-            <widget type="text" fieldname="numero2" />
+            <widget type="text" fieldname="numero2"/>
         </column>
         <column name="customer" order="120">
-            <widget type="text" fieldname="nombrecliente" />
+            <widget type="text" fieldname="nombrecliente"/>
         </column>
         <column name="notes" order="130">
-            <widget type="text" fieldname="observaciones" />
+            <widget type="text" fieldname="observaciones"/>
         </column>
         <column name="amount" order="130" display="right">
             <widget type="money" fieldname="total">
@@ -45,7 +45,7 @@
             </widget>
         </column>
         <column name="date" order="130" display="right">
-            <widget type="text" fieldname="fecha" />
+            <widget type="text" fieldname="fecha"/>
         </column>
     </columns>
     <rows>

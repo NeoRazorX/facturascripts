@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -32,7 +33,7 @@ class Serie
     use Base\ModelTrait;
 
     /**
-     * Clave primaria. Varchar (2).
+     * Primary key. Varchar (2).
      *
      * @var string
      */
@@ -46,7 +47,7 @@ class Serie
     public $descripcion;
 
     /**
-     * TRUE -> las facturas asociadas no encluyen IVA.
+     * If associated invoices are without tax True, else False.
      *
      * @var bool
      */
@@ -74,7 +75,7 @@ class Serie
     public $numfactura;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -84,7 +85,7 @@ class Serie
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -94,7 +95,7 @@ class Serie
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -107,7 +108,7 @@ class Serie
     }
 
     /**
-     * Devuelve TRUE si la serie es la predeterminada de la empresa
+     * Returns True if is the default serie for the company.
      *
      * @return bool
      */
@@ -117,7 +118,7 @@ class Serie
     }
 
     /**
-     * Comprueba los datos de la serie, devuelve TRUE si son correctos
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -150,7 +151,7 @@ class Serie
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName() . ' (codserie,descripcion,siniva,irpf) VALUES '
+        return 'INSERT INTO ' . static::tableName() . ' (codserie,descripcion,siniva,irpf) VALUES '
             . "('A','SERIE A',false,'0'),('R','RECTIFICATIVAS',false,'0');";
     }
 }

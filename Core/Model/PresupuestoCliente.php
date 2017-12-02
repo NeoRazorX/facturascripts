@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -30,7 +31,7 @@ class PresupuestoCliente
     use Base\DocumentoVenta;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var integer
      */
@@ -75,7 +76,7 @@ class PresupuestoCliente
     public $idoriginal;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -85,7 +86,7 @@ class PresupuestoCliente
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -103,12 +104,12 @@ class PresupuestoCliente
     {
         new Serie();
         new Ejercicio();
-        
+
         return '';
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -148,7 +149,8 @@ class PresupuestoCliente
     {
         $versiones = [];
 
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idoriginal = ' . $this->dataBase->var2str($this->idpresupuesto);
+        $sql = 'SELECT * FROM ' . static::tableName()
+            . ' WHERE idoriginal = ' . $this->dataBase->var2str($this->idpresupuesto);
         if ($this->idoriginal) {
             $sql .= ' OR idoriginal = ' . $this->dataBase->var2str($this->idoriginal);
             $sql .= ' OR idpresupuesto = ' . $this->dataBase->var2str($this->idoriginal);
@@ -166,9 +168,9 @@ class PresupuestoCliente
     }
 
     /**
-     * Comprueba los datos del presupuesto, devuelve True si está correcto
+     * Returns True if there is no erros on properties values.
      *
-     * @return boolean
+     * @return bool
      */
     public function test()
     {
@@ -176,9 +178,9 @@ class PresupuestoCliente
         if ($this->idpedido) {
             $this->status = 1;
             $this->editable = false;
-        } elseif ($this->status == 0) {
+        } elseif ($this->status === 0) {
             $this->editable = true;
-        } elseif ($this->status == 2) {
+        } elseif ($this->status === 2) {
             $this->editable = false;
         }
 
@@ -195,15 +197,17 @@ class PresupuestoCliente
             . " WHERE status != '1' AND idpedido IS NOT NULL;");
 
         /// devolvemos al estado pendiente a los presupuestos con estado 1 a los que se haya borrado el pedido
-        $this->dataBase->exec('UPDATE ' . static::tableName() . " SET status = '0', idpedido = NULL, editable = TRUE"
+        $this->dataBase->exec('UPDATE ' . static::tableName()
+            . " SET status = '0', idpedido = NULL, editable = TRUE"
             . " WHERE status = '1' AND idpedido NOT IN (SELECT idpedido FROM pedidoscli);");
 
         /// marcamos como rechazados todos los presupuestos con finoferta ya pasada
-        $this->dataBase->exec('UPDATE ' . static::tableName() . " SET status = '2' WHERE finoferta IS NOT NULL AND"
-            . ' finoferta < ' . $this->dataBase->var2str(date('d-m-Y')) . ' AND idpedido IS NULL;');
+        $this->dataBase->exec('UPDATE ' . static::tableName() . " SET status = '2'"
+            . ' WHERE finoferta IS NOT NULL AND finoferta < ' . $this->dataBase->var2str(date('d-m-Y'))
+            . ' AND idpedido IS NULL;');
 
         /// marcamos como rechazados todos los presupuestos no editables y sin pedido asociado
-        $this->dataBase->exec("UPDATE " . static::tableName() . " SET status = '2' WHERE idpedido IS NULL AND"
-            . ' editable = false;');
+        $this->dataBase->exec('UPDATE ' . static::tableName() . " SET status = '2'"
+            . ' WHERE idpedido IS NULL AND editable = false;');
     }
 }

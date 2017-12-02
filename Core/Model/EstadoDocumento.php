@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -31,7 +32,7 @@ class EstadoDocumento
     use Base\ModelTrait;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
@@ -63,10 +64,10 @@ class EstadoDocumento
      *
      * @var bool
      */
-    public $bloquedo;
+    public $bloqueado;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -76,7 +77,7 @@ class EstadoDocumento
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -86,7 +87,7 @@ class EstadoDocumento
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -98,25 +99,27 @@ class EstadoDocumento
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
     public function test()
     {
-        $status = FALSE;
+        $status = false;
 
         $this->documento = self::noHtml($this->documento);
+        $lenDoc = strlen($this->documento);
         $this->nombre = self::noHtml($this->nombre);
+        $lenNom = strlen($this->nombre);
 
-        if (strlen($this->documento) < 1 || strlen($this->documento) > 20) {
+        if ($lenDoc < 1 || $lenDoc > 20) {
             $this->miniLog->alert($this->i18n->trans('document-type-valid-length'));
-        } elseif (strlen($this->nombre) < 1 || strlen($this->nombre) > 20) {
+        } elseif ($lenNom < 1 || $lenNom > 20) {
             $this->miniLog->alert($this->i18n->trans('status-name-valid-length'));
         } elseif (!is_numeric($this->status)) {
             $this->miniLog->alert($this->i18n->trans('status-value-is-number'));
         } else {
-            $status = TRUE;
+            $status = true;
         }
 
         return $status;
@@ -127,13 +130,13 @@ class EstadoDocumento
      *
      * @param $doc
      *
-     * @return array
+     * @return self[]
      */
     public function getByDocument($doc)
     {
         $list = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName()
+        $sql = 'SELECT * FROM ' . static::tableName()
             . ' WHERE documento = ' . $this->dataBase->var2str($doc) . ' ORDER BY id ASC;';
         $data = $this->dataBase->select($sql);
         if ($data) {
@@ -154,7 +157,7 @@ class EstadoDocumento
     {
         $list = [];
 
-        $sql = 'SELECT DISTINCT(documento) FROM ' . $this->tableName() . ' ORDER BY id ASC;';
+        $sql = 'SELECT DISTINCT(documento) FROM ' . static::tableName() . ' ORDER BY id ASC;';
         $data = $this->dataBase->select($sql);
         if ($data) {
             foreach ($data as $d) {

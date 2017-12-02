@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2012-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -33,7 +34,7 @@ class Articulo
     }
 
     /**
-     * Clave primaria. Varchar (18).
+     * Primary key. Varchar (18).
      *
      * @var string
      */
@@ -254,7 +255,7 @@ class Articulo
     private static $impuestos;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -264,7 +265,7 @@ class Articulo
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -274,9 +275,9 @@ class Articulo
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
@@ -293,7 +294,7 @@ class Articulo
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -350,7 +351,7 @@ class Articulo
      */
     public function getNewReferencia()
     {
-        $sql = 'SELECT referencia FROM ' . $this->tableName() . ' WHERE referencia ';
+        $sql = 'SELECT referencia FROM ' . static::tableName() . ' WHERE referencia ';
         $sql .= (strtolower(FS_DB_TYPE) === 'postgresql') ? "~ '^\d+$' ORDER BY referencia::BIGINT DESC" : "REGEXP '^\d+$' ORDER BY ABS(referencia) DESC";
 
         $data = $this->dataBase->selectLimit($sql, 1);
@@ -419,13 +420,7 @@ class Articulo
             $this->iva = null;
         }
 
-        if (!isset(self::$impuestos)) {
-            self::$impuestos = [];
-            $impuestoModel = new Impuesto();
-            foreach ($impuestoModel->all() as $imp) {
-                self::$impuestos[$imp->codimpuesto] = $imp;
-            }
-        }
+        $this->checkTaxes();
 
         if ($this->iva === null) {
             $this->iva = 0;
@@ -464,7 +459,7 @@ class Articulo
      * Si $img está vacío, se elimina la imagen anterior.
      *
      * @param string $img
-     * @param bool   $png
+     * @param bool $png
      */
     public function setImagen($img, $png = true)
     {
@@ -525,7 +520,7 @@ class Articulo
         if ($ref === null || empty($ref) || strlen($ref) > 18) {
             $this->miniLog->alert($this->i18n->trans('product-reference-not-valid', [$this->referencia]));
         } elseif ($ref !== $this->referencia && !$this->referencia === null) {
-            $sql = 'UPDATE ' . $this->tableName() . ' SET referencia = ' . $this->dataBase->var2str($ref)
+            $sql = 'UPDATE ' . static::tableName() . ' SET referencia = ' . $this->dataBase->var2str($ref)
                 . ' WHERE referencia = ' . $this->dataBase->var2str($this->referencia) . ';';
             if ($this->dataBase->exec($sql)) {
                 /// renombramos la imagen, si la hay
@@ -551,13 +546,7 @@ class Articulo
             $this->codimpuesto = $codimpuesto;
             $this->iva = null;
 
-            if (!isset(self::$impuestos)) {
-                self::$impuestos = [];
-                $impuestoModel = new Impuesto();
-                foreach ($impuestoModel->all() as $imp) {
-                    self::$impuestos[$imp->codimpuesto] = $imp;
-                }
-            }
+            $this->checkTaxes();
         }
     }
 
@@ -566,7 +555,7 @@ class Articulo
      * Ya se encarga de ejecutar save() si es necesario.
      *
      * @param string $codalmacen
-     * @param int    $cantidad
+     * @param int $cantidad
      *
      * @return bool
      */
@@ -604,7 +593,7 @@ class Articulo
                 $this->stockfis = $nuevoStock;
 
                 if ($this->exists()) {
-                    $sql = 'UPDATE ' . $this->tableName()
+                    $sql = 'UPDATE ' . static::tableName()
                         . ' SET stockfis = ' . $this->dataBase->var2str($this->stockfis)
                         . ' WHERE referencia = ' . $this->dataBase->var2str($this->referencia) . ';';
                     $result = $this->dataBase->exec($sql);
@@ -623,10 +612,10 @@ class Articulo
      * Suma la cantidad especificada al stock del artículo en el almacén especificado.
      * Ya se encarga de ejecutar save() si es necesario.
      *
-     * @param string  $codalmacen
-     * @param int     $cantidad
-     * @param bool    $recalculaCoste
-     * @param string  $codcombinacion
+     * @param string $codalmacen
+     * @param int $cantidad
+     * @param bool $recalculaCoste
+     * @param string $codcombinacion
      *
      * @return bool
      */
@@ -645,7 +634,7 @@ class Articulo
             if ($recalculaCoste) {
                 /// este código está muy optimizado para guardar solamente los cambios
                 if ($this->exists()) {
-                    $sql = 'UPDATE ' . $this->tableName()
+                    $sql = 'UPDATE ' . static::tableName()
                         . '  SET costemedio = ' . $this->dataBase->var2str($this->costemedio)
                         . '  WHERE referencia = ' . $this->dataBase->var2str($this->referencia) . ';';
                     $result = $this->dataBase->exec($sql);
@@ -681,7 +670,7 @@ class Articulo
                     $this->stockfis = $nuevoStock;
 
                     if ($this->exists()) {
-                        $sql = 'UPDATE ' . $this->tableName()
+                        $sql = 'UPDATE ' . static::tableName()
                             . '  SET stockfis = ' . $this->dataBase->var2str($this->stockfis)
                             . ', costemedio = ' . $this->dataBase->var2str($this->costemedio)
                             . '  WHERE referencia = ' . $this->dataBase->var2str($this->referencia) . ';';
@@ -711,7 +700,7 @@ class Articulo
     }
 
     /**
-     * Devuelve True  si los datos del artículo son correctos.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -757,7 +746,8 @@ class Articulo
     public function delete()
     {
         $sql = 'DELETE FROM articulosprov WHERE referencia = ' . $this->dataBase->var2str($this->referencia) . ';';
-        $sql .= 'DELETE FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($this->referencia) . ';';
+        $sql .= 'DELETE FROM ' . static::tableName()
+            . ' WHERE referencia = ' . $this->dataBase->var2str($this->referencia) . ';';
         if ($this->dataBase->exec($sql)) {
             $this->setImagen(false);
 
@@ -781,17 +771,31 @@ class Articulo
     public function fixDb()
     {
         $fixes = [
-            'UPDATE ' . $this->tableName() . ' SET bloqueado = true WHERE bloqueado IS NULL;',
-            'UPDATE ' . $this->tableName() . ' SET nostock = false WHERE nostock IS NULL;',
+            'UPDATE ' . static::tableName() . ' SET bloqueado = true WHERE bloqueado IS NULL;',
+            'UPDATE ' . static::tableName() . ' SET nostock = false WHERE nostock IS NULL;',
             /// desvinculamos de fabricantes que no existan
-            'UPDATE ' . $this->tableName() . ' SET codfabricante = null WHERE codfabricante IS NOT NULL'
+            'UPDATE ' . static::tableName() . ' SET codfabricante = null WHERE codfabricante IS NOT NULL'
             . ' AND codfabricante NOT IN (SELECT codfabricante FROM fabricantes);',
             /// desvinculamos de familias que no existan
-            'UPDATE ' . $this->tableName() . ' SET codfamilia = null WHERE codfamilia IS NOT NULL'
+            'UPDATE ' . static::tableName() . ' SET codfamilia = null WHERE codfamilia IS NOT NULL'
             . ' AND codfamilia NOT IN (SELECT codfamilia FROM familias);',
         ];
         foreach ($fixes as $sql) {
             $this->dataBase->exec($sql);
+        }
+    }
+
+    /**
+     * Check list of taxes, and if is not set load all values.
+     */
+    public function checkTaxes()
+    {
+        if (!isset(self::$impuestos)) {
+            self::$impuestos = [];
+            $impuestoModel = new Impuesto();
+            foreach ($impuestoModel->all() as $imp) {
+                self::$impuestos[$imp->codimpuesto] = $imp;
+            }
         }
     }
 }

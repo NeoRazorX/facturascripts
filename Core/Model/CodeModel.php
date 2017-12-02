@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -29,7 +30,7 @@ class CodeModel
 {
 
     /**
-     * Proporciona acceso directo a la base de datos.
+     * Provides direct access to the database.
      *
      * @var DataBase
      */
@@ -63,9 +64,9 @@ class CodeModel
     /**
      * Carga una lista de CodeModel (código y descripción) para la tabla indicada
      *
-     * @param string  $tableName
-     * @param string  $fieldCode
-     * @param string  $fieldDescription
+     * @param string $tableName
+     * @param string $fieldCode
+     * @param string $fieldDescription
      * @param bool $addEmpty
      *
      * @return self[]

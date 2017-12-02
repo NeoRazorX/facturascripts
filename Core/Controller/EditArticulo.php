@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
 
 /**
  * Controller to edit a single item from the EditArticulo model
@@ -53,11 +54,11 @@ class EditArticulo extends ExtendedController\PanelController
         if ($this->getViewModelValue('EditArticulo', 'secompra') === false) {
             unset($this->views['ListArticuloProveedor']);
         }
-        
+
         if ($this->getViewModelValue('EditArticulo', 'tipo') !== 'atributos') {
             unset($this->views['ListArticuloCombinacion']);
         }
-        
+
         if ($this->getViewModelValue('EditArticulo', 'trazabilidad') === false) {
             unset($this->views['ListArticuloTraza']);
         }
@@ -72,7 +73,7 @@ class EditArticulo extends ExtendedController\PanelController
             case 'ListArticuloProveedor':
             case 'ListArticuloCombinacion':
             case 'ListArticuloTraza':
-                $where = [new DataBase\DataBaseWhere('referencia', $referencia)];
+                $where = [new DataBaseWhere('referencia', $referencia)];
                 $view->loadData($where);
                 break;
         }

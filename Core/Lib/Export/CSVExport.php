@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Export;
 
 use Symfony\Component\HttpFoundation\Response;
@@ -77,6 +78,7 @@ class CSVExport implements ExportInterface
     /**
      * Assigns the received text delimiter
      * By default it will use '"' quotes.
+     *
      * @param $del
      */
     public function setDelimiter($del)
@@ -140,7 +142,6 @@ class CSVExport implements ExportInterface
      */
     public function newListDoc($model, $where, $order, $offset, $columns)
     {
-        /// get the columns
         $tableCols = [];
         $sheetHeaders = [];
         $tableData = [];
@@ -187,7 +188,7 @@ class CSVExport implements ExportInterface
                     $value = $row->{$col};
                     if (is_string($value)) {
                         $value = $this->fixHtml($value);
-                    } elseif (is_null($value)) {
+                    } elseif (null === $value) {
                         $value = '';
                     }
                 }

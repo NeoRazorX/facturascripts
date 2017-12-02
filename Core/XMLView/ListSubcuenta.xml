@@ -25,19 +25,19 @@
 <view>
     <columns>
         <column name="id" order="100" display="none">
-            <widget type="text" fieldname="idsubcuenta" onclick="EditSubcuenta" />
+            <widget type="text" fieldname="idsubcuenta" onclick="EditSubcuenta"/>
         </column>
         <column name="fiscal-exercise" order="110">
-            <widget type="text" fieldname="codejercicio" />
+            <widget type="text" fieldname="codejercicio"/>
         </column>
         <column name="subaccount" order="120">
-            <widget type="text" fieldname="codsubcuenta" />
+            <widget type="text" fieldname="codsubcuenta"/>
         </column>
         <column name="description" order="130">
-            <widget type="text" fieldname="descripcion" />
+            <widget type="text" fieldname="descripcion"/>
         </column>
         <column name="ammount" order="140" display="right">
-            <widget type="money" fieldname="saldo" />
+            <widget type="money" fieldname="saldo"/>
         </column>
     </columns>
     <rows>

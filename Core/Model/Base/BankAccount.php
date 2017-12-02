@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 /**
- * Esta clase agrupa los datos y métodos de cálculo bancarios
- * para un uso genérico.
+ * This class group all data and method of bank calculation for a generic use.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -29,28 +29,28 @@ trait BankAccount
 {
 
     /**
-     * Cuenta bancaria
+     * Bank account.
      *
      * @var string
      */
     public $ccc;
 
     /**
-     * Cuenta bancaria formato internacional
+     * Bank account international format.
      *
      * @var string
      */
     public $iban;
 
     /**
-     * Identificativo bancario internacional del banco y entidad
+     * International bank identification of the bank and entity.
      *
      * @var string
      */
     public $swift;
 
     /**
-     * Devuelve el CCC con o sin espacios.
+     * Returns the CCC with or without spaces.
      *
      * @param bool $espacios
      *
@@ -70,7 +70,7 @@ trait BankAccount
     }
 
     /**
-     * Devuelve el IBAN con o sin espacios.
+     * Returns the IBAN with or without spaces.
      *
      * @param bool $espacios
      *
@@ -81,7 +81,8 @@ trait BankAccount
         $iban = str_replace(' ', '', $this->iban);
         if ($espacios) {
             $txt = '';
-            for ($i = 0; $i < $len = strlen($iban); $i += 4) {
+            $len = strlen($iban);
+            for ($i = 0; $i < $len; $i += 4) {
                 $txt .= substr($iban, $i, 4) . ' ';
             }
 
@@ -92,7 +93,7 @@ trait BankAccount
     }
 
     /**
-     * Inicializa los valores de los campos bancarios
+     * Initialize the values of the bank fields.
      */
     private function clearBankAccount()
     {
@@ -102,9 +103,9 @@ trait BankAccount
     }
 
     /**
-     * Comprueba los datos bancarios informados
+     * Check the bank details reported.
      *
-     * @return boolean
+     * @return bool
      */
     public function testBankAccount()
     {
@@ -115,7 +116,7 @@ trait BankAccount
     }
 
     /**
-     * Calcula el IBAN a partir de la cuenta bancaria
+     * Calculate the IBAN from the bank account.
      *
      * @param string $ccc
      * @param string $codpais
@@ -125,7 +126,8 @@ trait BankAccount
     private function calcularIBAN($ccc, $codpais = '')
     {
         $pais = substr($codpais, 0, 2);
-        $pesos = ['A' => '10', 'B' => '11', 'C' => '12', 'D' => '13', 'E' => '14', 'F' => '15',
+        $pesos = [
+            'A' => '10', 'B' => '11', 'C' => '12', 'D' => '13', 'E' => '14', 'F' => '15',
             'G' => '16', 'H' => '17', 'I' => '18', 'J' => '19', 'K' => '20', 'L' => '21', 'M' => '22',
             'N' => '23', 'O' => '24', 'P' => '25', 'Q' => '26', 'R' => '27', 'S' => '28', 'T' => '29',
             'U' => '30', 'V' => '31', 'W' => '32', 'X' => '33', 'Y' => '34', 'Z' => '35',
@@ -134,7 +136,7 @@ trait BankAccount
         $dividendo = $ccc . $pesos[$pais[0]] . $pesos[$pais[1]] . '00';
         $digitoControl = 98 - bcmod($dividendo, '97');
 
-        if (strlen($digitoControl) == 1) {
+        if (strlen($digitoControl) === 1) {
             $digitoControl = '0' . $digitoControl;
         }
 
@@ -142,28 +144,29 @@ trait BankAccount
     }
 
     /**
-     * Calcula el DC para la cadena en base 11 con los pesos indicados
+     * Calculate the DC for the chain in base 11 with the indicated weights.
      *
      * @param string $cadena
-     * @param array  $pesos
+     * @param array $pesos
      *
      * @return string
      */
     private function calcularDC($cadena, $pesos)
     {
         $totPeso = 0;
-        for ($i = 0; $i < $len = strlen($cadena); ++$i) {
+        $len = strlen($cadena);
+        for ($i = 0; $i < $len; ++$i) {
             $val = (int) $cadena[$i];
             $totPeso += ($pesos[$i] * $val);
         }
 
         $result = 11 - bcmod($totPeso, '11');
-        switch (TRUE) {
-            case $result == 11:
+        switch ($result) {
+            case 11:
                 $result = 0;
                 break;
 
-            case $result == 10:
+            case 10:
                 $result = 1;
                 break;
         }
@@ -172,7 +175,7 @@ trait BankAccount
     }
 
     /**
-     * Calcula la cuenta bancaria para una entidad, banco y cuenta
+     * Calculate the bank account for an entity, bank and account.
      *
      * @param string $entidad
      * @param string $oficina
@@ -183,7 +186,7 @@ trait BankAccount
     private function calcularCCC($entidad, $oficina, $cuenta)
     {
         $banco = $entidad . $oficina;
-        if ((strlen($banco) != 8) || (strlen($cuenta) != 10)) {
+        if ((strlen($banco) !== 8) || (strlen($cuenta) !== 10)) {
             return '';
         }
 
@@ -194,15 +197,15 @@ trait BankAccount
     }
 
     /**
-     * Comprueba si los DC de una cuenta bancaria son correctos
+     * Check if the DCs of a bank account are correct.
      *
      * @param string $ccc
      *
-     * @return boolean
+     * @return bool
      */
     public function verificarCCC($ccc)
     {
-        if (strlen($ccc) != 20) {
+        if (strlen($ccc) !== 20) {
             return false;
         }
 
@@ -210,25 +213,25 @@ trait BankAccount
         $oficina = substr($ccc, 4, 4);
         $cuenta = substr($ccc, 10, 10);
 
-        return $ccc == $this->calcularCCC($entidad, $oficina, $cuenta);
+        return $ccc === $this->calcularCCC($entidad, $oficina, $cuenta);
     }
 
     /**
-     * Comprueba si los DC de un IBAN son correctos
+     * Check if the DC's of an IBAN are correct.
      *
      * @param string $iban
      *
-     * @return boolean
+     * @return bool
      */
     public function verificarIBAN($iban)
     {
-        if (strlen($iban) != 24) {
+        if (strlen($iban) !== 24) {
             return false;
         }
 
         $codpais = substr($iban, 0, 2);
         $ccc = substr($iban, -20);
 
-        return $iban == $this->calcularIBAN($ccc, $codpais);
+        return $iban === $this->calcularIBAN($ccc, $codpais);
     }
 }

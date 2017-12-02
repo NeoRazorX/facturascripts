@@ -117,6 +117,7 @@
         <name>ca_lineaspedidoscli_pedidoscli</name>
         <type>FOREIGN KEY (idpedido)
             REFERENCES pedidoscli (idpedido)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
 </table>

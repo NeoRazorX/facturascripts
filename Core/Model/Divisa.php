@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -31,7 +32,7 @@ class Divisa
     use Base\ModelTrait;
 
     /**
-     * Clave primaria. Varchar (3).
+     * Primary key. Varchar (3).
      *
      * @var string
      */
@@ -73,7 +74,7 @@ class Divisa
     public $simbolo;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -83,7 +84,7 @@ class Divisa
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -93,7 +94,7 @@ class Divisa
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -106,7 +107,7 @@ class Divisa
     }
 
     /**
-     * Devuelve TRUE si esta es la divisa predeterminada de la empresa
+     * Returns True if is the default currency for the company.
      *
      * @return bool
      */
@@ -116,7 +117,7 @@ class Divisa
     }
 
     /**
-     * Comprueba los datos de la divisa, devuelve TRUE si son correctos
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -149,7 +150,7 @@ class Divisa
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName() . ' (coddivisa,descripcion,tasaconv,tasaconvcompra,codiso,simbolo)'
+        return 'INSERT INTO ' . static::tableName() . ' (coddivisa,descripcion,tasaconv,tasaconvcompra,codiso,simbolo)'
             . " VALUES ('EUR','EUROS','1','1','978','€')"
             . ",('ARS','PESOS ARGENTINOS','16.684','16.684','32','AR$')"
             . ",('CLP','PESOS CHILENOS','704.0227','704.0227','152','CLP$')"

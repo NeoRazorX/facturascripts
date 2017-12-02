@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -38,7 +39,7 @@ class Epigrafe
     private static $grupos;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
@@ -91,7 +92,7 @@ class Epigrafe
     public $codgrupo;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -101,7 +102,7 @@ class Epigrafe
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -132,12 +133,13 @@ class Epigrafe
     /**
      * Devuelve los epígrafes hijo
      *
-     * @return array
+     * @return self[]
      */
     public function hijos()
     {
         $epilist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idpadre = ' . $this->dataBase->var2str($this->idepigrafe)
+        $sql = 'SELECT * FROM ' . static::tableName()
+            . ' WHERE idpadre = ' . $this->dataBase->var2str($this->idepigrafe)
             . ' ORDER BY codepigrafe ASC;';
 
         $data = $this->dataBase->select($sql);
@@ -172,7 +174,7 @@ class Epigrafe
      */
     public function getByCodigo($cod, $codejercicio)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codepigrafe = ' . $this->dataBase->var2str($cod)
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codepigrafe = ' . $this->dataBase->var2str($cod)
             . ' AND codejercicio = ' . $this->dataBase->var2str($codejercicio) . ';';
 
         $data = $this->dataBase->select($sql);
@@ -184,7 +186,7 @@ class Epigrafe
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -210,7 +212,8 @@ class Epigrafe
     public function superFromEjercicio($codejercicio)
     {
         $epilist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->dataBase->var2str($codejercicio)
+        $sql = 'SELECT * FROM ' . static::tableName()
+            . ' WHERE codejercicio = ' . $this->dataBase->var2str($codejercicio)
             . ' AND idpadre IS NULL AND idgrupo IS NULL ORDER BY codepigrafe ASC;';
 
         $data = $this->dataBase->select($sql);
@@ -228,15 +231,15 @@ class Epigrafe
      */
     public function fixDb()
     {
-        $sql = 'UPDATE ' . $this->tableName()
+        $sql = 'UPDATE ' . static::tableName()
             . ' SET idgrupo = NULL WHERE idgrupo NOT IN (SELECT idgrupo FROM co_gruposepigrafes);';
         $this->dataBase->exec($sql);
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
@@ -249,7 +252,7 @@ class Epigrafe
     }
 
     /**
-     * Devuelve la url donde ver/modificar los datos
+     * Returns the url where to see / modify the data.
      *
      * @param string $type
      *

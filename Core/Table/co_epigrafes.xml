@@ -45,12 +45,14 @@
         <name>ca_co_epigrafes_ejercicios</name>
         <type>FOREIGN KEY (codejercicio)
             REFERENCES ejercicios (codejercicio)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>ca_co_epigrafes_gruposepigrafes2</name>
         <type>FOREIGN KEY (idgrupo)
             REFERENCES co_gruposepigrafes (idgrupo)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
 </table>

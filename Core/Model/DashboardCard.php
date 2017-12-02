@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -61,15 +62,15 @@ class DashboardCard
 
     /**
      * Card color.
-     * 
-     * @var string 
+     *
+     * @var string
      */
     public $color;
 
     /**
      * Optional link for actions.
-     * 
-     * @var string 
+     *
+     * @var string
      */
     public $link;
 
@@ -135,6 +136,11 @@ class DashboardCard
         return $result;
     }
 
+    /**
+     * Return the class type for this dashboard card
+     *
+     * @return string
+     */
     public function cardClass()
     {
         if ($this->color !== null) {

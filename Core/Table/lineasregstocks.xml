@@ -61,6 +61,7 @@
         <name>ca_lineasregstocks_stocks</name>
         <type>FOREIGN KEY (idstock)
             REFERENCES stocks (idstock)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
 </table>

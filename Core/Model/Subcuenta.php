@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -32,7 +33,7 @@ class Subcuenta
     use Base\ModelTrait;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
@@ -123,7 +124,7 @@ class Subcuenta
     public $iva;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -133,7 +134,7 @@ class Subcuenta
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -151,12 +152,12 @@ class Subcuenta
     {
         new Ejercicio();
         new Cuenta();
-        
+
         return '';
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -272,13 +273,14 @@ class Subcuenta
      *
      * @param string $cod
      * @param string $codejercicio
-     * @param bool   $crear
+     * @param bool $crear
      *
      * @return bool|Subcuenta
      */
     public function getByCodigo($cod, $codejercicio, $crear = false)
     {
-        foreach ($this->all([new DataBaseWhere('codsubcuenta', $cod), new DataBaseWhere('codejercicio', $codejercicio)]) as $subc) {
+        $where = [new DataBaseWhere('codsubcuenta', $cod), new DataBaseWhere('codejercicio', $codejercicio)];
+        foreach ($this->all($where) as $subc) {
             return $subc;
         }
 
@@ -323,7 +325,7 @@ class Subcuenta
      * Devuelve la primera subcuenta del ejercicio $codeje cuya cuenta madre
      * está marcada como cuenta especial $id.
      *
-     * @param int    $idcuesp
+     * @param int $idcuesp
      * @param string $codeje
      *
      * @return Subcuenta|bool
@@ -353,7 +355,7 @@ class Subcuenta
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -383,7 +385,7 @@ class Subcuenta
             $this->cleanCache();
         }
 
-        if (strlen($this->codcuenta) === 0 || strlen($this->codejercicio) === 0) {
+        if ($this->codcuenta === '' || $this->codejercicio === '') {
             $this->miniLog->alert($this->i18n->trans('account-data-missing'));
             return false;
         }
@@ -394,14 +396,14 @@ class Subcuenta
         ];
 
         $count = new Cuenta();
-        if ($count->loadFromCode(NULL, $where) === FALSE) {
+        if ($count->loadFromCode(null, $where) === false) {
             $this->miniLog->alert($this->i18n->trans('account-data-error'));
             return false;
         }
 
         $this->idcuenta = $count->idcuenta;
 
-        if (strlen($this->codsubcuenta) === 0 || strlen($this->descripcion) === 0) {
+        if ($this->codsubcuenta === '' || $this->descripcion === '') {
             $this->miniLog->alert($this->i18n->trans('missing-data-subaccount'));
             return false;
         }
@@ -413,7 +415,7 @@ class Subcuenta
      * Devuelve las subcuentas del ejercicio $codeje cuya cuenta madre
      * está marcada como cuenta especial $id.
      *
-     * @param int    $idcuesp
+     * @param int $idcuesp
      * @param string $codeje
      *
      * @return self[]
@@ -469,7 +471,7 @@ class Subcuenta
      * @param string $codejercicio
      * @param string $query
      *
-     * @return Subcuenta
+     * @return self[]
      */
     public function searchByEjercicio($codejercicio, $query)
     {
@@ -477,7 +479,8 @@ class Subcuenta
 
         $sublist = $this->cache->get('search_subcuenta_ejercicio_' . $codejercicio . '_' . $query);
         if (count($sublist) < 1) {
-            $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codejercicio = ' . $this->dataBase->var2str($codejercicio)
+            $sql = 'SELECT * FROM ' . static::tableName()
+                . ' WHERE codejercicio = ' . $this->dataBase->var2str($codejercicio)
                 . " AND (codsubcuenta LIKE '" . $query . "%' OR codsubcuenta LIKE '%" . $query . "'"
                 . " OR lower(descripcion) LIKE '%" . $query . "%') ORDER BY codcuenta ASC;";
 
@@ -492,5 +495,15 @@ class Subcuenta
         }
 
         return $sublist;
+    }
+
+    /**
+     * TODO: Uncomplete
+     *
+     * @param int $idcuenta
+     */
+    public function allFromCuenta($idcuenta)
+    {
+        return [];
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -33,7 +34,7 @@ class AlbaranProveedor
     use Base\DocumentoCompra;
 
     /**
-     * Clave primaria. Integer
+     * Primary key. Integer
      *
      * @var int
      */
@@ -54,7 +55,7 @@ class AlbaranProveedor
     public $ptefactura;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -64,7 +65,7 @@ class AlbaranProveedor
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -74,9 +75,9 @@ class AlbaranProveedor
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
@@ -90,7 +91,7 @@ class AlbaranProveedor
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -110,7 +111,7 @@ class AlbaranProveedor
     }
 
     /**
-     * Comprueba los datos del albarán, devuelve True si está correcto
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -136,7 +137,8 @@ class AlbaranProveedor
      */
     public function delete()
     {
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idalbaran = ' . $this->dataBase->var2str($this->idalbaran) . ';';
+        $sql = 'DELETE FROM ' . static::tableName()
+            . ' WHERE idalbaran = ' . $this->dataBase->var2str($this->idalbaran) . ';';
         if ($this->dataBase->exec($sql)) {
             if ($this->idfactura) {
                 /**
@@ -164,7 +166,7 @@ class AlbaranProveedor
         /**
          * Ponemos a null todos los idfactura que no están en facturasprov
          */
-        $sql = 'UPDATE ' . $this->tableName() . ' SET idfactura = NULL WHERE idfactura IS NOT NULL'
+        $sql = 'UPDATE ' . static::tableName() . ' SET idfactura = NULL WHERE idfactura IS NOT NULL'
             . ' AND idfactura NOT IN (SELECT idfactura FROM facturasprov);';
         $this->dataBase->exec($sql);
     }

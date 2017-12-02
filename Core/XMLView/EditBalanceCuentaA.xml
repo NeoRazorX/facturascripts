@@ -24,18 +24,18 @@
 
 <view>
     <columns>
-        <group name="data" numcolumns="12">    
+        <group name="data" numcolumns="12">
             <column name="code" order="100" numcolumns="2" display="none">
                 <widget type="text" fieldname="id" onclick="EditBalance"/>
-            </column>           
+            </column>
             <column name="cod-balance" order="110" numcolumns="2" display="none">
-                <widget type="text" fieldname="codbalance" />
+                <widget type="text" fieldname="codbalance"/>
             </column>
             <column name="account-code" order="120" numcolumns="4">
-                <widget type="text" fieldname="codcuenta" />
+                <widget type="text" fieldname="codcuenta"/>
             </column>
             <column name="description" order="130" numcolumns="4">
-                <widget type="text" fieldname="desccuenta" />
+                <widget type="text" fieldname="desccuenta"/>
             </column>
         </group>
     </columns>

@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -29,7 +30,7 @@ class BalanceCuentaA
     use Base\ModelTrait;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
@@ -57,7 +58,7 @@ class BalanceCuentaA
     public $desccuenta;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -67,7 +68,7 @@ class BalanceCuentaA
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -80,8 +81,8 @@ class BalanceCuentaA
      * Devuelve el saldo del balance de un ejercicio.
      *
      * @param ejercicio $ejercicio
-     * @param bool      $desde
-     * @param bool      $hasta
+     * @param bool $desde
+     * @param bool $hasta
      *
      * @return float|int
      */
@@ -135,7 +136,7 @@ class BalanceCuentaA
     public function allFromCodbalance($cod)
     {
         $balist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName()
+        $sql = 'SELECT * FROM ' . static::tableName()
             . ' WHERE codbalance = ' . $this->dataBase->var2str($cod) . ' ORDER BY codcuenta ASC;';
 
         $data = $this->dataBase->select($sql);
@@ -158,7 +159,7 @@ class BalanceCuentaA
     public function searchByCodbalance($cod)
     {
         $balist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName()
+        $sql = 'SELECT * FROM ' . static::tableName()
             . " WHERE codbalance LIKE '" . self::noHtml($cod) . "%' ORDER BY codcuenta ASC;";
 
         $data = $this->dataBase->select($sql);

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -34,7 +35,7 @@ class ListCuenta extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        /* Cuentas */
+        /* Accounts */
         $this->addView('FacturaScripts\Core\Model\Cuenta', 'ListCuenta', 'accounts', 'fa-book');
         $this->addSearchFields('ListCuenta', ['descripcion', 'codcuenta', 'codejercicio', 'codepigrafe']);
 
@@ -44,7 +45,7 @@ class ListCuenta extends ExtendedController\ListController
         $this->addFilterSelect('ListCuenta', 'codejercicio', 'ejercicios', '', 'nombre');
         $this->addFilterSelect('ListCuenta', 'codepigrafe', 'co_epigrafes', '', 'descripcion');
 
-        /* Epigrafes */
+        /* Epigraphs */
         $this->addView('FacturaScripts\Core\Model\Epigrafe', 'ListEpigrafe', 'epigraphs', 'fa-list-alt');
         $this->addSearchFields('ListEpigrafe', ['descripcion', 'codepigrafe', 'codejercicio']);
 
@@ -54,7 +55,7 @@ class ListCuenta extends ExtendedController\ListController
         $this->addFilterSelect('ListEpigrafe', 'codejercicio', 'ejercicios', '', 'nombre');
         $this->addFilterSelect('ListEpigrafe', 'codgrupo', 'co_gruposepigrafes', '', 'descripcion');
 
-        /* Grupo Epígrafes */
+        /* Epigraphs groups */
         $this->addView('FacturaScripts\Core\Model\GrupoEpigrafes', 'ListGrupoEpigrafes', 'epigraphs-group', 'fa-bars');
         $this->addSearchFields('ListGrupoEpigrafes', ['descripcion', 'codgrupo', 'codejercicio']);
 
@@ -62,16 +63,16 @@ class ListCuenta extends ExtendedController\ListController
         $this->addOrderBy('ListGrupoEpigrafes', 'codejercicio desc,descripcion', 'description');
 
         $this->addFilterSelect('ListGrupoEpigrafes', 'codejercicio', 'ejercicios', '', 'nombre');
-             
-        /* Cuenta Especial */
+
+        /* Special account */
         $this->addView('FacturaScripts\Core\Model\CuentaEspecial', 'ListCuentaEspecial', 'special-account', 'fa-newspaper-o');
         $this->addSearchFields('ListCuentaEspecial', ['descripcion', 'codcuenta']);
-        
+
         $this->addOrderBy('ListCuentaEspecial', 'descripcion');
         $this->addOrderBy('ListCuentaEspecial', 'codsubcuenta');
-        
+
         $this->addFilterSelect('ListCuentaEspecial', 'codsubcuenta', '', 'descripcion');
-        
+
     }
 
     /**

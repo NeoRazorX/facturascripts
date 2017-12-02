@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -33,7 +34,7 @@ class Asiento
     }
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
@@ -118,7 +119,7 @@ class Asiento
     private $coddivisa;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -128,7 +129,7 @@ class Asiento
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -138,7 +139,7 @@ class Asiento
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -248,7 +249,7 @@ class Asiento
     public function newNumero()
     {
         $this->numero = 1;
-        $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('numero') . ') as num FROM ' . $this->tableName()
+        $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('numero') . ') as num FROM ' . static::tableName()
             . ' WHERE codejercicio = ' . $this->dataBase->var2str($this->codejercicio) . ';';
 
         $data = $this->dataBase->select($sql);
@@ -258,7 +259,7 @@ class Asiento
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -323,7 +324,8 @@ class Asiento
         $ejercicio = new Ejercicio();
         $eje0 = $ejercicio->get($this->codejercicio);
         if ($eje0) {
-            if (strtotime($this->fecha) < strtotime($eje0->fechainicio) || strtotime($this->fecha) > strtotime($eje0->fechafin)) {
+            $timestamp = strtotime($this->fecha);
+            if ($timestamp < strtotime($eje0->fechainicio) || $timestamp > strtotime($eje0->fechafin)) {
                 $this->miniLog->alert($this->i18n->trans('seat-date-not-in-exercise-range', [$eje0->url()]));
                 $status = false;
             }
@@ -331,7 +333,7 @@ class Asiento
 
         if ($status && $duplicados) {
             /// comprobamos si es un duplicado
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fecha = ' . $this->dataBase->var2str($this->fecha) . '
+            $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE fecha = ' . $this->dataBase->var2str($this->fecha) . '
             AND concepto = ' . $this->dataBase->var2str($this->concepto) . ' AND importe = ' . $this->dataBase->var2str($this->importe) . '
             AND idasiento != ' . $this->dataBase->var2str($this->idasiento) . ';';
             $asientos = $this->dataBase->select($sql);
@@ -496,7 +498,8 @@ class Asiento
             $p->delete();
         }
 
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idasiento = ' . $this->dataBase->var2str($this->idasiento) . ';';
+        $sql = 'DELETE FROM ' . static::tableName()
+            . ' WHERE idasiento = ' . $this->dataBase->var2str($this->idasiento) . ';';
 
         return $this->dataBase->exec($sql);
     }
@@ -506,7 +509,7 @@ class Asiento
      * o concepto o importe.
      *
      * @param string $query
-     * @param int    $offset
+     * @param int $offset
      *
      * @return self[]
      */
@@ -515,7 +518,7 @@ class Asiento
         $alist = [];
         $query = self::noHtml(mb_strtolower($query, 'UTF8'));
 
-        $consulta = 'SELECT * FROM ' . $this->tableName() . ' WHERE ';
+        $consulta = 'SELECT * FROM ' . static::tableName() . ' WHERE ';
         if (is_numeric($query)) {
             $auxSql = '';
             if (strtolower(FS_DB_TYPE) === 'postgresql') {
@@ -527,7 +530,7 @@ class Asiento
         } elseif (preg_match('/^(\d{1,2})-(\d{1,2})-(\d{4})$/i', $query)) {
             $consulta .= 'fecha = ' . $this->dataBase->var2str($query) . " OR concepto LIKE '%" . $query . "%'";
         } else {
-            $consulta .= "lower(concepto) LIKE '%" . $buscar = str_replace(' ', '%', $query) . "%'";
+            $consulta .= "lower(concepto) LIKE '%" . str_replace(' ', '%', $query) . "%'";
         }
         $consulta .= ' ORDER BY fecha DESC';
 
@@ -553,7 +556,7 @@ class Asiento
 
         $alist = [];
         $sql = 'SELECT p.idasiento,SUM(p.debe) AS sdebe,SUM(p.haber) AS shaber
-         FROM co_partidas p, ' . $this->tableName() . ' a
+         FROM co_partidas p, ' . static::tableName() . ' a
           WHERE p.idasiento = a.idasiento
            GROUP BY p.idasiento
             HAVING ABS(SUM(p.haber) - SUM(p.debe)) > 0.01
@@ -583,7 +586,7 @@ class Asiento
             $numero = 1;
             $sql = '';
             $continuar = true;
-            $consulta = 'SELECT idasiento,numero,fecha FROM ' . $this->tableName()
+            $consulta = 'SELECT idasiento,numero,fecha FROM ' . static::tableName()
                 . ' WHERE codejercicio = ' . $this->dataBase->var2str($eje->codejercicio)
                 . ' ORDER BY codejercicio ASC, fecha ASC, idasiento ASC';
 
@@ -591,7 +594,7 @@ class Asiento
             while (!empty($asientos) && $continuar) {
                 foreach ($asientos as $col) {
                     if ($col['numero'] !== $numero) {
-                        $sql .= 'UPDATE ' . $this->tableName() . ' SET numero = ' . $this->dataBase->var2str($numero)
+                        $sql .= 'UPDATE ' . static::tableName() . ' SET numero = ' . $this->dataBase->var2str($numero)
                             . ' WHERE idasiento = ' . $this->dataBase->var2str($col['idasiento']) . ';';
                     }
 
@@ -627,14 +630,14 @@ class Asiento
         foreach ($eje0->all() as $ej) {
             if ($ej instanceof Ejercicio && $ej->abierto()) {
                 foreach ($regiva0->allFromEjercicio($ej->codejercicio) as $reg) {
-                    $sql = 'UPDATE ' . $this->tableName() . ' SET editable = false WHERE editable = true'
+                    $sql = 'UPDATE ' . static::tableName() . ' SET editable = false WHERE editable = true'
                         . ' AND codejercicio = ' . $this->dataBase->var2str($ej->codejercicio)
                         . ' AND fecha >= ' . $this->dataBase->var2str($reg->fechainicio)
                         . ' AND fecha <= ' . $this->dataBase->var2str($reg->fechafin) . ';';
                     $this->dataBase->exec($sql);
                 }
             } else {
-                $sql = 'UPDATE ' . $this->tableName() . ' SET editable = false WHERE editable = true'
+                $sql = 'UPDATE ' . static::tableName() . ' SET editable = false WHERE editable = true'
                     . ' AND codejercicio = ' . $this->dataBase->var2str($ej->codejercicio) . ';';
                 $this->dataBase->exec($sql);
             }

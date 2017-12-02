@@ -25,37 +25,37 @@
 <view>
     <columns>
         <column name="code" order="100">
-            <widget type="text" fieldname="codalmacen" onclick="EditAlmacen" />
+            <widget type="text" fieldname="codalmacen" onclick="EditAlmacen"/>
         </column>
         <column name="name" order="100">
-            <widget type="text" fieldname="nombre" />
+            <widget type="text" fieldname="nombre"/>
         </column>
         <column name="contact" order="100">
-            <widget type="text" fieldname="contacto" />
+            <widget type="text" fieldname="contacto"/>
         </column>
         <column name="address" order="100">
-            <widget type="text" fieldname="direccion" />
+            <widget type="text" fieldname="direccion"/>
         </column>
         <column name="postalmail" display="none" order="100">
-            <widget type="text" fieldname="apartado" />
+            <widget type="text" fieldname="apartado"/>
         </column>
         <column name="town" order="100">
-            <widget type="text" fieldname="poblacion" />
+            <widget type="text" fieldname="poblacion"/>
         </column>
         <column name="postal-code" display="none" order="100">
-            <widget type="text" fieldname="codpostal" />
+            <widget type="text" fieldname="codpostal"/>
         </column>
         <column name="province" display="center" order="100">
-            <widget type="text" fieldname="provincia" />
+            <widget type="text" fieldname="provincia"/>
         </column>
         <column name="phone" order="100">
-            <widget type="text" fieldname="telefono" />
+            <widget type="text" fieldname="telefono"/>
         </column>
         <column name="fax" order="100">
-            <widget type="text" fieldname="fax" />
+            <widget type="text" fieldname="fax"/>
         </column>
         <column name="valuation-type" display="center" order="100">
-            <widget type="text" fieldname="tipovaloracion" />
+            <widget type="text" fieldname="tipovaloracion"/>
         </column>
     </columns>
     <filters>

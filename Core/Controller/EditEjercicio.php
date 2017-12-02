@@ -16,13 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Model\GrupoEpigrafes;
-use FacturaScripts\Core\Model\Epigrafe;
-use FacturaScripts\Core\Model\Cuenta;
 
 /**
  * Controller to edit a single item from the Familia model
@@ -61,22 +59,22 @@ class EditEjercicio extends ExtendedController\PanelController
                 break;
 
             case 'EditEjercicioGrupoEpigrafes':
-                $where = [new DataBase\DataBaseWhere('codejercicio', $this->request->get('code'))];
+                $where = [new DataBaseWhere('codejercicio', $this->request->get('code'))];
                 $view->loadData($where);
                 break;
 
             case 'EditEjercicioEpigrafe':
-                $where = [new DataBase\DataBaseWhere('codejercicio', $this->request->get('code'))];
+                $where = [new DataBaseWhere('codejercicio', $this->request->get('code'))];
                 $view->loadData($where);
                 break;
 
             case 'EditEjercicioCuenta':
-                $where = [new DataBase\DataBaseWhere('codejercicio', $this->request->get('code'))];
+                $where = [new DataBaseWhere('codejercicio', $this->request->get('code'))];
                 $view->loadData($where);
                 break;
 
             case 'EditEjercicioSubcuenta':
-                $where = [new DataBase\DataBaseWhere('codejercicio', $this->request->get('code'))];
+                $where = [new DataBaseWhere('codejercicio', $this->request->get('code'))];
                 $view->loadData($where);
                 break;
         }

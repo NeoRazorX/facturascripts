@@ -119,7 +119,8 @@
         <name>ca_lineasalbaranescli_albaranescli2</name>
         <type>FOREIGN KEY (idalbaran)
             REFERENCES albaranescli (idalbaran)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+            ON DELETE CASCADE ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>lineasalbaranescli_pkey</name>

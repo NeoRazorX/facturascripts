@@ -16,8 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
+use DebugBar\Bridge\Twig\TraceableTwigEnvironment;
+use DebugBar\Bridge\Twig\TwigCollector;
 use DebugBar\StandardDebugBar;
 use Exception;
 use FacturaScripts\Core\Base\DebugBar\DataBaseCollector;
@@ -81,19 +84,19 @@ class AppController extends App
     /**
      * Select and run the corresponding controller.
      *
-     * @return boolean
+     * @return bool
      */
     public function run()
     {
         if (!$this->dataBase->connected()) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-            $this->renderHtml('Error/DbError.html');
+            $this->renderHtml('Error/DbError.twig');
         } elseif ($this->isIPBanned()) {
             $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
             $this->response->setContent('IP-BANNED');
         } elseif ($this->request->query->get('logout')) {
             $this->userLogout();
-            $this->renderHtml('Login/Login.html');
+            $this->renderHtml('Login/Login.twig');
         } else {
             $user = $this->userAuth();
 
@@ -110,8 +113,9 @@ class AppController extends App
 
     /**
      * Returns the name of the default controller for the current user or for all users.
-     * 
+     *
      * @param User|false $user
+     *
      * @return string
      */
     private function getDefaultController($user)
@@ -120,13 +124,14 @@ class AppController extends App
             return $user->homepage;
         }
 
+        // TODO: Warning: '...::get(...)' should be used instead.
         $homePage = $this->settings->get('default', 'homepage', 'AdminHome');
         return $this->request->cookies->get('fsHomepage', $homePage);
     }
 
     /**
      * Load and process the $pageName controller.
-     * 
+     *
      * @param string $pageName
      * @param User $user
      */
@@ -138,7 +143,7 @@ class AppController extends App
         }
 
         $controllerName = $this->getControllerFullName($pageName);
-        $template = 'Error/ControllerNotFound.html';
+        $template = 'Error/ControllerNotFound.twig';
         $httpStatus = Response::HTTP_NOT_FOUND;
 
         /// If we found a controller, load it
@@ -195,7 +200,7 @@ class AppController extends App
      * Creates HTML with the selected template. The data will not be inserted in it
      * until render() is executed
      *
-     * @param string $template       html file to use
+     * @param string $template html file to use
      * @param string $controllerName
      */
     private function renderHtml($template, $controllerName = '')
@@ -227,8 +232,8 @@ class AppController extends App
             unset($twigOptions['cache']);
             $twigOptions['debug'] = true;
 
-            $env = new \DebugBar\Bridge\Twig\TraceableTwigEnvironment(new Twig_Environment($twigLoader));
-            $this->debugBar->addCollector(new \DebugBar\Bridge\Twig\TwigCollector($env));
+            $env = new TraceableTwigEnvironment(new Twig_Environment($twigLoader));
+            $this->debugBar->addCollector(new TwigCollector($env));
             $baseUrl = 'vendor/maximebf/debugbar/src/DebugBar/Resources/';
             $templateVars['debugBarRender'] = $this->debugBar->getJavascriptRenderer($baseUrl);
 
@@ -244,7 +249,7 @@ class AppController extends App
             $this->response->setContent($twig->render($template, $templateVars));
         } catch (Exception $exc) {
             $this->debugBar['exceptions']->addException($exc);
-            $this->response->setContent($twig->render('Error/TemplateError.html', $templateVars));
+            $this->response->setContent($twig->render('Error/TemplateError.twig', $templateVars));
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -265,11 +270,12 @@ class AppController extends App
                 if ($user->verifyPassword($this->request->request->get('fsPassword'))) {
                     $logKey = $user->newLogkey($this->request->getClientIp());
                     $user->save();
-                    $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, time() + FS_COOKIES_EXPIRE));
-                    $this->response->headers->setCookie(new Cookie('fsLogkey', $logKey, time() + FS_COOKIES_EXPIRE));
-                    $this->response->headers->setCookie(new Cookie('fsHomepage', $user->homepage, time() + FS_COOKIES_EXPIRE));
-                    $this->response->headers->setCookie(new Cookie('fsLang', $user->langcode, time() + FS_COOKIES_EXPIRE));
-                    $this->response->headers->setCookie(new Cookie('fsCompany', $user->idempresa, time() + FS_COOKIES_EXPIRE));
+                    $expire = time() + FS_COOKIES_EXPIRE;
+                    $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, $expire));
+                    $this->response->headers->setCookie(new Cookie('fsLogkey', $logKey, $expire));
+                    $this->response->headers->setCookie(new Cookie('fsHomepage', $user->homepage, $expire));
+                    $this->response->headers->setCookie(new Cookie('fsLang', $user->langcode, $expire));
+                    $this->response->headers->setCookie(new Cookie('fsCompany', $user->idempresa, $expire));
                     $this->miniLog->debug($this->i18n->trans('login-ok', [$nick]));
                     return $user;
                 }
@@ -289,9 +295,10 @@ class AppController extends App
 
     /**
      * Authenticate the user using the cookie.
-     * 
+     *
      * @param User $user0
-     * @return boolean
+     *
+     * @return bool
      */
     private function cookieAuth(&$user0)
     {

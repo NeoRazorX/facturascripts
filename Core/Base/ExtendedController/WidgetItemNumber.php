@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Base\NumberTools;
 
 /**
- * Description of WidgetItemNumber
+ * This class manage all specific method for a WidgetItem of Number type.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -98,9 +98,9 @@ class WidgetItemNumber extends WidgetItem
     }
 
     /**
-     * Loads the attributes structure from a the database
+     * Loads the attributes structure from a JSON file
      *
-     * @param \SimpleXMLElement $column
+     * @param \SimpleXMLElement[] $column
      */
     public function loadFromJSON($column)
     {
@@ -114,18 +114,18 @@ class WidgetItemNumber extends WidgetItem
 
     /**
      * Generates the HTML code for widget special attributes such as:
-     * step
-     * maximum value
-     * minimum value
+     *  - 'step': difference to increase/decrease
+     *  - 'max': maximum value
+     *  - 'min': minimum value
      *
      * @return string
      */
     protected function specialAttributes()
     {
         $base = parent::specialAttributes();
-        $step = (empty($this->step)) ? '' : ' step="' . $this->step . '"';
-        $min = (empty($this->min)) ? '' : ' min="' . $this->min . '"';
-        $max = (empty($this->max)) ? '' : ' max="' . $this->max . '"';
+        $step = empty($this->step) ? '' : ' step="' . $this->step . '"';
+        $min = empty($this->min) ? '' : ' min="' . $this->min . '"';
+        $max = empty($this->max) ? '' : ' max="' . $this->max . '"';
         return $base . $step . $min . $max;
     }
 

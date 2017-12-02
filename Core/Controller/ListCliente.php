@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -49,7 +50,7 @@ class ListCliente extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        /* Clientes */
+        /* Customers */
         $this->addView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'customers', 'fa-users');
         $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente', 'email']);
 
@@ -60,7 +61,7 @@ class ListCliente extends ExtendedController\ListController
         $this->addFilterSelect('ListCliente', 'codgrupo', 'gruposclientes', '', 'nombre');
         $this->addFilterCheckbox('ListCliente', 'debaja', 'suspended');
 
-        /* Grupos */
+        /* Groups */
         $this->addView('FacturaScripts\Core\Model\GrupoClientes', 'ListGrupoClientes', 'groups', 'fa-folder-open');
         $this->addSearchFields('ListGrupoClientes', ['nombre', 'codgrupo']);
 

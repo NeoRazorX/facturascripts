@@ -18,7 +18,7 @@
 
 /**
  * Returns an array of tr html tags from the given json.
- * 
+ *
  * @param {type} json
  * @returns {Array|json2tr.items}
  */
