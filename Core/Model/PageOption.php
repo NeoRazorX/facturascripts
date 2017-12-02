@@ -132,16 +132,6 @@ class PageOption
         $this->rows = [];
     }
 
-    public function modals()
-    {
-        return json_encode($this->modals);
-    }
-
-    public function columns()
-    {
-        return json_encode($this->columns);
-    }
-
     /**
      * Load the column structure from the JSON
      *
