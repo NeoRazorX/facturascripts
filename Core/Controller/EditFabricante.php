@@ -19,14 +19,17 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the Fabricante model
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Nazca Networks <comercial@nazcanetworks.com>
  */
-class EditFabricante extends ExtendedController\EditController
+class EditFabricante extends ExtendedController\PanelController
 {
 
     /**
@@ -35,6 +38,35 @@ class EditFabricante extends ExtendedController\EditController
     public function getModelClassName()
     {
         return 'FacturaScripts\Core\Model\Fabricante';
+    }
+
+    protected function createViews()
+    {
+        $this->addEditView('FacturaScripts\Core\Model\Fabricante', 'EditFabricante', 'manufacturer');
+        $this->addListView('FacturaScripts\Core\Model\Articulo', 'EditFabricanteListArticulos', 'products');
+    }
+
+    /**
+     * Load view data procedure
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        $codfabricante = $this->request->get('code');
+
+
+        switch ($keyView) {
+            case 'EditFabricante':
+                $view->loadData($codfabricante);
+                break;
+
+            case 'EditFabricanteListArticulos':
+                $where = [new DataBase\DataBaseWhere('codfabricante', $codfabricante)];
+                $view->loadData($where);
+                break;
+        }
     }
 
     /**
