@@ -112,10 +112,6 @@ abstract class EditController extends Base\Controller
     private function execAfterAction($action)
     {
         switch ($action) {
-            case 'insert':
-                $this->insertAction();
-                break;
-
             case 'export':
                 $this->setTemplate(false);
                 $document = $this->view->export($this->exportManager, $this->response, $this->request->get('option'));
@@ -148,14 +144,6 @@ abstract class EditController extends Base\Controller
             return true;
         }
         return false;
-    }
-
-    /**
-     * Prepare the insertion of a new row
-     */
-    protected function insertAction()
-    {
-        
     }
 
     /**
