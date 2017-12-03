@@ -58,7 +58,7 @@ class Plugins extends Base\Controller
      * Plugin Manager.
      * @var Base\PluginManager
      */
-    public $pm;
+    public $pMng;
 
     /**
      * Runs the controller's private logic.
@@ -70,15 +70,15 @@ class Plugins extends Base\Controller
     {
         parent::privateCore($response, $user);
         $this->lang = $this->request->cookies->get('fsLang');
-        $this->pm = new Base\PluginManager();
-        $this->enabledPlugins = $this->pm->enabledPlugins();
+        $this->pMng = new Base\PluginManager();
+        $this->enabledPlugins = $this->pMng->enabledPlugins();
 
         $this->disablePlugin($this->request->get('disable', ''));
         $this->removePlugin($this->request->get('remove', ''));
         $this->enablePlugin($this->request->get('enable', ''));
         $this->uploadPlugin($this->request->files->get('plugin', []));
 
-        $this->enabledPlugins = $this->pm->enabledPlugins();
+        $this->enabledPlugins = $this->pMng->enabledPlugins();
         $this->postMaxSize = $this->returnKBytes(ini_get('post_max_size'));
         $this->uploadMaxFileSize = $this->returnKBytes(ini_get('upload_max_filesize'));
     }
@@ -114,55 +114,68 @@ class Plugins extends Base\Controller
      * Disable the plugin name received.
      *
      * @param string $disablePlugin
+     *
+     * @return bool
      */
     private function disablePlugin($disablePlugin)
     {
         if (!empty($disablePlugin)) {
             if (in_array($disablePlugin, $this->enabledPlugins)) {
-                $this->pm->disable($disablePlugin);
+                $this->pMng->disable($disablePlugin);
                 $this->miniLog->error($this->i18n->trans('plugin-disabled'));
-                $this->pm->deploy();
-            } else {
-                $this->miniLog->error($this->i18n->trans('plugin-is-not-yet-enabled'));
+                $this->pMng->deploy();
+                return true;
             }
+
+            $this->miniLog->error($this->i18n->trans('plugin-is-not-yet-enabled'));
+            return false;
         }
+        return false;
     }
 
     /**
      * Remove and disable the plugin name received.
      *
      * @param string $removePlugin
+     *
+     * @return bool
      */
     private function removePlugin($removePlugin)
     {
         if (!empty($removePlugin)) {
-            if (is_dir($this->pm->getPluginPath() . $removePlugin)) {
-                $this->pm->disable($removePlugin);
-                $this->pm->deploy();
+            if (is_dir($this->pMng->getPluginPath() . $removePlugin)) {
+                $this->pMng->disable($removePlugin);
+                $this->pMng->deploy();
                 $this->miniLog->error($this->i18n->trans('plugin-deleted', [$removePlugin]));
-                $this->delTree($this->pm->getPluginPath() . $removePlugin);
-            } else {
-                $this->miniLog->error($this->i18n->trans('plugin-yet-deleted', [$removePlugin]));
+                $this->delTree($this->pMng->getPluginPath() . $removePlugin);
+                return true;
             }
+            $this->miniLog->error($this->i18n->trans('plugin-yet-deleted', [$removePlugin]));
+            return false;
         }
+        return false;
     }
 
     /**
      * Enable the plugin name received.
      *
      * @param string $enablePlugin
+     *
+     * @return bool
      */
     private function enablePlugin($enablePlugin)
     {
         if (!empty($enablePlugin)) {
             if (!in_array($enablePlugin, $this->enabledPlugins)) {
-                $this->pm->enable($enablePlugin);
+                $this->pMng->enable($enablePlugin);
                 $this->miniLog->info($this->i18n->trans('plugin-enabled'));
-            } else {
-                $this->miniLog->info($this->i18n->trans('plugin-yet-enabled'));
+                $this->pMng->deploy();
+                return true;
             }
-            $this->pm->deploy();
+            $this->miniLog->info($this->i18n->trans('plugin-yet-enabled'));
+            return false;
         }
+        return false;
     }
 
     /**
@@ -174,10 +187,10 @@ class Plugins extends Base\Controller
     {
         foreach ($uploadFiles as $uploadFile) {
             if ($uploadFile->getMimeType() === 'application/zip') {
-                $listFilesBefore = array_diff(scandir($this->pm->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
-                $result = $this->unzipFile($uploadFile->getPathname(), $this->pm->getPluginPath(), $listFilesBefore);
+                $listFilesBefore = array_diff(scandir($this->pMng->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
+                $result = $this->unzipFile($uploadFile->getPathname(), $this->pMng->getPluginPath(), $listFilesBefore);
                 if ($result === true) {
-                    $listFilesAfter = array_diff(scandir($this->pm->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
+                    $listFilesAfter = array_diff(scandir($this->pMng->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
                     /// Contains added files on a list
                     $diffFolders = array_diff($listFilesAfter, $listFilesBefore);
                     foreach ($diffFolders as $folder) {
@@ -209,12 +222,12 @@ class Plugins extends Base\Controller
         $pluginFolder = substr($pluginUnzipped, 0, strpos($pluginUnzipped, '-')) ?: '';
         $pluginFolder = empty($pluginFolder) ? $pluginUnzipped : $pluginFolder;
         if ($pluginUnzipped !== $pluginFolder) {
-            $folder = $this->pm->getPluginPath() . $pluginFolder;
+            $folder = $this->pMng->getPluginPath() . $pluginFolder;
             if (file_exists($folder) && is_dir($folder)) {
                 $this->miniLog->info($this->i18n->trans('removing-previous-version', [$pluginFolder]));
                 $this->delTree($folder);
             }
-            if (!@rename($this->pm->getPluginPath() . $pluginUnzipped, $folder)) {
+            if (!@rename($this->pMng->getPluginPath() . $pluginUnzipped, $folder)) {
                 $this->miniLog->error($this->i18n->trans('plugin-can-not-renamed', [$pluginUnzipped, $pluginFolder]));
             } else {
                 $this->miniLog->info($this->i18n->trans('plugin-renamed', [$pluginUnzipped, $pluginFolder]));
@@ -242,7 +255,7 @@ class Plugins extends Base\Controller
             $this->miniLog->info($this->i18n->trans('removing-previous-version', [$pluginName]));
             $this->delTree($destinyFolder . $pluginName);
             /// Update the list before, if we delete an existing folder
-            $listFilesBefore = array_diff(scandir($this->pm->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
+            $listFilesBefore = array_diff(scandir($this->pMng->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
         }
         if ($result === true) {
             $zipFile->extractTo($destinyFolder);
@@ -281,8 +294,10 @@ class Plugins extends Base\Controller
         switch ($last) {
             case 'g':
                 $value *= 1024;
+                // no break - Pass all cases to transform to KB
             case 'm':
                 $value *= 1024;
+                // no break - Pass all cases to transform to KB
         }
         return $value;
     }

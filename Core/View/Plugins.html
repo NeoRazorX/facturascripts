@@ -76,12 +76,12 @@
             </tr>
         </thead>
         <tbody>
-        {% if fsc.pm.installedPlugins is empty %}
+        {% if fsc.pMng.installedPlugins is empty %}
             <tr class="table-warning">
                 <td colspan="3"><b>{{ i18n.trans('no-data') }}</b></td>
             </tr>
         {% else %}
-            {% for plugin in fsc.pm.installedPlugins %}
+            {% for plugin in fsc.pMng.installedPlugins %}
                 {% if plugin in fsc.enabledPlugins %}
                     <tr class="table-primary">
                 {% else %}
