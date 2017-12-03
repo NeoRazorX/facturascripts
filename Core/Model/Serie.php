@@ -150,7 +150,6 @@ class Serie
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName() . ' (codserie,descripcion,siniva,irpf) VALUES '
-            . "('A','SERIE A',false,'0'),('R','RECTIFICATIVAS',false,'0');";
+        return CSVImport::importTableSQL($this->tableName());
     }
 }

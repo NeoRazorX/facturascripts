@@ -187,7 +187,7 @@ class Familia
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName() . " (codfamilia,descripcion) VALUES ('VARI','VARIOS');";
+        return CSVImport::importTableSQL($this->tableName());
     }
 
     /**

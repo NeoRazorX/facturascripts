@@ -95,6 +95,6 @@ class Fabricante
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName() . " (codfabricante,nombre) VALUES ('OEM','OEM');";
+        return CSVImport::importTableSQL($this->tableName());
     }
 }

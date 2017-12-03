@@ -127,7 +127,6 @@ class Almacen
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName() . ' (codalmacen,nombre,poblacion,'
-            . "direccion,codpostal,telefono,fax,contacto) VALUES ('ALG','ALMACEN GENERAL','','','','','','');";
+        return CSVImport::importTableSQL($this->tableName());
     }
 }

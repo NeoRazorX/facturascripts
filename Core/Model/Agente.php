@@ -199,7 +199,6 @@ class Agente
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName() . ' (codagente,nombre,apellidos,dnicif)'
-            . " VALUES ('1','Paco','Pepe','00000014Z');";
+        return CSVImport::importTableSQL($this->tableName());
     }
 }

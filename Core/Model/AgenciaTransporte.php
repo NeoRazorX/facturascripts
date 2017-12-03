@@ -93,9 +93,6 @@ class AgenciaTransporte
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName() . ' (codtrans, nombre, web, activo) VALUES ' .
-            "('ASM', 'ASM', 'http://es.asmred.com/', true)," .
-            "('TIPSA', 'TIPSA', 'http://www.tip-sa.com/', true)," .
-            "('SEUR', 'SEUR', 'http://www.seur.com', true);";
+        return CSVImport::importTableSQL($this->tableName());
     }
 }

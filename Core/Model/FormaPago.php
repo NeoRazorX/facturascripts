@@ -190,12 +190,7 @@ class FormaPago
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName()
-            . ' (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)'
-            . " VALUES ('CONT','Al contado','Pagados',null,false,'+0day')"
-            . ",('TRANS','Transferencia bancaria','Emitidos',null,false,'+1month')"
-            . ",('TARJETA','Tarjeta de crédito','Pagados',null,false,'+0day')"
-            . ",('PAYPAL','PayPal','Pagados',null,false,'+0day');";
+        return CSVImport::importTableSQL($this->tableName());
     }
 
     /**
