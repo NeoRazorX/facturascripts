@@ -204,13 +204,13 @@ class Plugins extends Base\Controller
      *
      * @param string $pluginUnziped
      *
-     * @return bool|string
+     * @return string
      */
     private function getVerifiedPluginName($pluginUnziped)
     {
         /// If contains any '-', assume that is like 'pluginname-branch-commitid'
         /// Better verify it from facturascripts.ini field name
-        $pluginFolder = substr($pluginUnziped, 0, strpos($pluginUnziped, '-'));
+        $pluginFolder = substr($pluginUnziped, 0, strpos($pluginUnziped, '-')) ?: '';
         $pluginFolder = empty($pluginFolder) ? $pluginUnziped : $pluginFolder;
         if ($pluginUnziped !== $pluginFolder) {
             $folder = $this->pm->getPluginPath() . $pluginFolder;
@@ -276,11 +276,11 @@ class Plugins extends Base\Controller
      *
      * @param string $val
      *
-     * @return int|string
+     * @return int
      */
     private function returnKBytes($val)
     {
-        $value = substr(trim($val), 0, -1);
+        $value = (int) substr(trim($val), 0, -1);
         $last = strtolower(substr($val, -1));
         switch ($last) {
             case 'g':
