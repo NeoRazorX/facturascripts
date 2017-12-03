@@ -62,17 +62,25 @@ class PluginManager
     private static $minilog;
 
     /**
-     * Path of the plugin.list file
+     * Path of the plugin.list file.
      *
      * @var string
      */
     private static $pluginListFile;
 
     /**
+     * Path for plugins.
+     *
+     * @var string
+     */
+    private $pluginPath;
+
+    /**
      * PluginManager constructor.
      */
     public function __construct()
     {
+        $this->pluginPath = FS_FOLDER . '/Plugins/';
         if (self::$pluginListFile === null) {
             self::$deployedControllers = false;
             self::$i18n = new Translator();
@@ -83,6 +91,16 @@ class PluginManager
     }
 
     /**
+     * Returns the plugin path folder.
+     *
+     * @return string
+     */
+    public function getPluginPath()
+    {
+        return $this->pluginPath;
+    }
+
+    /**
      * Returns an array with the list of plugins in the plugin.list file.
      *
      * @return array
@@ -90,7 +108,11 @@ class PluginManager
     private function loadFromFile()
     {
         if (file_exists(self::$pluginListFile)) {
-            return explode(',', trim(file_get_contents(self::$pluginListFile)));
+            $list = explode(',', trim(file_get_contents(self::$pluginListFile)));
+            if (count($list) === 1 && empty($list[0])) {
+                return [];
+            }
+            return $list;
         }
 
         return [];
@@ -115,13 +137,23 @@ class PluginManager
     }
 
     /**
+     * Returns the list of installed plugins.
+     *
+     * @return array
+     */
+    public function installedPlugins()
+    {
+        return array_diff(scandir($this->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
+    }
+
+    /**
      * Activate the indicated plugin.
      *
      * @param string $pluginName
      */
     public function enable($pluginName)
     {
-        if (file_exists(FS_FOLDER . '/Plugins/' . $pluginName)) {
+        if (file_exists($this->pluginPath . $pluginName)) {
             self::$enabledPlugins[] = $pluginName;
             $this->save();
         }
@@ -161,7 +193,7 @@ class PluginManager
 
             /// examine the plugins
             foreach (self::$enabledPlugins as $pluginName) {
-                if (file_exists(FS_FOLDER . '/Plugins/' . $pluginName . '/' . $folder)) {
+                if (file_exists($this->pluginPath . $pluginName . '/' . $folder)) {
                     $this->linkFiles($folder, 'Plugins', $pluginName);
                 }
             }
@@ -255,7 +287,7 @@ class PluginManager
     
     /**
      * Link the files.
-     * 
+     *
      * @param string $folder
      * @param string $place
      * @param string $pluginName
@@ -267,7 +299,7 @@ class PluginManager
             $newPath = FS_FOLDER . '/Dinamic/' . $folder;
             $namespace = "\FacturaScripts\Core\\";
         } else {
-            $path = FS_FOLDER . '/Plugins/' . $pluginName . '/' . $folder;
+            $path = $this->pluginPath . $pluginName . '/' . $folder;
             $newPath = FS_FOLDER . '/Dinamic/Plugins/' . $pluginName . '/' . $folder;
             $namespace = "\FacturaScripts\Plugins\\" . $pluginName . '\\';
         }
@@ -290,7 +322,7 @@ class PluginManager
 
     /**
      * Link classes dynamically.
-     * 
+     *
      * @param string $fileName
      * @param string $folder
      * @param string $namespace
@@ -328,9 +360,8 @@ class PluginManager
     /**
      * Makes a recursive scan in folders inside a root folder and extracts the list of files
      * and pass its to an array as result.
-     * 
+     *
      * @param string $folder
-     * @param string $origin
      *
      * @return array $result
      */
