@@ -76,7 +76,7 @@ class Plugins extends Base\Controller
         $this->disablePlugin($this->request->get('disable', ''));
         $this->removePlugin($this->request->get('remove', ''));
         $this->enablePlugin($this->request->get('enable', ''));
-        $this->uploadPlugin($this->request->files->get('plugin'));
+        $this->uploadPlugin($this->request->files->get('plugin', []));
 
         $this->enabledPlugins = $this->pm->enabledPlugins();
         $this->postMaxSize = $this->returnKBytes(ini_get('post_max_size'));
@@ -172,29 +172,25 @@ class Plugins extends Base\Controller
      */
     private function uploadPlugin($uploadFiles)
     {
-        if ($uploadFiles === null) {
-            //$this->miniLog->error($this->i18n->trans('file-not-uploaded'));
-        } else {
-            foreach ($uploadFiles as $uploadFile) {
-                if ($uploadFile->getMimeType() === 'application/zip') {
-                    $listFilesBefore = array_diff(scandir($this->pm->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
-                    $result = $this->unzipFile($uploadFile->getPathname(), $this->pm->getPluginPath(), $listFilesBefore);
-                    if ($result === true) {
-                        $listFilesAfter = array_diff(scandir($this->pm->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
-                        /// Contains added files on a list
-                        $diffFolders = array_diff($listFilesAfter, $listFilesBefore);
-                        foreach ($diffFolders as $folder) {
-                            $pluginName = $this->getVerifiedPluginName($folder);
-                            $this->miniLog->info($this->i18n->trans('plugin-installed', [$pluginName]));
-                            $this->enablePlugin($pluginName);
-                        }
-                    } else {
-                        $this->miniLog->error($this->i18n->trans('can-not-open-zip-file', [$result]));
+        foreach ($uploadFiles as $uploadFile) {
+            if ($uploadFile->getMimeType() === 'application/zip') {
+                $listFilesBefore = array_diff(scandir($this->pm->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
+                $result = $this->unzipFile($uploadFile->getPathname(), $this->pm->getPluginPath(), $listFilesBefore);
+                if ($result === true) {
+                    $listFilesAfter = array_diff(scandir($this->pm->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
+                    /// Contains added files on a list
+                    $diffFolders = array_diff($listFilesAfter, $listFilesBefore);
+                    foreach ($diffFolders as $folder) {
+                        $pluginName = $this->getVerifiedPluginName($folder);
+                        $this->miniLog->info($this->i18n->trans('plugin-installed', [$pluginName]));
+                        $this->enablePlugin($pluginName);
                     }
-                    unlink($uploadFile->getPathname());
                 } else {
-                    $this->miniLog->error($this->i18n->trans('file-not-supported'));
+                    $this->miniLog->error($this->i18n->trans('can-not-open-zip-file', [$result]));
                 }
+                unlink($uploadFile->getPathname());
+            } else {
+                $this->miniLog->error($this->i18n->trans('file-not-supported'));
             }
         }
     }
@@ -202,26 +198,26 @@ class Plugins extends Base\Controller
     /**
      * Return the verified name, if its different than extracted folder, also rename it.
      *
-     * @param string $pluginUnziped
+     * @param string $pluginUnzipped
      *
      * @return string
      */
-    private function getVerifiedPluginName($pluginUnziped)
+    private function getVerifiedPluginName($pluginUnzipped)
     {
         /// If contains any '-', assume that is like 'pluginname-branch-commitid'
         /// Better verify it from facturascripts.ini field name
-        $pluginFolder = substr($pluginUnziped, 0, strpos($pluginUnziped, '-')) ?: '';
-        $pluginFolder = empty($pluginFolder) ? $pluginUnziped : $pluginFolder;
-        if ($pluginUnziped !== $pluginFolder) {
+        $pluginFolder = substr($pluginUnzipped, 0, strpos($pluginUnzipped, '-')) ?: '';
+        $pluginFolder = empty($pluginFolder) ? $pluginUnzipped : $pluginFolder;
+        if ($pluginUnzipped !== $pluginFolder) {
             $folder = $this->pm->getPluginPath() . $pluginFolder;
             if (file_exists($folder) && is_dir($folder)) {
                 $this->miniLog->info($this->i18n->trans('removing-previous-version', [$pluginFolder]));
                 $this->delTree($folder);
             }
-            if (!@rename($this->pm->getPluginPath() . $pluginUnziped, $folder)) {
-                $this->miniLog->error($this->i18n->trans('plugin-can-not-renamed', [$pluginUnziped, $pluginFolder]));
+            if (!@rename($this->pm->getPluginPath() . $pluginUnzipped, $folder)) {
+                $this->miniLog->error($this->i18n->trans('plugin-can-not-renamed', [$pluginUnzipped, $pluginFolder]));
             } else {
-                $this->miniLog->info($this->i18n->trans('plugin-renamed', [$pluginUnziped, $pluginFolder]));
+                $this->miniLog->info($this->i18n->trans('plugin-renamed', [$pluginUnzipped, $pluginFolder]));
             }
         }
         return $pluginFolder;
