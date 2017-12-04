@@ -21,8 +21,6 @@ namespace FacturaScripts\Core\Base;
 
 use Exception;
 
-const DS = DIRECTORY_SEPARATOR;
-
 /**
  * FacturaScripts plugins manager.
  *
