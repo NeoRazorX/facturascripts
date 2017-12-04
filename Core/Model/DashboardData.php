@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,16 +19,19 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Element of the Dashboard of FacturaScripts, each corresponds to a card.
+ * Components data to show into the Dashboard of FacturaScripts.
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class DashboardCard
+class DashboardData
 {
 
     use Base\ModelTrait {
         clear as private traitClear;
-        url as private traitURL;
+        loadFromData as traitLoadFromData;
+        saveInsert as traitSaveInsert;
+        url as traitURL;
     }
 
     /**
@@ -39,6 +42,13 @@ class DashboardCard
     public $id;
 
     /**
+     * Name of visual component
+     *
+     * @var string
+     */
+    public $component;
+
+    /**
      * Nick of the user to whom the card is addressed.
      *
      * @var string
@@ -46,32 +56,25 @@ class DashboardCard
     public $nick;
 
     /**
-     * Description to shown on the card.
+     * Date creation of the card.
      *
      * @var string
      */
-    public $fecha;
+    public $creationdate;
 
     /**
      * Date from which to show the card.
      *
      * @var string
      */
-    public $descripcion;
+    public $displaydate;
 
     /**
-     * Card color.
-     * 
-     * @var string 
+     * Set of configuration values
+     *
+     * @var array
      */
-    public $color;
-
-    /**
-     * Optional link for actions.
-     * 
-     * @var string 
-     */
-    public $link;
+    public $properties;
 
     /**
      * Returns the name of the table that uses this model.
@@ -80,7 +83,7 @@ class DashboardCard
      */
     public static function tableName()
     {
-        return 'dashboardcards';
+        return 'fs_dashboard_data';
     }
 
     /**
@@ -94,31 +97,54 @@ class DashboardCard
     }
 
     /**
+     * This function is called when creating the model table.
+     * Returns the SQL that will be executed after the creation of the table,
+     * useful to insert default values.
+     *
+     * @return string
+     */
+    public function install()
+    {
+        new User();
+
+        return '';
+    }
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
     {
         $this->traitClear();
-        $this->fecha = date('d-m-Y');
+        $this->creationdate = date('d-m-Y');
+        $this->displaydate = date('d-m-Y');
+        $this->properties = [];
     }
 
     /**
-     * Returns the url where to see/modify the data.
+     * Load data from array
      *
-     * @param string $type
-     *
-     * @return string
+     * @param array $data
      */
+    public function loadFromData($data)
+    {
+        $this->traitLoadFromData($data, ['properties']);
+        $this->properties = isset($data['properties']) ? json_decode($data['properties'], true) : [];
+    }
+
+    private function saveInsert()
+    {
+        $values = ['properties' => json_encode($this->properties)];
+        return $this->traitSaveInsert($values);
+    }
+
     public function url($type = 'auto')
     {
         $value = $this->primaryColumnValue();
         $model = $this->modelClassName();
         $result = 'index.php?page=';
-        switch ($type) {
-            case 'list':
-                $result .= 'Dashboard';
-                break;
 
+        switch ($type) {
             case 'edit':
                 $result .= 'Edit' . $model . '&code=' . $value;
                 break;
@@ -128,19 +154,8 @@ class DashboardCard
                 break;
 
             default:
-                $result .= empty($value) ? 'Dashboard' : 'Edit' . $model . '&code=' . $value;
-                break;
+                $result .= 'Dashboard';
         }
-
         return $result;
-    }
-
-    public function cardClass()
-    {
-        if ($this->color !== null) {
-            return 'border-' . $this->color;
-        }
-
-        return 'border-secondary';
     }
 }

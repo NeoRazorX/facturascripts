@@ -25,7 +25,7 @@ use FacturaScripts\Core\Base\ExtendedController;
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class EditDashboardCard extends ExtendedController\EditController
+class EditDashboardData extends ExtendedController\EditController
 {
 
     /**
@@ -33,7 +33,7 @@ class EditDashboardCard extends ExtendedController\EditController
      */
     public function getModelName()
     {
-        return 'FacturaScripts\Core\Model\DashboardCard';
+        return 'FacturaScripts\Core\Model\DashboardData';
     }
 
     /**

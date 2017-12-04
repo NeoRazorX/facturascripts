@@ -24,30 +24,16 @@
             <hr/>
         </div>
     </div>
+
     <div class="row">
-        <div class="card-columns" style="padding-left: 10px; padding-right: 10px;">
-        {% for card in fsc.cursor %}
-            <div class="card {{ card.cardClass() }}">
-                <div class="card-body">
-                    <p class="card-text">{{ card.descripcion }}</p>
-                </div>
-                <div class="card-footer">
-                    {% if card.link %}
-                    <a href="{{ card.link }}" class="btn btn-{{ card.color }} btn-sm float-right">link</a>
-                    {% endif %}
-                    <div class="btn-group">
-                        <a href="{{ card.url() }}" class="btn btn-outline-secondary btn-sm">
-                            <i class="fa fa-edit" aria-hidden="true"></i>
-                        </a>
-                        <a href="{{ card.url() }}" class="btn btn-outline-secondary btn-sm">
-                            <i class="fa fa-star" aria-hidden="true"></i>
-                        </a>
-                    </div>
-                    &nbsp;
-                    <small>{{ card.fecha }}</small>
-                </div>
-            </div>
-        {% endfor %}
+        <div class="card-columns col-md-12" style="column-count: 2;">
+
+    {% for index, component in fsc.components %}
+        {% import 'Macro/' ~ component.getTemplate() as componentTemplate %}
+        <div class="card" id="{{ index }}">
+            {{ componentTemplate.run(component, i18n) }}
+        </div>
+    {% endfor %}
         </div>
     </div>
 </div>
