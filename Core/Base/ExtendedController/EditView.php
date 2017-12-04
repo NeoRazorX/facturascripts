@@ -117,6 +117,6 @@ class EditView extends BaseView
      */
     public function export(&$exportManager)
     {
-        $exportManager->generateModelPage($this->model);
+        $exportManager->generateModelPage($this->model, $this->getColumns(), $this->title);
     }
 }

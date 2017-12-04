@@ -36,9 +36,7 @@ namespace FacturaScripts\Core\Model;
 class ArticuloCombinacion
 {
 
-    use Base\ModelTrait {
-        saveInsert as private saveInsertTrait;
-    }
+    use Base\ModelTrait;
 
     /**
      * Clave primaria. Identificador de este par atributo-valor, no de la combinación.
@@ -140,6 +138,22 @@ class ArticuloCombinacion
     }
 
     /**
+     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
+     * que se ejecutará tras la creación de la tabla. útil para insertar valores
+     * por defecto.
+     *
+     * @return string
+     */
+    public function install()
+    {
+        /// nos aseguramos de que existan las tablas necesarias
+        //new Atributo();
+        new AtributoValor();
+
+        return '';
+    }
+
+    /**
      * Resetea los valores de todas las propiedades modelo.
      */
     public function clear()
@@ -157,192 +171,11 @@ class ArticuloCombinacion
         $this->stockfis = 0;
     }
 
-    /**
-     * Devuelve la combinación de artículo con codigo = $cod
-     *
-     * @deprecated since version 110
-     *
-     * @param string $cod
-     *
-     * @return ArticuloCombinacion|bool
-     */
-    public function getByCodigo($cod)
-    {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codigo = ' . $this->dataBase->var2str($cod) . ';';
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            return new self($data[0]);
-        }
-
-        return false;
-    }
-
-    /**
-     * Elimina todas las combinaciones del artículo con referencia = $ref
-     *
-     * @param string $ref
-     *
-     * @return bool
-     */
-    public function deleteFromRef($ref)
-    {
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($ref) . ';';
-
-        return $this->dataBase->exec($sql);
-    }
-
-    /**
-     * Devuelve un array con todas las combinaciones del artículo con referencia = $ref
-     *
-     * @param string $ref
-     *
-     * @return self[]
-     */
-    public function allFromRef($ref)
-    {
-        $lista = [];
-
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($ref)
-            . ' ORDER BY codigo ASC, nombreatributo ASC;';
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $lista[] = new self($d);
-            }
-        }
-
-        return $lista;
-    }
-
-    /**
-     * Devuelve un array con todos los datos de la combinación con código = $cod,
-     * ten en cuenta que lo que se almacenan son los pares atributo => valor.
-     *
-     * @param string $cod
-     *
-     * @return self[]
-     */
-    public function allFromCodigo($cod)
-    {
-        $lista = [];
-
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codigo = ' . $this->dataBase->var2str($cod)
-            . ' ORDER BY nombreatributo ASC;';
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $lista[] = new self($d);
-            }
-        }
-
-        return $lista;
-    }
-
-    /**
-     * Devuelve un array con todos los datos de la combinación con codigo2 = $cod,
-     * ten en cuenta que lo que se almacena son los pares atrubuto => valor.
-     *
-     * @param string $cod
-     *
-     * @return self[]
-     */
-    public function allFromCodigo2($cod)
-    {
-        $lista = [];
-
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codigo2 = ' . $this->dataBase->var2str($cod)
-            . ' ORDER BY nombreatributo ASC;';
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $lista[] = new self($d);
-            }
-        }
-
-        return $lista;
-    }
-
-    /**
-     * Devuelve las combinaciones del artículos $ref agrupadas por código.
-     *
-     * @param string $ref
-     *
-     * @return array
-     */
-    public function combinacionesFromRef($ref)
-    {
-        $lista = [];
-
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($ref)
-            . ' ORDER BY codigo ASC, nombreatributo ASC;';
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                if (isset($lista[$d['codigo']])) {
-                    $lista[$d['codigo']][] = new self($d);
-                } else {
-                    $lista[$d['codigo']] = [new self($d)];
-                }
-            }
-        }
-
-        return $lista;
-    }
-
-    /**
-     * Devuelve un array con las combinaciones que contienen $query en su referencia
-     * o que coincide con su código de barras.
-     *
-     * @param string $query
-     *
-     * @return self[]
-     */
-    public function search($query = '')
-    {
-        $artilist = [];
-        $query = self::noHtml(mb_strtolower($query, 'UTF8'));
-
-        $sql = 'SELECT * FROM ' . $this->tableName() . " WHERE referencia LIKE '" . $query . "%'"
-            . ' OR codbarras = ' . $this->dataBase->var2str($query);
-
-        $data = $this->dataBase->selectLimit($sql, 200);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $artilist[] = new self($d);
-            }
-        }
-
-        return $artilist;
-    }
-
-    /**
-     * Inserta los datos del modelo en la base de datos.
-     *
-     * @return bool
-     */
-    private function saveInsert()
+    public function test()
     {
         if ($this->codigo === null) {
             $this->codigo = (string) $this->getNewCodigo();
         }
-
-        return $this->saveInsertTrait();
-    }
-
-    /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        /// nos aseguramos de que existan las tablas necesarias
-        //new Atributo();
-        new AtributoValor();
-
-        return '';
     }
 
     /**

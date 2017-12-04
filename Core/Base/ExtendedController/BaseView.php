@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Base definition for the views used in ExtendedControllers

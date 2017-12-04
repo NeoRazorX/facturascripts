@@ -34,6 +34,7 @@ class EditPresupuestoCliente extends ExtendedController\DocumentController
      */
     protected function createViews()
     {
+        parent::createViews();
         $this->addEditView('FacturaScripts\Core\Model\PresupuestoCliente', 'EditPresupuestoCliente', 'budget');
     }
 

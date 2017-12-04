@@ -74,7 +74,7 @@ class EditAlbaranProveedor extends ExtendedController\DocumentController
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'delivery-note';
-        $pagedata['menu'] = 'sales';
+        $pagedata['menu'] = 'purchases';
         $pagedata['icon'] = 'fa-files-o';
         $pagedata['showonmenu'] = false;
 

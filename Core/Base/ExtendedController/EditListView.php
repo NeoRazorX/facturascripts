@@ -174,7 +174,7 @@ class EditListView extends BaseView
     public function export(&$exportManager)
     {
         if ($this->count > 0) {
-            $exportManager->generateListModelPage($this->model, $this->where, $this->order, $this->offset, $this->getColumns());
+            $exportManager->generateListModelPage($this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title);
         }
     }
 }

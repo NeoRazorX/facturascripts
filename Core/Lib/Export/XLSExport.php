@@ -59,8 +59,10 @@ class XLSExport implements ExportInterface
     /**
      * Adds a new page with the model data.
      * @param mixed $model
+     * @param array $columns
+     * @param string $title
      */
-    public function generateModelPage($model)
+    public function generateModelPage($model, $columns, $title = '')
     {
         $tableData = [];
         foreach ((array) $model as $key => $value) {
@@ -79,8 +81,9 @@ class XLSExport implements ExportInterface
      * @param array $order
      * @param int $offset
      * @param array $columns
+     * @param string $title
      */
-    public function generateListModelPage($model, $where, $order, $offset, $columns)
+    public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '')
     {
         /// Get the columns
         $tableCols = [];

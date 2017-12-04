@@ -55,26 +55,25 @@ class PDFExport implements ExportInterface
     private $pdf;
 
     /**
-     * Y position in page. We use to solve Cezpdf bug on new page.
-     * @var int|double 
+     * PDF table width.
+     * @var float 
      */
-    private $yPos;
+    private $tableWidth;
 
     /**
      * PDFExport constructor.
      */
     public function __construct()
     {
-        $this->numberTools = new NumberTools();
         $this->i18n = new Translator();
+        $this->numberTools = new NumberTools();
+        $this->tableWidth = 0;
     }
 
     public function getDoc()
     {
         if ($this->pdf === null) {
-            $this->pdf = new \Cezpdf('a4', 'portrait');
-            $this->pdf->addInfo('Creator', 'FacturaScripts');
-            $this->pdf->addInfo('Producer', 'FacturaScripts');
+            $this->newPage();
             $this->pdf->ezText('');
         }
 
@@ -93,18 +92,35 @@ class PDFExport implements ExportInterface
     /**
      * Adds a new page with the model data.
      * @param mixed $model
+     * @param array $columns
+     * @param string $title
      */
-    public function generateModelPage($model)
+    public function generateModelPage($model, $columns, $title = '')
     {
+        $this->newPage();
+        $tableCols = [];
+        $tableColsTitle = [];
+        $tableOptions = ['width' => $this->tableWidth, 'showHeadings' => 0, 'cols' => []];
         $tableData = [];
-        foreach ((array) $model as $key => $value) {
-            if (is_string($value)) {
-                $tableData[] = ['key' => $key, 'value' => $value];
+
+        /// Get the columns
+        $this->setTableColumns($columns, $tableCols, $tableColsTitle, $tableOptions);
+
+        foreach ($tableColsTitle as $key => $colTitle) {
+            $value = null;
+            if (isset($model->{$key})) {
+                $value = $model->{$key};
+            }
+
+            if (is_bool($value)) {
+                $txt = $value ? $this->i18n->trans('yes') : $this->i18n->trans('no');
+                $tableData[] = ['key' => $colTitle, 'value' => $txt];
+            } else if ($value !== null && $value !== '') {
+                $tableData[] = ['key' => $colTitle, 'value' => $value];
             }
         }
 
-        $this->newPage();
-        $this->pdf->ezTable($tableData);
+        $this->pdf->ezTable($tableData, ['key' => 'key', 'value' => 'value'], $title, $tableOptions);
     }
 
     /**
@@ -114,8 +130,9 @@ class PDFExport implements ExportInterface
      * @param array $order
      * @param int $offset
      * @param array $columns
+     * @param string $title
      */
-    public function generateListModelPage($model, $where, $order, $offset, $columns)
+    public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '')
     {
         $orientation = 'portrait';
         $tableCols = [];
@@ -125,12 +142,12 @@ class PDFExport implements ExportInterface
 
         /// Get the columns
         $this->setTableColumns($columns, $tableCols, $tableColsTitle, $tableOptions);
-
         if (count($tableCols) > 5) {
             $orientation = 'landscape';
         }
 
         $this->newPage($orientation);
+        $tableOptions['width'] = $this->tableWidth;
 
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         if (empty($cursor)) {
@@ -138,7 +155,7 @@ class PDFExport implements ExportInterface
         }
         while (!empty($cursor)) {
             $tableData = $this->getTableData($cursor, $tableCols, $tableOptions);
-            $this->pdf->ezTable($tableData, $tableColsTitle, '', $tableOptions);
+            $this->pdf->ezTable($tableData, $tableColsTitle, $title, $tableOptions);
 
             /// Advance within the results
             $offset += self::LIST_LIMIT;
@@ -156,10 +173,14 @@ class PDFExport implements ExportInterface
             $this->pdf = new \Cezpdf('a4', $orientation);
             $this->pdf->addInfo('Creator', 'FacturaScripts');
             $this->pdf->addInfo('Producer', 'FacturaScripts');
-            $this->yPos = $this->pdf->y;
+
+            $this->tableWidth = $this->pdf->ez['pageWidth'] - 60;
+
+            $this->pdf->ezStartPageNumbers($this->pdf->ez['pageWidth'] / 2, 10, 9, 'left', '{PAGENUM} / {TOTALPAGENUM}');
+        } else if ($this->pdf->y < 200) {
+            $this->pdf->ezNewPage();
         } else {
-            $this->pdf->newPage();
-            $this->pdf->y = $this->yPos;
+            $this->pdf->ezText("\n");
         }
     }
 
@@ -171,7 +192,7 @@ class PDFExport implements ExportInterface
                 continue;
             }
 
-            if (isset($col->display) && $col->display != 'none') {
+            if (isset($col->display) && $col->display != 'none' && isset($col->widget->fieldName)) {
                 $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
                 $tableColsTitle[$col->widget->fieldName] = $this->i18n->trans($col->title);
                 $tableOptions['cols'][$col->widget->fieldName] = [
@@ -205,7 +226,7 @@ class PDFExport implements ExportInterface
                     if (in_array($tableOptions['cols'][$col]['col-type'], ['money', 'number'])) {
                         $value = $this->numberTools->format($value, 2);
                     } elseif (is_bool($value)) {
-                        $value = $value == 1 ? $this->i18n->trans('enabled') : $this->i18n->trans('disabled');
+                        $value = $value == 1 ? $this->i18n->trans('yes') : $this->i18n->trans('no');
                     } elseif (is_null($value)) {
                         $value = '';
                     }

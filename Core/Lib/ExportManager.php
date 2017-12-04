@@ -93,16 +93,18 @@ class ExportManager
     {
         $response->setContent(self::$engine->getDoc());
     }
-    
+
     /**
      * Adds a new page with the model data.
      * @param mixed $model
+     * @param array $columns
+     * @param string $title
      */
-    public function generateModelPage($model)
+    public function generateModelPage($model, $columns, $title = '')
     {
-        self::$engine->generateModelPage($model);
+        self::$engine->generateModelPage($model, $columns, $title);
     }
-    
+
     /**
      * Adds a new page with a table listing the models data.
      * @param mixed $model
@@ -110,10 +112,11 @@ class ExportManager
      * @param array $order
      * @param int $offset
      * @param array $columns
+     * @param string $title
      */
-    public function generateListModelPage($model, $where, $order, $offset, $columns)
+    public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '')
     {
-        self::$engine->generateListModelPage($model, $where, $order, $offset, $columns);
+        self::$engine->generateListModelPage($model, $where, $order, $offset, $columns, $title);
     }
 
     /**
