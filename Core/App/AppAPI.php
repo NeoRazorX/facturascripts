@@ -16,13 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * App description
+ * AppAPI is the class used for API.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -32,7 +33,7 @@ class AppAPI extends App
     /**
      * Runs the API.
      *
-     * @return boolean
+     * @return bool
      */
     public function run()
     {
@@ -80,7 +81,7 @@ class AppAPI extends App
         $map = $this->getResourcesMap();
 
         $resourceName = $this->request->get('resource', '');
-        if ($resourceName == '') {
+        if ($resourceName === '') {
             $this->exposeResources($map);
             return true;
         }
@@ -96,6 +97,42 @@ class AppAPI extends App
     }
 
     /**
+     * This method is equivalent to $this->request->get($key, $default),
+     * but always return an array, as expected for some parameters like operation, filter or sort.
+     *
+     * @param string $key
+     * @param string $default
+     *
+     * @return array
+     */
+    private function getRequestArray($key, $default = '')
+    {
+        $array = $this->request->get($key, $default);
+        return is_array($array) ? $array : []; /// if is string has bad format
+    }
+
+    /**
+     * Returns the where clauses.
+     *
+     * @param array $filter
+     * @param array $operation
+     * @param string $defaultOperation
+     *
+     * @return DataBaseWhere[]
+     */
+    private function getWhereValues($filter, $operation, $defaultOperation = 'AND')
+    {
+        $where = [];
+        foreach ($filter as $key => $value) {
+            if (!isset($operation[$key])) {
+                $operation[$key] = $defaultOperation;
+            }
+            $where[] = new DataBaseWhere($key, $value, 'LIKE', $operation[$key]);
+        }
+        return $where;
+    }
+
+    /**
      * Process the resource, allowing POST/PUT/DELETE/GET ALL actions
      *
      * @param string $modelName
@@ -106,24 +143,12 @@ class AppAPI extends App
     {
         try {
             $model = new $modelName();
-            $defaultOperation = 'AND';
-            $operationArray = $this->request->get('operation', '');
-            $filterArray = $this->request->get('filter', '');
-            $orderArray = $this->request->get('sort', '');
             $offset = (int) $this->request->get('offset', 0);
             $limit = (int) $this->request->get('limit', 50);
-
-            $operation = is_array($operationArray) ? $operationArray : []; /// if is string has bad format
-            $filter = is_array($filterArray) ? $filterArray : []; /// if is string has bad format
-            $order = is_array($orderArray) ? $orderArray : []; /// if is string has bad format
-
-            $where = [];
-            foreach ($filter as $key => $value) {
-                if (!isset($operation[$key])) {
-                    $operation[$key] = $defaultOperation;
-                }
-                $where[] = new DataBaseWhere($key, $value, 'LIKE', $operation[$key]);
-            }
+            $operation = $this->getRequestArray('operation');
+            $filter = $this->getRequestArray('filter');
+            $order = $this->getRequestArray('sort');
+            $where = $this->getWhereValues($filter, $operation);
 
             switch ($this->request->getMethod()) {
                 case 'POST':
@@ -205,7 +230,7 @@ class AppAPI extends App
             if (substr($fName, -4) === '.php') {
                 $modelName = substr($fName, 0, -4);
 
-                /// convertimos en plural
+                /// Conversion to plural
                 if (substr($modelName, -1) === 's') {
                     $plural = strtolower($modelName);
                 } elseif (substr($modelName, -3) === 'ser' || substr($modelName, -4) === 'tion') {

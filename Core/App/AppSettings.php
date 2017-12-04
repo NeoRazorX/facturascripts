@@ -16,21 +16,33 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Model\Settings;
 
 /**
- * Description of AppSettings
+ * AppSettings manage the essential data settings of the app.
  *
  * @author Carlos García Gómez
  */
 class AppSettings
 {
-
+    /**
+     * Array of data settings.
+     * @var array
+     */
     private static $data;
+
+    /**
+     * Contains if need to save data.
+     * @var bool
+     */
     private static $save;
 
+    /**
+     * AppSettings constructor.
+     */
     public function __construct()
     {
         if (!isset(self::$data)) {
@@ -39,6 +51,15 @@ class AppSettings
         }
     }
 
+    /**
+     * Return the value of property in group.
+     *
+     * @param string $group
+     * @param string $property
+     * @param string|null $default
+     *
+     * @return mixed
+     */
     public static function get($group, $property, $default = null)
     {
         if (!isset(self::$data[$group][$property])) {
@@ -49,6 +70,9 @@ class AppSettings
         return self::$data[$group][$property];
     }
 
+    /**
+     * Load default App Settings.
+     */
     public function load()
     {
         $settingsModel = new Settings();
@@ -66,13 +90,16 @@ class AppSettings
             'FS_ITEM_LIMIT' => ['property' => 'item_limit', 'default' => 50],
         ];
         $this->setConstants($constants);
-        $this->get('default', 'homepage', 'AdminHome');
+        static::get('default', 'homepage', 'AdminHome');
 
         if (self::$save) {
             $this->save();
         }
     }
 
+    /**
+     * Store the model data in the database.
+     */
     private function save()
     {
         foreach (self::$data as $key => $value) {
@@ -85,11 +112,16 @@ class AppSettings
         self::$save = false;
     }
 
+    /**
+     * Set the values for constants.
+     *
+     * @param array $data
+     */
     private function setConstants($data)
     {
         foreach ($data as $key => $value) {
             if (!defined($key)) {
-                define($key, $this->get('default', $value['property'], $value['default']));
+                define($key, static::get('default', $value['property'], $value['default']));
             }
         }
     }
