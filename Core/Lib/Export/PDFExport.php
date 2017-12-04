@@ -47,16 +47,16 @@ class PDFExport implements ExportInterface
      * @var NumberTools
      */
     private $numberTools;
-    
+
     /**
      * PDF object.
      * @var \Cezpdf 
      */
     private $pdf;
-    
+
     /**
      * Y position in page. We use to solve Cezpdf bug on new page.
-     * @var int 
+     * @var int|double 
      */
     private $yPos;
 
@@ -103,16 +103,7 @@ class PDFExport implements ExportInterface
             }
         }
 
-        if ($this->pdf === null) {
-            $this->pdf = new \Cezpdf('a4', 'portrait');
-            $this->pdf->addInfo('Creator', 'FacturaScripts');
-            $this->pdf->addInfo('Producer', 'FacturaScripts');
-            $this->yPos = $this->pdf->y;
-        } else {
-            $this->pdf->newPage();
-            $this->pdf->y = $this->yPos;
-        }
-
+        $this->newPage();
         $this->pdf->ezTable($tableData);
     }
 
@@ -139,15 +130,7 @@ class PDFExport implements ExportInterface
             $orientation = 'landscape';
         }
 
-        if ($this->pdf === null) {
-            $this->pdf = new \Cezpdf('a4', $orientation);
-            $this->pdf->addInfo('Creator', 'FacturaScripts');
-            $this->pdf->addInfo('Producer', 'FacturaScripts');
-            $this->yPos = $this->pdf->y;
-        } else {
-            $this->pdf->newPage();
-            $this->pdf->y = $this->yPos;
-        }
+        $this->newPage($orientation);
 
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         if (empty($cursor)) {
@@ -160,6 +143,23 @@ class PDFExport implements ExportInterface
             /// Advance within the results
             $offset += self::LIST_LIMIT;
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
+        }
+    }
+
+    /**
+     * Adds a new page.
+     * @param string $orientation
+     */
+    private function newPage($orientation = 'portrait')
+    {
+        if ($this->pdf === null) {
+            $this->pdf = new \Cezpdf('a4', $orientation);
+            $this->pdf->addInfo('Creator', 'FacturaScripts');
+            $this->pdf->addInfo('Producer', 'FacturaScripts');
+            $this->yPos = $this->pdf->y;
+        } else {
+            $this->pdf->newPage();
+            $this->pdf->y = $this->yPos;
         }
     }
 
