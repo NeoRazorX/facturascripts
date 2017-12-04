@@ -22,7 +22,7 @@
         });
         
         var container = document.getElementById('document-lines');
-        var hot = new Handsontable(container, {
+        var hstable = new Handsontable(container, {
             data: documentLines,
             columns: documentLineColumns,
             rowHeaders: true,
@@ -58,6 +58,9 @@
                 if (result) {
                     var form = document.forms[formName];
                     form.action.value = 'delete';
+                    if(formName === "f_document_primary") {
+                        form.action.value = 'delete-doc';
+                    }
                     form.submit();
                 }
             }
@@ -99,13 +102,10 @@
 {% from 'Macro/BaseController.html' import rowFooterForEditView as rowFooterForEditView %}
 {% from 'Macro/BaseController.html' import modalFormFromColumns as modalFormFromColumns %}
 
-{# -- Main Body -- #}
 <div class="container-fluid">
     {{ parent() }}
-
-    {# -- Header Row -- #}
-    <div id="header" class="row">
-        <div class="col-6 d-print-none">
+    <div class="row">
+        <div class="col-12 d-print-none">
             <div class="btn-group" aria-label="Button group with navigation actions">
                 <a href="{{ list_url }}" class="btn btn-sm btn-outline-secondary">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i>
@@ -115,29 +115,16 @@
                    <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
             </div>
-
-            {# -- Adds print and export options  -- #}
+            {# -- Adds print and export options -- #}
             {{ exportData(fsc, i18n, 'edit') }}
         </div>
-        <div class="col-6 text-right">
-            <div class="btn-group">
-                <a href="#" class="btn btn-sm btn-danger">
-                    <i class="fa fa-trash" aria-hidden="true"></i>
-                    <span class="d-none d-sm-inline-block">&nbsp;{{ remove }}</span>
-                </a>
-                <button type="submit" class="btn btn-sm btn-primary">
-                    <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
-                </button>
-            </div>
-        </div>
     </div>
-
-    <br/>
-
-    {# -- Data Row -- #}
-    <div id="data" class="row">
+    {# -- Tabs -- #}
+    <div class="row">
         <div class="col-sm-12">
+            <br/>
             <div class="nav nav-tabs" id="optionsindex" role="tablist">
+                {# -- Primary tab -- #}
                 <a class="nav-link active" id="document-primary-tab" data-toggle="pill" href="#document-primary" role="tab" aria-controls="document-primary" aria-expanded="true">
                     <i class="fa fa-file fa-fw" aria-hidden="true"></i>
                 </a>
@@ -148,58 +135,95 @@
                     </a>
                 {% endfor %}
             </div>
-            <div class="tab-content" id="optionsindex-tabContent">
-                <div class="tab-pane fade show active" id="document-primary" role="tabpanel" aria-labelledby="document-primary-tab">
-                    <div class="table-responsive">
-                        <table class="table table-condensed">
-                            <tr class="table-info">
-                                <td colspan="4">
-                                    <span>Empresa /</span>
-                                    <span>{{ fsc.document.codalmacen }} /</span>
-                                    <span>{{ fsc.document.nombrecliente }} /</span>
-                                    <span>{{ fsc.document.codserie }} /</span>
-                                    <span>{{ fsc.document.fecha }} /</span>
-                                    <span>{{ fsc.document.hora }} /</span>
-                                    <span>{{ fsc.document.codigo }}</span>
-                                </td>
-                            </tr>
-                            <tr class="table-info">
-                                <td>
-                                    <div class="input-group">
-                                        <span class="input-group-btn">
-                                            <button class="btn btn-secondary" type="button">
-                                                <i class="fa fa-search" aria-hidden="true"></i>
-                                            </button>
-                                        </span>
-                                        <input type="text" class="form-control" placeholder="Buscar..." autocomplete="off" autofocus=""/>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="input-group">
-                                        <span class="input-group-addon">Subtotal</span>
-                                        <input type="text" value="{{ fsc.document.neto }}" class="form-control text-right" readonly=""/>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="input-group">
-                                        <span class="input-group-addon">Dto.</span>
-                                        <input type="text" value="0.00" class="form-control text-right" autocomplete="off"/>
-                                        <span class="input-group-addon">%</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="input-group">
-                                        <span class="input-group-addon">Total</span>
-                                        <input type="text" value="{{ fsc.document.total }}" class="form-control text-right" readonly=""/>
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
+        </div>
+    </div>
+</div>
+
+<div class="tab-content" id="optionsindex-tabContent">
+    <div class="tab-pane fade show active" id="document-primary" role="tabpanel" aria-labelledby="document-primary-tab">
+        <form name="f_document_primary" action="{{ edit_url }}" method="post">
+            <input type="hidden" name="action"/>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <p class="alert alert-success">
+                            <span>Empresa &nbsp;/&nbsp;</span>
+                            <span>{{ fsc.document.codalmacen }} &nbsp;/&nbsp;</span>
+                            {% if fsc.document.codcliente %}
+                            <span>{{ fsc.document.nombrecliente }} &nbsp;/&nbsp;</span>
+                            {% else %}
+                            <span>{{ fsc.document.nombre }} &nbsp;/&nbsp;</span>
+                            {% endif %}
+                            <span>{{ fsc.document.codserie }} &nbsp;/&nbsp;</span>
+                            <span>{{ fsc.document.fecha }} &nbsp;/&nbsp;</span>
+                            <span>{{ fsc.document.hora }} &nbsp;/&nbsp;</span>
+                            <span>{{ title }} {{ fsc.document.codigo }}</span>
+                        </p>
                     </div>
-                    <div id="document-lines"></div>
                 </div>
-                {% for indexView, view in fsc.views %}
-                    <div class="tab-pane fade" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
+                <div class="row">
+                    <div class="col-2">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-info" type="button">
+                                        <i class="fa fa-search" aria-hidden="true"></i>
+                                    </button>
+                                </span>
+                                <input type="text" class="form-control" placeholder="Buscar..." autocomplete="off" autofocus=""/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon">Subtotal</span>
+                                <input type="text" value="{{ fsc.document.neto }}" class="form-control text-right" readonly=""/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon">Dto.</span>
+                                <input type="text" value="0.00" class="form-control text-right" autocomplete="off"/>
+                                <span class="input-group-addon">%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon">Total</span>
+                                <input type="text" value="{{ fsc.document.total }}" class="form-control text-right" readonly=""/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4 text-right">
+                        <div class="btn-group">
+                            <a href="#" class="btn btn-sm btn-danger" onclick="deleteRecord('f_document_primary')">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                <span class="d-none d-sm-inline-block">&nbsp;{{ remove }}</span>
+                            </a>
+                            <button type="submit" class="btn btn-sm btn-primary">
+                                <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div id="document-lines"></div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    {% for indexView, view in fsc.views %}
+        <div class="tab-pane fade" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
                         {% set viewType = fsc.viewClass(view) %}
                         {% if viewType == 'ListView' %}
                             {{ columnsForListView(_context, view) }}
@@ -226,10 +250,10 @@
                             {{ modalFormFromColumns(_context, view) }}
                         {% endif %}
                     </div>
-                {% endfor %}
+                </div>
             </div>
         </div>
-    </div>
+    {% endfor %}
 </div>
 <br/>
 {% endblock %}

@@ -99,6 +99,11 @@ class Page
         return 'name';
     }
 
+    public function install()
+    {
+        return 'INSERT INTO ' . $this->tableName() . " (name,title) VALUES ('AdminHome','AdminHome');";
+    }
+
     /**
      * Resetea los valores de todas las propiedades modelo.
      */

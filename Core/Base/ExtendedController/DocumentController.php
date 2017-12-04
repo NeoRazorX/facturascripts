@@ -44,6 +44,22 @@ abstract class DocumentController extends PanelController
         }
     }
 
+    protected function execPreviousAction($view, $action)
+    {
+        if ($action === 'delete-doc') {
+            if ($this->document->delete()) {
+                $this->document->clear();
+                $this->lines = [];
+                $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+                return true;
+            }
+
+            return false;
+        }
+
+        return parent::execPreviousAction($view, $action);
+    }
+
     abstract protected function getDocumentClassName();
 
     abstract protected function getDocumentLineClassName();

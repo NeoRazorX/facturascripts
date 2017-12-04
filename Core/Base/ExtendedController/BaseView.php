@@ -78,11 +78,9 @@ abstract class BaseView
     /**
      * Method to export the view data
      *
-     * @param Base\ExportManager $exportManager
-     * @param Response $response
-     * @param string $action
+     * @param ExportManager $exportManager
      */
-    abstract public function export(&$exportManager, &$response, $action);
+    abstract public function export(&$exportManager);
 
     /**
      * Construct and initialize the class

@@ -16,11 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
-use FacturaScripts\Core\Base;
-use Symfony\Component\HttpFoundation\Response;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ExportManager;
 
 /**
  * View definition for its use in ExtendedControllers
@@ -30,6 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class EditListView extends BaseView
 {
+
     /**
      * Cursor with the display model's data
      *
@@ -159,7 +159,7 @@ class EditListView extends BaseView
         $class = $this->model->modelName();
         $result = new $class();
 
-        foreach (Base\DataBase\DataBaseWhere::getFieldsFilter($this->where) as $field => $value) {
+        foreach (DataBaseWhere::getFieldsFilter($this->where) as $field => $value) {
             $result->{$field} = $value;
         }
 
@@ -169,14 +169,12 @@ class EditListView extends BaseView
     /**
      * Method to export the view data
      *
-     * @param Base\ExportManager $exportManager
-     * @param Response $response
-     * @param string $action
-     *
-     * @return mixed
+     * @param ExportManager $exportManager
      */
-    public function export(&$exportManager, &$response, $action)
+    public function export(&$exportManager)
     {
-        return $exportManager->generateList($response, $action, $this->model, $this->where, $this->order, $this->offset, $this->getColumns());
+        if ($this->count > 0) {
+            $exportManager->generateListModelPage($this->model, $this->where, $this->order, $this->offset, $this->getColumns());
+        }
     }
 }
