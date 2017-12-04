@@ -47,7 +47,17 @@ class PDFExport implements ExportInterface
      * @var NumberTools
      */
     private $numberTools;
+    
+    /**
+     * PDF object.
+     * @var \Cezpdf 
+     */
     private $pdf;
+    
+    /**
+     * Y position in page. We use to solve Cezpdf bug on new page.
+     * @var int 
+     */
     private $yPos;
 
     /**
@@ -72,7 +82,7 @@ class PDFExport implements ExportInterface
     }
 
     /**
-     * 
+     * Set headers.
      * @param Response $response
      */
     public function newDoc(&$response)
@@ -80,6 +90,10 @@ class PDFExport implements ExportInterface
         $response->headers->set('Content-type', 'application/pdf');
     }
 
+    /**
+     * Adds a new page with the model data.
+     * @param mixed $model
+     */
     public function generateModelPage($model)
     {
         $tableData = [];
@@ -102,6 +116,14 @@ class PDFExport implements ExportInterface
         $this->pdf->ezTable($tableData);
     }
 
+    /**
+     * Adds a new page with a table listing the models data.
+     * @param mixed $model
+     * @param array $where
+     * @param array $order
+     * @param int $offset
+     * @param array $columns
+     */
     public function generateListModelPage($model, $where, $order, $offset, $columns)
     {
         $orientation = 'portrait';

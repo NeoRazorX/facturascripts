@@ -34,12 +34,22 @@ interface ExportInterface
      * Asigna la cabecera
      *
      * @param Response $response
-     *
-     * @return mixed
      */
     public function newDoc(&$response);
 
+    /**
+     * Adds a new page with the model data.
+     * @param mixed $model
+     */
     public function generateModelPage($model);
 
+    /**
+     * Adds a new page with a table listing the models data.
+     * @param mixed $model
+     * @param array $where
+     * @param array $order
+     * @param int $offset
+     * @param array $columns
+     */
     public function generateListModelPage($model, $where, $order, $offset, $columns);
 }

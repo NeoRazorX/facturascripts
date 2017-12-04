@@ -31,19 +31,37 @@ class XLSExport implements ExportInterface
     use \FacturaScripts\Core\Base\Utils;
 
     const LIST_LIMIT = 1000;
-
+    
     /**
-     * New document
-     *
-     * @param $model
-     *
-     * @return bool|string
+     * XLSX object.
+     * @var \XLSXWriter 
      */
-    public function newDoc($model)
+    private $writer;
+    
+    public function getDoc()
     {
-        $writer = new \XLSXWriter();
-        $writer->setAuthor('FacturaScripts');
-
+        return $this->writer->writeToString();
+    }
+    
+    /**
+     * Create the document and set headers.
+     * @param Response $response
+     */
+    public function newDoc(&$response)
+    {
+        $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
+        $response->headers->set('Content-Disposition', 'attachment;filename=doc.xls');
+        
+        $this->writer = new \XLSXWriter();
+        $this->writer->setAuthor('FacturaScripts');
+    }
+    
+    /**
+     * Adds a new page with the model data.
+     * @param mixed $model
+     */
+    public function generateModelPage($model)
+    {
         $tableData = [];
         foreach ((array) $model as $key => $value) {
             if (is_string($value)) {
@@ -51,26 +69,19 @@ class XLSExport implements ExportInterface
             }
         }
 
-        $writer->writeSheet($tableData, '', ['key' => 'string', 'value' => 'string']);
-        return $writer->writeToString();
+        $this->writer->writeSheet($tableData, '', ['key' => 'string', 'value' => 'string']);
     }
-
+    
     /**
-     * New document list
-     *
-     * @param $model
+     * Adds a new page with a table listing all models data.
+     * @param mixed $model
      * @param array $where
      * @param array $order
      * @param int $offset
      * @param array $columns
-     *
-     * @return bool|string
      */
-    public function newListDoc($model, $where, $order, $offset, $columns)
+    public function generateListModelPage($model, $where, $order, $offset, $columns)
     {
-        $writer = new \XLSXWriter();
-        $writer->setAuthor('FacturaScripts');
-
         /// Get the columns
         $tableCols = [];
         $sheetHeaders = [];
@@ -84,18 +95,16 @@ class XLSExport implements ExportInterface
 
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         if (empty($cursor)) {
-            $writer->writeSheet($tableData, '', $sheetHeaders);
+            $this->writer->writeSheet($tableData, '', $sheetHeaders);
         }
         while (!empty($cursor)) {
             $tableData = $this->getTableData($cursor, $tableCols);
-            $writer->writeSheet($tableData, '', $sheetHeaders);
+            $this->writer->writeSheet($tableData, '', $sheetHeaders);
 
             /// Advance within the results
             $offset += self::LIST_LIMIT;
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
-
-        return $writer->writeToString();
     }
 
     /**
@@ -126,16 +135,5 @@ class XLSExport implements ExportInterface
         }
 
         return $tableData;
-    }
-
-    /**
-     * Assigns the header
-     *
-     * @param Response $response
-     */
-    public function setHeaders(&$response)
-    {
-        $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
-        $response->headers->set('Content-Disposition', 'attachment;filename=doc.xls');
     }
 }

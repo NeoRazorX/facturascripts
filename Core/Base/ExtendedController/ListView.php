@@ -329,6 +329,8 @@ class ListView extends BaseView
      */
     public function export(&$exportManager)
     {
-        $exportManager->generateListModelPage($this->model, $this->where, $this->order, $this->offset, $this->getColumns());
+        if ($this->count > 0) {
+            $exportManager->generateListModelPage($this->model, $this->where, $this->order, $this->offset, $this->getColumns());
+        }
     }
 }

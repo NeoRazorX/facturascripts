@@ -29,13 +29,13 @@ class ExportManager
 {
 
     /**
-     *
+     * The selected engine/class to export.
      * @var mixed
      */
     private static $engine;
 
     /**
-     *
+     * Option list.
      * @var array 
      */
     private static $options;
@@ -52,7 +52,7 @@ class ExportManager
     }
 
     /**
-     * Devuelve la opción por defecto
+     * Returns default option.
      *
      * @return string
      */
@@ -63,7 +63,7 @@ class ExportManager
     }
 
     /**
-     * Devuelve las opciones disponibles para exportar
+     * returns options to export.
      *
      * @return array
      */
@@ -72,6 +72,11 @@ class ExportManager
         return self::$options;
     }
 
+    /**
+     * Create a new doc and set headers.
+     * @param Response $response
+     * @param string $option
+     */
     public function newDoc(&$response, $option)
     {
         /// llamar a la clase apropiada para generar el archivo en función de la opción elegida
@@ -80,21 +85,42 @@ class ExportManager
         self::$engine->newDoc($response);
     }
 
+    /**
+     * Returns the formated data.
+     * @param Response $response
+     */
     public function show(&$response)
     {
         $response->setContent(self::$engine->getDoc());
     }
     
+    /**
+     * Adds a new page with the model data.
+     * @param mixed $model
+     */
     public function generateModelPage($model)
     {
         self::$engine->generateModelPage($model);
     }
     
+    /**
+     * Adds a new page with a table listing the models data.
+     * @param mixed $model
+     * @param array $where
+     * @param array $order
+     * @param int $offset
+     * @param array $columns
+     */
     public function generateListModelPage($model, $where, $order, $offset, $columns)
     {
         self::$engine->generateListModelPage($model, $where, $order, $offset, $columns);
     }
 
+    /**
+     * Returns the full class name.
+     * @param string $option
+     * @return string
+     */
     private function getExportClassName($option)
     {
         $className = "FacturaScripts\\Dinamic\\Lib\\Export\\" . $option . 'Export';

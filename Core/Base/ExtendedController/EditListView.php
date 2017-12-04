@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -30,6 +29,7 @@ use FacturaScripts\Core\Lib\ExportManager;
  */
 class EditListView extends BaseView
 {
+
     /**
      * Cursor with the display model's data
      *
@@ -173,6 +173,8 @@ class EditListView extends BaseView
      */
     public function export(&$exportManager)
     {
-        $exportManager->generateListModelPage($this->model, $this->where, $this->order, $this->offset, $this->getColumns());
+        if ($this->count > 0) {
+            $exportManager->generateListModelPage($this->model, $this->where, $this->order, $this->offset, $this->getColumns());
+        }
     }
 }
