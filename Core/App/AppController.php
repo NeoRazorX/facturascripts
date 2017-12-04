@@ -123,8 +123,7 @@ class AppController extends App
             return $user->homepage;
         }
 
-        // TODO: Warning: '...::get(...)' should be used instead.
-        $homePage = $this->settings->get('default', 'homepage', 'AdminHome');
+        $homePage = AppSettings::get('default', 'homepage', 'AdminHome');
         return $this->request->cookies->get('fsHomepage', $homePage);
     }
 
@@ -205,12 +204,7 @@ class AppController extends App
     private function renderHtml($template, $controllerName = '')
     {
         /// Load the template engine
-        $twigLoader = new Twig_Loader_Filesystem(FS_FOLDER . '/Core/View');
-        foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
-            if (file_exists(FS_FOLDER . '/Plugins/' . $pluginName . '/View')) {
-                $twigLoader->prependPath(FS_FOLDER . '/Plugins/' . $pluginName . '/View');
-            }
-        }
+        $twigLoader = new Twig_Loader_Filesystem(FS_FOLDER . '/Dinamic/View');
 
         /// Twig options
         $twigOptions = ['cache' => FS_FOLDER . '/Cache/Twig'];

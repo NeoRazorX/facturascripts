@@ -56,7 +56,7 @@ class PDFExport implements ExportInterface
 
     /**
      * PDF table width.
-     * @var float 
+     * @var int|float 
      */
     private $tableWidth;
 
@@ -67,7 +67,7 @@ class PDFExport implements ExportInterface
     {
         $this->i18n = new Translator();
         $this->numberTools = new NumberTools();
-        $this->tableWidth = 0;
+        $this->tableWidth = 0.0;
     }
 
     public function getDoc()
