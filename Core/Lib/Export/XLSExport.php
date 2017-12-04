@@ -47,7 +47,7 @@ class XLSExport implements ExportInterface
         $tableData = [];
         foreach ((array) $model as $key => $value) {
             if (is_string($value)) {
-                $tableData[] = ['key' => $key, 'value' => $this->fixHtml($value)];
+                $tableData[] = ['key' => $key, 'value' => $value];
             }
         }
 
@@ -116,9 +116,7 @@ class XLSExport implements ExportInterface
                 $value = '';
                 if (isset($row->{$col})) {
                     $value = $row->{$col};
-                    if (is_string($value)) {
-                        $value = $this->fixHtml($value);
-                    } elseif (is_null($value)) {
+                    if (is_null($value)) {
                         $value = '';
                     }
                 }

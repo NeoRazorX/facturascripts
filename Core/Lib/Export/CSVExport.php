@@ -118,7 +118,7 @@ class CSVExport implements ExportInterface
             if (is_string($value)) {
                 $tableData[] = [
                     'key' => $this->delimiter . $key . $this->delimiter,
-                    'value' => $this->delimiter . $this->fixHtml($value) . $this->delimiter
+                    'value' => $this->delimiter . $value . $this->delimiter
                 ];
             }
         }
@@ -185,9 +185,7 @@ class CSVExport implements ExportInterface
                 $value = '';
                 if (isset($row->{$col})) {
                     $value = $row->{$col};
-                    if (is_string($value)) {
-                        $value = $this->fixHtml($value);
-                    } elseif (is_null($value)) {
+                    if (is_null($value)) {
                         $value = '';
                     }
                 }

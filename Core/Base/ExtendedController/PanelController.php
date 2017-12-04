@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Lib\ExportManager;
 
 /**
  * Controller to edit data through the vertical panel
@@ -39,7 +40,7 @@ abstract class PanelController extends Base\Controller
     /**
      * Export data object
      *
-     * @var Base\ExportManager
+     * @var ExportManager
      */
     public $exportManager;
 
@@ -88,7 +89,7 @@ abstract class PanelController extends Base\Controller
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
-        $this->exportManager = new Base\ExportManager();
+        $this->exportManager = new ExportManager();
         $this->setTemplate('Master/PanelController');
         $this->active = $this->request->get('active', '');
         $this->tabsPosition = 'left';
@@ -223,8 +224,11 @@ abstract class PanelController extends Base\Controller
         switch ($action) {
             case 'export':
                 $this->setTemplate(false);
-                $document = $view->export($this->exportManager, $this->response, $this->request->get('option'));
-                $this->response->setContent($document);
+                $this->exportManager->newDoc($this->response, $this->request->get('option'));
+                foreach ($this->views as $view) {
+                    $view->export($this->exportManager);
+                }
+                $this->exportManager->show($this->response);
                 break;
         }
     }

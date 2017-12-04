@@ -53,13 +53,11 @@ class HtmlView extends BaseView
     /**
      * Method to export the view data
      *
-     * @param Base\ExportManager $exportManager
-     * @param Response $response
-     * @param string $action
+     * @param ExportManager $exportManager
      *
      * @return null
      */
-    public function export(&$exportManager, &$response, $action)
+    public function export(&$exportManager)
     {
         return null;
     }

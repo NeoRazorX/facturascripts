@@ -19,7 +19,8 @@
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ExportManager;
 
 /**
  * Controller that lists the data in table mode
@@ -40,7 +41,7 @@ abstract class ListController extends Base\Controller
     /**
      * Object to export data
      *
-     * @var Base\ExportManager
+     * @var ExportManager
      */
     public $exportManager;
 
@@ -90,7 +91,7 @@ abstract class ListController extends Base\Controller
 
         $this->setTemplate('Master/ListController');
 
-        $this->exportManager = new Base\ExportManager();
+        $this->exportManager = new ExportManager();
         $this->active = $this->request->get('active', '');
         $this->offset = (int) $this->request->get('offset', 0);
         $this->query = $this->request->get('query', '');
@@ -163,9 +164,9 @@ abstract class ListController extends Base\Controller
         switch ($action) {
             case 'export':
                 $this->setTemplate(false);
-                $view = $this->views[$this->active];
-                $document = $view->export($this->exportManager, $this->response, $this->request->get('option'));
-                $this->response->setContent($document);
+                $this->exportManager->newDoc($this->response, $this->request->get('option'));
+                $this->views[$this->active]->export($this->exportManager);
+                $this->exportManager->show($this->response);
                 break;
 
             case 'megasearch':
@@ -249,7 +250,7 @@ abstract class ListController extends Base\Controller
             }
 
             $fields = $listView->getSearchIn();
-            $listView->loadData([new DataBase\DataBaseWhere($fields, $this->query, 'LIKE')], 0, Base\Pagination::FS_ITEM_LIMIT);
+            $listView->loadData([new DataBaseWhere($fields, $this->query, 'LIKE')], 0, Base\Pagination::FS_ITEM_LIMIT);
 
             $cols = $this->getTextColumns($listView, 6);
             $json[$key]['columns'] = $cols;
@@ -277,7 +278,7 @@ abstract class ListController extends Base\Controller
 
         if ($this->query !== '') {
             $fields = $this->views[$this->active]->getSearchIn();
-            $result[] = new DataBase\DataBaseWhere($fields, $this->query, "LIKE");
+            $result[] = new DataBaseWhere($fields, $this->query, "LIKE");
         }
 
         foreach ($this->views[$this->active]->getFilters() as $key => $filter) {

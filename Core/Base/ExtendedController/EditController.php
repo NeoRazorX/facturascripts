@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Lib\ExportManager;
 
 /**
  * Controller to manage the data editing
@@ -32,7 +33,7 @@ abstract class EditController extends Base\Controller
     /**
      * Export data object
      *
-     * @var Base\ExportManager
+     * @var ExportManager
      */
     public $exportManager;
 
@@ -56,7 +57,7 @@ abstract class EditController extends Base\Controller
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         $this->setTemplate('Master/EditController');
-        $this->exportManager = new Base\ExportManager();
+        $this->exportManager = new ExportManager();
     }
 
     /**
@@ -114,8 +115,9 @@ abstract class EditController extends Base\Controller
         switch ($action) {
             case 'export':
                 $this->setTemplate(false);
-                $document = $this->view->export($this->exportManager, $this->response, $this->request->get('option'));
-                $this->response->setContent($document);
+                $this->exportManager->newDoc($this->response, $this->request->get('option'));
+                $this->view->export($this->exportManager);
+                $this->exportManager->show($this->response);
                 break;
         }
     }

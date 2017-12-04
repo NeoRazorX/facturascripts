@@ -18,8 +18,7 @@
  */
 namespace FacturaScripts\Core\Base\ExtendedController;
 
-use FacturaScripts\Core\Base;
-use Symfony\Component\HttpFoundation\Response;
+use FacturaScripts\Core\Lib\ExportManager;
 
 /**
  * View definition for its use in ListController
@@ -324,16 +323,12 @@ class ListView extends BaseView
     }
 
     /**
-     * Method o export the view data
+     * Method to export the view data
      *
-     * @param Base\ExportManager $exportManager
-     * @param Response $response
-     * @param string $action
-     *
-     * @return mixed
+     * @param ExportManager $exportManager
      */
-    public function export(&$exportManager, &$response, $action)
+    public function export(&$exportManager)
     {
-        return $exportManager->generateList($response, $action, $this->model, $this->where, $this->order, $this->offset, $this->getColumns());
+        $exportManager->generateListModelPage($this->model, $this->where, $this->order, $this->offset, $this->getColumns());
     }
 }

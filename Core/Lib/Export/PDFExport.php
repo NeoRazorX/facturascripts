@@ -35,18 +35,20 @@ class PDFExport implements ExportInterface
     const LIST_LIMIT = 1000;
 
     /**
-     * Class with number tools (to format numbers)
-     *
-     * @var NumberTools
-     */
-    private $numberTools;
-
-    /**
      * Translator object
      *
      * @var Translator
      */
     private $i18n;
+
+    /**
+     * Class with number tools (to format numbers)
+     *
+     * @var NumberTools
+     */
+    private $numberTools;
+    private $pdf;
+    private $yPos;
 
     /**
      * PDFExport constructor.
@@ -57,40 +59,50 @@ class PDFExport implements ExportInterface
         $this->i18n = new Translator();
     }
 
+    public function getDoc()
+    {
+        if ($this->pdf === null) {
+            $this->pdf = new \Cezpdf('a4', 'portrait');
+            $this->pdf->addInfo('Creator', 'FacturaScripts');
+            $this->pdf->addInfo('Producer', 'FacturaScripts');
+            $this->pdf->ezText('');
+        }
+
+        return $this->pdf->ezStream(['Content-Disposition' => 'doc_' . mt_rand(1, 999999) . '.pdf']);
+    }
+
     /**
-     * New document
-     *
-     * @param $model
-     * @return string
+     * 
+     * @param Response $response
      */
-    public function newDoc($model)
+    public function newDoc(&$response)
+    {
+        $response->headers->set('Content-type', 'application/pdf');
+    }
+
+    public function generateModelPage($model)
     {
         $tableData = [];
         foreach ((array) $model as $key => $value) {
             if (is_string($value)) {
-                $tableData[] = ['key' => $key, 'value' => $this->fixHtml($value)];
+                $tableData[] = ['key' => $key, 'value' => $value];
             }
         }
 
-        $pdf = new \Cezpdf('a4', 'portrait');
-        $pdf->addInfo('Creator', 'FacturaScripts');
-        $pdf->addInfo('Producer', 'FacturaScripts');
-        $pdf->ezTable($tableData);
-        return $pdf->ezStream(['Content-Disposition' => 'doc_' . $model->tableName() . '.pdf']);
+        if ($this->pdf === null) {
+            $this->pdf = new \Cezpdf('a4', 'portrait');
+            $this->pdf->addInfo('Creator', 'FacturaScripts');
+            $this->pdf->addInfo('Producer', 'FacturaScripts');
+            $this->yPos = $this->pdf->y;
+        } else {
+            $this->pdf->newPage();
+            $this->pdf->y = $this->yPos;
+        }
+
+        $this->pdf->ezTable($tableData);
     }
 
-    /**
-     * New document list
-     *
-     * @param $model
-     * @param array $where
-     * @param array $order
-     * @param int $offset
-     * @param array $columns
-     *
-     * @return array
-     */
-    public function newListDoc($model, $where, $order, $offset, $columns)
+    public function generateListModelPage($model, $where, $order, $offset, $columns)
     {
         $orientation = 'portrait';
         $tableCols = [];
@@ -99,8 +111,45 @@ class PDFExport implements ExportInterface
         $tableData = [];
 
         /// Get the columns
+        $this->setTableColumns($columns, $tableCols, $tableColsTitle, $tableOptions);
+
+        if (count($tableCols) > 5) {
+            $orientation = 'landscape';
+        }
+
+        if ($this->pdf === null) {
+            $this->pdf = new \Cezpdf('a4', $orientation);
+            $this->pdf->addInfo('Creator', 'FacturaScripts');
+            $this->pdf->addInfo('Producer', 'FacturaScripts');
+            $this->yPos = $this->pdf->y;
+        } else {
+            $this->pdf->newPage();
+            $this->pdf->y = $this->yPos;
+        }
+
+        $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
+        if (empty($cursor)) {
+            $this->pdf->ezTable($tableData, $tableColsTitle, '', $tableOptions);
+        }
+        while (!empty($cursor)) {
+            $tableData = $this->getTableData($cursor, $tableCols, $tableOptions);
+            $this->pdf->ezTable($tableData, $tableColsTitle, '', $tableOptions);
+
+            /// Advance within the results
+            $offset += self::LIST_LIMIT;
+            $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
+        }
+    }
+
+    private function setTableColumns(&$columns, &$tableCols, &$tableColsTitle, &$tableOptions)
+    {
         foreach ($columns as $col) {
-            if ($col->display != 'none') {
+            if (isset($col->columns)) {
+                $this->setTableColumns($col->columns, $tableCols, $tableColsTitle, $tableOptions);
+                continue;
+            }
+
+            if (isset($col->display) && $col->display != 'none') {
                 $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
                 $tableColsTitle[$col->widget->fieldName] = $this->i18n->trans($col->title);
                 $tableOptions['cols'][$col->widget->fieldName] = [
@@ -109,29 +158,6 @@ class PDFExport implements ExportInterface
                 ];
             }
         }
-
-        if (count($tableCols) > 5) {
-            $orientation = 'landscape';
-        }
-
-        $pdf = new \Cezpdf('a4', $orientation);
-        $pdf->addInfo('Creator', 'FacturaScripts');
-        $pdf->addInfo('Producer', 'FacturaScripts');
-
-        $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
-        if (empty($cursor)) {
-            $pdf->ezTable($tableData, $tableColsTitle, '', $tableOptions);
-        }
-        while (!empty($cursor)) {
-            $tableData = $this->getTableData($cursor, $tableCols, $tableOptions);
-            $pdf->ezTable($tableData, $tableColsTitle, '', $tableOptions);
-
-            /// Advance within the results
-            $offset += self::LIST_LIMIT;
-            $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
-        }
-
-        return $pdf->ezStream(['Content-Disposition' => 'list_' . $model->tableName() . '.pdf']);
     }
 
     /**
@@ -156,8 +182,6 @@ class PDFExport implements ExportInterface
 
                     if (in_array($tableOptions['cols'][$col]['col-type'], ['money', 'number'])) {
                         $value = $this->numberTools->format($value, 2);
-                    } elseif (is_string($value)) {
-                        $value = $this->fixHtml($value);
                     } elseif (is_bool($value)) {
                         $value = $value == 1 ? $this->i18n->trans('enabled') : $this->i18n->trans('disabled');
                     } elseif (is_null($value)) {
@@ -170,15 +194,5 @@ class PDFExport implements ExportInterface
         }
 
         return $tableData;
-    }
-
-    /**
-     * Assigns the header
-     *
-     * @param Response $response
-     */
-    public function setHeaders(&$response)
-    {
-        $response->headers->set('Content-type', 'application/pdf');
     }
 }
