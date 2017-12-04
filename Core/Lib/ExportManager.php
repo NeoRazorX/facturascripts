@@ -16,8 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-namespace FacturaScripts\Core\Base;
+namespace FacturaScripts\Core\Lib;
 
 use Symfony\Component\HttpFoundation\Response;
 
@@ -28,79 +27,107 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ExportManager
 {
+
     /**
-     * Devuelve la opción por defecto
+     * The selected engine/class to export.
+     * @var mixed
+     */
+    private static $engine;
+
+    /**
+     * Option list.
+     * @var array 
+     */
+    private static $options;
+
+    public function __construct()
+    {
+        if (self::$options === null) {
+            self::$options = [
+                'PDF' => ['description' => 'print', 'icon' => 'fa-print'],
+                'XLS' => ['description' => 'spreadsheet-xls', 'icon' => 'fa-file-excel-o'],
+                'CSV' => ['description' => 'structured-data-csv', 'icon' => 'fa-file-archive-o']
+            ];
+        }
+    }
+
+    /**
+     * Returns default option.
      *
      * @return string
      */
     public function defaultOption()
     {
-        return 'PDF';
+        $keys = array_keys(self::$options);
+        return $keys[0];
     }
 
     /**
-     * Devuelve las opciones disponibles para exportar
+     * returns options to export.
      *
      * @return array
      */
     public function options()
     {
-        return [
-            'PDF' => ['description' => 'print', 'icon' => 'fa-print'],
-            'XLS' => ['description' => 'spreadsheet-xls', 'icon' => 'fa-file-excel-o'],
-            'CSV' => ['description' => 'structured-data-csv', 'icon' => 'fa-file-archive-o']
-        ];
+        return self::$options;
     }
 
     /**
-     * Genera el documento
-     *
+     * Create a new doc and set headers.
      * @param Response $response
      * @param string $option
-     * @param $model
-     *
-     * @return mixed
      */
-    public function generateDoc(&$response, $option, $model)
+    public function newDoc(&$response, $option)
     {
         /// llamar a la clase apropiada para generar el archivo en función de la opción elegida
         $className = $this->getExportClassName($option);
-        $docClass = new $className();
-        $docClass->setHeaders($response);
-
-        return $docClass->newDoc($model);
+        self::$engine = new $className();
+        self::$engine->newDoc($response);
     }
 
     /**
-     * Genera una lista
-     *
+     * Returns the formated data.
      * @param Response $response
-     * @param string $option
-     * @param string $model
+     */
+    public function show(&$response)
+    {
+        $response->setContent(self::$engine->getDoc());
+    }
+    
+    /**
+     * Adds a new page with the model data.
+     * @param mixed $model
+     */
+    public function generateModelPage($model)
+    {
+        self::$engine->generateModelPage($model);
+    }
+    
+    /**
+     * Adds a new page with a table listing the models data.
+     * @param mixed $model
      * @param array $where
      * @param array $order
      * @param int $offset
      * @param array $columns
-     *
-     * @return mixed
      */
-    public function generateList(&$response, $option, $model, $where, $order, $offset, $columns)
+    public function generateListModelPage($model, $where, $order, $offset, $columns)
     {
-        /// llamar a la clase apropiada para generar el archivo en función de la opción elegida
-        $className = $this->getExportClassName($option);
-        $docClass = new $className();
-        $docClass->setHeaders($response);
-
-        return $docClass->newListDoc($model, $where, $order, $offset, $columns);
+        self::$engine->generateListModelPage($model, $where, $order, $offset, $columns);
     }
-    
+
+    /**
+     * Returns the full class name.
+     * @param string $option
+     * @return string
+     */
     private function getExportClassName($option)
     {
         $className = "FacturaScripts\\Dinamic\\Lib\\Export\\" . $option . 'Export';
-        if(!class_exists($className)) {
+        if (!class_exists($className)) {
             $className = "FacturaScripts\\Core\\Lib\\Export\\" . $option . 'Export';
         }
-        
+
         return $className;
     }
 }

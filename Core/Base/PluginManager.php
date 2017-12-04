@@ -284,7 +284,7 @@ class PluginManager
         }
         return true;
     }
-    
+
     /**
      * Link the files.
      *
@@ -296,24 +296,19 @@ class PluginManager
     {
         if (empty($pluginName)) {
             $path = FS_FOLDER . '/' . $place . '/' . $folder;
-            $newPath = FS_FOLDER . '/Dinamic/' . $folder;
-            $namespace = "\FacturaScripts\Core\\";
         } else {
-            $path = $this->pluginPath . $pluginName . '/' . $folder;
-            $newPath = FS_FOLDER . '/Dinamic/Plugins/' . $pluginName . '/' . $folder;
-            $namespace = "\FacturaScripts\Plugins\\" . $pluginName . '\\';
+            $path = FS_FOLDER . '/Plugins/' . $pluginName . '/' . $folder;
         }
 
-        $filesPath = $this->scanFolders($path);
-        foreach ($filesPath as $fileName) {
+        foreach ($this->scanFolders($path) as $fileName) {
             $infoFile = pathinfo($fileName);
-            if (is_dir($path . DS . $fileName)) {
-                $this->createFolder($newPath . '/' . $fileName);
-            } elseif ($infoFile['filename'] !== '' && is_file($path . DS . $fileName)) {
+            if (is_dir($path . '/' . $fileName)) {
+                $this->createFolder(FS_FOLDER . '/Dinamic/' . $folder . '/' . $fileName);
+            } elseif ($infoFile['filename'] !== '' && is_file($path . '/' . $fileName)) {
                 if ($infoFile['extension'] === 'php') {
-                    $this->linkClassFile($fileName, $folder, $namespace);
+                    $this->linkClassFile($fileName, $folder, $place, $pluginName);
                 } else {
-                    $filePath = FS_FOLDER . DS . $place . DS . $folder . DS . $fileName;
+                    $filePath = $path . '/' . $fileName;
                     $this->linkFile($fileName, $folder, $filePath);
                 }
             }
@@ -325,19 +320,34 @@ class PluginManager
      *
      * @param string $fileName
      * @param string $folder
-     * @param string $namespace
+     * @param string $place
+     * @param string $pluginName
      */
-    private function linkClassFile($fileName, $folder, $namespace = "\FacturaScripts\Core\\")
+    private function linkClassFile($fileName, $folder, $place, $pluginName)
     {
         if (!file_exists(FS_FOLDER . '/Dinamic/' . $folder . '/' . $fileName)) {
-            $className = str_replace('/', '\\', substr($fileName, 0, -4));
-            $txt = '<?php namespace FacturaScripts\Dinamic\\' . $folder . ";\n\n"
+            if (empty($pluginName)) {
+                $namespace = "FacturaScripts\\" . $place . '\\' . $folder;
+                $newNamespace = "FacturaScripts\\Dinamic\\" . $folder;
+            } else {
+                $namespace = "FacturaScripts\Plugins\\" . $pluginName . '\\' . $folder;
+                $newNamespace = "FacturaScripts\Dinamic\\" . $folder;
+            }
+
+            $paths = explode(DIRECTORY_SEPARATOR, $fileName);
+            for ($key = 0; $key < count($paths) - 1; $key++) {
+                $namespace .= "\\" . $paths[$key];
+                $newNamespace .= "\\" . $paths[$key];
+            }
+
+            $className = basename($fileName, ".php");
+            $txt = '<?php namespace ' . $newNamespace . ";\n\n"
                 . '/**' . "\n"
-                . ' * Clase cargada dinámicamente' . "\n"
-                . ' * @package FacturaScripts\\Dinamic\\Controller' . "\n"
+                . ' * Class created by Core/Base/PluginManager' . "\n"
+                . ' * @package ' . $newNamespace . "\n"
                 . ' * @author Carlos García Gómez <carlos@facturascripts.com>' . "\n"
                 . ' */' . "\n"
-                . 'class ' . $className . ' extends ' . $namespace . $folder . '\\' . $className . "\n{\n}\n";
+                . 'class ' . $className . ' extends \\' . $namespace . '\\' . $className . "\n{\n}\n";
 
             file_put_contents(FS_FOLDER . '/Dinamic/' . $folder . '/' . $fileName, $txt);
         }
@@ -370,14 +380,14 @@ class PluginManager
         $result = [];
         $rootFolder = array_diff(scandir($folder, SCANDIR_SORT_ASCENDING), ['.', '..']);
         foreach ($rootFolder as $item) {
-            $newItem = $folder . DS . $item;
+            $newItem = $folder . '/' . $item;
             if (is_file($newItem)) {
                 $result[] = $item;
                 continue;
             }
             $result[] = $item;
             foreach ($this->scanFolders($newItem) as $item2) {
-                $result[] = $item . DS . $item2;
+                $result[] = $item . '/' . $item2;
             }
         }
         return $result;

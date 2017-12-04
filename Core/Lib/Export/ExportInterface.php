@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\Export;
 
 use Symfony\Component\HttpFoundation\Response;
@@ -28,34 +27,29 @@ use Symfony\Component\HttpFoundation\Response;
  */
 interface ExportInterface
 {
+
+    public function getDoc();
+
     /**
      * Asigna la cabecera
      *
      * @param Response $response
-     *
-     * @return mixed
      */
-    public function setHeaders(&$response);
+    public function newDoc(&$response);
 
     /**
-     * Nuevo documento
-     *
-     * @param $model
-     *
-     * @return mixed
+     * Adds a new page with the model data.
+     * @param mixed $model
      */
-    public function newDoc($model);
+    public function generateModelPage($model);
 
     /**
-     * Nueva lista de documentos
-     *
-     * @param $model
+     * Adds a new page with a table listing the models data.
+     * @param mixed $model
      * @param array $where
      * @param array $order
      * @param int $offset
      * @param array $columns
-     *
-     * @return mixed
      */
-    public function newListDoc($model, $where, $order, $offset, $columns);
+    public function generateListModelPage($model, $where, $order, $offset, $columns);
 }
