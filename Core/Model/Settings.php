@@ -29,6 +29,8 @@ class Settings
     use Base\ModelTrait {
         clear as traitClear;
         loadFromData as traitLoadFromData;
+        saveInsert as traitSaveInsert;
+        saveUpdate as traitSaveUpdate;
     }
 
     /**
@@ -118,22 +120,24 @@ class Settings
     }
 
     /**
-     * Actualiza los datos del modelo en la base de datos.
+     * Update the model data in the database.
      *
      * @return bool
      */
-    public function save()
+    private function saveUpdate()
     {
-        $this->properties = json_encode($this->properties);
+        $values = ['properties' => json_encode($this->properties)];
+        return $this->traitSaveUpdate($values);
+    }
 
-        if ($this->test()) {
-            if ($this->exists()) {
-                return $this->saveUpdate();
-            }
-
-            return $this->saveInsert();
-        }
-
-        return false;
+    /**
+     * Insert the model data in the database.
+     *
+     * @return bool
+     */
+    private function saveInsert()
+    {
+        $values = ['properties' => json_encode($this->properties)];
+        return $this->traitSaveInsert($values);
     }
 }

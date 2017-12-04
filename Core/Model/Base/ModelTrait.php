@@ -518,14 +518,16 @@ trait ModelTrait
      *
      * @return bool
      */
-    private function saveUpdate()
+    private function saveUpdate($values = [])
     {
         $sql = 'UPDATE ' . $this->tableName();
         $coma = ' SET';
 
         foreach (self::$fields as $field) {
             if ($field['name'] !== $this->primaryColumn()) {
-                $sql .= $coma . ' ' . $field['name'] . ' = ' . $this->dataBase->var2str($this->{$field['name']});
+                $fieldName = $field['name'];
+                $fieldValue = isset($values[$fieldName]) ? $values[$fieldName] : $this->{$fieldName};
+                $sql .= $coma . ' ' . $fieldName . ' = ' . $this->dataBase->var2str($fieldValue);
                 if ($coma === ' SET') {
                     $coma = ', ';
                 }
@@ -542,14 +544,17 @@ trait ModelTrait
      *
      * @return bool
      */
-    private function saveInsert()
+    private function saveInsert($values = [])
     {
         $insertFields = [];
         $insertValues = [];
         foreach (self::$fields as $field) {
             if (isset($this->{$field['name']})) {
-                $insertFields[] = $field['name'];
-                $insertValues[] = $this->dataBase->var2str($this->{$field['name']});
+                $fieldName = $field['name'];
+                $fieldValue = isset($values[$fieldName]) ? $values[$fieldName] : $this->{$fieldName};
+
+                $insertFields[] = $fieldName;
+                $insertValues[] = $this->dataBase->var2str($fieldValue);
             }
         }
 
