@@ -30,6 +30,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AdminHome extends Base\Controller
 {
+
     /**
      * List of enabled plugins.
      * @var array
@@ -162,8 +163,8 @@ class AdminHome extends Base\Controller
             }
 
             $this->miniLog->error($this->i18n->trans('plugin-is-not-yet-enabled'));
-            return false;
         }
+
         return false;
     }
 
@@ -184,9 +185,10 @@ class AdminHome extends Base\Controller
                 $this->delTree($this->pMng->getPluginPath() . $removePlugin);
                 return true;
             }
+
             $this->miniLog->error($this->i18n->trans('plugin-yet-deleted', [$removePlugin]));
-            return false;
         }
+
         return false;
     }
 
@@ -206,9 +208,10 @@ class AdminHome extends Base\Controller
                 $this->pMng->deploy();
                 return true;
             }
+
             $this->miniLog->info($this->i18n->trans('plugin-yet-enabled'));
-            return false;
         }
+
         return false;
     }
 
