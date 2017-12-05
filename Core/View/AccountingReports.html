@@ -1,0 +1,81 @@
+{% extends "Master/MenuTemplate.html" %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1>
+                <i class="fa fa-balance-scale" aria-hidden="true"></i> {{ i18n.trans('accounting-reports') }}
+                <span class="btn-group d-xs-none">
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}">
+                        <i class="fa fa-refresh" aria-hidden="true"></i>
+                    </a>
+                    {% if fsc.getPageData()['name'] == fsc.user.homepage %}
+                    <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}&amp;defaultPage=FALSE">
+                        <i class="fa fa-bookmark" aria-hidden="true"></i>
+                    </a>
+                    {% else %}
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}&amp;defaultPage=TRUE">
+                        <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                    </a>
+                    {% endif %}
+                </span>
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div id="accordion" role="tablist">
+                {% for ejercicio in fsc.ejercicios %}
+                <div class="card">
+                    <div class="card-header" role="tab" id="heading{{ ejercicio.codejercicio }}">
+                        <h5 class="mb-0">
+                            <a data-toggle="collapse" href="#collapse{{ ejercicio.codejercicio }}" aria-expanded="false" aria-controls="collapse{{ ejercicio.codejercicio }}">
+                                {{ ejercicio.nombre }}
+                            </a>
+                        </h5>
+                    </div>
+                    <div id="collapse{{ ejercicio.codejercicio }}" class="collapse" role="tabpanel" aria-labelledby="heading{{ ejercicio.codejercicio }}" data-parent="#accordion">
+                        <div class="card-body">
+                            <form action="{{ fsc.url() }}" method="post">
+                                <input type="hidden" name="codejercicio" value="{{ ejercicio.codejercicio }}"/>
+                                <input type="hidden" name="action" value="libro-mayor"/>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h1>{{ i18n.trans('libro-mayor') }}</h1>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <input type="text" name="date-from" value="{{ ejercicio.fechainicio }}" class="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <input type="text" name="date-to" value="{{ ejercicio.fechafin }}" class="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <select name="format" class="form-control">
+                                                <option value="pdf">PDF</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fa fa-eye fa-fw" aria-hidden="true"></i> {{ i18n.trans('generate') }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
