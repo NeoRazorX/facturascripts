@@ -67,8 +67,8 @@ abstract class DocumentController extends PanelController
     public function getLineHeaders()
     {
         $headers = [
-            "Referencia", "Descripción", "Cantidad", "Precio", "Dto.",
-            "IVA", "RE", "IRPF", "Subtotal"
+            "Referencia", "Descripción", "Cantidad", "Precio", "% Dto.",
+            "% IVA", "% RE", "% IRPF", "Subtotal"
         ];
         return json_encode($headers);
     }
@@ -80,10 +80,10 @@ abstract class DocumentController extends PanelController
             ["data" => "descripcion", "type" => "text"],
             ["data" => "cantidad", "type" => "numeric", "format" => "0.00"],
             ["data" => "pvpunitario", "type" => "numeric", "format" => "0.0000"],
-            ["data" => "dtopor", "type" => "numeric", "format" => "0.00%"],
-            ["data" => "iva", "type" => "numeric", "format" => "0.00%"],
-            ["data" => "recargo", "type" => "numeric", "format" => "0.00%"],
-            ["data" => "irpf", "type" => "numeric", "format" => "0.00%"],
+            ["data" => "dtopor", "type" => "numeric", "format" => "0.00"],
+            ["data" => "iva", "type" => "numeric", "format" => "0.00"],
+            ["data" => "recargo", "type" => "numeric", "format" => "0.00"],
+            ["data" => "irpf", "type" => "numeric", "format" => "0.00"],
             ["data" => "subtotal", "type" => "numeric", "format" => "0.00"],
         ];
 

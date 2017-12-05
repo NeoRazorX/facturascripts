@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * Un Valor para un atributo de artículos.
  *
@@ -80,5 +82,19 @@ class AtributoValor
     {
         $this->valor = self::noHtml($this->valor);
         return true;
+    }
+
+    /**
+     * Selecciona todos los atributos de un código de atributo
+     *
+     * @param string $cod
+     *
+     * @return self[]
+     */
+    public function allFromAtributo($cod)
+    {
+        $where = [new DataBaseWhere('codatributo', $cod)];
+        $order = ['valor' => 'ASC'];
+        return $this->all($where, $order);
     }
 }

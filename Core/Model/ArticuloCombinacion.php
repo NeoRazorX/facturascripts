@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * Este modelo representa el par atributo => valor de la combinación de un artículo con atributos.
  * Ten en cuenta que lo que se almacena son estos pares atributo => valor,
@@ -192,5 +194,20 @@ class ArticuloCombinacion
         }
 
         return 1;
+    }
+
+    /**
+     * Devuelve un array con todos los datos de la combinación con código = $cod,
+     * ten en cuenta que lo que se almacenan son los pares atributo => valor.
+     *
+     * @param string $cod
+     *
+     * @return self[]
+     */
+    public function allFromCodigo($cod)
+    {
+        $where = [new DataBaseWhere('codigo', $cod)];
+        $order = ['nombreatributo' => 'ASC'];
+        return $this->all($where, $order);
     }
 }
