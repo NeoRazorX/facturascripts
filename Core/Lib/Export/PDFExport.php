@@ -137,7 +137,7 @@ class PDFExport implements ExportInterface
         $orientation = 'portrait';
         $tableCols = [];
         $tableColsTitle = [];
-        $tableOptions = ['cols' => []];
+        $tableOptions = ['cols' => [], 'shadeHeadingCol' => [0.8, 0.8, 0.8]];
         $tableData = [];
 
         /// Get the columns
