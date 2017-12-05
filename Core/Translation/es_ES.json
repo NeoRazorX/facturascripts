@@ -765,7 +765,7 @@
     "date-time": "Fecha hora",
     "no-data": "Sin datos",
     "reference": "Referencia",
-    "partnumber": "Part Number",
+    "partnumber": "Partnumber",
     "manufacturer": "Fabricante",
     "attribute": "Atributo",
     "family": "Família",
@@ -1101,7 +1101,7 @@
     "provider-reference": "Referéncia de proveedor",
     "codbarras": "Código de barras",
     "precio": "Precio",
-    "dto": "Dto",
+    "dto": "Dto.",
     "concepto": "Concepto",
     "importe": "Importe"
 }
