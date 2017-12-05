@@ -31,18 +31,18 @@ class XLSExport implements ExportInterface
     use \FacturaScripts\Core\Base\Utils;
 
     const LIST_LIMIT = 1000;
-    
+
     /**
      * XLSX object.
      * @var \XLSXWriter 
      */
     private $writer;
-    
+
     public function getDoc()
     {
         return $this->writer->writeToString();
     }
-    
+
     /**
      * Create the document and set headers.
      * @param Response $response
@@ -51,11 +51,11 @@ class XLSExport implements ExportInterface
     {
         $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
         $response->headers->set('Content-Disposition', 'attachment;filename=doc.xls');
-        
+
         $this->writer = new \XLSXWriter();
         $this->writer->setAuthor('FacturaScripts');
     }
-    
+
     /**
      * Adds a new page with the model data.
      * @param mixed $model
@@ -71,9 +71,9 @@ class XLSExport implements ExportInterface
             }
         }
 
-        $this->writer->writeSheet($tableData, '', ['key' => 'string', 'value' => 'string']);
+        $this->writer->writeSheet($tableData, $title, ['key' => 'string', 'value' => 'string']);
     }
-    
+
     /**
      * Adds a new page with a table listing all models data.
      * @param mixed $model
@@ -91,22 +91,34 @@ class XLSExport implements ExportInterface
         $tableData = [];
 
         /// Get the columns
-        foreach ($columns as $col) {
-            $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
-            $sheetHeaders[$col->widget->fieldName] = 'string';
-        }
+        $this->setTableColumns($columns, $tableCols, $sheetHeaders);
 
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         if (empty($cursor)) {
-            $this->writer->writeSheet($tableData, '', $sheetHeaders);
+            $this->writer->writeSheet($tableData, $title, $sheetHeaders);
         }
         while (!empty($cursor)) {
             $tableData = $this->getTableData($cursor, $tableCols);
-            $this->writer->writeSheet($tableData, '', $sheetHeaders);
+            $this->writer->writeSheet($tableData, $title, $sheetHeaders);
 
             /// Advance within the results
             $offset += self::LIST_LIMIT;
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
+        }
+    }
+
+    private function setTableColumns(&$columns, &$tableCols, &$sheetHeaders)
+    {
+        foreach ($columns as $col) {
+            if (isset($col->columns)) {
+                $this->setTableColumns($col->columns, $tableCols, $sheetHeaders);
+                continue;
+            }
+
+            if (isset($col->widget->fieldName)) {
+                $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
+                $sheetHeaders[$col->widget->fieldName] = 'string';
+            }
         }
     }
 
