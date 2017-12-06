@@ -23,7 +23,7 @@
                     <div class="card-header">{{ i18n.trans('columns') }}</div>
                     <div class="card-body">
                         <div class="form-group">
-                            <textarea name="columns" rows="10" class="form-control">{{ fsc.pageOption.columns() }}</textarea>
+                            <textarea name="columns" rows="10" class="form-control">{{ fsc.pageOption.columns|json_encode() }}</textarea>
                         </div>
                     </div>
                 </div>

@@ -71,12 +71,12 @@
         </tr>
         </thead>
         <tbody>
-        {% if fsc.pMng.installedPlugins is empty %}
+        {% if fsc.pluginManager.installedPlugins is empty %}
         <tr class="table-warning">
             <td colspan="3"><b>{{ i18n.trans('no-data') }}</b></td>
         </tr>
         {% else %}
-        {% for plugin in fsc.pMng.installedPlugins %}
+        {% for plugin in fsc.pluginManager.installedPlugins %}
         {% if plugin in fsc.enabledPlugins %}
         <tr class="table-primary">
             {% else %}
@@ -152,7 +152,7 @@
         dropZoneEnabled: true,
         browseOnZoneClick: false,
         fileActionSettings: {showDrag: false, showUpload: false, showZoom: false},
-        language: "{{ langCode }}",
+        language: "{{ i18n.getLangCode() }}",
         allowedFileExtensions: ["zip"],
         overwriteInitial: false,
         previewFileIcon: '<i class="fa fa-file-archive-o"></i>',

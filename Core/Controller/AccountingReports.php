@@ -43,10 +43,10 @@ class AccountingReports extends Controller
         $this->ejercicios = $ejercicioModel->all([], ['fechainicio' => 'DESC']);
 
         $action = $this->request->get('action', '');
-        $this->exexAction($action);
+        $this->execAction($action);
     }
 
-    private function exexAction($action)
+    private function execAction($action)
     {
         switch ($action) {
             case 'libro-mayor':

@@ -50,37 +50,32 @@ class AdminHome extends Base\Controller
     public $postMaxSize;
 
     /**
-     * User language.
-     * @var string
-     */
-    public $lang;
-
-    /**
      * Plugin Manager.
      * @var Base\PluginManager
      */
-    public $pMng;
+    public $pluginManager;
 
     /**
-     * AdminHome constructor.
+     * Runs the controller's private logic.
      *
-     * @param Base\Cache      $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog    $miniLog
-     * @param string          $className
+     * @param Response $response
+     * @param Model\User|null $user
      */
-    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    public function privateCore(&$response, $user)
     {
-        parent::__construct($cache, $i18n, $miniLog, $className);
-
-        /// Check for .htaccess
-        $this->checkHtaccess();
+        parent::privateCore($response, $user);
 
         /// For now, always deploy the contents of Dinamic, for testing purposes
-        $pluginManager = new Base\PluginManager();
-        $pluginManager->deploy(true);
-
+        $this->pluginManager = new Base\PluginManager();
+        $this->pluginManager->deploy(true);
         $this->cache->clear();
+
+        $this->enabledPlugins = $this->pluginManager->enabledPlugins();
+        $this->postMaxSize = $this->returnKBytes(ini_get('post_max_size'));
+        $this->uploadMaxFileSize = $this->returnKBytes(ini_get('upload_max_filesize'));
+
+        $action = $this->request->get('action', '');
+        $this->execAction($action);
     }
 
     /**
@@ -110,27 +105,31 @@ class AdminHome extends Base\Controller
         }
     }
 
-    /**
-     * Runs the controller's private logic.
-     *
-     * @param Response $response
-     * @param Model\User|null $user
-     */
-    public function privateCore(&$response, $user)
+    private function execAction($action)
     {
-        parent::privateCore($response, $user);
-        $this->lang = $this->request->cookies->get('fsLang');
-        $this->pMng = new Base\PluginManager();
-        $this->enabledPlugins = $this->pMng->enabledPlugins();
-
+        /// TODO: move this functions to the switch, and modify forms to use action
         $this->disablePlugin($this->request->get('disable', ''));
         $this->removePlugin($this->request->get('remove', ''));
         $this->enablePlugin($this->request->get('enable', ''));
         $this->uploadPlugin($this->request->files->get('plugin', []));
 
-        $this->enabledPlugins = $this->pMng->enabledPlugins();
-        $this->postMaxSize = $this->returnKBytes(ini_get('post_max_size'));
-        $this->uploadMaxFileSize = $this->returnKBytes(ini_get('upload_max_filesize'));
+        switch ($action) {
+            case 'upload':
+                break;
+
+            case 'enable':
+                break;
+
+            case 'disable':
+                break;
+
+            case 'remove':
+                break;
+
+            default:
+                $this->checkHtaccess();
+                break;
+        }
     }
 
     /**
