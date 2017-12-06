@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\App;
 
 use DebugBar\Bridge\Twig;
@@ -204,7 +203,7 @@ class AppController extends App
     private function renderHtml($template, $controllerName = '')
     {
         /// Load the template engine
-        $twigLoader = new Twig_Loader_Filesystem(FS_FOLDER . '/Dinamic/View');
+        $twigLoader = $this->loadTwigFolders();
 
         /// Twig options
         $twigOptions = ['cache' => FS_FOLDER . '/Cache/Twig'];
@@ -245,6 +244,26 @@ class AppController extends App
             $this->response->setContent($twig->render('Error/TemplateError.html', $templateVars));
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    /**
+     * Returns a TwigLoader object with the folders selecteds
+     * @return Twig_Loader_Filesystem
+     */
+    private function loadTwigFolders()
+    {
+        if (FS_DEBUG) {
+            $twigLoader = new Twig_Loader_Filesystem(FS_FOLDER . '/Core/View');
+            foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
+                if (file_exists(FS_FOLDER . '/Plugins/' . $pluginName . '/View')) {
+                    $twigLoader->prependPath(FS_FOLDER . '/Plugins/' . $pluginName . '/View');
+                }
+            }
+
+            return $twigLoader;
+        }
+
+        return new Twig_Loader_Filesystem(FS_FOLDER . '/Dinamic/View');
     }
 
     /**
