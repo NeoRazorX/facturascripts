@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\Cache;
 
 use FacturaScripts\Core\Base\MiniLog;
@@ -79,7 +80,7 @@ class MemcacheAdapter implements AdaptorInterface
             }
         }
     }
-    
+
     /**
      * Return if is connected or not.
      *
@@ -111,8 +112,8 @@ class MemcacheAdapter implements AdaptorInterface
      * Put content into the cache.
      *
      * @param string $key
-     * @param mixed  $content the the content you want to store
-     * @param int    $expire  time to expire
+     * @param mixed $content the the content you want to store
+     * @param int $expire time to expire
      *
      * @return bool whether if the operation was successful or not
      */
@@ -157,7 +158,7 @@ class MemcacheAdapter implements AdaptorInterface
         if (self::$connected) {
             return self::$memcache->flush();
         }
-        
+
         return false;
     }
 }
