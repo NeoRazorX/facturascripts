@@ -155,9 +155,9 @@ class AdminHome extends Base\Controller
     {
         if (!empty($disablePlugin)) {
             if (in_array($disablePlugin, $this->enabledPlugins)) {
-                $this->pMng->disable($disablePlugin);
+                $this->pluginManager->disable($disablePlugin);
                 $this->miniLog->error($this->i18n->trans('plugin-disabled'));
-                $this->pMng->deploy();
+                $this->pluginManager->deploy();
                 return true;
             }
 
@@ -177,11 +177,11 @@ class AdminHome extends Base\Controller
     private function removePlugin($removePlugin)
     {
         if (!empty($removePlugin)) {
-            $this->pMng->disable($removePlugin);
-            if (is_dir($this->pMng->getPluginPath() . $removePlugin)) {
-                $this->pMng->deploy();
+            $this->pluginManager->disable($removePlugin);
+            if (is_dir($this->pluginManager->getPluginPath() . $removePlugin)) {
+                $this->pluginManager->deploy();
                 $this->miniLog->error($this->i18n->trans('plugin-deleted', [$removePlugin]));
-                $this->delTree($this->pMng->getPluginPath() . $removePlugin);
+                $this->delTree($this->pluginManager->getPluginPath() . $removePlugin);
                 return true;
             }
 
@@ -202,9 +202,10 @@ class AdminHome extends Base\Controller
     {
         if (!empty($enablePlugin)) {
             if (!in_array($enablePlugin, $this->enabledPlugins)) {
-                $this->pMng->enable($enablePlugin);
+                $this->pluginManager->enable($enablePlugin);
                 $this->miniLog->info($this->i18n->trans('plugin-enabled'));
-                $this->pMng->deploy();
+                $this->pluginManager->deploy();
+                $this->enabledPlugins = $this->pluginManager->enabledPlugins();
                 return true;
             }
 
@@ -223,10 +224,10 @@ class AdminHome extends Base\Controller
     {
         foreach ($uploadFiles as $uploadFile) {
             if ($uploadFile->getMimeType() === 'application/zip') {
-                $listFilesBefore = array_diff(scandir($this->pMng->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
-                $result = $this->unzipFile($uploadFile->getPathname(), $this->pMng->getPluginPath(), $listFilesBefore);
+                $listFilesBefore = array_diff(scandir($this->pluginManager->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
+                $result = $this->unzipFile($uploadFile->getPathname(), $this->pluginManager->getPluginPath(), $listFilesBefore);
                 if ($result === true) {
-                    $listFilesAfter = array_diff(scandir($this->pMng->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
+                    $listFilesAfter = array_diff(scandir($this->pluginManager->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
                     /// Contains added files on a list
                     $diffFolders = array_diff($listFilesAfter, $listFilesBefore);
                     foreach ($diffFolders as $folder) {
@@ -258,12 +259,12 @@ class AdminHome extends Base\Controller
         $pluginFolder = substr($pluginUnzipped, 0, strpos($pluginUnzipped, '-')) ?: '';
         $pluginFolder = empty($pluginFolder) ? $pluginUnzipped : $pluginFolder;
         if ($pluginUnzipped !== $pluginFolder) {
-            $folder = $this->pMng->getPluginPath() . $pluginFolder;
+            $folder = $this->pluginManager->getPluginPath() . $pluginFolder;
             if (file_exists($folder) && is_dir($folder)) {
                 $this->miniLog->info($this->i18n->trans('removing-previous-version', [$pluginFolder]));
                 $this->delTree($folder);
             }
-            if (!@rename($this->pMng->getPluginPath() . $pluginUnzipped, $folder)) {
+            if (!@rename($this->pluginManager->getPluginPath() . $pluginUnzipped, $folder)) {
                 $this->miniLog->error($this->i18n->trans('plugin-can-not-renamed', [$pluginUnzipped, $pluginFolder]));
             } else {
                 $this->miniLog->info($this->i18n->trans('plugin-renamed', [$pluginUnzipped, $pluginFolder]));
@@ -291,7 +292,7 @@ class AdminHome extends Base\Controller
             $this->miniLog->info($this->i18n->trans('removing-previous-version', [$pluginName]));
             $this->delTree($destinyFolder . $pluginName);
             /// Update the list before, if we delete an existing folder
-            $listFilesBefore = array_diff(scandir($this->pMng->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
+            $listFilesBefore = array_diff(scandir($this->pluginManager->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
         }
         if ($result === true) {
             $zipFile->extractTo($destinyFolder);

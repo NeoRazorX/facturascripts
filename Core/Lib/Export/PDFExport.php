@@ -155,6 +155,7 @@ class PDFExport implements ExportInterface
         }
         while (!empty($cursor)) {
             $tableData = $this->getTableData($cursor, $tableCols, $tableOptions);
+            $this->removeEmptyCols($tableData, $tableColsTitle);
             $this->pdf->ezTable($tableData, $tableColsTitle, $title, $tableOptions);
 
             /// Advance within the results
@@ -237,5 +238,22 @@ class PDFExport implements ExportInterface
         }
 
         return $tableData;
+    }
+
+    private function removeEmptyCols(&$tableData, &$tableColsTitle)
+    {
+        foreach (array_keys($tableColsTitle) as $key) {
+            $remove = true;
+            foreach ($tableData as $row) {
+                if ($row[$key] !== null && $row[$key] !== '') {
+                    $remove = false;
+                    break;
+                }
+            }
+
+            if ($remove) {
+                unset($tableColsTitle[$key]);
+            }
+        }
     }
 }
