@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -41,86 +41,86 @@ class ArticuloCombinacion
     use Base\ModelTrait;
 
     /**
-     * Clave primaria. Identificador de este par atributo-valor, no de la combinación.
+     * Primary key. Identifier of this attribute-value pair, not the combination.
      *
      * @var int
      */
     public $id;
 
     /**
-     * Identificador de la combinación.
-     * Ten en cuenta que la combinación es la suma de todos los pares atributo-valor.
+     * Identifier of the combination.
+     * Note that the combination is the sum of all attribute-value pairs.
      *
      * @var string
      */
     public $codigo;
 
     /**
-     * Segundo identificador para la combinación, para facilitar la sincronización
-     * con woocommerce o prestashop.
+     * Second identifier for the combination, to facilitate synchronization
+     * with woocommerce or prestashop.
      *
      * @var string
      */
     public $codigo2;
 
     /**
-     * Referencia del artículos relacionado.
+     * Related articles reference.
      *
      * @var string
      */
     public $referencia;
 
     /**
-     * ID del valor del atributo.
+     * ID of the attribute value.
      *
      * @var int
      */
     public $idvalor;
 
     /**
-     * Nombre del atributo.
+     * Name of the attribute.
      *
      * @var string
      */
     public $nombreatributo;
 
     /**
-     * Valor del atributo.
+     * Value of the attribute.
      *
      * @var string
      */
     public $valor;
 
     /**
-     * Referencia de la propia combinación.
+     * Reference of the combination itself.
      *
      * @var string
      */
     public $refcombinacion;
 
     /**
-     * Código de barras de la combinación.
+     * Barcode combination.
      *
      * @var string
      */
     public $codbarras;
 
     /**
-     * Impacto en el precio del artículo.
+     * Impact on the price of the item.
      *
      * @var float|int
      */
     public $impactoprecio;
 
     /**
-     * Stock físico de la combinación.
+     * Physical stock of the combination.
      *
      * @var float|int
      */
     public $stockfis;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -130,7 +130,7 @@ class ArticuloCombinacion
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -140,23 +140,19 @@ class ArticuloCombinacion
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
-     *
-     * @return string
+     * Reset the values of all model properties.
      */
     public function install()
     {
-        /// nos aseguramos de que existan las tablas necesarias
-        //new Atributo();
+/// we make sure that the necessary tables exist
+//new Atributo();
         new AtributoValor();
 
         return '';
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset values of all model properties.
      */
     public function clear()
     {
@@ -175,30 +171,57 @@ class ArticuloCombinacion
 
     public function test()
     {
-        if ($this->codigo === null) {
-            $this->codigo = (string) $this->getNewCodigo();
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codigo = ' . $this->dataBase->var2str($cod) . ';';
+        $data = $this->dataBase->select($sql);
+        if (!empty($data)) {
+            return new self($data[0]);
         }
+
+        return false;
     }
 
     /**
-     * Devuelve un nuevo código para una combinación de artículo
+     * Remove all combinations of the item with reference = $ ref
      *
-     * @return int
+     * @param string $ref
+     *
+     * @return bool
      */
-    private function getNewCodigo()
+    public function deleteFromRef($ref)
     {
         $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codigo') . ') as cod FROM ' . $this->tableName() . ';';
         $cod = $this->dataBase->select($sql);
         if (!empty($cod)) {
             return 1 + (int) $cod[0]['cod'];
         }
-
-        return 1;
     }
 
     /**
-     * Devuelve un array con todos los datos de la combinación con código = $cod,
-     * ten en cuenta que lo que se almacenan son los pares atributo => valor.
+     * Returns an array with all the combinations of the item with reference = $ ref
+     *
+     * @param string $ref
+     *
+     * @return self[]
+     */
+    public function allFromRef($ref)
+    {
+        $lista = [];
+
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($ref)
+            . ' ORDER BY codigo ASC, nombreatributo ASC;';
+        $data = $this->dataBase->select($sql);
+        if (!empty($data)) {
+            foreach ($data as $d) {
+                $lista[] = new self($d);
+            }
+        }
+
+        return $lista;
+    }
+
+    /**
+     * Returns an array with all the data of the combination with code = $ cod,
+     * keep in mind that what are stored are the attribute pairs => value.
      *
      * @param string $cod
      *
@@ -206,8 +229,140 @@ class ArticuloCombinacion
      */
     public function allFromCodigo($cod)
     {
-        $where = [new DataBaseWhere('codigo', $cod)];
-        $order = ['nombreatributo' => 'ASC'];
-        return $this->all($where, $order);
+        $lista = [];
+
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codigo = ' . $this->dataBase->var2str($cod)
+            . ' ORDER BY nombreatributo ASC;';
+        $data = $this->dataBase->select($sql);
+        if (!empty($data)) {
+            foreach ($data as $d) {
+                $lista[] = new self($d);
+            }
+        }
+
+        return $lista;
+    }
+
+    /**
+     * Returns an array with all the data of the combination with code2 = $ cod,
+     * keep in mind that what is stored are the pairs atrubuto => value.
+     *
+     * @param string $cod
+     *
+     * @return self[]
+     */
+    public function allFromCodigo2($cod)
+    {
+        $lista = [];
+
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codigo2 = ' . $this->dataBase->var2str($cod)
+            . ' ORDER BY nombreatributo ASC;';
+        $data = $this->dataBase->select($sql);
+        if (!empty($data)) {
+            foreach ($data as $d) {
+                $lista[] = new self($d);
+            }
+        }
+
+        return $lista;
+    }
+
+    /**
+     * Returns the combinations of $ ref articles grouped by code.
+     *
+     * @param string $ref
+     *
+     * @return self[] with field codigo on array key
+     */
+    public function combinacionesFromRef($ref)
+    {
+        $lista = [];
+
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($ref)
+            . ' ORDER BY codigo ASC, nombreatributo ASC;';
+        $data = $this->dataBase->select($sql);
+        if (!empty($data)) {
+            foreach ($data as $d) {
+                if (isset($lista[$d['codigo']])) {
+                    $lista[$d['codigo']][] = new self($d);
+                } else {
+                    $lista[$d['codigo']] = [new self($d)];
+                }
+            }
+        }
+
+        return $lista;
+    }
+
+    /**
+     * Returns an array with the combinations containing $ query in its reference
+     * or that matches your barcode.
+     *
+     * @param string $query
+     *
+     * @return self[]
+     */
+    public function search($query = '')
+    {
+        $artilist = [];
+        $query = self::noHtml(mb_strtolower($query, 'UTF8'));
+
+        $sql = 'SELECT * FROM ' . static::tableName() . " WHERE referencia LIKE '" . $query . "%'"
+            . ' OR codbarras = ' . $this->dataBase->var2str($query);
+
+        $data = $this->dataBase->selectLimit($sql, 200);
+        if (!empty($data)) {
+            foreach ($data as $d) {
+                $artilist[] = new self($d);
+            }
+        }
+
+        return $artilist;
+    }
+
+    /**
+     * Insert the model data in the database.
+     *
+     * @return bool
+     */
+    private function saveInsert()
+    {
+        if ($this->codigo === null) {
+            $this->codigo = (string) $this->getNewCodigo();
+        }
+
+        return $this->saveInsertTrait();
+    }
+
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
+    public function install()
+    {
+/// we make sure that the necessary tables exist
+//new Atributo();
+        new AtributoValor();
+
+        return '';
+    }
+
+    /**
+     * Returns a new code for an article combination
+     *
+     * @return int
+     */
+    private function getNewCodigo()
+    {
+        $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codigo') . ') as cod FROM ' . static::tableName() . ';';
+        $cod = $this->dataBase->select($sql);
+        if (!empty($cod)) {
+            return 1 + (int) $cod[0]['cod'];
+        }
+
+        return 1;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2016      Luismipr               <luismipr@gmail.com>.
  * Copyright (C) 2016-2017 Carlos García Gómez    <carlos@facturascripts.com>
  *
@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Esta clase sirve para guardar la información de trazabilidad del artículo.
- * Números de serie, de lote y albaranes y facturas relacionadas.
+ * This class is used to save the traceability information of the article.
+ * Serial numbers, batch numbers and delivery notes and related invoices.
  *
  * @author Luismipr              <luismipr@gmail.com>
  * @author Carlos García Gómez   <carlos@facturascripts.com>
@@ -47,42 +47,42 @@ class ArticuloTraza
 
     /**
      * Numero de serie
-     * Clave primaria.
+     * Primary key.
      *
      * @var string
      */
     public $numserie;
 
     /**
-     * Número o identificador del lote
+     * Lot number or identifier
      *
      * @var string
      */
     public $lote;
 
     /**
-     * Id linea albaran venta
+     * Id line sale
      *
      * @var int
      */
     public $idlalbventa;
 
     /**
-     * id linea factura venta
+     * id line invoice sale
      *
      * @var int
      */
     public $idlfacventa;
 
     /**
-     * Id linea albaran compra
+     * Id linea albaran buy
      *
      * @var int
      */
     public $idlalbcompra;
 
     /**
-     * Id linea factura compra
+     * Id line invoice purchase
      *
      * @var int
      */
@@ -91,19 +91,19 @@ class ArticuloTraza
     /**
      * Fecha de entrada del artículo
      *
-     * @var |DateTime
+     * @var \DateTime
      */
     public $fecha_entrada;
 
     /**
      * Fecha de salida del artículo
      *
-     * @var |DateTime
+     * @var \DateTime
      */
     public $fecha_salida;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -113,7 +113,7 @@ class ArticuloTraza
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -123,7 +123,7 @@ class ArticuloTraza
     }
 
     /**
-     * Devuelve la url del albarán o la factura de compra.
+     * Returns the url of the delivery note or the purchase invoice.
      *
      * @return string
      */
@@ -147,7 +147,7 @@ class ArticuloTraza
     }
 
     /**
-     * Devuelve la url del albarán o factura de venta.
+     * Returns the url of the delivery note or sales invoice.
      *
      * @return string
      */
@@ -172,7 +172,7 @@ class ArticuloTraza
     }
 
     /**
-     * Devuelve la traza correspondiente al número de serie $numserie.
+     * Returns the trace corresponding to the serial number $ numserie.
      *
      * @param string $numserie
      *
@@ -193,7 +193,7 @@ class ArticuloTraza
      * Devuelve todas las trazas de un artículo.
      *
      * @param string $ref
-     * @param bool   $sololibre
+     * @param bool $sololibre
      *
      * @return self[]
      */
@@ -218,7 +218,7 @@ class ArticuloTraza
     }
 
     /**
-     * Devuelve todas las trazas cuya columna $tipo tenga valor $idlinea
+     * Returns all the traces whose $ type column has value $ idlinea
      *
      * @param string $tipo
      * @param string $idlinea
@@ -242,9 +242,9 @@ class ArticuloTraza
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */

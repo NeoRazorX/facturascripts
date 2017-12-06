@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Propiedad de un artículos. Permite añadir propiedades a un artículo
- * sin necesidad de modificar la clase artículo.
+ * Ownership of an article
+ * no need to modify the article class.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -30,28 +30,28 @@ class ArticuloPropiedad
     use Base\ModelTrait;
 
     /**
-     * Nombre de la propiedad
+     * Name of the property
      *
      * @var string
      */
     public $name;
 
     /**
-     * Referencia
+     * Reference
      *
      * @var string
      */
     public $referencia;
 
     /**
-     * Texto de la propiedad
+     * Property text
      *
      * @var string
      */
     public $text;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -61,7 +61,7 @@ class ArticuloPropiedad
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -71,7 +71,7 @@ class ArticuloPropiedad
     }
 
     /**
-     * Devuelve un array con los pares name => text para una referencia dada.
+     * Returns an array with the name => text pairs for a given reference.
      *
      * @param string $ref
      *
@@ -93,10 +93,10 @@ class ArticuloPropiedad
     }
 
     /**
-     * Guarda en la base de datos los pares name => text de propiedades de un artículo
+     * Save the name => text pairs of properties in an article in the database
      *
      * @param string $ref
-     * @param array  $values
+     * @param array $values
      *
      * @return bool
      */
@@ -119,7 +119,7 @@ class ArticuloPropiedad
     }
 
     /**
-     * Devuelve el valor de la propiedad $name del artículo con referencia $ref
+     * Returns the value of the $ name property of the item with reference $ ref
      *
      * @param string $ref
      * @param string $name
@@ -159,7 +159,7 @@ class ArticuloPropiedad
     }
 
     /**
-     * Elimina una propiedad de un artículo.
+     * Remove a property from an article.
      *
      * @param string $ref
      * @param string $name
