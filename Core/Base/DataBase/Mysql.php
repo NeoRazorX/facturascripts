@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
@@ -243,6 +244,7 @@ class Mysql implements DataBaseEngine
     /**
      * Runs a SELECT SQL statement, and returns an array with the results,
      * or an empty array when it fails.
+     *
      * @param \mysqli $link
      * @param string $sql
      *
@@ -364,7 +366,7 @@ class Mysql implements DataBaseEngine
             ($dbType === 'tinyint(1)' && $xmlType === 'boolean') ||
             (substr($dbType, 8, -1) === substr($xmlType, 18, -1)) ||
             (substr($dbType, 5, -1) === substr($xmlType, 18, -1))
-            );
+        );
 
         if (!$result) {
             $result = $this->compareDataTypeNumeric($dbType, $xmlType);

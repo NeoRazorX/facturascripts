@@ -110,10 +110,10 @@ class TranslationCollector extends DataCollector implements Renderable, AssetPro
     private function addTranslations()
     {
         foreach (static::$i18n->getUsedStrings() as $key => $value) {
-            $this->translations[] = array(
+            $this->translations[] = [
                 'key' => $key,
                 'value' => $value
-            );
+            ];
         }
     }
 
