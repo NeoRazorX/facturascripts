@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * Un Valor para un atributo de artículos.
+ * A Value for an article attribute.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -31,28 +31,28 @@ class AtributoValor
     use Base\ModelTrait;
 
     /**
-     * Clave primaria
+     * Primary key
      *
      * @var int
      */
     public $id;
 
     /**
-     * Código del atributo relacionado.
+     * Relative attribute codeo.
      *
      * @var string
      */
     public $codatributo;
 
     /**
-     * Valor del atributo
+     * Value of the attribute
      *
      * @var string
      */
     public $valor;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -62,7 +62,7 @@ class AtributoValor
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -85,7 +85,7 @@ class AtributoValor
     }
 
     /**
-     * Selecciona todos los atributos de un código de atributo
+     * Select all attributes of an attribute code
      *
      * @param string $cod
      *

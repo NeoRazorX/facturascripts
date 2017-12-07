@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -41,86 +41,86 @@ class ArticuloCombinacion
     use Base\ModelTrait;
 
     /**
-     * Clave primaria. Identificador de este par atributo-valor, no de la combinación.
+     * Primary key. Identifier of this value by attribute, not of the combination.
      *
      * @var int
      */
     public $id;
 
     /**
-     * Identificador de la combinación.
-     * Ten en cuenta que la combinación es la suma de todos los pares atributo-valor.
+     * Identifier of the combination.
+     * Note that the combination is the sum of all attribute-value pairs.
      *
      * @var string
      */
     public $codigo;
 
     /**
-     * Segundo identificador para la combinación, para facilitar la sincronización
-     * con woocommerce o prestashop.
+     * Second identifier for the combination, to facilitate synchronization
+     * with woocommerce or prestashop.
      *
      * @var string
      */
     public $codigo2;
 
     /**
-     * Referencia del artículos relacionado.
+     * Related articles reference.
      *
      * @var string
      */
     public $referencia;
 
     /**
-     * ID del valor del atributo.
+     * ID of the attribute value.
      *
      * @var int
      */
     public $idvalor;
 
     /**
-     * Nombre del atributo.
+     * Name of the attribute.
      *
      * @var string
      */
     public $nombreatributo;
 
     /**
-     * Valor del atributo.
+     * Value of the attribute.
      *
      * @var string
      */
     public $valor;
 
     /**
-     * Referencia de la propia combinación.
+     * Reference of the combination itself.
      *
      * @var string
      */
     public $refcombinacion;
 
     /**
-     * Código de barras de la combinación.
+     * Barcode combination.
      *
      * @var string
      */
     public $codbarras;
 
     /**
-     * Impacto en el precio del artículo.
+     * Impact on the price of the item.
      *
      * @var float|int
      */
     public $impactoprecio;
 
     /**
-     * Stock físico de la combinación.
+     * Physical stock of the combination.
      *
      * @var float|int
      */
     public $stockfis;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -130,7 +130,7 @@ class ArticuloCombinacion
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -140,9 +140,9 @@ class ArticuloCombinacion
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table.
+     * default.
      *
      * @return string
      */
@@ -181,7 +181,7 @@ class ArticuloCombinacion
     }
 
     /**
-     * Devuelve un nuevo código para una combinación de artículo
+     * Returns a new code for an article combination
      *
      * @return int
      */
@@ -197,8 +197,8 @@ class ArticuloCombinacion
     }
 
     /**
-     * Devuelve un array con todos los datos de la combinación con código = $cod,
-     * ten en cuenta que lo que se almacenan son los pares atributo => valor.
+     * Returns an array with all the data of the combination with código = $cod,
+     * keep in mind that what are stored are the attribute pairs => value.
      *
      * @param string $cod
      *
