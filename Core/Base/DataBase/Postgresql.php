@@ -16,13 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
 use FacturaScripts\Core\Base\Translator;
 
 /**
- * Class to connect with PostgreSQL..
+ * Class to connect with PostgreSQL.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -52,7 +53,7 @@ class Postgresql implements DataBaseEngine
     private $i18n;
 
     /**
-     * Contructor e inicializador de la clase
+     * Class constructor and initialization
      */
     public function __construct()
     {
@@ -62,7 +63,7 @@ class Postgresql implements DataBaseEngine
     }
 
     /**
-     * Devuelve el motor de base de datos y la versión.
+     * Return the used engine and the version.
      *
      * @param resource $link
      *
@@ -212,8 +213,8 @@ class Postgresql implements DataBaseEngine
      * or an empty array if it fails.
      *
      * @param resource $link
-     * @param string   $sql
-     * @param bool     $selectRows
+     * @param string $sql
+     * @param bool $selectRows
      *
      * @return array|bool
      */
@@ -243,7 +244,7 @@ class Postgresql implements DataBaseEngine
      * Runs a SELECT SQL statement
      *
      * @param resource $link
-     * @param string   $sql
+     * @param string $sql
      *
      * @return array
      */
@@ -257,7 +258,7 @@ class Postgresql implements DataBaseEngine
      * (inserts, updates or deletes)
      *
      * @param resource $link
-     * @param string   $sql
+     * @param string $sql
      *
      * @return bool
      */
@@ -270,7 +271,7 @@ class Postgresql implements DataBaseEngine
      * Escapes quotes from a text string
      *
      * @param resource $link
-     * @param string   $str
+     * @param string $str
      *
      * @return string
      */
@@ -333,9 +334,9 @@ class Postgresql implements DataBaseEngine
      * sequence exists. If it can't find it, i will create one.
      *
      * @param resource $link
-     * @param string   $tableName
-     * @param string   $default
-     * @param string   $colname
+     * @param string $tableName
+     * @param string $default
+     * @param string $colname
      */
     public function checkSequence($link, $tableName, $default, $colname)
     {
@@ -353,8 +354,8 @@ class Postgresql implements DataBaseEngine
      * Runs extra checks in the table
      *
      * @param resource $link
-     * @param string   $tableName
-     * @param string   $error
+     * @param string $tableName
+     * @param string $error
      *
      * @return bool
      */
