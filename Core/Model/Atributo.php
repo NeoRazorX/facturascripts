@@ -80,7 +80,7 @@ class Atributo
      * Get attribute by name
      *
      * @param string $nombre
-     * @param bool   $minusculas
+     * @param bool $minusculas
      *
      * @return Atributo|bool
      */
@@ -110,6 +110,6 @@ class Atributo
     {
         $this->nombre = self::noHtml($this->nombre);
 
-        return $this->traitSave();
+        return $this->saveTrait();
     }
 }

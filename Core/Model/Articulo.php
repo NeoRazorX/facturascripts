@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2012-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * Almacena los datos de un artículos.
+ * Store the data of an item.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -33,228 +33,228 @@ class Articulo
     }
 
     /**
-     * Clave primaria. Varchar (18).
+     * Primary key. Varchar (18).
      *
      * @var string
      */
     public $referencia;
 
     /**
-     * Define el tipo de artículo, así se pueden establecer distinciones
-     * según un tipo u otro. Varchar (10)
+     * Define the type of item, so you can set distinctions
+     * according to one type or another. Varchar (10)
      *
      * @var string
      */
     public $tipo;
 
     /**
-     * Código de la familia a la que pertenece. En la clase familia.
+     * Code of the family to which it belongs. In the family class.
      *
      * @var string
      */
     public $codfamilia;
 
     /**
-     * Descripción del artículo. Tipo text, sin límite de caracteres.
+     * Description of the article. Type text, without character limit.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * Código del fabricante al que pertenece. En la clase fabricante.
+     * Code of the manufacturer to which it belongs. In the manufacturer class.
      *
      * @var string
      */
     public $codfabricante;
 
     /**
-     * Precio del artículo, sin impuestos.
+     * Price of the item, without taxes.
      *
      * @var float|int
      */
     public $pvp;
 
     /**
-     * Almacena el valor del pvp antes de hacer el cambio.
-     * Este valor no se almacena en la base de datos, es decir,
-     * no se recuerda.
+     * Store the value of the pvp before making the change.
+     * This value is not stored in the database, ie,
+     * do not remember.
      *
      * @var float|int
      */
     public $pvp_ant;
 
     /**
-     * Fecha de actualización del pvp.
+     * Update date of the pvp.
      *
      * @var string
      */
     public $factualizado;
 
     /**
-     * Coste medio al comprar el artículo. Calculado.
+     * Average cost when buying the item. Calculated.
      *
      * @var float|int
      */
     public $costemedio;
 
     /**
-     * Precio de coste editado manualmente.
-     * No necesariamente es el precio de compra, puede incluir
-     * también otros costes.
+     * Cost price manually edited.
+     * It is not necessarily the purchase price, it can include
+     * also other costs.
      *
      * @var float|int
      */
     public $preciocoste;
 
     /**
-     * Impuesto asignado. Clase impuesto.
+     * Tax assigned. Taxed class.
      *
      * @var string
      */
     public $codimpuesto;
 
     /**
-     * True => el artículos está bloqueado / obsoleto.
+     * True => the items are locked / obsolete.
      *
      * @var bool
      */
     public $bloqueado;
 
     /**
-     * True => el artículo se compra
+     * True => the item is purchased
      *
      * @var bool
      */
     public $secompra;
 
     /**
-     * True => el artículo se vende
+     * True => the item is sold
      *
      * @var bool
      */
     public $sevende;
 
     /**
-     * True -> se mostrará sincronizará con la tienda online.
+     * True -> will be synchronized with the online store.
      *
      * @var bool
      */
     public $publico;
 
     /**
-     * Código de equivalencia. Varchar (18).
-     * Dos artículos o más son equivalentes si tienen el mismo código de equivalencia.
+     * Equivalence code. Varchar (18).
+     * Partnumber of the product. Maximum 38 characters.
      *
      * @var string
      */
     public $equivalencia;
 
     /**
-     * Partnumber del producto. Máximo 38 caracteres.
+     * Partnumber of the product. Maximum 38 characters.
      *
      * @var string
      */
     public $partnumber;
 
     /**
-     * Stock físico. La suma de las cantidades de esta referencia que en la tabla stocks.
+     * Physical stock. The sum of the amounts of this reference that in the table stocks.
      *
      * @var float|int
      */
     public $stockfis;
 
     /**
-     * El stock mínimo que debe haber
+     * The minimum stock that must have
      *
      * @var float|int
      */
     public $stockmin;
 
     /**
-     * El stock máximo que debe haber
+     * The maximum stock that must have
      *
      * @var float|int
      */
     public $stockmax;
 
     /**
-     * True -> permitir ventas sin stock.
-     * Si, sé que no tiene sentido que poner controlstock a True
-     * implique la ausencia de control de stock. Pero es una cagada de
-     * FacturaLux -> Abanq -> Eneboo, y por motivos de compatibilidad
-     * se mantiene.
+     * True -> allow sales without stock.
+     * Yes, I know it does not make sense to put controlstock to True
+     * implies the absence of stock control. But it's a shit
+     * FacturaLux -> Abanq -> Eneboo, and for compatibility reasons
+     * it keeps.
      *
      * @var bool
      */
     public $controlstock;
 
     /**
-     * True -> no controlar el stock.
-     * Activarlo implica poner a True $controlstock;
+     * True -> do not control the stock.
+     * Activating it implies putting True $ controlstock;
      *
      * @var bool
      */
     public $nostock;
 
     /**
-     * Código de barras.
+     * Barcode.
      *
      * @var string
      */
     public $codbarras;
 
     /**
-     * Observaciones del artículo
+     * Observations of the article
      *
      * @var string
      */
     public $observaciones;
 
     /**
-     * Código de la subcuenta para compras.
+     * Sub-account code for purchases.
      *
      * @var string
      */
     public $codsubcuentacom;
 
     /**
-     * Código para la subcuenta de compras, pero con IRPF.
+     * Code for the purchasing sub-account, but with IRPF.
      *
      * @var string
      */
     public $codsubcuentairpfcom;
 
     /**
-     * Control de trazabilidad.
+     * Traceability control.
      *
      * @var bool
      */
     public $trazabilidad;
 
     /**
-     * % IVA del impuesto asignado.
+     * % VAT tax assigned.
      *
      * @var float|int
      */
     private $iva;
 
     /**
-     * Ruta a la imagen
+     * Route to the image
      *
      * @var string
      */
     private $imagen;
 
     /**
-     * Array de impuestos
+     * Tax Array
      *
      * @var Impuesto[]
      */
     private static $impuestos;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -264,7 +264,7 @@ class Articulo
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -274,16 +274,16 @@ class Articulo
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
     public function install()
     {
         /**
-         * La tabla articulos tiene varias claves ajenas, por eso debemos forzar la comprobación de esas tablas.
+         * The article table has several foreign keys, so we must force the checking of these tables.
          */
         new Fabricante();
         new Familia();
@@ -293,7 +293,7 @@ class Articulo
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -302,7 +302,7 @@ class Articulo
     }
 
     /**
-     * Devuelve el PVP con IVA
+     * Returns the PVP with VAT
      *
      * @return float
      */
@@ -312,7 +312,7 @@ class Articulo
     }
 
     /**
-     * Devuelve el precio de coste, ya esté configurado como calculado o editable.
+     * Returns the cost price, whether it is configured as calculated or editable.
      *
      * @return float
      */
@@ -322,7 +322,7 @@ class Articulo
     }
 
     /**
-     * Devuelve el precio de coste con IVA
+     * Returns the cost price with VAT
      *
      * @return float
      */
@@ -332,8 +332,8 @@ class Articulo
     }
 
     /**
-     * Devuelve la referencia codificada para poder ser usada en imágenes.
-     * Evitamos así errores con caracteres especiales como / y \.
+     * Returns the coded reference to be used in images.
+     * We thus avoid errors with special characters such as / and \.
      *
      * @param string|false $ref
      *
@@ -346,7 +346,7 @@ class Articulo
     }
 
     /**
-     * Devuelve una nueva referencia, la siguiente a la última de la base de datos.
+     * Returns a new reference, the next to the last one in the database.
      */
     public function getNewReferencia()
     {
@@ -362,7 +362,7 @@ class Articulo
     }
 
     /**
-     * Devuelve la familia del artículo.
+     * Returns the article family.
      *
      * @return bool|Familia
      */
@@ -373,7 +373,7 @@ class Articulo
     }
 
     /**
-     * Devuelve el fabricante del artículo.
+     * Returns the article's manufacturer.
      *
      * @return bool|Fabricante
      */
@@ -384,7 +384,7 @@ class Articulo
     }
 
     /**
-     * Devuelve el stock del artículo
+     * Returns the stock of the item
      *
      * @return Stock[]
      */
@@ -395,7 +395,7 @@ class Articulo
     }
 
     /**
-     * Devuelve el impuesto del artículo
+     * Returns the item tax
      *
      * @return bool|Impuesto
      */
@@ -406,8 +406,8 @@ class Articulo
     }
 
     /**
-     * Devuelve el % de IVA del artículo.
-     * Si $reload es True, vuelve a consultarlo en lugar de usar los datos cargados.
+     * Returns the VAT% of the item.
+     * If $ reload is True, check back instead of using the loaded data.
      *
      * @param bool $reload
      *
@@ -419,13 +419,7 @@ class Articulo
             $this->iva = null;
         }
 
-        if (!isset(self::$impuestos)) {
-            self::$impuestos = [];
-            $impuestoModel = new Impuesto();
-            foreach ($impuestoModel->all() as $imp) {
-                self::$impuestos[$imp->codimpuesto] = $imp;
-            }
-        }
+        $this->checkTaxes();
 
         if ($this->iva === null) {
             $this->iva = 0;
@@ -439,7 +433,7 @@ class Articulo
     }
 
     /**
-     * Devuelve la url relativa de la imagen del artículo.
+     * Returns the relative url of the article image.
      *
      * @return string|false
      */
@@ -460,11 +454,11 @@ class Articulo
     }
 
     /**
-     * Asigna una imagen a un artículo.
-     * Si $img está vacío, se elimina la imagen anterior.
+     * Assign an image to an article.
+     * If $img is empty, the previous image is deleted.
      *
      * @param string $img
-     * @param bool   $png
+     * @param bool $png
      */
     public function setImagen($img, $png = true)
     {
@@ -488,7 +482,7 @@ class Articulo
     }
 
     /**
-     * Asigna el PVP
+     * Assign the PVP
      *
      * @param float $pvp
      */
@@ -504,7 +498,7 @@ class Articulo
     }
 
     /**
-     * Asigna el PVP con IVA
+     * Assign PVP with VAT
      *
      * @param float $pvp
      */
@@ -514,8 +508,8 @@ class Articulo
     }
 
     /**
-     * Cambia la referencia del artículo.
-     * Lo hace en el momento, no hace falta hacer save().
+     * Change the article reference.
+     * He does it at the moment, there is no need to do save().
      *
      * @param string $ref
      */
@@ -541,7 +535,7 @@ class Articulo
     }
 
     /**
-     * Cambia el impuesto asociado al artículo.
+     * Change the tax associated with the article.
      *
      * @param string $codimpuesto
      */
@@ -551,22 +545,16 @@ class Articulo
             $this->codimpuesto = $codimpuesto;
             $this->iva = null;
 
-            if (!isset(self::$impuestos)) {
-                self::$impuestos = [];
-                $impuestoModel = new Impuesto();
-                foreach ($impuestoModel->all() as $imp) {
-                    self::$impuestos[$imp->codimpuesto] = $imp;
-                }
-            }
+            $this->checkTaxes();
         }
     }
 
     /**
-     * Modifica el stock del artículo en un almacén concreto.
-     * Ya se encarga de ejecutar save() si es necesario.
+     * Modify the stock of the item in a specific warehouse.
+     * Already responsible for executing save () if necessary.
      *
      * @param string $codalmacen
-     * @param int    $cantidad
+     * @param int $cantidad
      *
      * @return bool
      */
@@ -596,8 +584,8 @@ class Articulo
         }
 
         if ($result) {
-            /// $result es True
-            /// este código está muy optimizado para guardar solamente los cambios
+            /// $ result is True
+            /// this code is highly optimized to save only the changes
 
             $nuevoStock = $stock->totalFromArticulo($this->referencia);
             if ($this->stockfis !== $nuevoStock) {
@@ -620,13 +608,13 @@ class Articulo
     }
 
     /**
-     * Suma la cantidad especificada al stock del artículo en el almacén especificado.
-     * Ya se encarga de ejecutar save() si es necesario.
+     * Add the specified amount to the stock of the item in the specified store.
+     * Already responsible for executing save () if necessary.
      *
-     * @param string  $codalmacen
-     * @param int     $cantidad
-     * @param bool    $recalculaCoste
-     * @param string  $codcombinacion
+     * @param string $codalmacen
+     * @param int $cantidad
+     * @param bool $recalculaCoste
+     * @param string $codcombinacion
      *
      * @return bool
      */
@@ -674,7 +662,7 @@ class Articulo
             }
 
             if ($result) {
-                /// este código está muy optimizado para guardar solamente los cambios
+                /// this code is highly optimized to save only the changes
 
                 $nuevoStock = $stock->totalFromArticulo($this->referencia);
                 if ($this->stockfis !== $nuevoStock) {
@@ -691,7 +679,7 @@ class Articulo
                         $result = false;
                     }
 
-                    /// ¿Alguna combinación?
+                    /// Any combination?
                     if ($codcombinacion !== null && $result) {
                         $com0 = new ArticuloCombinacion();
                         foreach ($com0->allFromCodigo($codcombinacion) as $combi) {
@@ -711,7 +699,7 @@ class Articulo
     }
 
     /**
-     * Devuelve True  si los datos del artículo son correctos.
+     * Returns True if the item data is correct.
      *
      * @return bool
      */
@@ -750,7 +738,7 @@ class Articulo
     }
 
     /**
-     * Elimina el artículo de la base de datos.
+     * Remove the article from the database.
      *
      * @return bool
      */
@@ -768,7 +756,7 @@ class Articulo
     }
 
     /**
-     * Ejecuta una tarea con cron
+     * Execute a task with cron
      */
     public function cronJob()
     {
@@ -776,7 +764,7 @@ class Articulo
     }
 
     /**
-     * Realizamos algunas correcciones a la base de datos.
+     * We made some corrections to the database.
      */
     public function fixDb()
     {
@@ -792,6 +780,20 @@ class Articulo
         ];
         foreach ($fixes as $sql) {
             $this->dataBase->exec($sql);
+        }
+    }
+
+    /**
+     * Check list of taxes, and if is not set load all values.
+     */
+    public function checkTaxes()
+    {
+        if (!isset(self::$impuestos)) {
+            self::$impuestos = [];
+            $impuestoModel = new Impuesto();
+            foreach ($impuestoModel->all() as $imp) {
+                self::$impuestos[$imp->codimpuesto] = $imp;
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Artículo vendido por un proveedor.
+ * Item sold by a supplier.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -31,77 +31,77 @@ class ArticuloProveedor
     }
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
     public $id;
 
     /**
-     * Referencia del artículo en nuestro catálogo. Puede no estar actualmente.
+     * Reference of the article in our catalog. It may not be currently.
      *
      * @var string
      */
     public $referencia;
 
     /**
-     * Código del proveedor asociado.
+     * Supplier code associated.
      *
      * @var string
      */
     public $codproveedor;
 
     /**
-     * Referencia del artículo para el proveedor.
+     * Article reference for the supplier.
      *
      * @var string
      */
     public $refproveedor;
 
     /**
-     * Descripción del artículo
+     * Description of the article
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * Precio neto al que nos ofrece el proveedor este producto.
+     * Net price to which the supplier offers this product.
      *
      * @var float|int
      */
     public $precio;
 
     /**
-     * Descuento sobre el precio que nos hace el proveedor.
+     * Discount on the price that the supplier makes us.
      *
      * @var float|int
      */
     public $dto;
 
     /**
-     * Impuesto asignado. Clase impuesto.
+     * Tax assigned. Taxed class.
      *
      * @var string
      */
     public $codimpuesto;
 
     /**
-     * Stock del artículo en el almacén del proveedor.
+     * Stock of the item in the supplier's warehouse.
      *
      * @var float|int
      */
     public $stock;
 
     /**
-     * TRUE -> el artículo no ofrece stock.
+     * TRUE -> the item does not offer stock.
      *
      * @var bool
      */
     public $nostock;
 
     /**
-     * Código de barras del artículo
+     * Article barcode
      *
      * @var string
      */
@@ -115,7 +115,7 @@ class ArticuloProveedor
     public $partnumber;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -125,7 +125,7 @@ class ArticuloProveedor
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -135,7 +135,7 @@ class ArticuloProveedor
     }
 
     /**
-     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
+     * Create the necessary query to create a new provider article in the database.
      *
      * @return string
      */
@@ -148,7 +148,7 @@ class ArticuloProveedor
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -167,7 +167,7 @@ class ArticuloProveedor
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -188,7 +188,7 @@ class ArticuloProveedor
     }
 
     /**
-     * Devuelve la url donde ver/modificar los datos
+     * Returns the url where to see / modify the data.
      *
      * @param string $type
      *
@@ -200,7 +200,7 @@ class ArticuloProveedor
     }
 
     /**
-     * Aplicamos correcciones a la tabla.
+     * We apply corrections to the table.
      */
     public function fixDb()
     {
