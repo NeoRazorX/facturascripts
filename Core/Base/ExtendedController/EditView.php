@@ -19,8 +19,7 @@
 
 namespace FacturaScripts\Core\Base\ExtendedController;
 
-use FacturaScripts\Core\Base;
-use Symfony\Component\HttpFoundation\Response;
+use FacturaScripts\Core\Lib\ExportManager;
 
 /**
  * View definition for its use in ExtendedControllers
@@ -114,14 +113,10 @@ class EditView extends BaseView
     /**
      * Method to export the view data
      *
-     * @param Base\ExportManager $exportManager
-     * @param Response $response
-     * @param string $action
-     *
-     * @return mixed
+     * @param ExportManager $exportManager
      */
-    public function export(&$exportManager, &$response, $action)
+    public function export(&$exportManager)
     {
-        return $exportManager->generateDoc($response, $action, $this->model);
+        $exportManager->generateModelPage($this->model, $this->getColumns(), $this->title);
     }
 }

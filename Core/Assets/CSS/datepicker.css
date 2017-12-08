@@ -10,19 +10,24 @@
 .datepicker {
 
 }
+
 .datepicker-inline {
     width: 220px;
 }
+
 .datepicker.datepicker-rtl {
     direction: rtl;
 }
+
 .datepicker.datepicker-rtl table tr td span {
     float: right;
 }
+
 .datepicker-dropdown {
     top: 0;
     left: 0;
 }
+
 .datepicker-dropdown:before {
     content: '';
     display: inline-block;
@@ -34,6 +39,7 @@
     top: -7px;
     left: 6px;
 }
+
 .datepicker-dropdown:after {
     content: '';
     display: inline-block;
@@ -44,21 +50,27 @@
     top: -6px;
     left: 7px;
 }
+
 .datepicker > div {
     display: none;
 }
+
 .datepicker.days div.datepicker-days {
     display: block;
 }
+
 .datepicker.months div.datepicker-months {
     display: block;
 }
+
 .datepicker.years div.datepicker-years {
     display: block;
 }
+
 .datepicker table {
     margin: 0;
 }
+
 .datepicker td,
 .datepicker th {
     text-align: center;
@@ -69,24 +81,29 @@
     border-radius: 4px;
     border: none;
 }
+
 .table-striped .datepicker table tr td,
 .table-striped .datepicker table tr th {
     background-color: transparent;
 }
+
 .datepicker table tr td.day:hover {
     background: #eeeeee;
     cursor: pointer;
 }
+
 .datepicker table tr td.old,
 .datepicker table tr td.new {
     color: #999999;
 }
+
 .datepicker table tr td.disabled,
 .datepicker table tr td.disabled:hover {
     background: none;
     color: #999999;
     cursor: default;
 }
+
 .datepicker table tr td.today,
 .datepicker table tr td.today:hover,
 .datepicker table tr td.today.disabled,
@@ -104,6 +121,7 @@
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
     filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 }
+
 .datepicker table tr td.today:hover,
 .datepicker table tr td.today:hover:hover,
 .datepicker table tr td.today.disabled:hover,
@@ -126,6 +144,7 @@
 .datepicker table tr td.today.disabled:hover[disabled] {
     background-color: #fdf59a;
 }
+
 .datepicker table tr td.today:active,
 .datepicker table tr td.today:hover:active,
 .datepicker table tr td.today.disabled:active,
@@ -136,6 +155,7 @@
 .datepicker table tr td.today.disabled:hover.active {
     background-color: #fbf069 \9;
 }
+
 .datepicker table tr td.active,
 .datepicker table tr td.active:hover,
 .datepicker table tr td.active.disabled,
@@ -155,6 +175,7 @@
     color: #fff;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
+
 .datepicker table tr td.active:hover,
 .datepicker table tr td.active:hover:hover,
 .datepicker table tr td.active.disabled:hover,
@@ -177,6 +198,7 @@
 .datepicker table tr td.active.disabled:hover[disabled] {
     background-color: #0044cc;
 }
+
 .datepicker table tr td.active:active,
 .datepicker table tr td.active:hover:active,
 .datepicker table tr td.active.disabled:active,
@@ -187,6 +209,7 @@
 .datepicker table tr td.active.disabled:hover.active {
     background-color: #003399 \9;
 }
+
 .datepicker table tr td span {
     display: block;
     width: 23%;
@@ -199,15 +222,18 @@
     -moz-border-radius: 4px;
     border-radius: 4px;
 }
+
 .datepicker table tr td span:hover {
     background: #eeeeee;
 }
+
 .datepicker table tr td span.disabled,
 .datepicker table tr td span.disabled:hover {
     background: none;
     color: #999999;
     cursor: default;
 }
+
 .datepicker table tr td span.active,
 .datepicker table tr td span.active:hover,
 .datepicker table tr td span.active.disabled,
@@ -227,6 +253,7 @@
     color: #fff;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
+
 .datepicker table tr td span.active:hover,
 .datepicker table tr td span.active:hover:hover,
 .datepicker table tr td span.active.disabled:hover,
@@ -249,6 +276,7 @@
 .datepicker table tr td span.active.disabled:hover[disabled] {
     background-color: #0044cc;
 }
+
 .datepicker table tr td span.active:active,
 .datepicker table tr td span.active:hover:active,
 .datepicker table tr td span.active.disabled:active,
@@ -259,20 +287,25 @@
 .datepicker table tr td span.active.disabled:hover.active {
     background-color: #003399 \9;
 }
+
 .datepicker table tr td span.old {
     color: #999999;
 }
+
 .datepicker th.switch {
     width: 145px;
 }
+
 .datepicker thead tr:first-child th,
 .datepicker tfoot tr:first-child th {
     cursor: pointer;
 }
+
 .datepicker thead tr:first-child th:hover,
 .datepicker tfoot tr:first-child th:hover {
     background: #eeeeee;
 }
+
 .input-append.date .add-on i,
 .input-prepend.date .add-on i {
     display: block;

@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Lib\ExportManager;
 
 /**
  * Controller to manage the data editing
@@ -26,13 +27,13 @@ use FacturaScripts\Core\Base;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class EditController extends Base\Controller
+abstract class EditController extends Base\Controller
 {
 
     /**
      * Export data object
      *
-     * @var Base\ExportManager
+     * @var ExportManager
      */
     public $exportManager;
 
@@ -56,7 +57,7 @@ class EditController extends Base\Controller
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         $this->setTemplate('Master/EditController');
-        $this->exportManager = new Base\ExportManager();
+        $this->exportManager = new ExportManager();
     }
 
     /**
@@ -72,7 +73,7 @@ class EditController extends Base\Controller
         // Create the view to display
         $viewName = $this->getClassName();
         $title = $this->getPageData()['title'];
-        $this->view = new EditView($title, $this->getmodelName(), $viewName, $user->nick);
+        $this->view = new EditView($title, $this->getModelClassName(), $viewName, $user->nick);
 
         // Get any operations that have to be performed
         $action = $this->request->get('action', '');
@@ -114,8 +115,9 @@ class EditController extends Base\Controller
         switch ($action) {
             case 'export':
                 $this->setTemplate(false);
-                $document = $this->view->export($this->exportManager, $this->response, $this->request->get('option'));
-                $this->response->setContent($document);
+                $this->exportManager->newDoc($this->response, $this->request->get('option'));
+                $this->view->export($this->exportManager);
+                $this->exportManager->show($this->response);
                 break;
         }
     }
@@ -165,6 +167,11 @@ class EditController extends Base\Controller
     {
         return !empty($this->view->getPanelFooter()) ? $this->i18n->trans($this->view->getPanelFooter()) : '';
     }
+
+    /**
+     * Returns the class name of the model to use in the editView.
+     */
+    abstract public function getModelClassName();
 
     /**
      * Pointer to the data model

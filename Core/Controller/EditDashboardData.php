@@ -25,15 +25,15 @@ use FacturaScripts\Core\Base\ExtendedController;
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class EditDashboardCard extends ExtendedController\EditController
+class EditDashboardData extends ExtendedController\EditController
 {
 
     /**
      * Returns the model name
      */
-    public function getModelName()
+    public function getModelClassName()
     {
-        return 'FacturaScripts\Core\Model\DashboardCard';
+        return 'FacturaScripts\Core\Model\DashboardData';
     }
 
     /**

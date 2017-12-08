@@ -1103,5 +1103,7 @@
     "precio": "Precio",
     "dto": "Dto.",
     "concepto": "Concepto",
-    "importe": "Importe"
+    "importe": "Importe",
+    "lines": "Lineas",
+    "budget": "presupuesto"
 }

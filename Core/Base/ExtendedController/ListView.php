@@ -18,8 +18,7 @@
  */
 namespace FacturaScripts\Core\Base\ExtendedController;
 
-use FacturaScripts\Core\Base;
-use Symfony\Component\HttpFoundation\Response;
+use FacturaScripts\Core\Lib\ExportManager;
 
 /**
  * View definition for its use in ListController
@@ -125,7 +124,7 @@ class ListView extends BaseView
     public function getClickEvent($data)
     {
         foreach ($this->getColumns() as $col) {
-            if (isset($col->widget->onClick)) {
+            if ($col->widget->onClick !== null && $col->widget->onClick !== '') {
                 return '?page=' . $col->widget->onClick . '&code=' . $data->{$col->widget->fieldName};
             }
         }
@@ -324,16 +323,14 @@ class ListView extends BaseView
     }
 
     /**
-     * Method o export the view data
+     * Method to export the view data
      *
-     * @param Base\ExportManager $exportManager
-     * @param Response $response
-     * @param string $action
-     *
-     * @return mixed
+     * @param ExportManager $exportManager
      */
-    public function export(&$exportManager, &$response, $action)
+    public function export(&$exportManager)
     {
-        return $exportManager->generateList($response, $action, $this->model, $this->where, $this->order, $this->offset, $this->getColumns());
+        if ($this->count > 0) {
+            $exportManager->generateListModelPage($this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title);
+        }
     }
 }
