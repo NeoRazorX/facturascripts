@@ -32,31 +32,11 @@ final class AlmacenTest extends TestCase
     {
         $model = new Almacen();
 
-        $this->assertInstanceOf(
-            Almacen::class,
-            $model
-        );
-
-        $this->assertEquals(
-            null,
-            $model->codalmacen
-        );
-
-        $this->assertEquals(
-            '',
-            $model->nombre
-        );
-
-        $this->assertEquals(
-            '',
-            $model->contacto
-        );
-
-        $this->assertEquals(
-            '',
-            $model->observaciones
-        );
-
+        $this->assertInstanceOf(Almacen::class, $model);
+        $this->assertEquals(null, $model->codalmacen);
+        $this->assertEquals('', $model->nombre);
+        $this->assertEquals('', $model->contacto);
+        $this->assertEquals('', $model->observaciones);
         $this->assertFalse($model->test());
 
         $model->nombre = 'Test name';
@@ -69,20 +49,14 @@ final class AlmacenTest extends TestCase
     {
         $model = new Almacen();
 
-        $this->assertInternalType(
-            'string',
-            $model::tableName()
-        );
+        $this->assertInternalType('string', $model::tableName());
     }
 
     public function testPrimaryColumn()
     {
         $model = new Almacen();
 
-        $this->assertInternalType(
-            'string',
-            $model->primaryColumn()
-        );
+        $this->assertInternalType('string', $model->primaryColumn());
     }
 
 
@@ -90,19 +64,14 @@ final class AlmacenTest extends TestCase
     {
         $model = new Almacen();
 
-        $this->assertTrue(
-            $model->isDefault()
-        );
+        $this->assertTrue($model->isDefault());
     }
 
     public function testInstall()
     {
         $model = new Almacen();
 
-        $this->assertInternalType(
-            'string',
-            $model->install()
-        );
+        $this->assertInternalType('string', $model->install());
     }
 
     public function testSave()
@@ -127,7 +96,6 @@ final class AlmacenTest extends TestCase
 
         if (!empty($list)) {
             $this->assertInternalType('array', $list);
-
         } else {
             $this->assertSame([], $list);
         }

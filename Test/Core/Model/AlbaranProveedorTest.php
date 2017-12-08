@@ -34,151 +34,35 @@ final class AlbaranProveedorTest extends TestCase
     {
         $model = new AlbaranProveedor();
 
-        $this->assertInstanceOf(
-            AlbaranProveedor::class,
-            $model
-        );
-
-        $this->assertEquals(
-            null,
-            $model->cifnif
-        );
-
-        $this->assertEquals(
-            null,
-            $model->codagente
-        );
-
-        $this->assertEquals(
-            null,
-            $model->codalmacen
-        );
-
-        $this->assertEquals(
-            null,
-            $model->codproveedor
-        );
-
-        $this->assertEquals(
-            null,
-            $model->coddivisa
-        );
-
-        $this->assertEquals(
-            null,
-            $model->codejercicio
-        );
-
-        $this->assertEquals(
-            null,
-            $model->codigo
-        );
-
-        $this->assertEquals(
-            AppSettings::get('default', 'idempresa'),
-            $model->codpago
-        );
-
-        $this->assertEquals(
-            AppSettings::get('default', 'codserie'),
-            $model->codserie
-        );
-
-        $this->assertEquals(
-            date('d-m-Y'),
-            $model->fecha
-        );
-
-        $this->assertEquals(
-            date('H:i:s'),
-            $model->hora
-        );
-
-        $this->assertEquals(
-            AppSettings::get('default', 'idempresa'),
-            $model->idempresa
-        );
-
-        $this->assertEquals(
-            0.0,
-            $model->irpf
-        );
-
-        $this->assertEquals(
-            0.0,
-            $model->neto
-        );
-
-        $this->assertEquals(
-            null,
-            $model->nombre
-        );
-
-        $this->assertEquals(
-            0,
-            $model->numdocs
-        );
-
-        $this->assertEquals(
-            null,
-            $model->numero
-        );
-
-        $this->assertEquals(
-            null,
-            $model->numproveedor
-        );
-
-        $this->assertEquals(
-            1.0,
-            $model->tasaconv
-        );
-
-        $this->assertEquals(
-            0.0,
-            $model->total
-        );
-
-        $this->assertEquals(
-            0.0,
-            $model->totaliva
-        );
-
-        $this->assertEquals(
-            0.0,
-            $model->totaleuros
-        );
-
-        $this->assertEquals(
-            0.0,
-            $model->totalirpf
-        );
-
-        $this->assertEquals(
-            0.0,
-            $model->totalrecargo
-        );
-
-        $this->assertEquals(
-            null,
-            $model->observaciones
-        );
-
-        $this->assertEquals(
-            true,
-            $model->ptefactura
-        );
-
-        $this->assertEquals(
-            null,
-            $model->idalbaran
-        );
-
-        $this->assertEquals(
-            null,
-            $model->idfactura
-        );
-
+        $this->assertInstanceOf(AlbaranProveedor::class, $model);
+        $this->assertEquals(null, $model->cifnif);
+        $this->assertEquals(null, $model->codagente);
+        $this->assertEquals(null, $model->codalmacen);
+        $this->assertEquals(null, $model->codproveedor);
+        $this->assertEquals(null, $model->coddivisa);
+        $this->assertEquals(null, $model->codejercicio);
+        $this->assertEquals(null, $model->codigo);
+        $this->assertEquals(AppSettings::get('default', 'idempresa'), $model->codpago);
+        $this->assertEquals(AppSettings::get('default', 'codserie'), $model->codserie);
+        $this->assertEquals(date('d-m-Y'), $model->fecha);
+        $this->assertEquals(date('H:i:s'), $model->hora);
+        $this->assertEquals(AppSettings::get('default', 'idempresa'), $model->idempresa);
+        $this->assertEquals(0.0, $model->irpf);
+        $this->assertEquals(0.0, $model->neto);
+        $this->assertEquals(null, $model->nombre);
+        $this->assertEquals(0, $model->numdocs);
+        $this->assertEquals(null, $model->numero);
+        $this->assertEquals(null, $model->numproveedor);
+        $this->assertEquals(1.0, $model->tasaconv);
+        $this->assertEquals(0.0, $model->total);
+        $this->assertEquals(0.0, $model->totaliva);
+        $this->assertEquals(0.0, $model->totaleuros);
+        $this->assertEquals(0.0, $model->totalirpf);
+        $this->assertEquals(0.0, $model->totalrecargo);
+        $this->assertEquals(null, $model->observaciones);
+        $this->assertEquals(true, $model->ptefactura);
+        $this->assertEquals(null, $model->idalbaran);
+        $this->assertEquals(null, $model->idfactura);
         $this->assertTrue($model->test());
     }
 
@@ -186,30 +70,21 @@ final class AlbaranProveedorTest extends TestCase
     {
         $model = new AlbaranProveedor();
 
-        $this->assertInternalType(
-            'string',
-            $model::tableName()
-        );
+        $this->assertInternalType('string', $model::tableName());
     }
 
     public function testPrimaryColumn()
     {
         $model = new AlbaranProveedor();
 
-        $this->assertInternalType(
-            'string',
-            $model->primaryColumn()
-        );
+        $this->assertInternalType('string', $model->primaryColumn());
     }
 
     public function testInstall()
     {
         $model = new AlbaranProveedor();
 
-        $this->assertInternalType(
-            'string',
-            $model->install()
-        );
+        $this->assertInternalType('string', $model->install());
     }
 
     public function testSave()
@@ -234,7 +109,6 @@ final class AlbaranProveedorTest extends TestCase
 
         if (!empty($list)) {
             $this->assertInternalType('array', $list);
-
         } else {
             $this->assertSame([], $list);
         }

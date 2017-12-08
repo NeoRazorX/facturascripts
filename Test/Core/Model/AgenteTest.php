@@ -152,7 +152,6 @@ final class AgenteTest extends TestCase
 
         if (!empty($list)) {
             $this->assertInternalType('array', $list);
-
         } else {
             $this->assertSame([], $list);
         }

@@ -32,55 +32,31 @@ final class AgenciaTransporteTest extends TestCase
     {
         $model = new AgenciaTransporte();
 
-        $this->assertInstanceOf(
-            AgenciaTransporte::class,
-            $model
-        );
-
-        $this->assertEquals(
-            null,
-            $model->codtrans
-        );
-
-        $this->assertEquals(
-            null,
-            $model->nombre
-        );
-
-        $this->assertEquals(
-            true,
-            $model->activo
-        );
+        $this->assertInstanceOf(AgenciaTransporte::class, $model);
+        $this->assertEquals(null, $model->codtrans);
+        $this->assertEquals(null, $model->nombre);
+        $this->assertEquals(true, $model->activo);
     }
 
     public function testTable()
     {
         $model = new AgenciaTransporte();
 
-        $this->assertInternalType(
-            'string',
-            $model::tableName()
-        );
+        $this->assertInternalType('string', $model::tableName());
     }
 
     public function testPrimaryColumn()
     {
         $model = new AgenciaTransporte();
 
-        $this->assertInternalType(
-            'string',
-            $model->primaryColumn()
-        );
+        $this->assertInternalType('string', $model->primaryColumn());
     }
 
     public function testInstall()
     {
         $model = new AgenciaTransporte();
 
-        $this->assertInternalType(
-            'string',
-            $model->install()
-        );
+        $this->assertInternalType('string', $model->install());
     }
 
     public function testSave()
@@ -105,7 +81,6 @@ final class AgenciaTransporteTest extends TestCase
 
         if (!empty($list)) {
             $this->assertInternalType('array', $list);
-
         } else {
             $this->assertSame([], $list);
         }
