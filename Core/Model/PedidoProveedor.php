@@ -86,7 +86,7 @@ class PedidoProveedor
     {
         new Serie();
         new Ejercicio();
-        
+
         return '';
     }
 
@@ -107,7 +107,7 @@ class PedidoProveedor
     public function getLineas()
     {
         $lineaModel = new LineaPedidoProveedor();
-        return $lineaModel->all(new DataBaseWhere('idpedido', $this->idpedido));
+        return $lineaModel->all([new DataBaseWhere('idpedido', $this->idpedido)]);
     }
 
     /**

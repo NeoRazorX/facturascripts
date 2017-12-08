@@ -16,16 +16,23 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Import;
 
 /**
- * Description of CSVImport
+ * Common CSV import actions.
  *
  * @author Carlos García Gómez
  */
 class CSVImport
 {
-
+    /**
+     * Return the insert SQL reading a CSV file for the specific table
+     *
+     * @param string $table
+     *
+     * @return string
+     */
     public static function importTableSQL($table)
     {
         $filePath = static::getTableFilePath($table);
@@ -54,6 +61,13 @@ class CSVImport
         return $sql;
     }
 
+    /**
+     * Return the correct filepath for the table
+     *
+     * @param string $table
+     *
+     * @return string
+     */
     protected static function getTableFilePath($table)
     {
         $filePath = FS_FOLDER . '/Core/Data/Codpais/' . FS_CODPAIS . '/' . $table . '.csv';
@@ -61,7 +75,7 @@ class CSVImport
             return $filePath;
         }
 
-        $lang = substr(strtoupper(FS_LANG), 0, 2);
+        $lang = strtoupper(substr(FS_LANG, 0, 2));
         $filePath = FS_FOLDER . '/Core/Data/Lang/' . $lang . '/' . $table . '.csv';
         if (file_exists($filePath)) {
             return $filePath;

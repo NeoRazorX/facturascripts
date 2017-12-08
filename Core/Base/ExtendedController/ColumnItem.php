@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -26,6 +25,7 @@ namespace FacturaScripts\Core\Base\ExtendedController;
  */
 class ColumnItem extends VisualItem implements VisualItemInterface
 {
+
     /**
      * Additional text that explains the field to the user
      *
@@ -158,7 +158,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     /**
      * check and apply special operations on the columns
      *
-     * @return None
+     * @return mixed
      */
     public function applySpecialOperations()
     {
@@ -216,7 +216,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     public function getEditHTML($value, $withLabel = TRUE, $formName = 'main_form')
     {
         $header = $withLabel ? $this->getHeaderHTML($this->title) : '';
-        $data = $this->getColumnData( $this->widget->columnFunction() );
+        $data = $this->getColumnData($this->widget->columnFunction());
 
         switch ($this->widget->type) {
             case 'checkbox':
@@ -263,9 +263,9 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     /**
      * Returns the HTML code to display a button
      *
-     * @param type $data
-     * @param type $formName
-     * @return type
+     * @param array $data
+     * @param string $formName
+     * @return string
      */
     private function buttonHTMLColumn($data, $formName)
     {
@@ -354,7 +354,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      *
      * @return string
      */
-    private function getColumnClass()
+    protected function getColumnClass()
     {
         return ($this->numColumns > 0) ? (' col-md-' . $this->numColumns) : ' col';
     }
@@ -364,7 +364,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      *
      * @return string
      */
-    private function getColumnHint()
+    protected function getColumnHint()
     {
         return $this->widget->getHintHTML($this->i18n->trans($this->widget->hint));
     }
@@ -374,7 +374,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      *
      * @return string
      */
-    private function getColumnRequired()
+    protected function getColumnRequired()
     {
         return $this->widget->required ? '<div class="invalid-feedback">' . $this->i18n->trans('please-enter-value') . '</div>' : '';
     }
@@ -384,7 +384,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      *
      * @return string
      */
-    private function getColumnDescription()
+    protected function getColumnDescription()
     {
         return empty($this->description) ? '' : '<small class="form-text text-muted">' . $this->i18n->trans($this->description) . '</small>';
     }

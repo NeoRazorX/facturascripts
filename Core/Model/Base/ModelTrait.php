@@ -271,7 +271,7 @@ trait ModelTrait
                         if ($value === null) {
                             $value = ($field['is_nullable'] === 'NO') ? '' : null;
                         }
-                        $this->{$key} = $value;
+                        $this->{$key} = $this->fixHtml($value);
                 }
             }
         }

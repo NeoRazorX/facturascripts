@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * Un Valor para un atributo de artículos.
  *
@@ -26,10 +28,7 @@ namespace FacturaScripts\Core\Model;
 class AtributoValor
 {
 
-    use Base\ModelTrait {
-        save as private saveTrait;
-        saveInsert as private saveInsertTrait;
-    }
+    use Base\ModelTrait;
 
     /**
      * Clave primaria
@@ -72,34 +71,17 @@ class AtributoValor
         return 'id';
     }
 
-    /**
-     * Devuelve el nombre de un atributo
-     *
-     * @return string
-     */
-    public function getNombre()
+    public function install()
     {
-        $nombre = '';
+        new Atributo();
 
-        $sql = 'SELECT * FROM atributos WHERE codatributo = ' . $this->dataBase->var2str($this->codatributo) . ';';
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            $nombre = $data[0]['nombre'];
-        }
-
-        return $nombre;
+        return '';
     }
 
-    /**
-     * Almacena los datos del modelo en la base de datos.
-     *
-     * @return bool
-     */
-    public function save()
+    public function test()
     {
         $this->valor = self::noHtml($this->valor);
-
-        return $this->saveTrait();
+        return true;
     }
 
     /**
@@ -111,51 +93,8 @@ class AtributoValor
      */
     public function allFromAtributo($cod)
     {
-        $lista = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codatributo = ' . $this->dataBase->var2str($cod)
-            . ' ORDER BY valor ASC;';
-
-        $data = $this->dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $lista[] = new self($d);
-            }
-        }
-
-        return $lista;
-    }
-
-    /**
-     * Actualiza los datos del modelo en la base de datos.
-     *
-     * @return bool
-     */
-    private function saveUpdate()
-    {
-        $sql = 'UPDATE atributos_valores SET valor = ' . $this->dataBase->var2str($this->valor)
-            . ', codatributo = ' . $this->dataBase->var2str($this->codatributo)
-            . '  WHERE id = ' . $this->dataBase->var2str($this->id) . ';';
-
-        return $this->dataBase->exec($sql);
-    }
-
-    /**
-     * Inserta los datos del modelo en la base de datos.
-     *
-     * @return bool
-     */
-    private function saveInsert()
-    {
-        if ($this->id === null) {
-            $this->id = 1;
-
-            $sql = 'SELECT MAX(id) AS max FROM ' . $this->tableName() . ';';
-            $data = $this->dataBase->select($sql);
-            if (!empty($data)) {
-                $this->id = 1 + (int) $data[0]['max'];
-            }
-        }
-
-        return $this->saveInsertTrait();
+        $where = [new DataBaseWhere('codatributo', $cod)];
+        $order = ['valor' => 'ASC'];
+        return $this->all($where, $order);
     }
 }

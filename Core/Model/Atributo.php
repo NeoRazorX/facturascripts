@@ -27,7 +27,7 @@ class Atributo
 {
 
     use Base\ModelTrait {
-        save as private saveTrait;
+        save as private traitSave;
     }
 
     /**
@@ -110,6 +110,6 @@ class Atributo
     {
         $this->nombre = self::noHtml($this->nombre);
 
-        return $this->saveTrait();
+        return $this->traitSave();
     }
 }

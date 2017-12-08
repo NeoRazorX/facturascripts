@@ -31,7 +31,7 @@ class EditArticuloTraza extends ExtendedController\EditController
     /**
      * Devuelve el nombre del modelo
      */
-    public function getModelName()
+    public function getModelClassName()
     {
         return 'FacturaScripts\Core\Model\ArticuloTraza';
     }

@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Base\Cache;
 
 /**
- * Description of AdaptorInterface
+ * Adaptor Interface.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

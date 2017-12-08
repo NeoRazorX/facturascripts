@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Initial description for the controller EditPresupuestoCliente
+ *
+ * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Fco.Antonio Moreno Pérez <famphuelva@gmail.com>
+-->
+
+<view>
+    <columns>
+        <group name="data" numcolumns="12">
+            <column name="code" display="none" order="100">
+                <widget type="text" fieldname="idpresupuesto" required="true" />
+            </column>
+            <column name="customer" title="customer" numcolumns="3" order="100">
+                <widget type="text" fieldname="nombrecliente" required="true" />
+            </column>
+            <column name="serie" numcolumns="2" order="100">
+                <widget type="select" fieldname="codserie">
+                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="number2" numcolumns="3" order="100">
+                <widget type="text" fieldname="numero2" />
+            </column>
+            <column name="date" title="date" numcolumns="2" order="100">
+                <widget type="datepicker" fieldname="fecha" required="true" />
+            </column>
+            <column name="hour" title="hour" numcolumns="2" order="100">
+                <widget type="text" fieldname="hora" required="true" />
+            </column>
+        </group>
+        <group name="notes" numcolumns="12">
+            <column name="observations" numcolumns="12" order="110">
+                <widget type="textarea" fieldname="observaciones" required="true" />
+            </column>
+        </group>
+    </columns>
+    <rows>
+        <row type="actions">
+            <button type="modal" label="more-data" color="info" action="more-data-modal" icon="fa-edit" />
+        </row>
+    </rows>
+    <modals>
+        <group name="more-data-modal" title="more-data" icon="fa-edit">
+            <column name="warehouse" numcolumns="12">
+                <widget type="select" fieldname="codalmacen">
+                    <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="payment" title="method-payment" numcolumns="12" titleurl="?page=ListFormaPago" order="120">
+                <widget type="select" fieldname="codpago">
+                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+        </group>
+    </modals>
+</view>

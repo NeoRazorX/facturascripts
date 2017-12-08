@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\App;
 
+use DebugBar\Bridge\Twig;
 use DebugBar\StandardDebugBar;
 use Exception;
 use FacturaScripts\Core\Base\DebugBar\DataBaseCollector;
@@ -81,7 +82,7 @@ class AppController extends App
     /**
      * Select and run the corresponding controller.
      *
-     * @return boolean
+     * @return bool
      */
     public function run()
     {
@@ -110,8 +111,9 @@ class AppController extends App
 
     /**
      * Returns the name of the default controller for the current user or for all users.
-     * 
+     *
      * @param User|false $user
+     *
      * @return string
      */
     private function getDefaultController($user)
@@ -120,13 +122,13 @@ class AppController extends App
             return $user->homepage;
         }
 
-        $homePage = $this->settings->get('default', 'homepage', 'AdminHome');
+        $homePage = AppSettings::get('default', 'homepage', 'AdminHome');
         return $this->request->cookies->get('fsHomepage', $homePage);
     }
 
     /**
      * Load and process the $pageName controller.
-     * 
+     *
      * @param string $pageName
      * @param User $user
      */
@@ -195,18 +197,13 @@ class AppController extends App
      * Creates HTML with the selected template. The data will not be inserted in it
      * until render() is executed
      *
-     * @param string $template       html file to use
+     * @param string $template html file to use
      * @param string $controllerName
      */
     private function renderHtml($template, $controllerName = '')
     {
         /// Load the template engine
-        $twigLoader = new Twig_Loader_Filesystem(FS_FOLDER . '/Core/View');
-        foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
-            if (file_exists(FS_FOLDER . '/Plugins/' . $pluginName . '/View')) {
-                $twigLoader->prependPath(FS_FOLDER . '/Plugins/' . $pluginName . '/View');
-            }
-        }
+        $twigLoader = $this->loadTwigFolders();
 
         /// Twig options
         $twigOptions = ['cache' => FS_FOLDER . '/Cache/Twig'];
@@ -227,8 +224,8 @@ class AppController extends App
             unset($twigOptions['cache']);
             $twigOptions['debug'] = true;
 
-            $env = new \DebugBar\Bridge\Twig\TraceableTwigEnvironment(new Twig_Environment($twigLoader));
-            $this->debugBar->addCollector(new \DebugBar\Bridge\Twig\TwigCollector($env));
+            $env = new Twig\TraceableTwigEnvironment(new Twig_Environment($twigLoader));
+            $this->debugBar->addCollector(new Twig\TwigCollector($env));
             $baseUrl = 'vendor/maximebf/debugbar/src/DebugBar/Resources/';
             $templateVars['debugBarRender'] = $this->debugBar->getJavascriptRenderer($baseUrl);
 
@@ -250,6 +247,26 @@ class AppController extends App
     }
 
     /**
+     * Returns a TwigLoader object with the folders selecteds
+     * @return Twig_Loader_Filesystem
+     */
+    private function loadTwigFolders()
+    {
+        if (FS_DEBUG) {
+            $twigLoader = new Twig_Loader_Filesystem(FS_FOLDER . '/Core/View');
+            foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
+                if (file_exists(FS_FOLDER . '/Plugins/' . $pluginName . '/View')) {
+                    $twigLoader->prependPath(FS_FOLDER . '/Plugins/' . $pluginName . '/View');
+                }
+            }
+
+            return $twigLoader;
+        }
+
+        return new Twig_Loader_Filesystem(FS_FOLDER . '/Dinamic/View');
+    }
+
+    /**
      * User authentication, returns the user when successful, or false when not.
      *
      * @return User|false
@@ -265,11 +282,12 @@ class AppController extends App
                 if ($user->verifyPassword($this->request->request->get('fsPassword'))) {
                     $logKey = $user->newLogkey($this->request->getClientIp());
                     $user->save();
-                    $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, time() + FS_COOKIES_EXPIRE));
-                    $this->response->headers->setCookie(new Cookie('fsLogkey', $logKey, time() + FS_COOKIES_EXPIRE));
-                    $this->response->headers->setCookie(new Cookie('fsHomepage', $user->homepage, time() + FS_COOKIES_EXPIRE));
-                    $this->response->headers->setCookie(new Cookie('fsLang', $user->langcode, time() + FS_COOKIES_EXPIRE));
-                    $this->response->headers->setCookie(new Cookie('fsCompany', $user->idempresa, time() + FS_COOKIES_EXPIRE));
+                    $expire = time() + FS_COOKIES_EXPIRE;
+                    $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, $expire));
+                    $this->response->headers->setCookie(new Cookie('fsLogkey', $logKey, $expire));
+                    $this->response->headers->setCookie(new Cookie('fsHomepage', $user->homepage, $expire));
+                    $this->response->headers->setCookie(new Cookie('fsLang', $user->langcode, $expire));
+                    $this->response->headers->setCookie(new Cookie('fsCompany', $user->idempresa, $expire));
                     $this->miniLog->debug($this->i18n->trans('login-ok', [$nick]));
                     return $user;
                 }
@@ -289,9 +307,10 @@ class AppController extends App
 
     /**
      * Authenticate the user using the cookie.
-     * 
+     *
      * @param User $user0
-     * @return boolean
+     *
+     * @return bool
      */
     private function cookieAuth(&$user0)
     {

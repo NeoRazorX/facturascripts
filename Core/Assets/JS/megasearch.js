@@ -18,7 +18,7 @@
 
 /**
  * Returns an array of tr html tags from the given json.
- * 
+ *
  * @param {type} json
  * @returns {Array|json2tr.items}
  */
@@ -72,7 +72,7 @@ function searchOnSection(url) {
             if (items.length > 0) {
                 $("#v-pills-tab").append("<a class='nav-link' id='v-pills-" + key + "-tab' data-toggle='pill' href='#v-pills-"
                         + key + "' role='tab' aria-controls='v-pills-" + key + "' aria-expanded='true'>\n\
-                    <span class='badge badge-secondary float-right'>" + (items.length - 1) + "</span>\n\
+                    <span class='badge badge-secondary float-right'>" + items.length + "</span>\n\
                     <i class='fa " + val.icon + " fa-fw'></i>\n\
                     " + val.title + "\n\
                 </a>");
