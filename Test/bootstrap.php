@@ -26,18 +26,17 @@ if (__DIR__ === '/home/scrutinizer/build/Test') {
     require_once __DIR__ . '/config-scrutinizer.php';
 } else {
     // Local config, to use the same database connection
-    // $config = __DIR__ . '/../config.php';
+    $config = __DIR__ . '/../config.php';
     // To use another config, to use the same database connection that scrutinizer
-    $config = __DIR__ . '/config-scrutinizer.php';
+    //$config = __DIR__ . '/config-scrutinizer.php';
 
     echo 'Executing on development ...' . "\n";
-    echo 'Edit "Test/bootstrap.php" if you want to use another config.php file' . "\n";
+    echo 'Edit "Test/bootstrap.php" if you want to use another config.php file.' . "\n";
     echo 'Using ' . $config . "\n\n";
 
     require_once $config;
 }
 
-define('PHPUNIT_PATH', dirname(__DIR__));
 define('FS_FOLDER', dirname(__DIR__ . '/../..'));
 
 echo "\n" . 'Database connection details:' . "\n";
