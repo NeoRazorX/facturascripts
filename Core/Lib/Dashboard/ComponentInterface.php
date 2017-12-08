@@ -27,5 +27,7 @@ interface ComponentInterface
     public function loadData();
     public function saveData($data);
     public function getTemplate();
+    public function getNumColumns();
+    public function getCardClass();
     public function url($id);
 }

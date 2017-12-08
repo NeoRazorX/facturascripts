@@ -26,15 +26,14 @@
     </div>
 
     <div class="row">
-        <div class="card-columns col-md-12" style="column-count: 2;">
-
     {% for index, component in fsc.components %}
         {% import 'Macro/' ~ component.getTemplate() as componentTemplate %}
-        <div class="card" id="{{ index }}">
-            {{ componentTemplate.run(component, i18n) }}
+        <div class="{{ component.getNumColumns() }}">
+            <div class="card {{ component.getCardClass() }}" id="{{ index }}">
+                {{ componentTemplate.run(component, i18n) }}
+            </div>
         </div>
     {% endfor %}
-        </div>
     </div>
 </div>
 {% endblock %}

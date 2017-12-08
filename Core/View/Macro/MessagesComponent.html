@@ -1,7 +1,11 @@
 {% macro run(component, i18n) %}
-    <!-- Filters buttons -->
-    <div class="card-header text-white">
-        <div class="row">
+    <div class="card-header">
+        <span><i class="fa fa-info-circle mr-2"></i>{{ i18n.trans('messages-component-title') }}</span>
+    </div>
+
+    <div class="card-body">
+        <!-- Filters buttons -->
+        <div class="row mb-3 text-white">
             <div class="col-md-3">
                 <a class="btn btn-info btn-block" data-toggle="collapse" data-target=".message-info">{{ i18n.trans('info') }}</a>
             </div>
@@ -15,32 +19,27 @@
                 <a class="btn btn-danger btn-block" data-toggle="collapse" data-target=".message-danger">{{ i18n.trans('attention') }}</a>
             </div>
         </div>
-    </div>
 
-    <div class="card-body">
-            <div class="card-columns" style="column-count: 2;">
-            {% for message in component.messages %}
-                {% set color = message.properties['color'] %}
-                <div class="collapse message-{{ color }} show">
-                    <div class="card">
-                        <div class="card-body">
-                            <p>{{ message.properties['description'] }}</p>
-                        </div>
-                        <div class="card-footer bg-{{ color }} text-white">
-                            <small class="float-right text-right">{{ message.displaydate }}</small>
+        <!-- Messages -->
+        <div class="card-columns" style="column-count: 2;">
+        {% for message in component.messages %}
+            {% set color = message.properties['color'] %}
+            <div class="collapse message-{{ color }} show">
+                <div class="card">
+                    <div class="card-body">
+                        <p>{{ message.properties['description'] }}</p>
+                    </div>
+                    <div class="card-footer bg-{{ color }} text-white">
+                        <small class="float-right text-right">{{ message.displaydate }}</small>
+                        <a href="{{ component.url(message.id) }}" class="btn btn-light btn-sm"><i class="fa fa-edit" aria-hidden="true"></i></a>
 
-                            {% set url = component.url(message.id) %}
-                            {% if url is not empty %}
-                            <a href="{{ url }}" class="btn btn-light btn-sm"><i class="fa fa-edit" aria-hidden="true"></i></a>
-                            {% endif %}
-
-                            {% if message.properties['link'] is not empty %}
-                            <a href="{{ message.properties['link'] }}" target="_blank" class="btn btn-light btn-sm"><i class="fa fa-link" aria-hidden="true"></i></a>
-                            {% endif %}
-                        </div>
+                        {% if message.properties['link'] is not empty %}
+                        <a href="{{ message.properties['link'] }}" target="_blank" class="btn btn-light btn-sm"><i class="fa fa-link" aria-hidden="true"></i></a>
+                        {% endif %}
                     </div>
                 </div>
-            {% endfor %}
             </div>
+        {% endfor %}
+        </div>
     </div>
 {% endmacro %}

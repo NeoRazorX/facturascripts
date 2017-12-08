@@ -21,18 +21,23 @@ namespace FacturaScripts\Core\Lib\Dashboard;
 use FacturaScripts\Core\Model;
 
 /**
- * Description of ComponentMessages
+ * Description of TasksComponent
  *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class MessagesComponent extends BaseComponent implements ComponentInterface
+class TasksComponent extends BaseComponent implements ComponentInterface
 {
     /**
      *
      * @var Model\DashboardData[]
      */
-    public $messages;
+    public $tasks;
+
+    /**
+     *
+     * @var Model\DashboardData[]
+     */
+    public $completed;
 
     /**
      *
@@ -42,30 +47,37 @@ class MessagesComponent extends BaseComponent implements ComponentInterface
     public function __construct($data, $userNick)
     {
         parent::__construct($data, $userNick);
-        $this->messages = [];
+        $this->tasks = [];
+        $this->completed = [];
     }
 
-    /**
-     * Load data of component for user to put into dashboard
-     */
     public function loadData()
     {
         $where = $this->getDataFilter();
         $orderBy = $this->getDataOrderBy();
 
         $model = new Model\DashboardData();
-        $this->messages = $model->all($where, $orderBy);
+        $rows = $model->all($where, $orderBy);
 
-        if (empty($this->messages)) {
-            $this->genetareRandomData(15, 15);
-            $this->messages = $model->all($where, $orderBy);
+        if (empty($rows)) {
+            $this->genetareRandomData(10, 10);
+            $rows = $model->all($where, $orderBy);
+        }
+
+        foreach ($rows as $data) {
+            if ($data->properties['completed']) {
+                $this->completed[] = $data;
+                continue;
+            }
+
+            $this->tasks[] = $data;
         }
     }
 
     public function saveData($data)
     {
         $newItem = new Model\DashboardData();
-        $newItem->component = 'Messages';
+        $newItem->component = 'Tasks';
         $newItem->nick = $this->nick;
 
         if (isset($data['id'])) {
@@ -75,13 +87,13 @@ class MessagesComponent extends BaseComponent implements ComponentInterface
         }
 
         if ($this->randomData) {
-            $data['link'] = (mt_rand(0, 3) == 0) ? 'https://www.' . mt_rand(999, 99999) . '.com' : '';
+            $data['completed'] = (mt_rand(0, 2) == 0);
         }
 
         $newItem->properties = [
                 'color' => $data['color'],
                 'description' => $data['description'],
-                'link' => $data['link']
+                'completed' => $data['completed']
         ];
 
         $newItem->save();
@@ -94,6 +106,11 @@ class MessagesComponent extends BaseComponent implements ComponentInterface
 
     public function getNumColumns()
     {
-        return "col-5";
+        return "col-4";
+    }
+
+    public function getCardClass()
+    {
+        return "task-card";
     }
 }

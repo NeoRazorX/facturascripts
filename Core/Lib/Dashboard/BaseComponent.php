@@ -31,6 +31,9 @@ class BaseComponent
     const DIR_COMPONENTS = 'FacturaScripts\\Core\\Lib\\Dashboard\\';
     const SUFIX_COMPONENTS = 'Component';
 
+    protected $randomData;
+
+
     public $component;
     public $version;
     public $location;
@@ -61,5 +64,56 @@ class BaseComponent
     protected function getDataOrderBy()
     {
         return [ 'displaydate' => 'ASC' ];
+    }
+
+    public function getTemplate()
+    {
+        return $this->component . self::SUFIX_COMPONENTS . '.html';
+    }
+
+    public function getNumColumns()
+    {
+        return "col";
+    }
+
+    public function getCardClass()
+    {
+        return "";
+    }
+
+    protected function genetareRandomData($numRecords, $maxWord)
+    {
+        $this->randomData = TRUE;
+        $colors = ['info', 'primary', 'warning', 'danger'];
+
+        for ($key = 1; $key < $numRecords; $key++) {
+            shuffle($colors);
+
+            $data = [
+                'color' => $colors[0],
+                'description' => $this->getRandomText($maxWord)
+            ];
+
+            $this->saveData($data);
+        }
+        $this->randomData = FALSE;
+    }
+
+    private function getRandomText($maxWord = 20)
+    {
+        $words = ['lorem', 'ipsum', 'trastis', 'tus', 'turum', 'maruk', 'tartor', 'isis', 'osiris', 'morowik'];
+        $txt = $words[mt_rand(0, 9)];
+
+        $numWord = 0;
+        while (mt_rand(0, 8) > 0) {
+            shuffle($words);
+            $txt .= $words[0] . ' ';
+            ++$numWord;
+            if ($numWord === $maxWord) {
+                break;
+            }
+        }
+
+        return $txt;
     }
 }
