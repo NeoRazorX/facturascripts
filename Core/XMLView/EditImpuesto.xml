@@ -20,6 +20,7 @@
  * Initial description for the controller EditImpuesto
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
 -->
 
 <view>
@@ -28,8 +29,14 @@
             <column name="code" numcolumns="2" order="100">
                 <widget type="text" fieldname="codimpuesto" onclick="" icon="fa-credit-card" required="true" />
             </column>
-            <column name="description" numcolumns="10" order="110">
+            <column name="description" numcolumns="6" order="110">
                 <widget type="text" fieldname="descripcion" required="true" />
+            </column>
+            <column name="% IVA" numcolumns="2" order="120">
+                <widget type="number" fieldname="iva" required="true" />
+            </column>
+            <column name="% Recargo" numcolumns="2" order="130">
+                <widget type="number" fieldname="recargo" />
             </column>
         </group>
     </columns>
