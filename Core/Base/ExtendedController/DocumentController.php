@@ -39,7 +39,7 @@ abstract class DocumentController extends PanelController
     /**
      * Lines of document, the body.
      *
-     * @var Base\LineaDocumentoVenta|Base\LineaDocumentoCompra
+     * @var Base\LineaDocumentoVenta[]|Base\LineaDocumentoCompra[]
      */
     public $lines;
 
@@ -87,13 +87,13 @@ abstract class DocumentController extends PanelController
 
     /**
      * Return the document class name
-     * @return mixed
+     * @return string
      */
     abstract protected function getDocumentClassName();
 
     /**
      * Return the document line class name
-     * @return mixed
+     * @return string
      */
     abstract protected function getDocumentLineClassName();
 
