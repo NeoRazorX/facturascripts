@@ -116,7 +116,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
     /**
      * Loads the attributes structure from a XML file
      *
-     * @param \SimpleXMLElement|\SimpleXMLElement[] $group
+     * @param \SimpleXMLElement $group
      */
     public function loadFromXML($group)
     {
