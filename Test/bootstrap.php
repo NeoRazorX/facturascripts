@@ -21,7 +21,25 @@
  * @author Carlos García Gómez
  */
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../config.php';
+if (__DIR__ === '/home/scrutinizer/build/Test') {
+    echo 'Executing on scrutinizer ...' . "\n\n";
+    require_once __DIR__ . '/config-scrutinizer.php';
+} else {
+    // Local config, to use the same database connection
+    $config = __DIR__ . '/../config.php';
+    // To use another config, to use the same database connection that scrutinizer
+    //$config = __DIR__ . '/config-scrutinizer.php';
 
-define('PHPUNIT_PATH', dirname(__DIR__));
-define('FS_FOLDER', dirname(__DIR__));
+    echo 'Executing on development ...' . "\n";
+    echo 'Edit "Test/bootstrap.php" if you want to use another config.php file.' . "\n";
+    echo 'Using ' . $config . "\n\n";
+
+    require_once $config;
+}
+
+define('FS_FOLDER', dirname(__DIR__ . '/../..'));
+
+echo "\n" . 'Database connection details:' . "\n";
+echo "\n" . 'Host: ' . FS_DB_HOST;
+echo "\n" . 'User: ' . FS_DB_USER;
+echo "\n" . 'Pass: ' . FS_DB_PASS . "\n\n";

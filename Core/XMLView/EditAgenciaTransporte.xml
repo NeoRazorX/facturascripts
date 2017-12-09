@@ -32,6 +32,20 @@
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
         </group>
+        <group name="vacio" numcolumns="2">
+             
+        </group>
+        <group name="data2" numcolumns="10">
+            <column name="phone" numcolumns="2" order="120">
+                <widget type="tel" fieldname="telefono" />
+            </column>
+            <column name="WWW" numcolumns="9" order="130">
+                <widget type="text" fieldname="web" />
+            </column>
+            <column name="active" numcolumns="1" order="140">
+                <widget type="checkbox" fieldname="activo" />
+            </column>            
+        </group>
     </columns>
 </view>
 
