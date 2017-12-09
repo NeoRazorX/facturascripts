@@ -110,6 +110,9 @@ class WidgetItemSelect extends WidgetItem
         }
     }
 
+    /**
+     * Load values from model.
+     */
     public function loadValuesFromModel()
     {
         $tableName = $this->values[0]['source'];
@@ -121,6 +124,9 @@ class WidgetItemSelect extends WidgetItem
         unset($rows);
     }
 
+    /**
+     * Load values from array.
+     */
     public function loadValuesFromRange()
     {
         $start = $this->values[0]['start'];
@@ -129,7 +135,6 @@ class WidgetItemSelect extends WidgetItem
         $values = range($start, $end, $step);
         $this->setValuesFromArray($values);
     }
-
 
     /**
      * Generates the HTML code to display the data in the List controller

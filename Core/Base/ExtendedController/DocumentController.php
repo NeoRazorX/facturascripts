@@ -86,13 +86,15 @@ abstract class DocumentController extends PanelController
     }
 
     /**
-     * Return the document class name
+     * Return the document class name.
+     *
      * @return string
      */
     abstract protected function getDocumentClassName();
 
     /**
-     * Return the document line class name
+     * Return the document line class name.
+     *
      * @return string
      */
     abstract protected function getDocumentLineClassName();

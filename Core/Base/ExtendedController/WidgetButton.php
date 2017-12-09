@@ -202,7 +202,6 @@ class WidgetButton implements VisualItemInterface
      *
      * @param string $label
      * @param string $hint
-     * @param string $class
      * @param string $formName
      * @param string $class
      *
