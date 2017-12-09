@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -82,8 +83,8 @@ abstract class PanelController extends Base\Controller
      *
      * @param Base\Cache $cache
      * @param Base\Translator $i18n
-     * @param Base\MiniLog    $miniLog
-     * @param string          $className
+     * @param Base\MiniLog $miniLog
+     * @param string $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
@@ -98,7 +99,7 @@ abstract class PanelController extends Base\Controller
     }
 
     /**
-     * Asigna la posición de la pestaña.
+     * Sets the tabs position, by default is setted to 'left', also supported 'bottom' and 'top'.
      *
      * @param string $position
      */
@@ -123,7 +124,7 @@ abstract class PanelController extends Base\Controller
     }
 
     /**
-     * Exeutes the controller's private logic
+     * Runs the controller's private logic
      *
      * @param mixed $response
      * @param mixed $user
@@ -156,6 +157,7 @@ abstract class PanelController extends Base\Controller
      *
      * @param mixed $model
      * @param string $fieldName
+     *
      * @return mixed
      */
     public function getFieldValue($model, $fieldName)
@@ -168,10 +170,11 @@ abstract class PanelController extends Base\Controller
     }
 
     /**
-     * Devuelve el valor para un campo del modelo de datos de la vista
+     * Return the value for a field in the model of the view.
      *
      * @param string $viewName
      * @param string $fieldName
+     *
      * @return mixed
      */
     public function getViewModelValue($viewName, $fieldName)
@@ -184,6 +187,7 @@ abstract class PanelController extends Base\Controller
      * Returns the url for a specified type
      *
      * @param string $type
+     *
      * @return string
      */
     public function getURL($type)
@@ -197,24 +201,29 @@ abstract class PanelController extends Base\Controller
      *
      * @param BaseView $view
      * @param string $action
+     *
+     * @return bool
      */
     protected function execPreviousAction($view, $action)
     {
+        $status = true;
         switch ($action) {
             case 'save':
                 $data = $this->request->request->all();
                 $view->loadFromData($data);
-                $this->editAction($view);
+                $status = $this->editAction($view);
                 break;
 
             case 'delete':
-                $this->deleteAction($view);
+                $status = $this->deleteAction($view);
                 break;
         }
+
+        return $status;
     }
 
     /**
-     * Run the controller actions
+     * Run the controller after actions
      *
      * @param EditView $view
      * @param string $action
@@ -237,7 +246,8 @@ abstract class PanelController extends Base\Controller
      * Run the data edits
      *
      * @param BaseView $view
-     * @return boolean
+     *
+     * @return bool
      */
     protected function editAction($view)
     {
@@ -252,7 +262,8 @@ abstract class PanelController extends Base\Controller
      * Action to delete data
      *
      * @param BaseView $view
-     * @return boolean
+     *
+     * @return bool
      */
     protected function deleteAction($view)
     {
@@ -342,6 +353,7 @@ abstract class PanelController extends Base\Controller
      * Returns the view class
      *
      * @param string $view
+     *
      * @return string
      */
     public function viewClass($view)
