@@ -27,7 +27,7 @@
     "bootstrap": "4.0.0-beta.2",
     "bootstrap-fileinput": "^4.4.6",
     "font-awesome": "^4.x",
-    "handsontable": "^0.34.x",
+    "handsontable": "^0.34.5",
     "jquery": "^3.x",
     "jscolor-picker": "^2.0.4",
     "popper.js": "^1.13.0"
