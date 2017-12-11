@@ -63,7 +63,7 @@ class BaseComponent
 
     protected function getDataOrderBy()
     {
-        return [ 'displaydate' => 'ASC' ];
+        return [ 'displaydate' => 'ASC', 'id' => 'ASC' ];
     }
 
     public function getTemplate()

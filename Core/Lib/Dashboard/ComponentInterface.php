@@ -24,6 +24,7 @@ namespace FacturaScripts\Core\Lib\Dashboard;
  */
 interface ComponentInterface
 {
+    public static function getPropertiesFields();
     public function loadData();
     public function saveData($data);
     public function getTemplate();

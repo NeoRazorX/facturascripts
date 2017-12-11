@@ -51,6 +51,20 @@ class TasksComponent extends BaseComponent implements ComponentInterface
         $this->completed = [];
     }
 
+    /**
+     * Sets the special fields for the component and their initial values
+     *
+     * @return array
+     */
+    public static function getPropertiesFields()
+    {
+        return [
+            'description' => '',
+            'color' => 'info',
+            'enddate' => NULL
+        ];
+    }
+
     public function loadData()
     {
         $where = $this->getDataFilter();
@@ -65,12 +79,11 @@ class TasksComponent extends BaseComponent implements ComponentInterface
         }
 
         foreach ($rows as $data) {
-            if ($data->properties['completed']) {
-                $this->completed[] = $data;
+            if (empty($data->properties['enddate'])) {
+                $this->tasks[] = $data;
                 continue;
             }
-
-            $this->tasks[] = $data;
+            $this->completed[] = $data;
         }
     }
 
@@ -87,13 +100,13 @@ class TasksComponent extends BaseComponent implements ComponentInterface
         }
 
         if ($this->randomData) {
-            $data['completed'] = (mt_rand(0, 2) == 0);
+            $data['enddate'] = (mt_rand(0, 2) == 0) ? date('Y-m-d') : NULL;
         }
 
         $newItem->properties = [
                 'color' => $data['color'],
                 'description' => $data['description'],
-                'completed' => $data['completed']
+                'enddate' => $data['enddate']
         ];
 
         $newItem->save();
@@ -106,7 +119,7 @@ class TasksComponent extends BaseComponent implements ComponentInterface
 
     public function getNumColumns()
     {
-        return "col-4";
+        return "col-3";
     }
 
     public function getCardClass()

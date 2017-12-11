@@ -1,81 +1,32 @@
 {% macro run(component, i18n) %}
 <style>
-.task-header-btn {
-    position: absolute;
-    cursor: pointer;
-    top: 7px;
-    right: 10px;
-    padding: 8px;
-    line-height: 0;
-    border-radius: 3px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    color: #CCC;
-}
-
-.task-card ul.task-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.task-card ul.task-list .task-item {
-    position: relative;
-}
-
-.task-item-data {
-    background-color: #f8f8f8;
-    margin-left: 15px;
-    padding-top: 10px;
-    padding-left: 8px;
-}
-
-.task-item-data span {
-    margin-left: 5px;
-    height: 30px;
-    display: inline-block;
-}
-
-.task-item-data.item-completed span {
-    color: #AAA;
-    text-decoration: line-through;
-}
-
-.task-item-edit {
-    z-index: 1;
-    position: absolute;
-    height: 100%;
-    right: 0;
-    top: 0;
-    padding-top: 10px;
-}
+    .task-completed li {
+        text-decoration: line-through;
+    }
 </style>
 
     <div class="card-header">
         <i class="fa fa-tasks"></i>&nbsp; {{ i18n.trans('tasks-component-title') }}
-        <button type="button" class="task-header-btn"><span class="fa fa-plus"></span></button>
+        <button type="button" class="component-btn-options"><span class="fa fa-plus"></span></button>
     </div>
 
-    <div class="card-body p-3">
+    <div class="card-body">
         <h5><i class="fa fa-bell text-warning"></i>&nbsp; {{ i18n.trans('tasks-personal-title') }}</h5>
-        <ul class="task-list">
+        <ul class="list-group list-group-sortable">
         {% for task in component.tasks %}
-            <li class="task-item bg-{{ task.properties['color'] }}">
-                <div class="task-item-data">
-                    <span>{{ task.properties['description'] }}</span>
-                    <a href="{{ component.url(task.id) }}" class="btn btn-light btn-sm task-item-edit"><i class="fa fa-edit" aria-hidden="true"></i></a>
-                </div>
+            <li class="list-group-item text-{{ task.properties['color'] }}">
+                <span>{{ task.properties['description'] }}</span>
+                <a href="{{ component.url(task.id) }}"><i class="fa fa-edit text-secondary float-right" aria-hidden="true"></i></a>
             </li>
         {% endfor %}
         </ul>
 
         <h5><i class="fa fa-check text-success mt-4"></i>&nbsp; {{ i18n.trans('tasks-completed-title') }}</h5>
-        <ul class="task-list task-completed">
+        <ul class="list-group list-group-sortable task-completed">
         {% for task in component.completed %}
-            <li class="task-item bg-{{ task.properties['color'] }}">
-                <div class="task-item-data item-completed">
-                    <span>{{ task.properties['description'] }}</span>
-                    <a href="{{ component.url(task.id) }}" class="btn btn-light btn-sm task-item-edit"><i class="fa fa-edit" aria-hidden="true"></i></a>
-                </div>
+            <li class="list-group-item text-{{ task.properties['color'] }}">
+                <span>{{ task.properties['description'] }}</span>
+                <a href="{{ component.url(task.id) }}"><i class="fa fa-edit text-secondary float-right" aria-hidden="true"></i></a>
             </li>
         {% endfor %}
         </ul>

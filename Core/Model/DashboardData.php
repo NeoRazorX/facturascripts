@@ -31,6 +31,7 @@ class DashboardData
         clear as private traitClear;
         loadFromData as traitLoadFromData;
         saveInsert as traitSaveInsert;
+        saveUpdate as traitSaveUpdate;
         url as traitURL;
     }
 
@@ -106,6 +107,7 @@ class DashboardData
     public function install()
     {
         new User();
+        new Dashboard();
 
         return '';
     }
@@ -119,6 +121,24 @@ class DashboardData
         $this->creationdate = date('d-m-Y');
         $this->displaydate = date('d-m-Y');
         $this->properties = [];
+    }
+
+    /**
+     * Check that a data array have correct struct of model
+     *
+     * @param array $data
+     */
+    public function checkArrayData(&$data)
+    {
+        $properties = [];
+        foreach ($data as $key => $value) {
+            if (!in_array($key, ['id', 'nick', 'creationdate', 'displaydate', 'action'])) {
+                $properties[$key] = $value;
+                unset($data[$key]);
+            }
+        }
+        $data['properties'] = json_encode($properties);
+        unset($properties);
     }
 
     /**
@@ -136,6 +156,12 @@ class DashboardData
     {
         $values = ['properties' => json_encode($this->properties)];
         return $this->traitSaveInsert($values);
+    }
+
+    private function saveUpdate()
+    {
+        $values = ['properties' => json_encode($this->properties)];
+        return $this->traitSaveUpdate($values);
     }
 
     public function url($type = 'auto')

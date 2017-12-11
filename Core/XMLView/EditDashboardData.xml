@@ -29,19 +29,36 @@
             <column name="id" display="none" order="100">
                 <widget type="text" fieldname="id" readonly="true" required="true" />
             </column>
-            <column name="nick" numcolumns="4" order="100">
+            <column name="user" numcolumns="4" order="100">
                 <widget type="select" fieldname="nick" icon="fa-user" required="true">
                     <values source="fs_users" fieldcode="nick" fieldtitle="nick" ></values>
                 </widget>
             </column>
-            <column name="creationdate" numcolumns="4" order="110">
+            <column name="creation-date" numcolumns="4" order="110">
                 <widget type="datepicker" fieldname="creationdate" readonly="true" />
             </column>
-            <column name="displaydate" numcolumns="4" order="120">
+            <column name="display-date" numcolumns="4" order="120">
                 <widget type="datepicker" fieldname="displaydate" required="true" />
             </column>
-            <column name="description" numcolumns="12" order="130">
-                <widget type="textarea" fieldname="descripcion" />
+        </group>
+
+        <group name="options" numcolumns="12">
+            <column name="description" order="130">
+                <widget type="textarea" fieldname="description" />
+            </column>
+            <column name="color" numcolumns="2" order="140">
+                <widget type="select" fieldname="color">
+                    <values title="Info">info</values>
+                    <values title="News">primary</values>
+                    <values title="Notices">warning</values>
+                    <values title="Danger">danger</values>
+                </widget>
+            </column>
+            <column name="end-date" numcolumns="3" order="150">
+                <widget type="datepicker" fieldname="enddate" />
+            </column>
+            <column name="link" numcolumns="4" order="160">
+                <widget type="text" fieldname="link" />
             </column>
         </group>
     </columns>

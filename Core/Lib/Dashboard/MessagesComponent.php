@@ -46,6 +46,20 @@ class MessagesComponent extends BaseComponent implements ComponentInterface
     }
 
     /**
+     * Sets the special fields for the component and their initial values
+     *
+     * @return array
+     */
+    public static function getPropertiesFields()
+    {
+        return [
+            'description' => '',
+            'color' => 'info',
+            'link' => ''
+        ];
+    }
+
+    /**
      * Load data of component for user to put into dashboard
      */
     public function loadData()

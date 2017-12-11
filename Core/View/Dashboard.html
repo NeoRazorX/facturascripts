@@ -1,7 +1,20 @@
 {% extends "Master/MenuTemplate.html" %}
 
+{% block css %}
+{{ parent() }}
+<style>
+    .component-btn-options {
+        color: #CCC;
+        position: absolute;
+        right: 10px;
+        top: 10px;
+    }
+</style>
+{% endblock %}
+
 {% block javascript %}
-    <script src="Core/Assets/JS/jquery.sortable.js"></script>
+{{ parent() }}
+<script src="Core/Assets/JS/jquery.sortable.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -40,4 +53,17 @@
     {% endfor %}
     </div>
 </div>
+
+<script>
+    $(function() {
+        $('.card-sortable').sortable({
+            placeholderClass: 'card'
+        });
+
+        $('.list-group-sortable').sortable({
+            placeholderClass: 'list-group-item',
+            connectWith: '.connected'
+        });
+    });
+</script>
 {% endblock %}
