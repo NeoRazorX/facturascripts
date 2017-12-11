@@ -145,7 +145,7 @@ abstract class ListController extends Base\Controller
      *
      * @param string $action
      */
-    private function execPreviousAction($action)
+    protected function execPreviousAction($action)
     {
         switch ($action) {
             case 'delete':
@@ -159,7 +159,7 @@ abstract class ListController extends Base\Controller
      *
      * @param string $action
      */
-    private function execAfterAction($action)
+    protected function execAfterAction($action)
     {
         switch ($action) {
             case 'export':

@@ -152,22 +152,6 @@ abstract class PanelController extends Base\Controller
     }
 
     /**
-     * Returns a field value for the loaded data model
-     *
-     * @param mixed $model
-     * @param string $fieldName
-     * @return mixed
-     */
-    public function getFieldValue($model, $fieldName)
-    {
-        if (isset($model->{$fieldName})) {
-            return $model->{$fieldName};
-        }
-
-        return null;
-    }
-
-    /**
      * Devuelve el valor para un campo del modelo de datos de la vista
      *
      * @param string $viewName

@@ -34,7 +34,7 @@ class Controller
 
     /**
      * Contiene la lista de archivos extra a cargar: javascript, css, etc.
-     * @var array 
+     * @var array
      */
     public $assets;
 
@@ -69,7 +69,7 @@ class Controller
 
     /**
      * Herramientas para trabajar con divisas.
-     * @var DivisaTools 
+     * @var DivisaTools
      */
     public $divisaTools;
 
@@ -96,7 +96,7 @@ class Controller
 
     /**
      * Herramientas para trabajar con números.
-     * @var NumberTools 
+     * @var NumberTools
      */
     public $numberTools;
 
@@ -182,6 +182,22 @@ class Controller
     public function getTemplate()
     {
         return $this->template;
+    }
+
+    /**
+     * Returns a field value for the loaded data model
+     *
+     * @param mixed $model
+     * @param string $fieldName
+     * @return mixed
+     */
+    public function getFieldValue($model, $fieldName)
+    {
+        if (isset($model->{$fieldName})) {
+            return $model->{$fieldName};
+        }
+
+        return null;
     }
 
     /**

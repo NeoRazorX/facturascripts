@@ -94,7 +94,7 @@ abstract class EditController extends Base\Controller
      *
      * @param string $action
      */
-    private function execPreviousAction($action)
+    protected function execPreviousAction($action)
     {
         switch ($action) {
             case 'save':
@@ -110,7 +110,7 @@ abstract class EditController extends Base\Controller
      *
      * @param string $action
      */
-    private function execAfterAction($action)
+    protected function execAfterAction($action)
     {
         switch ($action) {
             case 'export':
@@ -120,18 +120,6 @@ abstract class EditController extends Base\Controller
                 $this->exportManager->show($this->response);
                 break;
         }
-    }
-
-    /**
-     * Returns a field value for the loaded data model
-     *
-     * @param mixed $model
-     * @param string $field
-     * @return mixed
-     */
-    public function getFieldValue($model, $field)
-    {
-        return $model->{$field};
     }
 
     /**
