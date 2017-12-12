@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -47,10 +48,10 @@ abstract class EditController extends Base\Controller
     /**
      * Initializes all the objects and properties
      *
-     * @param Base\Cache      $cache
+     * @param Base\Cache $cache
      * @param Base\Translator $i18n
-     * @param Base\MiniLog    $miniLog
-     * @param string          $className
+     * @param Base\MiniLog $miniLog
+     * @param string $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
@@ -127,6 +128,7 @@ abstract class EditController extends Base\Controller
      *
      * @param mixed $model
      * @param string $field
+     *
      * @return mixed
      */
     public function getFieldValue($model, $field)
@@ -137,7 +139,7 @@ abstract class EditController extends Base\Controller
     /**
      * Run the data edits
      *
-     * @return boolean
+     * @return bool
      */
     protected function editAction()
     {
@@ -187,6 +189,7 @@ abstract class EditController extends Base\Controller
      * Returns the url for a specified type
      *
      * @param string $type
+     *
      * @return string
      */
     public function getURL($type)

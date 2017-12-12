@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -26,13 +27,15 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 class RowItemButtons extends RowItem
 {
     /**
-     * Lista de botones
+     * Buttons list.
      * @var array
      */
     public $buttons;
-    
+
     /**
-     * Class constructor
+     * RowItemButtons constructor.
+     *
+     * @param string $type
      */
     public function __construct($type)
     {
@@ -49,7 +52,7 @@ class RowItemButtons extends RowItem
     {
         $this->buttons = $this->loadButtonsFromXML($row);
     }
-    
+
     /**
      * Creates the attributes structure from a JSON file
      *
@@ -58,12 +61,13 @@ class RowItemButtons extends RowItem
     public function loadFromJSON($row)
     {
         $this->type = (string) $row['type'];
-        
+
         foreach ($row['buttons'] as $button) {
             $values = $button;
+            /// TODO: Method call uses 1 parameters, but method signature uses 0 parameters
             $buttomItem = new WidgetButton($values);
             $this->buttons[] = $buttomItem;
             unset($buttomItem);
-        }        
-    }    
+        }
+    }
 }

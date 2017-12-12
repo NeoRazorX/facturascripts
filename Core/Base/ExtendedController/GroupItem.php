@@ -36,14 +36,15 @@ class GroupItem extends VisualItem implements VisualItemInterface
     /**
      * Define the columns that the group includes
      *
-     * @var array
+     * @var ColumnItem[]
      */
     public $columns;
 
     /**
      * Create and load the group structure from a XML file
      *
-     * @param \SimpleXMLElement $group
+     * @param \SimpleXMLElement|\SimpleXMLElement[] $group
+     *
      * @return GroupItem
      */
     public static function newFromXML($group)
@@ -57,6 +58,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
      * Create and load the group structure from the database
      *
      * @param array $group
+     *
      * @return GroupItem
      */
     public static function newFromJSON($group)
@@ -82,11 +84,12 @@ class GroupItem extends VisualItem implements VisualItemInterface
      *
      * @param ColumnItem $column1
      * @param ColumnItem $column2
+     *
      * @return int
      */
     public static function sortColumns($column1, $column2)
     {
-        if ($column1->order == $column2->order) {
+        if ($column1->order === $column2->order) {
             return 0;
         }
 
