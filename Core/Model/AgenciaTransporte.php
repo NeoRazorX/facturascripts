@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2015         Pablo Peralta
  * Copyright (C) 2015-2017    Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Agencia de transporte de mercancías.
+ * Merchandise transport agency
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -32,28 +32,28 @@ class AgenciaTransporte
     use Base\ContactInformation;
 
     /**
-     * Clave primaria. Varchar(8).
+     * Primary key. Varchar(8).
      *
      * @var string
      */
     public $codtrans;
 
     /**
-     * Nombre de la agencia.
+     * Name of the agency.
      *
      * @var string
      */
     public $nombre;
 
     /**
-     * TRUE => activo.
+     * Contains True if is enabled.
      *
      * @var bool
      */
     public $activo;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -63,7 +63,7 @@ class AgenciaTransporte
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -73,7 +73,7 @@ class AgenciaTransporte
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -85,9 +85,9 @@ class AgenciaTransporte
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */

@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Detalle de un balance.
+ * Detail of a balance.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -29,21 +29,21 @@ class BalanceCuenta
     use Base\ModelTrait;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
     public $id;
 
     /**
-     * Código del balance
+     * Balance code
      *
      * @var string
      */
     public $codbalance;
 
     /**
-     * Código de la cuenta
+     * Account code
      *
      * @var string
      */
@@ -57,7 +57,7 @@ class BalanceCuenta
     public $desccuenta;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -67,7 +67,7 @@ class BalanceCuenta
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */

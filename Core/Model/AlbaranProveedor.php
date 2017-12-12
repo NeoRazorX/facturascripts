@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,9 +21,9 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * Albarán de proveedor o albarán de compra. Representa la recepción
- * de un material que se ha comprado. Implica la entrada de ese material
- * al almacén.
+ * Delivery note or purchase order. Represents the reception
+ * of a material that has been purchased. It implies the entry of that material
+ * to the warehouse.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -33,28 +33,28 @@ class AlbaranProveedor
     use Base\DocumentoCompra;
 
     /**
-     * Clave primaria. Integer
+     * Primary key. Integer
      *
      * @var int
      */
     public $idalbaran;
 
     /**
-     * ID de la factura relacionada, si la hay.
+     * ID of the related invoice, if any.
      *
      * @var int
      */
     public $idfactura;
 
     /**
-     * True => está pendiente de factura.
+     * True => is pending invoice.
      *
      * @var bool
      */
     public $ptefactura;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -64,7 +64,7 @@ class AlbaranProveedor
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -74,15 +74,15 @@ class AlbaranProveedor
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
     public function install()
     {
-        /// nos aseguramos de que se comprueban las tablas de facturas y series antes
+        /// we make sure that the invoice and series tables are checked before
         new Serie();
         new FacturaProveedor();
 
@@ -90,7 +90,7 @@ class AlbaranProveedor
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -99,7 +99,7 @@ class AlbaranProveedor
     }
 
     /**
-     * Devuelve las líneas asociadas al albarán
+     * Returns the lines associated with the delivery note
      *
      * @return LineaAlbaranProveedor[]
      */
@@ -110,7 +110,7 @@ class AlbaranProveedor
     }
 
     /**
-     * Comprueba los datos del albarán, devuelve True si está correcto
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -120,7 +120,7 @@ class AlbaranProveedor
     }
 
     /**
-     * Ejecuta un test completo de pruebas
+     * Run a complete test of tests
      *
      * @return bool
      */
@@ -130,7 +130,7 @@ class AlbaranProveedor
     }
 
     /**
-     * Elimina el albarán de la base de datos
+     * Remove the delivery note from the database
      *
      * @return bool
      */
@@ -162,7 +162,7 @@ class AlbaranProveedor
     public function cronJob()
     {
         /**
-         * Ponemos a null todos los idfactura que no están en facturasprov
+         * We put to null all the invoices that are not in invoicesprov
          */
         $sql = 'UPDATE ' . $this->tableName() . ' SET idfactura = NULL WHERE idfactura IS NOT NULL'
             . ' AND idfactura NOT IN (SELECT idfactura FROM facturasprov);';

@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Detalle abreviado de un balance.
+ * Abbreviated detail of a balance.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -29,35 +29,35 @@ class BalanceCuentaA
     use Base\ModelTrait;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
     public $id;
 
     /**
-     * Código del balance
+     * Balance code
      *
      * @var string
      */
     public $codbalance;
 
     /**
-     * Código de la cuenta
+     * Account code
      *
      * @var string
      */
     public $codcuenta;
 
     /**
-     * Descripción de la cuenta
+     * Description of the account
      *
      * @var string
      */
     public $desccuenta;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -67,7 +67,7 @@ class BalanceCuentaA
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -77,7 +77,7 @@ class BalanceCuentaA
     }
 
     /**
-     * Devuelve el saldo del balance de un ejercicio.
+     * Returns the balance of an exercise.
      *
      * @param ejercicio $ejercicio
      * @param bool      $desde
@@ -107,7 +107,7 @@ class BalanceCuentaA
         if ($this->codcuenta === '129') {
             $sql = "SELECT SUM(debe) AS debe, SUM(haber) AS haber FROM co_partidas
             WHERE idsubcuenta IN (SELECT idsubcuenta FROM co_subcuentas
-              WHERE (codcuenta LIKE '6%' OR codcuenta LIKE '7%') 
+              WHERE (codcuenta LIKE '6%' OR codcuenta LIKE '7%')
                 AND codejercicio = " . $this->dataBase->var2str($ejercicio->codejercicio) . ')' . $extra . ';';
             $data = $this->dataBase->select($sql);
         } else {
@@ -126,7 +126,7 @@ class BalanceCuentaA
     }
 
     /**
-     * Obtener todos los balances sde la cuenta por su código de balance
+     * Obtain all balances from the account by its balance code
      *
      * @param string $cod
      *
@@ -149,7 +149,7 @@ class BalanceCuentaA
     }
 
     /**
-     * Buscar todos los balances sde la cuenta por su código de balance
+     * Search all balances of the account by its balance code
      *
      * @param string $cod
      *

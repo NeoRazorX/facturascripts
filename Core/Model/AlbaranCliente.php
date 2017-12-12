@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,9 +21,9 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * Albarán de cliente o albarán de venta. Representa la entrega a un cliente
- * de un material que se le ha vendido. Implica la salida de ese material
- * del almacén de la empresa.
+ * Customer's delivery note or delivery note. Represents delivery to a customer
+ * of a material that has been sold to you. It implies the exit of this material
+ * from the company warehouse.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -33,28 +33,28 @@ class AlbaranCliente
     use Base\DocumentoVenta;
 
     /**
-     * Clave primaria. Integer.
+     * Primary key. Integer.
      *
      * @var int
      */
     public $idalbaran;
 
     /**
-     * ID de la factura relacionada, si la hay.
+     * ID of the related invoice, if any.
      *
      * @var int
      */
     public $idfactura;
 
     /**
-     * True => está pendiente de factura.
+     * True => is pending invoice.
      *
      * @var bool
      */
     public $ptefactura;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -64,7 +64,7 @@ class AlbaranCliente
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -74,22 +74,22 @@ class AlbaranCliente
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Return the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
     public function install()
     {
-        /// forzamos la comprobación de la tabla de facturascli.
+        /// we force the checking of the invoice table.
         new FacturaCliente();
 
         return '';
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -98,7 +98,7 @@ class AlbaranCliente
     }
 
     /**
-     * Devuelve las líneas asociadas al albarán.
+     * Returns the lines associated with the delivery note.
      *
      * @return LineaAlbaranCliente[]
      */
@@ -109,7 +109,7 @@ class AlbaranCliente
     }
 
     /**
-     * Comprueba los datos del albarán, devuelve True si son correctos
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -119,7 +119,7 @@ class AlbaranCliente
     }
 
     /**
-     * Ejecuta una tarea con cron
+     * Execute a task with cron
      */
     public function cronJob()
     {

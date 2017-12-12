@@ -18,8 +18,8 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Modelo ApiKey para administrar los token de conexión a través de la api
- * que se generarán para sincronizar distintas aplicaciones
+ * ApiKey model to manage the connection tokens through the api
+ * that will be generated to synchronize different applications
  * @author Joe Nilson <joenilson at gmail.com>
  */
 class ApiKey
@@ -28,49 +28,49 @@ class ApiKey
     use Base\ModelTrait;
 
     /**
-     * Clave primaria. Id autoincremental
+     * Primary key. Id autoincremental
      * @var int
      */
     public $id;
 
     /**
-     * Clave de la API
+     * API key
      * @var string
      */
     public $apikey;
 
     /**
-     * Descripción
+     * Description
      * @var string
      */
     public $descripcion;
 
     /**
-     * Activada/Desactivada
+     * On / Off
      * @var bool
      */
     public $enabled;
 
     /**
-     * Fecha de alta
+     * Charge date
      * @var string
      */
     public $f_alta;
 
     /**
-     * Fecha de baja
+     * Discharge date
      * @var string
      */
     public $f_baja;
 
     /**
-     * Nick del usuario
+     * Nick of the user
      * @var string
      */
     public $nick;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -80,7 +80,7 @@ class ApiKey
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -90,7 +90,7 @@ class ApiKey
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
