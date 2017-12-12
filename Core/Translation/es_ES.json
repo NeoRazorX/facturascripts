@@ -941,7 +941,7 @@
     "sum-total-line-tax-must-be": "La suma de los totales de iva de las líneas de IVA debería ser: 0",
     "sum-totalrecargo-line-tax-must-be": "La suma de los totalrecargo de las líneas de IVA debería ser: 0",
     "cant-assing-subaccount-supplier": "Imposible asociar la subcuenta para el proveedor 0",
-    "cant-create-subaccount-supplier": "Imposible crear la subcuenta para el proveedor ",
+    "cant-create-subaccount-supplier": "Imposible crear la subcuenta para el proveedor",
     "not-valid-supplier-code": "Código de proveedor no válido.",
     "not-valid-supplier-name": "Nombre de proveedor no válido.",
     "not-valid-supplier-business-name": "Razón social del proveedor no válida.",
