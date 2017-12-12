@@ -125,7 +125,7 @@ abstract class ListController extends Base\Controller
             $orderKey = '';
 
             // If processing the selected view, calculate order and filters
-            if ($this->active === $key) {
+            if ($this->active == $key) {
                 $orderKey = $this->request->get('order', '');
                 $where = $this->getWhere();
             }

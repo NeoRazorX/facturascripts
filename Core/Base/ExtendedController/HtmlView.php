@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Base\ExtendedController;
 
+use FacturaScripts\Core\Lib\ExportManager;
+
 /**
  * View definition for its use in ExtendedControllers
  *
@@ -50,7 +52,7 @@ class HtmlView extends BaseView
     /**
      * Method to export the view data
      *
-     * @param \FacturaScripts\Core\Lib\ExportManager $exportManager
+     * @param ExportManager $exportManager
      *
      * @return null
      */

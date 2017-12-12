@@ -72,8 +72,7 @@ class WidgetButton implements VisualItemInterface
     /**
      * Create and load the structure of attributes from a XML file.
      *
-     * @param \SimpleXMLElement|\SimpleXMLElement[] $button
-     *
+     * @param \SimpleXMLElement $button
      * @return WidgetButton
      */
     public static function newFromXML($button)
