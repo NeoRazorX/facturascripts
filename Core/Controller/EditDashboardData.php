@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Lib\Dashboard;
+use FacturaScripts\Core\Lib\Dashboard as DashboardLib;
 
 /**
  * Controller to edit a single item from the DashboardCard model
@@ -41,7 +41,7 @@ class EditDashboardData extends ExtendedController\EditController
         $model = $this->view->getModel();
         $component = 'FacturaScripts\\Core\\Lib\\Dashboard\\'
             . $model->component
-            . Dashboard\BaseComponent::SUFIX_COMPONENTS;
+            . DashboardLib\BaseComponent::SUFIX_COMPONENTS;
 
         return $component::getPropertiesFields();
     }

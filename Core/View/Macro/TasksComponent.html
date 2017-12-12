@@ -7,7 +7,9 @@
 
     <div class="card-header">
         <i class="fa fa-tasks"></i>&nbsp; {{ i18n.trans('tasks-component-title') }}
-        <button type="button" class="component-btn-options"><span class="fa fa-plus"></span></button>
+        <div class="btn-group btn-group-sm float-right" role="group" aria-label="Options">
+            <a class="btn btn-outline-secondary btn-options" role="button" data-toggle="collapse" data-target=".message-filter"><i class="fa fa-plus btn-options"></i></a>
+        </div>
     </div>
 
     <div class="card-body">

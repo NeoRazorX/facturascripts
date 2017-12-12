@@ -1,10 +1,15 @@
 {% macro run(component, i18n) %}
     <div class="card-header">
         <span><i class="fa fa-info-circle mr-2"></i>{{ i18n.trans('messages-component-title') }}</span>
+        <div class="btn-group btn-group-sm float-right" role="group" aria-label="Options">
+            <a class="btn btn-outline-secondary btn-options" role="button" data-toggle="collapse" data-target=".message-filter"><i class="fa fa-filter btn-options"></i></a>
+            <a class="btn btn-outline-secondary btn-options" role="button" data-toggle="collapse" data-target=".message-filter"><i class="fa fa-plus btn-options"></i></a>
+        </div>
     </div>
 
     <div class="card-body">
         <!-- Filters buttons -->
+        <div class="collapse message-filter">
         <div class="row mb-3 text-white">
             <div class="col-md-3">
                 <a class="btn btn-info btn-block" data-toggle="collapse" data-target=".message-info">{{ i18n.trans('info') }}</a>
@@ -18,6 +23,7 @@
             <div class="col-md-3">
                 <a class="btn btn-danger btn-block" data-toggle="collapse" data-target=".message-danger">{{ i18n.trans('alerts') }}</a>
             </div>
+        </div>
         </div>
 
         <!-- Messages -->
