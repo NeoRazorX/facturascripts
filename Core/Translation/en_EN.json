@@ -968,21 +968,12 @@
     "companies": "Companies",
     "lines": "Lines",
     "hour": "Hour",
-<<<<<<< HEAD
     "accept-data": "Accept changes or operation",
     "cancel-data": "Cancel changes or operation",
     "net": "Net",
     "regenerate-all":"Regenerate all",
     "regenerate-all-rol-user":"Regenerate all role user",
     "special-actions":"Special actions",
-=======
-    "accept-data": "Accept data",
-    "cancel-data": "Cancel data",
-    "neto": "Net",
-    "regenerate-all": "Regenerate all",
-    "regenerate-all-rol-user": "Regenerate all role user",
-    "special-actions": "Special actions",
->>>>>>> 36ec9a078ff33ae83912218161307dc9f9249db2
     "combinations": "Combinations",
     "lot": "Lot",
     "date-in": "Date in",
@@ -1003,7 +994,6 @@
     "file-not-supported": "File not supported",
     "plugin-renamed": "Plugin renamed from '0' to '1'",
     "removing-previous-version": "Removing previous version '0'",
-<<<<<<< HEAD
     "plugin-can-not-renamed": "Plugin '0' can't be renamed to '1'",
     "accounting-reports": "Accounting reports",
     "messages-component-title": "Notices and Messages",
@@ -1018,7 +1008,3 @@
     "display-date": "Display date",
     "color": "color"
 }
-=======
-    "plugin-can-not-renamed": "Plugin '0' can't be renamed to '1'"
-}
->>>>>>> 36ec9a078ff33ae83912218161307dc9f9249db2
