@@ -16,11 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\Base\NumberTools;
-use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Base;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -31,21 +29,21 @@ use Symfony\Component\HttpFoundation\Response;
 class PDFExport implements ExportInterface
 {
 
-    use \FacturaScripts\Core\Base\Utils;
+    use Base\Utils;
 
-    const LIST_LIMIT = 1000;
+    const LIST_LIMIT = 500;
 
     /**
      * Translator object
      *
-     * @var Translator
+     * @var Base\Translator
      */
     private $i18n;
 
     /**
      * Class with number tools (to format numbers)
      *
-     * @var NumberTools
+     * @var Base\NumberTools
      */
     private $numberTools;
 
@@ -66,13 +64,15 @@ class PDFExport implements ExportInterface
      */
     public function __construct()
     {
-        $this->i18n = new Translator();
-        $this->numberTools = new NumberTools();
+        $this->i18n = new Base\Translator();
+        $this->numberTools = new Base\NumberTools();
         $this->tableWidth = 0.0;
     }
 
     /**
      * Return the full document.
+     * 
+     * @return mixed
      */
     public function getDoc()
     {
@@ -133,7 +133,7 @@ class PDFExport implements ExportInterface
      * Adds a new page with a table listing the models data.
      *
      * @param mixed $model
-     * @param DataBaseWhere[] $where
+     * @param Base\DataBase\DataBaseWhere[] $where
      * @param array $order
      * @param int $offset
      * @param array $columns
@@ -236,17 +236,18 @@ class PDFExport implements ExportInterface
         /// Get the data
         foreach ($cursor as $key => $row) {
             foreach ($tableCols as $col) {
-                $value = '';
-                if (isset($row->{$col})) {
-                    $value = $row->{$col};
+                if (!isset($row->{$col})) {
+                    $tableData[$key][$col] = '';
+                    continue;
+                }
 
-                    if (in_array($tableOptions['cols'][$col]['col-type'], ['money', 'number'], false)) {
-                        $value = $this->numberTools->format($value, 2);
-                    } elseif (is_bool($value)) {
-                        $value = $value == 1 ? $this->i18n->trans('yes') : $this->i18n->trans('no');
-                    } elseif (null === $value) {
-                        $value = '';
-                    }
+                $value = $row->{$col};
+                if (in_array($tableOptions['cols'][$col]['col-type'], ['money', 'number'], false)) {
+                    $value = $this->numberTools->format($value, 2);
+                } elseif (is_bool($value)) {
+                    $value = $value == 1 ? $this->i18n->trans('yes') : $this->i18n->trans('no');
+                } elseif (null === $value) {
+                    $value = '';
                 }
 
                 $tableData[$key][$col] = $value;

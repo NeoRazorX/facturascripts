@@ -16,9 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\Export;
 
+use FacturaScripts\Core\Base;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -29,7 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
 class XLSExport implements ExportInterface
 {
 
-    use \FacturaScripts\Core\Base\Utils;
+    use Base\Utils;
 
     const LIST_LIMIT = 1000;
 
@@ -87,7 +87,7 @@ class XLSExport implements ExportInterface
      * Adds a new page with a table listing all models data.
      *
      * @param mixed $model
-     * @param \FacturaScripts\Core\Base\DataBase\DataBaseWhere[] $where
+     * @param Base\DataBase\DataBaseWhere[] $where
      * @param array $order
      * @param int $offset
      * @param array $columns
@@ -154,15 +154,12 @@ class XLSExport implements ExportInterface
         /// Get the data
         foreach ($cursor as $key => $row) {
             foreach ($tableCols as $col) {
-                $value = '';
-                if (isset($row->{$col})) {
-                    $value = $row->{$col};
-                    if (null === $value) {
-                        $value = '';
-                    }
+                if (!isset($row->{$col}) || null === $row->{$col}) {
+                    $tableData[$key][$col] = '';
+                    continue;
                 }
 
-                $tableData[$key][$col] = $value;
+                $tableData[$key][$col] = $row->{$col};
             }
         }
 
