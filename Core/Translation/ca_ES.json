@@ -391,5 +391,6 @@
     "contact-person": "Persona de contacte",
     "continue": "Continuar",
     "control-panel": "Panell de control",
-    "controller": "Controlador"
+    "controller": "Controlador",
+    "conversion-rate-not-0-for-purchases": "El percentatge de conversions per a les compres no pot ser 0."
 }
