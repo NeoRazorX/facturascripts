@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Export;
 
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Description of XLSExport
+ * XLS export data.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -34,10 +35,16 @@ class XLSExport implements ExportInterface
 
     /**
      * XLSX object.
+     *
      * @var \XLSXWriter 
      */
     private $writer;
 
+    /**
+     * Return the full document.
+     *
+     * @return bool|string
+     */
     public function getDoc()
     {
         return $this->writer->writeToString();
@@ -45,6 +52,7 @@ class XLSExport implements ExportInterface
 
     /**
      * Create the document and set headers.
+     *
      * @param Response $response
      */
     public function newDoc(&$response)
@@ -58,6 +66,7 @@ class XLSExport implements ExportInterface
 
     /**
      * Adds a new page with the model data.
+     *
      * @param mixed $model
      * @param array $columns
      * @param string $title
@@ -76,8 +85,9 @@ class XLSExport implements ExportInterface
 
     /**
      * Adds a new page with a table listing all models data.
+     *
      * @param mixed $model
-     * @param array $where
+     * @param \FacturaScripts\Core\Base\DataBase\DataBaseWhere[] $where
      * @param array $order
      * @param int $offset
      * @param array $columns
@@ -107,6 +117,13 @@ class XLSExport implements ExportInterface
         }
     }
 
+    /**
+     * Set the table content.
+     *
+     * @param $columns
+     * @param $tableCols
+     * @param $sheetHeaders
+     */
     private function setTableColumns(&$columns, &$tableCols, &$sheetHeaders)
     {
         foreach ($columns as $col) {
@@ -140,7 +157,7 @@ class XLSExport implements ExportInterface
                 $value = '';
                 if (isset($row->{$col})) {
                     $value = $row->{$col};
-                    if (is_null($value)) {
+                    if (null === $value) {
                         $value = '';
                     }
                 }
