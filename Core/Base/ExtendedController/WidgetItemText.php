@@ -43,6 +43,7 @@ class WidgetItemText extends WidgetItem
      *
      * @param string $txt
      * @param int $len
+     *
      * @return string
      */
     private function getTextResume($txt, $len = 60)
@@ -51,12 +52,11 @@ class WidgetItemText extends WidgetItem
             return $txt;
         }
 
-        return mb_substr($txt, 0, ($len - 3)) . '...';
+        return mb_substr($txt, 0, $len - 3) . '...';
     }
 
     /**
      * Generates the HTML code to display the data in the List controller
-     *
      *
      * @param string $value
      *
@@ -87,7 +87,7 @@ class WidgetItemText extends WidgetItem
                 $fieldName = '"' . $this->fieldName . '"';
                 $html = $this->getIconHTML()
                     . '<textarea name=' . $fieldName . ' id=' . $fieldName
-                    . ' class="form-control" rows="3"' . $specialAttributes
+                    . ' class="form-control" rows="3" ' . $specialAttributes
                     . '>' . $value . '</textarea>';
 
                 if (!empty($this->icon)) {

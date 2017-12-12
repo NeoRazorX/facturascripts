@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Description of WidgetItem
+ * This WidgetItem class modelises the common data and method of a WidgetItem element.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -50,14 +51,14 @@ abstract class WidgetItem implements VisualItemInterface
     /**
      * Indicates that the field is read only
      *
-     * @var boolean
+     * @var bool
      */
     public $readOnly;
 
     /**
      * Indicates that the field is mandatory and it must have a value
      *
-     * @var boolean
+     * @var bool
      */
     public $required;
 
@@ -100,6 +101,7 @@ abstract class WidgetItem implements VisualItemInterface
      * Class dynamic constructor. It creates a widget of the given type
      *
      * @param string $type
+     *
      * @return WidgetItem
      */
     private static function widgetItemFromType($type)
@@ -135,6 +137,7 @@ abstract class WidgetItem implements VisualItemInterface
      * Creates and loads the attributes structure from a XML file
      *
      * @param \SimpleXMLElement $column
+     *
      * @return WidgetItem
      */
     public static function newFromXML($column)
@@ -150,6 +153,7 @@ abstract class WidgetItem implements VisualItemInterface
      * Creates and loads the attributes structure from the database
      *
      * @param array $column
+     *
      * @return WidgetItem
      */
     public static function newFromJSON($column)
@@ -186,6 +190,7 @@ abstract class WidgetItem implements VisualItemInterface
      * Generate the html code to visualize the visual element header
      *
      * @param string $value
+     *
      * @return string
      */
     public function getHeaderHTML($value)
@@ -196,7 +201,7 @@ abstract class WidgetItem implements VisualItemInterface
     /**
      * Loads the attribute dictionary for a widget's group of options or values
      *
-     * @param array            $property
+     * @param array $property
      * @param \SimpleXMLElement[] $group
      */
     protected function getAttributesGroup(&$property, $group)
@@ -234,7 +239,7 @@ abstract class WidgetItem implements VisualItemInterface
     /**
      * Loads the attributes structure from the database
      *
-     * @param array $column
+     * @param \SimpleXMLElement[] $column
      */
     public function loadFromJSON($column)
     {
@@ -252,23 +257,24 @@ abstract class WidgetItem implements VisualItemInterface
      *
      * @param string $optionValue
      * @param string $valueItem
-     * @return boolean
+     *
+     * @return bool
      */
     private function canApplyOptions($optionValue, $valueItem)
     {
         switch ($optionValue[0]) {
             case '<':
-                $optionValue = substr($optionValue, 1);
+                $optionValue = substr($optionValue, 1) ? : '';
                 $result = ((float) $valueItem < (float) $optionValue);
                 break;
 
             case '>':
-                $optionValue = substr($optionValue, 1);
+                $optionValue = substr($optionValue, 1) ? : '';
                 $result = ((float) $valueItem > (float) $optionValue);
                 break;
 
             default:
-                $result = ($optionValue == $valueItem);
+                $result = ($optionValue === $valueItem);
                 break;
         }
         return $result;
@@ -302,13 +308,15 @@ abstract class WidgetItem implements VisualItemInterface
 
     /**
      * Returns the HTML code to display a popover with the given text
+     *
      * @param string $hint
      *
      * @return string
      */
     public function getHintHTML($hint)
     {
-        return empty($hint) ? '' : ' data-toggle="popover" data-placement="auto" data-trigger="hover" data-content="' . $hint . '" ';
+        return empty($hint) ? '' : ' data-toggle="popover" data-placement="auto" data-trigger="hover" data-content="'
+            . $hint . '" ';
     }
 
     /**
@@ -366,7 +374,8 @@ abstract class WidgetItem implements VisualItemInterface
         }
 
         $style = $this->getTextOptionsHTML($value);
-        $html = (empty($this->onClick)) ? '<span' . $style . '>' . $text . '</span>' : '<a href="?page=' . $this->onClick . '&code=' . $value . '"' . $style . '>' . $text . '</a>';
+        $html = empty($this->onClick) ? '<span' . $style . '>' . $text . '</span>' : '<a href="?page=' . $this->onClick
+            . '&code=' . $value . '" ' . $style . '>' . $text . '</a>';
 
         return $html;
     }
