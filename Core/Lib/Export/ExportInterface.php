@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Export;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

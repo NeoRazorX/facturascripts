@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
