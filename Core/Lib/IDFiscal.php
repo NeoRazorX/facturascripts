@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 /**
- * Description of IDFiscal
+ * This class centralizes all common method for fiscal id.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
