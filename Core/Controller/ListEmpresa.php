@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -45,12 +46,12 @@ class ListEmpresa extends ExtendedController\ListController
     }
 
     /**
-     * Procedimiento para insertar vistas en el controlador
+     * Load views
      */
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\Empresa', $className);
+        $this->addView('\FacturaScripts\Dinamic\Model\Empresa', $className);
         $this->addSearchFields($className, ['nombre', 'nombrecorto', 'CAST(id AS VARCHAR)']);
 
         $this->addOrderBy($className, 'id', 'code');

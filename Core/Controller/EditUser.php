@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
 
 /**
  * Controller to edit a single item from the User model
@@ -36,9 +37,9 @@ class EditUser extends ExtendedController\PanelController
     protected function createViews()
     {
         /// Add all views
-        $this->addEditView('FacturaScripts\Core\Model\User', 'EditUser', 'user', 'fa-user');
-        $this->addEditListView('FacturaScripts\Core\Model\RolUser', 'EditRolUser', 'rol-user', 'fa-address-card-o');
-        $this->addListView('FacturaScripts\Core\Model\PageRule', 'ListPageRule', 'page-rule', 'fa fa-check-square');
+        $this->addEditView('\FacturaScripts\Dinamic\Model\User', 'EditUser', 'user', 'fa-user');
+        $this->addEditListView('\FacturaScripts\Dinamic\Model\RolUser', 'EditRolUser', 'rol-user', 'fa-address-card-o');
+        $this->addListView('\FacturaScripts\Dinamic\Model\PageRule', 'ListPageRule', 'page-rule', 'fa fa-check-square');
 
         /// Load values option to Language select input
         $columnLangCode = $this->views['EditUser']->columnForName('lang-code');
@@ -49,8 +50,8 @@ class EditUser extends ExtendedController\PanelController
         $columnLangCode->widget->setValuesFromArray($langs);
 
         /// Disable columns
-        $this->views['EditRolUser']->disableColumn('nick', TRUE);
-        $this->views['ListPageRule']->disableColumn('nick', TRUE);
+        $this->views['EditRolUser']->disableColumn('nick', true);
+        $this->views['ListPageRule']->disableColumn('nick', true);
     }
 
     /**
@@ -68,12 +69,12 @@ class EditUser extends ExtendedController\PanelController
                 break;
 
             case 'EditRolUser':
-                $where = [new DataBase\DataBaseWhere('nick', $this->getViewModelValue('EditUser', 'nick'))];
+                $where = [new DataBaseWhere('nick', $this->getViewModelValue('EditUser', 'nick'))];
                 $view->loadData($where);
                 break;
 
             case 'ListPageRule':
-                $where = [new DataBase\DataBaseWhere('nick', $this->getViewModelValue('EditUser', 'nick'))];
+                $where = [new DataBaseWhere('nick', $this->getViewModelValue('EditUser', 'nick'))];
                 $view->loadData($where);
                 break;
         }

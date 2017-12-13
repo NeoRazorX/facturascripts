@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -35,7 +36,7 @@ class EditImpuesto extends ExtendedController\EditController
      */
     public function getModelClassName()
     {
-        return 'FacturaScripts\Core\Model\Impuesto';
+        return '\FacturaScripts\Dinamic\Model\Impuesto';
     }
 
     /**

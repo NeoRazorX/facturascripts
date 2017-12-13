@@ -16,10 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
+
 /**
  * Controller to edit a single item from the Familia model
  *
@@ -35,9 +37,9 @@ class EditFamilia extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('FacturaScripts\Core\Model\Familia', 'EditFamilia', 'family');
-        $this->addListView('FacturaScripts\Core\Model\Familia', 'ListFamilia', 'families-children', 'fa-level-down');
-        $this->addListView('FacturaScripts\Core\Model\Articulo', 'ListArticulo', 'products', 'fa-cubes');
+        $this->addEditView('\FacturaScripts\Dinamic\Model\Familia', 'EditFamilia', 'family');
+        $this->addListView('\FacturaScripts\Dinamic\Model\Familia', 'ListFamilia', 'families-children', 'fa-level-down');
+        $this->addListView('\FacturaScripts\Dinamic\Model\Articulo', 'ListArticulo', 'products', 'fa-cubes');
     }
 
     /**
@@ -54,16 +56,16 @@ class EditFamilia extends ExtendedController\PanelController
             case 'EditFamilia':
                 $view->loadData($value);
                 break;
-            
+
             case 'ListArticulo':
-                $where = [new DataBase\DataBaseWhere('codfamilia', $value)];
+                $where = [new DataBaseWhere('codfamilia', $value)];
                 $view->loadData($where);
                 break;
-            
+
             case 'ListFamilia':
-               $where = [new DataBase\DataBaseWhere('madre', $value)];
-               $view->loadData($where);
-               break;
+                $where = [new DataBaseWhere('madre', $value)];
+                $view->loadData($where);
+                break;
         }
     }
 

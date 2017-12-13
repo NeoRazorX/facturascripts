@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -35,17 +36,27 @@ class EditFacturaProveedor extends ExtendedController\DocumentController
     protected function createViews()
     {
         parent::createViews();
-        $this->addEditView('FacturaScripts\Core\Model\FacturaProveedor', 'EditFacturaProveedor', 'invoice');
+        $this->addEditView('\FacturaScripts\Dinamic\Model\FacturaProveedor', 'EditFacturaProveedor', 'invoice');
     }
 
+    /**
+     * Return the document class name.
+     *
+     * @return string
+     */
     protected function getDocumentClassName()
     {
-        return 'FacturaScripts\Core\Model\FacturaProveedor';
+        return '\FacturaScripts\Dinamic\Model\FacturaProveedor';
     }
 
+    /**
+     * Return the document line class name.
+     *
+     * @return string
+     */
     protected function getDocumentLineClassName()
     {
-        return 'FacturaScripts\Core\Model\LineaFacturaProveedor';
+        return '\FacturaScripts\Dinamic\Model\LineaFacturaProveedor';
     }
 
     /**

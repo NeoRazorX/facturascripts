@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
@@ -23,7 +24,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\DashboardCard;
 
 /**
- * Description of Dashboard
+ * Dashboard that contains some Cards with data to the end user.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -32,10 +33,16 @@ class Dashboard extends Base\Controller
 
     /**
      * List of cards.
-     * @var DashboardCard[] 
+     * @var DashboardCard[]
      */
     public $cursor;
 
+    /**
+     * Runs the controller's private logic.
+     *
+     * @param \Symfony\Component\HttpFoundation\Response $response
+     * @param \FacturaScripts\Core\Model\User|null $user
+     */
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
@@ -63,6 +70,9 @@ class Dashboard extends Base\Controller
         return $pageData;
     }
 
+    /**
+     * Generate some random Dashboar Cards.
+     */
     private function genetareRandomCards()
     {
         $colors = ['info', 'warning', 'success', 'danger', 'secondary', 'primary', 'light', 'dark'];
@@ -75,7 +85,7 @@ class Dashboard extends Base\Controller
             $newCard->descripcion = $this->getRandomText();
             $newCard->color = $colors[0];
 
-            if (mt_rand(0, 2) == 0) {
+            if (mt_rand(0, 2) === 0) {
                 $newCard->link = 'https://www.' . mt_rand(999, 99999) . '.com';
             }
 
@@ -86,6 +96,11 @@ class Dashboard extends Base\Controller
         $this->cursor = $dashboardCardModel->all([new DataBaseWhere('nick', $this->user->nick)]);
     }
 
+    /**
+     * Return some random text.
+     *
+     * @return mixed|string
+     */
     private function getRandomText()
     {
         $words = ['lorem', 'ipsum', 'trastis', 'tus', 'turum', 'maruk', 'tartor', 'isis', 'osiris', 'morowik'];

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -33,7 +34,7 @@ class EditDashboardCard extends ExtendedController\EditController
      */
     public function getModelClassName()
     {
-        return 'FacturaScripts\Core\Model\DashboardCard';
+        return '\FacturaScripts\Dinamic\Model\DashboardCard';
     }
 
     /**
