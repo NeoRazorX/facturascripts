@@ -41,10 +41,10 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row dashboard-component-sortable">
     {% for index, component in fsc.components %}
         {% import 'Macro/' ~ component.getTemplate() as componentTemplate %}
-        <div class="{{ component.getNumColumns() }}">
+        <div class="{{ component.getNumColumns() }} dashboard-component">
             <div class="card {{ component.getCardClass() }}" id="{{ index }}">
                 {{ componentTemplate.run(component, i18n) }}
             </div>
@@ -54,7 +54,11 @@
 </div>
 
 <script>
-    $(function() {
+    $(document).ready(function () {
+        $('.dashboard-component-sortable').sortable({
+            placeholderClass: 'dashboard-component'
+        });
+        
         $('.card-sortable').sortable({
             placeholderClass: 'card'
         });
