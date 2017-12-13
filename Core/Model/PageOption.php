@@ -33,6 +33,8 @@ class PageOption
     use Base\ModelTrait {
         clear as traitClear;
         loadFromData as traitLoadFromData;
+        saveInsert as traitSaveInsert;
+        saveUpdate as traitSaveUpdate;
     }
 
     /**
@@ -174,6 +176,16 @@ class PageOption
         }
     }
 
+    private function getEncodeValues()
+    {
+        return [
+            'columns' => json_encode($this->columns),
+            'modals' => json_encode($this->modals),
+            'filters' => json_encode($this->filters),
+            'rows' => json_encode($this->rows)
+        ];
+    }
+
     /**
      * Update the model data in the database.
      *
@@ -181,18 +193,8 @@ class PageOption
      */
     private function saveUpdate()
     {
-        $columns = json_encode($this->columns);
-        $modals = json_encode($this->modals);
-        $filters = json_encode($this->filters);
-        $rows = json_encode($this->rows);
-
-        $sql = 'UPDATE ' . $this->tableName() . ' SET columns = ' . $this->dataBase->var2str($columns)
-            . ', modals = ' . $this->dataBase->var2str($modals)
-            . ', filters = ' . $this->dataBase->var2str($filters)
-            . ', rows = ' . $this->dataBase->var2str($rows)
-            . '  WHERE id = ' . $this->id . ';';
-
-        return $this->dataBase->exec($sql);
+        $values = $this->getEncodeValues();
+        return $this->traitSaveUpdate($values);
     }
 
     /**
@@ -202,33 +204,8 @@ class PageOption
      */
     private function saveInsert()
     {
-        $columns = json_encode($this->columns);
-        $modals = json_encode($this->modals);
-        $filters = json_encode($this->filters);
-        $rows = json_encode($this->rows);
-
-        $sql = 'INSERT INTO ' . $this->tableName()
-            . ' (id, name, nick, columns, modals, filters, rows) VALUES ('
-            . "nextval('fs_pages_options_id_seq')" . ','
-            . $this->dataBase->var2str($this->name) . ','
-            . $this->dataBase->var2str($this->nick) . ','
-            . $this->dataBase->var2str($columns) . ','
-            . $this->dataBase->var2str($modals) . ','
-            . $this->dataBase->var2str($filters) . ','
-            . $this->dataBase->var2str($rows)
-            . ');';
-
-        if ($this->dataBase->exec($sql)) {
-            $lastVal = $this->dataBase->lastval();
-            if ($lastVal === FALSE) {
-                return false;
-            }
-
-            $this->id = $lastVal;
-            return true;
-        }
-
-        return false;
+        $values = $this->getEncodeValues();
+        return $this->traitSaveInsert($values);
     }
 
     /**

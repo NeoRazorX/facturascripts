@@ -35,6 +35,7 @@ class Controller
 
     /**
      * Contains a list of extra files to load: javascript, css, etc.
+     *
      * @var array
      */
     public $assets;
@@ -70,6 +71,7 @@ class Controller
 
     /**
      * Tools to work with currencies.
+     *
      * @var DivisaTools
      */
     public $divisaTools;
@@ -97,6 +99,7 @@ class Controller
 
     /**
      * Tools to work with numbers.
+     *
      * @var NumberTools
      */
     public $numberTools;
@@ -183,6 +186,23 @@ class Controller
     public function getTemplate()
     {
         return $this->template;
+    }
+
+    /**
+     * Returns a field value for the loaded data model
+     *
+     * @param mixed $model
+     * @param string $fieldName
+     *
+     * @return mixed
+     */
+    public function getFieldValue($model, $fieldName)
+    {
+        if (isset($model->{$fieldName})) {
+            return $model->{$fieldName};
+        }
+
+        return null;
     }
 
     /**
