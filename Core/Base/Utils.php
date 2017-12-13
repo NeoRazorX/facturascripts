@@ -20,15 +20,15 @@
 namespace FacturaScripts\Core\Base;
 
 /**
- * Description of Utils
+ * Utils give us some basic and common methods.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 trait Utils
 {
     /**
-     * Convierte una variable con contenido binario a texto.
-     * Lo hace en base64.
+     * Convert a variable with binary content to text.
+     * It does it in base64.
      *
      * @param mixed $val
      *
@@ -44,8 +44,8 @@ trait Utils
     }
 
     /**
-     * Convierte un texto a binario.
-     * Lo hace con base64.
+     * Convert a text to binary.
+     * It does with base64.
      *
      * @param string $val
      *
@@ -61,8 +61,8 @@ trait Utils
     }
 
     /**
-     * Devuelve el valor entero de la variable $s,
-     * o null si es null. La función intval() del php devuelve 0 si es null.
+     * Returns the integer value of the variable $ s,
+     * or null if it is null. The intval() function of the php returns 0 if it is null.
      *
      * @param string $str
      *
@@ -78,13 +78,13 @@ trait Utils
     }
 
     /**
-     * Compara dos números en coma flotante con una precisión de $precision,
-     * devuelve True si son iguales, False en caso contrario.
+     * Compare two floating point numbers with an accuracy of $precision,
+     * returns True if they are equal, False otherwise.
      *
      * @param double $f1
      * @param double $f2
-     * @param int    $precision
-     * @param bool   $round
+     * @param int $precision
+     * @param bool $round
      *
      * @return bool
      */
@@ -98,7 +98,7 @@ trait Utils
     }
 
     /**
-     * Devuelve un array con todas las fechas entre $first y $last.
+     * Returns an array with all dates between $first and $last.
      *
      * @param string $first
      * @param string $last
@@ -110,19 +110,19 @@ trait Utils
     public static function dateRange($first, $last, $step = '+1 day', $format = 'd-m-Y')
     {
         $dates = [];
-        $current = strtotime($first);
-        $last = strtotime($last);
+        $start = strtotime($first);
+        $end = strtotime($last);
 
-        while ($current <= $last) {
-            $dates[] = date($format, $current);
-            $current = strtotime($step, $current);
+        while ($start <= $end) {
+            $dates[] = date($format, $start);
+            $start = strtotime($step, $start);
         }
 
         return $dates;
     }
 
     /**
-     * Devuelve una cadena de texto aleatorio de longitud $length
+     * Returns a random text string of length $length.
      *
      * @param int $length
      *
@@ -134,14 +134,14 @@ trait Utils
     }
 
     /**
-     * Esta función convierte:
-     * < en &lt;
-     * > en &gt;
-     * " en &quot;
-     * ' en &#39;
+     * This function converts:
+     * < to &lt;
+     * > to &gt;
+     * " to &quot;
+     * ' to &#39;
      *
-     * No tengas la tentación de sustiturla por htmlentities o htmlspecialshars
-     * porque te encontrarás con muchas sorpresas desagradables.
+     * Do not be tempted to substitute by htmlentities or htmlspecialshars
+     * because you will find many unpleasant surprises.
      *
      * @param string $txt
      *
@@ -150,14 +150,16 @@ trait Utils
     public static function noHtml($txt)
     {
         $newt = str_replace(
-            ['<', '>', '"', "'"], ['&lt;', '&gt;', '&quot;', '&#39;'], $txt
+            ['<', '>', '"', "'"],
+            ['&lt;', '&gt;', '&quot;', '&#39;'],
+            $txt
         );
 
         return trim($newt);
     }
 
     /**
-     * Realiza correcciones en el código HTML
+     * Make corrections in the HTML code
      *
      * @param string $txt
      *
@@ -171,9 +173,9 @@ trait Utils
     }
 
     /**
-     * PostgreSQL guarda los valores True como 't', MySQL como 1.
-     * Esta función devuelve True si el valor se corresponde con
-     * alguno de los anteriores.
+     * PostgreSQL saves the True values as 't', MySQL as 1.
+     * This function returns True if the value corresponds to
+     * any of the above.
      *
      * @param string $val
      *
@@ -181,11 +183,11 @@ trait Utils
      */
     public function str2bool($val)
     {
-        return in_array(strtolower($val), ['true', 't', '1']);
+        return in_array(strtolower($val), ['true', 't', '1'], false);
     }
 
     /**
-     * Convierte un boleano a a texto
+     * Convert a boolean to text.
      *
      * @param bool $val
      *
