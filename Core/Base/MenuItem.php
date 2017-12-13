@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 /**
- * Estructura para cada uno de los items del menú de Facturascripts
+ * Structure for each of the items in the FacturaScripts menu.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -28,49 +28,49 @@ namespace FacturaScripts\Core\Base;
 class MenuItem
 {
     /**
-     * Indica si está activado o no.
+     * Indicates whether it is activated or not.
      *
      * @var bool
      */
     public $active;
 
     /**
-     * Icono de la fuente Fontawesome de la opción de menú.
+     * Fontawesome font icon of the menu option.
      *
      * @var string
      */
     public $icon;
 
     /**
-     * Lista de opciones de menú para el item.
+     * List of menu options for the item.
      *
      * @var MenuItem[]
      */
     public $menu;
 
     /**
-     * Nombre identificativo del elemento.
+     * Identifying name of the element.
      *
      * @var string
      */
     public $name;
 
     /**
-     * Título de la opción de menú.
+     * Title of the menu option.
      *
      * @var string
      */
     public $title;
 
     /**
-     * URL para el href de la opción de menú.
+     * URL for the href of the menu option.
      *
      * @var string
      */
     public $url;
 
     /**
-     * Contruye y rellena los valores principales del Item
+     * Build and fill the main values of the Item.
      *
      * @param string $name
      * @param string $title
@@ -88,19 +88,21 @@ class MenuItem
     }
 
     /**
-     * Devuelve el html para el icono del item
+     * Returns the HTML for the icon of the item.
      *
      * @return string
      */
     private function getHTMLIcon()
     {
-        return empty($this->icon) ? '<i class="fa fa-fw" aria-hidden="true"></i> ' : '<i class="fa ' . $this->icon . ' fa-fw" aria-hidden="true"></i> ';
+        return empty($this->icon) ? '<i class="fa fa-fw" aria-hidden="true"></i> ' : '<i class="fa ' . $this->icon
+            . ' fa-fw" aria-hidden="true"></i> ';
     }
 
     /**
-     * Devuelve el indintificador del menu
+     * Returns the indintifier of the menu.
      *
      * @param string $parent
+     *
      * @return string
      */
     private function getMenuId($parent)
@@ -109,8 +111,10 @@ class MenuItem
     }
 
     /**
-     * Devuelve el html para el menú / submenú
+     * Returns the html for the menu / submenu.
+     *
      * @param string $parent
+     *
      * @return string
      */
     public function getHTML($parent = '')
@@ -119,9 +123,11 @@ class MenuItem
         $menuId = $this->getMenuId($parent);
 
         $html = empty($parent) ? '<li class="nav-item dropdown' . $active . '">'
-            . '<a class="nav-link dropdown-toggle" href="#" id="' . $menuId . '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&nbsp; ' . \ucfirst($this->title) . '</a>'
+            . '<a class="nav-link dropdown-toggle" href="#" id="' . $menuId . '" data-toggle="dropdown"'
+            . ' aria-haspopup="true" aria-expanded="false">&nbsp; ' . \ucfirst($this->title) . '</a>'
             . '<ul class="dropdown-menu" aria-labelledby="' . $menuId . '">' : '<li class="dropdown-submenu">'
-            . '<a class="dropdown-item" href="#" id="' . $menuId . '"><i class="fa fa-folder-open fa-fw" aria-hidden="true"></i>&nbsp; ' . \ucfirst($this->title) . '</a>'
+            . '<a class="dropdown-item" href="#" id="' . $menuId . '"><i class="fa fa-folder-open fa-fw"'
+            . ' aria-hidden="true"></i>&nbsp; ' . \ucfirst($this->title) . '</a>'
             . '<ul class="dropdown-menu" aria-labelledby="' . $menuId . '">';
 
         foreach ($this->menu as $menuItem) {
@@ -130,8 +136,9 @@ class MenuItem
                 $extraClass = 'active';
             }
 
-            $html .= empty($menuItem->menu) ? '<li><a class="dropdown-item ' . $extraClass . '" href="' . $menuItem->url . '">'
-                . $menuItem->getHTMLIcon() . '&nbsp; ' . \ucfirst($menuItem->title) . '</a></li>' : $menuItem->getHTML($menuId);
+            $html .= empty($menuItem->menu) ? '<li><a class="dropdown-item ' . $extraClass . '" href="' . $menuItem->url
+                . '">' . $menuItem->getHTMLIcon() . '&nbsp; ' . \ucfirst($menuItem->title)
+                . '</a></li>' : $menuItem->getHTML($menuId);
         }
 
         $html .= '</ul>';

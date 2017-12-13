@@ -338,7 +338,7 @@ class PluginManager
                 $newNamespace .= "\\" . $paths[$key];
             }
 
-            $className = basename($fileName, ".php");
+            $className = basename($fileName, '.php');
             $txt = '<?php namespace ' . $newNamespace . ";\n\n"
                 . '/**' . "\n"
                 . ' * Class created by Core/Base/PluginManager' . "\n"
