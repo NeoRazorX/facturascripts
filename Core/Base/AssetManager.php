@@ -16,16 +16,24 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 /**
- * Description of AssetManager
+ * Asset Manager for easy add extra assets.
  *
  * @author Carlos García Gómez
  */
 class AssetManager
 {
 
+    /**
+     * Return the needed assets for this page
+     *
+     * @param string $name
+     *
+     * @return array
+     */
     public static function getAssetsForPage($name)
     {
         $assets = [
@@ -33,10 +41,8 @@ class AssetManager
             'css' => [],
         ];
 
-        /**
-         * TODO: add javascript and css files with the name $name
-         * Example: ['JS' => ['Core/Assets/JS/name.js']] 
-         */
+        // TODO: Add javascript and css files with the name $name
+        // Example: ['JS' => ['Core/Assets/JS/name.js']]
         return $assets;
     }
 }
