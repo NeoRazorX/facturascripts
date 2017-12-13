@@ -1,5 +1,5 @@
 ﻿[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)][1]
-﻿![Symfony 3.x]
+﻿![Symfony 3.x][2]
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/NeoRazorX/facturascripts/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/NeoRazorX/facturascripts/?branch=master)
 <a href="http://i18n.facturascripts.com/engage/facturascripts/?utm_source=widget">
 <img src="http://i18n.facturascripts.com/widgets/facturascripts/-/core/svg-badge.svg" alt="Estado de la traducción" />
