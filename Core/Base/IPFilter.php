@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -57,17 +56,6 @@ class IPFilter
     {
         $this->filePath = FS_FOLDER . '/Cache/ip.list';
         $this->ipList = [];
-
-        // Check needed to pass the unit tests
-        /**
-        $basePath = FS_FOLDER . '/Cache';
-        $this->filePath = $basePath . '/ip.list';
-        if (!file_exists($basePath) && !@mkdir($basePath, 0775, true) && !is_dir($basePath)) {
-            $minilog = new MiniLog();
-            $i18n = new Translator();
-            $minilog->critical($i18n->trans('cant-create-folder', [$basePath]));
-        }
-         */
 
         if (file_exists($this->filePath)) {
             /// We read the list of IP addresses in the file

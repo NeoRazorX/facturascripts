@@ -112,7 +112,7 @@ class ExportManager
     /**
      * Adds a new page with a table listing the models data.
      * @param mixed $model
-     * @param \FacturaScripts\Core\Base\DataBase\DataBaseWhere[] $where
+     * @param DataBaseWhere[] $where
      * @param array $order
      * @param int $offset
      * @param array $columns
