@@ -368,8 +368,8 @@ class Partida
      */
     public function delete()
     {
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idpartida = ' . $this->dataBase->var2str($this->idpartida) . ';';
-        if ($this->dataBase->exec($sql)) {
+        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idpartida = ' . self::$dataBase->var2str($this->idpartida) . ';';
+        if (self::$dataBase->exec($sql)) {
             $subc = $this->getSubcuenta();
             if ($subc) {
                 $subc->save(); /// guardamos la subcuenta para actualizar su saldo
@@ -393,10 +393,10 @@ class Partida
     {
         $plist = [];
         $sql = 'SELECT a.numero,a.fecha,p.idpartida,p.debe,p.haber FROM co_asientos a, co_partidas p'
-            . ' WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ' . $this->dataBase->var2str($idsubc)
+            . ' WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ' . self::$dataBase->var2str($idsubc)
             . ' ORDER BY a.numero ASC, p.idpartida ASC;';
 
-        $ordenadas = $this->dataBase->select($sql);
+        $ordenadas = self::$dataBase->select($sql);
         if (!empty($ordenadas)) {
             $partida = new self();
             $i = 0;
@@ -436,7 +436,7 @@ class Partida
     {
         $plist = [];
         $sql = 'SELECT a.numero,a.fecha,p.idpartida FROM co_asientos a, co_partidas p'
-            . ' WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ' . $this->dataBase->var2str($idsubc)
+            . ' WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ' . self::$dataBase->var2str($idsubc)
             . ' ORDER BY a.numero ASC, p.idpartida ASC';
 
         $saldo = 0;
@@ -445,7 +445,7 @@ class Partida
 
         $partida = new self();
         $offset = 0;
-        $data = $this->dataBase->selectLimit($sql, 100, $offset);
+        $data = self::$dataBase->selectLimit($sql, 100, $offset);
         while (!empty($data)) {
             foreach ($data as $po) {
                 $aux = $partida->get($po['idpartida']);
@@ -464,7 +464,7 @@ class Partida
                 ++$offset;
             }
 
-            $data = $this->dataBase->selectLimit($sql, 100, $offset);
+            $data = self::$dataBase->selectLimit($sql, 100, $offset);
         }
 
         return $plist;
@@ -483,11 +483,11 @@ class Partida
     {
         $sql = 'SELECT a.numero,a.fecha,s.codsubcuenta,s.descripcion,p.concepto,p.debe,p.haber'
             . ' FROM co_asientos a, co_subcuentas s, co_partidas p'
-            . ' WHERE a.codejercicio = ' . $this->dataBase->var2str($eje)
+            . ' WHERE a.codejercicio = ' . self::$dataBase->var2str($eje)
             . ' AND p.idasiento = a.idasiento AND p.idsubcuenta = s.idsubcuenta'
             . ' ORDER BY a.numero ASC, p.codsubcuenta ASC';
 
-        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
+        $data = self::$dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
             return $data;
         }
@@ -505,10 +505,10 @@ class Partida
     public function countFromSubcuenta($idsubc)
     {
         $sql = 'SELECT a.numero,a.fecha,p.idpartida FROM co_asientos a, co_partidas p'
-            . ' WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ' . $this->dataBase->var2str($idsubc)
+            . ' WHERE a.idasiento = p.idasiento AND p.idsubcuenta = ' . self::$dataBase->var2str($idsubc)
             . ' ORDER BY a.numero ASC, p.idpartida ASC;';
 
-        $ordenadas = $this->dataBase->select($sql);
+        $ordenadas = self::$dataBase->select($sql);
         if (!empty($ordenadas)) {
             return count($ordenadas);
         }
@@ -526,7 +526,7 @@ class Partida
     public function totalesFromSubcuenta($idsubc)
     {
         $sql = 'SELECT COALESCE(SUM(debe), 0) as debe,COALESCE(SUM(haber), 0) as haber'
-            . ' FROM ' . $this->tableName() . ' WHERE idsubcuenta = ' . $this->dataBase->var2str($idsubc) . ';';
+            . ' FROM ' . $this->tableName() . ' WHERE idsubcuenta = ' . self::$dataBase->var2str($idsubc) . ';';
 
         return $this->getTotalesFromSQL($sql);
     }
@@ -542,7 +542,7 @@ class Partida
     {
         $sql = 'SELECT COALESCE(SUM(p.debe), 0) as debe,COALESCE(SUM(p.haber), 0) as haber'
             . ' FROM co_partidas p, co_asientos a'
-            . ' WHERE p.idasiento = a.idasiento AND a.codejercicio = ' . $this->dataBase->var2str($cod) . ';';
+            . ' WHERE p.idasiento = a.idasiento AND a.codejercicio = ' . self::$dataBase->var2str($cod) . ';';
 
         return $this->getTotalesFromSQL($sql);
     }
@@ -557,7 +557,7 @@ class Partida
     public function getTotalesFromSQL($sql)
     {
         $totales = ['debe' => 0, 'haber' => 0, 'saldo' => 0];
-        $resultados = $this->dataBase->select($sql);
+        $resultados = self::$dataBase->select($sql);
         if (!empty($resultados)) {
             $totales['debe'] = (float) $resultados[0]['debe'];
             $totales['haber'] = (float) $resultados[0]['haber'];
@@ -584,16 +584,16 @@ class Partida
         if ($excluir) {
             $sql = 'SELECT COALESCE(SUM(p.debe), 0) AS debe,
             COALESCE(SUM(p.haber), 0) AS haber FROM co_partidas p, co_asientos a
-            WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ' . $this->dataBase->var2str($idsubc) . '
-               AND a.fecha BETWEEN ' . $this->dataBase->var2str($fechaini) . ' AND ' . $this->dataBase->var2str($fechafin) . "
+            WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ' . self::$dataBase->var2str($idsubc) . '
+               AND a.fecha BETWEEN ' . self::$dataBase->var2str($fechaini) . ' AND ' . self::$dataBase->var2str($fechafin) . "
                AND p.idasiento NOT IN ('" . implode("','", $excluir) . "');";
-            $resultados = $this->dataBase->select($sql);
+            $resultados = self::$dataBase->select($sql);
         } else {
             $sql = 'SELECT COALESCE(SUM(p.debe), 0) AS debe,
             COALESCE(SUM(p.haber), 0) AS haber FROM co_partidas p, co_asientos a
-            WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ' . $this->dataBase->var2str($idsubc) . '
-               AND a.fecha BETWEEN ' . $this->dataBase->var2str($fechaini) . ' AND ' . $this->dataBase->var2str($fechafin) . ';';
-            $resultados = $this->dataBase->select($sql);
+            WHERE p.idasiento = a.idasiento AND p.idsubcuenta = ' . self::$dataBase->var2str($idsubc) . '
+               AND a.fecha BETWEEN ' . self::$dataBase->var2str($fechaini) . ' AND ' . self::$dataBase->var2str($fechafin) . ';';
+            $resultados = self::$dataBase->select($sql);
         }
 
         if (!empty($resultados)) {

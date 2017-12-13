@@ -86,7 +86,7 @@ class GrupoClientes
                 . " ORDER BY CAST(`codgrupo` AS decimal) DESC";
         }
 
-        $data = $this->dataBase->selectLimit($sql, 1, 0);
+        $data = self::$dataBase->selectLimit($sql, 1, 0);
         if (!empty($data)) {
             return sprintf('%06s', (1 + (int) $data[0]['codgrupo']));
         }

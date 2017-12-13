@@ -110,11 +110,11 @@ class EstadoDocumento
         $this->nombre = self::noHtml($this->nombre);
 
         if (strlen($this->documento) < 1 || strlen($this->documento) > 20) {
-            $this->miniLog->alert($this->i18n->trans('document-type-valid-length'));
+            self::$miniLog->alert(self::$i18n->trans('document-type-valid-length'));
         } elseif (strlen($this->nombre) < 1 || strlen($this->nombre) > 20) {
-            $this->miniLog->alert($this->i18n->trans('status-name-valid-length'));
+            self::$miniLog->alert(self::$i18n->trans('status-name-valid-length'));
         } elseif (!is_numeric($this->status)) {
-            $this->miniLog->alert($this->i18n->trans('status-value-is-number'));
+            self::$miniLog->alert(self::$i18n->trans('status-value-is-number'));
         } else {
             $status = TRUE;
         }
@@ -134,8 +134,8 @@ class EstadoDocumento
         $list = [];
 
         $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE documento = ' . $this->dataBase->var2str($doc) . ' ORDER BY id ASC;';
-        $data = $this->dataBase->select($sql);
+            . ' WHERE documento = ' . self::$dataBase->var2str($doc) . ' ORDER BY id ASC;';
+        $data = self::$dataBase->select($sql);
         if ($data) {
             foreach ($data as $d) {
                 $list[] = new self($d);
@@ -155,7 +155,7 @@ class EstadoDocumento
         $list = [];
 
         $sql = 'SELECT DISTINCT(documento) FROM ' . $this->tableName() . ' ORDER BY id ASC;';
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if ($data) {
             foreach ($data as $d) {
                 $list[] = $d['documento'];

@@ -128,13 +128,13 @@ class Empresa
 
         $lenName = strlen($this->nombre);
         if (($lenName == 0) || ($lenName > 99)) {
-            $this->miniLog->alert($this->i18n->trans('company-name-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('company-name-invalid'));
 
             return false;
         }
 
         if ($lenName < strlen($this->nombrecorto)) {
-            $this->miniLog->alert($this->i18n->trans('company-short-name-smaller-name'));
+            self::$miniLog->alert(self::$i18n->trans('company-short-name-smaller-name'));
 
             return false;
         }

@@ -112,27 +112,27 @@ class FacturaCliente
         if ($this->numero === null) { /// nueva factura
             /// buscamos la última fecha usada en una factura en esta serie y ejercicio
             $sql = 'SELECT MAX(fecha) AS fecha FROM ' . static::tableName()
-                . ' WHERE codserie = ' . $this->dataBase->var2str($this->codserie)
-                . ' AND codejercicio = ' . $this->dataBase->var2str($this->codejercicio) . ';';
+                . ' WHERE codserie = ' . self::$dataBase->var2str($this->codserie)
+                . ' AND codejercicio = ' . self::$dataBase->var2str($this->codejercicio) . ';';
 
-            $data = $this->dataBase->select($sql);
+            $data = self::$dataBase->select($sql);
             if (!empty($data)) {
                 if (strtotime($data[0]['fecha']) > strtotime($fecha)) {
                     $fechaOld = $fecha;
                     $fecha = date('d-m-Y', strtotime($data[0]['fecha']));
 
-                    $this->miniLog->alert($this->i18n->trans('invoice-new-assigned-date', [$fechaOld, $fecha]));
+                    self::$miniLog->alert(self::$i18n->trans('invoice-new-assigned-date', [$fechaOld, $fecha]));
                     $cambio = true;
                 }
             }
 
             /// ahora buscamos la última hora usada para esa fecha, serie y ejercicio
             $sql = 'SELECT MAX(hora) AS hora FROM ' . static::tableName()
-                . ' WHERE codserie = ' . $this->dataBase->var2str($this->codserie)
-                . ' AND codejercicio = ' . $this->dataBase->var2str($this->codejercicio)
-                . ' AND fecha = ' . $this->dataBase->var2str($fecha) . ';';
+                . ' WHERE codserie = ' . self::$dataBase->var2str($this->codserie)
+                . ' AND codejercicio = ' . self::$dataBase->var2str($this->codejercicio)
+                . ' AND fecha = ' . self::$dataBase->var2str($fecha) . ';';
 
-            $data = $this->dataBase->select($sql);
+            $data = self::$dataBase->select($sql);
             if (!empty($data)) {
                 if (strtotime($data[0]['hora']) > strtotime($hora) || $cambio) {
                     $hora = date('H:i:s', strtotime($data[0]['hora']));
@@ -149,23 +149,23 @@ class FacturaCliente
             $ejercicio = $eje0->get($this->codejercicio);
             if ($ejercicio) {
                 if (!$ejercicio->abierto()) {
-                    $this->miniLog->alert($this->i18n->trans('closed-exercise-cant-change-date', [$ejercicio->nombre]));
+                    self::$miniLog->alert(self::$i18n->trans('closed-exercise-cant-change-date', [$ejercicio->nombre]));
                 } elseif ($fecha === $ejercicio->get_best_fecha($fecha)) {
                     $regiva0 = new RegularizacionIva();
                     if ($regiva0->getFechaInside($fecha)) {
-                        $this->miniLog->alert($this->i18n->trans('cant-assign-date-already-regularized', [$fecha, FS_IVA]));
+                        self::$miniLog->alert(self::$i18n->trans('cant-assign-date-already-regularized', [$fecha, FS_IVA]));
                     } elseif ($regiva0->getFechaInside($this->fecha)) {
-                        $this->miniLog->alert($this->i18n->trans('invoice-regularized-cant-change-date', [FS_IVA]));
+                        self::$miniLog->alert(self::$i18n->trans('invoice-regularized-cant-change-date', [FS_IVA]));
                     } else {
                         $this->fecha = $fecha;
                         $this->hora = $hora;
                         $cambio = false;
                     }
                 } else {
-                    $this->miniLog->alert($this->i18n->trans('date-out-of-exercise-range', [$ejercicio->nombre]));
+                    self::$miniLog->alert(self::$i18n->trans('date-out-of-exercise-range', [$ejercicio->nombre]));
                 }
             } else {
-                $this->miniLog->alert($this->i18n->trans('exercise-not-found'));
+                self::$miniLog->alert(self::$i18n->trans('exercise-not-found'));
             }
         } elseif ($hora !== $this->hora) { /// factura existente y cambiamos hora
             $this->hora = $hora;
@@ -221,30 +221,30 @@ class FacturaCliente
             if ($ejercicio->abierto()) {
                 $reg0 = new RegularizacionIva();
                 if ($reg0->getFechaInside($this->fecha)) {
-                    $this->miniLog->alert($this->i18n->trans('invoice-regularized-cant-delete', [FS_IVA]));
+                    self::$miniLog->alert(self::$i18n->trans('invoice-regularized-cant-delete', [FS_IVA]));
                     $bloquear = true;
                 } else {
                     foreach ($this->getRectificativas() as $rect) {
-                        $this->miniLog->alert($this->i18n->trans('invoice-have-rectifying-cant-delete'));
+                        self::$miniLog->alert(self::$i18n->trans('invoice-have-rectifying-cant-delete'));
                         $bloquear = true;
                         break;
                     }
                 }
             } else {
-                $this->miniLog->alert($this->i18n->trans('closed-exercise', [$ejercicio->nombre]));
+                self::$miniLog->alert(self::$i18n->trans('closed-exercise', [$ejercicio->nombre]));
                 $bloquear = true;
             }
         }
 
         /// desvincular albaranes asociados y eliminar factura
         $sql = 'UPDATE albaranescli'
-            . ' SET idfactura = NULL, ptefactura = TRUE WHERE idfactura = ' . $this->dataBase->var2str($this->idfactura) . ';'
-            . 'DELETE FROM ' . static::tableName() . ' WHERE idfactura = ' . $this->dataBase->var2str($this->idfactura) . ';';
+            . ' SET idfactura = NULL, ptefactura = TRUE WHERE idfactura = ' . self::$dataBase->var2str($this->idfactura) . ';'
+            . 'DELETE FROM ' . static::tableName() . ' WHERE idfactura = ' . self::$dataBase->var2str($this->idfactura) . ';';
 
         if ($bloquear) {
             return false;
         }
-        if ($this->dataBase->exec($sql)) {
+        if (self::$dataBase->exec($sql)) {
             $this->cleanCache();
 
             if ($this->idasiento) {
@@ -263,7 +263,7 @@ class FacturaCliente
                 }
             }
 
-            $this->miniLog->info($this->i18n->trans('customer-invoice-deleted-successfully', [$this->codigo]));
+            self::$miniLog->info(self::$i18n->trans('customer-invoice-deleted-successfully', [$this->codigo]));
 
             return true;
         }

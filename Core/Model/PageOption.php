@@ -261,7 +261,7 @@ class PageOption
     public function installXML($name)
     {
         if ($this->name != $name) {
-            $this->miniLog->critical($this->i18n->trans('error-install-name-xmlview'));
+            self::$miniLog->critical(self::$i18n->trans('error-install-name-xmlview'));
             return;
         }
 
@@ -274,7 +274,7 @@ class PageOption
         $xml = @simplexml_load_string(file_get_contents($file));
 
         if ($xml === false) {
-            $this->miniLog->critical($this->i18n->trans('error-processing-xmlview', [$file]));
+            self::$miniLog->critical(self::$i18n->trans('error-processing-xmlview', [$file]));
             return;
         }
 

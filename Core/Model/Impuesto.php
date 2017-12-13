@@ -130,9 +130,9 @@ class Impuesto
         $this->descripcion = self::noHtml($this->descripcion);
 
         if (empty($this->codimpuesto) || strlen($this->codimpuesto) > 10) {
-            $this->miniLog->alert($this->i18n->trans('not-valid-tax-code-length'));
+            self::$miniLog->alert(self::$i18n->trans('not-valid-tax-code-length'));
         } elseif (empty($this->descripcion) || strlen($this->descripcion) > 50) {
-            $this->miniLog->alert($this->i18n->trans('not-valid-description-tax'));
+            self::$miniLog->alert(self::$i18n->trans('not-valid-description-tax'));
         } else {
             $status = true;
         }
