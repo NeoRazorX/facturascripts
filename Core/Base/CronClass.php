@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 /**
- * Define atributos y métodos globales a todas las clases
+ * Defines global attributes and methos for all classes.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Rafael San José Tovar
@@ -28,32 +28,32 @@ namespace FacturaScripts\Core\Base;
 abstract class CronClass
 {
     /**
-     * Objeto de la cache
+     * Cache object.
      *
      * @var Cache|null
      */
-    protected static $cache = null;
+    protected static $cache;
 
     /**
-     * Objeto de la base de datos
+     * Database object.
      *
      * @var DataBase|null
      */
-    protected static $dataBase = null;
+    protected static $dataBase;
 
     /**
-     * Objeto del traductor
+     * Translator object.
      *
      * @var Translator|null
      */
-    protected static $i18n = null;
+    protected static $i18n;
 
     /**
-     * Objeto minilog
+     * MiniLog object.
      *
      * @var MiniLog|null
      */
-    protected static $miniLog = null;
+    protected static $miniLog;
 
     /**
      * CronClass constructor.
@@ -75,7 +75,7 @@ abstract class CronClass
     }
 
     /**
-     * Selecciona y ejecuta el controlador pertinente para el cron.
+     * Select and execute the relevant controller for the cron.
      *
      * @return mixed
      */

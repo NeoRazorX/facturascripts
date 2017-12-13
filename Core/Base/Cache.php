@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\Cache\APCAdapter;
@@ -45,7 +46,7 @@ class Cache
         if (self::$engine === null) {
             if (extension_loaded('apc') && ini_get('apc.enabled')) {
                 self::$engine = new APCAdapter();
-            } else if (\class_exists('Memcache') && FS_CACHE_HOST !== '') {
+            } elseif (FS_CACHE_HOST !== '' && \class_exists('Memcache')) {
                 self::$engine = new MemcacheAdapter();
                 if (!self::$engine->isConnected()) {
                     self::$engine = null;
@@ -74,7 +75,7 @@ class Cache
      * Saves contents in the cache and associates them to $key
      *
      * @param string $key
-     * @param mixed  $content
+     * @param mixed $content
      *
      * @return bool
      */
