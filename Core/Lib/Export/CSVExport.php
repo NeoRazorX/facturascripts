@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Export;
 
+use FacturaScripts\Core\Base;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -29,7 +31,7 @@ use Symfony\Component\HttpFoundation\Response;
 class CSVExport implements ExportInterface
 {
 
-    use \FacturaScripts\Core\Base\Utils;
+    use Base\Utils;
 
     const LIST_LIMIT = 1000;
 
@@ -67,7 +69,7 @@ class CSVExport implements ExportInterface
      * Assigns the received separator.
      * By default it will use ';' semicolons.
      *
-     * @param $sep
+     * @param string $sep
      */
     public function setSeparator($sep)
     {
@@ -77,7 +79,8 @@ class CSVExport implements ExportInterface
     /**
      * Assigns the received text delimiter
      * By default it will use '"' quotes.
-     * @param $del
+     *
+     * @param string $del
      */
     public function setDelimiter($del)
     {
@@ -103,7 +106,12 @@ class CSVExport implements ExportInterface
     {
         return $this->delimiter;
     }
-    
+
+    /**
+     * Return the full document.
+     *
+     * @return string
+     */
     public function getDoc()
     {
         return \implode(PHP_EOL, $this->csv);
@@ -111,6 +119,7 @@ class CSVExport implements ExportInterface
     
     /**
      * Set headers.
+     *
      * @param Response $response
      */
     public function newDoc(&$response)
@@ -121,6 +130,7 @@ class CSVExport implements ExportInterface
     
     /**
      * Adds a new page with the model data.
+     *
      * @param mixed $model
      * @param array $columns
      * @param string $title
@@ -139,11 +149,12 @@ class CSVExport implements ExportInterface
 
         $this->writeSheet($tableData, ['key' => 'string', 'value' => 'string']);
     }
-    
+
     /**
      * Adds a new page with a table listing the models data.
+     *
      * @param mixed $model
-     * @param array $where
+     * @param Base\DataBase\DataBaseWhere[] $where
      * @param array $order
      * @param int $offset
      * @param array $columns
@@ -193,7 +204,7 @@ class CSVExport implements ExportInterface
                 $value = '';
                 if (isset($row->{$col})) {
                     $value = $row->{$col};
-                    if (is_null($value)) {
+                    if (null === $value) {
                         $value = '';
                     }
                 }

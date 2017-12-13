@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -27,49 +28,49 @@ class WidgetButton implements VisualItemInterface
 {
 
     /**
-     * Tipo de botón
+     * Type of button.
      * @var string
      */
     public $type;
 
     /**
-     * Código adicional asociado al botón
+     * Aditional code for the button.
      * @var string
      */
     public $hint;
 
     /**
-     * Icono asociado al botón
+     * Icon for the button.
      * @var string
      */
     public $icon;
 
     /**
-     * Acción JS asociada al botón
+     * JavaScritp action for the button.
      * @var string
      */
     public $onClick;
 
     /**
-     * Texto asociado al botón
+     * Label for the button.
      * @var string
      */
     public $label;
 
     /**
-     * Acción asociada al botón
+     * Action for the button.
      * @var string
      */
     public $action;
 
     /**
-     * Color asociado al botón
+     * Color for the button.
      * @var string
      */
     public $color;
 
     /**
-     * Crea y carga la estructura de atributos en base a un archivo XML
+     * Create and load the structure of attributes from a XML file.
      *
      * @param \SimpleXMLElement $button
      * @return WidgetButton
@@ -81,6 +82,13 @@ class WidgetButton implements VisualItemInterface
         return $widget;
     }
 
+    /**
+     * Create and load element structure from JSON file
+     *
+     * @param array $button
+     *
+     * @return WidgetButton
+     */
     public static function newFromJSON($button)
     {
         $widget = new WidgetButton();
@@ -88,6 +96,9 @@ class WidgetButton implements VisualItemInterface
         return $widget;
     }
 
+    /**
+     * WidgetButton constructor.
+     */
     public function __construct()
     {
         $this->type = 'action';
@@ -107,6 +118,11 @@ class WidgetButton implements VisualItemInterface
         return ['ColumnClass', 'ColumnHint', 'ColumnDescription'];
     }
 
+    /**
+     * Loads the attributes structure from a XML file
+     *
+     * @param \SimpleXMLElement $button
+     */
     public function loadFromXML($button)
     {
         $widget_atributes = $button->attributes();
@@ -125,6 +141,11 @@ class WidgetButton implements VisualItemInterface
         }
     }
 
+    /**
+     * Loads the attributes structure from a JSON file
+     *
+     * @param array $column
+     */
     public function loadFromJSON($column)
     {
         $this->type = (string) $column['button']['type'];
@@ -143,8 +164,7 @@ class WidgetButton implements VisualItemInterface
      */
     private function getIconHTML()
     {
-        $html = empty($this->icon) ? '' : '<i class="fa ' . $this->icon . '"></i>&nbsp;&nbsp;';
-        return $html;
+        return empty($this->icon) ? '' : '<i class="fa ' . $this->icon . '"></i>&nbsp;&nbsp;';
     }
 
     /**
@@ -154,8 +174,7 @@ class WidgetButton implements VisualItemInterface
      */
     private function getOnClickHTML()
     {
-        $html = empty($this->onClick) ? '' : ' onclick="' . $this->onClick . '"';
-        return $html;
+        return empty($this->onClick) ? '' : ' onclick="' . $this->onClick . '"';
     }
 
     /**
@@ -164,6 +183,7 @@ class WidgetButton implements VisualItemInterface
      * @param string $label
      * @param string $value
      * @param string $hint
+     *
      * @return string
      */
     private function getCalculateHTML($label, $value, $hint)
@@ -183,6 +203,7 @@ class WidgetButton implements VisualItemInterface
      * @param string $hint
      * @param string $formName
      * @param string $class
+     *
      * @return string
      */
     private function getActionHTML($label, $hint, $formName = 'main_form', $class = 'col-sm-auto')
@@ -200,6 +221,8 @@ class WidgetButton implements VisualItemInterface
      * Returns the HTML code to display a button that links to a modal form
      *
      * @param string $label
+     * @param string $class
+     *
      * @return string
      */
     private function getModalHTML($label, $class = 'col-sm-auto')
@@ -218,6 +241,8 @@ class WidgetButton implements VisualItemInterface
      * @param string $label
      * @param string $value
      * @param string $hint
+     * @param string $class
+     *
      * @return string
      */
     public function getHTML($label, $value = '', $hint = '', $class = 'col-sm-auto')
@@ -241,6 +266,7 @@ class WidgetButton implements VisualItemInterface
      * Generate the html code to visualize the visual element header
      *
      * @param string $value
+     *
      * @return string
      */
     public function getHeaderHTML($value)
@@ -249,8 +275,7 @@ class WidgetButton implements VisualItemInterface
     }
 
     /**
-     * Devuelve el código HTML para la visualización de un popover
-     * con el texto indicado.
+     * Returns the HTML code to show a popover with the received text.
      *
      * @param string $hint
      *
@@ -258,6 +283,7 @@ class WidgetButton implements VisualItemInterface
      */
     public function getHintHTML($hint)
     {
-        return empty($hint) ? '' : ' data-toggle="popover" data-placement="auto" data-trigger="hover" data-content="' . $hint . '" ';
+        return empty($hint) ? '' : ' data-toggle="popover" data-placement="auto" data-trigger="hover" data-content="'
+            . $hint . '" ';
     }
 }

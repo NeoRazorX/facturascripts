@@ -18,45 +18,44 @@
  */
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\Base\NumberTools;
-use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Base;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Description of PDF
+ * PDF export data.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class PDFExport implements ExportInterface
 {
 
-    use \FacturaScripts\Core\Base\Utils;
+    use Base\Utils;
 
-    const LIST_LIMIT = 1000;
+    const LIST_LIMIT = 500;
 
     /**
      * Translator object
      *
-     * @var Translator
+     * @var Base\Translator
      */
     private $i18n;
 
     /**
      * Class with number tools (to format numbers)
      *
-     * @var NumberTools
+     * @var Base\NumberTools
      */
     private $numberTools;
 
     /**
      * PDF object.
-     * @var \Cezpdf 
+     * @var \Cezpdf
      */
     private $pdf;
 
     /**
      * PDF table width.
-     * @var int|float 
+     * @var int|float
      */
     private $tableWidth;
 
@@ -65,11 +64,16 @@ class PDFExport implements ExportInterface
      */
     public function __construct()
     {
-        $this->i18n = new Translator();
-        $this->numberTools = new NumberTools();
+        $this->i18n = new Base\Translator();
+        $this->numberTools = new Base\NumberTools();
         $this->tableWidth = 0.0;
     }
 
+    /**
+     * Return the full document.
+     * 
+     * @return mixed
+     */
     public function getDoc()
     {
         if ($this->pdf === null) {
@@ -82,6 +86,7 @@ class PDFExport implements ExportInterface
 
     /**
      * Set headers.
+     *
      * @param Response $response
      */
     public function newDoc(&$response)
@@ -91,6 +96,7 @@ class PDFExport implements ExportInterface
 
     /**
      * Adds a new page with the model data.
+     *
      * @param mixed $model
      * @param array $columns
      * @param string $title
@@ -125,8 +131,9 @@ class PDFExport implements ExportInterface
 
     /**
      * Adds a new page with a table listing the models data.
+     *
      * @param mixed $model
-     * @param array $where
+     * @param Base\DataBase\DataBaseWhere[] $where
      * @param array $order
      * @param int $offset
      * @param array $columns
@@ -166,6 +173,7 @@ class PDFExport implements ExportInterface
 
     /**
      * Adds a new page.
+     *
      * @param string $orientation
      */
     private function newPage($orientation = 'portrait')
@@ -178,13 +186,21 @@ class PDFExport implements ExportInterface
             $this->tableWidth = $this->pdf->ez['pageWidth'] - 60;
 
             $this->pdf->ezStartPageNumbers($this->pdf->ez['pageWidth'] / 2, 10, 9, 'left', '{PAGENUM} / {TOTALPAGENUM}');
-        } else if ($this->pdf->y < 200) {
+        } elseif ($this->pdf->y < 200) {
             $this->pdf->ezNewPage();
         } else {
             $this->pdf->ezText("\n");
         }
     }
 
+    /**
+     * Set the table content.
+     *
+     * @param $columns
+     * @param $tableCols
+     * @param $tableColsTitle
+     * @param $tableOptions
+     */
     private function setTableColumns(&$columns, &$tableCols, &$tableColsTitle, &$tableOptions)
     {
         foreach ($columns as $col) {
@@ -220,17 +236,18 @@ class PDFExport implements ExportInterface
         /// Get the data
         foreach ($cursor as $key => $row) {
             foreach ($tableCols as $col) {
-                $value = '';
-                if (isset($row->{$col})) {
-                    $value = $row->{$col};
+                if (!isset($row->{$col})) {
+                    $tableData[$key][$col] = '';
+                    continue;
+                }
 
-                    if (in_array($tableOptions['cols'][$col]['col-type'], ['money', 'number'])) {
-                        $value = $this->numberTools->format($value, 2);
-                    } elseif (is_bool($value)) {
-                        $value = $value == 1 ? $this->i18n->trans('yes') : $this->i18n->trans('no');
-                    } elseif (is_null($value)) {
-                        $value = '';
-                    }
+                $value = $row->{$col};
+                if (in_array($tableOptions['cols'][$col]['col-type'], ['money', 'number'], false)) {
+                    $value = $this->numberTools->format($value, 2);
+                } elseif (is_bool($value)) {
+                    $value = $value == 1 ? $this->i18n->trans('yes') : $this->i18n->trans('no');
+                } elseif (null === $value) {
+                    $value = '';
                 }
 
                 $tableData[$key][$col] = $value;
@@ -240,6 +257,12 @@ class PDFExport implements ExportInterface
         return $tableData;
     }
 
+    /**
+     * Remove the empty columns to save space.
+     *
+     * @param $tableData
+     * @param $tableColsTitle
+     */
     private function removeEmptyCols(&$tableData, &$tableColsTitle)
     {
         foreach (array_keys($tableColsTitle) as $key) {

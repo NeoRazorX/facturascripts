@@ -18,26 +18,33 @@
  */
 namespace FacturaScripts\Core\Lib\Export;
 
+use FacturaScripts\Core\Base;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Description of XLSExport
+ * XLS export data.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class XLSExport implements ExportInterface
 {
 
-    use \FacturaScripts\Core\Base\Utils;
+    use Base\Utils;
 
     const LIST_LIMIT = 1000;
 
     /**
      * XLSX object.
+     *
      * @var \XLSXWriter 
      */
     private $writer;
 
+    /**
+     * Return the full document.
+     *
+     * @return bool|string
+     */
     public function getDoc()
     {
         return $this->writer->writeToString();
@@ -45,6 +52,7 @@ class XLSExport implements ExportInterface
 
     /**
      * Create the document and set headers.
+     *
      * @param Response $response
      */
     public function newDoc(&$response)
@@ -58,6 +66,7 @@ class XLSExport implements ExportInterface
 
     /**
      * Adds a new page with the model data.
+     *
      * @param mixed $model
      * @param array $columns
      * @param string $title
@@ -76,8 +85,9 @@ class XLSExport implements ExportInterface
 
     /**
      * Adds a new page with a table listing all models data.
+     *
      * @param mixed $model
-     * @param array $where
+     * @param Base\DataBase\DataBaseWhere[] $where
      * @param array $order
      * @param int $offset
      * @param array $columns
@@ -107,6 +117,13 @@ class XLSExport implements ExportInterface
         }
     }
 
+    /**
+     * Set the table content.
+     *
+     * @param $columns
+     * @param $tableCols
+     * @param $sheetHeaders
+     */
     private function setTableColumns(&$columns, &$tableCols, &$sheetHeaders)
     {
         foreach ($columns as $col) {
@@ -137,15 +154,12 @@ class XLSExport implements ExportInterface
         /// Get the data
         foreach ($cursor as $key => $row) {
             foreach ($tableCols as $col) {
-                $value = '';
-                if (isset($row->{$col})) {
-                    $value = $row->{$col};
-                    if (is_null($value)) {
-                        $value = '';
-                    }
+                if (!isset($row->{$col}) || null === $row->{$col}) {
+                    $tableData[$key][$col] = '';
+                    continue;
                 }
 
-                $tableData[$key][$col] = $value;
+                $tableData[$key][$col] = $row->{$col};
             }
         }
 

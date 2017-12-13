@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Model;
 
 /**
- * Description of WidgetItemSelect
+ * This class manage all specific method for a WidgetItem of Select type.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -59,9 +60,9 @@ class WidgetItemSelect extends WidgetItem
     }
 
     /**
-     * Loads the attributes structure from the database
+     * Loads the attributes structure from a JSON file
      *
-     * @param array $column
+     * @param \SimpleXMLElement[] $column
      */
     public function loadFromJSON($column)
     {
@@ -109,6 +110,9 @@ class WidgetItemSelect extends WidgetItem
         }
     }
 
+    /**
+     * Load values from model.
+     */
     public function loadValuesFromModel()
     {
         $tableName = $this->values[0]['source'];
@@ -120,6 +124,9 @@ class WidgetItemSelect extends WidgetItem
         unset($rows);
     }
 
+    /**
+     * Load values from array.
+     */
     public function loadValuesFromRange()
     {
         $start = $this->values[0]['start'];
@@ -128,7 +135,6 @@ class WidgetItemSelect extends WidgetItem
         $values = range($start, $end, $step);
         $this->setValuesFromArray($values);
     }
-
 
     /**
      * Generates the HTML code to display the data in the List controller
@@ -168,8 +174,9 @@ class WidgetItemSelect extends WidgetItem
             . ' class="form-control"' . $specialAttributes . '>';
 
         foreach ($this->values as $selectValue) {
-            $selected = ($selectValue['value'] == $value) ? ' selected="selected" ' : '';
-            $html .= '<option value="' . $selectValue['value'] . '"' . $selected . '>' . $selectValue['title'] . '</option>';
+            $selected = ($selectValue['value'] === $value) ? ' selected="selected" ' : '';
+            $html .= '<option value="' . $selectValue['value'] . '" ' . $selected . '>' . $selectValue['title']
+                . '</option>';
         }
         $html .= '</select>';
 
