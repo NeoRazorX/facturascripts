@@ -47,7 +47,6 @@ class EditView extends BaseView
 
     /**
      * Returns the text for the data panel header
-     * Returns the
      *
      * @return string
      */
@@ -59,7 +58,6 @@ class EditView extends BaseView
     /**
      * Returns the text for the data panel footer
      *
-     *
      * @return string
      */
     public function getPanelFooter()
@@ -70,7 +68,7 @@ class EditView extends BaseView
     /**
      * Returns the column configuration
      *
-     * @return array
+     * @return GroupItem[]
      */
     public function getColumns()
     {
@@ -79,9 +77,9 @@ class EditView extends BaseView
 
     /**
      * Establishes the column edit state
-     * 
+     *
      * @param string $columnName
-     * @param boolean $disabled
+     * @param bool $disabled
      */
     public function disableColumn($columnName, $disabled)
     {

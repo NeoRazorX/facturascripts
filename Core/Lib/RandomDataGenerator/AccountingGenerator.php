@@ -95,7 +95,7 @@ class AccountingGenerator
      */
     public function cuentas($max = 50)
     {
-        $epigrafes = $this->randomModel("\FacturaScripts\Core\Model\Epigrafe");
+        $epigrafes = $this->randomModel("\FacturaScripts\Dinamic\Model\Epigrafe");
         for ($num = 0; $num < $max && count($epigrafes) > 0; ++$num) {
             $cuenta = new Model\Cuenta();
             $cuenta->codcuenta = $epigrafes[0]->codepigrafe . mt_rand(0, 99);
@@ -122,7 +122,7 @@ class AccountingGenerator
      */
     public function epigrafes($max = 50)
     {
-        $grupos = $this->randomModel("\FacturaScripts\Core\Model\GrupoEpigrafes");
+        $grupos = $this->randomModel("\FacturaScripts\Dinamic\Model\GrupoEpigrafes");
         for ($num = 0; $num < $max && count($grupos) > 0; ++$num) {
             $epigrafe = new Model\Epigrafe();
             $epigrafe->codejercicio = $grupos[0]->codejercicio;
@@ -172,7 +172,7 @@ class AccountingGenerator
      *
      * @return array
      */
-    protected function randomModel($modelName = "\FacturaScripts\Core\Model\Cuenta")
+    protected function randomModel($modelName = "\FacturaScripts\Dinamic\Model\Cuenta")
     {
         $model = new $modelName();
         $data = $model->all();
@@ -193,7 +193,7 @@ class AccountingGenerator
      */
     public function subcuentas($max = 50)
     {
-        $cuentas = $this->randomModel("\FacturaScripts\Core\Model\Cuenta");
+        $cuentas = $this->randomModel("\FacturaScripts\Dinamic\Model\Cuenta");
         for ($num = 0; $num < $max; ++$num) {
             $subcuenta = new Model\Subcuenta();
             $subcuenta->codcuenta = $cuentas[0]->codcuenta;

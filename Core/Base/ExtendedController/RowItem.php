@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Description of RowItem
+ * This RowItem class modelises the common data and method of a RowItem element.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -37,6 +37,7 @@ abstract class RowItem implements VisualItemInterface
      * Dynamic class constructor. Creates a RowItem objec of the given type.
      *
      * @param string $type
+     *
      * @return RowItem|null
      */
     private static function rowItemFromType($type)
@@ -53,14 +54,15 @@ abstract class RowItem implements VisualItemInterface
                 return new RowItemFooter();
 
             default:
-                return NULL;
+                return null;
         }
     }
-    
+
     /**
      * Creates and loads the row structure from an XML file
      *
      * @param \SimpleXMLElement $row
+     *
      * @return RowItem
      */
     public static function newFromXML($row)
@@ -76,6 +78,7 @@ abstract class RowItem implements VisualItemInterface
      * Creates and loads the row structure from the database
      *
      * @param array $row
+     *
      * @return RowItem
      */
     public static function newFromJSON($row)
@@ -85,7 +88,7 @@ abstract class RowItem implements VisualItemInterface
         $result->loadFromJSON($row);
         return $result;
     }
-    
+
     /**
      * RowItem constructor.
      *
@@ -97,7 +100,7 @@ abstract class RowItem implements VisualItemInterface
     }
 
     /**
-     * Devuelve los atributos de un elemento desde el XML.
+     * Return the attributes of an element from the XML.
      *
      * @param \SimpleXMLElement $item
      *
@@ -114,9 +117,9 @@ abstract class RowItem implements VisualItemInterface
     }
 
     /**
-     * Devuelve una lista de WidgetButton desde el XML.
+     * Return a list of WidgetButtons from the XML.
      *
-     * @param \SimpleXMLElement[] $buttonsXML
+     * @param \SimpleXMLElement|\SimpleXMLElement[] $buttonsXML
      *
      * @return WidgetButton[]
      */
@@ -130,10 +133,9 @@ abstract class RowItem implements VisualItemInterface
         }
         return $buttons;
     }
-    
+
     /**
      * Creates and loads the attributes structure from a XML file
-     *
      *
      * @param \SimpleXMLElement $row
      */
@@ -157,5 +159,5 @@ abstract class RowItem implements VisualItemInterface
     public function getHeaderHTML($value)
     {
         return $value;
-    }    
+    }
 }

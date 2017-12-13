@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExportManager;
 
 /**
@@ -45,7 +47,7 @@ class ListView extends BaseView
     /**
      * Filter configuration preset by the user
      *
-     * @var array
+     * @var ListFilter[]
      */
     private $filters;
 
@@ -87,7 +89,7 @@ class ListView extends BaseView
     /**
      * Stores the where parameters for the cursor
      *
-     * @var array
+     * @var DataBaseWhere[]
      */
     private $where;
 
@@ -145,7 +147,7 @@ class ListView extends BaseView
     /**
      * Returns the list of defined filters
      *
-     * @return array
+     * @return ListFilter[]
      */
     public function getFilters()
     {
@@ -176,7 +178,7 @@ class ListView extends BaseView
      * List of columns and its configuration
      * (Array of ColumnItem)
      *
-     * @return array
+     * @return ColumnItem[]
      */
     public function getColumns()
     {
@@ -188,6 +190,7 @@ class ListView extends BaseView
      * Returns the indicated Order By in array format
      *
      * @param string $orderKey
+     *
      * @return array
      */
     public function getSQLOrderBy($orderKey = '')
@@ -212,7 +215,7 @@ class ListView extends BaseView
     public function setSelectedOrderBy($orderKey)
     {
         $keys = array_keys($this->orderby);
-        if (empty($orderKey) || !in_array($orderKey, $keys)) {
+        if (empty($orderKey) || !in_array($orderKey, $keys, false)) {
             if (empty($this->selectedOrderBy)) {
                 $this->selectedOrderBy = (string) $keys[0]; // We force the first element when there is no default
             }
@@ -229,6 +232,9 @@ class ListView extends BaseView
     public function addSearchIn($fields)
     {
         if (is_array($fields)) {
+            // TODO: Error: Perhaps array_merge/array_replace can be used instead.
+            // Feel free to disable the inspection if '+' is intended.
+            //$this->searchIn = array_merge($this->searchIn, $fields);
             $this->searchIn += $fields;
         }
     }
@@ -238,7 +244,7 @@ class ListView extends BaseView
      *
      * @param string $field
      * @param string $label
-     * @param int $default    (0 = None, 1 = ASC, 2 = DESC)
+     * @param int $default (0 = None, 1 = ASC, 2 = DESC)
      */
     public function addOrderBy($field, $label = '', $default = 0)
     {
@@ -286,9 +292,9 @@ class ListView extends BaseView
 
     /**
      * Establishes a column's display state
-     * 
+     *
      * @param string $columnName
-     * @param boolean $disabled
+     * @param bool $disabled
      */
     public function disableColumn($columnName, $disabled)
     {
@@ -301,7 +307,7 @@ class ListView extends BaseView
     /**
      * Load data
      *
-     * @param array $where
+     * @param DataBaseWhere[] $where
      * @param int $offset
      * @param int $limit
      */
@@ -309,14 +315,13 @@ class ListView extends BaseView
     {
         $order = $this->getSQLOrderBy($this->selectedOrderBy);
         $this->count = $this->model->count($where);
+        /// needed when megasearch force data reload
+        $this->cursor = [];
         if ($this->count > 0) {
             $this->cursor = $this->model->all($where, $order, $offset, $limit);
-        } else {
-            /// needed when mesasearch force data reload
-            $this->cursor = [];
         }
 
-        /// nos guardamos los valores where y offset para la exportación
+        /// store values where & offset for exportation
         $this->offset = $offset;
         $this->order = $order;
         $this->where = $where;
@@ -330,7 +335,14 @@ class ListView extends BaseView
     public function export(&$exportManager)
     {
         if ($this->count > 0) {
-            $exportManager->generateListModelPage($this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title);
+            $exportManager->generateListModelPage(
+                $this->model,
+                $this->where,
+                $this->order,
+                $this->offset,
+                $this->getColumns(),
+                $this->title
+            );
         }
     }
 }

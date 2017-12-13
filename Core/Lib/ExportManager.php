@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -40,6 +41,9 @@ class ExportManager
      */
     private static $options;
 
+    /**
+     * ExportManager constructor.
+     */
     public function __construct()
     {
         if (self::$options === null) {
@@ -108,7 +112,7 @@ class ExportManager
     /**
      * Adds a new page with a table listing the models data.
      * @param mixed $model
-     * @param array $where
+     * @param DataBaseWhere[] $where
      * @param array $order
      * @param int $offset
      * @param array $columns

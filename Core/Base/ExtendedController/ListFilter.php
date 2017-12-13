@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Base\ExtendedController;
 
-use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * Description of ListFilter
+ * LisFilter definition for its use in ListController.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -114,34 +114,40 @@ class ListFilter
     /**
      * Adds $where to the informed filters in DataBaseWhere format
      *
-     * @param array $where
+     * @param DataBaseWhere[] $where
      * @param string $key
      */
     public function getDataBaseWhere(&$where, $key = '')
     {
         switch ($this->type) {
             case 'select':
-                if ($this->options['value'] != '') {
+                if ($this->options['value'] !== null && $this->options['value'] !== '') {
                     // we use the key value because the field value indicate is the text field of the source data
-                    $where[] = new DataBase\DataBaseWhere($key, $this->options['value']);
+                    $where[] = new DataBaseWhere($key, $this->options['value']);
                 }
                 break;
 
             case 'checkbox':
-                if ($this->options['value'] != '') {
-                    $checked = (bool) (($this->options['inverse']) ? !$this->options['value'] : $this->options['value']);
-                    $where[] = new DataBase\DataBaseWhere($this->options['field'], $checked);
+                if ($this->options['value'] !== null && $this->options['value'] !== '') {
+                    $checked = (bool) ($this->options['inverse'] ? !$this->options['value'] : $this->options['value']);
+                    $where[] = new DataBaseWhere($this->options['field'], $checked);
                 }
                 break;
 
             default:
-                if ($this->options['valueFrom'] != '') {
-                    $where[] = new DataBase\DataBaseWhere(
-                        $this->options['field'], $this->options['valueFrom'], $this->options['operatorFrom']);
+                if ($this->options['valueFrom'] !== null && $this->options['valueFrom'] !== '') {
+                    $where[] = new DataBaseWhere(
+                        $this->options['field'],
+                        $this->options['valueFrom'],
+                        $this->options['operatorFrom']
+                    );
                 }
-                if ($this->options['valueTo'] != '') {
-                    $where[] = new DataBase\DataBaseWhere(
-                        $this->options['field'], $this->options['valueTo'], $this->options['operatorTo']);
+                if ($this->options['valueTo'] !== null && $this->options['valueTo'] !== '') {
+                    $where[] = new DataBaseWhere(
+                        $this->options['field'],
+                        $this->options['valueTo'],
+                        $this->options['operatorTo']
+                    );
                 }
         }
     }
@@ -150,6 +156,7 @@ class ListFilter
      * Builds a string with the parameters contained in the URL of the controller call
      *
      * @param string $key
+     *
      * @return string
      */
     public function getParams($key)
@@ -184,6 +191,7 @@ class ListFilter
      * @param string $value
      * @param string $table
      * @param string $where
+     *
      * @return ListFilter
      */
     public static function newSelectFilter($field, $value, $table, $where)
@@ -198,7 +206,8 @@ class ListFilter
      * @param string $field
      * @param string $value
      * @param string $label
-     * @param boolean $inverse
+     * @param bool $inverse
+     *
      * @return ListFilter
      */
     public static function newCheckboxFilter($field, $value, $label, $inverse)
@@ -208,7 +217,8 @@ class ListFilter
     }
 
     /**
-     * TODO: Por completar
+     * If number is integer, return the number without decimal part.
+     * Else, return the number with decimal part.
      *
      * @param $value
      *
@@ -223,8 +233,9 @@ class ListFilter
     /**
      * Creates and returns a filter of the specified type [text|number|datepicker]
      *
-     * @param string $type    ('text' | 'datepicker' | 'number')
-     * @param array $options  (['field', 'label', 'valueFrom', 'operatorFrom', 'valueTo', 'operatorTo'])
+     * @param string $type ('text' | 'datepicker' | 'number')
+     * @param array $options (['field', 'label', 'valueFrom', 'operatorFrom', 'valueTo', 'operatorTo'])
+     *
      * @return ListFilter
      */
     public static function newStandardFilter($type, $options)
