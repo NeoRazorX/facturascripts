@@ -54,6 +54,21 @@ class Dashboard extends Base\Controller
     }
 
     /**
+     * Dashboard constructor.
+     *
+     * @param Base\Cache $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog $miniLog
+     * @param string $className
+     */
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    {
+        parent::__construct($cache, $i18n, $miniLog, $className);
+
+        $this->components = [];
+    }
+
+    /**
      * Runs the controller's private logic.
      *
      * @param \Symfony\Component\HttpFoundation\Response $response

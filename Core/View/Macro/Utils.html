@@ -32,7 +32,7 @@
 
 <div class="btn-group">
     {% if type == 'list' %}
-    <a href="#" onclick="doAction('export&option={{ fsc.exportManager.defaultOption() }}')" id="b_print" class="btn btn-sm btn-secondary" {{ popoverTitle(print_title, 'bottom') }}>
+    <a href="#" onclick="goToExport('{{ fsc.exportManager.defaultOption() }}')" id="b_print" class="btn btn-sm btn-secondary" {{ popoverTitle(print_title, 'bottom') }}>
     {% else %}
     <a href="{{ fsc.getURL('edit') }}&action=export&option={{ fsc.exportManager.defaultOption() }}" id="b_print" class="btn btn-sm btn-secondary" {{ popoverTitle(print_title, 'bottom') }}>
     {% endif %}
@@ -45,7 +45,7 @@
     <div class="dropdown-menu">
         {% for key, option in fsc.exportManager.options() %}
             {% if type == 'list' %}
-            <a href="#" onclick="doAction('export&option={{ key }}')" class="dropdown-item">
+            <a href="#" onclick="goToExport('{{ key }}')" class="dropdown-item">
             {% else %}
             <a href="{{ fsc.getURL('edit') }}&action=export&option={{ key }}" class="dropdown-item">
             {% endif %}

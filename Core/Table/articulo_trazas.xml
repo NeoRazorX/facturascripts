@@ -83,8 +83,4 @@
             REFERENCES lineasfacturasprov (idlinea)
             ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
-    <constraint>
-        <name>uniq_codigo_articulo_trazas</name>
-        <type>UNIQUE (numserie)</type>
-    </constraint>
 </table>

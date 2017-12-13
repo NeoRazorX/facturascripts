@@ -19,8 +19,9 @@
 
 namespace FacturaScripts\Core\Base\ExtendedController;
 
-use FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Lib\ExportManager;
+use FacturaScripts\Core\Model;
 
 /**
  * Base definition for the views used in ExtendedControllers
@@ -77,7 +78,7 @@ abstract class BaseView
     /**
      * Method to export the view data
      *
-     * @param \FacturaScripts\Core\Lib\ExportManager $exportManager
+     * @param ExportManager $exportManager
      */
     abstract public function export(&$exportManager);
 

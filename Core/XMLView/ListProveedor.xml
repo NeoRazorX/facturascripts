@@ -42,9 +42,6 @@
         <column name="phone2" display="none" order="160">
             <widget type="text" fieldname="telefono2" />
         </column>
-        <column name="fiscal-name" display="left" order="170">
-            <widget type="text" fieldname="razonsocial" />
-        </column>
         <column name="notes" display="left" order="180">
             <widget type="text" fieldname="observaciones" />
         </column>

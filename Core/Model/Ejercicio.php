@@ -165,13 +165,13 @@ class Ejercicio
      */
     public function newCodigo($cod = '0001')
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->dataBase->var2str($cod) . ';';
-        if (!$this->dataBase->select($sql)) {
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . self::$dataBase->var2str($cod) . ';';
+        if (!self::$dataBase->select($sql)) {
             return $cod;
         }
 
-        $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codejercicio') . ') as cod FROM ' . $this->tableName() . ';';
-        $newCod = $this->dataBase->select($sql);
+        $sql = 'SELECT MAX(' . self::$dataBase->sql2Int('codejercicio') . ') as cod FROM ' . $this->tableName() . ';';
+        $newCod = self::$dataBase->select($sql);
         if (!empty($newCod)) {
             return sprintf('%04s', 1 + (int) $newCod[0]['cod']);
         }
@@ -197,14 +197,14 @@ class Ejercicio
 
         if ($fecha2 > strtotime($this->fechainicio)) {
             if ($showError) {
-                $this->miniLog->alert($this->i18n->trans('date-out-of-rage-selected-better'));
+                self::$miniLog->alert(self::$i18n->trans('date-out-of-rage-selected-better'));
             }
 
             return $this->fechafin;
         }
 
         if ($showError) {
-            $this->miniLog->alert($this->i18n->trans('date-out-of-rage-selected-better'));
+            self::$miniLog->alert(self::$i18n->trans('date-out-of-rage-selected-better'));
         }
 
         return $this->fechainicio;
@@ -223,9 +223,9 @@ class Ejercicio
     public function getByFecha($fecha, $soloAbierto = true, $crear = true)
     {
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fechainicio <= '
-            . $this->dataBase->var2str($fecha) . ' AND fechafin >= ' . $this->dataBase->var2str($fecha) . ';';
+            . self::$dataBase->var2str($fecha) . ' AND fechafin >= ' . self::$dataBase->var2str($fecha) . ';';
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             $eje = new self($data[0]);
             if ($eje->abierto() || !$soloAbierto) {
@@ -239,7 +239,7 @@ class Ejercicio
             $eje->fechafin = date('31-12-Y', strtotime($fecha));
 
             if (strtotime($fecha) < 1) {
-                $this->miniLog->alert($this->i18n->trans('date-invalid-date', [$fecha]));
+                self::$miniLog->alert(self::$i18n->trans('date-invalid-date', [$fecha]));
             } elseif ($eje->save()) {
                 return $eje;
             }
@@ -261,14 +261,14 @@ class Ejercicio
         $this->nombre = self::noHtml($this->nombre);
 
         if (!preg_match('/^[A-Z0-9_]{1,4}$/i', $this->codejercicio)) {
-            $this->miniLog->alert($this->i18n->trans('fiscal-year-code-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('fiscal-year-code-invalid'));
         } elseif (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
-            $this->miniLog->alert($this->i18n->trans('fiscal-year-name-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('fiscal-year-name-invalid'));
         } elseif (strtotime($this->fechainicio) > strtotime($this->fechafin)) {
             $params = [$this->fechainicio, $this->fechafin];
-            $this->miniLog->alert($this->i18n->trans('start-date-later-end-date', $params));
+            self::$miniLog->alert(self::$i18n->trans('start-date-later-end-date', $params));
         } elseif (strtotime($this->fechainicio) < 1) {
-            $this->miniLog->alert($this->i18n->trans('date-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('date-invalid'));
         } else {
             $status = true;
         }
@@ -285,7 +285,7 @@ class Ejercicio
     {
         return 'INSERT INTO ' . $this->tableName() . ' (codejercicio,nombre,fechainicio,fechafin,'
             . 'estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre) '
-            . "VALUES ('" . date('Y') . "','" . date('Y') . "'," . $this->dataBase->var2str(date('01-01-Y'))
-            . ', ' . $this->dataBase->var2str(date('31-12-Y')) . ",'ABIERTO',10,'08',null,null,null);";
+            . "VALUES ('" . date('Y') . "','" . date('Y') . "'," . self::$dataBase->var2str(date('01-01-Y'))
+            . ', ' . self::$dataBase->var2str(date('31-12-Y')) . ",'ABIERTO',10,'08',null,null,null);";
     }
 }

@@ -43,8 +43,7 @@ class GroupItem extends VisualItem implements VisualItemInterface
     /**
      * Create and load the group structure from a XML file
      *
-     * @param \SimpleXMLElement|\SimpleXMLElement[] $group
-     *
+     * @param \SimpleXMLElement $group
      * @return GroupItem
      */
     public static function newFromXML($group)

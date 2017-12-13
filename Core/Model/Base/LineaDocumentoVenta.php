@@ -231,11 +231,11 @@ trait LineaDocumentoVenta
         $totalsindto = $this->pvpunitario * $this->cantidad;
 
         if (!static::floatcmp($this->pvptotal, $total, FS_NF0, true)) {
-            $this->miniLog->alert($this->i18n->trans('pvptotal-line-error', [$this->referencia, $total]));
+            self::$miniLog->alert(self::$i18n->trans('pvptotal-line-error', [$this->referencia, $total]));
             return false;
         }
         if (!static::floatcmp($this->pvpsindto, $totalsindto, FS_NF0, true)) {
-            $this->miniLog->alert($this->i18n->trans('pvpsindto-line-error', [$this->referencia, $totalsindto]));
+            self::$miniLog->alert(self::$i18n->trans('pvpsindto-line-error', [$this->referencia, $totalsindto]));
             return false;
         }
 

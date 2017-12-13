@@ -13,9 +13,10 @@
     function goToOptions() {
         window.location.href = 'index.php?page=EditPageOption&code=' + tabActive;
     }
-    function doAction(action) {
-        var url = '{{ fsc.url() }}';
-        window.location.href = url + '&active=' + tabActive + '&action=' + action;
+    function goToExport(option) {
+        $('#formSearch'+tabActive).append('<input type="hidden" name="action" value="export"/>'
+                +'<input type="hidden" name="option" value="'+option+'"/>');
+        $('#formSearch'+tabActive).submit();
     }
     function deleteFromList() {
         var deleteCodes = [];

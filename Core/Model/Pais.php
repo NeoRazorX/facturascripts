@@ -95,13 +95,13 @@ class Pais
         $this->nombre = self::noHtml($this->nombre);
 
         if (!preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {
-            $this->miniLog->alert($this->i18n->trans('country-cod-invalid', [$this->codpais]));
+            self::$miniLog->alert(self::$i18n->trans('country-cod-invalid', [$this->codpais]));
 
             return false;
         }
 
         if (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
-            $this->miniLog->alert($this->i18n->trans('country-name-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('country-name-invalid'));
 
             return false;
         }

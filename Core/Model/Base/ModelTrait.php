@@ -62,28 +62,28 @@ trait ModelTrait
      *
      * @var DataBase
      */
-    protected $dataBase;
+    protected static $dataBase;
 
     /**
      * Permite conectar e interactuar con el sistema de caché.
      *
      * @var Cache
      */
-    protected $cache;
+    protected static $cache;
 
     /**
      * Traductor multi-idioma.
      *
      * @var Translator
      */
-    protected $i18n;
+    protected static $i18n;
 
     /**
      * Gestiona el log de todos los controladores, modelos y base de datos.
      *
      * @var MiniLog
      */
-    protected $miniLog;
+    protected static $miniLog;
 
     /**
      * Constructor por defecto.
@@ -105,13 +105,15 @@ trait ModelTrait
      */
     private function init()
     {
-        $this->cache = new Cache();
-        $this->dataBase = new DataBase();
-        $this->i18n = new Translator();
-        $this->miniLog = new MiniLog();
+        if (self::$cache === null) {
+            self::$cache = new Cache();
+            self::$dataBase = new DataBase();
+            self::$i18n = new Translator();
+            self::$miniLog = new MiniLog();
+        }
 
         if (self::$checkedTables === null) {
-            self::$checkedTables = $this->cache->get('fs_checked_tables');
+            self::$checkedTables = self::$cache->get('fs_checked_tables');
             if (self::$checkedTables === null || self::$checkedTables === false) {
                 self::$checkedTables = [];
             }
@@ -120,13 +122,13 @@ trait ModelTrait
         }
 
         if ($this->tableName() !== '' && !in_array($this->tableName(), self::$checkedTables, false) && $this->checkTable($this->tableName())) {
-            $this->miniLog->debug($this->i18n->trans('table-checked', [$this->tableName()]));
+            self::$miniLog->debug(self::$i18n->trans('table-checked', [$this->tableName()]));
             self::$checkedTables[] = $this->tableName();
-            $this->cache->set('fs_checked_tables', self::$checkedTables);
+            self::$cache->set('fs_checked_tables', self::$checkedTables);
         }
 
         if (self::$fields === null) {
-            self::$fields = ($this->dataBase->tableExists($this->tableName()) ? $this->dataBase->getColumns($this->tableName()) : []);
+            self::$fields = (self::$dataBase->tableExists($this->tableName()) ? self::$dataBase->getColumns($this->tableName()) : []);
         }
     }
 
@@ -268,8 +270,8 @@ trait ModelTrait
                         break;
 
                     default:
-                        if ($value === null) {
-                            $value = ($field['is_nullable'] === 'NO') ? '' : null;
+                        if ($value === null && $field['is_nullable'] === 'NO') {
+                            $value = '';
                         }
                         $this->{$key} = $this->fixHtml($value);
                 }
@@ -344,9 +346,9 @@ trait ModelTrait
         }
 
         $sql = 'SELECT 1 FROM ' . $this->tableName()
-            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->dataBase->var2str($this->primaryColumnValue()) . ';';
+            . ' WHERE ' . $this->primaryColumn() . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
 
-        return (bool) $this->dataBase->select($sql);
+        return (bool) self::$dataBase->select($sql);
     }
 
     /**
@@ -389,9 +391,9 @@ trait ModelTrait
             $this->cleanCache();
         }
         $sql = 'DELETE FROM ' . $this->tableName()
-            . ' WHERE ' . $this->primaryColumn() . ' = ' . $this->dataBase->var2str($this->primaryColumnValue()) . ';';
+            . ' WHERE ' . $this->primaryColumn() . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
 
-        return $this->dataBase->exec($sql);
+        return self::$dataBase->exec($sql);
     }
 
     /**
@@ -404,7 +406,7 @@ trait ModelTrait
     public function count(array $where = [])
     {
         $sql = 'SELECT COUNT(1) AS total FROM ' . $this->tableName() . DataBase\DataBaseWhere::getSQLWhere($where);
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (empty($data)) {
             return 0;
         }
@@ -427,7 +429,7 @@ trait ModelTrait
         $modelList = [];
         $sqlWhere = DataBase\DataBaseWhere::getSQLWhere($where);
         $sql = 'SELECT * FROM ' . $this->tableName() . $sqlWhere . $this->getOrderBy($order);
-        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
+        $data = self::$dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
             $class = $this->modelName();
             foreach ($data as $d) {
@@ -448,10 +450,10 @@ trait ModelTrait
     public function newCode($field = '')
     {
         if (empty($field)) {
-            $field = $this->dataBase->sql2Int($this->primaryColumn());
+            $field = self::$dataBase->sql2Int($this->primaryColumn());
         }
         $sql = 'SELECT MAX(' . $field . ') as cod FROM ' . $this->tableName() . ';';
-        $cod = $this->dataBase->select($sql);
+        $cod = self::$dataBase->select($sql);
         if (empty($cod)) {
             return 1;
         }
@@ -474,11 +476,11 @@ trait ModelTrait
         $xmlCons = [];
 
         if (!$dbTools->getXmlTable($tableName, $xmlCols, $xmlCons)) {
-            $this->miniLog->critical($this->i18n->trans('error-on-xml-file'));
+            self::$miniLog->critical(self::$i18n->trans('error-on-xml-file'));
             return false;
         }
 
-        if ($this->dataBase->tableExists($tableName)) {
+        if (self::$dataBase->tableExists($tableName)) {
             $sql .= $dbTools->checkTable($tableName, $xmlCols, $xmlCons);
         } else {
             /// generamos el sql para crear la tabla
@@ -486,9 +488,9 @@ trait ModelTrait
             $sql .= $this->install();
         }
 
-        if ($sql !== '' && !$this->dataBase->exec($sql)) {
-            $this->miniLog->critical($this->i18n->trans('check-table', [$tableName]));
-            $this->cache->clear();
+        if ($sql !== '' && !self::$dataBase->exec($sql)) {
+            self::$miniLog->critical(self::$i18n->trans('check-table', [$tableName]));
+            self::$cache->clear();
             return false;
         }
 
@@ -507,10 +509,10 @@ trait ModelTrait
      */
     private function getRecord($cod, $where = null, $orderby = [])
     {
-        $sqlWhere = empty($where) ? ' WHERE ' . $this->primaryColumn() . ' = ' . $this->dataBase->var2str($cod) : DataBase\DataBaseWhere::getSQLWhere($where);
+        $sqlWhere = empty($where) ? ' WHERE ' . $this->primaryColumn() . ' = ' . self::$dataBase->var2str($cod) : DataBase\DataBaseWhere::getSQLWhere($where);
 
         $sql = 'SELECT * FROM ' . $this->tableName() . $sqlWhere . $this->getOrderBy($orderby);
-        return $this->dataBase->selectLimit($sql, 1);
+        return self::$dataBase->selectLimit($sql, 1);
     }
 
     /**
@@ -518,23 +520,25 @@ trait ModelTrait
      *
      * @return bool
      */
-    private function saveUpdate()
+    private function saveUpdate($values = [])
     {
         $sql = 'UPDATE ' . $this->tableName();
         $coma = ' SET';
 
         foreach (self::$fields as $field) {
             if ($field['name'] !== $this->primaryColumn()) {
-                $sql .= $coma . ' ' . $field['name'] . ' = ' . $this->dataBase->var2str($this->{$field['name']});
+                $fieldName = $field['name'];
+                $fieldValue = isset($values[$fieldName]) ? $values[$fieldName] : $this->{$fieldName};
+                $sql .= $coma . ' ' . $fieldName . ' = ' . self::$dataBase->var2str($fieldValue);
                 if ($coma === ' SET') {
                     $coma = ', ';
                 }
             }
         }
 
-        $sql .= ' WHERE ' . $this->primaryColumn() . ' = ' . $this->dataBase->var2str($this->primaryColumnValue()) . ';';
+        $sql .= ' WHERE ' . $this->primaryColumn() . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
 
-        return $this->dataBase->exec($sql);
+        return self::$dataBase->exec($sql);
     }
 
     /**
@@ -542,22 +546,25 @@ trait ModelTrait
      *
      * @return bool
      */
-    private function saveInsert()
+    private function saveInsert($values = [])
     {
         $insertFields = [];
         $insertValues = [];
         foreach (self::$fields as $field) {
             if (isset($this->{$field['name']})) {
-                $insertFields[] = $field['name'];
-                $insertValues[] = $this->dataBase->var2str($this->{$field['name']});
+                $fieldName = $field['name'];
+                $fieldValue = isset($values[$fieldName]) ? $values[$fieldName] : $this->{$fieldName};
+
+                $insertFields[] = $fieldName;
+                $insertValues[] = self::$dataBase->var2str($fieldValue);
             }
         }
 
         $sql = 'INSERT INTO ' . $this->tableName()
             . ' (' . implode(',', $insertFields) . ') VALUES (' . implode(',', $insertValues) . ');';
-        if ($this->dataBase->exec($sql)) {
+        if (self::$dataBase->exec($sql)) {
             if ($this->primaryColumnValue() === null) {
-                $this->{$this->primaryColumn()} = $this->dataBase->lastval();
+                $this->{$this->primaryColumn()} = self::$dataBase->lastval();
             }
 
             return true;
