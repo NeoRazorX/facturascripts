@@ -132,7 +132,7 @@ class EditSettings extends ExtendedController\PanelController
         $modelName = '\FacturaScripts\Dinamic\Model\Settings';
         $icon = $this->getPageData()['icon'];
         foreach ($this->allSettingsXMLViews() as $name) {
-            $title = strtolower(substr($name, 8));
+            $title = substr($name, 8);
             $this->addEditView($modelName, $name, $title, $icon);
         }
 
@@ -157,7 +157,7 @@ class EditSettings extends ExtendedController\PanelController
 
         $model = $view->getModel();
         if ($model->name === null) {
-            $model->name = substr(strtolower($keyView), 8);
+            $model->name = strtolower(substr($keyView, 8));
             $model->save();
         }
     }
@@ -170,9 +170,10 @@ class EditSettings extends ExtendedController\PanelController
     private function allSettingsXMLViews()
     {
         $names = [];
-        foreach (array_diff(scandir(FS_FOLDER . '/Dinamic/XMLView', SCANDIR_SORT_ASCENDING), ['.','..']) as $fileName) {
-            if (substr($fileName, 0, 8) == self::KEYSETTINGS) {
-                $names[] = substr($fileName, 0, -4);
+        $files = array_diff(scandir(FS_FOLDER . '/Dinamic/XMLView', SCANDIR_SORT_ASCENDING), ['.','..']);
+        foreach ($files as $fileName) {
+            if (0 === strpos($fileName, self::KEYSETTINGS)) {
+                $names[] = strtolower(substr($fileName, 0, -4));
             }
         }
 
