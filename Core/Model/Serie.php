@@ -133,9 +133,9 @@ class Serie
         }
 
         if (!preg_match('/^[A-Z0-9]{1,4}$/i', $this->codserie)) {
-            $this->miniLog->alert($this->i18n->trans('serie-cod-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('serie-cod-invalid'));
         } elseif (!(strlen($this->descripcion) > 1) && !(strlen($this->descripcion) < 100)) {
-            $this->miniLog->alert($this->i18n->trans('serie-desc-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('serie-desc-invalid'));
         } else {
             $status = true;
         }

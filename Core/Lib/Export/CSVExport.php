@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Export;
 
+use FacturaScripts\Core\Base;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -30,7 +31,7 @@ use Symfony\Component\HttpFoundation\Response;
 class CSVExport implements ExportInterface
 {
 
-    use \FacturaScripts\Core\Base\Utils;
+    use Base\Utils;
 
     const LIST_LIMIT = 1000;
 
@@ -68,7 +69,7 @@ class CSVExport implements ExportInterface
      * Assigns the received separator.
      * By default it will use ';' semicolons.
      *
-     * @param $sep
+     * @param string $sep
      */
     public function setSeparator($sep)
     {
@@ -79,7 +80,7 @@ class CSVExport implements ExportInterface
      * Assigns the received text delimiter
      * By default it will use '"' quotes.
      *
-     * @param $del
+     * @param string $del
      */
     public function setDelimiter($del)
     {
@@ -153,7 +154,7 @@ class CSVExport implements ExportInterface
      * Adds a new page with a table listing the models data.
      *
      * @param mixed $model
-     * @param \FacturaScripts\Core\Base\DataBase\DataBaseWhere[] $where
+     * @param Base\DataBase\DataBaseWhere[] $where
      * @param array $order
      * @param int $offset
      * @param array $columns

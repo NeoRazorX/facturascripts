@@ -187,8 +187,8 @@ class ArticuloCombinacion
      */
     private function getNewCodigo()
     {
-        $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('codigo') . ') as cod FROM ' . $this->tableName() . ';';
-        $cod = $this->dataBase->select($sql);
+        $sql = 'SELECT MAX(' . self::$dataBase->sql2Int('codigo') . ') as cod FROM ' . $this->tableName() . ';';
+        $cod = self::$dataBase->select($sql);
         if (!empty($cod)) {
             return 1 + (int) $cod[0]['cod'];
         }

@@ -125,7 +125,7 @@ abstract class ListController extends Base\Controller
             $orderKey = '';
 
             // If processing the selected view, calculate order and filters
-            if ($this->active === $key) {
+            if ($this->active == $key) {
                 $orderKey = $this->request->get('order', '');
                 $where = $this->getWhere();
             }
@@ -146,7 +146,7 @@ abstract class ListController extends Base\Controller
      *
      * @param string $action
      */
-    private function execPreviousAction($action)
+    protected function execPreviousAction($action)
     {
         switch ($action) {
             case 'delete':
@@ -160,7 +160,7 @@ abstract class ListController extends Base\Controller
      *
      * @param string $action
      */
-    private function execAfterAction($action)
+    protected function execAfterAction($action)
     {
         switch ($action) {
             case 'export':

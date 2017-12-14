@@ -111,7 +111,7 @@ class TransferenciaStock
     public function test()
     {
         if ($this->codalmadestino === $this->codalmaorigen) {
-            $this->miniLog->alert($this->i18n->trans('warehouse-cant-be-same'));
+            self::$miniLog->alert(self::$i18n->trans('warehouse-cant-be-same'));
 
             return false;
         }

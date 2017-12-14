@@ -100,13 +100,13 @@ class EditSettings extends ExtendedController\PanelController
      */
     public function getFieldValue($model, $field)
     {
-        $properties = parent::getFieldValue($model, 'properties');
-        if (is_array($properties) && array_key_exists($field, $properties)) {
-            return $properties[$field];
+        $value = parent::getFieldValue($model, $field);
+        if (isset($value)) {
+            return $value;
         }
 
-        if (isset($model->{$field})) {
-            return $model->{$field};
+        if (is_array($model->properties) && array_key_exists($field, $model->properties)) {
+            return $model->properties[$field];
         }
 
         return null;

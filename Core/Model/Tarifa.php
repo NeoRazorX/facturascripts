@@ -258,9 +258,9 @@ class Tarifa
         $this->nombre = self::noHtml($this->nombre);
 
         if (empty($this->codtarifa) || strlen($this->codtarifa) > 6) {
-            $this->miniLog->alert($this->i18n->trans('rate-code-valid-length'));
+            self::$miniLog->alert(self::$i18n->trans('rate-code-valid-length'));
         } elseif (empty($this->nombre) || strlen($this->nombre) > 50) {
-            $this->miniLog->alert($this->i18n->trans('rate-name-valid-length'));
+            self::$miniLog->alert(self::$i18n->trans('rate-name-valid-length'));
         } else {
             $status = true;
         }
