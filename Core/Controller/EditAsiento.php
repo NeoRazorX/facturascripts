@@ -37,7 +37,7 @@ class EditAsiento extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
+        $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entry', 'fa-balance-scale');
         $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
         $this->setTabsPosition('bottom');
     }
