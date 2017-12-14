@@ -126,10 +126,10 @@ class RegularizacionIva
      */
     public function getFechaInside($fecha)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fechainicio <= ' . $this->dataBase->var2str($fecha)
-            . ' AND fechafin >= ' . $this->dataBase->var2str($fecha) . ';';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fechainicio <= ' . self::$dataBase->var2str($fecha)
+            . ' AND fechafin >= ' . self::$dataBase->var2str($fecha) . ';';
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             return new self($data[0]);
         }
@@ -144,8 +144,8 @@ class RegularizacionIva
      */
     public function delete()
     {
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idregiva = ' . $this->dataBase->var2str($this->idregiva) . ';';
-        if ($this->dataBase->exec($sql)) {
+        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idregiva = ' . self::$dataBase->var2str($this->idregiva) . ';';
+        if (self::$dataBase->exec($sql)) {
             /// si hay un asiento asociado lo eliminamos
             if ($this->idasiento !== null) {
                 $asientoModel = new Asiento();

@@ -119,9 +119,9 @@ class CuentaBancoCliente
                 /// si esta cuenta es la principal, desmarcamos las demás
                 $sql = 'UPDATE ' . $this->tableName()
                     . ' SET principal = false'
-                    . ' WHERE codcliente = ' . $this->dataBase->var2str($this->codcliente)
-                    . ' AND codcuenta <> ' . $this->dataBase->var2str($this->codcuenta) . ';';
-                $allOK = $this->dataBase->exec($sql);
+                    . ' WHERE codcliente = ' . self::$dataBase->var2str($this->codcliente)
+                    . ' AND codcuenta <> ' . self::$dataBase->var2str($this->codcuenta) . ';';
+                $allOK = self::$dataBase->exec($sql);
             }
             return $allOK;
         }
@@ -138,7 +138,7 @@ class CuentaBancoCliente
     {
         $this->descripcion = self::noHtml($this->descripcion);
         if (!$this->testBankAccount()) {
-            ///$this->miniLog->alert($this->i18n->trans('error-incorrect-bank-details'));
+            ///self::$miniLog->alert(self::$i18n->trans('error-incorrect-bank-details'));
 
             return false;
         }

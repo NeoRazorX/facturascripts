@@ -2,6 +2,7 @@
 
 {% block css %}
 {{ parent() }}
+<link rel="stylesheet" href="node_modules/jquery-ui-dist/jquery-ui.min.css" />
 <style>
     .btn-options {
         color: #CCC;
@@ -12,7 +13,7 @@
 
 {% block javascript %}
 {{ parent() }}
-<script src="Core/Assets/JS/jquery.sortable.js"></script>
+<script src="node_modules/jquery-ui-dist/jquery-ui.min.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -40,10 +41,10 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row dashboard-component-sortable">
     {% for index, component in fsc.components %}
         {% import 'Macro/' ~ component.getTemplate() as componentTemplate %}
-        <div class="{{ component.getNumColumns() }}">
+        <div class="{{ component.getNumColumns() }} dashboard-component">
             <div class="card {{ component.getCardClass() }}" id="{{ index }}">
                 {{ componentTemplate.run(component, i18n) }}
             </div>
@@ -53,7 +54,11 @@
 </div>
 
 <script>
-    $(function() {
+    $(document).ready(function () {
+        $('.dashboard-component-sortable').sortable({
+            placeholderClass: 'dashboard-component'
+        });
+        
         $('.card-sortable').sortable({
             placeholderClass: 'card'
         });

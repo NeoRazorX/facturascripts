@@ -9,7 +9,6 @@
         {% block css %}
         <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css" />
-        <link rel="stylesheet" href="Core/Assets/CSS/submenu.css" />
         <link rel="stylesheet" href="Core/Assets/CSS/datepicker.css" />
         <link rel="stylesheet" href="Core/Assets/CSS/custom.css" />
         <link rel="shortcut icon" href="Core/Assets/Images/favicon.ico" />
@@ -79,6 +78,7 @@
         {{ show_message(log, ['info'], 'info') }}
         {% endblock %}
         {% block body %}{% endblock %}
+        <br/>
         {{ debugBarRender.render()|raw }}
     </body>
 </html>

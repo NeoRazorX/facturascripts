@@ -31,12 +31,14 @@ class ExportManager
 
     /**
      * The selected engine/class to export.
+     * 
      * @var mixed
      */
     private static $engine;
 
     /**
      * Option list.
+     * 
      * @var array 
      */
     private static $options;
@@ -78,6 +80,7 @@ class ExportManager
 
     /**
      * Create a new doc and set headers.
+     * 
      * @param Response $response
      * @param string $option
      */
@@ -91,6 +94,7 @@ class ExportManager
 
     /**
      * Returns the formated data.
+     * 
      * @param Response $response
      */
     public function show(&$response)
@@ -100,6 +104,7 @@ class ExportManager
 
     /**
      * Adds a new page with the model data.
+     * 
      * @param mixed $model
      * @param array $columns
      * @param string $title
@@ -111,8 +116,9 @@ class ExportManager
 
     /**
      * Adds a new page with a table listing the models data.
+     * 
      * @param mixed $model
-     * @param \FacturaScripts\Core\Base\DataBase\DataBaseWhere[] $where
+     * @param DataBaseWhere[] $where
      * @param array $order
      * @param int $offset
      * @param array $columns
@@ -120,12 +126,17 @@ class ExportManager
      */
     public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '')
     {
+        /// disable 30 seconds PHP limit
+        set_time_limit(0);
+        
         self::$engine->generateListModelPage($model, $where, $order, $offset, $columns, $title);
     }
 
     /**
      * Returns the full class name.
+     * 
      * @param string $option
+     * 
      * @return string
      */
     private function getExportClassName($option)

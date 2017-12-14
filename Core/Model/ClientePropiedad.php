@@ -77,9 +77,9 @@ class ClientePropiedad
     public function delete()
     {
         $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE name = ' .
-            $this->dataBase->var2str($this->name) . ' AND codcliente = ' . $this->dataBase->var2str($this->codcliente) . ';';
+            self::$dataBase->var2str($this->name) . ' AND codcliente = ' . self::$dataBase->var2str($this->codcliente) . ';';
 
-        return $this->dataBase->exec($sql);
+        return self::$dataBase->exec($sql);
     }
 
     /**
@@ -93,8 +93,8 @@ class ClientePropiedad
     {
         $vlist = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codcliente = ' . $this->dataBase->var2str($cod) . ';';
-        $data = $this->dataBase->select($sql);
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codcliente = ' . self::$dataBase->var2str($cod) . ';';
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $vlist[$d['name']] = $d['text'];

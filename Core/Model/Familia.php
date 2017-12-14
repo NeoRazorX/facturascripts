@@ -92,11 +92,11 @@ class Familia
         $this->madre = self::noHtml($this->madre);
 
         if (empty($this->codfamilia) || strlen($this->codfamilia) > 8) {
-            $this->miniLog->alert($this->i18n->trans('family-code-valid-length'));
+            self::$miniLog->alert(self::$i18n->trans('family-code-valid-length'));
         } elseif (empty($this->descripcion) || strlen($this->descripcion) > 100) {
-            $this->miniLog->alert($this->i18n->trans('family-desc-not-valid'));
+            self::$miniLog->alert(self::$i18n->trans('family-desc-not-valid'));
         } elseif ($this->madre === $this->codfamilia) {
-            $this->miniLog->alert($this->i18n->trans('parent-family-cant-be-child'));
+            self::$miniLog->alert(self::$i18n->trans('parent-family-cant-be-child'));
         } else {
             $status = true;
         }
@@ -114,7 +114,7 @@ class Familia
         $famlist = [];
 
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE madre IS NULL ORDER BY lower(descripcion) ASC;';
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $famlist[] = new self($d);
@@ -124,7 +124,7 @@ class Familia
         if (empty($famlist)) {
             /// si la lista está vacía, ponemos madre a null en todas por si el usuario ha estado jugando
             $sql = 'UPDATE ' . $this->tableName() . ' SET madre = NULL;';
-            $this->dataBase->exec($sql);
+            self::$dataBase->exec($sql);
         }
 
         return $famlist;
@@ -146,8 +146,8 @@ class Familia
         }
 
         $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE madre = ' . $this->dataBase->var2str($codmadre) . ' ORDER BY descripcion ASC;';
-        $data = $this->dataBase->select($sql);
+            . ' WHERE madre = ' . self::$dataBase->var2str($codmadre) . ' ORDER BY descripcion ASC;';
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $famlist[] = new self($d);
@@ -164,15 +164,15 @@ class Familia
     {
         /// comprobamos que las familias con madre, su madre exista.
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE madre IS NOT NULL;';
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $fam = $this->get($d['madre']);
                 if (!$fam) {
                     /// si no existe, desvinculamos
                     $sql = 'UPDATE ' . $this->tableName() . ' SET madre = null WHERE codfamilia = '
-                        . $this->dataBase->var2str($d['codfamilia']) . ':';
-                    $this->dataBase->exec($sql);
+                        . self::$dataBase->var2str($d['codfamilia']) . ':';
+                    self::$dataBase->exec($sql);
                 }
             }
         }
