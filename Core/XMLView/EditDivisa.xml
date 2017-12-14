@@ -43,9 +43,6 @@
             <column name="iso code number" numcolumns="2" order="150">
                 <widget type="number" decimal="0" fieldname="codiso" onclick="" />
             </column>
-<!--            <column name="decimals" numcolumns="2" order="160">
-                <widget type="number" decimal="0" fieldname="decimales" onclick="" />
-            </column>-->
         </group>
     </columns>
 </view>
