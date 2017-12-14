@@ -29,22 +29,86 @@
             <column name="code" display="none" order="100">
                 <widget type="text" fieldname="idpedido" required="true" />
             </column>
-            <column name="customer" title="customer" numcolumns="3" order="100">
+            <column name="number2" numcolumns="3" order="130">
+                <widget type="text" fieldname="numero2" />
+            </column>
+            <column name="date" title="date" numcolumns="2" order="110">
+                <widget type="datepicker" fieldname="fecha" required="true" />
+            </column>
+            <column name="hour" title="hour" numcolumns="2" order="120">
+                <widget type="text" fieldname="hora" required="true" />
+            </column>
+        </group>
+         <group name="customer" title="customer" numcolumns="12">
+            <column name="cifnif" title="cifnif" numcolumns="3" order="100">
+                <widget type="text" fieldname="cifnif" />
+            </column>
+            <column name="customer" title="name-or-business-name" numcolumns="4" order="100">
                 <widget type="text" fieldname="nombrecliente" required="true" />
+            </column>
+        </group>
+        <group name="billingaddr" title="billing-address" numcolumns="12">
+            <column name="country" numcolumns="3" order="150">
+                <widget type="select" fieldname="codpais">
+                    <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="province" numcolumns="3" order="130">
+                <widget type="text" fieldname="provincia" />
+            </column>
+            <column name="city" numcolumns="4" order="120">
+                <widget type="text" fieldname="ciudad" />
+            </column>
+            <column name="zip-code" numcolumns="2" order="110">
+                <widget type="text" fieldname="codpostal" />
+            </column>
+            <column name="postalmail" numcolumns="2" order="140">
+                <widget type="text" fieldname="apartado" />
+            </column>
+            <column name="address" numcolumns="6" order="100">
+                <widget type="text" fieldname="direccion" />
+            </column>
+        </group>
+         <group name="shippingaddr" title="shipping-address" numcolumns="12">
+            <column name="province" numcolumns="3" order="130">
+                <widget type="text" fieldname="provinciaenv" />
+            </column>
+            <column name="city" numcolumns="4" order="120">
+                <widget type="text" fieldname="ciudadenv" />
+            </column>
+            <column name="zip-code" numcolumns="2" order="110">
+                <widget type="text" fieldname="codpostalenv" />
+            </column>
+            <column name="postalmail" numcolumns="2" order="140">
+                <widget type="text" fieldname="apartadoenv" />
+            </column>
+            <column name="address" numcolumns="6" order="100">
+                <widget type="text" fieldname="direccionenv" />
+            </column>
+        </group>
+        <group name="codattributes" title="attributes" numcolumns="12">
+            <column name="warehouse" numcolumns="3">
+                <widget type="select" fieldname="codalmacen">
+                    <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
+                </widget>
             </column>
             <column name="serie" numcolumns="2" order="100">
                 <widget type="select" fieldname="codserie">
                     <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="number2" numcolumns="3" order="100">
-                <widget type="text" fieldname="numero2" />
+            <column name="payment" title="method-payment" numcolumns="3" titleurl="?page=ListFormaPago" order="120">
+                <widget type="select" fieldname="codpago">
+                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
+                </widget>
             </column>
-            <column name="date" title="date" numcolumns="2" order="100">
-                <widget type="datepicker" fieldname="fecha" required="true" />
+            <column name="currency" title="currency" numcolumns="2" titleurl="?page=ListDivisa" order="120">
+                <widget type="select" fieldname="coddivisa">
+                    <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
+                </widget>
             </column>
-            <column name="hour" title="hour" numcolumns="2" order="100">
-                <widget type="text" fieldname="hora" required="true" />
+            <column name="tasaconv" numcolumns="2" order="150">
+                <widget type="number" fieldname="tasaconv" />
             </column>
         </group>
         <group name="notes" numcolumns="12">
