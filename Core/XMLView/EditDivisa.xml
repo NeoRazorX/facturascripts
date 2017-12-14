@@ -17,22 +17,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Initial description for the controller EditDivisa
+ * Description for the controller EditDivisa
  *
  * @author Raúl Jiménez Nazca Networks <comercial@nazcanetworks.com>
+ * @author Carlos Jiménez Gómez <carlos@evolunext.es>
 -->
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" numcolumns="2" order="100" description="desc-currency-code">
+            <column name="iso code" numcolumns="2" order="100" description="desc-currency-code">
                 <widget type="text" fieldname="coddivisa" onclick="" icon="fa-object-group" required="true"/>
             </column>
             <column name="symbol" numcolumns="2" order="110" description="symbol">
                 <widget type="text" fieldname="simbolo" onclick="" />
             </column>
-            <column name="desc" numcolumns="4" order="110">
+            <column name="desc" numcolumns="4" order="120">
                 <widget type="text" fieldname="descripcion" onclick="" />
             </column>
+            <column name="conversion rate" numcolumns="2" order="130">
+                <widget type="text" fieldname="tasaconv" onclick="" />
+            </column>
+            <column name="purchase conversion rate" numcolumns="2" order="140">
+                <widget type="text" fieldname="tasaconvcompra" onclick="" />
+            </column>
+            <column name="iso code number" numcolumns="2" order="150">
+                <widget type="number" decimal="0" fieldname="codiso" onclick="" />
+            </column>
+<!--            <column name="decimals" numcolumns="2" order="160">
+                <widget type="number" decimal="0" fieldname="decimales" onclick="" />
+            </column>-->
         </group>
     </columns>
 </view>
