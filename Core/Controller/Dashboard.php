@@ -34,7 +34,7 @@ class Dashboard extends Base\Controller
     /**
      * List of components of dashboard.
      *
-     * @var BaseComponent[]
+     * @var Lib\Dashboard\BaseComponent[]
      */
     public $components;
 
