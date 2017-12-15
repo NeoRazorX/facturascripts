@@ -235,7 +235,7 @@ class AppAPI extends App
                     $plural = strtolower($modelName);
                 } elseif (substr($modelName, -3) === 'ser' || substr($modelName, -4) === 'tion') {
                     $plural = strtolower($modelName) . 's';
-                } elseif (in_array(substr($modelName, -1), ['a', 'e', 'i', 'o', 'u', 'k'])) {
+                } elseif (in_array(substr($modelName, -1), ['a', 'e', 'i', 'o', 'u', 'k'], false)) {
                     $plural = strtolower($modelName) . 's';
                 } else {
                     $plural = strtolower($modelName) . 'es';
