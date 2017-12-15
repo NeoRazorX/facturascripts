@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
 
 /**
  * Controller to edit a single item from the Epigrafe model
@@ -36,8 +37,8 @@ class EditEpigrafe extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('FacturaScripts\Core\Model\Epigrafe', 'EditEpigrafe', 'accounting-heading');
-        $this->addListView('FacturaScripts\Core\Model\Cuenta', 'ListCuenta', 'accounts', 'fa-book');
+        $this->addEditView('\FacturaScripts\Dinamic\Model\Epigrafe', 'EditEpigrafe', 'accounting-heading');
+        $this->addListView('\FacturaScripts\Dinamic\Model\Cuenta', 'ListCuenta', 'accounts', 'fa-book');
         $this->setTabsPosition('bottom');
     }
 
@@ -58,7 +59,7 @@ class EditEpigrafe extends ExtendedController\PanelController
             case 'ListCuenta':
                 $idepigrafe = $this->getViewModelValue('EditEpigrafe', 'idepigrafe');
                 if (!empty($idepigrafe)) {
-                    $where = [new DataBase\DataBaseWhere('idepigrafe', $idepigrafe)];
+                    $where = [new DataBaseWhere('idepigrafe', $idepigrafe)];
                     $view->loadData($where);
                 }
                 break;

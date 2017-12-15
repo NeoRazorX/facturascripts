@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -35,7 +36,7 @@ class ListPais extends ExtendedController\ListController
     protected function createViews()
     {
         /// Countries
-        $this->addView('FacturaScripts\Core\Model\Pais', 'ListPais', 'countries', 'fa-globe');
+        $this->addView('\FacturaScripts\Dinamic\Model\Pais', 'ListPais', 'countries', 'fa-globe');
         $this->addSearchFields('ListPais', ['nombre', 'codiso', 'codpais']);
 
         $this->addFilterCheckbox('ListPais', 'validarprov', 'validate-states');
@@ -44,7 +45,7 @@ class ListPais extends ExtendedController\ListController
         $this->addOrderBy('ListPais', 'codiso', 'codiso');
 
         /// States
-        $this->addView('FacturaScripts\Core\Model\Provincia', 'ListProvincia', 'province', 'fa-map-signs');
+        $this->addView('\FacturaScripts\Dinamic\Model\Provincia', 'ListProvincia', 'province', 'fa-map-signs');
         $this->addSearchFields('ListProvincia', ['provincia', 'codisoprov']);
 
         $this->addOrderBy('ListProvincia', 'provincia', 'province');

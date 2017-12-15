@@ -16,9 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
 
 /**
@@ -36,8 +37,8 @@ class EditSubcuenta extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('FacturaScripts\Core\Model\Subcuenta', 'EditSubcuenta', 'subaccount');
-        $this->addListView('FacturaScripts\Core\Model\Asiento', 'ListAsiento', 'accounting-entries', 'fa-balance-scale');
+        $this->addEditView('\FacturaScripts\Dinamic\Model\Subcuenta', 'EditSubcuenta', 'subaccount');
+        $this->addListView('\FacturaScripts\Dinamic\Model\Asiento', 'ListAsiento', 'accounting-entries', 'fa-balance-scale');
         $this->setTabsPosition('bottom');
     }
 
@@ -57,9 +58,9 @@ class EditSubcuenta extends ExtendedController\PanelController
                 break;
 
             case 'ListAsiento':
-                /// TODO: cargar los asientos relacionados (a través de la tabla co_partidas).
+                /// TODO: Load related accounting entries (through the co_partidas table).
                 $inSQL = 'SELECT idasiento FROM co_partidas WHERE idsubcuenta = ' . $this->dataBase->var2str($value);
-                $where = [new DataBase\DataBaseWhere('idasiento', $inSQL, 'IN')];
+                $where = [new DataBaseWhere('idasiento', $inSQL, 'IN')];
                 $view->loadData($where);
                 break;
         }

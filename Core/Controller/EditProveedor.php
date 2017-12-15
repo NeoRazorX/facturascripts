@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
 
 /**
  * Controller to edit a single item from the Proveedor model
@@ -34,13 +35,13 @@ class EditProveedor extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('FacturaScripts\Core\Model\Proveedor', 'EditProveedor', 'supplier');
-        $this->addEditListView('FacturaScripts\Core\Model\DireccionProveedor', 'EditDireccionProveedor', 'addresses', 'fa-road');
-        $this->addEditListView('FacturaScripts\Core\Model\CuentaBancoProveedor', 'EditCuentaBancoProveedor', 'bank-accounts', 'fa-university');
-        $this->addEditListView('FacturaScripts\Core\Model\ArticuloProveedor', 'EditProveedorArticulo', 'products', 'fa-cubes');
-        $this->addListView('FacturaScripts\Core\Model\FacturaProveedor', 'ListFacturaProveedor', 'invoices', 'fa-files-o');
-        $this->addListView('FacturaScripts\Core\Model\AlbaranProveedor', 'ListAlbaranProveedor', 'delivery-notes', 'fa-files-o');
-        $this->addListView('FacturaScripts\Core\Model\PedidoProveedor', 'ListPedidoProveedor', 'orders', 'fa-files-o');
+        $this->addEditView('\FacturaScripts\Dinamic\Model\Proveedor', 'EditProveedor', 'supplier');
+        $this->addEditListView('\FacturaScripts\Dinamic\Model\DireccionProveedor', 'EditDireccionProveedor', 'addresses', 'fa-road');
+        $this->addEditListView('\FacturaScripts\Dinamic\Model\CuentaBancoProveedor', 'EditCuentaBancoProveedor', 'bank-accounts', 'fa-university');
+        $this->addEditListView('\FacturaScripts\Dinamic\Model\ArticuloProveedor', 'EditProveedorArticulo', 'products', 'fa-cubes');
+        $this->addListView('\FacturaScripts\Dinamic\Model\FacturaProveedor', 'ListFacturaProveedor', 'invoices', 'fa-files-o');
+        $this->addListView('\FacturaScripts\Dinamic\Model\AlbaranProveedor', 'ListAlbaranProveedor', 'delivery-notes', 'fa-files-o');
+        $this->addListView('\FacturaScripts\Dinamic\Model\PedidoProveedor', 'ListPedidoProveedor', 'orders', 'fa-files-o');
     }
 
     /**
@@ -65,7 +66,7 @@ class EditProveedor extends ExtendedController\PanelController
             case 'ListAlbaranProveedor':
             case 'ListPedidoProveedor':
             case 'ListPresupuestoProveedor':
-                $where = [new DataBase\DataBaseWhere('codproveedor', $codproveedor)];
+                $where = [new DataBaseWhere('codproveedor', $codproveedor)];
                 $view->loadData($where);
                 break;
         }

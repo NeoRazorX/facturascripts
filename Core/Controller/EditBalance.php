@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
 
 /**
  * Controller to edit a single item from the Balance model
@@ -34,9 +35,9 @@ class EditBalance extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('FacturaScripts\Core\Model\Balance', 'EditBalance', 'Balance');
-        $this->addEditListView('FacturaScripts\Core\Model\BalanceCuenta', 'EditBalanceCuenta', 'balance-account');
-        $this->addEditListView('FacturaScripts\Core\Model\BalanceCuentaA', 'EditBalanceCuentaA', 'balance-account-abreviated');
+        $this->addEditView('\FacturaScripts\Dinamic\Model\Balance', 'EditBalance', 'Balance');
+        $this->addEditListView('\FacturaScripts\Dinamic\Model\BalanceCuenta', 'EditBalanceCuenta', 'balance-account');
+        $this->addEditListView('\FacturaScripts\Dinamic\Model\BalanceCuentaA', 'EditBalanceCuentaA', 'balance-account-abreviated');
     }
 
     /**
@@ -54,12 +55,12 @@ class EditBalance extends ExtendedController\PanelController
                 break;
 
             case 'EditBalanceCuenta':
-                $where = [new DataBase\DataBaseWhere('codbalance', $this->getViewModelValue('EditBalance', 'codbalance'))];
+                $where = [new DataBaseWhere('codbalance', $this->getViewModelValue('EditBalance', 'codbalance'))];
                 $view->loadData($where);
                 break;
 
             case 'EditBalanceCuentaA':
-                $where = [new DataBase\DataBaseWhere('codbalance', $this->getViewModelValue('EditBalance', 'codbalance'))];
+                $where = [new DataBaseWhere('codbalance', $this->getViewModelValue('EditBalance', 'codbalance'))];
                 $view->loadData($where);
                 break;
         }

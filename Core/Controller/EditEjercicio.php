@@ -16,13 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Model\GrupoEpigrafes;
-use FacturaScripts\Core\Model\Epigrafe;
-use FacturaScripts\Core\Model\Cuenta;
 
 /**
  * Controller to edit a single item from the Familia model
@@ -39,11 +37,11 @@ class EditEjercicio extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('FacturaScripts\Core\Model\Ejercicio', 'EditEjercicio', 'exercise');
-        $this->addEditListView('FacturaScripts\Core\Model\GrupoEpigrafes', 'EditEjercicioGrupoEpigrafes', 'Grupo epigrafe');
-        $this->addEditListView('FacturaScripts\Core\Model\Epigrafe', 'EditEjercicioEpigrafe', 'Epigrafes');
-        $this->addEditListView('FacturaScripts\Core\Model\Cuenta', 'EditEjercicioCuenta', 'account', 'fa-book');
-        $this->addEditListView('FacturaScripts\Core\Model\Subcuenta', 'EditEjercicioSubcuenta', 'subaccount');
+        $this->addEditView('\FacturaScripts\Dinamic\Model\Ejercicio', 'EditEjercicio', 'exercise');
+        $this->addEditListView('\FacturaScripts\Dinamic\Model\GrupoEpigrafes', 'EditEjercicioGrupoEpigrafes', 'epigraph-group');
+        $this->addEditListView('\FacturaScripts\Dinamic\Model\Epigrafe', 'EditEjercicioEpigrafe', 'epigraphs');
+        $this->addEditListView('\FacturaScripts\Dinamic\Model\Cuenta', 'EditEjercicioCuenta', 'account', 'fa-book');
+        $this->addEditListView('\FacturaScripts\Dinamic\Model\Subcuenta', 'EditEjercicioSubcuenta', 'subaccount');
     }
 
     /**
@@ -61,22 +59,22 @@ class EditEjercicio extends ExtendedController\PanelController
                 break;
 
             case 'EditEjercicioGrupoEpigrafes':
-                $where = [new DataBase\DataBaseWhere('codejercicio', $this->request->get('code'))];
+                $where = [new DataBaseWhere('codejercicio', $this->request->get('code'))];
                 $view->loadData($where);
                 break;
 
             case 'EditEjercicioEpigrafe':
-                $where = [new DataBase\DataBaseWhere('codejercicio', $this->request->get('code'))];
+                $where = [new DataBaseWhere('codejercicio', $this->request->get('code'))];
                 $view->loadData($where);
                 break;
 
             case 'EditEjercicioCuenta':
-                $where = [new DataBase\DataBaseWhere('codejercicio', $this->request->get('code'))];
+                $where = [new DataBaseWhere('codejercicio', $this->request->get('code'))];
                 $view->loadData($where);
                 break;
 
             case 'EditEjercicioSubcuenta':
-                $where = [new DataBase\DataBaseWhere('codejercicio', $this->request->get('code'))];
+                $where = [new DataBaseWhere('codejercicio', $this->request->get('code'))];
                 $view->loadData($where);
                 break;
         }
