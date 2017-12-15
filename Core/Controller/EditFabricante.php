@@ -39,12 +39,12 @@ class EditFabricante extends ExtendedController\PanelController
         $this->addEditView('\FacturaScripts\Dinamic\Model\Fabricante', 'EditFabricante', 'manufacturer');
         $this->addListView('\FacturaScripts\Dinamic\Model\Articulo', 'EditFabricanteListArticulos', 'products');
     }
-    
+
     /**
-     * Load view data procedure
+     * Load data view procedure
      *
      * @param string $keyView
-     * @param ExtendedController\EditView $view
+     * @param ExtendedController\BaseView $view
      */
     protected function loadData($keyView, $view)
     {

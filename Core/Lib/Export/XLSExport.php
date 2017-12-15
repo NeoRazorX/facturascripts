@@ -36,7 +36,7 @@ class XLSExport implements ExportInterface
     /**
      * XLSX object.
      *
-     * @var \XLSXWriter 
+     * @var \XLSXWriter
      */
     private $writer;
 
@@ -119,12 +119,12 @@ class XLSExport implements ExportInterface
     
     /**
      * Adds a new page with the document data.
-     * 
+     *
      * @param mixed $model
      */
     public function generateDocumentPage($model)
     {
-        /// TODO
+        /// TODO: Uncomplete
     }
 
     /**
