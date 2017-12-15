@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
@@ -23,8 +24,7 @@ use FacturaScripts\Core\Model;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Description of admin_home
- * At this time, manage a list of available plugins and main actions with they.
+ * AdminHome manage the basic settings.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -67,7 +67,7 @@ class AdminHome extends Base\Controller
 
         /// For now, always deploy the contents of Dinamic, for testing purposes
         $this->pluginManager = new Base\PluginManager();
-        $this->pluginManager->deploy(true);
+        $this->pluginManager->deploy();
         $this->cache->clear();
 
         $this->enabledPlugins = $this->pluginManager->enabledPlugins();
@@ -105,9 +105,14 @@ class AdminHome extends Base\Controller
         }
     }
 
+    /**
+     * Execute main actions.
+     *
+     * @param $action
+     */
     private function execAction($action)
     {
-        /// TODO: move this functions to the switch, and modify forms to use action
+        /// TODO: Move this functions to the switch, and modify forms to use action
         $this->disablePlugin($this->request->get('disable', ''));
         $this->removePlugin($this->request->get('remove', ''));
         $this->enablePlugin($this->request->get('enable', ''));
@@ -154,7 +159,7 @@ class AdminHome extends Base\Controller
     private function disablePlugin($disablePlugin)
     {
         if (!empty($disablePlugin)) {
-            if (in_array($disablePlugin, $this->enabledPlugins)) {
+            if (in_array($disablePlugin, $this->enabledPlugins, false)) {
                 $this->pluginManager->disable($disablePlugin);
                 $this->miniLog->error($this->i18n->trans('plugin-disabled'));
                 $this->pluginManager->deploy();
@@ -201,7 +206,7 @@ class AdminHome extends Base\Controller
     private function enablePlugin($enablePlugin)
     {
         if (!empty($enablePlugin)) {
-            if (!in_array($enablePlugin, $this->enabledPlugins)) {
+            if (!in_array($enablePlugin, $this->enabledPlugins, false)) {
                 $this->pluginManager->enable($enablePlugin);
                 $this->miniLog->info($this->i18n->trans('plugin-enabled'));
                 $this->pluginManager->deploy();

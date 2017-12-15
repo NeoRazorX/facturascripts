@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -49,8 +50,8 @@ class ListFormaPago extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        /* Formas de pago */
-        $this->addView('FacturaScripts\Core\Model\FormaPago', 'ListFormaPago', 'payment-methods', 'fa-credit-card');
+        /* Payment Methods */
+        $this->addView('\FacturaScripts\Dinamic\Model\FormaPago', 'ListFormaPago', 'payment-methods', 'fa-credit-card');
         $this->addSearchFields('ListFormaPago', ['descripcion', 'codpago', 'codcuenta']);
 
         $this->addOrderBy('ListFormaPago', 'codpago', 'code');
@@ -61,8 +62,8 @@ class ListFormaPago extends ExtendedController\ListController
         $this->addFilterCheckbox('ListFormaPago', 'domiciliado', 'domicilied');
         $this->addFilterCheckbox('ListFormaPago', 'imprimir', 'print');
 
-        /* Cuentas bancarias */
-        $this->addView('FacturaScripts\Core\Model\CuentaBanco', 'ListCuentaBanco', 'bank-accounts', 'fa-university');
+        /* Bank accounts */
+        $this->addView('\FacturaScripts\Dinamic\Model\CuentaBanco', 'ListCuentaBanco', 'bank-accounts', 'fa-university');
         $this->addSearchFields('ListCuentaBanco', ['descripcion', 'codcuenta']);
 
         $this->addOrderBy('ListCuentaBanco', 'codcuenta', 'code');
