@@ -16,13 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Lib\Import\CSVImport;
 
 /**
  * Allows to relate special accounts (SALES, for example)
-   * with the real account or sub-account.
+ * with the real account or sub-account.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -71,13 +72,21 @@ class CuentaEspecial
      * This function is called when creating the tale of the model.
      * Returns SQL that will be exectuted after the creation of the table.
      * useful to insert values default.
+     *
      * @return string
      */
     public function install()
     {
-        return CSVImport::importTableSQL($this->tableName());
+        return CSVImport::importTableSQL(static::tableName());
     }
 
+    /**
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     *
+     * @return string
+     */
     public function url($type = 'auto')
     {
         return $this->traitURL($type, 'ListCuenta&active=List');

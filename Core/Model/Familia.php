@@ -17,10 +17,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Lib\Import\CSVImport;
+
 /**
- * Una familia de artículos.
+ * A family of products.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -31,35 +34,35 @@ class Familia
     use Base\ModelTrait;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var string
      */
     public $codfamilia;
 
     /**
-     * Descripción de la família
+     * Family's description.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * Código de la familia madre.
+     * Mother family code.
      *
      * @var string
      */
     public $madre;
 
     /**
-     * Nivel
+     * Level.
      *
      * @var string
      */
     public $nivel;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -69,7 +72,7 @@ class Familia
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -79,7 +82,7 @@ class Familia
     }
 
     /**
-     * Comprueba los datos de la familia, devuelve TRUE si son correctos
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -105,7 +108,7 @@ class Familia
     }
 
     /**
-     * Devuelve las famílias madre
+     * Returns the mother families.
      *
      * @return self[]
      */
@@ -113,7 +116,7 @@ class Familia
     {
         $famlist = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE madre IS NULL ORDER BY lower(descripcion) ASC;';
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE madre IS NULL ORDER BY lower(descripcion) ASC;';
         $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
@@ -122,8 +125,8 @@ class Familia
         }
 
         if (empty($famlist)) {
-            /// si la lista está vacía, ponemos madre a null en todas por si el usuario ha estado jugando
-            $sql = 'UPDATE ' . $this->tableName() . ' SET madre = NULL;';
+            /// if the list is empty, we put mother to null in all in case the user has been playing
+            $sql = 'UPDATE ' . static::tableName() . ' SET madre = NULL;';
             self::$dataBase->exec($sql);
         }
 
@@ -131,7 +134,7 @@ class Familia
     }
 
     /**
-     * Devuelve las famílias hijas
+     * Returns the daughter families.
      *
      * @param string|bool $codmadre
      *
@@ -145,7 +148,7 @@ class Familia
             $codmadre = $this->codfamilia;
         }
 
-        $sql = 'SELECT * FROM ' . $this->tableName()
+        $sql = 'SELECT * FROM ' . static::tableName()
             . ' WHERE madre = ' . self::$dataBase->var2str($codmadre) . ' ORDER BY descripcion ASC;';
         $data = self::$dataBase->select($sql);
         if (!empty($data)) {
@@ -158,19 +161,19 @@ class Familia
     }
 
     /**
-     * Aplicamos correcciones a la tabla.
+     * We apply corrections to the table.
      */
     public function fixDb()
     {
-        /// comprobamos que las familias con madre, su madre exista.
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE madre IS NOT NULL;';
+        /// we check that families with mother, their mother exists.
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE madre IS NOT NULL;';
         $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $fam = $this->get($d['madre']);
                 if (!$fam) {
-                    /// si no existe, desvinculamos
-                    $sql = 'UPDATE ' . $this->tableName() . ' SET madre = null WHERE codfamilia = '
+                    /// if it does not exist, we disassociate
+                    $sql = 'UPDATE ' . static::tableName() . ' SET madre = null WHERE codfamilia = '
                         . self::$dataBase->var2str($d['codfamilia']) . ':';
                     self::$dataBase->exec($sql);
                 }
@@ -179,21 +182,21 @@ class Familia
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
     public function install()
     {
-        return CSVImport::importTableSQL($this->tableName());
+        return CSVImport::importTableSQL(static::tableName());
     }
 
     /**
-     * Completa los datos de la lista de familias con el nivel
+     * Complete the data in the list of families with the level.
      *
-     * @param array  $familias
+     * @param array $familias
      * @param string $madre
      * @param string $nivel
      *

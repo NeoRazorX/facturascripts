@@ -151,7 +151,7 @@ class Empresa
     {
         $num = mt_rand(1, 9999);
 
-        return 'INSERT INTO ' . $this->tableName() . ' (recequivalencia,web,email,fax,telefono,codpais,apartado,provincia,'
+        return 'INSERT INTO ' . static::tableName() . ' (recequivalencia,web,email,fax,telefono,codpais,apartado,provincia,'
             . 'ciudad,codpostal,direccion,administrador,cifnif,nombre,nombrecorto)'
             . "VALUES (NULL,'https://www.facturascripts.com',"
             . "NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','','00000014Z',"

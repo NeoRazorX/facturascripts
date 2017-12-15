@@ -16,12 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Lib\Import\CSVImport;
 
 /**
- * El almacén donde están físicamente los artículos.
+ * The warehouse where the items are physically.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -33,35 +35,35 @@ class Almacen
     use Base\ContactInformation;
 
     /**
-     * Clave primaria. Varchar (4).
+     * Primary key. Varchar (4).
      *
      * @var string
      */
     public $codalmacen;
 
     /**
-     * Nombre del almacen.
+     * Store name.
      *
      * @var string
      */
     public $nombre;
 
     /**
-     * Persona de contacto del almacen.
+     * Store contact person.
      *
      * @var string
      */
     public $contacto;
 
     /**
-     * Todavía sin uso.
+     * Still unused.
      *
      * @var string
      */
     public $observaciones;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -71,7 +73,7 @@ class Almacen
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -81,7 +83,7 @@ class Almacen
     }
 
     /**
-     * Devuelve TRUE si este es almacén predeterminado de la empresa.
+     * Returns True if is the default wharehouse for the company.
      *
      * @return bool
      */
@@ -91,7 +93,7 @@ class Almacen
     }
 
     /**
-     * Comprueba los datos del almacén, devuelve TRUE si son correctos
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -121,12 +123,14 @@ class Almacen
     }
 
     /**
-     * Crea la consulta necesaria para crear un nuevo almacen en la base de datos.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
     public function install()
     {
-        return CSVImport::importTableSQL($this->tableName());
+        return CSVImport::importTableSQL(static::tableName());
     }
 }

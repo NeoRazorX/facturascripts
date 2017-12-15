@@ -16,12 +16,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Lib\Import\CSVImport;
+
 /**
- * El agente/empleado es el que se asocia a un albarán, factura o caja.
- * Cada usuario puede estar asociado a un agente, y un agente puede
- * estar asociado a varios usuarios o a ninguno.
+ * The agent/employee is the one associated with a delivery note, invoice o box.
+ * Each user can be associated with an agent, an an agent can
+ * can be associated with several user of none at all.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -33,84 +36,84 @@ class Agente
     use Base\ContactInformation;
 
     /**
-     * Clave primaria. Varchar (10).
+     * Primary key. Varchar (10).
      *
      * @var int
      */
     public $codagente;
 
     /**
-     * Identificador fiscal (CIF/NIF).
+     * Tax Identifier (CIF / NIF).
      *
      * @var string
      */
     public $dnicif;
 
     /**
-     * Nombre del agente o empleado.
+     * Name of the agent or employee.
      *
      * @var string
      */
     public $nombre;
 
     /**
-     * Apellidos del agente o empleado.
+     * Last name of the agent or employee.
      *
      * @var string
      */
     public $apellidos;
 
     /**
-     * Nº de la seguridad social.
+     * Social security number.
      *
      * @var string
      */
     public $seg_social;
 
     /**
-     * cargo en la empresa.
+     * Position in the company.
      *
      * @var string
      */
     public $cargo;
 
     /**
-     * Cuenta bancaria
+     * Bank account.
      *
      * @var string
      */
     public $banco;
 
     /**
-     * Fecha de nacimiento.
+     * Birthdate.
      *
      * @var string
      */
     public $f_nacimiento;
 
     /**
-     * Fecha de alta en la empresa.
+     * Date of registration in the company.
      *
      * @var string
      */
     public $f_alta;
 
     /**
-     * Fecha de baja en la empresa.
+     * Date of withdrawal from the company.
      *
      * @var string
      */
     public $f_baja;
 
     /**
-     * Porcentaje de comisión del agente. Se utiliza en presupuestos, pedidos, albaranes y facturas.
+     * Percentage of the agent's commission. It is used in budgets, orders, delivery notes and invoices.
      *
      * @var float|int
      */
     public $porcomision;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -120,7 +123,7 @@ class Agente
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -130,7 +133,7 @@ class Agente
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset values of all model properties.
      */
     public function clear()
     {
@@ -150,7 +153,7 @@ class Agente
     }
 
     /**
-     * Devuelve nombre + apellidos del agente.
+     * Returns name + agent's last name.
      *
      * @return string
      */
@@ -160,7 +163,7 @@ class Agente
     }
 
     /**
-     * Comprueba los datos del empleado/agente, devuelve TRUE si son correctos
+     * Check employee / agent data, return TRUE if correct.
      *
      * @return bool
      */
@@ -193,12 +196,14 @@ class Agente
     }
 
     /**
-     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
     public function install()
     {
-        return CSVImport::importTableSQL($this->tableName());
+        return CSVImport::importTableSQL(static::tableName());
     }
 }
