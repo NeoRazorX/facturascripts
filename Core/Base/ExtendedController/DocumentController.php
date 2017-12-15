@@ -84,7 +84,13 @@ abstract class DocumentController extends PanelController
 
         return parent::execPreviousAction($view, $action);
     }
-    
+
+    /**
+     * Run the controller after actions
+     *
+     * @param EditView $view
+     * @param string $action
+     */
     protected function execAfterAction($view, $action)
     {
         switch ($action) {

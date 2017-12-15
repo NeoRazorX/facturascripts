@@ -58,7 +58,7 @@ class EditDashboardData extends ExtendedController\EditController
     }
 
     /**
-     * TODO: Uncomplete
+     * Validate propierties columns.
      */
     private function validateColumns()
     {
@@ -74,7 +74,7 @@ class EditDashboardData extends ExtendedController\EditController
     }
 
     /**
-     * TODO: Uncomplete
+     * Validate propierties fields.
      */
     private function validateProperties()
     {

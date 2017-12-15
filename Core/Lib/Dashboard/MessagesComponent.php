@@ -29,12 +29,14 @@ use FacturaScripts\Core\Model;
 class MessagesComponent extends BaseComponent implements ComponentInterface
 {
     /**
+     * List of dashboard cards.
      *
      * @var Model\DashboardData[]
      */
     public $messages;
 
     /**
+     * MessagesComponent constructor.
      *
      * @param Model\DashboardData $data
      * @param string $userNick
@@ -76,6 +78,12 @@ class MessagesComponent extends BaseComponent implements ComponentInterface
         }
     }
 
+    /**
+     * Data persists in the database, modifying if the record existed or inserting
+     * in case the primary key does not exist.
+     *
+     * @param array $data
+     */
     public function saveData($data)
     {
         $newItem = new Model\DashboardData();
@@ -89,7 +97,7 @@ class MessagesComponent extends BaseComponent implements ComponentInterface
         }
 
         if ($this->randomData) {
-            $data['link'] = (mt_rand(0, 3) == 0) ? 'https://www.' . mt_rand(999, 99999) . '.com' : '';
+            $data['link'] = (mt_rand(0, 3) === 0) ? 'https://www.' . mt_rand(999, 99999) . '.com' : '';
         }
 
         $newItem->properties = [
@@ -101,13 +109,25 @@ class MessagesComponent extends BaseComponent implements ComponentInterface
         $newItem->save();
     }
 
+    /**
+     * Return the URL to this component.
+     *
+     * @param string $id
+     *
+     * @return string
+     */
     public function url($id)
     {
         return 'index.php?page=EditDashboardData&code=' . $id;
     }
 
+    /**
+     * Return the number of columns to display width this component.
+     *
+     * @return string
+     */
     public function getNumColumns()
     {
-        return "col-5";
+        return 'col-5';
     }
 }
