@@ -144,7 +144,7 @@ class Postgresql implements DataBaseEngine
     {
         $error = pg_last_error($link);
 
-        return ($error != '') ? $error : $this->lastErrorMsg;
+        return ($error !== '') ? $error : $this->lastErrorMsg;
     }
 
     /**
@@ -225,10 +225,9 @@ class Postgresql implements DataBaseEngine
         try {
             $aux = @pg_query($link, $sql);
             if ($aux) {
+                $result = true;
                 if ($selectRows) {
                     $result = pg_fetch_all($aux);
-                } else {
-                    $result = true;
                 }
                 pg_free_result($aux);
             }
