@@ -185,6 +185,16 @@ class CSVExport implements ExportInterface
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
     }
+    
+    /**
+     * Adds a new page with the document data.
+     * 
+     * @param mixed $model
+     */
+    public function generateDocumentPage($model)
+    {
+        /// TODO
+    }
 
     /**
      * Returns the table data

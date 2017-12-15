@@ -84,6 +84,18 @@ abstract class DocumentController extends PanelController
 
         return parent::execPreviousAction($view, $action);
     }
+    
+    protected function execAfterAction($view, $action)
+    {
+        switch ($action) {
+            case 'export':
+                $this->setTemplate(false);
+                $this->exportManager->newDoc($this->response, $this->request->get('option'));
+                $this->exportManager->generateDocumentPage($this->document);
+                $this->exportManager->show($this->response);
+                break;
+        }
+    }
 
     /**
      * Return the document class name.

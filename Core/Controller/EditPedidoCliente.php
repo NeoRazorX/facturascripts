@@ -36,7 +36,7 @@ class EditPedidoCliente extends ExtendedController\DocumentController
     protected function createViews()
     {
         parent::createViews();
-        $this->addEditView('\FacturaScripts\Dinamic\Model\PedidoCliente', 'EditPedidoCliente', 'order');
+        $this->addEditView('\FacturaScripts\Dinamic\Model\PedidoCliente', 'EditPedidoCliente', 'detail');
     }
 
     /**

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -132,7 +131,7 @@ class EditSettings extends ExtendedController\PanelController
         $modelName = '\FacturaScripts\Dinamic\Model\Settings';
         $icon = $this->getPageData()['icon'];
         foreach ($this->allSettingsXMLViews() as $name) {
-            $title = substr($name, 8);
+            $title = strtolower(substr($name, 8));
             $this->addEditView($modelName, $name, $title, $icon);
         }
 
@@ -170,10 +169,10 @@ class EditSettings extends ExtendedController\PanelController
     private function allSettingsXMLViews()
     {
         $names = [];
-        $files = array_diff(scandir(FS_FOLDER . '/Dinamic/XMLView', SCANDIR_SORT_ASCENDING), ['.','..']);
+        $files = array_diff(scandir(FS_FOLDER . '/Dinamic/XMLView', SCANDIR_SORT_ASCENDING), ['.', '..']);
         foreach ($files as $fileName) {
             if (0 === strpos($fileName, self::KEYSETTINGS)) {
-                $names[] = strtolower(substr($fileName, 0, -4));
+                $names[] = substr($fileName, 0, -4);
             }
         }
 

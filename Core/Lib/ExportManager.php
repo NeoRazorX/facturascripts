@@ -131,6 +131,16 @@ class ExportManager
         
         self::$engine->generateListModelPage($model, $where, $order, $offset, $columns, $title);
     }
+    
+    /**
+     * Adds a new page with the document data.
+     * 
+     * @param mixed $model
+     */
+    public function generateDocumentPage($model)
+    {
+        self::$engine->generateDocumentPage($model);
+    }
 
     /**
      * Returns the full class name.

@@ -184,6 +184,16 @@ class PDFExport implements ExportInterface
 
         $this->newLongTitles($longTitles);
     }
+    
+    /**
+     * Adds a new page with the document data.
+     * 
+     * @param mixed $model
+     */
+    public function generateDocumentPage($model)
+    {
+        /// TODO
+    }
 
     /**
      * Adds a new line to the PDF.

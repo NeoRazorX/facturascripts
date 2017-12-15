@@ -36,7 +36,7 @@ class EditAlbaranProveedor extends ExtendedController\DocumentController
     protected function createViews()
     {
         parent::createViews();
-        $this->addEditView('\FacturaScripts\Dinamic\Model\AlbaranProveedor', 'EditAlbaranProveedor', 'delivery-note');
+        $this->addEditView('\FacturaScripts\Dinamic\Model\AlbaranProveedor', 'EditAlbaranProveedor', 'detail');
     }
 
     /**
