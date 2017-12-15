@@ -31,12 +31,21 @@ use FacturaScripts\Core\Base\ExtendedController;
 class EditFabricante extends ExtendedController\PanelController
 {
     
+    /**
+     * Load views.
+     */
     protected function createViews()
     {
         $this->addEditView('\FacturaScripts\Dinamic\Model\Fabricante', 'EditFabricante', 'manufacturer');
         $this->addListView('\FacturaScripts\Dinamic\Model\Articulo', 'EditFabricanteListArticulos', 'products');
     }
     
+    /**
+     * Load view data procedure
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
     protected function loadData($keyView, $view)
     {
         $value = $this->request->get('code');
