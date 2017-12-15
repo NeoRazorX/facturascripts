@@ -87,17 +87,17 @@
             <td class="text-right">
                 <span class="btn-group d-xs-none">
                     {% if plugin in fsc.enabledPlugins %}
-                    <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}&amp;disable={{ plugin }}" {{ popoverTitle(disable, 'bottom') }}>
+                    <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}&amp;action=disable&amp;plugin={{ plugin }}" {{ popoverTitle(disable, 'bottom') }}>
                         <i class="fa fa-close" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">&nbsp;{{ disable }}</span>
                     </a>
                     {% else %}
-                    <a class="btn btn-sm btn-primary" href="{{ fsc.url() }}&amp;enable={{ plugin }}" {{ popoverTitle(enable, 'bottom') }}>
+                    <a class="btn btn-sm btn-primary" href="{{ fsc.url() }}&amp;action=enable&amp;plugin={{ plugin }}" {{ popoverTitle(enable, 'bottom') }}>
                         <i class="fa fa-check" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">&nbsp;{{ enable }}</span>
                     </a>
                     {% endif %}
-                    <a class="btn btn-sm btn-danger" href="{{ fsc.url() }}&amp;remove={{ plugin }}" {{ popoverTitle(delete, 'bottom') }}>
+                    <a class="btn btn-sm btn-danger" href="{{ fsc.url() }}&amp;action=remove&amp;plugin={{ plugin }}" {{ popoverTitle(delete, 'bottom') }}>
                         <i class="fa fa-trash" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">&nbsp;{{ delete }}</span>
                     </a>
@@ -125,6 +125,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
+                        <input id="action" name="action" value="upload" type="hidden">
                         <label class="control-label" for="plugin">{{ i18n.trans('select-plugin-zip-file') }}</label>
                         <div class="file-loading">
                             <input id="plugin" name="plugin[]" type="file" multiple>
@@ -151,7 +152,7 @@
         showRemove: false,
         dropZoneEnabled: true,
         browseOnZoneClick: false,
-        fileActionSettings: {showDrag: false, showUpload: false, showZoom: false},
+        fileActionSettings: {showDrag: true, showUpload: false, showZoom: false},
         language: "{{ i18n.getLangCode() }}",
         allowedFileExtensions: ["zip"],
         overwriteInitial: false,
