@@ -61,7 +61,7 @@ class TasksComponent extends BaseComponent implements ComponentInterface
         return [
             'description' => '',
             'color' => 'info',
-            'enddate' => NULL
+            'enddate' => NULL,
         ];
     }
 
@@ -115,11 +115,6 @@ class TasksComponent extends BaseComponent implements ComponentInterface
     public function url($id)
     {
         return 'index.php?page=EditDashboardData&code=' . $id;
-    }
-
-    public function getNumColumns()
-    {
-        return "col-3";
     }
 
     public function getCardClass()

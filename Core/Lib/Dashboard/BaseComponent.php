@@ -33,7 +33,6 @@ class BaseComponent
 
     protected $randomData;
 
-
     public $component;
     public $version;
     public $location;

@@ -105,9 +105,4 @@ class MessagesComponent extends BaseComponent implements ComponentInterface
     {
         return 'index.php?page=EditDashboardData&code=' . $id;
     }
-
-    public function getNumColumns()
-    {
-        return "col-5";
-    }
 }
