@@ -441,7 +441,7 @@
             <div class="dropdown-menu">
                 <h6 class="dropdown-header">{{ context.i18n.trans('filter-method') }}</h6>
                 {% for keyOperator, valueOperator in filter.getFilterOperators() %}
-                <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}- from', '{{ valueOperator }}')">{{ context.i18n.trans(keyOperator) }} {{ filter.options.label }}</a>
+                <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}-from', '{{ valueOperator }}')">{{ context.i18n.trans(keyOperator) }} {{ filter.options.label }}</a>
                 {% endfor %}
             </div>
         </div>
@@ -461,7 +461,7 @@
             <div class="dropdown-menu">
                 <h6 class="dropdown-header">{{ context.i18n.trans('filter-method') }}</h6>
                 {% for keyOperator, valueOperator in filter.getFilterOperators() %}
-                <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}- to', '{{ valueOperator }}')">{{ context.i18n.trans(keyOperator) }} {{ filter.options.label }}</a>
+                <a class="dropdown-item" href="#" onclick="setOperator('{{ key }}-to', '{{ valueOperator }}')">{{ context.i18n.trans(keyOperator) }} {{ filter.options.label }}</a>
                 {% endfor %}
             </div>
         </div>

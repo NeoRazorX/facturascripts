@@ -31,14 +31,38 @@ class BaseComponent
     const DIR_COMPONENTS = 'FacturaScripts\\Core\\Lib\\Dashboard\\';
     const SUFIX_COMPONENTS = 'Component';
 
+    /**
+     * To create some random data or not.
+     *
+     * @var bool
+     */
     protected $randomData;
 
     public $component;
+
+    /**
+     * The component version.
+     *
+     * @var string
+     */
     public $version;
+
+    /**
+     * The location of component on screen.
+     *
+     * @var string
+     */
     public $location;
+
+    /**
+     * Nick of the user to whom the card is addressed.
+     *
+     * @var string
+     */
     public $nick;
 
     /**
+     * BaseComponent constructor.
      *
      * @param Model\DashboardData $data
      * @param string $userNick
@@ -51,6 +75,11 @@ class BaseComponent
         $this->nick = $userNick;
     }
 
+    /**
+     * Get the default filter to obtain dashboard components.
+     *
+     * @return array
+     */
     protected function getDataFilter()
     {
         return [
@@ -60,29 +89,55 @@ class BaseComponent
         ];
     }
 
+    /**
+     * Get the default order by.
+     *
+     * @return array
+     */
     protected function getDataOrderBy()
     {
         return [ 'displaydate' => 'ASC', 'id' => 'ASC' ];
     }
 
+    /**
+     * Return the template to use for this component.
+     *
+     * @return string
+     */
     public function getTemplate()
     {
         return $this->component . self::SUFIX_COMPONENTS . '.html';
     }
 
+    /**
+     * Return the number of columns to display width this component.
+     *
+     * @return string
+     */
     public function getNumColumns()
     {
-        return "col";
+        return 'col';
     }
 
+    /**
+     * Return the class name to render this component.
+     *
+     * @return string
+     */
     public function getCardClass()
     {
-        return "";
+        return '';
     }
 
+    /**
+     * Generate some random data.
+     *
+     * @param $numRecords
+     * @param $maxWord
+     */
     protected function genetareRandomData($numRecords, $maxWord)
     {
-        $this->randomData = TRUE;
+        $this->randomData = true;
         $colors = ['info', 'primary', 'warning', 'danger'];
 
         for ($key = 1; $key < $numRecords; $key++) {
@@ -95,9 +150,16 @@ class BaseComponent
 
             $this->saveData($data);
         }
-        $this->randomData = FALSE;
+        $this->randomData = false;
     }
 
+    /**
+     * Return random text to generate sample data.
+     *
+     * @param int $maxWord
+     *
+     * @return mixed|string
+     */
     private function getRandomText($maxWord = 20)
     {
         $words = ['lorem', 'ipsum', 'trastis', 'tus', 'turum', 'maruk', 'tartor', 'isis', 'osiris', 'morowik'];

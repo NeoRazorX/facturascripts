@@ -28,6 +28,12 @@ use FacturaScripts\Core\Lib\Dashboard as DashboardLib;
  */
 class EditDashboardData extends ExtendedController\EditController
 {
+    /**
+     * Runs the controller's private logic.
+     *
+     * @param \Symfony\Component\HttpFoundation\Response $response
+     * @param \FacturaScripts\Core\Model\User|null $user
+     */
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
@@ -36,6 +42,11 @@ class EditDashboardData extends ExtendedController\EditController
         $this->validateColumns();
     }
 
+    /**
+     * Return the propierties fields.
+     *
+     * @return mixed
+     */
     private function getPropertiesFields()
     {
         $model = $this->view->getModel();
@@ -46,12 +57,15 @@ class EditDashboardData extends ExtendedController\EditController
         return $component::getPropertiesFields();
     }
 
+    /**
+     * Validate propierties columns.
+     */
     private function validateColumns()
     {
         $fields = array_keys($this->view->getModel()->properties);
         $group = $this->view->getColumns()['options']->columns;
         foreach ($group as $column) {
-            if (in_array($column->widget->fieldName, $fields)) {
+            if (in_array($column->widget->fieldName, $fields, false)) {
                 continue;
             }
 
@@ -59,6 +73,9 @@ class EditDashboardData extends ExtendedController\EditController
         }
     }
 
+    /**
+     * Validate propierties fields.
+     */
     private function validateProperties()
     {
         $model = $this->view->getModel();
@@ -70,13 +87,18 @@ class EditDashboardData extends ExtendedController\EditController
         }
     }
 
+    /**
+     * Run the data edits
+     *
+     * @return bool
+     */
     protected function editAction()
     {
         $model = $this->view->getModel();
         $properties = array_keys($this->getPropertiesFields());
         $fields = array_keys($model->properties);
         foreach ($fields as $key) {
-            if (!in_array($key, $properties)) {
+            if (!in_array($key, $properties, false)) {
                 unset($model->properties[$key]);
             }
         }
@@ -88,7 +110,7 @@ class EditDashboardData extends ExtendedController\EditController
      */
     public function getModelClassName()
     {
-        return 'FacturaScripts\Core\Model\DashboardData';
+        return '\FacturaScripts\Dinamic\Model\DashboardData';
     }
 
     /**

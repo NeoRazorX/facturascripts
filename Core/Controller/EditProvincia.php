@@ -16,10 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
-use FacturaScripts\Core\Base;
 
 /**
  * Controlador para la edición de un registro del modelo de Provincia
@@ -30,15 +30,15 @@ class EditProvincia extends ExtendedController\EditController
 {
 
     /**
-     * Devuelve el nombre del modelo
+     * Returns the model name
      */
     public function getModelClassName()
     {
-        return 'FacturaScripts\Core\Model\Provincia';
+        return '\FacturaScripts\Dinamic\Model\Provincia';
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */

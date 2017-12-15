@@ -244,7 +244,7 @@ class DataBaseTools
         $xml = strtolower($xmlType);
 
         $result = (
-            (FS_DB_TYPE_CHECK) ||
+            FS_DB_TYPE_CHECK ||
             self::$dataBase->getEngine()->compareDataTypes($db0, $xml) ||
             ($xml === 'serial') ||
             (

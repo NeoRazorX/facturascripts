@@ -182,7 +182,7 @@ class DataBaseWhere
      */
     private function getValue()
     {
-        return in_array($this->operator, ['LIKE', 'IS', 'IN']) ? $this->getValueFromOperator() : $this->getValueFromType();
+        return in_array($this->operator, ['LIKE', 'IS', 'IN'], false) ? $this->getValueFromOperator() : $this->getValueFromType();
     }
 
     /**
@@ -206,7 +206,7 @@ class DataBaseWhere
             $union = ' OR ';
         }
 
-        if ($result != '') {
+        if ($result !== '') {
             if (count($fields) > 1) {
                 $result = '(' . $result . ')';
             }
@@ -235,7 +235,7 @@ class DataBaseWhere
             $join = true;
         }
 
-        if ($result != '') {
+        if ($result !== '') {
             $result = ' WHERE ' . $result;
         }
 

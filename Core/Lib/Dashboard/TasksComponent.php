@@ -28,18 +28,19 @@ use FacturaScripts\Core\Model;
 class TasksComponent extends BaseComponent implements ComponentInterface
 {
     /**
-     *
+     * List of tasks
      * @var Model\DashboardData[]
      */
     public $tasks;
 
     /**
-     *
+     * List of completed tasks
      * @var Model\DashboardData[]
      */
     public $completed;
 
     /**
+     * TasksComponent constructor.
      *
      * @param Model\DashboardData $data
      * @param string $userNick
@@ -52,7 +53,7 @@ class TasksComponent extends BaseComponent implements ComponentInterface
     }
 
     /**
-     * Sets the special fields for the component and their initial values
+     * Sets the special fields for the component and their initial values.
      *
      * @return array
      */
@@ -65,6 +66,9 @@ class TasksComponent extends BaseComponent implements ComponentInterface
         ];
     }
 
+    /**
+     * Load data of component for user to put into dashboard
+     */
     public function loadData()
     {
         $where = $this->getDataFilter();
@@ -87,6 +91,12 @@ class TasksComponent extends BaseComponent implements ComponentInterface
         }
     }
 
+    /**
+     * Data persists in the database, modifying if the record existed or inserting
+     * in case the primary key does not exist.
+     *
+     * @param array $data
+     */
     public function saveData($data)
     {
         $newItem = new Model\DashboardData();
@@ -112,6 +122,13 @@ class TasksComponent extends BaseComponent implements ComponentInterface
         $newItem->save();
     }
 
+    /**
+     * Return the URL to this component.
+     *
+     * @param string $id
+     *
+     * @return string
+     */
     public function url($id)
     {
         return 'index.php?page=EditDashboardData&code=' . $id;
@@ -119,6 +136,6 @@ class TasksComponent extends BaseComponent implements ComponentInterface
 
     public function getCardClass()
     {
-        return "task-card";
+        return 'task-card';
     }
 }

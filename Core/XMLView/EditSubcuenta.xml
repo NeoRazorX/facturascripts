@@ -20,68 +20,52 @@
  * Initial description for the controller EditSubcuenta
  *
  * @author Artex Trading sa <jferrer@artextrading.com>
+ * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
 -->
 
 <view>
     <columns>
-        <group name="Ejercicio" numcolumns="10">
-            <column name="exercise" numcolumns="2" order="100">
-                <widget type="select" required="true" fieldname="codejercicio">
-                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
-                </widget>
+        <group name="primary-data" numcolumns="12">
+            <column name="id" order="100" display="none">
+                <widget type="text" fieldname="idsubcuenta" onclick="" />
             </column>
-            
-            <column name="account" numcolumns="4" order="100">
-                <widget type="select" fieldname="codcuenta" required="true">
+            <column name="code" numcolumns="3" order="100">
+                <widget type="text" fieldname="codsubcuenta" readonly="true" />
+            </column>
+            <column name="description" numcolumns="9" order="100">
+                <widget type="text" fieldname="descripcion" required="true" />
+            </column>
+        </group>
+        <group name="seccondary-data" numcolumns="12">
+            <column name="account" numcolumns="3" order="100">
+                <widget type="select" fieldname="codcuenta" readonly="true">
                     <values source="co_cuentas" fieldcode="codcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            
-            <column name="idsubaccount" numcolumns="2" display="none" order="100">
-                <widget type="text" fieldname="idsubcuenta"/>
+            <column name="exercise" numcolumns="3" order="100">
+                <widget type="select" readonly="true" fieldname="codejercicio">
+                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
+                </widget>
             </column>
-        </group> 
-        
-        <group name="Sub-accounts" numcolumns="6">
-            <column name="Subcuenta" numcolumns="3" order="105">
-                <widget type="text" fieldname="codsubcuenta" required="true" />
-            </column>
-            
-            <column name="description" numcolumns="5" order="110">
-                <widget type="text" fieldname="descripcion" required="true" />
-            </column> 
-             
-            <column name="taxes" numcolumns="3" order="195">
-                <widget type="select" fieldname="codimpuesto" required="true">
-                    <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
-                </widget>    
-            </column>
-            
-            <column name="vat" numcolumns="1" order="195" display="none">
-                <widget type="text" fieldname="iva" readonly="true"/>
-            </column>
-            
-            <column name="recargo" numcolumns="1" order="195" display="none">
-                <widget type="text" fieldname="recargo" required="true" />
-            </column>     
-        </group>
-        
-        <group name="saldos-accounts" numcolumns="6">
-            <column name="divisa" numcolumns="6" order="190">
+            <column name="currency" numcolumns="3" order="100">
                 <widget type="select" fieldname="coddivisa" required="true">
                     <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
                 </widget> 
             </column>
-            
-            <column name="debe" numcolumns="2" order="190">
+            <column name="taxes" numcolumns="3" order="100">
+                <widget type="select" fieldname="codimpuesto" required="true">
+                    <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+        </group>
+        <group name="saldos-accounts" numcolumns="12">
+            <column name="Debe" numcolumns="4" order="100">
                 <widget type="money" fieldname="debe" readonly="true" />
             </column>
-            
-            <column name="haber" numcolumns="2" order="190">
+            <column name="Haber" numcolumns="4" order="100">
                 <widget type="money" fieldname="haber" readonly="true" />
             </column>
-            
-            <column name="saldo" numcolumns="2" order="190">
+            <column name="Saldo" numcolumns="4" order="100">
                 <widget type="money" fieldname="saldo" readonly="true" />
             </column>
         </group>
