@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -136,8 +136,8 @@ class AlbaranProveedor
      */
     public function delete()
     {
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idalbaran = ' . $this->dataBase->var2str($this->idalbaran) . ';';
-        if ($this->dataBase->exec($sql)) {
+        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idalbaran = ' . self::$dataBase->var2str($this->idalbaran) . ';';
+        if (self::$dataBase->exec($sql)) {
             if ($this->idfactura) {
                 /**
                  * Delegamos la eliminación de la factura en la clase correspondiente,
@@ -166,6 +166,6 @@ class AlbaranProveedor
          */
         $sql = 'UPDATE ' . $this->tableName() . ' SET idfactura = NULL WHERE idfactura IS NOT NULL'
             . ' AND idfactura NOT IN (SELECT idfactura FROM facturasprov);';
-        $this->dataBase->exec($sql);
+        self::$dataBase->exec($sql);
     }
 }

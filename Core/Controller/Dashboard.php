@@ -19,33 +19,52 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\DashboardCard;
+use FacturaScripts\Core\Model;
+use FacturaScripts\Core\Lib;
 
 /**
- * Description of Dashboard
+ * Dashboard that contains some Cards with data to the end user.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class Dashboard extends Base\Controller
 {
 
     /**
-     * List of cards.
-     * @var DashboardCard[] 
+     * List of components of dashboard.
+     *
+     * @var BaseComponent[]
      */
-    public $cursor;
+    public $components;
 
+    /**
+     * Dashboard constructor.
+     *
+     * @param Base\Cache $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog $miniLog
+     * @param string $className
+     */
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    {
+        parent::__construct($cache, $i18n, $miniLog, $className);
+
+        $this->components = [];
+    }
+
+    /**
+     * Runs the controller's private logic.
+     *
+     * @param \Symfony\Component\HttpFoundation\Response $response
+     * @param \FacturaScripts\Core\Model\User|null $user
+     */
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
 
-        $dashboardCardModel = new DashboardCard();
-        $this->cursor = $dashboardCardModel->all([new DataBaseWhere('nick', $user->nick)]);
-
-        if (empty($this->cursor)) {
-            $this->genetareRandomCards();
-        }
+        $this->getListComponents($user->nick);
+        $this->loadDataComponents();
     }
 
     /**
@@ -63,39 +82,31 @@ class Dashboard extends Base\Controller
         return $pageData;
     }
 
-    private function genetareRandomCards()
+    /**
+     * Get the list of components to this user.
+     *
+     * @param $userNick
+     */
+    private function getListComponents($userNick)
     {
-        $colors = ['info', 'warning', 'success', 'danger', 'secondary', 'primary', 'light', 'dark'];
-
-        for ($key = 1; $key < 29; $key++) {
-            shuffle($colors);
-
-            $newCard = new DashboardCard();
-            $newCard->nick = $this->user->nick;
-            $newCard->descripcion = $this->getRandomText();
-            $newCard->color = $colors[0];
-
-            if (mt_rand(0, 2) == 0) {
-                $newCard->link = 'https://www.' . mt_rand(999, 99999) . '.com';
-            }
-
-            $newCard->save();
+        $dashboardModel = new Model\Dashboard();
+        $rows = $dashboardModel->all();
+        foreach ($rows as $data) {
+            $componentName = Lib\Dashboard\BaseComponent::DIR_COMPONENTS
+                . $data->component
+                . Lib\Dashboard\BaseComponent::SUFIX_COMPONENTS;
+            
+            $this->components[$data->component] = new $componentName($data, $userNick);
         }
-
-        $dashboardCardModel = new DashboardCard();
-        $this->cursor = $dashboardCardModel->all([new DataBaseWhere('nick', $this->user->nick)]);
     }
 
-    private function getRandomText()
+    /**
+     * Load the needed data of components.
+     */
+    private function loadDataComponents()
     {
-        $words = ['lorem', 'ipsum', 'trastis', 'tus', 'turum', 'maruk', 'tartor', 'isis', 'osiris', 'morowik'];
-        $txt = $words[mt_rand(0, 8)];
-
-        while (mt_rand(0, 8) > 0) {
-            shuffle($words);
-            $txt .= $words[0] . ' ';
+        foreach ($this->components as $component) {
+            $component->loadData();
         }
-
-        return $txt;
     }
 }

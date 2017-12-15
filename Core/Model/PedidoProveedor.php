@@ -119,14 +119,14 @@ class PedidoProveedor
     {
         $versiones = [];
 
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idoriginal = ' . $this->dataBase->var2str($this->idpedido);
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idoriginal = ' . self::$dataBase->var2str($this->idpedido);
         if ($this->idoriginal) {
-            $sql .= ' OR idoriginal = ' . $this->dataBase->var2str($this->idoriginal);
-            $sql .= ' OR idpedido = ' . $this->dataBase->var2str($this->idoriginal);
+            $sql .= ' OR idoriginal = ' . self::$dataBase->var2str($this->idoriginal);
+            $sql .= ' OR idpedido = ' . self::$dataBase->var2str($this->idoriginal);
         }
         $sql .= 'ORDER BY fecha DESC, hora DESC;';
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $versiones[] = new self($d);
@@ -163,6 +163,6 @@ class PedidoProveedor
     {
         $sql = 'UPDATE ' . static::tableName() . ' SET idalbaran = NULL, editable = TRUE'
             . ' WHERE idalbaran IS NOT NULL AND NOT EXISTS(SELECT 1 FROM albaranesprov t1 WHERE t1.idalbaran = ' . static::tableName() . '.idalbaran);';
-        $this->dataBase->exec($sql);
+        self::$dataBase->exec($sql);
     }
 }

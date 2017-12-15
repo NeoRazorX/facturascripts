@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -29,21 +30,20 @@ class ListArticuloTraza extends ExtendedController\ListController
 {
 
     /**
-     * Procedimiento para insertar vistas en el controlador
+     * Load views
      */
     protected function createViews()
     {
         /* Artículos */
-        $this->addView('FacturaScripts\Core\Model\ArticuloTraza', 'ListArticuloTraza', 'traceability');
+        $this->addView('\FacturaScripts\Dinamic\Model\ArticuloTraza', 'ListArticuloTraza', 'traceability');
         $this->addSearchFields('ListArticuloTraza', ['referencia', 'numserie']);
 
         $this->addOrderBy('ListArticuloTraza', 'referencia', 'reference');
         $this->addOrderBy('ListArticuloTraza', 'numserie', 'serial-number');
-
     }
 
     /**
-     * Devuelve los datos básicos de la página
+     * Returns basic page attributes
      *
      * @return array
      */

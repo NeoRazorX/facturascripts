@@ -29,25 +29,16 @@
             <widget type="text" fieldname="idpartida" onclick="EditCuenta" />
         </column>
         <column name="subaccount" order="100">
-            <widget type="text" fieldname="idsubcuenta" />
+            <widget type="text" fieldname="codsubcuenta" />
         </column>
         <column name="description" order="110">
             <widget type="text" fieldname="concepto" />
         </column>
-        <column name="have" order="120">
-            <widget type="text" fieldname="haberme" />
+        <column name="debit" order="120">
+            <widget type="money" fieldname="debe" />
         </column>
-        <column name="debit" order="130">
-            <widget type="text" fieldname="debeme" />
-        </column>
-        <column name="credit" order="140">
-            <widget type="text" fieldname="haberme" />
-        </column>
-        <column name="invoice" order="150">
-            <widget type="text" fieldname="factura" />
-        </column>
-        <column name="amount" order="160">
-            <widget type="text" fieldname="baseimponible" />
+        <column name="habe" order="130">
+            <widget type="money" fieldname="haber" />
         </column>
     </columns>
 </view>

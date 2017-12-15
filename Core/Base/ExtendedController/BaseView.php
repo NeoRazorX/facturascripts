@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Base\ExtendedController;
 
-use FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base;
-use Symfony\Component\HttpFoundation\Response;
+use FacturaScripts\Core\Lib\ExportManager;
+use FacturaScripts\Core\Model;
 
 /**
  * Base definition for the views used in ExtendedControllers
@@ -71,18 +71,16 @@ abstract class BaseView
      * Establishes de view/edit state of a column
      *
      * @param string $columnName
-     * @param boolean $disabled
+     * @param bool $disabled
      */
     abstract public function disableColumn($columnName, $disabled);
 
     /**
      * Method to export the view data
      *
-     * @param Base\ExportManager $exportManager
-     * @param Response $response
-     * @param string $action
+     * @param ExportManager $exportManager
      */
-    abstract public function export(&$exportManager, &$response, $action);
+    abstract public function export(&$exportManager);
 
     /**
      * Construct and initialize the class
@@ -109,7 +107,7 @@ abstract class BaseView
     {
         $fieldKey = $this->model->primaryColumn();
         $fieldValue = $data[$fieldKey];
-        if ($fieldValue != $this->model->primaryColumnValue()) {
+        if ($fieldValue !== $this->model->primaryColumnValue()) {
             $this->model->loadFromCode($fieldValue);
         }
 
@@ -120,7 +118,7 @@ abstract class BaseView
     /**
      * Saves the model data into the database for persistence
      *
-     * @return boolean
+     * @return bool
      */
     public function save()
     {
@@ -131,7 +129,8 @@ abstract class BaseView
      * Deletes from the database the row with the given code
      *
      * @param string $code
-     * @return boolean
+     *
+     * @return bool
      */
     public function delete($code)
     {
@@ -144,7 +143,6 @@ abstract class BaseView
 
     /**
      * Returns the pointer to the data model
-     *
      *
      * @return mixed
      */
@@ -183,7 +181,7 @@ abstract class BaseView
      *
      * @param string $fieldName
      *
-     * @return ExtendedController\ColumnItem
+     * @return ColumnItem
      */
     public function columnForField($fieldName)
     {
@@ -217,18 +215,19 @@ abstract class BaseView
 
     /**
      * Returns the list of modal forms
-     * 
+     *
      * @return array
      */
     public function getModals()
     {
         return $this->pageOption->modals;
     }
-    
+
     /**
      * Returns the url for the requested model type
      *
-     * @param string $type      (edit / list / auto)
+     * @param string $type (edit / list / auto)
+     *
      * @return string
      */
     public function getURL($type)

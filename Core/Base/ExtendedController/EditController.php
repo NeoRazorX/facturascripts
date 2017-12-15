@@ -16,9 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Lib\ExportManager;
 
 /**
  * Controller to manage the data editing
@@ -32,7 +34,7 @@ abstract class EditController extends Base\Controller
     /**
      * Export data object
      *
-     * @var Base\ExportManager
+     * @var ExportManager
      */
     public $exportManager;
 
@@ -46,17 +48,17 @@ abstract class EditController extends Base\Controller
     /**
      * Initializes all the objects and properties
      *
-     * @param Base\Cache      $cache
+     * @param Base\Cache $cache
      * @param Base\Translator $i18n
-     * @param Base\MiniLog    $miniLog
-     * @param string          $className
+     * @param Base\MiniLog $miniLog
+     * @param string $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         $this->setTemplate('Master/EditController');
-        $this->exportManager = new Base\ExportManager();
+        $this->exportManager = new ExportManager();
     }
 
     /**
@@ -93,7 +95,7 @@ abstract class EditController extends Base\Controller
      *
      * @param string $action
      */
-    private function execPreviousAction($action)
+    protected function execPreviousAction($action)
     {
         switch ($action) {
             case 'save':
@@ -109,13 +111,14 @@ abstract class EditController extends Base\Controller
      *
      * @param string $action
      */
-    private function execAfterAction($action)
+    protected function execAfterAction($action)
     {
         switch ($action) {
             case 'export':
                 $this->setTemplate(false);
-                $document = $this->view->export($this->exportManager, $this->response, $this->request->get('option'));
-                $this->response->setContent($document);
+                $this->exportManager->newDoc($this->response, $this->request->get('option'));
+                $this->view->export($this->exportManager);
+                $this->exportManager->show($this->response);
                 break;
         }
     }
@@ -124,18 +127,23 @@ abstract class EditController extends Base\Controller
      * Returns a field value for the loaded data model
      *
      * @param mixed $model
-     * @param string $field
+     * @param string $fieldName
+     *
      * @return mixed
      */
-    public function getFieldValue($model, $field)
+    public function getFieldValue($model, $fieldName)
     {
-        return $model->{$field};
+        if (isset($model->{$fieldName})) {
+            return $model->{$fieldName};
+        }
+
+        return null;
     }
 
     /**
      * Run the data edits
      *
-     * @return boolean
+     * @return bool
      */
     protected function editAction()
     {
@@ -185,6 +193,7 @@ abstract class EditController extends Base\Controller
      * Returns the url for a specified type
      *
      * @param string $type
+     *
      * @return string
      */
     public function getURL($type)

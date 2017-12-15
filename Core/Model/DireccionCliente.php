@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -130,7 +130,7 @@ class DireccionCliente
         if ($this->test()) {
             /// ¿Desmarcamos las demás direcciones principales?
             $sql = '';
-            $where = 'WHERE codcliente = ' . $this->dataBase->var2str($this->codcliente);
+            $where = 'WHERE codcliente = ' . self::$dataBase->var2str($this->codcliente);
             if ($this->domenvio) {
                 $sql .= 'UPDATE ' . $this->tableName() . ' SET domenvio = false ' . $where . ' AND domenvio = TRUE;';
             }
@@ -142,9 +142,9 @@ class DireccionCliente
                 return $this->saveData();
             }
 
-            $this->dataBase->beginTransaction();
-            if ($this->dataBase->exec($sql)) {
-                return $this->saveData() ? $this->dataBase->commit() : $this->dataBase->rollback();
+            self::$dataBase->beginTransaction();
+            if (self::$dataBase->exec($sql)) {
+                return $this->saveData() ? self::$dataBase->commit() : self::$dataBase->rollback();
             }
         }
 

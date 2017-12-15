@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -111,9 +111,9 @@ class CuentaBancoProveedor
                 /// si esta cuenta es la principal, desmarcamos las demás
                 $sql = 'UPDATE ' . $this->tableName()
                     . ' SET principal = false'
-                    . ' WHERE codproveedor = ' . $this->dataBase->var2str($this->codproveedor)
-                    . ' AND codcuenta <> ' . $this->dataBase->var2str($this->codcuenta) . ';';
-                $allOK = $this->dataBase->exec($sql);
+                    . ' WHERE codproveedor = ' . self::$dataBase->var2str($this->codproveedor)
+                    . ' AND codcuenta <> ' . self::$dataBase->var2str($this->codcuenta) . ';';
+                $allOK = self::$dataBase->exec($sql);
             }
 
             return $allOK;
@@ -131,7 +131,7 @@ class CuentaBancoProveedor
     {
         $this->descripcion = self::noHtml($this->descripcion);
         if (!$this->testBankAccount()) {
-            ///$this->miniLog->alert($this->i18n->trans('error-incorrect-bank-details'));
+            ///self::$miniLog->alert(self::$i18n->trans('error-incorrect-bank-details'));
 
             return false;
         }

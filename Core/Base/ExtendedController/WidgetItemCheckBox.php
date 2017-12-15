@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Description of WidgetItemCheckBox
+ * This class manage all specific method for a WidgetItem of Checkbox type.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -38,9 +38,9 @@ class WidgetItemCheckBox extends WidgetItem
 
     /**
      * Generates the HTML code for special attributes like:
-     * hint
-     * read only
-     * mandatory value
+     *  - hint
+     *  - read only
+     *  - mandatory value
      *
      * @return string
      */
@@ -63,11 +63,10 @@ class WidgetItemCheckBox extends WidgetItem
             return '';
         }
 
-        $checked = in_array($value, ['t', '1']);
+        $checked = in_array($value, ['t', '1'], false);
         $icon = $checked ? 'fa-check' : 'fa-minus';
         $style = $this->getTextOptionsHTML($checked);
-        $html = '<i class="fa ' . $icon . '" aria-hidden="true"' . $style . '></i>';
-        return $html;
+        return '<i class="fa ' . $icon . '" aria-hidden="true" ' . $style . '></i>';
     }
 
     /**
@@ -81,11 +80,11 @@ class WidgetItemCheckBox extends WidgetItem
     {
         $specialAttributes = $this->specialAttributes();
         $fieldName = '"' . $this->fieldName . '"';
-        $checked = in_array(strtolower($value), ['true', 't', '1']) ? ' checked ' : '';
+        $checked = in_array(strtolower($value), ['true', 't', '1'], false) ? ' checked ' : '';
 
         $html = $this->getIconHTML()
             . '<input name=' . $fieldName . ' id=' . $fieldName
-            . ' class="custom-control-input form-check-input" type="checkbox" value="true"'
+            . ' class="custom-control-input form-check-input" type="checkbox" value="true" '
             . $specialAttributes . $checked . '>'
             . '<span class="custom-control-indicator"></span>';
 

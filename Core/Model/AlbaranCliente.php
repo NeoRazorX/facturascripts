@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -127,7 +127,7 @@ class AlbaranCliente
          * Ponemos a Null todos los idfactura que no están en facturascli.
          * ¿Por qué? Porque muchos usuarios se dedican a tocar la base de datos.
          */
-        $this->dataBase->exec('UPDATE ' . $this->tableName() . ' SET idfactura = NULL WHERE idfactura IS NOT NULL'
+        self::$dataBase->exec('UPDATE ' . $this->tableName() . ' SET idfactura = NULL WHERE idfactura IS NOT NULL'
             . ' AND idfactura NOT IN (SELECT idfactura FROM facturascli);');
     }
 }

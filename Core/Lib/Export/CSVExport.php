@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Export;
 
+use FacturaScripts\Core\Base;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -29,7 +31,7 @@ use Symfony\Component\HttpFoundation\Response;
 class CSVExport implements ExportInterface
 {
 
-    use \FacturaScripts\Core\Base\Utils;
+    use Base\Utils;
 
     const LIST_LIMIT = 1000;
 
@@ -67,7 +69,7 @@ class CSVExport implements ExportInterface
      * Assigns the received separator.
      * By default it will use ';' semicolons.
      *
-     * @param $sep
+     * @param string $sep
      */
     public function setSeparator($sep)
     {
@@ -77,7 +79,8 @@ class CSVExport implements ExportInterface
     /**
      * Assigns the received text delimiter
      * By default it will use '"' quotes.
-     * @param $del
+     *
+     * @param string $del
      */
     public function setDelimiter($del)
     {
@@ -105,42 +108,60 @@ class CSVExport implements ExportInterface
     }
 
     /**
-     * New document
-     *
-     * @param $model
+     * Return the full document.
      *
      * @return string
      */
-    public function newDoc($model)
+    public function getDoc()
+    {
+        return \implode(PHP_EOL, $this->csv);
+    }
+    
+    /**
+     * Set headers.
+     *
+     * @param Response $response
+     */
+    public function newDoc(&$response)
+    {
+        $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
+        $response->headers->set('Content-Disposition', 'attachment;filename=doc.csv');
+    }
+    
+    /**
+     * Adds a new page with the model data.
+     *
+     * @param mixed $model
+     * @param array $columns
+     * @param string $title
+     */
+    public function generateModelPage($model, $columns, $title = '')
     {
         $tableData = [];
         foreach ((array) $model as $key => $value) {
             if (is_string($value)) {
                 $tableData[] = [
                     'key' => $this->delimiter . $key . $this->delimiter,
-                    'value' => $this->delimiter . $this->fixHtml($value) . $this->delimiter
+                    'value' => $this->delimiter . $value . $this->delimiter
                 ];
             }
         }
 
         $this->writeSheet($tableData, ['key' => 'string', 'value' => 'string']);
-        return $this->writeToString();
     }
 
     /**
-     * New document list
+     * Adds a new page with a table listing the models data.
      *
-     * @param $model
-     * @param array $where
+     * @param mixed $model
+     * @param Base\DataBase\DataBaseWhere[] $where
      * @param array $order
      * @param int $offset
      * @param array $columns
-     *
-     * @return string
+     * @param string $title
      */
-    public function newListDoc($model, $where, $order, $offset, $columns)
+    public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '')
     {
-        /// get the columns
         $tableCols = [];
         $sheetHeaders = [];
         $tableData = [];
@@ -163,8 +184,16 @@ class CSVExport implements ExportInterface
             $offset += self::LIST_LIMIT;
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
-
-        return $this->writeToString();
+    }
+    
+    /**
+     * Adds a new page with the document data.
+     * 
+     * @param mixed $model
+     */
+    public function generateDocumentPage($model)
+    {
+        /// TODO
     }
 
     /**
@@ -185,9 +214,7 @@ class CSVExport implements ExportInterface
                 $value = '';
                 if (isset($row->{$col})) {
                     $value = $row->{$col};
-                    if (is_string($value)) {
-                        $value = $this->fixHtml($value);
-                    } elseif (is_null($value)) {
+                    if (null === $value) {
                         $value = '';
                     }
                 }
@@ -197,17 +224,6 @@ class CSVExport implements ExportInterface
         }
 
         return $tableData;
-    }
-
-    /**
-     * Assigns the header
-     *
-     * @param Response $response
-     */
-    public function setHeaders(&$response)
-    {
-        $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
-        $response->headers->set('Content-Disposition', 'attachment;filename=doc.csv');
     }
 
     /**
@@ -231,15 +247,5 @@ class CSVExport implements ExportInterface
             $body[] = \implode($this->separator, $line);
         }
         $this->csv[] = \implode(PHP_EOL, $body);
-    }
-
-    /**
-     * Retrurns the CSV as plain text
-     *
-     * @return string
-     */
-    public function writeToString()
-    {
-        return \implode(PHP_EOL, $this->csv);
     }
 }

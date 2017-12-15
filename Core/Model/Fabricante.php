@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -76,9 +76,9 @@ class Fabricante
         $this->nombre = self::noHtml($this->nombre);
 
         if (empty($this->codfabricante) || strlen($this->codfabricante) > 8) {
-            $this->miniLog->alert($this->i18n->trans('code-manufacturer-valid-length'));
+            self::$miniLog->alert(self::$i18n->trans('code-manufacturer-valid-length'));
         } elseif (empty($this->nombre) || strlen($this->nombre) > 100) {
-            $this->miniLog->alert($this->i18n->trans('manufacturer-description-not-valid'));
+            self::$miniLog->alert(self::$i18n->trans('manufacturer-description-not-valid'));
         } else {
             $status = true;
         }

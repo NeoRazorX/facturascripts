@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -306,12 +306,12 @@ class Subcuenta
                     return false;
                 }
 
-                $this->miniLog->alert($this->i18n->trans('equivalent-account-not-found', [$oldSc->codcuenta, $codejercicio, 'index.php?page=ContabilidadEjercicio&cod=' . $codejercicio]));
+                self::$miniLog->alert(self::$i18n->trans('equivalent-account-not-found', [$oldSc->codcuenta, $codejercicio, 'index.php?page=ContabilidadEjercicio&cod=' . $codejercicio]));
 
                 return false;
             }
 
-            $this->miniLog->alert($this->i18n->trans('equivalent-subaccount-not-found', [$cod]));
+            self::$miniLog->alert(self::$i18n->trans('equivalent-subaccount-not-found', [$cod]));
 
             return false;
         }
@@ -331,10 +331,10 @@ class Subcuenta
     public function getCuentaesp($idcuesp, $codeje)
     {
         $sql = 'SELECT * FROM co_subcuentas WHERE idcuenta IN '
-            . '(SELECT idcuenta FROM co_cuentas WHERE idcuentaesp = ' . $this->dataBase->var2str($idcuesp)
-            . ' AND codejercicio = ' . $this->dataBase->var2str($codeje) . ') ORDER BY codsubcuenta ASC;';
+            . '(SELECT idcuenta FROM co_cuentas WHERE idcuentaesp = ' . self::$dataBase->var2str($idcuesp)
+            . ' AND codejercicio = ' . self::$dataBase->var2str($codeje) . ') ORDER BY codsubcuenta ASC;';
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             return new self($data[0]);
         }
@@ -384,7 +384,7 @@ class Subcuenta
         }
 
         if (strlen($this->codcuenta) === 0 || strlen($this->codejercicio) === 0) {
-            $this->miniLog->alert($this->i18n->trans('account-data-missing'));
+            self::$miniLog->alert(self::$i18n->trans('account-data-missing'));
             return false;
         }
 
@@ -395,14 +395,14 @@ class Subcuenta
 
         $count = new Cuenta();
         if ($count->loadFromCode(NULL, $where) === FALSE) {
-            $this->miniLog->alert($this->i18n->trans('account-data-error'));
+            self::$miniLog->alert(self::$i18n->trans('account-data-error'));
             return false;
         }
 
         $this->idcuenta = $count->idcuenta;
 
         if (strlen($this->codsubcuenta) === 0 || strlen($this->descripcion) === 0) {
-            $this->miniLog->alert($this->i18n->trans('missing-data-subaccount'));
+            self::$miniLog->alert(self::$i18n->trans('missing-data-subaccount'));
             return false;
         }
 
@@ -422,10 +422,10 @@ class Subcuenta
     {
         $cuentas = [];
         $sql = 'SELECT * FROM co_subcuentas WHERE idcuenta IN '
-            . '(SELECT idcuenta FROM co_cuentas WHERE idcuentaesp = ' . $this->dataBase->var2str($idcuesp)
-            . ' AND codejercicio = ' . $this->dataBase->var2str($codeje) . ') ORDER BY codsubcuenta ASC;';
+            . '(SELECT idcuenta FROM co_cuentas WHERE idcuentaesp = ' . self::$dataBase->var2str($idcuesp)
+            . ' AND codejercicio = ' . self::$dataBase->var2str($codeje) . ') ORDER BY codsubcuenta ASC;';
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $cuentas[] = new self($d);
@@ -452,7 +452,7 @@ class Subcuenta
             . " OR lower(descripcion) LIKE '%" . $query . "%'"
             . ' ORDER BY codejercicio DESC, codcuenta ASC;';
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $s) {
                 $sublist[] = new self($s);
@@ -473,22 +473,22 @@ class Subcuenta
      */
     public function searchByEjercicio($codejercicio, $query)
     {
-        $query = $this->dataBase->escapeString(mb_strtolower(trim($query), 'UTF8'));
+        $query = self::$dataBase->escapeString(mb_strtolower(trim($query), 'UTF8'));
 
-        $sublist = $this->cache->get('search_subcuenta_ejercicio_' . $codejercicio . '_' . $query);
+        $sublist = self::$cache->get('search_subcuenta_ejercicio_' . $codejercicio . '_' . $query);
         if (count($sublist) < 1) {
-            $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codejercicio = ' . $this->dataBase->var2str($codejercicio)
+            $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codejercicio = ' . self::$dataBase->var2str($codejercicio)
                 . " AND (codsubcuenta LIKE '" . $query . "%' OR codsubcuenta LIKE '%" . $query . "'"
                 . " OR lower(descripcion) LIKE '%" . $query . "%') ORDER BY codcuenta ASC;";
 
-            $data = $this->dataBase->select($sql);
+            $data = self::$dataBase->select($sql);
             if (!empty($data)) {
                 foreach ($data as $s) {
                     $sublist[] = new self($s);
                 }
             }
 
-            $this->cache->set('search_subcuenta_ejercicio_' . $codejercicio . '_' . $query, $sublist);
+            self::$cache->set('search_subcuenta_ejercicio_' . $codejercicio . '_' . $query, $sublist);
         }
 
         return $sublist;

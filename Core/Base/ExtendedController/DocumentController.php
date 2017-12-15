@@ -16,7 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\ExtendedController;
+
+use FacturaScripts\Core\Model\Base;
 
 /**
  * Description of DocumentController
@@ -26,9 +29,23 @@ namespace FacturaScripts\Core\Base\ExtendedController;
 abstract class DocumentController extends PanelController
 {
 
+    /**
+     * Header of document.
+     *
+     * @var Base\DocumentoVenta|Base\DocumentoCompra
+     */
     public $document;
+
+    /**
+     * Lines of document, the body.
+     *
+     * @var Base\LineaDocumentoVenta[]|Base\LineaDocumentoCompra[]
+     */
     public $lines;
 
+    /**
+     * Load views
+     */
     protected function createViews()
     {
         if ($this->document === null) {
@@ -44,36 +61,97 @@ abstract class DocumentController extends PanelController
         }
     }
 
+    /**
+     * Run the actions that alter data before reading it.
+     *
+     * @param BaseView $view
+     * @param string $action
+     *
+     * @return bool
+     */
+    protected function execPreviousAction($view, $action)
+    {
+        if ($action === 'delete-doc') {
+            if ($this->document->delete()) {
+                $this->document->clear();
+                $this->lines = [];
+                $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+                return true;
+            }
+
+            return false;
+        }
+
+        return parent::execPreviousAction($view, $action);
+    }
+    
+    protected function execAfterAction($view, $action)
+    {
+        switch ($action) {
+            case 'export':
+                $this->setTemplate(false);
+                $this->exportManager->newDoc($this->response, $this->request->get('option'));
+                $this->exportManager->generateDocumentPage($this->document);
+                $this->exportManager->show($this->response);
+                break;
+        }
+    }
+
+    /**
+     * Return the document class name.
+     *
+     * @return string
+     */
     abstract protected function getDocumentClassName();
 
+    /**
+     * Return the document line class name.
+     *
+     * @return string
+     */
     abstract protected function getDocumentLineClassName();
 
+    /**
+     * Returns the line headers.
+     *
+     * @return string
+     */
     public function getLineHeaders()
     {
         $headers = [
-            "Referencia", "Descripción", "Cantidad", "Precio", "Dto.",
-            "IVA", "RE", "IRPF", "Subtotal"
+            'Referencia', 'Descripción', 'Cantidad', 'Precio', '% Dto.',
+            '% IVA', '% RE', '% IRPF', 'Subtotal'
         ];
         return json_encode($headers);
     }
 
+    /**
+     * Returns the line columns.
+     *
+     * @return string
+     */
     public function getLineColumns()
     {
         $columns = [
-            ["data" => "referencia", "type" => "text"],
-            ["data" => "descripcion", "type" => "text"],
-            ["data" => "cantidad", "type" => "numeric", "format" => "0.00"],
-            ["data" => "pvpunitario", "type" => "numeric", "format" => "0.0000"],
-            ["data" => "dtopor", "type" => "numeric", "format" => "0.00%"],
-            ["data" => "iva", "type" => "numeric", "format" => "0.00%"],
-            ["data" => "recargo", "type" => "numeric", "format" => "0.00%"],
-            ["data" => "irpf", "type" => "numeric", "format" => "0.00%"],
-            ["data" => "subtotal", "type" => "numeric", "format" => "0.00"],
+            ['data' => 'referencia', 'type' => 'text'],
+            ['data' => 'descripcion', 'type' => 'text'],
+            ['data' => 'cantidad', 'type' => 'numeric', 'format' => '0.00'],
+            ['data' => 'pvpunitario', 'type' => 'numeric', 'format' => '0.0000'],
+            ['data' => 'dtopor', 'type' => 'numeric', 'format' => '0.00'],
+            ['data' => 'iva', 'type' => 'numeric', 'format' => '0.00'],
+            ['data' => 'recargo', 'type' => 'numeric', 'format' => '0.00'],
+            ['data' => 'irpf', 'type' => 'numeric', 'format' => '0.00'],
+            ['data' => 'subtotal', 'type' => 'numeric', 'format' => '0.00'],
         ];
 
         return json_encode($columns);
     }
 
+    /**
+     * Returns the data of lines.
+     *
+     * @return string
+     */
     public function getLineData()
     {
         $data = [];
@@ -94,8 +172,13 @@ abstract class DocumentController extends PanelController
         return json_encode($data);
     }
 
+    /**
+     * Load view data procedure
+     *
+     * @param string $keyView
+     * @param BaseView $view
+     */
     protected function loadData($keyView, $view)
     {
-        ;
     }
 }

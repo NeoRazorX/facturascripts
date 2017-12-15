@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ class Atributo
 {
 
     use Base\ModelTrait {
-        save as private saveTrait;
+        save as private traitSave;
     }
 
     /**
@@ -86,13 +86,13 @@ class Atributo
      */
     public function getByNombre($nombre, $minusculas = false)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE nombre = ' . $this->dataBase->var2str($nombre) . ';';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE nombre = ' . self::$dataBase->var2str($nombre) . ';';
         if ($minusculas) {
             $sql = 'SELECT * FROM ' . $this->tableName()
-                . ' WHERE lower(nombre) = ' . $this->dataBase->var2str(mb_strtolower($nombre, 'UTF8') . ';');
+                . ' WHERE lower(nombre) = ' . self::$dataBase->var2str(mb_strtolower($nombre, 'UTF8') . ';');
         }
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
 
         if (!empty($data)) {
             return new self($data[0]);
@@ -110,6 +110,6 @@ class Atributo
     {
         $this->nombre = self::noHtml($this->nombre);
 
-        return $this->saveTrait();
+        return $this->traitSave();
     }
 }

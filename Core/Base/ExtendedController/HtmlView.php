@@ -19,8 +19,7 @@
 
 namespace FacturaScripts\Core\Base\ExtendedController;
 
-use FacturaScripts\Core\Base;
-use Symfony\Component\HttpFoundation\Response;
+use FacturaScripts\Core\Lib\ExportManager;
 
 /**
  * View definition for its use in ExtendedControllers
@@ -53,25 +52,22 @@ class HtmlView extends BaseView
     /**
      * Method to export the view data
      *
-     * @param Base\ExportManager $exportManager
-     * @param Response $response
-     * @param string $action
+     * @param ExportManager $exportManager
      *
      * @return null
      */
-    public function export(&$exportManager, &$response, $action)
+    public function export(&$exportManager)
     {
         return null;
     }
 
     /**
-     * Permite desactivar una columna de una tabla.
+     * Allow disable a column from a table.
      *
      * @param string $columnName
      * @param bool $disabled
      */
     public function disableColumn($columnName, $disabled)
     {
-        
     }
 }

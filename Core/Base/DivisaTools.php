@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 /**
- * Description of DivisaTools
+ * DivisaTools give us some basic and common methods for currency numbers.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -27,7 +28,7 @@ class DivisaTools
 {
 
     /**
-     * Devuelve el valor de la divisa formateada
+     * Returns the value of the formatted currency.
      *
      * @param float $number
      * @param int $decimals
@@ -39,7 +40,7 @@ class DivisaTools
         $symbol = '€';
         $txt = number_format($number, $decimals, FS_NF1, FS_NF2);
 
-        if (FS_POS_DIVISA == 'right') {
+        if (FS_POS_DIVISA === 'right') {
             return $txt . ' ' . $symbol;
         }
 

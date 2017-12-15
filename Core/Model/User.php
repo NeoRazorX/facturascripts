@@ -140,7 +140,7 @@ class User
         new Page();
         new Empresa();
 
-        $this->miniLog->info($this->i18n->trans('created-default-admin-account'));
+        self::$miniLog->info(self::$i18n->trans('created-default-admin-account'));
 
         return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled,idempresa,langcode,homepage)"
             . " VALUES ('admin','" . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE,'1','" . FS_LANG . "','AdminHome');";
@@ -238,7 +238,7 @@ class User
         $this->nick = trim($this->nick);
 
         if (!preg_match("/^[A-Z0-9_\+\.\-]{3,50}$/i", $this->nick)) {
-            $this->miniLog->alert($this->i18n->trans('invalid-user-nick', [$this->nick]));
+            self::$miniLog->alert(self::$i18n->trans('invalid-user-nick', [$this->nick]));
 
             return false;
         }

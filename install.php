@@ -205,7 +205,7 @@ function testPostgreSql(&$errors, $dbData)
 {
     $done = false;
 
-    $connection = pg_connect('host=' . $dbData['host'] . ' port=' . $dbData['port'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass']);
+    $connection = @pg_connect('host=' . $dbData['host'] . ' port=' . $dbData['port'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass']);
     if ($connection) {
         // Check that the DB exists, if it doesn't, we create a new one
         $connection2 = pg_connect('host=' . $dbData['host'] . ' port=' . $dbData['port'] . ' dbname=' . $dbData['name'] . ' user=' . $dbData['user'] . ' password=' . $dbData['pass']);

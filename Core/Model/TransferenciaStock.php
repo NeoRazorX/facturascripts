@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2016-2017    Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -111,7 +111,7 @@ class TransferenciaStock
     public function test()
     {
         if ($this->codalmadestino === $this->codalmaorigen) {
-            $this->miniLog->alert($this->i18n->trans('warehouse-cant-be-same'));
+            self::$miniLog->alert(self::$i18n->trans('warehouse-cant-be-same'));
 
             return false;
         }

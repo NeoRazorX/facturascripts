@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -112,8 +112,8 @@ class DireccionProveedor
             /// ¿Desmarcamos las demás direcciones principales?
             if ($this->direccionppal) {
                 $sql = 'UPDATE ' . $this->tableName() . ' SET direccionppal = false'
-                    . ' WHERE codproveedor = ' . $this->dataBase->var2str($this->codproveedor) . ';';
-                $this->dataBase->exec($sql);
+                    . ' WHERE codproveedor = ' . self::$dataBase->var2str($this->codproveedor) . ';';
+                self::$dataBase->exec($sql);
             }
 
             if ($this->exists()) {

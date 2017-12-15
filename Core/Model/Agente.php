@@ -180,7 +180,7 @@ class Agente
         $this->telefono = self::noHtml($this->telefono);
 
         if (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 50)) {
-            $this->miniLog->alert($this->i18n->trans('agent-name-between-1-50'));
+            self::$miniLog->alert(self::$i18n->trans('agent-name-between-1-50'));
 
             return false;
         }

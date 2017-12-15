@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -126,13 +126,13 @@ class Cliente extends Base\Persona
         if ($cifnif === '' && $razon !== '') {
             $razon = self::noHtml(mb_strtolower($razon, 'UTF8'));
             $sql = 'SELECT * FROM ' . $this->tableName()
-                . " WHERE cifnif = '' AND lower(razonsocial) = " . $this->dataBase->var2str($razon) . ';';
+                . " WHERE cifnif = '' AND lower(razonsocial) = " . self::$dataBase->var2str($razon) . ';';
         } else {
             $cifnif = mb_strtolower($cifnif, 'UTF8');
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE lower(cifnif) = ' . $this->dataBase->var2str($cifnif) . ';';
+            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE lower(cifnif) = ' . self::$dataBase->var2str($cifnif) . ';';
         }
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             return new self($data[0]);
         }
@@ -211,18 +211,18 @@ class Cliente extends Base\Persona
                     return $subcuenta;
                 }
 
-                $this->miniLog->alert($this->i18n->trans('cant-associate-customer-subaccount', [$this->codcliente]));
+                self::$miniLog->alert(self::$i18n->trans('cant-associate-customer-subaccount', [$this->codcliente]));
 
                 return false;
             }
 
-            $this->miniLog->alert($this->i18n->trans('cant-create-customer-subaccount', [$this->codcliente]));
+            self::$miniLog->alert(self::$i18n->trans('cant-create-customer-subaccount', [$this->codcliente]));
 
             return false;
         }
 
-        $this->miniLog->alert($this->i18n->trans('account-not-found'));
-        $this->miniLog->alert($this->i18n->trans('accounting-plan-imported?'));
+        self::$miniLog->alert(self::$i18n->trans('account-not-found'));
+        self::$miniLog->alert(self::$i18n->trans('accounting-plan-imported?'));
 
         return false;
     }
@@ -268,11 +268,11 @@ class Cliente extends Base\Persona
         }
 
         if (!preg_match('/^[A-Z0-9]{1,6}$/i', $this->codcliente)) {
-            $this->miniLog->alert($this->i18n->trans('not-valid-client-code', [$this->codcliente]), ['fieldname' => 'codcliente']);
+            self::$miniLog->alert(self::$i18n->trans('not-valid-client-code', [$this->codcliente]), ['fieldname' => 'codcliente']);
         } elseif (empty($this->nombre) || strlen($this->nombre) > 100) {
-            $this->miniLog->alert($this->i18n->trans('not-valid-client-name', [$this->nombre]), ['fieldname' => 'nombre']);
+            self::$miniLog->alert(self::$i18n->trans('not-valid-client-name', [$this->nombre]), ['fieldname' => 'nombre']);
         } elseif (empty($this->razonsocial) || strlen($this->razonsocial) > 100) {
-            $this->miniLog->alert($this->i18n->trans('not-valid-client-business-name', [$this->razonsocial]), ['fieldname' => 'razonsocial']);
+            self::$miniLog->alert(self::$i18n->trans('not-valid-client-business-name', [$this->razonsocial]), ['fieldname' => 'razonsocial']);
         } else {
             $status = true;
         }
@@ -308,7 +308,7 @@ class Cliente extends Base\Persona
         }
         $consulta .= ' ORDER BY lower(nombre) ASC';
 
-        $data = $this->dataBase->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
+        $data = self::$dataBase->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $clilist[] = new self($d);

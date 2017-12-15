@@ -19,43 +19,55 @@
 
 namespace FacturaScripts\Core\Lib\Export;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Description of ExportInterface
+ * Export interface.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 interface ExportInterface
 {
     /**
+     * Return the full document.
+     *
+     * @return mixed
+     */
+    public function getDoc();
+
+    /**
      * Asigna la cabecera
      *
      * @param Response $response
-     *
-     * @return mixed
      */
-    public function setHeaders(&$response);
+    public function newDoc(&$response);
 
     /**
-     * Nuevo documento
-     *
-     * @param $model
-     *
-     * @return mixed
+     * Adds a new page with the model data.
+     * 
+     * @param mixed $model
+     * @param array $columns
+     * @param string $title
      */
-    public function newDoc($model);
+    public function generateModelPage($model, $columns, $title = '');
 
     /**
-     * Nueva lista de documentos
-     *
-     * @param $model
-     * @param array $where
+     * Adds a new page with a table listing the models data.
+     * 
+     * @param mixed $model
+     * @param DataBaseWhere[] $where
      * @param array $order
      * @param int $offset
      * @param array $columns
-     *
-     * @return mixed
+     * @param string $title
      */
-    public function newListDoc($model, $where, $order, $offset, $columns);
+    public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '');
+    
+    /**
+     * Adds a new page with the document data.
+     * 
+     * @param mixed $model
+     */
+    public function generateDocumentPage($model);
 }

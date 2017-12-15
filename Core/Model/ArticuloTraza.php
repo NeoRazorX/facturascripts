@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2016      Luismipr               <luismipr@gmail.com>.
  * Copyright (C) 2016-2017 Carlos García Gómez    <carlos@facturascripts.com>
  *
@@ -180,8 +180,8 @@ class ArticuloTraza
      */
     public function getByNumserie($numserie)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE numserie = ' . $this->dataBase->var2str($numserie) . ';';
-        $data = $this->dataBase->select($sql);
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE numserie = ' . self::$dataBase->var2str($numserie) . ';';
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             return new self($data[0]);
         }
@@ -201,13 +201,13 @@ class ArticuloTraza
     {
         $lista = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . $this->dataBase->var2str($ref);
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . self::$dataBase->var2str($ref);
         if ($sololibre) {
             $sql .= ' AND idlalbventa IS NULL AND idlfacventa IS NULL';
         }
         $sql .= ' ORDER BY id ASC;';
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $lista[] = new self($d);
@@ -230,8 +230,8 @@ class ArticuloTraza
         $lista = [];
 
         $sql = 'SELECT * FROM ' . $this->tableName()
-            . ' WHERE ' . $tipo . ' = ' . $this->dataBase->var2str($idlinea) . ' ORDER BY id DESC;';
-        $data = $this->dataBase->select($sql);
+            . ' WHERE ' . $tipo . ' = ' . self::$dataBase->var2str($idlinea) . ' ORDER BY id DESC;';
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $lista[] = new self($d);

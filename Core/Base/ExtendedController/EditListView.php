@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Core\Base\ExtendedController;
 
-use FacturaScripts\Core\Base;
-use Symfony\Component\HttpFoundation\Response;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ExportManager;
 
 /**
  * View definition for its use in ExtendedControllers
@@ -54,13 +54,12 @@ class EditListView extends BaseView
     /**
      * Store the parameters for the cursor's WHERE clause
      *
-     * @var array
+     * @var DataBaseWhere[]
      */
     private $where;
 
     /**
-     * Constructor e inicializador de la clase
-     * Clos constructor and initialization
+     * Class constructor and initialization
      *
      * @param string $title
      * @param string $modelName
@@ -91,10 +90,9 @@ class EditListView extends BaseView
 
     /**
      * Column list and its configuration
-     *
      * (Array of ColumnItem)
      *
-     * @return array
+     * @return GroupItem[]
      */
     public function getColumns()
     {
@@ -102,7 +100,7 @@ class EditListView extends BaseView
     }
 
     /**
-     * Devuelve True si tiene menos de 5 columnas, sino False.
+     * Returns True if have less than 5 columns, else returns False.
      */
     public function isBasicEditList()
     {
@@ -119,7 +117,7 @@ class EditListView extends BaseView
      * Establishes the column's edit state
      *
      * @param string $columnName
-     * @param boolean $disabled
+     * @param bool $disabled
      */
     public function disableColumn($columnName, $disabled)
     {
@@ -133,7 +131,7 @@ class EditListView extends BaseView
      * Load the data in the cursor property, according to the where filter specified.
      * Adds an empty row/model at the end of the loaded data.
      *
-     * @param array $where
+     * @param DataBaseWhere[] $where
      * @param int $offset
      * @param int $limit
      */
@@ -159,7 +157,7 @@ class EditListView extends BaseView
         $class = $this->model->modelName();
         $result = new $class();
 
-        foreach (Base\DataBase\DataBaseWhere::getFieldsFilter($this->where) as $field => $value) {
+        foreach (DataBaseWhere::getFieldsFilter($this->where) as $field => $value) {
             $result->{$field} = $value;
         }
 
@@ -169,14 +167,19 @@ class EditListView extends BaseView
     /**
      * Method to export the view data
      *
-     * @param Base\ExportManager $exportManager
-     * @param Response $response
-     * @param string $action
-     *
-     * @return mixed
+     * @param ExportManager $exportManager
      */
-    public function export(&$exportManager, &$response, $action)
+    public function export(&$exportManager)
     {
-        return $exportManager->generateList($response, $action, $this->model, $this->where, $this->order, $this->offset, $this->getColumns());
+        if ($this->count > 0) {
+            $exportManager->generateListModelPage(
+                $this->model,
+                $this->where,
+                $this->order,
+                $this->offset,
+                $this->getColumns(),
+                $this->title
+            );
+        }
     }
 }

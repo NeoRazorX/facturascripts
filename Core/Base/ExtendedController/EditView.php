@@ -19,8 +19,7 @@
 
 namespace FacturaScripts\Core\Base\ExtendedController;
 
-use FacturaScripts\Core\Base;
-use Symfony\Component\HttpFoundation\Response;
+use FacturaScripts\Core\Lib\ExportManager;
 
 /**
  * View definition for its use in ExtendedControllers
@@ -48,7 +47,6 @@ class EditView extends BaseView
 
     /**
      * Returns the text for the data panel header
-     * Returns the
      *
      * @return string
      */
@@ -60,7 +58,6 @@ class EditView extends BaseView
     /**
      * Returns the text for the data panel footer
      *
-     *
      * @return string
      */
     public function getPanelFooter()
@@ -71,7 +68,7 @@ class EditView extends BaseView
     /**
      * Returns the column configuration
      *
-     * @return array
+     * @return GroupItem[]
      */
     public function getColumns()
     {
@@ -80,9 +77,9 @@ class EditView extends BaseView
 
     /**
      * Establishes the column edit state
-     * 
+     *
      * @param string $columnName
-     * @param boolean $disabled
+     * @param bool $disabled
      */
     public function disableColumn($columnName, $disabled)
     {
@@ -114,14 +111,10 @@ class EditView extends BaseView
     /**
      * Method to export the view data
      *
-     * @param Base\ExportManager $exportManager
-     * @param Response $response
-     * @param string $action
-     *
-     * @return mixed
+     * @param ExportManager $exportManager
      */
-    public function export(&$exportManager, &$response, $action)
+    public function export(&$exportManager)
     {
-        return $exportManager->generateDoc($response, $action, $this->model);
+        $exportManager->generateModelPage($this->model, $this->getColumns(), $this->title);
     }
 }

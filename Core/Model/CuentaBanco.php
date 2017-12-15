@@ -81,7 +81,7 @@ class CuentaBanco
     public function test()
     {
         if (!$this->testBankAccount()) {
-            ///$this->miniLog->alert($this->i18n->trans('error-incorrect-bank-details'));
+            ///self::$miniLog->alert(self::$i18n->trans('error-incorrect-bank-details'));
 
             return false;
         }

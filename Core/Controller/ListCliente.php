@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -49,8 +50,8 @@ class ListCliente extends ExtendedController\ListController
      */
     protected function createViews()
     {
-        /* Clientes */
-        $this->addView('FacturaScripts\Core\Model\Cliente', 'ListCliente', 'customers', 'fa-users');
+        /* Customers */
+        $this->addView('\FacturaScripts\Dinamic\Model\Cliente', 'ListCliente', 'customers', 'fa-users');
         $this->addSearchFields('ListCliente', ['nombre', 'razonsocial', 'codcliente', 'email']);
 
         $this->addOrderBy('ListCliente', 'codcliente', 'code');
@@ -60,8 +61,8 @@ class ListCliente extends ExtendedController\ListController
         $this->addFilterSelect('ListCliente', 'codgrupo', 'gruposclientes', '', 'nombre');
         $this->addFilterCheckbox('ListCliente', 'debaja', 'suspended');
 
-        /* Grupos */
-        $this->addView('FacturaScripts\Core\Model\GrupoClientes', 'ListGrupoClientes', 'groups', 'fa-folder-open');
+        /* Groups */
+        $this->addView('\FacturaScripts\Dinamic\Model\GrupoClientes', 'ListGrupoClientes', 'groups', 'fa-folder-open');
         $this->addSearchFields('ListGrupoClientes', ['nombre', 'codgrupo']);
 
         $this->addOrderBy('ListGrupoClientes', 'codgrupo', 'code');

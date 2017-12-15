@@ -18,84 +18,135 @@
  */
 namespace FacturaScripts\Core\Lib\Export;
 
+use FacturaScripts\Core\Base;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Description of XLSExport
+ * XLS export data.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class XLSExport implements ExportInterface
 {
 
-    use \FacturaScripts\Core\Base\Utils;
+    use Base\Utils;
 
     const LIST_LIMIT = 1000;
 
     /**
-     * New document
+     * XLSX object.
      *
-     * @param $model
+     * @var \XLSXWriter 
+     */
+    private $writer;
+
+    /**
+     * Return the full document.
      *
      * @return bool|string
      */
-    public function newDoc($model)
+    public function getDoc()
     {
-        $writer = new \XLSXWriter();
-        $writer->setAuthor('FacturaScripts');
-
-        $tableData = [];
-        foreach ((array) $model as $key => $value) {
-            if (is_string($value)) {
-                $tableData[] = ['key' => $key, 'value' => $this->fixHtml($value)];
-            }
-        }
-
-        $writer->writeSheet($tableData, '', ['key' => 'string', 'value' => 'string']);
-        return $writer->writeToString();
+        return $this->writer->writeToString();
     }
 
     /**
-     * New document list
+     * Create the document and set headers.
      *
-     * @param $model
-     * @param array $where
+     * @param Response $response
+     */
+    public function newDoc(&$response)
+    {
+        $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
+        $response->headers->set('Content-Disposition', 'attachment;filename=doc.xls');
+
+        $this->writer = new \XLSXWriter();
+        $this->writer->setAuthor('FacturaScripts');
+    }
+
+    /**
+     * Adds a new page with the model data.
+     *
+     * @param mixed $model
+     * @param array $columns
+     * @param string $title
+     */
+    public function generateModelPage($model, $columns, $title = '')
+    {
+        $tableData = [];
+        foreach ((array) $model as $key => $value) {
+            if (is_string($value)) {
+                $tableData[] = ['key' => $key, 'value' => $value];
+            }
+        }
+
+        $this->writer->writeSheet($tableData, $title, ['key' => 'string', 'value' => 'string']);
+    }
+
+    /**
+     * Adds a new page with a table listing all models data.
+     *
+     * @param mixed $model
+     * @param Base\DataBase\DataBaseWhere[] $where
      * @param array $order
      * @param int $offset
      * @param array $columns
-     *
-     * @return bool|string
+     * @param string $title
      */
-    public function newListDoc($model, $where, $order, $offset, $columns)
+    public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '')
     {
-        $writer = new \XLSXWriter();
-        $writer->setAuthor('FacturaScripts');
-
         /// Get the columns
         $tableCols = [];
         $sheetHeaders = [];
         $tableData = [];
 
         /// Get the columns
-        foreach ($columns as $col) {
-            $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
-            $sheetHeaders[$col->widget->fieldName] = 'string';
-        }
+        $this->setTableColumns($columns, $tableCols, $sheetHeaders);
 
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         if (empty($cursor)) {
-            $writer->writeSheet($tableData, '', $sheetHeaders);
+            $this->writer->writeSheet($tableData, $title, $sheetHeaders);
         }
         while (!empty($cursor)) {
             $tableData = $this->getTableData($cursor, $tableCols);
-            $writer->writeSheet($tableData, '', $sheetHeaders);
+            $this->writer->writeSheet($tableData, $title, $sheetHeaders);
 
             /// Advance within the results
             $offset += self::LIST_LIMIT;
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
+    }
+    
+    /**
+     * Adds a new page with the document data.
+     * 
+     * @param mixed $model
+     */
+    public function generateDocumentPage($model)
+    {
+        /// TODO
+    }
 
-        return $writer->writeToString();
+    /**
+     * Set the table content.
+     *
+     * @param $columns
+     * @param $tableCols
+     * @param $sheetHeaders
+     */
+    private function setTableColumns(&$columns, &$tableCols, &$sheetHeaders)
+    {
+        foreach ($columns as $col) {
+            if (isset($col->columns)) {
+                $this->setTableColumns($col->columns, $tableCols, $sheetHeaders);
+                continue;
+            }
+
+            if (isset($col->widget->fieldName)) {
+                $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
+                $sheetHeaders[$col->widget->fieldName] = 'string';
+            }
+        }
     }
 
     /**
@@ -113,31 +164,15 @@ class XLSExport implements ExportInterface
         /// Get the data
         foreach ($cursor as $key => $row) {
             foreach ($tableCols as $col) {
-                $value = '';
-                if (isset($row->{$col})) {
-                    $value = $row->{$col};
-                    if (is_string($value)) {
-                        $value = $this->fixHtml($value);
-                    } elseif (is_null($value)) {
-                        $value = '';
-                    }
+                if (!isset($row->{$col}) || null === $row->{$col}) {
+                    $tableData[$key][$col] = '';
+                    continue;
                 }
 
-                $tableData[$key][$col] = $value;
+                $tableData[$key][$col] = $row->{$col};
             }
         }
 
         return $tableData;
-    }
-
-    /**
-     * Assigns the header
-     *
-     * @param Response $response
-     */
-    public function setHeaders(&$response)
-    {
-        $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
-        $response->headers->set('Content-Disposition', 'attachment;filename=doc.xls');
     }
 }

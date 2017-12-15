@@ -50,7 +50,7 @@ abstract class VisualItem
     public $title;
 
     /**
-     * $tile link URL
+     * Title link URL
      *
      * @var string
      */
@@ -65,8 +65,7 @@ abstract class VisualItem
     public $numColumns;
 
     /**
-     * Posición en la que se visualizá ( from lowes to highest )
-     * Display positoin (
+     * Position to render ( from lowes to highest )
      *
      * @var int
      */
@@ -139,7 +138,7 @@ abstract class VisualItem
         $html = $this->i18n->trans($value);
 
         if (!empty($this->titleURL)) {
-            $target = ($this->titleURL[0] != '?') ? "target='_blank'" : '';
+            $target = ($this->titleURL[0] !== '?') ? "target='_blank'" : '';
             $html = '<a href="' . $this->titleURL . '" ' . $target . '>' . $html . '</a>';
         }
 

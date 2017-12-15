@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2016-2017    Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -148,22 +148,22 @@ class LineaTransferenciaStock
 
         $sql = 'SELECT l.idlinea,l.idtrans,l.referencia,l.cantidad,l.descripcion,t.fecha,t.hora FROM lineastransstock l'
             . ' LEFT JOIN transstock t ON l.idtrans = t.idtrans'
-            . ' WHERE l.referencia = ' . $this->dataBase->var2str($ref);
+            . ' WHERE l.referencia = ' . self::$dataBase->var2str($ref);
         if (!empty($codalmaorigen)) {
-            $sql .= ' AND t.codalmaorigen = ' . $this->dataBase->var2str($codalmaorigen);
+            $sql .= ' AND t.codalmaorigen = ' . self::$dataBase->var2str($codalmaorigen);
         }
         if (!empty($codalmadestino)) {
-            $sql .= ' AND t.codalmadestino = ' . $this->dataBase->var2str($codalmadestino);
+            $sql .= ' AND t.codalmadestino = ' . self::$dataBase->var2str($codalmadestino);
         }
         if (!empty($desde)) {
-            $sql .= ' AND t.fecha >= ' . $this->dataBase->var2str($desde);
+            $sql .= ' AND t.fecha >= ' . self::$dataBase->var2str($desde);
         }
         if (!empty($hasta)) {
-            $sql .= ' AND t.fecha >= ' . $this->dataBase->var2str($hasta);
+            $sql .= ' AND t.fecha >= ' . self::$dataBase->var2str($hasta);
         }
         $sql .= ' ORDER BY t.fecha ASC, t.hora ASC;';
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $list[] = new self($d);

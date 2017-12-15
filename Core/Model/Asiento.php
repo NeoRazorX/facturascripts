@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -248,10 +248,10 @@ class Asiento
     public function newNumero()
     {
         $this->numero = 1;
-        $sql = 'SELECT MAX(' . $this->dataBase->sql2Int('numero') . ') as num FROM ' . $this->tableName()
-            . ' WHERE codejercicio = ' . $this->dataBase->var2str($this->codejercicio) . ';';
+        $sql = 'SELECT MAX(' . self::$dataBase->sql2Int('numero') . ') as num FROM ' . $this->tableName()
+            . ' WHERE codejercicio = ' . self::$dataBase->var2str($this->codejercicio) . ';';
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             $this->numero = 1 + (int) $data[0]['num'];
         }
@@ -268,7 +268,7 @@ class Asiento
         $this->documento = self::noHtml($this->documento);
 
         if (strlen($this->concepto) > 255) {
-            $this->miniLog->alert($this->i18n->trans('concept-seat-too-large'));
+            self::$miniLog->alert(self::$i18n->trans('concept-seat-too-large'));
 
             return false;
         }
@@ -301,21 +301,21 @@ class Asiento
                 $sc = $p->getSubcuenta();
                 if ($sc) {
                     if ($sc->codejercicio !== $this->codejercicio) {
-                        $this->miniLog->alert($this->i18n->trans('subaccount-belongs-other-year', [$sc->codsubcuenta]));
+                        self::$miniLog->alert(self::$i18n->trans('subaccount-belongs-other-year', [$sc->codsubcuenta]));
                         $status = false;
                     }
                 } else {
-                    $this->miniLog->alert($this->i18n->trans('subaccount-not-found', [$p->codsubcuenta]));
+                    self::$miniLog->alert(self::$i18n->trans('subaccount-not-found', [$p->codsubcuenta]));
                     $status = false;
                 }
             }
         }
 
         if (!static::floatcmp($debe, $haber, FS_NF0, true)) {
-            $this->miniLog->alert($this->i18n->trans('notchead-seat', [round($debe - $haber, FS_NF0 + 1)]));
+            self::$miniLog->alert(self::$i18n->trans('notchead-seat', [round($debe - $haber, FS_NF0 + 1)]));
             $status = false;
         } elseif (!static::floatcmp($this->importe, max([abs($debe), abs($haber)]), FS_NF0, true)) {
-            $this->miniLog->alert($this->i18n->trans('incorrect-seat-amount'));
+            self::$miniLog->alert(self::$i18n->trans('incorrect-seat-amount'));
             $status = false;
         }
 
@@ -324,36 +324,36 @@ class Asiento
         $eje0 = $ejercicio->get($this->codejercicio);
         if ($eje0) {
             if (strtotime($this->fecha) < strtotime($eje0->fechainicio) || strtotime($this->fecha) > strtotime($eje0->fechafin)) {
-                $this->miniLog->alert($this->i18n->trans('seat-date-not-in-exercise-range', [$eje0->url()]));
+                self::$miniLog->alert(self::$i18n->trans('seat-date-not-in-exercise-range', [$eje0->url()]));
                 $status = false;
             }
         }
 
         if ($status && $duplicados) {
             /// comprobamos si es un duplicado
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fecha = ' . $this->dataBase->var2str($this->fecha) . '
-            AND concepto = ' . $this->dataBase->var2str($this->concepto) . ' AND importe = ' . $this->dataBase->var2str($this->importe) . '
-            AND idasiento != ' . $this->dataBase->var2str($this->idasiento) . ';';
-            $asientos = $this->dataBase->select($sql);
+            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fecha = ' . self::$dataBase->var2str($this->fecha) . '
+            AND concepto = ' . self::$dataBase->var2str($this->concepto) . ' AND importe = ' . self::$dataBase->var2str($this->importe) . '
+            AND idasiento != ' . self::$dataBase->var2str($this->idasiento) . ';';
+            $asientos = self::$dataBase->select($sql);
             if (!empty($asientos)) {
                 foreach ($asientos as $as) {
                     /// comprobamos las líneas
                     if (strtolower(FS_DB_TYPE) === 'mysql') {
                         $sql = 'SELECT codsubcuenta,debe,haber,codcontrapartida,concepto
-                     FROM co_partidas WHERE idasiento = ' . $this->dataBase->var2str($this->idasiento) . '
+                     FROM co_partidas WHERE idasiento = ' . self::$dataBase->var2str($this->idasiento) . '
                      AND NOT EXISTS(SELECT codsubcuenta,debe,haber,codcontrapartida,concepto FROM co_partidas
-                     WHERE idasiento = ' . $this->dataBase->var2str($as['idasiento']) . ');';
-                        $aux = $this->dataBase->select($sql);
+                     WHERE idasiento = ' . self::$dataBase->var2str($as['idasiento']) . ');';
+                        $aux = self::$dataBase->select($sql);
                     } else {
                         $sql = 'SELECT codsubcuenta,debe,haber,codcontrapartida,concepto
-                     FROM co_partidas WHERE idasiento = ' . $this->dataBase->var2str($this->idasiento) . '
+                     FROM co_partidas WHERE idasiento = ' . self::$dataBase->var2str($this->idasiento) . '
                      EXCEPT SELECT codsubcuenta,debe,haber,codcontrapartida,concepto FROM co_partidas
-                     WHERE idasiento = ' . $this->dataBase->var2str($as['idasiento']) . ';';
-                        $aux = $this->dataBase->select($sql);
+                     WHERE idasiento = ' . self::$dataBase->var2str($as['idasiento']) . ';';
+                        $aux = self::$dataBase->select($sql);
                     }
 
                     if (empty($aux)) {
-                        $this->miniLog->alert($this->i18n->trans('seat-possible-duplicated', [$as['idasiento']]));
+                        self::$miniLog->alert(self::$i18n->trans('seat-possible-duplicated', [$as['idasiento']]));
                         $status = false;
                     }
                 }
@@ -469,11 +469,11 @@ class Asiento
             } elseif ($ejercicio->abierto()) {
                 $reg0 = new RegularizacionIva();
                 if ($reg0->getFechaInside($this->fecha)) {
-                    $this->miniLog->alert($this->i18n->trans('seat-within-regularization', [FS_IVA]));
+                    self::$miniLog->alert(self::$i18n->trans('seat-within-regularization', [FS_IVA]));
                     $bloquear = true;
                 }
             } else {
-                $this->miniLog->alert($this->i18n->trans('closed-exercise', [$ejercicio->nombre]));
+                self::$miniLog->alert(self::$i18n->trans('closed-exercise', [$ejercicio->nombre]));
                 $bloquear = true;
             }
         }
@@ -496,9 +496,9 @@ class Asiento
             $p->delete();
         }
 
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idasiento = ' . $this->dataBase->var2str($this->idasiento) . ';';
+        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idasiento = ' . self::$dataBase->var2str($this->idasiento) . ';';
 
-        return $this->dataBase->exec($sql);
+        return self::$dataBase->exec($sql);
     }
 
     /**
@@ -525,13 +525,13 @@ class Asiento
             $consulta .= 'numero' . $auxSql . " LIKE '%" . $query . "%' OR concepto LIKE '%" . $query
                 . "%' OR importe BETWEEN " . ($query - .01) . ' AND ' . ($query + .01);
         } elseif (preg_match('/^(\d{1,2})-(\d{1,2})-(\d{4})$/i', $query)) {
-            $consulta .= 'fecha = ' . $this->dataBase->var2str($query) . " OR concepto LIKE '%" . $query . "%'";
+            $consulta .= 'fecha = ' . self::$dataBase->var2str($query) . " OR concepto LIKE '%" . $query . "%'";
         } else {
             $consulta .= "lower(concepto) LIKE '%" . $buscar = str_replace(' ', '%', $query) . "%'";
         }
         $consulta .= ' ORDER BY fecha DESC';
 
-        $data = $this->dataBase->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
+        $data = self::$dataBase->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $a) {
                 $alist[] = new self($a);
@@ -559,7 +559,7 @@ class Asiento
             HAVING ABS(SUM(p.haber) - SUM(p.debe)) > 0.01
              ORDER BY p.idasiento DESC;';
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $a) {
                 $alist[] = $this->get($a['idasiento']);
@@ -584,15 +584,15 @@ class Asiento
             $sql = '';
             $continuar = true;
             $consulta = 'SELECT idasiento,numero,fecha FROM ' . $this->tableName()
-                . ' WHERE codejercicio = ' . $this->dataBase->var2str($eje->codejercicio)
+                . ' WHERE codejercicio = ' . self::$dataBase->var2str($eje->codejercicio)
                 . ' ORDER BY codejercicio ASC, fecha ASC, idasiento ASC';
 
-            $asientos = $this->dataBase->selectLimit($consulta, 1000, $posicion);
+            $asientos = self::$dataBase->selectLimit($consulta, 1000, $posicion);
             while (!empty($asientos) && $continuar) {
                 foreach ($asientos as $col) {
                     if ($col['numero'] !== $numero) {
-                        $sql .= 'UPDATE ' . $this->tableName() . ' SET numero = ' . $this->dataBase->var2str($numero)
-                            . ' WHERE idasiento = ' . $this->dataBase->var2str($col['idasiento']) . ';';
+                        $sql .= 'UPDATE ' . $this->tableName() . ' SET numero = ' . self::$dataBase->var2str($numero)
+                            . ' WHERE idasiento = ' . self::$dataBase->var2str($col['idasiento']) . ';';
                     }
 
                     ++$numero;
@@ -600,14 +600,14 @@ class Asiento
                 $posicion += 1000;
 
                 if ($sql !== '') {
-                    if (!$this->dataBase->exec($sql)) {
-                        $this->miniLog->alert($this->i18n->trans('error-while-renumbering-seats', [$eje->codejercicio]));
+                    if (!self::$dataBase->exec($sql)) {
+                        self::$miniLog->alert(self::$i18n->trans('error-while-renumbering-seats', [$eje->codejercicio]));
                         $continuar = false;
                     }
                     $sql = '';
                 }
 
-                $asientos = $this->dataBase->selectLimit($consulta, 1000, $posicion);
+                $asientos = self::$dataBase->selectLimit($consulta, 1000, $posicion);
             }
         }
 
@@ -628,19 +628,19 @@ class Asiento
             if ($ej instanceof Ejercicio && $ej->abierto()) {
                 foreach ($regiva0->allFromEjercicio($ej->codejercicio) as $reg) {
                     $sql = 'UPDATE ' . $this->tableName() . ' SET editable = false WHERE editable = true'
-                        . ' AND codejercicio = ' . $this->dataBase->var2str($ej->codejercicio)
-                        . ' AND fecha >= ' . $this->dataBase->var2str($reg->fechainicio)
-                        . ' AND fecha <= ' . $this->dataBase->var2str($reg->fechafin) . ';';
-                    $this->dataBase->exec($sql);
+                        . ' AND codejercicio = ' . self::$dataBase->var2str($ej->codejercicio)
+                        . ' AND fecha >= ' . self::$dataBase->var2str($reg->fechainicio)
+                        . ' AND fecha <= ' . self::$dataBase->var2str($reg->fechafin) . ';';
+                    self::$dataBase->exec($sql);
                 }
             } else {
                 $sql = 'UPDATE ' . $this->tableName() . ' SET editable = false WHERE editable = true'
-                    . ' AND codejercicio = ' . $this->dataBase->var2str($ej->codejercicio) . ';';
-                $this->dataBase->exec($sql);
+                    . ' AND codejercicio = ' . self::$dataBase->var2str($ej->codejercicio) . ';';
+                self::$dataBase->exec($sql);
             }
         }
 
-        echo $this->i18n->trans('renumbering-seats');
+        echo self::$i18n->trans('renumbering-seats');
         $this->renumerar();
     }
     /// renumera todos los asientos. Devuelve False en caso de error

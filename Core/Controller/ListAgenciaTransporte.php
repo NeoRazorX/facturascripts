@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -50,7 +51,7 @@ class ListAgenciaTransporte extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\AgenciaTransporte', $className);
+        $this->addView('\FacturaScripts\Dinamic\Model\AgenciaTransporte', $className);
         $this->addSearchFields($className, ['nombre', 'codtrans']);
 
         $this->addOrderBy($className, 'codtrans', 'code');

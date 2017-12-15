@@ -137,7 +137,7 @@ class FormaPago
         $fecha1 = date('d-m-Y');
         $fecha2 = date('d-m-Y', strtotime($this->vencimiento));
         if (strtotime($fecha1) > strtotime($fecha2)) {
-            $this->miniLog->alert($this->i18n->trans('expiration-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('expiration-invalid'));
 
             return false;
         }

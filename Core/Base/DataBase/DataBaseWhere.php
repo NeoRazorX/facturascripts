@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -120,7 +121,7 @@ class DataBaseWhere
 
             case 'IN':
                 $result = '(';
-                if (substr(strtolower($this->value), 0, 7) == 'select ') {
+                if (0 === stripos($this->value, 'select ')) {
                     $result .= $this->value;
                 } else {
                     $comma = '';
@@ -181,7 +182,7 @@ class DataBaseWhere
      */
     private function getValue()
     {
-        return (in_array($this->operator, ['LIKE', 'IS', 'IN'])) ? $this->getValueFromOperator() : $this->getValueFromType();
+        return in_array($this->operator, ['LIKE', 'IS', 'IN'], false) ? $this->getValueFromOperator() : $this->getValueFromType();
     }
 
     /**
@@ -205,7 +206,7 @@ class DataBaseWhere
             $union = ' OR ';
         }
 
-        if ($result != '') {
+        if ($result !== '') {
             if (count($fields) > 1) {
                 $result = '(' . $result . ')';
             }
@@ -234,7 +235,7 @@ class DataBaseWhere
             $join = true;
         }
 
-        if ($result != '') {
+        if ($result !== '') {
             $result = ' WHERE ' . $result;
         }
 

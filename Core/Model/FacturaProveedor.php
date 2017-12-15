@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -105,9 +105,9 @@ class FacturaProveedor
                             /// ¿La factura está dentro de alguna regularización?
                             $regiva0 = new RegularizacionIva();
                             if ($regiva0->getFechaInside($this->fecha)) {
-                                $this->miniLog->alert($this->i18n->trans('invoice-regularized-cant-change-date', [FS_IVA]));
+                                self::$miniLog->alert(self::$i18n->trans('invoice-regularized-cant-change-date', [FS_IVA]));
                             } elseif ($regiva0->getFechaInside($fecha)) {
-                                $this->miniLog->alert($this->i18n->trans('cant-assign-date-already-regularized', [$fecha, FS_IVA]));
+                                self::$miniLog->alert(self::$i18n->trans('cant-assign-date-already-regularized', [$fecha, FS_IVA]));
                             } else {
                                 $cambio = false;
                                 $this->fecha = $fecha;
@@ -120,14 +120,14 @@ class FacturaProveedor
                                 }
                             }
                         } else {
-                            $this->miniLog->alert($this->i18n->trans('closed-exercise-cant-change-date', [$eje2->nombre]));
+                            self::$miniLog->alert(self::$i18n->trans('closed-exercise-cant-change-date', [$eje2->nombre]));
                         }
                     }
                 } else {
-                    $this->miniLog->alert($this->i18n->trans('closed-exercise-cant-change-date', [$ejercicio->nombre]));
+                    self::$miniLog->alert(self::$i18n->trans('closed-exercise-cant-change-date', [$ejercicio->nombre]));
                 }
             } else {
-                $this->miniLog->alert($this->i18n->trans('exercise-not-found'));
+                self::$miniLog->alert(self::$i18n->trans('exercise-not-found'));
             }
         } elseif ($hora !== $this->hora) { /// factura existente y cambiamos hora
             $this->hora = $hora;
@@ -193,30 +193,30 @@ class FacturaProveedor
             if ($ejercicio->abierto()) {
                 $reg0 = new RegularizacionIva();
                 if ($reg0->getFechaInside($this->fecha)) {
-                    $this->miniLog->alert($this->i18n->trans('invoice-regularized-cant-delete', [FS_IVA]));
+                    self::$miniLog->alert(self::$i18n->trans('invoice-regularized-cant-delete', [FS_IVA]));
                     $bloquear = true;
                 } else {
                     foreach ($this->getRectificativas() as $rect) {
-                        $this->miniLog->alert($this->i18n->trans('invoice-have-rectifying-cant-delete'));
+                        self::$miniLog->alert(self::$i18n->trans('invoice-have-rectifying-cant-delete'));
                         $bloquear = true;
                         break;
                     }
                 }
             } else {
-                $this->miniLog->alert($this->i18n->trans('closed-exercise', [$ejercicio->nombre]));
+                self::$miniLog->alert(self::$i18n->trans('closed-exercise', [$ejercicio->nombre]));
                 $bloquear = true;
             }
         }
 
         /// desvincular albaranes asociados y eliminar factura
         $sql = 'UPDATE albaranesprov SET idfactura = NULL, ptefactura = TRUE'
-            . ' WHERE idfactura = ' . $this->dataBase->var2str($this->idfactura) . ';'
-            . 'DELETE FROM ' . static::tableName() . ' WHERE idfactura = ' . $this->dataBase->var2str($this->idfactura) . ';';
+            . ' WHERE idfactura = ' . self::$dataBase->var2str($this->idfactura) . ';'
+            . 'DELETE FROM ' . static::tableName() . ' WHERE idfactura = ' . self::$dataBase->var2str($this->idfactura) . ';';
 
         if ($bloquear) {
             return false;
         }
-        if ($this->dataBase->exec($sql)) {
+        if (self::$dataBase->exec($sql)) {
             if ($this->idasiento) {
                 /**
                  * Delegamos la eliminación del asiento en la clase correspondiente.
@@ -233,7 +233,7 @@ class FacturaProveedor
                 }
             }
 
-            $this->miniLog->info($this->i18n->trans('supplier-invoice-deleted-successfully', [$this->codigo]));
+            self::$miniLog->info(self::$i18n->trans('supplier-invoice-deleted-successfully', [$this->codigo]));
 
             return true;
         }

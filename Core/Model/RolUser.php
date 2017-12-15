@@ -93,12 +93,12 @@ class RolUser
     public function test()
     {
         if (empty($this->nick)) {
-            $this->miniLog->alert($this->i18n->trans('nick-is-empty'));
+            self::$miniLog->alert(self::$i18n->trans('nick-is-empty'));
             return false;
         }
 
         if (empty($this->codrol)) {
-            $this->miniLog->alert($this->i18n->trans('role-is-empty'));
+            self::$miniLog->alert(self::$i18n->trans('role-is-empty'));
             return false;
         }
 
@@ -109,7 +109,7 @@ class RolUser
 
         $rolUser = new RolUser();
         if ($rolUser->loadFromCode(NULL, $where) && $rolUser->id !== $this->id) {
-            $this->miniLog->alert($this->i18n->trans('rol-user-exists'));
+            self::$miniLog->alert(self::$i18n->trans('rol-user-exists'));
             return false;
         }
 

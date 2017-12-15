@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\MiniLog;
@@ -24,15 +25,22 @@ use FacturaScripts\Core\Model\Settings;
 use PHPMailer\PHPMailer\PHPMailer;
 
 /**
- * Description of EmailTools
+ * Tools for send emails.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class EmailTools
 {
-
+    /**
+     * Settings properties for email
+     *
+     * @var array
+     */
     private static $settings;
 
+    /**
+     * EmailTools constructor.
+     */
     public function __construct()
     {
         if (!isset(self::$settings)) {
@@ -40,6 +48,9 @@ class EmailTools
         }
     }
 
+    /**
+     * Reload all email settings properties.
+     */
     public function reloadConfig()
     {
         $settingsModel = new Settings();
@@ -49,6 +60,11 @@ class EmailTools
         }
     }
 
+    /**
+     * Create new PHPMailer connection with stored settings.
+     *
+     * @return PHPMailer
+     */
     public function newMail()
     {
         $mail = new PHPMailer();
@@ -70,6 +86,13 @@ class EmailTools
         return $mail;
     }
 
+    /**
+     * Send an email, returns True on success, False on failure.
+     *
+     * @param PHPMailer $mail
+     *
+     * @return bool
+     */
     public function send($mail)
     {
         if ($mail->smtpConnect($this->smtpOptions()) && $mail->send()) {
@@ -82,6 +105,11 @@ class EmailTools
         return false;
     }
 
+    /**
+     * Test the PHPMailer connection. Return the result of the connection.
+     *
+     * @return bool
+     */
     public function test()
     {
         if (self::$settings['mailer'] === 'smtp') {
@@ -92,6 +120,16 @@ class EmailTools
         return true;
     }
 
+    /**
+     * Returns the HTML code for the email.
+     *
+     * @param string $companyName
+     * @param string $title
+     * @param string $txt
+     * @param string $sign
+     *
+     * @return mixed
+     */
     public function getHtml($companyName, $title, $txt, $sign)
     {
         $html = file_get_contents(FS_FOLDER . '/Dinamic/Assets/Email/BasicTemplate.html');
@@ -111,6 +149,11 @@ class EmailTools
         return str_replace($search, $replace, $html);
     }
 
+    /**
+     * Returns the SMTP Options.
+     *
+     * @return array
+     */
     private function smtpOptions()
     {
         $SMTPOptions = [];

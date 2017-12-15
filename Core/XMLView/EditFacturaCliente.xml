@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Initial description for the controller EditFacturaCliente
+ *
+ * @author Carlos García Gómez <carlos@facturascripts.com>
+-->
+
+<view>
+    <columns>
+        <group name="customer" numcolumns="12">
+            <column name="code" display="none" order="100">
+                <widget type="text" fieldname="idfactura" required="true" />
+            </column>
+            <column name="customer" title="customer" numcolumns="3" order="100">
+                <widget type="text" fieldname="nombrecliente" required="true" />
+            </column>
+            <column name="cifnif" title="cifnif" numcolumns="2" order="100">
+                <widget type="text" fieldname="cifnif" />
+            </column>
+            <column name="number2" numcolumns="3" order="100">
+                <widget type="text" fieldname="numero2" />
+            </column>
+            <column name="date" title="date" numcolumns="2" order="100">
+                <widget type="datepicker" fieldname="fecha" required="true" />
+            </column>
+            <column name="hour" title="hour" numcolumns="2" order="100">
+                <widget type="text" fieldname="hora" required="true" />
+            </column>
+        </group>
+        <group name="billingaddr" title="billing-address" numcolumns="12">
+            <column name="country" numcolumns="3">
+                <widget type="select" fieldname="codpais">
+                    <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="province" numcolumns="3" order="100">
+                <widget type="text" fieldname="provincia" />
+            </column>
+            <column name="city" numcolumns="3" order="100">
+                <widget type="text" fieldname="ciudad" />
+            </column>
+            <column name="zip-code" numcolumns="3" order="100">
+                <widget type="text" fieldname="codpostal" />
+            </column>
+            <column name="postalmail" numcolumns="2" order="100">
+                <widget type="text" fieldname="apartado" />
+            </column>
+            <column name="address" numcolumns="10" order="150">
+                <widget type="text" fieldname="direccion" />
+            </column>
+        </group>
+        <group name="shippingaddr" title="shipping-address" numcolumns="12">
+            <column name="province" numcolumns="3" order="100">
+                <widget type="text" fieldname="provinciaenv" />
+            </column>
+            <column name="city" numcolumns="3" order="100">
+                <widget type="text" fieldname="ciudadenv" />
+            </column>
+            <column name="zip-code" numcolumns="3" order="100">
+                <widget type="text" fieldname="codpostalenv" />
+            </column>
+            <column name="postalmail" numcolumns="3" order="100">
+                <widget type="text" fieldname="apartadoenv" />
+            </column>
+            <column name="address" numcolumns="12" order="150">
+                <widget type="text" fieldname="direccionenv" />
+            </column>
+        </group>
+        <group name="codattributes" title="attributes" numcolumns="12">
+            <column name="warehouse" numcolumns="3">
+                <widget type="select" fieldname="codalmacen">
+                    <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="serie" numcolumns="2" order="100">
+                <widget type="select" fieldname="codserie">
+                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="payment" title="method-payment" numcolumns="3" titleurl="?page=ListFormaPago" order="120">
+                <widget type="select" fieldname="codpago">
+                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="currency" title="currency" numcolumns="2" titleurl="?page=ListDivisa" order="120">
+                <widget type="select" fieldname="coddivisa">
+                    <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="tasaconv" numcolumns="2" order="150">
+                <widget type="number" fieldname="tasaconv" />
+            </column>
+        </group>
+        <group name="notes" numcolumns="12">
+            <column name="observations" numcolumns="12" order="110">
+                <widget type="textarea" fieldname="observaciones" required="true" />
+            </column>
+        </group>
+    </columns>
+</view>

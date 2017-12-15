@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -195,9 +195,9 @@ class Caja
     {
         $cajalist = [];
         $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codagente = '
-            . $this->dataBase->var2str($codagente) . ' ORDER BY id DESC';
+            . self::$dataBase->var2str($codagente) . ' ORDER BY id DESC';
 
-        $data = $this->dataBase->selectLimit($sql, $limit, $offset);
+        $data = self::$dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
             foreach ($data as $c) {
                 $cajalist[] = new self($c);
