@@ -126,7 +126,7 @@ abstract class DocumentController extends PanelController
      */
     protected function loadData($keyView, $view)
     {
-        
+        /// Implement in children
     }
 
     /**
@@ -161,6 +161,11 @@ abstract class DocumentController extends PanelController
      */
     abstract protected function getDocumentLineClassName();
 
+    /**
+     * Return the name of the xml file with the column configuration por lines.
+     * 
+     * @return string
+     */
     protected function getLineXMLView()
     {
         return 'CommonLineasDocumento';
@@ -217,5 +222,24 @@ abstract class DocumentController extends PanelController
         }
 
         return json_encode($data);
+    }
+
+    public function getBreadcrumb()
+    {
+        $items = [
+            ['title' => $this->empresa->nombre, 'url' => '#'],
+            ['title' => $this->document->codalmacen, 'url' => '#']
+        ];
+
+        if (isset($this->document->codcliente)) {
+            $items[] = ['title' => $this->document->nombrecliente, 'url' => '#'];
+        } elseif (isset($this->document->codproveedor)) {
+            $items[] = ['title' => $this->document->nombre, 'url' => '#'];
+        }
+
+        $items[] = ['title' => $this->document->codserie, 'url' => '#'];
+        $items[] = ['title' => $this->document->fecha, 'url' => '#'];
+        $items[] = ['title' => $this->document->hora, 'url' => '#'];
+        return $items;
     }
 }
