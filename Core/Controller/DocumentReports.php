@@ -325,31 +325,24 @@ class DocumentReports extends Controller
      */
     private function getTableName($source)
     {
-        $doc = '';
         switch ($source) {
             case 'customer-estimations':
-                $doc = 'presupuestoscli';
-                break;
+                return 'presupuestoscli';
             case 'customer-orders':
-                $doc = 'pedidoscli';
-                break;
+                return 'pedidoscli';
             case 'customer-delivery-notes':
-                $doc = 'albaranescli';
-                break;
+                return 'albaranescli';
             case 'customer-invoices':
-                $doc = 'facturascli';
-                break;
+                return 'facturascli';
             case 'supplier-orders':
-                $doc = 'pedidosprov';
-                break;
+                return 'pedidosprov';
             case 'supplier-delivery-notes':
-                $doc = 'albaranesprov';
-                break;
+                return 'albaranesprov';
             case 'supplier-invoices':
-                $doc = 'facturasprov';
-                break;
+                return 'facturasprov';
+            default:
+                return '';
         }
-        return $doc;
     }
 
     /**
