@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model;
 
 /**
@@ -225,7 +226,7 @@ class DocumentReports extends Controller
     {
         $result = [];
 
-        foreach ($this->dateRange($dateFrom, $dateTo, $step, $format) as $date) {
+        foreach (Utils::dateRange($dateFrom, $dateTo, $step, $format) as $date) {
             $dateDaily = $this->getStamp($format, $date);
             $result[$source][$dateDaily] = [
                 'date' => date($format, strtotime($this->fullDate($date))),
@@ -325,31 +326,24 @@ class DocumentReports extends Controller
      */
     private function getTableName($source)
     {
-        $doc = '';
         switch ($source) {
             case 'customer-estimations':
-                $doc = 'presupuestoscli';
-                break;
+                return 'presupuestoscli';
             case 'customer-orders':
-                $doc = 'pedidoscli';
-                break;
+                return 'pedidoscli';
             case 'customer-delivery-notes':
-                $doc = 'albaranescli';
-                break;
+                return 'albaranescli';
             case 'customer-invoices':
-                $doc = 'facturascli';
-                break;
+                return 'facturascli';
             case 'supplier-orders':
-                $doc = 'pedidosprov';
-                break;
+                return 'pedidosprov';
             case 'supplier-delivery-notes':
-                $doc = 'albaranesprov';
-                break;
+                return 'albaranesprov';
             case 'supplier-invoices':
-                $doc = 'facturasprov';
-                break;
+                return 'facturasprov';
+            default:
+                return '';
         }
-        return $doc;
     }
 
     /**
@@ -492,27 +486,5 @@ class DocumentReports extends Controller
             'supplier-delivery-notes',
             'supplier-invoices'
         ];
-    }
-
-    /**
-     * Generate an array based on dates.
-     *
-     * @param string $first
-     * @param string $last
-     * @param string $step
-     * @param string $format
-     *
-     * @return array
-     */
-    protected function dateRange($first, $last, $step = '+1 day', $format = 'd-m-Y')
-    {
-        $dates = array();
-        $start = strtotime($first);
-        $end = strtotime($last);
-        while ($start <= $end) {
-            $dates[] = date($format, $start);
-            $start = strtotime($step, $start);
-        }
-        return $dates;
     }
 }
