@@ -19,11 +19,18 @@
 var documentLineHeaders = [];
 var documentLineColumns = [];
 var documentLines = [];
-var msgConfirmDelete = '';
-var msgAreYouSure = '';
-var msgCancel = '';
-var msgConfirm = '';
-var tabActive = '';
+var hsTable = null;
+var msgConfirmDelete = "";
+var msgAreYouSure = "";
+var msgCancel = "";
+var msgConfirm = "";
+var tabActive = "";
+
+function documentSave() {
+    for(var num = 1; num < 200; num++) {
+        var row = hsTable.getData(num);
+    }
+}
 
 function deleteRecord(formName) {
     bootbox.confirm({
@@ -36,15 +43,15 @@ function deleteRecord(formName) {
             },
             confirm: {
                 label: "<i class='fa fa-check'></i> " + msgConfirm,
-                className: 'btn-danger'
+                className: "btn-danger"
             }
         },
         callback: function (result) {
             if (result) {
                 var form = document.forms[formName];
-                form.action.value = 'delete';
+                form.action.value = "delete";
                 if (formName === "f_document_primary") {
-                    form.action.value = 'delete-doc';
+                    form.action.value = "delete-doc";
                 }
                 form.submit();
             }
@@ -53,16 +60,16 @@ function deleteRecord(formName) {
 }
 
 $(document).ready(function () {
-    $('#mainTabs').on('shown.bs.tab', function (e) {
+    $("#mainTabs").on("shown.bs.tab", function (e) {
         tabActive = e.target.hash.substring(1);
     });
-    var container = document.getElementById('document-lines');
-    var hstable = new Handsontable(container, {
+    var container = document.getElementById("document-lines");
+    hsTable = new Handsontable(container, {
         data: documentLines,
         columns: documentLineColumns,
         rowHeaders: true,
         colHeaders: documentLineHeaders,
-        stretchH: 'all',
+        stretchH: "all",
         autoWrapRow: true,
         manualRowResize: true,
         manualColumnResize: true,
@@ -71,7 +78,7 @@ $(document).ready(function () {
         contextMenu: true,
         filters: true,
         dropdownMenu: true,
-        preventOverflow: 'horizontal',
+        preventOverflow: "horizontal",
         minSpareRows: 1,
     });
 });

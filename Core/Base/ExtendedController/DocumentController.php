@@ -193,6 +193,11 @@ abstract class DocumentController extends PanelController
      */
     public function getLineColumns()
     {
+        $moneyFormat = '0.';
+        for ($num = 0; $num < FS_NF0; $num++) {
+            $moneyFormat .= '0';
+        }
+
         $columns = [];
         foreach ($this->lineOptions as $col) {
             $item = [
@@ -201,6 +206,7 @@ abstract class DocumentController extends PanelController
             ];
             if ($item['type'] === 'number' || $item['type'] === 'money') {
                 $item['type'] = 'numeric';
+                $item['format'] = $moneyFormat;
             }
 
             $columns[] = $item;

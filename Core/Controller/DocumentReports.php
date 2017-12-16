@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * long with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -32,6 +31,7 @@ use FacturaScripts\Core\Model;
  */
 class DocumentReports extends Controller
 {
+
     /**
      * Data for table daily.
      * @var array
@@ -49,6 +49,7 @@ class DocumentReports extends Controller
      * @var array
      */
     public $dataTableYearly;
+
     /**
      * Document 1 used by default or selected.
      * @var string
@@ -205,7 +206,7 @@ class DocumentReports extends Controller
         $this->dataTableMonthly[] = $this->populateTable($this->date1From, $this->date1To, $this->source1, 1, '+1 month', 'm-Y');
         $this->dataTableMonthly[] = $this->populateTable($this->date2From, $this->date2To, $this->source2, 2, '+1 month', 'm-Y');
 
-        $this->dataTableYearly= [];
+        $this->dataTableYearly = [];
         $this->dataTableYearly[] = $this->populateTable($this->date1From, $this->date1To, $this->source1, 1, '+1 year', 'Y');
         $this->dataTableYearly[] = $this->populateTable($this->date2From, $this->date2To, $this->source2, 2, '+1 year', 'Y');
     }
@@ -238,7 +239,7 @@ class DocumentReports extends Controller
 
         $table = $this->getTableName($source);
         $sql = 'SELECT ' . $dateSQL . ' AS date, SUM(neto) AS total FROM ' . $table
-            . ' WHERE ' . $this->getWhere($pos) . 'GROUP BY date ORDER BY date ASC;' ;
+            . ' WHERE ' . $this->getWhere($pos) . 'GROUP BY date ORDER BY date ASC;';
         $list = $this->dataBase->select($sql);
         foreach ($list as $item) {
             $dateDaily = $this->getStamp($format, $item['date']);
@@ -264,6 +265,7 @@ class DocumentReports extends Controller
                     $date = "to_char(fecha,'YYYY')";
                 }
                 break;
+
             case 'm-Y':
                 $date = "DATE_FORMAT(fecha, '%m%Y')";
                 if (strtolower(FS_DB_TYPE) === 'postgresql') {
@@ -275,6 +277,7 @@ class DocumentReports extends Controller
                 $date = 'fecha';
                 break;
         }
+
         return $date;
     }
 
@@ -290,8 +293,10 @@ class DocumentReports extends Controller
         switch (strlen($date)) {
             case 4:
                 return '01-01-' . $date;
+                
             case 7:
                 return '01-' . $date;
+                
             default:
                 return $date;
         }
@@ -310,8 +315,10 @@ class DocumentReports extends Controller
         switch ($format) {
             case 'Y':
                 return date('Y', strtotime($this->fullDate($date)));
+
             case 'm-Y':
                 return date('Ym', strtotime($this->fullDate($date)));
+
             default:
                 return date('Ymd', strtotime($date));
         }
@@ -329,18 +336,25 @@ class DocumentReports extends Controller
         switch ($source) {
             case 'customer-estimations':
                 return 'presupuestoscli';
+
             case 'customer-orders':
                 return 'pedidoscli';
+
             case 'customer-delivery-notes':
                 return 'albaranescli';
+
             case 'customer-invoices':
                 return 'facturascli';
+
             case 'supplier-orders':
                 return 'pedidosprov';
+
             case 'supplier-delivery-notes':
                 return 'albaranesprov';
+
             case 'supplier-invoices':
                 return 'facturasprov';
+
             default:
                 return '';
         }
@@ -363,12 +377,14 @@ class DocumentReports extends Controller
                         . ' AND fecha ' . $this->date1ToOperator . ' ' . $this->dataBase->var2str($this->date1To) . ' ';
                 }
                 return $where . $this->getCommonWhere();
+
             case 2:
                 if (!empty($this->date2From) && !empty($this->date2To)) {
                     $where .= ' fecha ' . $this->date2FromOperator . ' ' . $this->dataBase->var2str($this->date2From)
                         . ' AND fecha ' . $this->date2ToOperator . ' ' . $this->dataBase->var2str($this->date2To) . ' ';
                 }
                 return $where . $this->getCommonWhere();
+
             default:
                 return '';
         }
@@ -391,8 +407,9 @@ class DocumentReports extends Controller
             $where .= ' AND coddivisa = ' . $this->dataBase->var2str($this->currency) . ' ';
         }
         if (!empty($this->paymentMethod)) {
-            $where .= ' AND codpago' . $this->dataBase->var2str($this->paymentMethod) . ' ';
+            $where .= ' AND codpago = ' . $this->dataBase->var2str($this->paymentMethod) . ' ';
         }
+        
         return $where;
     }
 
@@ -455,6 +472,7 @@ class DocumentReports extends Controller
         $this->currency = AppSettings::get('default', 'coddivisa');
         $this->paymentMethod = AppSettings::get('default', 'codpago');
     }
+
     /**
      * Return the basic data for this page.
      *
