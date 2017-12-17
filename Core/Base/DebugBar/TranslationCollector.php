@@ -40,6 +40,13 @@ class TranslationCollector extends DataCollector implements Renderable, AssetPro
     protected $translations;
 
     /**
+     * Array containing the pending translations
+     *
+     * @var array
+     */
+    protected $pendingTranslations;
+
+    /**
      * Translation engine
      *
      * @var Translator
@@ -115,6 +122,13 @@ class TranslationCollector extends DataCollector implements Renderable, AssetPro
                 'value' => $value
             ];
         }
+
+        $this->pendingTranslations = [];
+        if (static::$i18n->getLangCode() !== 'en_EN') {
+            foreach (static::$i18n->getMissingMessages(static::$i18n->getLangCode()) as $key => $value) {
+                $this->pendingTranslations[] = [ 'key' => $key, 'value' => $value];
+            }
+        }
     }
 
     /**
@@ -125,10 +139,11 @@ class TranslationCollector extends DataCollector implements Renderable, AssetPro
     public function collect()
     {
         $this->addTranslations();
-
         return [
             'nb_statements' => count($this->translations),
+            'nb_failed_statements' => count($this->pendingTranslations),
             'translations' => $this->translations,
+            'pending_translations' => $this->pendingTranslations,
         ];
     }
 }
