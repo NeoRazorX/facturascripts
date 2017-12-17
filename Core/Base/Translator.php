@@ -149,4 +149,46 @@ class Translator
     {
         return self::$usedStrings;
     }
+
+    /**
+     * Returns the full list of messages for the language
+     *
+     * @return array
+     */
+    public function getMessages($lang = FS_LANG)
+    {
+        $catalogue = self::$translator->getCatalogue($lang);
+        $messages = $catalogue->all();
+        while ($catalogue = $catalogue->getFallbackCatalogue()) {
+            $messages = array_replace_recursive($catalogue->all(), $messages);
+        }
+        return $messages['messages'];
+    }
+
+
+    /**
+     * Returns the full list of messages for the language
+     *
+     * @return array
+     */
+    public function getMissingMessages($lang)
+    {
+        $userCatalogue = self::$translator->getCatalogue($lang);
+        $userMessages = $userCatalogue->all();
+        while ($userCatalogue = $userCatalogue->getFallbackCatalogue()) {
+            $userMessages = array_replace_recursive($userCatalogue->all(), $userMessages);
+        }
+
+        $systemCatalogue = self::$translator->getCatalogue('en_EN');
+        $systemMessages = $systemCatalogue->all();
+
+        $result = [];
+        foreach ($systemMessages['messages'] as $pos => $msg) {
+            if ($msg === $userMessages['messages'][$pos]) {
+                $result[$pos] = $msg;
+            }
+        }
+
+        return $result;
+    }
 }
