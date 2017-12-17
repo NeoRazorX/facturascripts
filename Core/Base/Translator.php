@@ -152,6 +152,7 @@ class Translator
      */
     public function getUsedStrings()
     {
+        ksort(self::$usedStrings);
         return self::$usedStrings;
     }
 
@@ -169,6 +170,22 @@ class Translator
         while ($catalogue = $catalogue->getFallbackCatalogue()) {
             $messages = array_replace_recursive($catalogue->all(), $messages);
         }
+        ksort($messages['messages']);
+        return $messages['messages'];
+    }
+
+    /**
+     * Returns the full list of messages for the language
+     *
+     * @param string $lang
+     *
+     * @return array
+     */
+    public function getOriginalMessages($lang = FS_LANG)
+    {
+        $catalogue = self::$translator->getCatalogue($lang);
+        $messages = $catalogue->all();
+        ksort($messages['messages']);
         return $messages['messages'];
     }
 
@@ -185,22 +202,19 @@ class Translator
         if ($lang === 'en_EN') {
             return [];
         }
-        $userCatalogue = self::$translator->getCatalogue($lang);
-        $userMessages = $userCatalogue->all();
-        while ($userCatalogue = $userCatalogue->getFallbackCatalogue()) {
-            $userMessages = array_replace_recursive($userCatalogue->all(), $userMessages);
-        }
+        $userMessages = $this->getOriginalMessages($lang);
 
         $systemCatalogue = self::$translator->getCatalogue('en_EN');
         $systemMessages = $systemCatalogue->all();
 
         $result = [];
         foreach ($systemMessages['messages'] as $pos => $msg) {
-            if ($msg === $userMessages['messages'][$pos]) {
+            if (!isset($userMessages[$pos])) {
                 $result[$pos] = $msg;
             }
         }
 
+        ksort($result);
         return $result;
     }
 }
