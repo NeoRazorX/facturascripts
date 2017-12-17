@@ -20,11 +20,11 @@
  * Initial description for the controller EditProveedorArticulo
  *
  * @author Nazca Networks <comercial@nazcanetworks.com>
+ * @Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
 -->
 
 <view>
     <columns>
-        <group name="data" numcolumns="12">   
             <column name="id" display="none" order="100">
                 <widget type="number" decimal="0" fieldname="id" readonly="true" required="true" />
             </column>
@@ -45,8 +45,6 @@
             <column name="partnumber" order="140" numcolumns="2">
                 <widget type="text" fieldname="partnumber"   />
             </column>
-        </group>
-        <group name="price" numcolumns="12">   
             <column name="precio" numcolumns="2" display="left" order="110">
                 <widget type="number" fieldname="precio" />
             </column>
@@ -64,6 +62,5 @@
             <column name="stock" order="140" numcolumns="2">
                 <widget type="text" fieldname="stock"   />
             </column>
-        </group>
     </columns>
 </view>
