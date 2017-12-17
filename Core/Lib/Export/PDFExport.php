@@ -18,45 +18,44 @@
  */
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\Base\NumberTools;
-use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Base;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Description of PDF
+ * PDF export data.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class PDFExport implements ExportInterface
 {
 
-    use \FacturaScripts\Core\Base\Utils;
+    use Base\Utils;
 
-    const LIST_LIMIT = 1000;
+    const LIST_LIMIT = 500;
 
     /**
      * Translator object
      *
-     * @var Translator
+     * @var Base\Translator
      */
     private $i18n;
 
     /**
      * Class with number tools (to format numbers)
      *
-     * @var NumberTools
+     * @var Base\NumberTools
      */
     private $numberTools;
 
     /**
      * PDF object.
-     * @var \Cezpdf 
+     * @var \Cezpdf
      */
     private $pdf;
 
     /**
      * PDF table width.
-     * @var int|float 
+     * @var int|float
      */
     private $tableWidth;
 
@@ -65,11 +64,16 @@ class PDFExport implements ExportInterface
      */
     public function __construct()
     {
-        $this->i18n = new Translator();
-        $this->numberTools = new NumberTools();
+        $this->i18n = new Base\Translator();
+        $this->numberTools = new Base\NumberTools();
         $this->tableWidth = 0.0;
     }
 
+    /**
+     * Return the full document.
+     *
+     * @return mixed
+     */
     public function getDoc()
     {
         if ($this->pdf === null) {
@@ -82,6 +86,7 @@ class PDFExport implements ExportInterface
 
     /**
      * Set headers.
+     *
      * @param Response $response
      */
     public function newDoc(&$response)
@@ -91,6 +96,7 @@ class PDFExport implements ExportInterface
 
     /**
      * Adds a new page with the model data.
+     *
      * @param mixed $model
      * @param array $columns
      * @param string $title
@@ -100,12 +106,18 @@ class PDFExport implements ExportInterface
         $this->newPage();
         $tableCols = [];
         $tableColsTitle = [];
-        $tableOptions = ['width' => $this->tableWidth, 'showHeadings' => 0, 'cols' => []];
-        $tableData = [];
+        $tableOptions = [
+            'width' => $this->tableWidth,
+            'showHeadings' => 0,
+            'shaded' => 0,
+            'lineCol' => [1, 1, 1],
+            'cols' => []
+        ];
 
         /// Get the columns
         $this->setTableColumns($columns, $tableCols, $tableColsTitle, $tableOptions);
 
+        $tableDataAux = [];
         foreach ($tableColsTitle as $key => $colTitle) {
             $value = null;
             if (isset($model->{$key})) {
@@ -113,20 +125,25 @@ class PDFExport implements ExportInterface
             }
 
             if (is_bool($value)) {
-                $txt = $value ? $this->i18n->trans('yes') : $this->i18n->trans('no');
-                $tableData[] = ['key' => $colTitle, 'value' => $txt];
-            } else if ($value !== null && $value !== '') {
-                $tableData[] = ['key' => $colTitle, 'value' => $value];
+                $txt = $this->i18n->trans($value ? 'yes' : 'no');
+                $tableDataAux[] = ['key' => $colTitle, 'value' => $txt];
+            } elseif ($value !== null && $value !== '') {
+                $tableDataAux[] = ['key' => $colTitle, 'value' => $value];
             }
         }
 
-        $this->pdf->ezTable($tableData, ['key' => 'key', 'value' => 'value'], $title, $tableOptions);
+        $this->pdf->ezText($title . "\n", 12, ['justification' => 'center']);
+        $this->newLine();
+
+        $tableData = $this->paralellTableData($tableDataAux, 'key', 'value', 'data1', 'data2');
+        $this->pdf->ezTable($tableData, ['data1' => 'data1', 'data2' => 'data2'], '', $tableOptions);
     }
 
     /**
      * Adds a new page with a table listing the models data.
+     *
      * @param mixed $model
-     * @param array $where
+     * @param Base\DataBase\DataBaseWhere[] $where
      * @param array $order
      * @param int $offset
      * @param array $columns
@@ -139,11 +156,13 @@ class PDFExport implements ExportInterface
         $tableColsTitle = [];
         $tableOptions = ['cols' => [], 'shadeHeadingCol' => [0.8, 0.8, 0.8]];
         $tableData = [];
+        $longTitles = [];
 
         /// Get the columns
         $this->setTableColumns($columns, $tableCols, $tableColsTitle, $tableOptions);
         if (count($tableCols) > 5) {
             $orientation = 'landscape';
+            $this->removeLongTitles($longTitles, $tableColsTitle);
         }
 
         $this->newPage($orientation);
@@ -162,10 +181,53 @@ class PDFExport implements ExportInterface
             $offset += self::LIST_LIMIT;
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
+
+        $this->newLongTitles($longTitles);
+    }
+    
+    /**
+     * Adds a new page with the document data.
+     *
+     * @param mixed $model
+     */
+    public function generateDocumentPage($model)
+    {
+        /// TODO: Uncomplete
+    }
+
+    /**
+     * Adds a new line to the PDF.
+     */
+    private function newLine()
+    {
+        $posY = $this->pdf->y + 5;
+        $this->pdf->line(30, $posY, $this->tableWidth + 30, $posY);
+    }
+
+    /**
+     * Adds a description of long titles to the PDF.
+     *
+     * @param array $titles
+     */
+    private function newLongTitles(&$titles)
+    {
+        $txt = '';
+        foreach ($titles as $key => $value) {
+            if ($txt !== '') {
+                $txt .= ', ';
+            }
+
+            $txt .= '*' . $key . ' = ' . $value;
+        }
+
+        if ($txt !== '') {
+            $this->pdf->ezText($txt);
+        }
     }
 
     /**
      * Adds a new page.
+     *
      * @param string $orientation
      */
     private function newPage($orientation = 'portrait')
@@ -178,13 +240,21 @@ class PDFExport implements ExportInterface
             $this->tableWidth = $this->pdf->ez['pageWidth'] - 60;
 
             $this->pdf->ezStartPageNumbers($this->pdf->ez['pageWidth'] / 2, 10, 9, 'left', '{PAGENUM} / {TOTALPAGENUM}');
-        } else if ($this->pdf->y < 200) {
+        } elseif ($this->pdf->y < 200) {
             $this->pdf->ezNewPage();
         } else {
             $this->pdf->ezText("\n");
         }
     }
 
+    /**
+     * Set the table content.
+     *
+     * @param $columns
+     * @param $tableCols
+     * @param $tableColsTitle
+     * @param $tableOptions
+     */
     private function setTableColumns(&$columns, &$tableCols, &$tableColsTitle, &$tableOptions)
     {
         foreach ($columns as $col) {
@@ -193,7 +263,7 @@ class PDFExport implements ExportInterface
                 continue;
             }
 
-            if (isset($col->display) && $col->display != 'none' && isset($col->widget->fieldName)) {
+            if (isset($col->display) && $col->display !== 'none' && isset($col->widget->fieldName)) {
                 $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
                 $tableColsTitle[$col->widget->fieldName] = $this->i18n->trans($col->title);
                 $tableOptions['cols'][$col->widget->fieldName] = [
@@ -220,17 +290,18 @@ class PDFExport implements ExportInterface
         /// Get the data
         foreach ($cursor as $key => $row) {
             foreach ($tableCols as $col) {
-                $value = '';
-                if (isset($row->{$col})) {
-                    $value = $row->{$col};
+                if (!isset($row->{$col})) {
+                    $tableData[$key][$col] = '';
+                    continue;
+                }
 
-                    if (in_array($tableOptions['cols'][$col]['col-type'], ['money', 'number'])) {
-                        $value = $this->numberTools->format($value, 2);
-                    } elseif (is_bool($value)) {
-                        $value = $value == 1 ? $this->i18n->trans('yes') : $this->i18n->trans('no');
-                    } elseif (is_null($value)) {
-                        $value = '';
-                    }
+                $value = $row->{$col};
+                if (in_array($tableOptions['cols'][$col]['col-type'], ['money', 'number'], false)) {
+                    $value = $this->numberTools->format($value, 2);
+                } elseif (is_bool($value)) {
+                    $value = $this->i18n->trans($value === 1 ? 'yes' : 'no');
+                } elseif (null === $value) {
+                    $value = '';
                 }
 
                 $tableData[$key][$col] = $value;
@@ -240,6 +311,30 @@ class PDFExport implements ExportInterface
         return $tableData;
     }
 
+    /**
+     * Adds to $longTitles, and replace all long titles from $titles
+     *
+     * @param array $longTitles
+     * @param array $titles
+     */
+    private function removeLongTitles(&$longTitles, &$titles)
+    {
+        $num = 1;
+        foreach ($titles as $key => $value) {
+            if (mb_strlen($value) > 12) {
+                $longTitles[$num] = $value;
+                $titles[$key] = '*' . $num;
+                $num++;
+            }
+        }
+    }
+
+    /**
+     * Remove the empty columns to save space.
+     *
+     * @param $tableData
+     * @param $tableColsTitle
+     */
     private function removeEmptyCols(&$tableData, &$tableColsTitle)
     {
         foreach (array_keys($tableColsTitle) as $key) {
@@ -255,5 +350,36 @@ class PDFExport implements ExportInterface
                 unset($tableColsTitle[$key]);
             }
         }
+    }
+
+    /**
+     * Returns a new table with 2 columns. Each column with colName1: colName2
+     *
+     * @param array $table
+     * @param string $colName1
+     * @param string $colName2
+     * @param string $finalColName1
+     * @param string $finalColName2
+     *
+     * @return array
+     */
+    private function paralellTableData($table, $colName1, $colName2, $finalColName1, $finalColName2)
+    {
+        $tableData = [];
+        $key = 0;
+        foreach ($table as $value) {
+            $txt = '<b>' . $value[$colName1] . '</b>: ' . $value[$colName2];
+
+            if (isset($tableData[$key])) {
+                $tableData[$key][$finalColName2] = $txt;
+                $key++;
+                continue;
+            }
+
+            $tableData[$key][$finalColName1] = $txt;
+            $tableData[$key][$finalColName2] = '';
+        }
+
+        return $tableData;
     }
 }

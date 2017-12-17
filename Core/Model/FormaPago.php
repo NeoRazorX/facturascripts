@@ -16,12 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Lib\Import\CSVImport;
 
 /**
- * Forma de pago de una factura, albarán, pedido o presupuesto.
+ * Payment method of an invoice, delivery note, order or estimation.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -31,57 +33,57 @@ class FormaPago
     use Base\ModelTrait;
 
     /**
-     * Clave primaria. Varchar (10).
+     * Primary key. Varchar (10).
      *
      * @var string
      */
     public $codpago;
 
     /**
-     * Descripción de la forma de pago
+     * Description of the payment method.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * Pagados -> marca las facturas generadas como pagadas.
+     * Paid -> mark the invoices generated as paid.
      *
      * @var string
      */
     public $genrecibos;
 
     /**
-     * Código de la cuenta bancaria asociada.
+     * Code of the associated bank account.
      *
      * @var string
      */
     public $codcuenta;
 
     /**
-     * Para indicar si hay que mostrar la cuenta bancaria del cliente.
+     * To indicate if it is necessary to show the bank account of the client.
      *
      * @var bool
      */
     public $domiciliado;
 
     /**
-     * True (por defecto) -> mostrar los datos en documentos de venta,
-     * incluida la cuenta bancaria asociada.
+     * True (default) -> display the data in sales documents,
+     * including the associated bank account.
      *
      * @var bool
      */
     public $imprimir;
 
     /**
-     * Sirve para generar la fecha de vencimiento de las facturas.
+     * It serves to generate the due date of the invoices.
      *
      * @var string
      */
     public $vencimiento;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -91,7 +93,7 @@ class FormaPago
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -101,7 +103,7 @@ class FormaPago
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -115,7 +117,7 @@ class FormaPago
     }
 
     /**
-     * Devuelve True si esta es la forma de pago predeterminada de la empresa
+     * Returns True if is the default payment method for the company.
      *
      * @return bool
      */
@@ -125,7 +127,7 @@ class FormaPago
     }
 
     /**
-     * Comprueba la validez de los datos de la forma de pago.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -133,11 +135,11 @@ class FormaPago
     {
         $this->descripcion = self::noHtml($this->descripcion);
 
-        /// comprobamos la validez del vencimiento
+        /// we check the expiration validity
         $fecha1 = date('d-m-Y');
         $fecha2 = date('d-m-Y', strtotime($this->vencimiento));
         if (strtotime($fecha1) > strtotime($fecha2)) {
-            $this->miniLog->alert($this->i18n->trans('expiration-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('expiration-invalid'));
 
             return false;
         }
@@ -146,11 +148,11 @@ class FormaPago
     }
 
     /**
-     * A partir de una fecha devuelve la nueva fecha de vencimiento en base a esta forma de pago.
-     * Si se proporciona $diasDePago se usarán para la nueva fecha.
+     * From a date returns the new due date based on this form of payment.
+     * If $diasDePago is provided, they will be used for the new date.
      *
      * @param string $fechaInicio
-     * @param string $diasDePago  dias de pago específicos para el cliente (separados por comas).
+     * @param string $diasDePago dias de pago específicos para el cliente (separados por comas).
      *
      * @return string
      */
@@ -158,7 +160,7 @@ class FormaPago
     {
         $fecha = $this->calcularVencimiento2($fechaInicio);
 
-        /// validamos los días de pago
+        /// we validate the days of payment
         $arrayDias = [];
         foreach (str_getcsv($diasDePago) as $d) {
             if ((int) $d >= 1 && (int) $d <= 31) {
@@ -171,7 +173,7 @@ class FormaPago
                 if ($i === 0) {
                     $fecha = $this->calcularVencimiento2($fechaInicio, $diaDePago);
                 } else {
-                    /// si hay varios dias de pago, elegimos la fecha más cercana
+                    /// If there are several days of payment, we choose the closest date
                     $fechaTemp = $this->calcularVencimiento2($fechaInicio, $diaDePago);
                     if (strtotime($fechaTemp) < strtotime($fecha)) {
                         $fecha = $fechaTemp;
@@ -184,24 +186,21 @@ class FormaPago
     }
 
     /**
-     * Crea la consulta necesaria para crear una nueva forma de pago en la base de datos.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName()
-            . ' (codpago,descripcion,genrecibos,codcuenta,domiciliado,vencimiento)'
-            . " VALUES ('CONT','Al contado','Pagados',null,false,'+0day')"
-            . ",('TRANS','Transferencia bancaria','Emitidos',null,false,'+1month')"
-            . ",('TARJETA','Tarjeta de crédito','Pagados',null,false,'+0day')"
-            . ",('PAYPAL','PayPal','Pagados',null,false,'+0day');";
+        return CSVImport::importTableSQL(static::tableName());
     }
 
     /**
-     * Función recursiva auxiliar para calcularVencimiento()
+     * Aux recursive function to calcularVencimiento()
      *
-     * @param string  $fechaInicio
+     * @param string $fechaInicio
      * @param int $diaDePago
      *
      * @return string
@@ -218,16 +217,16 @@ class FormaPago
         $tmpAnyo = date('Y', strtotime($fecha));
 
         if ($tmpDia > $diaDePago) {
-            /// calculamos el dia de cobro para el mes siguiente
+            /// we calculate the collection day for the following month
             $fecha = date('d-m-Y', strtotime($fecha . ' +1 month'));
             $tmpMes = date('m', strtotime($fecha));
             $tmpAnyo = date('Y', strtotime($fecha));
         }
 
-        /// ahora elegimos un dia, pero que quepa en el mes, no puede ser 31 de febrero
+        /// now we choose a day, but what fits in the month, can not be February 31
         $tmpDia = min([$diaDePago, (int) date('t', strtotime($fecha))]);
 
-        /// y por último generamos la fecha
+        /// and finally we generated the date
         return date('d-m-Y', strtotime($tmpDia . '-' . $tmpMes . '-' . $tmpAnyo));
     }
 }

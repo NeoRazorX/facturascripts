@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -99,13 +99,13 @@ class Proveedor extends Base\Persona
         if ($cifnif === '' && $razon !== '') {
             $razon = mb_strtolower(self::noHtml($razon), 'UTF8');
             $sql = 'SELECT * FROM ' . $this->tableName() . " WHERE cifnif = ''"
-                . ' AND lower(razonsocial) = ' . $this->dataBase->var2str($razon) . ';';
+                . ' AND lower(razonsocial) = ' . self::$dataBase->var2str($razon) . ';';
         } else {
             $cifnif = mb_strtolower($cifnif, 'UTF8');
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE lower(cifnif) = ' . $this->dataBase->var2str($cifnif) . ';';
+            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE lower(cifnif) = ' . self::$dataBase->var2str($cifnif) . ';';
         }
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             return new self($data[0]);
         }
@@ -193,18 +193,18 @@ class Proveedor extends Base\Persona
                     return $subcuenta;
                 }
 
-                $this->miniLog->alert($this->i18n->trans('cant-assing-subaccount-supplier', [$this->codproveedor]));
+                self::$miniLog->alert(self::$i18n->trans('cant-assing-subaccount-supplier', [$this->codproveedor]));
 
                 return false;
             }
 
-            $this->miniLog->alert($this->i18n->trans('cant-create-subaccount-supplier', [$this->codproveedor]));
+            self::$miniLog->alert(self::$i18n->trans('cant-create-subaccount-supplier', [$this->codproveedor]));
 
             return false;
         }
 
-        $this->miniLog->alert($this->i18n->trans('account-not-found'));
-        $this->miniLog->alert($this->i18n->trans('accounting-plan-imported?'));
+        self::$miniLog->alert(self::$i18n->trans('account-not-found'));
+        self::$miniLog->alert(self::$i18n->trans('accounting-plan-imported?'));
 
         return false;
     }
@@ -230,11 +230,11 @@ class Proveedor extends Base\Persona
         $this->observaciones = self::noHtml($this->observaciones);
 
         if (!preg_match('/^[A-Z0-9]{1,6}$/i', $this->codproveedor)) {
-            $this->miniLog->alert($this->i18n->trans('not-valid-supplier-code'));
+            self::$miniLog->alert(self::$i18n->trans('not-valid-supplier-code'));
         } elseif (empty($this->nombre) || strlen($this->nombre) > 100) {
-            $this->miniLog->alert($this->i18n->trans('not-valid-supplier-name'));
+            self::$miniLog->alert(self::$i18n->trans('not-valid-supplier-name'));
         } elseif (empty($this->razonsocial) || strlen($this->razonsocial) > 100) {
-            $this->miniLog->alert($this->i18n->trans('not-valid-supplier-business-name'));
+            self::$miniLog->alert(self::$i18n->trans('not-valid-supplier-business-name'));
         } else {
             $status = true;
         }
@@ -270,7 +270,7 @@ class Proveedor extends Base\Persona
         }
         $consulta .= ' ORDER BY lower(nombre) ASC';
 
-        $data = $this->dataBase->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
+        $data = self::$dataBase->selectLimit($consulta, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $prolist[] = new self($d);

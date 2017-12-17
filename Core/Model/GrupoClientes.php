@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -86,7 +86,7 @@ class GrupoClientes
                 . " ORDER BY CAST(`codgrupo` AS decimal) DESC";
         }
 
-        $data = $this->dataBase->selectLimit($sql, 1, 0);
+        $data = self::$dataBase->selectLimit($sql, 1, 0);
         if (!empty($data)) {
             return sprintf('%06s', (1 + (int) $data[0]['codgrupo']));
         }

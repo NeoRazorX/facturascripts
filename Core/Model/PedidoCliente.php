@@ -139,14 +139,14 @@ class PedidoCliente
     {
         $versiones = [];
 
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idoriginal = ' . $this->dataBase->var2str($this->idpedido);
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idoriginal = ' . self::$dataBase->var2str($this->idpedido);
         if ($this->idoriginal) {
-            $sql .= ' OR idoriginal = ' . $this->dataBase->var2str($this->idoriginal);
-            $sql .= ' OR idpedido = ' . $this->dataBase->var2str($this->idoriginal);
+            $sql .= ' OR idoriginal = ' . self::$dataBase->var2str($this->idoriginal);
+            $sql .= ' OR idpedido = ' . self::$dataBase->var2str($this->idoriginal);
         }
         $sql .= 'ORDER BY fecha DESC, hora DESC;';
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $versiones[] = new self($d);
@@ -184,10 +184,10 @@ class PedidoCliente
      */
     public function delete()
     {
-        if ($this->dataBase->exec('DELETE FROM ' . static::tableName() . ' WHERE idpedido = ' . $this->dataBase->var2str($this->idpedido) . ';')) {
+        if (self::$dataBase->exec('DELETE FROM ' . static::tableName() . ' WHERE idpedido = ' . self::$dataBase->var2str($this->idpedido) . ';')) {
             /// modificamos el presupuesto relacionado
-            $this->dataBase->exec('UPDATE presupuestoscli SET idpedido = NULL, editable = TRUE,'
-                . ' status = 0 WHERE idpedido = ' . $this->dataBase->var2str($this->idpedido) . ';');
+            self::$dataBase->exec('UPDATE presupuestoscli SET idpedido = NULL, editable = TRUE,'
+                . ' status = 0 WHERE idpedido = ' . self::$dataBase->var2str($this->idpedido) . ';');
 
             return true;
         }
@@ -201,15 +201,15 @@ class PedidoCliente
     public function cronJob()
     {
         /// marcamos como aprobados los presupuestos con idpedido
-        $this->dataBase->exec('UPDATE ' . static::tableName() . " SET status = '1', editable = FALSE"
+        self::$dataBase->exec('UPDATE ' . static::tableName() . " SET status = '1', editable = FALSE"
             . " WHERE status != '1' AND idalbaran IS NOT NULL;");
 
         /// devolvemos al estado pendiente a los pedidos con estado 1 a los que se haya borrado el albarán
-        $this->dataBase->exec('UPDATE ' . static::tableName() . " SET status = '0', idalbaran = NULL, editable = TRUE "
+        self::$dataBase->exec('UPDATE ' . static::tableName() . " SET status = '0', idalbaran = NULL, editable = TRUE "
             . "WHERE status = '1' AND idalbaran NOT IN (SELECT idalbaran FROM albaranescli);");
 
         /// marcamos como rechazados todos los presupuestos no editables y sin pedido asociado
-        $this->dataBase->exec('UPDATE ' . static::tableName() . " SET status = '2' WHERE idalbaran IS NULL AND"
+        self::$dataBase->exec('UPDATE ' . static::tableName() . " SET status = '2' WHERE idalbaran IS NULL AND"
             . ' editable = false;');
     }
 }

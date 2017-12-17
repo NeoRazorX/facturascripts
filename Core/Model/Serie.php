@@ -16,13 +16,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Lib\Import\CSVImport;
 
 /**
- * Una serie de facturación o contabilidad, para tener distinta numeración
- * en cada serie.
+ * A series of invoicing or accounting, to have different numbering
+ * in each series.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -32,49 +34,49 @@ class Serie
     use Base\ModelTrait;
 
     /**
-     * Clave primaria. Varchar (2).
+     * Primary key. Varchar (2).
      *
      * @var string
      */
     public $codserie;
 
     /**
-     * Descripción de la serie de facturación
+     * Description of the billing series.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * TRUE -> las facturas asociadas no encluyen IVA.
+     * If associated invoices are without tax True, else False.
      *
      * @var bool
      */
     public $siniva;
 
     /**
-     * % de retención IRPF de las facturas asociadas.
+     * % IRPF withholding of the associated invoices.
      *
      * @var float|int
      */
     public $irpf;
 
     /**
-     * ejercicio para el que asignamos la numeración inicial de la serie.
+     * Exercise for which we assign the initial numbering of the series.
      *
      * @var string
      */
     public $codejercicio;
 
     /**
-     * numeración inicial para las facturas de esta serie.
+     * Initial numbering for the invoices of this series.
      *
      * @var int
      */
     public $numfactura;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -84,7 +86,7 @@ class Serie
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -94,7 +96,7 @@ class Serie
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -107,7 +109,7 @@ class Serie
     }
 
     /**
-     * Devuelve TRUE si la serie es la predeterminada de la empresa
+     * Returns True if is the default serie for the company.
      *
      * @return bool
      */
@@ -117,7 +119,7 @@ class Serie
     }
 
     /**
-     * Comprueba los datos de la serie, devuelve TRUE si son correctos
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -133,9 +135,9 @@ class Serie
         }
 
         if (!preg_match('/^[A-Z0-9]{1,4}$/i', $this->codserie)) {
-            $this->miniLog->alert($this->i18n->trans('serie-cod-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('serie-cod-invalid'));
         } elseif (!(strlen($this->descripcion) > 1) && !(strlen($this->descripcion) < 100)) {
-            $this->miniLog->alert($this->i18n->trans('serie-desc-invalid'));
+            self::$miniLog->alert(self::$i18n->trans('serie-desc-invalid'));
         } else {
             $status = true;
         }
@@ -144,13 +146,14 @@ class Serie
     }
 
     /**
-     * Crea la consulta necesaria para crear una nueva serie en la base de datos.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName() . ' (codserie,descripcion,siniva,irpf) VALUES '
-            . "('A','SERIE A',false,'0'),('R','RECTIFICATIVAS',false,'0');";
+        return CSVImport::importTableSQL(static::tableName());
     }
 }

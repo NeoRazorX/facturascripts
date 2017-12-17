@@ -31,6 +31,12 @@ class EditSettings extends ExtendedController\PanelController
 
     const KEYSETTINGS = 'Settings';
 
+    /**
+     * Run the controller after actions
+     *
+     * @param ExtendedController\EditView $view
+     * @param string $action
+     */
     protected function execAfterAction($view, $action)
     {
         if ($action === 'testmail') {
@@ -64,6 +70,7 @@ class EditSettings extends ExtendedController\PanelController
      * Returns the url for a specified $type
      *
      * @param string $type
+     *
      * @return string
      */
     public function getURL($type)
@@ -87,17 +94,18 @@ class EditSettings extends ExtendedController\PanelController
      *
      * @param mixed $model
      * @param string $field
+     *
      * @return mixed
      */
     public function getFieldValue($model, $field)
     {
-        $properties = parent::getFieldValue($model, 'properties');
-        if (is_array($properties) && array_key_exists($field, $properties)) {
-            return $properties[$field];
+        $value = parent::getFieldValue($model, $field);
+        if (isset($value)) {
+            return $value;
         }
 
-        if (isset($model->{$field})) {
-            return $model->{$field};
+        if (is_array($model->properties) && array_key_exists($field, $model->properties)) {
+            return $model->properties[$field];
         }
 
         return null;
@@ -107,6 +115,7 @@ class EditSettings extends ExtendedController\PanelController
      * Returns the view id for a specified $viewName
      *
      * @param string $viewName
+     *
      * @return string
      */
     private function getKeyFromViewName($viewName)
@@ -119,10 +128,10 @@ class EditSettings extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $modelName = 'FacturaScripts\Core\Model\Settings';
+        $modelName = '\FacturaScripts\Dinamic\Model\Settings';
         $icon = $this->getPageData()['icon'];
         foreach ($this->allSettingsXMLViews() as $name) {
-            $title = substr($name, 8);
+            $title = strtolower(substr($name, 8));
             $this->addEditView($modelName, $name, $title, $icon);
         }
 
@@ -147,16 +156,22 @@ class EditSettings extends ExtendedController\PanelController
 
         $model = $view->getModel();
         if ($model->name === null) {
-            $model->name = substr(strtolower($keyView), 8);
+            $model->name = strtolower(substr($keyView, 8));
             $model->save();
         }
     }
 
+    /**
+     * Return a list of all XML view files on XMLView folder.
+     *
+     * @return array
+     */
     private function allSettingsXMLViews()
     {
         $names = [];
-        foreach (scandir(FS_FOLDER . '/Dinamic/XMLView', SCANDIR_SORT_ASCENDING) as $fileName) {
-            if ($fileName != '.' && $fileName != '..' && substr($fileName, 0, 8) == self::KEYSETTINGS) {
+        $files = array_diff(scandir(FS_FOLDER . '/Dinamic/XMLView', SCANDIR_SORT_ASCENDING), ['.', '..']);
+        foreach ($files as $fileName) {
+            if (0 === strpos($fileName, self::KEYSETTINGS)) {
                 $names[] = substr($fileName, 0, -4);
             }
         }

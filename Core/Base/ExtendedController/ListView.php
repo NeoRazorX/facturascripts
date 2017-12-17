@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -182,7 +181,12 @@ class ListView extends BaseView
      */
     public function getColumns()
     {
-        $key = array_keys($this->pageOption->columns)[0];
+        $keys = array_keys($this->pageOption->columns);
+        if (empty($keys)) {
+            return [];
+        }
+
+        $key = $keys[0];
         return $this->pageOption->columns[$key]->columns;
     }
 
@@ -336,12 +340,7 @@ class ListView extends BaseView
     {
         if ($this->count > 0) {
             $exportManager->generateListModelPage(
-                $this->model,
-                $this->where,
-                $this->order,
-                $this->offset,
-                $this->getColumns(),
-                $this->title
+                $this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title
             );
         }
     }

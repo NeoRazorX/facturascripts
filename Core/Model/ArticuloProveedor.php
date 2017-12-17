@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -180,7 +180,7 @@ class ArticuloProveedor
         }
 
         if ($this->refproveedor === null || empty($this->refproveedor) || strlen($this->refproveedor) > 25) {
-            $this->miniLog->alert($this->i18n->trans('supplier-reference-valid-length'));
+            self::$miniLog->alert(self::$i18n->trans('supplier-reference-valid-length'));
             return false;
         }
 
@@ -209,7 +209,7 @@ class ArticuloProveedor
             'UPDATE articulosprov SET refproveedor = referencia WHERE refproveedor IS NULL;',
         ];
         foreach ($fixes as $sql) {
-            $this->dataBase->exec($sql);
+            self::$dataBase->exec($sql);
         }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,8 +18,10 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Lib\Import\CSVImport;
+
 /**
- * Un fabricante de artículos.
+ * A manufacturer of products.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -30,21 +32,21 @@ class Fabricante
     use Base\ModelTrait;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var string
      */
     public $codfabricante;
 
     /**
-     * Nombre del fabricante
+     * Manufacturer name.
      *
      * @var string
      */
     public $nombre;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -54,7 +56,7 @@ class Fabricante
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -64,7 +66,7 @@ class Fabricante
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -76,9 +78,9 @@ class Fabricante
         $this->nombre = self::noHtml($this->nombre);
 
         if (empty($this->codfabricante) || strlen($this->codfabricante) > 8) {
-            $this->miniLog->alert($this->i18n->trans('code-manufacturer-valid-length'));
+            self::$miniLog->alert(self::$i18n->trans('code-manufacturer-valid-length'));
         } elseif (empty($this->nombre) || strlen($this->nombre) > 100) {
-            $this->miniLog->alert($this->i18n->trans('manufacturer-description-not-valid'));
+            self::$miniLog->alert(self::$i18n->trans('manufacturer-description-not-valid'));
         } else {
             $status = true;
         }
@@ -87,14 +89,14 @@ class Fabricante
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName() . " (codfabricante,nombre) VALUES ('OEM','OEM');";
+        return CSVImport::importTableSQL(static::tableName());
     }
 }

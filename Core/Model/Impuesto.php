@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,14 +16,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Lib\Import\CSVImport;
 
 /**
- * Un impuesto (IVA) que puede estar asociado a artículos, líneas de albaranes,
- * facturas, etc.
+ * A tax (VAT) that can be associated to articles, delivery notes lines,
+ * invoices, etc.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -33,49 +34,49 @@ class Impuesto
     use Base\ModelTrait;
 
     /**
-     * Clave primaria. varchar(10).
+     * Primary key. varchar(10).
      *
      * @var string
      */
     public $codimpuesto;
 
     /**
-     * Código de la subcuenta para ventas.
+     * Sub-account code for sales.
      *
      * @var string
      */
     public $codsubcuentarep;
 
     /**
-     * Código de la subcuenta para compras.
+     * Sub-account code for purchases.
      *
      * @var string
      */
     public $codsubcuentasop;
 
     /**
-     * Descripción del impuesto.
+     * Description of the tax.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * Valor del IVA
+     * Value of VAT.
      *
      * @var float|int
      */
     public $iva;
 
     /**
-     * Valor del Recargo
+     * Value of the surcharge.
      *
      * @var float|int
      */
     public $recargo;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -85,7 +86,7 @@ class Impuesto
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -95,7 +96,7 @@ class Impuesto
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -108,7 +109,7 @@ class Impuesto
     }
 
     /**
-     * Devuelve True si el impuesto es el predeterminado del usuario
+     * Returns True if is the default tax for the user.
      *
      * @return bool
      */
@@ -118,7 +119,7 @@ class Impuesto
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -130,9 +131,9 @@ class Impuesto
         $this->descripcion = self::noHtml($this->descripcion);
 
         if (empty($this->codimpuesto) || strlen($this->codimpuesto) > 10) {
-            $this->miniLog->alert($this->i18n->trans('not-valid-tax-code-length'));
+            self::$miniLog->alert(self::$i18n->trans('not-valid-tax-code-length'));
         } elseif (empty($this->descripcion) || strlen($this->descripcion) > 50) {
-            $this->miniLog->alert($this->i18n->trans('not-valid-description-tax'));
+            self::$miniLog->alert(self::$i18n->trans('not-valid-description-tax'));
         } else {
             $status = true;
         }
@@ -141,14 +142,14 @@ class Impuesto
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
     public function install()
     {
-        return CSVImport::importTableSQL($this->tableName());
+        return CSVImport::importTableSQL(static::tableName());
     }
 }

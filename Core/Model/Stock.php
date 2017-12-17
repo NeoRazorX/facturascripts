@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -268,13 +268,13 @@ class Stock
     public function totalFromArticulo($ref, $codalmacen = false)
     {
         $sql = 'SELECT SUM(cantidad) AS total FROM ' . static::tableName()
-            . ' WHERE referencia = ' . $this->dataBase->var2str($ref);
+            . ' WHERE referencia = ' . self::$dataBase->var2str($ref);
 
         if ($codalmacen) {
-            $sql .= ' AND codalmacen = ' . $this->dataBase->var2str($codalmacen);
+            $sql .= ' AND codalmacen = ' . self::$dataBase->var2str($codalmacen);
 }
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             return round((float) $data[0]['total'], 3);
         }
@@ -294,7 +294,7 @@ class Stock
         $num = 0;
 
         $sql = 'SELECT COUNT(idstock) AS total FROM ' . static::tableName() . ';';
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             $num = (int) $data[0]['total'];
         }
@@ -324,8 +324,8 @@ class Stock
         $stocklist = array();
 
         $sql = 'SELECT * FROM ' . static::tableName()
-            . ' WHERE referencia = ' . $this->dataBase->var2str($ref) . ' ORDER BY codalmacen ASC;';
-        $data = $this->dataBase->select($sql);
+            . ' WHERE referencia = ' . self::$dataBase->var2str($ref) . ' ORDER BY codalmacen ASC;';
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $s) {
                 $stocklist[] = new self($s);

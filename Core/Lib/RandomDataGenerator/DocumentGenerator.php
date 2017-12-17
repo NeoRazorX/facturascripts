@@ -32,7 +32,7 @@ class DocumentGenerator extends ModelDataGenerator
     /**
      * Generates a random document
      *
-     * @param $doc
+     * @param mixed $doc
      */
     private function randomizeDocument(&$doc)
     {
@@ -40,6 +40,7 @@ class DocumentGenerator extends ModelDataGenerator
         $doc->hora = mt_rand(10, 20) . ':' . mt_rand(10, 59) . ':' . mt_rand(10, 59);
         $doc->codpago = $this->formasPago[0]->codpago;
         $doc->codalmacen = (mt_rand(0, 2) == 0) ? $this->almacenes[0]->codalmacen : AppSettings::get('default', 'codalmacen');
+        $doc->idempresa = AppSettings::get('default', 'idempresa');
 
         foreach ($this->divisas as $div) {
             if ($div->coddivisa == AppSettings::get('default', 'coddivisa')) {

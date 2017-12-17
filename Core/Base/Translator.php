@@ -16,13 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use Symfony\Component\Translation\Loader\JsonFileLoader;
 use Symfony\Component\Translation\Translator as symfonyTranslator;
 
 /**
- * Description of Translator
+ * The Translator class manage all translations methods required for internationalization.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -30,29 +31,29 @@ class Translator
 {
 
     /**
-     * Idioma por defecto.
+     * Language by default.
      *
      * @var string
      */
     private static $lang;
 
     /**
-     * El traductor de symfony.
+     * The Symfony translator.
      *
      * @var symfonyTranslator
      */
     private static $translator;
 
     /**
-     * Lista de strings utilizadas.
+     * List of strings used.
      *
      * @var array
      */
     private static $usedStrings;
 
     /**
-     * Constructor del traductor
-     * Por defecto se usará y definirá en_EN si no está definido en config.php.
+     * Translator's constructor.
+     * By default it will be used and it will define en_EN if it is not defined in config.php.
      *
      * @param string $lang
      */
@@ -69,7 +70,7 @@ class Translator
     }
 
     /**
-     * Traduce el texto al idioma predeterminado.
+     * Translate the text into the default language.
      *
      * @param string $txt
      * @param array $parameters
@@ -79,15 +80,14 @@ class Translator
     public function trans($txt, array $parameters = [])
     {
         $catalogue = self::$translator->getCatalogue(self::$lang);
-        self::$usedStrings[$txt] = $catalogue->get($txt, 'messages');
+        self::$usedStrings[$txt] = $catalogue->get($txt);
 
         return self::$translator->trans($txt, $parameters);
     }
 
     /**
-     * Carga los archivos de traducción siguiendo el sistema de prioridades
-     * de FacturaScripts. En este caso hay que proporcionar al traductor las rutas
-     * en orden inverso.
+     * Load the translation files following the priority system of FacturaScripts.
+     * In this case, the translator must be provided with the routes in reverse order.
      */
     private function locateFiles()
     {
@@ -104,7 +104,7 @@ class Translator
     }
 
     /**
-     * Devuelve un array con los idiomas con traducciones disponibles.
+     * Returns an array with the languages with available translations.
      *
      * @return array
      */
@@ -123,7 +123,7 @@ class Translator
     }
 
     /**
-     * Devuelve el código de idioma en uso
+     * Returns the language code in use.
      *
      * @return string
      */
@@ -133,7 +133,7 @@ class Translator
     }
 
     /**
-     * Devuelve las strings utilizadas
+     * Returns the strings used.
      *
      * @return array
      */

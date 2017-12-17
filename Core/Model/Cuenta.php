@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -148,10 +148,10 @@ class Cuenta
      */
     public function getByCodigo($cod, $codejercicio)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codcuenta = ' . $this->dataBase->var2str($cod) .
-            ' AND codejercicio = ' . $this->dataBase->var2str($codejercicio) . ';';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codcuenta = ' . self::$dataBase->var2str($cod) .
+            ' AND codejercicio = ' . self::$dataBase->var2str($codejercicio) . ';';
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             return new self($data[0]);
         }
@@ -169,10 +169,10 @@ class Cuenta
      */
     public function getCuentaesp($idcuesp, $codejercicio)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idcuentaesp = ' . $this->dataBase->var2str($idcuesp) .
-            ' AND codejercicio = ' . $this->dataBase->var2str($codejercicio) . ' ORDER BY codcuenta ASC;';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idcuentaesp = ' . self::$dataBase->var2str($idcuesp) .
+            ' AND codejercicio = ' . self::$dataBase->var2str($codejercicio) . ' ORDER BY codcuenta ASC;';
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             return new self($data[0]);
         }
@@ -192,7 +192,7 @@ class Cuenta
         if (strlen($this->codcuenta) > 0 && strlen($this->descripcion) > 0) {
             return true;
         }
-        $this->miniLog->alert($this->i18n->trans('account-data-missing'));
+        self::$miniLog->alert(self::$i18n->trans('account-data-missing'));
 
         return false;
     }
@@ -207,10 +207,10 @@ class Cuenta
     public function fullFromEpigrafe($idepi)
     {
         $cuenlist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idepigrafe = ' . $this->dataBase->var2str($idepi)
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idepigrafe = ' . self::$dataBase->var2str($idepi)
             . ' ORDER BY codcuenta ASC;';
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $c) {
                 $cuenlist[] = new self($c);
@@ -231,10 +231,10 @@ class Cuenta
     public function allFromEjercicio($codejercicio, $offset = 0)
     {
         $cuenlist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->dataBase->var2str($codejercicio) .
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . self::$dataBase->var2str($codejercicio) .
             ' ORDER BY codcuenta ASC';
 
-        $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
+        $data = self::$dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $c) {
                 $cuenlist[] = new self($c);
@@ -254,10 +254,10 @@ class Cuenta
     public function fullFromEjercicio($codejercicio)
     {
         $cuenlist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->dataBase->var2str($codejercicio)
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . self::$dataBase->var2str($codejercicio)
             . ' ORDER BY codcuenta ASC;';
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $c) {
                 $cuenlist[] = new self($c);
@@ -278,10 +278,10 @@ class Cuenta
     public function allFromCuentaesp($idcuesp, $codejercicio)
     {
         $cuenlist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idcuentaesp = ' . $this->dataBase->var2str($idcuesp)
-            . ' AND codejercicio = ' . $this->dataBase->var2str($codejercicio) . ' ORDER BY codcuenta ASC;';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idcuentaesp = ' . self::$dataBase->var2str($idcuesp)
+            . ' AND codejercicio = ' . self::$dataBase->var2str($codejercicio) . ' ORDER BY codcuenta ASC;';
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $cue) {
                 $cuenlist[] = new self($cue);
@@ -308,7 +308,7 @@ class Cuenta
             " WHERE codcuenta LIKE '" . $query . "%' OR lower(descripcion) LIKE '%" . $query . "%'" .
             ' ORDER BY codejercicio DESC, codcuenta ASC';
 
-        $data = $this->dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
+        $data = self::$dataBase->selectLimit($sql, FS_ITEM_LIMIT, $offset);
         if (!empty($data)) {
             foreach ($data as $c) {
                 $cuenlist[] = new self($c);

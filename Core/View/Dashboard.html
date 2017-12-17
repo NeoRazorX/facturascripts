@@ -1,5 +1,21 @@
 {% extends "Master/MenuTemplate.html" %}
 
+{% block css %}
+{{ parent() }}
+<link rel="stylesheet" href="node_modules/jquery-ui-dist/jquery-ui.min.css" />
+<style>
+    .btn-options {
+        color: #CCC;
+        border-color: #CCC;
+    }
+</style>
+{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+<script src="node_modules/jquery-ui-dist/jquery-ui.min.js"></script>
+{% endblock %}
+
 {% block body %}
 <div class="container-fluid">
     <div class="row">
@@ -24,31 +40,33 @@
             <hr/>
         </div>
     </div>
-    <div class="row">
-        <div class="card-columns" style="padding-left: 10px; padding-right: 10px;">
-        {% for card in fsc.cursor %}
-            <div class="card {{ card.cardClass() }}">
-                <div class="card-body">
-                    <p class="card-text">{{ card.descripcion }}</p>
-                </div>
-                <div class="card-footer">
-                    {% if card.link %}
-                    <a href="{{ card.link }}" class="btn btn-{{ card.color }} btn-sm float-right">link</a>
-                    {% endif %}
-                    <div class="btn-group">
-                        <a href="{{ card.url() }}" class="btn btn-outline-secondary btn-sm">
-                            <i class="fa fa-edit" aria-hidden="true"></i>
-                        </a>
-                        <a href="{{ card.url() }}" class="btn btn-outline-secondary btn-sm">
-                            <i class="fa fa-star" aria-hidden="true"></i>
-                        </a>
-                    </div>
-                    &nbsp;
-                    <small>{{ card.fecha }}</small>
-                </div>
+
+    <div class="row dashboard-component-sortable">
+    {% for index, component in fsc.components %}
+        {% import 'Macro/' ~ component.getTemplate() as componentTemplate %}
+        <div class="{{ component.getNumColumns() }} dashboard-component">
+            <div class="card {{ component.getCardClass() }}" id="{{ index }}">
+                {{ componentTemplate.run(component, i18n) }}
             </div>
-        {% endfor %}
         </div>
+    {% endfor %}
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $('.dashboard-component-sortable').sortable({
+            placeholderClass: 'dashboard-component'
+        });
+        
+        $('.card-sortable').sortable({
+            placeholderClass: 'card'
+        });
+
+        $('.list-group-sortable').sortable({
+            placeholderClass: 'list-group-item',
+            connectWith: '.connected'
+        });
+    });
+</script>
 {% endblock %}

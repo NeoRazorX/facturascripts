@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -115,10 +115,10 @@ class GrupoEpigrafes
      */
     public function getByCodigo($cod, $codejercicio)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codgrupo = ' . $this->dataBase->var2str($cod)
-            . ' AND codejercicio = ' . $this->dataBase->var2str($codejercicio) . ';';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codgrupo = ' . self::$dataBase->var2str($cod)
+            . ' AND codejercicio = ' . self::$dataBase->var2str($codejercicio) . ';';
 
-        $grupo = $this->dataBase->select($sql);
+        $grupo = self::$dataBase->select($sql);
         if (!empty($grupo)) {
             return new self($grupo[0]);
         }
@@ -139,7 +139,7 @@ class GrupoEpigrafes
             return true;
         }
 
-        $this->miniLog->alert($this->i18n->trans('missing-data-epigraph-group'));
+        self::$miniLog->alert(self::$i18n->trans('missing-data-epigraph-group'));
         return false;
     }
 

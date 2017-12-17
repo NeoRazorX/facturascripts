@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -137,10 +137,10 @@ class Epigrafe
     public function hijos()
     {
         $epilist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idpadre = ' . $this->dataBase->var2str($this->idepigrafe)
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idpadre = ' . self::$dataBase->var2str($this->idepigrafe)
             . ' ORDER BY codepigrafe ASC;';
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $ep) {
                 $epilist[] = new self($ep);
@@ -172,10 +172,10 @@ class Epigrafe
      */
     public function getByCodigo($cod, $codejercicio)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codepigrafe = ' . $this->dataBase->var2str($cod)
-            . ' AND codejercicio = ' . $this->dataBase->var2str($codejercicio) . ';';
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codepigrafe = ' . self::$dataBase->var2str($cod)
+            . ' AND codejercicio = ' . self::$dataBase->var2str($codejercicio) . ';';
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             return new self($data[0]);
         }
@@ -195,7 +195,7 @@ class Epigrafe
         if (strlen($this->codepigrafe) > 0 && strlen($this->descripcion) > 0) {
             return true;
         }
-        $this->miniLog->alert($this->i18n->trans('missing-epigraph-data'));
+        self::$miniLog->alert(self::$i18n->trans('missing-epigraph-data'));
 
         return false;
     }
@@ -210,10 +210,10 @@ class Epigrafe
     public function superFromEjercicio($codejercicio)
     {
         $epilist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . $this->dataBase->var2str($codejercicio)
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . self::$dataBase->var2str($codejercicio)
             . ' AND idpadre IS NULL AND idgrupo IS NULL ORDER BY codepigrafe ASC;';
 
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $ep) {
                 $epilist[] = new self($ep);
@@ -230,7 +230,7 @@ class Epigrafe
     {
         $sql = 'UPDATE ' . $this->tableName()
             . ' SET idgrupo = NULL WHERE idgrupo NOT IN (SELECT idgrupo FROM co_gruposepigrafes);';
-        $this->dataBase->exec($sql);
+        self::$dataBase->exec($sql);
     }
 
     /**

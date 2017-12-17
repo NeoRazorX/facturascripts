@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -138,7 +138,7 @@ class LineaIvaFacturaCliente
         if (static::floatcmp($this->totallinea, $this->neto + $this->totaliva + $this->totalrecargo, FS_NF0, true)) {
             return true;
         }
-        $this->miniLog->alert($this->i18n->trans('totallinea-value-error', [$this->codimpuesto, round($this->neto + $this->totaliva + $this->totalrecargo, FS_NF0)]));
+        self::$miniLog->alert(self::$i18n->trans('totallinea-value-error', [$this->codimpuesto, round($this->neto + $this->totaliva + $this->totalrecargo, FS_NF0)]));
 
         return false;
     }
@@ -175,13 +175,13 @@ class LineaIvaFacturaCliente
         $liRecargo = round($liRecargo, FS_NF0);
 
         if (!static::floatcmp($neto, $liNeto, FS_NF0, true)) {
-            $this->miniLog->alert($this->i18n->trans('sum-netos-line-tax-must-be', [$neto]));
+            self::$miniLog->alert(self::$i18n->trans('sum-netos-line-tax-must-be', [$neto]));
             $status = false;
         } elseif (!static::floatcmp($totaliva, $liIva, FS_NF0, true)) {
-            $this->miniLog->alert($this->i18n->trans('sum-total-line-tax-must-be', [$totaliva]));
+            self::$miniLog->alert(self::$i18n->trans('sum-total-line-tax-must-be', [$totaliva]));
             $status = false;
         } elseif (!static::floatcmp($totalrecargo, $liRecargo, FS_NF0, true)) {
-            $this->miniLog->alert($this->i18n->trans('sum-totalrecargo-line-tax-must-be', [$totalrecargo]));
+            self::$miniLog->alert(self::$i18n->trans('sum-totalrecargo-line-tax-must-be', [$totalrecargo]));
             $status = false;
         }
 
@@ -199,9 +199,9 @@ class LineaIvaFacturaCliente
     {
         $linealist = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idfactura = ' . $this->dataBase->var2str($idfac)
+        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idfactura = ' . self::$dataBase->var2str($idfac)
             . ' ORDER BY iva DESC;';
-        $data = $this->dataBase->select($sql);
+        $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $lin) {
                 $linealist[] = new self($lin);

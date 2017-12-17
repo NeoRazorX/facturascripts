@@ -16,36 +16,34 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 /**
- * Previene los ataques de fuerza bruta mediante una lista de direcciones IP
- * y sus contadores de intentos fallidos.
+ * Prevents brute force attacks through a list of IP addresses and their counters failed attempts.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class IPFilter
 {
     /**
-     * Número máximo de intentos de acceso.
+     * Maximum number of access attempts.
      */
     const MAX_ATTEMPTS = 5;
 
     /**
-     * Número de segundos que el sistema bloquea el acceso.
+     * The number of seconds the system blocks access.
      */
     const BAN_SECONDS = 600;
 
     /**
-     * Ruta del archivo con la lista.
+     * Path of the file with the list.
      *
      * @var string
      */
     private $filePath;
 
     /**
-     * Contiene las direcciones IP.
+     * Contains IP addresses.
      *
      * @var array
      */
@@ -60,7 +58,7 @@ class IPFilter
         $this->ipList = [];
 
         if (file_exists($this->filePath)) {
-            /// leemos la lista de direcciones de IP del archivo
+            /// We read the list of IP addresses in the file
             $file = fopen($this->filePath, 'rb');
             if ($file) {
                 while (!feof($file)) {
@@ -74,7 +72,7 @@ class IPFilter
     }
 
     /**
-     * Carga las direcciones IP en el array $ipList
+     * Load the IP addresses in the $ ipList array
      *
      * @param array $line
      */
@@ -91,7 +89,7 @@ class IPFilter
     }
 
     /**
-     * Devuelve true si los intentos de acceso desde la dirección IP sobrepasa el límite MAX_ATTEMPTS.
+     * Returns true if attempts to access from the IP address exceed the MAX_ATTEMPTS limit.
      *
      * @param string $ip
      *
@@ -112,7 +110,7 @@ class IPFilter
     }
 
     /**
-     * Añade o incrementa el contador de intentos de la dirección IP proporcionada.
+     * Add or increase the attempt counter of the provided IP address.
      *
      * @param string $ip
      */
@@ -140,7 +138,7 @@ class IPFilter
     }
 
     /**
-     * Almacena la lista de direcciones IP en el archivo.
+     * Stores the list of IP addresses in the file.
      */
     private function save()
     {
@@ -155,7 +153,7 @@ class IPFilter
     }
 
     /**
-     * Limpia la lista de direcciones IP y guarda los datos.
+     * Clean the list of IP addresses and save the data.
      */
     public function clear()
     {

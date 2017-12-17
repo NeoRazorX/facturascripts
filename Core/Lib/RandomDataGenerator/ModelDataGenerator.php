@@ -657,7 +657,7 @@ class ModelDataGenerator
      */
     protected function randomClientes($recursivo = true)
     {
-        return $this->randomModel('FacturaScripts\Core\Model\Cliente', 'clientes', 'clientes', $recursivo);
+        return $this->randomModel('\FacturaScripts\Dinamic\Model\Cliente', 'clientes', 'clientes', $recursivo);
     }
 
     /**
@@ -667,7 +667,7 @@ class ModelDataGenerator
      */
     protected function randomProveedores($recursivo = true)
     {
-        return $this->randomModel('FacturaScripts\Core\Model\Proveedor', 'proveedores', 'proveedores', $recursivo);
+        return $this->randomModel('\FacturaScripts\Dinamic\Model\Proveedor', 'proveedores', 'proveedores', $recursivo);
     }
 
     /**
@@ -677,7 +677,7 @@ class ModelDataGenerator
      */
     protected function randomAgentes($recursivo = true)
     {
-        return $this->randomModel('FacturaScripts\Core\Model\Agente', 'agentes', 'agentes', $recursivo);
+        return $this->randomModel('\FacturaScripts\Dinamic\Model\Agente', 'agentes', 'agentes', $recursivo);
     }
 
     /**
@@ -687,6 +687,6 @@ class ModelDataGenerator
      */
     protected function randomArticulos($recursivo = true)
     {
-        return $this->randomModel('FacturaScripts\Core\Model\Articulo', 'articulos', 'articulos', $recursivo);
+        return $this->randomModel('\FacturaScripts\Dinamic\Model\Articulo', 'articulos', 'articulos', $recursivo);
     }
 }

@@ -35,17 +35,27 @@ class EditPresupuestoCliente extends ExtendedController\DocumentController
     protected function createViews()
     {
         parent::createViews();
-        $this->addEditView('FacturaScripts\Core\Model\PresupuestoCliente', 'EditPresupuestoCliente', 'budget');
+        $this->addEditView('\FacturaScripts\Dinamic\Model\PresupuestoCliente', 'EditPresupuestoCliente', 'detail');
     }
 
+    /**
+     * Return the document class name.
+     *
+     * @return string
+     */
     protected function getDocumentClassName()
     {
-        return 'FacturaScripts\Core\Model\PresupuestoCliente';
+        return '\FacturaScripts\Dinamic\Model\PresupuestoCliente';
     }
 
+    /**
+     * Return the document line class name.
+     *
+     * @return string
+     */
     protected function getDocumentLineClassName()
     {
-        return 'FacturaScripts\Core\Model\LineaPresupuestoCliente';
+        return '\FacturaScripts\Dinamic\Model\LineaPresupuestoCliente';
     }
 
     /**
@@ -57,11 +67,12 @@ class EditPresupuestoCliente extends ExtendedController\DocumentController
     protected function loadData($keyView, $view)
     {
         $idpresupuesto = $this->request->get('code');
-
-        switch ($keyView) {
-            case 'EditPresupuestoCliente':
-                $view->loadData($idpresupuesto);
-                break;
+        if ($idpresupuesto !== null && $idpresupuesto !== '') {
+            switch ($keyView) {
+                case 'EditPresupuestoCliente':
+                    $view->loadData($idpresupuesto);
+                    break;
+            }
         }
     }
 
@@ -73,7 +84,7 @@ class EditPresupuestoCliente extends ExtendedController\DocumentController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'budget';
+        $pagedata['title'] = 'estimation';
         $pagedata['menu'] = 'sales';
         $pagedata['icon'] = 'fa-files-o';
         $pagedata['showonmenu'] = false;
