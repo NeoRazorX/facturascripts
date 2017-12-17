@@ -91,12 +91,20 @@ class Translator
      */
     private function locateFiles()
     {
+        $fallback = 'en_EN';
         $file = FS_FOLDER . '/Core/Translation/' . self::$lang . '.json';
+        $fileFallback = FS_FOLDER . '/Core/Translation/' . $fallback . '.json';
+        self::$translator->setFallbackLocales([$fallback]);
+        self::$translator->addResource('json', $fileFallback, $fallback);
         self::$translator->addResource('json', $file, self::$lang);
 
         $pluginManager = new PluginManager();
         foreach ($pluginManager->enabledPlugins() as $pluginName) {
             $file = FS_FOLDER . '/Plugins/' . $pluginName . '/Translation/' . self::$lang . '.json';
+            $fileFallback = FS_FOLDER . '/Plugins/' . $pluginName . '/Translation/' . $fallback . '.json';
+            if (file_exists($file)) {
+                self::$translator->addResource('json', $fileFallback, $fallback);
+            }
             if (file_exists($file)) {
                 self::$translator->addResource('json', $file, self::$lang);
             }
