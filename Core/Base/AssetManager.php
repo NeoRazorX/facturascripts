@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -36,13 +35,23 @@ class AssetManager
      */
     public static function getAssetsForPage($name)
     {
+
         $assets = [
             'js' => [],
             'css' => [],
         ];
 
-        // TODO: Add javascript and css files with the name $name
-        // Example: ['JS' => ['Core/Assets/JS/name.js']]
+        $folder_search = FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR .
+            'Assets' . DIRECTORY_SEPARATOR;
+        $js_file = $folder_search . 'JS' . DIRECTORY_SEPARATOR . $name . '.js';
+        if (file_exists($js_file)) {
+            $assets['js'] = $js_file;
+        }
+
+        $css_file = $folder_search . 'CSS' . DIRECTORY_SEPARATOR . $name . '.css';
+        if (file_exists($css_file)) {
+            $assets['css'] = $css_file;
+        }
         return $assets;
     }
 }

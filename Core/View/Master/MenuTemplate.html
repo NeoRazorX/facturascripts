@@ -13,6 +13,11 @@
         <link rel="stylesheet" href="Core/Assets/CSS/custom.css" />
         <link rel="shortcut icon" href="Core/Assets/Images/favicon.ico" />
         <link rel="apple-touch-icon" sizes="180x180" href="Core/Assets/Images/apple-icon-180x180.png" />
+        {% for cs in fsc.assets %}
+        {% if ".css" in cs %}
+        <link rel="stylesheet" href="{{cs}}" />
+        {% endif %}
+        {% endfor %}
         {% endblock %}
         {% block javascript %}
         <script src="node_modules/jquery/dist/jquery.min.js"></script>
@@ -22,6 +27,12 @@
         <script src="node_modules/jscolor-picker/jscolor.min.js"></script>
         <script src="Core/Assets/JS/datepicker.js"></script>
         <script src="Core/Assets/JS/custom.js"></script>
+        {% for ele in fsc.assets %}
+        {% if ".js" in ele %}
+        <script src="{{ele}}"></script>
+        {% endif %}
+        {% endfor %}
+
         {% endblock %}
         {{ debugBarRender.renderHead()|raw }}
     </head>
