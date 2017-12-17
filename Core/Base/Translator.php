@@ -88,22 +88,27 @@ class Translator
     /**
      * Load the translation files following the priority system of FacturaScripts.
      * In this case, the translator must be provided with the routes in reverse order.
+     * Load also fallback locales to languages different than default, to avoid empty strings.
      */
     private function locateFiles()
     {
         $fallback = 'en_EN';
         $file = FS_FOLDER . '/Core/Translation/' . self::$lang . '.json';
-        $fileFallback = FS_FOLDER . '/Core/Translation/' . $fallback . '.json';
-        self::$translator->setFallbackLocales([$fallback]);
-        self::$translator->addResource('json', $fileFallback, $fallback);
+        if (self::$lang !== 'en_EN') {
+            $fileFallback = FS_FOLDER . '/Core/Translation/' . $fallback . '.json';
+            self::$translator->setFallbackLocales([$fallback]);
+            self::$translator->addResource('json', $fileFallback, $fallback);
+        }
         self::$translator->addResource('json', $file, self::$lang);
 
         $pluginManager = new PluginManager();
         foreach ($pluginManager->enabledPlugins() as $pluginName) {
             $file = FS_FOLDER . '/Plugins/' . $pluginName . '/Translation/' . self::$lang . '.json';
-            $fileFallback = FS_FOLDER . '/Plugins/' . $pluginName . '/Translation/' . $fallback . '.json';
-            if (file_exists($file)) {
-                self::$translator->addResource('json', $fileFallback, $fallback);
+            if (self::$lang !== 'en_EN') {
+                $fileFallback = FS_FOLDER . '/Plugins/' . $pluginName . '/Translation/' . $fallback . '.json';
+                if (file_exists($fileFallback)) {
+                    self::$translator->addResource('json', $fileFallback, $fallback);
+                }
             }
             if (file_exists($file)) {
                 self::$translator->addResource('json', $file, self::$lang);
@@ -153,6 +158,8 @@ class Translator
     /**
      * Returns the full list of messages for the language
      *
+     * @param string $lang
+     *
      * @return array
      */
     public function getMessages($lang = FS_LANG)
@@ -165,14 +172,19 @@ class Translator
         return $messages['messages'];
     }
 
-
     /**
-     * Returns the full list of messages for the language
+     * Returns the full list of missing messages for the language.
+     * If is the default language, return an empty array.
+     *
+     * @param string $lang
      *
      * @return array
      */
     public function getMissingMessages($lang)
     {
+        if ($lang === 'en_EN') {
+            return [];
+        }
         $userCatalogue = self::$translator->getCatalogue($lang);
         $userMessages = $userCatalogue->all();
         while ($userCatalogue = $userCatalogue->getFallbackCatalogue()) {
