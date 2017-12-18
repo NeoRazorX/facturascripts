@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
@@ -30,11 +31,18 @@ class AccountingReports extends Controller
 {
 
     /**
+     * List of exercices.
      *
-     * @var Ejercicio[] 
+     * @var Ejercicio[]
      */
     public $ejercicios;
 
+    /**
+     * Runs the controller's private logic.
+     *
+     * @param \Symfony\Component\HttpFoundation\Response $response
+     * @param \FacturaScripts\Core\Model\User|null $user
+     */
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
@@ -46,16 +54,26 @@ class AccountingReports extends Controller
         $this->execAction($action);
     }
 
+    /**
+     * Execute main actions.
+     *
+     * @param $action
+     */
     private function execAction($action)
     {
         switch ($action) {
             case 'libro-mayor':
                 $this->setTemplate(false);
-                /// TODO: generate libro mayor from data form
+                /// TODO: Generate ledger from data form
                 break;
         }
     }
 
+    /**
+     * Return the basic data for this page.
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pageData = parent::getPageData();

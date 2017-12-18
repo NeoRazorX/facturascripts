@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -29,18 +30,18 @@ class ListUser extends ExtendedController\ListController
 {
 
     /**
-     * Procedimiento para insertar vistas en el controlador
+     * Load views
      */
     protected function createViews()
     {
-        $this->addView('FacturaScripts\Core\Model\User', 'ListUser', 'users', 'fa-users');
+        $this->addView('\FacturaScripts\Dinamic\Model\User', 'ListUser', 'users', 'fa-users');
         $this->addSearchFields('ListUser', ['nick', 'email']);
 
         $this->addOrderBy('ListUser', 'nick');
         $this->addOrderBy('ListUser', 'email');
 
         /* Roles */
-        $this->addView('FacturaScripts\Core\Model\Rol', 'ListRol', 'roles', 'fa-address-card-o');
+        $this->addView('\FacturaScripts\Dinamic\Model\Rol', 'ListRol', 'roles', 'fa-address-card-o');
         $this->addSearchFields('ListRol', ['codrol', 'descripcion']);
 
         $this->addOrderBy('ListRol', 'descripcion', 'description');

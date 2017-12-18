@@ -36,7 +36,7 @@ class XLSExport implements ExportInterface
     /**
      * XLSX object.
      *
-     * @var \XLSXWriter 
+     * @var \XLSXWriter
      */
     private $writer;
 
@@ -115,6 +115,16 @@ class XLSExport implements ExportInterface
             $offset += self::LIST_LIMIT;
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
+    }
+    
+    /**
+     * Adds a new page with the document data.
+     *
+     * @param mixed $model
+     */
+    public function generateDocumentPage($model)
+    {
+        /// TODO: Uncomplete
     }
 
     /**

@@ -613,6 +613,7 @@
     "mysql-socket": "MySQL Socket",
     "mysql-socket-p": "This field is only required in some MySQL hostings.",
     "name": "Name",
+    "name-or-business-name": "Name or Bussine name",
     "nature": "Nature",
     "need-solve-errors": "You have to correct these errors before continuing.",
     "need-start-session": "<a href='index.php'>You must be logged in</a>",

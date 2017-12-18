@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of facturacion_base
+ * This file is part of FacturaScripts
  * Copyright (C) 2017       Francesc Pineda Segarra     <francesc.pineda.segarra@gmail.com>
  * Copyright (C) 2013-2017  Carlos Garcia Gomez         <carlos@facturascripts.com>
  *

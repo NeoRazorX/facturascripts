@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -34,17 +35,27 @@ class EditAlbaranCliente extends ExtendedController\DocumentController
     protected function createViews()
     {
         parent::createViews();
-        $this->addEditView('FacturaScripts\Core\Model\AlbaranCliente', 'EditAlbaranCliente', 'detail', 'fa-edit');
+        $this->addEditView('\FacturaScripts\Dinamic\Model\AlbaranCliente', 'EditAlbaranCliente', 'detail', 'fa-edit');
     }
 
+    /**
+     * Return the document class name.
+     *
+     * @return string
+     */
     protected function getDocumentClassName()
     {
-        return 'FacturaScripts\Core\Model\AlbaranCliente';
+        return '\FacturaScripts\Dinamic\Model\AlbaranCliente';
     }
 
+    /**
+     * Return the document line class name.
+     *
+     * @return string
+     */
     protected function getDocumentLineClassName()
     {
-        return 'FacturaScripts\Core\Model\LineaAlbaranCliente';
+        return '\FacturaScripts\Dinamic\Model\LineaAlbaranCliente';
     }
 
     /**

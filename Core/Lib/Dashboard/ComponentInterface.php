@@ -19,16 +19,59 @@
 namespace FacturaScripts\Core\Lib\Dashboard;
 
 /**
+ * Interface ComponentInterface
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 interface ComponentInterface
 {
+    /**
+     * Sets the special fields for the component and their initial values.
+     *
+     * @return mixed
+     */
     public static function getPropertiesFields();
+
+    /**
+     * Load data of component for user to put into dashboard.
+     */
     public function loadData();
+
+    /**
+     * Data persists in the database, modifying if the record existed or inserting
+     * in case the primary key does not exist.
+     *
+     * @param array $data
+     */
     public function saveData($data);
+
+    /**
+     * Return the template to use for this component.
+     *
+     * @return string|false
+     */
     public function getTemplate();
+
+    /**
+     * Return the number of columns to display width this component.
+     *
+     * @return string
+     */
     public function getNumColumns();
+
+    /**
+     * Return the class name to render this component.
+     *
+     * @return string
+     */
     public function getCardClass();
+
+    /**
+     * Return the URL to this component.
+     *
+     * @param string $id
+     *
+     * @return string
+     */
     public function url($id);
 }

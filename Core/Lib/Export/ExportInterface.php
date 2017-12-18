@@ -45,6 +45,7 @@ interface ExportInterface
 
     /**
      * Adds a new page with the model data.
+     * 
      * @param mixed $model
      * @param array $columns
      * @param string $title
@@ -53,6 +54,7 @@ interface ExportInterface
 
     /**
      * Adds a new page with a table listing the models data.
+     * 
      * @param mixed $model
      * @param DataBaseWhere[] $where
      * @param array $order
@@ -61,4 +63,11 @@ interface ExportInterface
      * @param string $title
      */
     public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '');
+    
+    /**
+     * Adds a new page with the document data.
+     * 
+     * @param mixed $model
+     */
+    public function generateDocumentPage($model);
 }

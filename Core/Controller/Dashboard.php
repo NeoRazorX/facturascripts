@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model;
 use FacturaScripts\Core\Lib;
 
 /**
- * Description of Dashboard
+ * Dashboard that contains some Cards with data to the end user.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -34,10 +34,18 @@ class Dashboard extends Base\Controller
     /**
      * List of components of dashboard.
      *
-     * @var BaseComponent[]
+     * @var Lib\Dashboard\BaseComponent[]
      */
     public $components;
 
+    /**
+     * Dashboard constructor.
+     *
+     * @param Base\Cache $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog $miniLog
+     * @param string $className
+     */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
@@ -45,6 +53,12 @@ class Dashboard extends Base\Controller
         $this->components = [];
     }
 
+    /**
+     * Runs the controller's private logic.
+     *
+     * @param \Symfony\Component\HttpFoundation\Response $response
+     * @param \FacturaScripts\Core\Model\User|null $user
+     */
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
@@ -68,6 +82,11 @@ class Dashboard extends Base\Controller
         return $pageData;
     }
 
+    /**
+     * Get the list of components to this user.
+     *
+     * @param $userNick
+     */
     private function getListComponents($userNick)
     {
         $dashboardModel = new Model\Dashboard();
@@ -81,6 +100,9 @@ class Dashboard extends Base\Controller
         }
     }
 
+    /**
+     * Load the needed data of components.
+     */
     private function loadDataComponents()
     {
         foreach ($this->components as $component) {

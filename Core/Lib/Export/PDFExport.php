@@ -71,7 +71,7 @@ class PDFExport implements ExportInterface
 
     /**
      * Return the full document.
-     * 
+     *
      * @return mixed
      */
     public function getDoc()
@@ -125,9 +125,9 @@ class PDFExport implements ExportInterface
             }
 
             if (is_bool($value)) {
-                $txt = $value ? $this->i18n->trans('yes') : $this->i18n->trans('no');
+                $txt = $this->i18n->trans($value ? 'yes' : 'no');
                 $tableDataAux[] = ['key' => $colTitle, 'value' => $txt];
-            } else if ($value !== null && $value !== '') {
+            } elseif ($value !== null && $value !== '') {
                 $tableDataAux[] = ['key' => $colTitle, 'value' => $value];
             }
         }
@@ -184,6 +184,16 @@ class PDFExport implements ExportInterface
 
         $this->newLongTitles($longTitles);
     }
+    
+    /**
+     * Adds a new page with the document data.
+     *
+     * @param mixed $model
+     */
+    public function generateDocumentPage($model)
+    {
+        /// TODO: Uncomplete
+    }
 
     /**
      * Adds a new line to the PDF.
@@ -196,7 +206,7 @@ class PDFExport implements ExportInterface
 
     /**
      * Adds a description of long titles to the PDF.
-     * 
+     *
      * @param array $titles
      */
     private function newLongTitles(&$titles)
@@ -253,7 +263,7 @@ class PDFExport implements ExportInterface
                 continue;
             }
 
-            if (isset($col->display) && $col->display != 'none' && isset($col->widget->fieldName)) {
+            if (isset($col->display) && $col->display !== 'none' && isset($col->widget->fieldName)) {
                 $tableCols[$col->widget->fieldName] = $col->widget->fieldName;
                 $tableColsTitle[$col->widget->fieldName] = $this->i18n->trans($col->title);
                 $tableOptions['cols'][$col->widget->fieldName] = [
@@ -289,7 +299,7 @@ class PDFExport implements ExportInterface
                 if (in_array($tableOptions['cols'][$col]['col-type'], ['money', 'number'], false)) {
                     $value = $this->numberTools->format($value, 2);
                 } elseif (is_bool($value)) {
-                    $value = $value == 1 ? $this->i18n->trans('yes') : $this->i18n->trans('no');
+                    $value = $this->i18n->trans($value === 1 ? 'yes' : 'no');
                 } elseif (null === $value) {
                     $value = '';
                 }
@@ -303,7 +313,7 @@ class PDFExport implements ExportInterface
 
     /**
      * Adds to $longTitles, and replace all long titles from $titles
-     * 
+     *
      * @param array $longTitles
      * @param array $titles
      */
@@ -344,13 +354,13 @@ class PDFExport implements ExportInterface
 
     /**
      * Returns a new table with 2 columns. Each column with colName1: colName2
-     * 
+     *
      * @param array $table
      * @param string $colName1
      * @param string $colName2
      * @param string $finalColName1
      * @param string $finalColName2
-     * 
+     *
      * @return array
      */
     private function paralellTableData($table, $colName1, $colName2, $finalColName1, $finalColName2)

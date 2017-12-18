@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -50,11 +51,15 @@ class ListBalance extends ExtendedController\ListController
     protected function createViews()
     {
         $className = $this->getClassName();
-        $this->addView('FacturaScripts\Core\Model\Balance', $className);
-        $this->addSearchFields($className, ['codbalance', 'naturaleza', 'descripcion1', 'descripcion2', 'descripcion3', 'descripcion4', 'descripcion4ba']);
+        $this->addView('\FacturaScripts\Dinamic\Model\Balance', $className);
+        $fields = [
+            'codbalance', 'naturaleza', 'descripcion1', 'descripcion2', 'descripcion3', 'descripcion4', 'descripcion4ba'
+        ];
+        $this->addSearchFields($className, $fields);
 
         $this->addOrderBy($className, 'codbalance', 'code');
-        $this->addOrderBy($className, 'descripcion1', 'description-1', 2); /// forzamos el orden por defecto descripcion1
+        /// force default order
+        $this->addOrderBy($className, 'descripcion1', 'description-1', 2);
         $this->addOrderBy($className, 'descripcion2', 'description-2', 3);
         $this->addOrderBy($className, 'descripcion3', 'description-3', 4);
         $this->addOrderBy($className, 'descripcion4', 'description-4', 5);
