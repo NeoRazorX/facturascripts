@@ -9,10 +9,11 @@
         <i class="fa fa-tasks"></i>&nbsp; {{ i18n.trans('tasks-component-title') }}
         <div class="btn-group btn-group-sm float-right" role="group" aria-label="Options">
             <a class="btn btn-outline-secondary btn-options" role="button"><i class="fa fa-plus btn-options"></i></a>
+            <a class="btn btn-outline-secondary btn-options" role="button" data-toggle="collapse" href="#tasks"><i class="fa fa-window-restore btn-options"></i></a>
         </div>
     </div>
 
-    <div class="card-body">
+    <div class="card-body show" id="tasks">
         <h5><i class="fa fa-bell text-warning"></i>&nbsp; {{ i18n.trans('tasks-personal-title') }}</h5>
         <ul class="list-group list-group-sortable">
         {% for task in component.tasks %}
