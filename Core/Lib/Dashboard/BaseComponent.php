@@ -28,6 +28,7 @@ use FacturaScripts\Core\Model;
  */
 class BaseComponent
 {
+    const DIR_MODEL = 'FacturaScripts\\Core\\Model\\';
     const DIR_COMPONENTS = 'FacturaScripts\\Core\\Lib\\Dashboard\\';
     const SUFIX_COMPONENTS = 'Component';
 
@@ -82,11 +83,16 @@ class BaseComponent
      */
     protected function getDataFilter()
     {
-        return [
+        $result = [
             new DataBase\DataBaseWhere('component', $this->component),
-            new DataBase\DataBaseWhere('nick', $this->nick),
             new DataBase\DataBaseWhere('displaydate', date('Y-m-d'), '>=')
         ];
+
+        if (!empty($this->nick)) {
+            $result[] = new DataBase\DataBaseWhere('nick', $this->nick);
+        }
+
+        return $result;
     }
 
     /**
@@ -135,7 +141,7 @@ class BaseComponent
      * @param $numRecords
      * @param $maxWord
      */
-    protected function genetareRandomData($numRecords, $maxWord)
+    protected function generateRandomData($numRecords, $maxWord)
     {
         $this->randomData = true;
         $colors = ['info', 'primary', 'warning', 'danger'];

@@ -78,7 +78,7 @@ class TasksComponent extends BaseComponent implements ComponentInterface
         $rows = $model->all($where, $orderBy);
 
         if (empty($rows)) {
-            $this->genetareRandomData(10, 10);
+            $this->generateRandomData(10, 10);
             $rows = $model->all($where, $orderBy);
         }
 

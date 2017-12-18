@@ -73,7 +73,7 @@ class MessagesComponent extends BaseComponent implements ComponentInterface
         $this->messages = $model->all($where, $orderBy);
 
         if (empty($this->messages)) {
-            $this->genetareRandomData(15, 15);
+            $this->generateRandomData(15, 15);
             $this->messages = $model->all($where, $orderBy);
         }
     }
@@ -107,6 +107,16 @@ class MessagesComponent extends BaseComponent implements ComponentInterface
         ];
 
         $newItem->save();
+    }
+
+    /**
+     * Return the number of columns to display width this component.
+     *
+     * @return string
+     */
+    public function getNumColumns()
+    {
+        return 'col-5';
     }
 
     /**
