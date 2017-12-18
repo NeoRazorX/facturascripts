@@ -152,16 +152,16 @@ abstract class WidgetItem implements VisualItemInterface
     /**
      * Creates and loads the attributes structure from the database
      *
-     * @param array $column
+     * @param array $widget
      *
      * @return WidgetItem
      */
-    public static function newFromJSON($column)
+    public static function newFromJSON($widget)
     {
-        $type = (string) $column['widget']['type'];
-        $widget = self::widgetItemFromType($type);
-        $widget->loadFromJSON($column);
-        return $widget;
+        $type = (string) $widget['type'];
+        $widgetItem = self::widgetItemFromType($type);
+        $widgetItem->loadFromJSON($widget);
+        return $widgetItem;
     }
 
     /**
@@ -239,17 +239,17 @@ abstract class WidgetItem implements VisualItemInterface
     /**
      * Loads the attributes structure from the database
      *
-     * @param \SimpleXMLElement[] $column
+     * @param array $widget
      */
-    public function loadFromJSON($column)
+    public function loadFromJSON($widget)
     {
-        $this->fieldName = (string) $column['widget']['fieldName'];
-        $this->hint = (string) $column['widget']['hint'];
-        $this->readOnly = (bool) $column['widget']['readOnly'];
-        $this->required = (bool) $column['widget']['required'];
-        $this->icon = (string) $column['widget']['icon'];
-        $this->onClick = (string) $column['widget']['onClick'];
-        $this->options = (array) $column['widget']['options'];
+        $this->fieldName = (string) $widget['fieldName'];
+        $this->hint = (string) $widget['hint'];
+        $this->readOnly = (bool) $widget['readOnly'];
+        $this->required = (bool) $widget['required'];
+        $this->icon = (string) $widget['icon'];
+        $this->onClick = (string) $widget['onClick'];
+        $this->options = (array) $widget['options'];
     }
 
     /**

@@ -133,7 +133,16 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         if (!empty($this->widget)) {
             unset($this->widget);
         }
-        $this->widget = WidgetItem::newFromJSON($column);
+
+        switch ($column['widget']['type']) {
+            case 'modal':
+            case 'action':
+                $this->widget = WidgetButton::newFromJSON($column['widget']);
+                break;
+
+            default:
+                $this->widget = WidgetItem::newFromJSON($column['widget']);
+        }
     }
 
     /**
