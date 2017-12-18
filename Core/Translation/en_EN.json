@@ -1007,5 +1007,21 @@
     "dashboard-card": "Dashboard (Item)",
     "creation-date": "Creation date",
     "display-date": "Display date",
-    "color": "color"
+    "color": "color",
+    "document-reports": "Document reports",
+    "choose-doc-type": "Choose document type",
+    "customer-estimations": "Customer estimations",
+    "customer-delivery-notes": "Customer delivery notes",
+    "customer-invoices": "Customer invoices",
+    "supplier-delivery-notes": "Supplier delivery notes",
+    "supplier-invoices": "Supplier invoices",
+    "choose-source-1": "Choose source 1",
+    "choose-source-2": "Choose source 2",
+    "choose-employee": "Choose employee",
+    "choose-serie": "Choose serie",
+    "choose-currency": "Choose currency",
+    "choose-payment-method": "Choose payment method",
+    "daily": "Daily",
+    "monthly": "Monthly",
+    "yearly": "Yearly"
 }

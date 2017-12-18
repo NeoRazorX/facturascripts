@@ -16,9 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Lib\Import\CSVImport;
 
 /**
  * Una divisa (moneda) con su símbolo y su tasa de conversión respecto al euro.
@@ -31,49 +33,49 @@ class Divisa
     use Base\ModelTrait;
 
     /**
-     * Clave primaria. Varchar (3).
+     * Primary key. Varchar (3).
      *
      * @var string
      */
     public $coddivisa;
 
     /**
-     * Descripción de la divisa
+     * Currency description.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * Tasa de conversión respecto al euro.
+     * Conversion rate to the euro.
      *
      * @var float|int
      */
     public $tasaconv;
 
     /**
-     * Tasa de conversión respecto al euro (para compras).
+     * Conversion rate to the euro (for purchases).
      *
      * @var float|int
      */
     public $tasaconvcompra;
 
     /**
-     * código ISO 4217 en número: http://en.wikipedia.org/wiki/ISO_4217
+     * ISO 4217 code in number: http://en.wikipedia.org/wiki/ISO_4217
      *
      * @var string
      */
     public $codiso;
 
     /**
-     * Símbolo que representa a la divisa
+     * Symbol representing the currency.
      *
      * @var string
      */
     public $simbolo;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -83,7 +85,7 @@ class Divisa
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the primary key of the model.
      *
      * @return string
      */
@@ -93,7 +95,7 @@ class Divisa
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -106,7 +108,7 @@ class Divisa
     }
 
     /**
-     * Devuelve TRUE si esta es la divisa predeterminada de la empresa
+     * Returns True if is the default currency for the company.
      *
      * @return bool
      */
@@ -116,7 +118,7 @@ class Divisa
     }
 
     /**
-     * Comprueba los datos de la divisa, devuelve TRUE si son correctos
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -143,24 +145,14 @@ class Divisa
     }
 
     /**
-     * Crea la consulta necesaria para crear una nueva divisa en la base de datos.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName() . ' (coddivisa,descripcion,tasaconv,tasaconvcompra,codiso,simbolo)'
-            . " VALUES ('EUR','EUROS','1','1','978','€')"
-            . ",('ARS','PESOS ARGENTINOS','16.684','16.684','32','AR$')"
-            . ",('CLP','PESOS CHILENOS','704.0227','704.0227','152','CLP$')"
-            . ",('COP','PESOS COLOMBIANOS','3140.6803','3140.6803','170','CO$')"
-            . ",('DOP','PESOS DOMINICANOS','49.7618','49.7618','214','RD$')"
-            . ",('GBP','LIBRAS ESTERLINAS','0.865','0.865','826','£')"
-            . ",('HTG','GOURDES','72.0869','72.0869','322','G')"
-            . ",('MXN','PESOS MEXICANO','23.3678','23.3678','484','MX$')"
-            . ",('PAB','BALBOAS','1.128','1.128','590','B')"
-            . ",('PEN','NUEVOS SOLES','3.736','3.736','604','S/.')"
-            . ",('USD','DÓLARES EE.UU.','1.129','1.129','840','$')"
-            . ",('VEF','BOLÍVARES','10.6492','10.6492','937','Bs')";
+        return CSVImport::importTableSQL(static::tableName());
     }
 }

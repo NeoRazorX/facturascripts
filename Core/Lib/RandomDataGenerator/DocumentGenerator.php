@@ -32,7 +32,7 @@ class DocumentGenerator extends ModelDataGenerator
     /**
      * Generates a random document
      *
-     * @param Model\Base\DocumentoCompra $doc
+     * @param mixed $doc
      */
     private function randomizeDocument(&$doc)
     {

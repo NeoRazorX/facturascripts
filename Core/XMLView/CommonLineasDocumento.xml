@@ -41,7 +41,7 @@
         <column name="dto" display="right" order="100">
             <widget type="number" fieldname="dtopor" />
         </column>
-        <column name="neto" display="right" order="100">
+        <column name="net" display="right" order="100">
             <widget type="money" fieldname="pvptotal" />
         </column>
     </columns>
