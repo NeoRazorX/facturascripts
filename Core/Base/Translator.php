@@ -93,26 +93,34 @@ class Translator
      */
     private function locateFiles()
     {
+        $fileFallback = FS_FOLDER . '/Core/Translation/' . self::DEFAULT_LANG . '.json';
+        $this->addResourceFallbackLang($fileFallback);
         $file = FS_FOLDER . '/Core/Translation/' . self::$lang . '.json';
-        if (self::$lang !== self::DEFAULT_LANG) {
-            $fileFallback = FS_FOLDER . '/Core/Translation/' . self::DEFAULT_LANG . '.json';
-            self::$translator->setFallbackLocales([self::DEFAULT_LANG]);
-            self::$translator->addResource('json', $fileFallback, self::DEFAULT_LANG);
-        }
         self::$translator->addResource('json', $file, self::$lang);
 
         $pluginManager = new PluginManager();
         foreach ($pluginManager->enabledPlugins() as $pluginName) {
+            $fileFallback = FS_FOLDER . '/Plugins/' . $pluginName . '/Translation/' . self::DEFAULT_LANG . '.json';
+            $this->addResourceFallbackLang($fileFallback);
             $file = FS_FOLDER . '/Plugins/' . $pluginName . '/Translation/' . self::$lang . '.json';
-            if (self::$lang !== self::DEFAULT_LANG) {
-                $fileFallback = FS_FOLDER . '/Plugins/' . $pluginName . '/Translation/' . self::DEFAULT_LANG . '.json';
-                if (file_exists($fileFallback)) {
-                    self::$translator->addResource('json', $fileFallback, self::DEFAULT_LANG);
-                }
-            }
             if (file_exists($file)) {
                 self::$translator->addResource('json', $file, self::$lang);
             }
+        }
+    }
+
+    /**
+     * Add core/plugin language fallback if needed (when different than default lang).
+     * Combine user lang and default lang, to add all missing translations strings with default lang.
+     * If lang file exists on Core, can be setted as fallback locales.
+     */
+    private function addResourceFallbackLang($fileFallback)
+    {
+        if (self::$lang !== self::DEFAULT_LANG) {
+            if (strpos($fileFallback, FS_FOLDER . '/Core/Translation/') === 0) {
+                self::$translator->setFallbackLocales([self::DEFAULT_LANG]);
+            }
+            self::$translator->addResource('json', $fileFallback, self::DEFAULT_LANG);
         }
     }
 
