@@ -136,7 +136,9 @@ class PresupuestoCliente
     public function getLineas()
     {
         $lineaModel = new LineaPresupuestoCliente();
-        return $lineaModel->all([new DataBaseWhere('idpresupuesto', $this->idpresupuesto)]);
+        $where = [new DataBaseWhere('idpresupuesto', $this->idpresupuesto)];
+        $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
+        return $lineaModel->all($where, $order);
     }
 
     /**

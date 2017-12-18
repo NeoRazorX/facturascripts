@@ -24,6 +24,9 @@
 
 <view>
     <columns>
+        <column name="id" display="none" order="100">
+            <widget type="text" fieldname="idlinea" />
+        </column>
         <column name="reference" order="100">
             <widget type="text" fieldname="referencia" />
         </column>
@@ -43,6 +46,9 @@
         </column>
         <column name="net" display="right" order="100">
             <widget type="money" fieldname="pvptotal" />
+        </column>
+        <column name="tax" display="right" order="100">
+            <widget type="number" fieldname="iva" />
         </column>
     </columns>
 </view>

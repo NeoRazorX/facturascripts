@@ -16,9 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var documentLineHeaders = [];
-var documentLineColumns = [];
-var documentLines = [];
+var documentLineData = [];
+var documentUrl = '';
 var hsTable = null;
 var msgConfirmDelete = "";
 var msgAreYouSure = "";
@@ -27,9 +26,24 @@ var msgConfirm = "";
 var tabActive = "";
 
 function documentSave() {
-    for(var num = 1; num < 200; num++) {
-        var row = hsTable.getData(num);
-    }
+    $("#btn-document-save").prop("disabled", true);
+
+    var data = {action: "save-lines", lines: hsTable.getData()};
+    $.ajax({
+        type: "POST",
+        url: documentUrl,
+        dataType: "text",
+        data: data,
+        success: function (results) {
+            if(results == "OK") {
+                location.reload();
+            } else {
+                alert(results);
+            }
+        }
+    });
+
+    $("#btn-document-save").prop("disabled", false);
 }
 
 function deleteRecord(formName) {
@@ -63,12 +77,13 @@ $(document).ready(function () {
     $("#mainTabs").on("shown.bs.tab", function (e) {
         tabActive = e.target.hash.substring(1);
     });
+
     var container = document.getElementById("document-lines");
     hsTable = new Handsontable(container, {
-        data: documentLines,
-        columns: documentLineColumns,
+        data: documentLineData.rows,
+        columns: documentLineData.columns,
         rowHeaders: true,
-        colHeaders: documentLineHeaders,
+        colHeaders: documentLineData.headers,
         stretchH: "all",
         autoWrapRow: true,
         manualRowResize: true,
