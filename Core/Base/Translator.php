@@ -29,6 +29,7 @@ use Symfony\Component\Translation\Translator as symfonyTranslator;
  */
 class Translator
 {
+    const DEFAULT_LANG = 'en_EN';
 
     /**
      * Language by default.
@@ -92,22 +93,21 @@ class Translator
      */
     private function locateFiles()
     {
-        $fallback = 'en_EN';
         $file = FS_FOLDER . '/Core/Translation/' . self::$lang . '.json';
-        if (self::$lang !== 'en_EN') {
-            $fileFallback = FS_FOLDER . '/Core/Translation/' . $fallback . '.json';
-            self::$translator->setFallbackLocales([$fallback]);
-            self::$translator->addResource('json', $fileFallback, $fallback);
+        if (self::$lang !== self::DEFAULT_LANG) {
+            $fileFallback = FS_FOLDER . '/Core/Translation/' . self::DEFAULT_LANG . '.json';
+            self::$translator->setFallbackLocales([self::DEFAULT_LANG]);
+            self::$translator->addResource('json', $fileFallback, self::DEFAULT_LANG);
         }
         self::$translator->addResource('json', $file, self::$lang);
 
         $pluginManager = new PluginManager();
         foreach ($pluginManager->enabledPlugins() as $pluginName) {
             $file = FS_FOLDER . '/Plugins/' . $pluginName . '/Translation/' . self::$lang . '.json';
-            if (self::$lang !== 'en_EN') {
-                $fileFallback = FS_FOLDER . '/Plugins/' . $pluginName . '/Translation/' . $fallback . '.json';
+            if (self::$lang !== self::DEFAULT_LANG) {
+                $fileFallback = FS_FOLDER . '/Plugins/' . $pluginName . '/Translation/' . self::DEFAULT_LANG . '.json';
                 if (file_exists($fileFallback)) {
-                    self::$translator->addResource('json', $fileFallback, $fallback);
+                    self::$translator->addResource('json', $fileFallback, self::DEFAULT_LANG);
                 }
             }
             if (file_exists($file)) {
@@ -199,12 +199,12 @@ class Translator
      */
     public function getMissingMessages($lang)
     {
-        if ($lang === 'en_EN') {
+        if ($lang === self::DEFAULT_LANG) {
             return [];
         }
         $userMessages = $this->getOriginalMessages($lang);
 
-        $systemCatalogue = self::$translator->getCatalogue('en_EN');
+        $systemCatalogue = self::$translator->getCatalogue(self::DEFAULT_LANG);
         $systemMessages = $systemCatalogue->all();
 
         $result = [];
