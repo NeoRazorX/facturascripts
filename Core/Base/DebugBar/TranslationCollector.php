@@ -124,7 +124,7 @@ class TranslationCollector extends DataCollector implements Renderable, AssetPro
         }
 
         $this->pendingTranslations = [];
-        if (static::$i18n->getLangCode() !== 'en_EN') {
+        if (static::$i18n->getLangCode() !== static::$i18n::DEFAULT_LANG) {
             foreach (static::$i18n->getMissingMessages(static::$i18n->getLangCode()) as $key => $value) {
                 $this->pendingTranslations[] = [ 'key' => $key, 'value' => $value];
             }
