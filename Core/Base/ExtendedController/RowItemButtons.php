@@ -61,13 +61,10 @@ class RowItemButtons extends RowItem
     public function loadFromJSON($row)
     {
         $this->type = (string) $row['type'];
-
         foreach ($row['buttons'] as $button) {
-            $values = $button;
-            /// TODO: Method call uses 1 parameters, but method signature uses 0 parameters
-            $buttomItem = new WidgetButton($values);
-            $this->buttons[] = $buttomItem;
-            unset($buttomItem);
+            $widgetButton = WidgetButton::newFromJSON($button);
+            $this->buttons[] = $widgetButton;
+            unset($widgetButton);
         }
     }
 }

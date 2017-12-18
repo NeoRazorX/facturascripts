@@ -135,23 +135,6 @@ class PageOption
     }
 
     /**
-     * Load the column structure from the JSON
-     *
-     * @param \SimpleXMLElement $groups
-     * @param array $target
-     */
-    private function getJSONGroupsColumns($groups, &$target)
-    {
-        if (!empty($groups)) {
-            foreach ($groups as $item) {
-                $groupItem = ExtendedController\GroupItem::newFromJSON($item);
-                $target[$groupItem->name] = $groupItem;
-                unset($groupItem);
-            }
-        }
-    }
-
-    /**
      * Load the data from an array
      *
      * @param array $data
@@ -160,20 +143,10 @@ class PageOption
     {
         $this->traitLoadFromData($data, ['columns', 'modals', 'filters', 'rows']);
 
-        $groups = json_decode($data['columns'], true);
-        $this->getJSONGroupsColumns($groups, $this->columns);
-
+        $columns = json_decode($data['columns'], true);
         $modals = json_decode($data['modals'], true);
-        $this->getJSONGroupsColumns($modals, $this->modals);
-
         $rows = json_decode($data['rows'], true);
-        if (!empty($rows)) {
-            foreach ($rows as $item) {
-                $rowItem = ExtendedController\RowItem::newFromJSON($item);
-                $this->rows[$rowItem->type] = $rowItem;
-                unset($rowItem);
-            }
-        }
+        ExtendedController\VisualItemLoadEngine::loadJSON($columns, $modals, $rows, $this);
     }
 
     private function getEncodeValues()
@@ -209,81 +182,6 @@ class PageOption
     }
 
     /**
-     * Load the column structure from the XML
-     *
-     * @param \SimpleXMLElement $columns
-     * @param array $target
-     */
-    private function getXMLGroupsColumns($columns, &$target)
-    {
-        // if group dont have elements
-        if ($columns->count() === 0) {
-            return;
-        }
-
-        // if have elements but dont have groups
-        if (!isset($columns->group)) {
-            $groupItem = ExtendedController\GroupItem::newFromXML($columns);
-            $target[$groupItem->name] = $groupItem;
-            unset($groupItem);
-            return;
-        }
-
-        // exists columns grouped
-        foreach ($columns->group as $group) {
-            $groupItem = ExtendedController\GroupItem::newFromXML($group);
-            $target[$groupItem->name] = $groupItem;
-            unset($groupItem);
-        }
-    }
-
-    /**
-     * Load the special conditions for the rows from XML file
-     *
-     * @param \SimpleXMLElement $rows
-     */
-    private function getXMLRows($rows)
-    {
-        if (!empty($rows)) {
-            foreach ($rows->row as $row) {
-                $rowItem = ExtendedController\RowItem::newFromXML($row);
-                $this->rows[$rowItem->type] = $rowItem;
-                unset($rowItem);
-            }
-        }
-    }
-
-    /**
-     * Add to the configuration of a controller
-     *
-     * @param string $name
-     */
-    public function installXML($name)
-    {
-        if ($this->name != $name) {
-            self::$miniLog->critical(self::$i18n->trans('error-install-name-xmlview'));
-            return;
-        }
-
-        $file = "Core/XMLView/{$name}.xml";
-        /**
-         * This can be affected by a PHP bug #62577 (https://bugs.php.net/bug.php?id=62577)
-         * Reports 'simplexml_load_file(...)' calls, which may be affected by this PHP bug.
-         * $xml = simplexml_load_file($file);
-         */
-        $xml = @simplexml_load_string(file_get_contents($file));
-
-        if ($xml === false) {
-            self::$miniLog->critical(self::$i18n->trans('error-processing-xmlview', [$file]));
-            return;
-        }
-
-        $this->getXMLGroupsColumns($xml->columns, $this->columns);
-        $this->getXMLGroupsColumns($xml->modals, $this->modals);
-        $this->getXMLRows($xml->rows);
-    }
-
-    /**
      * Get the settings for the driver and user
      *
      * @param string $name
@@ -305,26 +203,14 @@ class PageOption
             $this->modals = [];
             $this->filters = [];
             $this->rows = [];
-            $this->installXML($name);
+
+            if (!ExtendedController\VisualItemLoadEngine::installXML($name, $this)) {
+                self::$miniLog->critical(self::$i18n->trans('error-processing-xmlview', [$name]));
+                return;
+            }
         }
 
         // Apply values to dynamic Select widgets
-        $this->dynamicSelectValues($this->columns);
-
-        // Apply values to dynamic Select widgets for modals forms
-        if (!empty($this->modals)) {
-            $this->dynamicSelectValues($this->modals);
-        }
-    }
-
-    /**
-     * Load the list of values for a dynamic select type widget with
-     *  a database model or a range of values
-     */
-    private function dynamicSelectValues($items)
-    {
-        foreach ($items as $group) {
-            $group->applySpecialOperations();
-        }
+        ExtendedController\VisualItemLoadEngine::applyDynamicSelectValues($this);
     }
 }
