@@ -16,10 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Model\Base;
+use FacturaScripts\Core\Model\PageOption;
 
 /**
  * Description of DocumentController
@@ -37,6 +37,13 @@ abstract class DocumentController extends PanelController
     public $document;
 
     /**
+     * Line columns from xmlview.
+     * 
+     * @var array
+     */
+    private $lineOptions;
+
+    /**
      * Lines of document, the body.
      *
      * @var Base\LineaDocumentoVenta[]|Base\LineaDocumentoCompra[]
@@ -44,20 +51,46 @@ abstract class DocumentController extends PanelController
     public $lines;
 
     /**
-     * Load views
+     * Constructor.
+     * 
+     * @param Cache $cache
+     * @param Translator $i18n
+     * @param MiniLog $miniLog
+     * @param string $className
+     */
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    {
+        parent::__construct($cache, $i18n, $miniLog, $className);
+        $this->setTemplate('Master/DocumentController');
+    }
+
+    /**
+     * Load views and document.
      */
     protected function createViews()
     {
-        if ($this->document === null) {
-            $this->setTemplate('Master/DocumentController');
-            $iddoc = $this->request->get('code');
-            $className = $this->getDocumentClassName();
+        $className = $this->getDocumentClassName();
+        $this->document = new $className();
+        $this->lines = [];
 
-            $this->document = new $className();
+        $iddoc = $this->request->get('code');
+        if ($iddoc !== null && $iddoc !== '') {
             $this->document->loadFromCode($iddoc);
             if ($this->document) {
                 $this->lines = $this->document->getLineas();
             }
+        }
+
+        $this->loadPrimaryTabOptions();
+    }
+
+    private function loadPrimaryTabOptions()
+    {
+        $PageOptions = new PageOption();
+        $PageOptions->getForUser($this->getLineXMLView(), $this->user->nick);
+
+        foreach ($PageOptions->columns['root']->columns as $col) {
+            $this->lineOptions[] = $col;
         }
     }
 
@@ -83,6 +116,17 @@ abstract class DocumentController extends PanelController
         }
 
         return parent::execPreviousAction($view, $action);
+    }
+
+    /**
+     * Load view data procedure
+     *
+     * @param string $keyView
+     * @param BaseView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        /// Implement in children
     }
 
     /**
@@ -118,16 +162,27 @@ abstract class DocumentController extends PanelController
     abstract protected function getDocumentLineClassName();
 
     /**
+     * Return the name of the xml file with the column configuration por lines.
+     * 
+     * @return string
+     */
+    protected function getLineXMLView()
+    {
+        return 'CommonLineasDocumento';
+    }
+
+    /**
      * Returns the line headers.
      *
      * @return string
      */
     public function getLineHeaders()
     {
-        $headers = [
-            'Referencia', 'Descripción', 'Cantidad', 'Precio', '% Dto.',
-            '% IVA', '% RE', '% IRPF', 'Subtotal'
-        ];
+        $headers = [];
+        foreach ($this->lineOptions as $col) {
+            $headers[] = $this->i18n->trans($col->title);
+        }
+
         return json_encode($headers);
     }
 
@@ -138,17 +193,24 @@ abstract class DocumentController extends PanelController
      */
     public function getLineColumns()
     {
-        $columns = [
-            ['data' => 'referencia', 'type' => 'text'],
-            ['data' => 'descripcion', 'type' => 'text'],
-            ['data' => 'cantidad', 'type' => 'numeric', 'format' => '0.00'],
-            ['data' => 'pvpunitario', 'type' => 'numeric', 'format' => '0.0000'],
-            ['data' => 'dtopor', 'type' => 'numeric', 'format' => '0.00'],
-            ['data' => 'iva', 'type' => 'numeric', 'format' => '0.00'],
-            ['data' => 'recargo', 'type' => 'numeric', 'format' => '0.00'],
-            ['data' => 'irpf', 'type' => 'numeric', 'format' => '0.00'],
-            ['data' => 'subtotal', 'type' => 'numeric', 'format' => '0.00'],
-        ];
+        $moneyFormat = '0.';
+        for ($num = 0; $num < FS_NF0; $num++) {
+            $moneyFormat .= '0';
+        }
+
+        $columns = [];
+        foreach ($this->lineOptions as $col) {
+            $item = [
+                'data' => $col->widget->fieldName,
+                'type' => $col->widget->type,
+            ];
+            if ($item['type'] === 'number' || $item['type'] === 'money') {
+                $item['type'] = 'numeric';
+                $item['format'] = $moneyFormat;
+            }
+
+            $columns[] = $item;
+        }
 
         return json_encode($columns);
     }
@@ -162,29 +224,28 @@ abstract class DocumentController extends PanelController
     {
         $data = [];
         foreach ($this->lines as $line) {
-            $data[] = [
-                'referencia' => $line->referencia,
-                'descripcion' => $line->descripcion,
-                'cantidad' => $line->cantidad,
-                'pvpunitario' => $line->pvpunitario,
-                'dtopor' => $line->dtopor,
-                'iva' => $line->iva,
-                'recargo' => $line->recargo,
-                'irpf' => $line->irpf,
-                'subtotal' => $line->pvptotal
-            ];
+            $data[] = (array) $line;
         }
 
         return json_encode($data);
     }
 
-    /**
-     * Load view data procedure
-     *
-     * @param string $keyView
-     * @param BaseView $view
-     */
-    protected function loadData($keyView, $view)
+    public function getBreadcrumb()
     {
+        $items = [
+            ['title' => $this->empresa->nombre, 'url' => '#'],
+            ['title' => $this->document->codalmacen, 'url' => '#']
+        ];
+
+        if (isset($this->document->codcliente)) {
+            $items[] = ['title' => $this->document->nombrecliente, 'url' => '#'];
+        } elseif (isset($this->document->codproveedor)) {
+            $items[] = ['title' => $this->document->nombre, 'url' => '#'];
+        }
+
+        $items[] = ['title' => $this->document->codserie, 'url' => '#'];
+        $items[] = ['title' => $this->document->fecha, 'url' => '#'];
+        $items[] = ['title' => $this->document->hora, 'url' => '#'];
+        return $items;
     }
 }

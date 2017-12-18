@@ -30,8 +30,9 @@ use FacturaScripts\Core\Base\ExtendedController;
  */
 class EditFabricante extends ExtendedController\PanelController
 {
+    
     /**
-     * Load views
+     * Load views.
      */
     protected function createViews()
     {

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
@@ -68,11 +67,12 @@ class EditPresupuestoCliente extends ExtendedController\DocumentController
     protected function loadData($keyView, $view)
     {
         $idpresupuesto = $this->request->get('code');
-
-        switch ($keyView) {
-            case 'EditPresupuestoCliente':
-                $view->loadData($idpresupuesto);
-                break;
+        if ($idpresupuesto !== null && $idpresupuesto !== '') {
+            switch ($keyView) {
+                case 'EditPresupuestoCliente':
+                    $view->loadData($idpresupuesto);
+                    break;
+            }
         }
     }
 
