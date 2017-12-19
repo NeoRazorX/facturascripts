@@ -61,7 +61,9 @@
                                     <div class="col-3">
                                         <div class="form-group">
                                             <select name="format" class="form-control">
-                                                <option value="pdf">PDF</option>
+                                                {% for key, option in fsc.exportManager.options() %}
+                                                <option value="{{ key }}">{{ option['description'] }}</option>
+                                                {% endfor %}
                                             </select>
                                         </div>
                                     </div>
@@ -97,7 +99,9 @@
                                     <div class="col-3">
                                         <div class="form-group">
                                             <select name="format" class="form-control">
-                                                <option value="pdf">PDF</option>
+                                                {% for key, option in fsc.exportManager.options() %}
+                                                <option value="{{ key }}">{{ option['description'] }}</option>
+                                                {% endfor %}
                                             </select>
                                         </div>
                                     </div>
@@ -133,7 +137,9 @@
                                     <div class="col-3">
                                         <div class="form-group">
                                             <select name="format" class="form-control">
-                                                <option value="pdf">PDF</option>
+                                                {% for key, option in fsc.exportManager.options() %}
+                                                <option value="{{ key }}">{{ option['description'] }}</option>
+                                                {% endfor %}
                                             </select>
                                         </div>
                                     </div>
@@ -169,7 +175,9 @@
                                     <div class="col-3">
                                         <div class="form-group">
                                             <select name="format" class="form-control">
-                                                <option value="pdf">PDF</option>
+                                                {% for key, option in fsc.exportManager.options() %}
+                                                <option value="{{ key }}">{{ option['description'] }}</option>
+                                                {% endfor %}
                                             </select>
                                         </div>
                                     </div>

@@ -141,6 +141,11 @@ class ExportManager
     {
         self::$engine->generateDocumentPage($model);
     }
+    
+    public function generateTablePage($headers, $rows)
+    {
+        self::$engine->generateTablePage($headers, $rows);
+    }
 
     /**
      * Returns the full class name.

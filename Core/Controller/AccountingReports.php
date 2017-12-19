@@ -20,7 +20,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Lib\Accounting;
-use FacturaScripts\Core\Lib\Export\PDFExport;
+use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,6 +39,13 @@ class AccountingReports extends Controller
      * @var Ejercicio[]
      */
     public $ejercicios;
+    
+    /**
+     * Object to manager data export.
+     * 
+     * @var ExportManager 
+     */
+    public $exportManager;
 
     /**
      * Runs the controller's private logic.
@@ -52,6 +59,7 @@ class AccountingReports extends Controller
 
         $ejercicioModel = new Ejercicio();
         $this->ejercicios = $ejercicioModel->all([], ['fechainicio' => 'DESC']);
+        $this->exportManager = new ExportManager();
 
         $action = $this->request->get('action', '');
         $this->execAction($action);
@@ -67,6 +75,7 @@ class AccountingReports extends Controller
         $data = [];
         $dateFrom = $this->request->get('date-from');
         $dateTo = $this->request->get('date-to');
+        $format = $this->request->get('format');
 
         switch ($action) {
             case 'libro-mayor':
@@ -93,7 +102,7 @@ class AccountingReports extends Controller
 
         if (!empty($data)) {
             $this->setTemplate(false);
-            $this->exportData($data);
+            $this->exportData($data, $format);
         }
     }
 
@@ -116,14 +125,14 @@ class AccountingReports extends Controller
      * Exports data to PDF.
      * 
      * @param array $data
+     * @param string $format
      */
-    private function exportData(&$data)
+    private function exportData(&$data, $format)
     {
         $headers = array_keys($data[0]);
 
-        $pdfExport = new PDFExport();
-        $pdfExport->newDoc($this->response);
-        $pdfExport->generateTablePage($headers, $data);
-        $this->response->setContent($pdfExport->getDoc());
+        $this->exportManager->newDoc($this->response, $format);
+        $this->exportManager->generateTablePage($headers, $data);
+        $this->exportManager->show($this->response);
     }
 }
