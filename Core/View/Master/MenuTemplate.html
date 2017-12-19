@@ -6,13 +6,18 @@
         <meta name="description" content="{{ i18n.trans('meta-description') }}" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="generator" content="{{ i18n.trans('facturascripts') }}" />
+        {% block icons %}
+        <link rel="shortcut icon" href="Core/Assets/Images/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="Core/Assets/Images/apple-icon-180x180.png" />
+        {% endblock %}
         {% block css %}
         <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css" />
         <link rel="stylesheet" href="Core/Assets/CSS/datepicker.css" />
         <link rel="stylesheet" href="Core/Assets/CSS/custom.css" />
-        <link rel="shortcut icon" href="Core/Assets/Images/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="Core/Assets/Images/apple-icon-180x180.png" />
+        {% for css in fsc.assets['css'] %}
+        <link rel="stylesheet" href="{{ css }}" />
+        {% endfor %}
         {% endblock %}
         {% block javascript %}
         <script src="node_modules/jquery/dist/jquery.min.js"></script>
@@ -22,6 +27,9 @@
         <script src="node_modules/jscolor-picker/jscolor.min.js"></script>
         <script src="Core/Assets/JS/datepicker.js"></script>
         <script src="Core/Assets/JS/custom.js"></script>
+        {% for js in fsc.assets['js'] %}
+        <script src="{{ js }}"></script>
+        {% endfor %}
         {% endblock %}
         {{ debugBarRender.renderHead()|raw }}
     </head>
