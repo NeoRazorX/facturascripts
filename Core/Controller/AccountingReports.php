@@ -82,7 +82,7 @@ class AccountingReports extends Controller
 
             case 'situacion':
                 $balanceSheet = new Accounting\BalanceSheet();
-                $data = $balanceAmmount->generate($dateFrom, $dateTo);
+                $data = $balanceSheet->generate($dateFrom, $dateTo);
                 break;
 
             case 'pyg':

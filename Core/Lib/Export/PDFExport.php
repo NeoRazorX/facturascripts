@@ -209,8 +209,8 @@ class PDFExport implements ExportInterface
         }
         
         $this->newPage($orientation);
-        $tableOptions['width'] = $this->tableWidth;
-        $this->pdf->ezTable($rows, $headers);
+        $tableOptions = ['width' => $this->tableWidth];
+        $this->pdf->ezTable($rows, $headers, '', $tableOptions);
     }
 
     /**
