@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Model;
 
 /**
  * Controller to edit a single item from the EditRol model
@@ -76,7 +77,7 @@ class EditRol extends ExtendedController\PanelController
      *
      * @return array
      */
-    public function getPageData()
+    public function getPageData(): array
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'rol';
@@ -85,5 +86,95 @@ class EditRol extends ExtendedController\PanelController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    /**
+     * List of users in the group with the indicated role code
+     *
+     * @param string $codRol
+     * @return array
+     */
+    private function getUsers($codRol): array
+    {
+        $result = [];
+        $rolUserModel = new Model\RolUser();
+        $rows = $rolUserModel->all([new DataBaseWhere('codrol', $codRol)]);
+        foreach ($rows as $rolUser) {
+            $result[] = $rolUser->nick;
+        }
+        return $result;
+    }
+
+    /**
+     * Add the indicated page list to the Role group
+     * and all users who are in that group
+     *
+     * @param string $codRol
+     * @param Model\Page[] $pages
+     * @throws \Exception
+     */
+    private function addRolAccess($codRol, $pages)
+    {
+        // add Pages to Rol
+        if (!Model\RolAccess::addPagesToRol($codRol, $pages)) {
+            throw new \Exception(self::$i18n->trans('cancel-process'));
+        }
+
+        // add Pages to User
+        $users = $this->getUsers($codRol);
+        foreach ($users as $nick) {
+            if (!Model\PageRule::addPagesToUser($nick, $pages)) {
+                throw new \Exception(self::$i18n->trans('cancel-process'));
+            }
+        }
+    }
+
+    /**
+     * List of all the pages included in a menu option
+     * and, optionally, included in a submenu option
+     *
+     * @return Model\Page[]
+     */
+    private function getPages() {
+        $menu = $this->request->get('menu', '');
+        $submenu = $this->request->get('submenu', '');
+        $where = [new DataBaseWhere('menu', $menu)];
+        if (!empty($submenu)) {
+            $where[] = [new DataBaseWhere('submenu', $submenu)];
+        }
+
+        $page = new Model\Page();
+        return $page->all($where);
+    }
+
+    /**
+     * Run the actions that alter data before reading it
+     *
+     * @param BaseView $view
+     * @param string $action
+     *
+     * @return bool
+     */
+    protected function execPreviousAction($view, $action): bool
+    {
+        switch ($action) {
+            case 'add-rol-access':
+                $codRol = $this->request->get('code', '');
+                $pages = $this->getPages();
+                if ($pages && $codRol) {
+                    $this->dataBase->beginTransaction();
+                    try {
+                        $this->addRolAccess($codRol, $pages);
+                        $this->dataBase->commit();
+                    } catch (\Exception $e) {
+                        $this->dataBase->rollback();
+                        $this->miniLog->notice($e->getMessage());
+                    }
+                }
+                return true;
+
+            default:
+                return parent::execPreviousAction($view, $action);
+        }
     }
 }
