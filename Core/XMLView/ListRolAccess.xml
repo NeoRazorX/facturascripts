@@ -34,10 +34,10 @@
             <widget type="text" fieldname="pagename" />
         </column>
         <column name="allow-delete" order="110">
-            <widget type="checkbox" fieldname="allow-delete" />
+            <widget type="checkbox" fieldname="allowdelete" />
         </column>
         <column name="allow-update" order="110">
-            <widget type="checkbox" fieldname="allow-update" />
+            <widget type="checkbox" fieldname="allowupdate" />
         </column>
     </columns>
 
@@ -52,13 +52,13 @@
     <modals>
         <group name="add-rol-access" icon="fa-user-plus">
             <column name="select-menu" title="menu">
-                <widget type="select">
+                <widget type="select" fieldname="menu">
                     <values source="fs_pages" fieldcode="menu" fieldtitle="menu"></values>
                 </widget>
             </column>
 
             <column name="select-submenu" title="submenu">
-                <widget type="select">
+                <widget type="select" fieldname="submenu">
                     <values source="fs_pages" fieldcode="submenu" fieldtitle="submenu"></values>
                 </widget>
             </column>
