@@ -243,6 +243,10 @@ class User
             return false;
         }
 
+        if (empty($this->lastactivity)) {
+            $this->lastactivity = date('d-m-Y H:i:s', 0);
+        }
+
         return true;
     }
 }
