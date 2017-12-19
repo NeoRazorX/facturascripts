@@ -243,7 +243,7 @@ abstract class DocumentController extends PanelController
     /**
      * Save the lines of the document.
      */
-    private function saveLines()
+    protected function saveLines()
     {
         $data = $this->request->request->all();
         $newLines = isset($data['lines']) ? $this->processFormLines($data['lines']) : [];
@@ -257,9 +257,6 @@ abstract class DocumentController extends PanelController
                     $found = true;
                     if (!$this->updateLine($oldLine, $newLine)) {
                         $result = 'ERROR ON LINE: ' . $oldLine->idlinea;
-                        foreach ($this->miniLog->read() as $msg) {
-                            $result = $msg['message'];
-                        }
                     }
                     break;
                 }
@@ -282,10 +279,13 @@ abstract class DocumentController extends PanelController
 
                 if (!$newDocLine->save()) {
                     $result = "ERROR ON NEW LINE";
-                    foreach ($this->miniLog->read() as $msg) {
-                        $result = $msg['message'];
-                    }
                 }
+            }
+        }
+
+        if ($result !== 'OK') {
+            foreach ($this->miniLog->read() as $msg) {
+                $result = $msg['message'];
             }
         }
 
@@ -300,7 +300,7 @@ abstract class DocumentController extends PanelController
      * 
      * @return bool
      */
-    private function updateLine($oldLine, $newLine)
+    protected function updateLine($oldLine, $newLine)
     {
         foreach ($newLine as $key => $value) {
             $oldLine->{$key} = $value;
@@ -320,7 +320,7 @@ abstract class DocumentController extends PanelController
      * 
      * @return array
      */
-    private function processFormLines($formLines)
+    protected function processFormLines($formLines)
     {
         $newLines = [];
         $columns = [];
