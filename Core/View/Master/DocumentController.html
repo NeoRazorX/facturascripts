@@ -13,9 +13,8 @@
 <script src="Core/Assets/JS/documentController.js"></script>
 
 <script type="text/javascript">
-    documentLineHeaders = {{ fsc.getLineHeaders()|raw }};
-    documentLineColumns = {{ fsc.getLineColumns()|raw }};
-    documentLines = {{ fsc.getLineData()|raw }};
+    documentLineData = {{ fsc.getLineData()|raw }};
+    documentUrl = '{{ fsc.document.url()|raw }}';
     msgConfirmDelete = "{{ i18n.trans('confirm-delete')|raw }}";
     msgAreYouSure = "{{ i18n.trans('are-you-sure') }}";
     msgCancel = "{{ i18n.trans('cancel') }}";
@@ -154,7 +153,7 @@
                                 <i class="fa fa-trash" aria-hidden="true"></i>
                                 <span class="d-none d-sm-inline-block">&nbsp;{{ remove }}</span>
                             </a>
-                            <button type="button" class="btn btn-sm btn-primary" onclick="documentSave()">
+                            <button type="button" id="btn-document-save" class="btn btn-sm btn-primary" onclick="documentSave()">
                                 <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
                             </button>
                         </div>
