@@ -19,6 +19,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * Define los permisos individuales para cada página dentro de un rol de usuarios.
  *
@@ -83,5 +85,34 @@ class RolAccess
     public function primaryColumn()
     {
         return 'id';
+    }
+
+    /**
+     * Add the indicated page list to the Role group
+     *
+     * @param string $codRol
+     * @param Page[] $pages
+     * @return bool
+     */
+    public static function addPagesToRol($codRol, $pages): bool
+    {
+        $where = [new DataBaseWhere('codrol', $codRol)];
+        $rolAccess = new RolAccess();
+
+        foreach ($pages as $record) {
+            $where[] = new DataBaseWhere('pagename', $record->name);
+
+            if (!$rolAccess->loadFromCode('', $where)) {
+                $rolAccess->codrol = $codRol;
+                $rolAccess->pagename = $record->name;
+                $rolAccess->allowdelete = true;
+                $rolAccess->allowupdate = true;
+                if (!$rolAccess->save()) {
+                    return false;
+                }
+            }
+            unset($where[1]);
+        }
+        return true;
     }
 }

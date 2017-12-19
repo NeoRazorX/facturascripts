@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * Define que un usuario tiene acceso a una página concreta
  * y si tiene permisos de eliminación en esa página.
@@ -82,5 +84,34 @@ class PageRule
     public function primaryColumn()
     {
         return 'id';
+    }
+
+    /**
+     * Add the indicated page list to user
+     *
+     * @param string $nick
+     * @param Page[] $pages
+     * @return bool
+     */
+    public static function addPagesToUser($nick, $pages): bool
+    {
+        $where = [new DataBaseWhere('nick', $nick)];
+        $pageRule = new PageRule();
+
+        foreach ($pages as $record) {
+            $where[] = new DataBaseWhere('pagename', $record->name);
+
+            if (!$pageRule->loadFromCode('', $where)) {
+                $pageRule->nick = $nick;
+                $pageRule->pagename = $record->name;
+                $pageRule->allowdelete = true;
+                $pageRule->allowupdate = true;
+                if (!$pageRule->save()) {
+                    return false;
+                }
+            }
+            unset($where[1]);
+        }
+        return true;
     }
 }

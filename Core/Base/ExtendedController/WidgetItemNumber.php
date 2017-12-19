@@ -100,16 +100,16 @@ class WidgetItemNumber extends WidgetItem
     /**
      * Loads the attributes structure from a JSON file
      *
-     * @param \SimpleXMLElement[] $column
+     * @param array $widget
      */
-    public function loadFromJSON($column)
+    public function loadFromJSON($widget)
     {
-        parent::loadFromJSON($column);
+        parent::loadFromJSON($widget);
 
-        $this->decimal = (int) $column['widget']['decimal'];
-        $this->step = (string) $column['widget']['step'];
-        $this->min = (string) $column['widget']['min'];
-        $this->max = (string) $column['widget']['max'];
+        $this->decimal = (int) $widget['decimal'];
+        $this->step = (string) $widget['step'];
+        $this->min = (string) $widget['min'];
+        $this->max = (string) $widget['max'];
     }
 
     /**

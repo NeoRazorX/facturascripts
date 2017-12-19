@@ -134,6 +134,17 @@ abstract class RowItem implements VisualItemInterface
         return $buttons;
     }
 
+    protected function loadButtonsFromJSON($buttonsJSON)
+    {
+        $buttons = [];
+        foreach ($buttonsJSON as $button) {
+            $widgetButton = WidgetButton::newFromJSON($button);
+            $buttons[] = $widgetButton;
+            unset($widgetButton);
+        }
+        return $buttons;
+    }
+
     /**
      * Creates and loads the attributes structure from a XML file
      *

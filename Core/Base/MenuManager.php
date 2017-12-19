@@ -237,12 +237,11 @@ class MenuManager
 
         $result = [];
         $pageRuleModel = new Model\PageRule();
-        $pageRule_list = $pageRuleModel->all(['nick' => self::$user->nick]);
+        $pageRule_list = $pageRuleModel->all([new DataBase\DataBaseWhere('nick', self::$user->nick)]);
         foreach ($pages as $page) {
             foreach ($pageRule_list as $pageRule) {
                 if ($page->name === $pageRule->pagename) {
                     $result[] = $page;
-                    // TODO: Delete the added page from the rule set
                     break;
                 }
             }

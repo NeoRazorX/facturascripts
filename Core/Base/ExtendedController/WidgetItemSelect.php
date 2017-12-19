@@ -62,12 +62,12 @@ class WidgetItemSelect extends WidgetItem
     /**
      * Loads the attributes structure from a JSON file
      *
-     * @param \SimpleXMLElement[] $column
+     * @param array $widget
      */
-    public function loadFromJSON($column)
+    public function loadFromJSON($widget)
     {
-        parent::loadFromJSON($column);
-        $this->values = (array) $column['widget']['values'];
+        parent::loadFromJSON($widget);
+        $this->values = (array) $widget['values'];
     }
 
     /**
