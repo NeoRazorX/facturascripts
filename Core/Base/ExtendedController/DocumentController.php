@@ -201,7 +201,7 @@ abstract class DocumentController extends PanelController
             ];
             if ($col->display === 'none') {
                 $item['editor'] = false;
-                $item['width'] = 0.1;
+                $item['width'] = 1;
             }
             if ($item['type'] === 'number' || $item['type'] === 'money') {
                 $item['type'] = 'numeric';
