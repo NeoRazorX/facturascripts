@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -28,6 +27,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class ListFilter
 {
+
     /**
      * Indicates the filter type
      *
@@ -128,25 +128,24 @@ class ListFilter
                 break;
 
             case 'checkbox':
+                $operator = $this->options['inverse'] ? '!=' : '=';
+                if ($this->options['matchValue'] === null) {
+                    $operator = $this->options['inverse'] ? 'IS NOT' : 'IS';
+                }
                 if ($this->options['value'] !== null && $this->options['value'] !== '') {
-                    $checked = (bool) ($this->options['inverse'] ? !$this->options['value'] : $this->options['value']);
-                    $where[] = new DataBaseWhere($this->options['field'], $checked);
+                    $where[] = new DataBaseWhere($this->options['field'], $this->options['matchValue'], $operator);
                 }
                 break;
 
             default:
                 if ($this->options['valueFrom'] !== null && $this->options['valueFrom'] !== '') {
                     $where[] = new DataBaseWhere(
-                        $this->options['field'],
-                        $this->options['valueFrom'],
-                        $this->options['operatorFrom']
+                        $this->options['field'], $this->options['valueFrom'], $this->options['operatorFrom']
                     );
                 }
                 if ($this->options['valueTo'] !== null && $this->options['valueTo'] !== '') {
                     $where[] = new DataBaseWhere(
-                        $this->options['field'],
-                        $this->options['valueTo'],
-                        $this->options['operatorTo']
+                        $this->options['field'], $this->options['valueTo'], $this->options['operatorTo']
                     );
                 }
         }
@@ -207,12 +206,19 @@ class ListFilter
      * @param string $value
      * @param string $label
      * @param bool $inverse
+     * @param mixed $matchValue
      *
      * @return ListFilter
      */
-    public static function newCheckboxFilter($field, $value, $label, $inverse)
+    public static function newCheckboxFilter($field, $value, $label, $inverse, $matchValue)
     {
-        $options = ['label' => $label, 'field' => $field, 'value' => $value, 'inverse' => $inverse];
+        $options = [
+            'label' => $label,
+            'field' => $field,
+            'value' => $value,
+            'inverse' => $inverse,
+            'matchValue' => $matchValue
+        ];
         return new ListFilter('checkbox', $options);
     }
 

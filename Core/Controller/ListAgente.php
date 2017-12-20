@@ -57,5 +57,7 @@ class ListAgente extends ExtendedController\ListController
         $this->addOrderBy($className, 'codagente', 'code');
         $this->addOrderBy($className, 'nombre||apellidos', 'name');
         $this->addOrderBy($className, 'provincia', 'province');
+        
+        $this->addFilterCheckbox($className, 'f_baja', 'suspended', 'f_baja', true, null);
     }
 }
