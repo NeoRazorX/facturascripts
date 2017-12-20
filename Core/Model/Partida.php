@@ -260,14 +260,7 @@ class Partida
      */
     public function clear()
     {
-        $this->idpartida = null;
-        $this->idasiento = null;
-        $this->idsubcuenta = null;
-        $this->codsubcuenta = null;
-        $this->idconcepto = null;
         $this->concepto = '';
-        $this->idcontrapartida = null;
-        $this->codcontrapartida = null;
         $this->punteada = false;
         $this->tasaconv = 1.0;
         $this->coddivisa = AppSettings::get('default', 'coddivisa');
@@ -276,11 +269,6 @@ class Partida
         $this->recargo = 0.0;
         $this->iva = 0.0;
         $this->baseimponible = 0.0;
-        $this->factura = null;
-        $this->codserie = null;
-        $this->tipodocumento = null;
-        $this->documento = null;
-        $this->cifnif = null;
         $this->debe = 0.0;
         $this->haber = 0.0;
         $this->numero = 0.0;
