@@ -140,7 +140,8 @@ a la que lo añadimos, y entre los tipos de filtros disponibles están:
       función del filtro.
    -  field : Nombre del campo del modelo donde se aplica el filtro. Si
       no se indica se usa el valor de key.
-   -  inverse : Permite invertir los valores booleanos.
+   -  inverse : Permite comprobar el valor inverso.
+   -  matchValue : Permite especificar el valor a comprobar.
 
 -  **addFilterDatePicker** : Filtro de tipo fecha.
 -  **addFilterText** : Filtro de tipo alfanumérico o texto libre.
