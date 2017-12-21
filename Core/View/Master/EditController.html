@@ -141,7 +141,7 @@
                 <input type="hidden" name="action" value="save">
                 <div class="card">
                     <div class="card-header">
-                        <span class="card-title">{{ panel_header }}</span>
+                        <span class="card-title">{{ panel_header|raw }}</span>
                     </div>
 
                     <div class="card-body">
@@ -150,13 +150,12 @@
 
                         <!-- Main Form -->
                         <div id="main_row" class="row">
-                            {% set model = fsc.view.getModel() %}
                             {{ columnsForEditView(_context, fsc.view, model, FALSE) }}
                         </div>
                     </div>
 
                     <div class="card-footer text-right">
-                        <small class="pull-left">{{ panel_footer }}</small>
+                        <small class="pull-left text-left">{{ panel_footer|raw }}</small>
                         <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
                             <i class="fa fa-undo" aria-hidden="true"></i>&nbsp; {{ undo }}
                         </button>

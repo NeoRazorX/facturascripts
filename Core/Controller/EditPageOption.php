@@ -19,54 +19,47 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\Controller;
-use FacturaScripts\Core\Model;
+use FacturaScripts\Core\Base\ExtendedController;
 
 /**
  * Edit option for any page.
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class EditPageOption extends Controller
+class EditPageOption extends ExtendedController\EditController
 {
-
     /**
-     * Loads and save selected PageOption.
-     * @var Model\PageOption
-     */
-    public $pageOption;
-
-    /**
-     * Runs the controller's private logic.
+     * Initializes all the objects and properties
      *
-     * @param \Symfony\Component\HttpFoundation\Response $response
-     * @param Model\User|null $user
+     * @param Base\Cache $cache
+     * @param Base\Translator $i18n
+     * @param Base\MiniLog $miniLog
+     * @param string $className
      */
-    public function privateCore(&$response, $user)
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
-        parent::privateCore($response, $user);
-
-        $code = $this->request->get('code');
-        $this->pageOption = new Model\PageOption();
-        $this->pageOption->getForUser($code, $user->nick);
-
-        if ($this->request->getMethod() === 'POST') {
-            $this->saveData();
-        }
+        parent::__construct($cache, $i18n, $miniLog, $className);
+        $this->setTemplate('EditPageOption');
     }
 
     /**
-     * Data persists in the database, modifying if the record existed or inserting
-     * in case the primary key does not exist.
+     * Returns the model name
      */
-    private function saveData()
+    public function getModelClassName()
     {
-        $this->pageOption->columns = json_decode($this->request->request->get('columns'), true);
-        if ($this->pageOption->save()) {
-            $this->miniLog->info($this->i18n->trans('data-save-ok'));
-        } else {
-            $this->miniLog->alert($this->i18n->trans('data-save-error'));
-        }
+        return '\FacturaScripts\Dinamic\Model\PageOption';
+    }
+
+    /**
+     * Load data of view from code
+     *
+     * @param string|array $code
+     */
+    protected function loadData($code)
+    {
+        $keys = [ 'name' => $code, 'nick' => $this->user->nick];
+        parent::loadData($keys);
     }
 
     /**
@@ -77,11 +70,35 @@ class EditPageOption extends Controller
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'page-option';
+        $pagedata['title'] = 'page-configuration';
         $pagedata['menu'] = 'admin';
         $pagedata['icon'] = 'fa-wrench';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    /**
+     * Returns the text for the data main panel header
+     *
+     * @return string
+     */
+    public function getPanelHeader()
+    {
+        return $this->i18n->trans('configure-columns');
+    }
+
+    /**
+     * Returns the text for the data main panel footer
+     *
+     * @return string
+     */
+    public function getPanelFooter()
+    {
+        $model = $this->getModel();
+        return '<strong>'
+            . $this->i18n->trans('page') . ':&nbsp;' . $model->name . '<br>'
+            . $this->i18n->trans('user') . ':&nbsp;' . $model->nick
+            . '</strong>';
     }
 }
