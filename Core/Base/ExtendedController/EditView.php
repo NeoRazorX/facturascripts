@@ -16,10 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Lib\ExportManager;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * View definition for its use in ExtendedControllers
@@ -29,6 +29,7 @@ use FacturaScripts\Core\Lib\ExportManager;
  */
 class EditView extends BaseView
 {
+
     /**
      * Class constructor and initialization
      *
@@ -96,10 +97,19 @@ class EditView extends BaseView
      */
     public function loadData($code)
     {
-        if($this->newCode !== null) {
+        if ($this->newCode !== null) {
             $code = $this->newCode;
         }
-        $this->model->loadFromCode($code);
+
+        if (is_array($code)) {
+            $where = [];
+            foreach ($code as $fieldName => $value) {
+                $where[] = new DataBaseWhere($fieldName, $value);
+            }
+            $this->model->loadFromCode('', $where);
+        } else {
+            $this->model->loadFromCode($code);
+        }
 
         $fieldName = $this->model->primaryColumn();
         $this->count = empty($this->model->{$fieldName}) ? 0 : 1;
@@ -107,7 +117,7 @@ class EditView extends BaseView
         // Bloqueamos el campo Primary Key si no es una alta
         $column = $this->columnForField($fieldName);
         if (!empty($column)) {
-            $column->widget->readOnly = (!empty($this->model->{$fieldName}));
+            $column->widget->readOnly = ($this->count > 0);
         }
     }
 

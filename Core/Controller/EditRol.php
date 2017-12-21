@@ -161,15 +161,17 @@ class EditRol extends ExtendedController\PanelController
             case 'add-rol-access':
                 $codRol = $this->request->get('code', '');
                 $pages = $this->getPages();
-                if ($pages && $codRol) {
-                    $this->dataBase->beginTransaction();
-                    try {
-                        $this->addRolAccess($codRol, $pages);
-                        $this->dataBase->commit();
-                    } catch (\Exception $e) {
-                        $this->dataBase->rollback();
-                        $this->miniLog->notice($e->getMessage());
-                    }
+                if (empty($pages) || empty($codRol)) {
+                    return true;
+                }
+
+                $this->dataBase->beginTransaction();
+                try {
+                    $this->addRolAccess($codRol, $pages);
+                    $this->dataBase->commit();
+                } catch (\Exception $e) {
+                    $this->dataBase->rollback();
+                    $this->miniLog->notice($e->getMessage());
                 }
                 return true;
 

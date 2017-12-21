@@ -84,10 +84,20 @@ abstract class EditController extends Base\Controller
 
         // Load the model data
         $value = $this->request->get('code');
-        $this->view->loadData($value);
+        $this->loadData($value);
 
         // General operations with the loaded data
         $this->execAfterAction($action);
+    }
+
+    /**
+     * Load data of view from code
+     *
+     * @param string|array $code
+     */
+    protected function loadData($code)
+    {
+        $this->view->loadData($code);
     }
 
     /**
