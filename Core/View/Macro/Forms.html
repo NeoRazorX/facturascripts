@@ -1,0 +1,50 @@
+<!--
+    Creates an input form item
+
+-->
+
+{% macro simpleInput( id, name, value, type = "text", label = false, icon = false) %}
+        {% if label %}
+            <label for="{{ name }}">{{ label }}</label>
+        {% endif %}
+
+        {% if icon %}
+            <div class="input-group">
+                <span class="input-group-addon">
+                    <i class="fa fa-{{ icon }}" aria-hidden="true"></i>
+                </span>
+        {% endif %}
+
+                <input type="{{ type }}" id="{{ id }}" name="{{ name }}"  value="{{ value }}" class="form-control" />
+
+        {% if icon %}
+            </div>
+        {% endif %}
+{% endmacro %}
+
+<!--
+    Creates a Select form item
+-->
+{% macro simpleSelect(id, name, value, allValues = {}, label = false, icon = false) %}
+    {% if label %}
+        <label for="{{ name }}">{{ label }}</label>
+    {% endif %}
+
+    {% if icon %}
+        <div class="input-group">
+        <span class="input-group-addon">
+                    <i class="fa fa-{{ icon }}" aria-hidden="true"></i>
+                </span>
+    {% endif %}
+
+        <select id="{{ id }}" name="{{ name }}" class="form-control">
+            {% for key, name in allValues %}
+                <option value="{{ key }}"{% if value == key %} selected="selected"{% endif %}>{{ name }}</option>
+            {% endfor %}
+        </select>
+
+    {% if icon %}
+        </div>
+    {% endif %}
+
+{% endmacro %}
