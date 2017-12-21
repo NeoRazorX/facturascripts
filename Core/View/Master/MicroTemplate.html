@@ -6,11 +6,13 @@
         <meta name="description" content="{{ i18n.trans('meta-description') }}" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="generator" content="{{ i18n.trans('facturascripts') }}" />
+        {% block icons %}
+        <link rel="shortcut icon" href="Core/Assets/Images/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="Core/Assets/Images/apple-icon-180x180.png" />
+        {% endblock %}
         {% block css %}
         <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css" />
-        <link rel="shortcut icon" href="Core/Assets/Images/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="Core/Assets/Images/apple-icon-180x180.png" />
         {% endblock %}
         {% block javascript %}
         <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>

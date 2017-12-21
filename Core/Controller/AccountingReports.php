@@ -16,11 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Lib\Accounting;
+use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Model\Ejercicio;
+use FacturaScripts\Core\Model\User;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of AccountingReports
@@ -36,12 +39,19 @@ class AccountingReports extends Controller
      * @var Ejercicio[]
      */
     public $ejercicios;
+    
+    /**
+     * Object to manager data export.
+     * 
+     * @var ExportManager 
+     */
+    public $exportManager;
 
     /**
      * Runs the controller's private logic.
      *
-     * @param \Symfony\Component\HttpFoundation\Response $response
-     * @param \FacturaScripts\Core\Model\User|null $user
+     * @param Response $response
+     * @param User|null $user
      */
     public function privateCore(&$response, $user)
     {
@@ -49,6 +59,7 @@ class AccountingReports extends Controller
 
         $ejercicioModel = new Ejercicio();
         $this->ejercicios = $ejercicioModel->all([], ['fechainicio' => 'DESC']);
+        $this->exportManager = new ExportManager();
 
         $action = $this->request->get('action', '');
         $this->execAction($action);
@@ -61,11 +72,37 @@ class AccountingReports extends Controller
      */
     private function execAction($action)
     {
+        $data = [];
+        $dateFrom = $this->request->get('date-from');
+        $dateTo = $this->request->get('date-to');
+        $format = $this->request->get('format');
+
         switch ($action) {
             case 'libro-mayor':
                 $this->setTemplate(false);
-                /// TODO: Generate ledger from data form
+                $ledger = new Accounting\Ledger();
+                $data = $ledger->generate($dateFrom, $dateTo);
                 break;
+
+            case 'sumas-saldos':
+                $balanceAmmount = new Accounting\BalanceAmmounts();
+                $data = $balanceAmmount->generate($dateFrom, $dateTo);
+                break;
+
+            case 'situacion':
+                $balanceSheet = new Accounting\BalanceSheet();
+                $data = $balanceSheet->generate($dateFrom, $dateTo);
+                break;
+
+            case 'pyg':
+                $proffitAndLoss = new Accounting\ProffitAndLoss();
+                $data = $proffitAndLoss->generate($dateFrom, $dateTo);
+                break;
+        }
+
+        if (!empty($data)) {
+            $this->setTemplate(false);
+            $this->exportData($data, $format);
         }
     }
 
@@ -82,5 +119,20 @@ class AccountingReports extends Controller
         $pageData['icon'] = 'fa-balance-scale';
 
         return $pageData;
+    }
+
+    /**
+     * Exports data to PDF.
+     * 
+     * @param array $data
+     * @param string $format
+     */
+    private function exportData(&$data, $format)
+    {
+        $headers = array_keys($data[0]);
+
+        $this->exportManager->newDoc($this->response, $format);
+        $this->exportManager->generateTablePage($headers, $data);
+        $this->exportManager->show($this->response);
     }
 }

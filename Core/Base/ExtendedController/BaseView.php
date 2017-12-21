@@ -38,6 +38,13 @@ abstract class BaseView
      * @var mixed
      */
     protected $model;
+    
+    /**
+     * Stores the new code from the save() procedure, to use in loadData().
+     * 
+     * @var string 
+     */
+    protected $newCode;
 
     /**
      * Columns and filters configuration
@@ -122,7 +129,12 @@ abstract class BaseView
      */
     public function save()
     {
-        return $this->model->save();
+        if( $this->model->save() ) {
+            $this->newCode = $this->model->primaryColumnValue();
+            return true;
+        }
+        
+        return false;
     }
 
     /**

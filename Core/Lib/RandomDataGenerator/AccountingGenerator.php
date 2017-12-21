@@ -68,8 +68,10 @@ class AccountingGenerator
      *
      * @return int
      */
-    public function asientos($max = 50)
+    public function asientos($max = 25)
     {
+        $subcuentas = $this->randomModel("\FacturaScripts\Dinamic\Model\Subcuenta");
+
         for ($num = 0; $num < $max; ++$num) {
             shuffle($this->ejercicios);
 
@@ -78,9 +80,31 @@ class AccountingGenerator
             $asiento->concepto = $this->tools->descripcion();
             $asiento->fecha = date('d-m-Y', strtotime($this->ejercicios[0]->fechainicio . ' +' . mt_rand(1, 360) . ' days'));
             $asiento->importe = $this->tools->precio(-999, 150, 99999);
-            if (!$asiento->save()) {
-                break;
+            if ($asiento->save()) {
+                shuffle($subcuentas);
+                $max2 = mt_rand(1, 20) * 2;
+                $debe = true;
+
+                for ($num2 = 0; $num2 < $max2; ++$num2) {
+                    $partida = new Model\Partida();
+                    $partida->idasiento = $asiento->idasiento;
+                    $partida->idsubcuenta = $subcuentas[$num2]->idsubcuenta;
+                    $partida->codsubcuenta = $subcuentas[$num2]->codsubcuenta;
+                    $partida->concepto = $asiento->concepto;
+                    if($debe) {
+                        $partida->debe = $asiento->importe;
+                    } else {
+                        $partida->haber = $asiento->importe;
+                    }
+                    
+                    if($partida->save()) {
+                        $debe = !$debe;
+                    }
+                }
+                continue;
             }
+            
+            break;
         }
 
         return $num;

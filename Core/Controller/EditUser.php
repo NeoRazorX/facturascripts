@@ -62,19 +62,16 @@ class EditUser extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
+        $nick = $this->request->get('code');
+        
         switch ($keyView) {
             case 'EditUser':
-                $value = $this->request->get('code');
-                $view->loadData($value);
+                $view->loadData($nick);
                 break;
 
             case 'EditRolUser':
-                $where = [new DataBaseWhere('nick', $this->getViewModelValue('EditUser', 'nick'))];
-                $view->loadData($where);
-                break;
-
             case 'ListPageRule':
-                $where = [new DataBaseWhere('nick', $this->getViewModelValue('EditUser', 'nick'))];
+                $where = [new DataBaseWhere('nick', $nick)];
                 $view->loadData($where);
                 break;
         }

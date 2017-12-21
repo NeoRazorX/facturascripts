@@ -70,4 +70,12 @@ interface ExportInterface
      * @param mixed $model
      */
     public function generateDocumentPage($model);
+    
+    /**
+     * Adds a new page with the table.
+     * 
+     * @param array $headers
+     * @param array $rows
+     */
+    public function generateTablePage($headers, $rows);
 }

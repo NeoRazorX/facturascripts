@@ -19,7 +19,7 @@
  *
  * Initial description for the controller ListAlbaranCliente
  *
- * @author Artex Trading sa <jcuello@artextrading.com>  
+ * @author Artex Trading sa <jcuello@artextrading.com>
 -->
 
 <view>
@@ -53,7 +53,33 @@
             <option color="table-warning">1</option>
             <option color="table-success">0</option>
         </row>
+        <row type="actions">
+            <button type="modal" label="Modal" color="primary" action="test" icon="fa-users" />
+            <button type="action" label="Action" color="info" action="process1" icon="fa-book" hint="Ejecuta el controlador con action=process1" />
+        </row>
+        <row type="footer">
+            <group name="footer1" footer="specials-actions" label="Esto es una muestra de botones en un 'bootstrap card'">
+                <button type="modal" label="Modal" color="primary" action="test" icon="fa-users" />
+                <button type="action" label="Action" color="info" action="process1" icon="fa-book" hint="Ejecuta el controlador con action=process1" />
+            </group>
+        </row>
     </rows>
     <filters>
     </filters>
+    <modals>
+        <group name="test" title="other-data" icon="fa-users">
+            <column name="name" numcolumns="12" description="desc-custommer-name">
+                <widget type="text" fieldname="nombre" required="true" hint="desc-custommer-name-2" />
+            </column>
+            <column name="create-date" numcolumns="6">
+                <widget type="datepicker" fieldname="fechaalta" readonly="true" />
+            </column>
+            <column name="blocked-date" numcolumns="6">
+                <widget type="datepicker" fieldname="fechabaja" />
+            </column>
+            <column name="blocked">
+                <widget type="checkbox" fieldname="debaja" />
+            </column>
+        </group>
+    </modals>
 </view>

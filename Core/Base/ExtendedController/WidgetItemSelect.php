@@ -174,7 +174,8 @@ class WidgetItemSelect extends WidgetItem
             . ' class="form-control"' . $specialAttributes . '>';
 
         foreach ($this->values as $selectValue) {
-            $selected = ($selectValue['value'] === $value) ? ' selected="selected" ' : '';
+            /// don't use strict comparation (===)
+            $selected = ($selectValue['value'] == $value) ? ' selected="selected" ' : '';
             $html .= '<option value="' . $selectValue['value'] . '" ' . $selected . '>' . $selectValue['title']
                 . '</option>';
         }

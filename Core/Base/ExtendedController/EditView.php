@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Lib\ExportManager;
@@ -30,6 +29,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class EditView extends BaseView
 {
+
     /**
      * Class constructor and initialization
      *
@@ -97,14 +97,17 @@ class EditView extends BaseView
      */
     public function loadData($code)
     {
+        if ($this->newCode !== null) {
+            $code = $this->newCode;
+        }
+
         if (is_array($code)) {
             $where = [];
             foreach ($code as $fieldName => $value) {
                 $where[] = new DataBaseWhere($fieldName, $value);
             }
             $this->model->loadFromCode('', $where);
-        }
-        else {
+        } else {
             $this->model->loadFromCode($code);
         }
 

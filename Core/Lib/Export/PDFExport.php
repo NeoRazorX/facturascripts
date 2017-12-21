@@ -194,6 +194,24 @@ class PDFExport implements ExportInterface
     {
         /// TODO: Uncomplete
     }
+    
+    /**
+     * Adds a new page with the table.
+     * 
+     * @param array $headers
+     * @param array $rows
+     */
+    public function generateTablePage($headers, $rows)
+    {
+        $orientation = 'portrait';
+        if(count($headers) > 5) {
+            $orientation = 'landscape';
+        }
+        
+        $this->newPage($orientation);
+        $tableOptions = ['width' => $this->tableWidth];
+        $this->pdf->ezTable($rows, $headers, '', $tableOptions);
+    }
 
     /**
      * Adds a new line to the PDF.

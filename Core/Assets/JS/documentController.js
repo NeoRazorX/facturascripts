@@ -17,7 +17,7 @@
  */
 
 var documentLineData = [];
-var documentUrl = '';
+var documentUrl = "";
 var hsTable = null;
 var msgConfirmDelete = "";
 var msgAreYouSure = "";
