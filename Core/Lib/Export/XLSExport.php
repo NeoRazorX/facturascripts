@@ -58,7 +58,7 @@ class XLSExport implements ExportInterface
     public function newDoc(&$response)
     {
         $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
-        $response->headers->set('Content-Disposition', 'attachment;filename=doc.xls');
+        $response->headers->set('Content-Disposition', 'attachment;filename=doc.xlsx');
 
         $this->writer = new \XLSXWriter();
         $this->writer->setAuthor('FacturaScripts');
@@ -135,7 +135,12 @@ class XLSExport implements ExportInterface
      */
     public function generateTablePage($headers, $rows)
     {
-        /// TODO: Uncomplete
+        //Writes the headers Row 
+        $this->writer->writeSheetRow('sheet1', $headers);
+        //Iterate in the rows
+        foreach($rows as $row){
+            $this->writer->writeSheetRow('sheet1', $row);
+        }
     }
 
     /**
