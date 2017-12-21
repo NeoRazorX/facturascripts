@@ -1075,5 +1075,19 @@
     "choose-payment-method": "Tria el mitjà de pagament",
     "daily": "Diari",
     "monthly": "Mensual",
-    "yearly": "Anualment"
+    "yearly": "Anualment",
+    "infostate-component-title": "Informació d'Estat",
+    "page-configuration": "Pàgina de configuració",
+    "configure-columns": "Configurador de columnes",
+    "title": "Títol",
+    "align": "Alineament",
+    "columns": "Columnes",
+    "sort": "Ordre",
+    "title-url": "Títol (URL)",
+    "left": "Esquerra",
+    "right": "Dreta",
+    "center": "Centre",
+    "none": "Cap",
+    "auto": "Auto",
+    "block-date": "Data Bloqueig"
 }
