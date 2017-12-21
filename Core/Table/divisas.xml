@@ -7,11 +7,6 @@
 -->
 <table>
     <column>
-        <name>bandera</name>
-        <type>text</type>
-        <null>YES</null>
-    </column>
-    <column>
         <name>coddivisa</name>
         <type>character varying(3)</type>
         <null>NO</null>
@@ -24,11 +19,6 @@
     <column>
         <name>descripcion</name>
         <type>character varying(100)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>fecha</name>
-        <type>date</type>
         <null>YES</null>
     </column>
     <column>
