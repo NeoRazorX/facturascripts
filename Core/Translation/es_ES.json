@@ -1165,5 +1165,19 @@
     "choose-payment-method": "Escoge el medio de pago",
     "daily": "Diario",
     "monthly": "Mensual",
-    "yearly": "Anual"
+    "yearly": "Anual",
+    "infostate-component-title": "Información de Estado",
+    "page-configuration": "Página de Configuración",
+    "configure-columns": "Configurador de columnas",
+    "title": "Título",
+    "align": "Alineamiento",
+    "columns": "Columnas",
+    "sort": "Órden",
+    "title-url": "Título (URL)",
+    "left": "Izquierda",
+    "right": "Derecha",
+    "center": "Centro",
+    "none": "Ninguno",
+    "auto": "Auto",
+    "block-date": "Fecha Bloqueo"
 }
