@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
+
 /**
  * Usuario de FacturaScripts.
  *
@@ -27,8 +29,8 @@ class User
 {
 
     use Base\ModelTrait {
-        get as private getTrait;
-        clear as clearTrait;
+        get as private traitGet;
+        clear as traitClear;
     }
 
     /**
@@ -151,8 +153,11 @@ class User
      */
     public function clear()
     {
-        $this->clearTrait();
+        $this->traitClear();
         $this->langcode = FS_LANG;
+        $this->homepage = 'Dashboard';
+        $this->idempresa = AppSettings::get('default', 'idempresa', 1);
+        $this->enabled = true;
     }
 
     /**
@@ -164,7 +169,7 @@ class User
      */
     public function get($nick)
     {
-        return $this->getTrait($nick);
+        return $this->traitGet($nick);
     }
 
     /**
@@ -241,6 +246,10 @@ class User
             self::$miniLog->alert(self::$i18n->trans('invalid-user-nick', [$this->nick]));
 
             return false;
+        }
+
+        if (empty($this->lastactivity)) {
+            $this->lastactivity = date('d-m-Y H:i:s', 0);
         }
 
         return true;

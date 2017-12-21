@@ -96,6 +96,9 @@ class EditView extends BaseView
      */
     public function loadData($code)
     {
+        if($this->newCode !== null) {
+            $code = $this->newCode;
+        }
         $this->model->loadFromCode($code);
 
         $fieldName = $this->model->primaryColumn();

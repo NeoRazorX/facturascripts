@@ -26,7 +26,7 @@
 <view>
     <columns>
         <column name="id" order="100" display="none">
-            <widget type="text" fieldname="idpartida" onclick="EditCuenta" />
+            <widget type="text" fieldname="idpartida" />
         </column>
         <column name="subaccount" order="100">
             <widget type="text" fieldname="codsubcuenta" />

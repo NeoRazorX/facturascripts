@@ -89,7 +89,8 @@ class RowItemStatus extends RowItem
     public function getStatus($value)
     {
         foreach ($this->options as $option) {
-            if ($option['value'] === $value) {
+            /// don't use strict comparation (===)
+            if ($option['value'] == $value) {
                 return $option['color'];
             }
 

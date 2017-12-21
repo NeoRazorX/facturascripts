@@ -113,6 +113,9 @@ abstract class DocumentController extends PanelController
             }
 
             return false;
+        } elseif ($action === 'save-lines') {
+            $this->setTemplate(false);
+            $this->saveLines();
         }
 
         return parent::execPreviousAction($view, $action);
@@ -172,64 +175,53 @@ abstract class DocumentController extends PanelController
     }
 
     /**
-     * Returns the line headers.
-     *
-     * @return string
-     */
-    public function getLineHeaders()
-    {
-        $headers = [];
-        foreach ($this->lineOptions as $col) {
-            $headers[] = $this->i18n->trans($col->title);
-        }
-
-        return json_encode($headers);
-    }
-
-    /**
-     * Returns the line columns.
-     *
-     * @return string
-     */
-    public function getLineColumns()
-    {
-        $moneyFormat = '0.';
-        for ($num = 0; $num < FS_NF0; $num++) {
-            $moneyFormat .= '0';
-        }
-
-        $columns = [];
-        foreach ($this->lineOptions as $col) {
-            $item = [
-                'data' => $col->widget->fieldName,
-                'type' => $col->widget->type,
-            ];
-            if ($item['type'] === 'number' || $item['type'] === 'money') {
-                $item['type'] = 'numeric';
-                $item['format'] = $moneyFormat;
-            }
-
-            $columns[] = $item;
-        }
-
-        return json_encode($columns);
-    }
-
-    /**
-     * Returns the data of lines.
+     * Returns the data of lines to the view.
      *
      * @return string
      */
     public function getLineData()
     {
-        $data = [];
+        $data = [
+            'headers' => [],
+            'columns' => [],
+            'rows' => []
+        ];
+
+        $moneyFormat = '0.';
+        for ($num = 0; $num < FS_NF0; $num++) {
+            $moneyFormat .= '0';
+        }
+
+        foreach ($this->lineOptions as $col) {
+            $data['headers'][] = $this->i18n->trans($col->title);
+
+            $item = [
+                'data' => $col->widget->fieldName,
+                'type' => $col->widget->type,
+            ];
+            if ($col->display === 'none') {
+                $item['editor'] = false;
+                $item['width'] = 1;
+            }
+            if ($item['type'] === 'number' || $item['type'] === 'money') {
+                $item['type'] = 'numeric';
+                $item['format'] = $moneyFormat;
+            }
+            $data['columns'][] = $item;
+        }
+
         foreach ($this->lines as $line) {
-            $data[] = (array) $line;
+            $data['rows'][] = (array) $line;
         }
 
         return json_encode($data);
     }
 
+    /**
+     * Returns an array of links to the view.
+     * 
+     * @return array
+     */
     public function getBreadcrumb()
     {
         $items = [
@@ -247,5 +239,106 @@ abstract class DocumentController extends PanelController
         $items[] = ['title' => $this->document->fecha, 'url' => '#'];
         $items[] = ['title' => $this->document->hora, 'url' => '#'];
         return $items;
+    }
+
+    /**
+     * Save the lines of the document.
+     */
+    protected function saveLines()
+    {
+        $data = $this->request->request->all();
+        $newLines = isset($data['lines']) ? $this->processFormLines($data['lines']) : [];
+        $result = 'OK';
+
+        /// remove or modify old lines
+        foreach ($this->lines as $oldLine) {
+            $found = false;
+            foreach ($newLines as $newLine) {
+                if ($newLine['idlinea'] == $oldLine->idlinea) {
+                    $found = true;
+                    if (!$this->updateLine($oldLine, $newLine)) {
+                        $result = 'ERROR ON LINE: ' . $oldLine->idlinea;
+                    }
+                    break;
+                }
+            }
+
+            if (!$found) {
+                $oldLine->delete();
+            }
+        }
+
+        /// add new lines
+        $lineClass = $this->getDocumentLineClassName();
+        foreach ($newLines as $newLine) {
+            if (empty($newLine['idlinea']) && !empty($newLine['descripcion'])) {
+                $newDocLine = new $lineClass($newLine);
+                $newDocLine->idlinea = null;
+                $newDocLine->{$this->document->primaryColumn()} = $this->document->primaryColumnValue();
+                $newDocLine->pvpsindto = $newDocLine->pvpunitario * $newDocLine->cantidad;
+                $newDocLine->pvptotal = $newDocLine->pvpsindto * (100 - $newDocLine->dtopor) / 100;
+
+                if (!$newDocLine->save()) {
+                    $result = "ERROR ON NEW LINE";
+                }
+            }
+        }
+
+        if ($result !== 'OK') {
+            foreach ($this->miniLog->read() as $msg) {
+                $result = $msg['message'];
+            }
+        }
+
+        $this->response->setContent($result);
+    }
+
+    /**
+     * Updates oldLine with newLine data.
+     * 
+     * @param mixed $oldLine
+     * @param array $newLine
+     * 
+     * @return bool
+     */
+    protected function updateLine($oldLine, $newLine)
+    {
+        foreach ($newLine as $key => $value) {
+            $oldLine->{$key} = $value;
+        }
+
+        $oldLine->pvpsindto = $oldLine->pvpunitario * $oldLine->cantidad;
+        $oldLine->pvptotal = $oldLine->pvpsindto * (100 - $oldLine->dtopor) / 100;
+
+        return $oldLine->save();
+    }
+
+    /**
+     * Process form lines to assign column keys instead of numbers.
+     * Also adds order column.
+     * 
+     * @param array $formLines
+     * 
+     * @return array
+     */
+    protected function processFormLines($formLines)
+    {
+        $newLines = [];
+        $columns = [];
+        foreach ($this->lineOptions as $col) {
+            $columns[] = $col->widget->fieldName;
+        }
+
+        $order = count($formLines);
+        foreach ($formLines as $data) {
+            $line = ['orden' => $order];
+            foreach ($data as $key => $value) {
+                $line[$columns[$key]] = $value;
+            }
+            $newLines[] = $line;
+            $order--;
+        }
+
+        return $newLines;
     }
 }

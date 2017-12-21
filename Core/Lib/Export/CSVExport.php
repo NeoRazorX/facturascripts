@@ -195,6 +195,17 @@ class CSVExport implements ExportInterface
     {
         /// TODO: Uncomplete
     }
+    
+    /**
+     * Adds a new page with the table.
+     * 
+     * @param array $headers
+     * @param array $rows
+     */
+    public function generateTablePage($headers, $rows)
+    {
+        /// TODO: Uncomplete
+    }
 
     /**
      * Returns the table data
