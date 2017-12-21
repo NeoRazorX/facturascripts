@@ -92,10 +92,10 @@
                                     <thead>
                                         <tr>
                                             <th class="d-inline-block col-4">{{ i18n.trans('title') }}</th>
-                                            <th class="d-inline-block col-1">{{ i18n.trans('align') }}</th>
-                                            <th class="d-inline-block col-1">{{ i18n.trans('columns') }}</th>
+                                            <th class="d-inline-block col-2">{{ i18n.trans('align') }}</th>
+                                            <th class="d-inline-block col-2">{{ i18n.trans('columns') }}</th>
                                             <th class="d-inline-block col-1">{{ i18n.trans('sort') }}</th>
-                                            <th class="d-inline-block col-5">{{ i18n.trans('title-url') }}</th>
+                                            <th class="d-inline-block col-3">{{ i18n.trans('title-url') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -105,7 +105,7 @@
                                         <th class="d-inline-block col-4">
                                             {{ i18n.trans(field.title) }}
                                         </th>
-                                        <td class="d-inline-block col-1">
+                                        <td class="d-inline-block col-2">
                                             <select class="form-control" name="{{ masterName ~ 'display' }}">
                                                 <option value="left" {% if field.display == 'left' %}selected{% endif %}>{{ i18n.trans('left') }}</option>
                                                 <option value="right" {% if field.display == 'right' %}selected{% endif %}>{{ i18n.trans('right') }}</option>
@@ -113,7 +113,7 @@
                                                 <option value="none" {% if field.display == 'none' %}selected{% endif %}>{{ i18n.trans('none') }}</option>
                                             </select>
                                         </td>
-                                        <td class="d-inline-block col-1">
+                                        <td class="d-inline-block col-2">
                                             <select class="form-control" name="{{ masterName ~ 'numColumns' }}">
                                                 <option value="0" {% if field.numColumns == 0 %}selected{% endif %}>{{ i18n.trans('auto') }}</option>
                                                 <option value="1" {% if field.numColumns == 1 %}selected{% endif %}>1</option>
@@ -133,7 +133,7 @@
                                         <td class="d-inline-block col-1">
                                             <input type="number" class="form-control" name="{{ masterName ~ 'order' }}" placeholder="Auto" value="{{ field.order }}">
                                         </td>
-                                        <td class="d-inline-block col-5">
+                                        <td class="d-inline-block col-3">
                                             <input type="url" class="form-control" name="{{ masterName ~ 'titleURL' }}" placeholder="http://" value="{{ field.titleURL }}">
                                         </td>
                                     </tr>
