@@ -204,7 +204,13 @@ class CSVExport implements ExportInterface
      */
     public function generateTablePage($headers, $rows)
     {
-        /// TODO: Uncomplete
+        //Generate the headers line
+        $this->csv[] = \implode($this->separator, $headers);
+        //Generate the data lines
+        foreach ($rows as $row) {
+            $body[] = \implode($this->separator, $row);
+        }
+        $this->csv[] = \implode(PHP_EOL, $body);
     }
 
     /**
