@@ -25,8 +25,8 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codcliente" onclick="" icon="fa-user" required="true" />
+            <column name="codcliente" numcolumns="2" order="100">
+                <widget type="text" fieldname="codcliente" icon="fa-user" required="true" />
             </column>
             <column name="name" numcolumns="3" order="110"
                     description="desc-custommer-name">
