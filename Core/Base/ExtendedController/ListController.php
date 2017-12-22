@@ -309,7 +309,8 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Adds a list of fields (separated by "|") to the search fields list so that data can be filtered
+     * Adds a list of fields (separated by "|") to the search fields list so that data can be filtered.
+     * To use integer columns, use CAST(columnName AS VARCHAR).
      *
      * @param string $indexView
      * @param string[] $fields
