@@ -20,7 +20,7 @@
     }
     function deleteFromList() {
         var deleteCodes = [];
-        $('.listDelete').each(function() {
+        $('.tab' + tabActive + ' .listDelete').each(function() {
             if ($(this).prop('checked')) {
                 deleteCodes.push($(this).val());
             }
@@ -35,7 +35,8 @@
                         label: '<i class="fa fa-times"></i> {{ i18n.trans("cancel") }}'
                     },
                     confirm: {
-                        label: '<i class="fa fa-check"></i> {{ i18n.trans("confirm") }}'
+                        label: '<i class="fa fa-check"></i> {{ i18n.trans("confirm") }}',
+                        className: 'btn-danger'
                     }
                 },
                 callback: function (result) {
@@ -63,7 +64,7 @@
             $(formName).focus().select();
         });
         // marca/desmarca todos los checkbox de eliminar del listado
-        $('#listDeleteCB').click(function() {
+        $('.listDeleteCB').click(function() {
             var checked = $(this).prop('checked');
             $('.listDelete').prop('checked', checked);
         });
