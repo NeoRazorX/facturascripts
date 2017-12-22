@@ -1,5 +1,20 @@
 {% extends "Master/MenuTemplate.html" %}
 
+{% block javascript %}
+{{ parent() }}
+
+{% if fsc.urlReload %}
+<script type="text/javascript">
+    function pageReload() {
+        window.location.href = '{{ fsc.urlReload|raw }}';
+    }
+    $(document).ready(function () {
+        setTimeout(pageReload, 10000);
+    });
+</script>
+{% endif %}
+{% endblock %}
+
 {% block body %}
 <div class="container">
     <div class="row">

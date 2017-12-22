@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
@@ -32,6 +31,8 @@ use Symfony\Component\HttpFoundation\Response;
 class Randomizer extends Base\Controller
 {
 
+    public $urlReload;
+
     /**
      * Runs the controller's private logic.
      *
@@ -42,11 +43,39 @@ class Randomizer extends Base\Controller
     {
         parent::privateCore($response, $user);
 
+        $option = $this->request->get('gen', '');
+        if ($option !== '') {
+            $this->execAction($option);
+            $this->urlReload = $this->url() . '&gen=' . $option;
+        }
+    }
+
+    /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
+    public function getPageData()
+    {
+        $pageData = parent::getPageData();
+        $pageData['menu'] = 'admin';
+        $pageData['title'] = 'generate-test-data';
+        $pageData['icon'] = 'fa-magic';
+
+        return $pageData;
+    }
+
+    /**
+     * Executes selected action.
+     * 
+     * @param string $option
+     */
+    private function execAction($option)
+    {
         $accountingGenerator = new RandomDataGenerator\AccountingGenerator($this->empresa);
         $documentGenerator = new RandomDataGenerator\DocumentGenerator($this->empresa);
         $modelDataGenerator = new RandomDataGenerator\ModelDataGenerator($this->empresa);
 
-        $option = $this->request->get('gen', '');
         switch ($option) {
             case 'agentes':
                 $num = $modelDataGenerator->agentes();
@@ -130,20 +159,5 @@ class Randomizer extends Base\Controller
                 $this->miniLog->info($this->i18n->trans('generated-subaccounts', [$num]));
                 break;
         }
-    }
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
-    {
-        $pageData = parent::getPageData();
-        $pageData['menu'] = 'admin';
-        $pageData['title'] = 'generate-test-data';
-        $pageData['icon'] = 'fa-magic';
-
-        return $pageData;
     }
 }
