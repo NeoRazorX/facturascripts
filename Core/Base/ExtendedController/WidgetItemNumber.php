@@ -123,7 +123,7 @@ class WidgetItemNumber extends WidgetItem
     protected function specialAttributes()
     {
         $base = parent::specialAttributes();
-        $step = empty($this->step) ? '' : ' step="' . $this->step . '"';
+        $step = empty($this->step) ? ' step="any"' : ' step="' . $this->step . '"';
         $min = empty($this->min) ? '' : ' min="' . $this->min . '"';
         $max = empty($this->max) ? '' : ' max="' . $this->max . '"';
         return $base . $step . $min . $max;

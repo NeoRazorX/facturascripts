@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
@@ -29,7 +30,7 @@ class Articulo
 {
 
     use Base\ModelTrait {
-        clear as clearTrait;
+        clear as traitClear;
     }
 
     /**
@@ -297,8 +298,17 @@ class Articulo
      */
     public function clear()
     {
-        $this->clearTrait();
+        $this->traitClear();
+        $this->codimpuesto = AppSettings::get('default', 'codimpuesto');
+        $this->costemedio = 0.0;
         $this->factualizado = date('d-m-Y');
+        $this->preciocoste = 0.0;
+        $this->pvp = 0.0;
+        $this->secompra = true;
+        $this->sevende = true;
+        $this->stockfis = 0.0;
+        $this->stockmax = 0.0;
+        $this->stockmin = 0.0;
     }
 
     /**
