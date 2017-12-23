@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * Factura de un proveedor.
+ * Invoice from a supplier.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -32,7 +32,7 @@ class FacturaProveedor
     use Base\Factura;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -42,7 +42,7 @@ class FacturaProveedor
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -52,7 +52,9 @@ class FacturaProveedor
     }
 
     /**
-     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
@@ -66,7 +68,7 @@ class FacturaProveedor
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -75,9 +77,9 @@ class FacturaProveedor
     }
 
     /**
-     * Establece la fecha y la hora, pero respetando el ejercicio y las
-     * regularizaciones de IVA.
-     * Devuelve TRUE si se asigna una fecha u hora distinta a los solicitados.
+     * Set the date and time, but respecting the exercise and the
+     * VAT regularizations.
+     * Returns TRUE if a date or time other than those requested is assigned.
      *
      * @param string $fecha
      * @param string $hora
@@ -88,48 +90,48 @@ class FacturaProveedor
     {
         $cambio = false;
 
-        if ($this->numero === null) { /// nueva factura
+        if ($this->numero === null) { /// new invoice
             $this->fecha = $fecha;
             $this->hora = $hora;
-        } elseif ($fecha !== $this->fecha) { /// factura existente y cambiamos fecha
+        } elseif ($fecha !== $this->fecha) { /// existing invoice and change date
             $cambio = true;
 
             $eje0 = new Ejercicio();
             $ejercicio = $eje0->get($this->codejercicio);
             if ($ejercicio) {
-                /// ¿El ejercicio actual está abierto?
+                /// Is the current exercise open?
                 if ($ejercicio->abierto()) {
                     $eje2 = $eje0->getByFecha($fecha);
                     if ($eje2) {
                         if ($eje2->abierto()) {
-                            /// ¿La factura está dentro de alguna regularización?
+                            /// Is the invoice within some regularization?
                             $regiva0 = new RegularizacionIva();
                             if ($regiva0->getFechaInside($this->fecha)) {
-                                self::$miniLog->alert(self::$i18n->trans('invoice-regularized-cant-change-date', [FS_IVA]));
+                                self::$miniLog->alert(self::$i18n->trans('invoice-regularized-cant-change-date', ['%tax%' => FS_IVA]));
                             } elseif ($regiva0->getFechaInside($fecha)) {
-                                self::$miniLog->alert(self::$i18n->trans('cant-assign-date-already-regularized', [$fecha, FS_IVA]));
+                                self::$miniLog->alert(self::$i18n->trans('cant-assign-date-already-regularized', ['%date%' => $fecha, '%tax%' => FS_IVA]));
                             } else {
                                 $cambio = false;
                                 $this->fecha = $fecha;
                                 $this->hora = $hora;
 
-                                /// ¿El ejercicio es distinto?
+                                /// Is the exercise different?
                                 if ($this->codejercicio !== $eje2->codejercicio) {
                                     $this->codejercicio = $eje2->codejercicio;
                                     $this->newCodigo();
                                 }
                             }
                         } else {
-                            self::$miniLog->alert(self::$i18n->trans('closed-exercise-cant-change-date', [$eje2->nombre]));
+                            self::$miniLog->alert(self::$i18n->trans('closed-exercise-cant-change-date', ['%exerciseName%' => $eje2->nombre]));
                         }
                     }
                 } else {
-                    self::$miniLog->alert(self::$i18n->trans('closed-exercise-cant-change-date', [$ejercicio->nombre]));
+                    self::$miniLog->alert(self::$i18n->trans('closed-exercise-cant-change-date', ['%exerciseName%' => $ejercicio->nombre]));
                 }
             } else {
                 self::$miniLog->alert(self::$i18n->trans('exercise-not-found'));
             }
-        } elseif ($hora !== $this->hora) { /// factura existente y cambiamos hora
+        } elseif ($hora !== $this->hora) { /// existing invoice and we change hour
             $this->hora = $hora;
         }
 
@@ -137,7 +139,7 @@ class FacturaProveedor
     }
 
     /**
-     * Devuelve las líneas asociadas a la factura.
+     * Returns the lines associated with the invoice.
      *
      * @return LineaFacturaProveedor[]
      */
@@ -148,8 +150,8 @@ class FacturaProveedor
     }
 
     /**
-     * Devuelve las líneas de IVA de la factura.
-     * Si no hay, las crea.
+     * Returns the VAT lines of the invoice.
+     * If there are not, create them.
      *
      * @return LineaIvaFacturaProveedor[]
      */
@@ -159,7 +161,7 @@ class FacturaProveedor
     }
 
     /**
-     * Comprueba los datos de la factura, devuelve TRUE si está correcto
+     * Check the invoice data, return TRUE if it is correct.
      *
      * @return bool
      */
@@ -169,7 +171,7 @@ class FacturaProveedor
     }
 
     /**
-     * Ejecuta un test completo de pruebas
+     * Run a complete test of tests.
      *
      * @return bool
      */
@@ -179,7 +181,7 @@ class FacturaProveedor
     }
 
     /**
-     * Elimina la factura de la base de datos.
+     * Remove the invoice from the database.
      *
      * @return bool
      */
@@ -193,7 +195,7 @@ class FacturaProveedor
             if ($ejercicio->abierto()) {
                 $reg0 = new RegularizacionIva();
                 if ($reg0->getFechaInside($this->fecha)) {
-                    self::$miniLog->alert(self::$i18n->trans('invoice-regularized-cant-delete', [FS_IVA]));
+                    self::$miniLog->alert(self::$i18n->trans('invoice-regularized-cant-delete', ['%tax%' => FS_IVA]));
                     $bloquear = true;
                 } else {
                     foreach ($this->getRectificativas() as $rect) {
@@ -203,12 +205,12 @@ class FacturaProveedor
                     }
                 }
             } else {
-                self::$miniLog->alert(self::$i18n->trans('closed-exercise', [$ejercicio->nombre]));
+                self::$miniLog->alert(self::$i18n->trans('closed-exercise', ['%exerciseName%' => $ejercicio->nombre]));
                 $bloquear = true;
             }
         }
 
-        /// desvincular albaranes asociados y eliminar factura
+        /// unlink associated delivery notes and eliminate invoice
         $sql = 'UPDATE albaranesprov SET idfactura = NULL, ptefactura = TRUE'
             . ' WHERE idfactura = ' . self::$dataBase->var2str($this->idfactura) . ';'
             . 'DELETE FROM ' . static::tableName() . ' WHERE idfactura = ' . self::$dataBase->var2str($this->idfactura) . ';';
@@ -219,7 +221,7 @@ class FacturaProveedor
         if (self::$dataBase->exec($sql)) {
             if ($this->idasiento) {
                 /**
-                 * Delegamos la eliminación del asiento en la clase correspondiente.
+                 * We delegate the elimination of the seat in the corresponding class.
                  */
                 $asiento = new Asiento();
                 $asi0 = $asiento->get($this->idasiento);
@@ -233,7 +235,7 @@ class FacturaProveedor
                 }
             }
 
-            self::$miniLog->info(self::$i18n->trans('supplier-invoice-deleted-successfully', [$this->codigo]));
+            self::$miniLog->info(self::$i18n->trans('supplier-invoice-deleted-successfully', ['%docCode%' => $this->codigo]));
 
             return true;
         }
