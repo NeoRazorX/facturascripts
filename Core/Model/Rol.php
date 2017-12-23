@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Define un paquete de permisos para asignar rápidamente a usuarios.
+ * Define a permission package to quickly assign users.
  *
  * @author Joe Nilson            <joenilson at gmail.com>
  * @author Carlos García Gómez <carlos@facturascripts.com>
@@ -29,25 +29,25 @@ class Rol
 {
 
     use Base\ModelTrait {
-        url as private traitURL;
+        url as private traitUrl;
     }
 
     /**
-     * Código de rol
+     * Role code.
      *
      * @var string
      */
     public $codrol;
 
     /**
-     * Descripción del rol.
+     * Description of the role.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -57,7 +57,7 @@ class Rol
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -67,7 +67,7 @@ class Rol
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      * Se ejecuta dentro del método save.
      *
      * @return bool
@@ -80,7 +80,7 @@ class Rol
     }
 
     /**
-     * Devuelve la url donde ver/modificar los datos
+     * Returns the url where to see/modify the data.
      *
      * @param string $type
      *
@@ -88,6 +88,6 @@ class Rol
      */
     public function url($type = 'auto')
     {
-        return $this->traitURL($type, 'ListUser&active=List');
+        return $this->traitUrl($type, 'ListUser&active=List');
     }
 }
