@@ -29,56 +29,56 @@ class LineaTransferenciaStock
     use Base\ModelTrait;
 
     /**
-     * Clave primaria. integer
+     * Primary key. Integer.
      *
      * @var int
      */
     public $idlinea;
 
     /**
-     * Identificador de transferéncia
+     * Transfer identifier.
      *
      * @var int
      */
     public $idtrans;
 
     /**
-     * Referencia
+     * Reference.
      *
      * @var string
      */
     public $referencia;
 
     /**
-     * Cantidad
+     * Quantity.
      *
      * @var float|int
      */
     public $cantidad;
 
     /**
-     * Descripción de la transferencia.
+     * Description of the transfer.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * Fecha
+     * Date.
      *
      * @var string
      */
     private $fecha;
 
     /**
-     * Hora
+     * Time.
      *
      * @var string
      */
     private $hora;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -88,7 +88,7 @@ class LineaTransferenciaStock
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -98,7 +98,7 @@ class LineaTransferenciaStock
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -112,7 +112,7 @@ class LineaTransferenciaStock
     }
 
     /**
-     * Devuelve la fecha
+     * Returns the date.
      *
      * @return string
      */
@@ -122,7 +122,7 @@ class LineaTransferenciaStock
     }
 
     /**
-     * Devuelve la hora
+     * Returns the time.
      *
      * @return string
      */
@@ -132,7 +132,7 @@ class LineaTransferenciaStock
     }
 
     /**
-     * Devuelve todas las líneas de transferéncia de stock
+     * Returns all stock transfer lines.
      *
      * @param string $ref
      * @param string $codalmaorigen
@@ -174,15 +174,15 @@ class LineaTransferenciaStock
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
     public function install()
     {
-        /// forzamos la comprobación de la tabla de transferencias de stock
+        /// we force the check of the stock transfers table
         //new TransferenciaStock();
 
         return '';
