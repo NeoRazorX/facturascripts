@@ -248,8 +248,8 @@ class User
             return false;
         }
 
-        if (empty($this->lastactivity)) {
-            $this->lastactivity = date('d-m-Y H:i:s', 0);
+        if ($this->lastactivity === '') {
+            $this->lastactivity = null;
         }
 
         return true;

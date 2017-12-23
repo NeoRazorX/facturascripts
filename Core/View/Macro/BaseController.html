@@ -138,14 +138,14 @@
             <th class="text-right">
                 {% if view.getCursor() is not empty %}
                 <label class="custom-checkbox-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
-                    <input class="custom-control-input" type="checkbox" id="listDeleteCB" />
+                    <input class="custom-control-input listDeleteCB" type="checkbox" />
                     <span class="custom-control-indicator"></span>
                 </label>
                 {% endif %}
             </th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="tab{{ context.indexView }}">
         {% for model in view.getCursor() %}
         {# Set background status #}
         {% set rowClass = 'table-light' %}
@@ -240,7 +240,7 @@
             <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
                     <i class="fa fa-undo" aria-hidden="true"></i>&nbsp; {{ undo }}
             </button>
-            <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled = true; this.form.submit();" {{ popoverTitle(save_title, 'bottom') }}>
+            <button class="btn btn-sm btn-primary" type="submit" {{ popoverTitle(save_title, 'bottom') }}>
                     <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
             </button>
         </div>
@@ -286,7 +286,7 @@
                     <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
                             &nbsp;<i class="fa fa-undo" aria-hidden="true"></i>&nbsp;
                     </button>
-                    <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled = true; this.form.submit();" {{ popoverTitle(save_title, 'bottom') }}>
+                    <button class="btn btn-sm btn-primary" type="submit" {{ popoverTitle(save_title, 'bottom') }}>
                             &nbsp;<i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;
                     </button>
                 </div>
@@ -345,7 +345,7 @@
     {% set formName = context.indexView ~ '-' ~ group.name %}
     {% set model = view.getModel() %}
 
-    <div class="modal fade" id="{{ group.name }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="{{ group.name }}" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form name="{{ formName }}" action="#" method="post" class="form" role="form">
@@ -373,7 +373,7 @@
                         <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal" {{ popoverTitle(cancel_title, 'bottom') }}>
                             <i class="fa fa-ban" aria-hidden="true"></i>&nbsp; {{ cancel }}
                         </button>
-                        <button type="submit" class="btn btn-sm btn-primary" onclick="this.disabled = true; this.form.submit();" {{ popoverTitle(accept_title, 'bottom') }}>
+                        <button type="submit" class="btn btn-sm btn-primary" {{ popoverTitle(accept_title, 'bottom') }}>
                             <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ accept }}
                         </button>
                     </div>

@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
@@ -29,7 +30,7 @@ class Articulo
 {
 
     use Base\ModelTrait {
-        clear as clearTrait;
+        clear as traitClear;
     }
 
     /**
@@ -297,8 +298,17 @@ class Articulo
      */
     public function clear()
     {
-        $this->clearTrait();
+        $this->traitClear();
+        $this->codimpuesto = AppSettings::get('default', 'codimpuesto');
+        $this->costemedio = 0.0;
         $this->factualizado = date('d-m-Y');
+        $this->preciocoste = 0.0;
+        $this->pvp = 0.0;
+        $this->secompra = true;
+        $this->sevende = true;
+        $this->stockfis = 0.0;
+        $this->stockmax = 0.0;
+        $this->stockmin = 0.0;
     }
 
     /**
@@ -765,33 +775,5 @@ class Articulo
         }
 
         return false;
-    }
-
-    /**
-     * Ejecuta una tarea con cron
-     */
-    public function cronJob()
-    {
-        $this->fixDb();
-    }
-
-    /**
-     * Realizamos algunas correcciones a la base de datos.
-     */
-    public function fixDb()
-    {
-        $fixes = [
-            'UPDATE ' . $this->tableName() . ' SET bloqueado = true WHERE bloqueado IS NULL;',
-            'UPDATE ' . $this->tableName() . ' SET nostock = false WHERE nostock IS NULL;',
-            /// desvinculamos de fabricantes que no existan
-            'UPDATE ' . $this->tableName() . ' SET codfabricante = null WHERE codfabricante IS NOT NULL'
-            . ' AND codfabricante NOT IN (SELECT codfabricante FROM fabricantes);',
-            /// desvinculamos de familias que no existan
-            'UPDATE ' . $this->tableName() . ' SET codfamilia = null WHERE codfamilia IS NOT NULL'
-            . ' AND codfamilia NOT IN (SELECT codfamilia FROM familias);',
-        ];
-        foreach ($fixes as $sql) {
-            self::$dataBase->exec($sql);
-        }
     }
 }

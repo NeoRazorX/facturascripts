@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -24,8 +23,7 @@ use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Model;
 
 /**
- * Controller to edit a single item from the EditRol model
- *
+ * Controller to edit a single item from the EditRol model.
  *
  * @author Artex Trading sa <jferrer@artextrading.com>
  */
@@ -54,19 +52,16 @@ class EditRol extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
+        $code = $this->request->get('code');
+
         switch ($keyView) {
             case 'EditRol':
-                $value = $this->request->get('code');
-                $view->loadData($value);
+                $view->loadData($code);
                 break;
 
             case 'EditRolUser':
-                $where = [new DataBaseWhere('codrol', $this->getViewModelValue('EditRol', 'codrol'))];
-                $view->loadData($where);
-                break;
-
             case 'ListRolAccess':
-                $where = [new DataBaseWhere('codrol', $this->getViewModelValue('EditRol', 'codrol'))];
+                $where = [new DataBaseWhere('codrol', $code)];
                 $view->loadData($where);
                 break;
         }
@@ -77,7 +72,7 @@ class EditRol extends ExtendedController\PanelController
      *
      * @return array
      */
-    public function getPageData(): array
+    public function getPageData()
     {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'rol';
@@ -94,7 +89,7 @@ class EditRol extends ExtendedController\PanelController
      * @param string $codRol
      * @return array
      */
-    private function getUsers($codRol): array
+    private function getUsers($codRol)
     {
         $result = [];
         $rolUserModel = new Model\RolUser();
@@ -135,7 +130,8 @@ class EditRol extends ExtendedController\PanelController
      *
      * @return Model\Page[]
      */
-    private function getPages() {
+    private function getPages()
+    {
         $menu = $this->request->get('menu', '');
         $submenu = $this->request->get('submenu', '');
         $where = [new DataBaseWhere('menu', $menu)];
@@ -155,7 +151,7 @@ class EditRol extends ExtendedController\PanelController
      *
      * @return bool
      */
-    protected function execPreviousAction($view, $action): bool
+    protected function execPreviousAction($view, $action)
     {
         switch ($action) {
             case 'add-rol-access':
