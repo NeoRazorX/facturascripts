@@ -36,6 +36,14 @@ class Cuenta
      * @var int
      */
     public $idcuenta;
+    
+    /**
+     *Identificacion de la empresa
+     *
+     * @var string
+     */
+    public $idempresa;
+
 
     /**
      * Código de cuenta

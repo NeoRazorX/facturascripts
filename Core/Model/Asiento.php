@@ -45,6 +45,13 @@ class Asiento
      * @var string
      */
     public $numero;
+    
+    /**
+     *Identificacion de la empresa
+     *
+     * @var string
+     */
+    public $idempresa;
 
     /**
      * Identificador del concepto
