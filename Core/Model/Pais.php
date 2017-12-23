@@ -22,7 +22,7 @@ use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Lib\Import\CSVImport;
 
 /**
- * Un país, por ejemplo España.
+ * A country, for example Spain.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -32,15 +32,15 @@ class Pais
     use Base\ModelTrait;
 
     /**
-     * Clave primaria. Varchar(3).
+     * Primary key. Varchar(3).
      *
-     * @var string Código alfa-3 del país.
+     * @var string Alpha-3 code of the country.
      *             http://es.wikipedia.org/wiki/ISO_3166-1
      */
     public $codpais;
 
     /**
-     * Código alfa-2 del país.
+     * Alpha-2 code of the country.
      * http://es.wikipedia.org/wiki/ISO_3166-1
      *
      * @var string
@@ -48,14 +48,14 @@ class Pais
     public $codiso;
 
     /**
-     * Nombre del pais.
+     * Country name.
      *
      * @var string
      */
     public $nombre;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -65,7 +65,7 @@ class Pais
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -75,7 +75,7 @@ class Pais
     }
 
     /**
-     * Devuelve True si el pais es el predeterminado de la empresa
+     * Returns True if the country is the default of the company.
      *
      * @return bool
      */
@@ -85,7 +85,7 @@ class Pais
     }
 
     /**
-     * Comprueba los datos del pais, devuelve True si son correctos
+     * Check the country's data, return True if they are correct.
      *
      * @return bool
      */
@@ -95,7 +95,7 @@ class Pais
         $this->nombre = self::noHtml($this->nombre);
 
         if (!preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {
-            self::$miniLog->alert(self::$i18n->trans('country-cod-invalid', [$this->codpais]));
+            self::$miniLog->alert(self::$i18n->trans('invalid-country-code', ['%countryCode%' => $this->codpais]));
 
             return false;
         }
@@ -110,12 +110,14 @@ class Pais
     }
 
     /**
-     * Crea la consulta necesaria para crear los paises en la base de datos.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
     public function install()
     {
-        return CSVImport::importTableSQL($this->tableName());
+        return CSVImport::importTableSQL(static::tableName());
     }
 }

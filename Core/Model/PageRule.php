@@ -21,8 +21,8 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * Define que un usuario tiene acceso a una página concreta
- * y si tiene permisos de eliminación en esa página.
+ * Defines that a user has access to a specific page
+ * and if you have removal permissions on that page.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -32,42 +32,42 @@ class PageRule
     use Base\ModelTrait;
 
     /**
-     * Identificador
+     * Identifier.
      *
      * @var int
      */
     public $id;
 
     /**
-     * Nick del usuario.
+     * Nick of the user.
      *
      * @var string
      */
     public $nick;
 
     /**
-     * Nombre de la página (nombre del controlador).
+     * Name of the page (name of the controller).
      *
      * @var string
      */
     public $pagename;
 
     /**
-     * Otorga permisos al usuario a eliminar elementos en la página.
+     * Grants permissions to the user to delete elements on the page.
      *
      * @var bool
      */
     public $allowdelete;
 
     /**
-     * Otorga permisis al usuario a actualizar elementos en la página.
+     * Grant the user permission to update elements on the page.
      *
      * @var bool
      */
     public $allowupdate;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -77,7 +77,7 @@ class PageRule
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */

@@ -149,6 +149,11 @@ class PageOption
         ExtendedController\VisualItemLoadEngine::loadJSON($columns, $modals, $rows, $this);
     }
 
+    /**
+     * TODO: Uncomplete
+     *
+     * @return array
+     */
     private function getEncodeValues()
     {
         return [
