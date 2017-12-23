@@ -101,7 +101,7 @@ class MemcacheAdapter implements AdaptorInterface
     public function get($key)
     {
         if (self::$connected) {
-            $this->minilog->debug($this->i18n->trans('memcache-get-key-item', [$key]));
+            $this->minilog->debug($this->i18n->trans('memcache-get-key-item', ['%item%' => $key]));
             return self::$memcache->get(FS_CACHE_PREFIX . $key);
         }
 
@@ -119,7 +119,7 @@ class MemcacheAdapter implements AdaptorInterface
      */
     public function set($key, $content, $expire = 5400)
     {
-        $this->minilog->debug($this->i18n->trans('memcache-set-key-item', [$key]));
+        $this->minilog->debug($this->i18n->trans('memcache-set-key-item', ['%item%' => $key]));
         if (self::$connected) {
             return self::$memcache->set(FS_CACHE_PREFIX . $key, $content, false, $expire);
         }
@@ -138,7 +138,7 @@ class MemcacheAdapter implements AdaptorInterface
      */
     public function delete($key)
     {
-        $this->minilog->debug($this->i18n->trans('memcache-delete-key-item', [$key]));
+        $this->minilog->debug($this->i18n->trans('memcache-delete-key-item', ['%item%' => $key]));
 
         if (self::$connected) {
             return self::$memcache->delete(FS_CACHE_PREFIX . $key);

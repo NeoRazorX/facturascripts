@@ -233,7 +233,7 @@ class PluginManager
                     $controller = new $controllerNamespace($cache, self::$i18n, self::$minilog, $controllerName);
                     $menuManager->selectPage($controller->getPageData());
                 } catch (Exception $exc) {
-                    self::$minilog->critical(self::$i18n->trans('cant-load-controller', [$controllerName]));
+                    self::$minilog->critical(self::$i18n->trans('cant-load-controller', ['%controllerName%' => $controllerName]));
                 }
             }
         }
@@ -277,7 +277,7 @@ class PluginManager
     private function createFolder($folder)
     {
         if (!file_exists($folder) && !@mkdir($folder, 0775, true)) {
-            self::$minilog->critical(self::$i18n->trans('cant-create-folder', [$folder]));
+            self::$minilog->critical(self::$i18n->trans('cant-create-folder', ['%folderName%' => $folder]));
             return false;
         }
         return true;

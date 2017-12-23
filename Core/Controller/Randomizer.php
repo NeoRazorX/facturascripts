@@ -79,84 +79,84 @@ class Randomizer extends Base\Controller
         switch ($option) {
             case 'agentes':
                 $num = $modelDataGenerator->agentes();
-                $this->miniLog->info($this->i18n->trans('generated-agents', [$num]));
+                $this->miniLog->info($this->i18n->trans('generated-agents', ['%quantity%' => $num]));
                 break;
 
             case 'albaranescli':
                 $num = $documentGenerator->albaranesCliente();
-                $this->miniLog->info($this->i18n->trans('generated-customer-delivery-notes', [$num]));
+                $this->miniLog->info($this->i18n->trans('generated-customer-delivery-notes', ['%quantity%' => $num]));
                 break;
 
             case 'albaranesprov':
                 $num = $documentGenerator->albaranesProveedor();
-                $this->miniLog->info($this->i18n->trans('generated-supplier-delivery-notes', [$num]));
+                $this->miniLog->info($this->i18n->trans('generated-supplier-delivery-notes', ['%quantity%' => $num]));
                 break;
 
             case 'articulos':
                 $num = $modelDataGenerator->articulos();
-                $this->miniLog->info($this->i18n->trans('generated-products', [$num]));
+                $this->miniLog->info($this->i18n->trans('generated-products', ['%quantity%' => $num]));
                 break;
 
             case 'articulosprov':
                 $num = $modelDataGenerator->articulosProveedor();
-                $this->miniLog->info($this->i18n->trans('generated-products', [$num]));
+                $this->miniLog->info($this->i18n->trans('generated-products', ['%quantity%' => $num]));
                 break;
 
             case 'asientos':
                 $num = $accountingGenerator->asientos();
-                $this->miniLog->info($this->i18n->trans('generated-accounting-entries', [$num]));
+                $this->miniLog->info($this->i18n->trans('generated-accounting-entries', ['%quantity%' => $num]));
                 break;
 
             case 'clientes':
                 $num = $modelDataGenerator->clientes();
-                $this->miniLog->info($this->i18n->trans('generated-customers', [$num]));
+                $this->miniLog->info($this->i18n->trans('generated-customers', ['%quantity%' => $num]));
                 break;
 
             case 'cuentas':
                 $accountingGenerator->gruposEpigrafes(2);
                 $accountingGenerator->epigrafes(4);
                 $num = $accountingGenerator->cuentas(8);
-                $this->miniLog->info($this->i18n->trans('generated-accounts', [$num]));
+                $this->miniLog->info($this->i18n->trans('generated-accounts', ['%quantity%' => $num]));
                 break;
 
             case 'fabricantes':
                 $num = $modelDataGenerator->fabricantes();
-                $this->miniLog->info($this->i18n->trans('generated-manufacturers', [$num]));
+                $this->miniLog->info($this->i18n->trans('generated-manufacturers', ['%quantity%' => $num]));
                 break;
 
             case 'familias':
                 $num = $modelDataGenerator->familias();
-                $this->miniLog->info($this->i18n->trans('generated-families', [$num]));
+                $this->miniLog->info($this->i18n->trans('generated-families', ['%quantity%' => $num]));
                 break;
 
             case 'grupos':
                 $num = $modelDataGenerator->gruposClientes();
-                $this->miniLog->info($this->i18n->trans('generated-customer-groups', [$num]));
+                $this->miniLog->info($this->i18n->trans('generated-customer-groups', ['%quantity%' => $num]));
                 break;
 
             case 'pedidoscli':
                 $num = $documentGenerator->pedidosCliente();
-                $this->miniLog->info($this->i18n->trans('generated-customer-orders', [$num]));
+                $this->miniLog->info($this->i18n->trans('generated-customer-orders', ['%quantity%' => $num]));
                 break;
 
             case 'pedidosprov':
                 $num = $documentGenerator->pedidosProveedor();
-                $this->miniLog->info($this->i18n->trans('generated-supplier-orders', [$num]));
+                $this->miniLog->info($this->i18n->trans('generated-supplier-orders', ['%quantity%' => $num]));
                 break;
 
             case 'presupuestoscli':
                 $num = $documentGenerator->presupuestosCliente();
-                $this->miniLog->info($this->i18n->trans('generated-customer-estimations', [$num]));
+                $this->miniLog->info($this->i18n->trans('generated-customer-estimations', ['%quantity%' => $num]));
                 break;
 
             case 'proveedores':
                 $num = $modelDataGenerator->proveedores();
-                $this->miniLog->info($this->i18n->trans('generated-supplier', [$num]));
+                $this->miniLog->info($this->i18n->trans('generated-supplier', ['%quantity%' => $num]));
                 break;
 
             case 'subcuentas':
                 $num = $accountingGenerator->subcuentas();
-                $this->miniLog->info($this->i18n->trans('generated-subaccounts', [$num]));
+                $this->miniLog->info($this->i18n->trans('generated-subaccounts', ['%quantity%' => $num]));
                 break;
         }
     }

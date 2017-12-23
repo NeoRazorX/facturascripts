@@ -95,7 +95,7 @@ class DataBaseTools
         $sql2 = $this->compareConstraints($tableName, $xmlCons, $dbCons, true);
         if ($sql2 !== '') {
             if (!self::$dataBase->exec($sql2)) {
-                self::$miniLog->critical(self::$i18n->trans('check-table', [$tableName]));
+                self::$miniLog->critical(self::$i18n->trans('check-table', ['%tableName%' => $tableName]));
             }
 
             /// leemos de nuevo las restricciones
@@ -284,10 +284,10 @@ class DataBaseTools
                     $this->checkXmlConstraints($constraints, $xml);
                 }
             } else {
-                self::$miniLog->critical(self::$i18n->trans('error-reading-file', [$filename]));
+                self::$miniLog->critical(self::$i18n->trans('error-reading-file', ['%fileName%' => $filename]));
             }
         } else {
-            self::$miniLog->critical(self::$i18n->trans('file-not-found', [$filename]));
+            self::$miniLog->critical(self::$i18n->trans('file-not-found', ['%fileName%' => $filename]));
         }
 
         return $return;
