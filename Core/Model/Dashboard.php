@@ -93,8 +93,8 @@ class Dashboard
      */
     public function install()
     {
-        return "INSERT INTO " . $this->tableName() . " (component, version, location) VALUES ('Messages','1.0 (Beta)', 0);"
-            . "INSERT INTO " . $this->tableName() . " (component, version, location) VALUES ('Tasks','1.0 (Beta)', 0);"
-            . "INSERT INTO " . $this->tableName() . " (component, version, location) VALUES ('InfoState','1.0 (Beta)', 0);";
+        return 'INSERT INTO ' . static::tableName() . " (component, version, location) VALUES ('Messages','1.0 (Beta)', 0);"
+            . 'INSERT INTO ' . static::tableName() . " (component, version, location) VALUES ('Tasks','1.0 (Beta)', 0);"
+            . 'INSERT INTO ' . static::tableName() . " (component, version, location) VALUES ('InfoState','1.0 (Beta)', 0);";
     }
 }
