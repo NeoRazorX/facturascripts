@@ -776,32 +776,4 @@ class Articulo
 
         return false;
     }
-
-    /**
-     * Ejecuta una tarea con cron
-     */
-    public function cronJob()
-    {
-        $this->fixDb();
-    }
-
-    /**
-     * Realizamos algunas correcciones a la base de datos.
-     */
-    public function fixDb()
-    {
-        $fixes = [
-            'UPDATE ' . $this->tableName() . ' SET bloqueado = true WHERE bloqueado IS NULL;',
-            'UPDATE ' . $this->tableName() . ' SET nostock = false WHERE nostock IS NULL;',
-            /// desvinculamos de fabricantes que no existan
-            'UPDATE ' . $this->tableName() . ' SET codfabricante = null WHERE codfabricante IS NOT NULL'
-            . ' AND codfabricante NOT IN (SELECT codfabricante FROM fabricantes);',
-            /// desvinculamos de familias que no existan
-            'UPDATE ' . $this->tableName() . ' SET codfamilia = null WHERE codfamilia IS NOT NULL'
-            . ' AND codfamilia NOT IN (SELECT codfamilia FROM familias);',
-        ];
-        foreach ($fixes as $sql) {
-            self::$dataBase->exec($sql);
-        }
-    }
 }
