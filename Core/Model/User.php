@@ -34,7 +34,7 @@ class User
     }
 
     /**
-     * Clave primaria. Varchar (50).
+     * Primary key. Varchar (50).
      *
      * @var string
      */
@@ -53,14 +53,14 @@ class User
     public $email;
 
     /**
-     * TRUE -> el usuario es un administrador.
+     * True -> el usuario es un administrador.
      *
      * @var bool
      */
     public $admin;
 
     /**
-     * TRUE -> el usuario esta activo.
+     * True -> el usuario esta activo.
      *
      * @var bool
      */
@@ -112,7 +112,7 @@ class User
     private $logkey;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -122,7 +122,7 @@ class User
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -132,7 +132,9 @@ class User
     }
 
     /**
-     * Inserta valores por defecto a la tabla, en el proceso de creación de la misma.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
@@ -144,12 +146,12 @@ class User
 
         self::$miniLog->info(self::$i18n->trans('created-default-admin-account'));
 
-        return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled,idempresa,langcode,homepage)"
+        return 'INSERT INTO ' . static::tableName() . " (nick,password,admin,enabled,idempresa,langcode,homepage)"
             . " VALUES ('admin','" . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE,'1','" . FS_LANG . "','AdminHome');";
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -233,7 +235,7 @@ class User
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      * Se ejecuta dentro del método save.
      *
      * @return bool
@@ -243,7 +245,7 @@ class User
         $this->nick = trim($this->nick);
 
         if (!preg_match("/^[A-Z0-9_\+\.\-]{3,50}$/i", $this->nick)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-user-nick', [$this->nick]));
+            self::$miniLog->alert(self::$i18n->trans('invalid-user-nick', ['%nick%' => $this->nick]));
 
             return false;
         }
