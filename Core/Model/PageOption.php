@@ -135,27 +135,6 @@ class PageOption
     }
 
     /**
-     * Check an array of data so that it has the correct structure of the model
-     *
-     * @param array $data
-     */
-    public function checkArrayData(&$data)
-    {
-        $columns = $this->columns;
-        foreach ($data as $key => $value) {
-            if (!in_array($key, ['id', 'nick', 'name', 'code', 'action'])) {
-                $path = explode('+', $key);
-                $columns[$path[0]]->columns[$path[1]]->{$path[2]} = $value;
-                unset($data[$key]);
-            }
-        }
-        $data['modals'] = json_encode($this->modals);
-        $data['rows'] = json_encode($this->rows);
-        $data['columns'] = json_encode($columns);
-        unset($columns);
-    }
-
-    /**
      * Load the data from an array
      *
      * @param array $data
@@ -221,30 +200,16 @@ class PageOption
      */
     public function getForUser($name, $nick)
     {
-        // if it's configuration columns page, nothing to do
-        if ($name == 'EditPageOption') {
-            return;
-        }
-
         $where = $this->getPageFilter($name, $nick);
         $orderby = ['nick' => 'ASC'];
 
         // Load data from database, if not exist install xmlview
         if (!$this->loadFromCode('', $where, $orderby)) {
             $this->name = $name;
-            $this->columns = [];
-            $this->modals = [];
-            $this->filters = [];
-            $this->rows = [];
 
             if (!ExtendedController\VisualItemLoadEngine::installXML($name, $this)) {
                 self::$miniLog->critical(self::$i18n->trans('error-processing-xmlview', [$name]));
                 return;
-            }
-
-            if ($nick != 'admin') {
-                $this->nick = $nick;
-                $this->save();
             }
         }
 

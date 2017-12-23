@@ -36,9 +36,6 @@
 <!-- Visual macros -->
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 
-<!-- Aux Objects -->
-{% set model = fsc.view.getModel() %}
-
 <!-- Main Body -->
 <div class="container-fluid">
     {{ parent() }}
@@ -47,11 +44,11 @@
     <div id="header" class="row">
         <div class="col-3 d-print-none">
             <div class="btn-group">
-                <a href="index.php?page={{ model.name }}" class="btn btn-sm btn-outline-secondary">
+                <a href="index.php?page={{ fsc.selectedViewName }}" class="btn btn-sm btn-outline-secondary">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i>
                     <span class="d-none d-md-inline-block">&nbsp;{{ go_back }} </span>
                 </a>
-                <a href="{{ fsc.url() ~ '&code=' ~ model.name }}" class="btn btn-sm btn-outline-secondary" {{ popoverTitle(refresh_title, 'bottom') }}>
+                <a href="{{ fsc.url() ~ '&code=' ~ fsc.selectedViewName }}" class="btn btn-sm btn-outline-secondary" {{ popoverTitle(refresh_title, 'bottom') }}>
                     <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
             </div>
@@ -69,20 +66,33 @@
     <!-- Data Row -->
     <div id="data" class="row">
         <div class="col-12">
-            <form action="#" method="post" class="form" role="form" name="main_form">
-                <input type="hidden" name="action" value="save">
-                <input type="hidden" name="code" value="{{ model.name }}"/>
-                <input type="hidden" name="id" value="{{ model.primaryColumnValue() }}">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">{{ panel_header|raw }}</span>
+                    <div class="float-right text-danger">
+                        <form action="#" method="post" class="form-inline" role="form" name="select_user">
+                            <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
 
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">{{ panel_header|raw }}</span>
+                            <label>{{ i18n.trans('select-user') }}&nbsp;&nbsp;</label>
+                            <select name="nick" class="text-danger" onchange="this.form.submit()">
+                                <option value="" {% if fsc.selectedUser is null %}selected{% endif %}>{{ i18n.trans('all') }}</option>
+                                {% for key, value in fsc.getUserList() %}
+                                <option value="{{ key }}" {% if fsc.selectedUser == key %}selected{% endif %}>{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </form>
                     </div>
+                </div>
+
+                <form action="#" method="post" class="form" role="form" name="main_form">
+                    <input type="hidden" name="action" value="save">
+                    <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
+                    <input type="hidden" name="nick" value="{{ fsc.selectedUser }}"/>
 
                     <div class="card-body">
                         <!-- Main Form -->
                         <div id="main_row" class="row">
-                            {% for key1, group in model.columns %}
+                            {% for key1, group in fsc.model.columns %}
                             <div class="col-12">
                                 {% if group.title is not empty %}
                                 <h4 class="text-muted">{{ group.getHeaderHTML(group.title)|raw }}</h4>
@@ -134,7 +144,7 @@
                                             <input type="number" class="form-control" name="{{ masterName ~ 'order' }}" placeholder="Auto" value="{{ field.order }}">
                                         </td>
                                         <td class="d-inline-block col-3">
-                                            <input type="url" class="form-control" name="{{ masterName ~ 'titleURL' }}" placeholder="http://" value="{{ field.titleURL }}">
+                                            <input type="text" class="form-control" name="{{ masterName ~ 'titleURL' }}" placeholder="http://" value="{{ field.titleURL }}">
                                         </td>
                                     </tr>
                                     {% endfor %}
@@ -154,8 +164,8 @@
                             <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
                         </button>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </div>

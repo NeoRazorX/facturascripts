@@ -76,6 +76,12 @@ class EditView extends BaseView
         return $this->pageOption->columns;
     }
 
+    public function getViewName()
+    {
+        return $this->pageOption->name;
+    }
+
+
     /**
      * Establishes the column edit state
      *

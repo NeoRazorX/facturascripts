@@ -19,7 +19,8 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Model;
 
 /**
  * Edit option for any page.
@@ -27,39 +28,77 @@ use FacturaScripts\Core\Base\ExtendedController;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class EditPageOption extends ExtendedController\EditController
+class EditPageOption extends Base\Controller
 {
-    /**
-     * Initializes all the objects and properties
-     *
-     * @param Base\Cache $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
-     * @param string $className
-     */
+    public $selectedUser;
+
+    public $selectedViewName;
+
+    public $model;
+
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
         $this->setTemplate('EditPageOption');
+        $this->model = new Model\PageOption();
     }
 
-    /**
-     * Returns the model name
-     */
-    public function getModelClassName()
+    private function getParams()
     {
-        return '\FacturaScripts\Dinamic\Model\PageOption';
+        $this->selectedViewName = $this->request->get('code');
+        $this->selectedUser = $this->user->admin
+            ? $this->request->get('nick', NULL)
+            : $this->user->nick;
     }
 
-    /**
-     * Load data of view from code
-     *
-     * @param string|array $code
-     */
-    protected function loadData($code)
+    public function privateCore(&$response, $user)
     {
-        $keys = [ 'name' => $code, 'nick' => $this->user->nick];
-        parent::loadData($keys);
+        parent::privateCore($response, $user);
+
+        $this->getParams();
+        $this->model->getForUser($this->selectedViewName, $this->selectedUser);
+
+        if ($this->request->get('action', '') === 'save') {
+            $this->saveData();
+        }
+    }
+
+    private function getFilter()
+    {
+        return [
+            new DataBaseWhere('name', $this->selectedViewName),
+            new DataBaseWhere('user', $this->selectedUser)
+        ];
+    }
+
+    private function checkNickAndID()
+    {
+        if ($this->model->nick != $this->selectedUser) {
+            $this->model->id = NULL;
+            $this->model->nick = empty($this->selectedUser) ? NULL : $this->selectedUser;
+        }
+
+        if ($this->model->nick === "") {
+            $this->model->nick = NULL;
+        }
+    }
+
+    private function saveData()
+    {
+        $this->checkNickAndID();
+        $data = $this->request->request->all();
+        foreach ($data as $key => $value) {
+            if (strpos($key, '+')) {
+                $path = explode('+', $key);
+                $this->model->columns[$path[0]]->columns[$path[1]]->{$path[2]} = $value;
+            }
+        }
+
+        if ($this->model->save()) {
+            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            return;
+        }
+        $this->miniLog->alert($this->i18n->trans('data-save-error'));
     }
 
     /**
@@ -95,10 +134,21 @@ class EditPageOption extends ExtendedController\EditController
      */
     public function getPanelFooter()
     {
-        $model = $this->getModel();
         return '<strong>'
-            . $this->i18n->trans('page') . ':&nbsp;' . $model->name . '<br>'
-            . $this->i18n->trans('user') . ':&nbsp;' . $model->nick
+            . $this->i18n->trans('page') . ':&nbsp;' . $this->selectedViewName . '<br>'
+            . $this->i18n->trans('user') . ':&nbsp;' . $this->selectedUser
             . '</strong>';
+    }
+
+    public function getUserList()
+    {
+        $result = [];
+        $users = Model\CodeModel::all(Model\User::tableName(), 'nick', 'nick', false);
+        foreach ($users as $codeModel) {
+            if ($codeModel->code != 'admin') {
+                $result[$codeModel->code] = $codeModel->description;
+            }
+        }
+        return $result;
     }
 }

@@ -72,9 +72,7 @@ abstract class EditController extends Base\Controller
         parent::privateCore($response, $user);
 
         // Create the view to display
-        $viewName = $this->getClassName();
-        $title = $this->getPageData()['title'];
-        $this->view = new EditView($title, $this->getModelClassName(), $viewName, $user->nick);
+        $this->view = $this->createView($user);
 
         // Get any operations that have to be performed
         $action = $this->request->get('action', '');
@@ -88,6 +86,15 @@ abstract class EditController extends Base\Controller
 
         // General operations with the loaded data
         $this->execAfterAction($action);
+    }
+
+    protected function createView($user): EditView
+    {
+        return new EditView(
+            $this->getPageData()['title'],
+            $this->getModelClassName(),
+            $this->getClassName(),
+            $user->nick);
     }
 
     /**
