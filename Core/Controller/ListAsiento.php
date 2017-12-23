@@ -35,7 +35,7 @@ class ListAsiento extends ExtendedController\ListController
     protected function createViews()
     {
         $this->addView('\FacturaScripts\Dinamic\Model\Asiento', 'ListAsiento');
-        $this->addSearchFields('ListAsiento', ['CAST(numero AS VARCHAR)','concepto']);
+        $this->addSearchFields('ListAsiento', ['CAST(numero AS CHAR(10))','concepto']);
 
         $this->addFilterDatePicker('ListAsiento', 'date', 'date', 'fecha');
         $this->addFilterNumber('ListAsiento', 'amount', 'amount', 'importe');
