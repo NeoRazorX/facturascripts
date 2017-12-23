@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * El cliente. Puede tener una o varias direcciones y subcuentas asociadas.
+ * The client. You can have one or more associated addresses and sub-accounts.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -31,26 +31,26 @@ class Cliente extends Base\Persona
     use Base\ModelTrait {
         __construct as private traitConstruct;
         clear as private traitClear;
-        url as private traitURL;
+        url as private traitUrl;
     }
 
     /**
-     * Grupo al que pertenece el cliente.
+     * Group to which the client belongs.
      *
      * @var string
      */
     public $codgrupo;
 
     /**
-     * TRUE -> al cliente se le aplica recargo de equivalencia.
+     * True -> equivalence surcharge is applied to the client.
      *
      * @var boolean
      */
     public $recargo;
 
     /**
-     * Dias de pago preferidos a la hora de calcular el vencimiento de las facturas.
-     * Días separados por comas: 1,15,31
+     * Preferred payment days when calculating the due date of invoices.
+     * Days separated by commas: 1,15,31
      *
      * @var string
      */
@@ -68,7 +68,7 @@ class Cliente extends Base\Persona
     }
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -78,7 +78,7 @@ class Cliente extends Base\Persona
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -88,9 +88,9 @@ class Cliente extends Base\Persona
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      */
     public function install()
     {
@@ -101,7 +101,7 @@ class Cliente extends Base\Persona
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -112,9 +112,9 @@ class Cliente extends Base\Persona
     }
 
     /**
-     * Devuelve el primer cliente que tenga $cifnif como cifnif.
-     * Si el cifnif está en blanco y se proporciona una razón social,
-     * se devuelve el primer cliente que tenga esa razón social.
+     * Returns the first client that has $ cifnif as cifnif.
+     * If the cifnif is blank and a company name is provided,
+     * the first client with that company name is returned.
      *
      * @param string $cifnif
      * @param string $razon
@@ -125,11 +125,11 @@ class Cliente extends Base\Persona
     {
         if ($cifnif === '' && $razon !== '') {
             $razon = self::noHtml(mb_strtolower($razon, 'UTF8'));
-            $sql = 'SELECT * FROM ' . $this->tableName()
+            $sql = 'SELECT * FROM ' . static::tableName()
                 . " WHERE cifnif = '' AND lower(razonsocial) = " . self::$dataBase->var2str($razon) . ';';
         } else {
             $cifnif = mb_strtolower($cifnif, 'UTF8');
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE lower(cifnif) = ' . self::$dataBase->var2str($cifnif) . ';';
+            $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE lower(cifnif) = ' . self::$dataBase->var2str($cifnif) . ';';
         }
 
         $data = self::$dataBase->select($sql);
@@ -141,7 +141,7 @@ class Cliente extends Base\Persona
     }
 
     /**
-     * Devuelve un array con las direcciones asociadas al cliente.
+     * Returns an array with the addresses associated with the client.
      *
      * @return DireccionCliente[]
      */
@@ -153,8 +153,8 @@ class Cliente extends Base\Persona
     }
 
     /**
-     * Devuelve un array con todas las subcuentas asociadas al cliente.
-     * Una para cada ejercicio.
+     * Returns an array with all the subaccounts associated with the client.
+     * One for each exercise.
      *
      * @return Subcuenta[]
      */
@@ -173,8 +173,8 @@ class Cliente extends Base\Persona
     }
 
     /**
-     * Devuelve la subcuenta asociada al cliente para el ejercicio $eje.
-     * Si no existe intenta crearla. Si falla devuelve False.
+     * Returns the sub-account associated with the client for the year $ axis.
+     * If it does not exist, try to create it. If it fails, it returns False.
      *
      * @param string $codejercicio
      *
@@ -211,12 +211,12 @@ class Cliente extends Base\Persona
                     return $subcuenta;
                 }
 
-                self::$miniLog->alert(self::$i18n->trans('cant-associate-customer-subaccount', [$this->codcliente]));
+                self::$miniLog->alert(self::$i18n->trans('cant-associate-customer-subaccount', ['%customerCode%' => $this->codcliente]));
 
                 return false;
             }
 
-            self::$miniLog->alert(self::$i18n->trans('cant-create-customer-subaccount', [$this->codcliente]));
+            self::$miniLog->alert(self::$i18n->trans('cant-create-customer-subaccount', ['%customerCode%' => $this->codcliente]));
 
             return false;
         }
@@ -228,7 +228,7 @@ class Cliente extends Base\Persona
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -255,7 +255,7 @@ class Cliente extends Base\Persona
             $this->fechabaja = null;
         }
 
-        /// validamos los dias de pago
+        /// we validate the days of payment
         $arrayDias = [];
         foreach (str_getcsv($this->diaspago) as $d) {
             if ((int) $d >= 1 && (int) $d <= 31) {
@@ -268,11 +268,11 @@ class Cliente extends Base\Persona
         }
 
         if (!preg_match('/^[A-Z0-9]{1,6}$/i', $this->codcliente)) {
-            self::$miniLog->alert(self::$i18n->trans('not-valid-client-code', [$this->codcliente]), ['fieldname' => 'codcliente']);
+            self::$miniLog->alert(self::$i18n->trans('not-valid-client-code', ['%customerCode%' => $this->codcliente, '%fieldName%' => 'codcliente']));
         } elseif (empty($this->nombre) || strlen($this->nombre) > 100) {
-            self::$miniLog->alert(self::$i18n->trans('not-valid-client-name', [$this->nombre]), ['fieldname' => 'nombre']);
+            self::$miniLog->alert(self::$i18n->trans('not-valid-client-name', ['%customerName%' => $this->nombre, '%fieldName%' => 'nombre']));
         } elseif (empty($this->razonsocial) || strlen($this->razonsocial) > 100) {
-            self::$miniLog->alert(self::$i18n->trans('not-valid-client-business-name', [$this->razonsocial]), ['fieldname' => 'razonsocial']);
+            self::$miniLog->alert(self::$i18n->trans('not-valid-client-business-name', ['%businessName%' => $this->razonsocial, '%fieldName%' => 'razonsocial']));
         } else {
             $status = true;
         }
@@ -281,8 +281,8 @@ class Cliente extends Base\Persona
     }
 
     /**
-     * Devuelve un array con las combinaciones que contienen $query en su nombre
-     * o razonsocial o codcliente o cifnif o telefono1 o telefono2 o observaciones.
+     * Returns an array with combinations containing $query in its name
+     * or reason or code or cifnif or telefono1 or telefono2 or observations.
      *
      * @param string $query
      * @param int    $offset
@@ -294,7 +294,7 @@ class Cliente extends Base\Persona
         $clilist = [];
         $query = mb_strtolower(self::noHtml($query), 'UTF8');
 
-        $consulta = 'SELECT * FROM ' . $this->tableName() . ' WHERE debaja = FALSE AND ';
+        $consulta = 'SELECT * FROM ' . static::tableName() . ' WHERE debaja = FALSE AND ';
         if (is_numeric($query)) {
             $consulta .= "(nombre LIKE '%" . $query . "%' OR razonsocial LIKE '%" . $query . "%'"
                 . " OR codcliente LIKE '%" . $query . "%' OR cifnif LIKE '%" . $query . "%'"
