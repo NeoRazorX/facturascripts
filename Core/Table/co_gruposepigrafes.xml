@@ -29,7 +29,7 @@
     </column>
     <column>
         <name>idempresa</name>
-        <type>character varying(4)</type>
+        <type>integer</type>
         <null>YES</null>
     </column>
     <constraint>
