@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Relaciona a un proveedor con una subcuenta para cada ejercicio
+ * Relate a supplier with a sub-account for each exercise.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -29,42 +29,42 @@ class SubcuentaProveedor
     use Base\ModelTrait;
 
     /**
-     * Clave primaria
+     * Primary key.
      *
      * @var int
      */
     public $id;
 
     /**
-     * ID de la subcuenta
+     * ID of the sub-account.
      *
      * @var int
      */
     public $idsubcuenta;
 
     /**
-     * Código del proveedor
+     * Supplier code.
      *
      * @var string
      */
     public $codproveedor;
 
     /**
-     * Código de subcuenta
+     * Sub-account code.
      *
      * @var string
      */
     public $codsubcuenta;
 
     /**
-     * Código de ejercicio
+     * Exercise code.
      *
      * @var string
      */
     public $codejercicio;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -74,7 +74,7 @@ class SubcuentaProveedor
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -84,7 +84,7 @@ class SubcuentaProveedor
     }
 
     /**
-     * Devuelve la subcuenta
+     * Returns the subaccount.
      *
      * @return Subcuenta|false
      */

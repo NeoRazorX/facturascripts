@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * La cantidad en inventario de un artículo en un almacén concreto.
+ * The quantity in inventory of an item in a particular warehouse.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -31,105 +31,105 @@ class Stock
     use Base\ModelTrait;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
     public $idstock;
 
     /**
-     * Código de almacén
+     * Warehouse code.
      *
      * @var string
      */
     public $codalmacen;
 
     /**
-     * Referéncia
+     * Reference.
      *
      * @var string
      */
     public $referencia;
 
     /**
-     * Nombre
+     * Name.
      *
      * @var string
      */
     public $nombre;
 
     /**
-     * Cantidad
+     * Quantity.
      *
      * @var float|int
      */
     public $cantidad;
 
     /**
-     * Reservada
+     * Reserved.
      *
      * @var float|int
      */
     public $reservada;
 
     /**
-     * Disponible
+     * Available.
      *
      * @var float|int
      */
     public $disponible;
 
     /**
-     * Pendiente de recibir
+     * Pending receipt.
      *
      * @var float|int
      */
     public $pterecibir;
 
     /**
-     * Stock mínimo
+     * Minimum stock.
      *
      * @var float|int
      */
     public $stockmin;
 
     /**
-     * Stock máximo
+     * Maximum stock.
      *
      * @var float|int
      */
     public $stockmax;
 
     /**
-     * Cantidad última regularización
+     * Amount last regularization.
      *
      * @var float|int
      */
     public $cantidadultreg;
 
     /**
-     * Fecha última regularización
+     * Last regularization date.
      *
      * @var string
      */
     public $fechaultreg;
 
     /**
-     * Hora última regularización
+     * Last regularization time.
      *
      * @var string
      */
     public $horaultreg;
 
     /**
-     * Ubicación
+     * Location.
      *
      * @var string
      */
     public $ubicacion;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -139,7 +139,7 @@ class Stock
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -149,7 +149,9 @@ class Stock
     }
 
     /**
-     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
@@ -162,7 +164,7 @@ class Stock
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -183,7 +185,7 @@ class Stock
     }
 
     /**
-     * Devuelve el nombre del almacén
+     * Returns the name of the store.
      *
      * @return string
      */
@@ -199,7 +201,7 @@ class Stock
     }
 
     /**
-     * Asigna la cantidad
+     * Assign the amount.
      *
      * @param int $cant
      */
@@ -210,7 +212,7 @@ class Stock
     }
 
     /**
-     * Añade la cantidad
+     * Add the amount.
      *
      * @param int $cant
      */
@@ -222,7 +224,7 @@ class Stock
     }
 
     /**
-     * Devuelve el stock por referencia y adicionalmente por almacén
+     * Returns the stock by reference and additionally by warehouse.
      *
      * @param string $ref
      * @param bool   $codalmacen
@@ -244,7 +246,7 @@ class Stock
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -258,7 +260,7 @@ class Stock
     }
 
     /**
-     * Devuelve el stock total por referencia y adicionalmente por almacén
+     * Returns the total stock by reference and additionally by warehouse.
      *
      * @param string $ref
      * @param bool   $codalmacen
@@ -283,7 +285,7 @@ class Stock
     }
 
     /**
-     * Devuelve el stock total
+     * Returns the total stock.
      *
      * @param string $column
      *
@@ -293,7 +295,7 @@ class Stock
     {
         $num = 0;
 
-        $sql = 'SELECT COUNT(idstock) AS total FROM ' . static::tableName() . ';';
+        $sql = 'SELECT COUNT(' . $column . ') AS total FROM ' . static::tableName() . ';';
         $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             $num = (int) $data[0]['total'];
@@ -303,7 +305,7 @@ class Stock
     }
 
     /**
-     * Devuelve el stock total por referencia
+     * Returns the total stock by reference.
      *
      * @return int
      */
@@ -313,7 +315,7 @@ class Stock
     }
 
     /**
-     * Devuelve el stock por referencia ordenado por codalmacen
+     * Returns the stock by reference ordered by codalmacen.
      *
      * @param string $ref
      *
