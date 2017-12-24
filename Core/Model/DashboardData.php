@@ -32,7 +32,7 @@ class DashboardData
         loadFromData as traitLoadFromData;
         saveInsert as traitSaveInsert;
         saveUpdate as traitSaveUpdate;
-        url as traitURL;
+        url as traitUrl;
     }
 
     /**
@@ -152,18 +152,35 @@ class DashboardData
         $this->properties = isset($data['properties']) ? json_decode($data['properties'], true) : [];
     }
 
+    /**
+     * Insert the model data in the database.
+     *
+     * @return bool
+     */
     private function saveInsert()
     {
         $values = ['properties' => json_encode($this->properties)];
         return $this->traitSaveInsert($values);
     }
 
+    /**
+     * Update the model data in the database.
+     *
+     * @return bool
+     */
     private function saveUpdate()
     {
         $values = ['properties' => json_encode($this->properties)];
         return $this->traitSaveUpdate($values);
     }
 
+    /**
+     * Returns the url where to see/modify the data.
+     *
+     * @param string $type
+     *
+     * @return string
+     */
     public function url($type = 'auto')
     {
         $value = $this->primaryColumnValue();
