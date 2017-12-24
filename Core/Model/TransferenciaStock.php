@@ -29,7 +29,7 @@ class TransferenciaStock
     use Base\ModelTrait;
 
     /**
-     * Clave primaria. integer
+     * Primary key. integer
      *
      * @var int
      */
@@ -71,7 +71,7 @@ class TransferenciaStock
     public $usuario;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -81,7 +81,7 @@ class TransferenciaStock
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -91,7 +91,7 @@ class TransferenciaStock
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -104,7 +104,7 @@ class TransferenciaStock
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
