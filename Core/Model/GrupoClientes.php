@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Un grupo de clientes, que puede estar asociado a una tarifa.
+ * A group of customers, which may be associated with a rate.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -27,32 +27,32 @@ class GrupoClientes
 {
 
     use Base\ModelTrait {
-        url as private traitURL;
+        url as private traitUrl;
     }
 
     /**
-     * Clave primaria
+     * Primary key.
      *
      * @var string
      */
     public $codgrupo;
 
     /**
-     * Nombre del grupo
+     * Group name.
      *
      * @var string
      */
     public $nombre;
 
     /**
-     * Código de la tarifa asociada, si la hay
+     * Code of the associated rate, if any.
      *
      * @var string
      */
     public $codtarifa;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -62,7 +62,7 @@ class GrupoClientes
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -72,30 +72,30 @@ class GrupoClientes
     }
 
     /**
-     * Devuelve un nuevo código para un nuevo grupo de clientes
+     * Returns a new code for a new group of clients.
      *
      * @return string
      */
     public function getNewCodigo()
     {
         if (strtolower(FS_DB_TYPE) === 'postgresql') {
-            $sql = "SELECT codgrupo from " . $this->tableName() . " where codgrupo ~ '^\d+$'"
-                . " ORDER BY codgrupo::integer DESC";
+            $sql = 'SELECT codgrupo from ' . static::tableName() . " where codgrupo ~ '^\d+$'"
+                . ' ORDER BY codgrupo::integer DESC';
         } else {
-            $sql = "SELECT codgrupo from " . $this->tableName() . " where codgrupo REGEXP '^[0-9]+$'"
-                . " ORDER BY CAST(`codgrupo` AS decimal) DESC";
+            $sql = 'SELECT codgrupo from ' . static::tableName() . " where codgrupo REGEXP '^[0-9]+$'"
+                . ' ORDER BY CAST(`codgrupo` AS decimal) DESC';
         }
 
-        $data = self::$dataBase->selectLimit($sql, 1, 0);
+        $data = self::$dataBase->selectLimit($sql, 1);
         if (!empty($data)) {
-            return sprintf('%06s', (1 + (int) $data[0]['codgrupo']));
+            return sprintf('%06s', 1 + (int) $data[0]['codgrupo']);
         }
 
         return '000001';
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -107,22 +107,22 @@ class GrupoClientes
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
     public function install()
     {
-        /// como hay una clave ajena a tarifas, tenemos que comprobar esa tabla antes
+        /// As there is a key outside of tariffs, we have to check that table before
         //new Tarifa();
 
         return '';
     }
 
     /**
-     * Devuelve la url donde ver/modificar los datos
+     * Returns the url where to see/modify the data.
      *
      * @param string $type
      *
@@ -130,6 +130,6 @@ class GrupoClientes
      */
     public function url($type = 'auto')
     {
-        return $this->traitURL($type, 'ListCliente&active=List');
+        return $this->traitUrl($type, 'ListCliente&active=List');
     }
 }
