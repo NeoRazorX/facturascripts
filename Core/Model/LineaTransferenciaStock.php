@@ -132,48 +132,6 @@ class LineaTransferenciaStock
     }
 
     /**
-     * Returns all stock transfer lines.
-     *
-     * @param string $ref
-     * @param string $codalmaorigen
-     * @param string $codalmadestino
-     * @param string $desde
-     * @param string $hasta
-     *
-     * @return self[]
-     */
-    public function allFromReferencia($ref, $codalmaorigen = '', $codalmadestino = '', $desde = '', $hasta = '')
-    {
-        $list = [];
-
-        $sql = 'SELECT l.idlinea,l.idtrans,l.referencia,l.cantidad,l.descripcion,t.fecha,t.hora FROM lineastransstock l'
-            . ' LEFT JOIN transstock t ON l.idtrans = t.idtrans'
-            . ' WHERE l.referencia = ' . self::$dataBase->var2str($ref);
-        if (!empty($codalmaorigen)) {
-            $sql .= ' AND t.codalmaorigen = ' . self::$dataBase->var2str($codalmaorigen);
-        }
-        if (!empty($codalmadestino)) {
-            $sql .= ' AND t.codalmadestino = ' . self::$dataBase->var2str($codalmadestino);
-        }
-        if (!empty($desde)) {
-            $sql .= ' AND t.fecha >= ' . self::$dataBase->var2str($desde);
-        }
-        if (!empty($hasta)) {
-            $sql .= ' AND t.fecha >= ' . self::$dataBase->var2str($hasta);
-        }
-        $sql .= ' ORDER BY t.fecha ASC, t.hora ASC;';
-
-        $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $list[] = new self($d);
-            }
-        }
-
-        return $list;
-    }
-
-    /**
      * This function is called when creating the model table. Returns the SQL
      * that will be executed after the creation of the table. Useful to insert values
      * default.
@@ -183,7 +141,7 @@ class LineaTransferenciaStock
     public function install()
     {
         /// we force the check of the stock transfers table
-        //new TransferenciaStock();
+        new TransferenciaStock();
 
         return '';
     }
