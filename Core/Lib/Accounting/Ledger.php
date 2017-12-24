@@ -24,10 +24,17 @@ use FacturaScripts\Core\Base\DataBase;
  * Description of Ledger
  *
  * @author carlos
+ * @author nazca <comercial@nazcanetworks.com>
  */
 class Ledger
 {
 
+    /**
+     * Generate the ledger between two dates
+     * @param date $dateFrom
+     * @param date $dateTo
+     * @return array
+     */
     public function generate($dateFrom, $dateTo)
     {
 
