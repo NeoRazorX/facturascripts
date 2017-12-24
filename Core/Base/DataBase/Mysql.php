@@ -437,7 +437,7 @@ class Mysql implements DataBaseEngine
         if (!empty($data) && $data[0]['Engine'] !== 'InnoDB') {
             $result = $this->exec($link, 'ALTER TABLE ' . $tableName . ' ENGINE=InnoDB;');
             if ($result) {
-                $error = $this->i18n->trans('cant-convert-to-innodb', [$tableName]);
+                $error = $this->i18n->trans('cant-convert-to-innodb', [ '%tableName%' => $tableName]);
             }
         }
 
