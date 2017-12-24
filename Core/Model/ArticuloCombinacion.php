@@ -21,17 +21,17 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * Este modelo representa el par atributo => valor de la combinación de un artículo con atributos.
- * Ten en cuenta que lo que se almacena son estos pares atributo => valor,
- * pero la combinación del artículo es el conjunto, que comparte el mismo código.
+ * This model represents the attribute pair => value of the combination of an article with attributes.
+ * Note that what is stored are these pairs attribute => value,
+ * but the combination of the article is the set, which shares the same code.
  *
- * Ejemplo de combinación:
- * talla => l
- * color => blanco
+ * Example of combination:
+ * size => l
+ * color => white
  *
- * Esto se traduce en dos objetos articulo_combinación, ambos con el mismo código,
- * pero uno con nombreatributo talla y valor l, y el otro con nombreatributo color
- * y valor blanco.
+ * This results in two articulo_combination objects, both with the same code,
+ * but one with name attribute size and value l, and the other with name attribute color
+ * and white value.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -41,86 +41,86 @@ class ArticuloCombinacion
     use Base\ModelTrait;
 
     /**
-     * Clave primaria. Identificador de este par atributo-valor, no de la combinación.
+     * Primary key. Identifier of this attribute-value pair, not of the combination.
      *
      * @var int
      */
     public $id;
 
     /**
-     * Identificador de la combinación.
-     * Ten en cuenta que la combinación es la suma de todos los pares atributo-valor.
+     * Identifier of the combination.
+     * Note that the combination is the sum of all attribute-value pairs.
      *
      * @var string
      */
     public $codigo;
 
     /**
-     * Segundo identificador para la combinación, para facilitar la sincronización
-     * con woocommerce o prestashop.
+     * Second identifier for the combination, to facilitate synchronization
+     * with woocommerce or prestashop.
      *
      * @var string
      */
     public $codigo2;
 
     /**
-     * Referencia del artículos relacionado.
+     * Reference of related articles.
      *
      * @var string
      */
     public $referencia;
 
     /**
-     * ID del valor del atributo.
+     * ID of the attribute value.
      *
      * @var int
      */
     public $idvalor;
 
     /**
-     * Nombre del atributo.
+     * Name of the attribute.
      *
      * @var string
      */
     public $nombreatributo;
 
     /**
-     * Valor del atributo.
+     * Value of the attribute.
      *
      * @var string
      */
     public $valor;
 
     /**
-     * Referencia de la propia combinación.
+     * Reference of the own combination.
      *
      * @var string
      */
     public $refcombinacion;
 
     /**
-     * Código de barras de la combinación.
+     * Barcode of the combination.
      *
      * @var string
      */
     public $codbarras;
 
     /**
-     * Impacto en el precio del artículo.
+     * Impact on the price of the item.
      *
      * @var float|int
      */
     public $impactoprecio;
 
     /**
-     * Stock físico de la combinación.
+     * Physical stock of the combination.
      *
      * @var float|int
      */
     public $stockfis;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -130,7 +130,7 @@ class ArticuloCombinacion
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -140,9 +140,9 @@ class ArticuloCombinacion
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
@@ -156,7 +156,7 @@ class ArticuloCombinacion
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -173,6 +173,9 @@ class ArticuloCombinacion
         $this->stockfis = 0;
     }
 
+    /**
+     * Returns True if there is no erros on properties values.
+     */
     public function test()
     {
         if ($this->codigo === null) {
@@ -187,7 +190,7 @@ class ArticuloCombinacion
      */
     private function getNewCodigo()
     {
-        $sql = 'SELECT MAX(' . self::$dataBase->sql2Int('codigo') . ') as cod FROM ' . $this->tableName() . ';';
+        $sql = 'SELECT MAX(' . self::$dataBase->sql2Int('codigo') . ') as cod FROM ' . static::tableName() . ';';
         $cod = self::$dataBase->select($sql);
         if (!empty($cod)) {
             return 1 + (int) $cod[0]['cod'];

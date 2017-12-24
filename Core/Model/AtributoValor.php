@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * Un Valor para un atributo de artículos.
+ * A Value for an article attribute.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -31,28 +31,28 @@ class AtributoValor
     use Base\ModelTrait;
 
     /**
-     * Clave primaria
+     * Primary key
      *
      * @var int
      */
     public $id;
 
     /**
-     * Código del atributo relacionado.
+     * Code of the related attribute.
      *
      * @var string
      */
     public $codatributo;
 
     /**
-     * Valor del atributo
+     * Value of the attribute
      *
      * @var string
      */
     public $valor;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -62,7 +62,7 @@ class AtributoValor
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -71,6 +71,13 @@ class AtributoValor
         return 'id';
     }
 
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
     public function install()
     {
         new Atributo();
@@ -78,6 +85,11 @@ class AtributoValor
         return '';
     }
 
+    /**
+     * Check the delivery note data, return True if it is correct.
+     *
+     * @return bool
+     */
     public function test()
     {
         $this->valor = self::noHtml($this->valor);
@@ -85,7 +97,7 @@ class AtributoValor
     }
 
     /**
-     * Selecciona todos los atributos de un código de atributo
+     * Select all attributes of an attribute code
      *
      * @param string $cod
      *

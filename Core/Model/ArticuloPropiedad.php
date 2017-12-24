@@ -51,7 +51,7 @@ class ArticuloPropiedad
     public $text;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -61,7 +61,7 @@ class ArticuloPropiedad
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -81,7 +81,7 @@ class ArticuloPropiedad
     {
         $vlist = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . self::$dataBase->var2str($ref) . ';';
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE referencia = ' . self::$dataBase->var2str($ref) . ';';
         $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             foreach ($data as $d) {
@@ -128,7 +128,7 @@ class ArticuloPropiedad
      */
     public function simpleGet($ref, $name)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . self::$dataBase->var2str($ref)
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE referencia = ' . self::$dataBase->var2str($ref)
             . ' AND name = ' . self::$dataBase->var2str($name) . ';';
         $data = self::$dataBase->select($sql);
         if (!empty($data)) {
@@ -148,7 +148,7 @@ class ArticuloPropiedad
      */
     public function simpleGetRef($name, $text)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE text = ' . self::$dataBase->var2str($text)
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE text = ' . self::$dataBase->var2str($text)
             . ' AND name = ' . self::$dataBase->var2str($name) . ';';
         $data = self::$dataBase->select($sql);
         if (!empty($data)) {
@@ -168,7 +168,7 @@ class ArticuloPropiedad
      */
     public function simpleDelete($ref, $name)
     {
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE referencia = ' . self::$dataBase->var2str($ref)
+        $sql = 'DELETE FROM ' . static::tableName() . ' WHERE referencia = ' . self::$dataBase->var2str($ref)
             . ' AND name = ' . self::$dataBase->var2str($name) . ';';
 
         return self::$dataBase->exec($sql);
