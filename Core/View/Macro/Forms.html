@@ -1,9 +1,19 @@
-<!--
-    Creates an input form item
-
--->
-
-{% macro simpleInput( id, name, value, type = "text", label = false, icon = false) %}
+{#   /**
+     * Creates an input form element
+     *
+     * @param string $id element id attribute.
+     * @param string $name element name attribute.
+     * @param string $value the default value for the input.
+     * @param string $type the input type attribute (defaults to text) must be any valid input type attribute
+     *               (https://www.w3.org/TR/2017/REC-html52-20171214/sec-forms.html#element-attrdef-input-type).
+     * @param string $label NULL if no label is set. This will add a <label> element with the string as its contents.
+     * @param string $icon string identifying a FontAwesome icon (http://fontawesome.io/icons/).
+     * @param array  $attributes an associative array of strings, extra attributes with their values
+     *               (https://www.w3.org/TR/2017/REC-html52-20171214/sec-forms.html#the-input-element)
+     *               it shouldn't be 'type', 'id' or 'name', as those are already given.
+     */
+#}
+{% macro simpleInput( id, name, value, type = "text", label = NULL, icon = NULL, attributes = NULL) %}
         {% if label %}
             <label for="{{ name }}">{{ label }}</label>
         {% endif %}
@@ -15,17 +25,45 @@
                 </span>
         {% endif %}
 
-                <input type="{{ type }}" id="{{ id }}" name="{{ name }}"  value="{{ value }}" class="form-control" />
+                <input
+                        type="{{ type }}"
+                        id="{{ id }}"
+                        name="{{ name }}"
+                        value="{{ value }}"
+                        {% if attributes.class is defined %}
+                            {% set attributes = attributes|merge({'class': 'form-control ' ~ attributes.class}) %}
+                        {% else %}
+                            class="form-control"
+                        {% endif %}
+
+                        {% for attribute,attrValue in attributes %}
+
+                            {{ attribute }}="{{ attrValue }}"
+                        {% endfor %}
+                /> {# end input #}
 
         {% if icon %}
             </div>
         {% endif %}
 {% endmacro %}
 
-<!--
-    Creates a Select form item
--->
-{% macro simpleSelect(id, name, value, allValues = {}, label = false, icon = false) %}
+{#   /**
+     * Creates a Select form element
+     *
+     * @param string $id element id attribute
+     * @param string $name element name attribute
+     * @param string $value the default value that will be selected (must be contained in the allValues select)
+     * @param array  $allValues an indexed array with all the select options. The key will be discarded.
+     * @param string $label NULL if no label is set. This will add a <label> element with the string as its contents.
+     * @param object $i18n NULL if no translation is needed, or the i18n object otherwise.
+     * @param string $icon string identifying a FontAwesome icon (http://fontawesome.io/icons/).
+     * @param array  $attributes an associative array of strings, extra attributes with their values
+     *               (https://www.w3.org/TR/2017/REC-html52-20171214/sec-forms.html#the-input-element)
+     *               it shouldn't be 'id' or 'name', as those are already given, if the class attribute is given, it will
+     *               be merged with the default ones.
+     */
+#}
+{% macro simpleSelect(id, name, value, allValues = {}, label = NULL, i18n = NULL, icon = NULL, attributes = NULL) %}
     {% if label %}
         <label for="{{ name }}">{{ label }}</label>
     {% endif %}
@@ -37,9 +75,28 @@
                 </span>
     {% endif %}
 
-        <select id="{{ id }}" name="{{ name }}" class="form-control">
-            {% for key, name in allValues %}
-                <option value="{{ key }}"{% if value == key %} selected="selected"{% endif %}>{{ name }}</option>
+        <select
+                id="{{ id }}"
+                name="{{ name }}"
+                {% if attributes.class is defined %}
+                            {% set attributes = attributes|merge({'class': 'form-control ' ~ attributes.class}) %}
+                {% else %}
+                    class="form-control"
+                {% endif %}
+
+                {% for attribute,attrValue in attributes %}
+                    {{ attribute }}="{{ attrValue }}"
+                {% endfor %}
+        > {# end select #}
+
+            {% for option in allValues %}
+                <option value="{{ option }}"{% if value == option %} selected="selected"{% endif %}>
+                    {% if i18n %}
+                        {{ i18n.trans(option) }}
+                    {% else %}
+                        {{ option }}
+                    {% endif %}
+                </option>
             {% endfor %}
         </select>
 
