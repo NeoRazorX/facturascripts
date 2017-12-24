@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * Define la relación entre un usuario y un rol.
+ * Defines the relationship between a user and a role.
  *
  * @author Joe Nilson            <joenilson at gmail.com>
  * @author Carlos García Gómez   <carlos@facturascripts.com>
@@ -33,28 +33,28 @@ class RolUser
     use Base\ModelTrait;
 
     /**
-     * Identificador
+     * Identifier.
      *
      * @var int
      */
     public $id;
 
     /**
-     * Código de rol
+     * Role code.
      *
      * @var string
      */
     public $codrol;
 
     /**
-     * Nick
+     * Nick.
      *
      * @var string
      */
     public $nick;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -64,7 +64,7 @@ class RolUser
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -74,7 +74,9 @@ class RolUser
     }
 
     /**
-     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
@@ -86,7 +88,7 @@ class RolUser
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */

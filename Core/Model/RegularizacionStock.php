@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Regularización del stock de un almacén de un artículos en una fecha concreta.
+ * Regularization of the stock of a warehouse of articles on a specific date.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -29,70 +29,70 @@ class RegularizacionStock
     use Base\ModelTrait;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
     public $id;
 
     /**
-     * ID del stock, en el modelo stock.
+     * Stock ID, in the stock model.
      *
      * @var int
      */
     public $idstock;
 
     /**
-     * Cantidad inicial
+     * Initial amount.
      *
      * @var float|int
      */
     public $cantidadini;
 
     /**
-     * Cantidad final
+     * Final amount.
      *
      * @var float|int
      */
     public $cantidadfin;
 
     /**
-     * Código del almacén destino.
+     * Destination warehouse code.
      *
      * @var string
      */
     public $codalmacendest;
 
     /**
-     * Fecha
+     * Date.
      *
      * @var string
      */
     public $fecha;
 
     /**
-     * Hora
+     * Time.
      *
      * @var string
      */
     public $hora;
 
     /**
-     * Motivo de la regularización
+     * Reason of the regularization.
      *
      * @var string
      */
     public $motivo;
 
     /**
-     * Nick del usuario que ha realizado la regularización.
+     * Nick of the user who has done the regularization.
      *
      * @var string
      */
     public $nick;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -102,7 +102,7 @@ class RegularizacionStock
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -112,7 +112,7 @@ class RegularizacionStock
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -128,9 +128,9 @@ class RegularizacionStock
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
