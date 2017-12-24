@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Relaciona a un cliente con una subcuenta para cada ejercicio.
+ * Relate a customer with a sub-account for each exercise.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -29,42 +29,42 @@ class SubcuentaCliente
     use Base\ModelTrait;
 
     /**
-     * Clave primaria
+     * Primary key.
      *
      * @var int
      */
     public $id;
 
     /**
-     * ID de la subcuenta
+     * Sub account ID.
      *
      * @var int
      */
     public $idsubcuenta;
 
     /**
-     * Código del cliente
+     * Customer code.
      *
      * @var string
      */
     public $codcliente;
 
     /**
-     * Código de subcuenta
+     * Sub-account code.
      *
      * @var string
      */
     public $codsubcuenta;
 
     /**
-     * Código de ejercicio
+     * Exercise code.
      *
      * @var string
      */
     public $codejercicio;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -74,7 +74,7 @@ class SubcuentaCliente
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -84,7 +84,7 @@ class SubcuentaCliente
     }
 
     /**
-     * Devuelve la subcuenta
+     * Returns the subaccount.
      *
      * @return bool|mixed
      */
