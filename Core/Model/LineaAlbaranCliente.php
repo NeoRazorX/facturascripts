@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Línea de un albarán de cliente.
+ * Line of a customer's delivery note.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -29,28 +29,28 @@ class LineaAlbaranCliente
     use Base\LineaDocumentoVenta;
 
     /**
-     * ID de la línea del pedido relacionado, si es que lo hay.
+     * ID of the related order line, if there is one.
      *
      * @var int
      */
     public $idlineapedido;
 
     /**
-     * ID del albaran de esta línea.
+     * Delivery note ID of this line.
      *
      * @var int
      */
     public $idalbaran;
 
     /**
-     * ID del pedido relacionado con el albarán relacionado.
+     * Order ID of the related to the delivery note.
      *
      * @var int
      */
     public $idpedido;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -58,7 +58,14 @@ class LineaAlbaranCliente
     {
         return 'lineasalbaranescli';
     }
-    
+
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
     public function install()
     {
         new AlbaranCliente();
@@ -67,7 +74,7 @@ class LineaAlbaranCliente
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
