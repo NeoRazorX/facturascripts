@@ -1021,5 +1021,19 @@
     "choose-payment-method": "Choose payment method",
     "daily": "Daily",
     "monthly": "Monthly",
-    "yearly": "Yearly"
+    "yearly": "Yearly",
+    "infostate-component-title": "Status Information",
+    "page-configuration": "Configuration Page",
+    "configure-columns": "Column Configurator",
+    "title": "Title",
+    "align": "Alignment",
+    "columns": "Columns",
+    "sort": "Order",
+    "title-url": "Title URL",
+    "left": "Left",
+    "right": "Right",
+    "center": "Center",
+    "none": "None",
+    "auto": "Auto",
+    "block-date": "Block date"
 }
