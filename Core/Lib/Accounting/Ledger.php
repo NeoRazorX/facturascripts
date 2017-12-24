@@ -18,26 +18,50 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
+use FacturaScripts\Core\Base\DataBase;
+
 /**
  * Description of Ledger
  *
  * @author carlos
+ * @author nazca <comercial@nazcanetworks.com>
  */
 class Ledger
 {
 
+    /**
+     * Generate the ledger between two dates
+     * @param date $dateFrom
+     * @param date $dateTo
+     * @return array
+     */
     public function generate($dateFrom, $dateTo)
     {
-        /// TODO
-        return [
-            [
-                'asiento' => '',
-                'fecha' => '',
-                'subcuenta' => '',
-                'concepto' => '',
-                'debe' => '',
-                'haber' => '',
-            ]
-        ];
+
+        $mayor = array();
+        $sql = 'SELECT asto.numero, asto.fecha,part.codsubcuenta,part.concepto, part.debe,part.haber,0 saldo ' .
+            'FROM `co_asientos` asto, `co_partidas` part where asto.idasiento = part.idasiento '
+            . ' and fecha>="' . date('Y-m-d', strtotime($dateFrom)) . '" and fecha<="' . date('Y-m-d', strtotime($dateTo))
+            . '" order by part.codsubcuenta,asto.fecha,part.idasiento ASC';
+
+        $datb = new Database();
+        $resultados = $datb->select($sql);
+        // $resultados = self::$dataBase->select($sql);
+        if (!empty($resultados)) {
+            $tmpcuenta = '';
+            $saldo = 0;
+            foreach ($resultados as $linea) {
+                if ($tmpcuenta != $linea['codsubcuenta']) {
+                    $saldo = 0;
+                }
+                $saldo = $saldo + $linea['debe'] - $linea['haber'];
+                $linea['saldo'] = $saldo;
+
+                $mayor[] = $linea;
+                $tmpcuenta = $linea['codsubcuenta'];
+            }
+        }
+        return $mayor;
+        //return $p->acountingLedger($dateFrom, $dateTo);
     }
 }
