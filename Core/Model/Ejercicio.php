@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Ejercicio contable. Es el periodo en el que se agrupan asientos, facturas, albaranes...
+ * Accounting year. It is the period in which seats, invoices, delivery notes are grouped ...
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -29,78 +29,78 @@ class Ejercicio
     use Base\ModelTrait;
 
     /**
-     * Clave primaria. Varchar(4).
+     * Primary key. Varchar(4).
      *
      * @var string
      */
     public $codejercicio;
 
     /**
-     * Nombre del ejercicio
+     * Name of the exercise.
      *
      * @var string
      */
     public $nombre;
 
     /**
-     * Fecha de inicio del ejercicio
+     * Start date of the exercise.
      *
-     * @var string con formato fecha
+     * @var string with date format
      */
     public $fechainicio;
 
     /**
-     * Fecha de fin del ejercicio
+     * End date of the exercise.
      *
-     * @var string con formato fecha
+     * @var string with date format
      */
     public $fechafin;
 
     /**
-     * Estado del ejercicio: ABIERTO|CERRADO
+     * Exercise status: ABIERTO|CERRADO
      *
      * @var string
      */
     public $estado;
 
     /**
-     * ID del asiento de cierre del ejercicio.
+     * Seat ID of the year end.
      *
      * @var int
      */
     public $idasientocierre;
 
     /**
-     * ID del asiento de pérdidas y ganancias.
+     * Profit and loss entry ID.
      *
      * @var int
      */
     public $idasientopyg;
 
     /**
-     * ID del asiento de apertura.
+     * Opening seat ID.
      *
      * @var int
      */
     public $idasientoapertura;
 
     /**
-     * Identifica el plan contable utilizado. Esto solamente es necesario
-     * para dar compatibilidad con Eneboo. En FacturaScripts no se utiliza.
+     * Identify the accounting plan used. This is only necessary
+     * to support Eneboo. In FacturaScripts it is not used.
      *
      * @var string
      */
     public $plancontable;
 
     /**
-     * Longitud de caracteres de las subcuentas asignadas.
+     * Length of characters of the subaccounts assigned.
      *
      * @var int
      */
     public $longsubcuenta;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -110,7 +110,7 @@ class Ejercicio
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -120,7 +120,7 @@ class Ejercicio
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -137,7 +137,7 @@ class Ejercicio
     }
 
     /**
-     * Devuelve el estado del ejercicio ABIERTO->true | CERRADO->false
+     * Returns the state of the exercise ABIERTO -> true | CLOSED -> false
      *
      * @return bool
      */
@@ -147,7 +147,7 @@ class Ejercicio
     }
 
     /**
-     * Devuelve el valos del año del ejercicio
+     * Returns the value of the year of the exercise.
      *
      * @return string en formato año
      */
@@ -157,7 +157,7 @@ class Ejercicio
     }
 
     /**
-     * Devuelve un nuevo código para un ejercicio
+     * Returns a new code for an exercise.
      *
      * @param string $cod
      *
@@ -165,12 +165,12 @@ class Ejercicio
      */
     public function newCodigo($cod = '0001')
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . self::$dataBase->var2str($cod) . ';';
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codejercicio = ' . self::$dataBase->var2str($cod) . ';';
         if (!self::$dataBase->select($sql)) {
             return $cod;
         }
 
-        $sql = 'SELECT MAX(' . self::$dataBase->sql2Int('codejercicio') . ') as cod FROM ' . $this->tableName() . ';';
+        $sql = 'SELECT MAX(' . self::$dataBase->sql2Int('codejercicio') . ') as cod FROM ' . static::tableName() . ';';
         $newCod = self::$dataBase->select($sql);
         if (!empty($newCod)) {
             return sprintf('%04s', 1 + (int) $newCod[0]['cod']);
@@ -180,7 +180,7 @@ class Ejercicio
     }
 
     /**
-     * Devuelve la fecha más próxima a $fecha que esté dentro del intervalo de este ejercicio
+     * Returns the date closest to $date that is within the range of this exercise.
      *
      * @param string $fecha
      * @param bool   $showError
@@ -211,8 +211,8 @@ class Ejercicio
     }
 
     /**
-     * Devuelve el ejercicio para la fecha indicada.
-     * Si no existe, lo crea.
+     * Returns the exercise for the indicated date.
+     * If it does not exist, create it.
      *
      * @param string $fecha
      * @param bool   $soloAbierto
@@ -222,7 +222,7 @@ class Ejercicio
      */
     public function getByFecha($fecha, $soloAbierto = true, $crear = true)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fechainicio <= '
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE fechainicio <= '
             . self::$dataBase->var2str($fecha) . ' AND fechafin >= ' . self::$dataBase->var2str($fecha) . ';';
 
         $data = self::$dataBase->select($sql);
@@ -239,7 +239,7 @@ class Ejercicio
             $eje->fechafin = date('31-12-Y', strtotime($fecha));
 
             if (strtotime($fecha) < 1) {
-                self::$miniLog->alert(self::$i18n->trans('date-invalid-date', [$fecha]));
+                self::$miniLog->alert(self::$i18n->trans('invalid-date', ['%date%' => $fecha]));
             } elseif ($eje->save()) {
                 return $eje;
             }
@@ -249,7 +249,7 @@ class Ejercicio
     }
 
     /**
-     * Comprueba los datos del ejercicio, devuelve True si son correctos
+     * Check the exercise data, return True if they are correct
      *
      * @return bool
      */
@@ -265,7 +265,7 @@ class Ejercicio
         } elseif (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 100)) {
             self::$miniLog->alert(self::$i18n->trans('fiscal-year-name-invalid'));
         } elseif (strtotime($this->fechainicio) > strtotime($this->fechafin)) {
-            $params = [$this->fechainicio, $this->fechafin];
+            $params = ['%endDate%' => $this->fechainicio, '%startDate%' => $this->fechafin];
             self::$miniLog->alert(self::$i18n->trans('start-date-later-end-date', $params));
         } elseif (strtotime($this->fechainicio) < 1) {
             self::$miniLog->alert(self::$i18n->trans('date-invalid'));
@@ -277,13 +277,15 @@ class Ejercicio
     }
 
     /**
-     * Crea la consulta necesaria para dotar de datos a un ejercicio en la base de datos.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName() . ' (codejercicio,nombre,fechainicio,fechafin,'
+        return 'INSERT INTO ' . static::tableName() . ' (codejercicio,nombre,fechainicio,fechafin,'
             . 'estado,longsubcuenta,plancontable,idasientoapertura,idasientopyg,idasientocierre) '
             . "VALUES ('" . date('Y') . "','" . date('Y') . "'," . self::$dataBase->var2str(date('01-01-Y'))
             . ', ' . self::$dataBase->var2str(date('31-12-Y')) . ",'ABIERTO',10,'08',null,null,null);";

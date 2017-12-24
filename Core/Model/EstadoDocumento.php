@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Un estado asociado a los documentos para distinguirlos por grupos.
- * Por ejemplo: Pendientes, Aprobados, ...
+ * A state associated with documents to distinguish them by groups.
+ * For example: Earrings, Approved, ...
  *
  * @author Francesc Pineda Segarra <francesc.pìneda.segarra@gmail.com>
  */
@@ -31,42 +31,42 @@ class EstadoDocumento
     use Base\ModelTrait;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
     public $id;
 
     /**
-     * Tipo de documento.
+     * Document type.
      *
      * @var string
      */
     public $documento;
 
     /**
-     * Número de estado.
+     * Status number.
      *
      * @var int
      */
     public $status;
 
     /**
-     * Nombre del estado para mostrar al usuario.
+     * Name of the state to show the user.
      *
      * @var string
      */
     public $nombre;
 
     /**
-     * Si el estado está o no bloqueado
+     * If the state is blocked or not.
      *
      * @var bool
      */
     public $bloquedo;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -76,7 +76,7 @@ class EstadoDocumento
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -86,7 +86,7 @@ class EstadoDocumento
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -98,7 +98,7 @@ class EstadoDocumento
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -109,9 +109,11 @@ class EstadoDocumento
         $this->documento = self::noHtml($this->documento);
         $this->nombre = self::noHtml($this->nombre);
 
-        if (strlen($this->documento) < 1 || strlen($this->documento) > 20) {
+        $docLength = strlen($this->documento);
+        $nameLength = strlen($this->nombre);
+        if ($docLength < 1 || $docLength > 20) {
             self::$miniLog->alert(self::$i18n->trans('document-type-valid-length'));
-        } elseif (strlen($this->nombre) < 1 || strlen($this->nombre) > 20) {
+        } elseif ($nameLength < 1 || $nameLength > 20) {
             self::$miniLog->alert(self::$i18n->trans('status-name-valid-length'));
         } elseif (!is_numeric($this->status)) {
             self::$miniLog->alert(self::$i18n->trans('status-value-is-number'));
@@ -123,7 +125,7 @@ class EstadoDocumento
     }
 
     /**
-     * Devuelve una array con los estados para el tipo de documento indicado
+     * Returns an array with the states for the indicated document type.
      *
      * @param $doc
      *
@@ -133,7 +135,7 @@ class EstadoDocumento
     {
         $list = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName()
+        $sql = 'SELECT * FROM ' . static::tableName()
             . ' WHERE documento = ' . self::$dataBase->var2str($doc) . ' ORDER BY id ASC;';
         $data = self::$dataBase->select($sql);
         if ($data) {
@@ -146,7 +148,7 @@ class EstadoDocumento
     }
 
     /**
-     * Devuelve un array con todas los estados
+     * Returns an array with all states.
      *
      * @return array
      */
@@ -154,7 +156,7 @@ class EstadoDocumento
     {
         $list = [];
 
-        $sql = 'SELECT DISTINCT(documento) FROM ' . $this->tableName() . ' ORDER BY id ASC;';
+        $sql = 'SELECT DISTINCT(documento) FROM ' . static::tableName() . ' ORDER BY id ASC;';
         $data = self::$dataBase->select($sql);
         if ($data) {
             foreach ($data as $d) {

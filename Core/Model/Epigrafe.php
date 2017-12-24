@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Segundo nivel del plan contable.
+ * Second level of the accounting plan.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -27,71 +27,71 @@ class Epigrafe
 {
 
     use Base\ModelTrait {
-        url as private traitURL;
+        url as private traitUrl;
     }
 
     /**
-     * Lista de grupos
+     * List of groups.
      *
      * @var GrupoEpigrafes[]
      */
     private static $grupos;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
     public $idepigrafe;
 
     /**
-     * Existen varias versiones de la contabilidad de Eneboo/Abanq,
-     * en una tenemos grupos, epigrafes, cuentas y subcuentas: 4 niveles.
-     * En la otra tenemos epígrafes (con hijos), cuentas y subcuentas: multi-nivel.
-     * FacturaScripts usa un híbrido: grupos, epígrafes (con hijos), cuentas
-     * y subcuentas.
+     * There are several versions of the accounting of Eneboo / Abanq,
+     * in one we have groups, epigraphs, accounts and sub-accounts: 4 levels.
+     * In the other we have epigraphs (with children), accounts and sub-accounts: multi-level.
+     * FacturaScripts uses a hybrid: groups, epigraphs (with children), accounts
+     * and subaccounts.
      *
      * @var int
      */
     public $idpadre;
 
     /**
-     * Código de epígrafe
+     * Code of epigraph.
      *
      * @var string
      */
     public $codepigrafe;
 
     /**
-     * Identificador de grupo
+     * Group identifier.
      *
      * @var int
      */
     public $idgrupo;
 
     /**
-     * Código de ejercicio
+     * Exercise code.
      *
      * @var string
      */
     public $codejercicio;
 
     /**
-     * Descripción del epígrafe.
+     * Description of the epigraph.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * Grupo al que pertenece.
+     * Group to which it belongs.
      *
      * @var string
      */
     public $codgrupo;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -101,7 +101,7 @@ class Epigrafe
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -111,7 +111,7 @@ class Epigrafe
     }
 
     /**
-     * Devuelve el codepigrade del epigrafe padre o false si no lo hay
+     * Returns the codepigrade of the parent epigraph or false if there is not one.
      *
      * @return bool
      */
@@ -130,14 +130,14 @@ class Epigrafe
     }
 
     /**
-     * Devuelve los epígrafes hijo
+     * Returns the child's epigraphs.
      *
      * @return array
      */
     public function hijos()
     {
         $epilist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE idpadre = ' . self::$dataBase->var2str($this->idepigrafe)
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idpadre = ' . self::$dataBase->var2str($this->idepigrafe)
             . ' ORDER BY codepigrafe ASC;';
 
         $data = self::$dataBase->select($sql);
@@ -151,7 +151,7 @@ class Epigrafe
     }
 
     /**
-     * Devuelve las cuentas del epígrafe
+     * Returns the accounts of the epigraph.
      *
      * @return Cuenta[]
      */
@@ -163,7 +163,7 @@ class Epigrafe
     }
 
     /**
-     * Obtiene el primer epígrafe del ejercicio
+     * Obtain the first section of the exercise.
      *
      * @param string $cod
      * @param string $codejercicio
@@ -172,7 +172,7 @@ class Epigrafe
      */
     public function getByCodigo($cod, $codejercicio)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codepigrafe = ' . self::$dataBase->var2str($cod)
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codepigrafe = ' . self::$dataBase->var2str($cod)
             . ' AND codejercicio = ' . self::$dataBase->var2str($codejercicio) . ';';
 
         $data = self::$dataBase->select($sql);
@@ -184,7 +184,7 @@ class Epigrafe
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -201,7 +201,7 @@ class Epigrafe
     }
 
     /**
-     * Devuelve todos los epígrafes del ejercicios sin idpadre ni idgrupo
+     * Returns all the epigraphs of the exercises without idpadre or idgrupo.
      *
      * @param string $codejercicio
      *
@@ -210,7 +210,7 @@ class Epigrafe
     public function superFromEjercicio($codejercicio)
     {
         $epilist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codejercicio = ' . self::$dataBase->var2str($codejercicio)
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codejercicio = ' . self::$dataBase->var2str($codejercicio)
             . ' AND idpadre IS NULL AND idgrupo IS NULL ORDER BY codepigrafe ASC;';
 
         $data = self::$dataBase->select($sql);
@@ -224,32 +224,32 @@ class Epigrafe
     }
 
     /**
-     * Aplica algunas correcciones a la tabla.
+     * Apply corrections to the table.
      */
     public function fixDb()
     {
-        $sql = 'UPDATE ' . $this->tableName()
+        $sql = 'UPDATE ' . static::tableName()
             . ' SET idgrupo = NULL WHERE idgrupo NOT IN (SELECT idgrupo FROM co_gruposepigrafes);';
         self::$dataBase->exec($sql);
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
     public function install()
     {
-        /// forzamos los creación de la tabla de grupos
+        /// force the creation of the group table
         new GrupoEpigrafes();
 
         return '';
     }
 
     /**
-     * Devuelve la url donde ver/modificar los datos
+     * Returns the url where to see/modify the data.
      *
      * @param string $type
      *
@@ -257,6 +257,6 @@ class Epigrafe
      */
     public function url($type = 'auto')
     {
-        return $this->traitURL($type, 'ListCuenta&active=List');
+        return $this->traitUrl($type, 'ListCuenta&active=List');
     }
 }

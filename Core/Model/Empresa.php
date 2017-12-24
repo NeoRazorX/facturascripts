@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Esta clase almacena los principales datos de la empresa.
+ * This class stores the main data of the company.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -30,63 +30,63 @@ class Empresa
     use Base\ContactInformation;
 
     /**
-     * Clave primaria. Integer.
+     * Primary key. Integer.
      *
      * @var int
      */
     public $id;
 
     /**
-     * TRUE -> activa el uso de recargo de equivalencia en los albaranes y facturas de compra.
+     * True -> activates the use of an equivalence surcharge on delivery notes and purchase invoices.
      *
      * @var bool
      */
     public $recequivalencia;
 
     /**
-     * Nombre del administrador de la empresa.
+     * Name of the company administrator.
      *
      * @var string
      */
     public $administrador;
 
     /**
-     * Código de identificación fiscal dela empresa.
+     * Tax identification code of the company.
      *
      * @var string
      */
     public $cifnif;
 
     /**
-     * Nombre de la empresa.
+     * Company name.
      *
      * @var string
      */
     public $nombre;
 
     /**
-     * Nombre corto de la empresa, para mostrar en el menú
+     * Short name of the company, to show on the menu.
      *
-     * @var string Nombre a mostrar en el menú de facturaScripts.
+     * @var string Name to show in the menu.
      */
     public $nombrecorto;
 
     /**
-     * Fecha de inicio de la actividad.
+     * Start date of the activity.
      *
      * @var string
      */
     public $inicio_actividad;
 
     /**
-     * Régimen de IVA de la empresa.
+     * VAT regime of the company.
      *
      * @var string
      */
     public $regimeniva;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -96,7 +96,7 @@ class Empresa
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -106,7 +106,7 @@ class Empresa
     }
 
     /**
-     * Comprueba los datos de la empresa, devuelve TRUE si es correcto
+     * Check the company's data, return TRUE if correct
      *
      * @return bool
      */
@@ -143,7 +143,9 @@ class Empresa
     }
 
     /**
-     * Crea la consulta necesaria para dotar de datos a la empresa en la base de datos.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
@@ -151,8 +153,8 @@ class Empresa
     {
         $num = mt_rand(1, 9999);
 
-        return 'INSERT INTO ' . static::tableName() . ' (recequivalencia,web,email,fax,telefono,codpais,apartado,provincia,'
-            . 'ciudad,codpostal,direccion,administrador,cifnif,nombre,nombrecorto)'
+        return 'INSERT INTO ' . static::tableName() . ' (recequivalencia,web,email,fax,telefono,codpais,apartado,'
+            . 'provincia,ciudad,codpostal,direccion,administrador,cifnif,nombre,nombrecorto)'
             . "VALUES (NULL,'https://www.facturascripts.com',"
             . "NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','','00000014Z',"
             . "'Empresa " . $num . " S.L.','E-" . $num . "');";
