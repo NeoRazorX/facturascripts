@@ -29,168 +29,168 @@ class Contacto
     use Base\ModelTrait;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var string
      */
     public $codcontacto;
 
     /**
-     * NIF del contacto
+     * Contact NIF.
      *
      * @var string
      */
     public $nif;
 
     /**
-     * True si es una persona física, sino False
+     * True if it is a physical person, but False.
      *
      * @var bool
      */
     public $personafisica;
 
     /**
-     * Nombre del contacto
+     * Contact name.
      *
      * @var string
      */
     public $nombre;
 
     /**
-     * Empresa del contacto
+     * Contact company.
      *
      * @var string
      */
     public $empresa;
 
     /**
-     * Cargo del contacto
+     * Contact charge.
      *
      * @var string
      */
     public $cargo;
 
     /**
-     * Email de contacto.
+     * Contact email.
      *
      * @var string
      */
     public $email;
 
     /**
-     * Teléfono de la persona.
+     * Phone 1 of the person.
      *
      * @var string
      */
     public $telefono1;
 
     /**
-     * Teléfono de la persona.
+     * Phone 2 of the person.
      *
      * @var string
      */
     public $telefono2;
 
     /**
-     * Dirección del contacto.
+     * Address of the contact.
      *
      * @var string
      */
     public $direccion;
 
     /**
-     * Código postal del contacto.
+     * Postal code of the contact.
      *
      * @var string
      */
     public $codpostal;
 
     /**
-     * Ciudad del contacto.
+     * Contact city.
      *
      * @var string
      */
     public $ciudad;
 
     /**
-     * Provincia del contacto.
+     * Contact province.
      *
      * @var string
      */
     public $provincia;
 
     /**
-     * País del contacto.
+     * Contact country.
      *
      * @var string
      */
     public $codpais;
 
     /**
-     * True si admite marketing, sino False
+     * True if it supports marketing, but False.
      *
      * @var bool
      */
     public $admitemarketing;
 
     /**
-     * Observaciones del contacto.
+     * Contact's observations.
      *
      * @var string
      */
     public $observaciones;
 
     /**
-     * Empleado asociado ha este contacto. Modelo agente.
+     * Associated employee has this contact. Agent model.
      *
      * @var string
      */
     public $codagente;
 
     /**
-     * Fecha de alta del contacto
+     * Contact's date of registration.
      *
      * @var string
      */
     public $fechaalta;
 
     /**
-     * Fecha de la última comunicación
+     * Date of the last communication.
      *
      * @var string
      */
     public $ultima_comunicacion;
 
     /**
-     * Fuente del contacto
+     * Contact source.
      *
      * @var string
      */
     public $fuente;
 
     /**
-     * Estado del contacto
+     * Contact status.
      *
      * @var string
      */
     public $estado;
 
     /**
-     * Potencial cliente
+     * Potential client.
      *
      * @var int
      */
     public $potencial;
 
     /**
-     * Grupo al que pertenece el cliente.
+     * Group to which the client belongs.
      *
      * @var string
      */
     public $codgrupo;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -200,7 +200,7 @@ class Contacto
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -210,7 +210,7 @@ class Contacto
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -240,7 +240,7 @@ class Contacto
     }
 
     /**
-     * Devuelve un listado de los estados del contacto
+     * Returns a list of contact states.
      *
      * @return array
      */
@@ -252,7 +252,7 @@ class Contacto
     }
 
     /**
-     * Devuelve una versión resumida de las observaciones
+     * Returns a summarized version of the observations.
      *
      * @return string
      */

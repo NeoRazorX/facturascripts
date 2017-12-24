@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Estructura para almacenar los datos de estado de una caja registradora (TPV).
+ * Structure to store the status data of a cash register (POS).
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -29,85 +29,85 @@ class Caja
     use Base\ModelTrait;
 
     /**
-     * UN array con todos los agentes utilizados, para agilizar la carga.
+     * AN array with all the agents used, to speed up the loading.
      *
      * @var Agente[]
      */
     private static $agentes;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
     public $id;
 
     /**
-     * Identificador del terminal. En la tabla cajas_terminales.
+     * Identifier of the terminal. In the table boxes_terminals.
      *
      * @var int
      */
     public $fs_id;
 
     /**
-     * Codigo del agente que abre y usa la caja.
-     * El agente asociado al usuario.
+     * Agent code that opens and uses the box.
+     * The agent associated with the user.
      *
      * @var string
      */
     public $codagente;
 
     /**
-     * Fecha de apertura (inicio) de la caja.
+     * Opening date (start) of the box.
      *
      * @var string
      */
     public $fecha_inicial;
 
     /**
-     * Dinero inicial en la caja
+     * Initial money in the box.
      *
      * @var float|int
      */
     public $dinero_inicial;
 
     /**
-     * Fecha de cierre (fin) de la caja.
+     * Closing date (end) of the box.
      *
      * @var string
      */
     public $fecha_fin;
 
     /**
-     * Dinero final en la caja
+     * Final money in the box.
      *
      * @var float|int
      */
     public $dinero_fin;
 
     /**
-     * Numero de tickets emitidos en esta caja.
+     * Number of tickets issued in this box.
      *
      * @var int
      */
     public $tickets;
 
     /**
-     * Ultima IP del usuario de la caja.
+     * Last IP of the user of the box.
      *
      * @var string
      */
     public $ip;
 
     /**
-     * El objeto agente asignado.
+     * The assigned agent object.
      *
      * @var Agente
      */
     public $agente;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -117,7 +117,7 @@ class Caja
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -127,7 +127,7 @@ class Caja
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -149,7 +149,7 @@ class Caja
     }
 
     /**
-     * Devuelve True si la caja está abierta, sino False
+     * Returns True if the box is open, but False.
      *
      * @return bool
      */
@@ -159,7 +159,7 @@ class Caja
     }
 
     /**
-     * Muestra la fecha de fin
+     * Shows the end date.
      *
      * @return string
      */
@@ -173,7 +173,7 @@ class Caja
     }
 
     /**
-     * Muestra la diferencia de dinero entre el cierre e inicio de caja
+     * It shows the difference of money between the closing and beginning of cash.
      *
      * @return mixed
      */
@@ -183,7 +183,7 @@ class Caja
     }
 
     /**
-     * Devuelve todas las cajas usadas por el agente
+     * Returns all the boxes used by the agent.
      *
      * @param string $codagente
      * @param int    $offset
@@ -194,7 +194,7 @@ class Caja
     public function allByAgente($codagente, $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         $cajalist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codagente = '
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codagente = '
             . self::$dataBase->var2str($codagente) . ' ORDER BY id DESC';
 
         $data = self::$dataBase->selectLimit($sql, $limit, $offset);
