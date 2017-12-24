@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * Presupuesto de cliente
+ * Customer estimation.
  */
 class PresupuestoCliente
 {
@@ -30,52 +30,52 @@ class PresupuestoCliente
     use Base\DocumentoVenta;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var integer
      */
     public $idpresupuesto;
 
     /**
-     * ID del pedido relacionado, si lo hay.
+     * Related order ID, if any.
      *
      * @var integer
      */
     public $idpedido;
 
     /**
-     * Fecha en la que termina la validéz del presupuesto.
+     * Date on which the validity of the estimation ends.
      *
      * @var string
      */
     public $finoferta;
 
     /**
-     * Estado del presupuesto:
-     * 0 -> pendiente. (editable)
-     * 1 -> aprobado. (hay un idpedido y no es editable)
-     * 2 -> rechazado. (no hay idpedido y no es editable)
+     * Estimation status:
+     * 0 -> pending. (editable)
+     * 1 -> approved. (there is a code and it is not editable)
+     * 2 -> rejected. (there is no code and it is not editable)
      *
      * @var integer
      */
     public $status;
 
     /**
-     * True si es editable, sino false
+     * True if it is editable, but false.
      *
      * @var bool
      */
     public $editable;
 
     /**
-     * Si este presupuesto es la versión de otro, aquí se almacena el idpresupuesto del original.
+     * If this estimation is the version of another, the original estimation document is stored here.
      *
      * @var integer
      */
     public $idoriginal;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -85,7 +85,7 @@ class PresupuestoCliente
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -95,7 +95,9 @@ class PresupuestoCliente
     }
 
     /**
-     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
@@ -108,7 +110,7 @@ class PresupuestoCliente
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -119,7 +121,7 @@ class PresupuestoCliente
     }
 
     /**
-     * Devuelve True si la fecha de oferta es menor a la actual, sino False
+     * Returns True if the offer date is less than the current one, but False.
      *
      * @return bool
      */
@@ -129,7 +131,7 @@ class PresupuestoCliente
     }
 
     /**
-     * Devuelve las líneas asociadas al presupuesto.
+     * Returns the lines associated with the estimation.
      *
      * @return LineaPresupuestoCliente[]
      */
@@ -142,7 +144,7 @@ class PresupuestoCliente
     }
 
     /**
-     * Devuelve las versiones de un presupuesto
+     * Returns the versions of a estimation.
      *
      * @return self[]
      */
@@ -150,7 +152,8 @@ class PresupuestoCliente
     {
         $versiones = [];
 
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idoriginal = ' . self::$dataBase->var2str($this->idpresupuesto);
+        $sql = 'SELECT * FROM ' . static::tableName()
+            . ' WHERE idoriginal = ' . self::$dataBase->var2str($this->idpresupuesto);
         if ($this->idoriginal) {
             $sql .= ' OR idoriginal = ' . self::$dataBase->var2str($this->idoriginal);
             $sql .= ' OR idpresupuesto = ' . self::$dataBase->var2str($this->idoriginal);
@@ -168,13 +171,13 @@ class PresupuestoCliente
     }
 
     /**
-     * Comprueba los datos del presupuesto, devuelve True si está correcto
+     * Check the estimation data, return True if it is correct.
      *
      * @return boolean
      */
     public function test()
     {
-        /// comprobamos que editable se corresponda con el status
+        /// check that editable corresponds to the status
         if ($this->idpedido) {
             $this->status = 1;
             $this->editable = false;
@@ -188,23 +191,23 @@ class PresupuestoCliente
     }
 
     /**
-     * Ejecuta una tarea con cron
+     * Execute a task with cron
      */
     public function cronJob()
     {
-        /// marcamos como aprobados los presupuestos con idpedido
+        /// mark estimations approved as approved
         self::$dataBase->exec('UPDATE ' . static::tableName() . " SET status = '1', editable = FALSE"
             . " WHERE status != '1' AND idpedido IS NOT NULL;");
 
-        /// devolvemos al estado pendiente a los presupuestos con estado 1 a los que se haya borrado el pedido
+        /// return to the pending status the estimations with state 1 to which the order has been deleted
         self::$dataBase->exec('UPDATE ' . static::tableName() . " SET status = '0', idpedido = NULL, editable = TRUE"
             . " WHERE status = '1' AND idpedido NOT IN (SELECT idpedido FROM pedidoscli);");
 
-        /// marcamos como rechazados todos los presupuestos con finoferta ya pasada
+        /// mark as rejected all estimations with endoffer past
         self::$dataBase->exec('UPDATE ' . static::tableName() . " SET status = '2' WHERE finoferta IS NOT NULL AND"
             . ' finoferta < ' . self::$dataBase->var2str(date('d-m-Y')) . ' AND idpedido IS NULL;');
 
-        /// marcamos como rechazados todos los presupuestos no editables y sin pedido asociado
+        /// mark as rejected all non-editable estimations and without associated order
         self::$dataBase->exec("UPDATE " . static::tableName() . " SET status = '2' WHERE idpedido IS NULL AND"
             . ' editable = false;');
     }
