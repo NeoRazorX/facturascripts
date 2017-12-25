@@ -30,38 +30,41 @@ class Ledger
 {
 
     /**
-     * Generate the ledger between two dates
+     * Generate the ledger between two dates.
+     * 
      * @param date $dateFrom
      * @param date $dateTo
+     * 
      * @return array
      */
     public function generate($dateFrom, $dateTo)
     {
+        $dataBase = new DataBase();
+        $sql = 'SELECT asto.numero, asto.fecha, part.codsubcuenta, part.concepto, part.debe, part.haber ' .
+            'FROM co_asientos as asto, co_partidas as part WHERE asto.idasiento = part.idasiento '
+            . ' AND fecha >= ' . $dataBase->var2str($dateFrom)
+            . ' AND fecha <= ' . $dataBase->var2str($dateTo)
+            . ' ORDER BY part.codsubcuenta, asto.fecha, part.idasiento ASC';
 
-        $mayor = array();
-        $sql = 'SELECT asto.numero, asto.fecha,part.codsubcuenta,part.concepto, part.debe,part.haber,0 saldo ' .
-            'FROM `co_asientos` asto, `co_partidas` part where asto.idasiento = part.idasiento '
-            . ' and fecha>="' . date('Y-m-d', strtotime($dateFrom)) . '" and fecha<="' . date('Y-m-d', strtotime($dateTo))
-            . '" order by part.codsubcuenta,asto.fecha,part.idasiento ASC';
-
-        $datb = new Database();
-        $resultados = $datb->select($sql);
-        // $resultados = self::$dataBase->select($sql);
-        if (!empty($resultados)) {
-            $tmpcuenta = '';
-            $saldo = 0;
-            foreach ($resultados as $linea) {
-                if ($tmpcuenta != $linea['codsubcuenta']) {
-                    $saldo = 0;
-                }
-                $saldo = $saldo + $linea['debe'] - $linea['haber'];
-                $linea['saldo'] = $saldo;
-
-                $mayor[] = $linea;
-                $tmpcuenta = $linea['codsubcuenta'];
-            }
+        $results = $dataBase->select($sql);
+        if (empty($results)) {
+            return [];
         }
+
+        $mayor = [];
+        $tmpcuenta = '';
+        $saldo = 0.0;
+        foreach ($results as $linea) {
+            if ($tmpcuenta != $linea['codsubcuenta']) {
+                $saldo = 0.0;
+            }
+            $saldo += $linea['debe'] - $linea['haber'];
+            $tmpcuenta = $linea['codsubcuenta'];
+
+            $linea['saldo'] = $saldo;
+            $mayor[] = $linea;
+        }
+
         return $mayor;
-        //return $p->acountingLedger($dateFrom, $dateTo);
     }
 }
