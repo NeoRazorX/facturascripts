@@ -1183,7 +1183,7 @@
     "%-commission": "% Comisión",
     "all": "Todos",
     "bank-account": "Cuenta Bancaria",
-    "birth-date": "Fec. Nacimiento",
+    "birth-date": "Fecha de Nacimiento",
     "postal-code": "Código Postal",
     "select-user": "Seleccionar Usuario",
     "social-security-number": "Número Seguridad Social",
@@ -1199,6 +1199,6 @@
     "low-security": "Baja Seguridad",
     "specials-actions": "Acciones especiales",
     "test": "Test",
-    "mailer": "Gestión del Mail",
+    "mailer": "Controlador de correo",
     "encrypt": "Encriptación"
 }
