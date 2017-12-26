@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -29,17 +28,21 @@ class DivisaTools
 
     /**
      * Returns the value of the formatted currency.
-     *
+     * 
      * @param float $number
      * @param int $decimals
-     *
+     * @param bool $addSymbol
+     * 
      * @return string
      */
-    public function format($number, $decimals = FS_NF0)
+    public function format($number, $decimals = FS_NF0, $addSymbol = true)
     {
-        $symbol = '€';
         $txt = number_format($number, $decimals, FS_NF1, FS_NF2);
+        if (!$addSymbol) {
+            return $txt;
+        }
 
+        $symbol = '€';
         if (FS_POS_DIVISA === 'right') {
             return $txt . ' ' . $symbol;
         }
