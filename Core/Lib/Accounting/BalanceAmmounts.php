@@ -19,6 +19,8 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DivisaTools;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * Description of BalanceAmmounts
@@ -29,26 +31,74 @@ use FacturaScripts\Core\Base\DataBase;
 class BalanceAmmounts
 {
 
+    use Utils;
+
+    private $divisaTools;
+
+    public function __construct()
+    {
+        $this->divisaTools = new DivisaTools();
+    }
+
     /**
      * Generate the balance ammounts between two dates.
-     * 
+     *
      * @param date $dateFrom
      * @param date $dateTo
      * @return array
      */
     public function generate($dateFrom, $dateTo)
     {
-        //SELECT subcta.codsubcuenta,subcta.descripcion,sum(partida.debe) SDebe,sum(partida.haber) SHaber,sum(partida.debe)-sum(partida.haber) saldo FROM `co_subcuentas` subcta,co_partidas partida,co_asientos asiento where subcta.codsubcuenta = partida.codsubcuenta and asiento.idasiento=partida.idasiento group by subcta.codsubcuenta,subcta.descripcion and asiento.fecha>='2017-01-01' and asiento.fecha<='2017-12-31'
-        /// TODO
+
+        $results = $this->getData($dateFrom, $dateTo);
+        if (empty($results)) {
+            return [];
+        }
+        $balance = [];
+
+        foreach ($results as $line) {
+            $balance[] = $this->proccessLine($line);
+        }
+
+        return $balance;
+    }
+
+    /**
+     * Return the balance data from database.
+     *
+     * @param string $dateFrom
+     * @param string $dateTo
+     *
+     * return array;
+     */
+    private function getData($dateFrom, $dateTo)
+    {
+
+        $dataBase = new DataBase();
         $sql = 'SELECT subcta.codsubcuenta,subcta.descripcion,sum(partida.debe) SDebe,sum(partida.haber) SHaber,sum(partida.debe)-sum(partida.haber) saldo ' .
             ' FROM `co_subcuentas` subcta,co_partidas partida,co_asientos asiento ' .
             'where subcta.codsubcuenta = partida.codsubcuenta and asiento.idasiento=partida.idasiento ' .
             ' and asiento.fecha>="' . date('Y-m-d', strtotime($dateFrom)) . '" and asiento.fecha<="' . date('Y-m-d', strtotime($dateTo)) . '"' .
             'group by subcta.codsubcuenta,subcta.descripcion ';
 
-        $datb = new Database();
-        $resultados = $datb->select($sql);
 
-        return $resultados;
+        return $dataBase->select($sql);
+    }
+
+    /**
+     *
+     * @param array $line
+     * @param float $balance
+     *
+     * @return array
+     */
+    private function proccessLine($line)
+    {
+        $line['SDebe'] = $this->divisaTools->format($line['SDebe'], FS_NF0, false);
+        $line['SHaber'] = $this->divisaTools->format($line['SHaber'], FS_NF0, false);
+        $line['saldo'] = $this->divisaTools->format($line['saldo'], FS_NF0, false);
+        $line['descripcion'] = $this->fixHtml($line['descripcion']);
+
+        return $line;
     }
 }
