@@ -39,7 +39,7 @@ class AccountingReports extends Controller
      * @var Ejercicio[]
      */
     public $ejercicios;
-    
+
     /**
      * Object to manager data export.
      * 
@@ -129,7 +129,7 @@ class AccountingReports extends Controller
      */
     private function exportData(&$data, $format)
     {
-        $headers = array_keys($data[0]);
+        $headers = empty($data) ? [] : array_keys($data[0]);
 
         $this->exportManager->newDoc($this->response, $format);
         $this->exportManager->generateTablePage($headers, $data);

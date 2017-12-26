@@ -116,7 +116,7 @@ class GrupoClientes
     public function install()
     {
         /// As there is a key outside of tariffs, we have to check that table before
-        //new Tarifa();
+        new Tarifa();
 
         return '';
     }

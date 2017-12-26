@@ -589,7 +589,7 @@ class Articulo
         $result = false;
         $stock = new Stock();
         $encontrado = false;
-        $stocks = $stock->allFromArticulo($this->referencia);
+        $stocks = $stock->all([new DataBaseWhere('referencia', $this->referencia)]);
         foreach ($stocks as $sto) {
             if ($sto->codalmacen === $codalmacen) {
                 $sto->setCantidad($cantidad);

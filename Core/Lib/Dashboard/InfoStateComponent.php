@@ -145,7 +145,7 @@ class InfoStateComponent extends BaseComponent implements ComponentInterface
         $newItem->save();
     }
 
-    public function url($id): string
+    public function url($id)
     {
         return $this->group[$id]['url'];
     }

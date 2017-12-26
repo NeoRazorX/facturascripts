@@ -31,7 +31,6 @@ class Cliente extends Base\Persona
     use Base\ModelTrait {
         __construct as private traitConstruct;
         clear as private traitClear;
-        url as private traitUrl;
     }
 
     /**

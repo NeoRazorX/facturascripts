@@ -27,8 +27,7 @@ class Balance
 {
 
     use Base\ModelTrait {
-        save as private saveTrait;
-        url as private traitUrl;
+        save as private traitSave;
     }
 
     /**
@@ -148,6 +147,6 @@ class Balance
         $this->descripcion4 = self::noHtml($this->descripcion4);
         $this->descripcion4ba = self::noHtml($this->descripcion4ba);
 
-        return $this->saveTrait();
+        return $this->traitSave();
     }
 }

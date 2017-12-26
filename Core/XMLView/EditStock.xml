@@ -24,6 +24,9 @@
 
 <view>
     <columns>
+        <column name="id" order="100" display="none">
+            <widget type="text" fieldname="idstock" />
+        </column>
         <column name="reference" display="none" order="100">
             <widget type="text" fieldname="referencia" onclick="EditArticulo" />
         </column>

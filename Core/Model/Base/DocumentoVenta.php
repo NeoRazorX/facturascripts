@@ -30,7 +30,7 @@ trait DocumentoVenta
 {
 
     use ModelTrait {
-        clear as clearTrait;
+        clear as traitClear;
     }
 
     /**
@@ -350,7 +350,7 @@ trait DocumentoVenta
      */
     private function clearDocumentoVenta()
     {
-        $this->clearTrait();
+        $this->traitClear();
         $this->codserie = AppSettings::get('default', 'codserie');
         $this->codalmacen = AppSettings::get('default', 'codalmacen');
         $this->codpago = AppSettings::get('default', 'codpago');
@@ -411,7 +411,7 @@ trait DocumentoVenta
     private function newCodigo()
     {
         $newCodigoDoc = new NewCodigoDoc();
-        $this->numero = $newCodigoDoc->getNumero(static::tableName(), $this->codejercicio, $this->codserie);
+        $this->numero = (string) $newCodigoDoc->getNumero(static::tableName(), $this->codejercicio, $this->codserie);
         $this->codigo = $newCodigoDoc->getCodigo(static::tableName(), $this->numero, $this->codserie, $this->codejercicio);
     }
 

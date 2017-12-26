@@ -32,7 +32,6 @@ class DashboardData
         loadFromData as traitLoadFromData;
         saveInsert as traitSaveInsert;
         saveUpdate as traitSaveUpdate;
-        url as traitUrl;
     }
 
     /**

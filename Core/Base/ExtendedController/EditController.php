@@ -88,7 +88,7 @@ abstract class EditController extends Base\Controller
         $this->execAfterAction($action);
     }
 
-    protected function createView($user): EditView
+    protected function createView($user)
     {
         return new EditView(
             $this->getPageData()['title'],
