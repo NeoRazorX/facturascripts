@@ -34,11 +34,11 @@
         <column name="pagename" order="110">
             <widget type="text" fieldname="pagename" />
         </column>
-        <column name="allow-delete" order="110">
-            <widget type="checkbox" fieldname="allowdelete" />
-        </column>
         <column name="allow-update" order="110">
             <widget type="checkbox" fieldname="allowupdate" />
+        </column>
+        <column name="allow-delete" order="110">
+            <widget type="checkbox" fieldname="allowdelete" />
         </column>
     </columns>
 </view>

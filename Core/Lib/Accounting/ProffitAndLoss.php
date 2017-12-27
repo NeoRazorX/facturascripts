@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Lib\Accounting;
 /**
  * Description of ProffitAndLoss
  *
- * @author carlos
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class ProffitAndLoss
 {

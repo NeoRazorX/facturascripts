@@ -114,7 +114,7 @@ abstract class BaseView
     {
         $fieldKey = $this->model->primaryColumn();
         $fieldValue = $data[$fieldKey];
-        if ($fieldValue !== $this->model->primaryColumnValue()) {
+        if ($fieldValue !== $this->model->primaryColumnValue() && $fieldValue !== '') {
             $this->model->loadFromCode($fieldValue);
         }
 

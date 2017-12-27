@@ -83,6 +83,16 @@ class MenuManager
     }
 
     /**
+     * Returns the user's menu, the set of pages to which he has access.
+     *
+     * @return array
+     */
+    public function getMenu()
+    {
+        return self::$menu;
+    }
+
+    /**
      * Returns if the page should be saved.
      *
      * @param Model\Page $pageModel
@@ -200,10 +210,10 @@ class MenuManager
             $menuItem[$page->name] = new MenuItem($page->name, $i18n->trans($page->title), $page->url(), $page->icon);
         }
 
-        // Reorder menu by title
+        /// Reorder menu by title
         array_multisort($sortMenu, SORT_ASC, $result);
 
-        // Reorder submenu by title
+        /// Reorder submenu by title
         foreach ($result as $posM => $menu) {
             $sortSubMenu = [];
             foreach ($menu->menu as $submenu) {
@@ -236,10 +246,9 @@ class MenuManager
         }
 
         $result = [];
-        $pageRuleModel = new Model\PageRule();
-        $pageRule_list = $pageRuleModel->all([new DataBase\DataBaseWhere('nick', self::$user->nick)]);
+        $userAccess = $this->getUserAccess(self::$user->nick);
         foreach ($pages as $page) {
-            foreach ($pageRule_list as $pageRule) {
+            foreach ($userAccess as $pageRule) {
                 if ($page->name === $pageRule->pagename) {
                     $result[] = $page;
                     break;
@@ -249,14 +258,25 @@ class MenuManager
 
         return $result;
     }
-
+    
     /**
-     * Returns the user's menu, the set of pages to which he has access.
-     *
-     * @return array
+     * Returns all access data from the user.
+     * 
+     * @param string $nick
+     * 
+     * @return Model\RolAccess[]
      */
-    public function getMenu()
+    private function getUserAccess($nick)
     {
-        return self::$menu;
+        $access = [];
+        $rolUserModel = new Model\RolUser();
+        $rolAccessModel = new Model\RolAccess();
+        foreach($rolUserModel->all([new DataBase\DataBaseWhere('nick', $nick)]) as $rol) {
+            foreach($rolAccessModel->all([new DataBase\DataBaseWhere('codrol', $rol->codrol)]) as $rolAccess) {
+                $access[] = $rolAccess;
+            }
+        }
+        
+        return $access;
     }
 }
