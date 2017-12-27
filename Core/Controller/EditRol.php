@@ -36,11 +36,11 @@ class EditRol extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('\FacturaScripts\Dinamic\Model\Rol', 'EditRol', 'rol', 'fa-id-card');
-
-        $this->addListView('\FacturaScripts\Dinamic\Model\RolAccess', 'ListRolAccess', 'page-rule', 'fa fa-check-square');
+        $this->addListView('\FacturaScripts\Dinamic\Model\RolAccess', 'ListRolAccess', 'rules', 'fa fa-check-square');
+        $this->addEditListView('\FacturaScripts\Dinamic\Model\RolUser', 'EditRolUser', 'users', 'fa-address-card-o');
+        
+        /// Disable columns
         $this->views['ListRolAccess']->disableColumn('role', true);
-
-        $this->addEditListView('\FacturaScripts\Dinamic\Model\RolUser', 'EditRolUser', 'rol-user', 'fa-address-card-o');
         $this->views['EditRolUser']->disableColumn('role', true);
     }
 
@@ -52,16 +52,16 @@ class EditRol extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
-        $code = $this->request->get('code');
-
         switch ($keyView) {
             case 'EditRol':
+                $code = $this->request->get('code');
                 $view->loadData($code);
                 break;
 
             case 'EditRolUser':
             case 'ListRolAccess':
-                $where = [new DataBaseWhere('codrol', $code)];
+                $codrol = $this->getViewModelValue('EditRol', 'codrol');
+                $where = [new DataBaseWhere('codrol', $codrol)];
                 $view->loadData($where);
                 break;
         }
@@ -84,23 +84,6 @@ class EditRol extends ExtendedController\PanelController
     }
 
     /**
-     * List of users in the group with the indicated role code
-     *
-     * @param string $codRol
-     * @return array
-     */
-    private function getUsers($codRol)
-    {
-        $result = [];
-        $rolUserModel = new Model\RolUser();
-        $rows = $rolUserModel->all([new DataBaseWhere('codrol', $codRol)]);
-        foreach ($rows as $rolUser) {
-            $result[] = $rolUser->nick;
-        }
-        return $result;
-    }
-
-    /**
      * Add the indicated page list to the Role group
      * and all users who are in that group
      *
@@ -113,14 +96,6 @@ class EditRol extends ExtendedController\PanelController
         // add Pages to Rol
         if (!Model\RolAccess::addPagesToRol($codRol, $pages)) {
             throw new \Exception(self::$i18n->trans('cancel-process'));
-        }
-
-        // add Pages to User
-        $users = $this->getUsers($codRol);
-        foreach ($users as $nick) {
-            if (!Model\PageRule::addPagesToUser($nick, $pages)) {
-                throw new \Exception(self::$i18n->trans('cancel-process'));
-            }
         }
     }
 

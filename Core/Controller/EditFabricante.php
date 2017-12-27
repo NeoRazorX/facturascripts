@@ -48,15 +48,15 @@ class EditFabricante extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
-        $value = $this->request->get('code');
-
         switch ($keyView) {
             case 'EditFabricante':
-                $view->loadData($value);
+                $code = $this->request->get('code');
+                $view->loadData($code);
                 break;
 
             case 'EditFabricanteListArticulos':
-                $where = [new DataBaseWhere('codfabricante', $value)];
+                $codfabricante = $this->getViewModelValue('EditFabricante', 'codfabricante');
+                $where = [new DataBaseWhere('codfabricante', $codfabricante)];
                 $view->loadData($where);
                 break;
         }

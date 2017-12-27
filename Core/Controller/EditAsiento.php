@@ -53,8 +53,8 @@ class EditAsiento extends ExtendedController\PanelController
     {
         switch ($keyView) {
             case 'EditAsiento':
-                $value = $this->request->get('code');
-                $view->loadData($value);
+                $code = $this->request->get('code');
+                $view->loadData($code);
                 break;
 
             case 'ListPartida':

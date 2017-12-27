@@ -50,20 +50,21 @@ class EditFamilia extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
-        $value = $this->request->get('code');
-
         switch ($keyView) {
             case 'EditFamilia':
-                $view->loadData($value);
+                $code = $this->request->get('code');
+                $view->loadData($code);
                 break;
 
             case 'ListArticulo':
-                $where = [new DataBaseWhere('codfamilia', $value)];
+                $codfamilia = $this->getViewModelValue('EditFamilia', 'codfamilia');
+                $where = [new DataBaseWhere('codfamilia', $codfamilia)];
                 $view->loadData($where);
                 break;
 
             case 'ListFamilia':
-                $where = [new DataBaseWhere('madre', $value)];
+                $codfamilia = $this->getViewModelValue('EditFamilia', 'codfamilia');
+                $where = [new DataBaseWhere('madre', $codfamilia)];
                 $view->loadData($where);
                 break;
         }

@@ -43,6 +43,9 @@ class EditProveedor extends ExtendedController\PanelController
         $this->addListView('\FacturaScripts\Dinamic\Model\FacturaProveedor', 'ListFacturaProveedor', 'invoices', 'fa-files-o');
         $this->addListView('\FacturaScripts\Dinamic\Model\AlbaranProveedor', 'ListAlbaranProveedor', 'delivery-notes', 'fa-files-o');
         $this->addListView('\FacturaScripts\Dinamic\Model\PedidoProveedor', 'ListPedidoProveedor', 'orders', 'fa-files-o');
+        
+        /// Disable columns
+        $this->views['ListArticuloProveedor']->disableColumn('supplier', true);
     }
 
     /**
@@ -53,11 +56,10 @@ class EditProveedor extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
-        $codproveedor = $this->request->get('code');
-
         switch ($keyView) {
             case 'EditProveedor':
-                $view->loadData($codproveedor);
+                $code = $this->request->get('code');
+                $view->loadData($code);
                 break;
 
             case 'EditDireccionProveedor':
@@ -67,6 +69,7 @@ class EditProveedor extends ExtendedController\PanelController
             case 'ListAlbaranProveedor':
             case 'ListPedidoProveedor':
             case 'ListPresupuestoProveedor':
+                $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
                 $where = [new DataBaseWhere('codproveedor', $codproveedor)];
                 $view->loadData($where);
                 break;

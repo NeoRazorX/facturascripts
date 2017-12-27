@@ -50,15 +50,15 @@ class EditCuenta extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
-        $value = $this->request->get('code');
-
         switch ($keyView) {
             case 'EditCuenta':
-                $view->loadData($value);
+                $code = $this->request->get('code');
+                $view->loadData($code);
                 break;
 
             case 'ListSubcuenta':
-                $where = [new DataBaseWhere('idcuenta', $value)];
+                $idcuenta = $this->getViewModelValue('EditCuenta', 'idcuenta');
+                $where = [new DataBaseWhere('idcuenta', $idcuenta)];
                 $view->loadData($where);
                 break;
         }

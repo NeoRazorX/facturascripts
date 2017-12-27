@@ -49,7 +49,7 @@
                     {% set buttons = footer.getButtons(panel.name) %}
                     {% if buttons|length > 0 %}
                     {% set formName = panel.name ~ '_form' %}
-                    <form action="#" method=post name="{{ formName }}">
+                    <form action="{{ context.edit_url }}" method=post name="{{ formName }}">
                         <input type="hidden" name="active" value="{{ context.indexView }}">
                         {% for button in buttons %}
                             {% set label = context.i18n.trans(button.label) %}
@@ -193,7 +193,7 @@
 {% set formName = (withForm == TRUE) ? context.indexView ~ '-' ~ keyValue : 'main_form' %}
 
 {% if withForm == TRUE %}
-<form name="{{ formName }}" action="#" method="post" class="form" role="form">
+<form name="{{ formName }}" action="{{ context.edit_url }}" method="post" class="form" role="form">
     <input type="hidden" name="action" value="save">
     <input type="hidden" name="active" value="{{ context.indexView }}">
     <div class="row">
@@ -260,7 +260,7 @@
 {% set keyValue = context.fsc.getFieldValue(model, model.primaryColumn()) %}
 {% set formName = context.indexView ~ '-' ~ keyValue %}
 
-<form name="{{ formName }}" action="#" method="post" class="form" role="form">
+<form name="{{ formName }}" action="{{ context.edit_url }}" method="post" class="form" role="form">
     <input type="hidden" name="action" value="save">
     <input type="hidden" name="active" value="{{ context.indexView }}">
     <div class="row">
@@ -276,7 +276,10 @@
                 {% endif %}
                 {% endfor %}
 
-                <div class="col">
+                <div class="form-group col">
+                    <div class="d-xs-none">
+                        <br/>
+                    </div>
                     {% if keyValue is not empty %}
                     <a class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
                        &nbsp;<i class="fa fa-trash" aria-hidden="true"></i>&nbsp;
@@ -317,19 +320,13 @@
 {% endfor %}
 
 {% set newModel = view.newEmptyModel() %}
-{% if isBasic %}
-    {{ columnsForBasicEditView(context, view, newModel) }}
-{% else %}
-    <div class="alert alert-success" role="alert">
-        <a class="alert-link" data-toggle="collapse" href="#new-{{ context.indexView }}" aria-expanded="true" aria-controls="new-{{ context.indexView }}">
-            <i class="fa fa-plus" aria-hidden="true"></i>&nbsp; {{ new_record_title }}...
-        </a>
-    </div>
-
+    <a class="btn btn-success btn-block" data-toggle="collapse" href="#new-{{ context.indexView }}" aria-expanded="true" aria-controls="new-{{ context.indexView }}">
+        <i class="fa fa-plus" aria-hidden="true"></i>&nbsp; {{ new_record_title }}...
+    </a>
+    <br/>
     <div id="new-{{ context.indexView }}" class="collapse">
         {{ columnsForEditView(context, view, newModel, TRUE) }}
     </div>
-{% endif %}
 {% endmacro %}
 
 
