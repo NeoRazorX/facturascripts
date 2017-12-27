@@ -1,0 +1,142 @@
+descripcion4ba;descripcion4;nivel4;descripcion3;orden3;nivel3;descripcion2;nivel2;descripcion1;nivel1;naturaleza;codbalance
+"";"1. Desarrollo.";1;"I. Inmovilizado intangible.";1;I;"";0;"A) ACTIVO NO CORRIENTE";A;A;A-A--I-1
+"";"2. Concesiones.";2;"I. Inmovilizado intangible.";1;I;"";0;"A) ACTIVO NO CORRIENTE";A;A;A-A--I-2
+"";"3. Patentes, licencias, marcas y similares.";3;"I. Inmovilizado intangible.";1;I;"";0;"A) ACTIVO NO CORRIENTE";A;A;A-A--I-3
+"";"4. Fondo de comercio.";4;"I. Inmovilizado intangible.";1;I;"";0;"A) ACTIVO NO CORRIENTE";A;A;A-A--I-4
+"";"5. Aplicaciones informáticas.";5;"I. Inmovilizado intangible.";1;I;"";0;"A) ACTIVO NO CORRIENTE";A;A;A-A--I-5
+"";"6. Otro inmovilizado intangible.";6;"I. Inmovilizado intangible.";1;I;"";0;"A) ACTIVO NO CORRIENTE";A;A;A-A--I-6
+"";"1. Terrenos y construcciones.";1;"II. Inmovilizado material.";2;II;"";0;"A) ACTIVO NO CORRIENTE";A;A;A-A--II-1
+"";"2. Instalaciones técnicas, y otro inmovilizado material.";2;"II. Inmovilizado material.";2;II;"";0;"A) ACTIVO NO CORRIENTE";A;A;A-A--II-2
+"";"3. Inmovilizado en curso y anticipos.";3;"II. Inmovilizado material.";2;II;"";0;"A) ACTIVO NO CORRIENTE";A;A;A-A--II-3
+"";"1. Terrenos.";1;"III. Inversiones inmobiliarias.";3;III;"";0;"A) ACTIVO NO CORRIENTE";A;A;A-A--III-1
+"";"2. Construcciones.";2;"III. Inversiones inmobiliarias.";3;III;"";0;"A) ACTIVO NO CORRIENTE";A;A;A-A--III-2
+"";"1. Instrumentos de patrimonio.";1;"IV. Inversiones en empresas del grupo y asociadas a largo plazo";4;IV;"";0;"A) ACTIVO NO CORRIENTE";A;A;A-A--IV-1
+"";"2. Créditos a empresas.";2;"IV. Inversiones en empresas del grupo y asociadas a largo plazo";4;IV;"";0;"A) ACTIVO NO CORRIENTE";A;A;A-A--IV-2
+"";"3. Valores representativos de deuda.";3;"IV. Inversiones en empresas del grupo y asociadas a largo plazo";4;IV;"";0;"A) ACTIVO NO CORRIENTE";A;A;A-A--IV-3
+"";"4. Derivados.";4;"IV. Inversiones en empresas del grupo y asociadas a largo plazo";4;IV;"";0;"A) ACTIVO NO CORRIENTE";A;A;A-A--IV-4
+"";"5. Otros activos financieros.";5;"IV. Inversiones en empresas del grupo y asociadas a largo plazo";4;IV;"";0;"A) ACTIVO NO CORRIENTE";A;A;A-A--IV-5
+"";"1. Instrumentos de patrimonio.";1;"V. Inversiones financieras a largo plazo.";5;V;"";0;"A) ACTIVO NO CORRIENTE";A;A;A-A--V-1
+"";"2. Créditos a terceros";2;"V. Inversiones financieras a largo plazo.";5;V;"";0;"A) ACTIVO NO CORRIENTE";A;A;A-A--V-2
+"";"3. Valores representativos de deuda";3;"V. Inversiones financieras a largo plazo.";5;V;"";0;"A) ACTIVO NO CORRIENTE";A;A;A-A--V-3
+"";"4. Derivados.";4;"V. Inversiones financieras a largo plazo.";5;V;"";0;"A) ACTIVO NO CORRIENTE";A;A;A-A--V-4
+"";"5. Otros activos financieros.";5;"V. Inversiones financieras a largo plazo.";5;V;"";0;"A) ACTIVO NO CORRIENTE";A;A;A-A--V-5
+"";"";"";"VI. Activos por impuesto diferido.";6;VI;"";0;"A) ACTIVO NO CORRIENTE";A;A;A-A--VI-
+"";"";"";"I. Activos no corrientes mantenidos para la venta.";1;I;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--I-
+"";"1. Comerciales.";1;"II. Existencias.";2;II;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--II-1
+"";"2. Materias primas y otros aprovisionamientos.";2;"II. Existencias.";2;II;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--II-2
+"";"3. Productos en curso.";3;"II. Existencias.";2;II;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--II-3
+"";"4. Productos terminados.";4;"II. Existencias.";2;II;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--II-4
+"";"5. Subproductos, residuos y materiales recuperados.";5;"II. Existencias.";2;II;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--II-5
+"";"6. Anticipos a proveedores";6;"II. Existencias.";2;II;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--II-6
+"1. Clientes por ventas y prestaciones de servicios";"1. Clientes por ventas y prestaciones de servicios.";1;"III. Deudores comerciales y otras cuentas a cobrar.";3;III;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--III-1
+"2. Accionistas (socios) por desembolsos exigidos";"2. Clientes, empresas del grupo y asociadas.";2;"III. Deudores comerciales y otras cuentas a cobrar.";3;III;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--III-2
+"3. Otros deudores";"3. Deudores varios.";3;"III. Deudores comerciales y otras cuentas a cobrar.";3;III;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--III-3
+"";"4. Personal.";4;"III. Deudores comerciales y otras cuentas a cobrar.";3;III;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--III-4
+"";"5. Activos por impuesto corriente.";5;"III. Deudores comerciales y otras cuentas a cobrar.";3;III;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--III-5
+"";"6. Otros créditos con las Administraciones Públicas.";6;"III. Deudores comerciales y otras cuentas a cobrar.";3;III;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--III-6
+"";"7. Accionistas (socios) por desembolsos exigidos";7;"III. Deudores comerciales y otras cuentas a cobrar.";3;III;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--III-7
+"";"1. Instrumentos de patrimonio.";1;"IV. Inversiones en empresas del grupo y asociadas a corto plazo";4;IV;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--IV-1
+"";"2. Créditos a empresas.";2;"IV. Inversiones en empresas del grupo y asociadas a corto plazo";4;IV;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--IV-2
+"";"3. Valores representativos de deuda.";3;"IV. Inversiones en empresas del grupo y asociadas a corto plazo";4;IV;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--IV-3
+"";"4. Derivados.";4;"IV. Inversiones en empresas del grupo y asociadas a corto plazo";4;IV;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--IV-4
+"";"5. Otros activos financieros.";5;"IV. Inversiones en empresas del grupo y asociadas a corto plazo";4;IV;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--IV-5
+"";"1. Instrumentos de patrimonio.";1;"V. Inversiones financieras a corto plazo.";5;V;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--V-1
+"";"2. Créditos a empresas";2;"V. Inversiones financieras a corto plazo.";5;V;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--V-2
+"";"3. Valores representativos de deuda.";3;"V. Inversiones financieras a corto plazo.";5;V;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--V-3
+"";"4. Derivados.";4;"V. Inversiones financieras a corto plazo.";5;V;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--V-4
+"";"5. Otros activos financieros.";5;"V. Inversiones financieras a corto plazo.";5;V;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--V-5
+"";"";"";"VI. Periodificaciones a corto plazo.";6;VI;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--VI-
+"";"1. Tesorería.";1;"VII. Efectivo y otros activos líquidos equivalentes.";7;VII;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--VII-1
+"";"2. Otros activos líquidos equivalentes.";2;"VII. Efectivo y otros activos líquidos equivalentes.";7;VII;"";0;"B) ACTIVO CORRIENTE";B;A;A-B--VII-2
+"";"1. Activos financieros disponibles para la venta.";1;"I. Por valoración instrumentos financieros.";1;I;"";0;"Ingresos y gastos imputados directamente al patrimonio neto";A;IG;IG-A--I-1
+"";"2. Otros ingresos/gastos.";2;"I. Por valoración instrumentos financieros.";1;I;"";0;"Ingresos y gastos imputados directamente al patrimonio neto";A;IG;IG-A--I-2
+"";"";"";"II. Por coberturas de flujos de efectivo.";2;II;"";0;"Ingresos y gastos imputados directamente al patrimonio neto";A;IG;IG-A--II-
+"";"";"";"III. Subvenciones, donaciones y legados recibidos.";3;III;"";0;"Ingresos y gastos imputados directamente al patrimonio neto";A;IG;IG-A--III-
+"";"";"";"IV. Por ganancias y pérdidas actuariales y otros ajustes.";4;IV;"";0;"Ingresos y gastos imputados directamente al patrimonio neto";A;IG;IG-A--IV-
+"";"";"";"V. Efecto impositivo.";5;V;"";0;"Ingresos y gastos imputados directamente al patrimonio neto";A;IG;IG-A--V-
+"";"";"";"IX. Efecto impositivo.";9;IX;"";0;"Transferencias a la cuenta de pérdidas y ganancias";B;IG;IG-B--IX-
+"";"1.Activos financieros disponibles para la venta.";1;"VI. Por valoración de instrumentos financieros.";6;VI;"";0;"Transferencias a la cuenta de pérdidas y ganancias";B;IG;IG-B--VI-1
+"";"2. Otros ingresos/gastos.";2;"VI. Por valoración de instrumentos financieros.";6;VI;"";0;"Transferencias a la cuenta de pérdidas y ganancias";B;IG;IG-B--VI-2
+"";"";"";"VII. Por coberturas de flujos de efectivo.";7;VII;"";0;"Transferencias a la cuenta de pérdidas y ganancias";B;IG;IG-B--VII-
+"";"";"";"VIII. Subvenciones, donaciones y legados recibidos.";8;VIII;"";0;"Transferencias a la cuenta de pérdidas y ganancias";B;IG;IG-B--VIII-
+"";"2. Otros activos líquidos equivalentes.";2;"VII. Efectivo y otros activos líquidos equivalentes.";7;VII;"";0;"";"";P;P---VII-2
+"1. Capital escriturado";"1. Capital escriturado.";1;"I. Capital.";1;I;"A-1) Fondos propios.";1;"A) PATRIMONIO NETO";A;P;P-A-1-I-1
+"2. (Capital no exigido)";"2. (Capital no exigido).";2;"I. Capital.";1;I;"A-1) Fondos propios.";1;"A) PATRIMONIO NETO";A;P;P-A-1-I-2
+"";"";"";"II. Prima de emisión.";2;II;"A-1) Fondos propios.";1;"A) PATRIMONIO NETO";A;P;P-A-1-II-
+"";"1. Legal y estatutarias.";1;"III. Reservas.";3;III;"A-1) Fondos propios.";1;"A) PATRIMONIO NETO";A;P;P-A-1-III-1
+"";"2. Otras reservas.";2;"III. Reservas.";3;III;"A-1) Fondos propios.";1;"A) PATRIMONIO NETO";A;P;P-A-1-III-2
+"";"";"";"IV. (Acciones y participaciones en patrimonio propias).";4;IV;"A-1) Fondos propios.";1;"A) PATRIMONIO NETO";A;P;P-A-1-IV-
+"";"";"";"IX. Otros instrumentos de patrimonio neto.";9;IX;"A-1) Fondos propios.";1;"A) PATRIMONIO NETO";A;P;P-A-1-IX-
+"";"1. Remanente.";1;"V. Resultados de ejercicios anteriores.";5;V;"A-1) Fondos propios.";1;"A) PATRIMONIO NETO";A;P;P-A-1-V-1
+"";"2. (Resultados negativos de ejercicios anteriores).";2;"V. Resultados de ejercicios anteriores.";5;V;"A-1) Fondos propios.";1;"A) PATRIMONIO NETO";A;P;P-A-1-V-2
+"";"";"";"VI. Otras aportaciones de socios.";6;VI;"A-1) Fondos propios.";1;"A) PATRIMONIO NETO";A;P;P-A-1-VI-
+"";"";"";"VII. Resultado del ejercicio.";7;VII;"A-1) Fondos propios.";1;"A) PATRIMONIO NETO";A;P;P-A-1-VII-
+"";"";"";"VIII. (Dividendo a cuenta).";8;VIII;"A-1) Fondos propios.";1;"A) PATRIMONIO NETO";A;P;P-A-1-VIII-
+"";"";"";"I. Activos financieros disponibles para la venta";1;I;"A-2) Ajustes por cambios de valor.";2;"A) PATRIMONIO NETO";A;P;P-A-2-I-
+"";"";"";"II. Operaciones de cobertura.";2;II;"A-2) Ajustes por cambios de valor.";2;"A) PATRIMONIO NETO";A;P;P-A-2-II-
+"";"";"";"III. Otros.";3;III;"A-2) Ajustes por cambios de valor.";2;"A) PATRIMONIO NETO";A;P;P-A-2-III-
+"";"";"";"";"";"";"A-3) Subvenciones, donaciones y legados recibidos.";3;"A) PATRIMONIO NETO";A;P;P-A-3--
+"";"1. Obligaciones por prestaciones a largo plazo al personal.";1;"I. Provisiones a largo plazo.";1;I;"";0;"B) PASIVO NO CORRIENTE";B;P;P-B--I-1
+"";"2. Actuaciones medioambientales.";2;"I. Provisiones a largo plazo.";1;I;"";0;"B) PASIVO NO CORRIENTE";B;P;P-B--I-2
+"";"3. Provisiones por reestructuración.";3;"I. Provisiones a largo plazo.";1;I;"";0;"B) PASIVO NO CORRIENTE";B;P;P-B--I-3
+"";"4. Otras provisiones.";4;"I. Provisiones a largo plazo.";1;I;"";0;"B) PASIVO NO CORRIENTE";B;P;P-B--I-4
+"1. Deudas con entidades de crédito";"1. Obligaciones y otros valores negociables.";1;"II. Deudas a largo plazo.";2;II;"";0;"B) PASIVO NO CORRIENTE";B;P;P-B--II-1
+"2. Acreedores por arrendamiento financiero";"2. Deudas con entidades de crédito.";2;"II. Deudas a largo plazo.";2;II;"";0;"B) PASIVO NO CORRIENTE";B;P;P-B--II-2
+"3. Otras deudas a largo plazo";"3. Acreedores por arrendamiento financiero.";3;"II. Deudas a largo plazo.";2;II;"";0;"B) PASIVO NO CORRIENTE";B;P;P-B--II-3
+"";"4. Derivados.";4;"II. Deudas a largo plazo.";2;II;"";0;"B) PASIVO NO CORRIENTE";B;P;P-B--II-4
+"";"5. Otros pasivos financieros.";5;"II. Deudas a largo plazo.";2;II;"";0;"B) PASIVO NO CORRIENTE";B;P;P-B--II-5
+"";"";"";"III. Deudas con empresas del grupo y asociadas a largo plazo.";3;III;"";0;"B) PASIVO NO CORRIENTE";B;P;P-B--III-
+"";"";"";"IV. Pasivos por impuesto diferido.";4;IV;"";0;"B) PASIVO NO CORRIENTE";B;P;P-B--IV-
+"";"";"";"V. Periodificaciones a largo plazo.";5;V;"";0;"B) PASIVO NO CORRIENTE";B;P;P-B--V-
+"";"";"";"I. Pasivos vinculados con activos no corrientes mantenidos para la venta";1;I;"";0;"C) PASIVO CORRIENTE";C;P;P-C--I-
+"";"";"";"II. Provisiones a corto plazo.";2;II;"";0;"C) PASIVO CORRIENTE";C;P;P-C--II-
+"1. Deudas con entidades de crédito";"1. Obligaciones y otros valores negociables.";1;"III. Deudas a corto plazo.";3;III;"";0;"C) PASIVO CORRIENTE";C;P;P-C--III-1
+"2. Acreedores por arrendamiento financiero";"2. Deudas con entidades de crédito.";2;"III. Deudas a corto plazo.";3;III;"";0;"C) PASIVO CORRIENTE";C;P;P-C--III-2
+"3. Otras deudas a corto plazo";"3. Acreedores por arrendamiento financiero.";3;"III. Deudas a corto plazo.";3;III;"";0;"C) PASIVO CORRIENTE";C;P;P-C--III-3
+"";"4. Derivados.";4;"III. Deudas a corto plazo.";3;III;"";0;"C) PASIVO CORRIENTE";C;P;P-C--III-4
+"";"5. Otros pasivos financieros.";5;"III. Deudas a corto plazo.";3;III;"";0;"C) PASIVO CORRIENTE";C;P;P-C--III-5
+"";"";"";"IV. Deudas con empresas del grupo y asociadas a corto plazo.";4;IV;"";0;"C) PASIVO CORRIENTE";C;P;P-C--IV-
+"1. Proveedores";"1. Proveedores";1;"V. Acreedores comerciales y otras cuentas a pagar.";5;V;"";0;"C) PASIVO CORRIENTE";C;P;P-C--V-1
+"2. Otros acreedores";"2. Proveedores, empresas del grupo y asociadas.";2;"V. Acreedores comerciales y otras cuentas a pagar.";5;V;"";0;"C) PASIVO CORRIENTE";C;P;P-C--V-2
+"";"3. Acreedores varios.";3;"V. Acreedores comerciales y otras cuentas a pagar.";5;V;"";0;"C) PASIVO CORRIENTE";C;P;P-C--V-3
+"";"4. Personal (remuneraciones pendientes de pago).";4;"V. Acreedores comerciales y otras cuentas a pagar.";5;V;"";0;"C) PASIVO CORRIENTE";C;P;P-C--V-4
+"";"5. Pasivos por impuesto corriente.";5;"V. Acreedores comerciales y otras cuentas a pagar.";5;V;"";0;"C) PASIVO CORRIENTE";C;P;P-C--V-5
+"";"6. Otras deudas con las Administraciones Públicas.";6;"V. Acreedores comerciales y otras cuentas a pagar.";5;V;"";0;"C) PASIVO CORRIENTE";C;P;P-C--V-6
+"";"7. Anticipos de clientes.";7;"V. Acreedores comerciales y otras cuentas a pagar.";5;V;"";0;"C) PASIVO CORRIENTE";C;P;P-C--V-7
+"";"";"";"VI. Periodificaciones a corto plazo.";6;VI;"";0;"C) PASIVO CORRIENTE";C;P;P-C--VI-
+"";"";"";"a) Ventas";a;a;"1. Importe neto de la cifra de negocios.";1;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-1-a-
+"";"";"";"b) Prestaciones de servicios";b;b;"1. Importe neto de la cifra de negocios.";1;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-1-b-
+"";"";"";"";"";"";"10. Excesos de provisiones";10;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-10--
+"";"";"";"a) Deterioros y pérdidas";a;a;"11. Deterioro y resultado por enajenaciones del inmovilizado";11;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-11-a-
+"";"";"";"b) Resultados por enajenaciones y otras";b;b;"11. Deterioro y resultado por enajenaciones del inmovilizado";11;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-11-b-
+"";"a1) En empresas del grupo y asociadas";1;"a) De participaciones en instrumentos de patrimonio";a;a;"12. Ingresos financieros";12;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-12-a-1
+"";"a2) En empresas terceros";2;"a) De participaciones en instrumentos de patrimonio";a;a;"12. Ingresos financieros";12;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-12-a-2
+"";"b1) De empresas del grupo y asociadas";1;"b) De valores negociables y otros instrumentos financieros";b;b;"12. Ingresos financieros";12;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-12-b-1
+"";"b2) De terceros";2;"b) De valores negociables y otros instrumentos financieros";b;b;"12. Ingresos financieros";12;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-12-b-2
+"";"";"";"a) Por deudas con empresas del grupo y asociadas";a;a;"13. Gastos financieros";13;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-13-a-
+"";"";"";"b) Por deudas con terceros";b;b;"13. Gastos financieros";13;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-13-b-
+"";"";"";"c) Por actualización de provisiones";c;c;"13. Gastos financieros";13;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-13-c-
+"";"";"";"a) Cartera de negociación y otros";a;a;"14. Variación de valor razonable en instrumentos financieros";14;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-14-a-
+"";"";"";"b) Imputación al resultado del ejercicio por activos fros. disponibles para la venta";b;b;"14. Variación de valor razonable en instrumentos financieros";14;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-14-b-
+"";"";"";"";"";"";"15. Diferencias de cambio";15;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-15--
+"";"";"";"a) Deterioros y pérdidas";a;a;"16. Deterioro y resultado por enajenaciones de instrumentos financieros";16;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-16-a-
+"";"";"";"b) Resultados por enajenaciones y otras";b;b;"16. Deterioro y resultado por enajenaciones de instrumentos financieros";16;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-16-b-
+"";"";"";"";"";"";"17. Impuesto sobre beneficios";17;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-17--
+"";"";"";"";"";"";"2. Variación de existencias de productos terminados y en curso de fabricación";2;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-2--
+"";"";"";"";"";"";"3. Trabajos realizados por la empresa para su activo";3;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-3--
+"";"";"";"a) Consumo de mercaderías";a;a;"4. Aprovisionamientos";4;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-4-a-
+"";"";"";"b) Consumo de materias primas y otras materias consumibles";b;b;"4. Aprovisionamientos";4;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-4-b-
+"";"";"";"c) Trabajos realizados por otras empresas";c;c;"4. Aprovisionamientos";4;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-4-c-
+"";"";"";"d) Deterioro de mercaderias , materias primas y otros aprovisioamientos";d;d;"4. Aprovisionamientos";4;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-4-d-
+"";"";"";"a) Ingresos accesorios y otros de gestión corriente";a;a;"5. Otros ingresos de explotación";5;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-5-a-
+"";"";"";"b) Subvenciones de explotación incorporadas al resultado del ejercicio";b;b;"5. Otros ingresos de explotación";5;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-5-b-
+"";"";"";"a) Sueldos , salarios y asimilados";a;a;"6. Gastos de personal";6;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-6-a-
+"";"";"";"b) Cargas sociales";b;b;"6. Gastos de personal";6;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-6-b-
+"";"";"";"c) Provisiones";c;c;"6. Gastos de personal";6;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-6-c-
+"";"";"";"a) Servicios exteriores";a;a;"7. Otros gastos de explotación";7;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-7-a-
+"";"";"";"b) Tributos";b;b;"7. Otros gastos de explotación";7;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-7-b-
+"";"";"";"c) Pérdidas , deterioro y variación de provisiones por operaciones comerciales";c;c;"7. Otros gastos de explotación";7;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-7-c-
+"";"";"";"d) Otros gastos de gestión corriente";d;d;"7. Otros gastos de explotación";7;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-7-d-
+"";"";"";"";"";"";"8. Amortización del inmovilizado";8;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-8--
+"";"";"";"";"";"";"9. Imputación de subvenciones de inmovilizado no financiero y otras";9;"A) OPERACIONES CONTINUADAS";A;PG;PG-A-9--
+"";"";"";"";"";"";"18. Resultado del ejercicio procedente de operaciones interrumpidas neto de impuestos";18;"B) OPERACIONES INTERRUMPIDAS";B;PG;PG-B-18--
