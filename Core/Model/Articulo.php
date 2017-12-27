@@ -321,7 +321,7 @@ class Articulo
      */
     public function preciocoste()
     {
-        return ($this->secompra && FS_COST_IS_AVERAGE) ? $this->costemedio : $this->preciocoste;
+        return $this->secompra ? $this->costemedio : $this->preciocoste;
     }
 
     /**
