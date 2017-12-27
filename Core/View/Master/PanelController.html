@@ -133,22 +133,16 @@
                             {% set viewType = fsc.viewClass(view) %}
                             {% if viewType == 'ListView' %}
                                 {{ columnsForListView(_context, view) }}
-                            {% endif %}
-
-                            {% if viewType == 'EditView' %}
+                            {% elseif viewType == 'EditView' %}
                                 <!-- Statistical buttons bar -->
                                 {{ rowHeaderForEditView(_context, view) }}
 
                                 <!-- Main Form -->
                                 {% set model = view.getModel() %}
                                 {{ columnsForEditView(_context, view, model, TRUE) }}
-                            {% endif %}
-
-                            {% if viewType == 'EditListView' %}
+                            {% elseif viewType == 'EditListView' %}
                                 {{ columnsForEditListView(_context, view) }}
-                            {% endif %}
-
-                            {% if viewType == 'HtmlView' %}
+                            {% elseif viewType == 'HtmlView' %}
                             <div>{% include view.fileName ignore missing %}</div>
                             {% endif %}
                         </div>

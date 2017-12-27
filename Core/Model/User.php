@@ -34,6 +34,83 @@ class User
     }
 
     /**
+     * true -> user is admin.
+     *
+     * @var bool
+     */
+    public $admin;
+
+    /**
+     * user's email.
+     *
+     * @var string
+     */
+    public $email;
+
+    /**
+     * true -> user enabled.
+     *
+     * @var bool
+     */
+    public $enabled;
+
+    /**
+     * Homepage.
+     *
+     * @var string
+     */
+    public $homepage;
+
+    /**
+     * Corporation identifier.
+     * 
+     * @var int
+     */
+    public $idempresa;
+
+    /**
+     * Language code.
+     *
+     * @var string
+     */
+    public $langcode;
+
+    /**
+     * Last IP used.
+     *
+     * @var string
+     */
+    public $lastip;
+
+    /**
+     * Last activity date.
+     *
+     * @var string
+     */
+    public $lastactivity;
+
+    /**
+     * Session key, saved also in cookie. Regenerated when user log in.
+     *
+     * @var string
+     */
+    private $logkey;
+    
+    /**
+     * New password.
+     * 
+     * @var string 
+     */
+    public $newPassword;
+    
+    /**
+     * Repeated new password.
+     * 
+     * @var string 
+     */
+    public $newPassword2;
+
+    /**
      * Primary key. Varchar (50).
      *
      * @var string
@@ -41,75 +118,11 @@ class User
     public $nick;
 
     /**
-     * Identificador de empresa seleccionada
-     */
-    public $idempresa;
-
-    /**
-     * Email del usuario.
-     *
-     * @var string
-     */
-    public $email;
-
-    /**
-     * True -> el usuario es un administrador.
-     *
-     * @var bool
-     */
-    public $admin;
-
-    /**
-     * True -> el usuario esta activo.
-     *
-     * @var bool
-     */
-    public $enabled;
-
-    /**
-     * Código del idioma seleccionado para este usuario.
-     *
-     * @var string
-     */
-    public $langcode;
-
-    /**
-     * Página de inicio.
-     *
-     * @var string
-     */
-    public $homepage;
-
-    /**
-     * Fecha y hora de la última actividad del usuario.
-     *
-     * @var string
-     */
-    public $lastactivity;
-
-    /**
-     * Última IP usada.
-     *
-     * @var string
-     */
-    public $lastip;
-
-    /**
-     * Contraseña, cifrada con password_hash()
+     * Password hashed with password_hash()
      *
      * @var string
      */
     public $password;
-
-    /**
-     * Clave de sesión. El cliente se la guarda en una cookie,
-     * sirve para no tener que guardar la contraseña.
-     * Se regenera cada vez que el cliente inicia sesión. Así se
-     * impide que dos personas accedan con el mismo usuario.
-     *
-     * @var string
-     */
-    private $logkey;
 
     /**
      * Returns the name of the table that uses this model.
@@ -248,6 +261,16 @@ class User
             self::$miniLog->alert(self::$i18n->trans('invalid-user-nick', ['%nick%' => $this->nick]));
 
             return false;
+        }
+
+        if (isset($this->newPassword) && isset($this->newPassword2) && $this->newPassword !== '' && $this->newPassword2 !== '') {
+            if($this->newPassword !== $this->newPassword2) {
+                self::$miniLog->alert(self::$i18n->trans('different-passwords', ['%userNick%' => $this->nick]));
+                
+                return false;
+            }
+            
+            $this->setPassword($this->newPassword);
         }
 
         if ($this->lastactivity === '') {

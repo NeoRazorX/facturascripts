@@ -43,6 +43,9 @@ class EditProveedor extends ExtendedController\PanelController
         $this->addListView('\FacturaScripts\Dinamic\Model\FacturaProveedor', 'ListFacturaProveedor', 'invoices', 'fa-files-o');
         $this->addListView('\FacturaScripts\Dinamic\Model\AlbaranProveedor', 'ListAlbaranProveedor', 'delivery-notes', 'fa-files-o');
         $this->addListView('\FacturaScripts\Dinamic\Model\PedidoProveedor', 'ListPedidoProveedor', 'orders', 'fa-files-o');
+        
+        /// Disable columns
+        $this->views['ListArticuloProveedor']->disableColumn('supplier', true);
     }
 
     /**

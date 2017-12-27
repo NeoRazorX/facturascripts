@@ -25,7 +25,7 @@ use FacturaScripts\Core\Base\Utils;
 /**
  * Description of BalanceAmmounts
  *
- * @author carlos
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author nazca <comercial@nazcanetworks.com>
  */
 class BalanceAmmounts
