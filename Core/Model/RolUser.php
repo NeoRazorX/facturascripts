@@ -104,17 +104,6 @@ class RolUser
             return false;
         }
 
-        $where = [
-            new DataBaseWhere('nick', $this->nick),
-            new DataBaseWhere('codrol', $this->codrol)
-        ];
-
-        $rolUser = new RolUser();
-        if ($rolUser->loadFromCode(NULL, $where) && $rolUser->id !== $this->id) {
-            self::$miniLog->alert(self::$i18n->trans('rol-user-exists'));
-            return false;
-        }
-
         return TRUE;
     }
 }

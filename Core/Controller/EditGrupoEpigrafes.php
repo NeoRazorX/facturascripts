@@ -52,8 +52,8 @@ class EditGrupoEpigrafes extends ExtendedController\PanelController
     {
         switch ($keyView) {
             case 'EditGrupoEpigrafes':
-                $value = $this->request->get('code');
-                $view->loadData($value);
+                $code = $this->request->get('code');
+                $view->loadData($code);
                 break;
 
             case 'ListEpigrafe':

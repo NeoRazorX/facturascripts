@@ -25,38 +25,43 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" numcolumns="3" order="100">
+            <column name="code" numcolumns="4" order="100">
                 <widget type="text" fieldname="nick" icon="fa-user-circle-o" required="true" />
+            </column>
+            <column name="new-password" numcolumns="4" order="100">
+                <widget type="password" fieldname="newPassword" icon="fa-key" />
+            </column>
+            <column name="repeat-new-password" numcolumns="4" order="100">
+                <widget type="password" fieldname="newPassword2" icon="fa-key" />
+            </column>
+            <column name="email" numcolumns="6" order="100">
+                <widget type="email" fieldname="email" icon="fa-envelope" />
+            </column>
+            <column name="is-admin" numcolumns="3" order="100">
+                <widget type="checkbox" fieldname="admin"/>
+            </column>
+            <column name="enabled" numcolumns="3" order="100">
+                <widget type="checkbox" fieldname="enabled" />
+            </column>
+        </group>
+        <group name="other" numcolumns="12">
+            <column name="company" numcolumns="4" order="210">
+                <widget type="select" fieldname="idempresa">
+                    <values source="empresas" fieldcode="id" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="lang-code" numcolumns="4" order="210">
+                <widget type="select" fieldname="langcode">
+                    <values></values>
+                </widget>
             </column>
             <column name="homepage" numcolumns="4" order="110">
                 <widget type="select" fieldname="homepage">
                     <values source="fs_pages" fieldcode="name" fieldtitle="title"></values>
                 </widget>
             </column>
-            <column name="email" numcolumns="5" order="120">
-                <widget type="email" fieldname="email" icon="fa-envelope" />
-            </column>
-            <column name="company" numcolumns="3" order="210">
-                <widget type="select" fieldname="idempresa">
-                    <values source="empresas" fieldcode="id" fieldtitle="nombre"></values>
-                </widget>
-            </column>
-            <column name="lang-code" numcolumns="3" order="210">
-                <widget type="select" fieldname="langcode">
-                    <values></values>
-                </widget>
-            </column>
-            <column name="password" numcolumns="3" order="220" display="none">
-                <widget type="password" fieldname="password" required="true" />
-            </column>
-            <column name="is-admin" numcolumns="3" order="310">
-                <widget type="checkbox" fieldname="admin"/>
-            </column>
-            <column name="enabled" numcolumns="3" order="320">
-                <widget type="checkbox" fieldname="enabled" />
-            </column>
         </group>
-        <group name="estadistic" numcolumns="12">
+        <group name="registry" numcolumns="12">
             <column name="last-activity" order="110">
                 <widget type="text" fieldname="lastactivity" readonly="true" />
             </column>

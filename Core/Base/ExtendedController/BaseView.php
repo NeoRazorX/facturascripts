@@ -38,7 +38,7 @@ abstract class BaseView
      * @var mixed
      */
     protected $model;
-    
+
     /**
      * Stores the new code from the save() procedure, to use in loadData().
      * 
@@ -114,7 +114,7 @@ abstract class BaseView
     {
         $fieldKey = $this->model->primaryColumn();
         $fieldValue = $data[$fieldKey];
-        if ($fieldValue !== $this->model->primaryColumnValue()) {
+        if ($fieldValue !== $this->model->primaryColumnValue() && $fieldValue !== '') {
             $this->model->loadFromCode($fieldValue);
         }
 

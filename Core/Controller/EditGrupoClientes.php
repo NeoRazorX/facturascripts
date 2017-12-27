@@ -52,12 +52,13 @@ class EditGrupoClientes extends ExtendedController\PanelController
     {
         switch ($keyView) {
             case 'EditGrupoClientes':
-                $value = $this->request->get('code');
-                $view->loadData($value);
+                $code = $this->request->get('code');
+                $view->loadData($code);
                 break;
 
             case 'ListCliente':
-                $where = [new DataBaseWhere('codgrupo', $this->request->get('code'))];
+                $codgrupo = $this->getViewModelValue('EditGrupoClientes', 'codgrupo');
+                $where = [new DataBaseWhere('codgrupo', $codgrupo)];
                 $view->loadData($where);
                 break;
         }

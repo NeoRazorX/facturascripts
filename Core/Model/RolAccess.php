@@ -94,7 +94,7 @@ class RolAccess
      * @param Page[] $pages
      * @return bool
      */
-    public static function addPagesToRol($codRol, $pages): bool
+    public static function addPagesToRol($codRol, $pages)
     {
         $where = [new DataBaseWhere('codrol', $codRol)];
         $rolAccess = new RolAccess();
