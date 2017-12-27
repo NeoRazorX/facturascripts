@@ -54,15 +54,14 @@ class EditCliente extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
-        $codcliente = $this->request->get('code');
-        $codgrupo = $this->getViewModelValue('EditCliente', 'codgrupo');
-
         switch ($keyView) {
             case 'EditCliente':
-                $view->loadData($codcliente);
+                $code = $this->request->get('code');
+                $view->loadData($code);
                 break;
 
             case 'ListCliente':
+                $codgrupo = $this->getViewModelValue('EditCliente', 'codgrupo');
                 if (!empty($codgrupo)) {
                     $where = [new DataBaseWhere('codgrupo', $codgrupo)];
                     $view->loadData($where);
@@ -75,6 +74,7 @@ class EditCliente extends ExtendedController\PanelController
             case 'ListAlbaranCliente':
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
+                $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
                 $where = [new DataBaseWhere('codcliente', $codcliente)];
                 $view->loadData($where);
                 break;

@@ -38,7 +38,7 @@ abstract class BaseView
      * @var mixed
      */
     protected $model;
-    
+
     /**
      * Stores the new code from the save() procedure, to use in loadData().
      * 

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -63,16 +62,17 @@ class EditArticulo extends ExtendedController\PanelController
             unset($this->views['ListArticuloTraza']);
         }
 
-        $referencia = $this->request->get('code');
         switch ($keyView) {
             case 'EditArticulo':
-                $view->loadData($referencia);
+                $code = $this->request->get('code');
+                $view->loadData($code);
                 break;
 
             case 'EditStock':
             case 'ListArticuloProveedor':
             case 'ListArticuloCombinacion':
             case 'ListArticuloTraza':
+                $referencia = $this->getViewModelValue('EditArticulo', 'referencia');
                 $where = [new DataBaseWhere('referencia', $referencia)];
                 $view->loadData($where);
                 break;

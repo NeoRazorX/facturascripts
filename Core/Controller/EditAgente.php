@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -51,10 +50,9 @@ class EditAgente extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
-        $code = $this->request->get('code');
-
         switch ($keyView) {
             case 'EditAgente':
+                $code = $this->request->get('code');
                 $view->loadData($code);
                 break;
 
@@ -62,7 +60,8 @@ class EditAgente extends ExtendedController\PanelController
             case 'EditAgentePedidos':
             case 'EditAgenteAlbaranes':
             case 'EditAgenteFacturas':
-                $where = [new DataBaseWhere('codagente', $code)];
+                $codagente = $this->getViewModelValue('EditAgente', 'codagente');
+                $where = [new DataBaseWhere('codagente', $codagente)];
                 $view->loadData($where);
                 break;
         }

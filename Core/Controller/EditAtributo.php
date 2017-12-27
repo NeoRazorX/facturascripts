@@ -49,14 +49,14 @@ class EditAtributo extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
-        $codatributo = $this->request->get('code');
-
         switch ($keyView) {
             case 'EditAtributo':
-                $view->loadData($codatributo);
+                $code = $this->request->get('code');
+                $view->loadData($code);
                 break;
 
             case 'EditAtributoValor':
+                $codatributo = $this->getViewModelValue('EditAtributo', 'codatributo');
                 $where = [new DataBaseWhere('codatributo', $codatributo)];
                 $view->loadData($where);
                 break;

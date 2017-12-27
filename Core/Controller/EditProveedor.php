@@ -56,11 +56,10 @@ class EditProveedor extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
-        $codproveedor = $this->request->get('code');
-
         switch ($keyView) {
             case 'EditProveedor':
-                $view->loadData($codproveedor);
+                $code = $this->request->get('code');
+                $view->loadData($code);
                 break;
 
             case 'EditDireccionProveedor':
@@ -70,6 +69,7 @@ class EditProveedor extends ExtendedController\PanelController
             case 'ListAlbaranProveedor':
             case 'ListPedidoProveedor':
             case 'ListPresupuestoProveedor':
+                $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
                 $where = [new DataBaseWhere('codproveedor', $codproveedor)];
                 $view->loadData($where);
                 break;
