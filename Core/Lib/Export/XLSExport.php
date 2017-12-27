@@ -125,6 +125,14 @@ class XLSExport implements ExportInterface
     public function generateDocumentPage($model)
     {
         /// TODO: Uncomplete
+        $tableData = [];
+        foreach ((array) $model as $key => $value) {
+            if (is_string($value)) {
+                $tableData[] = ['key' => $key, 'value' => $value];
+            }
+        }
+        
+        $this->writer->writeSheet($tableData, 'doc', ['key' => 'string', 'value' => 'string']);
     }
 
     /**
@@ -135,9 +143,8 @@ class XLSExport implements ExportInterface
      */
     public function generateTablePage($headers, $rows)
     {
-        //Writes the headers Row 
         $this->writer->writeSheetRow('sheet1', $headers);
-        //Iterate in the rows
+        
         foreach($rows as $row){
             $this->writer->writeSheetRow('sheet1', $row);
         }

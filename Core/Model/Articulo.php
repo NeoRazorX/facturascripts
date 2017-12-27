@@ -241,13 +241,6 @@ class Articulo
     private $iva;
 
     /**
-     * Route to the image.
-     *
-     * @var string
-     */
-    private $imagen;
-
-    /**
      * List of Tax.
      *
      * @var Impuesto[]
@@ -342,20 +335,6 @@ class Articulo
     }
 
     /**
-     * Returns the coded reference to be used in images.
-     * We avoid errors with special characters like / and \.
-     *
-     * @param string|false $ref
-     *
-     * @return string
-     */
-    public function imageRef($ref = false)
-    {
-        $ref2 = ($ref === false) ? $this->referencia : $ref;
-        return str_replace(['/', '\\'], '_', $ref2);
-    }
-
-    /**
      * Returns a new reference, the next to the last reference in the database.
      */
     public function getNewReferencia()
@@ -446,55 +425,6 @@ class Articulo
         }
 
         return $this->iva;
-    }
-
-    /**
-     * Returns the relative url of the article image.
-     *
-     * @return string|false
-     */
-    public function imagenUrl()
-    {
-        $images = [
-            FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png',
-            FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.jpg'
-        ];
-
-        foreach ($images as $image) {
-            if (file_exists($image)) {
-                return $image;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Assign an image to an article.
-     * If $img is empty, the previous image is deleted.
-     *
-     * @param string $img
-     * @param bool   $png
-     */
-    public function setImagen($img, $png = true)
-    {
-        $this->imagen = null;
-
-        if ($oldImage = $this->imagenUrl()) {
-            unlink($oldImage);
-        }
-
-        if ($img) {
-            if (!file_exists(FS_MYDOCS . 'images/articulos')) {
-                @mkdir(FS_MYDOCS . 'images/articulos', 0777, true);
-            }
-
-            $file = @fopen(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.' . ($png ? 'png' : 'jpg'), 'ab');
-            if ($file) {
-                fwrite($file, $img);
-                fclose($file);
-            }
-        }
     }
 
     /**

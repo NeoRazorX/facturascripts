@@ -81,6 +81,7 @@ class Proveedor extends Base\Persona
         parent::clear();
 
         $this->acreedor = false;
+        $this->regimeniva = 'general';
     }
 
     /**
