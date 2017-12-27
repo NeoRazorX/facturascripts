@@ -468,11 +468,6 @@ class Articulo
             $sql = 'UPDATE ' . static::tableName() . ' SET referencia = ' . self::$dataBase->var2str($ref)
                 . ' WHERE referencia = ' . self::$dataBase->var2str($this->referencia) . ';';
             if (self::$dataBase->exec($sql)) {
-                /// renombramos la imagen, si la hay
-                if ($oldImage = $this->imagenUrl()) {
-                    rename($oldImage, FS_MYDOCS . 'images/articulos/' . $this->imageRef($ref) . '-1.png');
-                }
-
                 $this->referencia = $ref;
             } else {
                 self::$miniLog->alert(self::$i18n->trans('cant-modify-reference'));
@@ -699,8 +694,6 @@ class Articulo
         $sql = 'DELETE FROM articulosprov WHERE referencia = ' . self::$dataBase->var2str($this->referencia) . ';';
         $sql .= 'DELETE FROM ' . static::tableName() . ' WHERE referencia = ' . self::$dataBase->var2str($this->referencia) . ';';
         if (self::$dataBase->exec($sql)) {
-            $this->setImagen(false);
-
             return true;
         }
 
