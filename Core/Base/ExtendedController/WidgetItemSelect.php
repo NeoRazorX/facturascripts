@@ -79,6 +79,11 @@ class WidgetItemSelect extends WidgetItem
     {
         $this->values = [];
         foreach ($rows as $codeModel) {
+            if($codeModel->code === null) {
+               $codeModel->code = '---null---';
+               $codeModel->description = '------';
+            }
+            
             $this->values[] = [
                 'value' => $codeModel->code,
                 'title' => $codeModel->description,

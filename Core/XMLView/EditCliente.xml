@@ -73,10 +73,10 @@
                     <values source="agentes" fieldcode="codagente" fieldtitle="CONCAT(nombre,' ',apellidos)"></values>
                 </widget>
             </column>
-            <column name="vat type" title="vat-regime" order="150">
+            <column name="vat-type" title="vat-regime" order="150">
                 <widget type="radio" fieldname="regimeniva">
-                    <values title="general">General</values>
-                    <values title="exempt">Exento</values>
+                    <values title="General">general</values>
+                    <values title="Exento">exento</values>
                 </widget>
             </column>
         </group>

@@ -108,6 +108,7 @@ class Cliente extends Base\Persona
         parent::clear();
 
         $this->recargo = false;
+        $this->regimeniva = 'general';
     }
 
     /**

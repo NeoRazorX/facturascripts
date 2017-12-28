@@ -241,13 +241,6 @@ class Articulo
     private $iva;
 
     /**
-     * Route to the image.
-     *
-     * @var string
-     */
-    private $imagen;
-
-    /**
      * List of Tax.
      *
      * @var Impuesto[]
@@ -328,7 +321,7 @@ class Articulo
      */
     public function preciocoste()
     {
-        return ($this->secompra && FS_COST_IS_AVERAGE) ? $this->costemedio : $this->preciocoste;
+        return $this->secompra ? $this->costemedio : $this->preciocoste;
     }
 
     /**
@@ -339,20 +332,6 @@ class Articulo
     public function preciocosteIva()
     {
         return $this->preciocoste() * (100 + $this->getIva()) / 100;
-    }
-
-    /**
-     * Returns the coded reference to be used in images.
-     * We avoid errors with special characters like / and \.
-     *
-     * @param string|false $ref
-     *
-     * @return string
-     */
-    public function imageRef($ref = false)
-    {
-        $ref2 = ($ref === false) ? $this->referencia : $ref;
-        return str_replace(['/', '\\'], '_', $ref2);
     }
 
     /**
@@ -449,55 +428,6 @@ class Articulo
     }
 
     /**
-     * Returns the relative url of the article image.
-     *
-     * @return string|false
-     */
-    public function imagenUrl()
-    {
-        $images = [
-            FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.png',
-            FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.jpg'
-        ];
-
-        foreach ($images as $image) {
-            if (file_exists($image)) {
-                return $image;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Assign an image to an article.
-     * If $img is empty, the previous image is deleted.
-     *
-     * @param string $img
-     * @param bool   $png
-     */
-    public function setImagen($img, $png = true)
-    {
-        $this->imagen = null;
-
-        if ($oldImage = $this->imagenUrl()) {
-            unlink($oldImage);
-        }
-
-        if ($img) {
-            if (!file_exists(FS_MYDOCS . 'images/articulos')) {
-                @mkdir(FS_MYDOCS . 'images/articulos', 0777, true);
-            }
-
-            $file = @fopen(FS_MYDOCS . 'images/articulos/' . $this->imageRef() . '-1.' . ($png ? 'png' : 'jpg'), 'ab');
-            if ($file) {
-                fwrite($file, $img);
-                fclose($file);
-            }
-        }
-    }
-
-    /**
      * Sets the retail price.
      *
      * @param float $pvp
@@ -538,11 +468,6 @@ class Articulo
             $sql = 'UPDATE ' . static::tableName() . ' SET referencia = ' . self::$dataBase->var2str($ref)
                 . ' WHERE referencia = ' . self::$dataBase->var2str($this->referencia) . ';';
             if (self::$dataBase->exec($sql)) {
-                /// renombramos la imagen, si la hay
-                if ($oldImage = $this->imagenUrl()) {
-                    rename($oldImage, FS_MYDOCS . 'images/articulos/' . $this->imageRef($ref) . '-1.png');
-                }
-
                 $this->referencia = $ref;
             } else {
                 self::$miniLog->alert(self::$i18n->trans('cant-modify-reference'));
@@ -769,8 +694,6 @@ class Articulo
         $sql = 'DELETE FROM articulosprov WHERE referencia = ' . self::$dataBase->var2str($this->referencia) . ';';
         $sql .= 'DELETE FROM ' . static::tableName() . ' WHERE referencia = ' . self::$dataBase->var2str($this->referencia) . ';';
         if (self::$dataBase->exec($sql)) {
-            $this->setImagen(false);
-
             return true;
         }
 

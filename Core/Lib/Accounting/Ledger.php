@@ -33,6 +33,11 @@ class Ledger
 
     use Utils;
     
+    /**
+     * Tools to format money.
+     * 
+     * @var DivisaTools 
+     */
     private $divisaTools;
     
     public function __construct()

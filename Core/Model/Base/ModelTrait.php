@@ -201,10 +201,11 @@ trait ModelTrait
     public function checkArrayData(&$data)
     {
         foreach (self::$fields as $field => $values) {
-            if ($values['type'] === 'boolean' || $values['type'] === 'tinyint(1)') {
-                if (!isset($data[$field])) {
-                    $data[$field] = FALSE;
-                }
+            if (in_array($values['type'], ['boolean', 'tinyint(1)']) && !isset($data[$field])) {
+                $data[$field] = false;
+            } elseif(isset($data[$field]) && $data[$field] === '---null---') {
+                /// ---null--- text comes from widgetItemSelect.
+                $data[$field] = null;
             }
         }
     }
@@ -223,10 +224,10 @@ trait ModelTrait
         }
 
         if ($field['name'] === $this->primaryColumn()) {
-            return NULL;
+            return null;
         }
 
-        return ($field['is_nullable'] === 'NO') ? 0 : NULL;
+        return ($field['is_nullable'] === 'NO') ? 0 : null;
     }
 
     /**

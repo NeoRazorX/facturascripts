@@ -6,8 +6,8 @@
     <div class="btn-group float-md-right">
         {% set orderbylist = view.getOrderBy() %}
         <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuOrder{{ context.indexView }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            <i class="fa {{ orderbylist[view.selectedOrderBy]['icon'] }}" aria-hidden="true"></i>
-            &nbsp; {{ orderbylist[view.selectedOrderBy]['label'] }}
+            <i class="fa {{ orderbylist[view.selectedOrderBy]['icon'] }} fa-fw" aria-hidden="true"></i>
+            {{ orderbylist[view.selectedOrderBy]['label'] }}
             <span class="caret"></span>
         </button>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuOrder{{ context.indexView }}">

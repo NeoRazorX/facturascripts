@@ -218,7 +218,7 @@ class PageOption
             }
         }
 
-        // Apply values to dynamic Select widgets
+        /// Apply values to dynamic Select widgets
         ExtendedController\VisualItemLoadEngine::applyDynamicSelectValues($this);
     }
 }

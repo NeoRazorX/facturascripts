@@ -33,6 +33,11 @@ class BalanceAmmounts
 
     use Utils;
 
+    /**
+     * Tools to format money.
+     * 
+     * @var DivisaTools 
+     */
     private $divisaTools;
 
     public function __construct()
@@ -45,17 +50,17 @@ class BalanceAmmounts
      *
      * @param date $dateFrom
      * @param date $dateTo
+     * 
      * @return array
      */
     public function generate($dateFrom, $dateTo)
     {
-
         $results = $this->getData($dateFrom, $dateTo);
         if (empty($results)) {
             return [];
         }
-        $balance = [];
 
+        $balance = [];
         foreach ($results as $line) {
             $balance[] = $this->proccessLine($line);
         }
@@ -73,14 +78,15 @@ class BalanceAmmounts
      */
     private function getData($dateFrom, $dateTo)
     {
-
         $dataBase = new DataBase();
-        $sql = 'SELECT subcta.codsubcuenta,subcta.descripcion,sum(partida.debe) SDebe,sum(partida.haber) SHaber,sum(partida.debe)-sum(partida.haber) saldo ' .
-            ' FROM `co_subcuentas` subcta,co_partidas partida,co_asientos asiento ' .
-            'where subcta.codsubcuenta = partida.codsubcuenta and asiento.idasiento=partida.idasiento ' .
-            ' and asiento.fecha>="' . date('Y-m-d', strtotime($dateFrom)) . '" and asiento.fecha<="' . date('Y-m-d', strtotime($dateTo)) . '"' .
-            'group by subcta.codsubcuenta,subcta.descripcion ';
-
+        $sql = 'SELECT subcta.codsubcuenta, subcta.descripcion, sum(partida.debe) SDebe,' .
+            ' sum(partida.haber) SHaber, sum(partida.debe) - sum(partida.haber) saldo' .
+            ' FROM `co_subcuentas` subcta,co_partidas partida,co_asientos asiento' .
+            ' WHERE subcta.codsubcuenta = partida.codsubcuenta' .
+            ' AND asiento.idasiento = partida.idasiento ' .
+            ' AND asiento.fecha >= ' . $dataBase->var2str($dateFrom) .
+            ' AND asiento.fecha <= ' . $dataBase->var2str($dateTo) .
+            ' GROUP BY subcta.codsubcuenta, subcta.descripcion';
 
         return $dataBase->select($sql);
     }
@@ -88,7 +94,6 @@ class BalanceAmmounts
     /**
      *
      * @param array $line
-     * @param float $balance
      *
      * @return array
      */
