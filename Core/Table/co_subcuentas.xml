@@ -52,6 +52,11 @@
         <null>YES</null>
     </column>
     <column>
+        <name>idempresa</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
         <name>idsubcuenta</name>
         <type>serial</type>
         <null>NO</null>
