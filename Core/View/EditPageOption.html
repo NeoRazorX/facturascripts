@@ -42,7 +42,7 @@
 
     <!-- Header Row -->
     <div id="header" class="row">
-        <div class="col-3 d-print-none">
+        <div class="col-4 d-print-none">
             <div class="btn-group">
                 <a href="index.php?page={{ fsc.selectedViewName }}" class="btn btn-sm btn-outline-secondary">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i>
@@ -53,13 +53,10 @@
                 </a>
             </div>
         </div>
-
-        <div class="col-6 text-center">
-            <div class="page-header">
-                <h2>
-                    <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
-                </h2>
-            </div>
+        <div class="col-8 text-right">
+            <h2>
+                <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
+            </h2>
         </div>
     </div>
 
