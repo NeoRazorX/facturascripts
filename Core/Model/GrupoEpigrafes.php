@@ -40,10 +40,9 @@ class GrupoEpigrafes
     /**
      *Identificacion de la empresa
      *
-     * @var string
+     * @var int
      */
     public $idempresa;
-
 
     /**
      * Group to which it belongs.

@@ -40,10 +40,9 @@ class Cuenta
     /**
      *Identificacion de la empresa
      *
-     * @var string
+     * @var int
      */
     public $idempresa;
-
 
     /**
      * Account code.

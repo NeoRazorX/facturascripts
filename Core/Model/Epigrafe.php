@@ -47,10 +47,9 @@ class Epigrafe
     /**
      *Identificacion de la empresa
      *
-     * @var string
+     * @var int
      */
     public $idempresa;
-
 
     /**
      * There are several versions of the accounting of Eneboo / Abanq,
