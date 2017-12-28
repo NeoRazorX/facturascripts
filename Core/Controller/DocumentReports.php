@@ -21,8 +21,10 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of AccountingReports
@@ -143,16 +145,17 @@ class DocumentReports extends Controller
      * @var string
      */
     public $grouped;
-
+    
     /**
      * Runs the controller's private logic.
      *
-     * @param \Symfony\Component\HttpFoundation\Response $response
-     * @param \FacturaScripts\Core\Model\User|null $user
+     * @param Response $response
+     * @param Model\User $user
+     * @param ControllerPermissions $permissions
      */
-    public function privateCore(&$response, $user)
+    public function privateCore(&$response, $user, $permissions)
     {
-        parent::privateCore($response, $user);
+        parent::privateCore($response, $user, $permissions);
 
         $action = $this->request->get('action', '');
         $this->execAction($action);

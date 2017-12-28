@@ -54,16 +54,17 @@ class AdminHome extends Base\Controller
      * @var Base\PluginManager
      */
     public $pluginManager;
-
+    
     /**
      * Runs the controller's private logic.
      *
      * @param Response $response
-     * @param Model\User|null $user
+     * @param Model\User $user
+     * @param Base\ControllerPermissions $permissions
      */
-    public function privateCore(&$response, $user)
+    public function privateCore(&$response, $user, $permissions)
     {
-        parent::privateCore($response, $user);
+        parent::privateCore($response, $user, $permissions);
 
         /// For now, always deploy the contents of Dinamic, for testing purposes
         $this->pluginManager = new Base\PluginManager();
