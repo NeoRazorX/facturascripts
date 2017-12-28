@@ -34,96 +34,112 @@ class DocumentReports extends Controller
 
     /**
      * Data for table.
+     * 
      * @var array
      */
     public $dataTable;
 
     /**
      * Document 1 used by default or selected.
+     * 
      * @var string
      */
     public $source1;
 
     /**
      * Document 2 used by default or selected.
+     * 
      * @var string
      */
     public $source2;
 
     /**
      * Start date used by default or selected.
+     * 
      * @var \DateTime
      */
     public $date1From;
 
     /**
      * End date used by default or selected.
+     * 
      * @var \DateTime
      */
     public $date1To;
 
     /**
      * Start date used by default or selected.
+     * 
      * @var \DateTime
      */
     public $date2From;
 
     /**
      * End date used by default or selected.
+     * 
      * @var \DateTime
      */
     public $date2To;
 
     /**
      * Employee used by default or selected.
+     * 
      * @var string
      */
     public $employee;
 
     /**
      * Employee list.
+     * 
      * @var Model\Agente[]
      */
     public $employeeList;
 
     /**
      * Serie used by default or selected.
+     * 
      * @var string
      */
     public $serie;
 
     /**
      * Serie list.
+     * 
      * @var Model\Serie[]
      */
     public $serieList;
 
     /**
      * Currency used by default or selected.
+     * 
      * @var string
      */
     public $currency;
 
     /**
      * Currency list.
+     * 
      * @var Model\Divisa[]
      */
     public $currencyList;
 
     /**
      * Payment method used by default or selected.
+     * 
      * @var string
      */
     public $paymentMethod;
 
     /**
      * Payment method List.
+     * 
      * @var Model\FormaPago[]
      */
     public $paymentMethodList;
 
     /**
      * Contains daily, monthly or yearly.
+     * 
      * @var string
      */
     public $grouped;

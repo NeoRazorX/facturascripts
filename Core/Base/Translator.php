@@ -104,8 +104,8 @@ class Translator
     /**
      * Translate the text into the selected language.
      * 
-     * @param type $lang
-     * @param type $txt
+     * @param string $lang
+     * @param string $txt
      * @param array $parameters
      * 
      * @return string

@@ -1,17 +1,9 @@
 {% extends "Master/MenuTemplate.html" %}
 
-{% block javascript %}
-{{ parent() }}
-
-<script type="text/javascript">
-    function setOperator(buttonID, operator) {
-        document.getElementById(buttonID + '-operator').value = operator;
-        document.getElementById(buttonID + '-btn').value = operator;
-    }
-</script>
-{% endblock %}
-
 {% block body %}
+<!-- Macros Template Imports -->
+{% import 'Macro/Forms.html' as forms %}
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
@@ -38,60 +30,38 @@
 <hr>
 <div class="container-fluid">
     <form name="f_search" id="formSearch" action="{{ fsc.url() }}" method="post" class="form">
-        <input name="action" id="action" type="hidden" value="reload">
+        <input name="action" id="action" type="hidden" value="reload"/>
         <div class="row">
             <div class="col-md-4">
                 <div class="form-group">
-                    <label for="source1">{{ i18n.trans('choose-source-1') }}</label>
-                    <select id="source1" name="source1" class="form-control" onchange="this.form.submit()">
-                        <option value="">{{ i18n.trans('choose-doc-type') }}</option>
-                        {% for doc in fsc.getDocumentTypes() %}
-                        {% if doc == fsc.source1 %}
-                        <option value="{{ doc }}" selected="selected">{{ i18n.trans(doc) }}</option>
-                        {% else %}
-                        <option value="{{ doc }}" >{{ i18n.trans(doc) }}</option>
-                        {% endif %}
-                        {% endfor %}
-                    </select>
+                    {{ forms.simpleSelect('source1', 'source1', fsc.source1, fsc.getDocumentTypes(), 'choose-source-1', i18n, 'fa-files-o', {onchange: 'this.form.submit()'}) }}
                 </div>
             </div>
             <div class="col-md-4">
-                <label for="source1">{{ i18n.trans('start-date') }}</label>
-                <input type="text" name="date1-from" value="{{ fsc.date1From.format('d-m-Y') }}" class="form-control datepicker" placeholder="Fecha" autocomplete="off" onchange="this.form.submit()" onkeypress="return event.charCode == 13 || (event.charCode >= 48 &amp;&amp; event.charCode <= 57) ||  event.charCode == 45 ||  event.charCode == 47">
+                <div class="form-group">
+                    {{ forms.simpleInput('date1-from', 'date1-form', fsc.date1From.format('d-m-Y'), 'text', i18n.trans('start-date'), 'fa-calendar', {class: 'datepicker'}) }}
+                </div>
             </div>
             <div class="col-md-4">
-                <label for="source1">{{ i18n.trans('end-date') }}</label>
-                <div class="input-group">
-                    <input type="text" name="date1-to" value="{{ fsc.date1To.format('d-m-Y') }}" class="form-control datepicker" placeholder="Fecha" autocomplete="off" onchange="this.form.submit()" onkeypress="return event.charCode == 13 || (event.charCode >= 48 &amp;&amp; event.charCode <= 57) ||  event.charCode == 45 ||  event.charCode == 47">
+                <div class="form-group">
+                    {{ forms.simpleInput('date1-to', 'date1-to', fsc.date1To.format('d-m-Y'), 'text', i18n.trans('end-date'), 'fa-calendar', {class: 'datepicker'}) }}
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-md-4">
                 <div class="form-group">
-                    <label for="source2">{{ i18n.trans('choose-source-2') }}</label>
-                    <select id="source2" name="source2" class="form-control" onchange="this.form.submit()">
-                        <option value="">{{ i18n.trans('choose-doc-type') }}</option>
-                        {% for doc in fsc.getDocumentTypes() %}
-                        {% if doc == fsc.source2 %}
-                        <option value="{{ doc }}" selected="selected">{{ i18n.trans(doc) }}</option>
-                        {% else %}
-                        <option value="{{ doc }}" >{{ i18n.trans(doc) }}</option>
-                        {% endif %}
-                        {% endfor %}
-                    </select>
+                    {{ forms.simpleSelect('source2', 'source2', fsc.source2, fsc.getDocumentTypes(), 'choose-source-2', i18n, 'fa-files-o',{'onchange': 'this.form.submit()'}) }}
                 </div>
             </div>
             <div class="col-md-4">
-                <label for="source1">{{ i18n.trans('start-date') }}</label>
-                <div class="input-group">
-                    <input type="text" name="date2-from" value="{{ fsc.date2From.format('d-m-Y') }}" class="form-control datepicker" placeholder="Fecha" autocomplete="off" onchange="this.form.submit()" onkeypress="return event.charCode == 13 || (event.charCode >= 48 &amp;&amp; event.charCode <= 57) ||  event.charCode == 45 ||  event.charCode == 47">
+                <div class="form-group">
+                    {{ forms.simpleInput('date2-from', 'date2-form', fsc.date2From.format('d-m-Y'), 'text', i18n.trans('start-date'), 'fa-calendar', {class: 'datepicker'}) }}
                 </div>
             </div>
             <div class="col-md-4">
-                <label for="source1">{{ i18n.trans('end-date') }}</label>
-                <div class="input-group">
-                    <input type="text" name="date2-to" value="{{ fsc.date2To.format('d-m-Y') }}" class="form-control datepicker" placeholder="Fecha" autocomplete="off" onchange="this.form.submit()" onkeypress="return event.charCode == 13 || (event.charCode >= 48 &amp;&amp; event.charCode <= 57) ||  event.charCode == 45 ||  event.charCode == 47">
+                <div class="form-group">
+                    {{ forms.simpleInput('date2-to', 'date2-to', fsc.date2To.format('d-m-Y'), 'text', i18n.trans('end-date'), 'fa-calendar', {class: 'datepicker'}) }}
                 </div>
             </div>
         </div>
