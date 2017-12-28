@@ -151,7 +151,7 @@ class PageOption
     }
 
     /**
-     * TODO: Uncomplete
+     * Returns the values of the view configuration fields in JSON format
      *
      * @return array
      */
@@ -187,6 +187,13 @@ class PageOption
         return $this->traitSaveInsert($values);
     }
 
+    /**
+     * Returns the where filter to locate the view configuration
+     *
+     * @param string $name
+     * @param string $nick
+     * @return Database\DataBaseWhere[]
+     */
     private function getPageFilter($name, $nick)
     {
         return [
