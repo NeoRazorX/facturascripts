@@ -234,8 +234,8 @@ abstract class PanelController extends Base\Controller
             case 'export':
                 $this->setTemplate(false);
                 $this->exportManager->newDoc($this->response, $this->request->get('option'));
-                foreach ($this->views as $view) {
-                    $view->export($this->exportManager);
+                foreach ($this->views as $selectedView) {
+                    $selectedView->export($this->exportManager);
                 }
                 $this->exportManager->show($this->response);
                 break;
