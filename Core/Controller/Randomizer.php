@@ -31,17 +31,22 @@ use Symfony\Component\HttpFoundation\Response;
 class Randomizer extends Base\Controller
 {
 
+    /**
+     *
+     * @var string 
+     */
     public $urlReload;
 
     /**
      * Runs the controller's private logic.
      *
      * @param Response $response
-     * @param User|null $user
+     * @param User $user
+     * @param Base\ControllerPermissions $permissions
      */
-    public function privateCore(&$response, $user)
+    public function privateCore(&$response, $user, $permissions)
     {
-        parent::privateCore($response, $user);
+        parent::privateCore($response, $user, $permissions);
 
         $option = $this->request->get('gen', '');
         if ($option !== '') {

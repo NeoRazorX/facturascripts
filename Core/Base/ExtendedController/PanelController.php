@@ -16,11 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Lib\ExportManager;
+use FacturaScripts\Core\Model\User;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller to edit data through the vertical panel
@@ -124,14 +125,15 @@ abstract class PanelController extends Base\Controller
     }
 
     /**
-     * Runs the controller's private logic
+     * Runs the controller's private logic.
      *
-     * @param mixed $response
-     * @param mixed $user
+     * @param Response $response
+     * @param User $user
+     * @param Base\ControllerPermissions $permissions
      */
-    public function privateCore(&$response, $user)
+    public function privateCore(&$response, $user, $permissions)
     {
-        parent::privateCore($response, $user);
+        parent::privateCore($response, $user, $permissions);
 
         // Create the views to display
         $this->createViews();

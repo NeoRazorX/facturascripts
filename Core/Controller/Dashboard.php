@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
 use FacturaScripts\Core\Lib;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Dashboard that contains some Cards with data to the end user.
@@ -52,16 +53,17 @@ class Dashboard extends Base\Controller
 
         $this->components = [];
     }
-
+    
     /**
      * Runs the controller's private logic.
      *
-     * @param \Symfony\Component\HttpFoundation\Response $response
-     * @param \FacturaScripts\Core\Model\User|null $user
+     * @param Response $response
+     * @param Model\User $user
+     * @param Base\ControllerPermissions $permissions
      */
-    public function privateCore(&$response, $user)
+    public function privateCore(&$response, $user, $permissions)
     {
-        parent::privateCore($response, $user);
+        parent::privateCore($response, $user, $permissions);
 
         $this->getListComponents($user->nick);
         $this->loadDataComponents();

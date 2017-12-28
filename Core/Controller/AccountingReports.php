@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Lib\Accounting;
 use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Model\Ejercicio;
@@ -46,16 +47,17 @@ class AccountingReports extends Controller
      * @var ExportManager 
      */
     public $exportManager;
-
+    
     /**
      * Runs the controller's private logic.
      *
      * @param Response $response
-     * @param User|null $user
+     * @param User $user
+     * @param ControllerPermissions $permissions
      */
-    public function privateCore(&$response, $user)
+    public function privateCore(&$response, $user, $permissions)
     {
-        parent::privateCore($response, $user);
+        parent::privateCore($response, $user, $permissions);
 
         $ejercicioModel = new Ejercicio();
         $this->ejercicios = $ejercicioModel->all([], ['fechainicio' => 'DESC']);
