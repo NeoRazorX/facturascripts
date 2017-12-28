@@ -148,16 +148,16 @@ class AppController extends App
         if (class_exists($controllerName)) {
             $this->miniLog->debug($this->i18n->trans('loading-controller', ['%controllerName%' => $controllerName]));
             $this->menuManager->setUser($user);
-            $controllerPermissions = new ControllerPermissions($user, $pageName);
+            $permissions = new ControllerPermissions($user, $pageName);
 
             try {
                 $this->controller = new $controllerName($this->cache, $this->i18n, $this->miniLog, $pageName);
                 if ($user === false) {
                     $this->controller->publicCore($this->response);
                     $template = $this->controller->getTemplate();
-                } elseif ($controllerPermissions->allowAccess) {
+                } elseif ($permissions->allowAccess) {
                     $this->menuManager->selectPage($this->controller->getPageData());
-                    $this->controller->privateCore($this->response, $user, $controllerPermissions);
+                    $this->controller->privateCore($this->response, $user, $permissions);
                     $template = $this->controller->getTemplate();
                 } else {
                     $template = 'Error/AccessDenied.html';

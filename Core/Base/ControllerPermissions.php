@@ -51,12 +51,12 @@ class ControllerPermissions
 
     /**
      * 
-     * @param User $user
+     * @param User|false $user
      * @param string $pageName
      */
-    public function __construct($user = null, $pageName = null)
+    public function __construct($user = false, $pageName = null)
     {
-        if ($user !== null && $pageName !== null) {
+        if ($user !== false && $pageName !== null) {
             $this->loadFromUser($user, $pageName);
         } else {
             $this->clear();
