@@ -29,15 +29,13 @@
             <column name="code" numcolumns="2" order="100">
                 <widget type="text" fieldname="codproveedor" onclick="" icon="fa-user" required="true" />
             </column>
-            <column name="name" numcolumns="3" order="110"
-                    description="desc-provider-name">
+            <column name="name" numcolumns="3" order="100" description="desc-provider-name">
                 <widget type="text" fieldname="nombre" required="true" hint="desc-provider-name-2" />
             </column>
-            <column name="fiscal name" title="business-name" numcolumns="3" order="120"
-                    description="desc-provider-business-name">
-                <widget type="text" fieldname="razonsocial" hint="desc-provicer-business-name-2" />
+            <column name="business-name" title="business-name" numcolumns="3" order="100" description="desc-provider-business-name">
+                <widget type="text" fieldname="razonsocial" required="true" />
             </column>
-            <column name="fiscal type" title="fiscal-id" numcolumns="2" order="130">
+            <column name="fiscal-id" title="fiscal-id" numcolumns="2" order="100">
                 <widget type="select" fieldname="tipoidfiscal">
                     <values title="CIF/NIF">cifnif</values>
                     <values title="Pasaporte">passport</values>
@@ -48,41 +46,41 @@
                     <values title="CUIT">CUIT</values>
                 </widget>
             </column>
-            <column name="fiscal number" title="cifnif" numcolumns="2" order="140">
+            <column name="fiscal-number" title="cifnif" numcolumns="2" order="100">
                 <widget type="text" fieldname="cifnif" required="true" />
             </column>
-            <column name="fiscal-mode" title="is-person" numcolumns="4" order="200">
+            <column name="fiscal-mode" title="is-person" numcolumns="4" order="100">
                 <widget type="checkbox" fieldname="personafisica" />
             </column>
-            <column name="is-creditor" title="is-creditor" numcolumns="3" order="210">
+            <column name="is-creditor" title="is-creditor" numcolumns="3" order="100">
                 <widget type="checkbox" fieldname="acreedor" />
             </column>
         </group>
         <group name="comercial" title="commercial-terms" numcolumns="12">
-            <column name="payment" title="method-payment" numcolumns="2" titleurl="?page=ListFormaPago" order="120">
-                <widget type="select" fieldname="codpago">
-                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
+            <column name="serie" title="serie" numcolumns="2" order="100">
+                <widget type="select" fieldname="codserie">
+                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="vat-type" title="vat-regime" order="160" numcolumns="2">
-                <widget type="radio" fieldname="regimeniva">
-                    <values title="General">general</values>
-                    <values title="Exento">exento</values>
-                </widget>
-            </column>
-            <column name="badge" title="badge" numcolumns="2" order="140">
+            <column name="currency" title="currency" numcolumns="2" order="100">
                 <widget type="select" fieldname="coddivisa">
                     <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="tax-transport" title="tax-transport" numcolumns="3" order="150">
+            <column name="payment-method" title="payment-method" numcolumns="3" titleurl="?page=ListFormaPago" order="100">
+                <widget type="select" fieldname="codpago">
+                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="tax-transport" title="tax-transport" numcolumns="3" order="100">
                 <widget type="select" fieldname="ivaportes">
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="serie" title="serie" numcolumns="2" order="130">
-                <widget type="select" fieldname="codserie">
-                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
+            <column name="vat-type" title="vat-regime" order="100" numcolumns="2">
+                <widget type="select" fieldname="regimeniva">
+                    <values title="General">general</values>
+                    <values title="Exento">exento</values>
                 </widget>
             </column>
         </group>

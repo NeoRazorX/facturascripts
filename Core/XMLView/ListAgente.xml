@@ -57,21 +57,6 @@
         <column name="email" order="190">
             <widget type="text" fieldname="email" />
         </column>
-        <column name="creation-date" display="none" order="200">
-            <widget type="text" fieldname="f_alta" />
-        </column>
-        <column name="discharge-date" display="center" order="210">
-            <widget type="text" fieldname="f_baja" />
-        </column>
-        <column name="birth-date" display="none" order="220">
-            <widget type="text" fieldname="f_nacimiento" />
-        </column>
-        <column name="social-security-number" display="none" order="230">
-            <widget type="text" fieldname="seg_social" />
-        </column>
-        <column name="bank-account" display="none" order="240">
-            <widget type="text" fieldname="banco" />
-        </column>
     </columns>
     <rows>
         <row type="status" fieldname="f_baja">

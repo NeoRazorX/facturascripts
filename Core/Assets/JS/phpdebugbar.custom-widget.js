@@ -230,7 +230,7 @@
 
             this.bindAttr('data', function (data) {
                 this.$list.set('data', data.translations);
-                var sentence = data.sentence || "translations were used";
+                var sentence = data.sentence || "translations were missed";
                 this.$status.empty().append($('<span />').text(data.translations.length + " " + sentence));
             });
         }
