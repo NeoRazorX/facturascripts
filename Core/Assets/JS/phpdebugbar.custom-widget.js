@@ -232,6 +232,11 @@
                 this.$list.set('data', data.translations);
                 var sentence = data.sentence || "translations were used";
                 this.$status.empty().append($('<span />').text(data.translations.length + " " + sentence));
+
+                if (data.pending_translations.length > 0) {
+                    var sentence = data.sentence || " translations of which were pending";
+                    this.$status.append($('<span />').html(", <a href='index.php?page=CheckTranslations' target='_blank'>" + data.pending_translations.length + " " + sentence + "</a>"));
+                }
             });
         }
 
