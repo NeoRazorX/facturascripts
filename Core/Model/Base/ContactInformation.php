@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 /**
- * Esta clase agrupa los datos de contacto para un uso genérico.
+ * This class groups the contact data for a generic use.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -28,84 +28,84 @@ trait ContactInformation
 {
 
     /**
-     * Teléfono de contacto.
+     * Contact's telephone.
      *
      * @var string
      */
     public $telefono;
 
     /**
-     * Número de fax del contacto.
+     * Contact's fax number.
      *
      * @var string
      */
     public $fax;
 
     /**
-     * Email de contacto.
+     * Contacts email.
      *
      * @var string
      */
     public $email;
 
     /**
-     * Página web del contacto.
+     * Contact's website
      *
      * @var string
      */
     public $web;
 
     /**
-     * Dirección del contacto.
+     * Contact's address
      *
      * @var string
      */
     public $direccion;
 
     /**
-     * Código postal del contacto.
+     * Contact's postal code.
      *
      * @var string
      */
     public $codpostal;
 
     /**
-     * Apartado de correos del contacto.
+     * Contact's post box.
      *
      * @var string
      */
     public $apartado;
 
     /**
-     * Ciudad del contacto.
+     * Contact's city.
      *
      * @var string
      */
     public $ciudad;
 
     /**
-     * Nombre de la población del contacto.
+     * Contact's population name.
      *
      * @var string
      */
     public $poblacion;
 
     /**
-     * Provincia del contacto.
+     * Contact's province
      *
      * @var string
      */
     public $provincia;
 
     /**
-     * Código que representa al páis donde está el contacto.
+     * Code that represents the country where the contact is.
      *
      * @var string
      */
     public $codpais;
 
     /**
-     * Inicializa los valores del contacto.
+     * Initializes the contact's values.
      */
     private function clearContactInformation()
     {

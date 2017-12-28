@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Línea de pedido de cliente.
+ * Customer order line
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -30,29 +30,28 @@ class LineaPedidoCliente
     use Base\LineaDocumentoVenta;
 
     /**
-     * ID de la linea relacionada en el presupuesto relacionado,
-     * si lo hay.
+     * Related line ID in the related order, if any.
      *
      * @var integer
      */
     public $idlineapresupuesto;
 
     /**
-     * ID del pedido.
+     * Order ID.
      *
      * @var integer
      */
     public $idpedido;
 
     /**
-     * ID del presupuesto relacionado, si lo hay.
+     * Estimation ID, if any.
      *
      * @var integer
      */
     public $idpresupuesto;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -62,7 +61,7 @@ class LineaPedidoCliente
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {

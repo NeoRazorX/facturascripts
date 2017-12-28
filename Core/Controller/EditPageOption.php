@@ -19,54 +19,86 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
 
 /**
  * Edit option for any page.
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class EditPageOption extends Controller
+class EditPageOption extends Base\Controller
 {
+    public $selectedUser;
 
-    /**
-     * Loads and save selected PageOption.
-     * @var Model\PageOption
-     */
-    public $pageOption;
+    public $selectedViewName;
 
-    /**
-     * Runs the controller's private logic.
-     *
-     * @param \Symfony\Component\HttpFoundation\Response $response
-     * @param Model\User|null $user
-     */
+    public $model;
+
+    public function __construct(&$cache, &$i18n, &$miniLog, $className)
+    {
+        parent::__construct($cache, $i18n, $miniLog, $className);
+        $this->setTemplate('EditPageOption');
+        $this->model = new Model\PageOption();
+    }
+
+    private function getParams()
+    {
+        $this->selectedViewName = $this->request->get('code');
+        $this->selectedUser = $this->user->admin
+            ? $this->request->get('nick', NULL)
+            : $this->user->nick;
+    }
+
     public function privateCore(&$response, $user)
     {
         parent::privateCore($response, $user);
 
-        $code = $this->request->get('code');
-        $this->pageOption = new Model\PageOption();
-        $this->pageOption->getForUser($code, $user->nick);
+        $this->getParams();
+        $this->model->getForUser($this->selectedViewName, $this->selectedUser);
 
-        if ($this->request->getMethod() === 'POST') {
+        if ($this->request->get('action', '') === 'save') {
             $this->saveData();
         }
     }
 
-    /**
-     * Data persists in the database, modifying if the record existed or inserting
-     * in case the primary key does not exist.
-     */
+    private function getFilter()
+    {
+        return [
+            new DataBaseWhere('name', $this->selectedViewName),
+            new DataBaseWhere('user', $this->selectedUser)
+        ];
+    }
+
+    private function checkNickAndID()
+    {
+        if ($this->model->nick != $this->selectedUser) {
+            $this->model->id = NULL;
+            $this->model->nick = empty($this->selectedUser) ? NULL : $this->selectedUser;
+        }
+
+        if ($this->model->nick === "") {
+            $this->model->nick = NULL;
+        }
+    }
+
     private function saveData()
     {
-        $this->pageOption->columns = json_decode($this->request->request->get('columns'), true);
-        if ($this->pageOption->save()) {
-            $this->miniLog->info($this->i18n->trans('data-save-ok'));
-        } else {
-            $this->miniLog->alert($this->i18n->trans('data-save-error'));
+        $this->checkNickAndID();
+        $data = $this->request->request->all();
+        foreach ($data as $key => $value) {
+            if (strpos($key, '+')) {
+                $path = explode('+', $key);
+                $this->model->columns[$path[0]]->columns[$path[1]]->{$path[2]} = $value;
+            }
         }
+
+        if ($this->model->save()) {
+            $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+            return;
+        }
+        $this->miniLog->alert($this->i18n->trans('data-save-error'));
     }
 
     /**
@@ -77,11 +109,46 @@ class EditPageOption extends Controller
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'page-option';
+        $pagedata['title'] = 'page-configuration';
         $pagedata['menu'] = 'admin';
         $pagedata['icon'] = 'fa-wrench';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    /**
+     * Returns the text for the data main panel header
+     *
+     * @return string
+     */
+    public function getPanelHeader()
+    {
+        return $this->i18n->trans('configure-columns');
+    }
+
+    /**
+     * Returns the text for the data main panel footer
+     *
+     * @return string
+     */
+    public function getPanelFooter()
+    {
+        return '<strong>'
+            . $this->i18n->trans('page') . ':&nbsp;' . $this->selectedViewName . '<br>'
+            . $this->i18n->trans('user') . ':&nbsp;' . $this->selectedUser
+            . '</strong>';
+    }
+
+    public function getUserList()
+    {
+        $result = [];
+        $users = Model\CodeModel::all(Model\User::tableName(), 'nick', 'nick', false);
+        foreach ($users as $codeModel) {
+            if ($codeModel->code != 'admin') {
+                $result[$codeModel->code] = $codeModel->description;
+            }
+        }
+        return $result;
     }
 }

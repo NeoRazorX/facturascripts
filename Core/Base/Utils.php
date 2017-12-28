@@ -167,6 +167,10 @@ trait Utils
      */
     public function fixHtml($txt)
     {
+        if($txt === null) {
+            return null;
+        }
+        
         $original = ['&lt;', '&gt;', '&quot;', '&#39;'];
         $final = ['<', '>', "'", "'"];
         return trim(str_replace($original, $final, $txt));

@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Una cuenta bancaria de un cliente.
+ * A bank account of a client.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -33,42 +33,42 @@ class CuentaBancoCliente
     use Base\BankAccount;
 
     /**
-     * Clave primaria. Varchar(6).
+     * Primary key. Varchar(6).
      *
      * @var int
      */
     public $codcuenta;
 
     /**
-     * Código del cliente.
+     * Customer code.
      *
      * @var string
      */
     public $codcliente;
 
     /**
-     * Identificación descriptiva para humanos
+     * Descriptive identification for humans.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * ¿Es la cuenta principal del cliente?
+     * Is it the customer's main account?
      *
      * @var boolean
      */
     public $principal;
 
     /**
-     * Fecha en la que se firmó el mandato para autorizar la domiciliación de recibos.
+     * Date on which the mandate to authorize the direct debit of receipts was signed.
      *
      * @var string
      */
     public $fmandato;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -78,7 +78,7 @@ class CuentaBancoCliente
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -88,7 +88,7 @@ class CuentaBancoCliente
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -101,7 +101,7 @@ class CuentaBancoCliente
     }
 
     /**
-     * Almacena los datos del modelo en la base de datos.
+     * Stores the model data in the database.
      *
      * @return bool
      */
@@ -116,8 +116,8 @@ class CuentaBancoCliente
             }
 
             if ($allOK) {
-                /// si esta cuenta es la principal, desmarcamos las demás
-                $sql = 'UPDATE ' . $this->tableName()
+                /// If this account is the main one, we demarcate the others
+                $sql = 'UPDATE ' . static::tableName()
                     . ' SET principal = false'
                     . ' WHERE codcliente = ' . self::$dataBase->var2str($this->codcliente)
                     . ' AND codcuenta <> ' . self::$dataBase->var2str($this->codcuenta) . ';';
@@ -130,7 +130,7 @@ class CuentaBancoCliente
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return boolean
      */

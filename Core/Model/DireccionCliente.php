@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Una dirección de un cliente. Puede tener varias.
+ * An address of a client. It can have several.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -32,35 +32,35 @@ class DireccionCliente
     }
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var integer
      */
     public $id;
 
     /**
-     * Código del cliente asociado.
+     * Code of the associated customer.
      *
      * @var string
      */
     public $codcliente;
 
     /**
-     * TRUE -> esta dirección es la principal para envíos.
+     * True -> this address is the main one for shipments.
      *
      * @var bool
      */
     public $domenvio;
 
     /**
-     * TRUE -> esta dirección es la principal para facturación.
+     * True -> this address is the main one for billing.
      *
      * @var bool
      */
     public $domfacturacion;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -70,7 +70,7 @@ class DireccionCliente
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -80,7 +80,7 @@ class DireccionCliente
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -93,7 +93,7 @@ class DireccionCliente
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -103,8 +103,8 @@ class DireccionCliente
     }
 
     /**
-     * Persiste los datos en la base de datos, modificando si existía el registro
-     * o insertando en caso de no existir la clave primaria.
+     * The data persists in the database, modifying if the record existed
+     * or inserting if the primary key does not exist.
      *
      * @return bool
      */
@@ -118,24 +118,25 @@ class DireccionCliente
     }
 
     /**
-     * Almacena los datos del modelo en la base de datos.
+     * Stores the model data in the database.
      *
      * @return bool
      */
     public function save()
     {
-        /// actualizamos la fecha de modificación
+        /// update the modification date
         $this->fecha = date('d-m-Y');
 
         if ($this->test()) {
-            /// ¿Desmarcamos las demás direcciones principales?
+            /// Do we demarcate the other main directions?
             $sql = '';
             $where = 'WHERE codcliente = ' . self::$dataBase->var2str($this->codcliente);
             if ($this->domenvio) {
-                $sql .= 'UPDATE ' . $this->tableName() . ' SET domenvio = false ' . $where . ' AND domenvio = TRUE;';
+                $sql .= 'UPDATE ' . static::tableName() . ' SET domenvio = false ' . $where . ' AND domenvio = TRUE;';
             }
             if ($this->domfacturacion) {
-                $sql .= 'UPDATE ' . $this->tableName() . ' SET domfacturacion = false ' . $where . ' AND domfacturacion = TRUE;';
+                $sql .= 'UPDATE ' . static::tableName() . ' SET domfacturacion = false ' . $where
+                    . ' AND domfacturacion = TRUE;';
             }
 
             if (empty($sql)) {

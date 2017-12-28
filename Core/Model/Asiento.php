@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\App\AppSettings;
 
 /**
- * El asiento contable. Se relaciona con un ejercicio y se compone de partidas.
+ * The accounting entry. It is related to an exercise and consists of games.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -33,14 +33,14 @@ class Asiento
     }
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
     public $idasiento;
 
     /**
-     * Número de asiento. Se modificará al renumerar.
+     * Seat number. It will be modified when renumbering.
      *
      * @var string
      */
@@ -54,78 +54,78 @@ class Asiento
     public $idempresa;
 
     /**
-     * Identificador del concepto
+     * Identifier of the concept.
      *
      * @var int
      */
     public $idconcepto;
 
     /**
-     * Concepto del asiento
+     * Seat concept.
      *
      * @var string
      */
     public $concepto;
 
     /**
-     * Fecha del asiento
+     * Date of the seat.
      *
      * @var string
      */
     public $fecha;
 
     /**
-     * Código de ejercicio del asiento
+     * Exercise code of the seat.
      *
      * @var string
      */
     public $codejercicio;
 
     /**
-     * Código del plan de asiento
+     * Seat plan code.
      *
      * @var string
      */
     public $codplanasiento;
 
     /**
-     * True si es editable, sino false
+     * True if it is editable, but false.
      *
      * @var bool
      */
     public $editable;
 
     /**
-     * Documento asociado al asiento
+     * Document associated with the seat.
      *
      * @var string
      */
     public $documento;
 
     /**
-     * Texto que identifica el tipo de documento
-     * 'Factura de cliente' o 'Factura de proveedor'
+     * Text that identifies the type of document
+     * 'Customer invoice' or 'Vendor invoice'.
      *
      * @var string
      */
     public $tipodocumento;
 
     /**
-     * Importe del asiento
+     * Amount of the seat.
      *
      * @var float|int
      */
     public $importe;
 
     /**
-     * Código de divisa del asiento
+     * Seat currency code.
      *
      * @var string
      */
     private $coddivisa;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -135,7 +135,7 @@ class Asiento
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -145,7 +145,7 @@ class Asiento
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -163,7 +163,7 @@ class Asiento
     }
 
     /**
-     * Devuelve la factura asociada al asiento
+     * Returns the invoice associated with the seat.
      *
      * @return bool|FacturaCliente|FacturaProveedor
      */
@@ -184,7 +184,7 @@ class Asiento
     }
 
     /**
-     * Devuelve la url de la factura asociada al asiento
+     * Returns the url of the invoice associated with the seat.
      *
      * @return string
      */
@@ -199,7 +199,7 @@ class Asiento
     }
 
     /**
-     * Devuelve la url al ejercicio asociado al asiento
+     * Returns the url to the exercise associated with the seat.
      *
      * @return string
      */
@@ -215,9 +215,9 @@ class Asiento
     }
 
     /**
-     * Devuelve el código de la divisa.
-     * Lo que pasa es que ese dato se almacena en las partidas, por eso
-     * hay que usar esta función.
+     * Returns the code of the currency.
+     * What happens is that this data is stored in the games, that's why
+     * you have to use this function.
      *
      * @return string|null
      */
@@ -238,7 +238,7 @@ class Asiento
     }
 
     /**
-     * Devuelve todas las partidas del asiento
+     * Returns all the items of the seat.
      *
      * @return Partida[]
      */
@@ -250,12 +250,12 @@ class Asiento
     }
 
     /**
-     * Asignamos un número al asiento.
+     * We assign a number to the seat.
      */
     public function newNumero()
     {
         $this->numero = 1;
-        $sql = 'SELECT MAX(' . self::$dataBase->sql2Int('numero') . ') as num FROM ' . $this->tableName()
+        $sql = 'SELECT MAX(' . self::$dataBase->sql2Int('numero') . ') as num FROM ' . static::tableName()
             . ' WHERE codejercicio = ' . self::$dataBase->var2str($this->codejercicio) . ';';
 
         $data = self::$dataBase->select($sql);
@@ -265,7 +265,7 @@ class Asiento
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -284,7 +284,7 @@ class Asiento
     }
 
     /**
-     * Ejecuta un test completo de pruebas
+     * Run a complete test of tests.
      *
      * @param bool $duplicados
      *
@@ -295,8 +295,8 @@ class Asiento
         $status = true;
 
         /*
-         * Comprobamos que el asiento no esté vacío o descuadrado.
-         * También comprobamos que las subcuentas pertenezcan al mismo ejercicio.
+         * We check that the seat is not empty or unbalanced.
+         * We also check that the subaccounts belong to the same fiscal year.
          */
         $debe = $haber = 0;
         $partidas = $this->getPartidas();
@@ -308,11 +308,11 @@ class Asiento
                 $sc = $p->getSubcuenta();
                 if ($sc) {
                     if ($sc->codejercicio !== $this->codejercicio) {
-                        self::$miniLog->alert(self::$i18n->trans('subaccount-belongs-other-year', [$sc->codsubcuenta]));
+                        self::$miniLog->alert(self::$i18n->trans('subaccount-belongs-other-year', ['%subAccountCode%' => $sc->codsubcuenta]));
                         $status = false;
                     }
                 } else {
-                    self::$miniLog->alert(self::$i18n->trans('subaccount-not-found', [$p->codsubcuenta]));
+                    self::$miniLog->alert(self::$i18n->trans('subaccount-not-found', ['%subAccountCode%' => $p->codsubcuenta]));
                     $status = false;
                 }
             }
@@ -326,25 +326,25 @@ class Asiento
             $status = false;
         }
 
-        /// comprobamos que la fecha sea correcta
+        /// check that the date is correct
         $ejercicio = new Ejercicio();
         $eje0 = $ejercicio->get($this->codejercicio);
         if ($eje0) {
             if (strtotime($this->fecha) < strtotime($eje0->fechainicio) || strtotime($this->fecha) > strtotime($eje0->fechafin)) {
-                self::$miniLog->alert(self::$i18n->trans('seat-date-not-in-exercise-range', [$eje0->url()]));
+                self::$miniLog->alert(self::$i18n->trans('seat-date-not-in-exercise-range', ['%link%' => $eje0->url()]));
                 $status = false;
             }
         }
 
         if ($status && $duplicados) {
-            /// comprobamos si es un duplicado
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE fecha = ' . self::$dataBase->var2str($this->fecha) . '
+            /// check if it is a duplicate
+            $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE fecha = ' . self::$dataBase->var2str($this->fecha) . '
             AND concepto = ' . self::$dataBase->var2str($this->concepto) . ' AND importe = ' . self::$dataBase->var2str($this->importe) . '
             AND idasiento != ' . self::$dataBase->var2str($this->idasiento) . ';';
             $asientos = self::$dataBase->select($sql);
             if (!empty($asientos)) {
                 foreach ($asientos as $as) {
-                    /// comprobamos las líneas
+                    /// check the lines
                     if (strtolower(FS_DB_TYPE) === 'mysql') {
                         $sql = 'SELECT codsubcuenta,debe,haber,codcontrapartida,concepto
                      FROM co_partidas WHERE idasiento = ' . self::$dataBase->var2str($this->idasiento) . '
@@ -360,7 +360,7 @@ class Asiento
                     }
 
                     if (empty($aux)) {
-                        self::$miniLog->alert(self::$i18n->trans('seat-possible-duplicated', [$as['idasiento']]));
+                        self::$miniLog->alert(self::$i18n->trans('seat-possible-duplicated', ['%seatId%' => $as['idasiento']]));
                         $status = false;
                     }
                 }
@@ -371,7 +371,7 @@ class Asiento
     }
 
     /**
-     * Aplica correcciones al asiento
+     * Apply corrections to the seat
      *
      * @return bool
      */
@@ -386,7 +386,7 @@ class Asiento
         $total = $debe - $haber;
         $this->importe = max([abs($debe), abs($haber)]);
 
-        /// corregimos descuadres de menos de 0.01
+        /// we correct unbalances of less than 0.01
         if (static::floatcmp($debe, $haber, 2)) {
             $debe = $haber = 0;
             $partidas = $this->getPartidas();
@@ -397,14 +397,14 @@ class Asiento
                 $haber += $p->haber;
             }
 
-            /// si con el redondeo se soluciona el problema, pues genial!
+            /// if with rounding the problem is solved, then great!
             if (static::floatcmp($debe, $haber)) {
                 $this->importe = max([abs($debe), abs($haber)]);
                 foreach ($partidas as $p) {
                     $p->save();
                 }
             } else {
-                /// si no ha funcionado, intentamos arreglarlo
+                /// If it has not worked, we try to fix it
                 $total = 0;
                 $partidas = $this->getPartidas();
                 foreach ($partidas as $p) {
@@ -423,7 +423,7 @@ class Asiento
                     $haber += $p->haber;
                 }
 
-                /// si hemos resuelto el problema grabamos
+                /// if we have solved the problem we recorded
                 if (static::floatcmp($debe, $haber)) {
                     $this->importe = max([abs($debe), abs($haber)]);
                     foreach ($partidas as $p) {
@@ -433,12 +433,12 @@ class Asiento
             }
         }
 
-        /// si el importe ha cambiado, lo guardamos
+        /// If the amount has changed, we keep it
         if (!static::floatcmp($this->importe, $importeOld)) {
             $this->save();
         }
 
-        /// comprobamos la factura asociada
+        /// we check the associated invoice
         $status = true;
         $fac = $this->getFactura();
         if ($fac) {
@@ -456,7 +456,7 @@ class Asiento
     }
 
     /**
-     * Elimina el asiento de la base de datos.
+     * Remove the database entry.
      *
      * @return bool
      */
@@ -468,19 +468,19 @@ class Asiento
         $ejercicio = $eje0->get($this->codejercicio);
         if ($ejercicio) {
             if ($this->idasiento === $ejercicio->idasientoapertura) {
-                /// permitimos eliminar el asiento de apertura
+                /// we allow to eliminate the opening seat
             } elseif ($this->idasiento === $ejercicio->idasientocierre) {
-                /// permitimos eliminar el asiento de cierre
+                /// we allow to eliminate the closing seat
             } elseif ($this->idasiento === $ejercicio->idasientopyg) {
-                /// permitimos eliminar el asiento de pérdidas y ganancias
+                /// we allow to eliminate the profit and loss statement
             } elseif ($ejercicio->abierto()) {
                 $reg0 = new RegularizacionIva();
                 if ($reg0->getFechaInside($this->fecha)) {
-                    self::$miniLog->alert(self::$i18n->trans('seat-within-regularization', [FS_IVA]));
+                    self::$miniLog->alert(self::$i18n->trans('seat-within-regularization', ['%tax%' => FS_IVA]));
                     $bloquear = true;
                 }
             } else {
-                self::$miniLog->alert(self::$i18n->trans('closed-exercise', [$ejercicio->nombre]));
+                self::$miniLog->alert(self::$i18n->trans('closed-exercise', ['%exerciseName%' => $ejercicio->nombre]));
                 $bloquear = true;
             }
         }
@@ -489,7 +489,7 @@ class Asiento
             return false;
         }
 
-        /// desvinculamos la factura
+        /// we unlink the invoice
         $fac = $this->getFactura();
         if ($fac) {
             if ($fac->idasiento === $this->idasiento) {
@@ -498,19 +498,19 @@ class Asiento
             }
         }
 
-        /// eliminamos las partidas una a una para forzar la actualización de las subcuentas asociadas
+        /// we eliminate the items one by one to force the updating of the associated subaccounts
         foreach ($this->getPartidas() as $p) {
             $p->delete();
         }
 
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE idasiento = ' . self::$dataBase->var2str($this->idasiento) . ';';
+        $sql = 'DELETE FROM ' . static::tableName() . ' WHERE idasiento = ' . self::$dataBase->var2str($this->idasiento) . ';';
 
         return self::$dataBase->exec($sql);
     }
 
     /**
-     * Devuelve un array con las combinaciones que contienen $query en su numero
-     * o concepto o importe.
+     * Returns an array with combinations containing $query in its number
+     * or concept or amount.
      *
      * @param string $query
      * @param int    $offset
@@ -522,7 +522,7 @@ class Asiento
         $alist = [];
         $query = self::noHtml(mb_strtolower($query, 'UTF8'));
 
-        $consulta = 'SELECT * FROM ' . $this->tableName() . ' WHERE ';
+        $consulta = 'SELECT * FROM ' . static::tableName() . ' WHERE ';
         if (is_numeric($query)) {
             $auxSql = '';
             if (strtolower(FS_DB_TYPE) === 'postgresql') {
@@ -549,18 +549,18 @@ class Asiento
     }
 
     /**
-     * Devuelve un listado de asientos descuadrados
+     * Returns a list of unbalanced entries.
      *
      * @return array
      */
     public function descuadrados()
     {
-        /// iniciamos partidas para asegurarnos que existe la tabla
+        /// we started games to make sure that the table exists
         new Partida();
 
         $alist = [];
         $sql = 'SELECT p.idasiento,SUM(p.debe) AS sdebe,SUM(p.haber) AS shaber
-         FROM co_partidas p, ' . $this->tableName() . ' a
+         FROM co_partidas p, ' . static::tableName() . ' a
           WHERE p.idasiento = a.idasiento
            GROUP BY p.idasiento
             HAVING ABS(SUM(p.haber) - SUM(p.debe)) > 0.01
@@ -577,7 +577,7 @@ class Asiento
     }
 
     /**
-     * Reenumera los asientos de los ejercicios abiertos
+     * Re-number the seats of the open exercises
      *
      * @return bool
      */
@@ -590,7 +590,7 @@ class Asiento
             $numero = 1;
             $sql = '';
             $continuar = true;
-            $consulta = 'SELECT idasiento,numero,fecha FROM ' . $this->tableName()
+            $consulta = 'SELECT idasiento,numero,fecha FROM ' . static::tableName()
                 . ' WHERE codejercicio = ' . self::$dataBase->var2str($eje->codejercicio)
                 . ' ORDER BY codejercicio ASC, fecha ASC, idasiento ASC';
 
@@ -598,7 +598,7 @@ class Asiento
             while (!empty($asientos) && $continuar) {
                 foreach ($asientos as $col) {
                     if ($col['numero'] !== $numero) {
-                        $sql .= 'UPDATE ' . $this->tableName() . ' SET numero = ' . self::$dataBase->var2str($numero)
+                        $sql .= 'UPDATE ' . static::tableName() . ' SET numero = ' . self::$dataBase->var2str($numero)
                             . ' WHERE idasiento = ' . self::$dataBase->var2str($col['idasiento']) . ';';
                     }
 
@@ -608,7 +608,7 @@ class Asiento
 
                 if ($sql !== '') {
                     if (!self::$dataBase->exec($sql)) {
-                        self::$miniLog->alert(self::$i18n->trans('error-while-renumbering-seats', [$eje->codejercicio]));
+                        self::$miniLog->alert(self::$i18n->trans('error-while-renumbering-seats', ['%exerciseCode%' => $eje->codejercicio]));
                         $continuar = false;
                     }
                     $sql = '';
@@ -622,26 +622,26 @@ class Asiento
     }
 
     /**
-     * Ejecuta una tarea con cron
+     * Execute a task with cron
      */
     public function cronJob()
     {
         /**
-         * Bloqueamos asientos de ejercicios cerrados o dentro de regularizaciones.
+         * We block closed exercise seats or within regularizations.
          */
         $eje0 = new Ejercicio();
         $regiva0 = new RegularizacionIva();
         foreach ($eje0->all() as $ej) {
             if ($ej instanceof Ejercicio && $ej->abierto()) {
                 foreach ($regiva0->allFromEjercicio($ej->codejercicio) as $reg) {
-                    $sql = 'UPDATE ' . $this->tableName() . ' SET editable = false WHERE editable = true'
+                    $sql = 'UPDATE ' . static::tableName() . ' SET editable = false WHERE editable = true'
                         . ' AND codejercicio = ' . self::$dataBase->var2str($ej->codejercicio)
                         . ' AND fecha >= ' . self::$dataBase->var2str($reg->fechainicio)
                         . ' AND fecha <= ' . self::$dataBase->var2str($reg->fechafin) . ';';
                     self::$dataBase->exec($sql);
                 }
             } else {
-                $sql = 'UPDATE ' . $this->tableName() . ' SET editable = false WHERE editable = true'
+                $sql = 'UPDATE ' . static::tableName() . ' SET editable = false WHERE editable = true'
                     . ' AND codejercicio = ' . self::$dataBase->var2str($ej->codejercicio) . ';';
                 self::$dataBase->exec($sql);
             }
@@ -650,10 +650,10 @@ class Asiento
         echo self::$i18n->trans('renumbering-seats');
         $this->renumerar();
     }
-    /// renumera todos los asientos. Devuelve False en caso de error
+    /// Renumber all seats. Returns False in case of error
 
     /**
-     * Inserta los datos del modelo en la base de datos.
+     * Insert the model data in the database.
      *
      * @return bool
      */

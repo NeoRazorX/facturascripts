@@ -101,7 +101,7 @@ class EmailTools
 
         $i18n = new i18n();
         $miniLog = new MiniLog();
-        $miniLog->alert($i18n->trans('email-error', [$mail->ErrorInfo]));
+        $miniLog->alert($i18n->trans('email-error', ['%errorInfo%' => $mail->ErrorInfo]));
         return false;
     }
 

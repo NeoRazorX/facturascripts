@@ -66,7 +66,7 @@ class APCAdapter implements AdaptorInterface
      */
     public function get($key)
     {
-        $this->minilog->debug($this->i18n->trans('apc-get-key-item', [$key]));
+        $this->minilog->debug($this->i18n->trans('apc-get-key-item', ['%item%' => $key]));
         if (apc_exists($key)) {
             $result = apc_fetch($key);
             return ($result === false) ? null : $result;
@@ -85,7 +85,7 @@ class APCAdapter implements AdaptorInterface
      */
     public function set($key, $content, $expire = 5400)
     {
-        $this->minilog->debug($this->i18n->trans('apc-set-key-item', [$key]));
+        $this->minilog->debug($this->i18n->trans('apc-set-key-item', ['%item%' => $key]));
         if (apc_fetch($key) !== false) {
             return apc_store($key, $content, $expire);
         }
@@ -101,7 +101,7 @@ class APCAdapter implements AdaptorInterface
      */
     public function delete($key)
     {
-        $this->minilog->debug($this->i18n->trans('apc-delete-key-item', [$key]));
+        $this->minilog->debug($this->i18n->trans('apc-delete-key-item', ['%item%' => $key]));
         return apc_delete($key) || !apc_exists($key);
     }
 

@@ -19,8 +19,8 @@
 namespace FacturaScripts\Core\Model\Base;
 
 /**
- * Esta clase agrupa los datos y métodos de cálculo bancarios
- * para un uso genérico.
+ * This class groups the data and bank calculation methods
+ * for a generic use.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
@@ -29,28 +29,28 @@ trait BankAccount
 {
 
     /**
-     * Cuenta bancaria
+     * Bank account.
      *
      * @var string
      */
     public $ccc;
 
     /**
-     * Cuenta bancaria formato internacional
+     * Bank account international format.
      *
      * @var string
      */
     public $iban;
 
     /**
-     * Identificativo bancario internacional del banco y entidad
+     * International bank identification of the bank and entity.
      *
      * @var string
      */
     public $swift;
 
     /**
-     * Devuelve el CCC con o sin espacios.
+     * Returns the CCC with or without spaces.
      *
      * @param bool $espacios
      *
@@ -70,7 +70,7 @@ trait BankAccount
     }
 
     /**
-     * Devuelve el IBAN con o sin espacios.
+     * Returns the IBAN with or without spaces.
      *
      * @param bool $espacios
      *
@@ -92,7 +92,7 @@ trait BankAccount
     }
 
     /**
-     * Inicializa los valores de los campos bancarios
+     * Initialize the values of the bank fields.
      */
     private function clearBankAccount()
     {
@@ -102,7 +102,7 @@ trait BankAccount
     }
 
     /**
-     * Comprueba los datos bancarios informados
+     * Check the reported bank details.
      *
      * @return boolean
      */
@@ -115,7 +115,7 @@ trait BankAccount
     }
 
     /**
-     * Calcula el IBAN a partir de la cuenta bancaria
+     * Calculate the IBAN from the bank account.
      *
      * @param string $ccc
      * @param string $codpais
@@ -134,7 +134,7 @@ trait BankAccount
         $dividendo = $ccc . $pesos[$pais[0]] . $pesos[$pais[1]] . '00';
         $digitoControl = 98 - bcmod($dividendo, '97');
 
-        if (strlen($digitoControl) == 1) {
+        if (strlen($digitoControl) === 1) {
             $digitoControl = '0' . $digitoControl;
         }
 
@@ -142,7 +142,7 @@ trait BankAccount
     }
 
     /**
-     * Calcula el DC para la cadena en base 11 con los pesos indicados
+     * Calculate the DC for the chain in base 11 with the indicated weights.
      *
      * @param string $cadena
      * @param array  $pesos
@@ -172,7 +172,7 @@ trait BankAccount
     }
 
     /**
-     * Calcula la cuenta bancaria para una entidad, banco y cuenta
+     * Calculate the bank account for an entity, bank and account.
      *
      * @param string $entidad
      * @param string $oficina
@@ -194,7 +194,7 @@ trait BankAccount
     }
 
     /**
-     * Comprueba si los DC de una cuenta bancaria son correctos
+     * Check if the DCs in a bank account are correct.
      *
      * @param string $ccc
      *
@@ -214,7 +214,7 @@ trait BankAccount
     }
 
     /**
-     * Comprueba si los DC de un IBAN son correctos
+     * Check if the DC's of an IBAN are correct.
      *
      * @param string $iban
      *

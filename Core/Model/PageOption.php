@@ -139,9 +139,10 @@ class PageOption
      *
      * @param array $data
      */
-    public function loadFromData($data)
+    public function loadFromData(array $data = [], array $exclude = [])
     {
-        $this->traitLoadFromData($data, ['columns', 'modals', 'filters', 'rows']);
+        array_push($exclude, 'columns', 'modals', 'filters', 'rows', 'code', 'action');
+        $this->traitLoadFromData($data, $exclude);
 
         $columns = json_decode($data['columns'], true);
         $modals = json_decode($data['modals'], true);
@@ -149,6 +150,11 @@ class PageOption
         ExtendedController\VisualItemLoadEngine::loadJSON($columns, $modals, $rows, $this);
     }
 
+    /**
+     * TODO: Uncomplete
+     *
+     * @return array
+     */
     private function getEncodeValues()
     {
         return [
@@ -181,6 +187,16 @@ class PageOption
         return $this->traitSaveInsert($values);
     }
 
+    private function getPageFilter($name, $nick)
+    {
+        return [
+            new DataBase\DataBaseWhere('nick', $nick),
+            new DataBase\DataBaseWhere('name', $name),
+            new DataBase\DataBaseWhere('nick', 'NULL', 'IS', 'OR'),
+            new DataBase\DataBaseWhere('name', $name)
+        ];
+    }
+
     /**
      * Get the settings for the driver and user
      *
@@ -189,20 +205,12 @@ class PageOption
      */
     public function getForUser($name, $nick)
     {
-        $where = [];
-        $where[] = new DataBase\DataBaseWhere('nick', $nick);
-        $where[] = new DataBase\DataBaseWhere('nick', 'NULL', 'IS', 'OR');
-        $where[] = new DataBase\DataBaseWhere('name', $name);
-
+        $where = $this->getPageFilter($name, $nick);
         $orderby = ['nick' => 'ASC'];
 
         // Load data from database, if not exist install xmlview
         if (!$this->loadFromCode('', $where, $orderby)) {
             $this->name = $name;
-            $this->columns = [];
-            $this->modals = [];
-            $this->filters = [];
-            $this->rows = [];
 
             if (!ExtendedController\VisualItemLoadEngine::installXML($name, $this)) {
                 self::$miniLog->critical(self::$i18n->trans('error-processing-xmlview', [$name]));
@@ -210,7 +218,7 @@ class PageOption
             }
         }
 
-        // Apply values to dynamic Select widgets
+        /// Apply values to dynamic Select widgets
         ExtendedController\VisualItemLoadEngine::applyDynamicSelectValues($this);
     }
 }

@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * Pedido de proveedor
+ * Supplier order.
  */
 class PedidoProveedor
 {
@@ -30,35 +30,35 @@ class PedidoProveedor
     use Base\DocumentoCompra;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
     public $idpedido;
 
     /**
-     * ID del albarán relacionado.
+     * Related delivery note ID.
      *
      * @var int
      */
     public $idalbaran;
 
     /**
-     * True si es editable, sino false
+     * True if it is editable, but false.
      *
      * @var bool
      */
     public $editable;
 
     /**
-     * Si este presupuesto es la versión de otro, aquí se almacena el idpresupuesto del original.
+     * If this estiamtion is the version of another, the original estimation document is stored here.
      *
      * @var int
      */
     public $idoriginal;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -68,7 +68,7 @@ class PedidoProveedor
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -78,7 +78,9 @@ class PedidoProveedor
     }
 
     /**
-     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
@@ -91,7 +93,7 @@ class PedidoProveedor
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -100,7 +102,7 @@ class PedidoProveedor
     }
 
     /**
-     * Devuelve las líneas asociadas al pedido.
+     * Returns the lines associated with the order.
      *
      * @return LineaPedidoProveedor[]
      */
@@ -111,7 +113,7 @@ class PedidoProveedor
     }
 
     /**
-     * Devuelve las versiones de un pedido
+     * Returns the versions of an order.
      *
      * @return self[]
      */
@@ -119,7 +121,8 @@ class PedidoProveedor
     {
         $versiones = [];
 
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idoriginal = ' . self::$dataBase->var2str($this->idpedido);
+        $sql = 'SELECT * FROM ' . static::tableName()
+            . ' WHERE idoriginal = ' . self::$dataBase->var2str($this->idpedido);
         if ($this->idoriginal) {
             $sql .= ' OR idoriginal = ' . self::$dataBase->var2str($this->idoriginal);
             $sql .= ' OR idpedido = ' . self::$dataBase->var2str($this->idoriginal);
@@ -137,7 +140,7 @@ class PedidoProveedor
     }
 
     /**
-     * Comprueba los daros del pedido, devuelve True si está correcto
+     * Check the order data, return True if it is correct.
      *
      * @return boolean
      */
@@ -147,7 +150,7 @@ class PedidoProveedor
     }
 
     /**
-     * Ejecuta un test completo de pruebas
+     * Run a complete test of tests.
      *
      * @return bool
      */
@@ -157,12 +160,13 @@ class PedidoProveedor
     }
 
     /**
-     * Ejecuta una tarea con cron
+     * Execute a task with cron
      */
     public function cronJob()
     {
         $sql = 'UPDATE ' . static::tableName() . ' SET idalbaran = NULL, editable = TRUE'
-            . ' WHERE idalbaran IS NOT NULL AND NOT EXISTS(SELECT 1 FROM albaranesprov t1 WHERE t1.idalbaran = ' . static::tableName() . '.idalbaran);';
+            . ' WHERE idalbaran IS NOT NULL AND NOT EXISTS(SELECT 1 FROM albaranesprov t1'
+            . ' WHERE t1.idalbaran = ' . static::tableName() . '.idalbaran);';
         self::$dataBase->exec($sql);
     }
 }

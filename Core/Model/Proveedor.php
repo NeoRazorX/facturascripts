@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * Un proveedor. Puede estar relacionado con varias direcciones o subcuentas.
+ * A supplier. It can be related to several addresses or sub-accounts.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -31,12 +31,11 @@ class Proveedor extends Base\Persona
     use Base\ModelTrait {
         __construct as private traitConstruct;
         clear as private traitClear;
-        url as private traitURL;
     }
 
     /**
-     * True -> el proveedor es un acreedor, es decir, no le compramos mercancia,
-     * le compramos servicios, etc.
+     * True -> the supplier is a creditor, that is, we do not buy him merchandise,
+     * we buy services, etc.
      *
      * @var bool
      */
@@ -54,7 +53,7 @@ class Proveedor extends Base\Persona
     }
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -64,7 +63,7 @@ class Proveedor extends Base\Persona
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -74,7 +73,7 @@ class Proveedor extends Base\Persona
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -82,12 +81,13 @@ class Proveedor extends Base\Persona
         parent::clear();
 
         $this->acreedor = false;
+        $this->regimeniva = 'general';
     }
 
     /**
-     * Devuelve el primer proveedor que tenga ese cifnif.
-     * Si el cifnif está en blanco y se proporciona una razón social, se devuelve
-     * el primer proveedor con esa razón social.
+     * Returns the first provider that has that cifnif.
+     * If the cifnif is blank and a business name is provided, it is returned
+     * the first provider with that company name.
      *
      * @param string $cifnif
      * @param string $razon
@@ -98,11 +98,12 @@ class Proveedor extends Base\Persona
     {
         if ($cifnif === '' && $razon !== '') {
             $razon = mb_strtolower(self::noHtml($razon), 'UTF8');
-            $sql = 'SELECT * FROM ' . $this->tableName() . " WHERE cifnif = ''"
+            $sql = 'SELECT * FROM ' . static::tableName() . " WHERE cifnif = ''"
                 . ' AND lower(razonsocial) = ' . self::$dataBase->var2str($razon) . ';';
         } else {
             $cifnif = mb_strtolower($cifnif, 'UTF8');
-            $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE lower(cifnif) = ' . self::$dataBase->var2str($cifnif) . ';';
+            $sql = 'SELECT * FROM ' . static::tableName()
+                . ' WHERE lower(cifnif) = ' . self::$dataBase->var2str($cifnif) . ';';
         }
 
         $data = self::$dataBase->select($sql);
@@ -114,7 +115,7 @@ class Proveedor extends Base\Persona
     }
 
     /**
-     * Devuelve las direcciones asociadas al proveedor.
+     * Returns the addresses associated with the provider.
      *
      * @return DireccionProveedor[]
      */
@@ -126,7 +127,7 @@ class Proveedor extends Base\Persona
     }
 
     /**
-     * Devuelve las subcuentas asociadas al proveedor, una para cada ejercicio.
+     * Returns the subaccounts associated with the provider, one for each fiscal year.
      *
      * @return Subcuenta[]
      */
@@ -145,8 +146,8 @@ class Proveedor extends Base\Persona
     }
 
     /**
-     * Devuelve la subcuenta asignada al proveedor para el ejercicio $codeje,
-     * si no hay una subcuenta asignada, intenta crearla. Si falla devuelve False.
+     * Returns the sub-account assigned to the provider for the year $codeje,
+     * If there is not an assigned subaccount, try to create it. If it fails, it returns False.
      *
      * @param string $codeje
      *
@@ -193,12 +194,12 @@ class Proveedor extends Base\Persona
                     return $subcuenta;
                 }
 
-                self::$miniLog->alert(self::$i18n->trans('cant-assing-subaccount-supplier', [$this->codproveedor]));
+                self::$miniLog->alert(self::$i18n->trans('cant-assing-subaccount-supplier', ['%supplierCode%' => $this->codproveedor]));
 
                 return false;
             }
 
-            self::$miniLog->alert(self::$i18n->trans('cant-create-subaccount-supplier', [$this->codproveedor]));
+            self::$miniLog->alert(self::$i18n->trans('cant-create-subaccount-supplier', ['%supplierCode%' => $this->codproveedor]));
 
             return false;
         }
@@ -210,7 +211,7 @@ class Proveedor extends Base\Persona
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -243,8 +244,8 @@ class Proveedor extends Base\Persona
     }
 
     /**
-     * Devuelve un array con las combinaciones que contienen $query en su nombre
-     * o razonsocial o codproveedor o cifnif o telefono1 o telefono2 o observaciones.
+     * Returns an array with combinations containing $query in its name
+     * or endorsement or co-supplier or cifnif or telefono1 or telefono2 or observations.
      *
      * @param string $query
      * @param int    $offset
@@ -256,7 +257,7 @@ class Proveedor extends Base\Persona
         $prolist = [];
         $query = mb_strtolower(self::noHtml($query), 'UTF8');
 
-        $consulta = 'SELECT * FROM ' . $this->tableName() . ' WHERE ';
+        $consulta = 'SELECT * FROM ' . static::tableName() . ' WHERE ';
         if (is_numeric($query)) {
             $consulta .= "nombre LIKE '%" . $query . "%' OR razonsocial LIKE '%" . $query . "%'"
                 . " OR codproveedor LIKE '%" . $query . "%' OR cifnif LIKE '%" . $query . "%'"

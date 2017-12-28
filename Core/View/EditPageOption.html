@@ -1,34 +1,172 @@
 {% extends "Master/MenuTemplate.html" %}
 
+{% block css %}
+{{ parent() }}
+
+<link rel="stylesheet" href="Core/Assets/CSS/extendedcontroller.css" />
+{% endblock %}
+
+
+{% block javascript %}
+{{ parent() }}
+{% endblock %}
+
+{% block messages %}
+<div class="container-fluid">
+    <div id="messages" class="row">
+        <div class="col-12">
+            {{ parent() }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
 {% block body %}
-<form action="{{ fsc.url() }}" method="post">
-    <input type="hidden" name="code" value="{{ fsc.pageOption.name }}"/>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-9">
-                <h1>
-                    <i class="fa fa-wrench" aria-hidden="true"></i> {{ i18n.trans('options') }}
-                    <small>{{ fsc.pageOption.name }}</small>
-                </h1>
-            </div>
-            <div class="col-3 text-right">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fa fa-floppy-o fa-fw" aria-hidden="true"></i> {{ i18n.trans('save') }}
-                </button>
+<!-- Calculate texts according to language -->
+{% set go_back = i18n.trans('back') %}
+{% set save, save_title = i18n.trans('save'), i18n.trans('save-data') %}
+{% set undo, undo_title = i18n.trans('undo'), i18n.trans('restore-data') %}
+{% set refresh_title = i18n.trans('refresh') %}
+
+{% set panel_header = fsc.getPanelHeader() %}
+{% set panel_footer = fsc.getPanelFooter() %}
+
+{% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
+
+<!-- Visual macros -->
+{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+
+<!-- Main Body -->
+<div class="container-fluid">
+    {{ parent() }}
+
+    <!-- Header Row -->
+    <div id="header" class="row">
+        <div class="col-3 d-print-none">
+            <div class="btn-group">
+                <a href="index.php?page={{ fsc.selectedViewName }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                    <span class="d-none d-md-inline-block">&nbsp;{{ go_back }} </span>
+                </a>
+                <a href="{{ fsc.url() ~ '&code=' ~ fsc.selectedViewName }}" class="btn btn-sm btn-outline-secondary" {{ popoverTitle(refresh_title, 'bottom') }}>
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                </a>
             </div>
         </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">{{ i18n.trans('columns') }}</div>
-                    <div class="card-body">
-                        <div class="form-group">
-                            <textarea name="columns" rows="10" class="form-control">{{ fsc.pageOption.columns|json_encode() }}</textarea>
-                        </div>
-                    </div>
-                </div>
+
+        <div class="col-6 text-center">
+            <div class="page-header">
+                <h2>
+                    <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
+                </h2>
             </div>
         </div>
     </div>
-</form>
+
+    <!-- Data Row -->
+    <div id="data" class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">{{ panel_header|raw }}</span>
+                    <div class="float-right text-danger">
+                        <form action="#" method="post" class="form-inline" role="form" name="select_user">
+                            <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
+
+                            <label>{{ i18n.trans('select-user') }}&nbsp;&nbsp;</label>
+                            <select name="nick" class="text-danger" onchange="this.form.submit()">
+                                <option value="" {% if fsc.selectedUser is null %}selected{% endif %}>{{ i18n.trans('all') }}</option>
+                                {% for key, value in fsc.getUserList() %}
+                                <option value="{{ key }}" {% if fsc.selectedUser == key %}selected{% endif %}>{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    </div>
+                </div>
+
+                <form action="#" method="post" class="form" role="form" name="main_form">
+                    <input type="hidden" name="action" value="save">
+                    <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
+                    <input type="hidden" name="nick" value="{{ fsc.selectedUser }}"/>
+
+                    <div class="card-body">
+                        <!-- Main Form -->
+                        <div id="main_row" class="row">
+                            {% for key1, group in fsc.model.columns %}
+                            <div class="col-12">
+                                {% if group.title is not empty %}
+                                <h4 class="text-muted">{{ group.getHeaderHTML(group.title)|raw }}</h4>
+                                {% endif %}
+
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="d-inline-block col-4">{{ i18n.trans('title') }}</th>
+                                            <th class="d-inline-block col-2">{{ i18n.trans('align') }}</th>
+                                            <th class="d-inline-block col-2">{{ i18n.trans('columns') }}</th>
+                                            <th class="d-inline-block col-1">{{ i18n.trans('sort') }}</th>
+                                            <th class="d-inline-block col-3">{{ i18n.trans('title-url') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for key2, field in group.columns %}
+                                    {% set masterName = key1 ~ '+' ~ key2 ~ '+' %}
+                                    <tr>
+                                        <th class="d-inline-block col-4">
+                                            {{ i18n.trans(field.title) }}
+                                        </th>
+                                        <td class="d-inline-block col-2">
+                                            <select class="form-control" name="{{ masterName ~ 'display' }}">
+                                                <option value="left" {% if field.display == 'left' %}selected{% endif %}>{{ i18n.trans('left') }}</option>
+                                                <option value="right" {% if field.display == 'right' %}selected{% endif %}>{{ i18n.trans('right') }}</option>
+                                                <option value="center" {% if field.display == 'center' %}selected{% endif %}>{{ i18n.trans('center') }}</option>
+                                                <option value="none" {% if field.display == 'none' %}selected{% endif %}>{{ i18n.trans('none') }}</option>
+                                            </select>
+                                        </td>
+                                        <td class="d-inline-block col-2">
+                                            <select class="form-control" name="{{ masterName ~ 'numColumns' }}">
+                                                <option value="0" {% if field.numColumns == 0 %}selected{% endif %}>{{ i18n.trans('auto') }}</option>
+                                                <option value="1" {% if field.numColumns == 1 %}selected{% endif %}>1</option>
+                                                <option value="2" {% if field.numColumns == 2 %}selected{% endif %}>2</option>
+                                                <option value="3" {% if field.numColumns == 3 %}selected{% endif %}>3</option>
+                                                <option value="4" {% if field.numColumns == 4 %}selected{% endif %}>4</option>
+                                                <option value="5" {% if field.numColumns == 5 %}selected{% endif %}>5</option>
+                                                <option value="6" {% if field.numColumns == 6 %}selected{% endif %}>6</option>
+                                                <option value="7" {% if field.numColumns == 7 %}selected{% endif %}>7</option>
+                                                <option value="8" {% if field.numColumns == 8 %}selected{% endif %}>8</option>
+                                                <option value="9" {% if field.numColumns == 9 %}selected{% endif %}>9</option>
+                                                <option value="10" {% if field.numColumns == 10 %}selected{% endif %}>10</option>
+                                                <option value="11" {% if field.numColumns == 11 %}selected{% endif %}>11</option>
+                                                <option value="12" {% if field.numColumns == 12 %}selected{% endif %}>12</option>
+                                            </select>
+                                        </td>
+                                        <td class="d-inline-block col-1">
+                                            <input type="number" class="form-control" name="{{ masterName ~ 'order' }}" placeholder="Auto" value="{{ field.order }}">
+                                        </td>
+                                        <td class="d-inline-block col-3">
+                                            <input type="text" class="form-control" name="{{ masterName ~ 'titleURL' }}" placeholder="http://" value="{{ field.titleURL }}">
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                  </tbody>
+                                </table>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="card-footer text-right">
+                        <small class="pull-left text-left">{{ panel_footer|raw }}</small>
+                        <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
+                            <i class="fa fa-undo" aria-hidden="true"></i>&nbsp; {{ undo }}
+                        </button>
+                        <button class="btn btn-sm btn-primary" type="submit" {{ popoverTitle(save_title, 'bottom') }}>
+                            <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ save }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

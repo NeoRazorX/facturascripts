@@ -193,11 +193,11 @@ class AdminHome extends Base\Controller
             if (is_dir($pluginPath) || is_file($pluginPath)) {
                 $this->pluginManager->deploy();
                 $this->delTree($this->pluginManager->getPluginPath() . $removePlugin);
-                $this->miniLog->error($this->i18n->trans('plugin-deleted', [$removePlugin]));
+                $this->miniLog->error($this->i18n->trans('plugin-deleted', ['%pluginName%' => $removePlugin]));
                 return true;
             }
 
-            $this->miniLog->error($this->i18n->trans('plugin-yet-deleted', [$removePlugin]));
+            $this->miniLog->error($this->i18n->trans('plugin-yet-deleted', ['%pluginName%' => $removePlugin]));
         }
 
         return false;
@@ -246,7 +246,7 @@ class AdminHome extends Base\Controller
                         foreach ($diffFolders as $folder) {
                             if (is_dir($this->pluginManager->getPluginPath() . $folder)) {
                                 $pluginName = $this->getVerifiedPluginName($uploadFile->getPathname());
-                                $this->miniLog->info($this->i18n->trans('plugin-installed', [$pluginName]));
+                                $this->miniLog->info($this->i18n->trans('plugin-installed', ['%pluginName%' => $pluginName]));
                                 $this->enablePlugin($pluginName);
                             } elseif (is_file($this->pluginManager->getPluginPath() . $folder)) {
                                 $this->delTree($this->pluginManager->getPluginPath() . $folder);
@@ -254,13 +254,13 @@ class AdminHome extends Base\Controller
                         }
                         break;
                     case 0:
-                        $this->miniLog->error($this->i18n->trans('can-not-open-zip-file', [$result]));
+                        $this->miniLog->error($this->i18n->trans('can-not-open-zip-file', ['%zipFile%' => $result]));
                         break;
                     case -1:
-                        $this->miniLog->error($this->i18n->trans('plugin-missing-ini', [$result]));
+                        $this->miniLog->error($this->i18n->trans('plugin-missing-ini', ['%pluginName%' => $result]));
                         break;
                     case -2:
-                        $this->miniLog->error($this->i18n->trans('plugin-name-missing-ini', [$result]));
+                        $this->miniLog->error($this->i18n->trans('plugin-name-missing-ini', ['%pluginName%' => $result]));
                         break;
                 }
                 unlink($uploadFile->getPathname());
@@ -314,7 +314,7 @@ class AdminHome extends Base\Controller
             $pluginName = $this->getVerifiedPluginName($filePath);
             if ($pluginName) {
                 if (is_dir($destinyFolder . $pluginName)) {
-                    $this->miniLog->info($this->i18n->trans('removing-previous-version', [$pluginName]));
+                    $this->miniLog->info($this->i18n->trans('removing-previous-version', ['%pluginName%' => $pluginName]));
                     $this->delTree($destinyFolder . $pluginName);
                     /// Update the list before, if we delete an existing folder
                     $listFilesBefore = array_diff(scandir($this->pluginManager->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
@@ -325,9 +325,9 @@ class AdminHome extends Base\Controller
                 }
                 if ($folderPlugin !== $pluginName) {
                     if (!@rename($destinyFolder . $folderPlugin, $destinyFolder . $pluginName)) {
-                        $this->miniLog->error($this->i18n->trans('plugin-can-not-renamed', [$folderPlugin, $pluginName]));
+                        $this->miniLog->error($this->i18n->trans('plugin-can-not-renamed', ['%folderPlugin%' => $folderPlugin, '%pluginName%' => $pluginName]));
                     } else {
-                        $this->miniLog->info($this->i18n->trans('plugin-renamed', [$folderPlugin, $pluginName]));
+                        $this->miniLog->info($this->i18n->trans('plugin-renamed', ['%folderPlugin%' => $folderPlugin, '%pluginName%' => $pluginName]));
                     }
                 }
                 return $result;

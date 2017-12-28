@@ -29,63 +29,63 @@ trait Factura
 {
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
     public $idfactura;
 
     /**
-     * ID del asiento relacionado, si lo hay.
+     * Related seat ID, if any.
      *
      * @var int
      */
     public $idasiento;
 
     /**
-     * ID del asiento de pago relacionado, si lo hay.
+     * ID of the related payment seat, if any.
      *
      * @var int
      */
     public $idasientop;
 
     /**
-     * ID de la factura que rectifica.
+     * ID of the invoice that you rectify.
      *
      * @var int
      */
     public $idfacturarect;
 
     /**
-     * Código de la factura que rectifica.
+     * Code of the invoice that rectifies.
      *
      * @var string
      */
     public $codigorect;
 
     /**
-     * TRUE => pagada
+     * True => paid.
      *
      * @var bool
      */
     public $pagada;
 
     /**
-     * TRUE => anulada
+     * TRUE => voided.
      *
      * @var bool
      */
     public $anulada;
 
     /**
-     * Fecha de vencimiento de la factura.
+     * Due date of the invoice.
      *
      * @var string
      */
     public $vencimiento;
 
     /**
-     * Devuelve el asiento asociado
+     * Returns the associated seat.
      *
      * @return bool|Asiento
      */
@@ -97,7 +97,7 @@ trait Factura
     }
 
     /**
-     * Devuelve el asiento de pago asociado
+     * Returns the associated payment entry.
      *
      * @return bool|mixed
      */
@@ -109,7 +109,7 @@ trait Factura
     }
 
     /**
-     * Devuelve las facturas rectificativas
+     * Returns the rectifying invoices.
      */
     public function getRectificativas()
     {
@@ -117,7 +117,7 @@ trait Factura
     }
 
     /**
-     * Obtiene las líneas de iva
+     * Get the VAT lines.
      *
      * @param string $className
      * @param int $dueTotales
@@ -129,9 +129,9 @@ trait Factura
         $linea_iva = new $className();
         $lineas = $this->getLineas();
         $lineasi = $linea_iva->allFromFactura($this->idfactura);
-        /// si no hay lineas de IVA, las generamos
+        /// If there are no VAT lines, we generate them
         if (empty($lineasi) && !empty($lineas)) {
-            /// necesitamos los totales por impuesto
+            /// we need totals for tax
             $subtotales = [];
             foreach ($lineas as $lin) {
                 $codimpuesto = ($lin->codimpuesto === null) ? 0 : $lin->codimpuesto;
@@ -144,18 +144,18 @@ trait Factura
                         'recargopor' => $lin->recargo
                     );
                 }
-                // Acumulamos por tipos de IVAs
+                // We accumulate by VAT rates
                 $subtotales[$codimpuesto]['neto'] += $lin->pvptotal * $dueTotales;
                 $subtotales[$codimpuesto]['iva'] += $lin->pvptotal * $dueTotales * ($lin->iva / 100);
                 $subtotales[$codimpuesto]['recargo'] += $lin->pvptotal * $dueTotales * ($lin->recargo / 100);
             }
-            /// redondeamos
+            /// round
             foreach ($subtotales as $codimp => $subt) {
                 $subtotales[$codimp]['neto'] = round($subt['neto'], FS_NF0);
                 $subtotales[$codimp]['iva'] = round($subt['iva'], FS_NF0);
                 $subtotales[$codimp]['recargo'] = round($subt['recargo'], FS_NF0);
             }
-            /// ahora creamos las líneas de iva
+            /// now we create the lines of iva
             foreach ($subtotales as $codimp => $subt) {
                 $lineasi[$codimp] = new $className();
                 $lineasi[$codimp]->idfactura = $this->idfactura;
@@ -173,7 +173,7 @@ trait Factura
     }
 
     /**
-     * Devuelve las líneas asociadas al documento.
+     * Returns the lines associated with the document.
      *
      * @return LineaFacturaCliente[]|LineaFacturaProveedor[]
      */

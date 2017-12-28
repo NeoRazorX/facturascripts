@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Línea de una factura de cliente.
+ * Line of a customer invoice.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -29,28 +29,28 @@ class LineaFacturaCliente
     use Base\LineaDocumentoVenta;
 
     /**
-     * ID de la linea del albarán relacionado, si lo hay.
+     * Delivery note ID line, if any.
      *
      * @var int
      */
     public $idlineaalbaran;
 
     /**
-     * ID de la factura de esta línea.
+     * Invoice ID of this line.
      *
      * @var int
      */
     public $idfactura;
 
     /**
-     * ID del albarán relacionado con esta factura, si lo hay.
+     * Delivery note ID related to this invoice, if there is one.
      *
      * @var int
      */
     public $idalbaran;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -60,7 +60,7 @@ class LineaFacturaCliente
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {

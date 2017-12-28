@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Una dirección de un proveedor. Puede tener varias.
+ * An address of a provider. It can have several.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -30,28 +30,28 @@ class DireccionProveedor
     use Base\Direccion;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var integer
      */
     public $id;
 
     /**
-     * Código del proveedor asociado.
+     * Code of the associated provider.
      *
      * @var string
      */
     public $codproveedor;
 
     /**
-     * True -> dirección principal
+     * True -> main address.
      *
      * @var boolean
      */
     public $direccionppal;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -61,7 +61,7 @@ class DireccionProveedor
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -71,7 +71,7 @@ class DireccionProveedor
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -89,7 +89,7 @@ class DireccionProveedor
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -99,19 +99,19 @@ class DireccionProveedor
     }
 
     /**
-     * Almacena los datos del modelo en la base de datos.
+     * Stores the model data in the database.
      *
      * @return bool
      */
     public function save()
     {
-        /// actualizamos la fecha de modificación
+        /// update the modification date
         $this->fecha = date('d-m-Y');
 
         if ($this->test()) {
-            /// ¿Desmarcamos las demás direcciones principales?
+            /// Do we demarcate the other main directions?
             if ($this->direccionppal) {
-                $sql = 'UPDATE ' . $this->tableName() . ' SET direccionppal = false'
+                $sql = 'UPDATE ' . static::tableName() . ' SET direccionppal = false'
                     . ' WHERE codproveedor = ' . self::$dataBase->var2str($this->codproveedor) . ';';
                 self::$dataBase->exec($sql);
             }

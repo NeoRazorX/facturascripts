@@ -54,27 +54,16 @@ class EditEjercicio extends ExtendedController\PanelController
     {
         switch ($keyView) {
             case 'EditEjercicio':
-                $value = $this->request->get('code');
-                $view->loadData($value);
+                $code = $this->request->get('code');
+                $view->loadData($code);
                 break;
 
             case 'EditEjercicioGrupoEpigrafes':
-                $where = [new DataBaseWhere('codejercicio', $this->request->get('code'))];
-                $view->loadData($where);
-                break;
-
             case 'EditEjercicioEpigrafe':
-                $where = [new DataBaseWhere('codejercicio', $this->request->get('code'))];
-                $view->loadData($where);
-                break;
-
             case 'EditEjercicioCuenta':
-                $where = [new DataBaseWhere('codejercicio', $this->request->get('code'))];
-                $view->loadData($where);
-                break;
-
             case 'EditEjercicioSubcuenta':
-                $where = [new DataBaseWhere('codejercicio', $this->request->get('code'))];
+                $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
+                $where = [new DataBaseWhere('codejercicio', $codejercicio)];
                 $view->loadData($where);
                 break;
         }

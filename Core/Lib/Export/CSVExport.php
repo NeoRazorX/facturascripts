@@ -193,6 +193,17 @@ class CSVExport implements ExportInterface
     public function generateDocumentPage($model)
     {
         /// TODO: Uncomplete
+        $tableData = [];
+        foreach ((array) $model as $key => $value) {
+            if (is_string($value)) {
+                $tableData[] = [
+                    'key' => $this->delimiter . $key . $this->delimiter,
+                    'value' => $this->delimiter . $value . $this->delimiter
+                ];
+            }
+        }
+
+        $this->writeSheet($tableData, ['key' => 'string', 'value' => 'string']);
     }
 
     /**

@@ -34,21 +34,21 @@ class Settings
     }
 
     /**
-     * Identificador del grupo de valores
+     * Identifier of the group of values.
      *
      * @var string
      */
     public $name;
 
     /**
-     * Descripción del contenido y valor del grupo
+     * Description of the content and value of the group.
      *
      * @var string
      */
     public $description;
 
     /**
-     * Icono a visualizar
+     * Icon to visualize.
      *
      * @var string
      */

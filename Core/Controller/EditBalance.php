@@ -50,17 +50,14 @@ class EditBalance extends ExtendedController\PanelController
     {
         switch ($keyView) {
             case 'EditBalance':
-                $value = $this->request->get('code');
-                $view->loadData($value);
+                $code = $this->request->get('code');
+                $view->loadData($code);
                 break;
 
             case 'EditBalanceCuenta':
-                $where = [new DataBaseWhere('codbalance', $this->getViewModelValue('EditBalance', 'codbalance'))];
-                $view->loadData($where);
-                break;
-
             case 'EditBalanceCuentaA':
-                $where = [new DataBaseWhere('codbalance', $this->getViewModelValue('EditBalance', 'codbalance'))];
+                $codbalance = $this->getViewModelValue('EditBalance', 'codbalance');
+                $where = [new DataBaseWhere('codbalance', $codbalance)];
                 $view->loadData($where);
                 break;
         }

@@ -68,8 +68,8 @@ class ListCuenta extends ExtendedController\ListController
         $this->addView('\FacturaScripts\Dinamic\Model\CuentaEspecial', 'ListCuentaEspecial', 'special-account', 'fa-newspaper-o');
         $this->addSearchFields('ListCuentaEspecial', ['descripcion', 'codcuenta']);
 
-        $this->addOrderBy('ListCuentaEspecial', 'descripcion');
-        $this->addOrderBy('ListCuentaEspecial', 'codsubcuenta');
+        $this->addOrderBy('ListCuentaEspecial', 'descripcion', 'description');
+        $this->addOrderBy('ListCuentaEspecial', 'codsubcuenta', 'code');
 
         $this->addFilterSelect('ListCuentaEspecial', 'codsubcuenta', '', 'descripcion');
     }

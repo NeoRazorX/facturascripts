@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * Pedido de cliente
+ * Customer order.
  */
 class PedidoCliente
 {
@@ -30,52 +30,52 @@ class PedidoCliente
     use Base\DocumentoVenta;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var integer
      */
     public $idpedido;
 
     /**
-     * ID del albarán relacionado.
+     * Related delivery note ID.
      *
      * @var integer
      */
     public $idalbaran;
 
     /**
-     * Estado del pedido:
-     * 0 -> pendiente. (editable)
-     * 1 -> aprobado. (hay un idalbaran y no es editable)
-     * 2 -> rechazado. (no hay idalbaran y no es editable)
+     * Order status:
+     * 0 -> pending. (editable)
+     * 1 -> approved. (there is an idalbaran and it is not editable)
+     * 2 -> rejected. (there is no idalbaran and it is not editable)
      *
      * @var integer
      */
     public $status;
 
     /**
-     * True si es editable, sino false
+     * True if it is editable, but false
      *
      * @var bool
      */
     public $editable;
 
     /**
-     * Fecha de salida prevista del material.
+     * Expected date of departure of the material.
      *
      * @var string
      */
     public $fechasalida;
 
     /**
-     * Si este presupuesto es la versión de otro, aquí se almacena el idpresupuesto del original.
+     * If this estimation is the version of another, the original estimation document is stored here.
      *
      * @var integer
      */
     public $idoriginal;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -85,7 +85,7 @@ class PedidoCliente
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -95,7 +95,9 @@ class PedidoCliente
     }
 
     /**
-     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
@@ -108,7 +110,7 @@ class PedidoCliente
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -120,7 +122,7 @@ class PedidoCliente
     }
 
     /**
-     * Devuelve las líneas asociadas al pedido.
+     * Returns the lines associated with the order.
      *
      * @return LineaPedidoCliente[]
      */
@@ -131,7 +133,7 @@ class PedidoCliente
     }
 
     /**
-     * Devuelve las versiones de un pedido
+     * Returns the versions of an order.
      *
      * @return self[]
      */
@@ -157,13 +159,13 @@ class PedidoCliente
     }
 
     /**
-     * Comprueba los datos del pedido, devuelve True si es correcto
+     * Check the order data, return True if it is correct.
      *
      * @return boolean
      */
     public function test()
     {
-        /// comprobamos que editable se corresponda con el status
+        /// we check that editable corresponds to the status
         if ($this->idalbaran) {
             $this->status = 1;
             $this->editable = false;
@@ -177,15 +179,15 @@ class PedidoCliente
     }
 
     /**
-     * Elimina el pedido de la base de datos.
-     * Devuelve False en caso de fallo.
+     * Remove the order from the database.
+     * Returns False in case of failure.
      *
      * @return boolean
      */
     public function delete()
     {
         if (self::$dataBase->exec('DELETE FROM ' . static::tableName() . ' WHERE idpedido = ' . self::$dataBase->var2str($this->idpedido) . ';')) {
-            /// modificamos el presupuesto relacionado
+            /// we modify the related budget
             self::$dataBase->exec('UPDATE presupuestoscli SET idpedido = NULL, editable = TRUE,'
                 . ' status = 0 WHERE idpedido = ' . self::$dataBase->var2str($this->idpedido) . ';');
 
@@ -196,19 +198,19 @@ class PedidoCliente
     }
 
     /**
-     * Ejecuta una tarea con cron
+     * Execute a task with cron
      */
     public function cronJob()
     {
-        /// marcamos como aprobados los presupuestos con idpedido
+        /// mark estimations approved as approved with idpedido
         self::$dataBase->exec('UPDATE ' . static::tableName() . " SET status = '1', editable = FALSE"
             . " WHERE status != '1' AND idalbaran IS NOT NULL;");
 
-        /// devolvemos al estado pendiente a los pedidos con estado 1 a los que se haya borrado el albarán
+        /// return to the pending status the orders with status 1 to which the delivery note has been erased
         self::$dataBase->exec('UPDATE ' . static::tableName() . " SET status = '0', idalbaran = NULL, editable = TRUE "
             . "WHERE status = '1' AND idalbaran NOT IN (SELECT idalbaran FROM albaranescli);");
 
-        /// marcamos como rechazados todos los presupuestos no editables y sin pedido asociado
+        /// mark as rejected all non-editable budgets and without associated order
         self::$dataBase->exec('UPDATE ' . static::tableName() . " SET status = '2' WHERE idalbaran IS NULL AND"
             . ' editable = false;');
     }

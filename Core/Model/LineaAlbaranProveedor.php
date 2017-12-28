@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Línea de un albarán de proveedor.
+ * Line of a supplier's delivery note.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -29,28 +29,28 @@ class LineaAlbaranProveedor
     use Base\LineaDocumentoCompra;
 
     /**
-     * ID de la línea del pedido relacionada, si la hay.
+     * Order line ID, if any.
      *
      * @var int
      */
     public $idlineapedido;
 
     /**
-     * ID del albarán de esta línea.
+     * Delivery note ID of this line.
      *
      * @var int
      */
     public $idalbaran;
 
     /**
-     * ID del pedido relacionado con el albarán, si lo hay.
+     * Order ID related to the delivery note, if any.
      *
      * @var int
      */
     public $idpedido;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -58,7 +58,14 @@ class LineaAlbaranProveedor
     {
         return 'lineasalbaranesprov';
     }
-    
+
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
     public function install()
     {
         new AlbaranProveedor();
@@ -67,7 +74,7 @@ class LineaAlbaranProveedor
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {

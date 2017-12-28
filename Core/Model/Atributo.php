@@ -31,21 +31,21 @@ class Atributo
     }
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var string
      */
     public $codatributo;
 
     /**
-     * Nombre del atributo
+     * Name of the attribute.
      *
      * @var string
      */
     public $nombre;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -55,7 +55,7 @@ class Atributo
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -65,7 +65,7 @@ class Atributo
     }
 
     /**
-     * Obtener los atributos de un código de atributo
+     * Obtain the attributes of an attribute code.
      *
      * @return AtributoValor[]
      */
@@ -77,7 +77,7 @@ class Atributo
     }
 
     /**
-     * Obtener atributo por nombre
+     * Get attribute by name.
      *
      * @param string $nombre
      * @param bool   $minusculas
@@ -86,9 +86,9 @@ class Atributo
      */
     public function getByNombre($nombre, $minusculas = false)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE nombre = ' . self::$dataBase->var2str($nombre) . ';';
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE nombre = ' . self::$dataBase->var2str($nombre) . ';';
         if ($minusculas) {
-            $sql = 'SELECT * FROM ' . $this->tableName()
+            $sql = 'SELECT * FROM ' . static::tableName()
                 . ' WHERE lower(nombre) = ' . self::$dataBase->var2str(mb_strtolower($nombre, 'UTF8') . ';');
         }
 
@@ -102,7 +102,7 @@ class Atributo
     }
 
     /**
-     * Almacena los datos del modelo en la base de datos.
+     * Stores the model data in the database.
      *
      * @return bool
      */

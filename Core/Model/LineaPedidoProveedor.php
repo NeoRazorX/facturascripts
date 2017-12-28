@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Línea de pedido de proveedor.
+ * Supplier order line.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -30,14 +30,14 @@ class LineaPedidoProveedor
     use Base\LineaDocumentoCompra;
 
     /**
-     * ID del pedido.
+     * Order ID.
      *
      * @var integer
      */
     public $idpedido;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -47,7 +47,7 @@ class LineaPedidoProveedor
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {

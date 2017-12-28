@@ -18,105 +18,104 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Lib\Import\CSVImport;
+
 /**
- * Define que cuentas hay que usar para generar los distintos informes contables.
+ * Defines which accounts must be used to generate the different accounting reports.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Balance
 {
 
-    use Base\ModelTrait {
-        save as private saveTrait;
-        url as private traitURL;
-    }
+    use Base\ModelTrait;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var string
      */
     public $codbalance;
 
     /**
-     * Descripción 4  del balance
+     * Description 4 of the balance.
      *
      * @var string
      */
     public $descripcion4ba;
 
     /**
-     * Descripción 4 del balance
+     * Description 4 of the balance.
      *
      * @var string
      */
     public $descripcion4;
 
     /**
-     * Nivel 4  del balance
+     * Level 4 of the balance.
      *
      * @var string
      */
     public $nivel4;
 
     /**
-     * Descripción 3 del balance
+     * Description 3 of the balance.
      *
      * @var string
      */
     public $descripcion3;
 
     /**
-     * Orden 3 del balance
+     * Order 3 of the balance.
      *
      * @var string
      */
     public $orden3;
 
     /**
-     * Nivel 2 del balance
+     * Level 2 of the balance.
      *
      * @var string
      */
     public $nivel3;
 
     /**
-     * Descripción 2 del balance
+     * Description 2 of the balance.
      *
      * @var string
      */
     public $descripcion2;
 
     /**
-     * Nivel 2 del balance
+     * Level 2 of the balance.
      *
      * @var int
      */
     public $nivel2;
 
     /**
-     * Descripción 1 del balance
+     * Description 1 of the balance.
      *
      * @var string
      */
     public $descripcion1;
 
     /**
-     * Nivel 1 del balance
+     * Level 1 of the balance.
      *
      * @var string
      */
     public $nivel1;
 
     /**
-     * Naturaleza del balance
+     * Nature of the balance.
      *
      * @var string
      */
     public $naturaleza;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -126,7 +125,7 @@ class Balance
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -134,20 +133,32 @@ class Balance
     {
         return 'codbalance';
     }
-
+    
     /**
-     * Almacena los datos del modelo en la base de datos.
-     *
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     * 
+     * @return string
+     */
+    public function install()
+    {
+        return CSVImport::importTableSQL(static::tableName());
+    }
+    
+    /**
+     * Test model's data.
+     * 
      * @return bool
      */
-    public function save()
+    public function test()
     {
         $this->descripcion1 = self::noHtml($this->descripcion1);
         $this->descripcion2 = self::noHtml($this->descripcion2);
         $this->descripcion3 = self::noHtml($this->descripcion3);
         $this->descripcion4 = self::noHtml($this->descripcion4);
         $this->descripcion4ba = self::noHtml($this->descripcion4ba);
-
-        return $this->saveTrait();
+        
+        return true;
     }
 }

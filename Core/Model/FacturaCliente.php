@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * Factura de un cliente.
+ * Invoice of a client.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -32,16 +32,16 @@ class FacturaCliente
     use Base\Factura;
 
     /**
-     * Identificador opcional para la impresión. Todavía sin uso.
-     * Se puede usar para identificar una forma de impresión y usar siempre
-     * esa en esta factura.
+     * Optional identifier for printing. Still without use.
+     * Can be used to identify a form of printing and always use
+     * that in this invoice.
      *
      * @var int
      */
     public $idimprenta;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -51,7 +51,7 @@ class FacturaCliente
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -61,7 +61,9 @@ class FacturaCliente
     }
 
     /**
-     * Crea la consulta necesaria para crear un nuevo agente en la base de datos.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
@@ -75,7 +77,7 @@ class FacturaCliente
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -86,7 +88,7 @@ class FacturaCliente
     }
 
     /**
-     * Devuelve true su está vencida, sino false
+     * Returns true its expired, but false.
      *
      * @return bool
      */
@@ -96,9 +98,9 @@ class FacturaCliente
     }
 
     /**
-     * Establece la fecha y la hora, pero respetando la numeración, el ejercicio
-     * y las regularizaciones de IVA.
-     * Devuelve True si se asigna una fecha distinta a los solicitados.
+     * Set the date and time, but respecting the numbering, the exercise
+     * and VAT regularizations.
+     * Returns True if a different date is assigned to those requested.
      *
      * @param string $fecha
      * @param string $hora
@@ -109,8 +111,8 @@ class FacturaCliente
     {
         $cambio = false;
 
-        if ($this->numero === null) { /// nueva factura
-            /// buscamos la última fecha usada en una factura en esta serie y ejercicio
+        if ($this->numero === null) { /// new invoice
+            /// we look for the last date used in an invoice in this series and exercise
             $sql = 'SELECT MAX(fecha) AS fecha FROM ' . static::tableName()
                 . ' WHERE codserie = ' . self::$dataBase->var2str($this->codserie)
                 . ' AND codejercicio = ' . self::$dataBase->var2str($this->codejercicio) . ';';
@@ -121,12 +123,12 @@ class FacturaCliente
                     $fechaOld = $fecha;
                     $fecha = date('d-m-Y', strtotime($data[0]['fecha']));
 
-                    self::$miniLog->alert(self::$i18n->trans('invoice-new-assigned-date', [$fechaOld, $fecha]));
+                    self::$miniLog->alert(self::$i18n->trans('invoice-new-assigned-date', ['%oldDate%' => $fechaOld, '%newDate%' => $fecha]));
                     $cambio = true;
                 }
             }
 
-            /// ahora buscamos la última hora usada para esa fecha, serie y ejercicio
+            /// now we look for the last hour used for that date, series and exercise
             $sql = 'SELECT MAX(hora) AS hora FROM ' . static::tableName()
                 . ' WHERE codserie = ' . self::$dataBase->var2str($this->codserie)
                 . ' AND codejercicio = ' . self::$dataBase->var2str($this->codejercicio)
@@ -142,32 +144,32 @@ class FacturaCliente
 
             $this->fecha = $fecha;
             $this->hora = $hora;
-        } elseif ($fecha !== $this->fecha) { /// factura existente y cambiamos fecha
+        } elseif ($fecha !== $this->fecha) { /// existing invoice and change date
             $cambio = true;
 
             $eje0 = new Ejercicio();
             $ejercicio = $eje0->get($this->codejercicio);
             if ($ejercicio) {
                 if (!$ejercicio->abierto()) {
-                    self::$miniLog->alert(self::$i18n->trans('closed-exercise-cant-change-date', [$ejercicio->nombre]));
+                    self::$miniLog->alert(self::$i18n->trans('closed-exercise-cant-change-date', ['%exerciseName%' => $ejercicio->nombre]));
                 } elseif ($fecha === $ejercicio->get_best_fecha($fecha)) {
                     $regiva0 = new RegularizacionIva();
                     if ($regiva0->getFechaInside($fecha)) {
-                        self::$miniLog->alert(self::$i18n->trans('cant-assign-date-already-regularized', [$fecha, FS_IVA]));
+                        self::$miniLog->alert(self::$i18n->trans('cant-assign-date-already-regularized', ['%date%' => $fecha, '%tax%' => FS_IVA]));
                     } elseif ($regiva0->getFechaInside($this->fecha)) {
-                        self::$miniLog->alert(self::$i18n->trans('invoice-regularized-cant-change-date', [FS_IVA]));
+                        self::$miniLog->alert(self::$i18n->trans('invoice-regularized-cant-change-date', ['%tax%' => FS_IVA]));
                     } else {
                         $this->fecha = $fecha;
                         $this->hora = $hora;
                         $cambio = false;
                     }
                 } else {
-                    self::$miniLog->alert(self::$i18n->trans('date-out-of-exercise-range', [$ejercicio->nombre]));
+                    self::$miniLog->alert(self::$i18n->trans('date-out-of-exercise-range', ['%exerciseName%' => $ejercicio->nombre]));
                 }
             } else {
                 self::$miniLog->alert(self::$i18n->trans('exercise-not-found'));
             }
-        } elseif ($hora !== $this->hora) { /// factura existente y cambiamos hora
+        } elseif ($hora !== $this->hora) { /// existing invoice and we change hour
             $this->hora = $hora;
         }
 
@@ -175,7 +177,7 @@ class FacturaCliente
     }
 
     /**
-     * Devuelve las líneas asociadas a la factura.
+     * Returns the lines associated with the invoice.
      *
      * @return LineaFacturaCliente[]
      */
@@ -186,8 +188,8 @@ class FacturaCliente
     }
 
     /**
-     * Devuelve las líneas de IVA de la factura.
-     * Si no hay, las crea.
+     * Returns the VAT lines of the invoice.
+     * If there are not, create them.
      *
      * @return LineaIvaFacturaCliente[]
      */
@@ -197,7 +199,7 @@ class FacturaCliente
     }
 
     /**
-     * Comprueba los datos de la factura, devuelve True si está correcto
+     * Check the invoice data, return True if correct.
      *
      * @return bool
      */
@@ -207,7 +209,7 @@ class FacturaCliente
     }
 
     /**
-     * Elimina una factura y actualiza los registros relacionados con ella.
+     * Remove an invoice and update the records related to it.
      *
      * @return bool
      */
@@ -221,7 +223,7 @@ class FacturaCliente
             if ($ejercicio->abierto()) {
                 $reg0 = new RegularizacionIva();
                 if ($reg0->getFechaInside($this->fecha)) {
-                    self::$miniLog->alert(self::$i18n->trans('invoice-regularized-cant-delete', [FS_IVA]));
+                    self::$miniLog->alert(self::$i18n->trans('invoice-regularized-cant-delete', ['%tax%' => FS_IVA]));
                     $bloquear = true;
                 } else {
                     foreach ($this->getRectificativas() as $rect) {
@@ -231,12 +233,12 @@ class FacturaCliente
                     }
                 }
             } else {
-                self::$miniLog->alert(self::$i18n->trans('closed-exercise', [$ejercicio->nombre]));
+                self::$miniLog->alert(self::$i18n->trans('closed-exercise', ['%exerciseName%' => $ejercicio->nombre]));
                 $bloquear = true;
             }
         }
 
-        /// desvincular albaranes asociados y eliminar factura
+        /// unlink associated delivery notes and eliminate invoice
         $sql = 'UPDATE albaranescli'
             . ' SET idfactura = NULL, ptefactura = TRUE WHERE idfactura = ' . self::$dataBase->var2str($this->idfactura) . ';'
             . 'DELETE FROM ' . static::tableName() . ' WHERE idfactura = ' . self::$dataBase->var2str($this->idfactura) . ';';
@@ -249,7 +251,7 @@ class FacturaCliente
 
             if ($this->idasiento) {
                 /**
-                 * Delegamos la eliminación de los asientos en la clase correspondiente.
+                 * We delegate the elimination of the seats in the corresponding class.
                  */
                 $asiento = new Asiento();
                 $asi0 = $asiento->get($this->idasiento);
@@ -263,7 +265,7 @@ class FacturaCliente
                 }
             }
 
-            self::$miniLog->info(self::$i18n->trans('customer-invoice-deleted-successfully', [$this->codigo]));
+            self::$miniLog->info(self::$i18n->trans('customer-invoice-deleted-successfully', ['%docCode%' => $this->codigo]));
 
             return true;
         }
@@ -272,7 +274,7 @@ class FacturaCliente
     }
 
     /**
-     * Devuelve un array con los huecos en la numeración.
+     * Returns an array with the gaps in the numbering.
      *
      * @return mixed
      */

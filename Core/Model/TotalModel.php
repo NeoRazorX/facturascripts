@@ -21,8 +21,8 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Modelo Auxiliar para cargar una lista de totales
- * con o sin agrupación por código.
+ * Auxiliary model to load a list of totals
+ * with or without grouping by code.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -30,28 +30,28 @@ class TotalModel
 {
 
     /**
-     * Proporciona acceso directo a la base de datos.
+     * It provides direct access to the database.
      *
      * @var DataBase
      */
     private static $dataBase;
 
     /**
-     * Valor del campo código del modelo leido
+     * Value of the code field of the model read.
      *
      * @var string
      */
     public $code;
 
     /**
-     * Valores de totales de los campos del modelo leido
+     * Total values of the fields of the read model.
      *
      * @var array
      */
     public $totals;
 
     /**
-     * Constructor e inicializador de la clase
+     * Constructor and class initializer
      *
      * @param array $data
      */
@@ -69,7 +69,7 @@ class TotalModel
     }
 
     /**
-     * Resetea los totales a 0.
+     * Reset the totals to 0.
      *
      * @param array $totalFields
      */
@@ -81,7 +81,7 @@ class TotalModel
     }
 
     /**
-     * Devuelve el/los campos como parte de consulta SQL.
+     * Returns the / fields as part of the SQL query.
      *
      * @param string $fieldCode
      * @param array $fieldList
@@ -107,7 +107,7 @@ class TotalModel
     }
 
     /**
-     * Carga una lista de TotalModel (código y campos de estadisticos) para la tabla indicada
+     * Load a list of TotalModel (code and fields of statistics) for the indicated table.
      *
      * @param string  $tableName
      * @param DataBase\DataBaseWhere[] $where
