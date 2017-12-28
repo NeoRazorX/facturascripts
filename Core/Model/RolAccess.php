@@ -19,8 +19,10 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
- * Define los permisos individuales para cada página dentro de un rol de usuarios.
+ * Defines the individual permissions for each page within a user role.
  *
  * @author Joe Nilson            <joenilson at gmail.com>
  * @author Carlos García Gómez <carlos@facturascripts.com>
@@ -31,42 +33,42 @@ class RolAccess
     use Base\ModelTrait;
 
     /**
-     * Identificador
+     * Identifier.
      *
      * @var int
      */
     public $id;
 
     /**
-     * Código de rol
+     * Role code.
      *
      * @var string
      */
     public $codrol;
 
     /**
-     * Nombre de la página
+     * Name of the page.
      *
      * @var string
      */
     public $pagename;
 
     /**
-     * Permiso para eliminar
+     * Permission to delete.
      *
      * @var bool
      */
     public $allowdelete;
 
     /**
-     * Permiso para actualizar
+     * Permission to update.
      *
      * @var bool
      */
     public $allowupdate;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -76,12 +78,41 @@ class RolAccess
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
     public function primaryColumn()
     {
         return 'id';
+    }
+
+    /**
+     * Add the indicated page list to the Role group
+     *
+     * @param string $codRol
+     * @param Page[] $pages
+     * @return bool
+     */
+    public static function addPagesToRol($codRol, $pages)
+    {
+        $where = [new DataBaseWhere('codrol', $codRol)];
+        $rolAccess = new RolAccess();
+
+        foreach ($pages as $record) {
+            $where[] = new DataBaseWhere('pagename', $record->name);
+
+            if (!$rolAccess->loadFromCode('', $where)) {
+                $rolAccess->codrol = $codRol;
+                $rolAccess->pagename = $record->name;
+                $rolAccess->allowdelete = true;
+                $rolAccess->allowupdate = true;
+                if (!$rolAccess->save()) {
+                    return false;
+                }
+            }
+            unset($where[1]);
+        }
+        return true;
     }
 }

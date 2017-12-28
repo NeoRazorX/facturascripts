@@ -40,7 +40,7 @@ class ListAgenciaTransporte extends ExtendedController\ListController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'carriers';
         $pagedata['icon'] = 'fa-truck';
-        $pagedata['menu'] = 'admin';
+        $pagedata['menu'] = 'warehouse';
 
         return $pagedata;
     }

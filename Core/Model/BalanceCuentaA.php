@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Detalle abreviado de un balance.
+ * Abbreviated detail of a balance.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -29,35 +29,35 @@ class BalanceCuentaA
     use Base\ModelTrait;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
     public $id;
 
     /**
-     * Código del balance
+     * Balance code.
      *
      * @var string
      */
     public $codbalance;
 
     /**
-     * Código de la cuenta
+     * Account code.
      *
      * @var string
      */
     public $codcuenta;
 
     /**
-     * Descripción de la cuenta
+     * Description of the account.
      *
      * @var string
      */
     public $desccuenta;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -67,7 +67,7 @@ class BalanceCuentaA
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -77,7 +77,7 @@ class BalanceCuentaA
     }
 
     /**
-     * Devuelve el saldo del balance de un ejercicio.
+     * Returns the balance of an exercise.
      *
      * @param ejercicio $ejercicio
      * @param bool      $desde
@@ -126,7 +126,7 @@ class BalanceCuentaA
     }
 
     /**
-     * Obtener todos los balances sde la cuenta por su código de balance
+     * Obtain all balances from the account by your balance code.
      *
      * @param string $cod
      *
@@ -135,7 +135,7 @@ class BalanceCuentaA
     public function allFromCodbalance($cod)
     {
         $balist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName()
+        $sql = 'SELECT * FROM ' . static::tableName()
             . ' WHERE codbalance = ' . self::$dataBase->var2str($cod) . ' ORDER BY codcuenta ASC;';
 
         $data = self::$dataBase->select($sql);
@@ -149,7 +149,7 @@ class BalanceCuentaA
     }
 
     /**
-     * Buscar todos los balances sde la cuenta por su código de balance
+     * Search all balances of the account by its balance code.
      *
      * @param string $cod
      *
@@ -158,7 +158,7 @@ class BalanceCuentaA
     public function searchByCodbalance($cod)
     {
         $balist = [];
-        $sql = 'SELECT * FROM ' . $this->tableName()
+        $sql = 'SELECT * FROM ' . static::tableName()
             . " WHERE codbalance LIKE '" . self::noHtml($cod) . "%' ORDER BY codcuenta ASC;";
 
         $data = self::$dataBase->select($sql);

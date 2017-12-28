@@ -127,7 +127,8 @@ types of filters available are:
    the description to be displayed and indicates to the user the
    function of the filter.      \* field: Name of the field of the model
    where the filter is applied. If not indicated the key value is used.
-        \* inverse: Allows you to invert the Boolean values.
+        \* inverse: Allows you to invert the value.
+        \* matchValue: Allows you to specify the match value.
 
 -  **addFilterDatePicker**: Date type filter.
 -  **addFilterText**: Filter of type alphanumeric or free text.

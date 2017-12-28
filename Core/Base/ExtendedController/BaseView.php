@@ -40,6 +40,13 @@ abstract class BaseView
     protected $model;
 
     /**
+     * Stores the new code from the save() procedure, to use in loadData().
+     * 
+     * @var string 
+     */
+    protected $newCode;
+
+    /**
      * Columns and filters configuration
      *
      * @var Model\PageOption
@@ -107,7 +114,7 @@ abstract class BaseView
     {
         $fieldKey = $this->model->primaryColumn();
         $fieldValue = $data[$fieldKey];
-        if ($fieldValue !== $this->model->primaryColumnValue()) {
+        if ($fieldValue !== $this->model->primaryColumnValue() && $fieldValue !== '') {
             $this->model->loadFromCode($fieldValue);
         }
 
@@ -122,7 +129,12 @@ abstract class BaseView
      */
     public function save()
     {
-        return $this->model->save();
+        if( $this->model->save() ) {
+            $this->newCode = $this->model->primaryColumnValue();
+            return true;
+        }
+        
+        return false;
     }
 
     /**

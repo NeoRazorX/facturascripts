@@ -26,8 +26,8 @@ use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Base\Utils;
 
 /**
- * La clase de la que heredan todos los modelos, conecta a la base de datos,
- * comprueba la estructura de la tabla y de ser necesario la crea o adapta.
+ * The class from which all models inherit, connects to the database,
+ * check the structure of the table and if necessary create or adapt.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -37,56 +37,56 @@ trait ModelTrait
     use Utils;
 
     /**
-     * Lista de campos de la tabla.
+     * List of fields in the table.
      *
      * @var array
      */
     protected static $fields;
 
     /**
-     * Nombre del modelo. De la clase que inicia este trait.
+     * Name of the model From the class that initiates this trait.
      *
      * @var string
      */
     private static $modelName;
 
     /**
-     * Lista de tablas ya comprobadas.
+     * List of already tested tables.
      *
      * @var array|null
      */
     private static $checkedTables;
 
     /**
-     * Proporciona acceso directo a la base de datos.
+     * It provides direct access to the database.
      *
      * @var DataBase
      */
     protected static $dataBase;
 
     /**
-     * Permite conectar e interactuar con el sistema de caché.
+     * It allows to connect and interact with the cache system.
      *
      * @var Cache
      */
     protected static $cache;
 
     /**
-     * Traductor multi-idioma.
+     * Multi-language translator.
      *
      * @var Translator
      */
     protected static $i18n;
 
     /**
-     * Gestiona el log de todos los controladores, modelos y base de datos.
+     * Manage the log of all controllers, models and database.
      *
      * @var MiniLog
      */
     protected static $miniLog;
 
     /**
-     * Constructor por defecto.
+     * ModelTrait constructor.
      *
      * @param array $data
      */
@@ -101,7 +101,7 @@ trait ModelTrait
     }
 
     /**
-     * Inicializa lo necesario.
+     * Initialize what is necessary.
      */
     private function init()
     {
@@ -121,21 +121,21 @@ trait ModelTrait
             self::$modelName = get_class($this);
         }
 
-        if ($this->tableName() !== '' && !in_array($this->tableName(), self::$checkedTables, false) && $this->checkTable($this->tableName())) {
-            self::$miniLog->debug(self::$i18n->trans('table-checked', [$this->tableName()]));
-            self::$checkedTables[] = $this->tableName();
+        if (static::tableName() !== '' && !in_array(static::tableName(), self::$checkedTables, false) && $this->checkTable(static::tableName())) {
+            self::$miniLog->debug(self::$i18n->trans('table-checked', ['%tableName%' => static::tableName()]));
+            self::$checkedTables[] = static::tableName();
             self::$cache->set('fs_checked_tables', self::$checkedTables);
         }
 
         if (self::$fields === null) {
-            self::$fields = (self::$dataBase->tableExists($this->tableName()) ? self::$dataBase->getColumns($this->tableName()) : []);
+            self::$fields = (self::$dataBase->tableExists(static::tableName()) ? self::$dataBase->getColumns(static::tableName()) : []);
         }
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+           * that will be executed after the creation of the table. Useful to insert values
+           * default.
      *
      * @return string
      */
@@ -149,7 +149,7 @@ trait ModelTrait
     }
 
     /**
-     * Devuelve el nombre de la clase del modelo
+     * Returns the name of the class of the model.
      *
      * @return string
      */
@@ -160,7 +160,7 @@ trait ModelTrait
     }
 
     /**
-     * Devuelve el nombre del modelo.
+     * Returns the name of the model.
      *
      * @return string
      */
@@ -170,14 +170,14 @@ trait ModelTrait
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
     abstract public function primaryColumn();
 
     /**
-     * Devuelve el valor actual de la columna principal del modelo
+     * Returns the current value of the main column of the model.
      *
      * @return mixed
      */
@@ -187,30 +187,31 @@ trait ModelTrait
     }
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
     abstract public function tableName();
 
     /**
-     * Comprueba un array de datos para que tenga la estructura correcta del modelo
+     * Check an array of data so that it has the correct structure of the model.
      *
      * @param array $data
      */
     public function checkArrayData(&$data)
     {
         foreach (self::$fields as $field => $values) {
-            if ($values['type'] === 'boolean' || $values['type'] === 'tinyint(1)') {
-                if (!isset($data[$field])) {
-                    $data[$field] = FALSE;
-                }
+            if (in_array($values['type'], ['boolean', 'tinyint(1)']) && !isset($data[$field])) {
+                $data[$field] = false;
+            } elseif(isset($data[$field]) && $data[$field] === '---null---') {
+                /// ---null--- text comes from widgetItemSelect.
+                $data[$field] = null;
             }
         }
     }
 
     /**
-     * Devuelve el valor integer controlando casos especiales para las PK y FK
+     * Returns the integer value by controlling special cases for the PK and FK.
      *
      * @param array $field
      * @param string $value
@@ -223,14 +224,14 @@ trait ModelTrait
         }
 
         if ($field['name'] === $this->primaryColumn()) {
-            return NULL;
+            return null;
         }
 
-        return ($field['is_nullable'] === 'NO') ? 0 : NULL;
+        return ($field['is_nullable'] === 'NO') ? 0 : null;
     }
 
     /**
-     * Asigna a las propiedades del modelo los valores del array $data
+     * Assign the values of the $data array to the model properties.
      *
      * @param array $data
      * @param string[] $exclude
@@ -245,7 +246,7 @@ trait ModelTrait
             if (isset(self::$fields[$key])) {
                 $field = self::$fields[$key];
 
-                // Comprobamos si es un varchar (con longitud establecida) u otro tipo de dato
+                // We check if it is a varchar (with established length) or another type of data
                 $type = (strpos($field['type'], '(') === false) ? $field['type'] : substr($field['type'], 0, strpos($field['type'], '('));
 
                 switch ($type) {
@@ -275,12 +276,14 @@ trait ModelTrait
                         }
                         $this->{$key} = $this->fixHtml($value);
                 }
+            } else {
+                $this->{$key} = $value;
             }
         }
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -290,12 +293,12 @@ trait ModelTrait
     }
 
     /**
-     * Rellena la clase con los valores del registro
-     * cuya columna primaria corresponda al valor $cod, o según la condición
-     * where indicada, si no se informa valor en $cod.
-     * Inicializa los valores de la clase si no existe ningún registro que
-     * cumpla las condiciones anteriores.
-     * Devuelve True si existe el registro y False en caso contrario.
+     * Fill the class with the registry values
+           * whose primary column corresponds to the value $cod, or according to the condition
+           * where indicated, if value is not reported in $cod.
+           * Initializes the values of the class if there is no record that
+           * meet the above conditions.
+           * Returns True if the record exists and False otherwise.
      *
      * @param string $cod
      * @param DataBase\DataBaseWhere[] $where
@@ -316,7 +319,7 @@ trait ModelTrait
     }
 
     /**
-     * Devuelve el modelo cuya columna primaria corresponda al valor $cod
+     * Returns the model whose primary column corresponds to the value $cod
      *
      * @param string $cod
      *
@@ -335,7 +338,7 @@ trait ModelTrait
     }
 
     /**
-     * Devuelve true si los datos del modelo se encuentran almacenados en la base de datos.
+     * Returns true if the model data is stored in the database.
      *
      * @return bool
      */
@@ -345,15 +348,15 @@ trait ModelTrait
             return false;
         }
 
-        $sql = 'SELECT 1 FROM ' . $this->tableName()
+        $sql = 'SELECT 1 FROM ' . static::tableName()
             . ' WHERE ' . $this->primaryColumn() . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
 
         return (bool) self::$dataBase->select($sql);
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
-     * Se ejecuta dentro del método save.
+     * Returns true if there are no errors in the values of the model properties.
+           * It runs inside the save method.
      *
      * @return bool
      */
@@ -363,7 +366,7 @@ trait ModelTrait
     }
 
     /**
-     * Almacena los datos del modelo en la base de datos.
+     * Stores the model data in the database.
      *
      * @return bool
      */
@@ -381,7 +384,7 @@ trait ModelTrait
     }
 
     /**
-     * Elimina los datos del modelo de la base de datos.
+     * Remove the model data from the database.
      *
      * @return bool
      */
@@ -390,22 +393,22 @@ trait ModelTrait
         if (method_exists(__CLASS__, 'cleanCache')) {
             $this->cleanCache();
         }
-        $sql = 'DELETE FROM ' . $this->tableName()
+        $sql = 'DELETE FROM ' . static::tableName()
             . ' WHERE ' . $this->primaryColumn() . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
 
         return self::$dataBase->exec($sql);
     }
 
     /**
-     * Devuelve el número de registros en el modelo que cumplen la condición
+     * Returns the number of records in the model that meet the condition.
      *
-     * @param array $where filtros a aplicar a los registros del modelo. (Array de DataBaseWhere)
+     * @param DataBase\DataBaseWhere[] $where filters to apply to model records.
      *
      * @return int
      */
     public function count(array $where = [])
     {
-        $sql = 'SELECT COUNT(1) AS total FROM ' . $this->tableName() . DataBase\DataBaseWhere::getSQLWhere($where);
+        $sql = 'SELECT COUNT(1) AS total FROM ' . static::tableName() . DataBase\DataBaseWhere::getSQLWhere($where);
         $data = self::$dataBase->select($sql);
         if (empty($data)) {
             return 0;
@@ -415,10 +418,10 @@ trait ModelTrait
     }
 
     /**
-     * Devuelve todos los modelos que se correspondan con los filtros seleccionados.
+     * Returns all models that correspond to the selected filters.
      *
-     * @param array   $where  filtros a aplicar a los registros del modelo. (Array de DataBaseWhere)
-     * @param array   $order  campos a utilizar en la ordenación. Por ejemplo ['codigo' => 'ASC']
+     * @param DataBase\DataBaseWhere[] $where  filters to apply to model records.
+     * @param array $order  fields to use in the sorting. For example ['code' => 'ASC']
      * @param int $offset
      * @param int $limit
      *
@@ -428,7 +431,7 @@ trait ModelTrait
     {
         $modelList = [];
         $sqlWhere = DataBase\DataBaseWhere::getSQLWhere($where);
-        $sql = 'SELECT * FROM ' . $this->tableName() . $sqlWhere . $this->getOrderBy($order);
+        $sql = 'SELECT * FROM ' . static::tableName() . $sqlWhere . $this->getOrderBy($order);
         $data = self::$dataBase->selectLimit($sql, $limit, $offset);
         if (!empty($data)) {
             $class = $this->modelName();
@@ -441,7 +444,7 @@ trait ModelTrait
     }
 
     /**
-     * Devuelve el siguiente código para el campo informado o de la primary key del modelo
+     * Returns the following code for the reported field or the primary key of the model.
      *
      * @param string $field
      *
@@ -452,7 +455,7 @@ trait ModelTrait
         if (empty($field)) {
             $field = self::$dataBase->sql2Int($this->primaryColumn());
         }
-        $sql = 'SELECT MAX(' . $field . ') as cod FROM ' . $this->tableName() . ';';
+        $sql = 'SELECT MAX(' . $field . ') as cod FROM ' . static::tableName() . ';';
         $cod = self::$dataBase->select($sql);
         if (empty($cod)) {
             return 1;
@@ -462,7 +465,7 @@ trait ModelTrait
     }
 
     /**
-     * Comprueba y actualiza la estructura de la tabla si es necesario
+     * Check and update the structure of the table if necessary.
      *
      * @param string $tableName
      *
@@ -483,13 +486,13 @@ trait ModelTrait
         if (self::$dataBase->tableExists($tableName)) {
             $sql .= $dbTools->checkTable($tableName, $xmlCols, $xmlCons);
         } else {
-            /// generamos el sql para crear la tabla
+            /// we generate the sql to create the table
             $sql .= $dbTools->generateTable($tableName, $xmlCols, $xmlCons);
             $sql .= $this->install();
         }
 
         if ($sql !== '' && !self::$dataBase->exec($sql)) {
-            self::$miniLog->critical(self::$i18n->trans('check-table', [$tableName]));
+            self::$miniLog->critical(self::$i18n->trans('check-table', ['%tableName%' => $tableName]));
             self::$cache->clear();
             return false;
         }
@@ -498,8 +501,8 @@ trait ModelTrait
     }
 
     /**
-     * Lee el registro cuya columna primaria corresponda al valor $cod
-     * o el primero que cumple la condición indicada
+     * Read the record whose primary column corresponds to the value $cod
+           * or the first that meets the indicated condition
      *
      * @param string $cod
      * @param array|null $where
@@ -511,18 +514,20 @@ trait ModelTrait
     {
         $sqlWhere = empty($where) ? ' WHERE ' . $this->primaryColumn() . ' = ' . self::$dataBase->var2str($cod) : DataBase\DataBaseWhere::getSQLWhere($where);
 
-        $sql = 'SELECT * FROM ' . $this->tableName() . $sqlWhere . $this->getOrderBy($orderby);
+        $sql = 'SELECT * FROM ' . static::tableName() . $sqlWhere . $this->getOrderBy($orderby);
         return self::$dataBase->selectLimit($sql, 1);
     }
 
     /**
-     * Actualiza los datos del modelo en la base de datos.
+     * Update the model data in the database.
+     *
+     * @param array $values
      *
      * @return bool
      */
     private function saveUpdate($values = [])
     {
-        $sql = 'UPDATE ' . $this->tableName();
+        $sql = 'UPDATE ' . static::tableName();
         $coma = ' SET';
 
         foreach (self::$fields as $field) {
@@ -542,7 +547,9 @@ trait ModelTrait
     }
 
     /**
-     * Inserta los datos del modelo en la base de datos.
+     * Insert the model data in the database.
+     *
+     * @param array $values
      *
      * @return bool
      */
@@ -560,7 +567,7 @@ trait ModelTrait
             }
         }
 
-        $sql = 'INSERT INTO ' . $this->tableName()
+        $sql = 'INSERT INTO ' . static::tableName()
             . ' (' . implode(',', $insertFields) . ') VALUES (' . implode(',', $insertValues) . ');';
         if (self::$dataBase->exec($sql)) {
             if ($this->primaryColumnValue() === null) {
@@ -574,7 +581,7 @@ trait ModelTrait
     }
 
     /**
-     * Convierte un array de filtros order by en string
+     * Convert an array of filters order by in string.
      *
      * @param array $order
      *
@@ -595,9 +602,10 @@ trait ModelTrait
     }
 
     /**
-     * Devuelve la url donde ver/modificar los datos
+     * Returns the url where to see / modify the data.
      *
      * @param string $type
+     * @param string $list
      *
      * @return string
      */

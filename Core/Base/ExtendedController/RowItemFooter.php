@@ -76,6 +76,10 @@ class RowItemFooter extends RowItem
      */
     public function loadFromJSON($items)
     {
+        $this->panels = $items['panels'];
+        foreach ($items['buttons'] as $key => $buttons) {
+            $this->buttons[$key] = $this->loadButtonsFromJSON($buttons);
+        }
     }
 
     /**

@@ -30,195 +30,195 @@ trait DocumentoCompra
 {
 
     use ModelTrait {
-        clear as clearTrait;
+        clear as traitClear;
     }
 
     /**
-     * CIF/NIF del proveedor
+     * VAT number of the supplier.
      *
      * @var string
      */
     public $cifnif;
 
     /**
-     * Empleado que ha creado este documento.
+     * Employee who created this document.
      *
      * @var string
      */
     public $codagente;
 
     /**
-     * Almacén en el que entra la mercancía.
+     * Warehouse in which the merchandise enters.
      *
      * @var string
      */
     public $codalmacen;
 
     /**
-     * Divisa del albarán.
+     * Currency of the document.
      *
      * @var string
      */
     public $coddivisa;
 
     /**
-     * Ejercicio relacionado. El que corresponde a la fecha.
+     * Related exercise. The one that corresponds to the date.
      *
      * @var string
      */
     public $codejercicio;
 
     /**
-     * Identificador único de cara a humanos.
+     * Unique identifier for humans.
      *
      * @var string
      */
     public $codigo;
 
     /**
-     * Forma de pago asociada.
+     * Payment method associated.
      *
      * @var string
      */
     public $codpago;
 
     /**
-     * Código del proveedor de este albarán.
+     * Supplier code for this document.
      *
      * @var string
      */
     public $codproveedor;
 
     /**
-     * Serie relacionada.
+     * Related serie.
      *
      * @var string
      */
     public $codserie;
 
     /**
-     * Fecha del albarán
+     * Date of the document.
      *
      * @var string
      */
     public $fecha;
 
     /**
-     * Hora del albarán
+     * Document time.
      *
      * @var string
      */
     public $hora;
     
     /**
-     * Idempresa del documento
-     * 
-     * @var int 
+     * Company id. of the document.
+     *
+     * @var int
      */
     public $idempresa;
 
     /**
-     * % de retención IRPF del albarán. Se obtiene de la serie.
-     * Cada línea puede tener un % distinto.
+     * % IRPF retention of the document. It is obtained from the series.
+     * Each line can have a different%.
      *
      * @var float|int
      */
     public $irpf;
 
     /**
-     * Nombre del proveedor
+     * Provider's name.
      *
      * @var string
      */
     public $nombre;
 
     /**
-     * Número del albarán.
-     * Único dentro de la serie+ejercicio.
+     * Number of the document.
+     * Unique within the series + exercise.
      *
      * @var string
      */
     public $numero;
 
     /**
-     * Número de albarán de proveedor, si lo hay.
-     * Puede contener letras.
+     * Supplier's document number, if any.
+     * May contain letters.
      *
      * @var string
      */
     public $numproveedor;
 
     /**
-     * Número de documentos adjuntos.
+     * Number of documents attached.
      *
      * @var int
      */
     public $numdocs;
 
     /**
-     * Suma del pvptotal de líneas. Total del albarán antes de impuestos.
+     * Sum of the pvptotal of lines. Total of the document before taxes.
      *
      * @var float|int
      */
     public $neto;
 
     /**
-     * Tasa de conversión a Euros de la divisa seleccionada.
+     * Rate of conversion to Euros of the selected currency.
      *
      * @var float|int
      */
     public $tasaconv;
 
     /**
-     * Suma total del albarán, con impuestos.
+     * Total sum of the document, with taxes.
      *
      * @var float|int
      */
     public $total;
 
     /**
-     * Suma del IVA de las líneas.
+     * Sum of the VAT of the lines.
      *
      * @var float|int
      */
     public $totaliva;
 
     /**
-     * Total expresado en euros, por si no fuese la divisa del albarán.
-     * totaleuros = total/tasaconv
-     * No hace falta rellenarlo, al hacer save() se calcula el valor.
+     * Total expressed in euros, if it were not the currency of the document.
+     * totaleuros = total / tasaconv
+     * It is not necessary to fill it, when doing save () the value is calculated.
      *
      * @var float|int
      */
     public $totaleuros;
 
     /**
-     * Suma total de las retenciones IRPF de las líneas.
+     * Total sum of the IRPF withholdings of the lines.
      *
      * @var float|int
      */
     public $totalirpf;
 
     /**
-     * Suma total del recargo de equivalencia de las líneas.
+     * Total sum of the equivalence surcharge of the lines.
      *
      * @var float|int
      */
     public $totalrecargo;
 
     /**
-     * Observaciones del albarán
+     * Notes of the document.
      *
      * @var string
      */
     public $observaciones;
 
     /**
-     * Inicializa los valores del documento.
+     * Initializes document values.
      */
     private function clearDocumentoCompra()
     {
-        $this->clearTrait();
+        $this->traitClear();
         $this->codserie = AppSettings::get('default', 'codserie');
         $this->codpago = AppSettings::get('default', 'codpago');
         $this->codalmacen = AppSettings::get('default', 'codalmacen');
@@ -237,7 +237,7 @@ trait DocumentoCompra
     }
 
     /**
-     * Almacena los datos del modelo en la base de datos.
+     * Stores the model data in the database.
      *
      * @return bool
      */
@@ -256,7 +256,7 @@ trait DocumentoCompra
     }
 
     /**
-     * Acorta el texto de observaciones
+     * Shorten the text of observations.
      *
      * @return string
      */
@@ -274,17 +274,17 @@ trait DocumentoCompra
     }
 
     /**
-     * Genera un nuevo código
+     * Generates a new code.
      */
     private function newCodigo()
     {
         $newCodigoDoc = new NewCodigoDoc();
-        $this->numero = $newCodigoDoc->getNumero($this->tableName(), $this->codejercicio, $this->codserie);
-        $this->codigo = $newCodigoDoc->getCodigo($this->tableName(), $this->numero, $this->codserie, $this->codejercicio);
+        $this->numero = (string) $newCodigoDoc->getNumero(static::tableName(), $this->codejercicio, $this->codserie);
+        $this->codigo = $newCodigoDoc->getCodigo(static::tableName(), $this->numero, $this->codserie, $this->codejercicio);
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns true if there are no errors in the values of the model properties.
      *
      * @return bool
      */
@@ -298,9 +298,9 @@ trait DocumentoCompra
         $this->observaciones = static::noHtml($this->observaciones);
 
         /**
-         * Usamos el euro como divisa puente a la hora de sumar, comparar
-         * o convertir cantidades en varias divisas. Por este motivo necesimos
-         * muchos decimales.
+         * We use the euro as a bridge currency when adding, compare
+         * or convert amounts in several currencies. For this reason we need
+         * many decimals.
          */
         $this->totaleuros = round($this->total / $this->tasaconv, 5);
         if (static::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, TRUE)) {
@@ -312,7 +312,7 @@ trait DocumentoCompra
     }
 
     /**
-     * Ejecuta un test completo de pruebas
+     * Run a complete test of tests.
      *
      * @param string $tipoDoc
      *
@@ -324,12 +324,12 @@ trait DocumentoCompra
         $subtotales = [];
         $irpf = 0;
 
-        /// calculamos también con el método anterior
+        /// we calculate also with the previous method
         $netoAlt = 0;
         $ivaAlt = 0;
         $this->getSubtotales($status, $subtotales, $irpf, $netoAlt, $ivaAlt);
 
-        /// redondeamos y sumamos
+        /// round and add
         $neto = 0;
         $iva = 0;
         $recargo = 0;
@@ -345,27 +345,32 @@ trait DocumentoCompra
         $total_alt = $netoAlt + $ivaAlt - $irpf + $recargo;
 
         if (!static::floatcmp($this->neto, $neto, FS_NF0, true) && !static::floatcmp($this->neto, $netoAlt, FS_NF0, true)) {
-            self::$miniLog->alert(self::$i18n->trans('neto-value-error', [$tipoDoc, $this->codigo, $this->neto, $neto]));
+            $values = ['%docType%' => $tipoDoc, '%docCode%' => $this->codigo, '%docNet%' => $this->neto, '%calcNet%' => $neto];
+            self::$miniLog->alert(self::$i18n->trans('neto-value-error', $values));
             $status = false;
         }
 
         if (!static::floatcmp($this->totaliva, $iva, FS_NF0, true) && !static::floatcmp($this->totaliva, $ivaAlt, FS_NF0, true)) {
-            self::$miniLog->alert(self::$i18n->trans('totaliva-value-error', [$tipoDoc, $this->codigo, $this->totaliva, $iva]));
+            $values = ['%docType%' => $tipoDoc, '%docCode%' => $this->codigo, '%docTotalTax%' => $this->totaliva, '%calcTotalTax%' => $iva];
+            self::$miniLog->alert(self::$i18n->trans('totaliva-value-error', $values));
             $status = false;
         }
 
         if (!static::floatcmp($this->totalirpf, $irpf, FS_NF0, true)) {
-            self::$miniLog->alert(self::$i18n->trans('totaliva-value-error', [$tipoDoc, $this->codigo, $this->totalirpf, $irpf]));
+            $values = ['%docType%' => $tipoDoc, '%docCode%' => $this->codigo, '%docTotalIRPF%' => $this->totalirpf, '%calcTotalIRPF%' => $irpf];
+            self::$miniLog->alert(self::$i18n->trans('totalirpf-value-error', $values));
             $status = false;
         }
 
         if (!static::floatcmp($this->totalrecargo, $recargo, FS_NF0, true)) {
-            self::$miniLog->alert(self::$i18n->trans('totalrecargp-value-error', [$tipoDoc, $this->codigo, $this->totalrecargo, $recargo]));
+            $values = ['%docType%' => $tipoDoc, '%docCode%' => $this->codigo, '%docTotalSurcharge%' => $this->totalrecargo, '%calcTotalSurcharge%' => $recargo];
+            self::$miniLog->alert(self::$i18n->trans('totalrecargo-value-error', $values));
             $status = false;
         }
 
         if (!static::floatcmp($this->total, $total, FS_NF0, true) && !static::floatcmp($this->total, $total_alt, FS_NF0, true)) {
-            self::$miniLog->alert(self::$i18n->trans('total-value-error', [$tipoDoc, $this->codigo, $this->total, $total]));
+            $values = ['%docType%' => $tipoDoc, '%docCode%' => $this->codigo, '%docTotal%' => $this->total, '%calcTotal%' => $total];
+            self::$miniLog->alert(self::$i18n->trans('total-value-error', $values));
             $status = false;
         }
 
@@ -373,7 +378,8 @@ trait DocumentoCompra
     }
 
     /**
-     * Calcula los subtotales de neto, impuestos y recargo, por tipo de impuesto, además del irpf, neto e impuestos con el cálculo anterior.
+     * Calculates the subtotals of net, taxes and surcharge, by type of tax, in addition to the irpf, net and taxes
+     * with the previous calculation.
      *
      * @param boolean $status
      * @param array $subtotales
@@ -408,7 +414,7 @@ trait DocumentoCompra
     }
 
     /**
-     * Devuelve las líneas asociadas al documento.
+     * Returns the lines associated with the document.
      *
      * @return array
      */

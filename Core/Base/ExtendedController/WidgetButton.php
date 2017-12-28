@@ -144,17 +144,17 @@ class WidgetButton implements VisualItemInterface
     /**
      * Loads the attributes structure from a JSON file
      *
-     * @param array $column
+     * @param array $button
      */
-    public function loadFromJSON($column)
+    public function loadFromJSON($button)
     {
-        $this->type = (string) $column['button']['type'];
-        $this->label = (string) $column['button']['label'];
-        $this->icon = (string) $column['button']['icon'];
-        $this->action = (string) $column['button']['action'];
-        $this->hint = (string) $column['button']['hint'];
-        $this->color = (string) $column['button']['color'];
-        $this->onClick = (string) $column['button']['onClick'];
+        $this->type = (string) $button['type'];
+        $this->label = (string) $button['label'];
+        $this->icon = (string) $button['icon'];
+        $this->action = (string) $button['action'];
+        $this->hint = (string) $button['hint'];
+        $this->color = (string) $button['color'];
+        $this->onClick = (string) $button['onClick'];
     }
 
     /**

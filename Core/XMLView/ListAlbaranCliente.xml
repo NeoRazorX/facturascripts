@@ -19,7 +19,7 @@
  *
  * Initial description for the controller ListAlbaranCliente
  *
- * @author Artex Trading sa <jcuello@artextrading.com>  
+ * @author Artex Trading sa <jcuello@artextrading.com>
 -->
 
 <view>
@@ -54,6 +54,4 @@
             <option color="table-success">0</option>
         </row>
     </rows>
-    <filters>
-    </filters>
 </view>

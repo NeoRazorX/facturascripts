@@ -62,12 +62,12 @@ class WidgetItemSelect extends WidgetItem
     /**
      * Loads the attributes structure from a JSON file
      *
-     * @param \SimpleXMLElement[] $column
+     * @param array $widget
      */
-    public function loadFromJSON($column)
+    public function loadFromJSON($widget)
     {
-        parent::loadFromJSON($column);
-        $this->values = (array) $column['widget']['values'];
+        parent::loadFromJSON($widget);
+        $this->values = (array) $widget['values'];
     }
 
     /**
@@ -79,6 +79,11 @@ class WidgetItemSelect extends WidgetItem
     {
         $this->values = [];
         foreach ($rows as $codeModel) {
+            if($codeModel->code === null) {
+               $codeModel->code = '---null---';
+               $codeModel->description = '------';
+            }
+            
             $this->values[] = [
                 'value' => $codeModel->code,
                 'title' => $codeModel->description,
@@ -174,7 +179,8 @@ class WidgetItemSelect extends WidgetItem
             . ' class="form-control"' . $specialAttributes . '>';
 
         foreach ($this->values as $selectValue) {
-            $selected = ($selectValue['value'] === $value) ? ' selected="selected" ' : '';
+            /// don't use strict comparation (===)
+            $selected = ($selectValue['value'] == $value) ? ' selected="selected" ' : '';
             $html .= '<option value="' . $selectValue['value'] . '" ' . $selected . '>' . $selectValue['title']
                 . '</option>';
         }

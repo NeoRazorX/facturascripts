@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base;
@@ -116,7 +115,7 @@ class CSVExport implements ExportInterface
     {
         return \implode(PHP_EOL, $this->csv);
     }
-    
+
     /**
      * Set headers.
      *
@@ -127,7 +126,7 @@ class CSVExport implements ExportInterface
         $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
         $response->headers->set('Content-Disposition', 'attachment;filename=doc.csv');
     }
-    
+
     /**
      * Adds a new page with the model data.
      *
@@ -185,7 +184,7 @@ class CSVExport implements ExportInterface
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
     }
-    
+
     /**
      * Adds a new page with the document data.
      *
@@ -194,6 +193,37 @@ class CSVExport implements ExportInterface
     public function generateDocumentPage($model)
     {
         /// TODO: Uncomplete
+        $tableData = [];
+        foreach ((array) $model as $key => $value) {
+            if (is_string($value)) {
+                $tableData[] = [
+                    'key' => $this->delimiter . $key . $this->delimiter,
+                    'value' => $this->delimiter . $value . $this->delimiter
+                ];
+            }
+        }
+
+        $this->writeSheet($tableData, ['key' => 'string', 'value' => 'string']);
+    }
+
+    /**
+     * Adds a new page with the table.
+     * 
+     * @param array $headers
+     * @param array $rows
+     */
+    public function generateTablePage($headers, $rows)
+    {
+        /// Generate the headers line
+        $this->csv[] = \implode($this->separator, $headers);
+        
+        /// Generate the data lines
+        $body = [];
+        foreach ($rows as $row) {
+            $body[] = \implode($this->separator, $row);
+        }
+        
+        $this->csv[] = \implode(PHP_EOL, $body);
     }
 
     /**

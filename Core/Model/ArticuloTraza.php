@@ -20,8 +20,8 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Esta clase sirve para guardar la información de trazabilidad del artículo.
- * Números de serie, de lote y albaranes y facturas relacionadas.
+ * This class is used to save the traceability information of the article.
+ * Serial numbers, batch and delivery notes and related invoices.
  *
  * @author Luismipr              <luismipr@gmail.com>
  * @author Carlos García Gómez   <carlos@facturascripts.com>
@@ -32,78 +32,78 @@ class ArticuloTraza
     use Base\ModelTrait;
 
     /**
-     * Clave primaria
+     * Primary key
      *
      * @var int
      */
     public $id;
 
     /**
-     * Referencia del artículo
+     * Article reference.
      *
      * @var string
      */
     public $referencia;
 
     /**
-     * Numero de serie
-     * Clave primaria.
+     * Serial number.
+     * Primary key.
      *
      * @var string
      */
     public $numserie;
 
     /**
-     * Número o identificador del lote
+     * Number or identifier of the lot.
      *
      * @var string
      */
     public $lote;
 
     /**
-     * Id linea albaran venta
+     * Line ID delivery note sale.
      *
      * @var int
      */
     public $idlalbventa;
 
     /**
-     * id linea factura venta
+     * Line ID invoice sale.
      *
      * @var int
      */
     public $idlfacventa;
 
     /**
-     * Id linea albaran compra
+     * Line ID delivery note purchase.
      *
      * @var int
      */
     public $idlalbcompra;
 
     /**
-     * Id linea factura compra
+     * Line ID invoice purchase.
      *
      * @var int
      */
     public $idlfaccompra;
 
     /**
-     * Fecha de entrada del artículo
+     * Date of entry of the article.
      *
      * @var |DateTime
      */
     public $fecha_entrada;
 
     /**
-     * Fecha de salida del artículo
+     * Date of departure of the article.
      *
      * @var |DateTime
      */
     public $fecha_salida;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -113,7 +113,7 @@ class ArticuloTraza
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -123,7 +123,7 @@ class ArticuloTraza
     }
 
     /**
-     * Devuelve la url del albarán o la factura de compra.
+     * Returns the url of the delivery note or the purchase invoice.
      *
      * @return string
      */
@@ -147,7 +147,7 @@ class ArticuloTraza
     }
 
     /**
-     * Devuelve la url del albarán o factura de venta.
+     * Returns the url of the delivery note or sales invoice.
      *
      * @return string
      */
@@ -172,7 +172,7 @@ class ArticuloTraza
     }
 
     /**
-     * Devuelve la traza correspondiente al número de serie $numserie.
+     * Returns the trace corresponding to the serial number $numserie.
      *
      * @param string $numserie
      *
@@ -180,7 +180,7 @@ class ArticuloTraza
      */
     public function getByNumserie($numserie)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE numserie = ' . self::$dataBase->var2str($numserie) . ';';
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE numserie = ' . self::$dataBase->var2str($numserie) . ';';
         $data = self::$dataBase->select($sql);
         if (!empty($data)) {
             return new self($data[0]);
@@ -190,7 +190,7 @@ class ArticuloTraza
     }
 
     /**
-     * Devuelve todas las trazas de un artículo.
+     * Returns all the traces of an article.
      *
      * @param string $ref
      * @param bool   $sololibre
@@ -201,7 +201,7 @@ class ArticuloTraza
     {
         $lista = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE referencia = ' . self::$dataBase->var2str($ref);
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE referencia = ' . self::$dataBase->var2str($ref);
         if ($sololibre) {
             $sql .= ' AND idlalbventa IS NULL AND idlfacventa IS NULL';
         }
@@ -218,7 +218,7 @@ class ArticuloTraza
     }
 
     /**
-     * Devuelve todas las trazas cuya columna $tipo tenga valor $idlinea
+     * Returns all the traces whose $ type column has value $idlinea
      *
      * @param string $tipo
      * @param string $idlinea
@@ -229,7 +229,7 @@ class ArticuloTraza
     {
         $lista = [];
 
-        $sql = 'SELECT * FROM ' . $this->tableName()
+        $sql = 'SELECT * FROM ' . static::tableName()
             . ' WHERE ' . $tipo . ' = ' . self::$dataBase->var2str($idlinea) . ' ORDER BY id DESC;';
         $data = self::$dataBase->select($sql);
         if (!empty($data)) {
@@ -242,9 +242,9 @@ class ArticuloTraza
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */

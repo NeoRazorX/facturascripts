@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Primer nivel del plan contable.
+ * First level of the accounting plan.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -27,39 +27,39 @@ class GrupoEpigrafes
 {
 
     use Base\ModelTrait {
-        url as private traitURL;
+        url as private traitUrl;
     }
 
     /**
-     * Clave primaria
+     * Primary key.
      *
      * @var int
      */
     public $idgrupo;
 
     /**
-     * Grupo al que pertenece.
+     * Group to which it belongs.
      *
      * @var string
      */
     public $codgrupo;
 
     /**
-     * Código de ejercicio
+     * Exercise code.
      *
      * @var string
      */
     public $codejercicio;
 
     /**
-     * Descripción del grupo del epígrafe.
+     * Description of the group of the epigraph.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -69,7 +69,7 @@ class GrupoEpigrafes
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -79,22 +79,22 @@ class GrupoEpigrafes
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
     public function install()
     {
-        /// forzamos la comprobación de la tabla de ejercicios.
+        /// we force the checking of the exercise table.
         new Ejercicio();
 
         return '';
     }
 
     /**
-     * Devuelve los epígrafes del grupo
+     * Returns the group's epigraphs.
      *
      * @return Epigrafe[]
      */
@@ -106,7 +106,7 @@ class GrupoEpigrafes
     }
 
     /**
-     * Devuelve el grupo de epígrafé del código de ejercicio
+     * Returns the epigraph group of the exercise code.
      *
      * @param string $cod
      * @param string $codejercicio
@@ -115,7 +115,7 @@ class GrupoEpigrafes
      */
     public function getByCodigo($cod, $codejercicio)
     {
-        $sql = 'SELECT * FROM ' . $this->tableName() . ' WHERE codgrupo = ' . self::$dataBase->var2str($cod)
+        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE codgrupo = ' . self::$dataBase->var2str($cod)
             . ' AND codejercicio = ' . self::$dataBase->var2str($codejercicio) . ';';
 
         $grupo = self::$dataBase->select($sql);
@@ -127,7 +127,7 @@ class GrupoEpigrafes
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */
@@ -144,7 +144,7 @@ class GrupoEpigrafes
     }
 
     /**
-     * Devuelve la url donde ver/modificar los datos
+     * Returns the url where to see/modify the data.
      *
      * @param string $type
      *
@@ -152,6 +152,6 @@ class GrupoEpigrafes
      */
     public function url($type = 'auto')
     {
-        return $this->traitURL($type, 'ListCuenta&active=List');
+        return $this->traitUrl($type, 'ListCuenta&active=List');
     }
 }

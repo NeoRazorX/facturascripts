@@ -116,6 +116,7 @@ class DataBaseWhere
                 break;
 
             case 'IS':
+            case 'IS NOT':
                 $result = $this->value;
                 break;
 
@@ -182,7 +183,11 @@ class DataBaseWhere
      */
     private function getValue()
     {
-        return in_array($this->operator, ['LIKE', 'IS', 'IN'], false) ? $this->getValueFromOperator() : $this->getValueFromType();
+        if($this->value === null) {
+            return 'NULL';
+        }
+        
+        return in_array($this->operator, ['LIKE', 'IS', 'IS NOT', 'IN'], false) ? $this->getValueFromOperator() : $this->getValueFromType();
     }
 
     /**

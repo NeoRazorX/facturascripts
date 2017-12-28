@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Elemento del menú de FacturaScripts, cada uno se corresponde con un controlador.
+ * Element of the menu of InvoiceScripts, each corresponds to a controller.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -29,58 +29,58 @@ class Page
     use Base\ModelTrait;
 
     /**
-     * Clave primaria. Varchar (30).
-     * Nombre de la página (controlador).
+     * Primary key. Varchar (30).
+     * Name of the page (controller).
      *
      * @var string
      */
     public $name;
 
     /**
-     * Título de la página.
+     * Page title.
      *
      * @var string
      */
     public $title;
 
     /**
-     * Título de la opción de menú donde se visualiza
+     * Title of the menu option where it is displayed.
      *
      * @var string
      */
     public $menu;
 
     /**
-     * Título de la subopción de menú donde se visualiza (si usa 2 nivel)
+     * Title of the menu sub-option where it is displayed (if it uses 2 levels).
      *
      * @var string
      */
     public $submenu;
 
     /**
-     * Indica si se visualiza en el menú
-     * False -> ocultar en el menú.
+     * Indicates if it is displayed in the menu.
+     * False -> hide in the menu.
      *
      * @var bool
      */
     public $showonmenu;
 
     /**
-     * Posición donde se coloca en el menú
+     * Position where it is placed in the menu.
      *
      * @var int
      */
     public $orden;
 
     /**
-     * Icono de la página
+     * Icon of the page.
      *
      * @var string
      */
     public $icon;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -90,7 +90,7 @@ class Page
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -99,13 +99,20 @@ class Page
         return 'name';
     }
 
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
     public function install()
     {
-        return 'INSERT INTO ' . $this->tableName() . " (name,title) VALUES ('AdminHome','AdminHome');";
+        return 'INSERT INTO ' . static::tableName() . " (name,title) VALUES ('AdminHome','AdminHome');";
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -119,7 +126,7 @@ class Page
     }
 
     /**
-     * Devuelve la url donde ver/modificar estos datos
+     * Returns the url where to see/modify the data.
      *
      * @return string
      */

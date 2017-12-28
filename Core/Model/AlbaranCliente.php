@@ -21,9 +21,9 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * Albarán de cliente o albarán de venta. Representa la entrega a un cliente
- * de un material que se le ha vendido. Implica la salida de ese material
- * del almacén de la empresa.
+ * Customer's delivery note or delivery note. Represents delivery to a customer
+ * of a material that has been sold to you. It implies the exit of this material
+ * from the company's warehouse.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -33,28 +33,28 @@ class AlbaranCliente
     use Base\DocumentoVenta;
 
     /**
-     * Clave primaria. Integer.
+     * Primary key. Integer.
      *
      * @var int
      */
     public $idalbaran;
 
     /**
-     * ID de la factura relacionada, si la hay.
+     * ID of the related invoice, if any.
      *
      * @var int
      */
     public $idfactura;
 
     /**
-     * True => está pendiente de factura.
+     * True => is pending invoice.
      *
      * @var bool
      */
     public $ptefactura;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -64,7 +64,7 @@ class AlbaranCliente
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -74,22 +74,22 @@ class AlbaranCliente
     }
 
     /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
     public function install()
     {
-        /// forzamos la comprobación de la tabla de facturascli.
+        /// we force the checking of the bill tablecli.
         new FacturaCliente();
 
         return '';
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -98,7 +98,7 @@ class AlbaranCliente
     }
 
     /**
-     * Devuelve las líneas asociadas al albarán.
+     * Returns the lines associated with the delivery note.
      *
      * @return LineaAlbaranCliente[]
      */
@@ -109,7 +109,7 @@ class AlbaranCliente
     }
 
     /**
-     * Comprueba los datos del albarán, devuelve True si son correctos
+     * Check the data of the delivery note, return True if they are correct.
      *
      * @return bool
      */
@@ -119,15 +119,15 @@ class AlbaranCliente
     }
 
     /**
-     * Ejecuta una tarea con cron
+     * Execute a task with cron
      */
     public function cronJob()
     {
         /**
-         * Ponemos a Null todos los idfactura que no están en facturascli.
-         * ¿Por qué? Porque muchos usuarios se dedican a tocar la base de datos.
+         * We put to Null all the invoices that are not in invoices.
+         * Why? Because many users are dedicated to touching the database.
          */
-        self::$dataBase->exec('UPDATE ' . $this->tableName() . ' SET idfactura = NULL WHERE idfactura IS NOT NULL'
+        self::$dataBase->exec('UPDATE ' . static::tableName() . ' SET idfactura = NULL WHERE idfactura IS NOT NULL'
             . ' AND idfactura NOT IN (SELECT idfactura FROM facturascli);');
     }
 }

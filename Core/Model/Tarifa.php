@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Una tarifa para los artículos.
+ * A fee for the products.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -31,56 +31,56 @@ class Tarifa
     }
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var string
      */
     public $codtarifa;
 
     /**
-     * Nombre de la tarifa.
+     * Name of the rate.
      *
      * @var string
      */
     public $nombre;
 
     /**
-     * Fórmula a aplicar
+     * Formula to apply.
      *
      * @var
      */
     public $aplicar_a;
 
     /**
-     * no vender por debajo de coste
+     * Do not sell below cost.
      *
      * @var bool
      */
     public $mincoste;
 
     /**
-     * no vender por encima de pvp
+     * Do not sell above retail price.
      *
      * @var bool
      */
     public $maxpvp;
 
     /**
-     * Incremento porcentual o descuento
+     * Percentage increase or discount.
      *
      * @var float|int
      */
     public $incporcentual;
 
     /**
-     * Incremento lineal o descuento lineal
+     * Linear increment or linear discount.
      *
      * @var float|int
      */
     public $inclineal;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -90,7 +90,7 @@ class Tarifa
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -100,7 +100,7 @@ class Tarifa
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -113,7 +113,7 @@ class Tarifa
     }
 
     /**
-     * Aplicar al PVP un incremento o decremento
+     * Apply an increase or decrease in the retail price.
      *
      * @param double $value
      *
@@ -125,7 +125,7 @@ class Tarifa
     }
 
     /**
-     * Devuelve un incremento porcentual
+     * Returns a percentage increase.
      *
      * @return double
      */
@@ -135,7 +135,7 @@ class Tarifa
     }
 
     /**
-     * Asigna un incremento porcentual
+     * Assign a percentage increase.
      *
      * @param float $dto
      */
@@ -145,7 +145,7 @@ class Tarifa
     }
 
     /**
-     * Devuelve un incremento lineal
+     * Returns a linear increment.
      *
      * @return double
      */
@@ -155,7 +155,7 @@ class Tarifa
     }
 
     /**
-     * Asigna un incremento lineal
+     * Assign a linear increment.
      *
      * @param float $inc
      */
@@ -165,7 +165,7 @@ class Tarifa
     }
 
     /**
-     * Devuelve un texto explicativo de lo que hace la tarifa
+     * Returns an explanatory text of what the rate does.
      *
      * @return string
      */
@@ -201,8 +201,7 @@ class Tarifa
     }
 
     /**
-     * Rellenamos los descuentos y los datos de la tarifa de una lista de
-     * artículos.
+     * Fill in the discounts and the tariff information from a list of articles.
      *
      * @param array $articulos
      */
@@ -246,7 +245,7 @@ class Tarifa
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return bool
      */

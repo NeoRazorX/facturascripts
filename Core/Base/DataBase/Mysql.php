@@ -145,7 +145,7 @@ class Mysql implements DataBaseEngine
         $result->autocommit(false);
 
         /// desactivamos las claves ajenas
-        if (FS_DB_FOREIGN_KEYS) {
+        if (!FS_DB_FOREIGN_KEYS) {
             $this->exec($result, 'SET foreign_key_checks = 0;');
         }
 
@@ -437,7 +437,7 @@ class Mysql implements DataBaseEngine
         if (!empty($data) && $data[0]['Engine'] !== 'InnoDB') {
             $result = $this->exec($link, 'ALTER TABLE ' . $tableName . ' ENGINE=InnoDB;');
             if ($result) {
-                $error = $this->i18n->trans('cant-convert-to-innodb', [$tableName]);
+                $error = $this->i18n->trans('cant-convert-to-innodb', [ '%tableName%' => $tableName]);
             }
         }
 

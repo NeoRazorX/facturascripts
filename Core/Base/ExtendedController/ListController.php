@@ -309,7 +309,8 @@ abstract class ListController extends Base\Controller
     }
 
     /**
-     * Adds a list of fields (separated by "|") to the search fields list so that data can be filtered
+     * Adds a list of fields (separated by "|") to the search fields list so that data can be filtered.
+     * To use integer columns, use CAST(columnName AS CHAR(50)).
      *
      * @param string $indexView
      * @param string[] $fields
@@ -355,11 +356,12 @@ abstract class ListController extends Base\Controller
      * @param string $label (Human reader description)
      * @param string $field (Field of the table to apply filter)
      * @param bool $inverse (If you need to invert the selected value)
+     * @param mixed $matchValue (Value to match)
      */
-    protected function addFilterCheckbox($indexView, $key, $label, $field = '', $inverse = false)
+    protected function addFilterCheckbox($indexView, $key, $label, $field = '', $inverse = false, $matchValue = true)
     {
         $value = $this->request->get($key);
-        $this->views[$indexView]->addFilter($key, ListFilter::newCheckboxFilter($field, $value, $label, $inverse));
+        $this->views[$indexView]->addFilter($key, ListFilter::newCheckboxFilter($field, $value, $label, $inverse, $matchValue));
     }
 
     /**

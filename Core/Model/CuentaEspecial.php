@@ -31,7 +31,7 @@ class CuentaEspecial
 {
 
     use Base\ModelTrait {
-        url as private traitURL;
+        url as private traitUrl;
     }
 
     /**
@@ -81,7 +81,7 @@ class CuentaEspecial
     }
 
     /**
-     * Returns the url where to see / modify the data.
+     * Returns the url where to see/modify the data.
      *
      * @param string $type
      *
@@ -89,6 +89,6 @@ class CuentaEspecial
      */
     public function url($type = 'auto')
     {
-        return $this->traitURL($type, 'ListCuenta&active=List');
+        return $this->traitUrl($type, 'ListCuenta&active=List');
     }
 }

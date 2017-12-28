@@ -62,7 +62,7 @@ class TasksComponent extends BaseComponent implements ComponentInterface
         return [
             'description' => '',
             'color' => 'info',
-            'enddate' => NULL
+            'enddate' => NULL,
         ];
     }
 
@@ -78,7 +78,7 @@ class TasksComponent extends BaseComponent implements ComponentInterface
         $rows = $model->all($where, $orderBy);
 
         if (empty($rows)) {
-            $this->genetareRandomData(10, 10);
+            $this->generateRandomData(10, 10);
             $rows = $model->all($where, $orderBy);
         }
 
@@ -134,21 +134,6 @@ class TasksComponent extends BaseComponent implements ComponentInterface
         return 'index.php?page=EditDashboardData&code=' . $id;
     }
 
-    /**
-     * Return the number of columns to display width this component.
-     *
-     * @return string
-     */
-    public function getNumColumns()
-    {
-        return 'col-3';
-    }
-
-    /**
-     * Return the class name to render this component.
-     *
-     * @return string
-     */
     public function getCardClass()
     {
         return 'task-card';

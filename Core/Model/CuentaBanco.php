@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 /**
- * Una cuenta bancaria de la propia empresa.
+ * A bank account of the company itself.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -27,34 +27,34 @@ class CuentaBanco
 {
 
     use Base\ModelTrait {
-        url as private traitURL;
+        url as private traitUrl;
     }
 
     use Base\BankAccount;
 
     /**
-     * Clave primaria. Varchar (6).
+     * Primary key. Varchar (6).
      *
      * @var string
      */
     public $codcuenta;
 
     /**
-     * Descripción de la cuenta
+     * Description of the account.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * Código de la subcuenta de contabilidad
+     * Code of the accounting sub-account.
      *
      * @var string
      */
     public $codsubcuenta;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -64,7 +64,7 @@ class CuentaBanco
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -74,7 +74,7 @@ class CuentaBanco
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      *
      * @return boolean
      */
@@ -90,7 +90,7 @@ class CuentaBanco
     }
 
     /**
-     * Devuelve la url donde ver/modificar los datos.
+     * Returns the url where to see/modify the data..
      *
      * @param string $type
      *

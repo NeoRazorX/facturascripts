@@ -31,119 +31,119 @@ trait LineaDocumentoVenta
     }
 
     /**
-     * Cantidad
+     * Quantity.
      *
      * @var float|int
      */
     public $cantidad;
 
     /**
-     * Código de la combinación seleccionada, en el caso de los artículos con atributos.
+     * Code of the selected combination, in the case of articles with attributes.
      *
      * @var string
      */
     public $codcombinacion;
 
     /**
-     * Código del impuesto relacionado.
+     * Code of the related tax.
      *
      * @var string
      */
     public $codimpuesto;
 
     /**
-     * Descripción de la línea.
+     * Description of the line.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * % de descuento.
+     * % off.
      *
      * @var float|int
      */
     public $dtopor;
 
     /**
-     * Clave primaria.
+     * Primary key.
      *
      * @var int
      */
     public $idlinea;
 
     /**
-     * % de IRPF de la línea.
+     * % of IRPF of the line.
      *
      * @var float|int
      */
     public $irpf;
 
     /**
-     * % del impuesto relacionado.
+     * % of the related tax.
      *
      * @var float|int
      */
     public $iva;
 
     /**
-     * False -> no se muestra la columna cantidad al imprimir.
+     * False -> the quantity column is not displayed when printing.
      *
      * @var boolean
      */
     public $mostrar_cantidad;
 
     /**
-     * False -> no se muestran las columnas precio, descuento, impuestos y total al imprimir.
+     * False -> price, discount, tax and total columns are not displayed when printing.
      *
      * @var boolean
      */
     public $mostrar_precio;
 
     /**
-     * Posición de la linea en el documento. Cuanto más alto más abajo.
+     * Position of the line in the document. The higher down.
      *
      * @var int
      */
     public $orden;
 
     /**
-     * Importe neto de la línea, sin impuestos.
+     * Net amount of the line, without taxes.
      *
      * @var float|int
      */
     public $pvptotal;
 
     /**
-     * Importe neto sin descuentos.
+     * Net amount without discounts.
      *
      * @var float|int
      */
     public $pvpsindto;
 
     /**
-     * Precio del artículo, una unidad.
+     * Price of the item, one unit.
      *
      * @var float|int
      */
     public $pvpunitario;
 
     /**
-     * % de recargo de equivalencia de la línea.
+     * % surcharge of line equivalence.
      *
      * @var float|int
      */
     public $recargo;
 
     /**
-     * Referencia del artículo.
+     * Reference of the article.
      *
      * @var string
      */
     public $referencia;
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -153,7 +153,7 @@ trait LineaDocumentoVenta
     }
 
     /**
-     * Inicializa los valores de la línea.
+     * Initializes the values of the line.
      */
     private function clearLinea()
     {
@@ -176,7 +176,7 @@ trait LineaDocumentoVenta
     }
 
     /**
-     * Devuelve el PVP con IVA
+     * Returns the retail price with VAT.
      *
      * @return float|int
      */
@@ -186,7 +186,7 @@ trait LineaDocumentoVenta
     }
 
     /**
-     * Devuelve el PVP total (con IVA, IRPF y recargo)
+     * Returns the retail price total (with VAT, IRPF and surcharge).
      *
      * @return integer
      */
@@ -196,7 +196,7 @@ trait LineaDocumentoVenta
     }
 
     /**
-     * Devuelve el PVP total por producto (sin IRPF ni recargo)
+     * Returns the total retail price per product (without income tax or surcharge).
      *
      * @return float|int
      */
@@ -210,7 +210,7 @@ trait LineaDocumentoVenta
     }
 
     /**
-     * Devuelve la descripción
+     * Returns the description.
      *
      * @return string
      */
@@ -220,7 +220,7 @@ trait LineaDocumentoVenta
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns true if there are no errors in the values of the model properties.
      *
      * @return bool
      */
@@ -231,11 +231,13 @@ trait LineaDocumentoVenta
         $totalsindto = $this->pvpunitario * $this->cantidad;
 
         if (!static::floatcmp($this->pvptotal, $total, FS_NF0, true)) {
-            self::$miniLog->alert(self::$i18n->trans('pvptotal-line-error', [$this->referencia, $total]));
+            $values = ['%reference%' => $this->referencia, '%total%' => $total];
+            self::$miniLog->alert(self::$i18n->trans('pvptotal-line-error', $values));
             return false;
         }
         if (!static::floatcmp($this->pvpsindto, $totalsindto, FS_NF0, true)) {
-            self::$miniLog->alert(self::$i18n->trans('pvpsindto-line-error', [$this->referencia, $totalsindto]));
+            $values = ['%reference%' => $this->referencia, '%totalWithoutDiscount%' => $totalsindto];
+            self::$miniLog->alert(self::$i18n->trans('pvpsindto-line-error', $values));
             return false;
         }
 

@@ -58,7 +58,7 @@ class XLSExport implements ExportInterface
     public function newDoc(&$response)
     {
         $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
-        $response->headers->set('Content-Disposition', 'attachment;filename=doc.xls');
+        $response->headers->set('Content-Disposition', 'attachment;filename=doc.xlsx');
 
         $this->writer = new \XLSXWriter();
         $this->writer->setAuthor('FacturaScripts');
@@ -116,7 +116,7 @@ class XLSExport implements ExportInterface
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
     }
-    
+
     /**
      * Adds a new page with the document data.
      *
@@ -125,6 +125,29 @@ class XLSExport implements ExportInterface
     public function generateDocumentPage($model)
     {
         /// TODO: Uncomplete
+        $tableData = [];
+        foreach ((array) $model as $key => $value) {
+            if (is_string($value)) {
+                $tableData[] = ['key' => $key, 'value' => $value];
+            }
+        }
+        
+        $this->writer->writeSheet($tableData, 'doc', ['key' => 'string', 'value' => 'string']);
+    }
+
+    /**
+     * Adds a new page with the table.
+     * 
+     * @param array $headers
+     * @param array $rows
+     */
+    public function generateTablePage($headers, $rows)
+    {
+        $this->writer->writeSheetRow('sheet1', $headers);
+        
+        foreach($rows as $row){
+            $this->writer->writeSheetRow('sheet1', $row);
+        }
     }
 
     /**

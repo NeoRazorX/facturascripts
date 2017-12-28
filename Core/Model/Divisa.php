@@ -23,7 +23,7 @@ use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Lib\Import\CSVImport;
 
 /**
- * Una divisa (moneda) con su símbolo y su tasa de conversión respecto al euro.
+ * A currency with its symbol and its conversion rate with respect to the euro.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */

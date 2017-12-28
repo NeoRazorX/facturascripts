@@ -161,7 +161,7 @@ class Familia
     }
 
     /**
-     * We apply corrections to the table.
+     * Apply corrections to the table.
      */
     public function fixDb()
     {

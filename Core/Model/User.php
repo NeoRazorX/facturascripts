@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
+
 /**
  * Usuario de FacturaScripts.
  *
@@ -27,90 +29,103 @@ class User
 {
 
     use Base\ModelTrait {
-        get as private getTrait;
-        clear as clearTrait;
+        get as private traitGet;
+        clear as traitClear;
     }
 
     /**
-     * Clave primaria. Varchar (50).
-     *
-     * @var string
-     */
-    public $nick;
-
-    /**
-     * Identificador de empresa seleccionada
-     */
-    public $idempresa;
-
-    /**
-     * Email del usuario.
-     *
-     * @var string
-     */
-    public $email;
-
-    /**
-     * TRUE -> el usuario es un administrador.
+     * true -> user is admin.
      *
      * @var bool
      */
     public $admin;
 
     /**
-     * TRUE -> el usuario esta activo.
+     * user's email.
+     *
+     * @var string
+     */
+    public $email;
+
+    /**
+     * true -> user enabled.
      *
      * @var bool
      */
     public $enabled;
 
     /**
-     * Código del idioma seleccionado para este usuario.
-     *
-     * @var string
-     */
-    public $langcode;
-
-    /**
-     * Página de inicio.
+     * Homepage.
      *
      * @var string
      */
     public $homepage;
 
     /**
-     * Fecha y hora de la última actividad del usuario.
+     * Corporation identifier.
+     * 
+     * @var int
+     */
+    public $idempresa;
+
+    /**
+     * Language code.
      *
      * @var string
      */
-    public $lastactivity;
+    public $langcode;
 
     /**
-     * Última IP usada.
+     * Last IP used.
      *
      * @var string
      */
     public $lastip;
 
     /**
-     * Contraseña, cifrada con password_hash()
+     * Last activity date.
+     *
+     * @var string
+     */
+    public $lastactivity;
+
+    /**
+     * Session key, saved also in cookie. Regenerated when user log in.
+     *
+     * @var string
+     */
+    private $logkey;
+    
+    /**
+     * New password.
+     * 
+     * @var string 
+     */
+    public $newPassword;
+    
+    /**
+     * Repeated new password.
+     * 
+     * @var string 
+     */
+    public $newPassword2;
+
+    /**
+     * Primary key. Varchar (50).
+     *
+     * @var string
+     */
+    public $nick;
+
+    /**
+     * Password hashed with password_hash()
      *
      * @var string
      */
     public $password;
 
     /**
-     * Clave de sesión. El cliente se la guarda en una cookie,
-     * sirve para no tener que guardar la contraseña.
-     * Se regenera cada vez que el cliente inicia sesión. Así se
-     * impide que dos personas accedan con el mismo usuario.
-     *
-     * @var string
-     */
-    private $logkey;
-
-    /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -120,7 +135,7 @@ class User
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -130,7 +145,9 @@ class User
     }
 
     /**
-     * Inserta valores por defecto a la tabla, en el proceso de creación de la misma.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
@@ -142,17 +159,20 @@ class User
 
         self::$miniLog->info(self::$i18n->trans('created-default-admin-account'));
 
-        return 'INSERT INTO ' . $this->tableName() . " (nick,password,admin,enabled,idempresa,langcode,homepage)"
+        return 'INSERT INTO ' . static::tableName() . " (nick,password,admin,enabled,idempresa,langcode,homepage)"
             . " VALUES ('admin','" . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE,'1','" . FS_LANG . "','AdminHome');";
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
-        $this->clearTrait();
+        $this->traitClear();
         $this->langcode = FS_LANG;
+        $this->homepage = 'Dashboard';
+        $this->idempresa = AppSettings::get('default', 'idempresa', 1);
+        $this->enabled = true;
     }
 
     /**
@@ -164,7 +184,7 @@ class User
      */
     public function get($nick)
     {
-        return $this->getTrait($nick);
+        return $this->traitGet($nick);
     }
 
     /**
@@ -228,7 +248,7 @@ class User
     }
 
     /**
-     * Devuelve true si no hay errores en los valores de las propiedades del modelo.
+     * Returns True if there is no erros on properties values.
      * Se ejecuta dentro del método save.
      *
      * @return bool
@@ -238,9 +258,23 @@ class User
         $this->nick = trim($this->nick);
 
         if (!preg_match("/^[A-Z0-9_\+\.\-]{3,50}$/i", $this->nick)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-user-nick', [$this->nick]));
+            self::$miniLog->alert(self::$i18n->trans('invalid-user-nick', ['%nick%' => $this->nick]));
 
             return false;
+        }
+
+        if (isset($this->newPassword) && isset($this->newPassword2) && $this->newPassword !== '' && $this->newPassword2 !== '') {
+            if($this->newPassword !== $this->newPassword2) {
+                self::$miniLog->alert(self::$i18n->trans('different-passwords', ['%userNick%' => $this->nick]));
+                
+                return false;
+            }
+            
+            $this->setPassword($this->newPassword);
+        }
+
+        if ($this->lastactivity === '') {
+            $this->lastactivity = null;
         }
 
         return true;

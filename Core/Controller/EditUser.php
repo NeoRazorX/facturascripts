@@ -38,8 +38,7 @@ class EditUser extends ExtendedController\PanelController
     {
         /// Add all views
         $this->addEditView('\FacturaScripts\Dinamic\Model\User', 'EditUser', 'user', 'fa-user');
-        $this->addEditListView('\FacturaScripts\Dinamic\Model\RolUser', 'EditRolUser', 'rol-user', 'fa-address-card-o');
-        $this->addListView('\FacturaScripts\Dinamic\Model\PageRule', 'ListPageRule', 'page-rule', 'fa fa-check-square');
+        $this->addEditListView('\FacturaScripts\Dinamic\Model\RolUser', 'EditRolUser', 'roles', 'fa-address-card-o');
 
         /// Load values option to Language select input
         $columnLangCode = $this->views['EditUser']->columnForName('lang-code');
@@ -49,9 +48,8 @@ class EditUser extends ExtendedController\PanelController
         }
         $columnLangCode->widget->setValuesFromArray($langs);
 
-        /// Disable columns
-        $this->views['EditRolUser']->disableColumn('nick', true);
-        $this->views['ListPageRule']->disableColumn('nick', true);
+        /// Disable column
+        $this->views['EditRolUser']->disableColumn('user', true);
     }
 
     /**
@@ -64,17 +62,13 @@ class EditUser extends ExtendedController\PanelController
     {
         switch ($keyView) {
             case 'EditUser':
-                $value = $this->request->get('code');
-                $view->loadData($value);
+                $code = $this->request->get('code');
+                $view->loadData($code);
                 break;
 
             case 'EditRolUser':
-                $where = [new DataBaseWhere('nick', $this->getViewModelValue('EditUser', 'nick'))];
-                $view->loadData($where);
-                break;
-
-            case 'ListPageRule':
-                $where = [new DataBaseWhere('nick', $this->getViewModelValue('EditUser', 'nick'))];
+                $nick = $this->getViewModelValue('EditUser', 'nick');
+                $where = [new DataBaseWhere('nick', $nick)];
                 $view->loadData($where);
                 break;
         }

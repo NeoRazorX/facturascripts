@@ -29,56 +29,56 @@ class LineaTransferenciaStock
     use Base\ModelTrait;
 
     /**
-     * Clave primaria. integer
+     * Primary key. Integer.
      *
      * @var int
      */
     public $idlinea;
 
     /**
-     * Identificador de transferéncia
+     * Transfer identifier.
      *
      * @var int
      */
     public $idtrans;
 
     /**
-     * Referencia
+     * Reference.
      *
      * @var string
      */
     public $referencia;
 
     /**
-     * Cantidad
+     * Quantity.
      *
      * @var float|int
      */
     public $cantidad;
 
     /**
-     * Descripción de la transferencia.
+     * Description of the transfer.
      *
      * @var string
      */
     public $descripcion;
 
     /**
-     * Fecha
+     * Date.
      *
      * @var string
      */
     private $fecha;
 
     /**
-     * Hora
+     * Time.
      *
      * @var string
      */
     private $hora;
 
     /**
-     * Devuelve el nombre de la tabla que usa este modelo.
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
@@ -88,7 +88,7 @@ class LineaTransferenciaStock
     }
 
     /**
-     * Devuelve el nombre de la columna que es clave primaria del modelo.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
@@ -98,7 +98,7 @@ class LineaTransferenciaStock
     }
 
     /**
-     * Resetea los valores de todas las propiedades modelo.
+     * Reset the values of all model properties.
      */
     public function clear()
     {
@@ -112,7 +112,7 @@ class LineaTransferenciaStock
     }
 
     /**
-     * Devuelve la fecha
+     * Returns the date.
      *
      * @return string
      */
@@ -122,7 +122,7 @@ class LineaTransferenciaStock
     }
 
     /**
-     * Devuelve la hora
+     * Returns the time.
      *
      * @return string
      */
@@ -132,58 +132,16 @@ class LineaTransferenciaStock
     }
 
     /**
-     * Devuelve todas las líneas de transferéncia de stock
-     *
-     * @param string $ref
-     * @param string $codalmaorigen
-     * @param string $codalmadestino
-     * @param string $desde
-     * @param string $hasta
-     *
-     * @return self[]
-     */
-    public function allFromReferencia($ref, $codalmaorigen = '', $codalmadestino = '', $desde = '', $hasta = '')
-    {
-        $list = [];
-
-        $sql = 'SELECT l.idlinea,l.idtrans,l.referencia,l.cantidad,l.descripcion,t.fecha,t.hora FROM lineastransstock l'
-            . ' LEFT JOIN transstock t ON l.idtrans = t.idtrans'
-            . ' WHERE l.referencia = ' . self::$dataBase->var2str($ref);
-        if (!empty($codalmaorigen)) {
-            $sql .= ' AND t.codalmaorigen = ' . self::$dataBase->var2str($codalmaorigen);
-        }
-        if (!empty($codalmadestino)) {
-            $sql .= ' AND t.codalmadestino = ' . self::$dataBase->var2str($codalmadestino);
-        }
-        if (!empty($desde)) {
-            $sql .= ' AND t.fecha >= ' . self::$dataBase->var2str($desde);
-        }
-        if (!empty($hasta)) {
-            $sql .= ' AND t.fecha >= ' . self::$dataBase->var2str($hasta);
-        }
-        $sql .= ' ORDER BY t.fecha ASC, t.hora ASC;';
-
-        $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $list[] = new self($d);
-            }
-        }
-
-        return $list;
-    }
-
-    /**
-     * Esta función es llamada al crear la tabla del modelo. Devuelve el SQL
-     * que se ejecutará tras la creación de la tabla. útil para insertar valores
-     * por defecto.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
     public function install()
     {
-        /// forzamos la comprobación de la tabla de transferencias de stock
-        //new TransferenciaStock();
+        /// we force the check of the stock transfers table
+        new TransferenciaStock();
 
         return '';
     }

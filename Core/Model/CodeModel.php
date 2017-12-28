@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Modelo Auxiliar para cargar una lista de códigos y sus descripciones
+ * Auxiliary model to load a list of codes and their descriptions
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
@@ -29,28 +29,28 @@ class CodeModel
 {
 
     /**
-     * Proporciona acceso directo a la base de datos.
+     * It provides direct access to the database.
      *
      * @var DataBase
      */
     private static $dataBase;
 
     /**
-     * Valor del campo código del modelo leido
+     * Value of the code field of the model read.
      *
      * @var string
      */
     public $code;
 
     /**
-     * Valor del campo descripción del modelo leido
+     * Value of the field description of the model read.
      *
      * @var string
      */
     public $description;
 
     /**
-     * Constructor e inicializador de la clase
+     * Constructor and class initializer.
      *
      * @param array $data
      */
@@ -61,7 +61,7 @@ class CodeModel
     }
 
     /**
-     * Carga una lista de CodeModel (código y descripción) para la tabla indicada
+     * Load a CodeModel list (code and description) for the indicated table.
      *
      * @param string  $tableName
      * @param string  $fieldCode
@@ -83,7 +83,8 @@ class CodeModel
                 $result[] = new self(['code' => null, 'description' => '']);
             }
 
-            $sql = 'SELECT DISTINCT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM ' . $tableName . ' ORDER BY 2 ASC';
+            $sql = 'SELECT DISTINCT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM '
+                . $tableName . ' ORDER BY 2 ASC';
             $data = self::$dataBase->selectLimit($sql, 1000);
             if (!empty($data)) {
                 foreach ($data as $d) {

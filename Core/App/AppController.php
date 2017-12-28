@@ -145,7 +145,7 @@ class AppController extends App
 
         /// If we found a controller, load it
         if (class_exists($controllerName)) {
-            $this->miniLog->debug($this->i18n->trans('loading-controller', [$controllerName]));
+            $this->miniLog->debug($this->i18n->trans('loading-controller', ['%controllerName%' => $controllerName]));
             $this->menuManager->setUser($user);
 
             try {
@@ -288,7 +288,7 @@ class AppController extends App
                     $this->response->headers->setCookie(new Cookie('fsHomepage', $user->homepage, $expire));
                     $this->response->headers->setCookie(new Cookie('fsLang', $user->langcode, $expire));
                     $this->response->headers->setCookie(new Cookie('fsCompany', $user->idempresa, $expire));
-                    $this->miniLog->debug($this->i18n->trans('login-ok', [$nick]));
+                    $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $nick]));
                     return $user;
                 }
 
@@ -319,7 +319,7 @@ class AppController extends App
             $cookieUser = $user0->get($cookieNick);
             if ($cookieUser) {
                 if ($cookieUser->verifyLogkey($this->request->cookies->get('fsLogkey'))) {
-                    $this->miniLog->debug($this->i18n->trans('login-ok', [$cookieNick]));
+                    $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $cookieNick]));
                     return $cookieUser;
                 }
 

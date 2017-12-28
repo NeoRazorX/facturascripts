@@ -128,10 +128,10 @@ class ExportManager
     {
         /// disable 30 seconds PHP limit
         set_time_limit(0);
-        
+
         self::$engine->generateListModelPage($model, $where, $order, $offset, $columns, $title);
     }
-    
+
     /**
      * Adds a new page with the document data.
      * 
@@ -140,6 +140,23 @@ class ExportManager
     public function generateDocumentPage($model)
     {
         self::$engine->generateDocumentPage($model);
+    }
+
+    /**
+     * Adds a new page with the table data.
+     * 
+     * @param array $headers
+     * @param array $rows
+     */
+    public function generateTablePage($headers, $rows)
+    {
+        /// We need headers key to be equal to value
+        $fixedHeaders = [];
+        foreach ($headers as $value) {
+            $fixedHeaders[$value] = $value;
+        }
+
+        self::$engine->generateTablePage($fixedHeaders, $rows);
     }
 
     /**

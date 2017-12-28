@@ -184,7 +184,7 @@ class PDFExport implements ExportInterface
 
         $this->newLongTitles($longTitles);
     }
-    
+
     /**
      * Adds a new page with the document data.
      *
@@ -193,6 +193,24 @@ class PDFExport implements ExportInterface
     public function generateDocumentPage($model)
     {
         /// TODO: Uncomplete
+    }
+
+    /**
+     * Adds a new page with the table.
+     * 
+     * @param array $headers
+     * @param array $rows
+     */
+    public function generateTablePage($headers, $rows)
+    {
+        $orientation = 'portrait';
+        if (count($headers) > 5) {
+            $orientation = 'landscape';
+        }
+
+        $this->newPage($orientation);
+        $tableOptions = ['width' => $this->tableWidth];
+        $this->pdf->ezTable($rows, $headers, '', $tableOptions);
     }
 
     /**
@@ -236,6 +254,7 @@ class PDFExport implements ExportInterface
             $this->pdf = new \Cezpdf('a4', $orientation);
             $this->pdf->addInfo('Creator', 'FacturaScripts');
             $this->pdf->addInfo('Producer', 'FacturaScripts');
+            $this->pdf->tempPath = FS_FOLDER . '/Cache';
 
             $this->tableWidth = $this->pdf->ez['pageWidth'] - 60;
 
