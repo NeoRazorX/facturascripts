@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Model;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Edit option for any page.
@@ -50,10 +51,17 @@ class EditPageOption extends Base\Controller
             ? $this->request->get('nick', NULL)
             : $this->user->nick;
     }
-
-    public function privateCore(&$response, $user)
+    
+    /**
+     * Runs the controller's private logic.
+     *
+     * @param Response $response
+     * @param Model\User $user
+     * @param Base\ControllerPermissions $permissions
+     */
+    public function privateCore(&$response, $user, $permissions)
     {
-        parent::privateCore($response, $user);
+        parent::privateCore($response, $user, $permissions);
 
         $this->getParams();
         $this->model->getForUser($this->selectedViewName, $this->selectedUser);

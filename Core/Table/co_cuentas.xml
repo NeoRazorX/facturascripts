@@ -47,6 +47,11 @@
         <type>integer</type>
         <null>NO</null>
     </column>
+    <column>
+        <name>idempresa</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
     <constraint>
         <name>co_cuentas_pkey</name>
         <type>PRIMARY KEY (idcuenta)</type>

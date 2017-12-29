@@ -52,7 +52,7 @@
                 </widget>
             </column>
             <column name="codbarras" title="barcode" numcolumns="2" order="130">
-                <widget type="text" fieldname="codbarras"/>
+                <widget type="text" fieldname="codbarras" icon="fa-barcode"/>
             </column>
             <column name="partnumber" numcolumns="2" order="140">
                 <widget type="text" fieldname="partnumber"/>

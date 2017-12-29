@@ -29,7 +29,44 @@ use FacturaScripts\Core\Lib\EmailTools;
 class EditSettings extends ExtendedController\PanelController
 {
 
-    const KEYSETTINGS = 'Settings';
+    const KEY_SETTINGS = 'Settings';
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $modelName = '\FacturaScripts\Dinamic\Model\Settings';
+        $icon = $this->getPageData()['icon'];
+        foreach ($this->allSettingsXMLViews() as $name) {
+            $title = strtolower(substr($name, 8));
+            $this->addEditView($modelName, $name, $title, $icon);
+        }
+
+        $this->addHtmlView('Block/About.html', null, 'about', 'about');
+    }
+
+    /**
+     * Load view data
+     *
+     * @param string $keyView
+     * @param ExtendedController\EditView $view
+     */
+    protected function loadData($keyView, $view)
+    {
+        if (empty($view->getModel())) {
+            return;
+        }
+
+        $code = $this->getKeyFromViewName($keyView);
+        $view->loadData($code);
+
+        $model = $view->getModel();
+        if ($model->name === null) {
+            $model->name = strtolower(substr($keyView, 8));
+            $model->save();
+        }
+    }
 
     /**
      * Run the controller after actions
@@ -39,15 +76,20 @@ class EditSettings extends ExtendedController\PanelController
      */
     protected function execAfterAction($view, $action)
     {
-        if ($action === 'testmail') {
-            $emailTools = new EmailTools();
-            if ($emailTools->test()) {
-                $this->miniLog->info($this->i18n->trans('mail-test-ok'));
-            } else {
-                $this->miniLog->error($this->i18n->trans('mail-test-error'));
-            }
-        } else {
-            parent::execAfterAction($view, $action);
+        switch ($action) {
+            case 'export':
+                $this->setTemplate(false);
+                $this->exportAction();
+                break;
+
+            case 'testmail':
+                $emailTools = new EmailTools();
+                if ($emailTools->test()) {
+                    $this->miniLog->info($this->i18n->trans('mail-test-ok'));
+                } else {
+                    $this->miniLog->error($this->i18n->trans('mail-test-error'));
+                }
+                break;
         }
     }
 
@@ -120,45 +162,7 @@ class EditSettings extends ExtendedController\PanelController
      */
     private function getKeyFromViewName($viewName)
     {
-        return strtolower(substr($viewName, strlen(self::KEYSETTINGS)));
-    }
-
-    /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $modelName = '\FacturaScripts\Dinamic\Model\Settings';
-        $icon = $this->getPageData()['icon'];
-        foreach ($this->allSettingsXMLViews() as $name) {
-            $title = strtolower(substr($name, 8));
-            $this->addEditView($modelName, $name, $title, $icon);
-        }
-
-        $title2 = 'about';
-        $this->addHtmlView('Block/About.html', null, 'about', $title2);
-    }
-
-    /**
-     * Load view data
-     *
-     * @param string $keyView
-     * @param ExtendedController\EditView $view
-     */
-    protected function loadData($keyView, $view)
-    {
-        if (empty($view->getModel())) {
-            return;
-        }
-
-        $code = $this->getKeyFromViewName($keyView);
-        $view->loadData($code);
-
-        $model = $view->getModel();
-        if ($model->name === null) {
-            $model->name = strtolower(substr($keyView, 8));
-            $model->save();
-        }
+        return strtolower(substr($viewName, strlen(self::KEY_SETTINGS)));
     }
 
     /**
@@ -171,11 +175,34 @@ class EditSettings extends ExtendedController\PanelController
         $names = [];
         $files = array_diff(scandir(FS_FOLDER . '/Dinamic/XMLView', SCANDIR_SORT_ASCENDING), ['.', '..']);
         foreach ($files as $fileName) {
-            if (0 === strpos($fileName, self::KEYSETTINGS)) {
+            if (0 === strpos($fileName, self::KEY_SETTINGS)) {
                 $names[] = substr($fileName, 0, -4);
             }
         }
 
         return $names;
+    }
+
+    private function exportAction()
+    {
+        $this->exportManager->newDoc($this->response, $this->request->get('option'));
+        foreach ($this->views as $view) {
+            $model = $view->getModel();
+            if ($model === null || !isset($model->properties)) {
+                continue;
+            }
+
+            $headers = ['key' => 'key', 'value' => 'value'];
+            $rows = [];
+            foreach ($model->properties as $key => $value) {
+                $rows[] = ['key' => $key, 'value' => $value];
+            }
+
+            if (count($rows) > 0) {
+                $this->exportManager->generateTablePage($headers, $rows);
+            }
+        }
+
+        $this->exportManager->show($this->response);
     }
 }

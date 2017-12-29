@@ -28,11 +28,13 @@
             <column name="code" numcolumns="2" order="100">
                 <widget type="text" fieldname="codcliente" onclick="" icon="fa-user" required="true" />
             </column>
-            <column name="name" numcolumns="3" order="110"
-                    description="desc-custommer-name">
+            <column name="name" numcolumns="3" order="100" description="desc-custommer-name">
                 <widget type="text" fieldname="nombre" required="true" hint="desc-custommer-name-2" />
             </column>
-            <column name="fiscal type" title="fiscal-id" numcolumns="2" order="130">
+            <column name="business-name" title="business-name" numcolumns="3" order="100" description="desc-business-name">
+                <widget type="text" fieldname="razonsocial" required="true" />
+            </column>
+            <column name="fiscal-id" title="fiscal-id" numcolumns="2" order="100">
                 <widget type="select" fieldname="tipoidfiscal">
                     <values title="CIF/NIF">CIF/NIF</values>
                     <values title="Pasaporte">PASAPORTE</values>
@@ -43,38 +45,44 @@
                     <values title="CUIT">CUIT</values>
                 </widget>
             </column>
-            <column name="fiscal name" title="business-name" numcolumns="3" order="120"
-                    description="desc-business-name">
-                <widget type="text" fieldname="razonsocial" hint="desc-business-name-2" />
-            </column>
-            <column name="fiscal number" title="cifnif" numcolumns="2" order="140">
+            <column name="fiscal-number" title="cifnif" numcolumns="2" order="100">
                 <widget type="text" fieldname="cifnif" required="true" />
             </column>
-            <column name="fiscal mode" title="is-person" order="200">
+            <column name="fiscal-mode" title="is-person" order="100">
                 <widget type="checkbox" fieldname="personafisica" />
             </column>
         </group>
         <group name="comercial" title="commercial-terms" numcolumns="12">
-            <column name="group" numcolumns="2" titleurl="?page=ListGrupoCliente" order="100">
+            <column name="group" numcolumns="3" order="100">
                 <widget type="select" fieldname="codgrupo">
                     <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="payment" title="method-payment" numcolumns="3" titleurl="?page=ListFormaPago" order="120">
+            <column name="serie" title="serie" numcolumns="2" order="100">
+                <widget type="select" fieldname="codserie">
+                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="currency" title="currency" numcolumns="2" order="100">
+                <widget type="select" fieldname="coddivisa">
+                    <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="payment-method" title="payment-method" numcolumns="3" titleurl="?page=ListFormaPago" order="100">
                 <widget type="select" fieldname="codpago">
                     <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="payment days" title="payment-days" description="desc-payment-days" numcolumns="2" order="130">
+            <column name="payment-days" title="payment-days" description="desc-payment-days" numcolumns="2" order="100">
                 <widget type="text" fieldname="diaspago" />
             </column>
-            <column name="employee" numcolumns="3" titleurl="?page=ListUser" order="140">
+            <column name="employee" numcolumns="3" titleurl="?page=ListUser" order="100">
                 <widget type="select" fieldname="codagente">
                     <values source="agentes" fieldcode="codagente" fieldtitle="CONCAT(nombre,' ',apellidos)"></values>
                 </widget>
             </column>
-            <column name="vat-type" title="vat-regime" order="150">
-                <widget type="radio" fieldname="regimeniva">
+            <column name="vat-type" title="vat-regime" numcolumns="3" order="100">
+                <widget type="select" fieldname="regimeniva">
                     <values title="General">general</values>
                     <values title="Exento">exento</values>
                 </widget>

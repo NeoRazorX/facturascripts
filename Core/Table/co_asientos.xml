@@ -48,6 +48,11 @@
         <null>YES</null>
     </column>
     <column>
+        <name>idempresa</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
         <name>importe</name>
         <type>double precision</type>
         <null>YES</null>

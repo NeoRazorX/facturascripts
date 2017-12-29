@@ -38,7 +38,7 @@ class EditRol extends ExtendedController\PanelController
         $this->addEditView('\FacturaScripts\Dinamic\Model\Rol', 'EditRol', 'rol', 'fa-id-card');
         $this->addListView('\FacturaScripts\Dinamic\Model\RolAccess', 'ListRolAccess', 'rules', 'fa fa-check-square');
         $this->addEditListView('\FacturaScripts\Dinamic\Model\RolUser', 'EditRolUser', 'users', 'fa-address-card-o');
-        
+
         /// Disable columns
         $this->views['ListRolAccess']->disableColumn('role', true);
         $this->views['EditRolUser']->disableColumn('role', true);
@@ -107,11 +107,15 @@ class EditRol extends ExtendedController\PanelController
      */
     private function getPages()
     {
-        $menu = $this->request->get('menu', '');
-        $submenu = $this->request->get('submenu', '');
+        $menu = $this->request->get('menu', '---null---');
+        $submenu = $this->request->get('submenu', '---null---');
+        if ($menu === '---null---') {
+            return [];
+        }
+
         $where = [new DataBaseWhere('menu', $menu)];
-        if (!empty($submenu)) {
-            $where[] = [new DataBaseWhere('submenu', $submenu)];
+        if ($submenu !== '---null---') {
+            $where[] = new DataBaseWhere('submenu', $submenu);
         }
 
         $page = new Model\Page();
@@ -130,15 +134,15 @@ class EditRol extends ExtendedController\PanelController
     {
         switch ($action) {
             case 'add-rol-access':
-                $codRol = $this->request->get('code', '');
+                $codrol = $this->request->get('code', '');
                 $pages = $this->getPages();
-                if (empty($pages) || empty($codRol)) {
+                if (empty($pages) || empty($codrol)) {
                     return true;
                 }
 
                 $this->dataBase->beginTransaction();
                 try {
-                    $this->addRolAccess($codRol, $pages);
+                    $this->addRolAccess($codrol, $pages);
                     $this->dataBase->commit();
                 } catch (\Exception $e) {
                     $this->dataBase->rollback();

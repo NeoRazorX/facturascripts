@@ -27,6 +27,11 @@
         <null>NO</null>
         <default>nextval('co_gruposepigrafes_idgrupo_seq'::regclass)</default>
     </column>
+    <column>
+        <name>idempresa</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
     <constraint>
         <name>co_gruposepigrafes_pkey</name>
         <type>PRIMARY KEY (idgrupo)</type>

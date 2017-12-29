@@ -24,6 +24,7 @@ use Exception;
 use FacturaScripts\Core\Base\DebugBar\DataBaseCollector;
 use FacturaScripts\Core\Base\DebugBar\TranslationCollector;
 use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\MenuManager;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Model\User;
@@ -130,7 +131,7 @@ class AppController extends App
      * Load and process the $pageName controller.
      *
      * @param string $pageName
-     * @param User $user
+     * @param User|false $user
      */
     private function loadController($pageName, $user)
     {
@@ -147,16 +148,21 @@ class AppController extends App
         if (class_exists($controllerName)) {
             $this->miniLog->debug($this->i18n->trans('loading-controller', ['%controllerName%' => $controllerName]));
             $this->menuManager->setUser($user);
+            $permissions = new ControllerPermissions($user, $pageName);
 
             try {
                 $this->controller = new $controllerName($this->cache, $this->i18n, $this->miniLog, $pageName);
                 if ($user === false) {
                     $this->controller->publicCore($this->response);
-                } else {
+                    $template = $this->controller->getTemplate();
+                } elseif ($permissions->allowAccess) {
                     $this->menuManager->selectPage($this->controller->getPageData());
-                    $this->controller->privateCore($this->response, $user);
+                    $this->controller->privateCore($this->response, $user, $permissions);
+                    $template = $this->controller->getTemplate();
+                } else {
+                    $template = 'Error/AccessDenied.html';
                 }
-                $template = $this->controller->getTemplate();
+
                 $httpStatus = Response::HTTP_OK;
             } catch (Exception $exc) {
                 $this->debugBar['exceptions']->addException($exc);
@@ -310,7 +316,7 @@ class AppController extends App
      *
      * @param User $user0
      *
-     * @return bool
+     * @return User|false
      */
     private function cookieAuth(&$user0)
     {
@@ -328,7 +334,6 @@ class AppController extends App
             }
 
             $this->miniLog->alert($this->i18n->trans('login-user-not-found'));
-            return false;
         }
 
         return false;

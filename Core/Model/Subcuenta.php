@@ -37,6 +37,13 @@ class Subcuenta
      * @var int
      */
     public $idsubcuenta;
+    
+    /**
+     *Identificacion de la empresa
+     *
+     * @var int
+     */
+    public $idempresa;
 
     /**
      * Sub-account code.

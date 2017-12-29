@@ -1,17 +1,9 @@
 {% extends "Master/MenuTemplate.html" %}
 
-{% block javascript %}
-{{ parent() }}
-
-<script type="text/javascript">
-    function setOperator(buttonID, operator) {
-        document.getElementById(buttonID + '-operator').value = operator;
-        document.getElementById(buttonID + '-btn').value = operator;
-    }
-    </script>
-{% endblock %}
-
 {% block body %}
+<!-- Macros Template Imports -->
+{% import 'Macro/Forms.html' as forms %}
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
@@ -38,110 +30,38 @@
 <hr>
 <div class="container-fluid">
     <form name="f_search" id="formSearch" action="{{ fsc.url() }}" method="post" class="form">
-        <input name="action" id="action" type="hidden" value="reload">
+        <input name="action" id="action" type="hidden" value="reload"/>
         <div class="row">
             <div class="col-md-4">
                 <div class="form-group">
-                    <label for="source1">{{ i18n.trans('choose-source-1') }}</label>
-                    <select id="source1" name="source1" class="form-control" onchange="this.form.submit()">
-                        <option value="">{{ i18n.trans('choose-doc-type') }}</option>
-                        {% for doc in fsc.getDocumentTypes() %}
-                        {% if doc == fsc.source1 %}
-                        <option value="{{ doc }}" selected="selected">{{ i18n.trans(doc) }}</option>
-                        {% else %}
-                        <option value="{{ doc }}" >{{ i18n.trans(doc) }}</option>
-                        {% endif %}
-                        {% endfor %}
-                    </select>
+                    {{ forms.simpleSelect('source1', 'source1', fsc.source1, fsc.getDocumentTypes(), 'choose-source-1', i18n, 'fa-files-o', {onchange: 'this.form.submit()'}) }}
                 </div>
             </div>
             <div class="col-md-4">
-                <label for="source1">{{ i18n.trans('start-date') }}</label>
-                <div class="input-group">
-                    <div class="input-group-btn">
-                        <input name="date1-from-btn" id="date1-from-btn" type="button" value="{{ fsc.date1FromOperator }}" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-
-                        <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 38px, 0px); top: 0px; left: 0px; will-change: transform;">
-                            <h6 class="dropdown-header">Método del filtro</h6>
-                            <a class="dropdown-item" href="#" onclick="setOperator('date-from', '=')">Igual que Fecha</a>
-                            <a class="dropdown-item" href="#" onclick="setOperator('date-from', '>=')">Mayor que Fecha</a>
-                            <a class="dropdown-item" href="#" onclick="setOperator('date-from', '<=')">Menor que Fecha</a>
-                            <a class="dropdown-item" href="#" onclick="setOperator('date-from', '<>')">Diferente que Fecha</a>
-                        </div>
-                    </div>
-                    <input type="hidden" name="date1-from-operator" id="date1-from-operator" value="{{ fsc.date1FromOperator }}">
-                    <input type="text" name="date1-from" value="{{ fsc.date1From }}" class="form-control datepicker" placeholder="Fecha" autocomplete="off" onchange="this.form.submit()" onkeypress="return event.charCode == 13 || (event.charCode >= 48 &amp;&amp; event.charCode <= 57) ||  event.charCode == 45 ||  event.charCode == 47">
+                <div class="form-group">
+                    {{ forms.simpleInput('date1-from', 'date1-form', fsc.date1From.format('d-m-Y'), 'text', i18n.trans('start-date'), 'fa-calendar', {class: 'datepicker'}) }}
                 </div>
             </div>
             <div class="col-md-4">
-                <label for="source1">{{ i18n.trans('end-date') }}</label>
-                <div class="input-group">
-                    <div class="input-group-btn">
-                        <input name="date1-to-btn" id="date1-to-btn" type="button" value="{{ fsc.date1ToOperator }}" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-
-                        <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 38px, 0px); top: 0px; left: 0px; will-change: transform;">
-                            <h6 class="dropdown-header">Método del filtro</h6>
-                            <a class="dropdown-item" href="#" onclick="setOperator('date-to', '=')">Igual que Fecha</a>
-                            <a class="dropdown-item" href="#" onclick="setOperator('date-to', '>=')">Mayor que Fecha</a>
-                            <a class="dropdown-item" href="#" onclick="setOperator('date-to', '<=')">Menor que Fecha</a>
-                            <a class="dropdown-item" href="#" onclick="setOperator('date-to', '<>')">Diferente que Fecha</a>
-                        </div>
-                    </div>
-                    <input type="hidden" name="date1-to-operator" id="date1-to-operator" value="{{ fsc.date1ToOperator }}">
-                    <input type="text" name="date1-to" value="{{ fsc.date1To }}" class="form-control datepicker" placeholder="Fecha" autocomplete="off" onchange="this.form.submit()" onkeypress="return event.charCode == 13 || (event.charCode >= 48 &amp;&amp; event.charCode <= 57) ||  event.charCode == 45 ||  event.charCode == 47">
+                <div class="form-group">
+                    {{ forms.simpleInput('date1-to', 'date1-to', fsc.date1To.format('d-m-Y'), 'text', i18n.trans('end-date'), 'fa-calendar', {class: 'datepicker'}) }}
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-md-4">
                 <div class="form-group">
-                    <label for="source2">{{ i18n.trans('choose-source-2') }}</label>
-                    <select id="source2" name="source2" class="form-control" onchange="this.form.submit()">
-                        <option value="">{{ i18n.trans('choose-doc-type') }}</option>
-                        {% for doc in fsc.getDocumentTypes() %}
-                        {% if doc == fsc.source2 %}
-                        <option value="{{ doc }}" selected="selected">{{ i18n.trans(doc) }}</option>
-                        {% else %}
-                        <option value="{{ doc }}" >{{ i18n.trans(doc) }}</option>
-                        {% endif %}
-                        {% endfor %}
-                    </select>
+                    {{ forms.simpleSelect('source2', 'source2', fsc.source2, fsc.getDocumentTypes(), 'choose-source-2', i18n, 'fa-files-o',{'onchange': 'this.form.submit()'}) }}
                 </div>
             </div>
             <div class="col-md-4">
-                <label for="source1">{{ i18n.trans('start-date') }}</label>
-                <div class="input-group">
-                    <div class="input-group-btn">
-                        <input name="date2-from-btn" id="date2-from-btn" type="button" value="{{ fsc.date2FromOperator }}" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-
-                        <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 38px, 0px); top: 0px; left: 0px; will-change: transform;">
-                            <h6 class="dropdown-header">Método del filtro</h6>
-                            <a class="dropdown-item" href="#" onclick="setOperator('date-from', '=')">Igual que Fecha</a>
-                            <a class="dropdown-item" href="#" onclick="setOperator('date-from', '>=')">Mayor que Fecha</a>
-                            <a class="dropdown-item" href="#" onclick="setOperator('date-from', '<=')">Menor que Fecha</a>
-                            <a class="dropdown-item" href="#" onclick="setOperator('date-from', '<>')">Diferente que Fecha</a>
-                        </div>
-                    </div>
-                    <input type="hidden" name="date2-from-operator" id="date2-from-operator" value="{{ fsc.date2FromOperator }}">
-                    <input type="text" name="date2-from" value="{{ fsc.date2From }}" class="form-control datepicker" placeholder="Fecha" autocomplete="off" onchange="this.form.submit()" onkeypress="return event.charCode == 13 || (event.charCode >= 48 &amp;&amp; event.charCode <= 57) ||  event.charCode == 45 ||  event.charCode == 47">
+                <div class="form-group">
+                    {{ forms.simpleInput('date2-from', 'date2-form', fsc.date2From.format('d-m-Y'), 'text', i18n.trans('start-date'), 'fa-calendar', {class: 'datepicker'}) }}
                 </div>
             </div>
             <div class="col-md-4">
-                <label for="source1">{{ i18n.trans('end-date') }}</label>
-                <div class="input-group">
-                    <div class="input-group-btn">
-                        <input name="date2-to-btn" id="date2-to-btn" type="button" value="{{ fsc.date2ToOperator }}" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-
-                        <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 38px, 0px); top: 0px; left: 0px; will-change: transform;">
-                            <h6 class="dropdown-header">Método del filtro</h6>
-                            <a class="dropdown-item" href="#" onclick="setOperator('date-to', '=')">Igual que Fecha</a>
-                            <a class="dropdown-item" href="#" onclick="setOperator('date-to', '>=')">Mayor que Fecha</a>
-                            <a class="dropdown-item" href="#" onclick="setOperator('date-to', '<=')">Menor que Fecha</a>
-                            <a class="dropdown-item" href="#" onclick="setOperator('date-to', '<>')">Diferente que Fecha</a>
-                        </div>
-                    </div>
-                    <input type="hidden" name="date2-to-operator" id="date2-to-operator" value="{{ fsc.date2ToOperator }}">
-                    <input type="text" name="date2-to" value="{{ fsc.date2To }}" class="form-control datepicker" placeholder="Fecha" autocomplete="off" onchange="this.form.submit()" onkeypress="return event.charCode == 13 || (event.charCode >= 48 &amp;&amp; event.charCode <= 57) ||  event.charCode == 45 ||  event.charCode == 47">
+                <div class="form-group">
+                    {{ forms.simpleInput('date2-to', 'date2-to', fsc.date2To.format('d-m-Y'), 'text', i18n.trans('end-date'), 'fa-calendar', {class: 'datepicker'}) }}
                 </div>
             </div>
         </div>
@@ -213,171 +133,61 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-12 text-center">
-            <h3>{{ i18n.trans('yearly') }}</h3>
+            <h3>{{ i18n.trans(fsc.grouped) }}</h3>
         </div>
     </div>
     <div class="row">
         <div class="col-6">
             <div class="table-responsive">
-                {% for key1,table in fsc.dataTableYearly[0] %}
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th class="text-left">{{ key2 }} {{fsc.date1From }} {{ fsc.date1To }}</th>
-                            <th class="text-left">Dia</th>
-                            <th class="text-left">Total</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for key3,item in table %}
-                        <tr class="table-light">
-                            <td class="text-left">{{ key3 }}</td>
-                            <td class="text-left">{{ item.date }}</td>
-                            <td class="text-left">{{ item.total }}</td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                {% for key1,table in fsc.dataTable[0] %}
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th class="text-left" colspan="3">{{ i18n.trans(fsc.source1) }}</th>
+                    </tr>
+                    <tr>
+                        <th class="text-left">{{fsc.date1From.format('d-m-Y') }} - {{ fsc.date1To.format('d-m-Y') }}</th>
+                        <th class="text-left">Dia</th>
+                        <th class="text-left">Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for key3,item in table %}
+                    <tr class="table-light">
+                        <td class="text-left">{{ key3 }}</td>
+                        <td class="text-left">{{ item.date }}</td>
+                        <td class="text-left">{{ item.total }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
                 {% endfor %}
             </div>
         </div>
         <div class="col-6">
             <div class="table-responsive">
-                {% for key1,table in fsc.dataTableYearly[1] %}
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th class="text-left">{{ key2 }} {{fsc.date2From }} {{ fsc.date2To }}</th>
-                            <th class="text-left">Dia</th>
-                            <th class="text-left">Total</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for key3,item in table %}
-                        <tr class="table-light">
-                            <td class="text-left">{{ key3 }}</td>
-                            <td class="text-left">{{ item.date }}</td>
-                            <td class="text-left">{{ item.total }}</td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12 text-center">
-            <h3>{{ i18n.trans('monthly') }}</h3>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-6">
-            <div class="table-responsive">
-                {% for key1,table in fsc.dataTableMonthly[0] %}
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th class="text-left">{{ key2 }} {{fsc.date1From }} {{ fsc.date1To }}</th>
-                            <th class="text-left">Dia</th>
-                            <th class="text-left">Total</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for key3,item in table %}
-                        <tr class="table-light">
-                            <td class="text-left">{{ key3 }}</td>
-                            <td class="text-left">{{ item.date }}</td>
-                            <td class="text-left">{{ item.total }}</td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="table-responsive">
-                {% for key1,table in fsc.dataTableMonthly[1] %}
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th class="text-left">{{ key2 }} {{fsc.date2From }} {{ fsc.date2To }}</th>
-                            <th class="text-left">Dia</th>
-                            <th class="text-left">Total</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for key3,item in table %}
-                        <tr class="table-light">
-                            <td class="text-left">{{ key3 }}</td>
-                            <td class="text-left">{{ item.date }}</td>
-                            <td class="text-left">{{ item.total }}</td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12 text-center">
-            <h3>{{ i18n.trans('daily') }}</h3>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-6">
-            <div class="table-responsive">
-                {% for key1,table in fsc.dataTableDaily[0] %}
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th class="text-left">{{ key2 }} {{fsc.date1From }} {{ fsc.date1To }}</th>
-                            <th class="text-left">Dia</th>
-                            <th class="text-left">Total</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for key3,item in table %}
-                        <tr class="table-light">
-                            <td class="text-left">{{ key3 }}</td>
-                            <td class="text-left">{{ item.date }}</td>
-                            <td class="text-left">{{ item.total }}</td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="table-responsive">
-                {% for key1,table in fsc.dataTableDaily[1] %}
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th class="text-left">{{ key2 }} {{fsc.date2From }} {{ fsc.date2To }}</th>
-                            <th class="text-left">Dia</th>
-                            <th class="text-left">Total</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for key3,item in table %}
-                        <tr class="table-light">
-                            <td class="text-left">{{ key3 }}</td>
-                            <td class="text-left">{{ item.date }}</td>
-                            <td class="text-left">{{ item.total }}</td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                {% for key1,table in fsc.dataTable[1] %}
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th class="text-left" colspan="3">{{ i18n.trans(fsc.source2) }}</th>
+                    </tr>
+                    <tr>
+                        <th class="text-left">{{fsc.date2From.format('d-m-Y') }} - {{ fsc.date2To.format('d-m-Y') }}</th>
+                        <th class="text-left">Dia</th>
+                        <th class="text-left">Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for key3,item in table %}
+                    <tr class="table-light">
+                        <td class="text-left">{{ key3 }}</td>
+                        <td class="text-left">{{ item.date }}</td>
+                        <td class="text-left">{{ item.total }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
                 {% endfor %}
             </div>
         </div>

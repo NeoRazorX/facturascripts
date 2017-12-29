@@ -40,7 +40,7 @@
      *               it shouldn't be 'type', 'id' or 'name', as those are already given.
      */
 #}
-{% macro simpleInput( id, name, value, type = "text", label = NULL, icon = NULL, attributes = NULL) %}
+{% macro simpleInput(id, name, value, type = "text", label = NULL, icon = NULL, attributes = NULL) %}
         {% if label %}
             <label for="{{ name }}">{{ label }}</label>
         {% endif %}
@@ -48,15 +48,11 @@
         {% if icon %}
             <div class="input-group">
                 <span class="input-group-addon">
-                    <i class="fa fa-{{ icon }}" aria-hidden="true"></i>
+                    <i class="fa {{ icon }} fa-fw" aria-hidden="true"></i>
                 </span>
         {% endif %}
 
-                <input
-                        type="{{ type }}"
-                        id="{{ id }}"
-                        name="{{ name }}"
-                        value="{{ value }}"
+                <input type="{{ type }}" id="{{ id }}" name="{{ name }}" value="{{ value }}"
                         {% if attributes.class is defined %}
                             {% set attributes = attributes|merge({'class': 'form-control ' ~ attributes.class}) %}
                         {% else %}
@@ -64,7 +60,6 @@
                         {% endif %}
 
                         {% for attribute,attrValue in attributes %}
-
                             {{ attribute }}="{{ attrValue }}"
                         {% endfor %}
                 /> {# end input #}
@@ -92,21 +87,23 @@
 #}
 {% macro simpleSelect(id, name, value, allValues = {}, label = NULL, i18n = NULL, icon = NULL, attributes = NULL) %}
     {% if label %}
+        {% if i18n %}
+        <label for="{{ name }}">{{ i18n.trans(label) }}</label>
+        {% else %}
         <label for="{{ name }}">{{ label }}</label>
+        {% endif %}
     {% endif %}
 
     {% if icon %}
         <div class="input-group">
-        <span class="input-group-addon">
-                    <i class="fa fa-{{ icon }}" aria-hidden="true"></i>
-                </span>
+            <span class="input-group-addon">
+                <i class="fa {{ icon }} fa-fw" aria-hidden="true"></i>
+            </span>
     {% endif %}
 
-        <select
-                id="{{ id }}"
-                name="{{ name }}"
+        <select id="{{ id }}" name="{{ name }}"
                 {% if attributes.class is defined %}
-                            {% set attributes = attributes|merge({'class': 'form-control ' ~ attributes.class}) %}
+                    {% set attributes = attributes|merge({'class': 'form-control ' ~ attributes.class}) %}
                 {% else %}
                     class="form-control"
                 {% endif %}
