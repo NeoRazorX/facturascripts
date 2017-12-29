@@ -42,6 +42,13 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     public $display;
 
     /**
+     * Indicates the security level of the column
+     *
+     * @var integer
+     */
+    public $level;
+
+    /**
      * Field display object configuration
      *
      * @var WidgetButton|WidgetItemCheckBox|WidgetItemColor|WidgetItemDateTime|WidgetItemMoney|WidgetItemNumber|WidgetItemRadio|WidgetItemSelect|WidgetItemText
@@ -83,6 +90,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     {
         parent::__construct();
 
+        $this->level = 1;
         $this->description = '';
         $this->display = 'left';
         $this->widget = null;
@@ -108,6 +116,10 @@ class ColumnItem extends VisualItem implements VisualItemInterface
             $this->display = (string) $column_atributes->display;
         }
 
+        if (!empty($column_atributes->level)) {
+            $this->level = (integer) $column_atributes->level;
+        }
+
         switch (true) {
             case isset($column->widget):
                 $this->widget = WidgetItem::newFromXML($column);
@@ -129,6 +141,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
         parent::loadFromJSON($column);
         $this->description = (string) $column['description'];
         $this->display = (string) $column['display'];
+        $this->level = (integer) $column['level'];
 
         if (!empty($this->widget)) {
             unset($this->widget);

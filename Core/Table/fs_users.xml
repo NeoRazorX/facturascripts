@@ -63,6 +63,12 @@
         <type>integer</type>
         <null>YES</null>
     </column>
+    <column>
+        <name>level</name>
+        <type>integer</type>
+        <null>NO</null>
+        <default>1</default>
+    </column>
     <constraint>
         <name>fs_users_pkey</name>
         <type>PRIMARY KEY (nick)</type>

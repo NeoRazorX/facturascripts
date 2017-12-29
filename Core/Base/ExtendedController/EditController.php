@@ -91,6 +91,12 @@ abstract class EditController extends Base\Controller
         $this->execAfterAction($action);
     }
 
+    /**
+     * Create the view to display
+     *
+     * @param \FacturaScripts\Core\Model\User $user
+     * @return ExtendedController\EditView
+     */
     protected function createView($user)
     {
         return new EditView(

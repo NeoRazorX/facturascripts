@@ -31,12 +31,35 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class EditPageOption extends Base\Controller
 {
+    /**
+     * Selected user, for which the controller columns are created or modified
+     *
+     * @var string
+     */
     public $selectedUser;
 
+    /**
+     * Selected view, for which columns are created or modified
+     *
+     * @var string
+     */
     public $selectedViewName;
 
+    /**
+     * Details of the view configuration
+     *
+     * @var Model\PageOption
+     */
     public $model;
 
+    /**
+     * Initialize all objects and properties.
+     *
+     * @param Cache $cache
+     * @param Translator $i18n
+     * @param MiniLog $miniLog
+     * @param string $className
+     */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
         parent::__construct($cache, $i18n, $miniLog, $className);
@@ -44,6 +67,9 @@ class EditPageOption extends Base\Controller
         $this->model = new Model\PageOption();
     }
 
+    /**
+     * Load and initialize the parameters sent by the form
+     */
     private function getParams()
     {
         $this->selectedViewName = $this->request->get('code');
@@ -51,7 +77,7 @@ class EditPageOption extends Base\Controller
             ? $this->request->get('nick', NULL)
             : $this->user->nick;
     }
-    
+
     /**
      * Runs the controller's private logic.
      *
@@ -71,6 +97,11 @@ class EditPageOption extends Base\Controller
         }
     }
 
+    /**
+     * Where filter for loading the view to be edited
+     *
+     * @return DatabaseWhere[]
+     */
     private function getFilter()
     {
         return [
@@ -79,6 +110,11 @@ class EditPageOption extends Base\Controller
         ];
     }
 
+    /**
+     * Checking the value of the nick field.
+     * It determines if we edit a configuration for all the users or one,
+     * and if there is already configuration for the nick
+     */
     private function checkNickAndID()
     {
         if ($this->model->nick != $this->selectedUser) {
@@ -91,6 +127,9 @@ class EditPageOption extends Base\Controller
         }
     }
 
+    /**
+     * Save new configuration for view
+     */
     private function saveData()
     {
         $this->checkNickAndID();
@@ -148,6 +187,11 @@ class EditPageOption extends Base\Controller
             . '</strong>';
     }
 
+    /**
+     * Get the list of users, excluding the user admin
+     *
+     * @return Array
+     */
     public function getUserList()
     {
         $result = [];
