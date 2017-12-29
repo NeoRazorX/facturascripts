@@ -529,7 +529,7 @@
     "plugin-name-disabled": "Plugin <b>%pluginName%</b> ha sido desactivado correctamente.",
     "plugin-name-enabled": "Plugin <b>%pluginName%</b> ha sido activado correctamente.",
     "plugin-deleted": "Plugin %pluginName% ha sido eliminado correctamente.",
-    "reset": "Configuración reiniciada correctamente, pulsa <a href='%link%#advanced'>aquí</a> para continuar.",
+    "reset": "Configuración reiniciada correctamente.",
     "question-delete-plugin": "¿Realmente desea eliminar este plugin?",
     "question-download-unstable-plugin": "Este plugin está marcado como inestable ¿Estás seguro de qué quieres descargarlo?",
     "there-are-not-enabled-pages": "No hay páginas activas.",
@@ -547,7 +547,7 @@
     "user-created": "Usuario '%userName%' creado correctamente.",
     "user-deleted": "Usuario '%userName%' eliminado correctamente.",
     "msg-user-not-found": "¡Usuario '%userNick%' no encontrado!",
-    "warning": "<b>Atención</b>",
+    "warning": "Atención",
     "cifnif": "CIF/NIF",
     "code": "Código",
     "colon": ":",
@@ -904,7 +904,7 @@
     "notchead-seat": "Asiento descuadrado. Descuadre: 0",
     "incorrect-seat-amount": "Importe del asiento incorrecto.",
     "seat-within-regularization": "El asiento se encuentra dentro de una regularización de %tax%. No se puede eliminar.",
-    "seat-date-not-in-exercise-range": "La fecha de este asiento está fuera del <a target='_blank' href='%link%'>ejercicio</a>.",
+    "seat-date-not-in-exercise-range": "La fecha de este asiento está fuera del ejercicio.",
     "seat-possible-duplicated": "Este asiento es un posible duplicado de <a href='index.php?page=ContabilidadAsiento&id=%seatId%'>este otro</a>. Si no lo es, para evitar este mensaje, simplemente modifica el concepto.",
     "closed-exercise": "El ejercicio %exerciseName% está cerrado.",
     "error-while-renumbering-seats": "Se ha producido un error mientras se renumeraban los asientos del ejercicio %exerciseCode%",
@@ -1200,5 +1200,7 @@
     "specials-actions": "Acciones especiales",
     "test": "Test",
     "mailer": "Controlador de correo",
-    "encrypt": "Encriptación"
+    "encrypt": "Encriptación",
+    "display": "Visualización",
+    "level": "Nivel"
 }
