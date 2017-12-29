@@ -69,6 +69,7 @@
             <div class="card">
                 <div class="card-header">
                     <span class="card-title">{{ panel_header|raw }}</span>
+                    {% if fsc.user.admin %}
                     <div class="float-right text-danger">
                         <form action="#" method="post" class="form-inline" role="form" name="select_user">
                             <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
@@ -82,6 +83,7 @@
                             </select>
                         </form>
                     </div>
+                    {% endif %}
                 </div>
 
                 <form action="#" method="post" class="form" role="form" name="main_form">
@@ -98,14 +100,19 @@
                                 <h4 class="text-muted">{{ group.getHeaderHTML(group.title)|raw }}</h4>
                                 {% endif %}
 
+                                {% set titleUrlColumn = 4 %}
                                 <table class="table">
                                     <thead>
                                         <tr>
                                             <th class="d-inline-block col-4">{{ i18n.trans('title') }}</th>
-                                            <th class="d-inline-block col-2">{{ i18n.trans('align') }}</th>
-                                            <th class="d-inline-block col-2">{{ i18n.trans('columns') }}</th>
+                                            {% if fsc.user.admin %}
+                                            {% set titleUrlColumn = 3 %}
+                                            <th class="d-inline-block col-1">{{ i18n.trans('level') }}</th>
+                                            {% endif %}
+                                            <th class="d-inline-block col-2">{{ i18n.trans('display') }}</th>
+                                            <th class="d-inline-block col-1">{{ i18n.trans('columns') }}</th>
                                             <th class="d-inline-block col-1">{{ i18n.trans('sort') }}</th>
-                                            <th class="d-inline-block col-3">{{ i18n.trans('title-url') }}</th>
+                                            <th class="d-inline-block col-{{ titleUrlColumn }}">{{ i18n.trans('title-url') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -115,6 +122,13 @@
                                         <th class="d-inline-block col-4">
                                             {{ i18n.trans(field.title) }}
                                         </th>
+
+                                        {% if fsc.user.admin %}
+                                        <td class="d-inline-block col-1">
+                                            <input type="number" class="form-control" name="{{ masterName ~ 'level' }}" min="1" max="99" step="1" placeholder="1" value="{{ field.level }}">
+                                        </td>
+                                        {% endif %}
+
                                         <td class="d-inline-block col-2">
                                             <select class="form-control" name="{{ masterName ~ 'display' }}">
                                                 <option value="left" {% if field.display == 'left' %}selected{% endif %}>{{ i18n.trans('left') }}</option>
@@ -123,7 +137,8 @@
                                                 <option value="none" {% if field.display == 'none' %}selected{% endif %}>{{ i18n.trans('none') }}</option>
                                             </select>
                                         </td>
-                                        <td class="d-inline-block col-2">
+
+                                        <td class="d-inline-block col-1">
                                             <select class="form-control" name="{{ masterName ~ 'numColumns' }}">
                                                 <option value="0" {% if field.numColumns == 0 %}selected{% endif %}>{{ i18n.trans('auto') }}</option>
                                                 <option value="1" {% if field.numColumns == 1 %}selected{% endif %}>1</option>
@@ -140,10 +155,12 @@
                                                 <option value="12" {% if field.numColumns == 12 %}selected{% endif %}>12</option>
                                             </select>
                                         </td>
+
                                         <td class="d-inline-block col-1">
                                             <input type="number" class="form-control" name="{{ masterName ~ 'order' }}" placeholder="Auto" value="{{ field.order }}">
                                         </td>
-                                        <td class="d-inline-block col-3">
+
+                                        <td class="d-inline-block col-{{ titleUrlColumn }}">
                                             <input type="text" class="form-control" name="{{ masterName ~ 'titleURL' }}" placeholder="http://" value="{{ field.titleURL }}">
                                         </td>
                                     </tr>

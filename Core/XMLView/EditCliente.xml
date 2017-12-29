@@ -32,7 +32,7 @@
                     description="desc-custommer-name">
                 <widget type="text" fieldname="nombre" required="true" hint="desc-custommer-name-2" />
             </column>
-            <column name="fiscal type" title="fiscal-id" numcolumns="2" order="130">
+            <column name="fiscal-id" numcolumns="2" order="130">
                 <widget type="select" fieldname="tipoidfiscal">
                     <values title="CIF/NIF">CIF/NIF</values>
                     <values title="Pasaporte">PASAPORTE</values>
@@ -43,14 +43,14 @@
                     <values title="CUIT">CUIT</values>
                 </widget>
             </column>
-            <column name="fiscal name" title="business-name" numcolumns="3" order="120"
+            <column name="business-name" numcolumns="3" order="120"
                     description="desc-business-name">
                 <widget type="text" fieldname="razonsocial" hint="desc-business-name-2" />
             </column>
-            <column name="fiscal number" title="cifnif" numcolumns="2" order="140">
+            <column name="cifnif" numcolumns="2" order="140">
                 <widget type="text" fieldname="cifnif" required="true" />
             </column>
-            <column name="fiscal mode" title="is-person" order="200">
+            <column name="is-person" order="200">
                 <widget type="checkbox" fieldname="personafisica" />
             </column>
         </group>
@@ -65,7 +65,7 @@
                     <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="payment days" title="payment-days" description="desc-payment-days" numcolumns="2" order="130">
+            <column name="payment-days" description="desc-payment-days" numcolumns="2" order="130">
                 <widget type="text" fieldname="diaspago" />
             </column>
             <column name="employee" numcolumns="3" titleurl="?page=ListUser" order="140">
@@ -73,7 +73,7 @@
                     <values source="agentes" fieldcode="codagente" fieldtitle="CONCAT(nombre,' ',apellidos)"></values>
                 </widget>
             </column>
-            <column name="vat-type" title="vat-regime" order="150">
+            <column name="vat-regime" order="150">
                 <widget type="radio" fieldname="regimeniva">
                     <values title="General">general</values>
                     <values title="Exento">exento</values>
