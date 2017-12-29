@@ -515,13 +515,13 @@ class DocumentReports extends Controller
     public function getDocumentTypes()
     {
         return [
-            'customer-estimations',
-            'customer-orders',
-            'customer-delivery-notes',
-            'customer-invoices',
-            'supplier-orders',
-            'supplier-delivery-notes',
-            'supplier-invoices'
+            'customer-estimations'    => $this->i18n->trans('customer-estimations'),
+            'customer-orders'         => $this->i18n->trans('customer-orders'),
+            'customer-delivery-notes' => $this->i18n->trans('customer-delivery-notes'),
+            'customer-invoices'       => $this->i18n->trans('customer-invoices'),
+            'supplier-orders'         => $this->i18n->trans('supplier-orders'),
+            'supplier-delivery-notes' => $this->i18n->trans('supplier-delivery-notes'),
+            'supplier-invoices'       => $this->i18n->trans('supplier-invoices')
         ];
     }
 }
