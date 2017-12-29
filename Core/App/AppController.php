@@ -259,12 +259,23 @@ class AppController extends App
      */
     private function loadTwigFolders()
     {
-        $twigLoader = new Twig_Loader_Filesystem(FS_FOLDER . '/Dinamic/View');
-        $twigLoader->prependPath(FS_FOLDER . '/Core/View', 'Core');
+        /// Path for default namespace
+        $path = FS_DEBUG ? FS_FOLDER . '/Core/View' : FS_FOLDER . '/Dinamic/View';
+        $twigLoader = new Twig_Loader_Filesystem($path);
+
+        /// Core namespace
+        $twigLoader->addPath(FS_FOLDER . '/Core/View', 'Core');
 
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
-            if (file_exists(FS_FOLDER . '/Plugins/' . $pluginName . '/View')) {
-                $twigLoader->prependPath(FS_FOLDER . '/Plugins/' . $pluginName . '/View', 'Plugin' . $pluginName);
+            $pluginPath = FS_FOLDER . '/Plugins/' . $pluginName . '/View';
+            if (!file_exists($pluginPath)) {
+                continue;
+            }
+
+            /// plugin namespace
+            $twigLoader->addPath($pluginPath, 'Plugin' . $pluginName);
+            if (FS_DEBUG) {
+                $twigLoader->prependPath($pluginPath);
             }
         }
 

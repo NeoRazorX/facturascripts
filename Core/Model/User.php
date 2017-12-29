@@ -180,6 +180,7 @@ class User
         $this->homepage = 'Dashboard';
         $this->idempresa = AppSettings::get('default', 'idempresa', 1);
         $this->enabled = true;
+        $this->level = 1;
     }
 
     /**
