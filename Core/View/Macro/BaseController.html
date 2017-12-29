@@ -1,6 +1,37 @@
-<!--
-    Generate the code for the sort dropdown in the ListController
--->
+{#
+   /**
+     * Base Extended Controller element Macros.
+     *
+     * Adds twig functions to display the ExtendedController elements
+     * Examples imports:
+     * {% import "Macro/BaseController.html" as BaseController %}
+     * {% from 'Macro/BaseController.html' import filterForTextInput as filterForTextInput %}
+     *
+     * This file is part of FacturaScripts
+     * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+     *
+     * This program is free software: you can redistribute it and/or modify
+     * it under the terms of the GNU Lesser General Public License as
+     * published by the Free Software Foundation, either version 3 of the
+     * License, or (at your option) any later version.
+     *
+     * This program is distributed in the hope that it will be useful,
+     * but WITHOUT ANY WARRANTY; without even the implied warranty of
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     * GNU Lesser General Public License for more details.
+     *
+     * You should have received a copy of the GNU Lesser General Public License
+     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+     *
+    */
+#}
+
+
+{#
+   /**
+     * Generate the code for the sort dropdown in the ListController
+     */
+#}
 {% macro buttonOrderBy(context, view) %}
 <div class="col">
     <div class="btn-group float-md-right">
@@ -24,9 +55,11 @@
 </div>
 {% endmacro %}
 
-<!--
-    Generate the code for the row of footers views (information cards)
--->
+{#
+   /**
+     * Generate the code for the row of footers views (information cards)
+     */
+#}
 {% macro rowFooterForEditView(context, view) %}
 {% set footer = view.getRow('footer') %}
 {% if footer is not empty %}
@@ -76,9 +109,11 @@
 {% endif %}
 {% endmacro %}
 
-<!--
-    Generate the code for the row of statistical buttons
--->
+{#
+   /**
+     * Generate the code for the row of statistical buttons
+     */
+#}
 {% macro rowHeaderForEditView(context, view) %}
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 
@@ -102,9 +137,12 @@
 </div>
 {% endmacro %}
 
-<!--
-    Generate the code for the row of actions buttons
--->
+
+{#
+   /**
+     * Generate the code for the row of actions buttons
+     */
+#}
 {% macro rowActionsForEditView(context, view, formName) %}
 
 {% set actions = view.getRow('actions') %}
@@ -122,9 +160,11 @@
 {% endmacro %}
 
 
-<!--
-    Generate the code for the List view according to the indicated columns
--->
+{#
+   /**
+     * Generate the code for the List view according to the indicated columns
+     */
+#}
 {% macro columnsForListView(context, view) %}
 {% set cols = (view.getColumns()|length)+1 %}
 <table class="table table-hover">
@@ -184,10 +224,12 @@
 {% endmacro %}
 
 
-<!--
-    Generate the code for the Edit view according to the indicated columns
-    (with or without form)
--->
+{#
+   /**
+     * Generate the code for the Edit view according to the indicated columns
+     * (with or without form)
+     */
+#}
 {% macro columnsForEditView(context, view, model, withForm) %}
 {% set keyValue = context.fsc.getFieldValue(model, model.primaryColumn()) %}
 {% set formName = (withForm == TRUE) ? context.indexView ~ '-' ~ keyValue : 'main_form' %}
@@ -251,9 +293,12 @@
 {% endif %}
 {% endmacro %}
 
-<!--
-    Generate the code for the Basic in Line Edit view according to the indicated columns
--->
+
+{#
+   /**
+     * Generate the code for the Basic in Line Edit view according to the indicated columns
+     */
+#}
 {% macro columnsForBasicEditView(context, view, model, needTitle) %}
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 {% set remove_title = context.i18n.trans('delete-record') %}
@@ -305,9 +350,11 @@
 {% endmacro %}
 
 
-<!--
-    Generate the code for the EditList view according to the indicated columns
--->
+{#
+   /**
+     * Generate the code for the EditList view according to the indicated columns
+     */
+#}
 {% macro columnsForEditListView(context, view) %}
 {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
 {% from 'Macro/BaseController.html' import columnsForBasicEditView as columnsForBasicEditView %}
@@ -334,9 +381,12 @@
 {% endmacro %}
 
 
-<!--
-    Generates the code for a Modal Form
--->
+
+{#
+   /**
+     * Generates the code for a Modal Form
+     */
+#}
 {% macro modalFormFromColumns(context, view) %}
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 {% set accept, accept_title = context.i18n.trans('accept'), context.i18n.trans('accept-data') %}
@@ -386,9 +436,12 @@
 {% endmacro %}
 
 
-<!--
-    Generates the code for a Select filter in a ListController
--->
+
+{#
+   /**
+     * Generates the code for a Select filter in a ListController
+     */
+#}
 {% macro filterForSelectInput(context, key, filter) %}
 {% set any = context.i18n.trans('any') %}
 
@@ -408,9 +461,11 @@
 {% endmacro %}
 
 
-<!--
-    Generates the code for a Checkbox filter in a ListController
--->
+{#
+   /**
+     * Generates the code for a Checkbox filter in a ListController
+     */
+#}
 {% macro filterForCheckBoxInput(context, key, filter) %}
 <div class="col-md-2">
     <div class="form-check mb-2 mb-sm-0">
@@ -428,9 +483,11 @@
 {% endmacro %}
 
 
-<!--
-    Generate the code for a Text filter in a ListController
--->
+{#
+   /**
+     * Generate the code for a Text filter in a ListController
+     */
+#}
 {% macro filterForTextInput(context, key, filter) %}
 <div class="col-md-2">
     <div class="input-group">
