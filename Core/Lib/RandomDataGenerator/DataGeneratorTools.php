@@ -189,7 +189,7 @@ class DataGeneratorTools
             'Barak', 'Sadam', 'Donald', 'Jorge', 'Joel', 'Pedro', 'Mariano',
             'Albert', 'Alberto', 'Gorka', 'Cecilia', 'Carmena', 'Pichita',
             'Alicia', 'Laura', 'Riola', 'Wilson', 'Jaume', 'David',
-            "D'Ambrosio", '"El nota"', '"El master"'
+            "D'Ambrosio", '"Licenciado"', '"El master"'
         ];
 
         shuffle($nombres);
@@ -209,7 +209,7 @@ class DataGeneratorTools
             'Hijo de Dios', 'Petrov', 'Maximiliano', 'Nieve', 'Snow', 'Trump',
             'Obama', 'Ali', 'Stark', 'Sanz', 'Rajoy', 'Sánchez', 'Iglesias',
             'Rivera', 'Tumor', 'Lanister', 'Suarez', 'Aznar', 'Botella',
-            'Errejón', "D'Ambrosio", 'Peña'
+            'Errejón', "D'Ambrosio", 'Peña', '"Márquez"'
         ];
 
         shuffle($apellidos);
@@ -263,8 +263,8 @@ class DataGeneratorTools
     public function email()
     {
         $nicks = [
-            'neo', 'carlos', 'moko', 'snake', 'pikachu', 'pliskin', 'ocelot', 'samurai',
-            'ninja', 'penetrator', 'info', 'compras', 'ventas', 'administracion', 'contacto',
+            'neo', 'carlos', 'mokko', 'snake', 'pikachu', 'pliskin', 'ocelot', 'samurai',
+            'ninja', 'infiltrator', 'info', 'compras', 'ventas', 'administracion', 'contacto',
             'contact', 'invoices', 'mail'
         ];
 

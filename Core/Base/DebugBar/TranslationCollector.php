@@ -54,6 +54,7 @@ class TranslationCollector extends DataCollector implements Renderable, AssetPro
     public function __construct(&$i18n)
     {
         static::$i18n = $i18n;
+        $this->translations = [];
     }
 
     /**

@@ -399,7 +399,7 @@
     <div class="modal fade" id="{{ group.name }}" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form name="{{ formName }}" action="#" method="post" class="form" role="form">
+                <form name="{{ formName }}" action="{{ context.edit_url }}" method="post" class="form" role="form">
                     <input type="hidden" name="action" value="{{ group.name }}">
                     <input type="hidden" name="active" value="{{ context.indexView }}">
                     <div class="modal-header">
