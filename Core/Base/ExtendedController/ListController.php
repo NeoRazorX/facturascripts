@@ -188,6 +188,11 @@ abstract class ListController extends Base\Controller
      */
     protected function deleteAction($view)
     {
+        if (!$this->permissions->allowDelete) {
+            $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
+            return false;
+        }
+        
         $code = $this->request->get('code');
         $numDeletes = 0;
         foreach (explode(',', $code) as $cod) {

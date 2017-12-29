@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -62,7 +61,7 @@ abstract class EditController extends Base\Controller
         $this->setTemplate('Master/EditController');
         $this->exportManager = new ExportManager();
     }
-    
+
     /**
      * Runs the controller's private logic.
      *
@@ -99,10 +98,7 @@ abstract class EditController extends Base\Controller
     protected function createView()
     {
         return new EditView(
-            $this->getPageData()['title'],
-            $this->getModelClassName(),
-            $this->getClassName(),
-            $this->user->nick);
+            $this->getPageData()['title'], $this->getModelClassName(), $this->getClassName(), $this->user->nick);
     }
 
     /**
@@ -172,10 +168,16 @@ abstract class EditController extends Base\Controller
      */
     protected function editAction()
     {
+        if (!$this->permissions->allowUpdate) {
+            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            return false;
+        }
+
         if ($this->view->save()) {
             $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
             return true;
         }
+
         return false;
     }
 

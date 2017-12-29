@@ -36,11 +36,11 @@ class EditRol extends ExtendedController\PanelController
     protected function createViews()
     {
         $this->addEditView('\FacturaScripts\Dinamic\Model\Rol', 'EditRol', 'rol', 'fa-id-card');
-        $this->addListView('\FacturaScripts\Dinamic\Model\RolAccess', 'ListRolAccess', 'rules', 'fa fa-check-square');
+        $this->addEditListView('\FacturaScripts\Dinamic\Model\RolAccess', 'ListRolAccess', 'rules', 'fa fa-check-square');
         $this->addEditListView('\FacturaScripts\Dinamic\Model\RolUser', 'EditRolUser', 'users', 'fa-address-card-o');
 
         /// Disable columns
-        $this->views['ListRolAccess']->disableColumn('role', true);
+        $this->views['ListRolAccess']->disableColumn('pagename', true);
         $this->views['EditRolUser']->disableColumn('role', true);
     }
 

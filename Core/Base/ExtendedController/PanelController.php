@@ -253,10 +253,16 @@ abstract class PanelController extends Base\Controller
      */
     protected function editAction($view)
     {
+        if (!$this->permissions->allowUpdate) {
+            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            return false;
+        }
+        
         if ($view->save()) {
             $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
             return true;
         }
+        
         return false;
     }
 
@@ -269,11 +275,17 @@ abstract class PanelController extends Base\Controller
      */
     protected function deleteAction($view)
     {
+        if (!$this->permissions->allowDelete) {
+            $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
+            return false;
+        }
+        
         $fieldKey = $view->getModel()->primaryColumn();
         if ($view->delete($this->request->get($fieldKey))) {
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
             return true;
         }
+        
         return false;
     }
 
