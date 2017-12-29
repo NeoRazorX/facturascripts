@@ -91,6 +91,7 @@ class EditCliente extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'customer';
         $pagedata['icon'] = 'fa-users';
+        $pagedata['menu'] = 'sales';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;

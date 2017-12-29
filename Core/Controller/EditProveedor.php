@@ -86,6 +86,7 @@ class EditProveedor extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'supplier';
         $pagedata['icon'] = 'fa-users';
+        $pagedata['menu'] = 'purchases';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
