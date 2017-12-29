@@ -35,6 +35,7 @@
 
 <!-- Visual macros -->
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+{% from 'Macro/Forms.html' import simpleSelect as simpleSelect %}
 
 <!-- Main Body -->
 <div class="container-fluid">
@@ -72,12 +73,9 @@
                             <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
 
                             <label>{{ i18n.trans('select-user') }}&nbsp;&nbsp;</label>
-                            <select name="nick" class="text-danger" onchange="this.form.submit()">
-                                <option value="" {% if fsc.selectedUser is null %}selected{% endif %}>{{ i18n.trans('all') }}</option>
-                                {% for key, value in fsc.getUserList() %}
-                                <option value="{{ key }}" {% if fsc.selectedUser == key %}selected{% endif %}>{{ value }}</option>
-                                {% endfor %}
-                            </select>
+
+                            {% set userList = {'':i18n.trans('all')}|merge(fsc.getUserList()|keys) %}
+                            {{ simpleSelect('nick', 'nick', fsc.selectedUser, userList, FALSE, i18n, FALSE, {'class': 'text-danger ml-2', 'onChange': 'this.form.submit()'}) }}
                         </form>
                     </div>
                     {% endif %}
@@ -101,13 +99,13 @@
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th class="d-inline-block col-4">{{ i18n.trans('title') }}</th>
+                                            <th class="d-inline-block col-3">{{ i18n.trans('title') }}</th>
                                             {% if fsc.user.admin %}
                                             {% set titleUrlColumn = 3 %}
                                             <th class="d-inline-block col-1">{{ i18n.trans('level') }}</th>
                                             {% endif %}
                                             <th class="d-inline-block col-2">{{ i18n.trans('display') }}</th>
-                                            <th class="d-inline-block col-1">{{ i18n.trans('columns') }}</th>
+                                            <th class="d-inline-block col-2">{{ i18n.trans('columns') }}</th>
                                             <th class="d-inline-block col-1">{{ i18n.trans('sort') }}</th>
                                             <th class="d-inline-block col-{{ titleUrlColumn }}">{{ i18n.trans('title-url') }}</th>
                                         </tr>
@@ -116,7 +114,7 @@
                                     {% for key2, field in group.columns %}
                                     {% set masterName = key1 ~ '+' ~ key2 ~ '+' %}
                                     <tr>
-                                        <th class="d-inline-block col-4">
+                                        <th class="d-inline-block col-3">
                                             {{ i18n.trans(field.title) }}
                                         </th>
 
@@ -127,15 +125,19 @@
                                         {% endif %}
 
                                         <td class="d-inline-block col-2">
-                                            <select class="form-control" name="{{ masterName ~ 'display' }}">
-                                                <option value="left" {% if field.display == 'left' %}selected{% endif %}>{{ i18n.trans('left') }}</option>
-                                                <option value="right" {% if field.display == 'right' %}selected{% endif %}>{{ i18n.trans('right') }}</option>
-                                                <option value="center" {% if field.display == 'center' %}selected{% endif %}>{{ i18n.trans('center') }}</option>
-                                                <option value="none" {% if field.display == 'none' %}selected{% endif %}>{{ i18n.trans('none') }}</option>
-                                            </select>
+                                            {{ simpleSelect(
+                                                    masterName ~ 'display',
+                                                    masterName ~ 'display',
+                                                    field.display,
+                                                    {'left':i18n.trans('left'), 'right':i18n.trans('right'), 'center':i18n.trans('center'), 'none':i18n.trans('none')},
+                                                    FALSE,
+                                                    i18n,
+                                                    FALSE,
+                                                    {})
+                                            }}
                                         </td>
 
-                                        <td class="d-inline-block col-1">
+                                        <td class="d-inline-block col-2">
                                             <select class="form-control" name="{{ masterName ~ 'numColumns' }}">
                                                 <option value="0" {% if field.numColumns == 0 %}selected{% endif %}>{{ i18n.trans('auto') }}</option>
                                                 <option value="1" {% if field.numColumns == 1 %}selected{% endif %}>1</option>
