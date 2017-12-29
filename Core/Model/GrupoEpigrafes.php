@@ -36,6 +36,13 @@ class GrupoEpigrafes
      * @var int
      */
     public $idgrupo;
+    
+    /**
+     *Identificacion de la empresa
+     *
+     * @var int
+     */
+    public $idempresa;
 
     /**
      * Group to which it belongs.

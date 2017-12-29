@@ -20,6 +20,8 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\ExtendedController;
 use FacturaScripts\Core\Lib\Dashboard as DashboardLib;
+use FacturaScripts\Core\Model\User;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller to edit a single item from the DashboardCard model
@@ -28,15 +30,17 @@ use FacturaScripts\Core\Lib\Dashboard as DashboardLib;
  */
 class EditDashboardData extends ExtendedController\EditController
 {
+    
     /**
      * Runs the controller's private logic.
      *
-     * @param \Symfony\Component\HttpFoundation\Response $response
-     * @param \FacturaScripts\Core\Model\User|null $user
+     * @param Response $response
+     * @param User $user
+     * @param Base\ControllerPermissions $permissions
      */
-    public function privateCore(&$response, $user)
+    public function privateCore(&$response, $user, $permissions)
     {
-        parent::privateCore($response, $user);
+        parent::privateCore($response, $user, $permissions);
 
         $this->validateProperties();
         $this->validateColumns();

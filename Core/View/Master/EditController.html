@@ -67,6 +67,7 @@
 {% set refresh_title = i18n.trans('refresh') %}
 {% set remove, remove_title = i18n.trans('delete'), i18n.trans('delete-record') %}
 {% set insert_title = i18n.trans('new') %}
+{% set options, options_title = i18n.trans('options'), i18n.trans('setup-options') %}
 
 {% set panel_header = fsc.getPanelHeader() %}
 {% set panel_footer = fsc.getPanelFooter() %}
@@ -100,25 +101,28 @@
                     <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
             </div>
-
-            <!-- Adds print and export options -->
-            {{ exportData(fsc, i18n, 'edit') }}
-        </div>
-
-        <div class="col-6 text-center">
-            <div class="page-header">
-                <h2>
-                    <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
-                </h2>
+            <div class="btn-group">
+                <a href="index.php?page=EditPageOption&code={{ fsc.view.getViewName() }}" class="btn btn-sm btn-secondary" {{ popoverTitle(options_title, 'bottom') }}>
+                   <i class="fa fa-wrench" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
+                </a>
+                <!-- Adds print and export options -->
+                {{ exportData(fsc, i18n, 'edit') }}
             </div>
         </div>
 
+        <div class="col-6 text-center">
+            <h2>
+                <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
+            </h2>
+        </div>
+
         <div class="col-3 text-right d-print-none">
-            <form action="{{ model.url('new') }}" method=post name="insert_form">
+            <form action="{{ model.url('new') }}" method="post" name="insert_form">
                 <input type="hidden" name="action" value="insert">
             </form>
 
-            <form action="{{ model.url('list') }}" method=post name="delete_form">
+            <form action="{{ model.url('list') }}" method="post" name="delete_form">
                 <input type="hidden" name="action" value="delete">
                 <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}">
             </form>

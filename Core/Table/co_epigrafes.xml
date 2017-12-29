@@ -33,6 +33,11 @@
         <null>YES</null>
     </column>
     <column>
+        <name>idempresa</name>
+        <type>integer</type>
+        <null>YES</null>
+    </column>
+    <column>
         <name>idpadre</name>
         <type>integer</type>
         <null>YES</null>

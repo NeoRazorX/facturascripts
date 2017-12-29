@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Lib\Import\CSVImport;
+
 /**
  * Detail of a balance.
  *
@@ -74,5 +76,17 @@ class BalanceCuenta
     public function primaryColumn()
     {
         return 'id';
+    }
+    
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     * 
+     * @return string
+     */
+    public function install()
+    {
+        return CSVImport::importTableSQL(static::tableName());
     }
 }

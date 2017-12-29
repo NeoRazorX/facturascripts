@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Model;
@@ -103,6 +102,13 @@ class Controller
      * @var NumberTools
      */
     public $numberTools;
+    
+    /**
+     * User permissions on this controller.
+     * 
+     * @var ControllerPermissions 
+     */
+    public $permissions;
 
     /**
      * Request on which we can get data.
@@ -135,7 +141,7 @@ class Controller
     /**
      * User logged in.
      *
-     * @var Model\User|null
+     * @var Model\User
      */
     public $user;
 
@@ -267,16 +273,18 @@ class Controller
      * Runs the controller's private logic.
      *
      * @param Response $response
-     * @param Model\User|null $user
+     * @param Model\User $user
+     * @param ControllerPermissions $permissions
      */
-    public function privateCore(&$response, $user)
+    public function privateCore(&$response, $user, $permissions)
     {
+        $this->permissions = $permissions;
         $this->response = &$response;
         $this->user = $user;
 
         /// Select the default company for the user
         $empresaModel = new Model\Empresa();
-        $this->empresa = $empresaModel->get($user->idempresa);
+        $this->empresa = $empresaModel->get($this->user->idempresa);
 
         /// This user have default page setted?
         $defaultPage = $this->request->query->get('defaultPage', '');

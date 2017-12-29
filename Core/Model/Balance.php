@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Lib\Import\CSVImport;
+
 /**
  * Defines which accounts must be used to generate the different accounting reports.
  *
@@ -26,9 +28,7 @@ namespace FacturaScripts\Core\Model;
 class Balance
 {
 
-    use Base\ModelTrait {
-        save as private traitSave;
-    }
+    use Base\ModelTrait;
 
     /**
      * Primary key.
@@ -133,20 +133,32 @@ class Balance
     {
         return 'codbalance';
     }
-
+    
     /**
-     * Stores the model data in the database.
-     *
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     * 
+     * @return string
+     */
+    public function install()
+    {
+        return CSVImport::importTableSQL(static::tableName());
+    }
+    
+    /**
+     * Test model's data.
+     * 
      * @return bool
      */
-    public function save()
+    public function test()
     {
         $this->descripcion1 = self::noHtml($this->descripcion1);
         $this->descripcion2 = self::noHtml($this->descripcion2);
         $this->descripcion3 = self::noHtml($this->descripcion3);
         $this->descripcion4 = self::noHtml($this->descripcion4);
         $this->descripcion4ba = self::noHtml($this->descripcion4ba);
-
-        return $this->traitSave();
+        
+        return true;
     }
 }
