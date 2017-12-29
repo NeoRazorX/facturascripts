@@ -75,7 +75,7 @@ abstract class EditController extends Base\Controller
         parent::privateCore($response, $user, $permissions);
 
         // Create the view to display
-        $this->view = $this->createView($user);
+        $this->view = $this->createView();
 
         // Get any operations that have to be performed
         $action = $this->request->get('action', '');
@@ -94,16 +94,15 @@ abstract class EditController extends Base\Controller
     /**
      * Create the view to display
      *
-     * @param \FacturaScripts\Core\Model\User $user
      * @return ExtendedController\EditView
      */
-    protected function createView($user)
+    protected function createView()
     {
         return new EditView(
             $this->getPageData()['title'],
             $this->getModelClassName(),
             $this->getClassName(),
-            $user->nick);
+            $this->user->nick);
     }
 
     /**

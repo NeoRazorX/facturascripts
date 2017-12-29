@@ -122,7 +122,7 @@ class VisualItemLoadEngine
      */
     public static function installXML($name, &$model)
     {
-        $file = "Core/XMLView/{$name}.xml";
+        $file = "Dinamic/XMLView/{$name}.xml";
         $xml = simplexml_load_string(file_get_contents($file));
 
         if ($xml === false) {

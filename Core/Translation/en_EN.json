@@ -186,6 +186,7 @@
     "error":"ERROR: %error%",
     "error-connecting-memcache":"Error connecting to Memcache server.",
     "error-incorrect-bank-details":"Serious error: Bank details are incorrect",
+    "error-no-name-in-settings":"Error testing %viewName% view. No 'name' column in xml",
     "error-processing-xmlview":"Error processing XML View, file '%fileName%' not exist or is incorrect",
     "error-reading-file":"Error reading file '%fileName%'",
     "error-saving-stock":"\u00a1Error saving stock!",
