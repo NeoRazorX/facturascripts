@@ -4,6 +4,10 @@
 <!-- Macros Template Imports -->
 {% import 'Macro/Forms.html' as forms %}
 
+{% set start_date, end_date = i18n.trans('start-date'), i18n.trans('end-date') %}
+{% set select_attr = {onchange: 'this.form.submit()'} %}
+{% set input_attr = {class: 'form-control datepicker', onchange: 'this.form.submit()'} %}
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
@@ -34,34 +38,34 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="form-group">
-                    {{ forms.simpleSelect('source1', 'source1', fsc.source1, fsc.getDocumentTypes(), i18n.trans('choose-source-1'), 'fa-files-o', {onchange: 'this.form.submit()'}) }}
+                    {{ forms.simpleSelect('source1', 'source1', fsc.source1, fsc.getDocumentTypes(), i18n.trans('choose-source-1'), 'fa-files-o', select_attr) }}
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    {{ forms.simpleInput('date1-from', 'date1-form', fsc.date1From.format('d-m-Y'), 'text', i18n.trans('start-date'), 'fa-calendar', {class: 'form-control datepicker'}) }}
+                    {{ forms.simpleInput('date1-from', 'date1-from', fsc.date1From.format('d-m-Y'), 'text', start_date, 'fa-calendar', input_attr) }}
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    {{ forms.simpleInput('date1-to', 'date1-to', fsc.date1To.format('d-m-Y'), 'text', i18n.trans('end-date'), 'fa-calendar', {class: 'form-control datepicker'}) }}
+                    {{ forms.simpleInput('date1-to', 'date1-to', fsc.date1To.format('d-m-Y'), 'text', end_date, 'fa-calendar', input_attr) }}
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-md-4">
                 <div class="form-group">
-                    {{ forms.simpleSelect('source2', 'source2', fsc.source2, fsc.getDocumentTypes(), i18n.trans('choose-source-2'), 'fa-files-o',{'onchange': 'this.form.submit()'}) }}
+                    {{ forms.simpleSelect('source2', 'source2', fsc.source2, fsc.getDocumentTypes(), i18n.trans('choose-source-2'), 'fa-files-o', select_attr) }}
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    {{ forms.simpleInput('date2-from', 'date2-form', fsc.date2From.format('d-m-Y'), 'text', i18n.trans('start-date'), 'fa-calendar', {class: 'form-control datepicker'}) }}
+                    {{ forms.simpleInput('date2-from', 'date2-from', fsc.date2From.format('d-m-Y'), 'text', start_date, 'fa-calendar', input_attr) }}
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    {{ forms.simpleInput('date2-to', 'date2-to', fsc.date2To.format('d-m-Y'), 'text', i18n.trans('end-date'), 'fa-calendar', {class: 'form-control datepicker'}) }}
+                    {{ forms.simpleInput('date2-to', 'date2-to', fsc.date2To.format('d-m-Y'), 'text', end_date, 'fa-calendar', input_attr) }}
                 </div>
             </div>
         </div>

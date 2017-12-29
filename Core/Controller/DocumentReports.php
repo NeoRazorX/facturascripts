@@ -145,7 +145,7 @@ class DocumentReports extends Controller
      * @var string
      */
     public $grouped;
-    
+
     /**
      * Runs the controller's private logic.
      *
@@ -209,23 +209,18 @@ class DocumentReports extends Controller
 
         $days = $dateDiff1->days < $dateDiff2->days ? $dateDiff2->days : $dateDiff1->days;
 
-        switch (true) {
-            case ($days >= 3*30 && $days <= 12*30):
-                $step = '+1 month';
-                $format = 'm-Y';
-                $this->grouped = 'monthly';
-                break;
-            case ($days >= 12*30):
-                $step = '+1 year';
-                $format = 'Y';
-                $this->grouped = 'yearly';
-                break;
-            default:
-                $step = '+1 day';
-                $format = 'd-m-Y';
-                $this->grouped = 'daily';
-
-                break;
+        if ($days >= 15 * 30) {
+            $step = '+1 year';
+            $format = 'Y';
+            $this->grouped = 'yearly';
+        } elseif ($days >= 3 * 30) {
+            $step = '+1 month';
+            $format = 'm-Y';
+            $this->grouped = 'monthly';
+        } else {
+            $step = '+1 day';
+            $format = 'd-m-Y';
+            $this->grouped = 'daily';
         }
     }
 
@@ -326,7 +321,7 @@ class DocumentReports extends Controller
                 return '01-' . $date;
 
             case 8:
-                return substr($date, 0, 2) . '-' . substr($date, 2, 2) . '-' .substr($date, 4, 4);
+                return substr($date, 0, 2) . '-' . substr($date, 2, 2) . '-' . substr($date, 4, 4);
 
             default:
                 return $date;
@@ -515,13 +510,13 @@ class DocumentReports extends Controller
     public function getDocumentTypes()
     {
         return [
-            'customer-estimations'    => $this->i18n->trans('customer-estimations'),
-            'customer-orders'         => $this->i18n->trans('customer-orders'),
+            'customer-estimations' => $this->i18n->trans('customer-estimations'),
+            'customer-orders' => $this->i18n->trans('customer-orders'),
             'customer-delivery-notes' => $this->i18n->trans('customer-delivery-notes'),
-            'customer-invoices'       => $this->i18n->trans('customer-invoices'),
-            'supplier-orders'         => $this->i18n->trans('supplier-orders'),
+            'customer-invoices' => $this->i18n->trans('customer-invoices'),
+            'supplier-orders' => $this->i18n->trans('supplier-orders'),
             'supplier-delivery-notes' => $this->i18n->trans('supplier-delivery-notes'),
-            'supplier-invoices'       => $this->i18n->trans('supplier-invoices')
+            'supplier-invoices' => $this->i18n->trans('supplier-invoices')
         ];
     }
 }
