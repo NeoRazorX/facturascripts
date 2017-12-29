@@ -73,9 +73,16 @@
                             <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
 
                             <label>{{ i18n.trans('select-user') }}&nbsp;&nbsp;</label>
-
-                            {% set userList = {'':i18n.trans('all')}|merge(fsc.getUserList()|keys) %}
-                            {{ simpleSelect('nick', 'nick', fsc.selectedUser, userList, FALSE, i18n, FALSE, {'class': 'text-danger ml-2', 'onChange': 'this.form.submit()'}) }}
+                            {% set userList = {'':i18n.trans('all')}|merge(fsc.getUserList()) %}
+                            {{ simpleSelect(
+                                'nick',
+                                'nick',
+                                fsc.selectedUser,
+                                userList,
+                                FALSE,
+                                FALSE,
+                                {'class': 'text-danger bg-white', 'onChange': 'this.form.submit()'})
+                            }}
                         </form>
                     </div>
                     {% endif %}
@@ -131,28 +138,21 @@
                                                     field.display,
                                                     {'left':i18n.trans('left'), 'right':i18n.trans('right'), 'center':i18n.trans('center'), 'none':i18n.trans('none')},
                                                     FALSE,
-                                                    i18n,
                                                     FALSE,
                                                     {})
                                             }}
                                         </td>
 
                                         <td class="d-inline-block col-2">
-                                            <select class="form-control" name="{{ masterName ~ 'numColumns' }}">
-                                                <option value="0" {% if field.numColumns == 0 %}selected{% endif %}>{{ i18n.trans('auto') }}</option>
-                                                <option value="1" {% if field.numColumns == 1 %}selected{% endif %}>1</option>
-                                                <option value="2" {% if field.numColumns == 2 %}selected{% endif %}>2</option>
-                                                <option value="3" {% if field.numColumns == 3 %}selected{% endif %}>3</option>
-                                                <option value="4" {% if field.numColumns == 4 %}selected{% endif %}>4</option>
-                                                <option value="5" {% if field.numColumns == 5 %}selected{% endif %}>5</option>
-                                                <option value="6" {% if field.numColumns == 6 %}selected{% endif %}>6</option>
-                                                <option value="7" {% if field.numColumns == 7 %}selected{% endif %}>7</option>
-                                                <option value="8" {% if field.numColumns == 8 %}selected{% endif %}>8</option>
-                                                <option value="9" {% if field.numColumns == 9 %}selected{% endif %}>9</option>
-                                                <option value="10" {% if field.numColumns == 10 %}selected{% endif %}>10</option>
-                                                <option value="11" {% if field.numColumns == 11 %}selected{% endif %}>11</option>
-                                                <option value="12" {% if field.numColumns == 12 %}selected{% endif %}>12</option>
-                                            </select>
+                                            {{ simpleSelect(
+                                                    masterName ~ 'numColumns',
+                                                    masterName ~ 'numColumns',
+                                                    field.numColumns,
+                                                    {'0':i18n.trans('auto'), '1':'1', '2':'2', '3':'3', '4':'4', '5':'5', '6':'6', '7':'7', '8':'8', '9':'9', '10':'10', '11':'11', '12':'12'},
+                                                    FALSE,
+                                                    FALSE,
+                                                    {})
+                                            }}
                                         </td>
 
                                         <td class="d-inline-block col-1">
