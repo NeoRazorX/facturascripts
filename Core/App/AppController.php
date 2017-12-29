@@ -254,22 +254,21 @@ class AppController extends App
 
     /**
      * Returns a TwigLoader object with the folders selecteds
+     * 
      * @return Twig_Loader_Filesystem
      */
     private function loadTwigFolders()
     {
-        if (FS_DEBUG) {
-            $twigLoader = new Twig_Loader_Filesystem(FS_FOLDER . '/Core/View');
-            foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
-                if (file_exists(FS_FOLDER . '/Plugins/' . $pluginName . '/View')) {
-                    $twigLoader->prependPath(FS_FOLDER . '/Plugins/' . $pluginName . '/View');
-                }
-            }
+        $twigLoader = new Twig_Loader_Filesystem(FS_FOLDER . '/Dinamic/View');
+        $twigLoader->prependPath(FS_FOLDER . '/Core/View', 'Core');
 
-            return $twigLoader;
+        foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
+            if (file_exists(FS_FOLDER . '/Plugins/' . $pluginName . '/View')) {
+                $twigLoader->prependPath(FS_FOLDER . '/Plugins/' . $pluginName . '/View', 'Plugin' . $pluginName);
+            }
         }
 
-        return new Twig_Loader_Filesystem(FS_FOLDER . '/Dinamic/View');
+        return $twigLoader;
     }
 
     /**
