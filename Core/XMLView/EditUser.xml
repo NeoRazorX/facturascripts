@@ -34,13 +34,16 @@
             <column name="repeat-new-password" numcolumns="4" order="100">
                 <widget type="password" fieldname="newPassword2" icon="fa-key" />
             </column>
-            <column name="email" numcolumns="6" order="100">
+            <column name="email" numcolumns="5" order="100">
                 <widget type="email" fieldname="email" icon="fa-envelope" />
+            </column>
+            <column name="level" numcolumns="2" order="100">
+                <widget type="number" step="1" min="1" max="99" fieldname="level" icon="fa-low-vision" />
             </column>
             <column name="is-admin" numcolumns="3" order="100">
                 <widget type="checkbox" fieldname="admin"/>
             </column>
-            <column name="enabled" numcolumns="3" order="100">
+            <column name="enabled" numcolumns="2" order="100">
                 <widget type="checkbox" fieldname="enabled" />
             </column>
         </group>

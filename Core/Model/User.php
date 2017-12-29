@@ -63,7 +63,7 @@ class User
 
     /**
      * Corporation identifier.
-     * 
+     *
      * @var int
      */
     public $idempresa;
@@ -95,18 +95,18 @@ class User
      * @var string
      */
     private $logkey;
-    
+
     /**
      * New password.
-     * 
-     * @var string 
+     *
+     * @var string
      */
     public $newPassword;
-    
+
     /**
      * Repeated new password.
-     * 
-     * @var string 
+     *
+     * @var string
      */
     public $newPassword2;
 
@@ -123,6 +123,13 @@ class User
      * @var string
      */
     public $password;
+
+    /**
+     * Indicates the level of security that the user can access
+     *
+     * @var integer
+     */
+    public $level;
 
     /**
      * Returns the name of the table that uses this model.
@@ -159,8 +166,8 @@ class User
 
         self::$miniLog->info(self::$i18n->trans('created-default-admin-account'));
 
-        return 'INSERT INTO ' . static::tableName() . " (nick,password,admin,enabled,idempresa,langcode,homepage)"
-            . " VALUES ('admin','" . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE,'1','" . FS_LANG . "','AdminHome');";
+        return 'INSERT INTO ' . static::tableName() . " (nick,password,admin,enabled,idempresa,langcode,homepage,level)"
+            . " VALUES ('admin','" . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE,'1','" . FS_LANG . "','AdminHome',99);";
     }
 
     /**
@@ -248,6 +255,20 @@ class User
     }
 
     /**
+     * Check the null value of the fields
+     */
+    private function checkEmptyValues()
+    {
+        if ($this->lastactivity === '') {
+            $this->lastactivity = null;
+        }
+
+        if ($this->level === null) {
+            $this->level = 0;
+        }
+    }
+
+    /**
      * Returns True if there is no erros on properties values.
      * Se ejecuta dentro del método save.
      *
@@ -255,6 +276,7 @@ class User
      */
     public function test()
     {
+        $this->checkEmptyValues();
         $this->nick = trim($this->nick);
 
         if (!preg_match("/^[A-Z0-9_\+\.\-]{3,50}$/i", $this->nick)) {
@@ -266,15 +288,11 @@ class User
         if (isset($this->newPassword) && isset($this->newPassword2) && $this->newPassword !== '' && $this->newPassword2 !== '') {
             if($this->newPassword !== $this->newPassword2) {
                 self::$miniLog->alert(self::$i18n->trans('different-passwords', ['%userNick%' => $this->nick]));
-                
+
                 return false;
             }
-            
-            $this->setPassword($this->newPassword);
-        }
 
-        if ($this->lastactivity === '') {
-            $this->lastactivity = null;
+            $this->setPassword($this->newPassword);
         }
 
         return true;

@@ -131,7 +131,7 @@
     <thead>
         <tr>
             {% for column in view.getColumns() %}
-            {% if column.display != 'none' %}
+            {% if (column.display != 'none') and (column.level <= context.fsc.user.level) %}
             <th class="text-{{ column.display }}">{{ column.getHeaderHTML(column.title)|raw }}</th>
             {% endif %}
             {% endfor %}
@@ -162,7 +162,7 @@
         <tr class="{{ rowClass }}" data-href="{{ rowDataHref }}">
             {# Print data columns for row #}
             {% for column in view.getColumns() %}
-            {% if column.display != 'none' %}
+            {% if (column.display != 'none') and (column.level <= context.fsc.user.level) %}
             {% set value = attribute(model, column.widget.fieldName) %}
             <td class="text-{{ column.display }}">{{ column.getListHTML(value)|raw }}</td>
             {% endif %}
@@ -210,7 +210,9 @@
                     {% if column.display == 'none' %}
                 <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
                     {% else %}
+                        {% if column.level <= context.fsc.user.level %}
                         {{ column.getEditHTML(value, TRUE, formName)|raw }}
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
             </div>
@@ -272,7 +274,9 @@
                 {% if column.display == 'none' %}
                 <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
                 {% else %}
-                {{ column.getEditHTML(value, needTitle)|raw }}
+                    {% if column.level <= context.fsc.user.level %}
+                    {{ column.getEditHTML(value, needTitle)|raw }}
+                    {% endif %}
                 {% endif %}
                 {% endfor %}
 
