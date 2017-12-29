@@ -53,16 +53,13 @@
         {% endif %}
 
                 <input type="{{ type }}" id="{{ id }}" name="{{ name }}" value="{{ value }}"
-                        {% if attributes.class is defined %}
-                            {% set attributes = attributes|merge({'class': 'form-control ' ~ attributes.class}) %}
-                        {% else %}
+                        {% if attributes.class is not defined %}
                             class="form-control"
                         {% endif %}
 
                         {% for attribute,attrValue in attributes %}
                             {{ attribute }}="{{ attrValue }}"
-                        {% endfor %}
-                /> {# end input #}
+                        {% endfor %} /> {# end input #}
 
         {% if icon %}
             </div>
@@ -75,23 +72,19 @@
      * @param string $id element id attribute
      * @param string $name element name attribute
      * @param string $value the default value that will be selected (must be contained in the allValues select)
-     * @param array  $allValues an indexed array with all the select options. The key will be discarded.
+     * @param array  $allValues an associative array with the select options (where the key is the option value and the
+     *               array value is the option text.
      * @param string $label NULL if no label is set. This will add a <label> element with the string as its contents.
-     * @param object $i18n NULL if no translation is needed, or the i18n object otherwise.
      * @param string $icon string identifying a FontAwesome icon (http://fontawesome.io/icons/).
      * @param array  $attributes an associative array of strings, extra attributes with their values
      *               (https://www.w3.org/TR/2017/REC-html52-20171214/sec-forms.html#the-input-element)
-     *               it shouldn't be 'id' or 'name', as those are already given, if the class attribute is given, it will
-     *               be merged with the default ones.
+     *               it shouldn't be 'id' or 'name', as those are already given, beware that if the class attribute is
+     *               given, it will override the default ones (remember to add the "form-control" class for consistency.
      */
 #}
-{% macro simpleSelect(id, name, value, allValues = {}, label = NULL, i18n = NULL, icon = NULL, attributes = NULL) %}
+{% macro simpleSelect(id, name, value, allValues = {}, label = NULL, icon = NULL, attributes = NULL) %}
     {% if label %}
-        {% if i18n %}
-        <label for="{{ name }}">{{ i18n.trans(label) }}</label>
-        {% else %}
         <label for="{{ name }}">{{ label }}</label>
-        {% endif %}
     {% endif %}
 
     {% if icon %}
@@ -102,24 +95,17 @@
     {% endif %}
 
         <select id="{{ id }}" name="{{ name }}"
-                {% if attributes.class is defined %}
-                    {% set attributes = attributes|merge({'class': 'form-control ' ~ attributes.class}) %}
-                {% else %}
-                    class="form-control"
+                {% if attributes.class is not defined %}
+                class="form-control"
                 {% endif %}
 
                 {% for attribute,attrValue in attributes %}
                     {{ attribute }}="{{ attrValue }}"
-                {% endfor %}
-        > {# end select #}
+                {% endfor %}> {# end select #}
 
-            {% for option in allValues %}
-                <option value="{{ option }}"{% if value == option %} selected="selected"{% endif %}>
-                    {% if i18n %}
-                        {{ i18n.trans(option) }}
-                    {% else %}
-                        {{ option }}
-                    {% endif %}
+            {% for key,option in allValues %}
+                <option value="{{ key }}"{% if value == key %} selected="selected"{% endif %}>
+                    {{ option }}
                 </option>
             {% endfor %}
         </select>

@@ -220,7 +220,7 @@ class PageOption
             $this->name = $name;
 
             if (!ExtendedController\VisualItemLoadEngine::installXML($name, $this)) {
-                self::$miniLog->critical(self::$i18n->trans('error-processing-xmlview', [$name]));
+                self::$miniLog->critical(self::$i18n->trans('error-processing-xmlview', ['%fileName%' => $name]));
                 return;
             }
         }

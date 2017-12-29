@@ -119,7 +119,7 @@ class Translator
         $catalogue = self::$translator->getCatalogue($lang);
         if ($catalogue->has($txt)) {
             self::$usedStrings[$txt] = $catalogue->get($txt);
-            return self::$translator->trans($txt, $parameters);
+            return self::$translator->trans($txt, $parameters, null, $lang);
         }
         
         self::$missingStrings[$txt] = $txt;
