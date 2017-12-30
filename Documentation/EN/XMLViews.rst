@@ -425,10 +425,10 @@ Example:
 
 
 
-footer
-------
+header and footer
+-----------------
 
-It allows adding additional information to visualize the user at the bottom of the view.
+It allows adding additional information to visualize the user at the top and/or the bottom of the view.
 The information is displayed in the form of panels ("Bootstrap cards") where we can
 include messages and buttons for both action and modals. To declare a panel we will use
 the tag *<group>* in which we will include tags *button* (if we need them).
@@ -443,7 +443,18 @@ and/or the footer with attributes:
 
 -  **footer**: indicates a text for the foot of the panel.
 
-Example:
+Example: (Top of the view)
+
+.. code:: xml
+
+        <row type="header">
+            <group name="footer1" footer="specials-actions" label="This is a sample of buttons on a 'bootstrap card'">
+                <button type="modal" label="Modal" color="primary" action="test" icon="fa-users" />
+                <button type="action" label="Action" color="info" action="process1" icon="fa-book" hint="Run the controller with action=process1" />
+            </group>
+        </row>
+
+Example: (Bottom of the view)
 
 .. code:: xml
 
