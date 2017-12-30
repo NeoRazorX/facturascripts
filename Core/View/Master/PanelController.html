@@ -152,6 +152,10 @@
                 {% for indexView, view in fsc.views %}
                     {% set active = (indexView == fsc.active) ? ' show active' : '' %}
                     <div class="tab-pane fade{{ active }}" id="{{ indexView }}" role="tabpanel" aria-labelledby="{{ indexView }}-tab">
+                        {% if viewType in ['EditView','EditListView'] %}
+                            {{ rowCardsForEditView(_context, view, 'header') }}
+                        {% endif %}
+
                         <div class="card">
                             <div class="card-body">
                             {% set viewType = fsc.viewClass(view) %}

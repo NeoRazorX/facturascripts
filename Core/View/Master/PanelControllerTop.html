@@ -153,14 +153,22 @@
                         {% endif %}
 
                         {% if viewType == 'EditView' %}
+                            {# Information Cards Header #}
+                            {{ rowCardsForEditView(_context, view, 'header') }}
+
                             {# Statistical buttons bar #}
                             {{ rowStatisticsForEditView(_context, view) }}
+
                             {# Main Form #}
                             {% set model = view.getModel() %}
                             {{ columnsForEditView(_context, view, model, TRUE) }}
                         {% endif %}
 
                         {% if viewType == 'EditListView' %}
+                            {# Information Cards Header #}
+                            {{ rowCardsForEditView(_context, view, 'header') }}
+
+                            {# Main Form #}
                             {{ columnsForEditListView(_context, view) }}
                         {% endif %}
 

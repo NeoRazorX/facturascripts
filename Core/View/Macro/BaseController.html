@@ -66,7 +66,7 @@
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 
     <br />
-    <div id="{{ type }}" class="row">
+    <div id="{{ type }}" class="row mb-2">
         {% for panel in cards.panels %}
         <div class="col">
             <div class="card {% if panel.color %}border-{{ panel.color }}{% endif %}">
@@ -77,7 +77,7 @@
                 {% endif %}
                 <div class="card-body">
                     {% if panel.label is not empty %}
-                    <p><i>{{ context.i18n.trans(panel.label) }}</i></p>
+                    <p><i>{{ context.i18n.trans(panel.label)|raw }}</i></p>
                     {% endif %}
                     {% set buttons = cards.getButtons(panel.name) %}
                     {% if buttons|length > 0 %}

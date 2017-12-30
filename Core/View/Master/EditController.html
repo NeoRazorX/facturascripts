@@ -166,6 +166,9 @@
     {# Data Row #}
     <div id="data" class="row">
         <div class="col-12">
+            {# Header Row #}
+            {{ rowCardsForEditView(_context, fsc.view, 'header') }}
+            
             <form action="#" method="post" class="form" role="form" name="main_form">
                 <input type="hidden" name="action" value="save">
                 <div class="card">

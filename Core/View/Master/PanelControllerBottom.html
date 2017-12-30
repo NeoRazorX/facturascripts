@@ -135,6 +135,10 @@
         <div class="col-12">
             {% for indexView, view in fsc.views %}
                 {% if loop.index == 1 %}
+                    {% if viewType in ['EditView','EditListView'] %}
+                        {{ rowCardsForEditView(_context, view, 'header') }}
+                    {% endif %}
+
                     <div class="card">
                         <div class="card-body">
                             {% set viewType = fsc.viewClass(view) %}
@@ -184,14 +188,22 @@
                         {% endif %}
 
                         {% if viewType == 'EditView' %}
+                        {# Information Cards Header #}
+                        {{ rowCardsForEditView(_context, view, 'header') }}
+
                         {# Statistical buttons bar #}
                         {{ rowStatisticsForEditView(_context, view) }}
+
                         {# Main Form #}
                         {% set model = view.getModel() %}
                         {{ columnsForEditView(_context, view, model, TRUE) }}
                         {% endif %}
 
                         {% if viewType == 'EditListView' %}
+                        {# Information Cards Header #}
+                        {{ rowCardsForEditView(_context, view, 'header') }}
+
+                        {# Main Form #}
                         {{ columnsForEditListView(_context, view) }}
                         {% endif %}
 
