@@ -32,9 +32,7 @@ use FacturaScripts\Core\Lib\Import\CSVImport;
 class Agente
 {
 
-    use Base\ModelTrait {
-        primaryDescription as traitPrimaryDescription;
-    }
+    use Base\ModelTrait;
     use Base\ContactInformation;
 
     /**
