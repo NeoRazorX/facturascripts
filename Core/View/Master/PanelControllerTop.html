@@ -1,3 +1,29 @@
+{#
+   /**
+     * Panel Controller Template. (Top Panel)
+     *
+     * It shows the data of one or several models, through a navigation panel,
+     * in different formats.
+     *
+     * This file is part of FacturaScripts
+     * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+     *
+     * This program is free software: you can redistribute it and/or modify
+     * it under the terms of the GNU Lesser General Public License as
+     * published by the Free Software Foundation, either version 3 of the
+     * License, or (at your option) any later version.
+     *
+     * This program is distributed in the hope that it will be useful,
+     * but WITHOUT ANY WARRANTY; without even the implied warranty of
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     * GNU Lesser General Public License for more details.
+     *
+     * You should have received a copy of the GNU Lesser General Public License
+     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+     *
+    */
+#}
+
 {% extends "Master/MenuTemplate.html" %}
 
 {% block css %}
@@ -70,8 +96,8 @@
 {% from 'Macro/BaseController.html' import columnsForListView as columnsForListView %}
 {% from 'Macro/BaseController.html' import columnsForEditListView as columnsForEditListView %}
 {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
-{% from 'Macro/BaseController.html' import rowHeaderForEditView as rowHeaderForEditView %}
-{% from 'Macro/BaseController.html' import rowFooterForEditView as rowFooterForEditView %}
+{% from 'Macro/BaseController.html' import rowStatisticsForEditView as rowStatisticsForEditView %}
+{% from 'Macro/BaseController.html' import rowCardsForEditView as rowCardsForEditView %}
 {% from 'Macro/BaseController.html' import modalFormFromColumns as modalFormFromColumns %}
 
 {# -- Main Body -- #}
@@ -127,9 +153,9 @@
                         {% endif %}
 
                         {% if viewType == 'EditView' %}
-                            <!-- Statistical buttons bar -->
-                            {{ rowHeaderForEditView(_context, view) }}
-                            <!-- Main Form -->
+                            {# Statistical buttons bar #}
+                            {{ rowStatisticsForEditView(_context, view) }}
+                            {# Main Form #}
                             {% set model = view.getModel() %}
                             {{ columnsForEditView(_context, view, model, TRUE) }}
                         {% endif %}
@@ -141,7 +167,7 @@
                         {% if viewType == 'HtmlView' %}
                             <div>{% include view.fileName ignore missing %}</div>
                         {% else %}
-                            {{ rowFooterForEditView(_context, view) }}
+                            {{ rowCardsForEditView(_context, view, 'footer') }}
                             {{ modalFormFromColumns(_context, view) }}
                         {% endif %}
                     </div>

@@ -57,17 +57,17 @@
 
 {#
    /**
-     * Generate the code for the row of footers views (information cards)
+     * Generate the code for the row of cards views (information cards)
      */
 #}
-{% macro rowFooterForEditView(context, view) %}
-{% set footer = view.getRow('footer') %}
-{% if footer is not empty %}
+{% macro rowCardsForEditView(context, view, type) %}
+{% set cards = view.getRow(type) %}
+{% if cards is not empty %}
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 
     <br />
-    <div id="footer" class="row">
-        {% for panel in footer.panels %}
+    <div id="{{ type }}" class="row">
+        {% for panel in cards.panels %}
         <div class="col">
             <div class="card {% if panel.color %}border-{{ panel.color }}{% endif %}">
                 {% if panel.title is not empty %}
@@ -79,7 +79,7 @@
                     {% if panel.label is not empty %}
                     <p><i>{{ context.i18n.trans(panel.label) }}</i></p>
                     {% endif %}
-                    {% set buttons = footer.getButtons(panel.name) %}
+                    {% set buttons = cards.getButtons(panel.name) %}
                     {% if buttons|length > 0 %}
                     {% set formName = panel.name ~ '_form' %}
                     <form action="{{ context.edit_url }}" method="post" name="{{ formName }}">
@@ -114,14 +114,14 @@
      * Generate the code for the row of statistical buttons
      */
 #}
-{% macro rowHeaderForEditView(context, view) %}
+{% macro rowStatisticsForEditView(context, view) %}
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 
 <div class="row" style="margin-top: -.5rem">
     <div class="col-12">
         <div class="btn-toolbar pull-right" role="toolbar" style="margin-bottom: 1rem">
             <div class="btn-group btn-group-lg" role="group">
-                {% set header = view.getRow('header') %}
+                {% set header = view.getRow('statistics') %}
                 {% if header is not empty %}
                     {% for button in header.buttons %}
                         {% set value = attribute(context.fsc, button.action, [view]) %}

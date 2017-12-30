@@ -395,8 +395,8 @@ Ejemplo:
         </rows>
 
 
-header
-------
+statistics
+----------
 
 Permite definir una lista de botones estadísticos y relacionales con otros modelos
 que dan información al usuario y le permite consultar al hacer click.
@@ -418,7 +418,7 @@ Ejemplo:
 .. code:: xml
 
         <rows>
-            <row type="header">
+            <row type="statistics">
                 <button icon="fa-files-o" label="Alb. Pdtes:" calculateby="nombre_function" onclick="#url"></option>
                 <button icon="fa-files-o" label="Pdte Cobro:" calculateby="nombre_function" onclick="#url"></option>
             </row>

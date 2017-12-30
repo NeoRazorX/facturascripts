@@ -47,11 +47,12 @@ abstract class RowItem implements VisualItemInterface
                 return new RowItemStatus();
 
             case 'actions':
-            case 'header':
+            case 'statistics':
                 return new RowItemButtons($type);
 
+            case 'header':
             case 'footer':
-                return new RowItemFooter();
+                return new RowItemCards($type);
 
             default:
                 return null;

@@ -373,8 +373,8 @@ Example:
         </rows>
 
 
-header
-------
+statistics
+----------
 
 Defines a list of statistical and relational buttons with other models that give
 information to the user and allows consult when you click.
@@ -396,7 +396,7 @@ Example:
 .. code:: xml
 
         <rows>
-            <row type="header">
+            <row type="statistics">
                 <button icon="fa-files-o" label="Pending delivery notes:" calculateby="function_name" onclick="#url"></option>
                 <button icon="fa-files-o" label="Pending collection:" calculateby="function_name" onclick="#url"></option>
             </row>
