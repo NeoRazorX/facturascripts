@@ -137,9 +137,8 @@
         </div>
 
         <div class="col-6 text-center">
-            <h2>
-                <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
-            </h2>
+            <h2><i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}</h2>
+            <h5 class="text-info">{{ fsc.getPrimaryDescription() }}</h5>
         </div>
 
         <div class="col-3 text-right d-print-none">
@@ -164,11 +163,11 @@
     </div>
 
     {# Data Row #}
-    <div id="data" class="row">
+    <div id="data" class="row mt-2">
         <div class="col-12">
             {# Header Row #}
             {{ rowCardsForEditView(_context, fsc.view, 'header') }}
-            
+
             <form action="#" method="post" class="form" role="form" name="main_form">
                 <input type="hidden" name="action" value="save">
                 <div class="card">

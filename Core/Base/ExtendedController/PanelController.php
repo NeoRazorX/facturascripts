@@ -199,6 +199,18 @@ abstract class PanelController extends Base\Controller
     }
 
     /**
+     * Descriptive identifier for humans of the main data editing record
+     *
+     * @return string
+     */
+    public function getPrimaryDescription()
+    {
+        $viewName = array_keys($this->views)[0];
+        $model = $this->views[$viewName]->getModel();
+        return $model->primaryDescription();
+    }
+
+    /**
      * Run the actions that alter data before reading it
      *
      * @param BaseView $view
@@ -257,12 +269,12 @@ abstract class PanelController extends Base\Controller
             $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
             return false;
         }
-        
+
         if ($view->save()) {
             $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
             return true;
         }
-        
+
         return false;
     }
 
@@ -279,13 +291,13 @@ abstract class PanelController extends Base\Controller
             $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
             return false;
         }
-        
+
         $fieldKey = $view->getModel()->primaryColumn();
         if ($view->delete($this->request->get($fieldKey))) {
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
             return true;
         }
-        
+
         return false;
     }
 

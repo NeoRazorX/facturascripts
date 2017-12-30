@@ -77,9 +77,9 @@
                         <option value="">{{ i18n.trans('choose-employee') }}</option>
                         {% for emp in fsc.employeeList %}
                         {% if emp.codagente == fsc.employee %}
-                        <option value="{{ emp.codagente }}" selected="selected">{{ emp.fullName() }}</option>
+                        <option value="{{ emp.codagente }}" selected="selected">{{ emp.primaryDescription() }}</option>
                         {% else %}
-                        <option value="{{ emp.codagente }}" >{{ emp.fullName() }}</option>
+                        <option value="{{ emp.codagente }}" >{{ emp.primaryDescription() }}</option>
                         {% endif %}
                         {% endfor %}
                     </select>
