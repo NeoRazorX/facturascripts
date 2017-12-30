@@ -72,62 +72,22 @@
         <div class="row">
             <div class="col-md-3">
                 <div class="form-group">
-                    <label for="employee">{{ i18n.trans('employee') }}</label>
-                    <select id="employee" name="employee" class="form-control" onchange="this.form.submit()">
-                        <option value="">{{ i18n.trans('choose-employee') }}</option>
-                        {% for emp in fsc.employeeList %}
-                        {% if emp.codagente == fsc.employee %}
-                        <option value="{{ emp.codagente }}" selected="selected">{{ emp.primaryDescription() }}</option>
-                        {% else %}
-                        <option value="{{ emp.codagente }}" >{{ emp.primaryDescription() }}</option>
-                        {% endif %}
-                        {% endfor %}
-                    </select>
+                    {{ forms.simpleSelect('employee', 'employee', fsc.employee, fsc.employeeList, i18n.trans('employee'), 'fa-users', select_attr) }}
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="form-group">
-                    <label for="serie">{{ i18n.trans('serie') }}</label>
-                    <select id="serie" name="serie" class="form-control" onchange="this.form.submit()">
-                        <option value="">{{ i18n.trans('choose-serie') }}</option>
-                        {% for ser in fsc.serieList %}
-                        {% if ser.codserie == fsc.serie %}
-                        <option value="{{ ser.codserie }}" selected="selected">{{ ser.descripcion }}</option>
-                        {% else %}
-                        <option value="{{ ser.codserie }}" >{{ ser.descripcion }}</option>
-                        {% endif %}
-                        {% endfor %}
-                    </select>
+                    {{ forms.simpleSelect('serie', 'serie', fsc.serie, fsc.serieList, i18n.trans('serie'), 'fa-list', select_attr) }}
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="form-group">
-                    <label for="currency">{{ i18n.trans('currency') }}</label>
-                    <select id="currency" name="currency" class="form-control" onchange="this.form.submit()">
-                        <option value="">{{ i18n.trans('choose-currency') }}</option>
-                        {% for cur in fsc.currencyList %}
-                        {% if cur.coddivisa == fsc.currency %}
-                        <option value="{{ cur.coddivisa }}" selected="selected">{{ cur.descripcion }}</option>
-                        {% else %}
-                        <option value="{{ cur.coddivisa }}" >{{ cur.descripcion }}</option>
-                        {% endif %}
-                        {% endfor %}
-                    </select>
+                    {{ forms.simpleSelect('currency', 'currency', fsc.currency, fsc.currencyList, i18n.trans('currency'), 'fa-list', select_attr) }}
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="form-group">
-                    <label for="payment-method">{{ i18n.trans('payment-method') }}</label>
-                    <select id="payment-method" name="payment-method" class="form-control" onchange="this.form.submit()">
-                        <option value="">{{ i18n.trans('choose-payment-method') }}</option>
-                        {% for payM in fsc.paymentMethodList %}
-                        {% if payM.codpago == fsc.paymentMethod %}
-                        <option value="{{ payM.codpago }}" selected="selected">{{ payM.descripcion }}</option>
-                        {% else %}
-                        <option value="{{ payM.codpago }}" >{{ payM.descripcion }}</option>
-                        {% endif %}
-                        {% endfor %}
-                    </select>
+                    {{ forms.simpleSelect('payment-method', 'payment-method', fsc.paymentMethod, fsc.paymentMethodList, i18n.trans('payment-method'), 'fa-list', select_attr) }}
                 </div>
             </div>
         </div>
@@ -179,7 +139,7 @@
                     <tr>
                         <th class="text-left">{{fsc.date2From.format('d-m-Y') }} - {{ fsc.date2To.format('d-m-Y') }}</th>
                         <th class="text-left">Dia</th>
-                        <th class="text-left">Total</th>
+                        <th class="text-right">Total</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -187,7 +147,7 @@
                     <tr class="table-light">
                         <td class="text-left">{{ key3 }}</td>
                         <td class="text-left">{{ item.date }}</td>
-                        <td class="text-left">{{ item.total }}</td>
+                        <td class="text-right">{{ item.total }}</td>
                     </tr>
                     {% endfor %}
                     </tbody>
