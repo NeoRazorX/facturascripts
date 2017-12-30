@@ -93,7 +93,7 @@ class DocumentReports extends Controller
     /**
      * Employee list.
      * 
-     * @var Model\Agente[]
+     * @var array
      */
     public $employeeList;
 
@@ -107,7 +107,7 @@ class DocumentReports extends Controller
     /**
      * Serie list.
      * 
-     * @var Model\Serie[]
+     * @var array
      */
     public $serieList;
 
@@ -121,7 +121,7 @@ class DocumentReports extends Controller
     /**
      * Currency list.
      * 
-     * @var Model\Divisa[]
+     * @var array
      */
     public $currencyList;
 
@@ -135,7 +135,7 @@ class DocumentReports extends Controller
     /**
      * Payment method List.
      * 
-     * @var Model\FormaPago[]
+     * @var array
      */
     public $paymentMethodList;
 
