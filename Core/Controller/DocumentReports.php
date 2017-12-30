@@ -183,6 +183,70 @@ class DocumentReports extends Controller
     }
 
     /**
+     * Set values selected by the user.
+     */
+    private function setValuesFromRequest()
+    {
+        $this->source1 = $this->request->get('source1', 'customer-invoices');
+        $this->source2 = $this->request->get('source2', 'supplier-invoices');
+        $this->date1From = new \DateTime($this->request->get('date1-from', date('01-m-Y')));
+        $this->date1To = new \DateTime($this->request->get('date1-to', date('t-m-Y')));
+        $this->date2From = new \DateTime($this->request->get('date2-from', date('01-m-Y')));
+        $this->date2To = new \DateTime($this->request->get('date2-to', date('t-m-Y')));
+        $this->employee = $this->request->get('employee', '');
+        $this->serie = $this->request->get('serie', '');
+        $this->currency = $this->request->get('currency', AppSettings::get('default', 'coddivisa'));
+        $this->paymentMethod = $this->request->get('payment-method', '');
+    }
+
+    /**
+     * Set default values.
+     */
+    private function setDefaults()
+    {
+        $this->source1 = 'customer-invoices';
+        $this->source2 = 'supplier-invoices';
+        $this->date1From = new \DateTime(date('01-m-Y'));
+        $this->date1To = new \DateTime(date('t-m-Y'));
+        $this->date2From = new \DateTime(date('01-m-Y'));
+        $this->date2To = new \DateTime(date('t-m-Y'));
+        $this->employee = '';
+        $this->serie = AppSettings::get('default', 'codserie');
+        $this->currency = AppSettings::get('default', 'coddivisa');
+        $this->paymentMethod = AppSettings::get('default', 'codpago');
+    }
+
+    /**
+     * Set basic list of default data for input selects.
+     */
+    private function setLists()
+    {
+        $agenteModel = new Model\Agente();
+        $this->employeeList = ['' => '------'];
+        foreach($agenteModel->all() as $age) {
+            $this->employeeList[$age->codagente] = $age->fullName();
+        }
+
+        $serieModel = new Model\Serie();
+        $this->serieList = ['' => '------'];
+        foreach($serieModel->all() as $serie) {
+            $this->serieList[$serie->codserie] = $serie->descripcion;
+        }
+
+        $divisaModel = new Model\Divisa();
+        $this->currencyList = ['' => '------'];
+        foreach($divisaModel->all() as $divisa) {
+            $this->currencyList[$divisa->coddivisa] = $divisa->descripcion;
+        }
+
+        $formaPagoModel = new Model\FormaPago();
+        $this->paymentMethodList = ['' => '------'];
+        foreach($formaPagoModel->all() as $fPago) {
+            $this->paymentMethodList[$fPago->codpago] = $fPago->descripcion;
+        }
+    }
+
+    /**
      * Generate daily data to show to user.
      */
     private function generateResults()
@@ -433,58 +497,6 @@ class DocumentReports extends Controller
         }
 
         return $where;
-    }
-
-    /**
-     * Set basic list of default data for input selects.
-     */
-    private function setLists()
-    {
-        $age = new Model\Agente();
-        $this->employeeList = $age->all();
-
-        $ser = new Model\Serie();
-        $this->serieList = $ser->all();
-
-        $div = new Model\Divisa();
-        $this->currencyList = $div->all();
-
-        $fpag = new Model\FormaPago();
-        $this->paymentMethodList = $fpag->all();
-    }
-
-    /**
-     * Set values selected by the user.
-     */
-    private function setValuesFromRequest()
-    {
-        $this->source1 = $this->request->get('source1', 'customer-invoices');
-        $this->source2 = $this->request->get('source2', 'supplier-invoices');
-        $this->date1From = new \DateTime($this->request->get('date1-from', date('01-m-Y')));
-        $this->date1To = new \DateTime($this->request->get('date1-to', date('t-m-Y')));
-        $this->date2From = new \DateTime($this->request->get('date2-from', date('01-m-Y')));
-        $this->date2To = new \DateTime($this->request->get('date2-to', date('t-m-Y')));
-        $this->employee = $this->request->get('employee', '');
-        $this->serie = $this->request->get('serie', '');
-        $this->currency = $this->request->get('currency', AppSettings::get('default', 'coddivisa'));
-        $this->paymentMethod = $this->request->get('payment-method', '');
-    }
-
-    /**
-     * Set default values.
-     */
-    private function setDefaults()
-    {
-        $this->source1 = 'customer-invoices';
-        $this->source2 = 'supplier-invoices';
-        $this->date1From = new \DateTime(date('01-m-Y'));
-        $this->date1To = new \DateTime(date('t-m-Y'));
-        $this->date2From = new \DateTime(date('01-m-Y'));
-        $this->date2To = new \DateTime(date('t-m-Y'));
-        $this->employee = '';
-        $this->serie = AppSettings::get('default', 'codserie');
-        $this->currency = AppSettings::get('default', 'coddivisa');
-        $this->paymentMethod = AppSettings::get('default', 'codpago');
     }
 
     /**
