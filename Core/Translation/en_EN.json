@@ -605,5 +605,5 @@
     "encrypt":"Encrypt",
     "level": "Level",
     "api": "API",
-    "disable_api": "Disable API"
+    "disable-api": "Disable API"
 }
