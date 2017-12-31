@@ -217,6 +217,17 @@ abstract class EditController extends Base\Controller
     }
 
     /**
+     * Descriptive identifier for humans of the main data editing record
+     *
+     * @return string
+     */
+    public function getPrimaryDescription()
+    {
+        $model = $this->view->getModel();
+        return $model->primaryDescription();
+    }
+
+    /**
      * Returns the url for a specified type
      *
      * @param string $type

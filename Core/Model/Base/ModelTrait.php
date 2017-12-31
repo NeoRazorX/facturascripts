@@ -187,6 +187,16 @@ trait ModelTrait
     }
 
     /**
+     * Descriptive identifier for humans of the data record
+     *
+     * @return string
+     */
+    public function primaryDescription()
+    {
+        return strval($this->primaryColumnValue());
+    }
+
+    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
