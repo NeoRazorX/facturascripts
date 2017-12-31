@@ -1,3 +1,28 @@
+{#
+   /**
+     * Edit Controller Template.
+     *
+     * Show the model data in format for editing.
+     *
+     * This file is part of FacturaScripts
+     * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+     *
+     * This program is free software: you can redistribute it and/or modify
+     * it under the terms of the GNU Lesser General Public License as
+     * published by the Free Software Foundation, either version 3 of the
+     * License, or (at your option) any later version.
+     *
+     * This program is distributed in the hope that it will be useful,
+     * but WITHOUT ANY WARRANTY; without even the implied warranty of
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     * GNU Lesser General Public License for more details.
+     *
+     * You should have received a copy of the GNU Lesser General Public License
+     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+     *
+    */
+#}
+
 {% extends "Master/MenuTemplate.html" %}
 
 {% block css %}
@@ -60,7 +85,7 @@
 {% endblock %}
 
 {% block body %}
-<!-- Calculate texts according to language -->
+{# Calculate texts according to language #}
 {% set go_back = i18n.trans('back') %}
 {% set save, save_title = i18n.trans('save'), i18n.trans('save-data') %}
 {% set undo, undo_title = i18n.trans('undo'), i18n.trans('restore-data') %}
@@ -74,22 +99,22 @@
 
 {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
 
-<!-- Visual macros -->
+{# Visual macros #}
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 {% from 'Macro/Utils.html' import exportData as exportData %}
 {% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
-{% from 'Macro/BaseController.html' import rowHeaderForEditView as rowHeaderForEditView %}
-{% from 'Macro/BaseController.html' import rowFooterForEditView as rowFooterForEditView %}
+{% from 'Macro/BaseController.html' import rowStatisticsForEditView as rowStatisticsForEditView %}
+{% from 'Macro/BaseController.html' import rowCardsForEditView as rowCardsForEditView %}
 {% from 'Macro/BaseController.html' import modalFormFromColumns as modalFormFromColumns %}
 
-<!-- Aux Objects -->
+{# Aux Objects #}
 {% set model = fsc.view.getModel() %}
 
-<!-- Main Body -->
+{# Main Body #}
 <div class="container-fluid">
     {{ parent() }}
 
-    <!-- Header Row -->
+    {# Header Row #}
     <div id="header" class="row">
         <div class="col-3 d-print-none">
             <div class="btn-group">
@@ -106,15 +131,14 @@
                    <i class="fa fa-wrench" aria-hidden="true"></i>
                     <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
                 </a>
-                <!-- Adds print and export options -->
+                {# Adds print and export options #}
                 {{ exportData(fsc, i18n, 'edit') }}
             </div>
         </div>
 
         <div class="col-6 text-center">
-            <h2>
-                <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
-            </h2>
+            <h2><i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}</h2>
+            <h5 class="text-info">{{ fsc.getPrimaryDescription() }}</h5>
         </div>
 
         <div class="col-3 text-right d-print-none">
@@ -138,9 +162,12 @@
         </div>
     </div>
 
-    <!-- Data Row -->
-    <div id="data" class="row">
+    {# Data Row #}
+    <div id="data" class="row mt-2">
         <div class="col-12">
+            {# Header Row #}
+            {{ rowCardsForEditView(_context, fsc.view, 'header') }}
+
             <form action="#" method="post" class="form" role="form" name="main_form">
                 <input type="hidden" name="action" value="save">
                 <div class="card">
@@ -149,10 +176,10 @@
                     </div>
 
                     <div class="card-body">
-                        <!-- Statistical buttons bar -->
-                        {{ rowHeaderForEditView(_context, fsc.view) }}
+                        {# Statistical buttons bar #}
+                        {{ rowStatisticsForEditView(_context, fsc.view) }}
 
-                        <!-- Main Form -->
+                        {# Main Form #}
                         <div id="main_row" class="row">
                             {{ columnsForEditView(_context, fsc.view, model, FALSE) }}
                         </div>
@@ -172,10 +199,10 @@
         </div>
     </div>
 
-    <!-- Footer Row -->
-    {{ rowFooterForEditView(_context, fsc.view) }}
+    {# Footer Row #}
+    {{ rowCardsForEditView(_context, fsc.view, 'footer') }}
 
-    <!-- Modals Forms -->
+    {# Modals Forms #}
     {{ modalFormFromColumns(_context, fsc.view) }}
 </div>
 {% endblock %}

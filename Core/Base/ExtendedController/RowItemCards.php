@@ -20,11 +20,11 @@
 namespace FacturaScripts\Core\Base\ExtendedController;
 
 /**
- * Description of RowItemFooter
+ * Description of RowItemCards
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class RowItemFooter extends RowItem
+class RowItemCards extends RowItem
 {
     /**
      * Panels lists.
@@ -41,9 +41,9 @@ class RowItemFooter extends RowItem
     /**
      * Class constructor
      */
-    public function __construct()
+    public function __construct($type)
     {
-        parent::__construct('footer');
+        parent::__construct($type);
         $this->panels = [];
         $this->buttons = [];
     }

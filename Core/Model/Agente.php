@@ -133,6 +133,16 @@ class Agente
     }
 
     /**
+     * Returns name + agent's last name.
+     *
+     * @return string
+     */
+    public function primaryDescription()
+    {
+        return $this->nombre . ' ' . $this->apellidos;
+    }
+
+    /**
      * Reset values of all model properties.
      */
     public function clear()
@@ -150,16 +160,6 @@ class Agente
         $this->f_alta = date('d-m-Y');
         $this->f_baja = null;
         $this->f_nacimiento = date('d-m-Y');
-    }
-
-    /**
-     * Returns name + agent's last name.
-     *
-     * @return string
-     */
-    public function fullName()
-    {
-        return $this->nombre . ' ' . $this->apellidos;
     }
 
     /**

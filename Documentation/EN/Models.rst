@@ -47,7 +47,7 @@ text string: **tableName** and **primaryColumn**.
 
 .. code:: php
 
-    public function tableName()
+    public static function tableName()
     {
         return 'agentes';
     }
@@ -254,6 +254,8 @@ Métodos comunes
 ===============
 
 -  **primaryColumnValue** : Returns the value of the key field (Primary Key).
+
+-  **primaryDescription** : Returns the descriptive identifier for the data record.
 
 -  **loadFromData** : Load the data of the model with the data array that is passed to it by parameter.
 

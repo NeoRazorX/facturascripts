@@ -123,7 +123,7 @@
         </group>
     </columns>
     <rows>
-        <row type="header">
+        <row type="statistics">
             <button type="calculate" icon="fa-files-o" label="delivery-notes-button" action="calcClientDeliveryNotes" />
             <button type="calculate" icon="fa-money" label="pending-invoices-button" action="calcClientInvoicePending" />
         </row>
