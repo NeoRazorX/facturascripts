@@ -40,6 +40,11 @@ class AppAPI extends App
         $this->response->headers->set('Access-Control-Allow-Origin', '*');
         $this->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
         $this->response->headers->set('Content-Type', 'application/json');
+        if ($this->isDisabled()) {
+            $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $this->response->setContent(json_encode(['error' => 'API-DISABLED']));
+            return false;
+        }
         if (!$this->dataBase->connected()) {
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
             $this->response->setContent(json_encode(['error' => 'DB-ERROR']));
@@ -52,6 +57,16 @@ class AppAPI extends App
         }
 
         return $this->selectVersion();
+    }
+
+    /**
+     * Check if API is disabled
+     *
+     * @return mixed
+     */
+    private function isDisabled()
+    {
+        return AppSettings::get('default', 'disable_api', null) !== null;
     }
 
     /**
