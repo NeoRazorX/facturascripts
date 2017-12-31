@@ -258,25 +258,23 @@ class MenuManager
 
         return $result;
     }
-    
+
     /**
      * Returns all access data from the user.
-     * 
+     *
      * @param string $nick
-     * 
+     *
      * @return Model\RolAccess[]
      */
     private function getUserAccess($nick)
     {
         $access = [];
         $rolUserModel = new Model\RolUser();
-        $rolAccessModel = new Model\RolAccess();
-        foreach($rolUserModel->all([new DataBase\DataBaseWhere('nick', $nick)]) as $rol) {
-            foreach($rolAccessModel->all([new DataBase\DataBaseWhere('codrol', $rol->codrol)]) as $rolAccess) {
-                $access[] = $rolAccess;
-            }
+        $filter1 = [new DataBase\DataBaseWhere('nick', $nick)];
+        foreach ($rolUserModel->all($filter1) as $rolUser) {
+            $access = $rolUser->getRolAccess($nick, $rolUser->codrol, '');
         }
-        
+
         return $access;
     }
 }
