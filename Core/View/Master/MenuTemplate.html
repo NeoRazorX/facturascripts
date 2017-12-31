@@ -34,7 +34,9 @@
         {{ debugBarRender.renderHead()|raw }}
     </head>
     <body>
+        {% block navbar %}
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top d-print-none">
+            {% block navbarContent %}
             <a class="navbar-brand" href="index.php">
                 <img src="Core/Assets/Images/logo.png" width="30" height="30" class="d-inline-block align-top" alt="FacturaScripts"/>
                 {{ fsc.empresa.nombrecorto }}
@@ -74,7 +76,9 @@
                 </form>
                 {% endif %}
             </div>
+            {% endblock %}
         </nav>
+        {% endblock %}
         <br/>
         {% block messages %}
         {% from 'Macro/Utils.html' import message as show_message %}
