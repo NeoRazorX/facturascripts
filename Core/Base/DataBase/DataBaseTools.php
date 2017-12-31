@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 use FacturaScripts\Core\Base\DataBase as db;
@@ -248,10 +247,10 @@ class DataBaseTools
             self::$dataBase->getEngine()->compareDataTypes($db0, $xml) ||
             ($xml === 'serial') ||
             (
-                strpos($db0, 'time') === 0 &&
-                strpos($xml, 'time') === 0
+            strpos($db0, 'time') === 0 &&
+            strpos($xml, 'time') === 0
             )
-        );
+            );
 
         return $result;
     }
@@ -302,12 +301,12 @@ class DataBaseTools
      */
     private function getXmlTableLocation($tableName)
     {
-        $filename = FS_FOLDER . '/Dinamic/Table/' . $tableName . '.xml';
-        if (!file_exists($filename)) {
-            $filename = FS_FOLDER . '/Core/Table/' . $tableName . '.xml';
+        $fileName = FS_FOLDER . '/Dinamic/Table/' . $tableName . '.xml';
+        if (FS_DEBUG && !file_exists($fileName)) {
+            $fileName = FS_FOLDER . '/Core/Table/' . $tableName . '.xml';
         }
 
-        return $filename;
+        return $fileName;
     }
 
     /**
