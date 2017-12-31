@@ -27,6 +27,7 @@ use FacturaScripts\Core\Model;
  */
 class VisualItemLoadEngine
 {
+
     /**
      * Load the column structure from the JSON
      *
@@ -64,7 +65,6 @@ class VisualItemLoadEngine
             }
         }
     }
-
 
     /**
      * Load the column structure from the XML
@@ -122,13 +122,12 @@ class VisualItemLoadEngine
      */
     public static function installXML($name, &$model)
     {
-        $file = "Dinamic/XMLView/{$name}.xml";
-        if(FS_DEBUG) {
-            $file = "Core/XMLView/{$name}.xml";
+        $fileName = FS_FOLDER . '/Dinamic/XMLView/' . $name . '.xml';
+        if (FS_DEBUG && !file_exists($fileName)) {
+            $fileName = FS_FOLDER . '/Core/XMLView/' . $name . '.xml';
         }
-        
-        $xml = simplexml_load_string(file_get_contents($file));
 
+        $xml = simplexml_load_string(file_get_contents($fileName));
         if ($xml === false) {
             return false;
         }
@@ -139,10 +138,9 @@ class VisualItemLoadEngine
         return true;
     }
 
-
     /**
      * Load the list of values for a dynamic select type widget with
-     *  a database model or a range of values
+     * a database model or a range of values
      *
      * @param Model\PageOption $model
      */
