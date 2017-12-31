@@ -603,5 +603,7 @@
     "test":"Test",
     "mailer":"Mail controller",
     "encrypt":"Encrypt",
-    "level": "Level"
+    "level": "Level",
+    "api": "API",
+    "disable-api": "Disable API"
 }
