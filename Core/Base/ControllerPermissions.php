@@ -89,9 +89,9 @@ class ControllerPermissions
         }
 
         $rolUserModel = new RolUser();
-        $filter1 = [new DataBaseWhere('nick', $user->nick)];
-        foreach ($rolUserModel->all($filter1) as $rolUser) {
-            foreach ($rolUser->getRolAccess($user->nick, '', $pageName) as $rolAccess) {
+        $filter = [new DataBaseWhere('nick', $user->nick)];
+        foreach ($rolUserModel->all($filter) as $rolUser) {
+            foreach ($rolUser->getRolAccess($pageName) as $rolAccess) {
                 $this->allowAccess = true;
                 $this->allowDelete = $rolAccess->allowdelete ? true : $this->allowDelete;
                 $this->allowUpdate = $rolAccess->allowupdate ? true : $this->allowUpdate;
