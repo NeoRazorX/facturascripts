@@ -88,6 +88,27 @@ class DataBase
     }
 
     /**
+     * Return the database engine used
+     *
+     * @return DataBaseEngine
+     */
+    public function getEngine()
+    {
+        return self::$engine;
+    }
+
+    /**
+     * Gets the operator for the database engine
+     *
+     * @param string $operator
+     * @return string
+     */
+    public function getOperator($operator)
+    {
+        return self::$engine->getOperator($operator);
+    }
+
+    /**
      * Returns an array with the names of the tables in the database.
      *
      * @return array
@@ -486,15 +507,5 @@ class DataBase
     public function sql2Int($colName)
     {
         return self::$engine->getSQL()->sql2Int($colName);
-    }
-
-    /**
-     * Return the database engine used
-     *
-     * @return DataBaseEngine
-     */
-    public function getEngine()
-    {
-        return self::$engine;
     }
 }

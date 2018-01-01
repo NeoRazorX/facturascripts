@@ -197,7 +197,7 @@
     </ul>
 
     {# Main Tab #}
-    <div class="tab-content" id="mainTabContent">
+    <div class="tab-content" id="mainTabsContent">
         {% for indexView, view in fsc.views %}
         {% set active = (indexView == fsc.active) ? 'active' : '' %}
         <div class="tab-pane {{ active }}" id="{{ view.getModelID() }}" role="tabpanel">

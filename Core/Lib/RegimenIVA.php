@@ -32,7 +32,7 @@ class RegimenIVA
      *
      * @return string
      */
-    public function defaultValue()
+    public static function defaultValue()
     {
         return 'General';
     }
@@ -42,7 +42,7 @@ class RegimenIVA
      *
      * @return array
      */
-    public function all()
+    public static function all()
     {
         return ['General', 'Exento'];
     }

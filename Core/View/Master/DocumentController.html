@@ -84,7 +84,7 @@
                 </a>
                 {% for indexView, view in fsc.views %}
                     <a class="nav-link" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
-                        <i class="fa {{ fsc.icons[indexView] }} fa-fw" aria-hidden="true"></i>
+                        <i class="fa {{ fsc.getSettings(indexView, 'icon') }} fa-fw" aria-hidden="true"></i>
                         &nbsp;{{ view.title }}
                     </a>
                 {% endfor %}

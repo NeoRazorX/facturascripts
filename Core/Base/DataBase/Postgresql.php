@@ -372,4 +372,20 @@ class Postgresql implements DataBaseEngine
     {
         return $this->utilsSQL;
     }
+
+    /**
+     * Indicates the operator for the database engine
+     *
+     * @param string $operator
+     */
+    public function getOperator($operator)
+    {
+        switch ($operator) {
+            case 'REGEXP':
+                return '~';
+
+            default:
+                return $operator;
+        }
+    }
 }

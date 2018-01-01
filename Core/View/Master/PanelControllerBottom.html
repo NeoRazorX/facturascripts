@@ -24,66 +24,13 @@
     */
 #}
 
-{% extends "Master/MenuTemplate.html" %}
-
-{% block css %}
-{{ parent() }}
-
-<link rel="stylesheet" href="Core/Assets/CSS/extendedcontroller.css" />
-{% endblock %}
-
-{% block javascript %}
-{{ parent() }}
-
-<script type="text/javascript">
-    var tabActive = '{{ fsc.active }}';
-    $(document).ready(function () {
-        $('#mainTabs').on('shown.bs.tab', function (e) {
-            tabActive = e.target.hash.substring(1);
-        });
-    });
-
-    function deleteRecord(formName) {
-        bootbox.confirm({
-            title: "{{ i18n.trans('confirm-delete')|raw }}",
-            message: "{{ i18n.trans('are-you-sure') }}",
-            closeButton: false,
-            buttons: {
-                cancel: {
-                    label: "<i class='fa fa-times'></i> {{ i18n.trans('cancel') }}"
-                },
-                confirm: {
-                    label: "<i class='fa fa-check'></i> {{ i18n.trans('confirm') }}",
-                    className: 'btn-danger'
-                }
-            },
-            callback: function (result) {
-                if (result) {
-                    var form = document.forms[formName];
-                    form.action.value = 'delete';
-                    form.submit();
-                }
-            }
-        });
-    }
-</script>
-{% endblock %}
-
-{% block messages %}
-<div class="container-fluid">
-    <div id="messages" class="row">
-        <div class="col-12">
-            {{ parent() }}
-        </div>
-    </div>
-</div>
-{% endblock %}
+{% extends "Master/PanelController.html" %}
 
 {% block body %}
 {# -- Calculate texts according to language -- #}
 {% set go_back = i18n.trans('back') %}
 {% set refresh_title = i18n.trans('refresh') %}
-
+{% set options, options_title = i18n.trans('options'), i18n.trans('setup-options') %}
 {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
 
 {# -- Calculate common values -- #}
@@ -102,8 +49,6 @@
 
 {# -- Main Body -- #}
 <div class="container-fluid">
-    {{ parent() }}
-
     {# -- Header Row -- #}
     <div id="header" class="row">
         <div class="col-6 d-print-none">
@@ -116,13 +61,20 @@
                    <i class="fa fa-refresh" aria-hidden="true"></i>
                 </a>
             </div>
-
-            {# -- Adds print and export options  -- #}
-            {{ exportData(fsc, i18n, 'edit') }}
+            <div class="btn-group">
+                <a href="#" id="b_options" class="btn btn-sm btn-secondary" onclick="goToOptions()" {{ popoverTitle(options_title, 'bottom') }}>
+                   <i class="fa fa-wrench" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
+                </a>
+                {# -- Adds print and export options -- #}
+                {{ exportData(fsc, i18n, 'edit') }}
+            </div>
         </div>
         <div class="col-6 text-right">
-            <h2><i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}</h2>
-            <h5 class="text-info">{{ fsc.getPrimaryDescription() }}</h5>
+            <h2>
+                <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i>
+                {{ title }} <small class="text-info">{{ fsc.getPrimaryDescription() }}</small>
+            </h2>
         </div>
     </div>
 
@@ -168,8 +120,9 @@
                 {% for indexView, view in fsc.views %}
                 {% set active = (loop.index == 2) ? ' active' : '' %}
                 {% if loop.index > 1 %}
-                <a class="nav-link{{ active }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
-                    <i class="fa {{ fsc.icons[indexView] }} fa-fw" aria-hidden="true"></i>
+                {% set disable = fsc.getSettings(indexView, 'active') ? '' : ' disabled' %}
+                <a class="nav-link{{ active }}{{ disable }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
+                    <i class="fa {{ fsc.getSettings(indexView, 'icon') }} fa-fw" aria-hidden="true"></i>
                     &nbsp;{{ view.title }}
                 </a>
                 {% endif %}

@@ -216,6 +216,7 @@ class AppController extends App
 
         /// HTML template variables
         $templateVars = [
+            'appSettings' => new AppSettings(),
             'controllerName' => $controllerName,
             'debugBarRender' => false,
             'fsc' => $this->controller,

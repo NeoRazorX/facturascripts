@@ -102,5 +102,13 @@
                 <widget type="number" fieldname="item_limit" required="true" />
             </column>
         </group>
+        <group name="api" title="api" numcolumns="12" icon="fa-universal-access fa-lg">
+            <column name="name" display="none" order="0">
+                <widget type="text" fieldname="name" readonly="true" required="true" />
+            </column>
+            <column name="disable-api" numcolumns="3" order="100">
+                <widget type="checkbox" fieldname="disable_api"/>
+            </column>
+        </group>
     </columns>
 </view>
