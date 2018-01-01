@@ -104,6 +104,36 @@ class RolUser
             return false;
         }
 
-        return TRUE;
+        return true;
+    }
+
+    /**
+     * Return the user rol access.
+     * If $pageName is empty, return roll access for all pages.
+     * Else return only rol access for specified $pageName.
+     *
+     * @param string $pageName
+     *
+     * @return RolAccess[]
+     */
+    public function getRolAccess($pageName = '')
+    {
+        $accesses = [];
+        $rolAccessModel = new RolAccess();
+
+        if (empty($this->nick)) {
+            return [];
+        }
+
+        $filter = [new DataBaseWhere('codrol', $this->codrol)];
+        if (!empty($pageName)) {
+            $filter[] = new DataBaseWhere('pagename', $pageName);
+        }
+
+        foreach ($rolAccessModel->all($filter) as $rolAccess) {
+            $accesses[] = new RolAccess($rolAccess);
+        }
+
+        return $accesses;
     }
 }
