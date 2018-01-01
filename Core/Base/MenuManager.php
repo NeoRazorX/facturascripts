@@ -277,7 +277,9 @@ class MenuManager
         $rolUserModel = new Model\RolUser();
         $filter = [new DataBase\DataBaseWhere('nick', $nick)];
         foreach ($rolUserModel->all($filter) as $rolUser) {
-            $access = $rolUser->getRolAccess();
+            foreach($rolUser->getRolAccess() as $rolAccess) {
+                $access[] = $rolAccess;
+            }
         }
 
         return $access;

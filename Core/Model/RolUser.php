@@ -131,7 +131,7 @@ class RolUser
         }
 
         foreach ($rolAccessModel->all($filter) as $rolAccess) {
-            $accesses[] = new RolAccess($rolAccess);
+            $accesses[] = $rolAccess;
         }
 
         return $accesses;
