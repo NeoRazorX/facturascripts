@@ -37,18 +37,18 @@ class Translator
      * @var string
      */
     private static $defaultLang;
-    
+
     /**
      * Loaded languages.
-     * 
-     * @var array 
+     *
+     * @var array
      */
     private static $languages;
 
     /**
      * List of strings without translation.
-     * 
-     * @var array 
+     *
+     * @var array
      */
     private static $missingStrings;
 
@@ -103,11 +103,11 @@ class Translator
 
     /**
      * Translate the text into the selected language.
-     * 
+     *
      * @param string $lang
      * @param string $txt
      * @param array $parameters
-     * 
+     *
      * @return string
      */
     public function customTrans($lang, $txt, array $parameters = [])
@@ -115,31 +115,31 @@ class Translator
         if(!in_array($lang, self::$languages)) {
             $this->locateFiles($lang);
         }
-        
+
         $catalogue = self::$translator->getCatalogue($lang);
         if ($catalogue->has($txt)) {
             self::$usedStrings[$txt] = $catalogue->get($txt);
             return self::$translator->trans($txt, $parameters, null, $lang);
         }
-        
+
         self::$missingStrings[$txt] = $txt;
         if($lang === self::FALLBACK_LANG) {
             return $txt;
         }
-        
+
         return $this->customTrans(self::FALLBACK_LANG, $txt, $parameters);
     }
 
     /**
      * Load the translation files following the priority system of FacturaScripts.
      * In this case, the translator must be provided with the routes in reverse order.
-     * 
+     *
      * @param string $lang
      */
     private function locateFiles($lang)
     {
         self::$languages[] = $lang;
-        
+
         $file = FS_FOLDER . '/Core/Translation/' . $lang . '.json';
         self::$translator->addResource('json', $file, $lang);
 
@@ -183,7 +183,7 @@ class Translator
 
     /**
      * Returns the missing strings.
-     * 
+     *
      * @return array
      */
     public function getMissingStrings()
