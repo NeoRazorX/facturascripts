@@ -47,6 +47,14 @@ class EditView extends BaseView
     }
 
     /**
+     * Calculate and set new code for PK of the model
+     */
+    public function setNewCode()
+    {
+        $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
+    }
+
+    /**
      * Returns the text for the data panel header
      *
      * @return string
@@ -78,7 +86,7 @@ class EditView extends BaseView
 
     /**
      * Returns the name.
-     * 
+     *
      * @return string
      */
     public function getViewName()
