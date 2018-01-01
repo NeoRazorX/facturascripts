@@ -37,13 +37,7 @@
             </column>
             <column name="fiscal-id" title="fiscal-id" numcolumns="2" order="100">
                 <widget type="select" fieldname="tipoidfiscal">
-                    <values title="CIF/NIF">cifnif</values>
-                    <values title="Pasaporte">passport</values>
-                    <values title="DNI">DNI</values>
-                    <values title="NIF">NIF</values>
-                    <values title="CIF">CIF</values>
-                    <values title="VAT">VAT</values>
-                    <values title="CUIT">CUIT</values>
+                    <values></values>
                 </widget>
             </column>
             <column name="fiscal-number" title="cifnif" numcolumns="2" order="100">
@@ -79,8 +73,7 @@
             </column>
             <column name="vat-type" title="vat-regime" order="100" numcolumns="2">
                 <widget type="select" fieldname="regimeniva">
-                    <values title="General">general</values>
-                    <values title="Exento">exento</values>
+                    <values></values>
                 </widget>
             </column>
         </group>
@@ -121,4 +114,11 @@
             </column>
         </group>
     </columns>
+
+    <rows>
+        <row type="statistics">
+            <button type="calculate" icon="fa-files-o" label="delivery-notes-button" action="calcSupplierDeliveryNotes" />
+            <button type="calculate" icon="fa-money" label="pending-invoices-button" action="calcSupplierInvoicePending" />
+        </row>
+    </rows>
 </view>
