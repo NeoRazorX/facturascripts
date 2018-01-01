@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
  * Visual configuration of the FacturaScripts views,

@@ -30,30 +30,32 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-12">
-            <h1>
-                <i class="fa fa-whrench" aria-hidden="true"></i> {{ i18n.trans('control-panel') }}
-                <span class="btn-group d-xs-none">
-                    <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}">
-                       <i class="fa fa-refresh" aria-hidden="true"></i>
-                    </a>
-                    {% if fsc.getPageData()['name'] == fsc.user.homepage %}
-                    <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}&amp;defaultPage=FALSE">
-                       <i class="fa fa-bookmark" aria-hidden="true"></i>
-                    </a>
-                    {% else %}
-                    <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}&amp;defaultPage=TRUE">
-                       <i class="fa fa-bookmark-o" aria-hidden="true"></i>
-                    </a>
-                    {% endif %}
-                </span>
-                <span class="btn-group d-xs-none">
+        <div class="col-6">
+            <div class="btn-group d-xs-none">
+                <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}">
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                </a>
+                {% if fsc.getPageData()['name'] == fsc.user.homepage %}
+                <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}&amp;defaultPage=FALSE">
+                    <i class="fa fa-bookmark" aria-hidden="true"></i>
+                </a>
+                {% else %}
+                <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}&amp;defaultPage=TRUE">
+                    <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+                </a>
+                {% endif %}
+            </div>
+            <div class="btn-group d-xs-none">
                 <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#addPlugin">
                     <i class="fa fa-plus" aria-hidden="true"></i>
                     <span class="d-none d-sm-inline-block">&nbsp;{{ add }}</span>
                 </button>
-            </span>
-            </h1>
+            </div>
+        </div>
+        <div class="col-6 text-right">
+            <h2>
+                <i class="fa fa-plug" aria-hidden="true"></i> {{ i18n.trans('plugins') }}
+            </h2>
         </div>
     </div>
 </div>

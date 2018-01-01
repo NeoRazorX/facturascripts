@@ -103,8 +103,9 @@ class MenuManager
     private function pageNeedSave($pageModel, $pageData)
     {
         return (
-            ($pageModel->menu !== $pageData['menu']) || ($pageModel->title !== $pageData['title']) ||
-            ($pageModel->icon !== $pageData['icon']) || ($pageModel->showonmenu !== $pageData['showonmenu'])
+            ($pageModel->menu !== $pageData['menu']) || ($pageModel->submenu !== $pageData['submenu']) || 
+            ($pageModel->title !== $pageData['title']) || ($pageModel->icon !== $pageData['icon']) ||
+            ($pageModel->showonmenu !== $pageData['showonmenu'])
         );
     }
 
@@ -163,6 +164,10 @@ class MenuManager
         foreach ($menu as $key => $menuItem) {
             if ($menuItem->name === $pageModel->name) {
                 $menu[$key]->active = true;
+                break;
+            } else if(!empty($pageModel->submenu) && !empty($menuItem->menu) && $menuItem->name === $pageModel->submenu) {
+                $menu[$key]->active = true;
+                $this->setActiveMenuItem($menu[$key]->menu, $pageModel);
                 break;
             }
         }
@@ -272,7 +277,9 @@ class MenuManager
         $rolUserModel = new Model\RolUser();
         $filter = [new DataBase\DataBaseWhere('nick', $nick)];
         foreach ($rolUserModel->all($filter) as $rolUser) {
-            $access = $rolUser->getRolAccess();
+            foreach($rolUser->getRolAccess() as $rolAccess) {
+                $access[] = $rolAccess;
+            }
         }
 
         return $access;

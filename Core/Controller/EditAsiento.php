@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
  * Controller to edit a single item from the Asiento model
