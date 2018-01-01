@@ -135,6 +135,10 @@ abstract class EditController extends Base\Controller
     protected function execAfterAction($action)
     {
         switch ($action) {
+            case 'insert':
+                $this->insertAction();
+                break;
+
             case 'export':
                 $this->setTemplate(false);
                 $this->exportManager->newDoc($this->response, $this->request->get('option'));
@@ -159,6 +163,11 @@ abstract class EditController extends Base\Controller
         }
 
         return null;
+    }
+
+    protected function insertAction()
+    {
+        $this->view->setNewCode();
     }
 
     /**

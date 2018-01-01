@@ -471,4 +471,14 @@ class Mysql implements DataBaseEngine
     {
         return $this->utilsSQL;
     }
+
+    /**
+     * Indicates the operator for the database engine
+     *
+     * @param string $operator
+     */
+    public function getOperator($operator)
+    {
+        return $operator;
+    }
 }

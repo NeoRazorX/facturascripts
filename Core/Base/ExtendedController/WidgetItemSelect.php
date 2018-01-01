@@ -83,7 +83,7 @@ class WidgetItemSelect extends WidgetItem
                $codeModel->code = '---null---';
                $codeModel->description = '------';
             }
-            
+
             $this->values[] = [
                 'value' => $codeModel->code,
                 'title' => $codeModel->description,
@@ -99,7 +99,7 @@ class WidgetItemSelect extends WidgetItem
      *
      * @param array $values
      */
-    public function setValuesFromArray(&$values)
+    public function setValuesFromArray($values)
     {
         $this->values = [];
         foreach ($values as $value) {
