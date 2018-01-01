@@ -271,6 +271,10 @@ abstract class PanelController extends Base\Controller
     protected function execAfterAction($view, $action)
     {
         switch ($action) {
+            case 'insert':
+                $this->insertAction($view);
+                break;
+
             case 'export':
                 $this->setTemplate(false);
                 $this->exportManager->newDoc($this->response, $this->request->get('option'));
@@ -282,6 +286,11 @@ abstract class PanelController extends Base\Controller
         }
     }
 
+    protected function insertAction($view)
+    {
+        $view->setNewCode();
+    }
+    
     /**
      * Run the data edits
      *

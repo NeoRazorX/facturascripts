@@ -462,10 +462,17 @@ trait ModelTrait
      */
     public function newCode($field = '')
     {
+        $sqlWhere = '';
         if (empty($field)) {
+            /// Set Cast to Integer of PK Field
             $field = self::$dataBase->sql2Int($this->primaryColumn());
+
+            /// Set Where to Integers values only
+            $where = [new DataBase\DataBaseWhere($this->primaryColumn(), '^-?[0-9]+$', 'REGEXP')];
+            $sqlWhere = DataBase\DataBaseWhere::getSQLWhere($where);
         }
-        $sql = 'SELECT MAX(' . $field . ') as cod FROM ' . static::tableName() . ';';
+
+        $sql = 'SELECT MAX(' . $field . ') as cod FROM ' . static::tableName() . $sqlWhere . ';';
         $cod = self::$dataBase->select($sql);
         if (empty($cod)) {
             return 1;

@@ -134,6 +134,10 @@ class DataBaseWhere
                 $result .= ')';
                 break;
 
+            case 'REGEXP':
+                $result = "'" . $this->dataBase->escapeString($this->value) . "'";
+                break;
+
             default:
                 $result = '';
         }
@@ -186,8 +190,10 @@ class DataBaseWhere
         if($this->value === null) {
             return 'NULL';
         }
-        
-        return in_array($this->operator, ['LIKE', 'IS', 'IS NOT', 'IN'], false) ? $this->getValueFromOperator() : $this->getValueFromType();
+
+        return in_array($this->operator, ['LIKE', 'IS', 'IS NOT', 'IN', 'REGEXP'], false)
+            ? $this->getValueFromOperator()
+            : $this->getValueFromType();
     }
 
     /**
@@ -207,7 +213,7 @@ class DataBaseWhere
             if ($this->operator === 'LIKE') {
                 $field = 'LOWER(' . $field . ')';
             }
-            $result .= $union . $field . ' ' . $this->operator . ' ' . $value;
+            $result .= $union . $field . ' ' . $this->dataBase->getOperator($this->operator) . ' ' . $value;
             $union = ' OR ';
         }
 
