@@ -139,8 +139,9 @@
             <div class="nav flex-column nav-pills" id="optionsindex" role="tablist">
                 {% for indexView, view in fsc.views %}
                 {% set active = (indexView == fsc.active) ? ' active' : '' %}
-                <a class="nav-link{{ active }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
-                    <i class="fa {{ fsc.icons[indexView] }} fa-fw" aria-hidden="true"></i>
+                {% set disable = fsc.getSettings(indexView, 'active') ? '' : ' disabled' %}
+                <a class="nav-link{{ active }}{{ disable }}" id="{{ indexView }}-tab" data-toggle="pill" href="#{{ indexView }}" role="tab" aria-controls="{{ indexView }}" aria-expanded="true">
+                    <i class="fa {{ fsc.getSettings(indexView, 'icon') }} fa-fw" aria-hidden="true"></i>
                     &nbsp;{{ view.title }}
                 </a>
                 {% endfor %}

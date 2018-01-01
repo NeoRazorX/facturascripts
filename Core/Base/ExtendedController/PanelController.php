@@ -47,11 +47,15 @@ abstract class PanelController extends Base\Controller
     public $exportManager;
 
     /**
-     * List of icons for each of the views
+     * List of configuration options for each of the views
+     * [
+     *   'keyView1' => ['icon' => 'fa-icon1', 'active' => TRUE],
+     *   'keyView2' => ['icon' => 'fa-icon2', 'active' => TRUE]
+     * ]
      *
      * @var array
      */
-    public $icons;
+    public $settings;
 
     /**
      * Tabs position in page: left, bottom.
@@ -95,7 +99,7 @@ abstract class PanelController extends Base\Controller
         $this->setTemplate('Master/PanelController');
         $this->active = $this->request->get('active', '');
         $this->tabsPosition = 'left';
-        $this->icons = [];
+        $this->settings = [];
         $this->views = [];
     }
 
@@ -146,12 +150,34 @@ abstract class PanelController extends Base\Controller
         $this->execPreviousAction($view, $action);
 
         // Load the model data for each view
+        $mainView = array_keys($this->views)[0];
+        $hasData = false;
         foreach ($this->views as $keyView => $dataView) {
             $this->loadData($keyView, $dataView);
+
+            // check if we are processing the main view
+            if ($keyView == $mainView) {
+                $hasData = $dataView->count > 0;
+                continue;
+            }
+            // check if the view should be active
+            $this->settings[$keyView]['active'] = $this->checkActiveView($dataView, $hasData);
         }
 
         // General operations with the loaded data
         $this->execAfterAction($view, $action);
+    }
+
+    /**
+     * Returns the configuration value for the indicated view
+     *
+     * @param string $keyView
+     * @param string $property
+     * @return mixed
+     */
+    public function getSettings($keyView, $property)
+    {
+        return $this->settings[$keyView][$property];
     }
 
     /**
@@ -302,6 +328,18 @@ abstract class PanelController extends Base\Controller
     }
 
     /**
+     * Check if the view should be active
+     *
+     * @param BaseView $view
+     * @param bool $mainViewHasData
+     * @return bool
+     */
+    protected function checkActiveView(&$view, $mainViewHasData)
+    {
+        return $mainViewHasData;
+    }
+
+    /**
      * Adds a view to the controller and loads its data
      *
      * @param string $keyView
@@ -311,7 +349,7 @@ abstract class PanelController extends Base\Controller
     private function addView($keyView, $view, $icon)
     {
         $this->views[$keyView] = $view;
-        $this->icons[$keyView] = $icon;
+        $this->settings[$keyView] = ['active' => TRUE, 'icon' => $icon];
 
         if (empty($this->active)) {
             $this->active = $keyView;
