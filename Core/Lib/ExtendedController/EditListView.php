@@ -104,20 +104,19 @@ class EditListView extends BaseView
      */
     public function isBasicEditList()
     {
-        $isBasic = count($this->pageOption->columns) === 1; // Only one group
-        if ($isBasic) {
-            $maxColumns = 5;
-            $group = current($this->pageOption->columns);
-            foreach ($group->columns as $col) {
-                if ($col->display !== 'none') {
-                    $maxColumns--;
-                }
-            }
-
-            $isBasic = $maxColumns > 0;
+        if(count($this->pageOption->columns) !== 1) {
+            return false;
         }
-
-        return $isBasic;
+        
+        $maxColumns = 5;
+        $group = reset($this->pageOption->columns);
+        foreach ($group->columns as $col) {
+            if ($col->display !== 'none') {
+                $maxColumns--;
+            }
+        }
+        
+        return $maxColumns > 0;
     }
 
     /**
