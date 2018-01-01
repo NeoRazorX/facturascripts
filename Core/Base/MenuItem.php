@@ -107,7 +107,7 @@ class MenuItem
      */
     private function getMenuId($parent)
     {
-        return empty($parent) ? 'menu-' . $this->title : $parent . $this->title;
+        return empty($parent) ? 'menu-' . $this->title : $parent . $this->name;
     }
 
     /**
@@ -126,17 +126,13 @@ class MenuItem
             . '<a class="nav-link dropdown-toggle" href="#" id="' . $menuId . '" data-toggle="dropdown"'
             . ' aria-haspopup="true" aria-expanded="false">&nbsp; ' . \ucfirst($this->title) . '</a>'
             . '<ul class="dropdown-menu" aria-labelledby="' . $menuId . '">' : '<li class="dropdown-submenu">'
-            . '<a class="dropdown-item" href="#" id="' . $menuId . '"><i class="fa fa-folder-open fa-fw"'
-            . ' aria-hidden="true"></i>&nbsp; ' . \ucfirst($this->title) . '</a>'
+            . '<a class="dropdown-item' . $active . '" href="#" id="' . $menuId . '"><i class="fa fa-folder-open fa-fw"'
+            . ' aria-hidden="true"></i> &nbsp; ' . \ucfirst($this->title) . '</a>'
             . '<ul class="dropdown-menu" aria-labelledby="' . $menuId . '">';
 
         foreach ($this->menu as $menuItem) {
-            $extraClass = '';
-            if ($menuItem->active) {
-                $extraClass = 'active';
-            }
-
-            $html .= empty($menuItem->menu) ? '<li><a class="dropdown-item ' . $extraClass . '" href="' . $menuItem->url
+            $extraClass = $menuItem->active ? ' active' : '';
+            $html .= empty($menuItem->menu) ? '<li><a class="dropdown-item' . $extraClass . '" href="' . $menuItem->url
                 . '">' . $menuItem->getHTMLIcon() . '&nbsp; ' . \ucfirst($menuItem->title)
                 . '</a></li>' : $menuItem->getHTML($menuId);
         }

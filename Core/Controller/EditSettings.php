@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Lib\EmailTools;
 
 /**
@@ -105,6 +105,7 @@ class EditSettings extends ExtendedController\PanelController
         $pagedata['title'] = 'app-preferences';
         $pagedata['icon'] = 'fa-cogs';
         $pagedata['menu'] = 'admin';
+        $pagedata['submenu'] = 'control-panel';
 
         return $pagedata;
     }

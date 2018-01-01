@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Lib\Dashboard as DashboardLib;
 use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Response;
