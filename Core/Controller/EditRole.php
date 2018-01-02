@@ -23,11 +23,11 @@ use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Model;
 
 /**
- * Controller to edit a single item from the EditRol model.
+ * Controller to edit a single item from the Role model.
  *
  * @author Artex Trading sa <jferrer@artextrading.com>
  */
-class EditRol extends ExtendedController\PanelController
+class EditRole extends ExtendedController\PanelController
 {
 
     /**
@@ -35,13 +35,13 @@ class EditRol extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('\FacturaScripts\Dinamic\Model\Rol', 'EditRol', 'rol', 'fa-id-card');
-        $this->addEditListView('\FacturaScripts\Dinamic\Model\RolAccess', 'ListRolAccess', 'rules', 'fa fa-check-square');
-        $this->addEditListView('\FacturaScripts\Dinamic\Model\RolUser', 'EditRolUser', 'users', 'fa-address-card-o');
+        $this->addEditView('\FacturaScripts\Dinamic\Model\Role', 'EditRole', 'rol', 'fa-id-card');
+        $this->addEditListView('\FacturaScripts\Dinamic\Model\RoleAccess', 'ListRoleAccess', 'rules', 'fa fa-check-square');
+        $this->addEditListView('\FacturaScripts\Dinamic\Model\RoleUser', 'EditRoleUser', 'users', 'fa-address-card-o');
 
         /// Disable columns
-        $this->views['ListRolAccess']->disableColumn('pagename', true);
-        $this->views['EditRolUser']->disableColumn('role', true);
+        $this->views['ListRoleAccess']->disableColumn('pagename', true);
+        $this->views['EditRoleUser']->disableColumn('role', true);
     }
 
     /**
@@ -53,14 +53,14 @@ class EditRol extends ExtendedController\PanelController
     protected function loadData($keyView, $view)
     {
         switch ($keyView) {
-            case 'EditRol':
+            case 'EditRole':
                 $code = $this->request->get('code');
                 $view->loadData($code);
                 break;
 
-            case 'EditRolUser':
-            case 'ListRolAccess':
-                $codrol = $this->getViewModelValue('EditRol', 'codrol');
+            case 'EditRoleUser':
+            case 'ListRoleAccess':
+                $codrol = $this->getViewModelValue('EditRole', 'codrol');
                 $where = [new DataBaseWhere('codrol', $codrol)];
                 $view->loadData($where);
                 break;
@@ -75,7 +75,7 @@ class EditRol extends ExtendedController\PanelController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'rol';
+        $pagedata['title'] = 'role';
         $pagedata['menu'] = 'admin';
         $pagedata['icon'] = 'fa-id-card-o';
         $pagedata['showonmenu'] = false;
@@ -87,14 +87,14 @@ class EditRol extends ExtendedController\PanelController
      * Add the indicated page list to the Role group
      * and all users who are in that group
      *
-     * @param string $codRol
+     * @param string $codrol
      * @param Model\Page[] $pages
      * @throws \Exception
      */
-    private function addRolAccess($codRol, $pages)
+    private function addRoleAccess($codrol, $pages)
     {
         // add Pages to Rol
-        if (!Model\RolAccess::addPagesToRol($codRol, $pages)) {
+        if (!Model\RoleAccess::addPagesToRole($codrol, $pages)) {
             throw new \Exception(self::$i18n->trans('cancel-process'));
         }
     }
@@ -142,7 +142,7 @@ class EditRol extends ExtendedController\PanelController
 
                 $this->dataBase->beginTransaction();
                 try {
-                    $this->addRolAccess($codrol, $pages);
+                    $this->addRoleAccess($codrol, $pages);
                     $this->dataBase->commit();
                 } catch (\Exception $e) {
                     $this->dataBase->rollback();

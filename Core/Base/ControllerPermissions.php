@@ -20,7 +20,7 @@ namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\User;
-use FacturaScripts\Core\Model\RolUser;
+use FacturaScripts\Core\Model\RoleUser;
 
 /**
  * Description of ControllerPermissions
@@ -88,13 +88,13 @@ class ControllerPermissions
             $this->allowUpdate = true;
         }
 
-        $rolUserModel = new RolUser();
+        $roleUserModel = new RoleUser();
         $filter = [new DataBaseWhere('nick', $user->nick)];
-        foreach ($rolUserModel->all($filter) as $rolUser) {
-            foreach ($rolUser->getRolAccess($pageName) as $rolAccess) {
+        foreach ($roleUserModel->all($filter) as $roleUser) {
+            foreach ($roleUser->getRoleAccess($pageName) as $roleAccess) {
                 $this->allowAccess = true;
-                $this->allowDelete = $rolAccess->allowdelete ? true : $this->allowDelete;
-                $this->allowUpdate = $rolAccess->allowupdate ? true : $this->allowUpdate;
+                $this->allowDelete = $roleAccess->allowdelete ? true : $this->allowDelete;
+                $this->allowUpdate = $roleAccess->allowupdate ? true : $this->allowUpdate;
             }
         }
     }

@@ -19,18 +19,25 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
- * Define a permission package to quickly assign users.
+ * Defines the individual permissions for each page within a user role.
  *
  * @author Joe Nilson            <joenilson at gmail.com>
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Rol
+class RoleAccess
 {
 
-    use Base\ModelTrait {
-        url as private traitUrl;
-    }
+    use Base\ModelTrait;
+
+    /**
+     * Identifier.
+     *
+     * @var int
+     */
+    public $id;
 
     /**
      * Role code.
@@ -40,11 +47,25 @@ class Rol
     public $codrol;
 
     /**
-     * Description of the role.
+     * Name of the page.
      *
      * @var string
      */
-    public $descripcion;
+    public $pagename;
+
+    /**
+     * Permission to delete.
+     *
+     * @var bool
+     */
+    public $allowdelete;
+
+    /**
+     * Permission to update.
+     *
+     * @var bool
+     */
+    public $allowupdate;
 
     /**
      * Returns the name of the table that uses this model.
@@ -53,7 +74,7 @@ class Rol
      */
     public static function tableName()
     {
-        return 'fs_roles';
+        return 'fs_roles_access';
     }
 
     /**
@@ -63,31 +84,35 @@ class Rol
      */
     public function primaryColumn()
     {
-        return 'codrol';
+        return 'id';
     }
 
     /**
-     * Returns True if there is no erros on properties values.
-     * Se ejecuta dentro del método save.
+     * Add the indicated page list to the Role group
      *
+     * @param string $codrol
+     * @param Page[] $pages
      * @return bool
      */
-    public function test()
+    public static function addPagesToRole($codrol, $pages)
     {
-        $this->descripcion = self::noHtml($this->descripcion);
+        $where = [new DataBaseWhere('codrol', $codrol)];
+        $roleAccess = new RoleAccess();
 
+        foreach ($pages as $record) {
+            $where[] = new DataBaseWhere('pagename', $record->name);
+
+            if (!$roleAccess->loadFromCode('', $where)) {
+                $roleAccess->codrol = $codrol;
+                $roleAccess->pagename = $record->name;
+                $roleAccess->allowdelete = true;
+                $roleAccess->allowupdate = true;
+                if (!$roleAccess->save()) {
+                    return false;
+                }
+            }
+            unset($where[1]);
+        }
         return true;
-    }
-
-    /**
-     * Returns the url where to see/modify the data.
-     *
-     * @param string $type
-     *
-     * @return string
-     */
-    public function url($type = 'auto')
-    {
-        return $this->traitUrl($type, 'ListUser&active=List');
     }
 }

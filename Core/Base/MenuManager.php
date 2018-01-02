@@ -207,7 +207,7 @@ class MenuManager
             if ($submenuValue !== $page->submenu) {
                 $submenuValue = $page->submenu;
                 $menuItem = &$result[$menuValue]->menu;
-                if ($submenuValue !== '') {
+                if (!empty($submenuValue)) {
                     $menuItem[$submenuValue] = new MenuItem($submenuValue, $i18n->trans($submenuValue), '#');
                     $menuItem = &$menuItem[$submenuValue]->menu;
                 }
@@ -274,11 +274,11 @@ class MenuManager
     private function getUserAccess($nick)
     {
         $access = [];
-        $rolUserModel = new Model\RolUser();
+        $roleUserModel = new Model\RoleUser();
         $filter = [new DataBase\DataBaseWhere('nick', $nick)];
-        foreach ($rolUserModel->all($filter) as $rolUser) {
-            foreach($rolUser->getRolAccess() as $rolAccess) {
-                $access[] = $rolAccess;
+        foreach ($roleUserModel->all($filter) as $roleUser) {
+            foreach($roleUser->getRoleAccess() as $roleAccess) {
+                $access[] = $roleAccess;
             }
         }
 
