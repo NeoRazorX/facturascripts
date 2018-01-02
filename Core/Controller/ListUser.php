@@ -41,11 +41,11 @@ class ListUser extends ExtendedController\ListController
         $this->addOrderBy('ListUser', 'email');
 
         /* Roles */
-        $this->addView('\FacturaScripts\Dinamic\Model\Rol', 'ListRol', 'roles', 'fa-address-card-o');
-        $this->addSearchFields('ListRol', ['codrol', 'descripcion']);
+        $this->addView('\FacturaScripts\Dinamic\Model\Role', 'ListRole', 'roles', 'fa-address-card-o');
+        $this->addSearchFields('ListRole', ['codrol', 'descripcion']);
 
-        $this->addOrderBy('ListRol', 'descripcion', 'description');
-        $this->addOrderBy('ListRol', 'codrol', 'code');
+        $this->addOrderBy('ListRole', 'descripcion', 'description');
+        $this->addOrderBy('ListRole', 'codrol', 'code');
     }
 
     /**

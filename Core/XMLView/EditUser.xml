@@ -48,19 +48,19 @@
             </column>
         </group>
         <group name="other" numcolumns="12">
-            <column name="company" numcolumns="4" order="210">
+            <column name="homepage" numcolumns="4" order="100">
+                <widget type="select" fieldname="homepage">
+                    <values></values>
+                </widget>
+            </column>
+            <column name="company" numcolumns="4" order="100">
                 <widget type="select" fieldname="idempresa">
                     <values source="empresas" fieldcode="id" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="lang-code" numcolumns="4" order="210">
+            <column name="lang-code" numcolumns="4" order="100">
                 <widget type="select" fieldname="langcode">
                     <values></values>
-                </widget>
-            </column>
-            <column name="homepage" numcolumns="4" order="110">
-                <widget type="select" fieldname="homepage">
-                    <values source="fs_pages" fieldcode="name" fieldtitle="title"></values>
                 </widget>
             </column>
         </group>

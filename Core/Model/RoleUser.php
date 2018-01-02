@@ -22,12 +22,12 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * Defines the individual permissions for each page within a user role.
+ * Defines the relationship between a user and a role.
  *
  * @author Joe Nilson            <joenilson at gmail.com>
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Carlos García Gómez   <carlos@facturascripts.com>
  */
-class RolAccess
+class RoleUser
 {
 
     use Base\ModelTrait;
@@ -47,25 +47,11 @@ class RolAccess
     public $codrol;
 
     /**
-     * Name of the page.
+     * Nick.
      *
      * @var string
      */
-    public $pagename;
-
-    /**
-     * Permission to delete.
-     *
-     * @var bool
-     */
-    public $allowdelete;
-
-    /**
-     * Permission to update.
-     *
-     * @var bool
-     */
-    public $allowupdate;
+    public $nick;
 
     /**
      * Returns the name of the table that uses this model.
@@ -74,7 +60,7 @@ class RolAccess
      */
     public static function tableName()
     {
-        return 'fs_roles_access';
+        return 'fs_roles_users';
     }
 
     /**
@@ -88,31 +74,66 @@ class RolAccess
     }
 
     /**
-     * Add the indicated page list to the Role group
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
-     * @param string $codRol
-     * @param Page[] $pages
+     * @return string
+     */
+    public function install()
+    {
+        new Role();
+        
+        return '';
+    }
+
+    /**
+     * Returns True if there is no erros on properties values.
+     *
      * @return bool
      */
-    public static function addPagesToRol($codRol, $pages)
+    public function test()
     {
-        $where = [new DataBaseWhere('codrol', $codRol)];
-        $rolAccess = new RolAccess();
-
-        foreach ($pages as $record) {
-            $where[] = new DataBaseWhere('pagename', $record->name);
-
-            if (!$rolAccess->loadFromCode('', $where)) {
-                $rolAccess->codrol = $codRol;
-                $rolAccess->pagename = $record->name;
-                $rolAccess->allowdelete = true;
-                $rolAccess->allowupdate = true;
-                if (!$rolAccess->save()) {
-                    return false;
-                }
-            }
-            unset($where[1]);
+        if (empty($this->nick)) {
+            self::$miniLog->alert(self::$i18n->trans('nick-is-empty'));
+            return false;
         }
+
+        if (empty($this->codrol)) {
+            self::$miniLog->alert(self::$i18n->trans('role-is-empty'));
+            return false;
+        }
+
         return true;
+    }
+
+    /**
+     * Return the user role access.
+     * If $pageName is empty, return role access for all pages.
+     * Else return only role access for specified $pageName.
+     *
+     * @param string $pageName
+     *
+     * @return RoleAccess[]
+     */
+    public function getRoleAccess($pageName = '')
+    {
+        $accesses = [];
+        $roleAccessModel = new RoleAccess();
+
+        if (empty($this->nick)) {
+            return [];
+        }
+
+        $filter = [new DataBaseWhere('codrol', $this->codrol)];
+        if (!empty($pageName)) {
+            $filter[] = new DataBaseWhere('pagename', $pageName);
+        }
+
+        foreach ($roleAccessModel->all($filter) as $roleAccess) {
+            $accesses[] = $roleAccess;
+        }
+
+        return $accesses;
     }
 }
