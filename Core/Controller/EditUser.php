@@ -91,12 +91,15 @@ class EditUser extends ExtendedController\PanelController
         $user = new Model\User();
         $code = $this->request->get('code');
 
+        $userPages = [
+            ['value' => '---null---', 'title' => '------']
+        ];
         if ($user->loadFromCode($code)) {
             $userPages = $this->getUserPages($user);
-
-            $columnHomepage = $this->views['EditUser']->columnForName('homepage');
-            $columnHomepage->widget->setValuesFromArray($userPages);
         }
+
+        $columnHomepage = $this->views['EditUser']->columnForName('homepage');
+        $columnHomepage->widget->setValuesFromArray($userPages);
     }
 
     /**
