@@ -11,7 +11,7 @@ php:
 install: travis_retry composer install --no-interaction --prefer-source
 
 script:
-  - vendor/bin/phpcs --standard=phpcs.xml Core -s
+  - vendor/bin/phpcs --tab-width=4 --encoding=utf-8 --standard=phpcs.xml Core -s
 
 matrix:
   include:
