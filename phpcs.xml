@@ -36,6 +36,10 @@
         <type>warning</type>
     </rule>
 
+    <rule ref="PSR2.ControlStructures.ElseIfDeclaration.NotAllowed">
+        <type>warning</type>
+    </rule>
+
     <!--
     See the [documented coding standard](http://symfony.com/doc/current/contributing/code/standards.html)
     This CodeSniffer standard does not yet enforce the following:
@@ -78,6 +82,10 @@
     </rule>
 
     <rule ref="Generic.Files.LineLength.MaxExceeded">
+        <type>warning</type>
+    </rule>
+
+    <rule ref="Generic.Files.LineLength.TooLong">
         <type>warning</type>
     </rule>
 
@@ -207,7 +215,7 @@
 
     <!-- Ignore variables that contains numbers -->
     <rule ref="Zend.NamingConventions.ValidVariableName.ContainsNumbers">
-        <severity>0</severity>
+        <type>warning</type>
     </rule>
 
     <rule ref="Zend.NamingConventions.ValidVariableName.NotCamelCaps">
@@ -215,6 +223,10 @@
     </rule>
 
     <rule ref="Zend.NamingConventions.ValidVariableName.MemberVarNotCamelCaps">
+        <type>warning</type>
+    </rule>
+
+    <rule ref="Zend.NamingConventions.ValidVariableName.MemberVarContainsNumbers">
         <type>warning</type>
     </rule>
 
