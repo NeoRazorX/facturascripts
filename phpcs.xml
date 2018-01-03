@@ -1,0 +1,229 @@
+<?xml version="1.0"?>
+<ruleset name="PHP_CodeSniffer">
+    <description>Coding standard ruleset based on the PSR-1/PSR-2 coding standard.</description>
+
+    <file>Core</file>
+    <file>Test</file>
+
+    <!-- There should not be any code in the bundle Resources directory. -->
+    <exclude-pattern>Core/Assets/*/*\.(inc|css|js)</exclude-pattern>
+
+    <!-- FacturaScripts follows the standards defined in the PSR-0, PSR-1 and PSR-2 documents. -->
+
+    <!-- Include the whole PSR-1 standard -->
+    <rule ref="PSR1"/>
+
+    <!-- Include the whole PSR-2 standard -->
+    <rule ref="PSR2" />
+
+    <rule ref="PSR2.Methods.FunctionCallSignature.MultipleArguments">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="PSR2.Methods.FunctionCallSignature.CloseBracketLine">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="PSR2.Methods.FunctionCallSignature.Indent">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="PSR2.ControlStructures.ControlStructureSpacing.SpaceBeforeCloseBrace">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="PSR2.ControlStructures.ElseIfDeclaration.NotAllowed">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Some Generic standard -->
+
+    <rule ref="Generic.ControlStructures.InlineControlStructure">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Generic.Formatting.SpaceAfterCast">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Generic.Functions.CallTimePassByReference">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Generic.NamingConventions.UpperCaseConstantName">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Generic.PHP.LowerCaseConstant">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="120"/>
+        </properties>
+    </rule>
+
+    <rule ref="Generic.Strings.UnnecessaryStringConcat.Found">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Generic.Files.LineLength.MaxExceeded">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Generic.Files.LineLength.TooLong">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Generic.Files.LineEndings.InvalidEOLChar">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Generic.WhiteSpace.ScopeIndent.IncorrectExact">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Generic.WhiteSpace.ScopeIndent.Incorrect">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Generic.Formatting.DisallowMultipleStatements.SameLine">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Some Squiz standard -->
+
+    <rule ref="Squiz.Arrays.ArrayBracketSpacing">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Squiz.ControlStructures.ControlSignature">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Squiz.ControlStructures.ForLoopDeclaration">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Squiz.ControlStructures.LowercaseDeclaration">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Squiz.PHP.LowercasePHPFunctions">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Squiz.Scope.MemberVarScope">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Squiz.ControlStructures.ControlSignature.SpaceAfterCloseParenthesis">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
+        <properties>
+            <property name="ignoreBlankLines" value="false"/>
+        </properties>
+    </rule>
+
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EmptyLines">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EndLine">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Squiz.ControlStructures.ControlSignature.SpaceAfterKeyword">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Squiz.WhiteSpace.ScopeClosingBrace.Indent">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Squiz.Strings.ConcatenationSpacing">
+        <properties>
+            <property name="spacing" value="1"/>
+            <property name="ignoreNewlines" value="true" />
+        </properties>
+    </rule>
+
+    <!-- We provide our own subclass of PEAR's ClassComment and FunctionComment sniff, but these will do: -->
+    <rule ref="PEAR.Commenting.InlineComment"/>
+
+    <rule ref="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="PEAR.Functions.FunctionCallSignature.SpaceAfterCloseBracket">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="PEAR.Functions.FunctionCallSignature.CloseBracketLine">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="PEAR.Functions.FunctionCallSignature.Indent">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="PEAR.Functions.ValidDefaultValue.NotAtEnd">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="PEAR.WhiteSpace.ScopeClosingBrace.Indent">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Import Zend coding standard (which in turn imports PEAR) -->
+    <rule ref="Zend">
+        <!-- but exclude their code analyzer -->
+        <exclude name="Zend.Debug.CodeAnalyzer"/>
+
+        <!-- covered by Squiz ControlSignature, which enforces try/catch as well -->
+        <exclude name="PEAR.ControlStructures.ControlSignature"/>
+
+        <exclude name="PEAR.Commenting.FunctionComment.SpacingBeforeTags"/>
+
+        <!-- covered by Squiz FunctionDeclarationSniff -->
+        <exclude name="Generic.Functions.OpeningFunctionBraceBsdAllman.BraceOnSameLine"/>
+    </rule>
+
+    <!-- Don't enforce Zend's private member underscores -->
+    <rule ref="Zend.NamingConventions.ValidVariableName.PrivateNoUnderscore">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Ignore variables that contains numbers -->
+    <rule ref="Zend.NamingConventions.ValidVariableName.ContainsNumbers">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Zend.NamingConventions.ValidVariableName.NotCamelCaps">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Zend.NamingConventions.ValidVariableName.MemberVarNotCamelCaps">
+        <severity>0</severity>
+    </rule>
+
+    <rule ref="Zend.NamingConventions.ValidVariableName.MemberVarContainsNumbers">
+        <severity>0</severity>
+    </rule>
+
+    <!-- The testing bootstrap file uses string concats to stop IDEs seeing the class aliases -->
+    <rule ref="Generic.Strings.UnnecessaryStringConcat">
+        <exclude-pattern>Test/bootstrap.php</exclude-pattern>
+    </rule>
+</ruleset>
