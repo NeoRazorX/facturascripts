@@ -896,7 +896,7 @@
     "error-updating-product-stock": "¡Error al actualizar el stock del artículo!",
     "error-saving-stock": "¡Error al guardar el stock!",
     "product-reference-not-valid": "Referencia de artículo no válida: %reference%. Debe tener entre 1 y 18 caracteres.",
-    "product-equivalence-not-valid": "Código de equivalencia del artículos no válido: %equivalence%. Debe tener entre 1 y 25 caracteres.",
+    "product-equivalence-not-valid": "Código de equivalencia del artículo no válido: %equivalence%. Debe tener entre 1 y 25 caracteres.",
     "supplier-reference-valid-length": "La referencia de proveedor debe contener entre 1 y 25 caracteres.",
     "concept-seat-too-large": "Concepto del asiento demasiado largo.",
     "subaccount-belongs-other-year": "La subcuenta %subAccountCode% pertenece a otro ejercicio.",
