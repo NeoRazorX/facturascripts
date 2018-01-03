@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base;
+namespace FacturaScripts\Core\Lib;
 
 /**
  * Structure for each of the items in the FacturaScripts menu.
