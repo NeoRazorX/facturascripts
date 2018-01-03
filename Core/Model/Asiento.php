@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2014-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,7 +29,7 @@ class Asiento
 {
 
     use Base\ModelTrait {
-        saveInsert as private saveInsertTrait;
+        saveInsert as private traitSaveInsert;
     }
 
     /**
@@ -143,23 +143,22 @@ class Asiento
     {
         return 'idasiento';
     }
+    
+    public function install()
+    {
+        new Ejercicio();
+        
+        return '';
+    }
 
     /**
      * Reset the values of all model properties.
      */
     public function clear()
     {
-        $this->idasiento = null;
-        $this->numero = null;
-        $this->idconcepto = null;
-        $this->concepto = null;
         $this->fecha = date('d-m-Y');
-        $this->codejercicio = null;
-        $this->codplanasiento = null;
         $this->editable = true;
-        $this->documento = null;
-        $this->tipodocumento = null;
-        $this->importe = 0;
+        $this->importe = 0.0;
     }
 
     /**
@@ -181,37 +180,6 @@ class Asiento
         }
 
         return false;
-    }
-
-    /**
-     * Returns the url of the invoice associated with the seat.
-     *
-     * @return string
-     */
-    public function facturaUrl()
-    {
-        $fac = $this->getFactura();
-        if ($fac) {
-            return $fac->url();
-        }
-
-        return '#';
-    }
-
-    /**
-     * Returns the url to the exercise associated with the seat.
-     *
-     * @return string
-     */
-    public function ejercicioUrl()
-    {
-        $ejercicio = new Ejercicio();
-        $eje0 = $ejercicio->get($this->codejercicio);
-        if ($eje0) {
-            return $eje0->url();
-        }
-
-        return '#';
     }
 
     /**
@@ -661,6 +629,6 @@ class Asiento
     {
         $this->newNumero();
 
-        return $this->saveInsertTrait();
+        return $this->traitSaveInsert();
     }
 }

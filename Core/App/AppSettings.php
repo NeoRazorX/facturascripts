@@ -69,6 +69,15 @@ class AppSettings
 
         return self::$data[$group][$property];
     }
+    
+    public function set($group, $property, $value)
+    {
+        if (!isset(self::$data[$group])) {
+            self::$data[$group] = [];
+        }
+        
+        self::$data[$group][$property] = $value;
+    }
 
     /**
      * Load default App Settings.
@@ -100,7 +109,7 @@ class AppSettings
     /**
      * Store the model data in the database.
      */
-    private function save()
+    public function save()
     {
         foreach (self::$data as $key => $value) {
             $settings = new Settings();
