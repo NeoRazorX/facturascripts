@@ -34,14 +34,10 @@
             <widget type="text" fieldname="codpais" />
         </column>
         <column name="latitude" display="right" order="140">
-            <widget type="number" decimal="4" fieldname="latitud">
-                <option>&lt;1</option>
-            </widget>
+            <widget type="number" decimal="4" fieldname="latitud" />
         </column>
         <column name="longitude" display="right" order="150">
-            <widget type="number" decimal="4" fieldname="longitud">
-                <option>&lt;1</option>
-            </widget>
+            <widget type="number" decimal="4" fieldname="longitud" />
         </column>
         <column name="review-date" order="160">
             <widget type="text" fieldname="fecha_revision" />
