@@ -123,8 +123,7 @@ class AppController extends App
             return $user->homepage;
         }
 
-        $homePage = AppSettings::get('default', 'homepage', 'AdminHome');
-        return $this->request->cookies->get('fsHomepage', $homePage);
+        return AppSettings::get('default', 'homepage', 'Wizard');
     }
 
     /**
@@ -302,7 +301,6 @@ class AppController extends App
                     $expire = time() + FS_COOKIES_EXPIRE;
                     $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, $expire));
                     $this->response->headers->setCookie(new Cookie('fsLogkey', $logKey, $expire));
-                    $this->response->headers->setCookie(new Cookie('fsHomepage', $user->homepage, $expire));
                     $this->response->headers->setCookie(new Cookie('fsLang', $user->langcode, $expire));
                     $this->response->headers->setCookie(new Cookie('fsCompany', $user->idempresa, $expire));
                     $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $nick]));

@@ -168,7 +168,7 @@ class User
 
         return 'INSERT INTO ' . static::tableName() . " (nick,password,admin,enabled,idempresa,langcode,homepage,level)"
             . " VALUES ('admin','" . password_hash('admin', PASSWORD_DEFAULT)
-            . "',TRUE,TRUE,'1','" . FS_LANG . "','AdminHome','99');";
+            . "',TRUE,TRUE,'1','" . FS_LANG . "','Wizard','99');";
     }
 
     /**
