@@ -123,7 +123,7 @@ class AppController extends App
             return $user->homepage;
         }
 
-        return AppSettings::get('default', 'homepage', 'AdminHome');
+        return AppSettings::get('default', 'homepage', 'Wizard');
     }
 
     /**

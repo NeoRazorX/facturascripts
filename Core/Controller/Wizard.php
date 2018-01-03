@@ -62,6 +62,9 @@ class Wizard extends Controller
             $appSettings->save();
             $this->initModels();
             
+            $this->user->homepage = 'AdminHome';
+            $this->user->save();
+            
             /// redir to EditSettings
             $this->response->headers->set('Refresh', '1; index.php?page=EditSettings');
         }
@@ -74,5 +77,6 @@ class Wizard extends Controller
         new Model\Almacen();
         new Model\FormaPago();
         new Model\Impuesto();
+        new Model\Serie();
     }
 }

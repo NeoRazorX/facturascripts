@@ -99,7 +99,7 @@ class AppSettings
             'FS_ITEM_LIMIT' => ['property' => 'item_limit', 'default' => 50],
         ];
         $this->setConstants($constants);
-        static::get('default', 'homepage', 'AdminHome');
+        static::get('default', 'homepage', 'Wizard');
 
         if (self::$save) {
             $this->save();
