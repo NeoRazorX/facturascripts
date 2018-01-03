@@ -68,17 +68,6 @@ class GroupItem extends VisualItem implements VisualItemInterface
     }
 
     /**
-     * Class construct and initialization
-     */
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->icon = null;
-        $this->columns = [];
-    }
-
-    /**
      * Sorts the columns
      *
      * @param ColumnItem $column1
@@ -93,6 +82,17 @@ class GroupItem extends VisualItem implements VisualItemInterface
         }
 
         return ($column1->order < $column2->order) ? -1 : 1;
+    }
+
+    /**
+     * Class construct and initialization
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->icon = null;
+        $this->columns = [];
     }
 
     /**
