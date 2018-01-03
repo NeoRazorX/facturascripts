@@ -54,12 +54,6 @@
                     <values source="fs_pages" fieldcode="menu" fieldtitle="menu"></values>
                 </widget>
             </column>
-
-            <column name="select-submenu" title="submenu">
-                <widget type="select" fieldname="submenu">
-                    <values source="fs_pages" fieldcode="submenu" fieldtitle="submenu"></values>
-                </widget>
-            </column>
         </group>
     </modals>
 </view>

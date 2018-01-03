@@ -108,17 +108,12 @@ class EditRole extends ExtendedController\PanelController
     private function getPages()
     {
         $menu = $this->request->get('menu', '---null---');
-        $submenu = $this->request->get('submenu', '---null---');
         if ($menu === '---null---') {
             return [];
         }
 
-        $where = [new DataBaseWhere('menu', $menu)];
-        if ($submenu !== '---null---') {
-            $where[] = new DataBaseWhere('submenu', $submenu);
-        }
-
         $page = new Model\Page();
+        $where = [new DataBaseWhere('menu', $menu)];
         return $page->all($where);
     }
 
