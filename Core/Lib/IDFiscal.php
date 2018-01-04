@@ -32,7 +32,7 @@ class IDFiscal
      *
      * @return string
      */
-    public function defaultValue()
+    public static function defaultValue()
     {
         return 'CIF/NIF';
     }
@@ -42,7 +42,7 @@ class IDFiscal
      *
      * @return array
      */
-    public function all()
+    public static function all()
     {
         return ['CIF/NIF', 'Pasaporte', 'DNI', 'NIF', 'CIF', 'VAT', 'CUIT'];
     }

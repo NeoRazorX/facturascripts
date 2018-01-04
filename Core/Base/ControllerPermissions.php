@@ -20,8 +20,7 @@ namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\User;
-use FacturaScripts\Core\Model\RolAccess;
-use FacturaScripts\Core\Model\RolUser;
+use FacturaScripts\Core\Model\RoleUser;
 
 /**
  * Description of ControllerPermissions
@@ -32,27 +31,28 @@ class ControllerPermissions
 {
 
     /**
-     *
-     * @var bool 
+     * Have permissitions to access data.
+     * @var bool
      */
     public $allowAccess;
 
     /**
-     *
-     * @var bool 
+     * Have permissitions to delete data.
+     * @var bool
      */
     public $allowDelete;
 
     /**
-     *
-     * @var bool 
+     * Have permissions to update data.
+     * @var bool
      */
     public $allowUpdate;
 
     /**
-     * 
-     * @param User|false $user
-     * @param string $pageName
+     * ControllerPermissions constructor.
+     *
+     * @param User|bool $user
+     * @param string|null $pageName
      */
     public function __construct($user = false, $pageName = null)
     {
@@ -63,6 +63,9 @@ class ControllerPermissions
         }
     }
 
+    /**
+     * Reset the values of all model properties.
+     */
     public function clear()
     {
         $this->allowAccess = false;
@@ -71,7 +74,8 @@ class ControllerPermissions
     }
 
     /**
-     * 
+     * Load permissions from $user
+     *
      * @param User $user
      * @param string $pageName
      */
@@ -84,19 +88,13 @@ class ControllerPermissions
             $this->allowUpdate = true;
         }
 
-        $rolUserModel = new RolUser();
-        $rolAccessModel = new RolAccess();
-
-        $filter1 = [new DataBaseWhere('nick', $user->nick)];
-        foreach ($rolUserModel->all($filter1) as $rolUser) {
-            $filter2 = [
-                new DataBaseWhere('codrol', $rolUser->codrol),
-                new DataBaseWhere('pagename', $pageName)
-            ];
-            foreach ($rolAccessModel->all($filter2) as $rolAccess) {
+        $roleUserModel = new RoleUser();
+        $filter = [new DataBaseWhere('nick', $user->nick)];
+        foreach ($roleUserModel->all($filter) as $roleUser) {
+            foreach ($roleUser->getRoleAccess($pageName) as $roleAccess) {
                 $this->allowAccess = true;
-                $this->allowDelete = $rolAccess->allowdelete ? true : $this->allowDelete;
-                $this->allowUpdate = $rolAccess->allowupdate ? true : $this->allowUpdate;
+                $this->allowDelete = $roleAccess->allowdelete ? true : $this->allowDelete;
+                $this->allowUpdate = $roleAccess->allowupdate ? true : $this->allowUpdate;
             }
         }
     }

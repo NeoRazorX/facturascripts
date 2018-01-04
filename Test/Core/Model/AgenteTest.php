@@ -94,7 +94,7 @@ final class AgenteTest extends TestCase
 
         $this->assertInternalType(
             'string',
-            $model->fullName()
+            $model->primaryDescription()
         );
 
         $this->assertTrue($model->test());

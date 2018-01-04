@@ -29,6 +29,13 @@ interface DataBaseEngine
 {
 
     /**
+     * Indicates the operator for the database engine
+     * 
+     * @param string $operator
+     */
+    public function getOperator($operator);
+
+    /**
      * Returns the link to the engine's SQL class
      *
      * @return DataBaseSQL

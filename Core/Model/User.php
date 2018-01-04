@@ -167,7 +167,8 @@ class User
         self::$miniLog->info(self::$i18n->trans('created-default-admin-account'));
 
         return 'INSERT INTO ' . static::tableName() . " (nick,password,admin,enabled,idempresa,langcode,homepage,level)"
-            . " VALUES ('admin','" . password_hash('admin', PASSWORD_DEFAULT) . "',TRUE,TRUE,'1','" . FS_LANG . "','AdminHome',99);";
+            . " VALUES ('admin','" . password_hash('admin', PASSWORD_DEFAULT)
+            . "',TRUE,TRUE,'1','" . FS_LANG . "','Wizard','99');";
     }
 
     /**
@@ -180,6 +181,7 @@ class User
         $this->homepage = 'Dashboard';
         $this->idempresa = AppSettings::get('default', 'idempresa', 1);
         $this->enabled = true;
+        $this->level = 1;
     }
 
     /**
@@ -286,7 +288,7 @@ class User
         }
 
         if (isset($this->newPassword) && isset($this->newPassword2) && $this->newPassword !== '' && $this->newPassword2 !== '') {
-            if($this->newPassword !== $this->newPassword2) {
+            if ($this->newPassword !== $this->newPassword2) {
                 self::$miniLog->alert(self::$i18n->trans('different-passwords', ['%userNick%' => $this->nick]));
 
                 return false;

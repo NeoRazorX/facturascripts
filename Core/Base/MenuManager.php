@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\Lib\MenuItem;
 use FacturaScripts\Core\Model;
 
 /**
@@ -103,8 +104,9 @@ class MenuManager
     private function pageNeedSave($pageModel, $pageData)
     {
         return (
-            ($pageModel->menu !== $pageData['menu']) || ($pageModel->title !== $pageData['title']) ||
-            ($pageModel->icon !== $pageData['icon']) || ($pageModel->showonmenu !== $pageData['showonmenu'])
+            ($pageModel->menu !== $pageData['menu']) || ($pageModel->submenu !== $pageData['submenu']) ||
+            ($pageModel->title !== $pageData['title']) || ($pageModel->icon !== $pageData['icon']) ||
+            ($pageModel->showonmenu !== $pageData['showonmenu'])
         );
     }
 
@@ -164,6 +166,10 @@ class MenuManager
             if ($menuItem->name === $pageModel->name) {
                 $menu[$key]->active = true;
                 break;
+            } elseif (!empty($pageModel->submenu) && !empty($menuItem->menu) && $menuItem->name === $pageModel->submenu) {
+                $menu[$key]->active = true;
+                $this->setActiveMenuItem($menu[$key]->menu, $pageModel);
+                break;
             }
         }
     }
@@ -202,7 +208,7 @@ class MenuManager
             if ($submenuValue !== $page->submenu) {
                 $submenuValue = $page->submenu;
                 $menuItem = &$result[$menuValue]->menu;
-                if ($submenuValue !== '') {
+                if (!empty($submenuValue)) {
                     $menuItem[$submenuValue] = new MenuItem($submenuValue, $i18n->trans($submenuValue), '#');
                     $menuItem = &$menuItem[$submenuValue]->menu;
                 }
@@ -258,25 +264,25 @@ class MenuManager
 
         return $result;
     }
-    
+
     /**
      * Returns all access data from the user.
-     * 
+     *
      * @param string $nick
-     * 
-     * @return Model\RolAccess[]
+     *
+     * @return Model\RoleAccess[]
      */
     private function getUserAccess($nick)
     {
         $access = [];
-        $rolUserModel = new Model\RolUser();
-        $rolAccessModel = new Model\RolAccess();
-        foreach($rolUserModel->all([new DataBase\DataBaseWhere('nick', $nick)]) as $rol) {
-            foreach($rolAccessModel->all([new DataBase\DataBaseWhere('codrol', $rol->codrol)]) as $rolAccess) {
-                $access[] = $rolAccess;
+        $roleUserModel = new Model\RoleUser();
+        $filter = [new DataBase\DataBaseWhere('nick', $nick)];
+        foreach ($roleUserModel->all($filter) as $roleUser) {
+            foreach ($roleUser->getRoleAccess() as $roleAccess) {
+                $access[] = $roleAccess;
             }
         }
-        
+
         return $access;
     }
 }

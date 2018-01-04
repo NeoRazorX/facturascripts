@@ -31,21 +31,15 @@
             <column name="name" numcolumns="3" order="100" description="desc-custommer-name">
                 <widget type="text" fieldname="nombre" required="true" hint="desc-custommer-name-2" />
             </column>
-            <column name="business-name" title="business-name" numcolumns="3" order="100" description="desc-business-name">
+            <column name="business-name" numcolumns="3" order="100" description="desc-business-name">
                 <widget type="text" fieldname="razonsocial" required="true" />
             </column>
-            <column name="fiscal-id" title="fiscal-id" numcolumns="2" order="100">
+            <column name="fiscal-id" numcolumns="2" order="100">
                 <widget type="select" fieldname="tipoidfiscal">
-                    <values title="CIF/NIF">CIF/NIF</values>
-                    <values title="Pasaporte">PASAPORTE</values>
-                    <values title="DNI">DNI</values>
-                    <values title="NIF">NIF</values>
-                    <values title="CIF">CIF</values>
-                    <values title="VAT">VAT</values>
-                    <values title="CUIT">CUIT</values>
+                    <values></values>
                 </widget>
             </column>
-            <column name="fiscal-number" title="cifnif" numcolumns="2" order="100">
+            <column name="fiscal-number" numcolumns="2" order="100">
                 <widget type="text" fieldname="cifnif" required="true" />
             </column>
             <column name="fiscal-mode" title="is-person" order="100">
@@ -83,8 +77,7 @@
             </column>
             <column name="vat-type" title="vat-regime" numcolumns="3" order="100">
                 <widget type="select" fieldname="regimeniva">
-                    <values title="General">general</values>
-                    <values title="Exento">exento</values>
+                    <values></values>
                 </widget>
             </column>
         </group>
@@ -123,7 +116,7 @@
         </group>
     </columns>
     <rows>
-        <row type="header">
+        <row type="statistics">
             <button type="calculate" icon="fa-files-o" label="delivery-notes-button" action="calcClientDeliveryNotes" />
             <button type="calculate" icon="fa-money" label="pending-invoices-button" action="calcClientInvoicePending" />
         </row>

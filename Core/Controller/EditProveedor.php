@@ -16,11 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Model;
+use FacturaScripts\Core\Lib;
 
 /**
  * Controller to edit a single item from the Proveedor model
@@ -32,18 +33,35 @@ class EditProveedor extends ExtendedController\PanelController
 {
 
     /**
-     * Load views
+     * Create and configure main view
+     */
+    private function addMainView()
+    {
+        $this->addEditView('\FacturaScripts\Dinamic\Model\Proveedor', 'EditProveedor', 'supplier');
+
+        /// Load values option to Fiscal ID select input
+        $columnFiscalID = $this->views['EditProveedor']->columnForName('fiscal-id');
+        $columnFiscalID->widget->setValuesFromArray(Lib\IDFiscal::all());
+
+        /// Load values option to VAT Type select input
+        $columnVATType = $this->views['EditProveedor']->columnForName('vat-type');
+        $columnVATType->widget->setValuesFromArray(Lib\RegimenIVA::all());
+    }
+
+    /**
+     * Create views
      */
     protected function createViews()
     {
-        $this->addEditView('\FacturaScripts\Dinamic\Model\Proveedor', 'EditProveedor', 'supplier');
+        $this->addMainView();
+
         $this->addEditListView('\FacturaScripts\Dinamic\Model\DireccionProveedor', 'EditDireccionProveedor', 'addresses', 'fa-road');
         $this->addEditListView('\FacturaScripts\Dinamic\Model\CuentaBancoProveedor', 'EditCuentaBancoProveedor', 'bank-accounts', 'fa-university');
         $this->addListView('\FacturaScripts\Dinamic\Model\ArticuloProveedor', 'ListArticuloProveedor', 'products', 'fa-cubes');
         $this->addListView('\FacturaScripts\Dinamic\Model\FacturaProveedor', 'ListFacturaProveedor', 'invoices', 'fa-files-o');
         $this->addListView('\FacturaScripts\Dinamic\Model\AlbaranProveedor', 'ListAlbaranProveedor', 'delivery-notes', 'fa-files-o');
         $this->addListView('\FacturaScripts\Dinamic\Model\PedidoProveedor', 'ListPedidoProveedor', 'orders', 'fa-files-o');
-        
+
         /// Disable columns
         $this->views['ListArticuloProveedor']->disableColumn('supplier', true);
     }
@@ -86,8 +104,43 @@ class EditProveedor extends ExtendedController\PanelController
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'supplier';
         $pagedata['icon'] = 'fa-users';
+        $pagedata['menu'] = 'purchases';
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    /**
+     * Returns the sum of the customer's total delivery notes.
+     *
+     * @param ExtendedController\EditView $view
+     *
+     * @return string
+     */
+    public function calcSupplierDeliveryNotes($view)
+    {
+        $where = [];
+        $where[] = new DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'));
+        $where[] = new DataBaseWhere('ptefactura', true);
+
+        $totalModel = Model\TotalModel::all('albaranesprov', $where, ['total' => 'SUM(total)'], '')[0];
+        return $this->divisaTools->format($totalModel->totals['total'], 2);
+    }
+
+    /**
+     * Returns the sum of the client's total outstanding invoices.
+     *
+     * @param ExtendedController\EditView $view
+     *
+     * @return string
+     */
+    public function calcSupplierInvoicePending($view)
+    {
+        $where = [];
+        $where[] = new DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor'));
+        $where[] = new DataBaseWhere('estado', 'Pagado', '<>');
+
+        $totalModel = Model\TotalModel::all('recibosprov', $where, ['total' => 'SUM(importe)'], '')[0];
+        return $this->divisaTools->format($totalModel->totals['total'], 2);
     }
 }

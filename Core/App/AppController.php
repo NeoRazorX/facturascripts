@@ -123,8 +123,7 @@ class AppController extends App
             return $user->homepage;
         }
 
-        $homePage = AppSettings::get('default', 'homepage', 'AdminHome');
-        return $this->request->cookies->get('fsHomepage', $homePage);
+        return AppSettings::get('default', 'homepage', 'Wizard');
     }
 
     /**
@@ -216,6 +215,7 @@ class AppController extends App
 
         /// HTML template variables
         $templateVars = [
+            'appSettings' => new AppSettings(),
             'controllerName' => $controllerName,
             'debugBarRender' => false,
             'fsc' => $this->controller,
@@ -254,22 +254,32 @@ class AppController extends App
 
     /**
      * Returns a TwigLoader object with the folders selecteds
+     * 
      * @return Twig_Loader_Filesystem
      */
     private function loadTwigFolders()
     {
-        if (FS_DEBUG) {
-            $twigLoader = new Twig_Loader_Filesystem(FS_FOLDER . '/Core/View');
-            foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
-                if (file_exists(FS_FOLDER . '/Plugins/' . $pluginName . '/View')) {
-                    $twigLoader->prependPath(FS_FOLDER . '/Plugins/' . $pluginName . '/View');
-                }
+        /// Path for default namespace
+        $path = FS_DEBUG ? FS_FOLDER . '/Core/View' : FS_FOLDER . '/Dinamic/View';
+        $twigLoader = new Twig_Loader_Filesystem($path);
+
+        /// Core namespace
+        $twigLoader->addPath(FS_FOLDER . '/Core/View', 'Core');
+
+        foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
+            $pluginPath = FS_FOLDER . '/Plugins/' . $pluginName . '/View';
+            if (!file_exists($pluginPath)) {
+                continue;
             }
 
-            return $twigLoader;
+            /// plugin namespace
+            $twigLoader->addPath($pluginPath, 'Plugin' . $pluginName);
+            if (FS_DEBUG) {
+                $twigLoader->prependPath($pluginPath);
+            }
         }
 
-        return new Twig_Loader_Filesystem(FS_FOLDER . '/Dinamic/View');
+        return $twigLoader;
     }
 
     /**
@@ -291,7 +301,6 @@ class AppController extends App
                     $expire = time() + FS_COOKIES_EXPIRE;
                     $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, $expire));
                     $this->response->headers->setCookie(new Cookie('fsLogkey', $logKey, $expire));
-                    $this->response->headers->setCookie(new Cookie('fsHomepage', $user->homepage, $expire));
                     $this->response->headers->setCookie(new Cookie('fsLang', $user->langcode, $expire));
                     $this->response->headers->setCookie(new Cookie('fsCompany', $user->idempresa, $expire));
                     $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $nick]));

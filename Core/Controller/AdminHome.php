@@ -88,8 +88,9 @@ class AdminHome extends Base\Controller
     {
         $pageData = parent::getPageData();
         $pageData['menu'] = 'admin';
-        $pageData['title'] = 'control-panel';
-        $pageData['icon'] = 'fa-wrench';
+        $pageData['submenu'] = 'control-panel';
+        $pageData['title'] = 'plugins';
+        $pageData['icon'] = 'fa-plug';
 
         return $pageData;
     }

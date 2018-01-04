@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Lib\IPFilter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -61,7 +62,7 @@ abstract class App
     /**
      * IP filter.
      *
-     * @var Base\IPFilter
+     * @var IPFilter
      */
     protected $ipFilter;
 
@@ -122,7 +123,7 @@ abstract class App
 
         $this->cache = new Base\Cache();
         $this->dataBase = new Base\DataBase();
-        $this->ipFilter = new Base\IPFilter();
+        $this->ipFilter = new IPFilter();
         $this->miniLog = new Base\MiniLog();
         $this->pluginManager = new Base\PluginManager();
         $this->response = new Response();

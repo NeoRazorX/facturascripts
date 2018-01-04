@@ -35,6 +35,7 @@
 
 <!-- Visual macros -->
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+{% from 'Macro/Forms.html' import simpleSelect as simpleSelect %}
 
 <!-- Main Body -->
 <div class="container-fluid">
@@ -56,6 +57,7 @@
         <div class="col-8 text-right">
             <h2>
                 <i class="fa {{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
+                <small class="text-info">{{ fsc.selectedViewName }}</small>
             </h2>
         </div>
     </div>
@@ -72,12 +74,16 @@
                             <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
 
                             <label>{{ i18n.trans('select-user') }}&nbsp;&nbsp;</label>
-                            <select name="nick" class="text-danger" onchange="this.form.submit()">
-                                <option value="" {% if fsc.selectedUser is null %}selected{% endif %}>{{ i18n.trans('all') }}</option>
-                                {% for key, value in fsc.getUserList() %}
-                                <option value="{{ key }}" {% if fsc.selectedUser == key %}selected{% endif %}>{{ value }}</option>
-                                {% endfor %}
-                            </select>
+                            {% set userList = {'':i18n.trans('all')}|merge(fsc.getUserList()) %}
+                            {{ simpleSelect(
+                                'nick',
+                                'nick',
+                                fsc.selectedUser,
+                                userList,
+                                FALSE,
+                                FALSE,
+                                {'class': 'text-danger bg-white', 'onChange': 'this.form.submit()'})
+                            }}
                         </form>
                     </div>
                     {% endif %}
@@ -101,24 +107,35 @@
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th class="d-inline-block col-4">{{ i18n.trans('title') }}</th>
+                                            <th class="d-inline-block col-3">{{ i18n.trans('title') }}</th>
+                                            <th class="d-inline-block col-2">{{ i18n.trans('display') }}</th>
                                             {% if fsc.user.admin %}
                                             {% set titleUrlColumn = 3 %}
                                             <th class="d-inline-block col-1">{{ i18n.trans('level') }}</th>
                                             {% endif %}
-                                            <th class="d-inline-block col-2">{{ i18n.trans('display') }}</th>
-                                            <th class="d-inline-block col-1">{{ i18n.trans('columns') }}</th>
-                                            <th class="d-inline-block col-1">{{ i18n.trans('sort') }}</th>
+                                            <th class="d-inline-block col-2">{{ i18n.trans('columns') }}</th>
                                             <th class="d-inline-block col-{{ titleUrlColumn }}">{{ i18n.trans('title-url') }}</th>
+                                            <th class="d-inline-block col-1">{{ i18n.trans('sort') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                     {% for key2, field in group.columns %}
                                     {% set masterName = key1 ~ '+' ~ key2 ~ '+' %}
                                     <tr>
-                                        <th class="d-inline-block col-4">
+                                        <th class="d-inline-block col-3">
                                             {{ i18n.trans(field.title) }}
                                         </th>
+                                        <td class="d-inline-block col-2">
+                                            {{ simpleSelect(
+                                                    masterName ~ 'display',
+                                                    masterName ~ 'display',
+                                                    field.display,
+                                                    {'left':i18n.trans('left'), 'right':i18n.trans('right'), 'center':i18n.trans('center'), 'none':i18n.trans('none')},
+                                                    FALSE,
+                                                    FALSE,
+                                                    {})
+                                            }}
+                                        </td>
 
                                         {% if fsc.user.admin %}
                                         <td class="d-inline-block col-1">
@@ -126,39 +143,25 @@
                                         </td>
                                         {% endif %}
 
+
                                         <td class="d-inline-block col-2">
-                                            <select class="form-control" name="{{ masterName ~ 'display' }}">
-                                                <option value="left" {% if field.display == 'left' %}selected{% endif %}>{{ i18n.trans('left') }}</option>
-                                                <option value="right" {% if field.display == 'right' %}selected{% endif %}>{{ i18n.trans('right') }}</option>
-                                                <option value="center" {% if field.display == 'center' %}selected{% endif %}>{{ i18n.trans('center') }}</option>
-                                                <option value="none" {% if field.display == 'none' %}selected{% endif %}>{{ i18n.trans('none') }}</option>
-                                            </select>
-                                        </td>
-
-                                        <td class="d-inline-block col-1">
-                                            <select class="form-control" name="{{ masterName ~ 'numColumns' }}">
-                                                <option value="0" {% if field.numColumns == 0 %}selected{% endif %}>{{ i18n.trans('auto') }}</option>
-                                                <option value="1" {% if field.numColumns == 1 %}selected{% endif %}>1</option>
-                                                <option value="2" {% if field.numColumns == 2 %}selected{% endif %}>2</option>
-                                                <option value="3" {% if field.numColumns == 3 %}selected{% endif %}>3</option>
-                                                <option value="4" {% if field.numColumns == 4 %}selected{% endif %}>4</option>
-                                                <option value="5" {% if field.numColumns == 5 %}selected{% endif %}>5</option>
-                                                <option value="6" {% if field.numColumns == 6 %}selected{% endif %}>6</option>
-                                                <option value="7" {% if field.numColumns == 7 %}selected{% endif %}>7</option>
-                                                <option value="8" {% if field.numColumns == 8 %}selected{% endif %}>8</option>
-                                                <option value="9" {% if field.numColumns == 9 %}selected{% endif %}>9</option>
-                                                <option value="10" {% if field.numColumns == 10 %}selected{% endif %}>10</option>
-                                                <option value="11" {% if field.numColumns == 11 %}selected{% endif %}>11</option>
-                                                <option value="12" {% if field.numColumns == 12 %}selected{% endif %}>12</option>
-                                            </select>
-                                        </td>
-
-                                        <td class="d-inline-block col-1">
-                                            <input type="number" class="form-control" name="{{ masterName ~ 'order' }}" placeholder="Auto" value="{{ field.order }}">
+                                            {{ simpleSelect(
+                                                    masterName ~ 'numColumns',
+                                                    masterName ~ 'numColumns',
+                                                    field.numColumns,
+                                                    {'0':i18n.trans('auto'), '1':'1', '2':'2', '3':'3', '4':'4', '5':'5', '6':'6', '7':'7', '8':'8', '9':'9', '10':'10', '11':'11', '12':'12'},
+                                                    FALSE,
+                                                    FALSE,
+                                                    {})
+                                            }}
                                         </td>
 
                                         <td class="d-inline-block col-{{ titleUrlColumn }}">
                                             <input type="text" class="form-control" name="{{ masterName ~ 'titleURL' }}" placeholder="http://" value="{{ field.titleURL }}">
+                                        </td>
+
+                                        <td class="d-inline-block col-1">
+                                            <input type="number" class="form-control" name="{{ masterName ~ 'order' }}" placeholder="Auto" value="{{ field.order }}">
                                         </td>
                                     </tr>
                                     {% endfor %}

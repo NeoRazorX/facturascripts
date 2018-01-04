@@ -395,8 +395,8 @@ Ejemplo:
         </rows>
 
 
-header
-------
+statistics
+----------
 
 Permite definir una lista de botones estadísticos y relacionales con otros modelos
 que dan información al usuario y le permite consultar al hacer click.
@@ -418,7 +418,7 @@ Ejemplo:
 .. code:: xml
 
         <rows>
-            <row type="header">
+            <row type="statistics">
                 <button icon="fa-files-o" label="Alb. Pdtes:" calculateby="nombre_function" onclick="#url"></option>
                 <button icon="fa-files-o" label="Pdte Cobro:" calculateby="nombre_function" onclick="#url"></option>
             </row>
@@ -446,10 +446,10 @@ Ejemplo:
         </rows>
 
 
-footer
-------
+header y footer
+---------------
 
-Permite añadir información adicional a visualizar al usuario en el pie de la vista.
+Permite añadir información adicional a visualizar al usuario en la cabecera y/o el pie de la vista.
 La información se muestra en forma de paneles ("cards" de Bootstrap) donde podemos
 incluir mensajes y botones tanto de acción como modales. Para declarar un panel usaremos
 la etiqueta *<group>* en la que incluiremos etiquetas *button* (si los necesitamos).
@@ -464,7 +464,18 @@ y/o el pie con atributos:
 
 -  **footer** : indica un texto para el pie del panel.
 
-Ejemplo:
+Ejemplo: (Cabecera de vista)
+
+.. code:: xml
+
+        <row type="header">
+            <group name="footer1" footer="specials-actions" label="Esto es una muestra de botones en un 'bootstrap card'">
+                <button type="modal" label="Modal" color="primary" action="test" icon="fa-users" />
+                <button type="action" label="Action" color="info" action="process1" icon="fa-book" hint="Ejecuta el controlador con action=process1" />
+            </group>
+        </row>
+
+Ejemplo: (Pie de vista)
 
 .. code:: xml
 

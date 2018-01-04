@@ -86,7 +86,7 @@ displayed in the header and footer of the data sheet.
         }
 
 We can also customize the view by including it in the group XML file
-*<rows>* and create *<row type = “”>* of the classes **header**, to
+*<rows>* and create *<row type = “”>* of the classes **statistics**, to
 define a list of statistical and relational buttons with other models,
 and **footer**, to add information additional to display to the user
 just after the data sheet.
@@ -96,7 +96,7 @@ Examples:
 .. code:: xml
 
         <rows>
-            <row type="header">
+            <row type="statistics">
                 <option icon="fa-files-o" label="Alb. Pdtes:" calculateby="nombre_function" onclick="#url"></option>
                 <option icon="fa-files-o" label="Pdte Cobro:" calculateby="nombre_function" onclick="#url"></option>
             </row>

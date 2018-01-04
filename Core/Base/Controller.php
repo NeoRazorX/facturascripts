@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Model;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Cookie;

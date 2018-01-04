@@ -36,116 +36,116 @@ class DocumentReports extends Controller
 
     /**
      * Data for table.
-     * 
+     *
      * @var array
      */
     public $dataTable;
 
     /**
      * Document 1 used by default or selected.
-     * 
+     *
      * @var string
      */
     public $source1;
 
     /**
      * Document 2 used by default or selected.
-     * 
+     *
      * @var string
      */
     public $source2;
 
     /**
      * Start date used by default or selected.
-     * 
+     *
      * @var \DateTime
      */
     public $date1From;
 
     /**
      * End date used by default or selected.
-     * 
+     *
      * @var \DateTime
      */
     public $date1To;
 
     /**
      * Start date used by default or selected.
-     * 
+     *
      * @var \DateTime
      */
     public $date2From;
 
     /**
      * End date used by default or selected.
-     * 
+     *
      * @var \DateTime
      */
     public $date2To;
 
     /**
      * Employee used by default or selected.
-     * 
+     *
      * @var string
      */
     public $employee;
 
     /**
      * Employee list.
-     * 
-     * @var Model\Agente[]
+     *
+     * @var array
      */
     public $employeeList;
 
     /**
      * Serie used by default or selected.
-     * 
+     *
      * @var string
      */
     public $serie;
 
     /**
      * Serie list.
-     * 
-     * @var Model\Serie[]
+     *
+     * @var array
      */
     public $serieList;
 
     /**
      * Currency used by default or selected.
-     * 
+     *
      * @var string
      */
     public $currency;
 
     /**
      * Currency list.
-     * 
-     * @var Model\Divisa[]
+     *
+     * @var array
      */
     public $currencyList;
 
     /**
      * Payment method used by default or selected.
-     * 
+     *
      * @var string
      */
     public $paymentMethod;
 
     /**
      * Payment method List.
-     * 
-     * @var Model\FormaPago[]
+     *
+     * @var array
      */
     public $paymentMethodList;
 
     /**
      * Contains daily, monthly or yearly.
-     * 
+     *
      * @var string
      */
     public $grouped;
-    
+
     /**
      * Runs the controller's private logic.
      *
@@ -183,6 +183,70 @@ class DocumentReports extends Controller
     }
 
     /**
+     * Set values selected by the user.
+     */
+    private function setValuesFromRequest()
+    {
+        $this->source1 = $this->request->get('source1', 'customer-invoices');
+        $this->source2 = $this->request->get('source2', 'supplier-invoices');
+        $this->date1From = new \DateTime($this->request->get('date1-from', date('01-m-Y')));
+        $this->date1To = new \DateTime($this->request->get('date1-to', date('t-m-Y')));
+        $this->date2From = new \DateTime($this->request->get('date2-from', date('01-m-Y')));
+        $this->date2To = new \DateTime($this->request->get('date2-to', date('t-m-Y')));
+        $this->employee = $this->request->get('employee', '');
+        $this->serie = $this->request->get('serie', '');
+        $this->currency = $this->request->get('currency', AppSettings::get('default', 'coddivisa'));
+        $this->paymentMethod = $this->request->get('payment-method', '');
+    }
+
+    /**
+     * Set default values.
+     */
+    private function setDefaults()
+    {
+        $this->source1 = 'customer-invoices';
+        $this->source2 = 'supplier-invoices';
+        $this->date1From = new \DateTime(date('01-m-Y'));
+        $this->date1To = new \DateTime(date('t-m-Y'));
+        $this->date2From = new \DateTime(date('01-m-Y'));
+        $this->date2To = new \DateTime(date('t-m-Y'));
+        $this->employee = '';
+        $this->serie = AppSettings::get('default', 'codserie');
+        $this->currency = AppSettings::get('default', 'coddivisa');
+        $this->paymentMethod = AppSettings::get('default', 'codpago');
+    }
+
+    /**
+     * Set basic list of default data for input selects.
+     */
+    private function setLists()
+    {
+        $agenteModel = new Model\Agente();
+        $this->employeeList = ['' => '------'];
+        foreach($agenteModel->all() as $age) {
+            $this->employeeList[$age->codagente] = $age->primaryDescription();
+        }
+
+        $serieModel = new Model\Serie();
+        $this->serieList = ['' => '------'];
+        foreach($serieModel->all() as $serie) {
+            $this->serieList[$serie->codserie] = $serie->descripcion;
+        }
+
+        $divisaModel = new Model\Divisa();
+        $this->currencyList = ['' => '------'];
+        foreach($divisaModel->all() as $divisa) {
+            $this->currencyList[$divisa->coddivisa] = $divisa->descripcion;
+        }
+
+        $formaPagoModel = new Model\FormaPago();
+        $this->paymentMethodList = ['' => '------'];
+        foreach($formaPagoModel->all() as $fPago) {
+            $this->paymentMethodList[$fPago->codpago] = $fPago->descripcion;
+        }
+    }
+
+    /**
      * Generate daily data to show to user.
      */
     private function generateResults()
@@ -209,23 +273,18 @@ class DocumentReports extends Controller
 
         $days = $dateDiff1->days < $dateDiff2->days ? $dateDiff2->days : $dateDiff1->days;
 
-        switch (true) {
-            case ($days >= 3*30 && $days <= 12*30):
-                $step = '+1 month';
-                $format = 'm-Y';
-                $this->grouped = 'monthly';
-                break;
-            case ($days >= 12*30):
-                $step = '+1 year';
-                $format = 'Y';
-                $this->grouped = 'yearly';
-                break;
-            default:
-                $step = '+1 day';
-                $format = 'd-m-Y';
-                $this->grouped = 'daily';
-
-                break;
+        if ($days >= 15 * 30) {
+            $step = '+1 year';
+            $format = 'Y';
+            $this->grouped = 'yearly';
+        } elseif ($days >= 3 * 30) {
+            $step = '+1 month';
+            $format = 'm-Y';
+            $this->grouped = 'monthly';
+        } else {
+            $step = '+1 day';
+            $format = 'd-m-Y';
+            $this->grouped = 'daily';
         }
     }
 
@@ -326,7 +385,7 @@ class DocumentReports extends Controller
                 return '01-' . $date;
 
             case 8:
-                return substr($date, 0, 2) . '-' . substr($date, 2, 2) . '-' .substr($date, 4, 4);
+                return substr($date, 0, 2) . '-' . substr($date, 2, 2) . '-' . substr($date, 4, 4);
 
             default:
                 return $date;
@@ -441,58 +500,6 @@ class DocumentReports extends Controller
     }
 
     /**
-     * Set basic list of default data for input selects.
-     */
-    private function setLists()
-    {
-        $age = new Model\Agente();
-        $this->employeeList = $age->all();
-
-        $ser = new Model\Serie();
-        $this->serieList = $ser->all();
-
-        $div = new Model\Divisa();
-        $this->currencyList = $div->all();
-
-        $fpag = new Model\FormaPago();
-        $this->paymentMethodList = $fpag->all();
-    }
-
-    /**
-     * Set values selected by the user.
-     */
-    private function setValuesFromRequest()
-    {
-        $this->source1 = $this->request->get('source1', 'customer-invoices');
-        $this->source2 = $this->request->get('source2', 'supplier-invoices');
-        $this->date1From = new \DateTime($this->request->get('date1-from', date('01-m-Y')));
-        $this->date1To = new \DateTime($this->request->get('date1-to', date('t-m-Y')));
-        $this->date2From = new \DateTime($this->request->get('date2-from', date('01-m-Y')));
-        $this->date2To = new \DateTime($this->request->get('date2-to', date('t-m-Y')));
-        $this->employee = $this->request->get('employee', '');
-        $this->serie = $this->request->get('serie', '');
-        $this->currency = $this->request->get('currency', AppSettings::get('default', 'coddivisa'));
-        $this->paymentMethod = $this->request->get('payment-method', '');
-    }
-
-    /**
-     * Set default values.
-     */
-    private function setDefaults()
-    {
-        $this->source1 = 'customer-invoices';
-        $this->source2 = 'supplier-invoices';
-        $this->date1From = new \DateTime(date('01-m-Y'));
-        $this->date1To = new \DateTime(date('t-m-Y'));
-        $this->date2From = new \DateTime(date('01-m-Y'));
-        $this->date2To = new \DateTime(date('t-m-Y'));
-        $this->employee = '';
-        $this->serie = AppSettings::get('default', 'codserie');
-        $this->currency = AppSettings::get('default', 'coddivisa');
-        $this->paymentMethod = AppSettings::get('default', 'codpago');
-    }
-
-    /**
      * Return the basic data for this page.
      *
      * @return array
@@ -502,7 +509,7 @@ class DocumentReports extends Controller
         $pageData = parent::getPageData();
         $pageData['menu'] = 'reports';
         $pageData['title'] = 'document-reports';
-        $pageData['icon'] = ' fa-area-chart';
+        $pageData['icon'] = 'fa-area-chart';
 
         return $pageData;
     }
@@ -515,13 +522,13 @@ class DocumentReports extends Controller
     public function getDocumentTypes()
     {
         return [
-            'customer-estimations',
-            'customer-orders',
-            'customer-delivery-notes',
-            'customer-invoices',
-            'supplier-orders',
-            'supplier-delivery-notes',
-            'supplier-invoices'
+            'customer-estimations' => $this->i18n->trans('customer-estimations'),
+            'customer-orders' => $this->i18n->trans('customer-orders'),
+            'customer-delivery-notes' => $this->i18n->trans('customer-delivery-notes'),
+            'customer-invoices' => $this->i18n->trans('customer-invoices'),
+            'supplier-orders' => $this->i18n->trans('supplier-orders'),
+            'supplier-delivery-notes' => $this->i18n->trans('supplier-delivery-notes'),
+            'supplier-invoices' => $this->i18n->trans('supplier-invoices')
         ];
     }
 }

@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Lib\EmailTools;
 
 /**
@@ -44,6 +44,7 @@ class EditSettings extends ExtendedController\PanelController
         }
 
         $this->addHtmlView('Block/About.html', null, 'about', 'about');
+        $this->testViews();
     }
 
     /**
@@ -104,6 +105,7 @@ class EditSettings extends ExtendedController\PanelController
         $pagedata['title'] = 'app-preferences';
         $pagedata['icon'] = 'fa-cogs';
         $pagedata['menu'] = 'admin';
+        $pagedata['submenu'] = 'control-panel';
 
         return $pagedata;
     }
@@ -183,6 +185,41 @@ class EditSettings extends ExtendedController\PanelController
         return $names;
     }
 
+    /**
+     * Test all view to show usefull errors.
+     */
+    private function testViews()
+    {
+        foreach ($this->views as $viewName => $view) {
+            if (!$view->getModel()) {
+                continue;
+            }
+
+            $error = true;
+            foreach ($view->getColumns() as $group) {
+                if (!isset($group->columns)) {
+                    break;
+                }
+
+                foreach ($group->columns as $col) {
+                    if ($col->name === 'name') {
+                        $error = false;
+                        break;
+                    }
+                }
+
+                break;
+            }
+
+            if ($error) {
+                $this->miniLog->critical($this->i18n->trans('error-no-name-in-settings', ['%viewName%' => $viewName]));
+            }
+        }
+    }
+
+    /**
+     * Exports data from views.
+     */
     private function exportAction()
     {
         $this->exportManager->newDoc($this->response, $this->request->get('option'));
