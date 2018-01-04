@@ -1198,5 +1198,8 @@
     "mailer": "Contrôleur de courrier",
     "encrypt": "Chiffrement",
     "display": "Affichage",
-    "level": "Niveau"
+    "level": "Niveau",
+    "api": "API",
+    "disable-api": "Désactiver l'API",
+    "default-tax": "Taxe par défaut"
 }

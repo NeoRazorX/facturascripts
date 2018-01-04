@@ -1038,5 +1038,9 @@
     "test": "Test",
     "mailer": "Mail controller",
     "encrypt": "Encrypt",
-    "level": "Level"
+    "level": "Level",
+    "error-no-name-in-settings": "Error testing %viewName% view. No 'name' column in xml",
+    "api": "API",
+    "disable-api": "Disable API",
+    "default-tax": "Default TAX"
 }
