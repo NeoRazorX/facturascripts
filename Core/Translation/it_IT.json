@@ -622,7 +622,7 @@
     "amount": "Quantità",
     "any": "Qualunque",
     "apc-clear": "APC cancellato.",
-    "apc-delete-key-item": "Elemento cancellato '0' da APC.",
+    "apc-delete-key-item": "Elemento eliminato '0' da APC.",
     "apc-get-key-item": "Elemento gettato '0' da APC.",
     "apc-getarray-key-item": "Ottimizzato gli elementi dell'array '0' da APC.",
     "apc-not-found": "Estensione APC non trovata.",
@@ -1144,5 +1144,7 @@
     "dashboard-card": "Dashboard (oggetto)",
     "creation-date": "Data di creazione",
     "display-date": "Data di visualizzazione",
-    "color": "colore"
+    "color": "colore",
+    "%-commission": "% Commissione",
+    "all": "Tutti"
 }
