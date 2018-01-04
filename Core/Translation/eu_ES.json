@@ -1769,5 +1769,7 @@
     "test": "Froga",
     "mailer": "Posta kontroladorea",
     "encrypt": "Zifratzea",
-    "level": "Maila"
+    "level": "Maila",
+    "api": "API",
+    "disable-api": "Ezgaitu APIa"
 }
