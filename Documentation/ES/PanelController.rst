@@ -13,7 +13,7 @@ datos.
 
 Para el uso de este controlador es necesario crear las vistas en formato
 XML, tal y como se describe en el documento
-`XMLViews <https://github.com/ArtexTrading/facturascripts/blob/master/Documentation/XMLViews_ES.md>`__,
+`XMLViews <XMLViews>`__,
 incluido en la documentación de **Facturascripts**.
 
 Cómo usar el controlador
@@ -114,14 +114,14 @@ Ejemplo sin especificar el método.
 
     $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
     $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
-        
+
 Ejemplo con el método.
 
 .. code:: php
-    
+
     $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
     $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
-    $this->setTabsPosition('left');    
+    $this->setTabsPosition('left');
 
 Las pestañas cuando están colocadas abajo, muestra ventana principal y debajo
 de esta mostrara la información de la pestaña seleccionada.
@@ -134,7 +134,7 @@ Ejemplo.
     $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
     $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
     $this->setTabsPosition('bottom');
-        
+
 Las pestañas cuando están colocadas arriba, mostrara la información de
 la pestaña seleccionada.
 
@@ -145,7 +145,7 @@ Ejemplo.
     $this->addEditView('FacturaScripts\Core\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
     $this->addListView('FacturaScripts\Core\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
     $this->setTabsPosition('top');
-        
+
 getPageData
 ===========
 

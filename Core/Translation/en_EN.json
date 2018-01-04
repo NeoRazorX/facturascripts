@@ -605,5 +605,6 @@
     "encrypt":"Encrypt",
     "level": "Level",
     "api": "API",
-    "disable-api": "Disable API"
+    "disable-api": "Disable API",
+    "default-tax": "Default TAX"
 }
