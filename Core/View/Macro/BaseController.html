@@ -82,8 +82,9 @@
                     {% set buttons = cards.getButtons(panel.name) %}
                     {% if buttons|length > 0 %}
                     {% set formName = panel.name ~ '_form' %}
-                    <form action="{{ context.edit_url }}" method="post" name="{{ formName }}">
-                        <input type="hidden" name="active" value="{{ context.indexView }}">
+                    <form action="{{ context.edit_url ? context.edit_url : '#' }}" method="post" name="{{ formName }}">
+                        <input type="hidden" name="active" value="{{ context.indexView }}" />
+                        <input type="hidden" name="action" />
                         {% for button in buttons %}
                             {% set label = context.i18n.trans(button.label) %}
                             {% set hint = context.i18n.trans(button.hint) %}

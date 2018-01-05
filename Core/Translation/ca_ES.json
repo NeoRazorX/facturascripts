@@ -1112,5 +1112,9 @@
     "mailer": "Controlador de correu",
     "encrypt": "Xifrar",
     "display": "Visualització",
-    "level": "Nivell"
+    "level": "Nivell",
+    "error-no-name-in-settings": "Error a la vista %viewName%. Cal informar el 'name' en qualcuna columna de l'xml",
+    "api": "API",
+    "disable-api": "Desactivar API",
+    "default-tax": "Impost per defecte"
 }
