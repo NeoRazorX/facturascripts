@@ -59,6 +59,7 @@ class Wizard extends Controller
         if($codpais !== '') {
             $appSettings = new AppSettings();
             $appSettings->set('default', 'codpais', $codpais);
+            $appSettings->set('default', 'homepage', 'AdminHome');
             $appSettings->save();
             $this->initModels();
             
@@ -66,7 +67,7 @@ class Wizard extends Controller
             $this->user->save();
             
             /// redir to EditSettings
-            $this->response->headers->set('Refresh', '1; index.php?page=EditSettings');
+            $this->response->headers->set('Refresh', '0; index.php?page=EditSettings');
         }
     }
     

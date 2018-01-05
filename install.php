@@ -81,7 +81,7 @@ function checkRequirement($isOk)
  */
 function getUserLanguage()
 {
-    $dataLanguage = explode(';', \filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'));
+    $dataLanguage = explode(';', filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'));
     $userLanguage = str_replace('-', '_', explode(',', $dataLanguage[0])[0]);
     $translationExists = file_exists(__DIR__ . '/Core/Translation/' . $userLanguage . '.json');
     return ($translationExists) ? $userLanguage : 'en_EN';
@@ -236,6 +236,7 @@ function createFolders()
         return true;
     }
     if (mkdir('Plugins') && mkdir('Dinamic') && mkdir('Cache')) {
+        chmod('Plugins', octdec(777));
         return true;
     }
 
