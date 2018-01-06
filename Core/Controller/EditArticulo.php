@@ -40,6 +40,9 @@ class EditArticulo extends ExtendedController\PanelController
         $this->addListView('\FacturaScripts\Dinamic\Model\ArticuloProveedor', 'ListArticuloProveedor', 'suppliers', 'fa-ship');
         $this->addListView('\FacturaScripts\Dinamic\Model\ArticuloCombinacion', 'ListArticuloCombinacion', 'combinations', 'fa-sliders');
         $this->addListView('\FacturaScripts\Dinamic\Model\ArticuloTraza', 'ListArticuloTraza', 'traceability', 'fa-barcode');
+        
+        /// Disable column
+        $this->views['ListArticuloProveedor']->disableColumn('reference', true);
     }
 
     /**

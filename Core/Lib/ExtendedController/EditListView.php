@@ -49,7 +49,7 @@ class EditListView extends BaseView
      *
      * @var array
      */
-    private $order;
+    public $order;
 
     /**
      * Store the parameters for the cursor's WHERE clause

@@ -309,7 +309,7 @@ class ListView extends BaseView
     }
 
     /**
-     * Load data
+     * Load the data in the cursor property, according to the where filter specified.
      *
      * @param DataBaseWhere[] $where
      * @param int $offset

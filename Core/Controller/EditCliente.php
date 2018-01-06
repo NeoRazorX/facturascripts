@@ -61,6 +61,12 @@ class EditCliente extends ExtendedController\PanelController
         $this->addListView('\FacturaScripts\Dinamic\Model\AlbaranCliente', 'ListAlbaranCliente', 'delivery-notes', 'fa-files-o');
         $this->addListView('\FacturaScripts\Dinamic\Model\PedidoCliente', 'ListPedidoCliente', 'orders', 'fa-files-o');
         $this->addListView('\FacturaScripts\Dinamic\Model\PresupuestoCliente', 'ListPresupuestoCliente', 'estimations', 'fa-files-o');
+        
+        /// Disable columns
+        $this->views['ListFacturaCliente']->disableColumn('customer', true);
+        $this->views['ListAlbaranCliente']->disableColumn('customer', true);
+        $this->views['ListPedidoCliente']->disableColumn('customer', true);
+        $this->views['ListPresupuestoCliente']->disableColumn('customer', true);
     }
 
     /**

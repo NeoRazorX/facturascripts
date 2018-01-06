@@ -64,6 +64,9 @@ class EditProveedor extends ExtendedController\PanelController
 
         /// Disable columns
         $this->views['ListArticuloProveedor']->disableColumn('supplier', true);
+        $this->views['ListFacturaProveedor']->disableColumn('supplier', true);
+        $this->views['ListAlbaranProveedor']->disableColumn('supplier', true);
+        $this->views['ListPedidoProveedor']->disableColumn('supplier', true);
     }
 
     /**

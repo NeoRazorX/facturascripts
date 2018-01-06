@@ -39,6 +39,18 @@ class Wizard extends Controller
         return $pageData;
     }
 
+    public function getDivisas()
+    {
+        $divisas = [];
+
+        $divisaModel = new Model\Divisa();
+        foreach ($divisaModel->all([], ['descripcion' => 'ASC'], 0, 500) as $divisa) {
+            $divisas[$divisa->coddivisa] = $divisa->descripcion;
+        }
+
+        return $divisas;
+    }
+
     public function getPaises()
     {
         $paises = [];
@@ -50,30 +62,32 @@ class Wizard extends Controller
 
         return $paises;
     }
-    
+
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-        
-        $codpais = $this->request->request->get('codpais','');
-        if($codpais !== '') {
+
+        $coddivisa = $this->request->request->get('coddivisa', '');
+        $codpais = $this->request->request->get('codpais', '');
+        if ($codpais !== '') {
             $appSettings = new AppSettings();
+            $appSettings->set('default', 'coddivisa', $coddivisa);
             $appSettings->set('default', 'codpais', $codpais);
             $appSettings->set('default', 'homepage', 'AdminHome');
             $appSettings->save();
             $this->initModels();
-            
+
+            /// change user homepage
             $this->user->homepage = 'AdminHome';
             $this->user->save();
-            
+
             /// redir to EditSettings
             $this->response->headers->set('Refresh', '0; index.php?page=EditSettings');
         }
     }
-    
+
     private function initModels()
     {
-        new Model\Divisa();
         new Model\Empresa();
         new Model\Almacen();
         new Model\FormaPago();
