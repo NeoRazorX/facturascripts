@@ -64,7 +64,7 @@ class EditEjercicio extends ExtendedController\PanelController
             case 'ListSubcuenta':
                 $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
                 $where = [new DataBaseWhere('codejercicio', $codejercicio)];
-                $view->loadData($where);
+                $view->loadData(false, $where);
                 break;
         }
     }

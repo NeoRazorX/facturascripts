@@ -77,7 +77,7 @@ class EditArticulo extends ExtendedController\PanelController
             case 'ListArticuloTraza':
                 $referencia = $this->getViewModelValue('EditArticulo', 'referencia');
                 $where = [new DataBaseWhere('referencia', $referencia)];
-                $view->loadData($where);
+                $view->loadData(false, $where);
                 break;
         }
     }

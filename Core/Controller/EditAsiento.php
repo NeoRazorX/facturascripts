@@ -38,7 +38,7 @@ class EditAsiento extends ExtendedController\PanelController
      */
     protected function createViews()
     {
-        $this->addEditView('\FacturaScripts\Dinamic\Model\Asiento', 'EditAsiento', 'accounting-entries', 'fa-balance-scale');
+        $this->addEditView('\FacturaScripts\Dinamic\Model\Asiento', 'EditAsiento', 'accounting-entry', 'fa-balance-scale');
         $this->addListView('\FacturaScripts\Dinamic\Model\Partida', 'ListPartida', 'accounting-items', 'fa-book');
         $this->setTabsPosition('bottom');
     }
@@ -61,7 +61,7 @@ class EditAsiento extends ExtendedController\PanelController
                 $idasiento = $this->getViewModelValue('EditAsiento', 'idasiento');
                 if (!empty($idasiento)) {
                     $where = [new DataBaseWhere('idasiento', $idasiento)];
-                    $view->loadData($where);
+                    $view->loadData(false, $where);
                 }
                 break;
         }

@@ -94,7 +94,7 @@ class EditProveedor extends ExtendedController\PanelController
             case 'ListPresupuestoProveedor':
                 $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
                 $where = [new DataBaseWhere('codproveedor', $codproveedor)];
-                $view->loadData($where);
+                $view->loadData(false, $where);
                 break;
         }
     }

@@ -35,6 +35,7 @@
         {% endblock %}
         {{ debugBarRender.renderHead()|raw }}
     </head>
+    {% block fullBody %}
     <body>
         {% block navbar %}
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top d-print-none">
@@ -93,4 +94,5 @@
         <br/>
         {{ debugBarRender.render()|raw }}
     </body>
+    {% endblock %}
 </html>

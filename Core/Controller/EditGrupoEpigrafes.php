@@ -60,7 +60,7 @@ class EditGrupoEpigrafes extends ExtendedController\PanelController
                 $idgrupo = $this->getViewModelValue('EditGrupoEpigrafes', 'idgrupo');
                 if (!empty($idgrupo)) {
                     $where = [new DataBaseWhere('idgrupo', $idgrupo)];
-                    $view->loadData($where);
+                    $view->loadData(false, $where);
                 }
                 break;
         }

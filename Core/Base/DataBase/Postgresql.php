@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
@@ -318,7 +317,7 @@ class Postgresql implements DataBaseEngine
             . ' ORDER BY tablename ASC;';
 
         $aux = $this->select($link, $sql);
-        if (!empty($aux)) {
+        if (is_array($aux)) {
             foreach ($aux as $a) {
                 $tables[] = $a['tablename'];
             }

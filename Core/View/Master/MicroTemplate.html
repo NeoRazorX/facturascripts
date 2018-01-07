@@ -23,6 +23,7 @@
         {% endblock %}
         {{ debugBarRender.renderHead()|raw }}
     </head>
+    {% block fullBody %}
     <body>
         {% block messages %}
         {% from 'Macro/Utils.html' import message as show_message %}
@@ -34,4 +35,5 @@
         {% block body %}{% endblock %}
         {{ debugBarRender.render()|raw }}
     </body>
+    {% endblock %}
 </html>
