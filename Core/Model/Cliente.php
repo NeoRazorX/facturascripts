@@ -237,7 +237,7 @@ class Cliente extends Base\Persona
         $status = false;
 
         if ($this->codcliente === null) {
-            $this->codcliente = $this->newCode();
+            $this->codcliente = (string) $this->newCode();
         } else {
             $this->codcliente = trim($this->codcliente);
         }

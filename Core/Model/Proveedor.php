@@ -220,7 +220,7 @@ class Proveedor extends Base\Persona
         $status = false;
 
         if ($this->codproveedor === null) {
-            $this->codproveedor = $this->newCode();
+            $this->codproveedor = (string) $this->newCode();
         } else {
             $this->codproveedor = trim($this->codproveedor);
         }

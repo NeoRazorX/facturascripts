@@ -339,7 +339,7 @@ class Cuenta
         $ejercicio = new Ejercicio();
         $eje0 = $ejercicio->get($this->codejercicio);
         if ($eje0) {
-            $codsubcuenta = (float) sprintf('%-0' . $eje0->longsubcuenta . 's', $this->codcuenta) + $sumaCodigo;
+            $codsubcuenta = sprintf('%-0' . $eje0->longsubcuenta . 's', $this->codcuenta) + $sumaCodigo;
             $subcuenta = new Subcuenta();
             $subc0 = $subcuenta->getByCodigo($codsubcuenta, $this->codejercicio);
             if ($subc0) {

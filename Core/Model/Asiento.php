@@ -172,12 +172,12 @@ class Asiento
         if ($this->tipodocumento === 'Factura de cliente') {
             $fac = new FacturaCliente();
 
-            return $fac->all([new DataBaseWhere('codigo', $this->documento)]);
+            return $fac->loadFromCode(null, [new DataBaseWhere('codigo', $this->documento)]);
         }
         if ($this->tipodocumento === 'Factura de proveedor') {
             $fac = new FacturaProveedor();
 
-            return $fac->all([new DataBaseWhere('codigo', $this->documento)]);
+            return $fac->loadFromCode(null, [new DataBaseWhere('codigo', $this->documento)]);
         }
 
         return false;
@@ -410,11 +410,9 @@ class Asiento
         /// we check the associated invoice
         $status = true;
         $fac = $this->getFactura();
-        if ($fac) {
-            if ($fac->idasiento === null) {
-                $fac->idasiento = $this->idasiento;
-                $status = $fac->save();
-            }
+        if ($fac && $fac->idasiento === null) {
+            $fac->idasiento = $this->idasiento;
+            $status = $fac->save();
         }
 
         if ($status) {
