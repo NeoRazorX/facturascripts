@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2014-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,6 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * Element of the third level of the accounting plan.
@@ -130,7 +132,7 @@ class Cuenta
     {
         $subcuenta = new Subcuenta();
 
-        return $subcuenta->allFromCuenta($this->idcuenta);
+        return $subcuenta->all([new DataBaseWhere('idcuenta', $this->idcuenta)]);
     }
 
     /**
