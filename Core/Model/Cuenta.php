@@ -38,9 +38,9 @@ class Cuenta
      * @var int
      */
     public $idcuenta;
-    
+
     /**
-     *Identificacion de la empresa
+     * Identificacion de la empresa
      *
      * @var int
      */
@@ -110,7 +110,7 @@ class Cuenta
 
     /**
      * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
+           * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
@@ -302,7 +302,7 @@ class Cuenta
 
     /**
      * Returns an array with the combinations containing $ query in its description
-     * or that matches your account code.
+           * or that matches your account code.
      *
      * @param string $query
      * @param int    $offset
@@ -336,22 +336,23 @@ class Cuenta
      */
     public function newSubcuenta($sumaCodigo)
     {
-        $ejercicio = new Ejercicio();
-        $eje0 = $ejercicio->get($this->codejercicio);
-        if ($eje0) {
-            $codsubcuenta = sprintf('%-0' . $eje0->longsubcuenta . 's', $this->codcuenta) + $sumaCodigo;
-            $subcuenta = new Subcuenta();
-            $subc0 = $subcuenta->getByCodigo($codsubcuenta, $this->codejercicio);
-            if ($subc0) {
-                return $subc0;
-            }
-            $subc0 = new Subcuenta();
-            $subc0->codcuenta = $this->codcuenta;
-            $subc0->idcuenta = $this->idcuenta;
-            $subc0->codejercicio = $this->codejercicio;
-            $subc0->codsubcuenta = $codsubcuenta;
+        $ejercicioModel = new Ejercicio();
+        $ejercicio = $ejercicioModel->get($this->codejercicio);
+        if ($ejercicio !== false) {
+            /// new codsubcuenta
+            $codsubcuenta = (string) (sprintf('%-0' . $ejercicio->longsubcuenta . 's', $this->codcuenta) + $sumaCodigo);
+            $subcuentaModel = new Subcuenta();
 
-            return $subc0;
+            $newSubcuenta = $subcuentaModel->getByCodigo($codsubcuenta, $this->codejercicio);
+            if ($newSubcuenta === flase) {
+                $newSubcuenta = new Subcuenta();
+                $newSubcuenta->codcuenta = $this->codcuenta;
+                $newSubcuenta->idcuenta = $this->idcuenta;
+                $newSubcuenta->codejercicio = $this->codejercicio;
+                $newSubcuenta->codsubcuenta = $codsubcuenta;
+            }
+
+            return $newSubcuenta;
         }
 
         return false;
