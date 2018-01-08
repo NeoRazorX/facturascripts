@@ -76,6 +76,7 @@ class Wizard extends Controller
             $appSettings->set('default', 'homepage', 'AdminHome');
             $appSettings->save();
             $this->initModels();
+            $this->saveAddress($appSettings, $codpais);
 
             /// change user homepage
             $this->user->homepage = 'AdminHome';
@@ -88,10 +89,33 @@ class Wizard extends Controller
 
     private function initModels()
     {
-        new Model\Empresa();
-        new Model\Almacen();
         new Model\FormaPago();
         new Model\Impuesto();
         new Model\Serie();
+    }
+
+    /**
+     * 
+     * @param AppSettings $appSettings
+     * @param string $codpais
+     */
+    private function saveAddress(&$appSettings, $codpais)
+    {
+        $this->empresa->codpais = $codpais;
+        $this->empresa->provincia = $this->request->request->get('provincia');
+        $this->empresa->ciudad = $this->request->request->get('ciudad');
+        $this->empresa->save();
+
+        $almacenModel = new Model\Almacen();
+        foreach ($almacenModel->all() as $almacen) {
+            $almacen->codpais = $codpais;
+            $almacen->provincia = $this->empresa->provincia;
+            $almacen->ciudad = $this->empresa->ciudad;
+            $almacen->save();
+
+            $appSettings->set('default', 'codalmacen', $almacen->codalmacen);
+            $appSettings->save();
+            break;
+        }
     }
 }

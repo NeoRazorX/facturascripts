@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,8 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 /**
  * This WidgetItem class modelises the common data and method of a WidgetItem element.
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 abstract class WidgetItem implements VisualItemInterface
 {
@@ -107,26 +108,30 @@ abstract class WidgetItem implements VisualItemInterface
     private static function widgetItemFromType($type)
     {
         switch ($type) {
-            case 'number':
-                return new WidgetItemNumber();
-
-            case 'money':
-                return new WidgetItemMoney();
 
             case 'checkbox':
                 return new WidgetItemCheckBox();
 
+            case 'color':
+                return new WidgetItemColor();
+
             case 'datepicker':
                 return new WidgetItemDateTime();
 
-            case 'select':
-                return new WidgetItemSelect();
+            case 'filechooser':
+                return new WidgetItemFileChooser();
+
+            case 'money':
+                return new WidgetItemMoney();
+
+            case 'number':
+                return new WidgetItemNumber();
 
             case 'radio':
                 return new WidgetItemRadio();
 
-            case 'color':
-                return new WidgetItemColor();
+            case 'select':
+                return new WidgetItemSelect();
 
             default:
                 return new WidgetItemText($type);
@@ -264,12 +269,12 @@ abstract class WidgetItem implements VisualItemInterface
     {
         switch ($optionValue[0]) {
             case '<':
-                $optionValue = substr($optionValue, 1) ? : '';
+                $optionValue = substr($optionValue, 1) ?: '';
                 $result = ((float) $valueItem < (float) $optionValue);
                 break;
 
             case '>':
-                $optionValue = substr($optionValue, 1) ? : '';
+                $optionValue = substr($optionValue, 1) ?: '';
                 $result = ((float) $valueItem > (float) $optionValue);
                 break;
 
@@ -369,10 +374,7 @@ abstract class WidgetItem implements VisualItemInterface
             return '';
         }
 
-        if (empty($text)) {
-            $text = $value;
-        }
-
+        $text = empty($text) ? $value : $text;
         $style = $this->getTextOptionsHTML($value);
         $html = empty($this->onClick) ? '<span' . $style . '>' . $text . '</span>' : '<a href="?page=' . $this->onClick
             . '&code=' . $value . '" ' . $style . '>' . $text . '</a>';
@@ -392,16 +394,10 @@ abstract class WidgetItem implements VisualItemInterface
      */
     protected function standardEditHTMLWidget($value, $specialAttributes, $extraClass = '', $type = '')
     {
-        $fieldName = '"' . $this->fieldName . '"';
-        $icon = $this->getIconHTML();
-
-        if (empty($type)) {
-            $type = $this->type;
-        }
-
-        $html = $icon
-            . '<input id=' . $fieldName . ' type="' . $type . '" class="form-control' . $extraClass . '"'
-            . 'name=' . $fieldName . ' value="' . $value . '"' . $specialAttributes . ' />';
+        $type = empty($type) ? $this->type : $type;
+        $html = $this->getIconHTML()
+            . '<input id="' . $this->fieldName . '" type="' . $type . '" class="form-control' . $extraClass . '"'
+            . 'name="' . $this->fieldName . '" value="' . $value . '"' . $specialAttributes . ' />';
 
         if (!empty($this->icon)) {
             $html .= '</div>';

@@ -4,8 +4,10 @@
 <!-- Macros Template Imports -->
 {% import 'Macro/Forms.html' as forms %}
 
+{% set ciudad = fsc.empresa ? fsc.empresa.ciudad : '' %}
 {% set coddivisa = appSettings.get('default','coddivisa','EUR') %}
 {% set codpais = appSettings.get('default','codpais','ESP') %}
+{% set provincia = fsc.empresa ? fsc.empresa.provincia : '' %}
 
 <div class="container">
     <div class="row">
@@ -21,23 +23,36 @@
     </div>
     <form action="#" method="post" class="form">
         <div class="row">
-            <div class="col-sm-6">
-                <div class="form-group">
-                    {{ forms.simpleSelect('codpais', 'codpais', codpais, fsc.getPaises(), i18n.trans('country'), 'fa-globe') }}
-                </div>
-            </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 <div class="form-group">
                     {{ forms.simpleSelect('coddivisa', 'coddivisa', coddivisa, fsc.getDivisas(), i18n.trans('currency'), 'fa-money') }}
                 </div>
             </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    {{ forms.simpleSelect('codpais', 'codpais', codpais, fsc.getPaises(), i18n.trans('country'), 'fa-globe') }}
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    {{ forms.simpleInput('provincia', 'provincia', provincia, 'text', i18n.trans('province')) }}
+                </div>
+            </div>
         </div>
         <div class="row">
-            <div class="col-sm-12">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fa fa-floppy-o fa-fw" aria-hidden="true"></i>
-                    {{ i18n.trans('save') }}
-                </button>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    {{ forms.simpleInput('ciudad', 'ciudad', ciudad, 'text', i18n.trans('city')) }}
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <br/>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-floppy-o fa-fw" aria-hidden="true"></i>
+                        {{ i18n.trans('save') }}
+                    </button>
+                </div>
             </div>
         </div>
     </form>
