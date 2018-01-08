@@ -1042,5 +1042,9 @@
     "error-no-name-in-settings": "Error testing %viewName% view. No 'name' column in xml",
     "api": "API",
     "disable-api": "Disable API",
-    "default-tax": "Default TAX"
+    "default-tax": "Default TAX",
+    "help-server-accepts-filesize": "This server support files up to %size% MB.",
+    "renumber-accounting": "Renumber Accounting",
+    "renumber-accounting-ok": "Renumbering of accounting entries completed",
+    "renumber-accounting-error": "An error occurred while renumber accounting entries in financial year %exerciseCode%"
 }
