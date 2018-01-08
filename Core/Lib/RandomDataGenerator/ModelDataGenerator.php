@@ -305,34 +305,16 @@ class ModelDataGenerator
             $agente->ciudad = $this->tools->ciudad();
             $agente->direccion = $this->tools->direccion();
             $agente->codpostal = (string) mt_rand(11111, 99999);
-
-            if (mt_rand(0, 24) == 0) {
-                $agente->f_baja = date('d-m-Y');
-            }
-
-            if (mt_rand(0, 1) == 0) {
-                $agente->telefono = (string) mt_rand(555555555, 999999999);
-            }
-
-            if (mt_rand(0, 2) > 0) {
-                $agente->email = $this->tools->email();
-            }
-
-            if (mt_rand(0, 2) > 0) {
-                $agente->cargo = $this->tools->cargo();
-            }
-
-            if (mt_rand(0, 1) == 0) {
-                $agente->seg_social = (string) mt_rand(111111, 9999999999);
-            }
+            $agente->f_baja = (mt_rand(0, 24) == 0) ? date('d-m-Y') : null;
+            $agente->telefono = (mt_rand(0, 1) == 0) ? (string) mt_rand(555555555, 999999999) : '';
+            $agente->email = (mt_rand(0, 2) > 0) ? $this->tools->email() : '';
+            $agente->cargo = (mt_rand(0, 2) > 0) ? $this->tools->cargo() : '';
+            $agente->seg_social = (mt_rand(0, 1) == 0) ? (string) mt_rand(111111, 9999999999) : '';
+            $agente->porcomision = $this->tools->cantidad(0, 5, 20);
 
             if (mt_rand(0, 5) == 0) {
                 $agente->banco = 'ES' . mt_rand(10, 99) . ' ' . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' '
                     . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999) . ' ' . mt_rand(1000, 9999);
-            }
-
-            if (mt_rand(0, 5) == 0) {
-                $agente->porcomision = $this->tools->cantidad(0, 5, 20);
             }
 
             if (!$agente->save()) {
@@ -473,7 +455,8 @@ class ModelDataGenerator
         while ($max > 0) {
             $dir = new Model\DireccionCliente();
             $dir->codcliente = $cliente->codcliente;
-            $dir->codpais = (mt_rand(0, 2) === 0) ? $this->paises[0]->codpais : AppSettings::get('default', 'codpais');;
+            $dir->codpais = (mt_rand(0, 2) === 0) ? $this->paises[0]->codpais : AppSettings::get('default', 'codpais');
+            ;
             $dir->provincia = $this->tools->provincia();
             $dir->ciudad = $this->tools->ciudad();
             $dir->direccion = $this->tools->direccion();
@@ -567,7 +550,8 @@ class ModelDataGenerator
         while ($max) {
             $dir = new Model\DireccionProveedor();
             $dir->codproveedor = $proveedor->codproveedor;
-            $dir->codpais = AppSettings::get('default', 'codpais');;
+            $dir->codpais = AppSettings::get('default', 'codpais');
+            ;
 
             if (mt_rand(0, 2) == 0) {
                 $dir->codpais = $this->paises[0]->codpais;

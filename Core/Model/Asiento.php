@@ -360,9 +360,9 @@ class Asiento
             $debe = $haber = 0;
             $partidas = $this->getPartidas();
             foreach ($partidas as $p) {
-                $p->debe = bround($p->debe, 2);
+                $p->debe = round($p->debe, 2, PHP_ROUND_HALF_EVEN);
                 $debe += $p->debe;
-                $p->haber = bround($p->haber, 2);
+                $p->haber = round($p->haber, 2, PHP_ROUND_HALF_EVEN);
                 $haber += $p->haber;
             }
 
@@ -501,7 +501,7 @@ class Asiento
         } elseif (preg_match('/^(\d{1,2})-(\d{1,2})-(\d{4})$/i', $query)) {
             $consulta .= 'fecha = ' . self::$dataBase->var2str($query) . " OR concepto LIKE '%" . $query . "%'";
         } else {
-            $consulta .= "lower(concepto) LIKE '%" . $buscar = str_replace(' ', '%', $query) . "%'";
+            $consulta .= "lower(concepto) LIKE '%" . str_replace(' ', '%', $query) . "%'";
         }
         $consulta .= ' ORDER BY fecha DESC';
 
