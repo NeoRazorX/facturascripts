@@ -59,4 +59,19 @@ class ListAsiento extends ExtendedController\ListController
 
         return $pagedata;
     }
+
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'renumber':
+                $model = $this->views['ListAsiento']->getModel();
+                if ($model->renumber()) {
+                    $this->miniLog->notice($this->i18n->trans('renumber-accounting-ok'));
+                }
+                break;
+
+            default:
+                parent::execPreviousAction($action);
+        }
+    }
 }

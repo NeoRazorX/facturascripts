@@ -548,7 +548,7 @@ class Asiento
      *
      * @return bool
      */
-    public function renumerar()
+    public function renumber()
     {
         $continuar = false;
         $ejercicio = new Ejercicio();
@@ -575,7 +575,7 @@ class Asiento
 
                 if ($sql !== '') {
                     if (!self::$dataBase->exec($sql)) {
-                        self::$miniLog->alert(self::$i18n->trans('error-while-renumbering-seats', ['%exerciseCode%' => $eje->codejercicio]));
+                        self::$miniLog->alert(self::$i18n->trans('renumber-accounting-error', ['%exerciseCode%' => $eje->codejercicio]));
                         $continuar = false;
                     }
                     $sql = '';
@@ -614,8 +614,8 @@ class Asiento
             }
         }
 
-        echo self::$i18n->trans('renumbering-seats');
-        $this->renumerar();
+        echo self::$i18n->trans('renumber-accounting');
+        $this->renumber();
     }
     /// Renumber all seats. Returns False in case of error
 
