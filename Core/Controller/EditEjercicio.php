@@ -16,10 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Core\Lib\ExtendedController;
 
 /**
@@ -83,5 +83,41 @@ class EditEjercicio extends ExtendedController\PanelController
         $pagedata['showonmenu'] = false;
 
         return $pagedata;
+    }
+
+    protected function execAfterAction($view, $action)
+    {
+        switch ($action) {
+            case 'import-accounting':
+                $this->importAccountingPlan();
+                break;
+
+            default:
+                parent::execAfterAction($view, $action);
+        }
+    }
+
+    private function importAccountingPlan()
+    {
+        $accountingPlanImport = new AccountingPlanImport();
+        $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
+        $uploadFile = $this->request->files->get('accountingfile', false);
+        if ($uploadFile === false) {
+            $this->miniLog->alert($this->i18n->trans('file-not-found', ['%fileName%' => '']));
+            return false;
+        }
+
+        switch ($uploadFile->getMimeType()) {
+            case 'application/xml':
+                $accountingPlanImport->importXML($uploadFile->getPathname(), $codejercicio);
+                break;
+
+            case 'text/csv':
+                $accountingPlanImport->importCSV($uploadFile->getPathname(), $codejercicio);
+                break;
+
+            default:
+                $this->miniLog->error($this->i18n->trans('file-not-supported'));
+        }
     }
 }

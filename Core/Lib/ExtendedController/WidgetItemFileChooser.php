@@ -66,4 +66,12 @@ class WidgetItemFileChooser extends WidgetItem
 
         return $html;
     }
+    
+    public function getMaxFileUpload()
+    {
+        $postMaxSize = (int) ini_get('post_max_size');
+        $uploadMaxSize = (int) ini_get('upload_max_filesize');
+        
+        return ($uploadMaxSize > $postMaxSize) ? $uploadMaxSize : $postMaxSize;
+    }
 }

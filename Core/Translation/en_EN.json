@@ -251,6 +251,7 @@
     "heading-account-group-id":"Heading account ID group",
     "heading-account-id-root":"Heading account root",
     "help":"Help",
+    "help-server-accepts-filesize": "This server support files up to %size% MB.",
     "homepage":"Start page",
     "host":"Host",
     "http":"HTTP",

@@ -82,7 +82,7 @@
                     {% set buttons = cards.getButtons(panel.name) %}
                     {% if buttons|length > 0 %}
                     {% set formName = panel.name ~ '_form' %}
-                    <form action="{{ context.edit_url ? context.edit_url : '#' }}" method="post" name="{{ formName }}">
+                    <form action="{{ context.edit_url ? context.edit_url : '#' }}" method="post" name="{{ formName }}" enctype="multipart/form-data">
                         <input type="hidden" name="active" value="{{ context.indexView }}" />
                         <input type="hidden" name="action" />
                         {% for button in buttons %}
@@ -236,7 +236,7 @@
 {% set formName = (withForm == TRUE) ? context.indexView ~ '-' ~ keyValue : 'main_form' %}
 
 {% if withForm == TRUE %}
-<form name="{{ formName }}" action="{{ context.edit_url }}" method="post" class="form" role="form">
+<form name="{{ formName }}" action="{{ context.edit_url }}" method="post" enctype="multipart/form-data" class="form" role="form">
     <input type="hidden" name="action" value="save">
     <input type="hidden" name="active" value="{{ context.indexView }}">
     <div class="row">
@@ -308,7 +308,7 @@
 {% set keyValue = context.fsc.getFieldValue(model, model.primaryColumn()) %}
 {% set formName = context.indexView ~ '-' ~ keyValue %}
 
-<form name="{{ formName }}" action="{{ context.edit_url }}" method="post" class="form" role="form">
+<form name="{{ formName }}" action="{{ context.edit_url }}" method="post" enctype="multipart/form-data" class="form" role="form">
     <input type="hidden" name="action" value="save">
     <input type="hidden" name="active" value="{{ context.indexView }}">
     {% for group in view.getColumns() %}
@@ -393,7 +393,7 @@
     <div class="modal fade" id="{{ group.name }}" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form name="{{ formName }}" action="{{ context.edit_url }}" method="post" class="form" role="form">
+                <form name="{{ formName }}" action="{{ context.edit_url }}" method="post" enctype="multipart/form-data" class="form" role="form">
                     <input type="hidden" name="action" value="{{ group.name }}">
                     <input type="hidden" name="active" value="{{ context.indexView }}">
                     <div class="modal-header">

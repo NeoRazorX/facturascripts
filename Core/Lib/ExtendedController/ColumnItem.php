@@ -51,7 +51,7 @@ class ColumnItem extends VisualItem implements VisualItemInterface
     /**
      * Field display object configuration
      *
-     * @var WidgetButton|WidgetItemCheckBox|WidgetItemColor|WidgetItemDateTime|WidgetItemMoney|WidgetItemNumber|WidgetItemRadio|WidgetItemSelect|WidgetItemText
+     * @var WidgetButton|WidgetItemCheckBox|WidgetItemColor|WidgetItemDateTime|WidgetItemMoney|WidgetItemNumber|WidgetItemRadio|WidgetItemSelect|WidgetItemText|WidgetItemFileChooser
      */
     public $widget;
 
@@ -410,7 +410,15 @@ class ColumnItem extends VisualItem implements VisualItemInterface
      */
     protected function getColumnDescription()
     {
-        return empty($this->description) ? '' : '<small class="form-text text-muted">'
-            . $this->i18n->trans($this->description) . '</small>';
+        $description = '';
+        if (!empty($this->description)) {
+            $description = $this->i18n->trans($this->description);
+        }
+
+        if ($this->widget->type === 'filechooser') {
+            $description = ' ' . $this->i18n->trans('help-server-accepts-filesize', ['%size%' => $this->widget->getMaxFileUpload()]);
+        }
+
+        return empty($description) ? '' : '<small class="form-text text-muted">' . $description . '</small>';
     }
 }
