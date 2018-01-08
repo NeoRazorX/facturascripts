@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2015-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -36,11 +36,11 @@ class Contacto
     public $codcontacto;
 
     /**
-     * Contact NIF.
+     * Contact CIF/NIF.
      *
      * @var string
      */
-    public $nif;
+    public $cifnif;
 
     /**
      * True if it is a physical person, but False.
@@ -55,6 +55,13 @@ class Contacto
      * @var string
      */
     public $nombre;
+    
+    /**
+     * Last name.
+     * 
+     * @var string
+     */
+    public $apellidos;
 
     /**
      * Contact company.
@@ -162,34 +169,6 @@ class Contacto
     public $ultima_comunicacion;
 
     /**
-     * Contact source.
-     *
-     * @var string
-     */
-    public $fuente;
-
-    /**
-     * Contact status.
-     *
-     * @var string
-     */
-    public $estado;
-
-    /**
-     * Potential client.
-     *
-     * @var int
-     */
-    public $potencial;
-
-    /**
-     * Group to which the client belongs.
-     *
-     * @var string
-     */
-    public $codgrupo;
-
-    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
@@ -214,41 +193,10 @@ class Contacto
      */
     public function clear()
     {
-        $this->codcontacto = null;
-        $this->nif = '';
         $this->personafisica = true;
-        $this->nombre = '';
-        $this->empresa = null;
-        $this->cargo = null;
-        $this->email = null;
-        $this->telefono1 = null;
-        $this->telefono2 = null;
-        $this->direccion = null;
-        $this->codpostal = null;
-        $this->ciudad = null;
-        $this->provincia = null;
-        $this->codpais = null;
         $this->admitemarketing = true;
-        $this->codagente = null;
-        $this->observaciones = '';
         $this->fechaalta = date('d-m-Y');
         $this->ultima_comunicacion = date('d-m-Y');
-        $this->fuente = null;
-        $this->estado = 'nuevo';
-        $this->potencial = 0;
-        $this->codgrupo = null;
-    }
-
-    /**
-     * Returns a list of contact states.
-     *
-     * @return array
-     */
-    public function estados()
-    {
-        return [
-            'nuevo', 'potencial', 'cliente', 'no interesado',
-        ];
     }
 
     /**

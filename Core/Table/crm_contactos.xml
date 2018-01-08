@@ -11,9 +11,9 @@
         <null>NO</null>
     </column>
     <column>
-        <name>nif</name>
-        <type>character varying(10)</type>
-        <null>YES</null>
+        <name>cifnif</name>
+        <type>character varying(30)</type>
+        <null>NO</null>
     </column>
     <column>
         <name>personafisica</name>
@@ -22,6 +22,11 @@
     </column>
     <column>
         <name>nombre</name>
+        <type>character varying(150)</type>
+        <null>YES</null>
+    </column>
+    <column>
+        <name>apellidos</name>
         <type>character varying(150)</type>
         <null>YES</null>
     </column>
@@ -99,26 +104,6 @@
     <column>
         <name>ultima_comunicacion</name>
         <type>date</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>fuente</name>
-        <type>character varying(50)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>estado</name>
-        <type>character varying(50)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>potencial</name>
-        <type>integer</type>
-        <default>0</default>
-    </column>
-    <column>
-        <name>codgrupo</name>
-        <type>character varying(6)</type>
         <null>YES</null>
     </column>
     <constraint>
