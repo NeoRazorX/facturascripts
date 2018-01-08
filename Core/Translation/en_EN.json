@@ -192,7 +192,6 @@
     "error-saving-stock":"\u00a1Error saving stock!",
     "error-to-innodb":"Error converting table to InnoDB.",
     "error-updating-product-stock":"\u00a1Error updating item stock!",
-    "error-while-renumbering-seats":"An error occurred while renumbering seats in financial year %exerciseCode%",
     "errors":"Mistakes",
     "estimation":"Estimation",
     "estimations":"Estimations",
@@ -415,7 +414,7 @@
     "refresh":"Refresh",
     "refresh-page":"Refresh page",
     "register-symbol":"#",
-    "renumbering-seats":"\nRenumbering seats...",
+    "renumber-accounting":"\nRenumber accounting entries...",
     "repeat-new-password":"Repeat password",
     "reports":"Reports",
     "reset":"Setup restarted successfully.",
@@ -607,5 +606,8 @@
     "level": "Level",
     "api": "API",
     "disable-api": "Disable API",
-    "default-tax": "Default TAX"
+    "default-tax": "Default TAX",
+    "renumber-accounting": "Renumber Accounting",
+    "renumber-accounting-ok": "Renumbering of accounting entries completed",
+    "renumber-accounting-error":"An error occurred while renumber accounting entries in financial year %exerciseCode%"
 }
