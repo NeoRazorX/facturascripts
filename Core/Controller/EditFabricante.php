@@ -57,7 +57,7 @@ class EditFabricante extends ExtendedController\PanelController
             case 'EditFabricanteListArticulos':
                 $codfabricante = $this->getViewModelValue('EditFabricante', 'codfabricante');
                 $where = [new DataBaseWhere('codfabricante', $codfabricante)];
-                $view->loadData($where);
+                $view->loadData(false, $where);
                 break;
         }
     }

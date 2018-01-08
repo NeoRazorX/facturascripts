@@ -113,7 +113,7 @@ class AppSettings
     {
         foreach (self::$data as $key => $value) {
             $settings = new Settings();
-            $settings->name = $key;
+            $settings->name = (string) $key;
             $settings->properties = $value;
             $settings->save();
         }

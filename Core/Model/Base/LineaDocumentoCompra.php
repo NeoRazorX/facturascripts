@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,7 +27,7 @@ trait LineaDocumentoCompra
 {
 
     use ModelTrait {
-        clear as private clearTrait;
+        clear as private traitClear;
     }
 
     /**
@@ -136,20 +136,16 @@ trait LineaDocumentoCompra
      */
     private function clearLinea()
     {
-        $this->clearTrait();
+        $this->traitClear();
         $this->cantidad = 0.0;
-        $this->codcombinacion = null;
-        $this->codimpuesto = null;
         $this->descripcion = '';
         $this->dtopor = 0.0;
-        $this->idlinea = null;
         $this->irpf = 0.0;
         $this->iva = 0.0;
         $this->pvpsindto = 0.0;
         $this->pvptotal = 0.0;
         $this->pvpunitario = 0.0;
         $this->recargo = 0.0;
-        $this->referencia = null;
     }
 
     /**

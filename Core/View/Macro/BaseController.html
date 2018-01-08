@@ -82,8 +82,9 @@
                     {% set buttons = cards.getButtons(panel.name) %}
                     {% if buttons|length > 0 %}
                     {% set formName = panel.name ~ '_form' %}
-                    <form action="{{ context.edit_url }}" method="post" name="{{ formName }}">
-                        <input type="hidden" name="active" value="{{ context.indexView }}">
+                    <form action="{{ context.edit_url ? context.edit_url : '#' }}" method="post" name="{{ formName }}">
+                        <input type="hidden" name="active" value="{{ context.indexView }}" />
+                        <input type="hidden" name="action" />
                         {% for button in buttons %}
                             {% set label = context.i18n.trans(button.label) %}
                             {% set hint = context.i18n.trans(button.hint) %}
@@ -310,42 +311,35 @@
 <form name="{{ formName }}" action="{{ context.edit_url }}" method="post" class="form" role="form">
     <input type="hidden" name="action" value="save">
     <input type="hidden" name="active" value="{{ context.indexView }}">
-    <div class="row">
-        {% for group in view.getColumns() %}
-        <div class="col">
-            <div class="form-row {% if needTitle %}align-items-center{% endif %}">
-                {% for column in group.columns %}
-                {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
-                {% if column.display == 'none' %}
-                <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
-                {% else %}
-                    {% if column.level <= context.fsc.user.level %}
-                    {{ column.getEditHTML(value, needTitle)|raw }}
-                    {% endif %}
-                {% endif %}
-                {% endfor %}
-
-                <div class="form-group col">
-                    <div class="d-xs-none">
-                        <br/>
-                    </div>
-                    {% if keyValue is not empty %}
-                    <a class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
-                       &nbsp;<i class="fa fa-trash" aria-hidden="true"></i>&nbsp;
-                    </a>
-                    {% endif %}
-
-                    <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
-                            &nbsp;<i class="fa fa-undo" aria-hidden="true"></i>&nbsp;
-                    </button>
-                    <button class="btn btn-sm btn-primary" type="submit" {{ popoverTitle(save_title, 'bottom') }}>
-                            &nbsp;<i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;
-                    </button>
-                </div>
+    {% for group in view.getColumns() %}
+    <div class="form-row {% if needTitle %}align-items-center{% endif %}">
+        {% for column in group.columns %}
+            {% set value = context.fsc.getFieldValue(model, column.widget.fieldName) %}
+            {% if column.display == 'none' %}
+            <input type="hidden" name="{{ column.widget.fieldName }}" value="{{ value }}">
+            {% elseif column.level <= context.fsc.user.level %}
+            {{ column.getEditHTML(value, needTitle)|raw }}
+            {% endif %}
+        {% endfor %}
+        
+        <div class="form-group col text-right">
+            <div class="d-xs-none"><br/></div>
+            {% if keyValue is not empty %}
+            <a class="btn btn-sm btn-danger" onclick="deleteRecord('{{ formName }}');" href="#" {{ popoverTitle(remove_title, 'bottom') }}>
+                <i class="fa fa-trash fa-fw" aria-hidden="true"></i>
+            </a>
+            {% endif %}
+            <div class="btn-group">
+                <button class="btn btn-sm btn btn-secondary" type="reset" {{ popoverTitle(undo_title, 'bottom') }}>
+                    <i class="fa fa-undo fa-fw" aria-hidden="true"></i>
+                </button>
+                <button class="btn btn-sm btn-primary" type="submit" {{ popoverTitle(save_title, 'bottom') }}>
+                    <i class="fa fa-floppy-o fa-fw" aria-hidden="true"></i>
+                </button>
             </div>
         </div>
-        {% endfor %}
     </div>
+    {% endfor %}
 </form>
 {% endmacro %}
 

@@ -59,7 +59,7 @@ class EditSubcuenta extends ExtendedController\PanelController
                 $idsubcuenta = $this->getViewModelValue('EditSubcuenta', 'idsubcuenta');
                 $inSQL = 'SELECT idasiento FROM co_partidas WHERE idsubcuenta = ' . $this->dataBase->var2str($idsubcuenta);
                 $where = [new DataBaseWhere('idasiento', $inSQL, 'IN')];
-                $view->loadData($where);
+                $view->loadData(false, $where);
                 break;
         }
     }

@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es" >
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ langcode2 }}" xml:lang="{{ langcode2 }}" >
     <head>
         {% block meta %}
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>{{ i18n.trans(fsc.title) | capitalize }}</title>
         <meta name="description" content="{{ i18n.trans('meta-description') }}" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="generator" content="{{ i18n.trans('facturascripts') }}" />
+        <meta name="generator" content="FacturaScripts" />
         {% endblock %}
         {% block icons %}
-        <link rel="shortcut icon" href="Core/Assets/Images/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="Core/Assets/Images/apple-icon-180x180.png" />
+        <link rel="shortcut icon" href="Dinamic/Assets/Images/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="Dinamic/Assets/Images/apple-icon-180x180.png" />
         {% endblock %}
         {% block css %}
         <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css" />
-        <link rel="stylesheet" href="Core/Assets/CSS/datepicker.css" />
-        <link rel="stylesheet" href="Core/Assets/CSS/custom.css" />
+        <link rel="stylesheet" href="Dinamic/Assets/CSS/datepicker.css" />
+        <link rel="stylesheet" href="Dinamic/Assets/CSS/custom.css" />
         {% for css in fsc.assets['css'] %}
         <link rel="stylesheet" href="{{ css }}" />
         {% endfor %}
@@ -27,21 +27,22 @@
         <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
         <script src="node_modules/bootbox/bootbox.min.js"></script>
         <script src="node_modules/jscolor-picker/jscolor.min.js"></script>
-        <script src="Core/Assets/JS/datepicker.js"></script>
-        <script src="Core/Assets/JS/custom.js"></script>
+        <script src="Dinamic/Assets/JS/datepicker.js"></script>
+        <script src="Dinamic/Assets/JS/custom.js"></script>
         {% for js in fsc.assets['js'] %}
         <script src="{{ js }}"></script>
         {% endfor %}
         {% endblock %}
         {{ debugBarRender.renderHead()|raw }}
     </head>
+    {% block fullBody %}
     <body>
         {% block navbar %}
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top d-print-none">
             {% block navbarContent %}
             <a class="navbar-brand" href="index.php">
-                <img src="Core/Assets/Images/logo.png" width="30" height="30" class="d-inline-block align-top" alt="FacturaScripts"/>
-                {{ fsc.empresa.nombrecorto }}
+                <img src="Dinamic/Assets/Images/logo-white.png" width="30" height="30" class="d-inline-block align-top" alt="FacturaScripts"/>
+                <span class="d-none d-xl-inline">{{ fsc.empresa.nombrecorto }}</span>
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -93,4 +94,5 @@
         <br/>
         {{ debugBarRender.render()|raw }}
     </body>
+    {% endblock %}
 </html>

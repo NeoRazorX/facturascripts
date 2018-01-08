@@ -31,6 +31,11 @@
 
 <script type="text/javascript">
     var tabActive = '{{ fsc.active }}';
+    function execActionForm(formName, actionValue) {
+        var form = document.forms[formName];
+        form.action.value = actionValue;
+        form.submit();
+    }
     function insertRecord() {
         var url = { {{ fsc.getStringURLs('new') | raw }} };
         document.insert_form.action = url[tabActive];

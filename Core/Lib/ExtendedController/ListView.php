@@ -309,25 +309,26 @@ class ListView extends BaseView
     }
 
     /**
-     * Load data
-     *
+     * Load the data in the cursor property, according to the where filter specified.
+     * 
+     * @param mixed $code
      * @param DataBaseWhere[] $where
+     * @param array $order
      * @param int $offset
      * @param int $limit
      */
-    public function loadData($where, $offset = 0, $limit = FS_ITEM_LIMIT)
+    public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {
-        $order = $this->getSQLOrderBy($this->selectedOrderBy);
+        $this->order = empty($order) ? $this->getSQLOrderBy($this->selectedOrderBy) : $order;
         $this->count = $this->model->count($where);
         /// needed when megasearch force data reload
         $this->cursor = [];
         if ($this->count > 0) {
-            $this->cursor = $this->model->all($where, $order, $offset, $limit);
+            $this->cursor = $this->model->all($where, $this->order, $offset, $limit);
         }
 
         /// store values where & offset for exportation
         $this->offset = $offset;
-        $this->order = $order;
         $this->where = $where;
     }
 

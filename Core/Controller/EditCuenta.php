@@ -59,7 +59,7 @@ class EditCuenta extends ExtendedController\PanelController
             case 'ListSubcuenta':
                 $idcuenta = $this->getViewModelValue('EditCuenta', 'idcuenta');
                 $where = [new DataBaseWhere('idcuenta', $idcuenta)];
-                $view->loadData($where);
+                $view->loadData(false, $where);
                 break;
         }
     }

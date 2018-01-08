@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -278,7 +278,7 @@ class Partida
         $this->baseimponible = 0.0;
         $this->debe = 0.0;
         $this->haber = 0.0;
-        $this->numero = 0.0;
+        $this->numero = 0;
         $this->fecha = date('d-m-Y');
         $this->saldo = 0.0;
         $this->sum_debe = 0.0;

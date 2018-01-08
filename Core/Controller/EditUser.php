@@ -81,7 +81,7 @@ class EditUser extends ExtendedController\PanelController
             case 'EditRoleUser':
                 $nick = $this->getViewModelValue('EditUser', 'nick');
                 $where = [new DataBaseWhere('nick', $nick)];
-                $view->loadData($where);
+                $view->loadData(false, $where);
                 break;
         }
     }
