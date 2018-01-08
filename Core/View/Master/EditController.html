@@ -102,10 +102,7 @@
 {# Visual macros #}
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 {% from 'Macro/Utils.html' import exportData as exportData %}
-{% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
-{% from 'Macro/BaseController.html' import rowStatisticsForEditView as rowStatisticsForEditView %}
-{% from 'Macro/BaseController.html' import rowCardsForEditView as rowCardsForEditView %}
-{% from 'Macro/BaseController.html' import modalFormFromColumns as modalFormFromColumns %}
+{% import 'Macro/BaseController.html' as BaseController %}
 
 {# Aux Objects #}
 {% set model = fsc.view.getModel() %}
@@ -166,7 +163,7 @@
     <div id="data" class="row mt-2">
         <div class="col-12">
             {# Header Row #}
-            {{ rowCardsForEditView(_context, fsc.view, 'header') }}
+            {{ BaseController.rowCardsForEditView(_context, fsc.view, 'header') }}
 
             <form action="#" method="post" class="form" role="form" name="main_form">
                 <input type="hidden" name="action" value="save">
@@ -177,11 +174,11 @@
 
                     <div class="card-body">
                         {# Statistical buttons bar #}
-                        {{ rowStatisticsForEditView(_context, fsc.view) }}
+                        {{ BaseController.rowStatisticsForEditView(_context, fsc.view) }}
 
                         {# Main Form #}
                         <div id="main_row" class="row">
-                            {{ columnsForEditView(_context, fsc.view, model, FALSE) }}
+                            {{ BaseController.columnsForEditView(_context, fsc.view, model, FALSE) }}
                         </div>
                     </div>
 
@@ -200,9 +197,9 @@
     </div>
 
     {# Footer Row #}
-    {{ rowCardsForEditView(_context, fsc.view, 'footer') }}
+    {{ BaseController.rowCardsForEditView(_context, fsc.view, 'footer') }}
 
     {# Modals Forms #}
-    {{ modalFormFromColumns(_context, fsc.view) }}
+    {{ BaseController.modalFormFromColumns(_context, fsc.view) }}
 </div>
 {% endblock %}

@@ -82,6 +82,16 @@ class Settings
     }
 
     /**
+     * Returns no description.
+     *
+     * @return string
+     */
+    public function primaryDescription()
+    {
+        return '';
+    }
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()

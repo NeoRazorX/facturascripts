@@ -130,13 +130,7 @@
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
 {% from 'Macro/Utils.html' import message as show_message %}
 {% from 'Macro/Utils.html' import exportData as exportData %}
-{% from 'Macro/BaseController.html' import buttonOrderBy as buttonOrderBy %}
-{% from 'Macro/BaseController.html' import columnsForListView as columnsForListView %}
-{% from 'Macro/BaseController.html' import filterForSelectInput as filterForSelectInput %}
-{% from 'Macro/BaseController.html' import filterForCheckBoxInput as filterForCheckBoxInput %}
-{% from 'Macro/BaseController.html' import filterForTextInput as filterForTextInput %}
-{% from 'Macro/BaseController.html' import rowCardsForEditView as rowCardsForEditView %}
-{% from 'Macro/BaseController.html' import modalFormFromColumns as modalFormFromColumns %}
+{% import 'Macro/BaseController.html' as BaseController %}
 
 {# Page Header #}
 <div class="container-fluid d-print-none">
@@ -236,11 +230,11 @@
 
                         {# Add new column filter #}
                         {% if filter.type == 'select' %}
-                        {{ filterForSelectInput(_context, key1, filter) }}
+                        {{ BaseController.filterForSelectInput(_context, key1, filter) }}
                         {% elseif filter.type == 'checkbox' %}
-                        {{ filterForCheckBoxInput(_context, key1, filter) }}
+                        {{ BaseController.filterForCheckBoxInput(_context, key1, filter) }}
                         {% else %}
-                        {{ filterForTextInput(_context, key1, filter) }}
+                        {{ BaseController.filterForTextInput(_context, key1, filter) }}
                         {% set columnsUsed = columnsUsed + 2 %}
                         {% endif %}
 
@@ -249,7 +243,7 @@
                         {% endfor %}
 
                         {# Order by selector #}
-                        {{ buttonOrderBy(_context, view) }}
+                        {{ BaseController.buttonOrderBy(_context, view) }}
                     </div>
                 </div>
             </form>
@@ -257,7 +251,7 @@
             {# Data Row #}
             <div class="table-responsive">
                 {# Data Table #}
-                {{ columnsForListView(_context, view) }}
+                {{ BaseController.columnsForListView(_context, view) }}
             </div>
 
             {# Footer Navigation #}
@@ -292,8 +286,8 @@
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        {{ rowCardsForEditView(_context, view, 'footer') }}
-                        {{ modalFormFromColumns(_context, view) }}
+                        {{ BaseController.rowCardsForEditView(_context, view, 'footer') }}
+                        {{ BaseController.modalFormFromColumns(_context, view) }}
                     </div>
                 </div>
             </div>
