@@ -1116,5 +1116,8 @@
     "error-no-name-in-settings": "Error a la vista %viewName%. Cal informar el 'name' en qualcuna columna de l'xml",
     "api": "API",
     "disable-api": "Desactivar API",
-    "default-tax": "Impost per defecte"
+    "default-tax": "Impost per defecte",
+    "renumber-accounting": "Renumerar Assentaments",
+    "renumber-accounting-ok": "Renumeració d'assentaments completada",
+    "renumber-accounting-error": "Hi ha hagut un error durant la renumeració d'assentaments en l'exercici fiscal %exerciseCode%"
 }
