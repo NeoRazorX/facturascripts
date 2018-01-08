@@ -39,6 +39,18 @@ class Wizard extends Controller
         return $pageData;
     }
 
+    public function getDivisas()
+    {
+        $divisas = [];
+
+        $divisaModel = new Model\Divisa();
+        foreach ($divisaModel->all([], ['descripcion' => 'ASC'], 0, 500) as $divisa) {
+            $divisas[$divisa->coddivisa] = $divisa->descripcion;
+        }
+
+        return $divisas;
+    }
+
     public function getPaises()
     {
         $paises = [];
@@ -50,33 +62,60 @@ class Wizard extends Controller
 
         return $paises;
     }
-    
+
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-        
-        $codpais = $this->request->request->get('codpais','');
-        if($codpais !== '') {
+
+        $coddivisa = $this->request->request->get('coddivisa', '');
+        $codpais = $this->request->request->get('codpais', '');
+        if ($codpais !== '') {
             $appSettings = new AppSettings();
+            $appSettings->set('default', 'coddivisa', $coddivisa);
             $appSettings->set('default', 'codpais', $codpais);
+            $appSettings->set('default', 'homepage', 'AdminHome');
             $appSettings->save();
             $this->initModels();
-            
+            $this->saveAddress($appSettings, $codpais);
+
+            /// change user homepage
             $this->user->homepage = 'AdminHome';
             $this->user->save();
-            
+
             /// redir to EditSettings
-            $this->response->headers->set('Refresh', '1; index.php?page=EditSettings');
+            $this->response->headers->set('Refresh', '0; index.php?page=EditSettings');
         }
     }
-    
+
     private function initModels()
     {
-        new Model\Divisa();
-        new Model\Empresa();
-        new Model\Almacen();
         new Model\FormaPago();
         new Model\Impuesto();
         new Model\Serie();
+    }
+
+    /**
+     * 
+     * @param AppSettings $appSettings
+     * @param string $codpais
+     */
+    private function saveAddress(&$appSettings, $codpais)
+    {
+        $this->empresa->codpais = $codpais;
+        $this->empresa->provincia = $this->request->request->get('provincia');
+        $this->empresa->ciudad = $this->request->request->get('ciudad');
+        $this->empresa->save();
+
+        $almacenModel = new Model\Almacen();
+        foreach ($almacenModel->all() as $almacen) {
+            $almacen->codpais = $codpais;
+            $almacen->provincia = $this->empresa->provincia;
+            $almacen->ciudad = $this->empresa->ciudad;
+            $almacen->save();
+
+            $appSettings->set('default', 'codalmacen', $almacen->codalmacen);
+            $appSettings->save();
+            break;
+        }
     }
 }

@@ -60,7 +60,7 @@ class EditEpigrafe extends ExtendedController\PanelController
                 $idepigrafe = $this->getViewModelValue('EditEpigrafe', 'idepigrafe');
                 if (!empty($idepigrafe)) {
                     $where = [new DataBaseWhere('idepigrafe', $idepigrafe)];
-                    $view->loadData($where);
+                    $view->loadData(false, $where);
                 }
                 break;
         }

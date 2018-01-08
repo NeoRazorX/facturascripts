@@ -26,7 +26,6 @@ use FacturaScripts\Core\Base\DebugBar\TranslationCollector;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\MenuManager;
-use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
@@ -63,6 +62,13 @@ class AppController extends App
     private $menuManager;
 
     /**
+     * Langcode to use in html.
+     * 
+     * @var string
+     */
+    private $langcode2;
+
+    /**
      * AppController constructor.
      *
      * @param string $folder
@@ -72,6 +78,7 @@ class AppController extends App
         parent::__construct($folder);
         $this->debugBar = new StandardDebugBar();
         $this->menuManager = new MenuManager();
+        $this->langcode2 = substr($this->request->cookies->get('fsLang', FS_LANG), 0, 2);
 
         if (FS_DEBUG) {
             $this->debugBar['time']->startMeasure('init', 'AppController::__construct()');
@@ -220,6 +227,7 @@ class AppController extends App
             'debugBarRender' => false,
             'fsc' => $this->controller,
             'i18n' => $this->i18n,
+            'langcode2' => $this->langcode2,
             'log' => $this->miniLog,
             'menuManager' => $this->menuManager,
             'sql' => $this->miniLog->read(['sql']),
@@ -339,6 +347,7 @@ class AppController extends App
                 }
 
                 $this->miniLog->alert($this->i18n->trans('login-cookie-fail'));
+                $this->response->headers->clearCookie('fsNick');
                 return false;
             }
 
@@ -349,21 +358,12 @@ class AppController extends App
     }
 
     /**
-     * Log out the user
+     * Log out the user.
      */
     private function userLogout()
     {
         $this->response->headers->clearCookie('fsNick');
         $this->response->headers->clearCookie('fsLogkey');
         $this->miniLog->debug($this->i18n->trans('logout-ok'));
-    }
-
-    /**
-     * Load plugins
-     */
-    private function deployPlugins()
-    {
-        $pluginManager = new PluginManager();
-        $pluginManager->deploy();
     }
 }

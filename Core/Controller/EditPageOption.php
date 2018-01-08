@@ -98,19 +98,6 @@ class EditPageOption extends Base\Controller
     }
 
     /**
-     * Where filter for loading the view to be edited
-     *
-     * @return DatabaseWhere[]
-     */
-    private function getFilter()
-    {
-        return [
-            new DataBaseWhere('name', $this->selectedViewName),
-            new DataBaseWhere('user', $this->selectedUser)
-        ];
-    }
-
-    /**
      * Checking the value of the nick field.
      * It determines if we edit a configuration for all the users or one,
      * and if there is already configuration for the nick

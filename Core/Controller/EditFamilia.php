@@ -59,13 +59,13 @@ class EditFamilia extends ExtendedController\PanelController
             case 'ListArticulo':
                 $codfamilia = $this->getViewModelValue('EditFamilia', 'codfamilia');
                 $where = [new DataBaseWhere('codfamilia', $codfamilia)];
-                $view->loadData($where);
+                $view->loadData(false, $where);
                 break;
 
             case 'ListFamilia':
                 $codfamilia = $this->getViewModelValue('EditFamilia', 'codfamilia');
                 $where = [new DataBaseWhere('madre', $codfamilia)];
-                $view->loadData($where);
+                $view->loadData(false, $where);
                 break;
         }
     }

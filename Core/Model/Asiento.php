@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * The accounting entry. It is related to an exercise and consists of games.
@@ -45,9 +46,9 @@ class Asiento
      * @var string
      */
     public $numero;
-    
+
     /**
-     *Identificacion de la empresa
+     * Identificacion de la empresa
      *
      * @var int
      */
@@ -104,7 +105,7 @@ class Asiento
 
     /**
      * Text that identifies the type of document
-     * 'Customer invoice' or 'Vendor invoice'.
+           * 'Customer invoice' or 'Vendor invoice'.
      *
      * @var string
      */
@@ -143,11 +144,11 @@ class Asiento
     {
         return 'idasiento';
     }
-    
+
     public function install()
     {
         new Ejercicio();
-        
+
         return '';
     }
 
@@ -171,12 +172,12 @@ class Asiento
         if ($this->tipodocumento === 'Factura de cliente') {
             $fac = new FacturaCliente();
 
-            return $fac->getByCodigo($this->documento);
+            return $fac->loadFromCode(null, [new DataBaseWhere('codigo', $this->documento)]);
         }
         if ($this->tipodocumento === 'Factura de proveedor') {
             $fac = new FacturaProveedor();
 
-            return $fac->getByCodigo($this->documento);
+            return $fac->loadFromCode(null, [new DataBaseWhere('codigo', $this->documento)]);
         }
 
         return false;
@@ -184,8 +185,8 @@ class Asiento
 
     /**
      * Returns the code of the currency.
-     * What happens is that this data is stored in the games, that's why
-     * you have to use this function.
+           * What happens is that this data is stored in the games, that's why
+           * you have to use this function.
      *
      * @return string|null
      */
@@ -214,7 +215,7 @@ class Asiento
     {
         $partida = new Partida();
 
-        return $partida->allFromAsiento($this->idasiento);
+        return $partida->all([new DataBaseWhere('idasiento', $this->idasiento)]);
     }
 
     /**
@@ -222,13 +223,13 @@ class Asiento
      */
     public function newNumero()
     {
-        $this->numero = 1;
+        $this->numero = '1';
         $sql = 'SELECT MAX(' . self::$dataBase->sql2Int('numero') . ') as num FROM ' . static::tableName()
             . ' WHERE codejercicio = ' . self::$dataBase->var2str($this->codejercicio) . ';';
 
         $data = self::$dataBase->select($sql);
         if (!empty($data)) {
-            $this->numero = 1 + (int) $data[0]['num'];
+            $this->numero = (string) (1 + (int) $data[0]['num']);
         }
     }
 
@@ -264,7 +265,7 @@ class Asiento
 
         /*
          * We check that the seat is not empty or unbalanced.
-         * We also check that the subaccounts belong to the same fiscal year.
+                   * We also check that the subaccounts belong to the same fiscal year.
          */
         $debe = $haber = 0;
         $partidas = $this->getPartidas();
@@ -409,11 +410,9 @@ class Asiento
         /// we check the associated invoice
         $status = true;
         $fac = $this->getFactura();
-        if ($fac) {
-            if ($fac->idasiento === null) {
-                $fac->idasiento = $this->idasiento;
-                $status = $fac->save();
-            }
+        if ($fac && $fac->idasiento === null) {
+            $fac->idasiento = $this->idasiento;
+            $status = $fac->save();
         }
 
         if ($status) {
@@ -478,7 +477,7 @@ class Asiento
 
     /**
      * Returns an array with combinations containing $query in its number
-     * or concept or amount.
+           * or concept or amount.
      *
      * @param string $query
      * @param int    $offset
@@ -553,7 +552,7 @@ class Asiento
     {
         $continuar = false;
         $ejercicio = new Ejercicio();
-        foreach ($ejercicio->allAbiertos() as $eje) {
+        foreach ($ejercicio->all([new DataBaseWhere('estado', 'ABIERTO')]) as $eje) {
             $posicion = 0;
             $numero = 1;
             $sql = '';
@@ -601,7 +600,7 @@ class Asiento
         $regiva0 = new RegularizacionIva();
         foreach ($eje0->all() as $ej) {
             if ($ej instanceof Ejercicio && $ej->abierto()) {
-                foreach ($regiva0->allFromEjercicio($ej->codejercicio) as $reg) {
+                foreach ($regiva0->all([new DataBaseWhere('codejercicio', $ej->codejercicio)]) as $reg) {
                     $sql = 'UPDATE ' . static::tableName() . ' SET editable = false WHERE editable = true'
                         . ' AND codejercicio = ' . self::$dataBase->var2str($ej->codejercicio)
                         . ' AND fecha >= ' . self::$dataBase->var2str($reg->fechainicio)

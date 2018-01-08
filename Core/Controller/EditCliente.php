@@ -27,6 +27,7 @@ use FacturaScripts\Core\Lib;
  * Controller to edit a single item from the Cliente model
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
  */
 class EditCliente extends ExtendedController\PanelController
 {
@@ -56,11 +57,18 @@ class EditCliente extends ExtendedController\PanelController
 
         $this->addEditListView('\FacturaScripts\Dinamic\Model\DireccionCliente', 'EditDireccionCliente', 'addresses', 'fa-road');
         $this->addEditListView('\FacturaScripts\Dinamic\Model\CuentaBancoCliente', 'EditCuentaBancoCliente', 'customer-banking-accounts', 'fa-bank');
+        $this->addEditListView('\FacturaScripts\Dinamic\Model\SubcuentaCliente', 'EditSubcuentaCliente', 'subaccount', 'fa-book');
         $this->addListView('\FacturaScripts\Dinamic\Model\Cliente', 'ListCliente', 'same-group', 'fa-users');
         $this->addListView('\FacturaScripts\Dinamic\Model\FacturaCliente', 'ListFacturaCliente', 'invoices', 'fa-files-o');
         $this->addListView('\FacturaScripts\Dinamic\Model\AlbaranCliente', 'ListAlbaranCliente', 'delivery-notes', 'fa-files-o');
         $this->addListView('\FacturaScripts\Dinamic\Model\PedidoCliente', 'ListPedidoCliente', 'orders', 'fa-files-o');
         $this->addListView('\FacturaScripts\Dinamic\Model\PresupuestoCliente', 'ListPresupuestoCliente', 'estimations', 'fa-files-o');
+        
+        /// Disable columns
+        $this->views['ListFacturaCliente']->disableColumn('customer', true);
+        $this->views['ListAlbaranCliente']->disableColumn('customer', true);
+        $this->views['ListPedidoCliente']->disableColumn('customer', true);
+        $this->views['ListPresupuestoCliente']->disableColumn('customer', true);
     }
 
     /**
@@ -81,19 +89,20 @@ class EditCliente extends ExtendedController\PanelController
                 $codgrupo = $this->getViewModelValue('EditCliente', 'codgrupo');
                 if (!empty($codgrupo)) {
                     $where = [new DataBaseWhere('codgrupo', $codgrupo)];
-                    $view->loadData($where);
+                    $view->loadData(false, $where);
                 }
                 break;
-
+                
             case 'EditDireccionCliente':
             case 'EditCuentaBancoCliente':
+            case 'EditSubcuentaCliente':
             case 'ListFacturaCliente':
             case 'ListAlbaranCliente':
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
                 $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
                 $where = [new DataBaseWhere('codcliente', $codcliente)];
-                $view->loadData($where);
+                $view->loadData(false, $where);
                 break;
         }
     }

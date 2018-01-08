@@ -132,17 +132,20 @@ class EditListView extends BaseView
             $column->widget->readOnly = $disabled;
         }
     }
-
+    
     /**
      * Load the data in the cursor property, according to the where filter specified.
      * Adds an empty row/model at the end of the loaded data.
-     *
+     * 
+     * @param mixed $code
      * @param DataBaseWhere[] $where
+     * @param array $order
      * @param int $offset
      * @param int $limit
      */
-    public function loadData($where, $offset = 0, $limit = 0)
+    public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {
+        $this->order = empty($order) ? $this->order : $order;
         $this->count = $this->model->count($where);
         if ($this->count > 0) {
             $this->cursor = $this->model->all($where, $this->order, $offset, $limit);

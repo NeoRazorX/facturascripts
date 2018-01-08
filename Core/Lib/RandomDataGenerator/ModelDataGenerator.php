@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2016-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2016-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -212,7 +212,7 @@ class ModelDataGenerator
 
                 case 1:
                     $aux = explode(':', $art->descripcion);
-                    if ($aux) {
+                    if (!empty($aux)) {
                         $art->referencia = $this->tools->txt2codigo($aux[0], 18);
                     } else {
                         $art->referencia = $art->getNewReferencia();
@@ -268,8 +268,8 @@ class ModelDataGenerator
             }
 
             $art = new Model\ArticuloProveedor();
-            $art->referencia = mt_rand(1, 99999999);
-            $art->refproveedor = mt_rand(1, 99999999);
+            $art->referencia = (string) mt_rand(1, 99999999);
+            $art->refproveedor = (string) mt_rand(1, 99999999);
             $art->descripcion = $this->tools->descripcion();
             $art->codimpuesto = $this->impuestos[0]->codimpuesto;
             $art->codproveedor = $proveedores[$num]->codproveedor;
@@ -477,7 +477,7 @@ class ModelDataGenerator
             $dir->provincia = $this->tools->provincia();
             $dir->ciudad = $this->tools->ciudad();
             $dir->direccion = $this->tools->direccion();
-            $dir->codpostal = mt_rand(1234, 99999);
+            $dir->codpostal = (string) mt_rand(1234, 99999);
             $dir->apartado = (mt_rand(0, 3) == 0) ? (string) mt_rand(1234, 99999) : null;
             $dir->domenvio = (mt_rand(0, 1) === 1);
             $dir->domfacturacion = (mt_rand(0, 1) === 1);
@@ -576,7 +576,7 @@ class ModelDataGenerator
             $dir->provincia = $this->tools->provincia();
             $dir->ciudad = $this->tools->ciudad();
             $dir->direccion = $this->tools->direccion();
-            $dir->codpostal = mt_rand(1234, 99999);
+            $dir->codpostal = (string) mt_rand(1234, 99999);
 
             if (mt_rand(0, 3) == 0) {
                 $dir->apartado = (string) mt_rand(1234, 99999);

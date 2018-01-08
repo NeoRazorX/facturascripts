@@ -165,7 +165,7 @@ trait Utils
      *
      * @return string
      */
-    public function fixHtml($txt)
+    public static function fixHtml($txt)
     {
         if($txt === null) {
             return null;

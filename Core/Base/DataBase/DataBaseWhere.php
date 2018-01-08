@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Base\DataBase;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -135,7 +134,7 @@ class DataBaseWhere
                 break;
 
             case 'REGEXP':
-                $result = "'" . $this->dataBase->escapeString($this->value) . "'";
+                $result = "'" . $this->dataBase->escapeString((string) $this->value) . "'";
                 break;
 
             default:
@@ -187,13 +186,11 @@ class DataBaseWhere
      */
     private function getValue()
     {
-        if($this->value === null) {
+        if ($this->value === null) {
             return 'NULL';
         }
 
-        return in_array($this->operator, ['LIKE', 'IS', 'IS NOT', 'IN', 'REGEXP'], false)
-            ? $this->getValueFromOperator()
-            : $this->getValueFromType();
+        return in_array($this->operator, ['LIKE', 'IS', 'IS NOT', 'IN', 'REGEXP'], false) ? $this->getValueFromOperator() : $this->getValueFromType();
     }
 
     /**

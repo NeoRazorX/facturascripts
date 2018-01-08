@@ -208,7 +208,7 @@ class WidgetButton implements VisualItemInterface
      */
     private function getActionHTML($label, $hint, $formName = 'main_form', $class = 'col-sm-auto')
     {
-        $html = '<button class="' . $class . ' btn btn-' . $this->color . '"'
+        $html = '<button type="button" class="' . $class . ' btn btn-' . $this->color . '"'
             . ' onclick="execActionForm(\'' . $formName . '\',\'' . $this->action . '\');" ' . $hint . '>'
             . $this->getIconHTML()
             . $label

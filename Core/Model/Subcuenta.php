@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,9 +37,9 @@ class Subcuenta
      * @var int
      */
     public $idsubcuenta;
-    
+
     /**
-     *Identificacion de la empresa
+     * Identificacion de la empresa
      *
      * @var int
      */
@@ -48,7 +48,7 @@ class Subcuenta
     /**
      * Sub-account code.
      *
-     * @var float|int
+     * @var string
      */
     public $codsubcuenta;
 
@@ -160,7 +160,7 @@ class Subcuenta
     {
         new Ejercicio();
         new Cuenta();
-        
+
         return '';
     }
 
@@ -330,7 +330,7 @@ class Subcuenta
 
     /**
      * Returns the first subaccount of the exercise $codeje whose parent account
-     * is marked as special account $id.
+           * is marked as special account $id.
      *
      * @param int    $idcuesp
      * @param string $codeje
@@ -369,27 +369,18 @@ class Subcuenta
     public function test()
     {
         $this->descripcion = self::noHtml($this->descripcion);
-
-        $limpiarCache = false;
         $totales = $this->getTotales();
 
         if (abs($this->debe - $totales['debe']) > .001) {
             $this->debe = $totales['debe'];
-            $limpiarCache = true;
         }
 
         if (abs($this->haber - $totales['haber']) > .001) {
             $this->haber = $totales['haber'];
-            $limpiarCache = true;
         }
 
         if (abs($this->saldo - $totales['saldo']) > .001) {
             $this->saldo = $totales['saldo'];
-            $limpiarCache = true;
-        }
-
-        if ($limpiarCache) {
-            $this->cleanCache();
         }
 
         if (strlen($this->codcuenta) === 0 || strlen($this->codejercicio) === 0) {
@@ -420,7 +411,7 @@ class Subcuenta
 
     /**
      * Returns the sub-accounts of the fiscal year $codeje whose parent account
-     * is marked as special account $id.
+           * is marked as special account $id.
      *
      * @param int    $idcuesp
      * @param string $codeje
@@ -446,7 +437,7 @@ class Subcuenta
 
     /**
      * Returns an array with the combinations containing $query in its codsubcuenta
-     * or description.
+           * or description.
      *
      * @param string $query
      *
@@ -473,7 +464,7 @@ class Subcuenta
 
     /**
      * Returns the results of the $ query search on the subaccounts of the
-     * exercise $codejercicio
+           * exercise $codejercicio
      *
      * @param string $codejercicio
      * @param string $query
