@@ -21,7 +21,7 @@
 namespace FacturaScripts\Core\Base;
 
 /**
- * PluginTools give us some basic and common methods for currency numbers.
+ * PluginTools give us some basic and common methods for manage the Plugins.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
