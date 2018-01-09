@@ -8,7 +8,7 @@
      * {% from 'Macro/BaseController.html' import filterForTextInput as filterForTextInput %}
      *
      * This file is part of FacturaScripts
-     * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+     * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -430,7 +430,6 @@
 {% endmacro %}
 
 
-
 {#
    /**
      * Generates the code for a Select filter in a ListController
@@ -451,6 +450,25 @@
         {% endif %}
         {% endfor %}
     </select>
+</div>
+{% endmacro %}
+
+
+{#
+   /**
+     * Generates the code for an Autcomplete filter in a ListController
+     */
+#}
+{% macro filterForAutocompleteInput(context, key, filter) %}
+{% set any = context.i18n.trans('any') %}
+
+<div class="col-md-2">
+    <div class="input-group">
+        <span class="input-group-addon" title="{{ key }}">
+            <i class="fa fa-keyboard-o" aria-hidden="true"></i>
+        </span>
+        <input type="text" name="{{ key }}" value="{{ filter.options.value }}" class="form-control autocomplete" data-view="{{ context.indexView }}" placeholder="{{ key }}" autocomplete="off"/>
+    </div>
 </div>
 {% endmacro %}
 

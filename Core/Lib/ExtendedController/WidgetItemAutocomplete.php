@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  carlos@facturascripts.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Model;
@@ -24,9 +23,9 @@ use FacturaScripts\Core\Model;
 /**
  * This class manage all specific method for a WidgetItem of Select type.
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class WidgetItemSelect extends WidgetItem
+class WidgetItemAutocomplete extends WidgetItem
 {
 
     /**
@@ -44,7 +43,7 @@ class WidgetItemSelect extends WidgetItem
     {
         parent::__construct();
 
-        $this->type = 'select';
+        $this->type = 'autocomplete';
         $this->values = [];
     }
 
@@ -79,9 +78,9 @@ class WidgetItemSelect extends WidgetItem
     {
         $this->values = [];
         foreach ($rows as $codeModel) {
-            if($codeModel->code === null) {
-               $codeModel->code = '---null---';
-               $codeModel->description = '------';
+            if ($codeModel->code === null) {
+                $codeModel->code = '---null---';
+                $codeModel->description = '------';
             }
 
             $this->values[] = [
@@ -158,7 +157,7 @@ class WidgetItemSelect extends WidgetItem
     }
 
     /**
-     * Generates the HTML code to display and edit  the data in the Edit / EditList controller.
+     * Generates the HTML code to display and edit the data in the Edit / EditList controller.
      * Values are loaded from Model\PageOption::getForUser()
      *
      * @param string $value
@@ -173,17 +172,8 @@ class WidgetItemSelect extends WidgetItem
             return $this->standardEditHTMLWidget($value, $specialAttributes, '', 'text');
         }
 
-        $html = $this->getIconHTML()
-            . '<select name="' . $this->fieldName . '" id="' . $this->fieldName
-            . '" class="form-control"' . $specialAttributes . '>';
-
-        foreach ($this->values as $selectValue) {
-            /// don't use strict comparation (===)
-            $selected = ($selectValue['value'] == $value) ? ' selected="selected" ' : '';
-            $html .= '<option value="' . $selectValue['value'] . '" ' . $selected . '>' . $selectValue['title']
-                . '</option>';
-        }
-        $html .= '</select>';
+        $html = $this->getIconHTML() . '<input type="text" name="' . $this->fieldName
+            . '" value="' . $value . '" class="form-control autocomplete"' . $specialAttributes . '/>';
 
         if (!empty($this->icon)) {
             $html .= '</div>';

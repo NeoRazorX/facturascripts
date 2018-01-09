@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -44,6 +44,7 @@ class ListFacturaCliente extends ExtendedController\ListController
         $this->addFilterSelect('ListFacturaCliente', 'codserie', 'series', '', 'codserie');
         $this->addFilterSelect('ListFacturaCliente', 'codpago', 'formaspago', '', 'codpago');
         $this->addFilterCheckbox('ListFacturaCliente', 'paid', 'paid', 'pagada');
+        $this->addFilterAutocomplete('ListFacturaCliente', 'codcliente', 'clientes', '', 'nombre');
 
         $this->addOrderBy('ListFacturaCliente', 'codigo', 'code');
         $this->addOrderBy('ListFacturaCliente', 'fecha', 'date');

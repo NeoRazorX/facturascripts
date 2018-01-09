@@ -79,13 +79,12 @@ class WidgetItemCheckBox extends WidgetItem
     public function getEditHTML($value)
     {
         $specialAttributes = $this->specialAttributes();
-        $fieldName = '"' . $this->fieldName . '"';
-        $checked = in_array(strtolower($value), ['true', 't', '1'], false) ? ' checked ' : '';
+        $checked = in_array(strtolower($value), ['true', 't', '1'], false) ? ' checked="" ' : '';
 
         $html = $this->getIconHTML()
-            . '<input name=' . $fieldName . ' id=' . $fieldName
-            . ' class="custom-control-input form-check-input" type="checkbox" value="true" '
-            . $specialAttributes . $checked . '>'
+            . '<input name="' . $this->fieldName . '" id="' . $this->fieldName
+            . '" class="custom-control-input form-check-input" type="checkbox" value="true" '
+            . $specialAttributes . $checked . '/>'
             . '<span class="custom-control-indicator"></span>';
 
         if (!empty($this->icon)) {

@@ -43,6 +43,7 @@ class ListPresupuestoCliente extends ExtendedController\ListController
         $this->addFilterSelect('ListPresupuestoCliente', 'codalmacen', 'almacenes', '', 'nombre');
         $this->addFilterSelect('ListPresupuestoCliente', 'codserie', 'series', '', 'descripcion');
         $this->addFilterSelect('ListPresupuestoCliente', 'codpago', 'formaspago', '', 'descripcion');
+        $this->addFilterAutocomplete('ListPresupuestoCliente', 'codcliente', 'clientes', '', 'nombre');
 
         $this->addOrderBy('ListPresupuestoCliente', 'codigo', 'code');
         $this->addOrderBy('ListPresupuestoCliente', 'fecha', 'date');
