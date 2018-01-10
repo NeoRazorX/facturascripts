@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,7 +17,10 @@
  */
 
 $(document).ready(function () {
-    $(".datepicker").datepicker();
+    $(".datepicker").datepicker({
+        dateFormat: "dd-mm-yy",
+        firstDay: 1
+    });
 
     // Adds a delay to help messages
     $('[data-toggle="popover"]').popover({

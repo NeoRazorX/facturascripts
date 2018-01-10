@@ -53,7 +53,7 @@ $(document).ready(function () {
                     {% for msg in errors %}
                     <div class="alert alert-danger">{{ msg }}</div>
                     {% endfor %}
-                    <p class="help-block">{{ i18n.trans('installer-p') }}</p>
+                    <p>{{ i18n.trans('installer-p') }}</p>
                 </div>
             </div>
             <div class="row">
@@ -169,7 +169,7 @@ $(document).ready(function () {
                                 <div class="form-group">
                                     {{ i18n.trans('mysql-socket') }}:
                                     <input type="text" name="mysql_socket" class="form-control"/>
-                                    <p class="help-block">{{ i18n.trans('mysql-socket-p') }}</p>
+                                    <p class="form-text">{{ i18n.trans('mysql-socket-p') }}</p>
                                 </div>
                             </div>
                         </div>

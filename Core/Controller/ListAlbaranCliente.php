@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -43,10 +43,11 @@ class ListAlbaranCliente extends ExtendedController\ListController
         $this->addFilterSelect('ListAlbaranCliente', 'codalmacen', 'almacenes', '', 'nombre');
         $this->addFilterSelect('ListAlbaranCliente', 'codserie', 'series', '', 'descripcion');
         $this->addFilterSelect('ListAlbaranCliente', 'codpago', 'formaspago', '', 'descripcion');
+        $this->addFilterAutocomplete('ListAlbaranCliente', 'codcliente', 'clientes', '', 'nombre');
         $this->addFilterCheckbox('ListAlbaranCliente', 'invoice', 'invoice', 'ptefactura', true);
 
         $this->addOrderBy('ListAlbaranCliente', 'codigo', 'code');
-        $this->addOrderBy('ListAlbaranCliente', 'fecha', 'date');
+        $this->addOrderBy('ListAlbaranCliente', 'fecha', 'date', 2);
         $this->addOrderBy('ListAlbaranCliente', 'total', 'amount');
     }
 

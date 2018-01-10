@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -49,6 +48,13 @@ abstract class ListController extends Base\Controller
     public $exportManager;
 
     /**
+     * List of icons for each of the views
+     *
+     * @var array
+     */
+    public $icons;
+
+    /**
      * First row to select from the database
      * @var int
      */
@@ -62,18 +68,18 @@ abstract class ListController extends Base\Controller
     public $query;
 
     /**
+     * Some tools for this controller.
+     * 
+     * @var ListControllerUtils
+     */
+    public $utils;
+
+    /**
      * List of views displayed by the controller
      *
      * @var ListView[]
      */
     public $views;
-
-    /**
-     * List of icons for each of the views
-     *
-     * @var array
-     */
-    public $icons;
 
     /**
      * Inserts the views to display
@@ -94,14 +100,15 @@ abstract class ListController extends Base\Controller
 
         $this->setTemplate('Master/ListController');
 
-        $this->exportManager = new ExportManager();
         $this->active = $this->request->get('active', '');
+        $this->exportManager = new ExportManager();
+        $this->icons = [];
         $this->offset = (int) $this->request->get('offset', 0);
         $this->query = $this->request->get('query', '');
+        $this->utils = new ListControllerUtils();
         $this->views = [];
-        $this->icons = [];
     }
-    
+
     /**
      * Runs the controller's private logic.
      *
@@ -166,6 +173,10 @@ abstract class ListController extends Base\Controller
     protected function execAfterAction($action)
     {
         switch ($action) {
+            case 'autocomplete':
+                $this->autocompleteAction();
+                break;
+
             case 'export':
                 $this->setTemplate(false);
                 $this->exportManager->newDoc($this->response, $this->request->get('option'));
@@ -192,7 +203,7 @@ abstract class ListController extends Base\Controller
             $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
             return false;
         }
-        
+
         $code = $this->request->get('code');
         $numDeletes = 0;
         foreach (explode(',', $code) as $cod) {
@@ -211,26 +222,28 @@ abstract class ListController extends Base\Controller
         return false;
     }
 
-    /**
-     * Returns columns title for megaSearchAction function.
-     *
-     * @param ListView $view
-     * @param int $maxColumns
-     *
-     * @return array
-     */
-    private function getTextColumns($view, $maxColumns)
+    private function autocompleteAction()
     {
-        $result = [];
-        foreach ($view->getColumns() as $col) {
-            if ($col->display !== 'none' && in_array($col->widget->type, ['text', 'money'], false)) {
-                $result[] = $col->widget->fieldName;
-                if (count($result) === $maxColumns) {
-                    break;
+        $this->setTemplate(false);
+        $filterKey = $this->request->get('filterKey');
+        $filterView = $this->request->get('filterView');
+        $term = $this->request->get('term', '');
+        $results = [];
+
+        if (isset($this->views[$filterView])) {
+            foreach ($this->views[$filterView]->getFilters() as $key => $filter) {
+                if ($filter->type !== 'autocomplete' || $key !== $filterKey) {
+                    continue;
                 }
+
+                foreach ($this->utils->autocompleteList($key, $filter->options, $term) as $newKey => $value) {
+                    $results[] = ['key' => $newKey, 'value' => $value];
+                }
+                break;
             }
         }
-        return $result;
+
+        $this->response->setContent(json_encode($results));
     }
 
     /**
@@ -263,7 +276,7 @@ abstract class ListController extends Base\Controller
             $where = [new DataBaseWhere($fields, $this->query, 'LIKE')];
             $listView->loadData($where, 0, Base\Pagination::FS_ITEM_LIMIT);
 
-            $cols = $this->getTextColumns($listView, 6);
+            $cols = $this->utils->getTextColumns($listView, 6);
             $json[$key]['columns'] = $cols;
 
             foreach ($listView->getCursor() as $item) {
@@ -357,6 +370,21 @@ abstract class ListController extends Base\Controller
     }
 
     /**
+     * Add an autocomplete type filter to a table
+     *
+     * @param string $indexView
+     * @param string $key (Filter field name identifier)
+     * @param string $table (Table name)
+     * @param string $where (Where condition for table)
+     * @param string $field (Field of the table with the data to show)
+     */
+    protected function addFilterAutocomplete($indexView, $key, $table, $where = '', $field = '')
+    {
+        $value = $this->request->get($key);
+        $this->views[$indexView]->addFilter($key, ListFilter::newAutocompleteFilter($field, $value, $table, $where));
+    }
+
+    /**
      * Adds a boolean condition type filter
      *
      * @param string $indexView
@@ -432,45 +460,6 @@ abstract class ListController extends Base\Controller
     protected function addFilterNumber($indexView, $key, $label, $field = '')
     {
         $this->addFilterFromType($indexView, $key, 'number', $label, $field);
-    }
-
-    /**
-     * Creates a list of data from a table
-     *
-     * @param string $field : Field name with real value
-     * @param array $options : Array with configuration values
-     *                          [field = Field description, table = table name, where = SQL Where clausule]
-     *
-     * @return array
-     */
-    public function optionlist($field, $options)
-    {
-        $result = [];
-        if ($this->dataBase->tableExists($options['table'])) {
-            $fieldList = $field;
-            if ($field !== $options['field']) {
-                $fieldList = $fieldList . ', ' . $options['field'];
-            }
-
-            $sql = 'SELECT DISTINCT ' . $fieldList
-                . ' FROM ' . $options['table']
-                . ' WHERE COALESCE(' . $options['field'] . ", '')" . " <> ''" . $options['where']
-                . ' ORDER BY ' . $options['field'] . ' ASC;';
-
-            $data = $this->dataBase->select($sql);
-            foreach ($data as $item) {
-                $value = $item[$options['field']];
-                if ($value !== '') {
-                    /**
-                     * If the key is  mb_strtolower($item[$field], 'UTF8') then we can't filter by codserie, codalmacen,
-                     * etc.
-                     */
-                    $result[$item[$field]] = $value;
-                }
-            }
-        }
-
-        return $result;
     }
 
     /**

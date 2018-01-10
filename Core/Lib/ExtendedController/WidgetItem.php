@@ -109,6 +109,9 @@ abstract class WidgetItem implements VisualItemInterface
     {
         switch ($type) {
 
+            case 'autocomplete':
+                return new WidgetItemAutocomplete();
+
             case 'checkbox':
                 return new WidgetItemCheckBox();
 
@@ -354,8 +357,8 @@ abstract class WidgetItem implements VisualItemInterface
     protected function specialAttributes()
     {
         $hint = $this->getHintHTML($this->hint);
-        $readOnly = empty($this->readOnly) ? '' : ' readonly';
-        $required = empty($this->required) ? '' : ' required';
+        $readOnly = empty($this->readOnly) ? '' : ' readonly=""';
+        $required = empty($this->required) ? '' : ' required=""';
 
         return $hint . $readOnly . $required;
     }
