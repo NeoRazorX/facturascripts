@@ -105,12 +105,12 @@
         });
         // autocomplete filters
         $('.autocomplete').each(function() {
+            var key = $(this).attr('data-key');
             $(this).autocomplete({
-                source: '{{ fsc.url() }}&action=autocomplete&filterKey=' + $(this).attr('name')
+                source: '{{ fsc.url() }}&action=autocomplete&filterKey=' + key
                         + '&filterView=' + $(this).attr('data-view'),
                 select: function(event, ui) {
-                    event.preventDefault();
-                    $(this).val(ui.item.key);
+                    $('#' + key + 'Autocomplete').val(ui.item.key);
                     $(this).form().submit();
                 }
             });

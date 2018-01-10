@@ -33,8 +33,6 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class ListController extends Base\Controller
 {
 
-    use Base\Utils;
-
     /**
      * Indicates the active view
      *
@@ -50,6 +48,13 @@ abstract class ListController extends Base\Controller
     public $exportManager;
 
     /**
+     * List of icons for each of the views
+     *
+     * @var array
+     */
+    public $icons;
+
+    /**
      * First row to select from the database
      * @var int
      */
@@ -63,18 +68,18 @@ abstract class ListController extends Base\Controller
     public $query;
 
     /**
+     * Some tools for this controller.
+     * 
+     * @var ListControllerUtils
+     */
+    public $utils;
+
+    /**
      * List of views displayed by the controller
      *
      * @var ListView[]
      */
     public $views;
-
-    /**
-     * List of icons for each of the views
-     *
-     * @var array
-     */
-    public $icons;
 
     /**
      * Inserts the views to display
@@ -95,12 +100,13 @@ abstract class ListController extends Base\Controller
 
         $this->setTemplate('Master/ListController');
 
-        $this->exportManager = new ExportManager();
         $this->active = $this->request->get('active', '');
+        $this->exportManager = new ExportManager();
+        $this->icons = [];
         $this->offset = (int) $this->request->get('offset', 0);
         $this->query = $this->request->get('query', '');
+        $this->utils = new ListControllerUtils();
         $this->views = [];
-        $this->icons = [];
     }
 
     /**
@@ -216,28 +222,6 @@ abstract class ListController extends Base\Controller
         return false;
     }
 
-    /**
-     * Returns columns title for megaSearchAction function.
-     *
-     * @param ListView $view
-     * @param int $maxColumns
-     *
-     * @return array
-     */
-    private function getTextColumns($view, $maxColumns)
-    {
-        $result = [];
-        foreach ($view->getColumns() as $col) {
-            if ($col->display !== 'none' && in_array($col->widget->type, ['text', 'money'], false)) {
-                $result[] = $col->widget->fieldName;
-                if (count($result) === $maxColumns) {
-                    break;
-                }
-            }
-        }
-        return $result;
-    }
-
     private function autocompleteAction()
     {
         $this->setTemplate(false);
@@ -252,8 +236,8 @@ abstract class ListController extends Base\Controller
                     continue;
                 }
 
-                foreach ($this->optionlist($key, $filter->options, $term) as $newKey => $value) {
-                    $results[] = ['key' => $newKey, 'value' => self::fixHtml($value)];
+                foreach ($this->utils->autocompleteList($key, $filter->options, $term) as $newKey => $value) {
+                    $results[] = ['key' => $newKey, 'value' => $value];
                 }
                 break;
             }
@@ -292,7 +276,7 @@ abstract class ListController extends Base\Controller
             $where = [new DataBaseWhere($fields, $this->query, 'LIKE')];
             $listView->loadData($where, 0, Base\Pagination::FS_ITEM_LIMIT);
 
-            $cols = $this->getTextColumns($listView, 6);
+            $cols = $this->utils->getTextColumns($listView, 6);
             $json[$key]['columns'] = $cols;
 
             foreach ($listView->getCursor() as $item) {
@@ -476,52 +460,6 @@ abstract class ListController extends Base\Controller
     protected function addFilterNumber($indexView, $key, $label, $field = '')
     {
         $this->addFilterFromType($indexView, $key, 'number', $label, $field);
-    }
-
-    /**
-     * Creates a list of data from a table
-     *
-     * @param string $field : Field name with real value
-     * @param array $options : Array with configuration values
-     *                          [field = Field description, table = table name, where = SQL Where clausule]
-     * @param string $search : text to find
-     *
-     * @return array
-     */
-    public function optionlist($field, $options, $search = '')
-    {
-        $result = [];
-        if ($this->dataBase->tableExists($options['table'])) {
-            $fieldList = $field;
-            if ($field !== $options['field']) {
-                $fieldList = $fieldList . ', ' . $options['field'];
-            }
-
-            $limit = 0;
-            $sql = 'SELECT DISTINCT ' . $fieldList
-                . ' FROM ' . $options['table'] . ' WHERE ';
-            if ($search === '') {
-                $sql .= 'COALESCE(' . $options['field'] . ", '')" . " <> ''" . $options['where'];
-            } else {
-                $limit = 100;
-                $sql .= "LOWER(" . $options['field'] . ") LIKE '%" . mb_strtolower($search) . "%'";
-            }
-            $sql .= ' ORDER BY ' . $options['field'] . ' ASC';
-
-            $data = $this->dataBase->selectLimit($sql, $limit);
-            foreach ($data as $item) {
-                $value = $item[$options['field']];
-                if ($value !== '') {
-                    /**
-                     * If the key is  mb_strtolower($item[$field], 'UTF8') then we can't filter by codserie, codalmacen,
-                     * etc.
-                     */
-                    $result[$item[$field]] = $value;
-                }
-            }
-        }
-
-        return $result;
     }
 
     /**

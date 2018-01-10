@@ -68,7 +68,7 @@
     <select name="{{ key }}" class="form-control" onchange="this.form.submit()">
         <option value="">{{ any }} {{ key }}</option>
         <option value="">------</option>
-        {% for key2, data in context.fsc.optionlist(key, filter.options) %}
+        {% for key2, data in context.fsc.utils.optionlist(key, filter.options) %}
         {% if (context.indexView == context.fsc.active) and (filter.options.value != '') and (key2 == filter.options.value) %}
         <option value="{{ key2 }}" selected="">{{ data }}</option>
         {% else %}
@@ -89,11 +89,21 @@
 {% set any = context.i18n.trans('any') %}
 
 <div class="col-md-2">
+    <input type="hidden" id="{{ key }}Autocomplete" name="{{ key }}" value="{{ filter.options.value }}" />
     <div class="input-group">
+        {% if filter.options.value is empty %}
         <span class="input-group-addon" title="{{ key }}">
             <i class="fa fa-keyboard-o" aria-hidden="true"></i>
         </span>
-        <input type="text" name="{{ key }}" value="{{ filter.options.value }}" class="form-control autocomplete" data-view="{{ context.indexView }}" placeholder="{{ key }}" autocomplete="off"/>
+        {% else %}
+        <span class="input-group-btn" title="{{ key }}">
+            <button class="btn btn-outline-warning" type="button" onclick="$('#{{ key }}Autocomplete').val('');$('#{{ key }}Autocomplete').form().submit();">
+                <i class="fa fa-remove" aria-hidden="true"></i>
+            </button>
+        </span>
+        {% endif %}
+        <input type="text" value="{{ context.fsc.utils.autocompleteValue(key, filter.options) }}" class="form-control autocomplete"
+               data-key="{{ key }}" data-view="{{ context.indexView }}" placeholder="{{ any }} {{ key }}" autocomplete="off"/>
     </div>
 </div>
 {% endmacro %}

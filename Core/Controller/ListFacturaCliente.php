@@ -43,8 +43,8 @@ class ListFacturaCliente extends ExtendedController\ListController
         $this->addFilterSelect('ListFacturaCliente', 'codalmacen', 'almacenes', '', 'nombre');
         $this->addFilterSelect('ListFacturaCliente', 'codserie', 'series', '', 'codserie');
         $this->addFilterSelect('ListFacturaCliente', 'codpago', 'formaspago', '', 'codpago');
-        $this->addFilterCheckbox('ListFacturaCliente', 'paid', 'paid', 'pagada');
         $this->addFilterAutocomplete('ListFacturaCliente', 'codcliente', 'clientes', '', 'nombre');
+        $this->addFilterCheckbox('ListFacturaCliente', 'paid', 'paid', 'pagada');
 
         $this->addOrderBy('ListFacturaCliente', 'codigo', 'code');
         $this->addOrderBy('ListFacturaCliente', 'fecha', 'date', 2);
