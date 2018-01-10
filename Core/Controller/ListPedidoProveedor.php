@@ -46,7 +46,7 @@ class ListPedidoProveedor extends ExtendedController\ListController
         $this->addFilterAutocomplete('ListPedidoProveedor', 'codproveedor', 'proveedores', '', 'nombre');
 
         $this->addOrderBy('ListPedidoProveedor', 'codigo', 'code');
-        $this->addOrderBy('ListPedidoProveedor', 'fecha', 'date');
+        $this->addOrderBy('ListPedidoProveedor', 'fecha', 'date', 2);
         $this->addOrderBy('ListPedidoProveedor', 'total', 'amount');
     }
 

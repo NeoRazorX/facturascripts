@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Carlos Garcia Gomez  carlos@facturascripts.com
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,6 +34,3 @@ define('FS_CACHE_HOST', 'localhost');
 define('FS_CACHE_PORT', '11211');
 define('FS_CACHE_PREFIX', 'tFlqb1s1');
 define('FS_MYDOCS', '');
-define('FS_ITEM_LIMIT', 50);
-define('FS_CODPAIS', 'ESP');
-define('FS_NF0', '2');

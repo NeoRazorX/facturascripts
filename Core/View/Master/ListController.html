@@ -140,9 +140,9 @@
 
 {# Macros Template Imports #}
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
-{% from 'Macro/Utils.html' import message as show_message %}
 {% from 'Macro/Utils.html' import exportData as exportData %}
 {% import 'Macro/BaseController.html' as BaseController %}
+{% import 'Macro/ListFilter.html' as ListFilter %}
 
 {# Page Header #}
 <div class="container-fluid d-print-none">
@@ -242,13 +242,13 @@
 
                         {# Add new column filter #}
                         {% if filter.type == 'autocomplete' %}
-                        {{ BaseController.filterForAutocompleteInput(_context, key1, filter) }}
+                        {{ ListFilter.filterForAutocompleteInput(_context, key1, filter) }}
                         {% elseif filter.type == 'select' %}
-                        {{ BaseController.filterForSelectInput(_context, key1, filter) }}
+                        {{ ListFilter.filterForSelectInput(_context, key1, filter) }}
                         {% elseif filter.type == 'checkbox' %}
-                        {{ BaseController.filterForCheckBoxInput(_context, key1, filter) }}
+                        {{ ListFilter.filterForCheckBoxInput(_context, key1, filter) }}
                         {% else %}
-                        {{ BaseController.filterForTextInput(_context, key1, filter) }}
+                        {{ ListFilter.filterForTextInput(_context, key1, filter) }}
                         {% set columnsUsed = columnsUsed + 2 %}
                         {% endif %}
 
@@ -257,7 +257,7 @@
                         {% endfor %}
 
                         {# Order by selector #}
-                        {{ BaseController.buttonOrderBy(_context, view) }}
+                        {{ ListFilter.buttonOrderBy(_context, view) }}
                     </div>
                 </div>
             </form>
