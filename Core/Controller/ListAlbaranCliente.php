@@ -47,7 +47,7 @@ class ListAlbaranCliente extends ExtendedController\ListController
         $this->addFilterAutocomplete('ListAlbaranCliente', 'codcliente', 'clientes', '', 'nombre');
 
         $this->addOrderBy('ListAlbaranCliente', 'codigo', 'code');
-        $this->addOrderBy('ListAlbaranCliente', 'fecha', 'date');
+        $this->addOrderBy('ListAlbaranCliente', 'fecha', 'date', 2);
         $this->addOrderBy('ListAlbaranCliente', 'total', 'amount');
     }
 

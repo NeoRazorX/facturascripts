@@ -17,7 +17,10 @@
  */
 
 $(document).ready(function () {
-    $(".datepicker").datepicker({ dateFormat: 'dd-mm-yy' });
+    $(".datepicker").datepicker({
+        dateFormat: "dd-mm-yy",
+        firstDay: 1
+    });
 
     // Adds a delay to help messages
     $('[data-toggle="popover"]').popover({

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -46,7 +46,7 @@ class ListPedidoCliente extends ExtendedController\ListController
         $this->addFilterAutocomplete('ListPedidoCliente', 'codcliente', 'clientes', '', 'nombre');
 
         $this->addOrderBy('ListPedidoCliente', 'codigo', 'code');
-        $this->addOrderBy('ListPedidoCliente', 'fecha', 'date');
+        $this->addOrderBy('ListPedidoCliente', 'fecha', 'date', 2);
         $this->addOrderBy('ListPedidoCliente', 'total', 'amount');
     }
 

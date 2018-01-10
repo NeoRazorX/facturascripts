@@ -46,7 +46,7 @@ class ListFacturaProveedor extends ExtendedController\ListController
         $this->addFilterAutocomplete('ListFacturaProveedor', 'codproveedor', 'proveedores', '', 'nombre');
 
         $this->addOrderBy('ListFacturaProveedor', 'codigo', 'code');
-        $this->addOrderBy('ListFacturaProveedor', 'fecha', 'date');
+        $this->addOrderBy('ListFacturaProveedor', 'fecha', 'date', 2);
         $this->addOrderBy('ListFacturaProveedor', 'total', 'amount');
     }
 

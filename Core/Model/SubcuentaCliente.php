@@ -93,7 +93,7 @@ class SubcuentaCliente
     /**
      * Returns the subaccount.
      *
-     * @return bool|bool
+     * @return Subcuenta|bool
      */
     public function getSubcuenta()
     {

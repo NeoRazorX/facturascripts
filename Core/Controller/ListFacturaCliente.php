@@ -47,7 +47,7 @@ class ListFacturaCliente extends ExtendedController\ListController
         $this->addFilterAutocomplete('ListFacturaCliente', 'codcliente', 'clientes', '', 'nombre');
 
         $this->addOrderBy('ListFacturaCliente', 'codigo', 'code');
-        $this->addOrderBy('ListFacturaCliente', 'fecha', 'date');
+        $this->addOrderBy('ListFacturaCliente', 'fecha', 'date', 2);
         $this->addOrderBy('ListFacturaCliente', 'total', 'amount');
     }
 
