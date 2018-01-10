@@ -253,7 +253,7 @@ abstract class ListController extends Base\Controller
                 }
 
                 foreach ($this->optionlist($key, $filter->options, $term) as $newKey => $value) {
-                    $results[$newKey] = ['key' => $newKey, 'value' => self::fixHtml($value)];
+                    $results[] = ['key' => $newKey, 'value' => self::fixHtml($value)];
                 }
                 break;
             }

@@ -31,24 +31,6 @@
 
 <script type="text/javascript">
     var tabActive = '{{ fsc.active }}';
-    function execActionForm(formName, actionValue) {
-        var form = document.forms[formName];
-        form.action.value = actionValue;
-        form.submit();
-    }
-    function insertRecord() {
-        var url = { {{ fsc.getStringURLs('new') | raw }} };
-        document.insert_form.action = url[tabActive];
-        document.insert_form.submit();
-    }
-    function goToOptions() {
-        window.location.href = 'index.php?page=EditPageOption&code=' + tabActive;
-    }
-    function goToExport(option) {
-        $('#formSearch' + tabActive).append('<input type="hidden" name="action" value="export"/>'
-            + '<input type="hidden" name="option" value="' + option + '"/>');
-        $('#formSearch' + tabActive).submit();
-    }
     function deleteFromList() {
         var deleteCodes = [];
         $('.tab' + tabActive + ' .listDelete').each(function() {
@@ -82,9 +64,31 @@
 
         return false;
     }
+    function execActionForm(formName, actionValue) {
+        var form = document.forms[formName];
+        form.action.value = actionValue;
+        form.submit();
+    }
+    function goToExport(option) {
+        $('#formSearch' + tabActive).append('<input type="hidden" name="action" value="export"/>'
+            + '<input type="hidden" name="option" value="' + option + '"/>');
+        $('#formSearch' + tabActive).submit();
+    }
+    function goToOptions() {
+        window.location.href = 'index.php?page=EditPageOption&code=' + tabActive;
+    }
+    function insertRecord() {
+        var url = { {{ fsc.getStringURLs('new') | raw }} };
+        document.insert_form.action = url[tabActive];
+        document.insert_form.submit();
+    }
     function setOperator(buttonID, operator) {
         document.getElementById(buttonID + '-operator').value = operator;
         document.getElementById(buttonID + '-btn').value = operator;
+        $('#formSearch' + tabActive).submit();
+    }
+    function setOrder(value) {
+        $("#formSearch" + tabActive + " :input[name='order']").val(value);
         $('#formSearch' + tabActive).submit();
     }
     $(document).ready(function () {
@@ -214,6 +218,7 @@
         <div class="tab-pane {{ active }}" id="{{ view.getModelID() }}" role="tabpanel">
             {# Filters Row #}
             <form name="f_search{{ indexView }}" id="formSearch{{ indexView }}" action="{{ fsc.url() }}" method="post" class="form">
+                <input type="hidden" name="order" value="{{ view.selectedOrderBy }}" />
                 <div class="container-fluid d-print-none" style="margin-top: 15px; margin-bottom: 10px;">
                     <div class="row align-items-center">
                         {# Main filter #}
