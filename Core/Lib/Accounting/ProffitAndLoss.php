@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,10 +32,10 @@ class ProffitAndLoss extends AccountingBase
     protected $dateToPrev;
 
     /**
-     *
+     * Constructor.
+     * 
      * @param string $dateFrom
      * @param string $dateTo
-     * @return array
      */
     public function __construct($dateFrom, $dateTo)
     {
@@ -43,17 +43,6 @@ class ProffitAndLoss extends AccountingBase
 
         $this->dateFromPrev = $this->addToDate($this->dateFrom, '-1 year');
         $this->dateToPrev = $this->addToDate($this->dateTo, '-1 year');
-    }
-
-    /**
-     *
-     * @param string $date
-     * @param integer $add
-     * @return date
-     */
-    private function addToDate($date, $add)
-    {
-        return date('d-m-Y', strtotime($add, strtotime($date)));
     }
 
     public static function generate($dateFrom, $dateTo)
@@ -69,8 +58,10 @@ class ProffitAndLoss extends AccountingBase
     }
 
     /**
-     * Format de Proffit-Lost including then chapters
+     * Format de Proffit-Lost including then chapters.
+     * 
      * @param array $proffitLost
+     * 
      * @return array
      */
     private function calcProffitAndLoss($proffitLost)
@@ -87,6 +78,7 @@ class ProffitAndLoss extends AccountingBase
             }
         }
 
+        $balanceFinal = [];
         foreach ($balanceCalculado as $lineaBalance) {
             $balanceFinal[] = $this->processLine($lineaBalance);
         }
@@ -95,7 +87,8 @@ class ProffitAndLoss extends AccountingBase
     }
 
     /**
-     * obtains the balances for each one of the sections of the balance sheet according to their assigned accounts
+     * Obtains the balances for each one of the sections of the balance sheet according to their assigned accounts.
+     * 
      * @return array
      */
     protected function getData()
