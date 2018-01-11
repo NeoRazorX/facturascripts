@@ -43,11 +43,11 @@ class AccountingReports extends Controller
 
     /**
      * Object to manager data export.
-     * 
-     * @var ExportManager 
+     *
+     * @var ExportManager
      */
     public $exportManager;
-    
+
     /**
      * Runs the controller's private logic.
      *
@@ -92,12 +92,12 @@ class AccountingReports extends Controller
                 break;
 
             case 'situacion':
-                $balanceSheet = new Accounting\BalanceSheet();
+                $balanceSheet = new Accounting\BalanceSheet($dateFrom, $dateTo);
                 $data = $balanceSheet->generate($dateFrom, $dateTo);
                 break;
 
             case 'pyg':
-                $proffitAndLoss = new Accounting\ProffitAndLoss();
+                $proffitAndLoss = new Accounting\ProffitAndLoss($dateFrom, $dateTo);
                 $data = $proffitAndLoss->generate($dateFrom, $dateTo);
                 break;
         }
@@ -125,7 +125,7 @@ class AccountingReports extends Controller
 
     /**
      * Exports data to PDF.
-     * 
+     *
      * @param array $data
      * @param string $format
      */
