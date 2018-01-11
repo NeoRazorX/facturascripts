@@ -142,7 +142,7 @@ class CodeModel
      * @param string $code
      * @param string $fieldDescription
      * 
-     * @return self
+     * @return string
      */
     public function getDescription($tableName, $fieldCode, $code, $fieldDescription)
     {
