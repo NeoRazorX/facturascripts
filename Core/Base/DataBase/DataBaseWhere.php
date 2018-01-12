@@ -239,8 +239,10 @@ class DataBaseWhere
         $result = '';
         $join = false;
         foreach ($whereItems as $item) {
-            $result .= $item->getSQLWhereItem($join);
-            $join = true;
+            if (isset($item)) {
+                $result .= $item->getSQLWhereItem($join);
+                $join = true;
+            }
         }
 
         if ($result !== '') {

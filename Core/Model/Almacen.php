@@ -82,6 +82,10 @@ class Almacen
         return 'codalmacen';
     }
 
+    public function primaryDescriptionColumn() {
+        return 'nombre';
+    }
+
     /**
      * Returns True if is the default wharehouse for the company.
      *
