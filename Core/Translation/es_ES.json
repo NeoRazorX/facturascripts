@@ -824,7 +824,7 @@
     "filter-records-containing-indicated-value": "Filtrar registros que contienen el valor",
     "common-data": "Datos comunes",
     "login-user-not-found": "Usuario no encontrado",
-    "login-text": "Iniciar sesión",
+    "login-text": "Escriba su nombre de usuario y contraseña para Iniciar sesión",
     "login-cookie-fail": "Cookie de sesión no válida",
     "login": "Iniciar sesión",
     "epigraphs": "Epígrafes",
