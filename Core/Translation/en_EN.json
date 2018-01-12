@@ -140,8 +140,8 @@
     "desc-alfa-code-3":"Oficial identification for name of countries and other administratives units",
     "desc-business-name":"Official name of the customer, for invoices and other documents.",
     "desc-business-name-2":"Fiscal or legally registered name of the client",
-    "desc-custommer-name":"Name by which the customer is known. For internal use.",
-    "desc-custommer-name-2":"Customer trade name",
+    "desc-customer-name":"Name by which the customer is known. For internal use.",
+    "desc-customer-name-2":"Customer trade name",
     "desc-family-code":"Code for family internal use.",
     "desc-parent-family":"Indicates if the family is grouped in another higher level.",
     "desc-payment-days":"Example: 1,15,31",
@@ -566,8 +566,7 @@
     "customer-invoices":"Customer invoices",
     "supplier-delivery-notes":"Supplier delivery notes",
     "supplier-invoices":"Supplier invoices",
-    "choose-source-1":"Choose source 1",
-    "choose-source-2":"Choose source 2",
+    "choose-source":"Choose source",
     "choose-employee":"Choose employee",
     "choose-serie":"Choose serie",
     "choose-currency":"Choose currency",
@@ -610,5 +609,8 @@
     "renumber-accounting": "Renumber Accounting",
     "renumber-accounting-ok": "Renumbering of accounting entries completed",
     "renumber-accounting-error":"An error occurred while renumber accounting entries in financial year %exerciseCode%",
-    "record-save-error": "An error occurred while saving the record"
+    "record-save-error": "An error occurred while saving the record",
+    "generate-title": "Run report generation",
+    "tasaconv": "Conversion rate",
+    "paid": "Paid"
 }
