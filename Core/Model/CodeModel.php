@@ -70,7 +70,7 @@ class CodeModel
      *
      * @return self[]
      */
-    public static function all($tableName, $fieldCode, $fieldDescription, $addEmpty = false)
+    public static function all($tableName, $fieldCode, $fieldDescription, $addEmpty = true)
     {
         $result = [];
 
@@ -80,7 +80,7 @@ class CodeModel
 
         if (self::$dataBase->tableExists($tableName)) {
             if ($addEmpty) {
-                $result[] = new self(['code' => null, 'description' => '']);
+                $result[] = new self(['code' => null, 'description' => '------']);
             }
 
             $sql = 'SELECT DISTINCT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM '

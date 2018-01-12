@@ -4,7 +4,7 @@
 <!-- Macros Template Imports -->
 {% import 'Macro/Forms.html' as forms %}
 
-{% set start_date, end_date = i18n.trans('start-date'), i18n.trans('end-date') %}
+{% set choose_source, start_date, end_date = i18n.trans('choose-source'), i18n.trans('start-date'), i18n.trans('end-date') %}
 {% set select_attr = {onchange: 'this.form.submit()'} %}
 {% set input_attr = {class: 'form-control datepicker', onchange: 'this.form.submit()'} %}
 
@@ -35,61 +35,35 @@
 <div class="container-fluid">
     <form name="f_search" id="formSearch" action="{{ fsc.url() }}" method="post" class="form">
         <input name="action" id="action" type="hidden" value="reload"/>
+        {% for index, source in fsc.sources %}
         <div class="row">
             <div class="col-md-4">
                 <div class="form-group">
-                    {{ forms.simpleSelect('source1', 'source1', fsc.source1, fsc.getDocumentTypes(), i18n.trans('choose-source-1'), 'fa-files-o', select_attr) }}
+                    {{ forms.simpleSelect('source' ~ index, 'source' ~ index, source.source, fsc.getDocumentTypes(), choose_source ~ ' ' ~ index, 'fa-files-o', select_attr) }}
                 </div>
             </div>
+
             <div class="col-md-4">
                 <div class="form-group">
-                    {{ forms.simpleInput('date1-from', 'date1-from', fsc.date1From.format('d-m-Y'), 'text', start_date, 'fa-calendar', input_attr) }}
+                    {{ forms.simpleInput('date-from' ~ index, 'date-from' ~ index, source.dateFrom.format('d-m-Y'), 'text', start_date, 'fa-calendar', input_attr) }}
                 </div>
             </div>
+
             <div class="col-md-4">
                 <div class="form-group">
-                    {{ forms.simpleInput('date1-to', 'date1-to', fsc.date1To.format('d-m-Y'), 'text', end_date, 'fa-calendar', input_attr) }}
+                    {{ forms.simpleInput('date-to' ~ index, 'date-to' ~ index, source.dateTo.format('d-m-Y'), 'text', end_date, 'fa-calendar', input_attr) }}
                 </div>
             </div>
         </div>
+        {% endfor %}
         <div class="row">
-            <div class="col-md-4">
-                <div class="form-group">
-                    {{ forms.simpleSelect('source2', 'source2', fsc.source2, fsc.getDocumentTypes(), i18n.trans('choose-source-2'), 'fa-files-o', select_attr) }}
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    {{ forms.simpleInput('date2-from', 'date2-from', fsc.date2From.format('d-m-Y'), 'text', start_date, 'fa-calendar', input_attr) }}
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    {{ forms.simpleInput('date2-to', 'date2-to', fsc.date2To.format('d-m-Y'), 'text', end_date, 'fa-calendar', input_attr) }}
-                </div>
-            </div>
-        </div>
-        <div class="row">
+        {% for index, filter in fsc.filters %}
             <div class="col-md-3">
                 <div class="form-group">
-                    {{ forms.simpleSelect('employee', 'employee', fsc.employee, fsc.employeeList, i18n.trans('employee'), 'fa-users', select_attr) }}
+                    {{ forms.simpleSelect(index, index, filter.selectedValue, filter.listValues, i18n.trans(index), filter.icon, select_attr) }}
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="form-group">
-                    {{ forms.simpleSelect('serie', 'serie', fsc.serie, fsc.serieList, i18n.trans('serie'), 'fa-list', select_attr) }}
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group">
-                    {{ forms.simpleSelect('currency', 'currency', fsc.currency, fsc.currencyList, i18n.trans('currency'), 'fa-list', select_attr) }}
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group">
-                    {{ forms.simpleSelect('payment-method', 'payment-method', fsc.paymentMethod, fsc.paymentMethodList, i18n.trans('payment-method'), 'fa-list', select_attr) }}
-                </div>
-            </div>
+        {% endfor %}
         </div>
     </form>
 </div>
@@ -100,61 +74,40 @@
             <h3>{{ i18n.trans(fsc.grouped) }}</h3>
         </div>
     </div>
+
     <div class="row">
-        <div class="col-6">
+        {% for source in fsc.sources %}
+        <div class="col">
             <div class="table-responsive">
-                {% for key1,table in fsc.dataTable[0] %}
                 <table class="table table-hover">
                     <thead>
                     <tr>
-                        <th class="text-left" colspan="3">{{ i18n.trans(fsc.source1) }}</th>
+                        <th class="text-left" colspan="3">
+                            {{ i18n.trans(source.source) }} <br />
+                            <small>(
+                                {{source.dateFrom.format('d-m-Y') }}
+                                &nbsp;&nbsp;-&nbsp;&nbsp;
+                                {{ source.dateTo.format('d-m-Y') }})
+                            </small>
+                        </th>
                     </tr>
                     <tr>
-                        <th class="text-left">{{fsc.date1From.format('d-m-Y') }} - {{ fsc.date1To.format('d-m-Y') }}</th>
-                        <th class="text-left">Dia</th>
+                        <th class="text-left">Code</th>
                         <th class="text-left">Total</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% for key3,item in table %}
+                    {% for code, total in fsc.dataTable[source.source] %}
                     <tr class="table-light">
-                        <td class="text-left">{{ key3 }}</td>
-                        <td class="text-left">{{ item.date }}</td>
-                        <td class="text-left">{{ item.total }}</td>
+                        <td class="text-left">{{ code }}</td>
+                        <td class="text-left">{{ total }}</td>
                     </tr>
                     {% endfor %}
                     </tbody>
                 </table>
-                {% endfor %}
             </div>
         </div>
-        <div class="col-6">
-            <div class="table-responsive">
-                {% for key1,table in fsc.dataTable[1] %}
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th class="text-left" colspan="3">{{ i18n.trans(fsc.source2) }}</th>
-                    </tr>
-                    <tr>
-                        <th class="text-left">{{fsc.date2From.format('d-m-Y') }} - {{ fsc.date2To.format('d-m-Y') }}</th>
-                        <th class="text-left">Dia</th>
-                        <th class="text-right">Total</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for key3,item in table %}
-                    <tr class="table-light">
-                        <td class="text-left">{{ key3 }}</td>
-                        <td class="text-left">{{ item.date }}</td>
-                        <td class="text-right">{{ item.total }}</td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-                {% endfor %}
-            </div>
-        </div>
+        {% endfor %}
     </div>
 </div>
 
