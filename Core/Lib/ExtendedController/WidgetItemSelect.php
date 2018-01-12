@@ -173,10 +173,9 @@ class WidgetItemSelect extends WidgetItem
             return $this->standardEditHTMLWidget($value, $specialAttributes, '', 'text');
         }
 
-        $fieldName = '"' . $this->fieldName . '"';
         $html = $this->getIconHTML()
-            . '<select name=' . $fieldName . ' id=' . $fieldName
-            . ' class="form-control"' . $specialAttributes . '>';
+            . '<select name="' . $this->fieldName . '" id="' . $this->fieldName
+            . '" class="form-control"' . $specialAttributes . '>';
 
         foreach ($this->values as $selectValue) {
             /// don't use strict comparation (===)

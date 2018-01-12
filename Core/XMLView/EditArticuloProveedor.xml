@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,8 @@
  *
  * Initial description for the controller EditArticuloProveedor
  *
- * @author PC REDNET S.L. luismi@pcrednet.com>
+ * @author PC REDNET S.L.       <luismi@pcrednet.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
 
 <view>
@@ -35,32 +36,29 @@
                 <widget type="text" fieldname="descripcion" required="true" />
             </column>
             <column name="supplier" title="supplier" numcolumns="4" titleurl="?page=ListProveedor" order="130">
-                <widget type="select" fieldname="codproveedor" required="true">
+                <widget type="autocomplete" fieldname="codproveedor" required="true">
                     <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre"></values>
                 </widget>
             </column>
         </group>
         <group name="product-data" tittle="produt-data" numcolumns="12">   
-            <column name="reference" numcolumns="2" order="150">
-                <widget type="text" fieldname="refproveedor" onclick="" icon="" required="true" />
+            <column name="reference" numcolumns="2" order="100">
+                <widget type="text" fieldname="referencia" onclick="" icon="" required="true" />
             </column>
-            <column name="price" numcolumns="2" order="160">
-                <widget type="price" fieldname="precio" onclick="" required="true" />
-            </column>
-            <column name="stock" numcolumns="2" order="170">
-                <widget type="number" fieldname="stock" onclick="" required="" />
-            </column>
-            <column name="nostock" numcolumns="1" order="180">
-                <widget type="checkbox" fieldname="nostock" onclick=""/>
-            </column>
-            <column name="discount" numcolumns="2" order="190">
-                <widget type="number" fieldname="dto" onclick="" required="" />
-            </column>
-            <column name="partnumber" numcolumns="2" order="200">
+            <column name="partnumber" numcolumns="2" order="110">
                 <widget type="text" fieldname="partnumber" onclick="" />
             </column>
-            <column name="barcode" numcolumns="1" order="210" display="none">
-                <widget type="text" fieldname="codbarras" onclick="" />
+            <column name="price" numcolumns="2" order="120">
+                <widget type="number" fieldname="precio" onclick="" required="true" />
+            </column>
+            <column name="discount" numcolumns="2" order="130">
+                <widget type="number" fieldname="dto" onclick="" required="" />
+            </column>
+            <column name="stock" numcolumns="2" order="140">
+                <widget type="number" fieldname="stock" onclick="" required="" />
+            </column>
+            <column name="nostock" numcolumns="1" order="150">
+                <widget type="checkbox" fieldname="nostock" onclick=""/>
             </column>
         </group>
     </columns>

@@ -82,11 +82,18 @@ class SubcuentaProveedor
     {
         return 'id';
     }
+    
+    public function install()
+    {
+        new Subcuenta();
+        
+        return '';
+    }
 
     /**
      * Returns the subaccount.
      *
-     * @return Subcuenta|false
+     * @return Subcuenta|bool
      */
     public function getSubcuenta()
     {

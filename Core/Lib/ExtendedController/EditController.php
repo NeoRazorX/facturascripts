@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Lib\ExportManager;
+use FacturaScripts\Core\Model\CodeModel;
 use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -31,7 +32,13 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class EditController extends Base\Controller
 {
-
+    /**
+     * Model to use with select and autocomplete filters.
+     *
+     * @var CodeModel
+     */
+    private $codeModel;
+    
     /**
      * Export data object
      *
@@ -59,6 +66,7 @@ abstract class EditController extends Base\Controller
         parent::__construct($cache, $i18n, $miniLog, $className);
 
         $this->setTemplate('Master/EditController');
+        $this->codeModel = new CodeModel();
         $this->exportManager = new ExportManager();
     }
 
@@ -135,8 +143,8 @@ abstract class EditController extends Base\Controller
     protected function execAfterAction($action)
     {
         switch ($action) {
-            case 'insert':
-                $this->insertAction();
+            case 'autocomplete':
+                $this->autocompleteAction();
                 break;
 
             case 'export':
@@ -144,6 +152,10 @@ abstract class EditController extends Base\Controller
                 $this->exportManager->newDoc($this->response, $this->request->get('option'));
                 $this->view->export($this->exportManager);
                 $this->exportManager->show($this->response);
+                break;
+            
+            case 'insert':
+                $this->insertAction();
                 break;
         }
     }
@@ -164,10 +176,20 @@ abstract class EditController extends Base\Controller
 
         return null;
     }
-
-    protected function insertAction()
+    
+    private function autocompleteAction()
     {
-        $this->view->setNewCode();
+        $this->setTemplate(false);
+        $source = $this->request->get('source');
+        $field = $this->request->get('field');
+        $title = $this->request->get('title');
+        $term = $this->request->get('term');
+        
+        $results = [];
+        foreach($this->codeModel->search($source, $field, $title, $term) as $value) {
+            $results[] = ['key' => $value->code, 'value' => $value->description];
+        }
+        $this->response->setContent(json_encode($results));
     }
 
     /**
@@ -188,6 +210,11 @@ abstract class EditController extends Base\Controller
         }
 
         return false;
+    }
+
+    protected function insertAction()
+    {
+        $this->view->setNewCode();
     }
 
     /**

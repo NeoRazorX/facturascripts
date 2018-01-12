@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  * LisFilter definition for its use in ListController.
  *
  * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class ListFilter
 {
@@ -120,6 +121,7 @@ class ListFilter
     public function getDataBaseWhere(&$where, $key = '')
     {
         switch ($this->type) {
+            case 'autocomplete':
             case 'select':
                 if ($this->options['value'] !== null && $this->options['value'] !== '') {
                     // we use the key value because the field value indicate is the text field of the source data
@@ -162,6 +164,7 @@ class ListFilter
     {
         $result = '';
         switch ($this->type) {
+            case 'autocomplete':
             case 'select':
             case 'checkbox':
                 if ($this->options['value'] !== '') {
@@ -197,6 +200,22 @@ class ListFilter
     {
         $options = ['field' => $field, 'value' => $value, 'table' => $table, 'where' => $where];
         return new ListFilter('select', $options);
+    }
+
+    /**
+     * Creates and returns an autocomplete type filter
+     *
+     * @param string $field
+     * @param string $value
+     * @param string $table
+     * @param string $where
+     *
+     * @return ListFilter
+     */
+    public static function newAutocompleteFilter($field, $value, $table, $where)
+    {
+        $options = ['field' => $field, 'value' => $value, 'table' => $table, 'where' => $where];
+        return new ListFilter('autocomplete', $options);
     }
 
     /**

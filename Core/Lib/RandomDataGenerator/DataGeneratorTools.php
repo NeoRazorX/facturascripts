@@ -208,7 +208,7 @@ class DataGeneratorTools
             'Escobar', 'Mendoza', 'Pérez', 'Cruz', 'Lee', 'Smith', 'Humilde',
             'Hijo de Dios', 'Petrov', 'Maximiliano', 'Nieve', 'Snow', 'Trump',
             'Obama', 'Ali', 'Stark', 'Sanz', 'Rajoy', 'Sánchez', 'Iglesias',
-            'Rivera', 'Tumor', 'Lanister', 'Suarez', 'Aznar', 'Botella',
+            'Rivera', 'Tudor', 'Lanister', 'Suarez', 'Aznar', 'Botella',
             'Errejón', "D'Ambrosio", 'Peña', '"Márquez"'
         ];
 
