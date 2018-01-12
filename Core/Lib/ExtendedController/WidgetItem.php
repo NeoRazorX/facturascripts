@@ -108,7 +108,6 @@ abstract class WidgetItem implements VisualItemInterface
     private static function widgetItemFromType($type)
     {
         switch ($type) {
-
             case 'autocomplete':
                 return new WidgetItemAutocomplete();
 

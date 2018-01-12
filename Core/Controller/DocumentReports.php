@@ -181,12 +181,14 @@ class DocumentReports extends Controller
     {
         $result = '';
         $options = explode('-', $format);
-        switch (TRUE) {
+        switch (true) {
             case in_array('d', $options):
                 $result .= 'LPAD(CAST(EXTRACT(DAY FROM fecha) AS VARCHAR), 2, \'0\') || \'-\' || ';
+                /// no break
 
             case in_array('m', $options):
                 $result .= 'LPAD(CAST(EXTRACT(MONTH FROM fecha) AS VARCHAR), 2, \'0\') || \'-\' || ';
+                /// no break
 
             case in_array('Y', $options):
                 $result .= 'CAST(EXTRACT(YEAR FROM fecha) AS VARCHAR)';

@@ -176,7 +176,8 @@ trait ModelTrait
      */
     abstract public function primaryColumn();
 
-    public function primaryDescriptionColumn() {
+    public function primaryDescriptionColumn() 
+    {
         return 'descripcion';
     }
 

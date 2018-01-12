@@ -387,7 +387,7 @@ abstract class PanelController extends Base\Controller
     private function addView($keyView, $view, $icon)
     {
         $this->views[$keyView] = $view;
-        $this->settings[$keyView] = ['active' => TRUE, 'icon' => $icon];
+        $this->settings[$keyView] = ['active' => true, 'icon' => $icon];
 
         if (empty($this->active)) {
             $this->active = $keyView;

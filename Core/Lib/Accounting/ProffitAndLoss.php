@@ -70,7 +70,6 @@ class ProffitAndLoss extends AccountingBase
 
         if (!empty($proffitLost)) {
             foreach ($proffitLost as $lineaBalance) {
-
                 $this->processDescription('descripcion1', $lineaBalance, $balanceCalculado);
                 $this->processDescription('descripcion2', $lineaBalance, $balanceCalculado);
                 $this->processDescription('descripcion3', $lineaBalance, $balanceCalculado);

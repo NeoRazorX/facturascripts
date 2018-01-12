@@ -132,7 +132,8 @@ class Agente
         return 'codagente';
     }
 
-    public function primaryDescriptionColumn() {
+    public function primaryDescriptionColumn() 
+    {
         return 'nombre || \' \' || apellidos';
     }
     

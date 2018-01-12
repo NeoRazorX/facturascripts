@@ -158,7 +158,7 @@ trait BankAccount
         }
 
         $result = 11 - \bcmod($totPeso, '11');
-        switch (TRUE) {
+        switch (true) {
             case $result == 11:
                 $result = 0;
                 break;

@@ -104,7 +104,7 @@ class EstadoDocumento
      */
     public function test()
     {
-        $status = FALSE;
+        $status = false;
 
         $this->documento = self::noHtml($this->documento);
         $this->nombre = self::noHtml($this->nombre);
@@ -118,7 +118,7 @@ class EstadoDocumento
         } elseif (!is_numeric($this->status)) {
             self::$miniLog->alert(self::$i18n->trans('status-value-is-number'));
         } else {
-            $status = TRUE;
+            $status = true;
         }
 
         return $status;

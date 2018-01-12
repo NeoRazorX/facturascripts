@@ -74,7 +74,7 @@ class EditPageOption extends Base\Controller
     {
         $this->selectedViewName = $this->request->get('code');
         $this->selectedUser = $this->user->admin
-            ? $this->request->get('nick', NULL)
+            ? $this->request->get('nick', null)
             : $this->user->nick;
     }
 
@@ -105,12 +105,12 @@ class EditPageOption extends Base\Controller
     private function checkNickAndID()
     {
         if ($this->model->nick != $this->selectedUser) {
-            $this->model->id = NULL;
-            $this->model->nick = empty($this->selectedUser) ? NULL : $this->selectedUser;
+            $this->model->id = null;
+            $this->model->nick = empty($this->selectedUser) ? null : $this->selectedUser;
         }
 
         if ($this->model->nick === "") {
-            $this->model->nick = NULL;
+            $this->model->nick = null;
         }
     }
 

@@ -80,7 +80,7 @@ class DocumentReportsFilterList
     public function getWhere()
     {
         if (empty($this->selectedValue)) {
-            return NULL;
+            return null;
         }
 
         return new DataBase\DataBaseWhere($this->model->primaryColumn(), $this->selectedValue);
