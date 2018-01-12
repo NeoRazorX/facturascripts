@@ -292,7 +292,7 @@
     "login-cookie-fail":"Session cookie failed",
     "login-ok":"Login successfully (cookie). User: '%nick%'",
     "login-password-fail":"Login failed",
-    "login-text":"Log-in",
+    "login-text":"Type your user name and password to login",
     "login-user-not-found":"User not found",
     "logout":"Logout",
     "logout-ok":"Logout successfully.",
@@ -609,5 +609,6 @@
     "default-tax": "Default TAX",
     "renumber-accounting": "Renumber Accounting",
     "renumber-accounting-ok": "Renumbering of accounting entries completed",
-    "renumber-accounting-error":"An error occurred while renumber accounting entries in financial year %exerciseCode%"
+    "renumber-accounting-error":"An error occurred while renumber accounting entries in financial year %exerciseCode%",
+    "record-save-error": "An error occurred while saving the record"
 }

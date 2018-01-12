@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,12 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\Cache;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Lib\DocumentReportsBase;
 use FacturaScripts\Core\Model;
@@ -64,9 +67,9 @@ class DocumentReports extends Controller
     /**
      * Initializes all the objects and properties
      *
-     * @param Base\Cache $cache
-     * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
+     * @param Cache $cache
+     * @param Translator $i18n
+     * @param MiniLog $miniLog
      * @param string $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
@@ -233,7 +236,7 @@ class DocumentReports extends Controller
         $tableName = $source->getTableName();
         $dateSQL = $this->getDateSQL($format);
         $where = $this->getWhere($source);
-        $data = Model\TotalModel::all($tableName, $where, ['total' => 'SUM(neto)'] , $dateSQL);
+        $data = Model\TotalModel::all($tableName, $where, ['total' => 'SUM(neto)'], $dateSQL);
 
         foreach ($data as $item) {
             if (empty($item->code)) {

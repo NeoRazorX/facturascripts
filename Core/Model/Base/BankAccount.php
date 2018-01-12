@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -132,7 +132,7 @@ trait BankAccount
         ];
 
         $dividendo = $ccc . $pesos[$pais[0]] . $pesos[$pais[1]] . '00';
-        $digitoControl = 98 - bcmod($dividendo, '97');
+        $digitoControl = 98 - \bcmod($dividendo, '97');
 
         if (strlen($digitoControl) === 1) {
             $digitoControl = '0' . $digitoControl;
@@ -157,7 +157,7 @@ trait BankAccount
             $totPeso += ($pesos[$i] * $val);
         }
 
-        $result = 11 - bcmod($totPeso, '11');
+        $result = 11 - \bcmod($totPeso, '11');
         switch (TRUE) {
             case $result == 11:
                 $result = 0;

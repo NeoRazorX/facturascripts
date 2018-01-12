@@ -356,6 +356,7 @@ abstract class PanelController extends Base\Controller
             return true;
         }
 
+        $this->miniLog->error($this->i18n->trans('record-save-error'));
         return false;
     }
 
