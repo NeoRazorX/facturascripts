@@ -899,7 +899,7 @@
     "login-cookie-fail": "Le cookie de session a échoué",
     "login-ok": "Connectez-vous avec succès (cookie). Utilisateur: '%nick'",
     "login-password-fail": "Échec de la connexion",
-    "login-text": "S'identifier",
+    "login-text": "Entrez votre nom d'utilisateur et mot de passe pour vous connecter",
     "login-user-not-found": "Utilisateur non trouvé",
     "logo": "Logo",
     "logout": "Connectez - Out",
@@ -1201,5 +1201,13 @@
     "level": "Niveau",
     "api": "API",
     "disable-api": "Désactiver l'API",
-    "default-tax": "Taxe par défaut"
+    "default-tax": "Taxe par défaut",
+    "desc-customer-name": "Nom par lequel le client est connu. Pour usage interne.",
+    "desc-customer-name-2": "Nom commercial du client",
+    "error-no-name-in-settings": "Erreur dans %viewName% view. Manquant d'informer le 'nom' dans une colonne du xml",
+    "choose-source": "Choisissez l'origine",
+    "record-save-error": "Une erreur s'est produite lors de l'enregistrement des données",
+    "generate-title": "Exécuter la création du rapport",
+    "tasaconv": "Taux de conversion",
+    "paid": "Payé"
 }

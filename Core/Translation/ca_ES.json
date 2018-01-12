@@ -714,7 +714,7 @@
     "login-cookie-fail": "La cookie de sessió ha fallat",
     "login-ok": "Sessió iniciada satisfactòriament (cookie). Usuari: '%nick%'",
     "login-password-fail": "Error a l'iniciar sessió",
-    "login-text": "Iniciar sessió",
+    "login-text": "Escriu el vostre nom d'usuari i contrasenya per iniciar sessió",
     "login-user-not-found": "Usuari no trobat",
     "logo": "Logotip",
     "logout": "Tancar sessió",
@@ -1119,5 +1119,12 @@
     "default-tax": "Impost per defecte",
     "renumber-accounting": "Renumerar Assentaments",
     "renumber-accounting-ok": "Renumeració d'assentaments completada",
-    "renumber-accounting-error": "Hi ha hagut un error durant la renumeració d'assentaments en l'exercici fiscal %exerciseCode%"
+    "renumber-accounting-error": "Hi ha hagut un error durant la renumeració d'assentaments en l'exercici fiscal %exerciseCode%",
+    "desc-customer-name": "Nom pel qual el clients és conegut. Per a ús intern.",
+    "desc-customer-name-2": "Nom comercial del client",
+    "choose-source": "Triar l'origen",
+    "record-save-error": "Un error ha succeït mentre es guardaven les dades",
+    "generate-title": "Executa la creació de l'informe",
+    "tasaconv": "Taxa de conversió",
+    "paid": "Pagat"
 }
