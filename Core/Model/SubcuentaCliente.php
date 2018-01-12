@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2014-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,6 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * Relate a customer with a sub-account for each exercise.
@@ -83,15 +85,45 @@ class SubcuentaCliente
         return 'id';
     }
 
+    public function install()
+    {
+        new Subcuenta();
+
+        return '';
+    }
+
     /**
      * Returns the subaccount.
      *
-     * @return bool|mixed
+     * @return Subcuenta|bool
      */
     public function getSubcuenta()
     {
-        $subc = new Subcuenta();
-        $subc->loadFromCode($this->idsubcuenta);
-        return $subc;
+        $subcuentaModel = new Subcuenta();
+
+        return $subcuentaModel->get($this->idsubcuenta);
+    }
+
+    public function test()
+    {
+        $subcuentaModel = new Subcuenta();
+        if ($subcuentaModel->loadFromCode($this->idsubcuenta)) {
+            if ($subcuentaModel->codejercicio === $this->codejercicio) {
+                return true;
+            }
+        }
+
+        $where = [
+            new DataBaseWhere('codejercicio', $this->codejercicio),
+            new DataBaseWhere('codsubcuenta', $this->codsubcuenta),
+        ];
+        if ($subcuentaModel->loadFromCode(null, $where)) {
+            if ($subcuentaModel->codejercicio === $this->codejercicio) {
+                $this->idsubcuenta = $subcuentaModel->idsubcuenta;
+                return true;
+            }
+        }
+
+        return false;
     }
 }

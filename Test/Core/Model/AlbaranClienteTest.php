@@ -1,7 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017    Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017    Francesc Pineda Segarra    <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2018    Carlos García Gómez        <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -38,13 +39,13 @@ final class AlbaranClienteTest extends TestCase
         $this->assertEquals(null, $model->cifnif);
         $this->assertEquals(null, $model->ciudad);
         $this->assertEquals(null, $model->codagente);
-        $this->assertEquals(null, $model->codalmacen);
+        $this->assertEquals(AppSettings::get('default', 'codalmacen'), $model->codalmacen);
         $this->assertEquals(null, $model->codcliente);
         $this->assertEquals(null, $model->coddivisa);
         $this->assertEquals(null, $model->coddir);
         $this->assertEquals(null, $model->codejercicio);
         $this->assertEquals(null, $model->codigo);
-        $this->assertEquals(AppSettings::get('default', 'idempresa'), $model->codpago);
+        $this->assertEquals(AppSettings::get('default', 'codpago'), $model->codpago);
         $this->assertEquals(null, $model->codpostal);
         $this->assertEquals(AppSettings::get('default', 'codserie'), $model->codserie);
         $this->assertEquals(null, $model->direccion);

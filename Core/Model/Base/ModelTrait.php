@@ -176,6 +176,11 @@ trait ModelTrait
      */
     abstract public function primaryColumn();
 
+    public function primaryDescriptionColumn() 
+    {
+        return 'descripcion';
+    }
+
     /**
      * Returns the current value of the main column of the model.
      *
@@ -193,6 +198,11 @@ trait ModelTrait
      */
     public function primaryDescription()
     {
+        $field = $this->primaryDescriptionColumn();
+        if (isset($this->{$field})) {
+            return $this->{$field};
+        }
+
         return strval($this->primaryColumnValue());
     }
 

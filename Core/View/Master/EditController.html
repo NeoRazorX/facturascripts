@@ -5,7 +5,7 @@
      * Show the model data in format for editing.
      *
      * This file is part of FacturaScripts
-     * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+     * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -36,10 +36,6 @@
 {{ parent() }}
 
 <script type="text/javascript">
-    function insertRecord() {
-        document.insert_form.submit();
-    }
-
     function deleteRecord() {
         bootbox.confirm({
             title: "{{ i18n.trans('confirm-delete')|raw }}",
@@ -61,15 +57,27 @@
             }
         });
     }
-
     function execActionForm(formName, actionValue) {
         var form = document.forms[formName];
         form.action.value = actionValue;
         form.submit();
     }
-
+    function insertRecord() {
+        document.insert_form.submit();
+    }
     $(document).ready(function () {
         $('#main_row :text:first').focus();
+        // autocomplete filters
+        $('.autocomplete').each(function() {
+            var field = $(this).attr('data-field');
+            $(this).autocomplete({
+                source: '{{ fsc.url() }}&action=autocomplete&source=' + $(this).attr('data-source')
+                        + '&field=' + field + '&title=' + $(this).attr('data-title'),
+                select: function(event, ui) {
+                    $('#' + field + 'Autocomplete').val(ui.item.key);
+                }
+            });
+        });
     });
 </script>
 {% endblock %}

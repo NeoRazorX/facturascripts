@@ -88,10 +88,9 @@ class WidgetItemRadio extends WidgetItem
     public function getEditHTML($value)
     {
         $specialAttributes = $this->specialAttributes();
-        $fieldName = '"' . $this->fieldName . '"';
         $html = $this->getIconHTML()
-            . '<input name=' . $fieldName . ' id=' . $fieldName
-            . 'sufix% class="form-check-input" type="radio"'
+            . '<input name="' . $this->fieldName . '" id="' . $this->fieldName
+            . '"sufix% class="form-check-input" type="radio"'
             . ' value=""value%"' . $specialAttributes . '"checked%>';
 
         if (!empty($this->icon)) {

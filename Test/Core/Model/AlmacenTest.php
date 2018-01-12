@@ -1,7 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017    Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017    Francesc Pineda Segarra    <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2018    Carlos García Gómez        <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -57,14 +58,6 @@ final class AlmacenTest extends TestCase
         $model = new Almacen();
 
         $this->assertInternalType('string', $model->primaryColumn());
-    }
-
-
-    public function testDefault()
-    {
-        $model = new Almacen();
-
-        $this->assertTrue($model->isDefault());
     }
 
     public function testInstall()

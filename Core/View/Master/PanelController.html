@@ -37,11 +37,6 @@
 
 <script type="text/javascript">
     var tabActive = '{{ fsc.active }}';
-    function execActionForm(formName, actionValue) {
-        var form = document.forms[formName];
-        form.action.value = actionValue;
-        form.submit();
-    }
     function deleteRecord(formName) {
         bootbox.confirm({
             title: "{{ i18n.trans('confirm-delete')|raw }}",
@@ -63,12 +58,28 @@
             }
         });
     }
+    function execActionForm(formName, actionValue) {
+        var form = document.forms[formName];
+        form.action.value = actionValue;
+        form.submit();
+    }
     function goToOptions() {
         window.location.href = 'index.php?page=EditPageOption&code=' + tabActive;
     }
     $(document).ready(function () {
         $('#mainTabs').on('shown.bs.tab', function (e) {
             tabActive = e.target.hash.substring(1);
+        });
+        // autocomplete filters
+        $('.autocomplete').each(function() {
+            var field = $(this).attr('data-field');
+            $(this).autocomplete({
+                source: '{{ fsc.url() }}&action=autocomplete&source=' + $(this).attr('data-source')
+                        + '&field=' + field + '&title=' + $(this).attr('data-title'),
+                select: function(event, ui) {
+                    $('#' + field + 'Autocomplete').val(ui.item.key);
+                }
+            });
         });
     });
 </script>

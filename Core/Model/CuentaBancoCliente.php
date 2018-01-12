@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2014-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,7 +27,7 @@ class CuentaBancoCliente
 {
 
     use Base\ModelTrait {
-        save as private saveTrait;
+        save as private traitSave;
     }
 
     use Base\BankAccount;
@@ -92,11 +92,7 @@ class CuentaBancoCliente
      */
     public function clear()
     {
-        $this->codcuenta = null;
-        $this->codcliente = null;
-        $this->descripcion = null;
         $this->principal = true;
-        $this->fmandato = null;
         $this->clearBankAccount();
     }
 
@@ -138,7 +134,7 @@ class CuentaBancoCliente
     {
         $this->descripcion = self::noHtml($this->descripcion);
         if (!$this->testBankAccount()) {
-            ///self::$miniLog->alert(self::$i18n->trans('error-incorrect-bank-details'));
+            self::$miniLog->alert(self::$i18n->trans('error-incorrect-bank-details'));
 
             return false;
         }

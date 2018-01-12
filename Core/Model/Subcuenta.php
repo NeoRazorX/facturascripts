@@ -394,7 +394,7 @@ class Subcuenta
         ];
 
         $count = new Cuenta();
-        if ($count->loadFromCode(NULL, $where) === FALSE) {
+        if ($count->loadFromCode(null, $where) === false) {
             self::$miniLog->alert(self::$i18n->trans('account-data-error'));
             return false;
         }

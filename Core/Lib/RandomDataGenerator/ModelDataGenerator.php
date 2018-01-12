@@ -261,17 +261,18 @@ class ModelDataGenerator
     public function articulosProveedor($max = 50)
     {
         $proveedores = $this->randomProveedores();
+        $articulos = $this->randomArticulos();
 
         for ($num = 0; $num < $max; ++$num) {
-            if (mt_rand(0, 2) == 0 && $this->impuestos[0]->iva <= 10) {
-                shuffle($this->impuestos);
+            if(!isset($articulos[$num])) {
+                break;
             }
-
+            
             $art = new Model\ArticuloProveedor();
-            $art->referencia = (string) mt_rand(1, 99999999);
+            $art->referencia = $articulos[$num]->referencia;
             $art->refproveedor = (string) mt_rand(1, 99999999);
             $art->descripcion = $this->tools->descripcion();
-            $art->codimpuesto = $this->impuestos[0]->codimpuesto;
+            $art->codimpuesto = $articulos[$num]->codimpuesto;
             $art->codproveedor = $proveedores[$num]->codproveedor;
             $art->precio = $this->tools->precio(1, 49, 699);
             $art->dto = mt_rand(0, 80);

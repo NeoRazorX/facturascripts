@@ -6,7 +6,7 @@
      * in rows and columns format.
      *
      * This file is part of FacturaScripts
-     * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+     * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -31,24 +31,6 @@
 
 <script type="text/javascript">
     var tabActive = '{{ fsc.active }}';
-    function execActionForm(formName, actionValue) {
-        var form = document.forms[formName];
-        form.action.value = actionValue;
-        form.submit();
-    }
-    function insertRecord() {
-        var url = { {{ fsc.getStringURLs('new') | raw }} };
-        document.insert_form.action = url[tabActive];
-        document.insert_form.submit();
-    }
-    function goToOptions() {
-        window.location.href = 'index.php?page=EditPageOption&code=' + tabActive;
-    }
-    function goToExport(option) {
-        $('#formSearch' + tabActive).append('<input type="hidden" name="action" value="export"/>'
-            + '<input type="hidden" name="option" value="' + option + '"/>');
-        $('#formSearch' + tabActive).submit();
-    }
     function deleteFromList() {
         var deleteCodes = [];
         $('.tab' + tabActive + ' .listDelete').each(function() {
@@ -82,22 +64,56 @@
 
         return false;
     }
+    function execActionForm(formName, actionValue) {
+        var form = document.forms[formName];
+        form.action.value = actionValue;
+        form.submit();
+    }
+    function goToExport(option) {
+        $('#formSearch' + tabActive).append('<input type="hidden" name="action" value="export"/>'
+            + '<input type="hidden" name="option" value="' + option + '"/>');
+        $('#formSearch' + tabActive).submit();
+    }
+    function goToOptions() {
+        window.location.href = 'index.php?page=EditPageOption&code=' + tabActive;
+    }
+    function insertRecord() {
+        var url = { {{ fsc.getStringURLs('new') | raw }} };
+        document.insert_form.action = url[tabActive];
+        document.insert_form.submit();
+    }
     function setOperator(buttonID, operator) {
         document.getElementById(buttonID + '-operator').value = operator;
         document.getElementById(buttonID + '-btn').value = operator;
         $('#formSearch' + tabActive).submit();
     }
+    function setOrder(value) {
+        $("#formSearch" + tabActive + " :input[name='order']").val(value);
+        $('#formSearch' + tabActive).submit();
+    }
     $(document).ready(function () {
-        // Situa el foco cuando se cambia de tab
+        // set focus on tab change
         $('#mainTabs').on('shown.bs.tab', function (e) {
             tabActive = 'List' + e.target.hash.substring(1);
             var formName = '#formSearch' + tabActive + ' :text:first';
             $(formName).focus().select();
         });
-        // marca/desmarca todos los checkbox de eliminar del listado
+        // set/unset all delete checkbox
         $('.listDeleteCB').click(function() {
             var checked = $(this).prop('checked');
             $('.listDelete').prop('checked', checked);
+        });
+        // autocomplete filters
+        $('.autocomplete').each(function() {
+            var field = $(this).attr('data-field');
+            $(this).autocomplete({
+                source: '{{ fsc.url() }}&action=autocomplete&source=' + $(this).attr('data-source')
+                        + '&field=' + field + '&title=' + $(this).attr('data-title'),
+                select: function(event, ui) {
+                    $('#' + field + 'Autocomplete').val(ui.item.key);
+                    $(this).form().submit();
+                }
+            });
         });
     });</script>
 {% endblock %}
@@ -128,9 +144,9 @@
 
 {# Macros Template Imports #}
 {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
-{% from 'Macro/Utils.html' import message as show_message %}
 {% from 'Macro/Utils.html' import exportData as exportData %}
 {% import 'Macro/BaseController.html' as BaseController %}
+{% import 'Macro/ListFilter.html' as ListFilter %}
 
 {# Page Header #}
 <div class="container-fluid d-print-none">
@@ -202,6 +218,7 @@
         <div class="tab-pane {{ active }}" id="{{ view.getModelID() }}" role="tabpanel">
             {# Filters Row #}
             <form name="f_search{{ indexView }}" id="formSearch{{ indexView }}" action="{{ fsc.url() }}" method="post" class="form">
+                <input type="hidden" name="order" value="{{ view.selectedOrderBy }}" />
                 <div class="container-fluid d-print-none" style="margin-top: 15px; margin-bottom: 10px;">
                     <div class="row align-items-center">
                         {# Main filter #}
@@ -229,12 +246,14 @@
                         {% endif %}
 
                         {# Add new column filter #}
-                        {% if filter.type == 'select' %}
-                        {{ BaseController.filterForSelectInput(_context, key1, filter) }}
+                        {% if filter.type == 'autocomplete' %}
+                        {{ ListFilter.filterForAutocompleteInput(_context, key1, filter) }}
+                        {% elseif filter.type == 'select' %}
+                        {{ ListFilter.filterForSelectInput(_context, key1, filter) }}
                         {% elseif filter.type == 'checkbox' %}
-                        {{ BaseController.filterForCheckBoxInput(_context, key1, filter) }}
+                        {{ ListFilter.filterForCheckBoxInput(_context, key1, filter) }}
                         {% else %}
-                        {{ BaseController.filterForTextInput(_context, key1, filter) }}
+                        {{ ListFilter.filterForTextInput(_context, key1, filter) }}
                         {% set columnsUsed = columnsUsed + 2 %}
                         {% endif %}
 
@@ -243,7 +262,7 @@
                         {% endfor %}
 
                         {# Order by selector #}
-                        {{ BaseController.buttonOrderBy(_context, view) }}
+                        {{ ListFilter.buttonOrderBy(_context, view) }}
                     </div>
                 </div>
             </form>
