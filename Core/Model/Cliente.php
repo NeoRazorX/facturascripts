@@ -86,7 +86,8 @@ class Cliente extends Base\Persona
         return 'codcliente';
     }
 
-    public function primaryDescriptionColumn() {
+    public function primaryDescriptionColumn() 
+    {
         return 'nombre';
     }
 

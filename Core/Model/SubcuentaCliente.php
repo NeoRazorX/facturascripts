@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * Relate a customer with a sub-account for each exercise.
  *
@@ -82,11 +84,11 @@ class SubcuentaCliente
     {
         return 'id';
     }
-    
+
     public function install()
     {
         new Subcuenta();
-        
+
         return '';
     }
 
@@ -100,5 +102,28 @@ class SubcuentaCliente
         $subcuentaModel = new Subcuenta();
 
         return $subcuentaModel->get($this->idsubcuenta);
+    }
+
+    public function test()
+    {
+        $subcuentaModel = new Subcuenta();
+        if ($subcuentaModel->loadFromCode($this->idsubcuenta)) {
+            if ($subcuentaModel->codejercicio === $this->codejercicio) {
+                return true;
+            }
+        }
+
+        $where = [
+            new DataBaseWhere('codejercicio', $this->codejercicio),
+            new DataBaseWhere('codsubcuenta', $this->codsubcuenta),
+        ];
+        if ($subcuentaModel->loadFromCode(null, $where)) {
+            if ($subcuentaModel->codejercicio === $this->codejercicio) {
+                $this->idsubcuenta = $subcuentaModel->idsubcuenta;
+                return true;
+            }
+        }
+
+        return false;
     }
 }

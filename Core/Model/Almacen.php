@@ -82,7 +82,8 @@ class Almacen
         return 'codalmacen';
     }
 
-    public function primaryDescriptionColumn() {
+    public function primaryDescriptionColumn() 
+    {
         return 'nombre';
     }
 

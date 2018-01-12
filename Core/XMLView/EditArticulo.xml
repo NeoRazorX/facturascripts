@@ -63,7 +63,7 @@
         </group>
         <group name="stock" numcolumns="4">
             <column name="stockfis" title="physical-stock" numcolumns="4" order="100">
-                <widget type="number" fieldname="stockfis"/>
+                <widget type="number" fieldname="stockfis" readonly="true"/>
             </column>
             <column name="stockmin" title="minimum-stock" numcolumns="4" order="100">
                 <widget type="number" fieldname="stockmin"/>

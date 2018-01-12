@@ -140,7 +140,7 @@ class EditUser extends ExtendedController\PanelController
         }
 
         /// sorting
-        usort($langs, function($objA, $objB) {
+        usort($langs, function ($objA, $objB) {
             return strcmp($objA['title'], $objB['title']);
         });
 

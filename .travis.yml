@@ -11,6 +11,9 @@ php:
 install: travis_retry composer install --no-interaction --prefer-source
 
 script:
+# Run PHP-CS Beautifier and Fixer: to format some common non PSR code that can be auto-fixed.
+  - vendor/bin/phpcbf --tab-width=4 --encoding=utf-8 --standard=phpcs.xml Core -s
+# Run PHP-CS.
   - vendor/bin/phpcs --tab-width=4 --encoding=utf-8 --standard=phpcs.xml Core -s
 
 matrix:

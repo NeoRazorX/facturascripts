@@ -104,15 +104,15 @@ class BalanceSheet extends AccountingBase
         $dateFromPrev = $this->database->var2str($this->dateFromPrev);
         $dateToPrev = $this->database->var2str($this->dateToPrev);
 
-        $sql = 'select cb.codbalance,cb.naturaleza,cb.descripcion1,cb.descripcion2,cb.descripcion3,cb.descripcion4,ccb.codcuenta, '
-            . ' SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFrom . ' AND ' . $dateTo . ' THEN pa.debe - pa.haber ELSE 0 END) saldo, '
-            . 'SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateToPrev . ' THEN pa.debe - pa.haber ELSE 0 END) saldoPrev'
+        $sql = 'select cb.codbalance,cb.naturaleza,cb.descripcion1,cb.descripcion2,cb.descripcion3,cb.descripcion4,ccb.codcuenta,'
+            . ' SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFrom . ' AND ' . $dateTo . ' THEN pa.debe - pa.haber ELSE 0 END) saldo,'
+            . ' SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateToPrev . ' THEN pa.debe - pa.haber ELSE 0 END) saldoPrev'
             . ' from co_cuentascbba ccb '
             . ' INNER JOIN co_codbalances08 cb ON ccb.codbalance = cb.codbalance '
             . ' INNER JOIN co_partidas pa ON substr(pa.codsubcuenta, 1, 1) between "1" and "5" and pa.codsubcuenta like concat(ccb.codcuenta,"%")'
             . ' INNER JOIN co_asientos asto on asto.idasiento = pa.idasiento and asto.fecha between ' . $dateFromPrev . ' and ' . $dateTo
             . ' where cb.naturaleza in ("A", "P")'
-            . ' group by 1, 2, 3 '
+            . ' group by 1, 2, 3, 4, 5, 6, 7 '
             . ' ORDER BY cb.naturaleza, cb.nivel1, cb.nivel2, cb.orden3, cb.nivel4';
 
         return $this->database->select($sql);

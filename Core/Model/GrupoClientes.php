@@ -71,7 +71,8 @@ class GrupoClientes
         return 'codgrupo';
     }
 
-    public function primaryDescriptionColumn() {
+    public function primaryDescriptionColumn() 
+    {
         return 'nombre';
     }
 
