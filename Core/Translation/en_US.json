@@ -543,7 +543,7 @@
     "login-cookie-fail": "Session cookie failed",
     "login-ok": "Login successfully (cookie). User: '%nick%'",
     "login-password-fail": "Login failed: incorrect user or password",
-    "login-text": "Log-in",
+    "login-text": "Type your user name and password to login",
     "login-user-not-found": "User not found",
     "logo": "Logo",
     "logout": "Logout",
@@ -1046,5 +1046,12 @@
     "help-server-accepts-filesize": "This server support files up to %size% MB.",
     "renumber-accounting": "Renumber Accounting",
     "renumber-accounting-ok": "Renumbering of accounting entries completed",
-    "renumber-accounting-error": "An error occurred while renumber accounting entries in financial year %exerciseCode%"
+    "renumber-accounting-error": "An error occurred while renumber accounting entries in financial year %exerciseCode%",
+    "desc-customer-name": "Name by which the customer is known. For internal use.",
+    "desc-customer-name-2": "Customer trade name",
+    "choose-source": "Choose source",
+    "record-save-error": "An error occurred while saving the record",
+    "generate-title": "Run report generation",
+    "tasaconv": "Conversion rate",
+    "paid": "Paid"
 }

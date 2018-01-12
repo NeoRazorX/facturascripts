@@ -104,12 +104,27 @@ class AccountingReports extends Controller
                 break;
         }
 
-        if (!empty($data)) {
-            $this->setTemplate(false);
-            $this->exportData($data, $format);
-        } else {
+        if (empty($data)) {
             $this->miniLog->info($this->i18n->trans('no-data'));
+            return;
         }
+        $this->setTemplate(false);
+        $this->exportData($data, $format);
+    }
+
+    /**
+     * Return list of accounting documents
+     *
+     * @return array
+     */
+    public function getReports()
+    {
+        return [
+            'libro-mayor' => 'ledger',
+            'sumas-saldos' => 'balance-ammounts',
+            'situacion' => 'balance-sheet',
+            'pyg' => 'profit-and-loss-balance'
+        ];
     }
 
     /**
