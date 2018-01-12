@@ -1053,5 +1053,6 @@
     "record-save-error": "An error occurred while saving the record",
     "generate-title": "Run report generation",
     "tasaconv": "Conversion rate",
-    "paid": "Paid"
+    "paid": "Paid",
+    "enable-api": "Enable API"
 }
