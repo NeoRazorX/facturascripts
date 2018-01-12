@@ -1209,5 +1209,12 @@
     "default-tax": "Impuesto por defecto",
     "renumber-accounting": "Renumerar Asientos",
     "renumber-accounting-ok": "Renumeración de asientos completada",
-    "renumber-accounting-error": "Ha ocurrido un error durante la renumeración de asientos en el ejercicio fiscal %exerciseCode%"
+    "renumber-accounting-error": "Ha ocurrido un error durante la renumeración de asientos en el ejercicio fiscal %exerciseCode%",
+    "desc-customer-name": "Nombre por el cual el clientes es conocido. Para uso interno.",
+    "desc-customer-name-2": "Nombre comercial del cliente",
+    "choose-source": "Elegir el origen",
+    "record-save-error": "Un error ha ocurrido mientras se guardaban los datos",
+    "generate-title": "Ejecuta la creación del informe",
+    "tasaconv": "Tasa de conversión",
+    "paid": "Pagado"
 }
