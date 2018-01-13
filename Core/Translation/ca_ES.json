@@ -1126,5 +1126,6 @@
     "record-save-error": "Un error ha succeït mentre es guardaven les dades",
     "generate-title": "Executa la creació de l'informe",
     "tasaconv": "Taxa de conversió",
-    "paid": "Pagat"
+    "paid": "Pagat",
+    "enable-api": "Activa API"
 }
