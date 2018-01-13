@@ -299,6 +299,10 @@ abstract class PanelController extends Base\Controller
         }
     }
 
+    /**
+     * Run the autocomplete action.
+     * Returns a JSON string for the searched values.
+     */
     private function autocompleteAction()
     {
         $this->setTemplate(false);
@@ -360,6 +364,11 @@ abstract class PanelController extends Base\Controller
         return false;
     }
 
+    /**
+     * Run the data insert action.
+     *
+     * @param EditView $view
+     */
     protected function insertAction($view)
     {
         $view->setNewCode();

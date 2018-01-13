@@ -60,6 +60,11 @@ class ListAsiento extends ExtendedController\ListController
         return $pagedata;
     }
 
+    /**
+     * Run the actions that alter data before reading it.
+     *
+     * @param string $action
+     */
     protected function execPreviousAction($action)
     {
         switch ($action) {

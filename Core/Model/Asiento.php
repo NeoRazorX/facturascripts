@@ -145,6 +145,13 @@ class Asiento
         return 'idasiento';
     }
 
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
     public function install()
     {
         new Ejercicio();
@@ -234,7 +241,7 @@ class Asiento
     }
 
     /**
-     * Returns True if there is no erros on properties values.
+     * Returns True if there is no errors on properties values.
      *
      * @return bool
      */

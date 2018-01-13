@@ -39,7 +39,9 @@ class RowItemCards extends RowItem
     public $buttons;
 
     /**
-     * Class constructor
+     * RowItemCards constructor.
+     *
+     * @param string $type
      */
     public function __construct($type)
     {

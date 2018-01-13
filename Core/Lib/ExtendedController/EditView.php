@@ -31,7 +31,7 @@ class EditView extends BaseView
 {
 
     /**
-     * Class constructor and initialization
+     * EditView constructor and initialization.
      *
      * @param string $title
      * @param string $modelName

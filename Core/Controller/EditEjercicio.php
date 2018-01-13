@@ -85,6 +85,12 @@ class EditEjercicio extends ExtendedController\PanelController
         return $pagedata;
     }
 
+    /**
+     * Run the controller after actions
+     *
+     * @param ExtendedController\EditView $view
+     * @param string $action
+     */
     protected function execAfterAction($view, $action)
     {
         switch ($action) {
@@ -97,6 +103,11 @@ class EditEjercicio extends ExtendedController\PanelController
         }
     }
 
+    /**
+     * Import AccountingPlan from any supported file type.
+     *
+     * @return bool
+     */
     private function importAccountingPlan()
     {
         $accountingPlanImport = new AccountingPlanImport();

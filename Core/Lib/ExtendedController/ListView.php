@@ -93,7 +93,7 @@ class ListView extends BaseView
     private $where;
 
     /**
-     * Class constructor and initialization
+     * ListView constructor and initialization.
      *
      * @param string $title
      * @param string $modelName

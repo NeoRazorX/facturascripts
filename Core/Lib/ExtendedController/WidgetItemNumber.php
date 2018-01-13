@@ -64,7 +64,7 @@ class WidgetItemNumber extends WidgetItem
     public $min;
 
     /**
-     * Class constructor
+     * WidgetItemNumber constructor.
      */
     public function __construct()
     {

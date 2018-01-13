@@ -28,12 +28,14 @@ use FacturaScripts\Core\Model;
 class InfoStateComponent extends BaseComponent implements ComponentInterface
 {
     /**
+     * List of groups.
      *
      * @var array
      */
     public $group;
 
     /**
+     * List of details.
      *
      * @var array
      */
@@ -97,6 +99,13 @@ class InfoStateComponent extends BaseComponent implements ComponentInterface
         }
     }
 
+    /**
+     * Add details to component.
+     *
+     * @param $group
+     * @param $values
+     * @param $totalModel
+     */
     private function addDetail($group, $values, &$totalModel)
     {
         foreach ($values as $value) {
@@ -108,6 +117,13 @@ class InfoStateComponent extends BaseComponent implements ComponentInterface
         }
     }
 
+    /**
+     * Return the model info table and url list.
+     *
+     * @param $modelName
+     *
+     * @return array
+     */
     private function getModelInfo($modelName)
     {
         $model = self::DIR_MODEL . $modelName;
@@ -115,6 +131,14 @@ class InfoStateComponent extends BaseComponent implements ComponentInterface
         return ['table' => $modelObj->tableName(), 'url' => $modelObj->url('list')];
     }
 
+    /**
+     * Get summary data from total model.
+     *
+     * @param $table
+     * @param $values
+     *
+     * @return Model\TotalModel
+     */
     private function getSQLData($table, $values)
     {
         $fields = [];
@@ -125,6 +149,12 @@ class InfoStateComponent extends BaseComponent implements ComponentInterface
         return Model\TotalModel::all($table, [], $fields)[0];
     }
 
+    /**
+     * Data persists in the database, modifying if the record existed or inserting
+     * in case the primary key does not exist.
+     *
+     * @param array $data
+     */
     public function saveData($data)
     {
         $newItem = new Model\DashboardData();
@@ -145,6 +175,13 @@ class InfoStateComponent extends BaseComponent implements ComponentInterface
         $newItem->save();
     }
 
+    /**
+     * Returns the url where to see/modify the data.
+     *
+     * @param string $id
+     *
+     * @return string
+     */
     public function url($id)
     {
         return $this->group[$id]['url'];

@@ -138,6 +138,7 @@ class PageOption
      * Load the data from an array
      *
      * @param array $data
+     * @param array $exclude
      */
     public function loadFromData(array $data = [], array $exclude = [])
     {

@@ -101,7 +101,7 @@ abstract class EditController extends Base\Controller
     /**
      * Create the view to display
      *
-     * @return ExtendedController\EditView
+     * @return EditView
      */
     protected function createView()
     {
@@ -176,7 +176,11 @@ abstract class EditController extends Base\Controller
 
         return null;
     }
-    
+
+    /**
+     * Run the autocomplete action.
+     * Returns a JSON string for the searched values.
+     */
     private function autocompleteAction()
     {
         $this->setTemplate(false);
@@ -212,6 +216,9 @@ abstract class EditController extends Base\Controller
         return false;
     }
 
+    /**
+     * Run the data insert action.
+     */
     protected function insertAction()
     {
         $this->view->setNewCode();

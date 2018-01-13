@@ -46,8 +46,9 @@ class DocumentReports extends Controller
     public $dataTable;
 
     /**
+     * List of filters.
      *
-     * @var DocumentReports\DocumentReportsFilterList[]
+     * @var DocumentReportsBase\DocumentReportsFilterList[]
      */
     public $filters;
 
@@ -59,8 +60,9 @@ class DocumentReports extends Controller
     public $grouped;
 
     /**
+     * List of sources.
      *
-     * @var DocumentReports\DocumentReportsSource[]
+     * @var DocumentReportsBase\DocumentReportsSource[]
      */
     public $sources;
 
@@ -114,7 +116,7 @@ class DocumentReports extends Controller
      * Set values selected by the user to source.
      *
      * @param int $index
-     * @param DocumentReports\DocumentReportsSource $source
+     * @param DocumentReportsBase\DocumentReportsSource $source
      */
     private function setDefaultToSource($index, &$source)
     {
@@ -198,17 +200,17 @@ class DocumentReports extends Controller
         }
         
         if(strtolower(FS_DB_TYPE) === 'mysql') {
-            return 'CONCAT('. join(', ', $concat).')';
+            return 'CONCAT(' . join(', ', $concat) . ')';
         }
 
         /// PostgreSQL
-        return join(' || ', $concat);
+        return implode(' || ', $concat);
     }
 
     /**
      * Establishes the WHERE clause according to the defined filters.
      *
-     * @param DocumentReports\DocumentReportsSource $source
+     * @param DocumentReportsBase\DocumentReportsSource $source
      *
      * @return DataBase\DataBaseWhere[]
      */

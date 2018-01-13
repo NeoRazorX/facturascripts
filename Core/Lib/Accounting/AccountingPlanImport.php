@@ -27,7 +27,8 @@ class AccountingPlanImport
 {
 
     /**
-     * 
+     * Import data from XML file.
+     *
      * @param string $filePath
      * @param string $codejercicio
      */
@@ -40,7 +41,8 @@ class AccountingPlanImport
     }
 
     /**
-     * 
+     * Import data from CSV file.
+     *
      * @param string $filePath
      * @param string $codejercicio
      */

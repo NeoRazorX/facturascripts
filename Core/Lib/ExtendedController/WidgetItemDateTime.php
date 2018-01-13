@@ -27,7 +27,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 class WidgetItemDateTime extends WidgetItem
 {
     /**
-     * Class constructor
+     * WidgetItemDateTime constructor.
      */
     public function __construct()
     {

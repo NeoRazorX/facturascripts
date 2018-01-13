@@ -49,7 +49,7 @@ class CSVImport
             $sql .= $sep . '(';
             $sep2 = '';
             foreach ($row as $value) {
-                $sql .= $sep2 . self::value2sql($value);
+                $sql .= $sep2 . self::valueToSql($value);
                 $sep2 = ', ';
             }
 
@@ -60,8 +60,15 @@ class CSVImport
 
         return $sql;
     }
-    
-    private static function value2sql($value)
+
+    /**
+     * Returns a value to SQL format.
+     *
+     * @param $value
+     *
+     * @return string
+     */
+    private static function valueToSql($value)
     {
         if($value === 'false' || $value === 'true') {
             return $value;

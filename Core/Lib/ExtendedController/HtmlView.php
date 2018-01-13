@@ -38,7 +38,7 @@ class HtmlView extends BaseView
     public $fileName;
 
     /**
-     * Class constructor and initialization
+     * HtmlView constructor and initialization.
      *
      * @param string $title
      * @param string $modelName

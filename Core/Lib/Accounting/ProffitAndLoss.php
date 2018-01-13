@@ -28,12 +28,23 @@ namespace FacturaScripts\Core\Lib\Accounting;
 class ProffitAndLoss extends AccountingBase
 {
 
+    /**
+     * Date from for filter
+     *
+     * @var string
+     */
     protected $dateFromPrev;
+
+    /**
+     * Date to for filter
+     *
+     * @var string
+     */
     protected $dateToPrev;
 
     /**
      * Constructor.
-     * 
+     *
      * @param string $dateFrom
      * @param string $dateTo
      */
@@ -45,6 +56,14 @@ class ProffitAndLoss extends AccountingBase
         $this->dateToPrev = $this->addToDate($this->dateTo, '-1 year');
     }
 
+    /**
+     * Generate the data results.
+     *
+     * @param string $dateFrom
+     * @param string $dateTo
+     *
+     * @return array
+     */
     public static function generate($dateFrom, $dateTo)
     {
         $ProffitAndLoss = new ProffitAndLoss($dateFrom, $dateTo);
@@ -61,7 +80,7 @@ class ProffitAndLoss extends AccountingBase
      * Format de Proffit-Lost including then chapters.
      * 
      * @param array $proffitLost
-     * 
+     *
      * @return array
      */
     private function calcProffitAndLoss($proffitLost)
@@ -87,7 +106,7 @@ class ProffitAndLoss extends AccountingBase
 
     /**
      * Obtains the balances for each one of the sections of the balance sheet according to their assigned accounts.
-     * 
+     *
      * @return array
      */
     protected function getData()
@@ -111,6 +130,13 @@ class ProffitAndLoss extends AccountingBase
         return $this->database->select($sql);
     }
 
+    /**
+     * Process a balance values.
+     *
+     * @param string $description
+     * @param array $linea
+     * @param array $balance
+     */
     private function processDescription($description, &$linea, &$balance)
     {
         $index = $linea[$description];
@@ -129,6 +155,13 @@ class ProffitAndLoss extends AccountingBase
         }
     }
 
+    /**
+     * Process a line entry with correct format.
+     *
+     * @param array $line
+     *
+     * @return array
+     */
     protected function processLine($line)
     {
         $line['saldo'] = $this->divisaTools->format($line['saldo'], FS_NF0, false);

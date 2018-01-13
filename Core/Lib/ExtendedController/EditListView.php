@@ -59,7 +59,7 @@ class EditListView extends BaseView
     private $where;
 
     /**
-     * Class constructor and initialization
+     * EditListView constructor and initialization
      *
      * @param string $title
      * @param string $modelName

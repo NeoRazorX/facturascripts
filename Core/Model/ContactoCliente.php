@@ -48,12 +48,22 @@ class ContactoCliente
      * @var string
      */
     public $codcontacto;
-    
+
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'contactosclientes';
     }
-    
+
+    /**
+     * Returns the name of the column that is the model's primary key.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'id';

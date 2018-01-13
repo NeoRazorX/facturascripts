@@ -32,14 +32,17 @@ class Ledger
 {
 
     use Utils;
-    
+
     /**
-     * Tools to format money.
-     * 
-     * @var DivisaTools 
+     * Tools to work with currencies.
+     *
+     * @var DivisaTools
      */
     private $divisaTools;
-    
+
+    /**
+     * Ledger constructor.
+     */
     public function __construct()
     {
         $this->divisaTools = new DivisaTools();

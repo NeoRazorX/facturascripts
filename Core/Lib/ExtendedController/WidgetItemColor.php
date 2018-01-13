@@ -27,7 +27,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 class WidgetItemColor extends WidgetItem
 {
     /**
-     * Class constructor
+     * WidgetItemColor constructor.
      */
     public function __construct()
     {

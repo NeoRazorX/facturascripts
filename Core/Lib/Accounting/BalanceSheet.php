@@ -28,7 +28,18 @@ namespace FacturaScripts\Core\Lib\Accounting;
 class BalanceSheet extends AccountingBase
 {
 
+    /**
+     * Date from for filter
+     *
+     * @var string
+     */
     protected $dateFromPrev;
+
+    /**
+     * * Date to for filter
+     *
+     * @var string
+     */
     protected $dateToPrev;
 
     /**
@@ -45,6 +56,14 @@ class BalanceSheet extends AccountingBase
         $this->dateToPrev = $this->addToDate($this->dateTo, '-1 year');
     }
 
+    /**
+     * Generate the balance ammounts between two dates.
+     *
+     * @param string $dateFrom
+     * @param string $dateTo
+     *
+     * @return array
+     */
     public static function generate($dateFrom, $dateTo)
     {
         $balanceSheet = new BalanceSheet($dateFrom, $dateTo);
@@ -58,9 +77,9 @@ class BalanceSheet extends AccountingBase
 
     /**
      * Format de balance including then chapters
-     * 
+     *
      * @param array $balance
-     * 
+     *
      * @return array
      */
     private function calcSheetBalance($balance)
@@ -93,7 +112,7 @@ class BalanceSheet extends AccountingBase
 
     /**
      * Obtains the balances for each one of the sections of the balance sheet according to their assigned accounts.
-     * 
+     *
      * @return array
      */
     protected function getData()
@@ -118,6 +137,13 @@ class BalanceSheet extends AccountingBase
         return $this->database->select($sql);
     }
 
+    /**
+     * Process a balance values.
+     *
+     * @param string $description
+     * @param array $linea
+     * @param array $balance
+     */
     private function processDescription($description, &$linea, &$balance)
     {
         $index = $linea[$description];
@@ -136,6 +162,13 @@ class BalanceSheet extends AccountingBase
         }
     }
 
+    /**
+     * Process a line entry with correct format.
+     *
+     * @param array $line
+     *
+     * @return array
+     */
     protected function processLine($line)
     {
         $line['saldo'] = $this->divisaTools->format($line['saldo'], FS_NF0, false);

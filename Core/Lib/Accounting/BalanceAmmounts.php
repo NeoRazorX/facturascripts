@@ -34,12 +34,15 @@ class BalanceAmmounts
     use Utils;
 
     /**
-     * Tools to format money.
-     * 
-     * @var DivisaTools 
+     * Tools to work with currencies.
+     *
+     * @var DivisaTools
      */
     private $divisaTools;
 
+    /**
+     * BalanceAmmounts constructor.
+     */
     public function __construct()
     {
         $this->divisaTools = new DivisaTools();
@@ -48,8 +51,8 @@ class BalanceAmmounts
     /**
      * Generate the balance ammounts between two dates.
      *
-     * @param date $dateFrom
-     * @param date $dateTo
+     * @param string $dateFrom
+     * @param string $dateTo
      * 
      * @return array
      */
@@ -62,7 +65,7 @@ class BalanceAmmounts
 
         $balance = [];
         foreach ($results as $line) {
-            $balance[] = $this->proccessLine($line);
+            $balance[] = $this->processLine($line);
         }
 
         return $balance;
@@ -92,12 +95,13 @@ class BalanceAmmounts
     }
 
     /**
+     * Process the line data to use the appropiate formats.
      *
      * @param array $line
      *
      * @return array
      */
-    private function proccessLine($line)
+    private function processLine($line)
     {
         $line['SDebe'] = $this->divisaTools->format($line['SDebe'], FS_NF0, false);
         $line['SHaber'] = $this->divisaTools->format($line['SHaber'], FS_NF0, false);

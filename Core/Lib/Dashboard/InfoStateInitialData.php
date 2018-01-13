@@ -26,6 +26,7 @@ namespace FacturaScripts\Core\Lib\Dashboard;
 class InfoStateInitialData
 {
     /**
+     * TODO: Uncomplete
      *
      * @param InfoStateComponent $parent
      */
@@ -37,6 +38,11 @@ class InfoStateInitialData
         $parent->saveData($data->getProductData());
     }
 
+    /**
+     * TODO: Uncomplete
+     *
+     * @return mixed
+     */
     protected function getCustomerData()
     {
         $result['model'] = 'Cliente';
@@ -51,6 +57,11 @@ class InfoStateInitialData
         return $result;
     }
 
+    /**
+     * TODO: Uncomplete
+     *
+     * @return mixed
+     */
     protected function getSupplierData()
     {
         $result['model'] = 'Proveedor';
@@ -65,6 +76,11 @@ class InfoStateInitialData
         return $result;
     }
 
+    /**
+     * TODO: Uncomplete
+     *
+     * @return mixed
+     */
     protected function getProductData()
     {
         $result['model'] = 'Articulo';

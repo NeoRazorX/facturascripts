@@ -44,7 +44,7 @@ class ListFilter
     public $options;
 
     /**
-     * Class constructor
+     * ListFilter constructor.
      *
      * @param string $type
      * @param array $options
