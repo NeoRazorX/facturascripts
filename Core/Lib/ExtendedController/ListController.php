@@ -192,6 +192,10 @@ abstract class ListController extends Base\Controller
         }
     }
 
+    /**
+     * Run the autocomplete action.
+     * Returns a JSON string for the searched values.
+     */
     private function autocompleteAction()
     {
         $this->setTemplate(false);

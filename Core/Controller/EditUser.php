@@ -86,6 +86,9 @@ class EditUser extends ExtendedController\PanelController
         }
     }
 
+    /**
+     * Load a list of pages where user has access that can be setted as homepage.
+     */
     private function loadHomepageValues()
     {
         $user = new Model\User();
@@ -103,8 +106,11 @@ class EditUser extends ExtendedController\PanelController
     }
 
     /**
+     * Return a list of pages where user has access.
      *
      * @param Model\User $user
+     *
+     * @return array
      */
     private function getUserPages($user)
     {
@@ -132,6 +138,9 @@ class EditUser extends ExtendedController\PanelController
         return $pageList;
     }
 
+    /**
+     * Load the available language values from translator.
+     */
     private function loadLanguageValues()
     {
         $columnLangCode = $this->views['EditUser']->columnForName('lang-code');

@@ -85,6 +85,13 @@ class SubcuentaProveedor
         return 'id';
     }
 
+    /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     *
+     * @return string
+     */
     public function install()
     {
         new Subcuenta();
@@ -104,6 +111,11 @@ class SubcuentaProveedor
         return $subcuentaModel->get($this->idsubcuenta);
     }
 
+    /**
+     * Returns True if there is no erros on properties values.
+     *
+     * @return bool
+     */
     public function test()
     {
         $subcuentaModel = new Subcuenta();

@@ -177,7 +177,12 @@ trait ModelTrait
      */
     abstract public function primaryColumn();
 
-    public function primaryDescriptionColumn()
+    /**
+     * Returns the description of the column that is the model's primary key.
+     *
+     * @return string
+     */
+    public function primaryDescriptionColumn() 
     {
         return 'descripcion';
     }
@@ -204,7 +209,7 @@ trait ModelTrait
             return $this->{$field};
         }
 
-        return strval($this->primaryColumnValue());
+        return (string) $this->primaryColumnValue();
     }
 
     /**
@@ -380,7 +385,9 @@ trait ModelTrait
 
     /**
      * Returns true if there are no errors in the values of the model properties.
-          * It runs inside the save method.
+==== BASE ====
+           * It runs inside the save method.
+==== BASE ====
      *
      * @return bool
      */

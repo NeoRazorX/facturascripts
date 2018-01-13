@@ -72,6 +72,13 @@ class AppSettings
         return self::$data[$group][$property];
     }
 
+    /**
+     * Set the value for group property.
+     *
+     * @param string $group
+     * @param string $property
+     * @param string $value
+     */
     public function set($group, $property, $value)
     {
         if (!isset(self::$data[$group])) {

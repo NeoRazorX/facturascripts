@@ -30,11 +30,15 @@ use FacturaScripts\Core\Model\Subcuenta;
 class BalanceAmmounts extends AccountingBase
 {
     /**
+     * Tools to work with currencies.
      *
-     * @var Subcuenta
+     * @var DivisaTools
      */
     private $subcuentaModel;
 
+    /**
+     * BalanceAmmounts constructor.
+     */
     public function __construct()
     {
         parent::__construct();
@@ -44,9 +48,9 @@ class BalanceAmmounts extends AccountingBase
     /**
      * Generate the balance ammounts between two dates.
      *
-     * @param date $dateFrom
-     * @param date $dateTo
-     *
+     * @param string $dateFrom
+     * @param string $dateTo
+     * 
      * @return array
      */
     public function generate($dateFrom, $dateTo)
@@ -61,7 +65,7 @@ class BalanceAmmounts extends AccountingBase
 
         $balance = [];
         foreach ($results as $line) {
-            $balance[] = $this->proccessLine($line);
+            $balance[] = $this->processLine($line);
         }
 
         return $balance;
@@ -91,7 +95,7 @@ class BalanceAmmounts extends AccountingBase
      *
      * @return array
      */
-    private function proccessLine($line)
+    private function processLine($line)
     {
         $saldo = (float) $line['debe'] - (float) $line['haber'];
 

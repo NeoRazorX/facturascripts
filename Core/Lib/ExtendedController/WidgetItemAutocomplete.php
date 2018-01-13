@@ -44,7 +44,7 @@ class WidgetItemAutocomplete extends WidgetItem
     public $values;
 
     /**
-     * Class constructor
+     * WidgetItemAutocomplete constructor.
      */
     public function __construct()
     {
@@ -131,6 +131,13 @@ class WidgetItemAutocomplete extends WidgetItem
         return $html;
     }
 
+    /**
+     * Get the text for the given value
+     *
+     * @param string $value
+     *
+     * @return string
+     */
     public function getTextValue($value)
     {
         $tableName = $this->values[0]['source'];

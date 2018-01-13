@@ -28,19 +28,23 @@ namespace FacturaScripts\Core\Lib\Accounting;
  */
 class ProffitAndLoss extends AccountingBase
 {
+
     /**
+     * Date from for filter
      *
      * @var string
      */
     protected $dateFromPrev;
 
     /**
+     * Date to for filter
      *
      * @var string
      */
     protected $dateToPrev;
 
     /**
+     * Constructor.
      *
      * @param string $dateFrom
      * @param string $dateTo
@@ -54,7 +58,22 @@ class ProffitAndLoss extends AccountingBase
         $this->dateFromPrev = $this->addToDate($dateFrom, '-1 year');
         $this->dateToPrev = $this->addToDate($dateTo, '-1 year');
 
-        $data = $this->getData();
+        $this->dateFromPrev = $this->addToDate($this->dateFrom, '-1 year');
+        $this->dateToPrev = $this->addToDate($this->dateTo, '-1 year');
+    }
+
+    /**
+     * Generate the data results.
+     *
+     * @param string $dateFrom
+     * @param string $dateTo
+     *
+     * @return array
+     */
+    public static function generate($dateFrom, $dateTo)
+    {
+        $ProffitAndLoss = new ProffitAndLoss($dateFrom, $dateTo);
+        $data = $ProffitAndLoss->getData();
         if (empty($data)) {
             return [];
         }
@@ -64,8 +83,8 @@ class ProffitAndLoss extends AccountingBase
 
     /**
      * Format de Proffit-Lost including then chapters.
-     *
-     * @param array $data
+     * 
+     * @param array $proffitLost
      *
      * @return array
      */
@@ -114,12 +133,13 @@ class ProffitAndLoss extends AccountingBase
     }
 
     /**
+     * Process a balance values.
      *
-     * @param array  $linea
-     * @param array  $balance
      * @param string $description
+     * @param array $linea
+     * @param array $balance
      */
-    protected function processDescription(&$linea, &$balance, $description)
+    private function processDescription($description, &$linea, &$balance)
     {
         $index = $linea[$description];
         if (empty($index)) {
@@ -138,7 +158,7 @@ class ProffitAndLoss extends AccountingBase
     }
 
     /**
-     * Process the line data to use the appropiate formats.
+     * Process a line entry with correct format.
      *
      * @param array $line
      *

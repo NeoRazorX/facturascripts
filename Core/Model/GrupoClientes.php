@@ -71,7 +71,12 @@ class GrupoClientes
         return 'codgrupo';
     }
 
-    public function primaryDescriptionColumn()
+    /**
+     * Returns the description of the column that is the model's primary key.
+     *
+     * @return string
+     */
+    public function primaryDescriptionColumn() 
     {
         return 'nombre';
     }

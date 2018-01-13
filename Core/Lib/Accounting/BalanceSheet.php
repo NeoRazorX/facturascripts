@@ -28,13 +28,16 @@ namespace FacturaScripts\Core\Lib\Accounting;
  */
 class BalanceSheet extends AccountingBase
 {
+
     /**
+     * Date from for filter
      *
      * @var string
      */
     protected $dateFromPrev;
 
     /**
+     * * Date to for filter
      *
      * @var string
      */
@@ -47,14 +50,10 @@ class BalanceSheet extends AccountingBase
      *
      * @return array
      */
-    public function generate($dateFrom, $dateTo)
+    public static function generate($dateFrom, $dateTo)
     {
-        $this->dateFrom = $dateFrom;
-        $this->dateTo = $dateTo;
-        $this->dateFromPrev = $this->addToDate($dateFrom, '-1 year');
-        $this->dateToPrev = $this->addToDate($dateTo, '-1 year');
-
-        $data = $this->getData();
+        $balanceSheet = new BalanceSheet($dateFrom, $dateTo);
+        $data = $balanceSheet->getData();
         if (empty($data)) {
             return [];
         }
@@ -65,7 +64,7 @@ class BalanceSheet extends AccountingBase
     /**
      * Format de balance including then chapters
      *
-     * @param array $data
+     * @param array $balance
      *
      * @return array
      */
@@ -121,12 +120,13 @@ class BalanceSheet extends AccountingBase
     }
 
     /**
+     * Process a balance values.
      *
-     * @param array  $linea
-     * @param array  $balance
      * @param string $description
+     * @param array $linea
+     * @param array $balance
      */
-    protected function processDescription(&$linea, &$balance, $description)
+    private function processDescription($description, &$linea, &$balance)
     {
         $index = $linea[$description];
         if (empty($index)) {
@@ -145,7 +145,7 @@ class BalanceSheet extends AccountingBase
     }
 
     /**
-     * Process the line data to use the appropiate formats.
+     * Process a line entry with correct format.
      *
      * @param array $line
      *

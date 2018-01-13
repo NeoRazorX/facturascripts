@@ -29,14 +29,14 @@ use FacturaScripts\Core\Base\DivisaTools;
 class WidgetItemMoney extends WidgetItem
 {
     /**
-     * Class that formats currency
+     * Tools to work with currencies.
      *
      * @var DivisaTools
      */
     private static $divisaTools;
 
     /**
-     * Class constructor
+     * WidgetItemMoney constructor.
      */
     public function __construct()
     {

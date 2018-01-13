@@ -34,41 +34,65 @@ abstract class AccountingBase
     use Utils;
 
     /**
+     * Link with the active dataBase
      *
-     * @var DataBase
+     * @var dataBase
      */
     protected $dataBase;
 
     /**
+     * Tools to work with currencies.
      *
      * @var DivisaTools
      */
     protected $divisaTools;
 
     /**
+     * Start date.
      *
      * @var string
      */
     protected $dateFrom;
 
     /**
+     * End date.
      *
      * @var string
      */
     protected $dateTo;
 
+    /**
+     * Obtains the balances for each one of the sections of the balance sheet according to their assigned accounts.
+     *
+     * @return array
+     */
     abstract protected function getData();
 
-    abstract public function generate($dateFrom, $dateTo);
+    /**
+     * Process a line entry with correct format.
+     *
+     * @param array $line
+     *
+     * @return array
+     */
+    abstract protected function processLine($line);
 
-    public function __construct()
+    abstract public static function generate($dateFrom, $dateTo);
+
+    /**
+     * AccountingBase constructor.
+     *
+     * @param string $dateFrom
+     * @param string $dateTo
+     */
+    public function __construct($dateFrom, $dateTo)
     {
         $this->dataBase = new DataBase();
         $this->divisaTools = new DivisaTools();
     }
 
     /**
-     * Returns a new date.
+     * Add some days to a date.
      *
      * @param string $date
      * @param string $add

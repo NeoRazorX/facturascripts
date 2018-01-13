@@ -51,12 +51,12 @@ abstract class DocumentController extends PanelController
     public $lines;
 
     /**
-     * Constructor.
+     * DocumentController constructor.
      *
-     * @param Cache      $cache
-     * @param Translator $i18n
-     * @param MiniLog    $miniLog
-     * @param string     $className
+     * @param \FacturaScripts\Core\Base\Cache $cache
+     * @param \FacturaScripts\Core\Base\Translator $i18n
+     * @param \FacturaScripts\Core\Base\MiniLog $miniLog
+     * @param string $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
@@ -84,6 +84,9 @@ abstract class DocumentController extends PanelController
         $this->loadPrimaryTabOptions();
     }
 
+    /**
+     * Load the primary tab column options
+     */
     private function loadPrimaryTabOptions()
     {
         $PageOptions = new PageOption();
