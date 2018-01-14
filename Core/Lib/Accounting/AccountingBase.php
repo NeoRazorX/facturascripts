@@ -107,7 +107,7 @@ abstract class AccountingBase
      *
      * @param string $date
      * @param string $add
-     * 
+     *
      * @return string
      */
     protected function addToDate($date, $add)

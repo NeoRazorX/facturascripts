@@ -53,7 +53,7 @@ class BalanceAmmounts
      *
      * @param string $dateFrom
      * @param string $dateTo
-     * 
+     *
      * @return array
      */
     public function generate($dateFrom, $dateTo)
@@ -77,7 +77,7 @@ class BalanceAmmounts
      * @param string $dateFrom
      * @param string $dateTo
      *
-     * return array;
+     * @return array
      */
     private function getData($dateFrom, $dateTo)
     {
@@ -106,7 +106,7 @@ class BalanceAmmounts
         $line['SDebe'] = $this->divisaTools->format($line['SDebe'], FS_NF0, false);
         $line['SHaber'] = $this->divisaTools->format($line['SHaber'], FS_NF0, false);
         $line['saldo'] = $this->divisaTools->format($line['saldo'], FS_NF0, false);
-        $line['descripcion'] = $this->fixHtml($line['descripcion']);
+        $line['descripcion'] = $this::fixHtml($line['descripcion']);
 
         return $line;
     }

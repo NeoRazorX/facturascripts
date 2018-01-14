@@ -43,7 +43,7 @@ class ProffitAndLoss extends AccountingBase
     protected $dateToPrev;
 
     /**
-     * Constructor.
+     * ProffitAndLoss constructor.
      *
      * @param string $dateFrom
      * @param string $dateTo
@@ -72,8 +72,7 @@ class ProffitAndLoss extends AccountingBase
             return [];
         }
 
-        $proffitLostFinal = $ProffitAndLoss->calcProffitAndLoss($data);
-        return $proffitLostFinal;
+        return $ProffitAndLoss->calcProffitAndLoss($data);
     }
 
     /**
@@ -101,7 +100,7 @@ class ProffitAndLoss extends AccountingBase
             $balanceFinal[] = $this->processLine($lineaBalance);
         }
 
-        return($balanceFinal);
+        return $balanceFinal;
     }
 
     /**
@@ -112,22 +111,22 @@ class ProffitAndLoss extends AccountingBase
     protected function getData()
     {
 
-        $dateFrom = $this->database->var2str($this->dateFrom);
-        $dateTo = $this->database->var2str($this->dateTo);
-        $dateFromPrev = $this->database->var2str($this->dateFromPrev);
-        $dateToPrev = $this->database->var2str($this->dateToPrev);
+        $dateFrom = $this->dataBase->var2str($this->dateFrom);
+        $dateTo = $this->dataBase->var2str($this->dateTo);
+        $dateFromPrev = $this->dataBase->var2str($this->dateFromPrev);
+        $dateToPrev = $this->dataBase->var2str($this->dateToPrev);
 
-        $sql = 'select cb.codbalance,cb.naturaleza,cb.descripcion1,cb.descripcion2,cb.descripcion3,cb.descripcion4,ccb.codcuenta,'
+        $sql = 'SELECT cb.codbalance,cb.naturaleza,cb.descripcion1,cb.descripcion2,cb.descripcion3,cb.descripcion4,ccb.codcuenta,'
             . ' SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFrom . ' AND ' . $dateTo . ' THEN pa.debe - pa.haber ELSE 0 END) saldo,'
             . ' SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateToPrev . ' THEN pa.debe - pa.haber ELSE 0 END) saldoPrev'
-            . ' from co_cuentascbba ccb '
+            . ' FROM co_cuentascbba ccb '
             . ' INNER JOIN co_codbalances08 cb ON ccb.codbalance = cb.codbalance '
-            . ' INNER JOIN co_partidas pa ON substr(pa.codsubcuenta, 1, 1) between "6" and "7" and pa.codsubcuenta like concat(ccb.codcuenta,"%")'
-            . ' INNER JOIN co_asientos asto on asto.idasiento = pa.idasiento and asto.fecha between ' . $dateFromPrev . ' and ' . $dateTo
-            . ' where cb.naturaleza ="PG"'
-            . ' group by 1, 2, 3, 4, 5, 6, 7 '
+            . ' INNER JOIN co_partidas pa ON substr(pa.codsubcuenta, 1, 1) BETWEEN "6" AND "7" AND pa.codsubcuenta LIKE CONCAT(ccb.codcuenta,"%")'
+            . ' INNER JOIN co_asientos asto ON asto.idasiento = pa.idasiento AND asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateTo
+            . ' WHERE cb.naturaleza ="PG"'
+            . ' GROUP BY 1, 2, 3, 4, 5, 6, 7 '
             . ' ORDER BY cb.naturaleza, cb.nivel1, cb.nivel2, cb.orden3, cb.nivel4';
-        return $this->database->select($sql);
+        return $this->dataBase->select($sql);
     }
 
     /**
@@ -166,7 +165,7 @@ class ProffitAndLoss extends AccountingBase
     {
         $line['saldo'] = $this->divisaTools->format($line['saldo'], FS_NF0, false);
         $line['saldoPrev'] = $this->divisaTools->format($line['saldoPrev'], FS_NF0, false);
-        $line['descripcion'] = $this->fixHtml($line['descripcion']);
+        $line['descripcion'] = $this::fixHtml($line['descripcion']);
         return $line;
     }
 }

@@ -167,7 +167,7 @@ trait Utils
      */
     public static function fixHtml($txt)
     {
-        if($txt === null) {
+        if ($txt === null) {
             return null;
         }
         

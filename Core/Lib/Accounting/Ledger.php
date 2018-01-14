@@ -50,10 +50,10 @@ class Ledger
 
     /**
      * Generate the ledger between two dates.
-     * 
+     *
      * @param string $dateFrom
      * @param string $dateTo
-     * 
+     *
      * @return array
      */
     public function generate($dateFrom, $dateTo)
@@ -81,10 +81,10 @@ class Ledger
 
     /**
      * Return the appropiate data from database.
-     * 
+     *
      * @param string $dateFrom
      * @param string $dateTo
-     * 
+     *
      * @return array
      */
     private function getData($dateFrom, $dateTo)
@@ -101,10 +101,10 @@ class Ledger
     
     /**
      * Process the line data to use the appropiate formats.
-     * 
+     *
      * @param array $line
      * @param float $balance
-     * 
+     *
      * @return array
      */
     private function processLine($line, $balance)
@@ -112,7 +112,7 @@ class Ledger
         $line['saldo'] = $this->divisaTools->format($balance, FS_NF0, false);
         $line['haber'] = $this->divisaTools->format($line['haber'], FS_NF0, false);
         $line['debe'] = $this->divisaTools->format($line['debe'], FS_NF0, false);
-        $line['concepto'] = $this->fixHtml($line['concepto']);
+        $line['concepto'] = $this::fixHtml($line['concepto']);
         $line['fecha'] = date('d-m-Y', strtotime($line['fecha']));
         
         return $line;
