@@ -77,7 +77,15 @@ abstract class AccountingBase
      */
     abstract protected function processLine($line);
 
-    abstract public static function generate($dateFrom, $dateTo);
+    /**
+     * Generate the balance ammounts between two dates.
+     *
+     * @param string $dateFrom
+     * @param string $dateTo
+     *
+     * @return mixed
+     */
+    abstract public function generate($dateFrom, $dateTo);
 
     /**
      * AccountingBase constructor.

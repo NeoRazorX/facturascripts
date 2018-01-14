@@ -65,7 +65,7 @@ class BalanceSheet extends AccountingBase
      *
      * @return array
      */
-    public static function generate($dateFrom, $dateTo)
+    public function generate($dateFrom, $dateTo)
     {
         $balanceSheet = new BalanceSheet($dateFrom, $dateTo);
         $data = $balanceSheet->getData();
