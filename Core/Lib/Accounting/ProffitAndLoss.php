@@ -64,7 +64,7 @@ class ProffitAndLoss extends AccountingBase
      *
      * @return array
      */
-    public static function generate($dateFrom, $dateTo)
+    public function generate($dateFrom, $dateTo)
     {
         $ProffitAndLoss = new ProffitAndLoss($dateFrom, $dateTo);
         $data = $ProffitAndLoss->getData();
