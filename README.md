@@ -1,6 +1,6 @@
-﻿[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)][1]
-﻿![Symfony 3.x][2]
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/NeorazorX/facturascripts/issues?utf8=✓&q=is%3Aopen%20is%3Aissue)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/NeoRazorX/facturascripts/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/NeoRazorX/facturascripts/?branch=master)
+[![Build Status](https://travis-ci.org/NeoRazorX/facturascripts.svg?branch=master)](https://travis-ci.org/NeoRazorX/facturascripts)
 <a href="http://i18n.facturascripts.com/engage/facturascripts/?utm_source=widget">
 <img src="http://i18n.facturascripts.com/widgets/facturascripts/-/core/svg-badge.svg" alt="Estado de la traducción" />
 </a>
@@ -26,6 +26,3 @@ npm install
 ## Feedback
 Tienes las instrucciones para colaborar en desarrollo o traducciones aquí:
 https://www.facturascripts.com/documentacion/como-contribuir/hemos-abierto-un-para-todo-el-que-este-interesado-252.html
-
-[1]: https://github.com/NeorazorX/facturascripts/issues?utf8=✓&q=is%3Aopen%20is%3Aissue
-[2]: https://img.shields.io/badge/Symfony-%202.x%20&%203.x-green.svg

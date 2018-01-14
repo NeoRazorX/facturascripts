@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,8 @@
  *
  * Initial description for the controller EditArticuloProveedor
  *
- * @author PC REDNET S.L. luismi@pcrednet.com>
+ * @author PC REDNET S.L.       <luismi@pcrednet.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
 
 <view>
@@ -35,14 +36,14 @@
                 <widget type="text" fieldname="descripcion" required="true" />
             </column>
             <column name="supplier" title="supplier" numcolumns="4" titleurl="?page=ListProveedor" order="130">
-                <widget type="select" fieldname="codproveedor" required="true">
+                <widget type="autocomplete" fieldname="codproveedor" required="true">
                     <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre"></values>
                 </widget>
             </column>
         </group>
         <group name="product-data" tittle="produt-data" numcolumns="12">   
             <column name="reference" numcolumns="2" order="100">
-                <widget type="text" fieldname="refproveedor" onclick="" icon="" required="true" />
+                <widget type="text" fieldname="referencia" onclick="" icon="" required="true" />
             </column>
             <column name="partnumber" numcolumns="2" order="110">
                 <widget type="text" fieldname="partnumber" onclick="" />

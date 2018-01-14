@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExportManager;
+use FacturaScripts\Core\Model\CodeModel;
 use FacturaScripts\Core\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -39,6 +40,13 @@ abstract class ListController extends Base\Controller
      * @var string
      */
     public $active;
+    
+    /**
+     * Model to use with select and autocomplete filters.
+     *
+     * @var CodeModel
+     */
+    public $codeModel;
 
     /**
      * Object to export data
@@ -68,13 +76,6 @@ abstract class ListController extends Base\Controller
     public $query;
 
     /**
-     * Some tools for this controller.
-     * 
-     * @var ListControllerUtils
-     */
-    public $utils;
-
-    /**
      * List of views displayed by the controller
      *
      * @var ListView[]
@@ -101,11 +102,11 @@ abstract class ListController extends Base\Controller
         $this->setTemplate('Master/ListController');
 
         $this->active = $this->request->get('active', '');
+        $this->codeModel = new CodeModel();
         $this->exportManager = new ExportManager();
         $this->icons = [];
         $this->offset = (int) $this->request->get('offset', 0);
         $this->query = $this->request->get('query', '');
-        $this->utils = new ListControllerUtils();
         $this->views = [];
     }
 
@@ -190,6 +191,21 @@ abstract class ListController extends Base\Controller
         }
     }
 
+    private function autocompleteAction()
+    {
+        $this->setTemplate(false);
+        $source = $this->request->get('source');
+        $field = $this->request->get('field');
+        $title = $this->request->get('title');
+        $term = $this->request->get('term');
+        
+        $results = [];
+        foreach($this->codeModel->search($source, $field, $title, $term) as $value) {
+            $results[] = ['key' => $value->code, 'value' => $value->description];
+        }
+        $this->response->setContent(json_encode($results));
+    }
+
     /**
      * Delete data action
      *
@@ -222,30 +238,6 @@ abstract class ListController extends Base\Controller
         return false;
     }
 
-    private function autocompleteAction()
-    {
-        $this->setTemplate(false);
-        $filterKey = $this->request->get('filterKey');
-        $filterView = $this->request->get('filterView');
-        $term = $this->request->get('term', '');
-        $results = [];
-
-        if (isset($this->views[$filterView])) {
-            foreach ($this->views[$filterView]->getFilters() as $key => $filter) {
-                if ($filter->type !== 'autocomplete' || $key !== $filterKey) {
-                    continue;
-                }
-
-                foreach ($this->utils->autocompleteList($key, $filter->options, $term) as $newKey => $value) {
-                    $results[] = ['key' => $newKey, 'value' => $value];
-                }
-                break;
-            }
-        }
-
-        $this->response->setContent(json_encode($results));
-    }
-
     /**
      * Returns a JSON response to MegaSearch.
      */
@@ -276,7 +268,7 @@ abstract class ListController extends Base\Controller
             $where = [new DataBaseWhere($fields, $this->query, 'LIKE')];
             $listView->loadData($where, 0, Base\Pagination::FS_ITEM_LIMIT);
 
-            $cols = $this->utils->getTextColumns($listView, 6);
+            $cols = $this->getTextColumns($listView, 6);
             $json[$key]['columns'] = $cols;
 
             foreach ($listView->getCursor() as $item) {
@@ -289,6 +281,28 @@ abstract class ListController extends Base\Controller
         }
 
         $this->response->setContent(json_encode($json));
+    }
+
+    /**
+     * Returns columns title for megaSearchAction function.
+     *
+     * @param ListView $view
+     * @param int $maxColumns
+     *
+     * @return array
+     */
+    private function getTextColumns($view, $maxColumns)
+    {
+        $result = [];
+        foreach ($view->getColumns() as $col) {
+            if ($col->display !== 'none' && in_array($col->widget->type, ['text', 'money'], false)) {
+                $result[] = $col->widget->fieldName;
+                if (count($result) === $maxColumns) {
+                    break;
+                }
+            }
+        }
+        return $result;
     }
 
     /**

@@ -71,6 +71,11 @@ class GrupoClientes
         return 'codgrupo';
     }
 
+    public function primaryDescriptionColumn() 
+    {
+        return 'nombre';
+    }
+
     /**
      * Returns a new code for a new group of clients.
      *

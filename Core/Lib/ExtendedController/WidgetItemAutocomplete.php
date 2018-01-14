@@ -29,6 +29,13 @@ class WidgetItemAutocomplete extends WidgetItem
 {
 
     /**
+     * Model to use with select and autocomplete filters.
+     * 
+     * @var Model\CodeModel
+     */
+    private $codeModel;
+
+    /**
      * Accepted values for the field associated to the widget.
      * Values are loaded from Model\PageOption::getForUser()
      *
@@ -43,6 +50,7 @@ class WidgetItemAutocomplete extends WidgetItem
     {
         parent::__construct();
 
+        $this->codeModel = new Model\CodeModel();
         $this->type = 'autocomplete';
         $this->values = [];
     }
@@ -67,77 +75,6 @@ class WidgetItemAutocomplete extends WidgetItem
     {
         parent::loadFromJSON($widget);
         $this->values = (array) $widget['values'];
-    }
-
-    /**
-     * Loads the value list from an array with value and title (description)
-     *
-     * @param array $rows
-     */
-    public function setValuesFromCodeModel(&$rows)
-    {
-        $this->values = [];
-        foreach ($rows as $codeModel) {
-            if ($codeModel->code === null) {
-                $codeModel->code = '---null---';
-                $codeModel->description = '------';
-            }
-
-            $this->values[] = [
-                'value' => $codeModel->code,
-                'title' => $codeModel->description,
-            ];
-        }
-    }
-
-    /**
-     * Loads the value list from a given array.
-     * The array must have one of the two following structures:
-     * - If it's a value array, it must uses the value of each element as title and value
-     * - If it's a multidimensional array, the indexes value and title must be set for each element
-     *
-     * @param array $values
-     */
-    public function setValuesFromArray($values)
-    {
-        $this->values = [];
-        foreach ($values as $value) {
-            if (is_array($value)) {
-                $this->values[] = ['title' => $value['title'], 'value' => $value['value']];
-                continue;
-            }
-
-            $this->values[] = [
-                'value' => $value,
-                'title' => $value,
-            ];
-        }
-    }
-
-    /**
-     * Load values from model.
-     */
-    public function loadValuesFromModel()
-    {
-        $tableName = $this->values[0]['source'];
-        $fieldCode = $this->values[0]['fieldcode'];
-        $fieldDesc = $this->values[0]['fieldtitle'];
-        $allowEmpty = !$this->required;
-        $rows = Model\CodeModel::all($tableName, $fieldCode, $fieldDesc, $allowEmpty);
-        $this->setValuesFromCodeModel($rows);
-        unset($rows);
-    }
-
-    /**
-     * Load values from array.
-     */
-    public function loadValuesFromRange()
-    {
-        $start = $this->values[0]['start'];
-        $end = $this->values[0]['end'];
-        $step = $this->values[0]['step'];
-        $values = range($start, $end, $step);
-        $this->setValuesFromArray($values);
     }
 
     /**
@@ -172,13 +109,34 @@ class WidgetItemAutocomplete extends WidgetItem
             return $this->standardEditHTMLWidget($value, $specialAttributes, '', 'text');
         }
 
-        $html = $this->getIconHTML() . '<input type="text" name="' . $this->fieldName
-            . '" value="' . $value . '" class="form-control autocomplete"' . $specialAttributes . '/>';
+        $html = '<input type="hidden" id="' . $this->fieldName . 'Autocomplete" name="'
+            . $this->fieldName . '" value="' . $value . '"/>'
+            . '<div class="input-group">';
 
-        if (!empty($this->icon)) {
-            $html .= '</div>';
+        if (empty($value) || $this->required) {
+            $html .= '<span class="input-group-addon"><i class="fa fa-keyboard-o" aria-hidden="true"></i></span>';
+        } else {
+            $html .= '<span class="input-group-btn">'
+                . '<button type="button" class="btn btn-warning" onclick="$(\'#' . $this->fieldName . 'Autocomplete, #' . $this->fieldName . 'Autocomplete2\').val(\'\');">'
+                . '<i class="fa fa-remove" aria-hidden="true"></i>'
+                . '</button>'
+                . '</span>';
         }
 
+        $html .= '<input type="text" id="' . $this->fieldName . 'Autocomplete2" value="' . $this->getTextValue($value) . '" class="form-control autocomplete"'
+            . ' data-source="' . $this->values[0]['source'] . '" data-field="' . $this->values[0]['fieldcode'] . '"'
+            . ' data-title="' . $this->values[0]['fieldtitle'] . '"' . $specialAttributes . '/>'
+            . '</div>';
+
         return $html;
+    }
+
+    public function getTextValue($value)
+    {
+        $tableName = $this->values[0]['source'];
+        $fieldCode = $this->values[0]['fieldcode'];
+        $fieldDesc = $this->values[0]['fieldtitle'];
+
+        return $this->codeModel->getDescription($tableName, $fieldCode, $value, $fieldDesc);
     }
 }

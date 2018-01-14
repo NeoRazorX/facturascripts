@@ -39,7 +39,7 @@
                     <values></values>
                 </widget>
             </column>
-            <column name="fiscal-number" numcolumns="2" order="100">
+            <column name="vat-id" numcolumns="2" order="100">
                 <widget type="text" fieldname="cifnif" required="true" />
             </column>
             <column name="fiscal-mode" title="is-person" order="100">
