@@ -94,7 +94,7 @@
             <div class="nav flex-column nav-pills" id="mainTabs" role="tablist" aria-orientation="vertical">
                 {% for ejercicio in fsc.ejercicios %}
                 <a class="nav-link{% if loop.first %} active{% endif %}" id="tab-{{ ejercicio.codejercicio }}" data-toggle="pill" href="#data-{{ ejercicio.codejercicio }}" role="tab" aria-controls="data-{{ ejercicio.codejercicio }}" aria-selected="{{ loop.first }}">
-                    &nbsp;{{ ejercicio.nombre }}
+                    <i class="fa fa-calendar fa-fw" aria-hidden="true"></i> {{ ejercicio.nombre }}
                 </a>
                 {% endfor %}
             </div>
