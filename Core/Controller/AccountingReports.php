@@ -94,13 +94,13 @@ class AccountingReports extends Controller
                 break;
 
             case 'situacion':
-                $balanceSheet = new Accounting\BalanceSheet();
-                $data = $balanceSheet->generate($dateFrom, $dateTo);
+                $balanceSheet = new Accounting\BalanceSheet($dateFrom, $dateTo);
+                $data = $balanceSheet::generate($dateFrom, $dateTo);
                 break;
 
             case 'pyg':
-                $proffitAndLoss = new Accounting\ProffitAndLoss();
-                $data = $proffitAndLoss->generate($dateFrom, $dateTo);
+                $proffitAndLoss = new Accounting\ProffitAndLoss($dateFrom, $dateTo);
+                $data = $proffitAndLoss::generate($dateFrom, $dateTo);
                 break;
         }
 

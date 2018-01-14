@@ -50,7 +50,7 @@ class BalanceAmmounts extends AccountingBase
      *
      * @param string $dateFrom
      * @param string $dateTo
-     * 
+     *
      * @return array
      */
     public function generate($dateFrom, $dateTo)
@@ -73,6 +73,9 @@ class BalanceAmmounts extends AccountingBase
 
     /**
      * Return the appropiate data from database.
+     *
+     * @param string $dateFrom
+     * @param string $dateTo
      *
      * @return array
      */
@@ -97,30 +100,10 @@ class BalanceAmmounts extends AccountingBase
      */
     private function processLine($line)
     {
-        $saldo = (float) $line['debe'] - (float) $line['haber'];
-
-        return [
-            'subcuenta' => $line['codsubcuenta'],
-            'descripcion' => $this->getDescriptionSubcuenta($line['idsubcuenta']),
-            'debe' => $this->divisaTools->format($line['debe'], FS_NF0, false),
-            'haber' => $this->divisaTools->format($line['haber'], FS_NF0, false),
-            'saldo' => $this->divisaTools->format($saldo, FS_NF0, false),
-        ];
-    }
-
-    /**
-     * Gets the description of the subaccount with that ID.
-     *
-     * @param string $idsubcuenta
-     *
-     * @return string
-     */
-    private function getDescriptionSubcuenta($idsubcuenta)
-    {
-        $subcuenta = $this->subcuentaModel->get($idsubcuenta);
-        if ($subcuenta !== false) {
-            return $subcuenta->descripcion;
-        }
+        $line['SDebe'] = $this->divisaTools->format($line['SDebe'], FS_NF0, false);
+        $line['SHaber'] = $this->divisaTools->format($line['SHaber'], FS_NF0, false);
+        $line['saldo'] = $this->divisaTools->format($line['saldo'], FS_NF0, false);
+        $line['descripcion'] = $this::fixHtml($line['descripcion']);
 
         return '-';
     }

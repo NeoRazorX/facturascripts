@@ -74,6 +74,9 @@ class Ledger extends AccountingBase
     /**
      * Return the appropiate data from database.
      *
+     * @param string $dateFrom
+     * @param string $dateTo
+     *
      * @return array
      */
     protected function getData()
@@ -91,11 +94,16 @@ class Ledger extends AccountingBase
      * Process the line data to use the appropiate formats.
      *
      * @param array $line
+     * @param float $balance
      *
      * @return array
      */
     protected function processLine($line)
     {
+        $line['saldo'] = $this->divisaTools->format($balance, FS_NF0, false);
+        $line['haber'] = $this->divisaTools->format($line['haber'], FS_NF0, false);
+        $line['debe'] = $this->divisaTools->format($line['debe'], FS_NF0, false);
+        $line['concepto'] = $this::fixHtml($line['concepto']);
         $line['fecha'] = date('d-m-Y', strtotime($line['fecha']));
         $line['concepto'] = $this->fixHtml($line['concepto']);
         $line['debe'] = $this->divisaTools->format($line['debe'], FS_NF0, false);
