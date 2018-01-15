@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
@@ -28,8 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class AdminHome extends Base\Controller
-{
+class AdminHome extends Base\Controller {
 
     /**
      * List of enabled plugins.
@@ -54,7 +54,7 @@ class AdminHome extends Base\Controller
      * @var Base\PluginManager
      */
     public $pluginManager;
-    
+
     /**
      * Runs the controller's private logic.
      *
@@ -62,8 +62,7 @@ class AdminHome extends Base\Controller
      * @param Model\User $user
      * @param Base\ControllerPermissions $permissions
      */
-    public function privateCore(&$response, $user, $permissions)
-    {
+    public function privateCore(&$response, $user, $permissions) {
         parent::privateCore($response, $user, $permissions);
 
         /// For now, always deploy the contents of Dinamic, for testing purposes
@@ -84,8 +83,7 @@ class AdminHome extends Base\Controller
      *
      * @return array
      */
-    public function getPageData()
-    {
+    public function getPageData() {
         $pageData = parent::getPageData();
         $pageData['menu'] = 'admin';
         $pageData['submenu'] = 'control-panel';
@@ -98,8 +96,7 @@ class AdminHome extends Base\Controller
     /**
      * Restores .htaccess to default settings
      */
-    private function checkHtaccess()
-    {
+    private function checkHtaccess() {
         if (!file_exists(FS_FOLDER . '/.htaccess')) {
             // TODO: Don't assume that the example exists
             $txt = file_get_contents(FS_FOLDER . '/htaccess-sample');
@@ -112,8 +109,7 @@ class AdminHome extends Base\Controller
      *
      * @param $action
      */
-    private function execAction($action)
-    {
+    private function execAction($action) {
         switch ($action) {
             case 'upload':
                 $this->uploadPlugin($this->request->files->get('plugin', []));
@@ -152,8 +148,7 @@ class AdminHome extends Base\Controller
      *
      * @return bool
      */
-    public function fileExists($file)
-    {
+    public function fileExists($file) {
         return file_exists($file);
     }
 
@@ -164,8 +159,7 @@ class AdminHome extends Base\Controller
      *
      * @return bool
      */
-    private function disablePlugin($disablePlugin)
-    {
+    private function disablePlugin($disablePlugin) {
         if (!empty($disablePlugin)) {
             if (in_array($disablePlugin, $this->enabledPlugins, false)) {
                 $this->pluginManager->disable($disablePlugin);
@@ -187,14 +181,13 @@ class AdminHome extends Base\Controller
      *
      * @return bool
      */
-    private function removePlugin($removePlugin)
-    {
+    private function removePlugin($removePlugin) {
         if (!empty($removePlugin)) {
             $this->pluginManager->disable($removePlugin);
             $pluginPath = $this->pluginManager->getPluginPath() . $removePlugin;
             if (is_dir($pluginPath) || is_file($pluginPath)) {
                 $this->pluginManager->deploy();
-                $this->delTree($this->pluginManager->getPluginPath() . $removePlugin);
+                $this->pluginManager->delTree($this->pluginManager->getPluginPath() . $removePlugin);
                 $this->miniLog->error($this->i18n->trans('plugin-deleted', ['%pluginName%' => $removePlugin]));
                 return true;
             }
@@ -212,8 +205,7 @@ class AdminHome extends Base\Controller
      *
      * @return bool
      */
-    private function enablePlugin($enablePlugin)
-    {
+    private function enablePlugin($enablePlugin) {
         if (!empty($enablePlugin)) {
             if (!in_array($enablePlugin, $this->enabledPlugins, false)) {
                 $this->pluginManager->enable($enablePlugin);
@@ -234,36 +226,15 @@ class AdminHome extends Base\Controller
      *
      * @param \Symfony\Component\HttpFoundation\File\UploadedFile[] $uploadFiles
      */
-    private function uploadPlugin($uploadFiles)
-    {
+    private function uploadPlugin($uploadFiles) {
         foreach ($uploadFiles as $uploadFile) {
             if ($uploadFile->getMimeType() === 'application/zip') {
-                $listFilesBefore = array_diff(scandir($this->pluginManager->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
-                $result = $this->unzipFile($uploadFile->getPathname(), $this->pluginManager->getPluginPath(), $listFilesBefore);
-                switch ((int) $result) {
-                    case 1:
-                        $listFilesAfter = array_diff(scandir($this->pluginManager->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
-                        /// Contains added files on a list
-                        $diffFolders = array_diff($listFilesAfter, $listFilesBefore);
-                        foreach ($diffFolders as $folder) {
-                            if (is_dir($this->pluginManager->getPluginPath() . $folder)) {
-                                $pluginName = $this->getVerifiedPluginName($uploadFile->getPathname());
-                                $this->miniLog->info($this->i18n->trans('plugin-installed', ['%pluginName%' => $pluginName]));
-                                $this->enablePlugin($pluginName);
-                            } elseif (is_file($this->pluginManager->getPluginPath() . $folder)) {
-                                $this->delTree($this->pluginManager->getPluginPath() . $folder);
-                            }
-                        }
-                        break;
-                    case 0:
-                        $this->miniLog->error($this->i18n->trans('can-not-open-zip-file', ['%zipFile%' => $result]));
-                        break;
-                    case -1:
-                        $this->miniLog->error($this->i18n->trans('plugin-missing-ini', ['%pluginName%' => $result]));
-                        break;
-                    case -2:
-                        $this->miniLog->error($this->i18n->trans('plugin-name-missing-ini', ['%pluginName%' => $result]));
-                        break;
+                $result = $this->pluginManager->unzipFile($uploadFile->getPathname());
+                if ($result) {
+                    $this->miniLog->info($this->i18n->trans('plugin-installed', ['%pluginName%' => $result]));
+                    $this->enablePlugin($result);
+                } else {
+                    $this->miniLog->error($this->i18n->trans('plugin-not-installed: ' . $result));
                 }
                 unlink($uploadFile->getPathname());
             } else {
@@ -273,100 +244,13 @@ class AdminHome extends Base\Controller
     }
 
     /**
-     * Return the verified name, if its different than extracted folder, also rename it.
-     *
-     * @param string $pluginUnzipped
-     *
-     * @return string|false
-     */
-    private function getVerifiedPluginName($pluginUnzipped)
-    {
-        $zipFile = new \ZipArchive();
-        $result = $zipFile->open($pluginUnzipped);
-        if ($result) {
-            $fsIni = $zipFile->getFromName($zipFile->getNameIndex(0) . 'facturascripts.ini');
-            $zipFile->close();
-            if (!$fsIni) {
-                return -1;
-            }
-            $fsIniContent = parse_ini_string($fsIni);
-            if (!array_key_exists('name', $fsIniContent)) {
-                return -2;
-            }
-            return $fsIniContent['name'];
-        }
-        return false;
-    }
-
-    /**
-     * Unzip the file path to destiny folder.
-     *
-     * @param string $filePath
-     * @param string $destinyFolder
-     * @param array $listFilesBefore
-     *
-     * @return bool|int|string
-     */
-    private function unzipFile($filePath, $destinyFolder, &$listFilesBefore)
-    {
-        $zipFile = new \ZipArchive();
-        $result = $zipFile->open($filePath);
-        $folderPlugin = str_replace('/', '', $zipFile->getNameIndex(0));
-        if ($result) {
-            $pluginName = $this->getVerifiedPluginName($filePath);
-            if ($pluginName) {
-                if (is_dir($destinyFolder . $pluginName)) {
-                    $this->miniLog->info($this->i18n->trans('removing-previous-version', ['%pluginName%' => $pluginName]));
-                    $this->delTree($destinyFolder . $pluginName);
-                    /// Update the list before, if we delete an existing folder
-                    $listFilesBefore = array_diff(scandir($this->pluginManager->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
-                }
-                if ($result === true) {
-                    $zipFile->extractTo($destinyFolder);
-                    $zipFile->close();
-                }
-                if ($folderPlugin !== $pluginName) {
-                    if (!@rename($destinyFolder . $folderPlugin, $destinyFolder . $pluginName)) {
-                        $this->miniLog->error($this->i18n->trans('plugin-can-not-renamed', ['%folderPlugin%' => $folderPlugin, '%pluginName%' => $pluginName]));
-                    } else {
-                        $this->miniLog->info($this->i18n->trans('plugin-renamed', ['%folderPlugin%' => $folderPlugin, '%pluginName%' => $pluginName]));
-                    }
-                }
-                return $result;
-            }
-            return false;
-        }
-        return false;
-    }
-
-    /**
-     * Recursive delete directory.
-     *
-     * @param string $dir
-     *
-     * @return bool
-     */
-    private function delTree($dir)
-    {
-        $files = [];
-        if (is_dir($dir)) {
-            $files = array_diff(scandir($dir, SCANDIR_SORT_ASCENDING), ['.', '..']);
-        }
-        foreach ($files as $file) {
-            is_dir($dir . '/' . $file) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
-        }
-        return is_dir($dir) ? rmdir($dir) : unlink($dir);
-    }
-
-    /**
      * Return the unit of $val in KBytes.
      *
      * @param string $val
      *
      * @return int
      */
-    private function returnKBytes($val)
-    {
+    private function returnKBytes($val) {
         $value = (int) substr(trim($val), 0, -1);
         $last = strtolower(substr($val, -1));
         switch ($last) {
@@ -379,4 +263,5 @@ class AdminHome extends Base\Controller
         }
         return $value;
     }
+
 }

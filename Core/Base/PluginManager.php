@@ -400,16 +400,17 @@ class PluginManager {
      *
      * @param string $filePath
      *
-     * @return bool|int|string
+     * @return int|false|string
      */
     public function unzipFile($filePath) {
         $zipFile = new ZipArchive();
         $result = $zipFile->open($filePath, ZipArchive::CHECKCONS);
 
         if ($result === TRUE) {
-            $folderPlugin = str_replace('/', '', $zipFile->getNameIndex(0));
-            $pluginName = $this->getVerifiedPluginName($filePath);
-            if ($pluginName) {
+            $pathINI = $zipFile->getNameIndex($zipFile->locateName('facturascripts.ini', ZipArchive::FL_NOCASE | ZipArchive::FL_NODIR));
+            $folderPluginZip = explode('/', $pathINI);
+            $pluginName = $this->getValuePluginINI($filePath, 'name');
+            if ($pluginName && $folderPluginZip[0] !== 'facturascripts.ini') {
                 // Removing previous version
                 if (is_dir($this->pluginPath . $pluginName)) {
                     $this->delTree($this->pluginPath . $pluginName);
@@ -418,63 +419,37 @@ class PluginManager {
                 $zipFile->extractTo($this->pluginPath);
                 $zipFile->close();
                 // Rename folder Plugin
-                if ($folderPlugin !== $pluginName) {
-                    rename($this->pluginPath . $folderPlugin, $this->pluginPath . $pluginName);
+                if ($folderPluginZip[0] !== $pluginName) {
+                    rename($this->pluginPath . $folderPluginZip[0], $this->pluginPath . $pluginName);
                 }
-                return $result;
+                return $pluginName;
             }
             return false;
         }
-
         return $result;
     }
 
     /**
-     * Return the FacturaScripts´s version minimum requirement for the Plugin
+     * Return specified value´s name  of the ini file of the plugin
      *
      * @param string $pluginUnzipped
+     * @param string $valueName
      *
      * @return string|false
      */
-    public function getRequiredPluginVersion($pluginUnzipped) {
+    public function getValuePluginINI($pluginUnzipped, $valueName) {
         $zipFile = new ZipArchive();
-        $result = $zipFile->open($pluginUnzipped);
-        if ($result) {
-            $fsIni = $zipFile->getFromName($zipFile->getNameIndex(0) . 'facturascripts.ini');
+        $result = $zipFile->open($pluginUnzipped, ZipArchive::CHECKCONS);
+        if ($result === TRUE) {
+            $fsIni = $zipFile->getFromIndex($zipFile->locateName('facturascripts.ini', ZipArchive::FL_NOCASE | ZipArchive::FL_NODIR));
             $zipFile->close();
-            if (!$fsIni) {
-                return -1;
+            if ($fsIni) {
+                $fsIniContent = parse_ini_string($fsIni);
+                if (!$fsIniContent || !array_key_exists($valueName, $fsIniContent)) {
+                    return false;
+                }
+                return $fsIniContent[$valueName];
             }
-            $fsIniContent = parse_ini_string($fsIni);
-            if (!array_key_exists('min_version', $fsIniContent)) {
-                return -2;
-            }
-            return $fsIniContent['min_version'];
-        }
-        return false;
-    }
-
-    /**
-     * Return the verified name, if its different than extracted folder, also rename it.
-     *
-     * @param string $pluginUnzipped
-     *
-     * @return string|false
-     */
-    public function getVerifiedPluginName($pluginUnzipped) {
-        $zipFile = new ZipArchive();
-        $result = $zipFile->open($pluginUnzipped);
-        if ($result) {
-            $fsIni = $zipFile->getFromName($zipFile->getNameIndex(0) . 'facturascripts.ini');
-            $zipFile->close();
-            if (!$fsIni) {
-                return -1;
-            }
-            $fsIniContent = parse_ini_string($fsIni);
-            if (!array_key_exists('name', $fsIniContent)) {
-                return -2;
-            }
-            return $fsIniContent['name'];
         }
         return false;
     }
@@ -486,7 +461,7 @@ class PluginManager {
      *
      * @return bool
      */
-    private function delTree($dir) {
+    public function delTree($dir) {
         $files = [];
         if (is_dir($dir)) {
             $files = array_diff(scandir($dir, SCANDIR_SORT_ASCENDING), ['.', '..']);
