@@ -56,7 +56,7 @@ class AppSettings
      *
      * @param string $group
      * @param string $property
-     * @param string|null $default
+     * @param mixed $default
      *
      * @return mixed
      */
