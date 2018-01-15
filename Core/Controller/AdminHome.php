@@ -249,7 +249,7 @@ class AdminHome extends Base\Controller
                     $this->miniLog->info($this->i18n->trans('plugin-installed', ['%pluginName%' => $result]));
                     $this->enablePlugin($result);
                 } else {
-                    $this->miniLog->error($this->i18n->trans('plugin-not-installed: ' . $result));
+                    $this->miniLog->error($this->i18n->trans('plugin-not-installed'));
                 }
                 unlink($uploadFile->getPathname());
             } else {
