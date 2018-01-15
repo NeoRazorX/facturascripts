@@ -33,28 +33,43 @@ abstract class AccountingBase
 
     use Utils;
 
-    protected $database;
+    /**
+     *
+     * @var DataBase
+     */
+    protected $dataBase;
+
+    /**
+     *
+     * @var DivisaTools
+     */
     protected $divisaTools;
+
+    /**
+     *
+     * @var string
+     */
     protected $dateFrom;
+
+    /**
+     *
+     * @var string
+     */
     protected $dateTo;
 
     abstract protected function getData();
 
-    abstract protected function processLine($line);
+    abstract public function generate($dateFrom, $dateTo);
 
-    abstract public static function generate($dateFrom, $dateTo);
-
-    public function __construct($dateFrom, $dateTo)
+    public function __construct()
     {
-        $this->database = new DataBase();
+        $this->dataBase = new DataBase();
         $this->divisaTools = new DivisaTools();
-
-        $this->dateFrom = $dateFrom;
-        $this->dateTo = $dateTo;
     }
 
     /**
-     *
+     * Returns a new date.
+     * 
      * @param string $date
      * @param string $add
      * 

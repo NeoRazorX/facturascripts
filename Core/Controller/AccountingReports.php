@@ -94,12 +94,12 @@ class AccountingReports extends Controller
                 break;
 
             case 'situacion':
-                $balanceSheet = new Accounting\BalanceSheet($dateFrom, $dateTo);
+                $balanceSheet = new Accounting\BalanceSheet();
                 $data = $balanceSheet->generate($dateFrom, $dateTo);
                 break;
 
             case 'pyg':
-                $proffitAndLoss = new Accounting\ProffitAndLoss($dateFrom, $dateTo);
+                $proffitAndLoss = new Accounting\ProffitAndLoss();
                 $data = $proffitAndLoss->generate($dateFrom, $dateTo);
                 break;
         }
@@ -108,6 +108,7 @@ class AccountingReports extends Controller
             $this->miniLog->info($this->i18n->trans('no-data'));
             return;
         }
+        
         $this->setTemplate(false);
         $this->exportData($data, $format);
     }
