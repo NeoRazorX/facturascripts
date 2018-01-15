@@ -403,7 +403,7 @@ class PluginManager
     {
         $zipFile = new ZipArchive();
         $zip_status = $zipFile->open($filePath, ZipArchive::CHECKCONS);
-        if ($zip_status !== TRUE) {
+        if ($zip_status !== true) {
             return $zip_status;
         }
         $zipFile->close();
@@ -421,7 +421,7 @@ class PluginManager
     {
         $zipFile = new ZipArchive();
         $result = $zipFile->open($filePath, ZipArchive::CHECKCONS);
-        if ($result === TRUE) {
+        if ($result === true) {
             $pathINI = $zipFile->getNameIndex($zipFile->locateName('facturascripts.ini', ZipArchive::FL_NOCASE | ZipArchive::FL_NODIR));
             $folderPluginZip = explode('/', $pathINI);
             $pluginName = $this->getValuePluginINI($filePath, 'name');
@@ -456,7 +456,7 @@ class PluginManager
     {
         $zipFile = new ZipArchive();
         $result = $zipFile->open($pluginUnzipped, ZipArchive::CHECKCONS);
-        if ($result === TRUE) {
+        if ($result === true) {
             $fsIni = $zipFile->getFromIndex($zipFile->locateName('facturascripts.ini', ZipArchive::FL_NOCASE | ZipArchive::FL_NODIR));
             $zipFile->close();
             if ($fsIni) {
