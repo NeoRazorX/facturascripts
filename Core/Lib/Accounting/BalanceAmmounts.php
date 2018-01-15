@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,9 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DivisaTools;
-use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Model\Subcuenta;
 
 /**
  * Description of BalanceAmmounts
@@ -28,21 +26,19 @@ use FacturaScripts\Core\Base\Utils;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author nazca <comercial@nazcanetworks.com>
  */
-class BalanceAmmounts
+class BalanceAmmounts extends AccountingBase
 {
 
-    use Utils;
-
     /**
-     * Tools to format money.
-     * 
-     * @var DivisaTools 
+     *
+     * @var Subcuenta
      */
-    private $divisaTools;
+    private $subcuentaModel;
 
     public function __construct()
     {
-        $this->divisaTools = new DivisaTools();
+        parent::__construct();
+        $this->subcuentaModel = new Subcuenta();
     }
 
     /**
@@ -55,7 +51,10 @@ class BalanceAmmounts
      */
     public function generate($dateFrom, $dateTo)
     {
-        $results = $this->getData($dateFrom, $dateTo);
+        $this->dateFrom = $dateFrom;
+        $this->dateTo = $dateTo;
+
+        $results = $this->getData();
         if (empty($results)) {
             return [];
         }
@@ -69,41 +68,56 @@ class BalanceAmmounts
     }
 
     /**
-     * Return the balance data from database.
+     * Return the appropiate data from database.
      *
-     * @param string $dateFrom
-     * @param string $dateTo
-     *
-     * return array;
+     * @return array
      */
-    private function getData($dateFrom, $dateTo)
+    protected function getData()
     {
-        $dataBase = new DataBase();
-        $sql = 'SELECT subcta.codsubcuenta, subcta.descripcion, sum(partida.debe) SDebe,' .
-            ' sum(partida.haber) SHaber, sum(partida.debe) - sum(partida.haber) saldo' .
-            ' FROM `co_subcuentas` subcta,co_partidas partida,co_asientos asiento' .
-            ' WHERE subcta.codsubcuenta = partida.codsubcuenta' .
-            ' AND asiento.idasiento = partida.idasiento ' .
-            ' AND asiento.fecha >= ' . $dataBase->var2str($dateFrom) .
-            ' AND asiento.fecha <= ' . $dataBase->var2str($dateTo) .
-            ' GROUP BY subcta.codsubcuenta, subcta.descripcion';
+        $sql = 'SELECT partida.idsubcuenta, partida.codsubcuenta, SUM(partida.debe) as debe, SUM(partida.haber) as haber'
+            . ' FROM co_partidas as partida, co_asientos as asiento'
+            . ' WHERE asiento.idasiento = partida.idasiento'
+            . ' AND asiento.fecha >= ' . $this->dataBase->var2str($this->dateFrom)
+            . ' AND asiento.fecha <= ' . $this->dataBase->var2str($this->dateTo)
+            . ' GROUP BY idsubcuenta, codsubcuenta ORDER BY codsubcuenta ASC';
 
-        return $dataBase->select($sql);
+        return $this->dataBase->select($sql);
     }
 
     /**
-     *
+     * Process the line data to use the appropiate formats.
+     * 
      * @param array $line
      *
      * @return array
      */
     private function proccessLine($line)
     {
-        $line['SDebe'] = $this->divisaTools->format($line['SDebe'], FS_NF0, false);
-        $line['SHaber'] = $this->divisaTools->format($line['SHaber'], FS_NF0, false);
-        $line['saldo'] = $this->divisaTools->format($line['saldo'], FS_NF0, false);
-        $line['descripcion'] = $this->fixHtml($line['descripcion']);
+        $saldo = (float) $line['debe'] - (float) $line['haber'];
 
-        return $line;
+        return [
+            'subcuenta' => $line['codsubcuenta'],
+            'descripcion' => $this->getDescriptionSubcuenta($line['idsubcuenta']),
+            'debe' => $this->divisaTools->format($line['debe'], FS_NF0, false),
+            'haber' => $this->divisaTools->format($line['haber'], FS_NF0, false),
+            'saldo' => $this->divisaTools->format($saldo, FS_NF0, false)
+        ];
+    }
+
+    /**
+     * Gets the description of the subaccount with that ID.
+     * 
+     * @param string $idsubcuenta
+     * 
+     * @return string
+     */
+    private function getDescriptionSubcuenta($idsubcuenta)
+    {
+        $subcuenta = $this->subcuentaModel->get($idsubcuenta);
+        if ($subcuenta) {
+            return $subcuenta->descripcion;
+        }
+
+        return '-';
     }
 }

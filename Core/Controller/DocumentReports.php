@@ -198,7 +198,7 @@ class DocumentReports extends Controller
         }
         
         if(strtolower(FS_DB_TYPE) === 'mysql') {
-            return 'CONCAT('. join(', ', $concat).')';
+            return 'CONCAT(' . join(', ', $concat) . ')';
         }
 
         /// PostgreSQL
