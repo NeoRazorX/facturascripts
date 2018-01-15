@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
@@ -16,9 +17,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use Exception;
+use ZipArchive;
 
 /**
  * FacturaScripts plugins manager.
@@ -27,8 +30,7 @@ use Exception;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class PluginManager
-{
+class PluginManager {
 
     /**
      * Prevents infinite loops by deploying plugins.
@@ -75,8 +77,7 @@ class PluginManager
     /**
      * PluginManager constructor.
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->pluginPath = FS_FOLDER . DIRECTORY_SEPARATOR . 'Plugins' . DIRECTORY_SEPARATOR;
         if (self::$pluginListFile === null) {
             self::$deployedControllers = false;
@@ -92,8 +93,7 @@ class PluginManager
      *
      * @return string
      */
-    public function getPluginPath()
-    {
+    public function getPluginPath() {
         return $this->pluginPath;
     }
 
@@ -102,8 +102,7 @@ class PluginManager
      *
      * @return array
      */
-    private function loadFromFile()
-    {
+    private function loadFromFile() {
         if (file_exists(self::$pluginListFile)) {
             $list = explode(',', trim(file_get_contents(self::$pluginListFile)));
             if (count($list) === 1 && empty($list[0])) {
@@ -118,8 +117,7 @@ class PluginManager
     /**
      * Save the list of plugins in a file.
      */
-    private function save()
-    {
+    private function save() {
         file_put_contents(self::$pluginListFile, implode(',', self::$enabledPlugins));
     }
 
@@ -128,8 +126,7 @@ class PluginManager
      *
      * @return array
      */
-    public function enabledPlugins()
-    {
+    public function enabledPlugins() {
         return self::$enabledPlugins;
     }
 
@@ -138,8 +135,7 @@ class PluginManager
      *
      * @return array
      */
-    public function installedPlugins()
-    {
+    public function installedPlugins() {
         return array_diff(scandir($this->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
     }
 
@@ -148,8 +144,7 @@ class PluginManager
      *
      * @param string $pluginName
      */
-    public function enable($pluginName)
-    {
+    public function enable($pluginName) {
         if (file_exists($this->pluginPath . $pluginName)) {
             self::$enabledPlugins[] = $pluginName;
             $this->save();
@@ -161,8 +156,7 @@ class PluginManager
      *
      * @param string $pluginName
      */
-    public function disable($pluginName)
-    {
+    public function disable($pluginName) {
         foreach (self::$enabledPlugins as $i => $value) {
             if ($value === $pluginName) {
                 unset(self::$enabledPlugins[$i]);
@@ -178,8 +172,7 @@ class PluginManager
      *
      * @param bool $clean
      */
-    public function deploy($clean = true)
-    {
+    public function deploy($clean = true) {
         $folders = ['Assets', 'Controller', 'Model', 'Lib', 'Table', 'View', 'XMLView'];
         foreach ($folders as $folder) {
             if ($clean) {
@@ -210,8 +203,7 @@ class PluginManager
     /**
      * Initialize the controllers dynamically.
      */
-    private function initControllers()
-    {
+    private function initControllers() {
         self::$deployedControllers = true;
         $cache = new Cache();
         $menuManager = new MenuManager();
@@ -245,8 +237,7 @@ class PluginManager
      *
      * @return bool
      */
-    private function cleanFolder($folder)
-    {
+    private function cleanFolder($folder) {
         $done = true;
 
         if (file_exists($folder)) {
@@ -273,8 +264,7 @@ class PluginManager
      *
      * @return bool
      */
-    private function createFolder($folder)
-    {
+    private function createFolder($folder) {
         if (!file_exists($folder) && !@mkdir($folder, 0775, true)) {
             self::$minilog->critical(self::$i18n->trans('cant-create-folder', ['%folderName%' => $folder]));
             return false;
@@ -289,8 +279,7 @@ class PluginManager
      * @param string $place
      * @param string $pluginName
      */
-    private function linkFiles($folder, $place = 'Core', $pluginName = '')
-    {
+    private function linkFiles($folder, $place = 'Core', $pluginName = '') {
         if (empty($pluginName)) {
             $path = FS_FOLDER . DIRECTORY_SEPARATOR . $place . DIRECTORY_SEPARATOR . $folder;
         } else {
@@ -320,8 +309,7 @@ class PluginManager
      * @param string $place
      * @param string $pluginName
      */
-    private function linkClassFile($fileName, $folder, $place, $pluginName)
-    {
+    private function linkClassFile($fileName, $folder, $place, $pluginName) {
         if (!file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName)) {
             if (empty($pluginName)) {
                 $namespace = "FacturaScripts\\" . $place . '\\' . $folder;
@@ -339,12 +327,12 @@ class PluginManager
 
             $className = basename($fileName, '.php');
             $txt = '<?php namespace ' . $newNamespace . ";\n\n"
-                . '/**' . "\n"
-                . ' * Class created by Core/Base/PluginManager' . "\n"
-                . ' * @package ' . $newNamespace . "\n"
-                . ' * @author Carlos García Gómez <carlos@facturascripts.com>' . "\n"
-                . ' */' . "\n"
-                . 'class ' . $className . ' extends \\' . $namespace . '\\' . $className . "\n{\n}\n";
+                    . '/**' . "\n"
+                    . ' * Class created by Core/Base/PluginManager' . "\n"
+                    . ' * @package ' . $newNamespace . "\n"
+                    . ' * @author Carlos García Gómez <carlos@facturascripts.com>' . "\n"
+                    . ' */' . "\n"
+                    . 'class ' . $className . ' extends \\' . $namespace . '\\' . $className . "\n{\n}\n";
 
             file_put_contents(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName, $txt);
         }
@@ -357,8 +345,7 @@ class PluginManager
      * @param string $folder
      * @param string $filePath
      */
-    private function linkFile($fileName, $folder, $filePath)
-    {
+    private function linkFile($fileName, $folder, $filePath) {
         if (!file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName)) {
             @copy($filePath, FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName);
         }
@@ -372,8 +359,7 @@ class PluginManager
      *
      * @return array $result
      */
-    private function scanFolders($folder)
-    {
+    private function scanFolders($folder) {
         $result = [];
         $rootFolder = array_diff(scandir($folder, SCANDIR_SORT_ASCENDING), ['.', '..']);
         foreach ($rootFolder as $item) {
@@ -389,4 +375,126 @@ class PluginManager
         }
         return $result;
     }
+
+    /**
+     * Check the zip file integrity
+     *
+     * @param string $filePath
+     *
+     * @return int|true
+     */
+    public function checkZipfile($filePath) {
+        $zipFile = new ZipArchive();
+        $zip_status = $zipFile->open($filePath, ZipArchive::CHECKCONS);
+
+        if ($zip_status !== TRUE) {
+            return $zip_status;
+        }
+
+        $zipFile->close();
+        return true;
+    }
+
+    /**
+     * Unzip the file path to destiny folder.
+     *
+     * @param string $filePath
+     *
+     * @return bool|int|string
+     */
+    public function unzipFile($filePath) {
+        $zipFile = new ZipArchive();
+        $result = $zipFile->open($filePath, ZipArchive::CHECKCONS);
+
+        if ($result === TRUE) {
+            $folderPlugin = str_replace('/', '', $zipFile->getNameIndex(0));
+            $pluginName = $this->getVerifiedPluginName($filePath);
+            if ($pluginName) {
+                // Removing previous version
+                if (is_dir($this->pluginPath . $pluginName)) {
+                    $this->delTree($this->pluginPath . $pluginName);
+                }
+                // Extract new version
+                $zipFile->extractTo($this->pluginPath);
+                $zipFile->close();
+                // Rename folder Plugin
+                if ($folderPlugin !== $pluginName) {
+                    rename($this->pluginPath . $folderPlugin, $this->pluginPath . $pluginName);
+                }
+                return $result;
+            }
+            return false;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Return the FacturaScripts´s version minimum requirement for the Plugin
+     *
+     * @param string $pluginUnzipped
+     *
+     * @return string|false
+     */
+    public function getRequiredPluginVersion($pluginUnzipped) {
+        $zipFile = new ZipArchive();
+        $result = $zipFile->open($pluginUnzipped);
+        if ($result) {
+            $fsIni = $zipFile->getFromName($zipFile->getNameIndex(0) . 'facturascripts.ini');
+            $zipFile->close();
+            if (!$fsIni) {
+                return -1;
+            }
+            $fsIniContent = parse_ini_string($fsIni);
+            if (!array_key_exists('min_version', $fsIniContent)) {
+                return -2;
+            }
+            return $fsIniContent['min_version'];
+        }
+        return false;
+    }
+
+    /**
+     * Return the verified name, if its different than extracted folder, also rename it.
+     *
+     * @param string $pluginUnzipped
+     *
+     * @return string|false
+     */
+    public function getVerifiedPluginName($pluginUnzipped) {
+        $zipFile = new ZipArchive();
+        $result = $zipFile->open($pluginUnzipped);
+        if ($result) {
+            $fsIni = $zipFile->getFromName($zipFile->getNameIndex(0) . 'facturascripts.ini');
+            $zipFile->close();
+            if (!$fsIni) {
+                return -1;
+            }
+            $fsIniContent = parse_ini_string($fsIni);
+            if (!array_key_exists('name', $fsIniContent)) {
+                return -2;
+            }
+            return $fsIniContent['name'];
+        }
+        return false;
+    }
+
+    /**
+     * Recursive delete directory.
+     *
+     * @param string $dir
+     *
+     * @return bool
+     */
+    private function delTree($dir) {
+        $files = [];
+        if (is_dir($dir)) {
+            $files = array_diff(scandir($dir, SCANDIR_SORT_ASCENDING), ['.', '..']);
+        }
+        foreach ($files as $file) {
+            is_dir($dir . '/' . $file) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
+        }
+        return is_dir($dir) ? rmdir($dir) : unlink($dir);
+    }
+
 }
