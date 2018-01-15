@@ -42,6 +42,12 @@ class EditEjercicio extends ExtendedController\PanelController
         $this->addListView('\FacturaScripts\Dinamic\Model\Epigrafe', 'ListEpigrafe', 'epigraphs');
         $this->addListView('\FacturaScripts\Dinamic\Model\Cuenta', 'ListCuenta', 'accounts', 'fa-book');
         $this->addListView('\FacturaScripts\Dinamic\Model\Subcuenta', 'ListSubcuenta', 'subaccount');
+        
+        /// Disable columns
+        $this->views['ListGrupoEpigrafes']->disableColumn('fiscal-exercise', true);
+        $this->views['ListEpigrafe']->disableColumn('fiscal-exercise', true);
+        $this->views['ListCuenta']->disableColumn('fiscal-exercise', true);
+        $this->views['ListSubcuenta']->disableColumn('fiscal-exercise', true);
     }
 
     /**
@@ -52,6 +58,9 @@ class EditEjercicio extends ExtendedController\PanelController
      */
     protected function loadData($keyView, $view)
     {
+        $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
+        $where = [new DataBaseWhere('codejercicio', $codejercicio)];
+
         switch ($keyView) {
             case 'EditEjercicio':
                 $code = $this->request->get('code');
@@ -59,12 +68,19 @@ class EditEjercicio extends ExtendedController\PanelController
                 break;
 
             case 'ListGrupoEpigrafes':
+                $view->loadData(false, $where, ['codgrupo' => 'ASC']);
+                break;
+            
             case 'ListEpigrafe':
+                $view->loadData(false, $where, ['codepigrafe' => 'ASC']);
+                break;
+            
             case 'ListCuenta':
+                $view->loadData(false, $where, ['codcuenta' => 'ASC']);
+                break;
+            
             case 'ListSubcuenta':
-                $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
-                $where = [new DataBaseWhere('codejercicio', $codejercicio)];
-                $view->loadData(false, $where);
+                $view->loadData(false, $where, ['codsubcuenta' => 'ASC']);
                 break;
         }
     }

@@ -114,7 +114,7 @@ class BalanceAmmounts extends AccountingBase
     private function getDescriptionSubcuenta($idsubcuenta)
     {
         $subcuenta = $this->subcuentaModel->get($idsubcuenta);
-        if ($subcuenta) {
+        if ($subcuenta !== false) {
             return $subcuenta->descripcion;
         }
 

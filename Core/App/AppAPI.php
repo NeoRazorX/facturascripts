@@ -69,7 +69,7 @@ class AppAPI extends App
      */
     private function isDisabled()
     {
-        return AppSettings::get('default', 'enable_api', null) !== true;
+        return AppSettings::get('default', 'enable_api', false) !== true;
     }
 
     /**
