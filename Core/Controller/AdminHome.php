@@ -29,7 +29,8 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class AdminHome extends Base\Controller {
+class AdminHome extends Base\Controller
+{
 
     /**
      * List of enabled plugins.
@@ -62,7 +63,8 @@ class AdminHome extends Base\Controller {
      * @param Model\User $user
      * @param Base\ControllerPermissions $permissions
      */
-    public function privateCore(&$response, $user, $permissions) {
+    public function privateCore(&$response, $user, $permissions)
+    {
         parent::privateCore($response, $user, $permissions);
 
         /// For now, always deploy the contents of Dinamic, for testing purposes
@@ -83,7 +85,8 @@ class AdminHome extends Base\Controller {
      *
      * @return array
      */
-    public function getPageData() {
+    public function getPageData()
+    {
         $pageData = parent::getPageData();
         $pageData['menu'] = 'admin';
         $pageData['submenu'] = 'control-panel';
@@ -96,7 +99,8 @@ class AdminHome extends Base\Controller {
     /**
      * Restores .htaccess to default settings
      */
-    private function checkHtaccess() {
+    private function checkHtaccess()
+    {
         if (!file_exists(FS_FOLDER . '/.htaccess')) {
             // TODO: Don't assume that the example exists
             $txt = file_get_contents(FS_FOLDER . '/htaccess-sample');
@@ -109,7 +113,8 @@ class AdminHome extends Base\Controller {
      *
      * @param $action
      */
-    private function execAction($action) {
+    private function execAction($action)
+    {
         switch ($action) {
             case 'upload':
                 $this->uploadPlugin($this->request->files->get('plugin', []));
@@ -148,7 +153,8 @@ class AdminHome extends Base\Controller {
      *
      * @return bool
      */
-    public function fileExists($file) {
+    public function fileExists($file)
+    {
         return file_exists($file);
     }
 
@@ -159,7 +165,8 @@ class AdminHome extends Base\Controller {
      *
      * @return bool
      */
-    private function disablePlugin($disablePlugin) {
+    private function disablePlugin($disablePlugin)
+    {
         if (!empty($disablePlugin)) {
             if (in_array($disablePlugin, $this->enabledPlugins, false)) {
                 $this->pluginManager->disable($disablePlugin);
@@ -181,7 +188,8 @@ class AdminHome extends Base\Controller {
      *
      * @return bool
      */
-    private function removePlugin($removePlugin) {
+    private function removePlugin($removePlugin)
+    {
         if (!empty($removePlugin)) {
             $this->pluginManager->disable($removePlugin);
             $pluginPath = $this->pluginManager->getPluginPath() . $removePlugin;
@@ -205,7 +213,8 @@ class AdminHome extends Base\Controller {
      *
      * @return bool
      */
-    private function enablePlugin($enablePlugin) {
+    private function enablePlugin($enablePlugin)
+    {
         if (!empty($enablePlugin)) {
             if (!in_array($enablePlugin, $this->enabledPlugins, false)) {
                 $this->pluginManager->enable($enablePlugin);
@@ -226,7 +235,8 @@ class AdminHome extends Base\Controller {
      *
      * @param \Symfony\Component\HttpFoundation\File\UploadedFile[] $uploadFiles
      */
-    private function uploadPlugin($uploadFiles) {
+    private function uploadPlugin($uploadFiles)
+    {
         foreach ($uploadFiles as $uploadFile) {
             if ($uploadFile->getMimeType() === 'application/zip') {
                 $result = $this->pluginManager->unzipFile($uploadFile->getPathname());
@@ -250,7 +260,8 @@ class AdminHome extends Base\Controller {
      *
      * @return int
      */
-    private function returnKBytes($val) {
+    private function returnKBytes($val)
+    {
         $value = (int) substr(trim($val), 0, -1);
         $last = strtolower(substr($val, -1));
         switch ($last) {
