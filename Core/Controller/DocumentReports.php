@@ -46,12 +46,6 @@ class DocumentReports extends Controller
     public $dataTable;
 
     /**
-     *
-     * @var DocumentReports\DocumentReportsFilterList[]
-     */
-    public $filters;
-
-    /**
      * Contains daily, monthly or yearly.
      *
      * @var string
@@ -63,6 +57,12 @@ class DocumentReports extends Controller
      * @var DocumentReports\DocumentReportsSource[]
      */
     public $sources;
+
+    /**
+     *
+     * @var DocumentReports\DocumentReportsFilterList[]
+     */
+    public $filters;
 
     /**
      * Initializes all the objects and properties
@@ -87,7 +87,7 @@ class DocumentReports extends Controller
             'employee' => new DocumentReportsBase\DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\Agente', '', 'fa-users'),
             'serie' => new DocumentReportsBase\DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\Serie', AppSettings::get('default', 'codserie')),
             'currency' => new DocumentReportsBase\DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\Divisa', AppSettings::get('default', 'coddivisa')),
-            'payment-method' => new DocumentReportsBase\DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\FormaPago')
+            'payment-method' => new DocumentReportsBase\DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\FormaPago', AppSettings::get('default', 'codpago'))
         ];
     }
 
@@ -179,30 +179,27 @@ class DocumentReports extends Controller
      */
     private function getDateSQL($format)
     {
-        $concat = [];
+        $result = '';
         $options = explode('-', $format);
-
         switch (true) {
             case in_array('d', $options):
-                $concat[] = 'LPAD(CAST(EXTRACT(DAY FROM fecha) AS CHAR(10)), 2, \'0\')';
-                $concat[] = ' \'-\' ';
+                $result .= 'LPAD(CAST(EXTRACT(DAY FROM fecha) AS VARCHAR), 2, \'0\') || \'-\' || ';
                 /// no break
 
             case in_array('m', $options):
-                $concat[] = 'LPAD(CAST(EXTRACT(MONTH FROM fecha) AS CHAR(10)), 2, \'0\')';
-                $concat[] = ' \'-\' ';
+                $result .= 'LPAD(CAST(EXTRACT(MONTH FROM fecha) AS VARCHAR), 2, \'0\') || \'-\' || ';
                 /// no break
 
             case in_array('Y', $options):
+
                 $concat[] = 'CAST(EXTRACT(YEAR FROM fecha) AS CHAR(10))';
         }
         
         if(strtolower(FS_DB_TYPE) === 'mysql') {
             return 'CONCAT(' . join(', ', $concat) . ')';
-        }
 
-        /// PostgreSQL
-        return join(' || ', $concat);
+        }
+        return $result;
     }
 
     /**
