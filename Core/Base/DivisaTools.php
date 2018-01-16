@@ -29,7 +29,7 @@ class DivisaTools
     /**
      * Returns the value of the formatted currency.
      * 
-     * @param float $number
+     * @param float|string $number
      * @param int|string $decimals
      * @param bool $addSymbol
      * 

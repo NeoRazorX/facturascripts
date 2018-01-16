@@ -604,7 +604,7 @@
     "encrypt":"Encrypt",
     "level": "Level",
     "api": "API",
-    "disable-api": "Disable API",
+    "enable-api": "Enable API",
     "default-tax": "Default TAX",
     "renumber-accounting": "Renumber Accounting",
     "renumber-accounting-ok": "Renumbering of accounting entries completed",

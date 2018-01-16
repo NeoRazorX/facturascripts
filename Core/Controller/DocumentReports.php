@@ -191,7 +191,13 @@ class DocumentReports extends Controller
                 /// no break
 
             case in_array('Y', $options):
-                $result .= 'CAST(EXTRACT(YEAR FROM fecha) AS VARCHAR)';
+
+                $concat[] = 'CAST(EXTRACT(YEAR FROM fecha) AS CHAR(10))';
+        }
+        
+        if(strtolower(FS_DB_TYPE) === 'mysql') {
+            return 'CONCAT(' . join(', ', $concat) . ')';
+
         }
         return $result;
     }
