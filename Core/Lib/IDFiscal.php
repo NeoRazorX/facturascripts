@@ -26,7 +26,6 @@ namespace FacturaScripts\Core\Lib;
  */
 class IDFiscal
 {
-
     /**
      * Returns the default value
      *

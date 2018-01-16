@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -27,14 +28,13 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class FacturaCliente
 {
-
     use Base\DocumentoVenta;
     use Base\Factura;
 
     /**
      * Optional identifier for printing. Still without use.
-     * Can be used to identify a form of printing and always use
-     * that in this invoice.
+          * Can be used to identify a form of printing and always use
+          * that in this invoice.
      *
      * @var int
      */
@@ -72,7 +72,7 @@ class FacturaCliente
         new Serie();
         new Ejercicio();
         new Asiento();
-        
+
         return '';
     }
 
@@ -99,8 +99,8 @@ class FacturaCliente
 
     /**
      * Set the date and time, but respecting the numbering, the exercise
-     * and VAT regularizations.
-     * Returns True if a different date is assigned to those requested.
+          * and VAT regularizations.
+          * Returns True if a different date is assigned to those requested.
      *
      * @param string $fecha
      * @param string $hora
@@ -184,12 +184,13 @@ class FacturaCliente
     public function getLineas()
     {
         $lineaModel = new LineaFacturaCliente();
+
         return $lineaModel->all([new DataBaseWhere('idfactura', $this->idfactura)]);
     }
 
     /**
      * Returns the VAT lines of the invoice.
-     * If there are not, create them.
+          * If there are not, create them.
      *
      * @return LineaIvaFacturaCliente[]
      */

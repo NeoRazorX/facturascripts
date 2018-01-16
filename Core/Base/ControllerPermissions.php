@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,21 +30,23 @@ use FacturaScripts\Core\Model\RoleUser;
  */
 class ControllerPermissions
 {
-
     /**
      * Have permissitions to access data.
+     *
      * @var bool
      */
     public $allowAccess;
 
     /**
      * Have permissitions to delete data.
+     *
      * @var bool
      */
     public $allowDelete;
 
     /**
      * Have permissions to update data.
+     *
      * @var bool
      */
     public $allowUpdate;
@@ -51,7 +54,7 @@ class ControllerPermissions
     /**
      * ControllerPermissions constructor.
      *
-     * @param User|bool $user
+     * @param User|bool   $user
      * @param string|null $pageName
      */
     public function __construct($user = false, $pageName = null)
@@ -76,7 +79,7 @@ class ControllerPermissions
     /**
      * Load permissions from $user
      *
-     * @param User $user
+     * @param User   $user
      * @param string $pageName
      */
     public function loadFromUser($user, $pageName)

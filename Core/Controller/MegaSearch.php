@@ -30,7 +30,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class MegaSearch extends Base\Controller
 {
-
     /**
      * This variable contains the input text as the $query parameter
      * to be used to filter the model data
@@ -52,18 +51,18 @@ class MegaSearch extends Base\Controller
      * @var array
      */
     public $sections;
-    
+
     /**
      * Runs the controller's private logic.
      *
-     * @param Response $response
-     * @param Model\User $user
+     * @param Response                   $response
+     * @param Model\User                 $user
      * @param Base\ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-        
+
         $this->query = mb_strtolower($this->request->request->get('query', ''), 'UTF8');
         $this->results = ['pages' => []];
         $this->sections = [];

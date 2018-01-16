@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
@@ -31,7 +32,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Dashboard extends Base\Controller
 {
-
     /**
      * List of components of dashboard.
      *
@@ -42,10 +42,10 @@ class Dashboard extends Base\Controller
     /**
      * Dashboard constructor.
      *
-     * @param Base\Cache $cache
+     * @param Base\Cache      $cache
      * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
-     * @param string $className
+     * @param Base\MiniLog    $miniLog
+     * @param string          $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
@@ -53,12 +53,12 @@ class Dashboard extends Base\Controller
 
         $this->components = [];
     }
-    
+
     /**
      * Runs the controller's private logic.
      *
-     * @param Response $response
-     * @param Model\User $user
+     * @param Response                   $response
+     * @param Model\User                 $user
      * @param Base\ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -97,7 +97,7 @@ class Dashboard extends Base\Controller
             $componentName = Lib\Dashboard\BaseComponent::DIR_COMPONENTS
                 . $data->component
                 . Lib\Dashboard\BaseComponent::SUFIX_COMPONENTS;
-            
+
             $this->components[$data->component] = new $componentName($data, $userNick);
         }
     }

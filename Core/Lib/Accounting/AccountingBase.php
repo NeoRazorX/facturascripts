@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -30,7 +31,6 @@ use FacturaScripts\Core\Base\Utils;
  */
 abstract class AccountingBase
 {
-
     use Utils;
 
     /**
@@ -69,10 +69,10 @@ abstract class AccountingBase
 
     /**
      * Returns a new date.
-     * 
+     *
      * @param string $date
      * @param string $add
-     * 
+     *
      * @return string
      */
     protected function addToDate($date, $add)

@@ -12,10 +12,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
 /**
@@ -25,13 +26,12 @@ namespace FacturaScripts\Core\Lib\RandomDataGenerator;
  */
 class DataGeneratorTools
 {
-
     /**
      * Support method for the model constructor and data initialisation
      *
-     * @param array $variable    -> data destination
+     * @param array $variable -> data destination
      * @param $modelo   -> model for each array item
-     * @param bool $shuffle   -> Randomly sort the list
+     * @param bool $shuffle -> Randomly sort the list
      */
     public function loadData(&$variable, $modelo, $shuffle)
     {
@@ -45,8 +45,10 @@ class DataGeneratorTools
      * Shortens a string to $len and replaces special characters
      *
      * Devuelve el string acortado.
+     *
      * @param string $txt
-     * @param int $len
+     * @param int    $len
+     *
      * @return string
      */
     public function txt2codigo($txt, $len = 8)
@@ -69,25 +71,25 @@ class DataGeneratorTools
     {
         $prefijos = [
             'Jet', 'Jex', 'Max', 'Pro', 'FX', 'Neo', 'Maxi', 'Extreme', 'Sub',
-            'Ultra', 'Minga', 'Hiper', 'Giga', 'Mega', 'Super', 'Fusion', 'Broken'
+            'Ultra', 'Minga', 'Hiper', 'Giga', 'Mega', 'Super', 'Fusion', 'Broken',
         ];
         shuffle($prefijos);
 
         $nombres = [
             'Motor', 'Engine', 'Generator', 'Tool', 'Oviode', 'Box', 'Proton', 'Neutro',
-            'Radeon', 'GeForce', 'nForce', 'Labtech', 'Station', 'Arco', 'Arkam'
+            'Radeon', 'GeForce', 'nForce', 'Labtech', 'Station', 'Arco', 'Arkam',
         ];
         shuffle($nombres);
 
         $sufijos = [
-            'II', '3', 'XL', 'XXL', 'SE', 'GT', 'GTX', 'Pro', 'NX', 'XP', 'OS', 'Nitro'
+            'II', '3', 'XL', 'XXL', 'SE', 'GT', 'GTX', 'Pro', 'NX', 'XP', 'OS', 'Nitro',
         ];
         shuffle($sufijos);
 
         $descripciones1 = [
             'Una alcachofa', 'Un motor', 'Una targeta gráfica (GPU)', 'Un procesador',
             'Un coche', 'Un dispositivo tecnológico', 'Un magnetofón', 'Un palo',
-            'un cubo de basura', "Un objeto pequeño d'or", '"La hostia"'
+            'un cubo de basura', "Un objeto pequeño d'or", '"La hostia"',
         ];
         shuffle($descripciones1);
 
@@ -97,7 +99,7 @@ class DataGeneratorTools
             '32 pistones digitales', 'tecnología digitrónica 4.1', 'cuernos metálicos', 'un palo',
             'memoria HBM', 'taladro matricial', 'Wifi 4G', 'faros de xenon', 'un ambientador de pino',
             'un posavasos', 'malignas intenciones', 'la virginidad intacta', 'malware', 'linux',
-            'Windows Vista', 'propiedades psicotrópicas', 'spyware', 'reproductor 4k'
+            'Windows Vista', 'propiedades psicotrópicas', 'spyware', 'reproductor 4k',
         ];
         shuffle($descripciones2);
 
@@ -135,6 +137,7 @@ class DataGeneratorTools
      * @param int $min
      * @param int $max1
      * @param int $max2
+     *
      * @return float
      */
     public function cantidad($min, $max1, $max2)
@@ -159,6 +162,7 @@ class DataGeneratorTools
      * @param int $min
      * @param int $max1
      * @param int $max2
+     *
      * @return float
      */
     public function precio($min, $max1, $max2)
@@ -189,10 +193,11 @@ class DataGeneratorTools
             'Barak', 'Sadam', 'Donald', 'Jorge', 'Joel', 'Pedro', 'Mariano',
             'Albert', 'Alberto', 'Gorka', 'Cecilia', 'Carmena', 'Pichita',
             'Alicia', 'Laura', 'Riola', 'Wilson', 'Jaume', 'David',
-            "D'Ambrosio", '"Licenciado"', '"El master"'
+            "D'Ambrosio", '"Licenciado"', '"El master"',
         ];
 
         shuffle($nombres);
+
         return $nombres[0];
     }
 
@@ -209,10 +214,11 @@ class DataGeneratorTools
             'Hijo de Dios', 'Petrov', 'Maximiliano', 'Nieve', 'Snow', 'Trump',
             'Obama', 'Ali', 'Stark', 'Sanz', 'Rajoy', 'Sánchez', 'Iglesias',
             'Rivera', 'Tudor', 'Lanister', 'Suarez', 'Aznar', 'Botella',
-            'Errejón', "D'Ambrosio", 'Peña', '"Márquez"'
+            'Errejón', "D'Ambrosio", 'Peña', '"Márquez"',
         ];
 
         shuffle($apellidos);
+
         return $apellidos[0] . ' ' . $apellidos[1];
     }
 
@@ -226,6 +232,7 @@ class DataGeneratorTools
         $cargos = ['Gerente', 'CEO', 'Compras', 'Comercial', 'Técnico', 'Freelance', 'Becario', 'Becario Senior'];
 
         shuffle($cargos);
+
         return $cargos[0];
     }
 
@@ -243,7 +250,7 @@ class DataGeneratorTools
             'Investments', 'Solutions', 'Neo', 'Ming', 'Tube', 'Pear', 'Apple',
             'Dolphin', 'Chrome', 'Cat', 'Hat', 'Linux', 'Soft', 'Mobile', 'Phone',
             'XL', 'Open', 'Thunder', 'Zero', 'Scorpio', 'Zelda', '10', 'V', 'Q',
-            'X', 'Arch', 'Arco', 'Broken', 'Arkam', 'RX', "d'Art", 'Peña', '"La cosa"'
+            'X', 'Arch', 'Arco', 'Broken', 'Arkam', 'RX', "d'Art", 'Peña', '"La cosa"',
         ];
 
         $separador = ['-', ' & ', ' ', '_', '', '/', '*'];
@@ -252,6 +259,7 @@ class DataGeneratorTools
         shuffle($nombres);
         shuffle($separador);
         shuffle($tipo);
+
         return $nombres[0] . $separador[0] . $nombres[1] . ' ' . $tipo[0];
     }
 
@@ -265,10 +273,11 @@ class DataGeneratorTools
         $nicks = [
             'neo', 'carlos', 'mokko', 'snake', 'pikachu', 'pliskin', 'ocelot', 'samurai',
             'ninja', 'infiltrator', 'info', 'compras', 'ventas', 'administracion', 'contacto',
-            'contact', 'invoices', 'mail'
+            'contact', 'invoices', 'mail',
         ];
 
         shuffle($nicks);
+
         return $nicks[0] . '.' . mt_rand(2, 9999) . '@facturascripts.com';
     }
 
@@ -285,10 +294,11 @@ class DataGeneratorTools
             'Girona', 'Granada', 'Guadalajara', 'Guipuzcoa', 'Huelva', 'Huesca', 'Jaen', 'León', 'Lleida', 'La Rioja',
             'Lugo', 'Madrid', 'Málaga', 'Melilla', 'Murcia', 'Navarra', 'Ourense', 'Palencia', 'Las Palmas', 'Pontevedra',
             'Salamanca', 'Segovia', 'Sevilla', 'Soria', 'Tarragona', 'Tenerife', 'Teruel', 'Toledo', 'Valencia',
-            'Valladolid', 'Vizcaya', 'Zamora', 'Zaragoza'
+            'Valladolid', 'Vizcaya', 'Zamora', 'Zaragoza',
         ];
 
         shuffle($nombres);
+
         return $nombres[0];
     }
 
@@ -305,10 +315,11 @@ class DataGeneratorTools
             'Girona', 'Granada', 'Guadalajara', 'Guipuzcoa', 'Huelva', 'Huesca', 'Jaen', 'León', 'Lleida', 'La Rioja',
             'Lugo', 'Madrid', 'Málaga', 'Melilla', 'Murcia', 'Navarra', 'Ourense', 'Palencia', 'Las Palmas', 'Pontevedra',
             'Salamanca', 'Segovia', 'Sevilla', 'Soria', 'Tarragona', 'Tenerife', 'Teruel', 'Toledo', 'Valencia',
-            'Valladolid', 'Vizcaya', 'Zamora', 'Zaragoza', 'Torrevieja', 'Elche'
+            'Valladolid', 'Vizcaya', 'Zamora', 'Zaragoza', 'Torrevieja', 'Elche',
         ];
 
         shuffle($nombres);
+
         return $nombres[0];
     }
 
@@ -322,7 +333,7 @@ class DataGeneratorTools
         $tipos = ['Calle', 'Avenida', 'Polígono', 'Carretera'];
         $nombres = [
             'Infante', 'Principal', 'Falsa', '58', '74', 'Pacheco', 'Baleares',
-            'Del Pacífico', 'Rue', "d'Ambrosio", 'Bañez', '"La calle"'
+            'Del Pacífico', 'Rue', "d'Ambrosio", 'Bañez', '"La calle"',
         ];
 
         shuffle($tipos);
@@ -339,6 +350,7 @@ class DataGeneratorTools
      * Returns random comments
      *
      * @param string|bool $fecha
+     *
      * @return string
      */
     public function observaciones($fecha = false)
@@ -346,7 +358,7 @@ class DataGeneratorTools
         $observaciones = [
             'Pagado', 'Faltan piezas', 'No se corresponde con lo solicitado.',
             'Muy caro', 'Muy barato', 'Mala calidad',
-            'La parte contratante de la primera parte será la parte contratante de la primera parte.'
+            'La parte contratante de la primera parte será la parte contratante de la primera parte.',
         ];
 
         /// Add a lot of Blas as an option
@@ -386,6 +398,7 @@ class DataGeneratorTools
      * Returns a random string of $length length
      *
      * @param string $length la longitud del string
+     *
      * @return string la cadena aleatoria
      */
     public function randomString($length = 30)

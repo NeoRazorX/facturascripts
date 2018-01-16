@@ -45,6 +45,7 @@ class Pagination
         if ($result < 0) {
             $result = 0;
         }
+
         return $result;
     }
 
@@ -62,17 +63,18 @@ class Pagination
         if ($result > $count) {
             $result = $count;
         }
+
         return $result;
     }
 
     /**
      * Returns a paging item.
      *
-     * @param string $url
-     * @param int $page
-     * @param int $offset
+     * @param string      $url
+     * @param int         $page
+     * @param int         $offset
      * @param string|bool $icon
-     * @param bool $active
+     * @param bool        $active
      *
      * @return array
      */
@@ -83,12 +85,13 @@ class Pagination
             'url' => $auxUrl[0] . '&offset=' . $offset,
             'icon' => $icon,
             'page' => $page,
-            'active' => $active
+            'active' => $active,
         ];
 
         if (count($auxUrl) > 1) {
             $result['url'] = $result['url'] . '#' . $auxUrl[1];
         }
+
         return $result;
     }
 
@@ -104,14 +107,14 @@ class Pagination
      *  - last
      *
      * @param string $url
-     * @param int $count
-     * @param int $offset
+     * @param int    $count
+     * @param int    $offset
      *
      * @return array
-     *      url    => link to the page
-     *      icon   => specific bootstrap icon instead of num. page
-     *      page   => page number
-     *      active => indicate if it is the active indicator
+     *               url    => link to the page
+     *               icon   => specific bootstrap icon instead of num. page
+     *               page   => page number
+     *               active => indicate if it is the active indicator
      */
     public function getPages($url, $count, $offset = 0)
     {
@@ -123,7 +126,7 @@ class Pagination
         // We add the first page, if it is not included in the page margin
         if ($offset > (self::FS_ITEM_LIMIT * self::FS_PAGE_MARGIN)) {
             $result[$index] = $this->addPaginationItem($url, 1, 0, 'fa-step-backward');
-            $index++;
+            ++$index;
         }
 
         // We add the middle page between the first and the selected page,
@@ -132,7 +135,7 @@ class Pagination
         if ($recordMiddleLeft < $recordMin) {
             $page = floor($recordMiddleLeft / self::FS_ITEM_LIMIT);
             $result[$index] = $this->addPaginationItem($url, $page + 1, $this->offset($page), 'fa-backward');
-            $index++;
+            ++$index;
         }
 
         // We add the selected page and the page margin to its left and right
@@ -140,7 +143,7 @@ class Pagination
             if (($record >= $recordMin && $record <= $offset) || ($record <= $recordMax && $record >= $offset)) {
                 $page = ($record / self::FS_ITEM_LIMIT) + 1;
                 $result[$index] = $this->addPaginationItem($url, $page, $record, false, $record === $offset);
-                $index++;
+                ++$index;
             }
         }
 
@@ -150,7 +153,7 @@ class Pagination
         if ($recordMiddleRight > $recordMax) {
             $page = floor($recordMiddleRight / self::FS_ITEM_LIMIT);
             $result[$index] = $this->addPaginationItem($url, $page + 1, $this->offset($page), 'fa-forward');
-            $index++;
+            ++$index;
         }
 
         // We add the last page, if it is not included in the page margin

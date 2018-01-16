@@ -29,7 +29,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditPais extends ExtendedController\EditController
 {
-
     /**
      * Returns the model name
      */

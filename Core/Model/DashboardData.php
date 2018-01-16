@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -26,7 +27,6 @@ namespace FacturaScripts\Core\Model;
  */
 class DashboardData
 {
-
     use Base\ModelTrait {
         clear as private traitClear;
         loadFromData as traitLoadFromData;
@@ -159,6 +159,7 @@ class DashboardData
     private function saveInsert()
     {
         $values = ['properties' => json_encode($this->properties)];
+
         return $this->traitSaveInsert($values);
     }
 
@@ -170,6 +171,7 @@ class DashboardData
     private function saveUpdate()
     {
         $values = ['properties' => json_encode($this->properties)];
+
         return $this->traitSaveUpdate($values);
     }
 
@@ -198,6 +200,7 @@ class DashboardData
             default:
                 $result .= 'Dashboard';
         }
+
         return $result;
     }
 }

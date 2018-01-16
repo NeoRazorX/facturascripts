@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
  */
 class WidgetItemFileChooser extends WidgetItem
 {
-
     /**
      * Class constructor
      */
@@ -66,12 +66,12 @@ class WidgetItemFileChooser extends WidgetItem
 
         return $html;
     }
-    
+
     public function getMaxFileUpload()
     {
         $postMaxSize = (int) ini_get('post_max_size');
         $uploadMaxSize = (int) ini_get('upload_max_filesize');
-        
+
         return ($uploadMaxSize > $postMaxSize) ? $uploadMaxSize : $postMaxSize;
     }
 }

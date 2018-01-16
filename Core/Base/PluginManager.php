@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use Exception;
@@ -29,7 +30,6 @@ use Exception;
  */
 class PluginManager
 {
-
     /**
      * Prevents infinite loops by deploying plugins.
      *
@@ -109,6 +109,7 @@ class PluginManager
             if (count($list) === 1 && empty($list[0])) {
                 return [];
             }
+
             return $list;
         }
 
@@ -277,8 +278,10 @@ class PluginManager
     {
         if (!file_exists($folder) && !@mkdir($folder, 0775, true)) {
             self::$minilog->critical(self::$i18n->trans('cant-create-folder', ['%folderName%' => $folder]));
+
             return false;
         }
+
         return true;
     }
 
@@ -324,17 +327,17 @@ class PluginManager
     {
         if (!file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName)) {
             if (empty($pluginName)) {
-                $namespace = "FacturaScripts\\" . $place . '\\' . $folder;
-                $newNamespace = "FacturaScripts\\Dinamic\\" . $folder;
+                $namespace = 'FacturaScripts\\' . $place . '\\' . $folder;
+                $newNamespace = 'FacturaScripts\\Dinamic\\' . $folder;
             } else {
                 $namespace = "FacturaScripts\Plugins\\" . $pluginName . '\\' . $folder;
                 $newNamespace = "FacturaScripts\Dinamic\\" . $folder;
             }
 
             $paths = explode(DIRECTORY_SEPARATOR, $fileName);
-            for ($key = 0; $key < count($paths) - 1; $key++) {
-                $namespace .= "\\" . $paths[$key];
-                $newNamespace .= "\\" . $paths[$key];
+            for ($key = 0; $key < count($paths) - 1; ++$key) {
+                $namespace .= '\\' . $paths[$key];
+                $newNamespace .= '\\' . $paths[$key];
             }
 
             $className = basename($fileName, '.php');
@@ -387,6 +390,7 @@ class PluginManager
                 $result[] = $item . DIRECTORY_SEPARATOR . $item2;
             }
         }
+
         return $result;
     }
 }

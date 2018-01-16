@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -28,7 +29,6 @@ use FacturaScripts\Core\Lib\NewCodigoDoc;
  */
 trait DocumentoVenta
 {
-
     use ModelTrait {
         clear as traitClear;
     }
@@ -231,14 +231,14 @@ trait DocumentoVenta
 
     /**
      * Company ID of the document.
-     * 
-     * @var int 
+     *
+     * @var int
      */
     public $idempresa;
 
     /**
      * % IRPF retention of the delivery note. It is obtained from the series.
-     * Each line can have a different %.
+          * Each line can have a different %.
      *
      * @var float|int
      */
@@ -267,7 +267,7 @@ trait DocumentoVenta
 
     /**
      * Delivery note number.
-     * It is unique within the serie + exercise.
+          * It is unique within the serie + exercise.
      *
      * @var string
      */
@@ -317,8 +317,8 @@ trait DocumentoVenta
 
     /**
      * Total expressed in euros, if it were not the currency of the delivery note.
-     * totaleuros = total / tasaconv
-     * It is not necessary to fill it, when doing save() the value is calculated.
+          * totaleuros = total / tasaconv
+          * It is not necessary to fill it, when doing save() the value is calculated.
      *
      * @var float|int
      */
@@ -381,6 +381,7 @@ trait DocumentoVenta
             }
 
             $this->newCodigo();
+
             return $this->saveInsert();
         }
 
@@ -439,8 +440,8 @@ trait DocumentoVenta
 
         /**
          * We use the euro as a bridge currency when adding, compare
-         * or convert amounts in several currencies. For this reason we need
-         * many decimals.
+                  * or convert amounts in several currencies. For this reason we need
+                  * many decimals.
          */
         $this->totaleuros = round($this->total / $this->tasaconv, 5);
         if (static::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true)) {
@@ -448,6 +449,7 @@ trait DocumentoVenta
         }
 
         self::$miniLog->alert(self::$i18n->trans('bad-total-error'));
+
         return false;
     }
 
@@ -522,10 +524,10 @@ trait DocumentoVenta
      * with the previous calculation.
      *
      * @param boolean $status
-     * @param array $subtotales
-     * @param int $irpf
-     * @param int $netoAlt
-     * @param int $ivaAlt
+     * @param array   $subtotales
+     * @param int     $irpf
+     * @param int     $netoAlt
+     * @param int     $ivaAlt
      */
     private function getSubtotales(&$status, &$subtotales, &$irpf, &$netoAlt, &$ivaAlt)
     {
@@ -535,11 +537,11 @@ trait DocumentoVenta
             }
             $codimpuesto = ($lin->codimpuesto === null) ? 0 : $lin->codimpuesto;
             if (!array_key_exists($codimpuesto, $subtotales)) {
-                $subtotales[$codimpuesto] = array(
+                $subtotales[$codimpuesto] = [
                     'neto' => 0,
                     'iva' => 0, // Total VAT
                     'recargo' => 0, // Total Surcharge
-                );
+                ];
             }
             /// We accumulate by VAT rates
             $subtotales[$codimpuesto]['neto'] += $lin->pvptotal;

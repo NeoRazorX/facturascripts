@@ -29,7 +29,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class ListFacturaCliente extends ExtendedController\ListController
 {
-
     /**
      * Load views
      */

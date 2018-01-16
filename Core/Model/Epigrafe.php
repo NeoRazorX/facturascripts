@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Model;
  */
 class Epigrafe
 {
-
     use Base\ModelTrait {
         url as private traitUrl;
     }
@@ -43,7 +43,7 @@ class Epigrafe
      * @var int
      */
     public $idepigrafe;
-    
+
     /**
      *Identificacion de la empresa
      *
@@ -53,10 +53,10 @@ class Epigrafe
 
     /**
      * There are several versions of the accounting of Eneboo / Abanq,
-     * in one we have groups, epigraphs, accounts and sub-accounts: 4 levels.
-     * In the other we have epigraphs (with children), accounts and sub-accounts: multi-level.
-     * FacturaScripts uses a hybrid: groups, epigraphs (with children), accounts
-     * and subaccounts.
+          * in one we have groups, epigraphs, accounts and sub-accounts: 4 levels.
+          * In the other we have epigraphs (with children), accounts and sub-accounts: multi-level.
+          * FacturaScripts uses a hybrid: groups, epigraphs (with children), accounts
+          * and subaccounts.
      *
      * @var int
      */
@@ -242,7 +242,7 @@ class Epigrafe
 
     /**
      * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
+          * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string

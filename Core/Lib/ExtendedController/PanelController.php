@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -32,7 +33,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class PanelController extends Base\Controller
 {
-
     /**
      * Indicates the active view
      *
@@ -42,7 +42,7 @@ abstract class PanelController extends Base\Controller
 
     /**
      * Model to use with select and autocomplete filters.
-     * 
+     *
      * @var CodeModel
      */
     private $codeModel;
@@ -67,6 +67,7 @@ abstract class PanelController extends Base\Controller
 
     /**
      * Tabs position in page: left, bottom.
+     *
      * @var string
      */
     public $tabsPosition;
@@ -86,7 +87,7 @@ abstract class PanelController extends Base\Controller
     /**
      * Loads the data to display
      *
-     * @param string $keyView
+     * @param string   $keyView
      * @param BaseView $view
      */
     abstract protected function loadData($keyView, $view);
@@ -94,10 +95,10 @@ abstract class PanelController extends Base\Controller
     /**
      * Starts all the objects and properties
      *
-     * @param Base\Cache $cache
+     * @param Base\Cache      $cache
      * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
-     * @param string $className
+     * @param Base\MiniLog    $miniLog
+     * @param string          $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
@@ -140,8 +141,8 @@ abstract class PanelController extends Base\Controller
     /**
      * Runs the controller's private logic.
      *
-     * @param Response $response
-     * @param User $user
+     * @param Response                   $response
+     * @param User                       $user
      * @param Base\ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -182,6 +183,7 @@ abstract class PanelController extends Base\Controller
      *
      * @param string $keyView
      * @param string $property
+     *
      * @return mixed
      */
     public function getSettings($keyView, $property)
@@ -192,7 +194,7 @@ abstract class PanelController extends Base\Controller
     /**
      * Returns a field value for the loaded data model
      *
-     * @param mixed $model
+     * @param mixed  $model
      * @param string $fieldName
      *
      * @return mixed
@@ -217,6 +219,7 @@ abstract class PanelController extends Base\Controller
     public function getViewModelValue($viewName, $fieldName)
     {
         $model = $this->views[$viewName]->getModel();
+
         return $this->getFieldValue($model, $fieldName);
     }
 
@@ -230,6 +233,7 @@ abstract class PanelController extends Base\Controller
     public function getURL($type)
     {
         $view = array_values($this->views)[0];
+
         return $view->getURL($type);
     }
 
@@ -242,6 +246,7 @@ abstract class PanelController extends Base\Controller
     {
         $viewName = array_keys($this->views)[0];
         $model = $this->views[$viewName]->getModel();
+
         return $model->primaryDescription();
     }
 
@@ -249,7 +254,7 @@ abstract class PanelController extends Base\Controller
      * Run the actions that alter data before reading it
      *
      * @param BaseView $view
-     * @param string $action
+     * @param string   $action
      *
      * @return bool
      */
@@ -275,7 +280,7 @@ abstract class PanelController extends Base\Controller
      * Run the controller after actions
      *
      * @param EditView $view
-     * @param string $action
+     * @param string   $action
      */
     protected function execAfterAction($view, $action)
     {
@@ -325,12 +330,14 @@ abstract class PanelController extends Base\Controller
     {
         if (!$this->permissions->allowDelete) {
             $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
+
             return false;
         }
 
         $fieldKey = $view->getModel()->primaryColumn();
         if ($view->delete($this->request->get($fieldKey))) {
             $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+
             return true;
         }
 
@@ -348,15 +355,18 @@ abstract class PanelController extends Base\Controller
     {
         if (!$this->permissions->allowUpdate) {
             $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+
             return false;
         }
 
         if ($view->save()) {
             $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+
             return true;
         }
 
         $this->miniLog->error($this->i18n->trans('record-save-error'));
+
         return false;
     }
 
@@ -369,7 +379,8 @@ abstract class PanelController extends Base\Controller
      * Check if the view should be active
      *
      * @param BaseView $view
-     * @param bool $mainViewHasData
+     * @param bool     $mainViewHasData
+     *
      * @return bool
      */
     protected function checkActiveView(&$view, $mainViewHasData)
@@ -380,9 +391,9 @@ abstract class PanelController extends Base\Controller
     /**
      * Adds a view to the controller and loads its data
      *
-     * @param string $keyView
+     * @param string   $keyView
      * @param BaseView $view
-     * @param string $icon
+     * @param string   $icon
      */
     private function addView($keyView, $view, $icon)
     {
@@ -461,6 +472,7 @@ abstract class PanelController extends Base\Controller
     public function viewClass($view)
     {
         $result = explode('\\', get_class($view));
+
         return end($result);
     }
 }

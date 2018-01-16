@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Model\Subcuenta;
@@ -28,7 +29,6 @@ use FacturaScripts\Core\Model\Subcuenta;
  */
 class BalanceAmmounts extends AccountingBase
 {
-
     /**
      *
      * @var Subcuenta
@@ -46,7 +46,7 @@ class BalanceAmmounts extends AccountingBase
      *
      * @param date $dateFrom
      * @param date $dateTo
-     * 
+     *
      * @return array
      */
     public function generate($dateFrom, $dateTo)
@@ -86,7 +86,7 @@ class BalanceAmmounts extends AccountingBase
 
     /**
      * Process the line data to use the appropiate formats.
-     * 
+     *
      * @param array $line
      *
      * @return array
@@ -100,15 +100,15 @@ class BalanceAmmounts extends AccountingBase
             'descripcion' => $this->getDescriptionSubcuenta($line['idsubcuenta']),
             'debe' => $this->divisaTools->format($line['debe'], FS_NF0, false),
             'haber' => $this->divisaTools->format($line['haber'], FS_NF0, false),
-            'saldo' => $this->divisaTools->format($saldo, FS_NF0, false)
+            'saldo' => $this->divisaTools->format($saldo, FS_NF0, false),
         ];
     }
 
     /**
      * Gets the description of the subaccount with that ID.
-     * 
+     *
      * @param string $idsubcuenta
-     * 
+     *
      * @return string
      */
     private function getDescriptionSubcuenta($idsubcuenta)

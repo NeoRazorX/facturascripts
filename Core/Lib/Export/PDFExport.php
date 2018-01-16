@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base;
@@ -28,7 +29,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class PDFExport implements ExportInterface
 {
-
     use Base\Utils;
 
     const LIST_LIMIT = 500;
@@ -49,12 +49,14 @@ class PDFExport implements ExportInterface
 
     /**
      * PDF object.
+     *
      * @var \Cezpdf
      */
     private $pdf;
 
     /**
      * PDF table width.
+     *
      * @var int|float
      */
     private $tableWidth;
@@ -97,8 +99,8 @@ class PDFExport implements ExportInterface
     /**
      * Adds a new page with the model data.
      *
-     * @param mixed $model
-     * @param array $columns
+     * @param mixed  $model
+     * @param array  $columns
      * @param string $title
      */
     public function generateModelPage($model, $columns, $title = '')
@@ -111,7 +113,7 @@ class PDFExport implements ExportInterface
             'showHeadings' => 0,
             'shaded' => 0,
             'lineCol' => [1, 1, 1],
-            'cols' => []
+            'cols' => [],
         ];
 
         /// Get the columns
@@ -142,12 +144,12 @@ class PDFExport implements ExportInterface
     /**
      * Adds a new page with a table listing the models data.
      *
-     * @param mixed $model
+     * @param mixed                         $model
      * @param Base\DataBase\DataBaseWhere[] $where
-     * @param array $order
-     * @param int $offset
-     * @param array $columns
-     * @param string $title
+     * @param array                         $order
+     * @param int                           $offset
+     * @param array                         $columns
+     * @param string                        $title
      */
     public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '')
     {
@@ -197,7 +199,7 @@ class PDFExport implements ExportInterface
 
     /**
      * Adds a new page with the table.
-     * 
+     *
      * @param array $headers
      * @param array $rows
      */
@@ -343,7 +345,7 @@ class PDFExport implements ExportInterface
             if (mb_strlen($value) > 12) {
                 $longTitles[$num] = $value;
                 $titles[$key] = '*' . $num;
-                $num++;
+                ++$num;
             }
         }
     }
@@ -374,7 +376,7 @@ class PDFExport implements ExportInterface
     /**
      * Returns a new table with 2 columns. Each column with colName1: colName2
      *
-     * @param array $table
+     * @param array  $table
      * @param string $colName1
      * @param string $colName2
      * @param string $finalColName1
@@ -391,7 +393,7 @@ class PDFExport implements ExportInterface
 
             if (isset($tableData[$key])) {
                 $tableData[$key][$finalColName2] = $txt;
-                $key++;
+                ++$key;
                 continue;
             }
 

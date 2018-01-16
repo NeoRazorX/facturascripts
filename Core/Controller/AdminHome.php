@@ -30,36 +30,39 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AdminHome extends Base\Controller
 {
-
     /**
      * List of enabled plugins.
+     *
      * @var array
      */
     public $enabledPlugins;
 
     /**
      * PHP Upload Max File Size.
+     *
      * @var int
      */
     public $uploadMaxFileSize;
 
     /**
      * PHP Post Max Size.
+     *
      * @var int
      */
     public $postMaxSize;
 
     /**
      * Plugin Manager.
+     *
      * @var Base\PluginManager
      */
     public $pluginManager;
-    
+
     /**
      * Runs the controller's private logic.
      *
-     * @param Response $response
-     * @param Model\User $user
+     * @param Response                   $response
+     * @param Model\User                 $user
      * @param Base\ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -171,6 +174,7 @@ class AdminHome extends Base\Controller
                 $this->pluginManager->disable($disablePlugin);
                 $this->miniLog->error($this->i18n->trans('plugin-disabled'));
                 $this->pluginManager->deploy();
+
                 return true;
             }
 
@@ -196,6 +200,7 @@ class AdminHome extends Base\Controller
                 $this->pluginManager->deploy();
                 $this->delTree($this->pluginManager->getPluginPath() . $removePlugin);
                 $this->miniLog->error($this->i18n->trans('plugin-deleted', ['%pluginName%' => $removePlugin]));
+
                 return true;
             }
 
@@ -220,6 +225,7 @@ class AdminHome extends Base\Controller
                 $this->miniLog->info($this->i18n->trans('plugin-enabled'));
                 $this->pluginManager->deploy();
                 $this->enabledPlugins = $this->pluginManager->enabledPlugins();
+
                 return true;
             }
 
@@ -293,8 +299,10 @@ class AdminHome extends Base\Controller
             if (!array_key_exists('name', $fsIniContent)) {
                 return -2;
             }
+
             return $fsIniContent['name'];
         }
+
         return false;
     }
 
@@ -303,7 +311,7 @@ class AdminHome extends Base\Controller
      *
      * @param string $filePath
      * @param string $destinyFolder
-     * @param array $listFilesBefore
+     * @param array  $listFilesBefore
      *
      * @return bool|int|string
      */
@@ -332,10 +340,13 @@ class AdminHome extends Base\Controller
                         $this->miniLog->info($this->i18n->trans('plugin-renamed', ['%folderPlugin%' => $folderPlugin, '%pluginName%' => $pluginName]));
                     }
                 }
+
                 return $result;
             }
+
             return false;
         }
+
         return false;
     }
 
@@ -355,6 +366,7 @@ class AdminHome extends Base\Controller
         foreach ($files as $file) {
             is_dir($dir . '/' . $file) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
         }
+
         return is_dir($dir) ? rmdir($dir) : unlink($dir);
     }
 
@@ -377,6 +389,7 @@ class AdminHome extends Base\Controller
                 $value *= 1024;
             // no break - Pass all cases to transform to KB
         }
+
         return $value;
     }
 }

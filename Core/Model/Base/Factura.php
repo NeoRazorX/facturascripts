@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Model\Asiento;
@@ -27,7 +28,6 @@ use FacturaScripts\Core\Model\Asiento;
  */
 trait Factura
 {
-
     /**
      * Primary key.
      *
@@ -120,7 +120,7 @@ trait Factura
      * Get the VAT lines.
      *
      * @param string $className
-     * @param int $dueTotales
+     * @param int    $dueTotales
      *
      * @return mixed
      */
@@ -136,13 +136,13 @@ trait Factura
             foreach ($lineas as $lin) {
                 $codimpuesto = ($lin->codimpuesto === null) ? 0 : $lin->codimpuesto;
                 if (!array_key_exists($codimpuesto, $subtotales)) {
-                    $subtotales[$codimpuesto] = array(
+                    $subtotales[$codimpuesto] = [
                         'neto' => 0,
                         'iva' => 0,
                         'ivapor' => $lin->iva,
                         'recargo' => 0,
-                        'recargopor' => $lin->recargo
-                    );
+                        'recargopor' => $lin->recargo,
+                    ];
                 }
                 // We accumulate by VAT rates
                 $subtotales[$codimpuesto]['neto'] += $lin->pvptotal * $dueTotales;
@@ -169,6 +169,7 @@ trait Factura
                 $lineasi[$codimp]->save();
             }
         }
+
         return $lineasi;
     }
 

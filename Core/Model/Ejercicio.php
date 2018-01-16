@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Model;
  */
 class Ejercicio
 {
-
     use Base\ModelTrait;
 
     /**
@@ -86,7 +86,7 @@ class Ejercicio
 
     /**
      * Identify the accounting plan used. This is only necessary
-     * to support Eneboo. In FacturaScripts it is not used.
+          * to support Eneboo. In FacturaScripts it is not used.
      *
      * @var string
      */
@@ -212,7 +212,7 @@ class Ejercicio
 
     /**
      * Returns the exercise for the indicated date.
-     * If it does not exist, create it.
+          * If it does not exist, create it.
      *
      * @param string $fecha
      * @param bool   $soloAbierto

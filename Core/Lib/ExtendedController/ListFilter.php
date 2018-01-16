@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -28,7 +29,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class ListFilter
 {
-
     /**
      * Indicates the filter type
      *
@@ -47,7 +47,7 @@ class ListFilter
      * Class constructor
      *
      * @param string $type
-     * @param array $options
+     * @param array  $options
      */
     public function __construct($type, $options)
     {
@@ -66,7 +66,7 @@ class ListFilter
             'like-than' => '=',
             'greater-than' => '>=',
             'smaller-than' => '<=',
-            'different-than' => '<>'
+            'different-than' => '<>',
         ];
     }
 
@@ -116,7 +116,7 @@ class ListFilter
      * Adds $where to the informed filters in DataBaseWhere format
      *
      * @param DataBaseWhere[] $where
-     * @param string $key
+     * @param string          $key
      */
     public function getDataBaseWhere(&$where, $key = '')
     {
@@ -183,6 +183,7 @@ class ListFilter
                     $result .= '&' . $key . '-to-operator=' . $this->options['operatorTo'];
                 }
         }
+
         return $result;
     }
 
@@ -199,7 +200,8 @@ class ListFilter
     public static function newSelectFilter($field, $value, $table, $where)
     {
         $options = ['field' => $field, 'value' => $value, 'table' => $table, 'where' => $where];
-        return new ListFilter('select', $options);
+
+        return new self('select', $options);
     }
 
     /**
@@ -215,7 +217,8 @@ class ListFilter
     public static function newAutocompleteFilter($field, $value, $table, $where)
     {
         $options = ['field' => $field, 'value' => $value, 'table' => $table, 'where' => $where];
-        return new ListFilter('autocomplete', $options);
+
+        return new self('autocomplete', $options);
     }
 
     /**
@@ -224,8 +227,8 @@ class ListFilter
      * @param string $field
      * @param string $value
      * @param string $label
-     * @param bool $inverse
-     * @param mixed $matchValue
+     * @param bool   $inverse
+     * @param mixed  $matchValue
      *
      * @return ListFilter
      */
@@ -236,9 +239,10 @@ class ListFilter
             'field' => $field,
             'value' => $value,
             'inverse' => $inverse,
-            'matchValue' => $matchValue
+            'matchValue' => $matchValue,
         ];
-        return new ListFilter('checkbox', $options);
+
+        return new self('checkbox', $options);
     }
 
     /**
@@ -252,14 +256,15 @@ class ListFilter
     private static function checkNumberValue($value)
     {
         $values = explode('.', $value, 1);
+
         return count($values) === 1 ? $values[0] : $values[0] . '.' . $values[1];
     }
 
     /**
      * Creates and returns a filter of the specified type [text|number|datepicker]
      *
-     * @param string $type ('text' | 'datepicker' | 'number')
-     * @param array $options (['field', 'label', 'valueFrom', 'operatorFrom', 'valueTo', 'operatorTo'])
+     * @param string $type    ('text' | 'datepicker' | 'number')
+     * @param array  $options (['field', 'label', 'valueFrom', 'operatorFrom', 'valueTo', 'operatorTo'])
      *
      * @return ListFilter
      */
@@ -270,6 +275,6 @@ class ListFilter
             $options['valueTo'] = self::checkNumberValue($options['valueTo']);
         }
 
-        return new ListFilter($type, $options);
+        return new self($type, $options);
     }
 }

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -28,7 +29,6 @@ use FacturaScripts\Core\App\AppSettings;
  */
 class Partida
 {
-
     use Base\ModelTrait;
 
     /**
@@ -566,10 +566,10 @@ class Partida
     /**
      * Returns the totals of the sub-accounts of the items between dates.
      *
-     * @param int          $idsubc
-     * @param string       $fechaini
-     * @param string       $fechafin
-     * @param array|bool   $excluir
+     * @param int        $idsubc
+     * @param string     $fechaini
+     * @param string     $fechafin
+     * @param array|bool $excluir
      *
      * @return array
      */

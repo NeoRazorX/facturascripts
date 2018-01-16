@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Lib\Import\CSVImport;
@@ -27,7 +28,6 @@ use FacturaScripts\Core\Lib\Import\CSVImport;
  */
 class Balance
 {
-
     use Base\ModelTrait;
 
     /**
@@ -133,22 +133,22 @@ class Balance
     {
         return 'codbalance';
     }
-    
+
     /**
      * This function is called when creating the model table. Returns the SQL
      * that will be executed after the creation of the table. Useful to insert values
      * default.
-     * 
+     *
      * @return string
      */
     public function install()
     {
         return CSVImport::importTableSQL(static::tableName());
     }
-    
+
     /**
      * Test model's data.
-     * 
+     *
      * @return bool
      */
     public function test()
@@ -158,7 +158,7 @@ class Balance
         $this->descripcion3 = self::noHtml($this->descripcion3);
         $this->descripcion4 = self::noHtml($this->descripcion4);
         $this->descripcion4ba = self::noHtml($this->descripcion4ba);
-        
+
         return true;
     }
 }

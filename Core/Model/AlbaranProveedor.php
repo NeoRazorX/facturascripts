@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,7 +30,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class AlbaranProveedor
 {
-
     use Base\DocumentoCompra;
 
     /**
@@ -75,7 +75,7 @@ class AlbaranProveedor
 
     /**
      * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
+          * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
@@ -106,6 +106,7 @@ class AlbaranProveedor
     public function getLineas()
     {
         $lineaModel = new LineaAlbaranProveedor();
+
         return $lineaModel->all([new DataBaseWhere('idalbaran', $this->idalbaran)]);
     }
 
@@ -141,7 +142,7 @@ class AlbaranProveedor
             if ($this->idfactura) {
                 /**
                  * We delegate the elimination of the invoice in the corresponding class,
-                 * You will have to do more things.
+                                  * You will have to do more things.
                  */
                 $factura = new FacturaProveedor();
                 $factura0 = $factura->get($this->idfactura);
