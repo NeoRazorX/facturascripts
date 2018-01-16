@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
@@ -16,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,14 +31,12 @@ use FacturaScripts\Core\Lib\ExtendedController;
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-class EditEjercicio extends ExtendedController\PanelController
-{
+class EditEjercicio extends ExtendedController\PanelController {
 
     /**
      * Load views.
      */
-    protected function createViews()
-    {
+    protected function createViews() {
         $this->addEditView('\FacturaScripts\Dinamic\Model\Ejercicio', 'EditEjercicio', 'exercise');
         $this->addListView('\FacturaScripts\Dinamic\Model\GrupoEpigrafes', 'ListGrupoEpigrafes', 'epigraphs-group');
         $this->addListView('\FacturaScripts\Dinamic\Model\Epigrafe', 'ListEpigrafe', 'epigraphs');
@@ -50,8 +50,7 @@ class EditEjercicio extends ExtendedController\PanelController
      * @param string $keyView
      * @param ExtendedController\EditView $view
      */
-    protected function loadData($keyView, $view)
-    {
+    protected function loadData($keyView, $view) {
         switch ($keyView) {
             case 'EditEjercicio':
                 $code = $this->request->get('code');
@@ -74,8 +73,7 @@ class EditEjercicio extends ExtendedController\PanelController
      *
      * @return array
      */
-    public function getPageData()
-    {
+    public function getPageData() {
         $pagedata = parent::getPageData();
         $pagedata['title'] = 'exercise';
         $pagedata['menu'] = 'accounting';
@@ -85,8 +83,7 @@ class EditEjercicio extends ExtendedController\PanelController
         return $pagedata;
     }
 
-    protected function execAfterAction($view, $action)
-    {
+    protected function execAfterAction($view, $action) {
         switch ($action) {
             case 'import-accounting':
                 $this->importAccountingPlan();
@@ -97,8 +94,7 @@ class EditEjercicio extends ExtendedController\PanelController
         }
     }
 
-    private function importAccountingPlan()
-    {
+    private function importAccountingPlan() {
         $accountingPlanImport = new AccountingPlanImport();
         $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
         $uploadFile = $this->request->files->get('accountingfile', false);
@@ -109,6 +105,7 @@ class EditEjercicio extends ExtendedController\PanelController
 
         switch ($uploadFile->getMimeType()) {
             case 'application/xml':
+            case 'text/xml':
                 $accountingPlanImport->importXML($uploadFile->getPathname(), $codejercicio);
                 break;
 
@@ -120,4 +117,5 @@ class EditEjercicio extends ExtendedController\PanelController
                 $this->miniLog->error($this->i18n->trans('file-not-supported'));
         }
     }
+
 }
