@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -222,7 +222,7 @@ class EditSettings extends ExtendedController\PanelController
      */
     private function exportAction()
     {
-        $this->exportManager->newDoc($this->response, $this->request->get('option'));
+        $this->exportManager->newDoc($this->request->get('option'));
         foreach ($this->views as $view) {
             $model = $view->getModel();
             if ($model === null || !isset($model->properties)) {
