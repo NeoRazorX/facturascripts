@@ -1,6 +1,6 @@
 {#
    /**
-     * Panel Controller Template. (Bottom Panel)
+     * PanelController Template. (Bottom Panel)
      *
      * It shows the data of one or several models, through a navigation panel,
      * in different formats.
@@ -19,7 +19,7 @@
      * GNU Lesser General Public License for more details.
      *
      * You should have received a copy of the GNU Lesser General Public License
-     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+     * along with this program.  If not, see http://www.gnu.org/licenses/.
      *
     */
 #}
@@ -45,7 +45,7 @@
 {# -- Main Body -- #}
 <div class="container-fluid">
     {# -- Header Row -- #}
-    <div id="header" class="row">
+    <div class="row">
         <div class="col-6 d-print-none">
             <div class="btn-group" aria-label="Button group with navigation actions">
                 <a href="{{ list_url }}" class="btn btn-sm btn-outline-secondary">
@@ -63,9 +63,9 @@
                         <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
                     </a>
                     <div class="dropdown-menu">
-                        {% for indexView, view in fsc.views %}
-                        <a class="dropdown-item" href="index.php?page=EditPageOption&code={{ indexView }}">
-                            <i class="fa fa-wrench fa-fw" aria-hidden="true"></i> {{ indexView }}
+                        {% for view in fsc.views %}
+                        <a class="dropdown-item" href="index.php?page=EditPageOption&code={{ view.getViewName() }}">
+                            <i class="fa fa-wrench fa-fw" aria-hidden="true"></i> {{ view.title }}
                         </a>
                         {% endfor %}
                     </div>
@@ -85,7 +85,7 @@
     <br/>
 
     {# -- Data Row -- #}
-    <div id="data" class="row">
+    <div class="row">
         {# -- First View Panel -- #}
         <div class="col-12">
             {% for indexView, view in fsc.views %}

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,9 +18,6 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Model\Base;
-use FacturaScripts\Core\Model\PageOption;
-
 /**
  * Description of DocumentController
  *
@@ -29,26 +26,7 @@ use FacturaScripts\Core\Model\PageOption;
 abstract class DocumentController extends PanelController
 {
 
-    /**
-     * Header of document.
-     *
-     * @var Base\DocumentoVenta|Base\DocumentoCompra
-     */
-    public $document;
-
-    /**
-     * Line columns from xmlview.
-     * 
-     * @var array
-     */
-    private $lineOptions;
-
-    /**
-     * Lines of document, the body.
-     *
-     * @var Base\LineaDocumentoVenta[]|Base\LineaDocumentoCompra[]
-     */
-    public $lines;
+    const ITEM_SELECT_LIMIT = 500;
 
     /**
      * Constructor.
@@ -69,29 +47,8 @@ abstract class DocumentController extends PanelController
      */
     protected function createViews()
     {
-        $className = $this->getDocumentClassName();
-        $this->document = new $className();
-        $this->lines = [];
-
-        $iddoc = $this->request->get('code');
-        if ($iddoc !== null && $iddoc !== '') {
-            $this->document->loadFromCode($iddoc);
-            if ($this->document) {
-                $this->lines = $this->document->getLineas();
-            }
-        }
-
-        $this->loadPrimaryTabOptions();
-    }
-
-    private function loadPrimaryTabOptions()
-    {
-        $PageOptions = new PageOption();
-        $PageOptions->getForUser($this->getLineXMLView(), $this->user->nick);
-
-        foreach ($PageOptions->columns['root']->columns as $col) {
-            $this->lineOptions[] = $col;
-        }
+        $view = new DocumentView('Doc', $this->getDocumentClassName(), $this->getDocumentLineClassName(), $this->getLineXMLView(), $this->user->nick);
+        $this->addView('Document', $view, 'fa-file');
     }
 
     /**
@@ -104,18 +61,12 @@ abstract class DocumentController extends PanelController
      */
     protected function execPreviousAction($view, $action)
     {
-        if ($action === 'delete-doc') {
-            if ($this->document->delete()) {
-                $this->document->clear();
-                $this->lines = [];
-                $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
-                return true;
-            }
-
-            return false;
-        } elseif ($action === 'save-lines') {
+        if ($action === 'save-document') {
             $this->setTemplate(false);
-            $this->saveLines();
+
+            $data = $this->request->request->all();
+            $result = $view->saveDocument($data);
+            $this->response->setContent($result);
         }
 
         return parent::execPreviousAction($view, $action);
@@ -129,24 +80,9 @@ abstract class DocumentController extends PanelController
      */
     protected function loadData($keyView, $view)
     {
-        /// Implement in children
-    }
-
-    /**
-     * Run the controller after actions
-     *
-     * @param EditView $view
-     * @param string $action
-     */
-    protected function execAfterAction($view, $action)
-    {
-        switch ($action) {
-            case 'export':
-                $this->setTemplate(false);
-                $this->exportManager->newDoc($this->response, $this->request->get('option'));
-                $this->exportManager->generateDocumentPage($this->document);
-                $this->exportManager->show($this->response);
-                break;
+        $iddoc = $this->request->get('code', '');
+        if ($keyView === 'Document' && !empty($iddoc)) {
+            $view->loadData($iddoc);
         }
     }
 
@@ -174,171 +110,17 @@ abstract class DocumentController extends PanelController
         return 'CommonLineasDocumento';
     }
 
-    /**
-     * Returns the data of lines to the view.
-     *
-     * @return string
-     */
-    public function getLineData()
+    public function getSelectValues($modelName)
     {
-        $data = [
-            'headers' => [],
-            'columns' => [],
-            'rows' => []
-        ];
+        $values = [];
+        $modelName = '\FacturaScripts\Dinamic\Model\\' . $modelName;
+        $model = new $modelName();
 
-        $moneyFormat = '0.';
-        for ($num = 0; $num < FS_NF0; $num++) {
-            $moneyFormat .= '0';
+        $order = [$model->primaryDescriptionColumn() => 'ASC'];
+        foreach ($model->all([], $order, 0, self::ITEM_SELECT_LIMIT) as $newModel) {
+            $values[$newModel->primaryColumnValue()] = $newModel->primaryDescription();
         }
 
-        foreach ($this->lineOptions as $col) {
-            $data['headers'][] = $this->i18n->trans($col->title);
-
-            $item = [
-                'data' => $col->widget->fieldName,
-                'type' => $col->widget->type,
-            ];
-            if ($col->display === 'none') {
-                $item['editor'] = false;
-                $item['width'] = 1;
-            }
-            if ($item['type'] === 'number' || $item['type'] === 'money') {
-                $item['type'] = 'numeric';
-                $item['format'] = $moneyFormat;
-            }
-            $data['columns'][] = $item;
-        }
-
-        foreach ($this->lines as $line) {
-            $data['rows'][] = (array) $line;
-        }
-
-        return json_encode($data);
-    }
-
-    /**
-     * Returns an array of links to the view.
-     * 
-     * @return array
-     */
-    public function getBreadcrumb()
-    {
-        $items = [
-            ['title' => $this->empresa->nombre, 'url' => '#'],
-            ['title' => $this->document->codalmacen, 'url' => '#']
-        ];
-
-        if (isset($this->document->codcliente)) {
-            $items[] = ['title' => $this->document->nombrecliente, 'url' => '#'];
-        } elseif (isset($this->document->codproveedor)) {
-            $items[] = ['title' => $this->document->nombre, 'url' => '#'];
-        }
-
-        $items[] = ['title' => $this->document->codserie, 'url' => '#'];
-        $items[] = ['title' => $this->document->fecha, 'url' => '#'];
-        $items[] = ['title' => $this->document->hora, 'url' => '#'];
-        return $items;
-    }
-
-    /**
-     * Save the lines of the document.
-     */
-    protected function saveLines()
-    {
-        $data = $this->request->request->all();
-        $newLines = isset($data['lines']) ? $this->processFormLines($data['lines']) : [];
-        $result = 'OK';
-
-        /// remove or modify old lines
-        foreach ($this->lines as $oldLine) {
-            $found = false;
-            foreach ($newLines as $newLine) {
-                if ($newLine['idlinea'] == $oldLine->idlinea) {
-                    $found = true;
-                    if (!$this->updateLine($oldLine, $newLine)) {
-                        $result = 'ERROR ON LINE: ' . $oldLine->idlinea;
-                    }
-                    break;
-                }
-            }
-
-            if (!$found) {
-                $oldLine->delete();
-            }
-        }
-
-        /// add new lines
-        $lineClass = $this->getDocumentLineClassName();
-        foreach ($newLines as $newLine) {
-            if (empty($newLine['idlinea']) && !empty($newLine['descripcion'])) {
-                $newDocLine = new $lineClass($newLine);
-                $newDocLine->idlinea = null;
-                $newDocLine->{$this->document->primaryColumn()} = $this->document->primaryColumnValue();
-                $newDocLine->pvpsindto = $newDocLine->pvpunitario * $newDocLine->cantidad;
-                $newDocLine->pvptotal = $newDocLine->pvpsindto * (100 - $newDocLine->dtopor) / 100;
-
-                if (!$newDocLine->save()) {
-                    $result = "ERROR ON NEW LINE";
-                }
-            }
-        }
-
-        if ($result !== 'OK') {
-            foreach ($this->miniLog->read() as $msg) {
-                $result = $msg['message'];
-            }
-        }
-
-        $this->response->setContent($result);
-    }
-
-    /**
-     * Updates oldLine with newLine data.
-     * 
-     * @param mixed $oldLine
-     * @param array $newLine
-     * 
-     * @return bool
-     */
-    protected function updateLine($oldLine, $newLine)
-    {
-        foreach ($newLine as $key => $value) {
-            $oldLine->{$key} = $value;
-        }
-
-        $oldLine->pvpsindto = $oldLine->pvpunitario * $oldLine->cantidad;
-        $oldLine->pvptotal = $oldLine->pvpsindto * (100 - $oldLine->dtopor) / 100;
-
-        return $oldLine->save();
-    }
-
-    /**
-     * Process form lines to assign column keys instead of numbers.
-     * Also adds order column.
-     * 
-     * @param array $formLines
-     * 
-     * @return array
-     */
-    protected function processFormLines($formLines)
-    {
-        $newLines = [];
-        $columns = [];
-        foreach ($this->lineOptions as $col) {
-            $columns[] = $col->widget->fieldName;
-        }
-
-        $order = count($formLines);
-        foreach ($formLines as $data) {
-            $line = ['orden' => $order];
-            foreach ($data as $key => $value) {
-                $line[$columns[$key]] = $value;
-            }
-            $newLines[] = $line;
-            $order--;
-        }
-
-        return $newLines;
+        return $values;
     }
 }

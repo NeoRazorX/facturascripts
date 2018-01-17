@@ -36,7 +36,7 @@ class EditFacturaCliente extends ExtendedController\DocumentController
     protected function createViews()
     {
         parent::createViews();
-        $this->addEditView('\FacturaScripts\Dinamic\Model\FacturaCliente', 'EditFacturaCliente', 'detail', 'fa-edit');
+        $this->addEditView($this->getDocumentClassName(), 'EditFacturaCliente', 'detail', 'fa-edit');
     }
 
     /**
@@ -67,13 +67,12 @@ class EditFacturaCliente extends ExtendedController\DocumentController
      */
     protected function loadData($keyView, $view)
     {
-        $idfacturacliente = $this->request->get('code');
-
-        switch ($keyView) {
-            case 'EditFacturaCliente':
-                $view->loadData($idfacturacliente);
-                break;
+        if ($keyView === 'EditFacturaCliente') {
+            $idfactura = $this->getViewModelValue('Document', 'idfactura');
+            $view->loadData($idfactura);
         }
+        
+        parent::loadData($keyView, $view);
     }
 
     /**

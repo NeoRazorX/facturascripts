@@ -114,7 +114,7 @@ abstract class BaseView
 
         $this->count = 0;
         $this->title = static::$i18n->trans($title);
-        $this->model = empty($modelName) ? null : new $modelName;
+        $this->model = empty($modelName) ? null : new $modelName();
         $this->pageOption = new Model\PageOption();
     }
 
@@ -148,6 +148,14 @@ abstract class BaseView
         }
 
         return false;
+    }
+
+    /**
+     * Calculate and set new code for PK of the model
+     */
+    public function setNewCode()
+    {
+        $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
     }
 
     /**
@@ -268,5 +276,15 @@ abstract class BaseView
     public function getModelID()
     {
         return empty($this->model) ? '' : $this->model->modelClassName();
+    }
+
+    /**
+     * Returns the name.
+     *
+     * @return string
+     */
+    public function getViewName()
+    {
+        return $this->pageOption->name;
     }
 }

@@ -35,7 +35,7 @@ class EditAlbaranCliente extends ExtendedController\DocumentController
     protected function createViews()
     {
         parent::createViews();
-        $this->addEditView('\FacturaScripts\Dinamic\Model\AlbaranCliente', 'EditAlbaranCliente', 'detail', 'fa-edit');
+        $this->addEditView($this->getDocumentClassName(), 'EditAlbaranCliente', 'detail', 'fa-edit');
     }
 
     /**
@@ -66,13 +66,12 @@ class EditAlbaranCliente extends ExtendedController\DocumentController
      */
     protected function loadData($keyView, $view)
     {
-        $idalbaran = $this->request->get('code');
-
-        switch ($keyView) {
-            case 'EditAlbaranCliente':
-                $view->loadData($idalbaran);
-                break;
+        if ($keyView === 'EditAlbaranCliente') {
+            $idalbaran = $this->getViewModelValue('Document', 'idalbaran');
+            $view->loadData($idalbaran);
         }
+        
+        parent::loadData($keyView, $view);
     }
 
     /**

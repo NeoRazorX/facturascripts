@@ -104,6 +104,11 @@ class Empresa
     {
         return 'id';
     }
+    
+    public function primaryDescriptionColumn()
+    {
+        return 'nombre';
+    }
 
     /**
      * Check the company's data, return TRUE if correct
