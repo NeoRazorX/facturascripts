@@ -156,7 +156,6 @@ class DocumentView extends BaseView
 
     public function saveDocument(&$data)
     {
-        $result = 'OK';
         $newLines = isset($data['lines']) ? $this->processFormLines($data['lines']) : [];
         unset($data['lines']);
         $this->loadFromData($data);
@@ -177,17 +176,21 @@ class DocumentView extends BaseView
             }
         }
 
+        $new = empty($this->model->primaryColumnValue());
+        $result = 'OK';
         if ($this->save()) {
             $result = $this->saveLines($newLines);
         } else {
             $result = 'ERROR';
         }
 
-        if ($result !== 'OK') {
-            $miniLog = new MiniLog();
-            foreach ($miniLog->read() as $msg) {
-                $result = $msg['message'];
-            }
+        if ($result === 'OK') {
+            return $new ? 'NEW:' . $this->model->url() : $result;
+        }
+
+        $miniLog = new MiniLog();
+        foreach ($miniLog->read() as $msg) {
+            $result = $msg['message'];
         }
 
         return $result;

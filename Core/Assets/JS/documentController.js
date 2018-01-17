@@ -38,6 +38,8 @@ function documentSave() {
         success: function (results) {
             if(results == "OK") {
                 location.reload();
+            } else if(results.substring(0, 4) == "NEW:") {
+                location.href = results.substring(4);
             } else {
                 alert(results);
             }
