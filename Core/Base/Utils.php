@@ -83,8 +83,8 @@ trait Utils
      *
      * @param double $f1
      * @param double $f2
-     * @param int $precision
-     * @param bool $round
+     * @param int    $precision
+     * @param bool   $round
      *
      * @return bool
      */
@@ -170,9 +170,10 @@ trait Utils
         if($txt === null) {
             return null;
         }
-        
+
         $original = ['&lt;', '&gt;', '&quot;', '&#39;'];
         $final = ['<', '>', "'", "'"];
+
         return trim(str_replace($original, $final, $txt));
     }
 

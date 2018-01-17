@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,7 +30,6 @@ use FacturaScripts\Core\Model;
  */
 class EditRole extends ExtendedController\PanelController
 {
-
     /**
      * Load views
      */
@@ -47,7 +47,7 @@ class EditRole extends ExtendedController\PanelController
     /**
      * Load view data
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)
@@ -87,8 +87,9 @@ class EditRole extends ExtendedController\PanelController
      * Add the indicated page list to the Role group
      * and all users who are in that group
      *
-     * @param string $codrol
+     * @param string       $codrol
      * @param Model\Page[] $pages
+     *
      * @throws \Exception
      */
     private function addRoleAccess($codrol, $pages)
@@ -114,6 +115,7 @@ class EditRole extends ExtendedController\PanelController
 
         $page = new Model\Page();
         $where = [new DataBaseWhere('menu', $menu)];
+
         return $page->all($where);
     }
 
@@ -121,7 +123,7 @@ class EditRole extends ExtendedController\PanelController
      * Run the actions that alter data before reading it
      *
      * @param BaseView $view
-     * @param string $action
+     * @param string   $action
      *
      * @return bool
      */
@@ -143,6 +145,7 @@ class EditRole extends ExtendedController\PanelController
                     $this->dataBase->rollback();
                     $this->miniLog->notice($e->getMessage());
                 }
+
                 return true;
 
             default:

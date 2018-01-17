@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Model;
  */
 class Ejercicio
 {
-
     use Base\ModelTrait;
 
     /**
@@ -86,7 +86,7 @@ class Ejercicio
 
     /**
      * Identify the accounting plan used. This is only necessary
-     * to support Eneboo. In FacturaScripts it is not used.
+          * to support Eneboo. In FacturaScripts it is not used.
      *
      * @var string
      */
@@ -124,14 +124,10 @@ class Ejercicio
      */
     public function clear()
     {
-        $this->codejercicio = null;
         $this->nombre = '';
         $this->fechainicio = date('01-01-Y');
         $this->fechafin = date('31-12-Y');
         $this->estado = 'ABIERTO';
-        $this->idasientocierre = null;
-        $this->idasientopyg = null;
-        $this->idasientoapertura = null;
         $this->plancontable = '08';
         $this->longsubcuenta = 10;
     }
@@ -212,13 +208,13 @@ class Ejercicio
 
     /**
      * Returns the exercise for the indicated date.
-     * If it does not exist, create it.
+          * If it does not exist, create it.
      *
      * @param string $fecha
      * @param bool   $soloAbierto
      * @param bool   $crear
      *
-     * @return bool|ejercicio
+     * @return bool|Ejercicio
      */
     public function getByFecha($fecha, $soloAbierto = true, $crear = true)
     {

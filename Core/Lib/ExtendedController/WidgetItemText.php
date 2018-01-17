@@ -42,7 +42,7 @@ class WidgetItemText extends WidgetItem
      * Formats text to a given maximum length
      *
      * @param string $txt
-     * @param int $len
+     * @param int    $len
      *
      * @return string
      */
@@ -68,6 +68,7 @@ class WidgetItemText extends WidgetItem
             return '';
         }
         $txt = $this->getTextResume($value);
+
         return $this->standardListHTMLWidget($value, $txt);
     }
 

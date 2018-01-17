@@ -1,6 +1,6 @@
 {#
    /**
-     * Edit Controller Template.
+     * EditController Template.
      *
      * Show the model data in format for editing.
      *
@@ -18,7 +18,7 @@
      * GNU Lesser General Public License for more details.
      *
      * You should have received a copy of the GNU Lesser General Public License
-     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+     * along with this program.  If not, see http://www.gnu.org/licenses/.
      *
     */
 #}
@@ -82,16 +82,6 @@
 </script>
 {% endblock %}
 
-{% block messages %}
-<div class="container-fluid">
-    <div id="messages" class="row">
-        <div class="col-12">
-            {{ parent() }}
-        </div>
-    </div>
-</div>
-{% endblock %}
-
 {% block body %}
 {# Calculate texts according to language #}
 {% set go_back = i18n.trans('back') %}
@@ -120,7 +110,7 @@
     {{ parent() }}
 
     {# Header Row #}
-    <div id="header" class="row">
+    <div class="row">
         <div class="col-3 d-print-none">
             <div class="btn-group">
                 <a href="{{ model.url('list') }}" class="btn btn-sm btn-outline-secondary">
@@ -168,7 +158,7 @@
     </div>
 
     {# Data Row #}
-    <div id="data" class="row mt-2">
+    <div class="row mt-2">
         <div class="col-12">
             {# Header Row #}
             {{ BaseController.rowCardsForEditView(_context, fsc.view, 'header') }}
@@ -185,7 +175,7 @@
                         {{ BaseController.rowStatisticsForEditView(_context, fsc.view) }}
 
                         {# Main Form #}
-                        <div id="main_row" class="row">
+                        <div class="row">
                             {{ BaseController.columnsForEditView(_context, fsc.view, model, FALSE) }}
                         </div>
                     </div>

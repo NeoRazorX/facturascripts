@@ -31,7 +31,6 @@ use FacturaScripts\Core\Lib\Import\CSVImport;
  */
 class Agente
 {
-
     use Base\ModelTrait;
     use Base\ContactInformation;
 
@@ -132,11 +131,11 @@ class Agente
         return 'codagente';
     }
 
-    public function primaryDescriptionColumn() 
+    public function primaryDescriptionColumn()
     {
         return 'nombre || \' \' || apellidos';
     }
-    
+
     /**
      * Returns name + agent's last name.
      *

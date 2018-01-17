@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -28,7 +29,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class Articulo
 {
-
     use Base\ModelTrait {
         clear as traitClear;
     }
@@ -42,7 +42,7 @@ class Articulo
 
     /**
      * Define the type of item, so you can set distinctions
-     * according to one type or another. Varchar (10)
+          * according to one type or another. Varchar (10)
      *
      * @var string
      */
@@ -78,8 +78,8 @@ class Articulo
 
     /**
      * Stores the value of the pvp before making the change.
-     * This value is not stored in the database, that is,
-     * is not remembered.
+          * This value is not stored in the database, that is,
+          * is not remembered.
      *
      * @var float|int
      */
@@ -101,8 +101,8 @@ class Articulo
 
     /**
      * Cost price manually edited
-     * It is not necessarily the purchase price, it can include
-     * also other costs.
+          * It is not necessarily the purchase price, it can include
+          * also other costs.
      *
      * @var float|int
      */
@@ -145,7 +145,7 @@ class Articulo
 
     /**
      * Equivalence code. Varchar (18).
-     * Two or more articles are equivalent if they have the same equivalence code.
+          * Two or more articles are equivalent if they have the same equivalence code.
      *
      * @var string
      */
@@ -181,10 +181,10 @@ class Articulo
 
     /**
      * True -> allow sales without stock.
-     * Yes, I know it does not make sense to put controlstock to True
-     * implies the absence of stock control. But it's a shit
-     * FacturaLux -> Abanq -> Eneboo, and for compatibility reasons
-     * it keeps.
+          * Yes, I know it does not make sense to put controlstock to True
+          * implies the absence of stock control. But it's a shit
+          * FacturaLux -> Abanq -> Eneboo, and for compatibility reasons
+          * it keeps.
      *
      * @var bool
      */
@@ -192,7 +192,7 @@ class Articulo
 
     /**
      * True -> do not control the stock.
-     * Activating it implies putting True $controlstock;
+          * Activating it implies putting True $controlstock;
      *
      * @var bool
      */
@@ -269,7 +269,7 @@ class Articulo
 
     /**
      * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
+          * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
@@ -358,6 +358,7 @@ class Articulo
     public function getFamilia()
     {
         $fam = new Familia();
+
         return $this->codfamilia === null ? false : $fam->get($this->codfamilia);
     }
 
@@ -369,6 +370,7 @@ class Articulo
     public function getFabricante()
     {
         $fab = new Fabricante();
+
         return $this->codfabricante === null ? false : $fab->get($this->codfabricante);
     }
 
@@ -380,6 +382,7 @@ class Articulo
     public function getStock()
     {
         $stock = new Stock();
+
         return $this->nostock ? [] : $stock->all([new DataBaseWhere('referencia', $this->referencia)]);
     }
 
@@ -391,12 +394,13 @@ class Articulo
     public function getImpuesto()
     {
         $imp = new Impuesto();
+
         return $imp->get($this->codimpuesto);
     }
 
     /**
      * Returns the VAT% of the item.
-     * If $reload is True, check back instead of using the loaded data.
+          * If $reload is True, check back instead of using the loaded data.
      *
      * @param bool $reload
      *
@@ -455,7 +459,7 @@ class Articulo
 
     /**
      * Change the reference of the article.
-     * Do it at the moment, you do not need to save().
+          * Do it at the moment, you do not need to save().
      *
      * @param string $ref
      */
@@ -498,7 +502,7 @@ class Articulo
 
     /**
      * Modifies the stock of the item in a specific warehouse.
-     * Already responsible for executing save() if necessary.
+          * Already responsible for executing save() if necessary.
      *
      * @param string $codalmacen
      * @param int    $cantidad
@@ -556,12 +560,12 @@ class Articulo
 
     /**
      * Add the specified amount to the stock of the item in the specified store.
-     * Already responsible for executing save() if necessary.
+          * Already responsible for executing save() if necessary.
      *
-     * @param string  $codalmacen
-     * @param int     $cantidad
-     * @param bool    $recalculaCoste
-     * @param string  $codcombinacion
+     * @param string $codalmacen
+     * @param int    $cantidad
+     * @param bool   $recalculaCoste
+     * @param string $codcombinacion
      *
      * @return bool
      */

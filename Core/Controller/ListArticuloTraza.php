@@ -28,7 +28,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class ListArticuloTraza extends ExtendedController\ListController
 {
-
     /**
      * Load views
      */

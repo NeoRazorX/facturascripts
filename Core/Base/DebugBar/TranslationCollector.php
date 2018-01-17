@@ -113,7 +113,7 @@ class TranslationCollector extends DataCollector implements Renderable, AssetPro
         foreach (static::$i18n->getMissingStrings() as $key => $value) {
             $this->translations[] = [
                 'key' => $key,
-                'value' => $value
+                'value' => $value,
             ];
         }
     }

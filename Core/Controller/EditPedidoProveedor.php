@@ -29,14 +29,14 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditPedidoProveedor extends ExtendedController\DocumentController
 {
-
     /**
      * Load views
      */
     protected function createViews()
     {
         parent::createViews();
-        $this->addEditView('\FacturaScripts\Dinamic\Model\PedidoProveedor', 'EditPedidoProveedor', 'detail', 'fa-edit');
+        $this->views['Document']->documentType = 'purchase';
+        $this->addEditView($this->getDocumentClassName(), 'EditPedidoProveedor', 'detail', 'fa-edit');
     }
 
     /**
@@ -62,18 +62,17 @@ class EditPedidoProveedor extends ExtendedController\DocumentController
     /**
      * Load data view procedure
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)
     {
-        $idpedidoproveedor = $this->request->get('code');
-
-        switch ($keyView) {
-            case 'EditPedidoProveedor':
-                $view->loadData($idpedidoproveedor);
-                break;
+        if ($keyView === 'EditPedidoProveedor') {
+            $idpedido = $this->getViewModelValue('Document', 'idpedido');
+            $view->loadData($idpedido);
         }
+        
+        parent::loadData($keyView, $view);
     }
 
     /**

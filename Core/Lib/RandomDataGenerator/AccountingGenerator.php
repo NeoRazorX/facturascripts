@@ -12,10 +12,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -28,21 +29,23 @@ use FacturaScripts\Core\Model;
  */
 class AccountingGenerator
 {
-
     /**
      * List of available periods
-     * @var Model\Ejercicio[] 
+     *
+     * @var Model\Ejercicio[]
      */
     protected $ejercicios;
 
     /**
      * Default company
-     * @var Model\Empresa 
+     *
+     * @var Model\Empresa
      */
     protected $empresa;
 
     /**
      * Provides access to the data generator
+     *
      * @var DataGeneratorTools
      */
     protected $tools;
@@ -96,14 +99,14 @@ class AccountingGenerator
                     } else {
                         $partida->haber = $asiento->importe;
                     }
-                    
+
                     if($partida->save()) {
                         $debe = !$debe;
                     }
                 }
                 continue;
             }
-            
+
             break;
         }
 
@@ -205,6 +208,7 @@ class AccountingGenerator
         }
 
         shuffle($data);
+
         return $data;
     }
 

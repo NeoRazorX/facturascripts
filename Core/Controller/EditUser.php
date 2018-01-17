@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -30,7 +31,6 @@ use FacturaScripts\Core\Model;
  */
 class EditUser extends ExtendedController\PanelController
 {
-
     /**
      * Load views
      */
@@ -67,7 +67,7 @@ class EditUser extends ExtendedController\PanelController
     /**
      * Load view data proedure
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)
@@ -92,7 +92,7 @@ class EditUser extends ExtendedController\PanelController
         $code = $this->request->get('code');
 
         $userPages = [
-            ['value' => '---null---', 'title' => '------']
+            ['value' => '---null---', 'title' => '------'],
         ];
         if ($user->loadFromCode($code)) {
             $userPages = $this->getUserPages($user);
@@ -103,7 +103,7 @@ class EditUser extends ExtendedController\PanelController
     }
 
     /**
-     * 
+     *
      * @param Model\User $user
      */
     private function getUserPages($user)
@@ -118,6 +118,7 @@ class EditUser extends ExtendedController\PanelController
 
                 $pageList[] = ['value' => $page->name, 'title' => $page->name];
             }
+
             return $pageList;
         }
 

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base;
@@ -28,7 +29,6 @@ use FacturaScripts\Core\Base;
  */
 class CodeModel
 {
-
     use Base\Utils;
 
     const ITEM_LIMIT = 1000;
@@ -73,10 +73,10 @@ class CodeModel
     /**
      * Load a CodeModel list (code and description) for the indicated table.
      *
-     * @param string  $tableName
-     * @param string  $fieldCode
-     * @param string  $fieldDescription
-     * @param bool $addEmpty
+     * @param string $tableName
+     * @param string $fieldCode
+     * @param string $fieldDescription
+     * @param bool   $addEmpty
      *
      * @return self[]
      */
@@ -113,7 +113,7 @@ class CodeModel
      * @param string $fieldCode
      * @param string $code
      * @param string $fieldDescription
-     * 
+     *
      * @return self
      */
     public function get($tableName, $fieldCode, $code, $fieldDescription)
@@ -141,23 +141,24 @@ class CodeModel
      * @param string $fieldCode
      * @param string $code
      * @param string $fieldDescription
-     * 
+     *
      * @return string
      */
     public function getDescription($tableName, $fieldCode, $code, $fieldDescription)
     {
         $model = $this->get($tableName, $fieldCode, $code, $fieldDescription);
+
         return $model->description;
     }
 
     /**
      * Load a CodeModel list (code and description) for the indicated table and search.
-     * 
+     *
      * @param string $tableName
      * @param string $fieldCode
      * @param string $fieldDescription
      * @param string $search
-     * 
+     *
      * @return self[]
      */
     public static function search($tableName, $fieldCode, $fieldDescription, $search)

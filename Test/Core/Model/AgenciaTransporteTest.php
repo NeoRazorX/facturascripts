@@ -24,7 +24,7 @@ use FacturaScripts\Core\Model\AgenciaTransporte;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers AgenciaTransporte
+ * @covers \AgenciaTransporte
  */
 final class AgenciaTransporteTest extends TestCase
 {
@@ -33,9 +33,9 @@ final class AgenciaTransporteTest extends TestCase
         $model = new AgenciaTransporte();
 
         $this->assertInstanceOf(AgenciaTransporte::class, $model);
-        $this->assertEquals(null, $model->codtrans);
-        $this->assertEquals(null, $model->nombre);
-        $this->assertEquals(true, $model->activo);
+        $this->assertNull($model->codtrans);
+        $this->assertNull($model->nombre);
+        $this->assertTrue($model->activo);
     }
 
     public function testTable()
@@ -63,7 +63,7 @@ final class AgenciaTransporteTest extends TestCase
     {
         $dataBase = new DataBase();
 
-        $this->assertEquals(true, $dataBase->connect());
+        $this->assertTrue($dataBase->connect());
 
         $model = new AgenciaTransporte();
         $sql = $model->install();

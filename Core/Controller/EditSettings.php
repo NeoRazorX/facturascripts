@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
@@ -28,7 +29,6 @@ use FacturaScripts\Core\Lib\EmailTools;
  */
 class EditSettings extends ExtendedController\PanelController
 {
-
     const KEY_SETTINGS = 'Settings';
 
     /**
@@ -50,7 +50,7 @@ class EditSettings extends ExtendedController\PanelController
     /**
      * Load view data
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)
@@ -73,7 +73,7 @@ class EditSettings extends ExtendedController\PanelController
      * Run the controller after actions
      *
      * @param ExtendedController\EditView $view
-     * @param string $action
+     * @param string                      $action
      */
     protected function execAfterAction($view, $action)
     {
@@ -136,7 +136,7 @@ class EditSettings extends ExtendedController\PanelController
     /**
      * Returns the configuration property value for a specified $field
      *
-     * @param mixed $model
+     * @param mixed  $model
      * @param string $field
      *
      * @return mixed
@@ -222,7 +222,7 @@ class EditSettings extends ExtendedController\PanelController
      */
     private function exportAction()
     {
-        $this->exportManager->newDoc($this->response, $this->request->get('option'));
+        $this->exportManager->newDoc($this->request->get('option'));
         foreach ($this->views as $view) {
             $model = $view->getModel();
             if ($model === null || !isset($model->properties)) {

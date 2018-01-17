@@ -26,7 +26,6 @@ use FacturaScripts\Core\App\AppCron;
  */
 class AppCronTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var AppCron
      */
@@ -47,7 +46,6 @@ class AppCronTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        
     }
 
     public function testConnect()

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -29,7 +30,6 @@ use FacturaScripts\Core\Lib\RegimenIVA;
  */
 abstract class Persona
 {
-
     /**
      * Tax identifier of the customer.
      *
@@ -137,7 +137,7 @@ abstract class Persona
 
     /**
      * True -> the customer is a natural person.
-     * False -> the client is a legal person (company).
+          * False -> the client is a legal person (company).
      *
      * @var boolean
      */
@@ -180,7 +180,7 @@ abstract class Persona
 
     /**
      * Type of tax identification of the client.
-     * Examples: CIF, NIF, CUIT ...
+          * Examples: CIF, NIF, CUIT ...
      *
      * @var string
      */

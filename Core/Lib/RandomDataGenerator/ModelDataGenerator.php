@@ -12,10 +12,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\RandomDataGenerator;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -29,88 +30,100 @@ use FacturaScripts\Core\Model;
  */
 class ModelDataGenerator
 {
-
     /**
      * Contains generated agentes
+     *
      * @var Model\Agente[]
      */
     protected $agentes;
 
     /**
      * Contains generated almacenes
-     * 
+     *
      * @var Model\Almacen[]
      */
     protected $almacenes;
 
     /**
      * Provides direct access to the database.
+     *
      * @var Base\DataBase
      */
     protected $db;
 
     /**
      * Contains generated divisas
+     *
      * @var Model\Divisa[]
      */
     protected $divisas;
 
     /**
      * Contains generated ejercicios
+     *
      * @var Model\Ejercicio
      */
     protected $ejercicio;
 
     /**
      * Contains generated empresas
+     *
      * @var Model\Empresa
      */
     protected $empresa;
 
     /**
-     * Contains generated formas de pago 
+     * Contains generated formas de pago
+     *
      * @var Model\FormaPago[]
      */
     protected $formasPago;
 
     /**
-     * Contains generated grupos de clientes 
+     * Contains generated grupos de clientes
+     *
      * @var Model\GrupoClientes[]
      */
     protected $grupos;
 
     /**
      * Contains generated impuestos
+     *
      * @var Model\Impuesto[]
      */
     protected $impuestos;
 
     /**
-     * Contains generated países 
+     * Contains generated países
+     *
      * @var Model\Pais[]
      */
     protected $paises;
 
     /**
      * Contains generated series
+     *
      * @var Model\Serie[]
      */
     protected $series;
 
     /**
      * Provides access to the data generator
+     *
      * @var DataGeneratorTools
      */
     protected $tools;
 
     /**
      * Contains generated usuarios
+     *
      * @var Model\User[]
      */
     protected $users;
 
     /**
      * Constructor. Initialize everything needed and randomize.
+     *
      * @param Model\Empresa $empresa
      */
     public function __construct($empresa)
@@ -134,7 +147,9 @@ class ModelDataGenerator
     /**
      * Generates $max random fabricantes.
      * Returns how many fabricantes were generated.
+     *
      * @param int $max
+     *
      * @return int
      */
     public function fabricantes($max = 50)
@@ -154,7 +169,9 @@ class ModelDataGenerator
     /**
      * Generates $max random familias.
      * Returns how many familias were generated.
+     *
      * @param int $max
+     *
      * @return int
      */
     public function familias($max = 50)
@@ -179,7 +196,9 @@ class ModelDataGenerator
     /**
      * Generates $max random artículos.
      * Returns how many artículos were generated.
+     *
      * @param int $max
+     *
      * @return int
      */
     public function articulos($max = 50)
@@ -255,7 +274,9 @@ class ModelDataGenerator
     /**
      * Generates $max random artículos de proveedor.
      * Returns how many artículos were generated.
+     *
      * @param int $max
+     *
      * @return int
      */
     public function articulosProveedor($max = 50)
@@ -267,7 +288,7 @@ class ModelDataGenerator
             if(!isset($articulos[$num])) {
                 break;
             }
-            
+
             $art = new Model\ArticuloProveedor();
             $art->referencia = $articulos[$num]->referencia;
             $art->refproveedor = (string) mt_rand(1, 99999999);
@@ -290,7 +311,9 @@ class ModelDataGenerator
     /**
      * Generates $max random agentes (empleados).
      * Returns how many agentes were generated.
+     *
      * @param int $max
+     *
      * @return int
      */
     public function agentes($max = 50)
@@ -329,14 +352,16 @@ class ModelDataGenerator
     /**
      * Generates $max random grupos de clientes.
      * Returns how many grupos de clientes were generated.
+     *
      * @param int $max
+     *
      * @return int
      */
     public function gruposClientes($max = 50)
     {
         $nombres = [
             'Profesionales', 'Profesional', 'Grandes compradores', 'Preferentes',
-            'Basico', 'Premium', 'Variado', 'Reservado', 'Técnico', 'Elemental'
+            'Basico', 'Premium', 'Variado', 'Reservado', 'Técnico', 'Elemental',
         ];
         $nombres2 = ['VIP', 'PRO', 'NEO', 'XL', 'XXL', '50 aniversario', 'C', 'Z'];
 
@@ -359,7 +384,9 @@ class ModelDataGenerator
     /**
      * Generates $max random clientes.
      * Returns how many clientes were generated.
+     *
      * @param int $max
+     *
      * @return int
      */
     public function clientes($max = 50)
@@ -449,7 +476,7 @@ class ModelDataGenerator
      * Rellena direcciones de un cliente con datos aleatorios.
      *
      * @param Model\Cliente $cliente
-     * @param int $max
+     * @param int           $max
      */
     private function direccionesCliente($cliente, $max = 3)
     {
@@ -457,7 +484,7 @@ class ModelDataGenerator
             $dir = new Model\DireccionCliente();
             $dir->codcliente = $cliente->codcliente;
             $dir->codpais = (mt_rand(0, 2) === 0) ? $this->paises[0]->codpais : AppSettings::get('default', 'codpais');
-            ;
+
             $dir->provincia = $this->tools->provincia();
             $dir->ciudad = $this->tools->ciudad();
             $dir->direccion = $this->tools->direccion();
@@ -470,7 +497,7 @@ class ModelDataGenerator
                 break;
             }
 
-            $max--;
+            --$max;
         }
     }
 
@@ -478,7 +505,7 @@ class ModelDataGenerator
      * Rellena cuentas bancarias de un cliente con datos aleatorios.
      *
      * @param Model\Cliente $cliente
-     * @param int $max
+     * @param int           $max
      */
     private function cuentasBancoCliente($cliente, $max = 3)
     {
@@ -499,14 +526,16 @@ class ModelDataGenerator
                 break;
             }
 
-            $max--;
+            --$max;
         }
     }
 
     /**
      * Generates $max random proveedores.
      * Returns how many proveedores were generated.
+     *
      * @param int $max
+     *
      * @return int
      */
     public function proveedores($max = 50)
@@ -523,7 +552,7 @@ class ModelDataGenerator
 
             $proveedor->codproveedor = $proveedor->newCode();
             if ($proveedor->save()) {
-                $num++;
+                ++$num;
 
                 /// añadimos direcciones
                 $numDirs = mt_rand(0, 3);
@@ -544,7 +573,7 @@ class ModelDataGenerator
      * Rellena direcciones de un proveedor con datos aleatorios.
      *
      * @param Model\Proveedor $proveedor
-     * @param int $max
+     * @param int             $max
      */
     private function direccionesProveedor($proveedor, $max = 3)
     {
@@ -552,7 +581,6 @@ class ModelDataGenerator
             $dir = new Model\DireccionProveedor();
             $dir->codproveedor = $proveedor->codproveedor;
             $dir->codpais = AppSettings::get('default', 'codpais');
-            ;
 
             if (mt_rand(0, 2) == 0) {
                 $dir->codpais = $this->paises[0]->codpais;
@@ -573,7 +601,7 @@ class ModelDataGenerator
 
             $dir->descripcion = 'Dirección #' . $max;
             $dir->save();
-            $max--;
+            --$max;
         }
     }
 
@@ -581,7 +609,7 @@ class ModelDataGenerator
      * Rellena cuentas bancarias de un proveedor con datos aleatorios.
      *
      * @param Model\Proveedor $proveedor
-     * @param int $max
+     * @param int             $max
      */
     private function cuentasBancoProveedor($proveedor, $max = 3)
     {
@@ -601,7 +629,7 @@ class ModelDataGenerator
             }
 
             $cuenta->save();
-            $max--;
+            --$max;
         }
     }
 
@@ -611,7 +639,7 @@ class ModelDataGenerator
      * @param string $modelName
      * @param string $tableName
      * @param string $functionName
-     * @param bool $recursivo
+     * @param bool   $recursivo
      *
      * @return array
      */
@@ -637,7 +665,9 @@ class ModelDataGenerator
 
     /**
      * Returns an array with random clientes.
+     *
      * @param bool $recursivo
+     *
      * @return Model\Cliente[]
      */
     protected function randomClientes($recursivo = true)
@@ -647,7 +677,9 @@ class ModelDataGenerator
 
     /**
      * Returns an array with random proveedores.
+     *
      * @param bool $recursivo
+     *
      * @return Model\Proveedor[]
      */
     protected function randomProveedores($recursivo = true)
@@ -657,7 +689,9 @@ class ModelDataGenerator
 
     /**
      * Returns an array with random empleados.
+     *
      * @param bool $recursivo
+     *
      * @return Model\Agente[]
      */
     protected function randomAgentes($recursivo = true)
@@ -667,7 +701,9 @@ class ModelDataGenerator
 
     /**
      * Returns an array with random artículos.
+     *
      * @param bool $recursivo
+     *
      * @return Model\Articulo[]
      */
     protected function randomArticulos($recursivo = true)

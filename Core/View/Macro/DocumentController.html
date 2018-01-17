@@ -1,0 +1,94 @@
+{#
+   /**
+     * DocumentController element Macros.
+     *
+     * Adds twig functions to display the DocumentController elements
+     * Examples imports:
+     * {% import "Macro/DocumentController.html" as DocumentController %}
+     *
+     * This file is part of FacturaScripts
+     * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+     *
+     * This program is free software: you can redistribute it and/or modify
+     * it under the terms of the GNU Lesser General Public License as
+     * published by the Free Software Foundation, either version 3 of the
+     * License, or (at your option) any later version.
+     *
+     * This program is distributed in the hope that it will be useful,
+     * but WITHOUT ANY WARRANTY; without even the implied warranty of
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     * GNU Lesser General Public License for more details.
+     *
+     * You should have received a copy of the GNU Lesser General Public License
+     * along with this program.  If not, see http://www.gnu.org/licenses/.
+     *
+    */
+#}
+
+{% macro DocumentView(context, view) %}
+<!-- Macros Template Imports -->
+{% import 'Macro/Forms.html' as forms %}
+
+{# -- Calculate common values -- #}
+{% set idempresa = context.appSettings.get('default','idempresa') %}
+{% set codalmacen = context.appSettings.get('default','codalmacen') %}
+{% set codserie = context.appSettings.get('default','codserie') %}
+{% set coddivisa = context.appSettings.get('default','coddivisa') %}
+{% set codpago = context.appSettings.get('default','codpago') %}
+{% set model = view.getModel() %}
+
+<script type="text/javascript">
+    documentLineData = {{ view.getLineData() | raw }};
+</script>
+
+<form name="f_document_primary" action="#" method="post">
+    <input type="hidden" name="action"/>
+    <input type="hidden" name="{{ model.primaryColumn() }}" value="{{ model.primaryColumnValue() }}"/>
+    <div class="form-row">
+        <div class="col">
+            {% if view.documentType == 'sale' %}
+            {{ forms.simpleSelect('doc_codcliente', 'codcliente', model.codcliente, context.fsc.getSelectValues('Cliente')) }}
+            {% elseif view.documentType == 'purchase' %}
+            {{ forms.simpleSelect('doc_codproveedor', 'codproveedor', model.codproveedor, context.fsc.getSelectValues('Proveedor')) }}
+            {% endif %}
+        </div>
+        <div class="col">
+            {{ forms.simpleSelect('doc_codserie', 'codserie', codserie, context.fsc.getSelectValues('Serie')) }}
+        </div>
+        <div class="col">
+            {{ forms.simpleSelect('doc_codalmacen', 'codalmacen', codalmacen, context.fsc.getSelectValues('Almacen')) }}
+        </div>
+        <div class="col">
+            {{ forms.simpleSelect('doc_idempresa', 'idempresa', idempresa, context.fsc.getSelectValues('Empresa')) }}
+        </div>
+    </div>
+    <br/>
+    <div id="document-lines"></div>
+    <br/>
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                {{ forms.simpleSelect('doc_codpago', 'codpago', codpago, context.fsc.getSelectValues('FormaPago')) }}
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                {{ forms.simpleSelect('doc_coddivisa', 'coddivisa', coddivisa, context.fsc.getSelectValues('Divisa')) }}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <a href="#" class="btn btn-sm btn-danger" onclick="deleteRecord('f_document_primary')">
+                <i class="fa fa-trash" aria-hidden="true"></i>
+                <span class="d-none d-sm-inline-block">&nbsp;{{ context.i18n.trans('delete') }}</span>
+            </a>
+        </div>
+        <div class="col-6 text-right">
+            <button type="button" id="btn-document-save" class="btn btn-sm btn-primary" onclick="documentSave()">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp; {{ context.i18n.trans('save') }}
+            </button>
+        </div>
+    </div>
+</form>
+{% endmacro %}

@@ -28,14 +28,13 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class ListAsiento extends ExtendedController\ListController
 {
-
     /**
      * Load views
      */
     protected function createViews()
     {
         $this->addView('\FacturaScripts\Dinamic\Model\Asiento', 'ListAsiento');
-        $this->addSearchFields('ListAsiento', ['CAST(numero AS CHAR(10))','concepto']);
+        $this->addSearchFields('ListAsiento', ['CAST(numero AS CHAR(10))', 'concepto']);
 
         $this->addFilterDatePicker('ListAsiento', 'date', 'date', 'fecha');
         $this->addFilterNumber('ListAsiento', 'amount', 'amount', 'importe');

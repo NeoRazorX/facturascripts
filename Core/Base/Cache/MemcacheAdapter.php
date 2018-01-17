@@ -31,7 +31,6 @@ use FacturaScripts\Core\Base\Translator;
  */
 class MemcacheAdapter implements AdaptorInterface
 {
-
     /**
      * Memcache object
      *
@@ -102,6 +101,7 @@ class MemcacheAdapter implements AdaptorInterface
     {
         if (self::$connected) {
             $this->minilog->debug($this->i18n->trans('memcache-get-key-item', ['%item%' => $key]));
+
             return self::$memcache->get(FS_CACHE_PREFIX . $key);
         }
 
@@ -112,8 +112,8 @@ class MemcacheAdapter implements AdaptorInterface
      * Put content into the cache.
      *
      * @param string $key
-     * @param mixed $content the the content you want to store
-     * @param int $expire time to expire
+     * @param mixed  $content the the content you want to store
+     * @param int    $expire  time to expire
      *
      * @return bool whether if the operation was successful or not
      */

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -38,7 +39,7 @@ abstract class EditController extends Base\Controller
      * @var CodeModel
      */
     private $codeModel;
-    
+
     /**
      * Export data object
      *
@@ -56,10 +57,10 @@ abstract class EditController extends Base\Controller
     /**
      * Initializes all the objects and properties
      *
-     * @param Base\Cache $cache
+     * @param Base\Cache      $cache
      * @param Base\Translator $i18n
-     * @param Base\MiniLog $miniLog
-     * @param string $className
+     * @param Base\MiniLog    $miniLog
+     * @param string          $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
@@ -73,8 +74,8 @@ abstract class EditController extends Base\Controller
     /**
      * Runs the controller's private logic.
      *
-     * @param Response $response
-     * @param User $user
+     * @param Response                   $response
+     * @param User                       $user
      * @param Base\ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -149,11 +150,11 @@ abstract class EditController extends Base\Controller
 
             case 'export':
                 $this->setTemplate(false);
-                $this->exportManager->newDoc($this->response, $this->request->get('option'));
+                $this->exportManager->newDoc($this->request->get('option'));
                 $this->view->export($this->exportManager);
                 $this->exportManager->show($this->response);
                 break;
-            
+
             case 'insert':
                 $this->insertAction();
                 break;
@@ -163,7 +164,7 @@ abstract class EditController extends Base\Controller
     /**
      * Returns a field value for the loaded data model
      *
-     * @param mixed $model
+     * @param mixed  $model
      * @param string $fieldName
      *
      * @return mixed
@@ -176,7 +177,7 @@ abstract class EditController extends Base\Controller
 
         return null;
     }
-    
+
     private function autocompleteAction()
     {
         $this->setTemplate(false);
@@ -184,7 +185,7 @@ abstract class EditController extends Base\Controller
         $field = $this->request->get('field');
         $title = $this->request->get('title');
         $term = $this->request->get('term');
-        
+
         $results = [];
         foreach($this->codeModel->search($source, $field, $title, $term) as $value) {
             $results[] = ['key' => $value->code, 'value' => $value->description];
@@ -201,11 +202,13 @@ abstract class EditController extends Base\Controller
     {
         if (!$this->permissions->allowUpdate) {
             $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+
             return false;
         }
 
         if ($this->view->save()) {
             $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+
             return true;
         }
 
@@ -260,6 +263,7 @@ abstract class EditController extends Base\Controller
     public function getPrimaryDescription()
     {
         $model = $this->view->getModel();
+
         return $model->primaryDescription();
     }
 

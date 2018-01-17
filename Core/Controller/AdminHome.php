@@ -30,36 +30,39 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AdminHome extends Base\Controller
 {
-
     /**
      * List of enabled plugins.
+     *
      * @var array
      */
     public $enabledPlugins;
 
     /**
      * PHP Upload Max File Size.
+     *
      * @var int
      */
     public $uploadMaxFileSize;
 
     /**
      * PHP Post Max Size.
+     *
      * @var int
      */
     public $postMaxSize;
 
     /**
      * Plugin Manager.
+     *
      * @var Base\PluginManager
      */
     public $pluginManager;
-    
+
     /**
      * Runs the controller's private logic.
      *
-     * @param Response $response
-     * @param Model\User $user
+     * @param Response                   $response
+     * @param Model\User                 $user
      * @param Base\ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -171,6 +174,7 @@ class AdminHome extends Base\Controller
                 $this->pluginManager->disable($disablePlugin);
                 $this->miniLog->error($this->i18n->trans('plugin-disabled'));
                 $this->pluginManager->deploy();
+
                 return true;
             }
 
@@ -196,6 +200,7 @@ class AdminHome extends Base\Controller
                 $this->pluginManager->deploy();
                 $this->pluginManager->delTree($this->pluginManager->getPluginPath() . $removePlugin);
                 $this->miniLog->error($this->i18n->trans('plugin-deleted', ['%pluginName%' => $removePlugin]));
+
                 return true;
             }
 
@@ -220,6 +225,7 @@ class AdminHome extends Base\Controller
                 $this->miniLog->info($this->i18n->trans('plugin-enabled'));
                 $this->pluginManager->deploy();
                 $this->enabledPlugins = $this->pluginManager->enabledPlugins();
+
                 return true;
             }
 
@@ -271,6 +277,7 @@ class AdminHome extends Base\Controller
                 $value *= 1024;
             // no break - Pass all cases to transform to KB
         }
+
         return $value;
     }
 }
