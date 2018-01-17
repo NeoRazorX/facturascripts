@@ -53,7 +53,7 @@ class ExportManager
                 'PDF' => ['description' => 'print', 'icon' => 'fa-print'],
                 'XLS' => ['description' => 'spreadsheet-xls', 'icon' => 'fa-file-excel-o'],
                 'CSV' => ['description' => 'structured-data-csv', 'icon' => 'fa-file-archive-o'],
-                'EMAIL' => ['description' => 'send-via-email', 'icon' => 'fa-envelope-o'],
+                'Email' => ['description' => 'send-via-email', 'icon' => 'fa-envelope-o'],
             ];
         }
     }
