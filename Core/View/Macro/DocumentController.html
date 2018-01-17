@@ -26,15 +26,9 @@
 #}
 
 {% macro DocumentView(context, view) %}
-<!-- Macros Template Imports -->
-{% import 'Macro/Forms.html' as forms %}
+{% import _self as macros %}
 
 {# -- Calculate common values -- #}
-{% set idempresa = context.appSettings.get('default','idempresa') %}
-{% set codalmacen = context.appSettings.get('default','codalmacen') %}
-{% set codserie = context.appSettings.get('default','codserie') %}
-{% set coddivisa = context.appSettings.get('default','coddivisa') %}
-{% set codpago = context.appSettings.get('default','codpago') %}
 {% set model = view.getModel() %}
 
 <script type="text/javascript">
@@ -45,36 +39,26 @@
     <input type="hidden" name="action"/>
     <input type="hidden" name="{{ model.primaryColumn() }}" value="{{ model.primaryColumnValue() }}"/>
     <div class="form-row">
-        <div class="col">
-            {% if view.documentType == 'sale' %}
-            {{ forms.simpleSelect('doc_codcliente', 'codcliente', model.codcliente, context.fsc.getSelectValues('Cliente')) }}
-            {% elseif view.documentType == 'purchase' %}
-            {{ forms.simpleSelect('doc_codproveedor', 'codproveedor', model.codproveedor, context.fsc.getSelectValues('Proveedor')) }}
-            {% endif %}
-        </div>
-        <div class="col">
-            {{ forms.simpleSelect('doc_codserie', 'codserie', codserie, context.fsc.getSelectValues('Serie')) }}
-        </div>
-        <div class="col">
-            {{ forms.simpleSelect('doc_codalmacen', 'codalmacen', codalmacen, context.fsc.getSelectValues('Almacen')) }}
-        </div>
-        <div class="col">
-            {{ forms.simpleSelect('doc_idempresa', 'idempresa', idempresa, context.fsc.getSelectValues('Empresa')) }}
-        </div>
+        {% if view.documentType == 'sale' %}
+            {{ macros.customerSelect(context, 'doc_codcliente', 'codcliente', model.codcliente, context.fsc.getSelectValues('Cliente')) }}
+        {% elseif view.documentType == 'purchase' %}
+            {{ macros.supplierSelect(context, 'doc_codproveedor', 'codproveedor', model.codproveedor, context.fsc.getSelectValues('Proveedor')) }}
+        {% endif %}
+        {{ macros.customSelect('doc_codserie', 'codserie', model.codserie, context.fsc.getSelectValues('Serie')) }}
+        {{ macros.customSelect('doc_codalmacen', 'codalmacen', model.codalmacen, context.fsc.getSelectValues('Almacen')) }}
+        {{ macros.customSelect('doc_idempresa', 'idempresa', model.idempresa, context.fsc.getSelectValues('Empresa')) }}
+        {{ macros.customInput('doc_fecha', 'fecha', model.fecha, 'text', 'fa-calendar', {class: 'form-control datepicker'}) }}
     </div>
     <br/>
     <div id="document-lines"></div>
     <br/>
     <div class="row">
-        <div class="col">
-            <div class="form-group">
-                {{ forms.simpleSelect('doc_codpago', 'codpago', codpago, context.fsc.getSelectValues('FormaPago')) }}
-            </div>
-        </div>
-        <div class="col">
-            <div class="form-group">
-                {{ forms.simpleSelect('doc_coddivisa', 'coddivisa', coddivisa, context.fsc.getSelectValues('Divisa')) }}
-            </div>
+        {{ macros.customSelect('doc_codpago', 'codpago', model.codpago, context.fsc.getSelectValues('FormaPago')) }}
+        {{ macros.customSelect('doc_coddivisa', 'coddivisa', model.coddivisa, context.fsc.getSelectValues('Divisa')) }}
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <br/>
         </div>
     </div>
     <div class="row">
@@ -91,4 +75,138 @@
         </div>
     </div>
 </form>
+{% endmacro %}
+
+{% macro customSelect(id, name, value, allValues = {}, allowHide = true) %}
+    {% if allowHide and allValues | length == 1 %}
+        {% for key, option in allValues %}
+        <input type="hidden" id="{{ id }}" name="{{ name }}" value="{{ key }}"/>
+        {% endfor %}
+    {% else %}
+    <div class="col">
+        <select id="{{ id }}" name="{{ name }}" class="form-control">
+            {% for key, option in allValues %}
+            <option value="{{ key }}"{% if value == key %} selected=""{% endif %}>
+                {{ option }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro customInput(id, name, value, type = "text", icon = NULL, attributes = NULL) %}
+    <div class="col">
+        {% if icon %}
+            <div class="input-group">
+                <span class="input-group-addon">
+                    <i class="fa {{ icon }} fa-fw" aria-hidden="true"></i>
+                </span>
+        {% endif %}
+
+                <input type="{{ type }}" id="{{ id }}" name="{{ name }}" value="{{ value }}"
+                        {% if attributes.class is not defined %}
+                            class="form-control"
+                        {% endif %}
+
+                        {% for attribute,attrValue in attributes %}
+                            {{ attribute }}="{{ attrValue }}"
+                        {% endfor %} /> {# end input #}
+
+        {% if icon %}
+            </div>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro customerSelect(context, id, name, value, allValues = {}) %}
+    <div class="col">
+        <div class="input-group">
+            <span class="input-group-addon">
+                <i class="fa fa-user fa-fw" aria-hidden="true"></i>
+            </span>
+            <select id="{{ id }}" name="{{ name }}" class="form-control">
+                <option value="">------</option>
+                {% for key, option in allValues %}
+                <option value="{{ key }}"{% if value == key %} selected=""{% endif %}>
+                    {{ option }}
+                </option>
+                {% endfor %}
+            </select>
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#newCustomerModal">
+                    <i class="fa fa-plus fa-fw" aria-hidden="true"></i>
+                </button>
+            </span>
+        </div>
+    </div>
+    <div class="modal" id="newCustomerModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ context.i18n.trans('new-customer') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="text" name="new_cliente" placeholder="{{ context.i18n.trans('name') }}" class="form-control" autocomplete="off" autofocus=""/>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="new_cifnif" placeholder="{{ context.i18n.trans('vat-id') }}" class="form-control" autocomplete="off"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">{{ context.i18n.trans('accept') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro supplierSelect(context, id, name, value, allValues = {}) %}
+    <div class="col">
+        <div class="input-group">
+            <span class="input-group-addon">
+                <i class="fa fa-user fa-fw" aria-hidden="true"></i>
+            </span>
+            <select id="{{ id }}" name="{{ name }}" class="form-control">
+                <option value="">------</option>
+                {% for key, option in allValues %}
+                <option value="{{ key }}"{% if value == key %} selected=""{% endif %}>
+                    {{ option }}
+                </option>
+                {% endfor %}
+            </select>
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#newSupplierModal">
+                    <i class="fa fa-plus fa-fw" aria-hidden="true"></i>
+                </button>
+            </span>
+        </div>
+    </div>
+    <div class="modal" id="newSupplierModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ context.i18n.trans('new-supplier') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="text" name="new_proveedor" placeholder="{{ context.i18n.trans('name') }}" class="form-control" autocomplete="off" autofocus=""/>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="new_cifnif" placeholder="{{ context.i18n.trans('vat-id') }}" class="form-control" autocomplete="off"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">{{ context.i18n.trans('accept') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endmacro %}

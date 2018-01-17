@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -219,9 +219,10 @@ trait DocumentoCompra
     private function clearDocumentoCompra()
     {
         $this->traitClear();
-        $this->codserie = AppSettings::get('default', 'codserie');
-        $this->codpago = AppSettings::get('default', 'codpago');
         $this->codalmacen = AppSettings::get('default', 'codalmacen');
+        $this->coddivisa = AppSettings::get('default', 'coddivisa');
+        $this->codpago = AppSettings::get('default', 'codpago');
+        $this->codserie = AppSettings::get('default', 'codserie');
         $this->idempresa = AppSettings::get('default', 'idempresa');
         $this->fecha = date('d-m-Y');
         $this->hora = date('H:i:s');
