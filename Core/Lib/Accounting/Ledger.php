@@ -50,7 +50,9 @@ class Ledger extends AccountingBase
             $ledger[] = $this->processLine($line);
         }
 
-        return $ledger;
+        /// every page is a table
+        $pages = [$ledger];
+        return $pages;
     }
 
     /**

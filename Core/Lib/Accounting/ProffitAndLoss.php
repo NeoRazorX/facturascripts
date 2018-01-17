@@ -59,7 +59,9 @@ class ProffitAndLoss extends AccountingBase
             return [];
         }
 
-        return $this->calcProffitAndLoss($data);
+        /// every page is a table
+        $pages = [$this->calcProffitAndLoss($data)];
+        return $pages;
     }
 
     /**
