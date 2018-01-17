@@ -158,7 +158,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">{{ context.i18n.trans('accept') }}</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="$('#{{ id }}').val('')">
+                        {{ context.i18n.trans('accept') }}
+                    </button>
                 </div>
             </div>
         </div>
@@ -204,7 +206,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">{{ context.i18n.trans('accept') }}</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="$('#{{ id }}').val('')">
+                        {{ context.i18n.trans('accept') }}
+                    </button>
                 </div>
             </div>
         </div>
