@@ -351,9 +351,10 @@ trait DocumentoVenta
     private function clearDocumentoVenta()
     {
         $this->traitClear();
-        $this->codserie = AppSettings::get('default', 'codserie');
         $this->codalmacen = AppSettings::get('default', 'codalmacen');
+        $this->coddivisa = AppSettings::get('default', 'coddivisa');
         $this->codpago = AppSettings::get('default', 'codpago');
+        $this->codserie = AppSettings::get('default', 'codserie');
         $this->idempresa = AppSettings::get('default', 'idempresa');
         $this->fecha = date('d-m-Y');
         $this->hora = date('H:i:s');

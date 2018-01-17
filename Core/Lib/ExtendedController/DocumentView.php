@@ -20,8 +20,9 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Lib\ExportManager;
-use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\Cliente;
+use FacturaScripts\Core\Model\Ejercicio;
+use FacturaScripts\Core\Model\Proveedor;
 
 /**
  * Description of DocumentView
@@ -75,8 +76,7 @@ class DocumentView extends BaseView
     }
 
     public function disableColumn($columnName, $disabled)
-    {
-        ;
+    {        
     }
 
     /**
@@ -156,6 +156,7 @@ class DocumentView extends BaseView
 
     public function saveDocument(&$data)
     {
+        $result = 'OK';
         $newLines = isset($data['lines']) ? $this->processFormLines($data['lines']) : [];
         unset($data['lines']);
         $this->loadFromData($data);
@@ -169,15 +170,16 @@ class DocumentView extends BaseView
         }
 
         if ($this->documentType === 'sale' && empty($this->model->nombrecliente)) {
-            $cliente = new Cliente();
-            if ($cliente->loadFromCode($this->model->codcliente)) {
-                $this->model->nombrecliente = $cliente->razonsocial;
-                $this->model->cifnif = $cliente->cifnif;
-            }
+            $result = $this->setCustomer($data);
+        } elseif ($this->documentType === 'purchase' && empty($this->model->nombre)) {
+            $result = $this->setSupplier($data);
+        }
+
+        if ($result !== 'OK') {
+            return $result;
         }
 
         $new = empty($this->model->primaryColumnValue());
-        $result = 'OK';
         if ($this->save()) {
             $result = $this->saveLines($newLines);
         } else {
@@ -194,6 +196,52 @@ class DocumentView extends BaseView
         }
 
         return $result;
+    }
+
+    private function setCustomer($data)
+    {
+        $cliente = new Cliente();
+        if ($cliente->loadFromCode($this->model->codcliente)) {
+            $this->model->nombrecliente = $cliente->razonsocial;
+            $this->model->cifnif = $cliente->cifnif;
+            return 'OK';
+        }
+
+        if ($data['new_cliente'] !== '') {
+            $cliente->nombre = $cliente->razonsocial = $data['new_cliente'];
+            $cliente->cifnif = $data['new_cifnif'];
+            if ($cliente->save()) {
+                $this->model->codcliente = $cliente->codcliente;
+                $this->model->nombrecliente = $cliente->razonsocial;
+                $this->model->cifnif = $cliente->cifnif;
+                return 'OK';
+            }
+        }
+
+        return 'ERROR: NO CUSTOMER';
+    }
+
+    private function setSupplier($data)
+    {
+        $proveedor = new Proveedor();
+        if ($proveedor->loadFromCode($this->model->codproveedor)) {
+            $this->model->nombre = $proveedor->razonsocial;
+            $this->model->cifnif = $proveedor->cifnif;
+            return 'OK';
+        }
+
+        if ($data['new_proveedor'] !== '') {
+            $proveedor->nombre = $proveedor->razonsocial = $data['new_proveedor'];
+            $proveedor->cifnif = $data['new_cifnif'];
+            if ($proveedor->save()) {
+                $this->model->codproveedor = $proveedor->codproveedor;
+                $this->model->nombre = $proveedor->razonsocial;
+                $this->model->cifnif = $proveedor->cifnif;
+                return 'OK';
+            }
+        }
+
+        return 'ERROR: NO SUPPLIER';
     }
 
     private function saveLines(&$newLines)
