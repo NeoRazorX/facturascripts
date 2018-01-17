@@ -35,7 +35,7 @@ class EditPedidoCliente extends ExtendedController\DocumentController
     protected function createViews()
     {
         parent::createViews();
-        $this->addEditView('\FacturaScripts\Dinamic\Model\PedidoCliente', 'EditPedidoCliente', 'detail');
+        $this->addEditView($this->getDocumentClassName(), 'EditPedidoCliente', 'detail');
     }
 
     /**
@@ -66,13 +66,12 @@ class EditPedidoCliente extends ExtendedController\DocumentController
      */
     protected function loadData($keyView, $view)
     {
-        $idpedido = $this->request->get('code');
-
-        switch ($keyView) {
-            case 'EditPedidoCliente':
-                $view->loadData($idpedido);
-                break;
+        if ($keyView === 'EditPedidoCliente') {
+            $idpedido = $this->getViewModelValue('Document', 'idpedido');
+            $view->loadData($idpedido);
         }
+        
+        parent::loadData($keyView, $view);
     }
 
     /**

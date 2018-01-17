@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,7 +35,7 @@ class EditPresupuestoCliente extends ExtendedController\DocumentController
     protected function createViews()
     {
         parent::createViews();
-        $this->addEditView('\FacturaScripts\Dinamic\Model\PresupuestoCliente', 'EditPresupuestoCliente', 'detail');
+        $this->addEditView($this->getDocumentClassName(), 'EditPresupuestoCliente', 'detail');
     }
 
     /**
@@ -66,14 +66,12 @@ class EditPresupuestoCliente extends ExtendedController\DocumentController
      */
     protected function loadData($keyView, $view)
     {
-        $idpresupuesto = $this->request->get('code');
-        if ($idpresupuesto !== null && $idpresupuesto !== '') {
-            switch ($keyView) {
-                case 'EditPresupuestoCliente':
-                    $view->loadData($idpresupuesto);
-                    break;
-            }
+        if ($keyView === 'EditPresupuestoCliente') {
+            $idpresupuesto = $this->getViewModelValue('Document', 'idpresupuesto');
+            $view->loadData($idpresupuesto);
         }
+        
+        parent::loadData($keyView, $view);
     }
 
     /**

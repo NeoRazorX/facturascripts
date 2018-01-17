@@ -1,6 +1,6 @@
 {#
    /**
-     * Panel Controller Template. (Top Panel)
+     * PanelController Template. (Top Panel)
      *
      * It shows the data of one or several models, through a navigation panel,
      * in different formats.
@@ -19,7 +19,7 @@
      * GNU Lesser General Public License for more details.
      *
      * You should have received a copy of the GNU Lesser General Public License
-     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+     * along with this program.  If not, see http://www.gnu.org/licenses/.
      *
     */
 #}
@@ -45,7 +45,7 @@
 {# -- Main Body -- #}
 <div class="container-fluid">
     {# -- Header Row -- #}
-    <div id="header" class="row">
+    <div class="row">
         <div class="col-6 d-print-none">
             <div class="btn-group" aria-label="Button group with navigation actions">
                 <a href="{{ list_url }}" class="btn btn-sm btn-outline-secondary">
@@ -57,13 +57,22 @@
                 </a>
             </div>
             <div class="btn-group">
-                <a href="#" id="b_options" class="btn btn-sm btn-secondary" onclick="goToOptions()" {{ popoverTitle(options_title, 'bottom') }}>
-                   <i class="fa fa-wrench" aria-hidden="true"></i>
-                    <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
-                </a>
-                {# -- Adds print and export options -- #}
-                {{ exportData(fsc, i18n, 'edit') }}
+                <div class="dropdown">
+                    <a class="btn btn-sm btn-secondary dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-wrench" aria-hidden="true"></i>
+                        <span class="d-none d-sm-inline-block">&nbsp;{{ options }}</span>
+                    </a>
+                    <div class="dropdown-menu">
+                        {% for view in fsc.views %}
+                        <a class="dropdown-item" href="index.php?page=EditPageOption&code={{ view.getViewName() }}">
+                            <i class="fa fa-wrench fa-fw" aria-hidden="true"></i> {{ view.title }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
+            {# -- Adds print and export options -- #}
+            {{ exportData(fsc, i18n, 'edit') }}
         </div>
         <div class="col-6 text-right">
             <h2>
@@ -76,7 +85,7 @@
     <br/>
 
     {# -- Data Row -- #}
-    <div id="data" class="row">
+    <div class="row">
         <div class="col-sm-12">
             <div class="nav nav-tabs" id="optionsindex" role="tablist">
                 {% for indexView, view in fsc.views %}
@@ -109,17 +118,13 @@
                             {# Main Form #}
                             {% set model = view.getModel() %}
                             {{ BaseController.columnsForEditView(_context, view, model, TRUE) }}
-                        {% endif %}
-
-                        {% if viewType == 'EditListView' %}
+                        {% elseif viewType == 'EditListView' %}
                             {# Information Cards Header #}
                             {{ BaseController.rowCardsForEditView(_context, view, 'header') }}
 
                             {# Main Form #}
                             {{ BaseController.columnsForEditListView(_context, view) }}
-                        {% endif %}
-
-                        {% if viewType == 'HtmlView' %}
+                        {% elseif viewType == 'HtmlView' %}
                             <div>{% include view.fileName ignore missing %}</div>
                         {% else %}
                             {{ BaseController.rowCardsForEditView(_context, view, 'footer') }}

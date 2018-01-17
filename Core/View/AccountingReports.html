@@ -25,24 +25,6 @@
 
 {% extends "Master/MenuTemplate.html" %}
 
-{% block css %}
-    {{ parent() }}
-{% endblock %}
-
-{% block javascript %}
-    {{ parent() }}
-{% endblock %}
-
-{% block messages %}
-<div class="container-fluid">
-    <div id="messages" class="row">
-        <div class="col-12">
-            {{ parent() }}
-        </div>
-    </div>
-</div>
-{% endblock %}
-
 {% block body %}
 {# -- Calculate texts according to language -- #}
 {% set refresh = i18n.trans('refresh-page') %}

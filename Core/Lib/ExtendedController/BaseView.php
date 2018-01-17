@@ -152,6 +152,14 @@ abstract class BaseView
     }
 
     /**
+     * Calculate and set new code for PK of the model
+     */
+    public function setNewCode()
+    {
+        $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
+    }
+
+    /**
      * Deletes from the database the row with the given code
      *
      * @param string $code
@@ -269,5 +277,15 @@ abstract class BaseView
     public function getModelID()
     {
         return empty($this->model) ? '' : $this->model->modelClassName();
+    }
+
+    /**
+     * Returns the name.
+     *
+     * @return string
+     */
+    public function getViewName()
+    {
+        return $this->pageOption->name;
     }
 }

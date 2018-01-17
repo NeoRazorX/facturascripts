@@ -404,7 +404,7 @@ abstract class PanelController extends Base\Controller
      * @param BaseView $view
      * @param string   $icon
      */
-    private function addView($keyView, $view, $icon)
+    protected function addView($keyView, $view, $icon)
     {
         $this->views[$keyView] = $view;
         $this->settings[$keyView] = ['active' => true, 'icon' => $icon];

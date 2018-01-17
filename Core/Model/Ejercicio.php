@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -124,14 +124,10 @@ class Ejercicio
      */
     public function clear()
     {
-        $this->codejercicio = null;
         $this->nombre = '';
         $this->fechainicio = date('01-01-Y');
         $this->fechafin = date('31-12-Y');
         $this->estado = 'ABIERTO';
-        $this->idasientocierre = null;
-        $this->idasientopyg = null;
-        $this->idasientoapertura = null;
         $this->plancontable = '08';
         $this->longsubcuenta = 10;
     }
@@ -218,7 +214,7 @@ class Ejercicio
      * @param bool   $soloAbierto
      * @param bool   $crear
      *
-     * @return bool|ejercicio
+     * @return bool|Ejercicio
      */
     public function getByFecha($fecha, $soloAbierto = true, $crear = true)
     {

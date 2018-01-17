@@ -72,6 +72,11 @@ class Proveedor extends Base\Persona
         return 'codproveedor';
     }
 
+    public function primaryDescriptionColumn() 
+    {
+        return 'nombre';
+    }
+
     /**
      * Reset the values of all model properties.
      */
