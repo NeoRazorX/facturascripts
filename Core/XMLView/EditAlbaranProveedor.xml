@@ -40,7 +40,7 @@
                 <widget type="text" fieldname="hora" required="true" />
             </column>
         </group>
-         <group name="supplier" title="supplier" numcolumns="12">
+        <group name="supplier" title="supplier" numcolumns="12">
             <column name="cifnif" title="cifnif" numcolumns="4" order="120">
                 <widget type="text" fieldname="cifnif" />
             </column>

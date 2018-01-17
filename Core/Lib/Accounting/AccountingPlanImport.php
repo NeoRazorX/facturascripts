@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -37,7 +35,8 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Raul Jimenez <comercial@nazcanetworks.com>
  */
-class AccountingPlanImport {
+class AccountingPlanImport
+{
 
     /**
      * Import data from XML file.
@@ -47,7 +46,8 @@ class AccountingPlanImport {
      */
     private $ejercicio;
 
-    public function importXML($filePath, $codejercicio) {
+    public function importXML($filePath, $codejercicio)
+    {
 
         $this->ejercicio = new Ejercicio();
         $this->ejercicio->codejercicio = $codejercicio;
@@ -72,7 +72,8 @@ class AccountingPlanImport {
      * @return array object
      * 
      */
-    private function getData($filePath) {
+    private function getData($filePath)
+    {
         if (file_exists($filePath)) {
             return simplexml_load_file(($filePath));
         } else {
@@ -84,12 +85,12 @@ class AccountingPlanImport {
      * insert into system balance definition
      * @param array  $data
      */
-    private function importBalance($data) {
+    private function importBalance($data)
+    {
         $bal = new Balance();
 
         if ($bal->count() == 0) {
             foreach ($data as $balance) {
-
                 $bal = new Balance();
                 if (!$bal->get($balance->codbalance)) {
                     $bal->codbalance = $balance->codbalance;
@@ -114,14 +115,14 @@ class AccountingPlanImport {
      * Insert counts of balance definition
      * @param array $data
      */
-    private function importBalanceCuenta($data) {
+    private function importBalanceCuenta($data)
+    {
         $balCuenta = new BalanceCuenta();
         $all_bcs = $balCuenta->all();
         $arr = [];
         $where = [];
         foreach ($data as $bcta) {
             $arr = (array) $bcta;
-
             $where[] = new DataBaseWhere('codbalance', $arr['codbalance']);
             $where[] = new DataBaseWhere('codcuenta', $arr['codcuenta']);
 
@@ -139,7 +140,8 @@ class AccountingPlanImport {
      * Insert counts of abbreviate balance definition
      * @param array $data
      */
-    private function importBalanceCuentaA($data) {
+    private function importBalanceCuentaA($data)
+    {
         $balCuenta = new BalanceCuentaA();
         $all_bcs = $balCuenta->all();
         $arr = [];
@@ -163,7 +165,8 @@ class AccountingPlanImport {
      * 
      * @param array $data
      */
-    private function importEpigrafeGroup($data) {
+    private function importEpigrafeGroup($data)
+    {
         $gepig = new GrupoEpigrafes();
         $arr = [];
         $where = [];
@@ -189,7 +192,8 @@ class AccountingPlanImport {
      * 
      * @param array $data
      */
-    private function importEpigrafe($data) {
+    private function importEpigrafe($data)
+    {
         $epig = new Epigrafe();
         $arr = [];
         $where = [];
@@ -217,7 +221,8 @@ class AccountingPlanImport {
      * 
      * @param array $data
      */
-    private function importCuenta($data) {
+    private function importCuenta($data)
+    {
         $cta = new Cuenta();
         $arr = [];
         $where = [];
@@ -246,7 +251,8 @@ class AccountingPlanImport {
      * 
      * @param array $data
      */
-    private function importSubcuenta($data) {
+    private function importSubcuenta($data)
+    {
         $subcta = new Subcuenta();
         $arr = [];
         $where = [];
@@ -276,11 +282,11 @@ class AccountingPlanImport {
      * @param string $filePath
      * @param string $codejercicio
      */
-    public function importCSV($filePath, $codejercicio) {
+    public function importCSV($filePath, $codejercicio)
+    {
         /**
          * TODO: read CSV file and import GrupoEpigrafe, Epigrafe, Cuenta and Subcuenta
          * data.
          */
     }
-
 }
