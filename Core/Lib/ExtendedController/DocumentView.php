@@ -76,7 +76,7 @@ class DocumentView extends BaseView
     }
 
     public function disableColumn($columnName, $disabled)
-    {        
+    {
     }
 
     /**
@@ -157,7 +157,11 @@ class DocumentView extends BaseView
     public function saveDocument(&$data)
     {
         $result = 'OK';
+        $codcliente = isset($data['codcliente']) ? $data['codcliente'] : '';
+        $codproveedor = isset($data['codproveedor']) ? $data['codproveedor'] : '';
         $newLines = isset($data['lines']) ? $this->processFormLines($data['lines']) : [];
+        unset($data['codcliente']);
+        unset($data['codproveedor']);
         unset($data['lines']);
         $this->loadFromData($data);
 
@@ -169,10 +173,10 @@ class DocumentView extends BaseView
             }
         }
 
-        if ($this->documentType === 'sale' && empty($this->model->nombrecliente)) {
-            $result = $this->setCustomer($data);
-        } elseif ($this->documentType === 'purchase' && empty($this->model->nombre)) {
-            $result = $this->setSupplier($data);
+        if ($this->documentType === 'sale') {
+            $result = $this->setCustomer($codcliente, $data['new_cliente'], $data['new_cifnif']);
+        } elseif ($this->documentType === 'purchase') {
+            $result = $this->setSupplier($codproveedor, $data['new_proveedor'], $data['new_cifnif']);
         }
 
         if ($result !== 'OK') {
@@ -198,46 +202,50 @@ class DocumentView extends BaseView
         return $result;
     }
 
-    private function setCustomer($data)
+    private function setCustomer($codcliente, $newCliente = '', $newCifnif = '')
     {
+        if ($this->model->codcliente === $codcliente && !empty($this->model->codcliente)) {
+            return 'OK';
+        }
+
         $cliente = new Cliente();
-        if ($cliente->loadFromCode($this->model->codcliente)) {
+        if ($cliente->loadFromCode($codcliente)) {
+            $this->model->codcliente = $cliente->codcliente;
             $this->model->nombrecliente = $cliente->razonsocial;
             $this->model->cifnif = $cliente->cifnif;
             return 'OK';
         }
 
-        if ($data['new_cliente'] !== '') {
-            $cliente->nombre = $cliente->razonsocial = $data['new_cliente'];
-            $cliente->cifnif = $data['new_cifnif'];
+        if ($newCliente !== '') {
+            $cliente->nombre = $cliente->razonsocial = $newCliente;
+            $cliente->cifnif = $newCifnif;
             if ($cliente->save()) {
-                $this->model->codcliente = $cliente->codcliente;
-                $this->model->nombrecliente = $cliente->razonsocial;
-                $this->model->cifnif = $cliente->cifnif;
-                return 'OK';
+                return $this->setCustomer($cliente->codcliente);
             }
         }
 
         return 'ERROR: NO CUSTOMER';
     }
 
-    private function setSupplier($data)
+    private function setSupplier($codproveedor, $newProveedor = '', $newCifnif = '')
     {
+        if ($this->model->codproveedor === $codproveedor && !empty($this->model->codproveedor)) {
+            return 'OK';
+        }
+
         $proveedor = new Proveedor();
-        if ($proveedor->loadFromCode($this->model->codproveedor)) {
+        if ($proveedor->loadFromCode($codproveedor)) {
+            $this->model->codproveedor = $proveedor->codproveedor;
             $this->model->nombre = $proveedor->razonsocial;
             $this->model->cifnif = $proveedor->cifnif;
             return 'OK';
         }
 
-        if ($data['new_proveedor'] !== '') {
-            $proveedor->nombre = $proveedor->razonsocial = $data['new_proveedor'];
-            $proveedor->cifnif = $data['new_cifnif'];
+        if ($newProveedor !== '') {
+            $proveedor->nombre = $proveedor->razonsocial = $newProveedor;
+            $proveedor->cifnif = $newCifnif;
             if ($proveedor->save()) {
-                $this->model->codproveedor = $proveedor->codproveedor;
-                $this->model->nombre = $proveedor->razonsocial;
-                $this->model->cifnif = $proveedor->cifnif;
-                return 'OK';
+                return $this->setSupplier($proveedor->codproveedor);
             }
         }
 
