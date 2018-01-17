@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 use Exception;
+use ZipArchive;
 
 /**
  * FacturaScripts plugins manager.
@@ -393,4 +394,102 @@ class PluginManager
 
         return $result;
     }
+    
+
+    /**
+     * Check the zip file integrity
+     *
+     * @param string $filePath
+     *
+     * @return int|true
+     */
+    public function checkZipfile($filePath)
+    {
+        $zipFile = new ZipArchive();
+        $zip_status = $zipFile->open($filePath, ZipArchive::CHECKCONS);
+        if ($zip_status !== true) {
+            return $zip_status;
+        }
+        $zipFile->close();
+        return true;
+    }
+    
+    /**
+     * Unzip the file path to destiny folder.
+     *
+     * @param string $filePath
+     *
+     * @return int|false|string
+     */
+    public function unzipFile($filePath)
+    {
+        $zipFile = new ZipArchive();
+        $result = $zipFile->open($filePath, ZipArchive::CHECKCONS);
+        if ($result === true) {
+            $pathINI = $zipFile->getNameIndex($zipFile->locateName('facturascripts.ini', ZipArchive::FL_NOCASE | ZipArchive::FL_NODIR));
+            $folderPluginZip = explode('/', $pathINI);
+            $pluginName = $this->getValuePluginINI($filePath, 'name');
+            if ($pluginName && $folderPluginZip[0] !== 'facturascripts.ini') {
+                // Removing previous version
+                if (is_dir($this->pluginPath . $pluginName)) {
+                    $this->delTree($this->pluginPath . $pluginName);
+                }
+                // Extract new version
+                $zipFile->extractTo($this->pluginPath);
+                $zipFile->close();
+                // Rename folder Plugin
+                if ($folderPluginZip[0] !== $pluginName) {
+                    rename($this->pluginPath . $folderPluginZip[0], $this->pluginPath . $pluginName);
+                }
+                return $pluginName;
+            }
+            return false;
+        }
+        return $result;
+    }
+    
+    /**
+     * Return specified value´s name  of the ini file of the plugin
+     *
+     * @param string $pluginUnzipped
+     * @param string $valueName
+     *
+     * @return string|false
+     */
+    public function getValuePluginINI($pluginUnzipped, $valueName)
+    {
+        $zipFile = new ZipArchive();
+        $result = $zipFile->open($pluginUnzipped, ZipArchive::CHECKCONS);
+        if ($result === true) {
+            $fsIni = $zipFile->getFromIndex($zipFile->locateName('facturascripts.ini', ZipArchive::FL_NOCASE | ZipArchive::FL_NODIR));
+            $zipFile->close();
+            if ($fsIni) {
+                $fsIniContent = parse_ini_string($fsIni);
+                if (!$fsIniContent || !array_key_exists($valueName, $fsIniContent)) {
+                    return false;
+                }
+                return $fsIniContent[$valueName];
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Recursive delete directory.
+     *
+     * @param string $dir
+     *
+     * @return bool
+     */
+    public function delTree($dir)
+    {
+        $files = [];
+        if (is_dir($dir)) {
+            $files = array_diff(scandir($dir, SCANDIR_SORT_ASCENDING), ['.', '..']);
+        }
+        foreach ($files as $file) {
+            is_dir($dir . '/' . $file) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
+        }
+        return is_dir($dir) ? rmdir($dir) : unlink($dir);
+    }    
 }
