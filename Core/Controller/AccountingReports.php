@@ -154,7 +154,7 @@ class AccountingReports extends Controller
     {
         $headers = empty($data) ? [] : array_keys($data[0]);
 
-        $this->exportManager->newDoc($this->response, $format);
+        $this->exportManager->newDoc($format);
         $this->exportManager->generateTablePage($headers, $data);
         $this->exportManager->show($this->response);
     }
