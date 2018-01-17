@@ -72,7 +72,10 @@ class BalanceSheet extends AccountingBase
         if (empty($data)) {
             return [];
         }
-        return $balanceSheet->calcSheetBalance($data);
+
+        /// every page is a table
+        $pages = [$this->calcSheetBalance($data)];
+        return $pages;
     }
 
     /**

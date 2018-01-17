@@ -68,7 +68,9 @@ class BalanceAmmounts extends AccountingBase
             $balance[] = $this->processLine($line);
         }
 
-        return $balance;
+        /// every page is a table
+        $pages = [$balance];
+        return $pages;
     }
 
     /**
