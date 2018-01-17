@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
@@ -33,7 +34,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AccountingReports extends Controller
 {
-
     /**
      * List of exercices.
      *
@@ -51,8 +51,8 @@ class AccountingReports extends Controller
     /**
      * Runs the controller's private logic.
      *
-     * @param Response $response
-     * @param User $user
+     * @param Response              $response
+     * @param User                  $user
      * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -106,9 +106,10 @@ class AccountingReports extends Controller
 
         if (empty($data)) {
             $this->miniLog->info($this->i18n->trans('no-data'));
+
             return;
         }
-        
+
         $this->setTemplate(false);
         $this->exportData($data, $format);
     }
@@ -124,7 +125,7 @@ class AccountingReports extends Controller
             'libro-mayor' => 'ledger',
             'sumas-saldos' => 'balance-ammounts',
             'situacion' => 'balance-sheet',
-            'pyg' => 'profit-and-loss-balance'
+            'pyg' => 'profit-and-loss-balance',
         ];
     }
 
@@ -146,7 +147,7 @@ class AccountingReports extends Controller
     /**
      * Exports data to PDF.
      *
-     * @param array $data
+     * @param array  $data
      * @param string $format
      */
     private function exportData(&$data, $format)

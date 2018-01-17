@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -37,7 +38,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class ArticuloCombinacion
 {
-
     use Base\ModelTrait;
 
     /**
@@ -49,7 +49,7 @@ class ArticuloCombinacion
 
     /**
      * Identifier of the combination.
-     * Note that the combination is the sum of all attribute-value pairs.
+          * Note that the combination is the sum of all attribute-value pairs.
      *
      * @var string
      */
@@ -57,7 +57,7 @@ class ArticuloCombinacion
 
     /**
      * Second identifier for the combination, to facilitate synchronization
-     * with woocommerce or prestashop.
+          * with woocommerce or prestashop.
      *
      * @var string
      */
@@ -141,7 +141,7 @@ class ArticuloCombinacion
 
     /**
      * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
+          * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
@@ -211,6 +211,7 @@ class ArticuloCombinacion
     {
         $where = [new DataBaseWhere('codigo', $cod)];
         $order = ['nombreatributo' => 'ASC'];
+
         return $this->all($where, $order);
     }
 }

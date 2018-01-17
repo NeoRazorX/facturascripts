@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Model\Base;
@@ -28,7 +29,6 @@ use FacturaScripts\Core\Model\PageOption;
  */
 abstract class DocumentController extends PanelController
 {
-
     /**
      * Header of document.
      *
@@ -38,7 +38,7 @@ abstract class DocumentController extends PanelController
 
     /**
      * Line columns from xmlview.
-     * 
+     *
      * @var array
      */
     private $lineOptions;
@@ -52,11 +52,11 @@ abstract class DocumentController extends PanelController
 
     /**
      * Constructor.
-     * 
-     * @param Cache $cache
+     *
+     * @param Cache      $cache
      * @param Translator $i18n
-     * @param MiniLog $miniLog
-     * @param string $className
+     * @param MiniLog    $miniLog
+     * @param string     $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
@@ -98,7 +98,7 @@ abstract class DocumentController extends PanelController
      * Run the actions that alter data before reading it.
      *
      * @param BaseView $view
-     * @param string $action
+     * @param string   $action
      *
      * @return bool
      */
@@ -109,6 +109,7 @@ abstract class DocumentController extends PanelController
                 $this->document->clear();
                 $this->lines = [];
                 $this->miniLog->notice($this->i18n->trans('record-deleted-correctly'));
+
                 return true;
             }
 
@@ -124,7 +125,7 @@ abstract class DocumentController extends PanelController
     /**
      * Load view data procedure
      *
-     * @param string $keyView
+     * @param string   $keyView
      * @param BaseView $view
      */
     protected function loadData($keyView, $view)
@@ -136,7 +137,7 @@ abstract class DocumentController extends PanelController
      * Run the controller after actions
      *
      * @param EditView $view
-     * @param string $action
+     * @param string   $action
      */
     protected function execAfterAction($view, $action)
     {
@@ -166,7 +167,7 @@ abstract class DocumentController extends PanelController
 
     /**
      * Return the name of the xml file with the column configuration por lines.
-     * 
+     *
      * @return string
      */
     protected function getLineXMLView()
@@ -184,11 +185,11 @@ abstract class DocumentController extends PanelController
         $data = [
             'headers' => [],
             'columns' => [],
-            'rows' => []
+            'rows' => [],
         ];
 
         $moneyFormat = '0.';
-        for ($num = 0; $num < FS_NF0; $num++) {
+        for ($num = 0; $num < FS_NF0; ++$num) {
             $moneyFormat .= '0';
         }
 
@@ -219,14 +220,14 @@ abstract class DocumentController extends PanelController
 
     /**
      * Returns an array of links to the view.
-     * 
+     *
      * @return array
      */
     public function getBreadcrumb()
     {
         $items = [
             ['title' => $this->empresa->nombre, 'url' => '#'],
-            ['title' => $this->document->codalmacen, 'url' => '#']
+            ['title' => $this->document->codalmacen, 'url' => '#'],
         ];
 
         if (isset($this->document->codcliente)) {
@@ -238,6 +239,7 @@ abstract class DocumentController extends PanelController
         $items[] = ['title' => $this->document->codserie, 'url' => '#'];
         $items[] = ['title' => $this->document->fecha, 'url' => '#'];
         $items[] = ['title' => $this->document->hora, 'url' => '#'];
+
         return $items;
     }
 
@@ -279,7 +281,7 @@ abstract class DocumentController extends PanelController
                 $newDocLine->pvptotal = $newDocLine->pvpsindto * (100 - $newDocLine->dtopor) / 100;
 
                 if (!$newDocLine->save()) {
-                    $result = "ERROR ON NEW LINE";
+                    $result = 'ERROR ON NEW LINE';
                 }
             }
         }
@@ -295,10 +297,10 @@ abstract class DocumentController extends PanelController
 
     /**
      * Updates oldLine with newLine data.
-     * 
+     *
      * @param mixed $oldLine
      * @param array $newLine
-     * 
+     *
      * @return bool
      */
     protected function updateLine($oldLine, $newLine)
@@ -316,9 +318,9 @@ abstract class DocumentController extends PanelController
     /**
      * Process form lines to assign column keys instead of numbers.
      * Also adds order column.
-     * 
+     *
      * @param array $formLines
-     * 
+     *
      * @return array
      */
     protected function processFormLines($formLines)
@@ -336,7 +338,7 @@ abstract class DocumentController extends PanelController
                 $line[$columns[$key]] = $value;
             }
             $newLines[] = $line;
-            $order--;
+            --$order;
         }
 
         return $newLines;

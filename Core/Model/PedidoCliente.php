@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -26,7 +27,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class PedidoCliente
 {
-
     use Base\DocumentoVenta;
 
     /**
@@ -45,9 +45,9 @@ class PedidoCliente
 
     /**
      * Order status:
-     * 0 -> pending. (editable)
-     * 1 -> approved. (there is an idalbaran and it is not editable)
-     * 2 -> rejected. (there is no idalbaran and it is not editable)
+          * 0 -> pending. (editable)
+          * 1 -> approved. (there is an idalbaran and it is not editable)
+          * 2 -> rejected. (there is no idalbaran and it is not editable)
      *
      * @var integer
      */
@@ -105,7 +105,7 @@ class PedidoCliente
     {
         new Serie();
         new Ejercicio();
-        
+
         return '';
     }
 
@@ -129,6 +129,7 @@ class PedidoCliente
     public function getLineas()
     {
         $lineaModel = new LineaPedidoCliente();
+
         return $lineaModel->all([new DataBaseWhere('idpedido', $this->idpedido)]);
     }
 
@@ -180,7 +181,7 @@ class PedidoCliente
 
     /**
      * Remove the order from the database.
-     * Returns False in case of failure.
+          * Returns False in case of failure.
      *
      * @return boolean
      */

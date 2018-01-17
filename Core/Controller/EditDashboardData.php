@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
@@ -30,12 +31,11 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class EditDashboardData extends ExtendedController\EditController
 {
-    
     /**
      * Runs the controller's private logic.
      *
-     * @param Response $response
-     * @param User $user
+     * @param Response                   $response
+     * @param User                       $user
      * @param Base\ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -106,6 +106,7 @@ class EditDashboardData extends ExtendedController\EditController
                 unset($model->properties[$key]);
             }
         }
+
         return parent::editAction();
     }
 
@@ -136,8 +137,9 @@ class EditDashboardData extends ExtendedController\EditController
     /**
      * Returns the configuration property value for a specified $field
      *
-     * @param mixed $model
+     * @param mixed  $model
      * @param string $field
+     *
      * @return mixed
      */
     public function getFieldValue($model, $field)

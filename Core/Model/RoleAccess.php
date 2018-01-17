@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,7 +30,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class RoleAccess
 {
-
     use Base\ModelTrait;
 
     /**
@@ -92,12 +92,13 @@ class RoleAccess
      *
      * @param string $codrol
      * @param Page[] $pages
+     *
      * @return bool
      */
     public static function addPagesToRole($codrol, $pages)
     {
         $where = [new DataBaseWhere('codrol', $codrol)];
-        $roleAccess = new RoleAccess();
+        $roleAccess = new self();
 
         foreach ($pages as $record) {
             $where[] = new DataBaseWhere('pagename', $record->name);
@@ -113,6 +114,7 @@ class RoleAccess
             }
             unset($where[1]);
         }
+
         return true;
     }
 }

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Accounting;
 
 /**
@@ -26,13 +27,12 @@ namespace FacturaScripts\Core\Lib\Accounting;
  */
 class Ledger extends AccountingBase
 {
-
     /**
      * Generate the ledger between two dates.
-     * 
+     *
      * @param string $dateFrom
      * @param string $dateTo
-     * 
+     *
      * @return array
      */
     public function generate($dateFrom, $dateTo)
@@ -55,7 +55,7 @@ class Ledger extends AccountingBase
 
     /**
      * Return the appropiate data from database.
-     * 
+     *
      * @return array
      */
     protected function getData()
@@ -71,9 +71,9 @@ class Ledger extends AccountingBase
 
     /**
      * Process the line data to use the appropiate formats.
-     * 
+     *
      * @param array $line
-     * 
+     *
      * @return array
      */
     protected function processLine($line)

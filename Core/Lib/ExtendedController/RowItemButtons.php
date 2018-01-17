@@ -28,6 +28,7 @@ class RowItemButtons extends RowItem
 {
     /**
      * Buttons list.
+     *
      * @var array
      */
     public $buttons;

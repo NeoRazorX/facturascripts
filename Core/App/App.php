@@ -32,9 +32,9 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class App
 {
-
     /**
      * Stored defaut configuration with the default application settings.
+     *
      * @var AppSettings
      */
     protected $appSettings;
@@ -140,6 +140,7 @@ abstract class App
     {
         if ($this->dataBase->connect()) {
             $this->settings->load();
+
             return true;
         }
 

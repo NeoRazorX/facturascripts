@@ -25,7 +25,7 @@ use FacturaScripts\Core\Model\Almacen;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers Almacen
+ * @covers \Almacen
  */
 final class AlmacenTest extends TestCase
 {
@@ -34,7 +34,7 @@ final class AlmacenTest extends TestCase
         $model = new Almacen();
 
         $this->assertInstanceOf(Almacen::class, $model);
-        $this->assertEquals(null, $model->codalmacen);
+        $this->assertNull($model->codalmacen);
         $this->assertEquals('', $model->nombre);
         $this->assertEquals('', $model->contacto);
         $this->assertEquals('', $model->observaciones);

@@ -29,7 +29,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class ListSubcuenta extends ExtendedController\ListController
 {
-
     /**
      * Returns basic page attributes
      *

@@ -28,7 +28,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditProvincia extends ExtendedController\EditController
 {
-
     /**
      * Returns the model name
      */

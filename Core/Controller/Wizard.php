@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -29,7 +30,6 @@ use FacturaScripts\Core\Model;
  */
 class Wizard extends Controller
 {
-
     public function getPageData()
     {
         $pageData = parent::getPageData();
@@ -95,9 +95,9 @@ class Wizard extends Controller
     }
 
     /**
-     * 
+     *
      * @param AppSettings $appSettings
-     * @param string $codpais
+     * @param string      $codpais
      */
     private function saveAddress(&$appSettings, $codpais)
     {

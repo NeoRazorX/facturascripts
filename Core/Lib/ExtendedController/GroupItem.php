@@ -44,12 +44,14 @@ class GroupItem extends VisualItem implements VisualItemInterface
      * Create and load the group structure from a XML file
      *
      * @param \SimpleXMLElement $group
+     *
      * @return GroupItem
      */
     public static function newFromXML($group)
     {
-        $result = new GroupItem();
+        $result = new self();
         $result->loadFromXML($group);
+
         return $result;
     }
 
@@ -62,8 +64,9 @@ class GroupItem extends VisualItem implements VisualItemInterface
      */
     public static function newFromJSON($group)
     {
-        $result = new GroupItem();
+        $result = new self();
         $result->loadFromJSON($group);
+
         return $result;
     }
 

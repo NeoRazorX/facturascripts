@@ -97,17 +97,17 @@ class MenuManager
      * Returns if the page should be saved.
      *
      * @param Model\Page $pageModel
-     * @param array $pageData
+     * @param array      $pageData
      *
      * @return bool
      */
     private function pageNeedSave($pageModel, $pageData)
     {
-        return (
+        return
             ($pageModel->menu !== $pageData['menu']) || ($pageModel->submenu !== $pageData['submenu']) ||
             ($pageModel->title !== $pageData['title']) || ($pageModel->icon !== $pageData['icon']) ||
             ($pageModel->showonmenu !== $pageData['showonmenu'])
-        );
+        ;
     }
 
     /**

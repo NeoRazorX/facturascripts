@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Dashboard;
 
 use FacturaScripts\Core\Model;
@@ -43,7 +44,7 @@ class InfoStateComponent extends BaseComponent implements ComponentInterface
      * InfoStateComponent constructor.
      *
      * @param Model\DashboardData $data
-     * @param string $userNick
+     * @param string              $userNick
      */
     public function __construct($data, $userNick)
     {
@@ -63,7 +64,7 @@ class InfoStateComponent extends BaseComponent implements ComponentInterface
             'group' => '',
             'model' => '',
             'icon' => '',
-            'values' => []
+            'values' => [],
         ];
     }
 
@@ -90,7 +91,7 @@ class InfoStateComponent extends BaseComponent implements ComponentInterface
             $this->group[$data->properties['group']] = [
                 'icon' => $data->properties['icon'],
                 'value' => $totalModel->totals['total'],
-                'url' => $modelInfo['url']
+                'url' => $modelInfo['url'],
             ];
 
             $this->addDetail($data->properties['group'], $data->properties['values'], $totalModel);
@@ -112,6 +113,7 @@ class InfoStateComponent extends BaseComponent implements ComponentInterface
     {
         $model = self::DIR_MODEL . $modelName;
         $modelObj = new $model();
+
         return ['table' => $modelObj->tableName(), 'url' => $modelObj->url('list')];
     }
 
@@ -122,6 +124,7 @@ class InfoStateComponent extends BaseComponent implements ComponentInterface
             $name = str_replace('-', '', $value['name']);
             $fields[$name] = $value['sql'];
         }
+
         return Model\TotalModel::all($table, [], $fields)[0];
     }
 
@@ -139,7 +142,7 @@ class InfoStateComponent extends BaseComponent implements ComponentInterface
             'group' => $data['group'],
             'model' => $data['model'],
             'icon' => $data['icon'],
-            'values' => $data['values']
+            'values' => $data['values'],
         ];
 
         $newItem->save();

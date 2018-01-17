@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -27,7 +28,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class Cliente extends Base\Persona
 {
-
     use Base\ModelTrait {
         __construct as private traitConstruct;
         clear as private traitClear;
@@ -49,7 +49,7 @@ class Cliente extends Base\Persona
 
     /**
      * Preferred payment days when calculating the due date of invoices.
-     * Days separated by commas: 1,15,31
+          * Days separated by commas: 1,15,31
      *
      * @var string
      */
@@ -86,14 +86,14 @@ class Cliente extends Base\Persona
         return 'codcliente';
     }
 
-    public function primaryDescriptionColumn() 
+    public function primaryDescriptionColumn()
     {
         return 'nombre';
     }
 
     /**
      * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
+          * that will be executed after the creation of the table. Useful to insert values
      * default.
      */
     public function install()
@@ -118,8 +118,8 @@ class Cliente extends Base\Persona
 
     /**
      * Returns the first client that has $ cifnif as cifnif.
-     * If the cifnif is blank and a company name is provided,
-     * the first client with that company name is returned.
+          * If the cifnif is blank and a company name is provided,
+          * the first client with that company name is returned.
      *
      * @param string $cifnif
      * @param string $razon
@@ -159,7 +159,7 @@ class Cliente extends Base\Persona
 
     /**
      * Returns an array with all the subaccounts associated with the client.
-     * One for each exercise.
+          * One for each exercise.
      *
      * @return Subcuenta[]
      */
@@ -179,7 +179,7 @@ class Cliente extends Base\Persona
 
     /**
      * Returns the sub-account associated with the client for the year $ axis.
-     * If it does not exist, try to create it. If it fails, it returns False.
+          * If it does not exist, try to create it. If it fails, it returns False.
      *
      * @param string $codejercicio
      *
@@ -287,7 +287,7 @@ class Cliente extends Base\Persona
 
     /**
      * Returns an array with combinations containing $query in its name
-     * or reason or code or cifnif or telefono1 or telefono2 or observations.
+          * or reason or code or cifnif or telefono1 or telefono2 or observations.
      *
      * @param string $query
      * @param int    $offset

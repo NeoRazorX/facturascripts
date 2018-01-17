@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Accounting;
 
 /**
@@ -27,7 +28,6 @@ namespace FacturaScripts\Core\Lib\Accounting;
  */
 class BalanceSheet extends AccountingBase
 {
-
     /**
      *
      * @var string
@@ -41,10 +41,10 @@ class BalanceSheet extends AccountingBase
     protected $dateToPrev;
 
     /**
-     * 
+     *
      * @param string $dateFrom
      * @param string $dateTo
-     * 
+     *
      * @return array
      */
     public function generate($dateFrom, $dateTo)
@@ -64,9 +64,9 @@ class BalanceSheet extends AccountingBase
 
     /**
      * Format de balance including then chapters
-     * 
+     *
      * @param array $data
-     * 
+     *
      * @return array
      */
     private function calcSheetBalance($data)
@@ -96,7 +96,7 @@ class BalanceSheet extends AccountingBase
 
     /**
      * Obtains the balances for each one of the sections of the balance sheet according to their assigned accounts.
-     * 
+     *
      * @return array
      */
     protected function getData()
@@ -121,9 +121,9 @@ class BalanceSheet extends AccountingBase
     }
 
     /**
-     * 
-     * @param array $linea
-     * @param array $balance
+     *
+     * @param array  $linea
+     * @param array  $balance
      * @param string $description
      */
     protected function processDescription(&$linea, &$balance, $description)
@@ -137,7 +137,7 @@ class BalanceSheet extends AccountingBase
             $balance[$index] = [
                 'descripcion' => $index,
                 'saldo' => $linea['saldo'],
-                'saldoprev' => $linea['saldoprev']];
+                'saldoprev' => $linea['saldoprev'], ];
         } else {
             $balance[$index]['saldo'] += $linea['saldo'];
             $balance[$index]['saldoprev'] += $linea['saldoprev'];
@@ -146,9 +146,9 @@ class BalanceSheet extends AccountingBase
 
     /**
      * Process the line data to use the appropiate formats.
-     * 
+     *
      * @param array $line
-     * 
+     *
      * @return array
      */
     protected function processLine($line)

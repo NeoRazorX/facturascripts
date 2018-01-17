@@ -29,7 +29,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class ListAlbaranCliente extends ExtendedController\ListController
 {
-
     /**
      * Load views
      */

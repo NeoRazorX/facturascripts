@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 define('FS_COOKIES_EXPIRE', 604800);
 define('FS_DEBUG', true);
 define('FS_LANG', 'es_ES');

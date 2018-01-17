@@ -32,7 +32,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditAsiento extends ExtendedController\PanelController
 {
-
     /**
      * Load views
      */
@@ -46,7 +45,7 @@ class EditAsiento extends ExtendedController\PanelController
     /**
      * Load data view procedure
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)

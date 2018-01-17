@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -37,7 +38,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class DocumentReports extends Controller
 {
-
     /**
      * Data for table.
      *
@@ -67,10 +67,10 @@ class DocumentReports extends Controller
     /**
      * Initializes all the objects and properties
      *
-     * @param Cache $cache
+     * @param Cache      $cache
      * @param Translator $i18n
-     * @param MiniLog $miniLog
-     * @param string $className
+     * @param MiniLog    $miniLog
+     * @param string     $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
@@ -87,15 +87,15 @@ class DocumentReports extends Controller
             'employee' => new DocumentReportsBase\DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\Agente', '', 'fa-users'),
             'serie' => new DocumentReportsBase\DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\Serie', AppSettings::get('default', 'codserie')),
             'currency' => new DocumentReportsBase\DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\Divisa', AppSettings::get('default', 'coddivisa')),
-            'payment-method' => new DocumentReportsBase\DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\FormaPago')
+            'payment-method' => new DocumentReportsBase\DocumentReportsFilterList('\FacturaScripts\Dinamic\Model\FormaPago'),
         ];
     }
 
     /**
      * Runs the controller's private logic.
      *
-     * @param Response $response
-     * @param Model\User $user
+     * @param Response              $response
+     * @param Model\User            $user
      * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -113,7 +113,7 @@ class DocumentReports extends Controller
     /**
      * Set values selected by the user to source.
      *
-     * @param int $index
+     * @param int                                   $index
      * @param DocumentReports\DocumentReportsSource $source
      */
     private function setDefaultToSource($index, &$source)
@@ -159,6 +159,7 @@ class DocumentReports extends Controller
             $step = '+1 year';
             $format = 'Y';
             $this->grouped = 'yearly';
+
             return;
         }
 
@@ -166,6 +167,7 @@ class DocumentReports extends Controller
             $step = '+1 month';
             $format = 'm-Y';
             $this->grouped = 'monthly';
+
             return;
         }
     }
@@ -196,13 +198,13 @@ class DocumentReports extends Controller
             case in_array('Y', $options):
                 $concat[] = 'CAST(EXTRACT(YEAR FROM fecha) AS CHAR(10))';
         }
-        
+
         if(strtolower(FS_DB_TYPE) === 'mysql') {
-            return 'CONCAT(' . join(', ', $concat) . ')';
+            return 'CONCAT(' . implode(', ', $concat) . ')';
         }
 
         /// PostgreSQL
-        return join(' || ', $concat);
+        return implode(' || ', $concat);
     }
 
     /**
@@ -216,7 +218,7 @@ class DocumentReports extends Controller
     {
         $where = [
             new DataBase\DataBaseWhere('fecha', $source->dateFrom->format('d-m-Y'), '>='),
-            new DataBase\DataBaseWhere('fecha', $source->dateTo->format('d-m-Y'), '<=')
+            new DataBase\DataBaseWhere('fecha', $source->dateTo->format('d-m-Y'), '<='),
         ];
 
         foreach ($this->filters as $filter) {
@@ -230,8 +232,8 @@ class DocumentReports extends Controller
      * Populate the result with the parameters.
      *
      * @param DocumentReportsBase\DocumentReportsSource $source
-     * @param string $step
-     * @param string $format
+     * @param string                                    $step
+     * @param string                                    $format
      *
      * @return array
      */
@@ -305,7 +307,7 @@ class DocumentReports extends Controller
             'customer-invoices' => $this->i18n->trans('customer-invoices'),
             'supplier-orders' => $this->i18n->trans('supplier-orders'),
             'supplier-delivery-notes' => $this->i18n->trans('supplier-delivery-notes'),
-            'supplier-invoices' => $this->i18n->trans('supplier-invoices')
+            'supplier-invoices' => $this->i18n->trans('supplier-invoices'),
         ];
     }
 }

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
 use DebugBar\Bridge\Twig;
@@ -39,7 +40,6 @@ use Twig_Loader_Filesystem;
  */
 class AppController extends App
 {
-
     /**
      * Controller loaded
      *
@@ -63,7 +63,7 @@ class AppController extends App
 
     /**
      * Langcode to use in html.
-     * 
+     *
      * @var string
      */
     private $langcode2;
@@ -136,7 +136,7 @@ class AppController extends App
     /**
      * Load and process the $pageName controller.
      *
-     * @param string $pageName
+     * @param string     $pageName
      * @param User|false $user
      */
     private function loadController($pageName, $user)
@@ -209,7 +209,7 @@ class AppController extends App
      * Creates HTML with the selected template. The data will not be inserted in it
      * until render() is executed
      *
-     * @param string $template html file to use
+     * @param string $template       html file to use
      * @param string $controllerName
      */
     private function renderHtml($template, $controllerName = '')
@@ -262,7 +262,7 @@ class AppController extends App
 
     /**
      * Returns a TwigLoader object with the folders selecteds
-     * 
+     *
      * @return Twig_Loader_Filesystem
      */
     private function loadTwigFolders()
@@ -312,16 +312,19 @@ class AppController extends App
                     $this->response->headers->setCookie(new Cookie('fsLang', $user->langcode, $expire));
                     $this->response->headers->setCookie(new Cookie('fsCompany', $user->idempresa, $expire));
                     $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $nick]));
+
                     return $user;
                 }
 
                 $this->ipFilter->setAttempt($this->request->getClientIp());
                 $this->miniLog->alert($this->i18n->trans('login-password-fail'));
+
                 return false;
             }
 
             $this->ipFilter->setAttempt($this->request->getClientIp());
             $this->miniLog->alert($this->i18n->trans('login-user-not-found'));
+
             return false;
         }
 
@@ -343,11 +346,13 @@ class AppController extends App
             if ($cookieUser) {
                 if ($cookieUser->verifyLogkey($this->request->cookies->get('fsLogkey'))) {
                     $this->miniLog->debug($this->i18n->trans('login-ok', ['%nick%' => $cookieNick]));
+
                     return $cookieUser;
                 }
 
                 $this->miniLog->alert($this->i18n->trans('login-cookie-fail'));
                 $this->response->headers->clearCookie('fsNick');
+
                 return false;
             }
 
