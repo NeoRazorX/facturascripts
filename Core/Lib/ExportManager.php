@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -82,15 +82,14 @@ class ExportManager
     /**
      * Create a new doc and set headers.
      *
-     * @param Response $response
      * @param string   $option
      */
-    public function newDoc(&$response, $option)
+    public function newDoc($option)
     {
         /// llamar a la clase apropiada para generar el archivo en función de la opción elegida
         $className = $this->getExportClassName($option);
         self::$engine = new $className();
-        self::$engine->newDoc($response);
+        self::$engine->newDoc();
     }
 
     /**
@@ -100,7 +99,7 @@ class ExportManager
      */
     public function show(&$response)
     {
-        $response->setContent(self::$engine->getDoc());
+        self::$engine->show($response);
     }
 
     /**

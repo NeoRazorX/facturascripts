@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -87,13 +87,22 @@ class PDFExport implements ExportInterface
     }
 
     /**
-     * Set headers.
+     * Blank document.
+     */
+    public function newDoc()
+    {
+        ;
+    }
+    
+    /**
+     * Set headers and output document content to response.
      *
      * @param Response $response
      */
-    public function newDoc(&$response)
+    public function show(&$response)
     {
         $response->headers->set('Content-type', 'application/pdf');
+        $response->setContent($this->getDoc());
     }
 
     /**
