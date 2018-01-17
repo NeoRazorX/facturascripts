@@ -19,3 +19,8 @@ package-lock.json
 *.cache
 *.lock
 .vscode
+
+# Eclipse config files
+.project
+.settings
+.buildpath
