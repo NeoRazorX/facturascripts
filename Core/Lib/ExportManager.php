@@ -53,7 +53,7 @@ class ExportManager
                 'PDF' => ['description' => 'print', 'icon' => 'fa-print'],
                 'XLS' => ['description' => 'spreadsheet-xls', 'icon' => 'fa-file-excel-o'],
                 'CSV' => ['description' => 'structured-data-csv', 'icon' => 'fa-file-archive-o'],
-                'Email' => ['description' => 'send-via-email', 'icon' => 'fa-envelope-o'],
+                'EMAIL' => ['description' => 'send-via-email', 'icon' => 'fa-envelope-o'],
             ];
         }
     }
@@ -83,6 +83,7 @@ class ExportManager
     /**
      * Create a new doc and set headers.
      *
+     * @param Response $response
      * @param string   $option
      */
     public function newDoc($option)
