@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -31,7 +32,6 @@ use FacturaScripts\Core\Lib;
  */
 class EditCliente extends ExtendedController\PanelController
 {
-
     /**
      * Create and configure main view
      */
@@ -63,7 +63,7 @@ class EditCliente extends ExtendedController\PanelController
         $this->addListView('\FacturaScripts\Dinamic\Model\AlbaranCliente', 'ListAlbaranCliente', 'delivery-notes', 'fa-files-o');
         $this->addListView('\FacturaScripts\Dinamic\Model\PedidoCliente', 'ListPedidoCliente', 'orders', 'fa-files-o');
         $this->addListView('\FacturaScripts\Dinamic\Model\PresupuestoCliente', 'ListPresupuestoCliente', 'estimations', 'fa-files-o');
-        
+
         /// Disable columns
         $this->views['ListFacturaCliente']->disableColumn('customer', true);
         $this->views['ListAlbaranCliente']->disableColumn('customer', true);
@@ -74,7 +74,7 @@ class EditCliente extends ExtendedController\PanelController
     /**
      * Load view data procedure
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)
@@ -92,7 +92,7 @@ class EditCliente extends ExtendedController\PanelController
                     $view->loadData(false, $where);
                 }
                 break;
-                
+
             case 'EditDireccionCliente':
             case 'EditCuentaBancoCliente':
             case 'EditSubcuentaCliente':
@@ -137,6 +137,7 @@ class EditCliente extends ExtendedController\PanelController
         $where[] = new DataBaseWhere('ptefactura', true);
 
         $totalModel = Model\TotalModel::all('albaranescli', $where, ['total' => 'SUM(total)'], '')[0];
+
         return $this->divisaTools->format($totalModel->totals['total'], 2);
     }
 
@@ -154,6 +155,7 @@ class EditCliente extends ExtendedController\PanelController
         $where[] = new DataBaseWhere('estado', 'Pagado', '<>');
 
         $totalModel = Model\TotalModel::all('reciboscli', $where, ['total' => 'SUM(importe)'], '')[0];
+
         return $this->divisaTools->format($totalModel->totals['total'], 2);
     }
 }

@@ -15,56 +15,64 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
  * ApiKey model to manage the connection tokens through the api
  * that will be generated to synchronize different applications.
+ *
  * @author Joe Nilson <joenilson at gmail.com>
  */
 class ApiKey
 {
-
     use Base\ModelTrait;
 
     /**
      * Primary key. Id autoincremental
+     *
      * @var int
      */
     public $id;
 
     /**
      * API key.
+     *
      * @var string
      */
     public $apikey;
 
     /**
      * Description.
+     *
      * @var string
      */
     public $descripcion;
 
     /**
      * Enabled/Disabled.
+     *
      * @var bool
      */
     public $enabled;
 
     /**
      * Date of registration.
+     *
      * @var string
      */
     public $f_alta;
 
     /**
      * Discharge date.
+     *
      * @var string
      */
     public $f_baja;
 
     /**
      * Nick of the user.
+     *
      * @var string
      */
     public $nick;

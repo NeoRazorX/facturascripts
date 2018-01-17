@@ -30,7 +30,6 @@ use FacturaScripts\Core\Lib\Import\CSVImport;
  */
 class Almacen
 {
-
     use Base\ModelTrait;
     use Base\ContactInformation;
 
@@ -82,7 +81,7 @@ class Almacen
         return 'codalmacen';
     }
 
-    public function primaryDescriptionColumn() 
+    public function primaryDescriptionColumn()
     {
         return 'nombre';
     }

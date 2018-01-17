@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Lib\Import\CSVImport;
@@ -28,7 +29,6 @@ use FacturaScripts\Core\Lib\Import\CSVImport;
  */
 class Provincia
 {
-
     use Base\ModelTrait {
         url as private traitUrl;
     }
@@ -56,6 +56,7 @@ class Provincia
 
     /**
      * 'Normalized' code in Spain to identify the provinces.
+     *
      * @url: https://es.wikipedia.org/wiki/Provincia_de_España#Denominaci.C3.B3n_y_lista_de_las_provincias
      *
      * @var string
@@ -64,6 +65,7 @@ class Provincia
 
     /**
      * Postal code associated with the province.
+     *
      * @url: https://upload.wikimedia.org/wikipedia/commons/5/5c/2_digit_postcode_spain.png
      *
      * @var string
@@ -106,7 +108,7 @@ class Provincia
 
     /**
      * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
+          * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string

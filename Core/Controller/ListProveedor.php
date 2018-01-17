@@ -28,7 +28,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class ListProveedor extends ExtendedController\ListController
 {
-
     /**
      * Returns basic page attributes
      *

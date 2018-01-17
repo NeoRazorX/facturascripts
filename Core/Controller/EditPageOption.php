@@ -55,10 +55,10 @@ class EditPageOption extends Base\Controller
     /**
      * Initialize all objects and properties.
      *
-     * @param Cache $cache
+     * @param Cache      $cache
      * @param Translator $i18n
-     * @param MiniLog $miniLog
-     * @param string $className
+     * @param MiniLog    $miniLog
+     * @param string     $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
@@ -81,8 +81,8 @@ class EditPageOption extends Base\Controller
     /**
      * Runs the controller's private logic.
      *
-     * @param Response $response
-     * @param Model\User $user
+     * @param Response                   $response
+     * @param Model\User                 $user
      * @param Base\ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -109,7 +109,7 @@ class EditPageOption extends Base\Controller
             $this->model->nick = empty($this->selectedUser) ? null : $this->selectedUser;
         }
 
-        if ($this->model->nick === "") {
+        if ($this->model->nick === '') {
             $this->model->nick = null;
         }
     }
@@ -130,6 +130,7 @@ class EditPageOption extends Base\Controller
 
         if ($this->model->save()) {
             $this->miniLog->notice($this->i18n->trans('record-updated-correctly'));
+
             return;
         }
         $this->miniLog->alert($this->i18n->trans('data-save-error'));
@@ -188,6 +189,7 @@ class EditPageOption extends Base\Controller
                 $result[$codeModel->code] = $codeModel->description;
             }
         }
+
         return $result;
     }
 }

@@ -23,11 +23,10 @@ namespace FacturaScripts\Test\Core\Model;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\AlbaranCliente;
-use FacturaScripts\Dinamic\Model\LineaAlbaranCliente;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers AlbaranCliente
+ * @covers \AlbaranCliente
  */
 final class AlbaranClienteTest extends TestCase
 {
@@ -35,10 +34,10 @@ final class AlbaranClienteTest extends TestCase
     {
         $model = new AlbaranCliente();
         $this->assertInstanceOf(AlbaranCliente::class, $model);
-        $this->assertEquals(null, $model->apartado);
-        $this->assertEquals(null, $model->cifnif);
-        $this->assertEquals(null, $model->ciudad);
-        $this->assertEquals(null, $model->codagente);
+        $this->assertNull($model->apartado);
+        $this->assertNull($model->cifnif);
+        $this->assertNull($model->ciudad);
+        $this->assertNull($model->codagente);
         $this->assertEquals(AppSettings::get('default', 'codalmacen'), $model->codalmacen);
         $this->assertEquals(null, $model->codcliente);
         $this->assertEquals(null, $model->coddivisa);
@@ -125,6 +124,7 @@ final class AlbaranClienteTest extends TestCase
             $this->assertSame([], $list);
         }
     }
+
     /*
         public function testGetLineas()
         {

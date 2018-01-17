@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController;
@@ -28,7 +29,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditPresupuestoCliente extends ExtendedController\DocumentController
 {
-
     /**
      * Load views
      */
@@ -61,7 +61,7 @@ class EditPresupuestoCliente extends ExtendedController\DocumentController
     /**
      * Load data view procedure
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)

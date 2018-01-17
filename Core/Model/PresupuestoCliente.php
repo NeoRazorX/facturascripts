@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -26,7 +27,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class PresupuestoCliente
 {
-
     use Base\DocumentoVenta;
 
     /**
@@ -52,9 +52,9 @@ class PresupuestoCliente
 
     /**
      * Estimation status:
-     * 0 -> pending. (editable)
-     * 1 -> approved. (there is a code and it is not editable)
-     * 2 -> rejected. (there is no code and it is not editable)
+          * 0 -> pending. (editable)
+          * 1 -> approved. (there is a code and it is not editable)
+          * 2 -> rejected. (there is no code and it is not editable)
      *
      * @var integer
      */
@@ -96,7 +96,7 @@ class PresupuestoCliente
 
     /**
      * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
+          * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
@@ -105,7 +105,7 @@ class PresupuestoCliente
     {
         new Serie();
         new Ejercicio();
-        
+
         return '';
     }
 
@@ -140,6 +140,7 @@ class PresupuestoCliente
         $lineaModel = new LineaPresupuestoCliente();
         $where = [new DataBaseWhere('idpresupuesto', $this->idpresupuesto)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
+
         return $lineaModel->all($where, $order);
     }
 
@@ -208,7 +209,7 @@ class PresupuestoCliente
             . ' finoferta < ' . self::$dataBase->var2str(date('d-m-Y')) . ' AND idpedido IS NULL;');
 
         /// mark as rejected all non-editable estimations and without associated order
-        self::$dataBase->exec("UPDATE " . static::tableName() . " SET status = '2' WHERE idpedido IS NULL AND"
+        self::$dataBase->exec('UPDATE ' . static::tableName() . " SET status = '2' WHERE idpedido IS NULL AND"
             . ' editable = false;');
     }
 }

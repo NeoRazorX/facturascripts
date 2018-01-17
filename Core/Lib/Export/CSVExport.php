@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base;
@@ -29,7 +30,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CSVExport implements ExportInterface
 {
-
     use Base\Utils;
 
     const LIST_LIMIT = 1000;
@@ -130,8 +130,8 @@ class CSVExport implements ExportInterface
     /**
      * Adds a new page with the model data.
      *
-     * @param mixed $model
-     * @param array $columns
+     * @param mixed  $model
+     * @param array  $columns
      * @param string $title
      */
     public function generateModelPage($model, $columns, $title = '')
@@ -141,7 +141,7 @@ class CSVExport implements ExportInterface
             if (is_string($value)) {
                 $tableData[] = [
                     'key' => $this->delimiter . $key . $this->delimiter,
-                    'value' => $this->delimiter . $value . $this->delimiter
+                    'value' => $this->delimiter . $value . $this->delimiter,
                 ];
             }
         }
@@ -152,12 +152,12 @@ class CSVExport implements ExportInterface
     /**
      * Adds a new page with a table listing the models data.
      *
-     * @param mixed $model
+     * @param mixed                         $model
      * @param Base\DataBase\DataBaseWhere[] $where
-     * @param array $order
-     * @param int $offset
-     * @param array $columns
-     * @param string $title
+     * @param array                         $order
+     * @param int                           $offset
+     * @param array                         $columns
+     * @param string                        $title
      */
     public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '')
     {
@@ -198,7 +198,7 @@ class CSVExport implements ExportInterface
             if (is_string($value)) {
                 $tableData[] = [
                     'key' => $this->delimiter . $key . $this->delimiter,
-                    'value' => $this->delimiter . $value . $this->delimiter
+                    'value' => $this->delimiter . $value . $this->delimiter,
                 ];
             }
         }
@@ -208,7 +208,7 @@ class CSVExport implements ExportInterface
 
     /**
      * Adds a new page with the table.
-     * 
+     *
      * @param array $headers
      * @param array $rows
      */
@@ -216,13 +216,13 @@ class CSVExport implements ExportInterface
     {
         /// Generate the headers line
         $this->csv[] = \implode($this->separator, $headers);
-        
+
         /// Generate the data lines
         $body = [];
         foreach ($rows as $row) {
             $body[] = \implode($this->separator, $row);
         }
-        
+
         $this->csv[] = \implode(PHP_EOL, $body);
     }
 

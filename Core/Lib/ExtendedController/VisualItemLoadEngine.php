@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Model;
@@ -27,11 +28,10 @@ use FacturaScripts\Core\Model;
  */
 class VisualItemLoadEngine
 {
-
     /**
      * Load the column structure from the JSON
      *
-     * @param JSON $columns
+     * @param JSON  $columns
      * @param array $target
      */
     private static function getJSONGroupsColumns($columns, &$target)
@@ -47,9 +47,9 @@ class VisualItemLoadEngine
 
     /**
      *
-     * @param JSON $columns
-     * @param JSON $modals
-     * @param JSON $rows
+     * @param JSON             $columns
+     * @param JSON             $modals
+     * @param JSON             $rows
      * @param Model\PageOption $model
      */
     public static function loadJSON($columns, $modals, $rows, &$model)
@@ -70,7 +70,7 @@ class VisualItemLoadEngine
      * Load the column structure from the XML
      *
      * @param \SimpleXMLElement $columns
-     * @param array $target
+     * @param array             $target
      */
     private static function getXMLGroupsColumns($columns, &$target)
     {
@@ -84,6 +84,7 @@ class VisualItemLoadEngine
             $groupItem = GroupItem::newFromXML($columns);
             $target[$groupItem->name] = $groupItem;
             unset($groupItem);
+
             return;
         }
 
@@ -99,7 +100,7 @@ class VisualItemLoadEngine
      * Load the special conditions for the rows from XML file
      *
      * @param \SimpleXMLElement $rows
-     * @param array $target
+     * @param array             $target
      */
     private static function getXMLRows($rows, &$target)
     {
@@ -115,7 +116,7 @@ class VisualItemLoadEngine
     /**
      * Add to the configuration of a controller
      *
-     * @param string $name
+     * @param string           $name
      * @param Model\PageOption $model
      *
      * @return boolean
@@ -135,6 +136,7 @@ class VisualItemLoadEngine
         self::getXMLGroupsColumns($xml->columns, $model->columns);
         self::getXMLGroupsColumns($xml->modals, $model->modals);
         self::getXMLRows($xml->rows, $model->rows);
+
         return true;
     }
 

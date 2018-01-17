@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -27,7 +28,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class Proveedor extends Base\Persona
 {
-
     use Base\ModelTrait {
         __construct as private traitConstruct;
         clear as private traitClear;
@@ -35,7 +35,7 @@ class Proveedor extends Base\Persona
 
     /**
      * True -> the supplier is a creditor, that is, we do not buy him merchandise,
-     * we buy services, etc.
+          * we buy services, etc.
      *
      * @var bool
      */
@@ -91,8 +91,8 @@ class Proveedor extends Base\Persona
 
     /**
      * Returns the first provider that has that cifnif.
-     * If the cifnif is blank and a business name is provided, it is returned
-     * the first provider with that company name.
+          * If the cifnif is blank and a business name is provided, it is returned
+          * the first provider with that company name.
      *
      * @param string $cifnif
      * @param string $razon
@@ -152,7 +152,7 @@ class Proveedor extends Base\Persona
 
     /**
      * Returns the sub-account assigned to the provider for the year $codeje,
-     * If there is not an assigned subaccount, try to create it. If it fails, it returns False.
+          * If there is not an assigned subaccount, try to create it. If it fails, it returns False.
      *
      * @param string $codeje
      *
@@ -250,7 +250,7 @@ class Proveedor extends Base\Persona
 
     /**
      * Returns an array with combinations containing $query in its name
-     * or endorsement or co-supplier or cifnif or telefono1 or telefono2 or observations.
+      * or endorsement or co-supplier or cifnif or telefono1 or telefono2 or observations.
      *
      * @param string $query
      * @param int    $offset

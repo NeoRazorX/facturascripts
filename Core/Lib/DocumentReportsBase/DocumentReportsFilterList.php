@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\DocumentReportsBase;
 
 use FacturaScripts\Core\Model;
@@ -43,6 +44,7 @@ class DocumentReportsFilterList
 
     /**
      * Icon for select input
+     *
      * @var string
      */
     public $icon;
@@ -53,7 +55,6 @@ class DocumentReportsFilterList
      * @var array
      */
     public $listValues;
-
 
     public function __construct($modelName, $selectedValue = '', $icon = 'fa-list', $allowEmpty = true)
     {

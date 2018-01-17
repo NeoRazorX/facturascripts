@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 /**
@@ -30,11 +31,11 @@ abstract class DocumentController extends PanelController
 
     /**
      * Constructor.
-     * 
-     * @param Cache $cache
+     *
+     * @param Cache      $cache
      * @param Translator $i18n
-     * @param MiniLog $miniLog
-     * @param string $className
+     * @param MiniLog    $miniLog
+     * @param string     $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {
@@ -55,7 +56,7 @@ abstract class DocumentController extends PanelController
      * Run the actions that alter data before reading it.
      *
      * @param BaseView $view
-     * @param string $action
+     * @param string   $action
      *
      * @return bool
      */
@@ -75,7 +76,7 @@ abstract class DocumentController extends PanelController
     /**
      * Load view data procedure
      *
-     * @param string $keyView
+     * @param string   $keyView
      * @param BaseView $view
      */
     protected function loadData($keyView, $view)
@@ -102,7 +103,7 @@ abstract class DocumentController extends PanelController
 
     /**
      * Return the name of the xml file with the column configuration por lines.
-     * 
+     *
      * @return string
      */
     protected function getLineXMLView()

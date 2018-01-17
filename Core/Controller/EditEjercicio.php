@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -31,7 +32,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditEjercicio extends ExtendedController\PanelController
 {
-
     /**
      * Load views.
      */
@@ -42,7 +42,7 @@ class EditEjercicio extends ExtendedController\PanelController
         $this->addListView('\FacturaScripts\Dinamic\Model\Epigrafe', 'ListEpigrafe', 'epigraphs');
         $this->addListView('\FacturaScripts\Dinamic\Model\Cuenta', 'ListCuenta', 'accounts', 'fa-book');
         $this->addListView('\FacturaScripts\Dinamic\Model\Subcuenta', 'ListSubcuenta', 'subaccount');
-        
+
         /// Disable columns
         $this->views['ListGrupoEpigrafes']->disableColumn('fiscal-exercise', true);
         $this->views['ListEpigrafe']->disableColumn('fiscal-exercise', true);
@@ -53,7 +53,7 @@ class EditEjercicio extends ExtendedController\PanelController
     /**
      * Load view data procedure
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)
@@ -70,15 +70,15 @@ class EditEjercicio extends ExtendedController\PanelController
             case 'ListGrupoEpigrafes':
                 $view->loadData(false, $where, ['codgrupo' => 'ASC']);
                 break;
-            
+
             case 'ListEpigrafe':
                 $view->loadData(false, $where, ['codepigrafe' => 'ASC']);
                 break;
-            
+
             case 'ListCuenta':
                 $view->loadData(false, $where, ['codcuenta' => 'ASC']);
                 break;
-            
+
             case 'ListSubcuenta':
                 $view->loadData(false, $where, ['codsubcuenta' => 'ASC']);
                 break;
@@ -120,6 +120,7 @@ class EditEjercicio extends ExtendedController\PanelController
         $uploadFile = $this->request->files->get('accountingfile', false);
         if ($uploadFile === false) {
             $this->miniLog->alert($this->i18n->trans('file-not-found', ['%fileName%' => '']));
+
             return false;
         }
 

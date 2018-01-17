@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Model\Base;
  */
 trait LineaDocumentoVenta
 {
-
     use ModelTrait {
         clear as private traitClear;
     }
@@ -227,11 +227,13 @@ trait LineaDocumentoVenta
         if (!static::floatcmp($this->pvptotal, $total, FS_NF0, true)) {
             $values = ['%reference%' => $this->referencia, '%total%' => $total];
             self::$miniLog->alert(self::$i18n->trans('pvptotal-line-error', $values));
+
             return false;
         }
         if (!static::floatcmp($this->pvpsindto, $totalsindto, FS_NF0, true)) {
             $values = ['%reference%' => $this->referencia, '%totalWithoutDiscount%' => $totalsindto];
             self::$miniLog->alert(self::$i18n->trans('pvpsindto-line-error', $values));
+
             return false;
         }
 

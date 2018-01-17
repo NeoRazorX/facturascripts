@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
@@ -30,18 +31,17 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Randomizer extends Base\Controller
 {
-
     /**
      *
-     * @var string 
+     * @var string
      */
     public $urlReload;
 
     /**
      * Runs the controller's private logic.
      *
-     * @param Response $response
-     * @param User $user
+     * @param Response                   $response
+     * @param User                       $user
      * @param Base\ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -72,7 +72,7 @@ class Randomizer extends Base\Controller
 
     /**
      * Executes selected action.
-     * 
+     *
      * @param string $option
      */
     private function execAction($option)

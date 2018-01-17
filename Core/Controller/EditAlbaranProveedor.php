@@ -29,7 +29,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditAlbaranProveedor extends ExtendedController\DocumentController
 {
-
     /**
      * Load views
      */
@@ -63,7 +62,7 @@ class EditAlbaranProveedor extends ExtendedController\DocumentController
     /**
      * Load data view procedure
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)

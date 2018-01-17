@@ -102,6 +102,7 @@ class EmailTools
         $i18n = new i18n();
         $miniLog = new MiniLog();
         $miniLog->alert($i18n->trans('email-error', ['%errorInfo%' => $mail->ErrorInfo]));
+
         return false;
     }
 
@@ -114,6 +115,7 @@ class EmailTools
     {
         if (self::$settings['mailer'] === 'smtp') {
             $mail = $this->newMail();
+
             return $mail->smtpConnect($this->smtpOptions());
         }
 
@@ -137,13 +139,13 @@ class EmailTools
             '[[titulo]]',
             '[[empresa]]',
             '[[texto]]',
-            '[[pie]]'
+            '[[pie]]',
         ];
         $replace = [
             $title,
             $companyName,
             nl2br($txt),
-            $sign
+            $sign,
         ];
 
         return str_replace($search, $replace, $html);
@@ -162,10 +164,11 @@ class EmailTools
                 'ssl' => [
                     'verify_peer' => false,
                     'verify_peer_name' => false,
-                    'allow_self_signed' => true
-                ]
+                    'allow_self_signed' => true,
+                ],
             ];
         }
+
         return $SMTPOptions;
     }
 }

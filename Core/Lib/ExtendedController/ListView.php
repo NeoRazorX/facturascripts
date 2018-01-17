@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,7 +30,6 @@ use FacturaScripts\Core\Lib\ExportManager;
  */
 class ListView extends BaseView
 {
-
     /**
      * Order constants
      */
@@ -61,12 +61,14 @@ class ListView extends BaseView
      * List of fields available to order by
      * Example: orderby[key] = ["label" => "Etiqueta", "icon" => ICON_ASC]
      *          key = field_asc | field_desc
+     *
      * @var array
      */
     private $orderby;
 
     /**
      * Selected element in the Order By list
+     *
      * @var string
      */
     public $selectedOrderBy;
@@ -187,6 +189,7 @@ class ListView extends BaseView
         }
 
         $key = $keys[0];
+
         return $this->pageOption->columns[$key]->columns;
     }
 
@@ -208,6 +211,7 @@ class ListView extends BaseView
         }
 
         $orderby = explode('_', $orderKey);
+
         return [$orderby[0] => $orderby[1]];
     }
 
@@ -248,7 +252,7 @@ class ListView extends BaseView
      *
      * @param string $field
      * @param string $label
-     * @param int $default (0 = None, 1 = ASC, 2 = DESC)
+     * @param int    $default (0 = None, 1 = ASC, 2 = DESC)
      */
     public function addOrderBy($field, $label = '', $default = 0)
     {
@@ -278,7 +282,7 @@ class ListView extends BaseView
     /**
      * Defines a new option to filter the data with
      *
-     * @param string $key
+     * @param string     $key
      * @param ListFilter $filter
      */
     public function addFilter($key, $filter)
@@ -298,7 +302,7 @@ class ListView extends BaseView
      * Establishes a column's display state
      *
      * @param string $columnName
-     * @param bool $disabled
+     * @param bool   $disabled
      */
     public function disableColumn($columnName, $disabled)
     {
@@ -310,12 +314,12 @@ class ListView extends BaseView
 
     /**
      * Load the data in the cursor property, according to the where filter specified.
-     * 
-     * @param mixed $code
+     *
+     * @param mixed           $code
      * @param DataBaseWhere[] $where
-     * @param array $order
-     * @param int $offset
-     * @param int $limit
+     * @param array           $order
+     * @param int             $offset
+     * @param int             $limit
      */
     public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {

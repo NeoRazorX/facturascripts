@@ -29,7 +29,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditFacturaCliente extends ExtendedController\DocumentController
 {
-
     /**
      * Load views
      */
@@ -62,7 +61,7 @@ class EditFacturaCliente extends ExtendedController\DocumentController
     /**
      * Load data view procedure
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)

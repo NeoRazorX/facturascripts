@@ -26,7 +26,6 @@ use FacturaScripts\Core\Lib\IPFilter;
  */
 class IPFilterTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var IPFilter
      */
@@ -48,7 +47,6 @@ class IPFilterTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        
     }
 
     /**

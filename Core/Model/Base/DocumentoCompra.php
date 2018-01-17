@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -28,7 +29,6 @@ use FacturaScripts\Core\Lib\NewCodigoDoc;
  */
 trait DocumentoCompra
 {
-
     use ModelTrait {
         clear as traitClear;
     }
@@ -109,7 +109,7 @@ trait DocumentoCompra
      * @var string
      */
     public $hora;
-    
+
     /**
      * Company id. of the document.
      *
@@ -119,7 +119,7 @@ trait DocumentoCompra
 
     /**
      * % IRPF retention of the document. It is obtained from the series.
-     * Each line can have a different%.
+          * Each line can have a different%.
      *
      * @var float|int
      */
@@ -134,7 +134,7 @@ trait DocumentoCompra
 
     /**
      * Number of the document.
-     * Unique within the series + exercise.
+          * Unique within the series + exercise.
      *
      * @var string
      */
@@ -142,7 +142,7 @@ trait DocumentoCompra
 
     /**
      * Supplier's document number, if any.
-     * May contain letters.
+          * May contain letters.
      *
      * @var string
      */
@@ -185,8 +185,8 @@ trait DocumentoCompra
 
     /**
      * Total expressed in euros, if it were not the currency of the document.
-     * totaleuros = total / tasaconv
-     * It is not necessary to fill it, when doing save () the value is calculated.
+          * totaleuros = total / tasaconv
+          * It is not necessary to fill it, when doing save () the value is calculated.
      *
      * @var float|int
      */
@@ -249,6 +249,7 @@ trait DocumentoCompra
             }
 
             $this->newCodigo();
+
             return $this->saveInsert();
         }
 
@@ -299,8 +300,8 @@ trait DocumentoCompra
 
         /**
          * We use the euro as a bridge currency when adding, compare
-         * or convert amounts in several currencies. For this reason we need
-         * many decimals.
+                  * or convert amounts in several currencies. For this reason we need
+                  * many decimals.
          */
         $this->totaleuros = round($this->total / $this->tasaconv, 5);
         if (static::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true)) {
@@ -308,6 +309,7 @@ trait DocumentoCompra
         }
 
         self::$miniLog->alert(self::$i18n->trans('bad-total-error'));
+
         return false;
     }
 
@@ -382,10 +384,10 @@ trait DocumentoCompra
      * with the previous calculation.
      *
      * @param boolean $status
-     * @param array $subtotales
-     * @param int $irpf
-     * @param int $netoAlt
-     * @param int $ivaAlt
+     * @param array   $subtotales
+     * @param int     $irpf
+     * @param int     $netoAlt
+     * @param int     $ivaAlt
      */
     private function getSubtotales(&$status, &$subtotales, &$irpf, &$netoAlt, &$ivaAlt)
     {
@@ -395,11 +397,11 @@ trait DocumentoCompra
             }
             $codimpuesto = ($lin->codimpuesto === null) ? 0 : $lin->codimpuesto;
             if (!array_key_exists($codimpuesto, $subtotales)) {
-                $subtotales[$codimpuesto] = array(
+                $subtotales[$codimpuesto] = [
                     'neto' => 0,
                     'iva' => 0, // Total IVA
                     'recargo' => 0, // Total Recargo
-                );
+                ];
             }
             /// Acumulamos por tipos de IVAs
             $subtotales[$codimpuesto]['neto'] += $lin->pvptotal;

@@ -60,13 +60,13 @@ class CSVImport
 
         return $sql;
     }
-    
+
     private static function value2sql($value)
     {
         if($value === 'false' || $value === 'true') {
             return $value;
         }
-        
+
         return "'" . $value . "'";
     }
 
@@ -89,7 +89,7 @@ class CSVImport
         if (file_exists($filePath)) {
             return $filePath;
         }
-        
+
         /// If everything else fails
         $filePath = FS_FOLDER . '/Core/Data/Lang/ES/' . $table . '.csv';
         if (file_exists($filePath)) {

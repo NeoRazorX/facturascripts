@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -31,7 +32,6 @@ use FacturaScripts\Core\Lib;
  */
 class EditProveedor extends ExtendedController\PanelController
 {
-
     /**
      * Create and configure main view
      */
@@ -73,7 +73,7 @@ class EditProveedor extends ExtendedController\PanelController
     /**
      * Load view data
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)
@@ -129,6 +129,7 @@ class EditProveedor extends ExtendedController\PanelController
         $where[] = new DataBaseWhere('ptefactura', true);
 
         $totalModel = Model\TotalModel::all('albaranesprov', $where, ['total' => 'SUM(total)'], '')[0];
+
         return $this->divisaTools->format($totalModel->totals['total'], 2);
     }
 
@@ -146,6 +147,7 @@ class EditProveedor extends ExtendedController\PanelController
         $where[] = new DataBaseWhere('estado', 'Pagado', '<>');
 
         $totalModel = Model\TotalModel::all('recibosprov', $where, ['total' => 'SUM(importe)'], '')[0];
+
         return $this->divisaTools->format($totalModel->totals['total'], 2);
     }
 }

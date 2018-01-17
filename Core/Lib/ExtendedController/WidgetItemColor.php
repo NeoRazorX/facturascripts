@@ -58,6 +58,7 @@ class WidgetItemColor extends WidgetItem
     public function getEditHTML($value)
     {
         $specialAttributes = $this->specialAttributes();
+
         return $this->standardEditHTMLWidget($value, $specialAttributes, ' jscolor', 'text');
     }
 }

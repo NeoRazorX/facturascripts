@@ -27,10 +27,9 @@ namespace FacturaScripts\Core\Base\DataBase;
  */
 interface DataBaseEngine
 {
-
     /**
      * Indicates the operator for the database engine
-     * 
+     *
      * @param string $operator
      */
     public function getOperator($operator);
@@ -111,7 +110,7 @@ interface DataBaseEngine
      * Runs a database statement on the connection
      *
      * @param \mysqli|resource $link
-     * @param string $sql
+     * @param string           $sql
      *
      * @return array
      */
@@ -122,7 +121,7 @@ interface DataBaseEngine
      * If there is no open transaction, it will create one and end it after the DDL
      *
      * @param \mysqli|resource $link
-     * @param string $sql
+     * @param string           $sql
      *
      * @return bool
      */
@@ -147,7 +146,7 @@ interface DataBaseEngine
      * Escape the given string
      *
      * @param \mysqli|resource $link
-     * @param string $str
+     * @param string           $str
      */
     public function escapeString($link, $str);
 
@@ -160,9 +159,9 @@ interface DataBaseEngine
      * Checks if a sequence exists
      *
      * @param \mysqli|resource $link
-     * @param string $tableName
-     * @param string $default
-     * @param string $colname
+     * @param string           $tableName
+     * @param string           $default
+     * @param string           $colname
      */
     public function checkSequence($link, $tableName, $default, $colname);
 
@@ -170,8 +169,8 @@ interface DataBaseEngine
      * Additional check to see if a table exists
      *
      * @param \mysqli|resource $link
-     * @param string $tableName
-     * @param string $error
+     * @param string           $tableName
+     * @param string           $error
      */
     public function checkTableAux($link, $tableName, &$error);
 }

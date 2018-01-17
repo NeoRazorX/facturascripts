@@ -26,7 +26,6 @@ namespace FacturaScripts\Core\Lib;
  */
 class RegimenIVA
 {
-
     /**
      * Returns the default value
      *

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,7 +30,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class AlbaranCliente
 {
-
     use Base\DocumentoVenta;
 
     /**
@@ -75,8 +75,8 @@ class AlbaranCliente
 
     /**
      * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
+          * that will be executed after the creation of the table. Useful to insert values
+          * default.
      *
      * @return string
      */
@@ -105,6 +105,7 @@ class AlbaranCliente
     public function getLineas()
     {
         $lineaModel = new LineaAlbaranCliente();
+
         return $lineaModel->all([new DataBaseWhere('idalbaran', $this->idalbaran)]);
     }
 
@@ -125,7 +126,7 @@ class AlbaranCliente
     {
         /**
          * We put to Null all the invoices that are not in invoices.
-         * Why? Because many users are dedicated to touching the database.
+                  * Why? Because many users are dedicated to touching the database.
          */
         self::$dataBase->exec('UPDATE ' . static::tableName() . ' SET idfactura = NULL WHERE idfactura IS NOT NULL'
             . ' AND idfactura NOT IN (SELECT idfactura FROM facturascli);');

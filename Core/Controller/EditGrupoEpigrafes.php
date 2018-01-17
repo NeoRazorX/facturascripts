@@ -31,7 +31,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditGrupoEpigrafes extends ExtendedController\PanelController
 {
-
     /**
      * Load views
      */
@@ -45,7 +44,7 @@ class EditGrupoEpigrafes extends ExtendedController\PanelController
     /**
      * Load view data
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)

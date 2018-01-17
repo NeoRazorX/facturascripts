@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use Symfony\Component\Translation\Loader\JsonFileLoader;
@@ -28,7 +29,6 @@ use Symfony\Component\Translation\Translator as symfonyTranslator;
  */
 class Translator
 {
-
     const FALLBACK_LANG = 'en_EN';
 
     /**
@@ -88,7 +88,7 @@ class Translator
      * Translate the text into the default language.
      *
      * @param string $txt
-     * @param array $parameters
+     * @param array  $parameters
      *
      * @return string
      */
@@ -106,7 +106,7 @@ class Translator
      *
      * @param string $lang
      * @param string $txt
-     * @param array $parameters
+     * @param array  $parameters
      *
      * @return string
      */
@@ -119,6 +119,7 @@ class Translator
         $catalogue = self::$translator->getCatalogue($lang);
         if ($catalogue->has($txt)) {
             self::$usedStrings[$txt] = $catalogue->get($txt);
+
             return self::$translator->trans($txt, $parameters, null, $lang);
         }
 

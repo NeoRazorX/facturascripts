@@ -24,7 +24,7 @@ use FacturaScripts\Core\Model\Agente;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers Agente
+ * @covers \Agente
  */
 final class AgenteTest extends TestCase
 {
@@ -37,8 +37,7 @@ final class AgenteTest extends TestCase
             $model
         );
 
-        $this->assertEquals(
-            null,
+        $this->assertNull(
             $model->codagente
         );
 

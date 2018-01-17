@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,7 +30,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class RoleUser
 {
-
     use Base\ModelTrait;
 
     /**
@@ -83,7 +83,7 @@ class RoleUser
     public function install()
     {
         new Role();
-        
+
         return '';
     }
 
@@ -96,11 +96,13 @@ class RoleUser
     {
         if (empty($this->nick)) {
             self::$miniLog->alert(self::$i18n->trans('nick-is-empty'));
+
             return false;
         }
 
         if (empty($this->codrol)) {
             self::$miniLog->alert(self::$i18n->trans('role-is-empty'));
+
             return false;
         }
 

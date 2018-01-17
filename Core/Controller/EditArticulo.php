@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,7 +30,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditArticulo extends ExtendedController\PanelController
 {
-
     /**
      * Load views
      */
@@ -40,7 +40,7 @@ class EditArticulo extends ExtendedController\PanelController
         $this->addListView('\FacturaScripts\Dinamic\Model\ArticuloProveedor', 'ListArticuloProveedor', 'suppliers', 'fa-ship');
         $this->addListView('\FacturaScripts\Dinamic\Model\ArticuloCombinacion', 'ListArticuloCombinacion', 'combinations', 'fa-sliders');
         $this->addListView('\FacturaScripts\Dinamic\Model\ArticuloTraza', 'ListArticuloTraza', 'traceability', 'fa-barcode');
-        
+
         /// Disable column
         $this->views['ListArticuloProveedor']->disableColumn('reference', true);
     }
@@ -48,7 +48,7 @@ class EditArticulo extends ExtendedController\PanelController
     /**
      * Load view data procedure
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)

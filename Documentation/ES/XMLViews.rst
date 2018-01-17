@@ -295,7 +295,7 @@ como su nombre indica permite incluir un botón en una de las columnas de edici�
 Existen tres tipos de botones declarados mediante el atributo ``type`` y con funciones
 distintas:
 
-*  *calculate* : Botón para mostrar un cáculo estadístico.
+*  *calculate* : Botón para mostrar un cálculo estadístico.
 *  *action* : Botón para ejecutar una acción en el controlador.
 *  *modal* : Botón para mostrar un formulario modal.
 

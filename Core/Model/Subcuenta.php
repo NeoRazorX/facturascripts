@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -28,7 +29,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class Subcuenta
 {
-
     use Base\ModelTrait;
 
     /**
@@ -330,7 +330,7 @@ class Subcuenta
 
     /**
      * Returns the first subaccount of the exercise $codeje whose parent account
-           * is marked as special account $id.
+          * is marked as special account $id.
      *
      * @param int    $idcuesp
      * @param string $codeje
@@ -385,17 +385,19 @@ class Subcuenta
 
         if (strlen($this->codcuenta) === 0 || strlen($this->codejercicio) === 0) {
             self::$miniLog->alert(self::$i18n->trans('account-data-missing'));
+
             return false;
         }
 
         $where = [
             new DataBaseWhere('codejercicio', $this->codejercicio),
-            new DataBaseWhere('codcuenta', $this->codcuenta)
+            new DataBaseWhere('codcuenta', $this->codcuenta),
         ];
 
         $count = new Cuenta();
         if ($count->loadFromCode(null, $where) === false) {
             self::$miniLog->alert(self::$i18n->trans('account-data-error'));
+
             return false;
         }
 
@@ -403,6 +405,7 @@ class Subcuenta
 
         if (strlen($this->codsubcuenta) === 0 || strlen($this->descripcion) === 0) {
             self::$miniLog->alert(self::$i18n->trans('missing-data-subaccount'));
+
             return false;
         }
 
@@ -411,7 +414,7 @@ class Subcuenta
 
     /**
      * Returns the sub-accounts of the fiscal year $codeje whose parent account
-           * is marked as special account $id.
+          * is marked as special account $id.
      *
      * @param int    $idcuesp
      * @param string $codeje
@@ -437,7 +440,7 @@ class Subcuenta
 
     /**
      * Returns an array with the combinations containing $query in its codsubcuenta
-           * or description.
+          * or description.
      *
      * @param string $query
      *
@@ -464,7 +467,7 @@ class Subcuenta
 
     /**
      * Returns the results of the $ query search on the subaccounts of the
-           * exercise $codejercicio
+          * exercise $codejercicio
      *
      * @param string $codejercicio
      * @param string $query

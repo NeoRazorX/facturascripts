@@ -26,7 +26,6 @@ namespace FacturaScripts\Core\Lib;
  */
 class NewCodigoDoc
 {
-
     /**
      * Code option
      *
@@ -92,7 +91,7 @@ class NewCodigoDoc
      * Returns the document code
      *
      * @param string $tableName
-     * @param int $numero
+     * @param int    $numero
      * @param string $codserie
      * @param string $codejercicio
      *

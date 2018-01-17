@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -27,7 +28,6 @@ use FacturaScripts\Core\App\AppSettings;
  */
 class User
 {
-
     use Base\ModelTrait {
         get as private traitGet;
         clear as traitClear;
@@ -166,7 +166,7 @@ class User
 
         self::$miniLog->info(self::$i18n->trans('created-default-admin-account'));
 
-        return 'INSERT INTO ' . static::tableName() . " (nick,password,admin,enabled,idempresa,langcode,homepage,level)"
+        return 'INSERT INTO ' . static::tableName() . ' (nick,password,admin,enabled,idempresa,langcode,homepage,level)'
             . " VALUES ('admin','" . password_hash('admin', PASSWORD_DEFAULT)
             . "',TRUE,TRUE,'1','" . FS_LANG . "','Wizard','99');";
     }

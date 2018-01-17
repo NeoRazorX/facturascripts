@@ -30,7 +30,6 @@ use FacturaScripts\Core\Lib\Import\CSVImport;
  */
 class Familia
 {
-
     use Base\ModelTrait;
 
     /**
@@ -196,7 +195,7 @@ class Familia
     /**
      * Complete the data in the list of families with the level.
      *
-     * @param array $familias
+     * @param array  $familias
      * @param string $madre
      * @param string $nivel
      *
