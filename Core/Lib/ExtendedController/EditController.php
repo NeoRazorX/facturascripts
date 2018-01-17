@@ -150,7 +150,7 @@ abstract class EditController extends Base\Controller
 
             case 'export':
                 $this->setTemplate(false);
-                $this->exportManager->newDoc($this->response, $this->request->get('option'));
+                $this->exportManager->newDoc($this->request->get('option'));
                 $this->view->export($this->exportManager);
                 $this->exportManager->show($this->response);
                 break;
