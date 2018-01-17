@@ -137,6 +137,7 @@ class EditEjercicio extends ExtendedController\PanelController
 
         switch ($uploadFile->getMimeType()) {
             case 'application/xml':
+            case 'text/xml':
                 $accountingPlanImport->importXML($uploadFile->getPathname(), $codejercicio);
                 break;
 
