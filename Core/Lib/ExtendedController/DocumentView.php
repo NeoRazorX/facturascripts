@@ -213,6 +213,18 @@ class DocumentView extends BaseView
             $this->model->codcliente = $cliente->codcliente;
             $this->model->nombrecliente = $cliente->razonsocial;
             $this->model->cifnif = $cliente->cifnif;
+            foreach ($cliente->getDirecciones() as $dir) {
+                $this->model->coddir = $dir->id;
+                $this->model->codpais = $dir->codpais;
+                $this->model->provincia = $dir->provincia;
+                $this->model->ciudad = $dir->ciudad;
+                $this->model->direccion = $dir->direccion;
+                $this->model->codpostal = $dir->codpostal;
+                $this->model->apartado = $dir->apartado;
+                if($dir->domfacturacion) {
+                    break;
+                }
+            }
             return 'OK';
         }
 
@@ -295,7 +307,6 @@ class DocumentView extends BaseView
 
     public function setNewCode()
     {
-        
     }
 
     /**
