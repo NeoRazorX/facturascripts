@@ -40,9 +40,9 @@
     <input type="hidden" name="{{ model.primaryColumn() }}" value="{{ model.primaryColumnValue() }}"/>
     <div class="form-row">
         {% if view.documentType == 'sale' %}
-            {{ macros.customerSelect(context, 'codcliente', 'codcliente', model, context.fsc.getSelectValues('Cliente')) }}
+            {{ macros.customerSelect(context.i18n, 'codcliente', 'codcliente', model) }}
         {% elseif view.documentType == 'purchase' %}
-            {{ macros.supplierSelect(context, 'codproveedor', 'codproveedor', model, context.fsc.getSelectValues('Proveedor')) }}
+            {{ macros.supplierSelect(context.i18n, 'codproveedor', 'codproveedor', model) }}
         {% endif %}
         {{ macros.customSelect('doc_codserie', 'codserie', model.codserie, context.fsc.getSelectValues('Serie')) }}
         {{ macros.customSelect('doc_codalmacen', 'codalmacen', model.codalmacen, context.fsc.getSelectValues('Almacen')) }}
@@ -119,7 +119,7 @@
     </div>
 {% endmacro %}
 
-{% macro customerSelect(context, id, name, model, allValues = {}) %}
+{% macro customerSelect(i18n, id, name, model) %}
     <div class="col">
         <div class="input-group">
             <span class="input-group-addon">
@@ -128,7 +128,7 @@
             <input type="hidden" id="{{ id }}Autocomplete" name="{{ name }}" value="{{ model.codcliente }}"/>
             <input type="text" id="{{ id }}" value="{{ model.nombrecliente }}" class="form-control autocomplete"
                    data-source="clientes" data-field="codcliente" data-title="razonsocial"
-                   placeholder="{{ context.i18n.trans('new-customer') }}" autocomplete="off" autofocus=""/>
+                   placeholder="{{ i18n.trans('new-customer') }}" autocomplete="off" autofocus=""/>
             <span class="input-group-btn">
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#newCustomerModal">
                     <i class="fa fa-plus fa-fw" aria-hidden="true"></i>
@@ -140,22 +140,22 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">{{ context.i18n.trans('new-customer') }}</h5>
+                    <h5 class="modal-title">{{ i18n.trans('new-customer') }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <input type="text" id="new_cliente" name="new_cliente" placeholder="{{ context.i18n.trans('name') }}" class="form-control" autocomplete="off" autofocus=""/>
+                        <input type="text" id="new_cliente" name="new_cliente" placeholder="{{ i18n.trans('name') }}" class="form-control" autocomplete="off" autofocus=""/>
                     </div>
                     <div class="form-group">
-                        <input type="text" name="new_cifnif" placeholder="{{ context.i18n.trans('vat-id') }}" class="form-control" autocomplete="off"/>
+                        <input type="text" name="new_cifnif" placeholder="{{ i18n.trans('vat-id') }}" class="form-control" autocomplete="off"/>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="$('#{{ id }}Autocomplete').val('');$('#{{ id }}').val($('#new_cliente').val());">
-                        {{ context.i18n.trans('accept') }}
+                        {{ i18n.trans('accept') }}
                     </button>
                 </div>
             </div>
@@ -163,7 +163,7 @@
     </div>
 {% endmacro %}
 
-{% macro supplierSelect(context, id, name, model, allValues = {}) %}
+{% macro supplierSelect(i18n, id, name, model) %}
     <div class="col">
         <div class="input-group">
             <span class="input-group-addon">
@@ -172,7 +172,7 @@
             <input type="hidden" id="{{ id }}Autocomplete" name="{{ name }}" value="{{ model.codproveedor }}"/>
             <input type="text" id="{{ id }}" value="{{ model.nombre }}" class="form-control autocomplete"
                    data-source="proveedores" data-field="codproveedor" data-title="razonsocial"
-                   placeholder="{{ context.i18n.trans('new-supplier') }}" autocomplete="off" autofocus=""/>
+                   placeholder="{{ i18n.trans('new-supplier') }}" autocomplete="off" autofocus=""/>
             <span class="input-group-btn">
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#newSupplierModal">
                     <i class="fa fa-plus fa-fw" aria-hidden="true"></i>
@@ -184,22 +184,22 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">{{ context.i18n.trans('new-supplier') }}</h5>
+                    <h5 class="modal-title">{{ i18n.trans('new-supplier') }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <input type="text" id="new_proveedor" name="new_proveedor" placeholder="{{ context.i18n.trans('name') }}" class="form-control" autocomplete="off" autofocus=""/>
+                        <input type="text" id="new_proveedor" name="new_proveedor" placeholder="{{ i18n.trans('name') }}" class="form-control" autocomplete="off" autofocus=""/>
                     </div>
                     <div class="form-group">
-                        <input type="text" name="new_cifnif" placeholder="{{ context.i18n.trans('vat-id') }}" class="form-control" autocomplete="off"/>
+                        <input type="text" name="new_cifnif" placeholder="{{ i18n.trans('vat-id') }}" class="form-control" autocomplete="off"/>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="$('#{{ id }}Autocomplete').val('');$('#{{ id }}').val($('#new_proveedor').val());">
-                        {{ context.i18n.trans('accept') }}
+                        {{ i18n.trans('accept') }}
                     </button>
                 </div>
             </div>
