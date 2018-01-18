@@ -27,7 +27,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 class WidgetItemFileChooser extends WidgetItem
 {
     /**
-     * Class constructor
+     * WidgetItemFileChooser constructor.
      */
     public function __construct()
     {
@@ -67,6 +67,11 @@ class WidgetItemFileChooser extends WidgetItem
         return $html;
     }
 
+    /**
+     * Return the max file size that can be uploaded.
+     *
+     * @return int
+     */
     public function getMaxFileUpload()
     {
         $postMaxSize = (int) ini_get('post_max_size');

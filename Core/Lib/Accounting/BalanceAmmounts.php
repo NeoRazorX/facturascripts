@@ -35,6 +35,9 @@ class BalanceAmmounts extends AccountingBase
      */
     private $subcuentaModel;
 
+    /**
+     * BalanceAmmounts constructor.
+     */
     public function __construct()
     {
         parent::__construct();
@@ -61,7 +64,7 @@ class BalanceAmmounts extends AccountingBase
 
         $balance = [];
         foreach ($results as $line) {
-            $balance[] = $this->proccessLine($line);
+            $balance[] = $this->processLine($line);
         }
 
         /// every page is a table
@@ -76,7 +79,7 @@ class BalanceAmmounts extends AccountingBase
      */
     protected function getData()
     {
-        $sql = 'SELECT partida.idsubcuenta, partida.codsubcuenta, SUM(partida.debe) as debe, SUM(partida.haber) as haber'
+        $sql = 'SELECT partida.idsubcuenta, partida.codsubcuenta, SUM(partida.debe) AS debe, SUM(partida.haber) AS haber'
             . ' FROM co_partidas as partida, co_asientos as asiento'
             . ' WHERE asiento.idasiento = partida.idasiento'
             . ' AND asiento.fecha >= ' . $this->dataBase->var2str($this->dateFrom)
@@ -93,7 +96,7 @@ class BalanceAmmounts extends AccountingBase
      *
      * @return array
      */
-    private function proccessLine($line)
+    private function processLine($line)
     {
         $saldo = (float) $line['debe'] - (float) $line['haber'];
 

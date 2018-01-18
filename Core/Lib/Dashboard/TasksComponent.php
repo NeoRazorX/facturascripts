@@ -137,6 +137,11 @@ class TasksComponent extends BaseComponent implements ComponentInterface
         return 'index.php?page=EditDashboardData&code=' . $id;
     }
 
+    /**
+     * Return the class for render the card.
+     *
+     * @return string
+     */
     public function getCardClass()
     {
         return 'task-card';

@@ -30,6 +30,12 @@ use FacturaScripts\Core\Model;
  */
 class Wizard extends Controller
 {
+
+    /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pageData = parent::getPageData();
@@ -39,6 +45,11 @@ class Wizard extends Controller
         return $pageData;
     }
 
+    /**
+     * Return a list currencies.
+     *
+     * @return Model\Divisa[]
+     */
     public function getDivisas()
     {
         $divisas = [];
@@ -51,6 +62,11 @@ class Wizard extends Controller
         return $divisas;
     }
 
+    /**
+     * Return a list of countries.
+     *
+     * @return Model\Pais[]
+     */
     public function getPaises()
     {
         $paises = [];
@@ -63,6 +79,13 @@ class Wizard extends Controller
         return $paises;
     }
 
+    /**
+     * Runs the controller's private logic.
+     *
+     * @param \Symfony\Component\HttpFoundation\Response $response
+     * @param Model\User $user
+     * @param \FacturaScripts\Core\Base\ControllerPermissions $permissions
+     */
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
@@ -87,6 +110,9 @@ class Wizard extends Controller
         }
     }
 
+    /**
+     * Initialize required models.
+     */
     private function initModels()
     {
         new Model\FormaPago();
@@ -95,6 +121,7 @@ class Wizard extends Controller
     }
 
     /**
+     * Save company default address.
      *
      * @param AppSettings $appSettings
      * @param string      $codpais

@@ -29,18 +29,21 @@ namespace FacturaScripts\Core\Lib\Accounting;
 class BalanceSheet extends AccountingBase
 {
     /**
+     * Date from for filter
      *
      * @var string
      */
     protected $dateFromPrev;
 
     /**
+     * * Date to for filter
      *
      * @var string
      */
     protected $dateToPrev;
 
     /**
+     * Generate the balance ammounts between two dates.     *
      *
      * @param string $dateFrom
      * @param string $dateTo
@@ -108,21 +111,22 @@ class BalanceSheet extends AccountingBase
         $dateFromPrev = $this->dataBase->var2str($this->dateFromPrev);
         $dateToPrev = $this->dataBase->var2str($this->dateToPrev);
 
-        $sql = 'select cb.codbalance,cb.naturaleza,cb.descripcion1,cb.descripcion2,cb.descripcion3,cb.descripcion4,ccb.codcuenta,'
+        $sql = 'SELECT cb.codbalance,cb.naturaleza,cb.descripcion1,cb.descripcion2,cb.descripcion3,cb.descripcion4,ccb.codcuenta,'
             . ' SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFrom . ' AND ' . $dateTo . ' THEN pa.debe - pa.haber ELSE 0 END) saldo,'
             . ' SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateToPrev . ' THEN pa.debe - pa.haber ELSE 0 END) saldoprev'
-            . ' from co_cuentascbba ccb '
+            . ' FROM co_cuentascbba ccb '
             . ' INNER JOIN co_codbalances08 cb ON ccb.codbalance = cb.codbalance '
-            . ' INNER JOIN co_partidas pa ON substr(pa.codsubcuenta, 1, 1) between \'1\' and \'5\' and pa.codsubcuenta like concat(ccb.codcuenta,\'%\')'
-            . ' INNER JOIN co_asientos asto on asto.idasiento = pa.idasiento and asto.fecha between ' . $dateFromPrev . ' and ' . $dateTo
-            . ' where cb.naturaleza in (\'A\', \'P\')'
-            . ' group by 1, 2, 3, 4, 5, 6, 7 '
+            . ' INNER JOIN co_partidas pa ON substr(pa.codsubcuenta, 1, 1) BETWEEN \'1\' AND \'5\' AND pa.codsubcuenta LIKE CONCAT(ccb.codcuenta,\'%\')'
+            . ' INNER JOIN co_asientos asto ON asto.idasiento = pa.idasiento and asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateTo
+            . ' WHERE cb.naturaleza IN (\'A\', \'P\')'
+            . ' GROUP BY 1, 2, 3, 4, 5, 6, 7 '
             . ' ORDER BY cb.naturaleza, cb.nivel1, cb.nivel2, cb.orden3, cb.nivel4';
 
         return $this->dataBase->select($sql);
     }
 
     /**
+     * Process a balance values.
      *
      * @param array  $linea
      * @param array  $balance

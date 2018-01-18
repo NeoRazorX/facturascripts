@@ -25,7 +25,7 @@ use FacturaScripts\Core\Base\DataBase;
 /**
  * Description of DocumentReportsFilterList
  *
- * @author Francesc Pienda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
 class DocumentReportsFilterList
@@ -56,6 +56,14 @@ class DocumentReportsFilterList
      */
     public $listValues;
 
+    /**
+     * DocumentReportsFilterList constructor.
+     *
+     * @param string $modelName
+     * @param string $selectedValue
+     * @param string $icon
+     * @param bool $allowEmpty
+     */
     public function __construct($modelName, $selectedValue = '', $icon = 'fa-list', $allowEmpty = true)
     {
         $this->model = new $modelName();
@@ -64,6 +72,11 @@ class DocumentReportsFilterList
         $this->loadValuesFromModel($allowEmpty);
     }
 
+    /**
+     * Load requires values from model.
+     *
+     * @param bool $allowEmpty
+     */
     private function loadValuesFromModel($allowEmpty = true)
     {
         $tableName = $this->model->tableName();
@@ -78,6 +91,11 @@ class DocumentReportsFilterList
         unset($rows);
     }
 
+    /**
+     * Return DataBaseWhere with needed filter.
+     *
+     * @return DataBase\DataBaseWhere|null
+     */
     public function getWhere()
     {
         if (empty($this->selectedValue)) {

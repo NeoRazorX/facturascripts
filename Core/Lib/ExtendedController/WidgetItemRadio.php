@@ -34,7 +34,7 @@ class WidgetItemRadio extends WidgetItem
     public $values;
 
     /**
-     * Class constructor
+     * WidgetItemRadio constructor.
      */
     public function __construct()
     {

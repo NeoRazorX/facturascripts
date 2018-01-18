@@ -68,7 +68,7 @@ class Role
 
     /**
      * Returns True if there is no erros on properties values.
-     * Se ejecuta dentro del método save.
+     * It runs inside the save method.
      *
      * @return bool
      */

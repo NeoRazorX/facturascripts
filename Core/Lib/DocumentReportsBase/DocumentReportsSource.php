@@ -24,7 +24,7 @@ use FacturaScripts\Core\Model;
 /**
  * Description of DocumentReportsSource
  *
- * @author Francesc Pienda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
