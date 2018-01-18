@@ -271,8 +271,8 @@ class User
     }
 
     /**
-     * Returns True if there is no erros on properties values.
-     * Se ejecuta dentro del método save.
+     * Returns True if there is no errors on properties values.
+     * It runs inside the save method.
      *
      * @return bool
      */

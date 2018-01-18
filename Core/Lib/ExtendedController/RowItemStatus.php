@@ -41,7 +41,7 @@ class RowItemStatus extends RowItem
     public $options;
 
     /**
-     * Class constructor
+     * RowItemStatus constructor.
      */
     public function __construct()
     {

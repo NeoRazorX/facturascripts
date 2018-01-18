@@ -37,7 +37,7 @@ class WidgetItemSelect extends WidgetItem
     public $values;
 
     /**
-     * Class constructor
+     * WidgetItemSelect constructor.
      */
     public function __construct()
     {

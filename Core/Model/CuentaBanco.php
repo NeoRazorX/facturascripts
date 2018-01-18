@@ -76,7 +76,7 @@ class CuentaBanco
     /**
      * Returns True if there is no erros on properties values.
      *
-     * @return boolean
+     * @return bool
      */
     public function test()
     {

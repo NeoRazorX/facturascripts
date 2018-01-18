@@ -27,7 +27,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 class WidgetItemCheckBox extends WidgetItem
 {
     /**
-     * Class constructor
+     * WidgetItemCheckBox constructor.
      */
     public function __construct()
     {

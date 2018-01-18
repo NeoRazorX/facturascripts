@@ -45,6 +45,12 @@ class AccountingPlanImport
      */
     private $ejercicio;
 
+    /**
+     * Import data from XML file.
+     *
+     * @param string $filePath
+     * @param string $codejercicio
+     */
     public function importXML($filePath, $codejercicio)
     {
 
@@ -66,10 +72,10 @@ class AccountingPlanImport
 
     /**
      * returns an array width the content of xml file
-     * 
+     *
      * @param string $filePath
      * @return array object
-     * 
+     *
      */
     private function getData($filePath)
     {
@@ -161,7 +167,7 @@ class AccountingPlanImport
 
     /**
      * Insert Groups of accounting plan
-     * 
+     *
      * @param array $data
      */
     private function importEpigrafeGroup($data)
@@ -188,7 +194,7 @@ class AccountingPlanImport
 
     /**
      * insert Epigrafe of accounting plan
-     * 
+     *
      * @param array $data
      */
     private function importEpigrafe($data)
@@ -217,7 +223,7 @@ class AccountingPlanImport
 
     /**
      * insert Cuenta of accounting plan
-     * 
+     *
      * @param array $data
      */
     private function importCuenta($data)
@@ -247,7 +253,7 @@ class AccountingPlanImport
 
     /**
      * Import subaccounts of accounting plan
-     * 
+     *
      * @param array $data
      */
     private function importSubcuenta($data)
@@ -276,6 +282,7 @@ class AccountingPlanImport
     }
 
     /**
+     * Import data from CSV file.
      *
      * @param string $filePath
      * @param string $codejercicio
