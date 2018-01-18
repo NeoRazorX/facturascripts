@@ -1072,5 +1072,6 @@
     "record-save-error": "Un error ha ocurrido mientras se guardaban los datos",
     "generate-title": "Ejecuta la creación del informe",
     "tasaconv": "Tasa de conversión",
-    "paid": "Pagado"
+    "paid": "Pagado",
+    "enable-api": "Activar API"
 }
