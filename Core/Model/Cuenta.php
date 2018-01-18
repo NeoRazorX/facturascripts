@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,7 +30,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class Cuenta
 {
-
     use Base\ModelTrait;
 
     /**
@@ -110,7 +110,7 @@ class Cuenta
 
     /**
      * This function is called when creating the model table. Returns the SQL
-           * that will be executed after the creation of the table. Useful to insert values
+          * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
@@ -302,7 +302,7 @@ class Cuenta
 
     /**
      * Returns an array with the combinations containing $ query in its description
-           * or that matches your account code.
+          * or that matches your account code.
      *
      * @param string $query
      * @param int    $offset

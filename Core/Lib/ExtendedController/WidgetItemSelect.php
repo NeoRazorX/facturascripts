@@ -28,7 +28,6 @@ use FacturaScripts\Core\Model;
  */
 class WidgetItemSelect extends WidgetItem
 {
-
     /**
      * Accepted values for the field associated to the widget.
      * Values are loaded from Model\PageOption::getForUser()

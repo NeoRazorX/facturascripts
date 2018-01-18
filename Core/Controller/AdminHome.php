@@ -30,36 +30,39 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AdminHome extends Base\Controller
 {
-
     /**
      * List of enabled plugins.
+     *
      * @var array
      */
     public $enabledPlugins;
 
     /**
      * PHP Upload Max File Size.
+     *
      * @var int
      */
     public $uploadMaxFileSize;
 
     /**
      * PHP Post Max Size.
+     *
      * @var int
      */
     public $postMaxSize;
 
     /**
      * Plugin Manager.
+     *
      * @var Base\PluginManager
      */
     public $pluginManager;
-    
+
     /**
      * Runs the controller's private logic.
      *
-     * @param Response $response
-     * @param Model\User $user
+     * @param Response                   $response
+     * @param Model\User                 $user
      * @param Base\ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -171,6 +174,7 @@ class AdminHome extends Base\Controller
                 $this->pluginManager->disable($disablePlugin);
                 $this->miniLog->error($this->i18n->trans('plugin-disabled'));
                 $this->pluginManager->deploy();
+
                 return true;
             }
 
@@ -194,8 +198,9 @@ class AdminHome extends Base\Controller
             $pluginPath = $this->pluginManager->getPluginPath() . $removePlugin;
             if (is_dir($pluginPath) || is_file($pluginPath)) {
                 $this->pluginManager->deploy();
-                $this->delTree($this->pluginManager->getPluginPath() . $removePlugin);
+                $this->pluginManager->delTree($this->pluginManager->getPluginPath() . $removePlugin);
                 $this->miniLog->error($this->i18n->trans('plugin-deleted', ['%pluginName%' => $removePlugin]));
+
                 return true;
             }
 
@@ -220,6 +225,7 @@ class AdminHome extends Base\Controller
                 $this->miniLog->info($this->i18n->trans('plugin-enabled'));
                 $this->pluginManager->deploy();
                 $this->enabledPlugins = $this->pluginManager->enabledPlugins();
+
                 return true;
             }
 
@@ -238,124 +244,18 @@ class AdminHome extends Base\Controller
     {
         foreach ($uploadFiles as $uploadFile) {
             if ($uploadFile->getMimeType() === 'application/zip') {
-                $listFilesBefore = array_diff(scandir($this->pluginManager->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
-                $result = $this->unzipFile($uploadFile->getPathname(), $this->pluginManager->getPluginPath(), $listFilesBefore);
-                switch ((int) $result) {
-                    case 1:
-                        $listFilesAfter = array_diff(scandir($this->pluginManager->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
-                        /// Contains added files on a list
-                        $diffFolders = array_diff($listFilesAfter, $listFilesBefore);
-                        foreach ($diffFolders as $folder) {
-                            if (is_dir($this->pluginManager->getPluginPath() . $folder)) {
-                                $pluginName = $this->getVerifiedPluginName($uploadFile->getPathname());
-                                $this->miniLog->info($this->i18n->trans('plugin-installed', ['%pluginName%' => $pluginName]));
-                                $this->enablePlugin($pluginName);
-                            } elseif (is_file($this->pluginManager->getPluginPath() . $folder)) {
-                                $this->delTree($this->pluginManager->getPluginPath() . $folder);
-                            }
-                        }
-                        break;
-                    case 0:
-                        $this->miniLog->error($this->i18n->trans('can-not-open-zip-file', ['%zipFile%' => $result]));
-                        break;
-                    case -1:
-                        $this->miniLog->error($this->i18n->trans('plugin-missing-ini', ['%pluginName%' => $result]));
-                        break;
-                    case -2:
-                        $this->miniLog->error($this->i18n->trans('plugin-name-missing-ini', ['%pluginName%' => $result]));
-                        break;
+                $result = $this->pluginManager->unzipFile($uploadFile->getPathname());
+                if ($result) {
+                    $this->miniLog->info($this->i18n->trans('plugin-installed', ['%pluginName%' => $result]));
+                    $this->enablePlugin($result);
+                } else {
+                    $this->miniLog->error($this->i18n->trans('plugin-not-installed'));
                 }
                 unlink($uploadFile->getPathname());
             } else {
                 $this->miniLog->error($this->i18n->trans('file-not-supported'));
             }
         }
-    }
-
-    /**
-     * Return the verified name, if its different than extracted folder, also rename it.
-     *
-     * @param string $pluginUnzipped
-     *
-     * @return string|false
-     */
-    private function getVerifiedPluginName($pluginUnzipped)
-    {
-        $zipFile = new \ZipArchive();
-        $result = $zipFile->open($pluginUnzipped);
-        if ($result) {
-            $fsIni = $zipFile->getFromName($zipFile->getNameIndex(0) . 'facturascripts.ini');
-            $zipFile->close();
-            if (!$fsIni) {
-                return -1;
-            }
-            $fsIniContent = parse_ini_string($fsIni);
-            if (!array_key_exists('name', $fsIniContent)) {
-                return -2;
-            }
-            return $fsIniContent['name'];
-        }
-        return false;
-    }
-
-    /**
-     * Unzip the file path to destiny folder.
-     *
-     * @param string $filePath
-     * @param string $destinyFolder
-     * @param array $listFilesBefore
-     *
-     * @return bool|int|string
-     */
-    private function unzipFile($filePath, $destinyFolder, &$listFilesBefore)
-    {
-        $zipFile = new \ZipArchive();
-        $result = $zipFile->open($filePath);
-        $folderPlugin = str_replace('/', '', $zipFile->getNameIndex(0));
-        if ($result) {
-            $pluginName = $this->getVerifiedPluginName($filePath);
-            if ($pluginName) {
-                if (is_dir($destinyFolder . $pluginName)) {
-                    $this->miniLog->info($this->i18n->trans('removing-previous-version', ['%pluginName%' => $pluginName]));
-                    $this->delTree($destinyFolder . $pluginName);
-                    /// Update the list before, if we delete an existing folder
-                    $listFilesBefore = array_diff(scandir($this->pluginManager->getPluginPath(), SCANDIR_SORT_ASCENDING), ['.', '..']);
-                }
-                if ($result === true) {
-                    $zipFile->extractTo($destinyFolder);
-                    $zipFile->close();
-                }
-                if ($folderPlugin !== $pluginName) {
-                    if (!@rename($destinyFolder . $folderPlugin, $destinyFolder . $pluginName)) {
-                        $this->miniLog->error($this->i18n->trans('plugin-can-not-renamed', ['%folderPlugin%' => $folderPlugin, '%pluginName%' => $pluginName]));
-                    } else {
-                        $this->miniLog->info($this->i18n->trans('plugin-renamed', ['%folderPlugin%' => $folderPlugin, '%pluginName%' => $pluginName]));
-                    }
-                }
-                return $result;
-            }
-            return false;
-        }
-        return false;
-    }
-
-    /**
-     * Recursive delete directory.
-     *
-     * @param string $dir
-     *
-     * @return bool
-     */
-    private function delTree($dir)
-    {
-        $files = [];
-        if (is_dir($dir)) {
-            $files = array_diff(scandir($dir, SCANDIR_SORT_ASCENDING), ['.', '..']);
-        }
-        foreach ($files as $file) {
-            is_dir($dir . '/' . $file) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
-        }
-        return is_dir($dir) ? rmdir($dir) : unlink($dir);
     }
 
     /**
@@ -377,6 +277,7 @@ class AdminHome extends Base\Controller
                 $value *= 1024;
             // no break - Pass all cases to transform to KB
         }
+
         return $value;
     }
 }

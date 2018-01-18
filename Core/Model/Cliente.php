@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -27,7 +28,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class Cliente extends Base\Persona
 {
-
     use Base\ModelTrait {
         __construct as private traitConstruct;
         clear as private traitClear;
@@ -91,14 +91,14 @@ class Cliente extends Base\Persona
      *
      * @return string
      */
-    public function primaryDescriptionColumn() 
+    public function primaryDescriptionColumn()
     {
         return 'nombre';
     }
 
     /**
      * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
+     * that will be executed after the creation of the table. Useful to insert values
      * default.
      */
     public function install()
@@ -164,7 +164,7 @@ class Cliente extends Base\Persona
 
     /**
      * Returns an array with all the subaccounts associated with the client.
-     * One for each exercise.
+     * One for each exercise.
      *
      * @return Subcuenta[]
      */

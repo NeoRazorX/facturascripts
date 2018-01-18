@@ -26,45 +26,51 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
  */
 class WidgetButton implements VisualItemInterface
 {
-
     /**
      * Type of button.
+     *
      * @var string
      */
     public $type;
 
     /**
      * Aditional code for the button.
+     *
      * @var string
      */
     public $hint;
 
     /**
      * Icon for the button.
+     *
      * @var string
      */
     public $icon;
 
     /**
      * JavaScritp action for the button.
+     *
      * @var string
      */
     public $onClick;
 
     /**
      * Label for the button.
+     *
      * @var string
      */
     public $label;
 
     /**
      * Action for the button.
+     *
      * @var string
      */
     public $action;
 
     /**
      * Color for the button.
+     *
      * @var string
      */
     public $color;
@@ -73,12 +79,14 @@ class WidgetButton implements VisualItemInterface
      * Create and load the structure of attributes from a XML file.
      *
      * @param \SimpleXMLElement $button
+     *
      * @return WidgetButton
      */
     public static function newFromXML($button)
     {
-        $widget = new WidgetButton();
+        $widget = new self();
         $widget->loadFromXML($button);
+
         return $widget;
     }
 
@@ -91,8 +99,9 @@ class WidgetButton implements VisualItemInterface
      */
     public static function newFromJSON($button)
     {
-        $widget = new WidgetButton();
+        $widget = new self();
         $widget->loadFromJSON($button);
+
         return $widget;
     }
 
@@ -232,6 +241,7 @@ class WidgetButton implements VisualItemInterface
             . $this->getIconHTML()
             . $label
             . '</button>';
+
         return $html;
     }
 

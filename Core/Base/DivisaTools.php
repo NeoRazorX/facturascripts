@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -25,19 +26,18 @@ namespace FacturaScripts\Core\Base;
  */
 class DivisaTools
 {
-
     /**
      * Returns the value of the formatted currency.
-     * 
-     * @param float $number
-     * @param int|string $decimals
-     * @param bool $addSymbol
-     * 
+     *
+     * @param float|string $number
+     * @param int|string   $decimals
+     * @param bool         $addSymbol
+     *
      * @return string
      */
     public function format($number, $decimals = FS_NF0, $addSymbol = true)
     {
-        $txt = number_format($number, $decimals, FS_NF1, FS_NF2);
+        $txt = number_format((float) $number, (int) $decimals, FS_NF1, FS_NF2);
         if (!$addSymbol) {
             return $txt;
         }

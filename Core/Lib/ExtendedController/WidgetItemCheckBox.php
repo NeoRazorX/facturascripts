@@ -47,6 +47,7 @@ class WidgetItemCheckBox extends WidgetItem
     protected function specialAttributes()
     {
         $readOnly = empty($this->readOnly) ? '' : ' disabled';
+
         return parent::specialAttributes() . $readOnly;
     }
 
@@ -66,6 +67,7 @@ class WidgetItemCheckBox extends WidgetItem
         $checked = in_array($value, ['t', '1'], false);
         $icon = $checked ? 'fa-check' : 'fa-minus';
         $style = $this->getTextOptionsHTML($checked);
+
         return '<i class="fa ' . $icon . '" aria-hidden="true" ' . $style . '></i>';
     }
 

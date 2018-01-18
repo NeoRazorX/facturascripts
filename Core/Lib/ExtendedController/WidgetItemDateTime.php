@@ -59,6 +59,7 @@ class WidgetItemDateTime extends WidgetItem
     {
         $specialAttributes = $this->specialAttributes();
         $specialClass = $this->readOnly ? '' : ' datepicker';
+
         return $this->standardEditHTMLWidget($value, $specialAttributes, $specialClass, 'text');
     }
 }

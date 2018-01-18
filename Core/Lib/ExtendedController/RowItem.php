@@ -72,6 +72,7 @@ abstract class RowItem implements VisualItemInterface
         $type = (string) $rowAtributes->type;
         $result = self::rowItemFromType($type);
         $result->loadFromXML($row);
+
         return $result;
     }
 
@@ -87,6 +88,7 @@ abstract class RowItem implements VisualItemInterface
         $type = (string) $row['type'];
         $result = self::rowItemFromType($type);
         $result->loadFromJSON($row);
+
         return $result;
     }
 
@@ -114,6 +116,7 @@ abstract class RowItem implements VisualItemInterface
             $result[$key] = (string) $value;
         }
         $result['value'] = trim((string) $item);
+
         return $result;
     }
 
@@ -132,6 +135,7 @@ abstract class RowItem implements VisualItemInterface
             $buttons[] = $widgetButton;
             unset($widgetButton);
         }
+
         return $buttons;
     }
 
@@ -150,6 +154,7 @@ abstract class RowItem implements VisualItemInterface
             $buttons[] = $widgetButton;
             unset($widgetButton);
         }
+
         return $buttons;
     }
 
@@ -166,7 +171,6 @@ abstract class RowItem implements VisualItemInterface
      * @param array $row
      */
     abstract public function loadFromJSON($row);
-
 
     /**
      * Generates the HTML code to display the header for the visual element

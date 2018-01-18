@@ -7,16 +7,6 @@
 -->
 <table>
     <column>
-        <name>codcuenta</name>
-        <type>character varying(10)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>codsubcuenta</name>
-        <type>character varying(15)</type>
-        <null>YES</null>
-    </column>
-    <column>
         <name>descripcion</name>
         <type>character varying(255)</type>
         <null>YES</null>

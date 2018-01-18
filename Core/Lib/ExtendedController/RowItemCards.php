@@ -28,20 +28,22 @@ class RowItemCards extends RowItem
 {
     /**
      * Panels lists.
+     *
      * @var array
      */
     public $panels;
 
     /**
      * Buttons lists.
+     *
      * @var WidgetButton[]
      */
     public $buttons;
 
     /**
-     * RowItemCards constructor.
+     * Class constructor
      *
-     * @param string $type
+     * @param mixed $type
      */
     public function __construct($type)
     {

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Model;
  */
 class GrupoClientes
 {
-
     use Base\ModelTrait {
         url as private traitUrl;
     }
@@ -76,7 +76,7 @@ class GrupoClientes
      *
      * @return string
      */
-    public function primaryDescriptionColumn() 
+    public function primaryDescriptionColumn()
     {
         return 'nombre';
     }
@@ -118,7 +118,7 @@ class GrupoClientes
 
     /**
      * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
+     * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string

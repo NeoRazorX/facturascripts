@@ -27,7 +27,6 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
  */
 abstract class WidgetItem implements VisualItemInterface
 {
-
     /**
      * Field name with the data that the widget displays
      *
@@ -153,6 +152,7 @@ abstract class WidgetItem implements VisualItemInterface
         $type = (string) $widgetAtributes->type;
         $widget = self::widgetItemFromType($type);
         $widget->loadFromXML($column);
+
         return $widget;
     }
 
@@ -168,6 +168,7 @@ abstract class WidgetItem implements VisualItemInterface
         $type = (string) $widget['type'];
         $widgetItem = self::widgetItemFromType($type);
         $widgetItem->loadFromJSON($widget);
+
         return $widgetItem;
     }
 
@@ -208,7 +209,7 @@ abstract class WidgetItem implements VisualItemInterface
     /**
      * Loads the attribute dictionary for a widget's group of options or values
      *
-     * @param array $property
+     * @param array               $property
      * @param \SimpleXMLElement[] $group
      */
     protected function getAttributesGroup(&$property, $group)
@@ -284,6 +285,7 @@ abstract class WidgetItem implements VisualItemInterface
                 $result = ($optionValue === $valueItem);
                 break;
         }
+
         return $result;
     }
 

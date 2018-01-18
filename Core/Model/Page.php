@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Model;
  */
 class Page
 {
-
     use Base\ModelTrait;
 
     /**
@@ -59,7 +59,7 @@ class Page
 
     /**
      * Indicates if it is displayed in the menu.
-     * False -> hide in the menu.
+          * False -> hide in the menu.
      *
      * @var bool
      */

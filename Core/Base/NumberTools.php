@@ -26,12 +26,11 @@ namespace FacturaScripts\Core\Base;
  */
 class NumberTools
 {
-
     /**
      * Returns the number format with the number of decimals indicated.
      *
      * @param float $number
-     * @param int $decimals
+     * @param int   $decimals
      *
      * @return string
      */

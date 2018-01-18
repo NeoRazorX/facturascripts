@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Accounting;
 
 /**
@@ -27,7 +28,6 @@ namespace FacturaScripts\Core\Lib\Accounting;
  */
 class ProffitAndLoss extends AccountingBase
 {
-
     /**
      * Date from for filter
      *
@@ -43,20 +43,6 @@ class ProffitAndLoss extends AccountingBase
     protected $dateToPrev;
 
     /**
-     * ProffitAndLoss constructor.
-     *
-     * @param string $dateFrom
-     * @param string $dateTo
-     */
-    public function __construct($dateFrom, $dateTo)
-    {
-        parent::__construct($dateFrom, $dateTo);
-
-        $this->dateFromPrev = $this->addToDate($this->dateFrom, '-1 year');
-        $this->dateToPrev = $this->addToDate($this->dateTo, '-1 year');
-    }
-
-    /**
      * Generate the data results.
      *
      * @param string $dateFrom
@@ -66,33 +52,36 @@ class ProffitAndLoss extends AccountingBase
      */
     public function generate($dateFrom, $dateTo)
     {
-        $ProffitAndLoss = new ProffitAndLoss($dateFrom, $dateTo);
-        $data = $ProffitAndLoss->getData();
+        $this->dateFrom = $dateFrom;
+        $this->dateTo = $dateTo;
+        $this->dateFromPrev = $this->addToDate($dateFrom, '-1 year');
+        $this->dateToPrev = $this->addToDate($dateTo, '-1 year');
+
+        $data = $this->getData();
         if (empty($data)) {
             return [];
         }
 
-        return $ProffitAndLoss->calcProffitAndLoss($data);
+        /// every page is a table
+        $pages = [$this->calcProffitAndLoss($data)];
+        return $pages;
     }
 
     /**
      * Format de Proffit-Lost including then chapters.
-     * 
-     * @param array $proffitLost
+     *
+     * @param array $data
      *
      * @return array
      */
-    private function calcProffitAndLoss($proffitLost)
+    private function calcProffitAndLoss($data)
     {
         $balanceCalculado = [];
-
-        if (!empty($proffitLost)) {
-            foreach ($proffitLost as $lineaBalance) {
-                $this->processDescription('descripcion1', $lineaBalance, $balanceCalculado);
-                $this->processDescription('descripcion2', $lineaBalance, $balanceCalculado);
-                $this->processDescription('descripcion3', $lineaBalance, $balanceCalculado);
-                $this->processDescription('descripcion4', $lineaBalance, $balanceCalculado);
-            }
+        foreach ($data as $lineaBalance) {
+            $this->processDescription($lineaBalance, $balanceCalculado, 'descripcion1');
+            $this->processDescription($lineaBalance, $balanceCalculado, 'descripcion2');
+            $this->processDescription($lineaBalance, $balanceCalculado, 'descripcion3');
+            $this->processDescription($lineaBalance, $balanceCalculado, 'descripcion4');
         }
 
         $balanceFinal = [];
@@ -110,7 +99,6 @@ class ProffitAndLoss extends AccountingBase
      */
     protected function getData()
     {
-
         $dateFrom = $this->dataBase->var2str($this->dateFrom);
         $dateTo = $this->dataBase->var2str($this->dateTo);
         $dateFromPrev = $this->dataBase->var2str($this->dateFromPrev);
@@ -118,25 +106,26 @@ class ProffitAndLoss extends AccountingBase
 
         $sql = 'SELECT cb.codbalance,cb.naturaleza,cb.descripcion1,cb.descripcion2,cb.descripcion3,cb.descripcion4,ccb.codcuenta,'
             . ' SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFrom . ' AND ' . $dateTo . ' THEN pa.debe - pa.haber ELSE 0 END) saldo,'
-            . ' SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateToPrev . ' THEN pa.debe - pa.haber ELSE 0 END) saldoPrev'
+            . ' SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateToPrev . ' THEN pa.debe - pa.haber ELSE 0 END) saldoprev'
             . ' FROM co_cuentascbba ccb '
             . ' INNER JOIN co_codbalances08 cb ON ccb.codbalance = cb.codbalance '
-            . ' INNER JOIN co_partidas pa ON substr(pa.codsubcuenta, 1, 1) BETWEEN "6" AND "7" AND pa.codsubcuenta LIKE CONCAT(ccb.codcuenta,"%")'
-            . ' INNER JOIN co_asientos asto ON asto.idasiento = pa.idasiento AND asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateTo
-            . ' WHERE cb.naturaleza ="PG"'
+            . ' INNER JOIN co_partidas pa ON substr(pa.codsubcuenta, 1, 1) BETWEEN \'6\' AND \'7\' AND pa.codsubcuenta LIKE CONCAT(ccb.codcuenta,\'%\')'
+            . ' INNER JOIN co_asientos asto on asto.idasiento = pa.idasiento and asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateTo
+            . ' WHERE cb.naturaleza = \'PG\''
             . ' GROUP BY 1, 2, 3, 4, 5, 6, 7 '
             . ' ORDER BY cb.naturaleza, cb.nivel1, cb.nivel2, cb.orden3, cb.nivel4';
+
         return $this->dataBase->select($sql);
     }
 
     /**
      * Process a balance values.
      *
+     * @param array  $linea
+     * @param array  $balance
      * @param string $description
-     * @param array $linea
-     * @param array $balance
      */
-    private function processDescription($description, &$linea, &$balance)
+    protected function processDescription(&$linea, &$balance, $description)
     {
         $index = $linea[$description];
         if (empty($index)) {
@@ -147,15 +136,15 @@ class ProffitAndLoss extends AccountingBase
             $balance[$index] = [
                 'descripcion' => $index,
                 'saldo' => $linea['saldo'],
-                'saldoPrev' => $linea['saldoPrev']];
+                'saldoprev' => $linea['saldoprev'], ];
         } else {
             $balance[$index]['saldo'] += $linea['saldo'];
-            $balance[$index]['saldoPrev'] += $linea['saldoPrev'];
+            $balance[$index]['saldoprev'] += $linea['saldoprev'];
         }
     }
 
     /**
-     * Process a line entry with correct format.
+     * Process the line data to use the appropiate formats.
      *
      * @param array $line
      *
@@ -163,9 +152,10 @@ class ProffitAndLoss extends AccountingBase
      */
     protected function processLine($line)
     {
+        $line['descripcion'] = $this->fixHtml($line['descripcion']);
         $line['saldo'] = $this->divisaTools->format($line['saldo'], FS_NF0, false);
-        $line['saldoPrev'] = $this->divisaTools->format($line['saldoPrev'], FS_NF0, false);
-        $line['descripcion'] = $this::fixHtml($line['descripcion']);
+        $line['saldoprev'] = $this->divisaTools->format($line['saldoprev'], FS_NF0, false);
+
         return $line;
     }
 }

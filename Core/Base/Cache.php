@@ -30,7 +30,6 @@ use FacturaScripts\Core\Base\Cache\MemcacheAdapter;
  */
 class Cache
 {
-
     /**
      * The engine used for cache
      *
@@ -75,7 +74,7 @@ class Cache
      * Saves contents in the cache and associates them to $key
      *
      * @param string $key
-     * @param mixed $content
+     * @param mixed  $content
      *
      * @return bool
      */

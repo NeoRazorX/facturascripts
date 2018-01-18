@@ -30,7 +30,6 @@ use FacturaScripts\Core\Lib\Import\CSVImport;
  */
 class AgenciaTransporte
 {
-
     use Base\ModelTrait;
     use Base\ContactInformation;
 

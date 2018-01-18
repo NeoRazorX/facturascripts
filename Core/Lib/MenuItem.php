@@ -138,6 +138,7 @@ class MenuItem
         }
 
         $html .= '</ul>';
+
         return $html;
     }
 }

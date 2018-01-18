@@ -314,7 +314,7 @@
     "created-default-admin-account": "L'utilisateur admin a été crée avec le mot de passe admin.",
     "invalid-user-nick": "Nick '%nick% non valable. Il doit être composé d'entre 3 et 12 caractères, chiffres ou lettres , mais pas de Ñ ni accents.",
     "pass-between-1-32-chars": "Le mot de passe doit être avoir entre 1 et 32 caractères.",
-    "memcache": "Memcache 0",
+    "memcache": "Memcache",
     "connection-error": "Erreur de connexion au serveur Memcache.",
     "valid-login": "connexion correcte.",
     "email-not-valid": "Email invalide: '%email%'",
@@ -476,7 +476,7 @@
     "mailers-sendmail": "SendMail",
     "mailers-smtp": "SMTP",
     "error-gmail-explanation": "Bien que le mot de passe Gmail est correct, dans certains cas serveurs gmail pour bloquer la connexion. Pour remédier à cette situation, vous devez créer et utiliser un mot de passe <a href=\"https://support.google.com/accounts/answer/185833?hl=es\" target=\"_blank\"> application </a>",
-    "help-server-accepts-filesize": "Ce serveur prend en charge une taille maximale de% 1 $ MB. Si le plugin prend le relais, il ne parviendra pas à télécharger, même vous ne pouvez pas laisser quoi que ce soit.",
+    "help-server-accepts-filesize": "Ce serveur prend en charge une taille maximale de %size% MB.",
     "language-translation-by": "Traduction réalisée par:",
     "language-translation-credits": "Voici votre nom en tant que collaborateur dans la traduction;)",
     "languages-es_ES": "Espagnol - Espagne)",
@@ -1017,7 +1017,7 @@
     "scolor": "S Couleur",
     "search": "Chercher",
     "seat-date-not-in-exercise-range": "La date du siège n'est pas dans la plage d'exercice.",
-    "seat-possible-duplicated": "Siège possible dupliqué de cet autre. Si ce n'est pas le cas, pour éviter ce message, changez simplement le concept.",
+    "seat-possible-duplicated": "Siège possible dupliqué de <a href='index.php?page=ContabilidadAsiento&id=%seatId%'>cet autre</a>. Si ce n'est pas le cas, pour éviter ce message, changez simplement le concept.",
     "seat-within-regularization": "Le siège est dans une régularisation de %tax%. Il ne peut pas être supprimé.",
     "select-timezone": "Sélectionner le fuseau horaire",
     "setup-options": "Options de configuration",
@@ -1209,5 +1209,9 @@
     "record-save-error": "Une erreur s'est produite lors de l'enregistrement des données",
     "generate-title": "Exécuter la création du rapport",
     "tasaconv": "Taux de conversion",
-    "paid": "Payé"
+    "paid": "Payé",
+    "renumber-accounting": "Renuméroter les sièges",
+    "renumber-accounting-ok": "Renumérotation des sièges terminés",
+    "renumber-accounting-error": "Une erreur s'est produite lors de la renumérotation des entrées de l'année fiscale %exerciseCode%",
+    "enable-api": "Activer l'API"
 }

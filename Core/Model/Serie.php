@@ -30,7 +30,6 @@ use FacturaScripts\Core\Lib\Import\CSVImport;
  */
 class Serie
 {
-
     use Base\ModelTrait;
 
     /**

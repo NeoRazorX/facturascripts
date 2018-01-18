@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base;
@@ -31,7 +32,6 @@ use FacturaScripts\Core\Model;
  */
 abstract class BaseView
 {
-
     /**
      * Needed model to for the model method calls.
      * In the scope of EditController it contains the view data.
@@ -42,8 +42,8 @@ abstract class BaseView
 
     /**
      * Stores the new code from the save() procedure, to use in loadData().
-     * 
-     * @var string 
+     *
+     * @var string
      */
     protected $newCode;
 
@@ -79,7 +79,7 @@ abstract class BaseView
      * Establishes de view/edit state of a column
      *
      * @param string $columnName
-     * @param bool $disabled
+     * @param bool   $disabled
      */
     abstract public function disableColumn($columnName, $disabled);
 
@@ -93,12 +93,12 @@ abstract class BaseView
     /**
      * Load the data in the model or cursor property, according to the code or
      * where filter specified.
-     * 
-     * @param mixed $code
+     *
+     * @param mixed           $code
      * @param DataBaseWhere[] $where
-     * @param array $order
-     * @param int $offset
-     * @param int $limit
+     * @param array           $order
+     * @param int             $offset
+     * @param int             $limit
      */
     abstract public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT);
 
@@ -114,7 +114,7 @@ abstract class BaseView
 
         $this->count = 0;
         $this->title = static::$i18n->trans($title);
-        $this->model = empty($modelName) ? null : new $modelName;
+        $this->model = empty($modelName) ? null : new $modelName();
         $this->pageOption = new Model\PageOption();
     }
 
@@ -144,10 +144,19 @@ abstract class BaseView
     {
         if ($this->model->save()) {
             $this->newCode = $this->model->primaryColumnValue();
+
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * Calculate and set new code for PK of the model
+     */
+    public function setNewCode()
+    {
+        $this->model->{$this->model->primaryColumn()} = $this->model->newCode();
     }
 
     /**
@@ -268,5 +277,15 @@ abstract class BaseView
     public function getModelID()
     {
         return empty($this->model) ? '' : $this->model->modelClassName();
+    }
+
+    /**
+     * Returns the name.
+     *
+     * @return string
+     */
+    public function getViewName()
+    {
+        return $this->pageOption->name;
     }
 }

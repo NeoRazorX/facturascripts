@@ -126,6 +126,7 @@ class WidgetItemNumber extends WidgetItem
         $step = empty($this->step) ? ' step="any"' : ' step="' . $this->step . '"';
         $min = empty($this->min) ? '' : ' min="' . $this->min . '"';
         $max = empty($this->max) ? '' : ' max="' . $this->max . '"';
+
         return $base . $step . $min . $max;
     }
 
@@ -144,6 +145,7 @@ class WidgetItemNumber extends WidgetItem
 
         $style = $this->getTextOptionsHTML($value);
         $html = '<span' . $style . '>' . self::$numberTools->format($value, $this->decimal) . '</span>';
+
         return $html;
     }
 
@@ -157,6 +159,7 @@ class WidgetItemNumber extends WidgetItem
     public function getEditHTML($value)
     {
         $specialAttributes = $this->specialAttributes();
+
         return $this->standardEditHTMLWidget($value, $specialAttributes);
     }
 }

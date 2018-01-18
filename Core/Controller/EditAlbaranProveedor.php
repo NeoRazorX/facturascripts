@@ -29,14 +29,14 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class EditAlbaranProveedor extends ExtendedController\DocumentController
 {
-
     /**
      * Load views
      */
     protected function createViews()
     {
         parent::createViews();
-        $this->addEditView('\FacturaScripts\Dinamic\Model\AlbaranProveedor', 'EditAlbaranProveedor', 'detail');
+        $this->views['Document']->documentType = 'purchase';
+        $this->addEditView($this->getDocumentClassName(), 'EditAlbaranProveedor', 'detail');
     }
 
     /**
@@ -62,18 +62,17 @@ class EditAlbaranProveedor extends ExtendedController\DocumentController
     /**
      * Load data view procedure
      *
-     * @param string $keyView
+     * @param string                      $keyView
      * @param ExtendedController\EditView $view
      */
     protected function loadData($keyView, $view)
     {
-        $idalbaran = $this->request->get('code');
-
-        switch ($keyView) {
-            case 'EditAlbaranProveedor':
-                $view->loadData($idalbaran);
-                break;
+        if ($keyView === 'EditAlbaranProveedor') {
+            $idalbaran = $this->getViewModelValue('Document', 'idalbaran');
+            $view->loadData($idalbaran);
         }
+        
+        parent::loadData($keyView, $view);
     }
 
     /**

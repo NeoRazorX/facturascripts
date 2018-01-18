@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -27,7 +28,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class FacturaProveedor
 {
-
     use Base\DocumentoCompra;
     use Base\Factura;
 
@@ -78,8 +78,8 @@ class FacturaProveedor
 
     /**
      * Set the date and time, but respecting the exercise and the
-     * VAT regularizations.
-     * Returns TRUE if a date or time other than those requested is assigned.
+          * VAT regularizations.
+          * Returns TRUE if a date or time other than those requested is assigned.
      *
      * @param string $fecha
      * @param string $hora
@@ -146,12 +146,13 @@ class FacturaProveedor
     public function getLineas()
     {
         $lineaModel = new LineaFacturaProveedor();
+
         return $lineaModel->all([new DataBaseWhere('idfactura', $this->idfactura)]);
     }
 
     /**
      * Returns the VAT lines of the invoice.
-     * If there are not, create them.
+          * If there are not, create them.
      *
      * @return LineaIvaFacturaProveedor[]
      */

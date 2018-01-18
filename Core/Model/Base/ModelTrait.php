@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\Cache;
@@ -33,7 +34,6 @@ use FacturaScripts\Core\Base\Utils;
  */
 trait ModelTrait
 {
-
     use Utils;
 
     /**
@@ -134,8 +134,8 @@ trait ModelTrait
 
     /**
      * This function is called when creating the model table. Returns the SQL
-           * that will be executed after the creation of the table. Useful to insert values
-           * default.
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
@@ -156,6 +156,7 @@ trait ModelTrait
     public function modelClassName()
     {
         $result = explode('\\', $this->modelName());
+
         return end($result);
     }
 
@@ -181,7 +182,7 @@ trait ModelTrait
      *
      * @return string
      */
-    public function primaryDescriptionColumn() 
+    public function primaryDescriptionColumn()
     {
         return 'descripcion';
     }
@@ -238,8 +239,9 @@ trait ModelTrait
     /**
      * Returns the integer value by controlling special cases for the PK and FK.
      *
-     * @param array $field
+     * @param array  $field
      * @param string $value
+     *
      * @return integer|NULL
      */
     private function getIntergerValueForField($field, $value)
@@ -258,7 +260,7 @@ trait ModelTrait
     /**
      * Assign the values of the $data array to the model properties.
      *
-     * @param array $data
+     * @param array    $data
      * @param string[] $exclude
      */
     public function loadFromData(array $data = [], array $exclude = [])
@@ -299,7 +301,7 @@ trait ModelTrait
                         if ($value === null && $field['is_nullable'] === 'NO') {
                             $value = '';
                         }
-                        $this->{$key} = $this::fixHtml($value);
+                        $this->{$key} = $this->fixHtml($value);
                 }
             } else {
                 $this->{$key} = $value;
@@ -319,15 +321,15 @@ trait ModelTrait
 
     /**
      * Fill the class with the registry values
-           * whose primary column corresponds to the value $cod, or according to the condition
-           * where indicated, if value is not reported in $cod.
-           * Initializes the values of the class if there is no record that
-           * meet the above conditions.
-           * Returns True if the record exists and False otherwise.
+     * whose primary column corresponds to the value $cod, or according to the condition
+     * where indicated, if value is not reported in $cod.
+     * Initializes the values of the class if there is no record that
+     * meet the above conditions.
+     * Returns True if the record exists and False otherwise.
      *
-     * @param string $cod
+     * @param string                   $cod
      * @param DataBase\DataBaseWhere[] $where
-     * @param array $orderby
+     * @param array                    $orderby
      *
      * @return bool
      */
@@ -336,10 +338,12 @@ trait ModelTrait
         $data = $this->getRecord($cod, $where, $orderby);
         if (empty($data)) {
             $this->clear();
+
             return false;
         }
 
         $this->loadFromData($data[0]);
+
         return true;
     }
 
@@ -446,9 +450,9 @@ trait ModelTrait
      * Returns all models that correspond to the selected filters.
      *
      * @param DataBase\DataBaseWhere[] $where  filters to apply to model records.
-     * @param array $order  fields to use in the sorting. For example ['code' => 'ASC']
-     * @param int $offset
-     * @param int $limit
+     * @param array                    $order  fields to use in the sorting. For example ['code' => 'ASC']
+     * @param int                      $offset
+     * @param int                      $limit
      *
      * @return array
      */
@@ -512,6 +516,7 @@ trait ModelTrait
 
         if (!$dbTools->getXmlTable($tableName, $xmlCols, $xmlCons)) {
             self::$miniLog->critical(self::$i18n->trans('error-on-xml-file'));
+
             return false;
         }
 
@@ -526,6 +531,7 @@ trait ModelTrait
         if ($sql !== '' && !self::$dataBase->exec($sql)) {
             self::$miniLog->critical(self::$i18n->trans('check-table', ['%tableName%' => $tableName]));
             self::$cache->clear();
+
             return false;
         }
 
@@ -534,11 +540,11 @@ trait ModelTrait
 
     /**
      * Read the record whose primary column corresponds to the value $cod
-           * or the first that meets the indicated condition
+     * or the first that meets the indicated condition
      *
-     * @param string $cod
+     * @param string     $cod
      * @param array|null $where
-     * @param array $orderby
+     * @param array      $orderby
      *
      * @return array
      */
@@ -547,6 +553,7 @@ trait ModelTrait
         $sqlWhere = empty($where) ? ' WHERE ' . $this->primaryColumn() . ' = ' . self::$dataBase->var2str($cod) : DataBase\DataBaseWhere::getSQLWhere($where);
 
         $sql = 'SELECT * FROM ' . static::tableName() . $sqlWhere . $this->getOrderBy($orderby);
+
         return self::$dataBase->selectLimit($sql, 1);
     }
 

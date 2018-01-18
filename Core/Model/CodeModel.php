@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base;
@@ -28,10 +29,10 @@ use FacturaScripts\Core\Base;
  */
 class CodeModel
 {
-
     use Base\Utils;
 
-    const ITEM_LIMIT = 1000;
+    const ALL_LIMIT = 1000;
+    const SEARCH_LIMIT = 50;
 
     /**
      * It provides direct access to the database.
@@ -73,10 +74,10 @@ class CodeModel
     /**
      * Load a CodeModel list (code and description) for the indicated table.
      *
-     * @param string  $tableName
-     * @param string  $fieldCode
-     * @param string  $fieldDescription
-     * @param bool $addEmpty
+     * @param string $tableName
+     * @param string $fieldCode
+     * @param string $fieldDescription
+     * @param bool   $addEmpty
      *
      * @return self[]
      */
@@ -95,7 +96,7 @@ class CodeModel
 
             $sql = 'SELECT DISTINCT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM '
                 . $tableName . ' ORDER BY 2 ASC';
-            $data = self::$dataBase->selectLimit($sql, self::ITEM_LIMIT);
+            $data = self::$dataBase->selectLimit($sql, self::ALL_LIMIT);
             if (!empty($data)) {
                 foreach ($data as $d) {
                     $result[] = new self($d);
@@ -113,7 +114,7 @@ class CodeModel
      * @param string $fieldCode
      * @param string $code
      * @param string $fieldDescription
-     * 
+     *
      * @return self
      */
     public function get($tableName, $fieldCode, $code, $fieldDescription)
@@ -141,23 +142,24 @@ class CodeModel
      * @param string $fieldCode
      * @param string $code
      * @param string $fieldDescription
-     * 
+     *
      * @return string
      */
     public function getDescription($tableName, $fieldCode, $code, $fieldDescription)
     {
         $model = $this->get($tableName, $fieldCode, $code, $fieldDescription);
+
         return $model->description;
     }
 
     /**
      * Load a CodeModel list (code and description) for the indicated table and search.
-     * 
+     *
      * @param string $tableName
      * @param string $fieldCode
      * @param string $fieldDescription
      * @param string $search
-     * 
+     *
      * @return self[]
      */
     public static function search($tableName, $fieldCode, $fieldDescription, $search)
@@ -173,7 +175,7 @@ class CodeModel
                 . ' FROM ' . $tableName
                 . ' WHERE LOWER(' . $fieldDescription . ") LIKE '%" . mb_strtolower($search) . "%'"
                 . ' ORDER BY 2 ASC';
-            $data = self::$dataBase->selectLimit($sql, self::ITEM_LIMIT);
+            $data = self::$dataBase->selectLimit($sql, self::SEARCH_LIMIT);
             if (!empty($data)) {
                 foreach ($data as $d) {
                     $result[] = new self($d);

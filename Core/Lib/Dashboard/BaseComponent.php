@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Dashboard;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -71,7 +72,7 @@ class BaseComponent
      * BaseComponent constructor.
      *
      * @param Model\DashboardData $data
-     * @param string $userNick
+     * @param string              $userNick
      */
     public function __construct($data, $userNick)
     {
@@ -90,7 +91,7 @@ class BaseComponent
     {
         $result = [
             new DataBase\DataBaseWhere('component', $this->component),
-            new DataBase\DataBaseWhere('displaydate', date('Y-m-d'), '>=')
+            new DataBase\DataBaseWhere('displaydate', date('Y-m-d'), '>='),
         ];
 
         if (!empty($this->nick)) {
@@ -107,7 +108,7 @@ class BaseComponent
      */
     protected function getDataOrderBy()
     {
-        return [ 'displaydate' => 'ASC', 'id' => 'ASC' ];
+        return ['displaydate' => 'ASC', 'id' => 'ASC'];
     }
 
     /**
@@ -151,12 +152,12 @@ class BaseComponent
         $this->randomData = true;
         $colors = ['info', 'primary', 'warning', 'danger'];
 
-        for ($key = 1; $key < $numRecords; $key++) {
+        for ($key = 1; $key < $numRecords; ++$key) {
             shuffle($colors);
 
             $data = [
                 'color' => $colors[0],
-                'description' => $this->getRandomText($maxWord)
+                'description' => $this->getRandomText($maxWord),
             ];
 
             $this->saveData($data);

@@ -156,7 +156,7 @@
     "mailers-sendmail": "SendMail",
     "mailers-smtp": "SMTP",
     "error-gmail-explanation": "Tot i que la clau de gmail sigui correcta, en algunes circumstàncies els servidors de gmail bloquegen la connexió. Per a superar aquesta situació has de crear i utilitzar una <a href='https://support.google.com/accounts/answer/185833?hl=es' target='_blank'>clau d'aplicació</a>",
-    "help-server-accepts-filesize": "Aquest servidor admet una mida màxima de fitxer de <b>%s MB</b>. Si el plugin ocupa més, donarà error al pujar-lo, inclòs potser que no aparegui res.",
+    "help-server-accepts-filesize": "Aquest servidor admet una mida màxima de fitxer de %size% MB.",
     "language-translation-by": "Traducció realitzada per",
     "language-translation-credits": "Francesc Pineda Segarra",
     "deleted-page-without-controller": "S'ha eliminat automàticament la pàgina '%pageName%' ja que no té un controlador associat a la carpeta controller.",
@@ -855,7 +855,7 @@
     "put-on-startpage": "Marcar com a pàgina d'inici",
     "pvp": "PVP",
     "pvpsindto-line-error": "Error en el valor de pvpsindto de la línia %reference% del document. Valor correcte: %totalWithoutDiscount%",
-    "pvptotal-line-error": "Error en el valor pvototal de la línia %reference% del document. Valor correcte: %total%",
+    "pvptotal-line-error": "Error en el valor 'pvptotal' de la línia %reference% del document. Valor correcte: %total%",
     "quantity": "Quantitat",
     "quarter": "Trimestre",
     "questions": "Preguntes",
@@ -1059,7 +1059,7 @@
     "creation-date": "Data de creació",
     "display-date": "Data a mostrar",
     "color": "color",
-    "name-or-business-name": "Nom o nom de l'empresa",
+    "name-or-business-name": "Nom o raó social",
     "document-reports": "Informes de documents",
     "choose-doc-type": "Tria el tipus de document",
     "customer-estimations": "Pressupostos de clients",
@@ -1126,5 +1126,6 @@
     "record-save-error": "Un error ha succeït mentre es guardaven les dades",
     "generate-title": "Executa la creació de l'informe",
     "tasaconv": "Taxa de conversió",
-    "paid": "Pagat"
+    "paid": "Pagat",
+    "enable-api": "Activa API"
 }

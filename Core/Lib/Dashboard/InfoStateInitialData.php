@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Dashboard;
 
 /**
@@ -32,7 +33,7 @@ class InfoStateInitialData
      */
     public static function generateData($parent)
     {
-        $data = new InfoStateInitialData();
+        $data = new self();
         $parent->saveData($data->getCustomerData());
         $parent->saveData($data->getSupplierData());
         $parent->saveData($data->getProductData());
@@ -51,7 +52,7 @@ class InfoStateInitialData
         $result['values'] = [
             ['name' => 'total', 'sql' => 'count(*)', 'type' => 'int'],
             ['name' => 'new', 'sql' => 'SUM(CASE WHEN EXTRACT(YEAR FROM fechaalta) = EXTRACT(YEAR FROM current_date) THEN 1 ELSE 0 END)', 'type' => 'int'],
-            ['name' => 'suspended', 'sql' => 'SUM(CASE WHEN debaja THEN 1 ELSE 0 END)', 'type' => 'int']
+            ['name' => 'suspended', 'sql' => 'SUM(CASE WHEN debaja THEN 1 ELSE 0 END)', 'type' => 'int'],
         ];
 
         return $result;
@@ -70,7 +71,7 @@ class InfoStateInitialData
         $result['values'] = [
             ['name' => 'total', 'sql' => 'count(*)', 'type' => 'int'],
             ['name' => 'is-creditor', 'sql' => 'SUM(CASE WHEN acreedor THEN 1 ELSE 0 END)', 'type' => 'int'],
-            ['name' => 'suspended', 'sql' => 'SUM(CASE WHEN debaja THEN 1 ELSE 0 END)', 'type' => 'int']
+            ['name' => 'suspended', 'sql' => 'SUM(CASE WHEN debaja THEN 1 ELSE 0 END)', 'type' => 'int'],
         ];
 
         return $result;
@@ -90,7 +91,7 @@ class InfoStateInitialData
             ['name' => 'total', 'sql' => 'count(*)', 'type' => 'int'],
             ['name' => 'for-sale', 'sql' => 'SUM(CASE WHEN sevende THEN 1 ELSE 0 END)', 'type' => 'int'],
             ['name' => 'no-stock', 'sql' => 'SUM(CASE WHEN (sevende AND stockfis < stockmin) THEN 1 ELSE 0 END)', 'type' => 'int'],
-            ['name' => 'locked', 'sql' => 'SUM(CASE WHEN bloqueado THEN 1 ELSE 0 END)', 'type' => 'int']
+            ['name' => 'locked', 'sql' => 'SUM(CASE WHEN bloqueado THEN 1 ELSE 0 END)', 'type' => 'int'],
         ];
 
         return $result;

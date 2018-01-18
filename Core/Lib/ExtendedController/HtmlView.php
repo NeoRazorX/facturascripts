@@ -54,11 +54,10 @@ class HtmlView extends BaseView
      * Allow disable a column from a table.
      *
      * @param string $columnName
-     * @param bool $disabled
+     * @param bool   $disabled
      */
     public function disableColumn($columnName, $disabled)
     {
-        ;
     }
 
     /**
@@ -72,18 +71,17 @@ class HtmlView extends BaseView
     {
         return null;
     }
-    
+
     /**
      * Does nothing in this class.
-     * 
-     * @param mixed $code
+     *
+     * @param mixed           $code
      * @param DataBaseWhere[] $where
-     * @param array $order
-     * @param int $offset
-     * @param int $limit
+     * @param array           $order
+     * @param int             $offset
+     * @param int             $limit
      */
     public function loadData($code = false, $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {
-        ;
     }
 }

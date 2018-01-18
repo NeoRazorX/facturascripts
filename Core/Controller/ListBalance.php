@@ -29,7 +29,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class ListBalance extends ExtendedController\ListController
 {
-
     /**
      * Returns basic page attributes
      *
@@ -53,7 +52,7 @@ class ListBalance extends ExtendedController\ListController
         $className = $this->getClassName();
         $this->addView('\FacturaScripts\Dinamic\Model\Balance', $className);
         $fields = [
-            'codbalance', 'naturaleza', 'descripcion1', 'descripcion2', 'descripcion3', 'descripcion4', 'descripcion4ba'
+            'codbalance', 'naturaleza', 'descripcion1', 'descripcion2', 'descripcion3', 'descripcion4', 'descripcion4ba',
         ];
         $this->addSearchFields($className, $fields);
 

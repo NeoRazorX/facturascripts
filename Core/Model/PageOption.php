@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -29,7 +30,6 @@ use FacturaScripts\Core\Lib\ExtendedController;
  */
 class PageOption
 {
-
     use Base\ModelTrait {
         clear as traitClear;
         loadFromData as traitLoadFromData;
@@ -162,7 +162,7 @@ class PageOption
             'columns' => json_encode($this->columns),
             'modals' => json_encode($this->modals),
             'filters' => json_encode($this->filters),
-            'rows' => json_encode($this->rows)
+            'rows' => json_encode($this->rows),
         ];
     }
 
@@ -174,6 +174,7 @@ class PageOption
     private function saveUpdate()
     {
         $values = $this->getEncodeValues();
+
         return $this->traitSaveUpdate($values);
     }
 
@@ -185,6 +186,7 @@ class PageOption
     private function saveInsert()
     {
         $values = $this->getEncodeValues();
+
         return $this->traitSaveInsert($values);
     }
 
@@ -193,6 +195,7 @@ class PageOption
      *
      * @param string $name
      * @param string $nick
+     *
      * @return Database\DataBaseWhere[]
      */
     private function getPageFilter($name, $nick)
@@ -201,7 +204,7 @@ class PageOption
             new DataBase\DataBaseWhere('nick', $nick),
             new DataBase\DataBaseWhere('name', $name),
             new DataBase\DataBaseWhere('nick', 'NULL', 'IS', 'OR'),
-            new DataBase\DataBaseWhere('name', $name)
+            new DataBase\DataBaseWhere('name', $name),
         ];
     }
 
@@ -222,6 +225,7 @@ class PageOption
 
             if (!ExtendedController\VisualItemLoadEngine::installXML($name, $this)) {
                 self::$miniLog->critical(self::$i18n->trans('error-processing-xmlview', ['%fileName%' => $name]));
+
                 return;
             }
         }

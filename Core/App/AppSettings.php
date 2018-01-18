@@ -30,12 +30,14 @@ class AppSettings
 {
     /**
      * Array of data settings.
+     *
      * @var array
      */
     private static $data;
 
     /**
      * Contains if need to save data.
+     *
      * @var bool
      */
     private static $save;
@@ -54,8 +56,8 @@ class AppSettings
     /**
      * Return the value of property in group.
      *
-     * @param string $group
-     * @param string $property
+     * @param string      $group
+     * @param string      $property
      * @param string|null $default
      *
      * @return mixed
@@ -70,6 +72,7 @@ class AppSettings
         return self::$data[$group][$property];
     }
 
+
     /**
      * Set the value for group property.
      *
@@ -82,7 +85,7 @@ class AppSettings
         if (!isset(self::$data[$group])) {
             self::$data[$group] = [];
         }
-        
+
         self::$data[$group][$property] = $value;
     }
 

@@ -1,6 +1,6 @@
 {#
    /**
-     * Panel Controller Template. (Left Panel)
+     * PanelController Template. (Left Panel)
      *
      * It shows the data of one or several models, through a navigation panel,
      * in different formats.
@@ -19,7 +19,7 @@
      * GNU Lesser General Public License for more details.
      *
      * You should have received a copy of the GNU Lesser General Public License
-     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+     * along with this program.  If not, see http://www.gnu.org/licenses/.
      *
     */
 #}
@@ -85,16 +85,6 @@
 </script>
 {% endblock %}
 
-{% block messages %}
-<div class="container-fluid">
-    <div id="messages" class="row">
-        <div class="col-12">
-            {{ parent() }}
-        </div>
-    </div>
-</div>
-{% endblock %}
-
 {% block body %}
 {# -- Calculate texts according to language -- #}
 {% set go_back = i18n.trans('back') %}
@@ -116,7 +106,7 @@
     {{ parent() }}
 
     {# -- Header Row -- #}
-    <div id="header" class="row">
+    <div class="row">
         <div class="col-6 d-print-none">
             <div class="btn-group" aria-label="Button group with navigation actions">
                 <a href="{{ list_url }}" class="btn btn-sm btn-outline-secondary">
@@ -145,7 +135,7 @@
     </div>
 
     {# -- Data Row -- #}
-    <div id="data" class="row" style="margin-top: 15px;">
+    <div class="row" style="margin-top: 15px;">
         {# -- Left Panel -- #}
         <div class="col-sm-2">
             <div class="nav flex-column nav-pills" id="mainTabs" role="tablist">

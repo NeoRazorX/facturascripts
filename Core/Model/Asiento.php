@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -28,7 +29,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class Asiento
 {
-
     use Base\ModelTrait {
         saveInsert as private traitSaveInsert;
     }
@@ -105,7 +105,7 @@ class Asiento
 
     /**
      * Text that identifies the type of document
-           * 'Customer invoice' or 'Vendor invoice'.
+          * 'Customer invoice' or 'Vendor invoice'.
      *
      * @var string
      */
@@ -192,8 +192,8 @@ class Asiento
 
     /**
      * Returns the code of the currency.
-           * What happens is that this data is stored in the games, that's why
-           * you have to use this function.
+          * What happens is that this data is stored in the games, that's why
+          * you have to use this function.
      *
      * @return string|null
      */
@@ -484,7 +484,7 @@ class Asiento
 
     /**
      * Returns an array with combinations containing $query in its number
-           * or concept or amount.
+          * or concept or amount.
      *
      * @param string $query
      * @param int    $offset
@@ -624,6 +624,7 @@ class Asiento
         echo self::$i18n->trans('renumber-accounting');
         $this->renumber();
     }
+
     /// Renumber all seats. Returns False in case of error
 
     /**

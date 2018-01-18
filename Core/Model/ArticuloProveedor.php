@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,7 +26,6 @@ namespace FacturaScripts\Core\Model;
  */
 class ArticuloProveedor
 {
-
     use Base\ModelTrait {
         url as private traitUrl;
     }
@@ -183,6 +183,7 @@ class ArticuloProveedor
 
         if ($this->refproveedor === null || empty($this->refproveedor) || strlen($this->refproveedor) > 25) {
             self::$miniLog->alert(self::$i18n->trans('supplier-reference-valid-length'));
+
             return false;
         }
 

@@ -39,7 +39,7 @@ interface AdaptorInterface
      * Assign $content to the adaptor $key
      *
      * @param string $key
-     * @param mixed $content
+     * @param mixed  $content
      *
      * @return mixed
      */

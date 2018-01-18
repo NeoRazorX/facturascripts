@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -27,7 +28,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class AtributoValor
 {
-
     use Base\ModelTrait;
 
     /**
@@ -73,7 +73,7 @@ class AtributoValor
 
     /**
      * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
+          * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
@@ -93,6 +93,7 @@ class AtributoValor
     public function test()
     {
         $this->valor = self::noHtml($this->valor);
+
         return true;
     }
 
@@ -107,6 +108,7 @@ class AtributoValor
     {
         $where = [new DataBaseWhere('codatributo', $cod)];
         $order = ['valor' => 'ASC'];
+
         return $this->all($where, $order);
     }
 }

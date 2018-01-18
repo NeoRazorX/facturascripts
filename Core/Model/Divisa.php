@@ -29,7 +29,6 @@ use FacturaScripts\Core\Lib\Import\CSVImport;
  */
 class Divisa
 {
-
     use Base\ModelTrait;
 
     /**
