@@ -48,8 +48,7 @@ abstract class DocumentController extends PanelController
      */
     protected function createViews()
     {
-        $title = $this->i18n->trans('new');
-        $view = new DocumentView($title, $this->getDocumentClassName(), $this->getDocumentLineClassName(), $this->getLineXMLView(), $this->user->nick);
+        $view = new DocumentView('new', $this->getDocumentClassName(), $this->getDocumentLineClassName(), $this->getLineXMLView(), $this->user->nick);
         $this->addView('Document', $view, 'fa-file');
     }
 

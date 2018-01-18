@@ -14,12 +14,10 @@
     <column>
         <name>codagente</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codalmacen</name>
         <type>character varying(4)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>coddivisa</name>
@@ -39,12 +37,10 @@
     <column>
         <name>codpago</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codproveedor</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codserie</name>
@@ -59,8 +55,6 @@
     <column>
         <name>hora</name>
         <type>time without time zone</type>
-        <null>NO</null>
-        <default>now()</default>
     </column>
     <column>
         <name>idalbaran</name>
@@ -71,7 +65,6 @@
     <column>
         <name>idfactura</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>irpf</name>
@@ -98,27 +91,19 @@
     <column>
         <name>numproveedor</name>
         <type>character varying(50)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>observaciones</name>
         <type>text</type>
-        <null>YES</null>
     </column>
     <column>
         <name>femail</name>
         <type>date</type>
     </column>
     <column>
-        <name>ptefactura</name>
+        <name>editable</name>
         <type>boolean</type>
         <null>NO</null>
-        <default>true</default>
-    </column>
-    <column>
-        <name>recfinanciero</name>
-        <type>double precision</type>
-        <default>0</default>
     </column>
     <column>
         <name>tasaconv</name>
@@ -157,32 +142,20 @@
         <default>0</default>
     </column>
     <column>
-        <name>numdocs</name>
-        <type>integer</type>
-        <default>0</default>
-    </column>
-    <column>
         <name>idempresa</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <constraint>
         <name>ca_albaranesprov_series2</name>
-        <type>FOREIGN KEY (codserie)
-            REFERENCES series (codserie)
-            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_albaranesprov_ejercicios2</name>
-        <type>FOREIGN KEY (codejercicio)
-            REFERENCES ejercicios (codejercicio)
-            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_albaranesprov_facturas</name>
-        <type>FOREIGN KEY (idfactura)
-            REFERENCES facturasprov (idfactura)
-            ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idfactura) REFERENCES facturasprov (idfactura) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>uniq_codigo_albaranesprov</name>

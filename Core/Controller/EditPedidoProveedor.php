@@ -83,7 +83,7 @@ class EditPedidoProveedor extends ExtendedController\DocumentController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['title'] = 'supplier-order';
+        $pagedata['title'] = 'order';
         $pagedata['menu'] = 'purchases';
         $pagedata['icon'] = 'fa-files-o';
         $pagedata['showonmenu'] = false;

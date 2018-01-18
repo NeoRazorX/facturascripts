@@ -612,5 +612,8 @@
     "record-save-error": "An error occurred while saving the record",
     "generate-title": "Run report generation",
     "tasaconv": "Conversion rate",
-    "paid": "Paid"
+    "paid": "Paid",
+    "re": "RE",
+    "new-customer": "new customer",
+    "new-supplier": "new supplier"
 }

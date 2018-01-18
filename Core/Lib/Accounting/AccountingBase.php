@@ -36,7 +36,7 @@ abstract class AccountingBase
     /**
      * Link with the active dataBase
      *
-     * @var dataBase
+     * @var DataBase
      */
     protected $dataBase;
 
