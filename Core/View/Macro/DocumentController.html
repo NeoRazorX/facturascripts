@@ -55,6 +55,7 @@
     <div class="row">
         {{ macros.customSelect('doc_codpago', 'codpago', model.codpago, context.fsc.getSelectValues('FormaPago')) }}
         {{ macros.customSelect('doc_coddivisa', 'coddivisa', model.coddivisa, context.fsc.getSelectValues('Divisa')) }}
+        {{ macros.customInput('doc_total', 'total', model.total, 'text', 'fa-money', {class: 'form-control', disabled: ''}) }}
     </div>
     <div class="row">
         <div class="col-12">

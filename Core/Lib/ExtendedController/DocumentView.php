@@ -149,8 +149,8 @@ class DocumentView extends BaseView
         }
 
         $fieldName = $this->model->primaryColumn();
-        $this->count = empty($this->model->{$fieldName}) ? 0 : 1;
-        $this->lines = empty($this->model->{$fieldName}) ? [] : $this->model->getLineas();
+        $this->count = empty($this->model->primaryColumnValue()) ? 0 : 1;
+        $this->lines = empty($this->model->primaryColumnValue()) ? [] : $this->model->getLineas();
         $this->title = $this->model->codigo;
     }
 
@@ -164,6 +164,7 @@ class DocumentView extends BaseView
         unset($data['codproveedor']);
         unset($data['lines']);
         $this->loadFromData($data);
+        $this->lines = empty($this->model->primaryColumnValue()) ? [] : $this->model->getLineas();
 
         if (empty($this->model->codejercicio)) {
             $ejercicioModel = new Ejercicio();

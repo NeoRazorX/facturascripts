@@ -19,7 +19,6 @@
     <column>
         <name>codagente</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codpago</name>
@@ -44,7 +43,6 @@
     <column>
         <name>irpf</name>
         <type>double precision</type>
-        <null>YES</null>
     </column>
     <column>
         <name>idpedido</name>
@@ -55,21 +53,14 @@
     <column>
         <name>idalbaran</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>observaciones</name>
         <type>text</type>
-        <null>YES</null>
     </column>
     <column>
         <name>femail</name>
         <type>date</type>
-    </column>
-    <column>
-        <name>servido</name>
-        <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>editable</name>
@@ -79,12 +70,10 @@
     <column>
         <name>codalmacen</name>
         <type>character varying(4)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>numproveedor</name>
         <type>character varying(50)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>cifnif</name>
@@ -94,26 +83,14 @@
     <column>
         <name>codproveedor</name>
         <type>character varying(10)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>fechaentrada</name>
-        <type>date</type>
     </column>
     <column>
         <name>totalrecargo</name>
         <type>double precision</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>recfinanciero</name>
-        <type>double precision</type>
-        <default>0</default>
     </column>
     <column>
         <name>nombre</name>
         <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>fecha</name>
@@ -123,8 +100,6 @@
     <column>
         <name>hora</name>
         <type>time without time zone</type>
-        <null>YES</null>
-        <default>now()</default>
     </column>
     <column>
         <name>neto</name>
@@ -134,7 +109,6 @@
     <column>
         <name>totalirpf</name>
         <type>double precision</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codserie</name>
@@ -157,18 +131,8 @@
         <null>NO</null>
     </column>
     <column>
-        <name>numdocs</name>
-        <type>integer</type>
-        <default>0</default>
-    </column>
-    <column>
-        <name>idoriginal</name>
-        <type>integer</type>
-    </column>
-    <column>
         <name>idempresa</name>
         <type>integer</type>
-        <null>YES</null>
     </column>
     <constraint>
         <name>pedidosprov_pkey</name>
@@ -176,15 +140,11 @@
     </constraint>
     <constraint>
         <name>ca_pedidosprov_series</name>
-        <type>FOREIGN KEY (codserie)
-            REFERENCES series (codserie)
-            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (codserie) REFERENCES series (codserie) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_pedidosprov_ejercicios</name>
-        <type>FOREIGN KEY (codejercicio)
-            REFERENCES ejercicios (codejercicio)
-            ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>uniq_codigo_pedidosprov</name>
