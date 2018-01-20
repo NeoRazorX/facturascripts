@@ -111,6 +111,13 @@ abstract class DocumentController extends PanelController
         return 'CommonLineasDocumento';
     }
 
+    /**
+     * Returns an array with all data from selected model.
+     *
+     * @param string $modelName
+     *
+     * @return mixed
+     */
     public function getSelectValues($modelName)
     {
         $values = [];

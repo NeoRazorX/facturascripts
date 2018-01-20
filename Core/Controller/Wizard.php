@@ -30,6 +30,7 @@ use FacturaScripts\Core\Model;
  */
 class Wizard extends Controller
 {
+    const ITEM_SELECT_LIMIT = 500;
 
     /**
      * Returns basic page attributes
@@ -46,37 +47,24 @@ class Wizard extends Controller
     }
 
     /**
-     * Return a list currencies.
+     * Returns an array with all data from selected model.
      *
-     * @return Model\Divisa[]
+     * @param string $modelName
+     *
+     * @return mixed
      */
-    public function getDivisas()
+    public function getSelectValues($modelName)
     {
-        $divisas = [];
+        $values = [];
+        $modelName = '\FacturaScripts\Dinamic\Model\\' . $modelName;
+        $model = new $modelName();
 
-        $divisaModel = new Model\Divisa();
-        foreach ($divisaModel->all([], ['descripcion' => 'ASC'], 0, 500) as $divisa) {
-            $divisas[$divisa->coddivisa] = $divisa->descripcion;
+        $order = [$model->primaryDescriptionColumn() => 'ASC'];
+        foreach ($model->all([], $order, 0, self::ITEM_SELECT_LIMIT) as $newModel) {
+            $values[$newModel->primaryColumnValue()] = $newModel->primaryDescription();
         }
 
-        return $divisas;
-    }
-
-    /**
-     * Return a list of countries.
-     *
-     * @return Model\Pais[]
-     */
-    public function getPaises()
-    {
-        $paises = [];
-
-        $paisModel = new Model\Pais();
-        foreach ($paisModel->all([], ['nombre' => 'ASC'], 0, 500) as $pais) {
-            $paises[$pais->codpais] = $pais->nombre;
-        }
-
-        return $paises;
+        return $values;
     }
 
     /**
