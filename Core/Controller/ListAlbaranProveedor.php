@@ -43,7 +43,6 @@ class ListAlbaranProveedor extends ExtendedController\ListController
         $this->addFilterSelect('ListAlbaranProveedor', 'codserie', 'series', '', 'descripcion');
         $this->addFilterSelect('ListAlbaranProveedor', 'codpago', 'formaspago', '', 'descripcion');
         $this->addFilterAutocomplete('ListAlbaranProveedor', 'codproveedor', 'proveedores', '', 'nombre');
-        $this->addFilterCheckbox('ListAlbaranProveedor', 'invoice', 'invoice', 'ptefactura', true);
 
         $this->addOrderBy('ListAlbaranProveedor', 'codigo', 'code');
         $this->addOrderBy('ListAlbaranProveedor', 'fecha', 'date', 2);

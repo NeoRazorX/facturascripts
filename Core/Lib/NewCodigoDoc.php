@@ -101,7 +101,7 @@ class NewCodigoDoc
             . " AND codserie = " . self::$dataBase->var2str($codserie) . ";";
 
         $data = self::$dataBase->select($sql);
-        if ($data) {
+        if (!empty($data)) {
             $numero = 1 + (int) $data[0]['num'];
         }
 

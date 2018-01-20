@@ -32,15 +32,6 @@ class FacturaCliente
     use Base\Factura;
 
     /**
-     * Optional identifier for printing. Still without use.
-          * Can be used to identify a form of printing and always use
-          * that in this invoice.
-     *
-     * @var int
-     */
-    public $idimprenta;
-
-    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
@@ -184,8 +175,10 @@ class FacturaCliente
     public function getLineas()
     {
         $lineaModel = new LineaFacturaCliente();
+        $where = [new DataBaseWhere('idfactura', $this->idfactura)];
+        $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
 
-        return $lineaModel->all([new DataBaseWhere('idfactura', $this->idfactura)]);
+        return $lineaModel->all($where, $order);
     }
 
     /**
@@ -270,15 +263,5 @@ class FacturaCliente
         }
 
         return false;
-    }
-
-    /**
-     * Returns an array with the gaps in the numbering.
-     *
-     * @return mixed
-     */
-    public function huecos()
-    {
-        return [];
     }
 }

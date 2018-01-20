@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of presupuestos_y_pedidos
- * Copyright (C) 2014-2017    Carlos Garcia Gomez        <carlos@facturascripts.com>
+ * Copyright (C) 2014-2018    Carlos Garcia Gomez        <carlos@facturascripts.com>
  * Copyright (C) 2014         Francesc Pineda Segarra    <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -51,30 +51,6 @@ class PresupuestoCliente
     public $finoferta;
 
     /**
-     * Estimation status:
-          * 0 -> pending. (editable)
-          * 1 -> approved. (there is a code and it is not editable)
-          * 2 -> rejected. (there is no code and it is not editable)
-     *
-     * @var integer
-     */
-    public $status;
-
-    /**
-     * True if it is editable, but false.
-     *
-     * @var bool
-     */
-    public $editable;
-
-    /**
-     * If this estimation is the version of another, the original estimation document is stored here.
-     *
-     * @var integer
-     */
-    public $idoriginal;
-
-    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
@@ -116,8 +92,6 @@ class PresupuestoCliente
     {
         $this->clearDocumentoVenta();
         $this->finoferta = date('d-m-Y', strtotime(date('d-m-Y') . ' +1 month'));
-        $this->status = 0;
-        $this->editable = true;
     }
 
     /**
@@ -145,71 +119,12 @@ class PresupuestoCliente
     }
 
     /**
-     * Returns the versions of a estimation.
-     *
-     * @return self[]
-     */
-    public function getVersiones()
-    {
-        $versiones = [];
-
-        $sql = 'SELECT * FROM ' . static::tableName()
-            . ' WHERE idoriginal = ' . self::$dataBase->var2str($this->idpresupuesto);
-        if ($this->idoriginal) {
-            $sql .= ' OR idoriginal = ' . self::$dataBase->var2str($this->idoriginal);
-            $sql .= ' OR idpresupuesto = ' . self::$dataBase->var2str($this->idoriginal);
-        }
-        $sql .= 'ORDER BY fecha DESC, hora DESC;';
-
-        $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $d) {
-                $versiones[] = new self($d);
-            }
-        }
-
-        return $versiones;
-    }
-
-    /**
      * Check the estimation data, return True if it is correct.
      *
      * @return boolean
      */
     public function test()
     {
-        /// check that editable corresponds to the status
-        if ($this->idpedido) {
-            $this->status = 1;
-            $this->editable = false;
-        } elseif ($this->status == 0) {
-            $this->editable = true;
-        } elseif ($this->status == 2) {
-            $this->editable = false;
-        }
-
         return $this->testTrait();
-    }
-
-    /**
-     * Execute a task with cron
-     */
-    public function cronJob()
-    {
-        /// mark estimations approved as approved
-        self::$dataBase->exec('UPDATE ' . static::tableName() . " SET status = '1', editable = FALSE"
-            . " WHERE status != '1' AND idpedido IS NOT NULL;");
-
-        /// return to the pending status the estimations with state 1 to which the order has been deleted
-        self::$dataBase->exec('UPDATE ' . static::tableName() . " SET status = '0', idpedido = NULL, editable = TRUE"
-            . " WHERE status = '1' AND idpedido NOT IN (SELECT idpedido FROM pedidoscli);");
-
-        /// mark as rejected all estimations with endoffer past
-        self::$dataBase->exec('UPDATE ' . static::tableName() . " SET status = '2' WHERE finoferta IS NOT NULL AND"
-            . ' finoferta < ' . self::$dataBase->var2str(date('d-m-Y')) . ' AND idpedido IS NULL;');
-
-        /// mark as rejected all non-editable estimations and without associated order
-        self::$dataBase->exec('UPDATE ' . static::tableName() . " SET status = '2' WHERE idpedido IS NULL AND"
-            . ' editable = false;');
     }
 }

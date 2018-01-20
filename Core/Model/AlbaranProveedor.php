@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -47,13 +47,6 @@ class AlbaranProveedor
     public $idfactura;
 
     /**
-     * True => is pending invoice.
-     *
-     * @var bool
-     */
-    public $ptefactura;
-
-    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
@@ -95,7 +88,6 @@ class AlbaranProveedor
     public function clear()
     {
         $this->clearDocumentoCompra();
-        $this->ptefactura = true;
     }
 
     /**
@@ -118,16 +110,6 @@ class AlbaranProveedor
     public function test()
     {
         return $this->testTrait();
-    }
-
-    /**
-     * Run a complete test of tests.
-     *
-     * @return bool
-     */
-    public function fullTest()
-    {
-        return $this->fullTestTrait('albaran');
     }
 
     /**
@@ -155,18 +137,5 @@ class AlbaranProveedor
         }
 
         return false;
-    }
-
-    /**
-     * Execute a task with cron
-     */
-    public function cronJob()
-    {
-        /**
-         * We put to null all the invoices that are not in facturasprov
-         */
-        $sql = 'UPDATE ' . static::tableName() . ' SET idfactura = NULL WHERE idfactura IS NOT NULL'
-            . ' AND idfactura NOT IN (SELECT idfactura FROM facturasprov);';
-        self::$dataBase->exec($sql);
     }
 }
