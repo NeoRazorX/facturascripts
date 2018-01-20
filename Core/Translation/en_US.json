@@ -158,7 +158,7 @@
     "create-date": "Created at",
     "create-new-record": "Create new record",
     "created-at": "Created at %date%",
-    "created-default-admin-account": "The admin user was created with the admin password.",
+    "created-default-admin-account": "\"admin\" user was created with the password \"admin\".",
     "cron-error": "\nERROR: %error%\n",
     "cron-never-executed": "The <a href='https://www.facturascripts.com/comm3/index.php?page=community_item&tag=cron' target='_blank'>cron</a> has never been run, you'll miss some cool features FacturaScripts.",
     "cron-still-working": "ERROR: There is already a cron running. If you think this is a bug, go to Admin &gt; System information to solve the problem.",
