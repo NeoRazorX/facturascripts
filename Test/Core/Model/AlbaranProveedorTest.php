@@ -50,7 +50,6 @@ final class AlbaranProveedorTest extends TestCase
         $this->assertEquals(0.0, $model->irpf);
         $this->assertEquals(0.0, $model->neto);
         $this->assertEquals(null, $model->nombre);
-        $this->assertEquals(0, $model->numdocs);
         $this->assertEquals(null, $model->numero);
         $this->assertEquals(null, $model->numproveedor);
         $this->assertEquals(1.0, $model->tasaconv);
@@ -60,7 +59,6 @@ final class AlbaranProveedorTest extends TestCase
         $this->assertEquals(0.0, $model->totalirpf);
         $this->assertEquals(0.0, $model->totalrecargo);
         $this->assertEquals(null, $model->observaciones);
-        $this->assertEquals(true, $model->ptefactura);
         $this->assertEquals(null, $model->idalbaran);
         $this->assertEquals(null, $model->idfactura);
         $this->assertTrue($model->test());
@@ -113,20 +111,4 @@ final class AlbaranProveedorTest extends TestCase
             $this->assertSame([], $list);
         }
     }
-
-    /*
-        public function testGetLineas()
-        {
-
-            $model = new AlbaranProveedor();
-            $list = $model->getLineas();
-
-            if (!empty($list)) {
-                $this->assertInternalType('array', $list);
-
-            } else {
-                $this->assertSame([], $list);
-            }
-        }
-    */
 }
