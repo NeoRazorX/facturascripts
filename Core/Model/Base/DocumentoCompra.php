@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Lib\NewCodigoDoc;
+use FacturaScripts\Core\Model\Proveedor;
 
 /**
  * Description of DocumentoCompra
@@ -149,13 +150,6 @@ trait DocumentoCompra
     public $numproveedor;
 
     /**
-     * Number of documents attached.
-     *
-     * @var int
-     */
-    public $numdocs;
-
-    /**
      * Sum of the pvptotal of lines. Total of the document before taxes.
      *
      * @var float|int
@@ -214,6 +208,20 @@ trait DocumentoCompra
     public $observaciones;
 
     /**
+     * indicates whether the document can be modified
+     *
+     * @var bool
+     */
+    public $editable;
+
+    /**
+     * Document state, from EstadoDocumento model.
+     *
+     * @var int
+     */
+    public $idestado;
+
+    /**
      * Initializes document values.
      */
     private function clearDocumentoCompra()
@@ -223,18 +231,30 @@ trait DocumentoCompra
         $this->coddivisa = AppSettings::get('default', 'coddivisa');
         $this->codpago = AppSettings::get('default', 'codpago');
         $this->codserie = AppSettings::get('default', 'codserie');
-        $this->idempresa = AppSettings::get('default', 'idempresa');
+        $this->editable = true;
         $this->fecha = date('d-m-Y');
         $this->hora = date('H:i:s');
+        $this->idempresa = AppSettings::get('default', 'idempresa');
         $this->irpf = 0.0;
         $this->neto = 0.0;
-        $this->numdocs = 0;
         $this->tasaconv = 1.0;
         $this->total = 0.0;
         $this->totaleuros = 0.0;
         $this->totalirpf = 0.0;
         $this->totaliva = 0.0;
         $this->totalrecargo = 0.0;
+    }
+    
+    /**
+     * Assign the supplier to the document.
+     *
+     * @param Proveedor $proveedor
+     */
+    public function setProveedor($proveedor)
+    {
+        $this->codproveedor = $proveedor->codproveedor;
+        $this->nombre = $proveedor->razonsocial;
+        $this->cifnif = $proveedor->cifnif;
     }
 
     /**
@@ -255,24 +275,6 @@ trait DocumentoCompra
         }
 
         return false;
-    }
-
-    /**
-     * Shorten the text of observations.
-     *
-     * @return string
-     */
-    public function observacionesResume()
-    {
-        if ($this->observaciones == '') {
-            return '-';
-        }
-
-        if (mb_strlen($this->observaciones) < 60) {
-            return $this->observaciones;
-        }
-
-        return mb_substr($this->observaciones, 0, 50) . '...';
     }
 
     /**
@@ -312,72 +314,6 @@ trait DocumentoCompra
         self::$miniLog->alert(self::$i18n->trans('bad-total-error'));
 
         return false;
-    }
-
-    /**
-     * Run a complete test of tests.
-     *
-     * @param string $tipoDoc
-     *
-     * @return bool
-     */
-    private function fullTestTrait($tipoDoc)
-    {
-        $status = true;
-        $subtotales = [];
-        $irpf = 0;
-
-        /// we calculate also with the previous method
-        $netoAlt = 0;
-        $ivaAlt = 0;
-        $this->getSubtotales($status, $subtotales, $irpf, $netoAlt, $ivaAlt);
-
-        /// round and add
-        $neto = 0;
-        $iva = 0;
-        $recargo = 0;
-        $irpf = round($irpf, FS_NF0);
-        foreach ($subtotales as $subt) {
-            $neto += round($subt['neto'], FS_NF0);
-            $iva += round($subt['iva'], FS_NF0);
-            $recargo += round($subt['recargo'], FS_NF0);
-        }
-        $netoAlt = round($netoAlt, FS_NF0);
-        $ivaAlt = round($ivaAlt, FS_NF0);
-        $total = $neto + $iva - $irpf + $recargo;
-        $total_alt = $netoAlt + $ivaAlt - $irpf + $recargo;
-
-        if (!static::floatcmp($this->neto, $neto, FS_NF0, true) && !static::floatcmp($this->neto, $netoAlt, FS_NF0, true)) {
-            $values = ['%docType%' => $tipoDoc, '%docCode%' => $this->codigo, '%docNet%' => $this->neto, '%calcNet%' => $neto];
-            self::$miniLog->alert(self::$i18n->trans('neto-value-error', $values));
-            $status = false;
-        }
-
-        if (!static::floatcmp($this->totaliva, $iva, FS_NF0, true) && !static::floatcmp($this->totaliva, $ivaAlt, FS_NF0, true)) {
-            $values = ['%docType%' => $tipoDoc, '%docCode%' => $this->codigo, '%docTotalTax%' => $this->totaliva, '%calcTotalTax%' => $iva];
-            self::$miniLog->alert(self::$i18n->trans('totaliva-value-error', $values));
-            $status = false;
-        }
-
-        if (!static::floatcmp($this->totalirpf, $irpf, FS_NF0, true)) {
-            $values = ['%docType%' => $tipoDoc, '%docCode%' => $this->codigo, '%docTotalIRPF%' => $this->totalirpf, '%calcTotalIRPF%' => $irpf];
-            self::$miniLog->alert(self::$i18n->trans('totalirpf-value-error', $values));
-            $status = false;
-        }
-
-        if (!static::floatcmp($this->totalrecargo, $recargo, FS_NF0, true)) {
-            $values = ['%docType%' => $tipoDoc, '%docCode%' => $this->codigo, '%docTotalSurcharge%' => $this->totalrecargo, '%calcTotalSurcharge%' => $recargo];
-            self::$miniLog->alert(self::$i18n->trans('totalrecargo-value-error', $values));
-            $status = false;
-        }
-
-        if (!static::floatcmp($this->total, $total, FS_NF0, true) && !static::floatcmp($this->total, $total_alt, FS_NF0, true)) {
-            $values = ['%docType%' => $tipoDoc, '%docCode%' => $this->codigo, '%docTotal%' => $this->total, '%calcTotal%' => $total];
-            self::$miniLog->alert(self::$i18n->trans('total-value-error', $values));
-            $status = false;
-        }
-
-        return $status;
     }
 
     /**

@@ -80,7 +80,10 @@
     <column>
         <name>editable</name>
         <type>boolean</type>
-        <null>NO</null>
+    </column>
+    <column>
+        <name>idestado</name>
+        <type>integer</type>
     </column>
     <column>
         <name>fecha</name>

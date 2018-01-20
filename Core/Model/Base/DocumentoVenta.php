@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Lib\NewCodigoDoc;
+use FacturaScripts\Core\Model\Cliente;
 
 /**
  * Description of DocumentoVenta
@@ -29,6 +29,7 @@ use FacturaScripts\Core\Lib\NewCodigoDoc;
  */
 trait DocumentoVenta
 {
+
     use ModelTrait {
         clear as traitClear;
     }
@@ -143,70 +144,70 @@ trait DocumentoVenta
      *
      * @var string
      */
-    public $envio_codtrans;
+    public $codtrans;
 
     /**
      * Shipping tracking code.
      *
      * @var string
      */
-    public $envio_codigo;
+    public $codigoenv;
 
     /**
      * Name of the shipping address.
      *
      * @var string
      */
-    public $envio_nombre;
+    public $nombreenv;
 
     /**
      * Last name of the shipping address.
      *
      * @var string
      */
-    public $envio_apellidos;
+    public $apellidosenv;
 
     /**
      * Post box of the shipping address.
      *
      * @var string
      */
-    public $envio_apartado;
+    public $apartadoenv;
 
     /**
      * Address of the shipping address.
      *
      * @var string
      */
-    public $envio_direccion;
+    public $direccionenv;
 
     /**
      * Postal code of the shipping address.
      *
      * @var string
      */
-    public $envio_codpostal;
+    public $codpostalenv;
 
     /**
      * City of the shipping address.
      *
      * @var string
      */
-    public $envio_ciudad;
+    public $ciudadenv;
 
     /**
      * Province of the shipping address.
      *
      * @var string
      */
-    public $envio_provincia;
+    public $provinciaenv;
 
     /**
      * Country code of the shipping address.
      *
      * @var string
      */
-    public $envio_codpais;
+    public $codpaisenv;
 
     /**
      * Date of the document.
@@ -238,7 +239,7 @@ trait DocumentoVenta
 
     /**
      * % IRPF retention of the delivery note. It is obtained from the series.
-          * Each line can have a different %.
+           * Each line can have a different %.
      *
      * @var float|int
      */
@@ -259,15 +260,8 @@ trait DocumentoVenta
     public $nombrecliente;
 
     /**
-     * Number of documents attached.
-     *
-     * @var int
-     */
-    public $numdocs;
-
-    /**
      * Delivery note number.
-          * It is unique within the serie + exercise.
+           * It is unique within the serie + exercise.
      *
      * @var string
      */
@@ -317,8 +311,8 @@ trait DocumentoVenta
 
     /**
      * Total expressed in euros, if it were not the currency of the delivery note.
-          * totaleuros = total / tasaconv
-          * It is not necessary to fill it, when doing save() the value is calculated.
+           * totaleuros = total / tasaconv
+           * It is not necessary to fill it, when doing save() the value is calculated.
      *
      * @var float|int
      */
@@ -346,6 +340,20 @@ trait DocumentoVenta
     public $observaciones;
 
     /**
+     * indicates whether the document can be modified
+     *
+     * @var bool
+     */
+    public $editable;
+
+    /**
+     * Document state, from EstadoDocumento model.
+     *
+     * @var int
+     */
+    public $idestado;
+
+    /**
      * Initializes document values.
      */
     private function clearDocumentoVenta()
@@ -355,18 +363,42 @@ trait DocumentoVenta
         $this->coddivisa = AppSettings::get('default', 'coddivisa');
         $this->codpago = AppSettings::get('default', 'codpago');
         $this->codserie = AppSettings::get('default', 'codserie');
-        $this->idempresa = AppSettings::get('default', 'idempresa');
+        $this->editable = true;
         $this->fecha = date('d-m-Y');
         $this->hora = date('H:i:s');
+        $this->idempresa = AppSettings::get('default', 'idempresa');
         $this->irpf = 0.0;
         $this->neto = 0.0;
-        $this->numdocs = 0;
         $this->tasaconv = 1.0;
         $this->total = 0.0;
         $this->totaleuros = 0.0;
         $this->totalirpf = 0.0;
         $this->totaliva = 0.0;
         $this->totalrecargo = 0.0;
+    }
+
+    /**
+     * Assign the customer to the document.
+     *
+     * @param Cliente $cliente
+     */
+    public function setCliente($cliente)
+    {
+        $this->codcliente = $cliente->codcliente;
+        $this->nombrecliente = $cliente->razonsocial;
+        $this->cifnif = $cliente->cifnif;
+        foreach ($cliente->getDirecciones() as $dir) {
+            $this->coddir = $dir->id;
+            $this->codpais = $dir->codpais;
+            $this->provincia = $dir->provincia;
+            $this->ciudad = $dir->ciudad;
+            $this->direccion = $dir->direccion;
+            $this->codpostal = $dir->codpostal;
+            $this->apartado = $dir->apartado;
+            if ($dir->domfacturacion) {
+                break;
+            }
+        }
     }
 
     /**
@@ -387,24 +419,6 @@ trait DocumentoVenta
         }
 
         return false;
-    }
-
-    /**
-     * Shorten the text of observations.
-     *
-     * @return string
-     */
-    public function observacionesResume()
-    {
-        if ($this->observaciones === '') {
-            return '-';
-        }
-
-        if (mb_strlen($this->observaciones) < 60) {
-            return $this->observaciones;
-        }
-
-        return mb_substr($this->observaciones, 0, 50) . '...';
     }
 
     /**
@@ -431,18 +445,18 @@ trait DocumentoVenta
         $this->direccion = static::noHtml($this->direccion);
         $this->ciudad = static::noHtml($this->ciudad);
         $this->provincia = static::noHtml($this->provincia);
-        $this->envio_nombre = static::noHtml($this->envio_nombre);
-        $this->envio_apellidos = static::noHtml($this->envio_apellidos);
-        $this->envio_direccion = static::noHtml($this->envio_direccion);
-        $this->envio_ciudad = static::noHtml($this->envio_ciudad);
-        $this->envio_provincia = static::noHtml($this->envio_provincia);
+        $this->nombreenv = static::noHtml($this->nombreenv);
+        $this->apellidosenv = static::noHtml($this->apellidosenv);
+        $this->direccionenv = static::noHtml($this->direccionenv);
+        $this->ciudadenv = static::noHtml($this->ciudadenv);
+        $this->provinciaenv = static::noHtml($this->provinciaenv);
         $this->numero2 = static::noHtml($this->numero2);
         $this->observaciones = static::noHtml($this->observaciones);
 
         /**
          * We use the euro as a bridge currency when adding, compare
-                  * or convert amounts in several currencies. For this reason we need
-                  * many decimals.
+                   * or convert amounts in several currencies. For this reason we need
+                   * many decimals.
          */
         $this->totaleuros = round($this->total / $this->tasaconv, 5);
         if (static::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true)) {
@@ -452,72 +466,6 @@ trait DocumentoVenta
         self::$miniLog->alert(self::$i18n->trans('bad-total-error'));
 
         return false;
-    }
-
-    /**
-     * Returns true if there are no errors in the values of the model properties.
-     *
-     * @param string $tipoDoc
-     *
-     * @return bool
-     */
-    private function fullTestTrait($tipoDoc)
-    {
-        $status = true;
-        $subtotales = [];
-        $irpf = 0;
-
-        /// we calculate also with the previous method
-        $netoAlt = 0;
-        $ivaAlt = 0;
-        $this->getSubtotales($status, $subtotales, $irpf, $netoAlt, $ivaAlt);
-
-        /// round and add
-        $neto = 0;
-        $iva = 0;
-        $recargo = 0;
-        $irpf = round($irpf, FS_NF0);
-        foreach ($subtotales as $subt) {
-            $neto += round($subt['neto'], FS_NF0);
-            $iva += round($subt['iva'], FS_NF0);
-            $recargo += round($subt['recargo'], FS_NF0);
-        }
-        $netoAlt = round($netoAlt, FS_NF0);
-        $ivaAlt = round($ivaAlt, FS_NF0);
-        $total = $neto + $iva - $irpf + $recargo;
-        $total_alt = $netoAlt + $ivaAlt - $irpf + $recargo;
-
-        if (!static::floatcmp($this->neto, $neto, FS_NF0, true) && !static::floatcmp($this->neto, $netoAlt, FS_NF0, true)) {
-            $values = ['%docType%' => $tipoDoc, '%docCode%' => $this->codigo, '%docNet%' => $this->neto, '%calcNet%' => $neto];
-            self::$miniLog->alert(self::$i18n->trans('neto-value-error', $values));
-            $status = false;
-        }
-
-        if (!static::floatcmp($this->totaliva, $iva, FS_NF0, true) && !static::floatcmp($this->totaliva, $ivaAlt, FS_NF0, true)) {
-            $values = ['%docType%' => $tipoDoc, '%docCode%' => $this->codigo, '%docTotalTax%' => $this->totaliva, '%calcTotalTax%' => $iva];
-            self::$miniLog->alert(self::$i18n->trans('totaliva-value-error', $values));
-            $status = false;
-        }
-
-        if (!static::floatcmp($this->totalirpf, $irpf, FS_NF0, true)) {
-            $values = ['%docType%' => $tipoDoc, '%docCode%' => $this->codigo, '%docTotalIRPF%' => $this->totalirpf, '%calcTotalIRPF%' => $irpf];
-            self::$miniLog->alert(self::$i18n->trans('totalirpf-value-error', $values));
-            $status = false;
-        }
-
-        if (!static::floatcmp($this->totalrecargo, $recargo, FS_NF0, true)) {
-            $values = ['%docType%' => $tipoDoc, '%docCode%' => $this->codigo, '%docTotalSurcharge%' => $this->totalrecargo, '%calcTotalSurcharge%' => $recargo];
-            self::$miniLog->alert(self::$i18n->trans('totalrecargo-value-error', $values));
-            $status = false;
-        }
-
-        if (!static::floatcmp($this->total, $total, FS_NF0, true) && !static::floatcmp($this->total, $total_alt, FS_NF0, true)) {
-            $values = ['%docType%' => $tipoDoc, '%docCode%' => $this->codigo, '%docTotal%' => $this->total, '%calcTotal%' => $total];
-            self::$miniLog->alert(self::$i18n->trans('total-value-error', $values));
-            $status = false;
-        }
-
-        return $status;
     }
 
     /**

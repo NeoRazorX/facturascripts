@@ -1,8 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
- * Copyright (C) 2017  Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,21 +35,7 @@ class EstadoDocumento
      *
      * @var int
      */
-    public $id;
-
-    /**
-     * Document type.
-     *
-     * @var string
-     */
-    public $documento;
-
-    /**
-     * Status number.
-     *
-     * @var int
-     */
-    public $status;
+    public $idestado;
 
     /**
      * Name of the state to show the user.
@@ -59,11 +45,11 @@ class EstadoDocumento
     public $nombre;
 
     /**
-     * If the state is blocked or not.
+     * If the state is editable or not.
      *
      * @var bool
      */
-    public $bloquedo;
+    public $editable;
 
     /**
      * Returns the name of the table that uses this model.
@@ -82,7 +68,7 @@ class EstadoDocumento
      */
     public function primaryColumn()
     {
-        return 'id';
+        return 'idestado';
     }
 
     /**
@@ -90,11 +76,7 @@ class EstadoDocumento
      */
     public function clear()
     {
-        $this->id = null;
-        $this->documento = null;
-        $this->status = null;
-        $this->nombre = null;
-        $this->bloqueado = null;
+        $this->editable = true;
     }
 
     /**
@@ -104,66 +86,7 @@ class EstadoDocumento
      */
     public function test()
     {
-        $status = false;
-
-        $this->documento = self::noHtml($this->documento);
         $this->nombre = self::noHtml($this->nombre);
-
-        $docLength = strlen($this->documento);
-        $nameLength = strlen($this->nombre);
-        if ($docLength < 1 || $docLength > 20) {
-            self::$miniLog->alert(self::$i18n->trans('document-type-valid-length'));
-        } elseif ($nameLength < 1 || $nameLength > 20) {
-            self::$miniLog->alert(self::$i18n->trans('status-name-valid-length'));
-        } elseif (!is_numeric($this->status)) {
-            self::$miniLog->alert(self::$i18n->trans('status-value-is-number'));
-        } else {
-            $status = true;
-        }
-
-        return $status;
-    }
-
-    /**
-     * Returns an array with the states for the indicated document type.
-     *
-     * @param $doc
-     *
-     * @return array
-     */
-    public function getByDocument($doc)
-    {
-        $list = [];
-
-        $sql = 'SELECT * FROM ' . static::tableName()
-            . ' WHERE documento = ' . self::$dataBase->var2str($doc) . ' ORDER BY id ASC;';
-        $data = self::$dataBase->select($sql);
-        if ($data) {
-            foreach ($data as $d) {
-                $list[] = new self($d);
-            }
-        }
-
-        return $list;
-    }
-
-    /**
-     * Returns an array with all states.
-     *
-     * @return array
-     */
-    public function allDocumentTypes()
-    {
-        $list = [];
-
-        $sql = 'SELECT DISTINCT(documento) FROM ' . static::tableName() . ' ORDER BY id ASC;';
-        $data = self::$dataBase->select($sql);
-        if ($data) {
-            foreach ($data as $d) {
-                $list[] = $d['documento'];
-            }
-        }
-
-        return $list;
+        return true;
     }
 }

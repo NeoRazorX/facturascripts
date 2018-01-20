@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,20 +25,14 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="register-symbol" order="100">
-                <widget type="text" fieldname="id" onclick="EditEstadoDocumento" />
-            </column>
-            <column name="document" order="110">
-                <widget type="text" fieldname="documento" />
-            </column>
-            <column name="status" order="120">
-                <widget type="number" decimal="0" fieldname="status" />
+            <column name="register-symbol" display="none" order="100">
+                <widget type="text" fieldname="idestado" onclick="EditEstadoDocumento" />
             </column>
             <column name="name" order="130">
                 <widget type="text" fieldname="nombre" />
             </column>
-            <column name="blocked" display="center" order="140">
-                <widget type="checkbox" fieldname="bloqueado"></widget>
+            <column name="editable" display="center" order="140">
+                <widget type="checkbox" fieldname="editable"></widget>
             </column>
         </group>
     </columns>
