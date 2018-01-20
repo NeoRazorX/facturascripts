@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,8 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib;
+
+use FacturaScripts\Core\Base\DataBase;
 
 /**
  * This class centralizes the generation of the document code.
@@ -26,6 +27,14 @@ namespace FacturaScripts\Core\Lib;
  */
 class NewCodigoDoc
 {
+
+    /**
+     * Database object.
+     *
+     * @var DataBase
+     */
+    private static $dataBase;
+
     /**
      * Code option
      *
@@ -38,7 +47,8 @@ class NewCodigoDoc
      */
     public function __construct()
     {
-        if (!isset(self::$option)) {
+        if (!isset(self::$dataBase)) {
+            self::$dataBase = new DataBase();
             self::$option = 'new';
         }
     }
@@ -84,7 +94,18 @@ class NewCodigoDoc
      */
     public function getNumero($tableName, $codejercicio, $codserie)
     {
-        return mt_rand(1, 99999999);
+        $numero = 1;
+
+        $sql = "SELECT MAX(" . self::$dataBase->sql2Int('numero') . ") as num FROM " . $tableName
+            . " WHERE codejercicio = " . self::$dataBase->var2str($codejercicio)
+            . " AND codserie = " . self::$dataBase->var2str($codserie) . ";";
+
+        $data = self::$dataBase->select($sql);
+        if ($data) {
+            $numero = 1 + (int) $data[0]['num'];
+        }
+
+        return $numero;
     }
 
     /**

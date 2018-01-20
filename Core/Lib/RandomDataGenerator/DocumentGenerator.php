@@ -97,9 +97,7 @@ class DocumentGenerator extends ModelDataGenerator
 
         $regimeniva = 'Exento';
         if (mt_rand(0, 14) > 0 && isset($proveedores[$num])) {
-            $doc->codproveedor = $proveedores[$num]->codproveedor;
-            $doc->nombre = $proveedores[$num]->razonsocial;
-            $doc->cifnif = $proveedores[$num]->cifnif;
+            $doc->setProveedor($proveedores[$num]);
             $regimeniva = $proveedores[$num]->regimeniva;
         } else {
             /// Every once in a while, generate one without provider, to check if it breaks ;-)
@@ -126,32 +124,8 @@ class DocumentGenerator extends ModelDataGenerator
 
         $regimeniva = 'Exento';
         if (mt_rand(0, 14) > 0 && isset($clientes[$num])) {
-            $doc->codcliente = $clientes[$num]->codcliente;
-            $doc->nombrecliente = $clientes[$num]->razonsocial;
-            $doc->cifnif = $clientes[$num]->cifnif;
+            $doc->setCliente($clientes[$num]);
             $regimeniva = $clientes[$num]->regimeniva;
-
-            foreach ($clientes[$num]->getDirecciones() as $dir) {
-                if ($dir->domfacturacion) {
-                    $doc->codpais = $dir->codpais;
-                    $doc->provincia = $dir->provincia;
-                    $doc->ciudad = $dir->ciudad;
-                    $doc->direccion = $dir->direccion;
-                    $doc->codpostal = $dir->codpostal;
-                    $doc->apartado = $dir->apartado;
-                }
-
-                if ($dir->domenvio && mt_rand(0, 2) == 0) {
-                    $doc->envio_nombre = $this->tools->nombre();
-                    $doc->envio_apellidos = $this->tools->apellidos();
-                    $doc->envio_codpais = $dir->codpais;
-                    $doc->envio_provincia = $dir->provincia;
-                    $doc->envio_ciudad = $dir->ciudad;
-                    $doc->envio_codpostal = $dir->codpostal;
-                    $doc->envio_direccion = $dir->direccion;
-                    $doc->envio_apartado = $dir->apartado;
-                }
-            }
         } else {
             /// Every once in a while, generate one without the client, to check if it breaks ;-)
             $doc->nombrecliente = $this->tools->nombre() . ' ' . $this->tools->apellidos();

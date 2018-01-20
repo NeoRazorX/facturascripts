@@ -7,37 +7,23 @@
 -->
 <table>
     <column>
-        <name>id</name>
+        <name>idestado</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('estados_documentos_id_seq'::regclass)</default>
-    </column>
-    <column>
-        <name>documento</name>
-        <type>character varying(20)</type>
-        <null>NO</null>
-    </column>
-    <column>
-        <name>status</name>
-        <type>integer</type>
-        <null>NO</null>
+        <default>nextval('estados_documentos_idestado_seq'::regclass)</default>
     </column>
     <column>
         <name>nombre</name>
-        <type>character varying(20)</type>
+        <type>character varying(30)</type>
         <null>NO</null>
     </column>
     <column>
-        <name>bloqueado</name>
+        <name>editable</name>
         <type>boolean</type>
         <null>NO</null>
     </column>
     <constraint>
         <name>estados_documentos_pkey</name>
-        <type>PRIMARY KEY (id)</type>
-    </constraint>
-    <constraint>
-        <name>uniq_tipo_estados_documentos</name>
-        <type>UNIQUE (documento, status)</type>
+        <type>PRIMARY KEY (idestado)</type>
     </constraint>
 </table>
