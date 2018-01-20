@@ -73,6 +73,16 @@ class Pais
     {
         return 'codpais';
     }
+    
+    /**
+     * Returns the name of the column that is the model's description.
+     *
+     * @return string
+     */
+    public function primaryDescriptionColumn()
+    {
+        return 'nombre';
+    }
 
     /**
      * Returns True if the country is the default of the company.

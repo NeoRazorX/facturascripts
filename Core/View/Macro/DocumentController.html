@@ -44,18 +44,18 @@
         {% elseif view.documentType == 'purchase' %}
             {{ macros.supplierSelect(context.i18n, 'codproveedor', 'codproveedor', model) }}
         {% endif %}
-        {{ macros.customSelect('doc_codserie', 'codserie', model.codserie, context.fsc.getSelectValues('Serie')) }}
-        {{ macros.customSelect('doc_codalmacen', 'codalmacen', model.codalmacen, context.fsc.getSelectValues('Almacen')) }}
-        {{ macros.customSelect('doc_idempresa', 'idempresa', model.idempresa, context.fsc.getSelectValues('Empresa')) }}
         {{ macros.customInput('doc_fecha', 'fecha', model.fecha, 'text', 'fa-calendar', {class: 'form-control datepicker'}) }}
+        {{ macros.customInput('doc_total', 'total', model.total, 'text', 'fa-money', {class: 'form-control', disabled: ''}) }}
     </div>
     <br/>
     <div id="document-lines"></div>
     <br/>
     <div class="row">
+        {{ macros.customSelect('doc_codserie', 'codserie', model.codserie, context.fsc.getSelectValues('Serie')) }}
+        {{ macros.customSelect('doc_codalmacen', 'codalmacen', model.codalmacen, context.fsc.getSelectValues('Almacen')) }}
+        {{ macros.customSelect('doc_idempresa', 'idempresa', model.idempresa, context.fsc.getSelectValues('Empresa')) }}
         {{ macros.customSelect('doc_codpago', 'codpago', model.codpago, context.fsc.getSelectValues('FormaPago')) }}
         {{ macros.customSelect('doc_coddivisa', 'coddivisa', model.coddivisa, context.fsc.getSelectValues('Divisa')) }}
-        {{ macros.customInput('doc_total', 'total', model.total, 'text', 'fa-money', {class: 'form-control', disabled: ''}) }}
     </div>
     <div class="row">
         <div class="col-12">
