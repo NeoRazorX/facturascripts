@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Lib\NewCodigoDoc;
 use FacturaScripts\Core\Model\Cliente;
+use FacturaScripts\Core\Model\Ejercicio;
 
 /**
  * Description of DocumentoVenta
@@ -354,6 +355,16 @@ trait DocumentoVenta
     public $idestado;
 
     /**
+     * Returns the description of the column that is the model's primary key.
+     *
+     * @return string
+     */
+    public function primaryDescriptionColumn()
+    {
+        return 'codigo';
+    }
+
+    /**
      * Initializes document values.
      */
     private function clearDocumentoVenta()
@@ -398,6 +409,20 @@ trait DocumentoVenta
             if ($dir->domfacturacion) {
                 break;
             }
+        }
+    }
+
+    /**
+     * Assign the date and find an accounting exercise.
+     *
+     * @param string $fecha
+     */
+    public function setFecha($fecha)
+    {
+        $ejercicioModel = new Ejercicio();
+        $ejercicio = $ejercicioModel->getByFecha($fecha);
+        if ($ejercicio) {
+            $this->codejercicio = $ejercicio->codejercicio;
         }
     }
 
@@ -466,42 +491,6 @@ trait DocumentoVenta
         self::$miniLog->alert(self::$i18n->trans('bad-total-error'));
 
         return false;
-    }
-
-    /**
-     * Calculates the subtotals of net, taxes and surcharge, by type of tax, in addition to the irpf, net and taxes
-     * with the previous calculation.
-     *
-     * @param boolean $status
-     * @param array   $subtotales
-     * @param int     $irpf
-     * @param int     $netoAlt
-     * @param int     $ivaAlt
-     */
-    private function getSubtotales(&$status, &$subtotales, &$irpf, &$netoAlt, &$ivaAlt)
-    {
-        foreach ($this->getLineas() as $lin) {
-            if (!$lin->test()) {
-                $status = false;
-            }
-            $codimpuesto = ($lin->codimpuesto === null) ? 0 : $lin->codimpuesto;
-            if (!array_key_exists($codimpuesto, $subtotales)) {
-                $subtotales[$codimpuesto] = [
-                    'neto' => 0,
-                    'iva' => 0, // Total VAT
-                    'recargo' => 0, // Total Surcharge
-                ];
-            }
-            /// We accumulate by VAT rates
-            $subtotales[$codimpuesto]['neto'] += $lin->pvptotal;
-            $subtotales[$codimpuesto]['iva'] += $lin->pvptotal * $lin->iva / 100;
-            $subtotales[$codimpuesto]['recargo'] += $lin->pvptotal * $lin->recargo / 100;
-            $irpf += $lin->pvptotal * $lin->irpf / 100;
-
-            /// Previous calculation
-            $netoAlt += $lin->pvptotal;
-            $ivaAlt += $lin->pvptotal * $lin->iva / 100;
-        }
     }
 
     /**

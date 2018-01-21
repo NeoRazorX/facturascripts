@@ -45,12 +45,12 @@
             {{ macros.supplierSelect(context.i18n, 'codproveedor', 'codproveedor', model) }}
         {% endif %}
         {{ macros.customInput('doc_fecha', 'fecha', model.fecha, 'text', 'fa-calendar', {class: 'form-control datepicker'}) }}
-        {{ macros.customInput('doc_total', 'total', model.total, 'text', 'fa-money', {class: 'form-control', disabled: ''}) }}
+        {{ macros.customInput('doc_total', 'total', model.total, 'text', 'fa-money', {class: 'form-control text-right', disabled: ''}) }}
     </div>
     <br/>
     <div id="document-lines"></div>
     <br/>
-    <div class="row">
+    <div class="form-row">
         {{ macros.customSelect('doc_codserie', 'codserie', model.codserie, context.fsc.getSelectValues('Serie')) }}
         {{ macros.customSelect('doc_codalmacen', 'codalmacen', model.codalmacen, context.fsc.getSelectValues('Almacen')) }}
         {{ macros.customSelect('doc_idempresa', 'idempresa', model.idempresa, context.fsc.getSelectValues('Empresa')) }}
