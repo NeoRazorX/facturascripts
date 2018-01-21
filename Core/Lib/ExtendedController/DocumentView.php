@@ -19,9 +19,9 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Lib\DocumentCalculator;
 use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Model\Cliente;
-use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\Proveedor;
 
 /**
@@ -153,6 +153,13 @@ class DocumentView extends BaseView
         $this->lines = empty($this->model->primaryColumnValue()) ? [] : $this->model->getLineas();
         $this->title = $this->model->codigo;
     }
+    
+    public function calculateDocument(&$data)
+    {
+        $result = 0;
+
+        return $result;
+    }
 
     public function saveDocument(&$data)
     {
@@ -164,15 +171,8 @@ class DocumentView extends BaseView
         unset($data['codproveedor']);
         unset($data['lines']);
         $this->loadFromData($data);
+        $this->model->setFecha($this->model->fecha);
         $this->lines = empty($this->model->primaryColumnValue()) ? [] : $this->model->getLineas();
-
-        if (empty($this->model->codejercicio)) {
-            $ejercicioModel = new Ejercicio();
-            $ejercicio = $ejercicioModel->getByFecha($this->model->fecha);
-            if ($ejercicio) {
-                $this->model->codejercicio = $ejercicio->codejercicio;
-            }
-        }
 
         if ($this->documentType === 'sale') {
             $result = $this->setCustomer($codcliente, $data['new_cliente'], $data['new_cifnif']);
@@ -192,6 +192,9 @@ class DocumentView extends BaseView
         }
 
         if ($result === 'OK') {
+            $calculator = new DocumentCalculator();
+            $calculator->calculate($this->model);
+            $result = $this->model->save() ? 'OK' : 'ERROR';
             return $new ? 'NEW:' . $this->model->url() : $result;
         }
 

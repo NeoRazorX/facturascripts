@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Lib\NewCodigoDoc;
+use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\Proveedor;
 
 /**
@@ -30,6 +30,7 @@ use FacturaScripts\Core\Model\Proveedor;
  */
 trait DocumentoCompra
 {
+
     use ModelTrait {
         clear as traitClear;
     }
@@ -120,7 +121,7 @@ trait DocumentoCompra
 
     /**
      * % IRPF retention of the document. It is obtained from the series.
-          * Each line can have a different%.
+           * Each line can have a different%.
      *
      * @var float|int
      */
@@ -135,7 +136,7 @@ trait DocumentoCompra
 
     /**
      * Number of the document.
-          * Unique within the series + exercise.
+           * Unique within the series + exercise.
      *
      * @var string
      */
@@ -143,7 +144,7 @@ trait DocumentoCompra
 
     /**
      * Supplier's document number, if any.
-          * May contain letters.
+           * May contain letters.
      *
      * @var string
      */
@@ -179,8 +180,8 @@ trait DocumentoCompra
 
     /**
      * Total expressed in euros, if it were not the currency of the document.
-          * totaleuros = total / tasaconv
-          * It is not necessary to fill it, when doing save () the value is calculated.
+           * totaleuros = total / tasaconv
+           * It is not necessary to fill it, when doing save () the value is calculated.
      *
      * @var float|int
      */
@@ -222,6 +223,16 @@ trait DocumentoCompra
     public $idestado;
 
     /**
+     * Returns the description of the column that is the model's primary key.
+     *
+     * @return string
+     */
+    public function primaryDescriptionColumn()
+    {
+        return 'codigo';
+    }
+
+    /**
      * Initializes document values.
      */
     private function clearDocumentoCompra()
@@ -244,7 +255,7 @@ trait DocumentoCompra
         $this->totaliva = 0.0;
         $this->totalrecargo = 0.0;
     }
-    
+
     /**
      * Assign the supplier to the document.
      *
@@ -255,6 +266,20 @@ trait DocumentoCompra
         $this->codproveedor = $proveedor->codproveedor;
         $this->nombre = $proveedor->razonsocial;
         $this->cifnif = $proveedor->cifnif;
+    }
+
+    /**
+     * Assign the date and find an accounting exercise.
+     *
+     * @param string $fecha
+     */
+    public function setFecha($fecha)
+    {
+        $ejercicioModel = new Ejercicio();
+        $ejercicio = $ejercicioModel->getByFecha($fecha);
+        if ($ejercicio) {
+            $this->codejercicio = $ejercicio->codejercicio;
+        }
     }
 
     /**
@@ -303,8 +328,8 @@ trait DocumentoCompra
 
         /**
          * We use the euro as a bridge currency when adding, compare
-                  * or convert amounts in several currencies. For this reason we need
-                  * many decimals.
+                   * or convert amounts in several currencies. For this reason we need
+                   * many decimals.
          */
         $this->totaleuros = round($this->total / $this->tasaconv, 5);
         if (static::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true)) {
@@ -314,42 +339,6 @@ trait DocumentoCompra
         self::$miniLog->alert(self::$i18n->trans('bad-total-error'));
 
         return false;
-    }
-
-    /**
-     * Calculates the subtotals of net, taxes and surcharge, by type of tax, in addition to the irpf, net and taxes
-     * with the previous calculation.
-     *
-     * @param boolean $status
-     * @param array   $subtotales
-     * @param int     $irpf
-     * @param int     $netoAlt
-     * @param int     $ivaAlt
-     */
-    private function getSubtotales(&$status, &$subtotales, &$irpf, &$netoAlt, &$ivaAlt)
-    {
-        foreach ($this->getLineas() as $lin) {
-            if (!$lin->test()) {
-                $status = false;
-            }
-            $codimpuesto = ($lin->codimpuesto === null) ? 0 : $lin->codimpuesto;
-            if (!array_key_exists($codimpuesto, $subtotales)) {
-                $subtotales[$codimpuesto] = [
-                    'neto' => 0,
-                    'iva' => 0, // Total IVA
-                    'recargo' => 0, // Total Recargo
-                ];
-            }
-            /// Acumulamos por tipos de IVAs
-            $subtotales[$codimpuesto]['neto'] += $lin->pvptotal;
-            $subtotales[$codimpuesto]['iva'] += $lin->pvptotal * $lin->iva / 100;
-            $subtotales[$codimpuesto]['recargo'] += $lin->pvptotal * $lin->recargo / 100;
-            $irpf += $lin->pvptotal * $lin->irpf / 100;
-
-            /// Cálculo anterior
-            $netoAlt += $lin->pvptotal;
-            $ivaAlt += $lin->pvptotal * $lin->iva / 100;
-        }
     }
 
     /**
