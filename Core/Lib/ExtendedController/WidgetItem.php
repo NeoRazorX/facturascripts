@@ -173,7 +173,7 @@ abstract class WidgetItem implements VisualItemInterface
     }
 
     /**
-     * Class constructor
+     * WidgetItem constructor.
      */
     public function __construct()
     {

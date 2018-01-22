@@ -134,8 +134,8 @@ trait ModelTrait
 
     /**
      * This function is called when creating the model table. Returns the SQL
-          * that will be executed after the creation of the table. Useful to insert values
-          * default.
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
      * @return string
      */
@@ -177,6 +177,11 @@ trait ModelTrait
      */
     abstract public function primaryColumn();
 
+    /**
+     * Returns the description of the column that is the model's primary key.
+     *
+     * @return string
+     */
     public function primaryDescriptionColumn()
     {
         return 'descripcion';
@@ -204,7 +209,7 @@ trait ModelTrait
             return $this->{$field};
         }
 
-        return strval($this->primaryColumnValue());
+        return (string) $this->primaryColumnValue();
     }
 
     /**
@@ -316,11 +321,11 @@ trait ModelTrait
 
     /**
      * Fill the class with the registry values
-          * whose primary column corresponds to the value $cod, or according to the condition
-          * where indicated, if value is not reported in $cod.
-          * Initializes the values of the class if there is no record that
-          * meet the above conditions.
-          * Returns True if the record exists and False otherwise.
+     * whose primary column corresponds to the value $cod, or according to the condition
+     * where indicated, if value is not reported in $cod.
+     * Initializes the values of the class if there is no record that
+     * meet the above conditions.
+     * Returns True if the record exists and False otherwise.
      *
      * @param string                   $cod
      * @param DataBase\DataBaseWhere[] $where
@@ -380,7 +385,7 @@ trait ModelTrait
 
     /**
      * Returns true if there are no errors in the values of the model properties.
-          * It runs inside the save method.
+     * It runs inside the save method.
      *
      * @return bool
      */
@@ -535,7 +540,7 @@ trait ModelTrait
 
     /**
      * Read the record whose primary column corresponds to the value $cod
-          * or the first that meets the indicated condition
+     * or the first that meets the indicated condition
      *
      * @param string     $cod
      * @param array|null $where

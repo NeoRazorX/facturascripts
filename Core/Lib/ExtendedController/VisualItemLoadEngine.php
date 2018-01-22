@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,8 +31,8 @@ class VisualItemLoadEngine
     /**
      * Load the column structure from the JSON
      *
-     * @param JSON  $columns
-     * @param array $target
+     * @param string $columns
+     * @param array  $target
      */
     private static function getJSONGroupsColumns($columns, &$target)
     {
@@ -46,10 +46,11 @@ class VisualItemLoadEngine
     }
 
     /**
+     * Load the column structure from the JSON
      *
-     * @param JSON             $columns
-     * @param JSON             $modals
-     * @param JSON             $rows
+     * @param string (JSON)    $columns
+     * @param string (JSON)    $modals
+     * @param string (JSON)    $rows
      * @param Model\PageOption $model
      */
     public static function loadJSON($columns, $modals, $rows, &$model)

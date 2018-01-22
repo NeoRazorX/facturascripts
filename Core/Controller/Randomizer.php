@@ -32,6 +32,7 @@ use Symfony\Component\HttpFoundation\Response;
 class Randomizer extends Base\Controller
 {
     /**
+     * URL where reload.
      *
      * @var string
      */

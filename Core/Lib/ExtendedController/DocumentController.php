@@ -48,7 +48,7 @@ abstract class DocumentController extends PanelController
      */
     protected function createViews()
     {
-        $view = new DocumentView('Doc', $this->getDocumentClassName(), $this->getDocumentLineClassName(), $this->getLineXMLView(), $this->user->nick);
+        $view = new DocumentView('new', $this->getDocumentClassName(), $this->getDocumentLineClassName(), $this->getLineXMLView(), $this->user->nick);
         $this->addView('Document', $view, 'fa-file');
     }
 
@@ -111,6 +111,13 @@ abstract class DocumentController extends PanelController
         return 'CommonLineasDocumento';
     }
 
+    /**
+     * Returns an array with all data from selected model.
+     *
+     * @param string $modelName
+     *
+     * @return mixed
+     */
     public function getSelectValues($modelName)
     {
         $values = [];

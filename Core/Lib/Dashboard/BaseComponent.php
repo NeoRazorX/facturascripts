@@ -40,6 +40,11 @@ class BaseComponent
      */
     protected $randomData;
 
+    /**
+     * Name of visual component.
+     *
+     * @var string
+     */
     public $component;
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -47,13 +47,6 @@ class AlbaranCliente
     public $idfactura;
 
     /**
-     * True => is pending invoice.
-     *
-     * @var bool
-     */
-    public $ptefactura;
-
-    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
@@ -94,7 +87,6 @@ class AlbaranCliente
     public function clear()
     {
         $this->clearDocumentoVenta();
-        $this->ptefactura = true;
     }
 
     /**
@@ -105,8 +97,10 @@ class AlbaranCliente
     public function getLineas()
     {
         $lineaModel = new LineaAlbaranCliente();
+        $where = [new DataBaseWhere('idalbaran', $this->idalbaran)];
+        $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
 
-        return $lineaModel->all([new DataBaseWhere('idalbaran', $this->idalbaran)]);
+        return $lineaModel->all($where, $order);
     }
 
     /**
@@ -117,18 +111,5 @@ class AlbaranCliente
     public function test()
     {
         return $this->testTrait();
-    }
-
-    /**
-     * Execute a task with cron
-     */
-    public function cronJob()
-    {
-        /**
-         * We put to Null all the invoices that are not in invoices.
-                  * Why? Because many users are dedicated to touching the database.
-         */
-        self::$dataBase->exec('UPDATE ' . static::tableName() . ' SET idfactura = NULL WHERE idfactura IS NOT NULL'
-            . ' AND idfactura NOT IN (SELECT idfactura FROM facturascli);');
     }
 }

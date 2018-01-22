@@ -31,7 +31,8 @@ class CodeModel
 {
     use Base\Utils;
 
-    const ITEM_LIMIT = 1000;
+    const ALL_LIMIT = 1000;
+    const SEARCH_LIMIT = 50;
 
     /**
      * It provides direct access to the database.
@@ -95,7 +96,7 @@ class CodeModel
 
             $sql = 'SELECT DISTINCT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM '
                 . $tableName . ' ORDER BY 2 ASC';
-            $data = self::$dataBase->selectLimit($sql, self::ITEM_LIMIT);
+            $data = self::$dataBase->selectLimit($sql, self::ALL_LIMIT);
             if (!empty($data)) {
                 foreach ($data as $d) {
                     $result[] = new self($d);
@@ -174,7 +175,7 @@ class CodeModel
                 . ' FROM ' . $tableName
                 . ' WHERE LOWER(' . $fieldDescription . ") LIKE '%" . mb_strtolower($search) . "%'"
                 . ' ORDER BY 2 ASC';
-            $data = self::$dataBase->selectLimit($sql, self::ITEM_LIMIT);
+            $data = self::$dataBase->selectLimit($sql, self::SEARCH_LIMIT);
             if (!empty($data)) {
                 foreach ($data as $d) {
                     $result[] = new self($d);

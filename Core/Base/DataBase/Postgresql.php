@@ -52,7 +52,7 @@ class Postgresql implements DataBaseEngine
     private $i18n;
 
     /**
-     * Class constructor and initialization
+     * Postgresql constructor and initialization.
      */
     public function __construct()
     {

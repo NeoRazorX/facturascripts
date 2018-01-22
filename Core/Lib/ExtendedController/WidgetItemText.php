@@ -27,7 +27,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 class WidgetItemText extends WidgetItem
 {
     /**
-     * Class constructor
+     * WidgetItemText constructor.
      *
      * @param string $type
      */

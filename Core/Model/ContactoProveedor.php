@@ -49,11 +49,21 @@ class ContactoProveedor
      */
     public $codcontacto;
 
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
     public function tableName()
     {
         return 'contactosproveedores';
     }
 
+    /**
+     * Returns the name of the column that is the model's primary key.
+     *
+     * @return string
+     */
     public function primaryColumn()
     {
         return 'id';

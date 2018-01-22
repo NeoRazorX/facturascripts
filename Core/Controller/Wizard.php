@@ -30,6 +30,13 @@ use FacturaScripts\Core\Model;
  */
 class Wizard extends Controller
 {
+    const ITEM_SELECT_LIMIT = 500;
+
+    /**
+     * Returns basic page attributes
+     *
+     * @return array
+     */
     public function getPageData()
     {
         $pageData = parent::getPageData();
@@ -39,30 +46,34 @@ class Wizard extends Controller
         return $pageData;
     }
 
-    public function getDivisas()
+    /**
+     * Returns an array with all data from selected model.
+     *
+     * @param string $modelName
+     *
+     * @return mixed
+     */
+    public function getSelectValues($modelName)
     {
-        $divisas = [];
+        $values = [];
+        $modelName = '\FacturaScripts\Dinamic\Model\\' . $modelName;
+        $model = new $modelName();
 
-        $divisaModel = new Model\Divisa();
-        foreach ($divisaModel->all([], ['descripcion' => 'ASC'], 0, 500) as $divisa) {
-            $divisas[$divisa->coddivisa] = $divisa->descripcion;
+        $order = [$model->primaryDescriptionColumn() => 'ASC'];
+        foreach ($model->all([], $order, 0, self::ITEM_SELECT_LIMIT) as $newModel) {
+            $values[$newModel->primaryColumnValue()] = $newModel->primaryDescription();
         }
 
-        return $divisas;
+        return $values;
     }
 
-    public function getPaises()
-    {
-        $paises = [];
-
-        $paisModel = new Model\Pais();
-        foreach ($paisModel->all([], ['nombre' => 'ASC'], 0, 500) as $pais) {
-            $paises[$pais->codpais] = $pais->nombre;
-        }
-
-        return $paises;
-    }
-
+    /**
+     * Runs the controller's private logic.
+     *
+     * @param \Symfony\Component\HttpFoundation\Response $response
+     * @param Model\User $user
+     * @param \FacturaScripts\Core\Base\ControllerPermissions $permissions
+     */
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
@@ -87,6 +98,9 @@ class Wizard extends Controller
         }
     }
 
+    /**
+     * Initialize required models.
+     */
     private function initModels()
     {
         new Model\FormaPago();
@@ -95,6 +109,7 @@ class Wizard extends Controller
     }
 
     /**
+     * Save company default address.
      *
      * @param AppSettings $appSettings
      * @param string      $codpais

@@ -104,7 +104,7 @@ class TransferenciaStock
     }
 
     /**
-     * Returns True if there is no erros on properties values.
+     * Returns True if there is no errors on properties values.
      *
      * @return bool
      */

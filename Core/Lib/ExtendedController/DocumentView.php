@@ -149,8 +149,8 @@ class DocumentView extends BaseView
         }
 
         $fieldName = $this->model->primaryColumn();
-        $this->count = empty($this->model->{$fieldName}) ? 0 : 1;
-        $this->lines = empty($this->model->{$fieldName}) ? [] : $this->model->getLineas();
+        $this->count = empty($this->model->primaryColumnValue()) ? 0 : 1;
+        $this->lines = empty($this->model->primaryColumnValue()) ? [] : $this->model->getLineas();
         $this->title = $this->model->codigo;
     }
 
@@ -164,6 +164,7 @@ class DocumentView extends BaseView
         unset($data['codproveedor']);
         unset($data['lines']);
         $this->loadFromData($data);
+        $this->lines = empty($this->model->primaryColumnValue()) ? [] : $this->model->getLineas();
 
         if (empty($this->model->codejercicio)) {
             $ejercicioModel = new Ejercicio();
@@ -210,21 +211,7 @@ class DocumentView extends BaseView
 
         $cliente = new Cliente();
         if ($cliente->loadFromCode($codcliente)) {
-            $this->model->codcliente = $cliente->codcliente;
-            $this->model->nombrecliente = $cliente->razonsocial;
-            $this->model->cifnif = $cliente->cifnif;
-            foreach ($cliente->getDirecciones() as $dir) {
-                $this->model->coddir = $dir->id;
-                $this->model->codpais = $dir->codpais;
-                $this->model->provincia = $dir->provincia;
-                $this->model->ciudad = $dir->ciudad;
-                $this->model->direccion = $dir->direccion;
-                $this->model->codpostal = $dir->codpostal;
-                $this->model->apartado = $dir->apartado;
-                if($dir->domfacturacion) {
-                    break;
-                }
-            }
+            $this->model->setCliente($cliente);
             return 'OK';
         }
 
@@ -247,9 +234,7 @@ class DocumentView extends BaseView
 
         $proveedor = new Proveedor();
         if ($proveedor->loadFromCode($codproveedor)) {
-            $this->model->codproveedor = $proveedor->codproveedor;
-            $this->model->nombre = $proveedor->razonsocial;
-            $this->model->cifnif = $proveedor->cifnif;
+            $this->model->setProveedor($proveedor);
             return 'OK';
         }
 

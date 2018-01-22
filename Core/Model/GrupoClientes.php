@@ -71,6 +71,11 @@ class GrupoClientes
         return 'codgrupo';
     }
 
+    /**
+     * Returns the description of the column that is the model's primary key.
+     *
+     * @return string
+     */
     public function primaryDescriptionColumn()
     {
         return 'nombre';
@@ -113,7 +118,7 @@ class GrupoClientes
 
     /**
      * This function is called when creating the model table. Returns the SQL
-          * that will be executed after the creation of the table. Useful to insert values
+     * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
