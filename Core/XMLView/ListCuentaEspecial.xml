@@ -19,21 +19,13 @@
  *
  * Initial description for the controller ListCuentaEspecial
  *
- * @author Artex Trading sa <jferrer@artextrading.com>  
+ * @author Artex Trading sa <jferrer@artextrading.com>
 -->
 
 <view>
     <columns>
         <column name="id-account-special" order="100">
             <widget type="text" fieldname="idcuentaesp" onclick="EditCuentaEspecial" />
-        </column>
-        
-        <column name="account" order="110">
-            <widget type="text" fieldname="codcuenta" />
-        </column>
-        
-        <column name="sub-account" order="120">
-            <widget type="text" fieldname="codsubcuenta" />
         </column>
         
         <column name="description" order="130">
