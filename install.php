@@ -300,7 +300,7 @@ function renderHTML(&$templateVars)
     $twig = new Twig_Environment($twigLoader);
 
     /// Generate and return the HTML
-    $response = new Response($twig->render('Installer/Install.html', $templateVars), Response::HTTP_OK);
+    $response = new Response($twig->render('Installer/Install.html.twig', $templateVars), Response::HTTP_OK);
     $response->send();
 }
 
