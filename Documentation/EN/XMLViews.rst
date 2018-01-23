@@ -269,6 +269,8 @@ Examples:
 -  **readonly**: Optional attribute to indicate that the column is not
    editable. **[readonly = “true”]**
 
+-  **maxlength** : Maximum number of characters allowed by the field.
+
 -  **icon**: (optional) If indicated, the icon will be displayed to the
    left of the field.
 
