@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 /**
- * This class manage all specific method for a WidgetItem of Color Picker type.
+ * This class manage all specific method for a WidgetItem of File Chooser type.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
