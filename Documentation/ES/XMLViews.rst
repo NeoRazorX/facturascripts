@@ -280,6 +280,8 @@ Ejemplos:
 -  **readonly** : Atributo opcional para indicar que la columna no es
    editable. **[readonly=“true”]**
 
+-  **maxlength** : Número máximo de carácteres que permite la campo.
+
 -  **icon** : (opcional) Si se indica se visualizará el icono a la
    izquierda del campo.
 
