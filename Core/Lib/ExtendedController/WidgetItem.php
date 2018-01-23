@@ -63,6 +63,13 @@ abstract class WidgetItem implements VisualItemInterface
     public $required;
 
     /**
+     * Indicates that the max length of value
+     *
+     * @var integer
+     */
+    public $maxLength;
+
+    /**
      * Icon used as a value or to accompany the widget
      *
      * @var string
@@ -181,6 +188,7 @@ abstract class WidgetItem implements VisualItemInterface
         $this->hint = '';
         $this->readOnly = false;
         $this->required = false;
+        $this->maxLength = 0;
         $this->icon = null;
         $this->onClick = '';
         $this->options = [];
@@ -238,6 +246,7 @@ abstract class WidgetItem implements VisualItemInterface
         $this->hint = (string) $widgetAtributes->hint;
         $this->readOnly = (bool) $widgetAtributes->readonly;
         $this->required = (bool) $widgetAtributes->required;
+        $this->maxLength = (integer) $widgetAtributes->maxlength;
         $this->icon = (string) $widgetAtributes->icon;
         $this->onClick = (string) $widgetAtributes->onclick;
 
@@ -255,6 +264,7 @@ abstract class WidgetItem implements VisualItemInterface
         $this->hint = (string) $widget['hint'];
         $this->readOnly = (bool) $widget['readOnly'];
         $this->required = (bool) $widget['required'];
+        $this->maxLength = (integer) $widget['maxLength'];
         $this->icon = (string) $widget['icon'];
         $this->onClick = (string) $widget['onClick'];
         $this->options = (array) $widget['options'];
@@ -360,8 +370,9 @@ abstract class WidgetItem implements VisualItemInterface
         $hint = $this->getHintHTML($this->hint);
         $readOnly = empty($this->readOnly) ? '' : ' readonly=""';
         $required = empty($this->required) ? '' : ' required=""';
+        $maxLength = empty($this->maxLength) ? '' : ' maxlength="' . $this->maxLength . '"';
 
-        return $hint . $readOnly . $required;
+        return $hint . $readOnly . $required . $maxLength;
     }
 
     /**
