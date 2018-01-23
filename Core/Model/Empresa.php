@@ -34,7 +34,7 @@ class Empresa
      *
      * @var int
      */
-    public $id;
+    public $idempresa;
 
     /**
      * True -> activates the use of an equivalence surcharge on delivery notes and purchase invoices.
@@ -102,12 +102,12 @@ class Empresa
      */
     public function primaryColumn()
     {
-        return 'id';
+        return 'idempresa';
     }
-    
+
     public function primaryDescriptionColumn()
     {
-        return 'nombre';
+        return 'nombrecorto';
     }
 
     /**
@@ -144,6 +144,10 @@ class Empresa
             return false;
         }
 
+        if ($this->idempresa === null) {
+            $this->idempresa = $this->newCode();
+        }
+
         return true;
     }
 
@@ -158,9 +162,9 @@ class Empresa
     {
         $num = mt_rand(1, 9999);
 
-        return 'INSERT INTO ' . static::tableName() . ' (recequivalencia,web,email,fax,telefono,codpais,apartado,'
+        return 'INSERT INTO ' . static::tableName() . ' (idempresa,recequivalencia,web,email,fax,telefono,codpais,apartado,'
             . 'provincia,ciudad,codpostal,direccion,administrador,cifnif,nombre,nombrecorto)'
-            . "VALUES (NULL,'https://www.facturascripts.com',"
+            . "VALUES (1,NULL,'https://www.facturascripts.com',"
             . "NULL,NULL,NULL,'ESP',NULL,NULL,NULL,NULL,'C/ Falsa, 123','','00000014Z',"
             . "'Empresa " . $num . " S.L.','E-" . $num . "');";
     }
