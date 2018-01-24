@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,32 +30,20 @@
         <column name="name" order="100">
             <widget type="text" fieldname="nombre" />
         </column>
-        <column name="contact" order="100">
-            <widget type="text" fieldname="contacto" />
-        </column>
-        <column name="address" order="100">
+        <column name="address" order="110">
             <widget type="text" fieldname="direccion" />
         </column>
-        <column name="postalmail" display="none" order="100">
-            <widget type="text" fieldname="apartado" />
+        <column name="city" order="120">
+            <widget type="text" fieldname="ciudad" />
         </column>
-        <column name="town" order="100">
-            <widget type="text" fieldname="poblacion" />
-        </column>
-        <column name="postal-code" display="none" order="100">
+        <column name="postal-code" order="130">
             <widget type="text" fieldname="codpostal" />
         </column>
-        <column name="province" display="center" order="100">
+        <column name="province" display="center" order="140">
             <widget type="text" fieldname="provincia" />
         </column>
-        <column name="phone" order="100">
+        <column name="phone" order="150">
             <widget type="text" fieldname="telefono" />
-        </column>
-        <column name="fax" order="100">
-            <widget type="text" fieldname="fax" />
-        </column>
-        <column name="valuation-type" display="center" order="100">
-            <widget type="text" fieldname="tipovaloracion" />
         </column>
     </columns>
     <filters>

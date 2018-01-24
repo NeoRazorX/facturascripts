@@ -16,16 +16,18 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * Accounting year. It is the period in which seats, invoices, delivery notes are grouped ...
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Ejercicio
+class Ejercicio extends Base\ModelClass
 {
+
     use Base\ModelTrait;
 
     /**
@@ -86,7 +88,7 @@ class Ejercicio
 
     /**
      * Identify the accounting plan used. This is only necessary
-          * to support Eneboo. In FacturaScripts it is not used.
+     * to support Eneboo. In FacturaScripts it is not used.
      *
      * @var string
      */
@@ -114,7 +116,7 @@ class Ejercicio
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'codejercicio';
     }
@@ -124,6 +126,7 @@ class Ejercicio
      */
     public function clear()
     {
+        parent::clear();
         $this->nombre = '';
         $this->fechainicio = date('01-01-Y');
         $this->fechafin = date('31-12-Y');
@@ -208,7 +211,7 @@ class Ejercicio
 
     /**
      * Returns the exercise for the indicated date.
-          * If it does not exist, create it.
+           * If it does not exist, create it.
      *
      * @param string $fecha
      * @param bool   $soloAbierto
@@ -254,7 +257,7 @@ class Ejercicio
         $status = false;
 
         $this->codejercicio = trim($this->codejercicio);
-        $this->nombre = self::noHtml($this->nombre);
+        $this->nombre = Utils::noHtml($this->nombre);
 
         if (!preg_match('/^[A-Z0-9_]{1,4}$/i', $this->codejercicio)) {
             self::$miniLog->alert(self::$i18n->trans('fiscal-year-code-invalid'));

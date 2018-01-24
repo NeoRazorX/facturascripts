@@ -1,8 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2016 Joe Nilson             <joenilson at gmail.com>
- * Copyright (C) 2017 Carlos García Gómez    <carlos@facturascripts.com>
+ * Copyright (C) 2016       Joe Nilson             <joenilson at gmail.com>
+ * Copyright (C) 2017-2018  Carlos García Gómez    <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -28,7 +28,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  * @author Joe Nilson            <joenilson at gmail.com>
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class RoleAccess
+class RoleAccess extends Base\ModelClass
 {
     use Base\ModelTrait;
 
@@ -82,7 +82,7 @@ class RoleAccess
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'id';
     }

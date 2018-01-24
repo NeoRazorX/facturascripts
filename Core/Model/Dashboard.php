@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,11 +25,9 @@ namespace FacturaScripts\Core\Model;
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class Dashboard
+class Dashboard extends Base\ModelClass
 {
-    use Base\ModelTrait {
-        url as private traitUrl;
-    }
+    use Base\ModelTrait;
 
     /**
      * Name of visual component
@@ -67,21 +65,14 @@ class Dashboard
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'component';
     }
-
-    /**
-     * Returns the url where to see/modify the data.
-     *
-     * @param string $type
-     *
-     * @return string
-     */
-    public function url($type = 'auto')
+    
+    public function url($type = 'auto', $list = 'List')
     {
-        return $this->traitUrl($type, '');
+        return parent::url($type, '');
     }
 
     /**

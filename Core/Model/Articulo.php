@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2012-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2012-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,33 +16,24 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * Stores the data of an article.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Articulo
+class Articulo extends Base\Product
 {
-    use Base\ModelTrait {
-        clear as traitClear;
-    }
 
-    /**
-     * Primary key. Varchar (18).
-     *
-     * @var string
-     */
-    public $referencia;
+    use Base\ModelTrait;
 
     /**
      * Define the type of item, so you can set distinctions
-          * according to one type or another. Varchar (10)
+     * according to one type or another. Varchar (10)
      *
      * @var string
      */
@@ -54,13 +45,6 @@ class Articulo
      * @var string
      */
     public $codfamilia;
-
-    /**
-     * Description of the article. Type text, without character limit.
-     *
-     * @var string
-     */
-    public $descripcion;
 
     /**
      * Code of the manufacturer to which it belongs. In the manufacturer class.
@@ -78,19 +62,12 @@ class Articulo
 
     /**
      * Stores the value of the pvp before making the change.
-          * This value is not stored in the database, that is,
-          * is not remembered.
+     * This value is not stored in the database, that is,
+     * is not remembered.
      *
      * @var float|int
      */
     public $pvp_ant;
-
-    /**
-     * Update date of the retail price.
-     *
-     * @var string
-     */
-    public $factualizado;
 
     /**
      * Average cost when buying the item. Calculated.
@@ -101,19 +78,12 @@ class Articulo
 
     /**
      * Cost price manually edited
-          * It is not necessarily the purchase price, it can include
-          * also other costs.
+     * It is not necessarily the purchase price, it can include
+     * also other costs.
      *
      * @var float|int
      */
     public $preciocoste;
-
-    /**
-     * Tax assigned. Tax class
-     *
-     * @var string
-     */
-    public $codimpuesto;
 
     /**
      * True => the articles are locked / obsolete.
@@ -145,25 +115,11 @@ class Articulo
 
     /**
      * Equivalence code. Varchar (18).
-          * Two or more articles are equivalent if they have the same equivalence code.
+     * Two or more articles are equivalent if they have the same equivalence code.
      *
      * @var string
      */
     public $equivalencia;
-
-    /**
-     * Partnumber of the product. Maximum 38 characters.
-     *
-     * @var string
-     */
-    public $partnumber;
-
-    /**
-     * Physical stock. The sum of the quantities of this reference that in the table stocks.
-     *
-     * @var float|int
-     */
-    public $stockfis;
 
     /**
      * The minimum stock that there should be.
@@ -181,29 +137,10 @@ class Articulo
 
     /**
      * True -> allow sales without stock.
-          * Yes, I know it does not make sense to put controlstock to True
-          * implies the absence of stock control. But it's a shit
-          * FacturaLux -> Abanq -> Eneboo, and for compatibility reasons
-          * it keeps.
      *
      * @var bool
      */
-    public $controlstock;
-
-    /**
-     * True -> do not control the stock.
-          * Activating it implies putting True $controlstock;
-     *
-     * @var bool
-     */
-    public $nostock;
-
-    /**
-     * Barcode.
-     *
-     * @var string
-     */
-    public $codbarras;
+    public $ventasinstock;
 
     /**
      * Observations of the article.
@@ -234,20 +171,6 @@ class Articulo
     public $trazabilidad;
 
     /**
-     * VAT% of the assigned tax.
-     *
-     * @var float|int
-     */
-    private $iva;
-
-    /**
-     * List of Tax.
-     *
-     * @var Impuesto[]
-     */
-    private static $impuestos;
-
-    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
@@ -262,14 +185,14 @@ class Articulo
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'referencia';
     }
 
     /**
      * This function is called when creating the model table. Returns the SQL
-          * that will be executed after the creation of the table. Useful to insert values
+     * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
@@ -291,87 +214,14 @@ class Articulo
      */
     public function clear()
     {
-        $this->traitClear();
-        $this->codimpuesto = AppSettings::get('default', 'codimpuesto');
+        parent::clear();
         $this->costemedio = 0.0;
-        $this->factualizado = date('d-m-Y');
         $this->preciocoste = 0.0;
         $this->pvp = 0.0;
         $this->secompra = true;
         $this->sevende = true;
-        $this->stockfis = 0.0;
         $this->stockmax = 0.0;
         $this->stockmin = 0.0;
-    }
-
-    /**
-     * Returns the retail price with VAT
-     *
-     * @return float
-     */
-    public function pvpIva()
-    {
-        return $this->pvp * (100 + $this->getIva()) / 100;
-    }
-
-    /**
-     * Returns the cost price, whether it is configured as calculated or editable.
-     *
-     * @return float
-     */
-    public function preciocoste()
-    {
-        return $this->secompra ? $this->costemedio : $this->preciocoste;
-    }
-
-    /**
-     * Returns the cost price with VAT.
-     *
-     * @return float
-     */
-    public function preciocosteIva()
-    {
-        return $this->preciocoste() * (100 + $this->getIva()) / 100;
-    }
-
-    /**
-     * Returns a new reference, the next to the last reference in the database.
-     */
-    public function getNewReferencia()
-    {
-        $sql = 'SELECT referencia FROM ' . static::tableName() . ' WHERE referencia ';
-        $sql .= (strtolower(FS_DB_TYPE) === 'postgresql') ? "~ '^\d+$' ORDER BY referencia::BIGINT DESC" : "REGEXP '^\d+$' ORDER BY ABS(referencia) DESC";
-
-        $data = self::$dataBase->selectLimit($sql, 1);
-        if (!empty($data)) {
-            return sprintf(1 + (int) $data[0]['referencia']);
-        }
-
-        return '1';
-    }
-
-    /**
-     * Returns the family of the item.
-     *
-     * @return bool|Familia
-     */
-    public function getFamilia()
-    {
-        $fam = new Familia();
-
-        return $this->codfamilia === null ? false : $fam->get($this->codfamilia);
-    }
-
-    /**
-     * Returns the article's manufacturer.
-     *
-     * @return bool|Fabricante
-     */
-    public function getFabricante()
-    {
-        $fab = new Fabricante();
-
-        return $this->codfabricante === null ? false : $fab->get($this->codfabricante);
     }
 
     /**
@@ -387,51 +237,6 @@ class Articulo
     }
 
     /**
-     * Returns the tax on the item.
-     *
-     * @return bool|Impuesto
-     */
-    public function getImpuesto()
-    {
-        $imp = new Impuesto();
-
-        return $imp->get($this->codimpuesto);
-    }
-
-    /**
-     * Returns the VAT% of the item.
-          * If $reload is True, check back instead of using the loaded data.
-     *
-     * @param bool $reload
-     *
-     * @return float|null
-     */
-    public function getIva($reload = false)
-    {
-        if ($reload) {
-            $this->iva = null;
-        }
-
-        if (!isset(self::$impuestos)) {
-            self::$impuestos = [];
-            $impuestoModel = new Impuesto();
-            foreach ($impuestoModel->all() as $imp) {
-                self::$impuestos[$imp->codimpuesto] = $imp;
-            }
-        }
-
-        if ($this->iva === null) {
-            $this->iva = 0;
-
-            if (!$this->codimpuesto === null && isset(self::$impuestos[$this->codimpuesto])) {
-                $this->iva = self::$impuestos[$this->codimpuesto]->iva;
-            }
-        }
-
-        return $this->iva;
-    }
-
-    /**
      * Sets the retail price.
      *
      * @param float $pvp
@@ -440,9 +245,8 @@ class Articulo
     {
         $pvp = round($pvp, FS_NF0_ART);
 
-        if (!static::floatcmp($this->pvp, $pvp, FS_NF0_ART + 2)) {
+        if (!Utils::floatcmp($this->pvp, $pvp, FS_NF0_ART + 2)) {
             $this->pvp_ant = $this->pvp;
-            $this->factualizado = date('d-m-Y');
             $this->pvp = $pvp;
         }
     }
@@ -458,51 +262,8 @@ class Articulo
     }
 
     /**
-     * Change the reference of the article.
-          * Do it at the moment, you do not need to save().
-     *
-     * @param string $ref
-     */
-    public function setReferencia($ref)
-    {
-        $ref = trim($ref);
-        if ($ref === null || empty($ref) || strlen($ref) > 18) {
-            self::$miniLog->alert(self::$i18n->trans('product-reference-not-valid', ['%reference%' => $this->referencia]));
-        } elseif ($ref !== $this->referencia && !$this->referencia === null) {
-            $sql = 'UPDATE ' . static::tableName() . ' SET referencia = ' . self::$dataBase->var2str($ref)
-                . ' WHERE referencia = ' . self::$dataBase->var2str($this->referencia) . ';';
-            if (self::$dataBase->exec($sql)) {
-                $this->referencia = $ref;
-            } else {
-                self::$miniLog->alert(self::$i18n->trans('cant-modify-reference'));
-            }
-        }
-    }
-
-    /**
-     * Change the tax associated with the item.
-     *
-     * @param string $codimpuesto
-     */
-    public function setImpuesto($codimpuesto)
-    {
-        if ($codimpuesto !== $this->codimpuesto) {
-            $this->codimpuesto = $codimpuesto;
-            $this->iva = null;
-
-            if (!isset(self::$impuestos)) {
-                self::$impuestos = [];
-                $impuestoModel = new Impuesto();
-                foreach ($impuestoModel->all() as $imp) {
-                    self::$impuestos[$imp->codimpuesto] = $imp;
-                }
-            }
-        }
-    }
-
-    /**
      * Modifies the stock of the item in a specific warehouse.
-          * Already responsible for executing save() if necessary.
+     * Already responsible for executing save() if necessary.
      *
      * @param string $codalmacen
      * @param int    $cantidad
@@ -560,7 +321,7 @@ class Articulo
 
     /**
      * Add the specified amount to the stock of the item in the specified store.
-          * Already responsible for executing save() if necessary.
+     * Already responsible for executing save() if necessary.
      *
      * @param string $codalmacen
      * @param int    $cantidad
@@ -656,51 +417,22 @@ class Articulo
      */
     public function test()
     {
-        $status = false;
-
-        $this->descripcion = self::noHtml($this->descripcion);
-        $this->codbarras = self::noHtml($this->codbarras);
-        $this->observaciones = self::noHtml($this->observaciones);
+        $this->observaciones = Utils::noHtml($this->observaciones);
 
         if ($this->equivalencia === '') {
             $this->equivalencia = null;
         }
 
         if ($this->nostock) {
-            $this->controlstock = true;
-            $this->stockfis = 0;
-            $this->stockmax = 0;
-            $this->stockmin = 0;
+            $this->ventasinstock = true;
+            $this->stockmax = 0.0;
+            $this->stockmin = 0.0;
         }
 
         if ($this->bloqueado) {
             $this->publico = false;
         }
 
-        if ($this->referencia === null || empty($this->referencia) || strlen($this->referencia) > 18) {
-            self::$miniLog->alert(self::$i18n->trans('product-reference-not-valid', ['%reference%' => $this->referencia]));
-        } elseif ($this->equivalencia !== null && strlen($this->equivalencia) > 25) {
-            self::$miniLog->alert(self::$i18n->trans('product-equivalence-not-valid', ['%equivalence%' => $this->equivalencia]));
-        } else {
-            $status = true;
-        }
-
-        return $status;
-    }
-
-    /**
-     * Remove the article from the database.
-     *
-     * @return bool
-     */
-    public function delete()
-    {
-        $sql = 'DELETE FROM articulosprov WHERE referencia = ' . self::$dataBase->var2str($this->referencia) . ';';
-        $sql .= 'DELETE FROM ' . static::tableName() . ' WHERE referencia = ' . self::$dataBase->var2str($this->referencia) . ';';
-        if (self::$dataBase->exec($sql)) {
-            return true;
-        }
-
-        return false;
+        return true;
     }
 }

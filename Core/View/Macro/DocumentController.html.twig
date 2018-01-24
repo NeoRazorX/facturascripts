@@ -45,12 +45,12 @@
             {{ macros.supplierSelect(context.i18n, 'codproveedor', 'codproveedor', model) }}
         {% endif %}
         {{ macros.customInput('doc_fecha', 'fecha', model.fecha, 'text', 'fa-calendar', {class: 'form-control datepicker'}) }}
-        {{ macros.customInput('doc_total', 'total', model.total, 'text', 'fa-money', {class: 'form-control', disabled: ''}) }}
+        {{ macros.customInput('doc_total', 'total', model.total, 'text', 'fa-money', {class: 'form-control text-right', disabled: ''}) }}
     </div>
     <br/>
     <div id="document-lines"></div>
     <br/>
-    <div class="row">
+    <div class="form-row">
         {{ macros.customSelect('doc_codserie', 'codserie', model.codserie, context.fsc.getSelectValues('Serie')) }}
         {{ macros.customSelect('doc_codalmacen', 'codalmacen', model.codalmacen, context.fsc.getSelectValues('Almacen')) }}
         {{ macros.customSelect('doc_idempresa', 'idempresa', model.idempresa, context.fsc.getSelectValues('Empresa')) }}
@@ -100,8 +100,10 @@
     <div class="col">
         {% if icon %}
             <div class="input-group">
-                <span class="input-group-addon">
-                    <i class="fa {{ icon }} fa-fw" aria-hidden="true"></i>
+                <span class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="fa {{ icon }} fa-fw" aria-hidden="true"></i>
+                    </span>
                 </span>
         {% endif %}
 
@@ -123,8 +125,10 @@
 {% macro customerSelect(i18n, id, name, model) %}
     <div class="col">
         <div class="input-group">
-            <span class="input-group-addon">
-                <i class="fa fa-user fa-fw" aria-hidden="true"></i>
+            <span class="input-group-prepend">
+                <span class="input-group-text">
+                    <i class="fa fa-user fa-fw" aria-hidden="true"></i>
+                </span>
             </span>
             <input type="hidden" id="{{ id }}Autocomplete" name="{{ name }}" value="{{ model.codcliente }}"/>
             <input type="text" id="{{ id }}" value="{{ model.nombrecliente }}" class="form-control autocomplete"
@@ -169,8 +173,10 @@
 {% macro supplierSelect(i18n, id, name, model) %}
     <div class="col">
         <div class="input-group">
-            <span class="input-group-addon">
-                <i class="fa fa-user fa-fw" aria-hidden="true"></i>
+            <span class="input-group-prepend">
+                <span class="input-group-text">
+                    <i class="fa fa-user fa-fw" aria-hidden="true"></i>
+                </span>
             </span>
             <input type="hidden" id="{{ id }}Autocomplete" name="{{ name }}" value="{{ model.codproveedor }}"/>
             <input type="text" id="{{ id }}" value="{{ model.nombre }}" class="form-control autocomplete"

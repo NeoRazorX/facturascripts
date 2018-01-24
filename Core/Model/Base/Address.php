@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018    Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,22 +16,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Base\Utils;
+
 /**
- * Description of Direccion
+ * Description of Address
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-trait Direccion
+abstract class Address extends ModelClass
 {
-    /**
-     * Country of the address.
-     *
-     * @var string
-     */
-    public $codpais;
 
     /**
      * Post office box of the address.
@@ -41,18 +36,18 @@ trait Direccion
     public $apartado;
 
     /**
-     * Province of the address.
-     *
-     * @var string
-     */
-    public $provincia;
-
-    /**
      * City of the address.
      *
      * @var string
      */
     public $ciudad;
+
+    /**
+     * Country of the address.
+     *
+     * @var string
+     */
+    public $codpais;
 
     /**
      * Postal code of the address.
@@ -69,33 +64,19 @@ trait Direccion
     public $direccion;
 
     /**
-     * Description of the address.
+     * Province of the address.
      *
      * @var string
      */
-    public $descripcion;
+    public $provincia;
 
-    /**
-     * Date of last modification.
-     *
-     * @var string
-     */
-    public $fecha;
-
-    /**
-     * Address test
-     *
-     * @return bool
-     */
-    public function testDireccion()
+    public function test()
     {
-        $this->apartado = self::noHtml($this->apartado);
-        $this->ciudad = self::noHtml($this->ciudad);
-        $this->codpostal = self::noHtml($this->codpostal);
-        $this->descripcion = self::noHtml($this->descripcion);
-        $this->direccion = self::noHtml($this->direccion);
-        $this->provincia = self::noHtml($this->provincia);
+        $this->apartado = Utils::noHtml($this->apartado);
+        $this->ciudad = Utils::noHtml($this->ciudad);
+        $this->direccion = Utils::noHtml($this->direccion);
+        $this->provincia = Utils::noHtml($this->provincia);
 
-        return true;
+        return false;
     }
 }

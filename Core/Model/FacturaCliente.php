@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -26,10 +25,11 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class FacturaCliente
+class FacturaCliente extends Base\SalesDocument
 {
-    use Base\DocumentoVenta;
-    use Base\Factura;
+
+    use Base\ModelTrait;
+    use Base\InvoiceTrait;
 
     /**
      * Returns the name of the table that uses this model.
@@ -46,9 +46,16 @@ class FacturaCliente
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'idfactura';
+    }
+    
+    public function clear()
+    {
+        parent::clear();
+        $this->anulada = false;
+        $this->pagada = false;
     }
 
     /**
@@ -60,38 +67,16 @@ class FacturaCliente
      */
     public function install()
     {
-        new Serie();
-        new Ejercicio();
+        parent::install();
         new Asiento();
 
         return '';
     }
 
     /**
-     * Reset the values of all model properties.
-     */
-    public function clear()
-    {
-        $this->clearDocumentoVenta();
-        $this->pagada = false;
-        $this->anulada = false;
-        $this->vencimiento = date('d-m-Y', strtotime('+1 day'));
-    }
-
-    /**
-     * Returns true its expired, but false.
-     *
-     * @return bool
-     */
-    public function vencida()
-    {
-        return ($this->pagada) ? false : strtotime($this->vencimiento) < strtotime(date('d-m-Y'));
-    }
-
-    /**
      * Set the date and time, but respecting the numbering, the exercise
-          * and VAT regularizations.
-          * Returns True if a different date is assigned to those requested.
+           * and VAT regularizations.
+           * Returns True if a different date is assigned to those requested.
      *
      * @param string $fecha
      * @param string $hora
@@ -179,27 +164,6 @@ class FacturaCliente
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
 
         return $lineaModel->all($where, $order);
-    }
-
-    /**
-     * Returns the VAT lines of the invoice.
-          * If there are not, create them.
-     *
-     * @return LineaIvaFacturaCliente[]
-     */
-    public function getLineasIva()
-    {
-        return $this->getLineasIvaTrait('FacturaCliente');
-    }
-
-    /**
-     * Check the invoice data, return True if correct.
-     *
-     * @return bool
-     */
-    public function test()
-    {
-        return $this->testTrait();
     }
 
     /**

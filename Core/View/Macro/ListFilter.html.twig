@@ -67,7 +67,6 @@
 <div class="col-md-2">
     <select name="{{ key }}" class="form-control" onchange="this.form.submit()">
         <option value="">{{ any }} {{ key }}</option>
-        <option value="">------</option>
         {% for data in context.fsc.codeModel.all(filter.options.table, key, filter.options.field) %}
         {% if (context.indexView == context.fsc.active) and (filter.options.value != '') and (data.code == filter.options.value) %}
         <option value="{{ data.code }}" selected="">{{ data.description }}</option>
@@ -92,8 +91,10 @@
     <input type="hidden" id="{{ key }}Autocomplete" name="{{ key }}" value="{{ filter.options.value }}" />
     <div class="input-group">
         {% if filter.options.value is empty %}
-        <span class="input-group-addon" title="{{ key }}">
-            <i class="fa fa-keyboard-o" aria-hidden="true"></i>
+        <span class="input-group-prepend" title="{{ key }}">
+            <span class="input-group-text">
+                <i class="fa fa-keyboard-o" aria-hidden="true"></i>
+            </span>
         </span>
         {% else %}
         <span class="input-group-btn" title="{{ key }}">
@@ -118,13 +119,12 @@
 {% macro filterForCheckBoxInput(context, key, filter) %}
 <div class="col-md-2">
     <div class="form-check mb-2 mb-sm-0">
-        <label class="form-check-label custom-checkbox-control custom-checkbox">
+        <label class="form-check-label">
             {% if (context.indexView == context.fsc.active) and filter.options.value %}
-            <input class="form-check-input custom-control-input" type="checkbox" name="{{ key }}" value="TRUE" checked="" onchange="this.form.submit()"/>
+            <input class="form-check-input" type="checkbox" name="{{ key }}" value="TRUE" checked="" onchange="this.form.submit()"/>
             {% else %}
-            <input class="form-check-input custom-control-input" type="checkbox" name="{{ key }}" value="TRUE" onchange="this.form.submit()"/>
+            <input class="form-check-input" type="checkbox" name="{{ key }}" value="TRUE" onchange="this.form.submit()"/>
             {% endif %}
-            <span class="custom-control-indicator"></span>
             {{ filter.options.label }}
         </label>
     </div>

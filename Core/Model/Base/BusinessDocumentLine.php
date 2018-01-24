@@ -16,19 +16,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Base\Utils;
+
 /**
- * Description of LineaDocumentoCompra
+ * Description of BusinessDocumentLine
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-trait LineaDocumentoCompra
+abstract class BusinessDocumentLine extends ModelClass
 {
-    use ModelTrait {
-        clear as private traitClear;
-    }
 
     /**
      * Quantity.
@@ -121,22 +119,9 @@ trait LineaDocumentoCompra
      */
     public $referencia;
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public function primaryColumn()
+    public function clear()
     {
-        return 'idlinea';
-    }
-
-    /**
-     * Initializes the values of the line.
-     */
-    private function clearLinea()
-    {
-        $this->traitClear();
+        parent::clear();
         $this->cantidad = 0.0;
         $this->descripcion = '';
         $this->dtopor = 0.0;
@@ -149,72 +134,20 @@ trait LineaDocumentoCompra
     }
 
     /**
-     * Returns the retail price with VAT.
-     *
-     * @return float|int
-     */
-    public function pvpIva()
-    {
-        return $this->pvpunitario * (100 + $this->iva) / 100;
-    }
-
-    /**
-     * Returns the retail price total (with VAT, IRPF and surcharge).
-     *
-     * @return float|int
-     */
-    public function totalIva()
-    {
-        return $this->pvptotal * (100 + $this->iva - $this->irpf + $this->recargo) / 100;
-    }
-
-    /**
-     * Returns the retail price total per product (without income tax or surcharge).
-     *
-     * @return float|int
-     */
-    public function totalIva2()
-    {
-        if ($this->cantidad === 0) {
-            return 0;
-        }
-
-        return $this->pvptotal * (100 + $this->iva) / 100 / $this->cantidad;
-    }
-
-    /**
-     *Returns the description.
+     * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
-    public function descripcion()
+    public static function primaryColumn()
     {
-        return nl2br($this->descripcion);
+        return 'idlinea';
     }
 
-    /**
-     * Returns true if there are no errors in the values of the model properties.
-     *
-     * @return bool
-     */
     public function test()
     {
-        $this->descripcion = static::noHtml($this->descripcion);
-        $total = $this->pvpunitario * $this->cantidad * (100 - $this->dtopor) / 100;
-        $totalsindto = $this->pvpunitario * $this->cantidad;
-
-        if (!static::floatcmp($this->pvptotal, $total, FS_NF0, true)) {
-            $values = ['%reference%' => $this->referencia, '%total%' => $total];
-            self::$miniLog->alert(self::$i18n->trans('pvptotal-line-error', $values));
-
-            return false;
-        }
-        if (!static::floatcmp($this->pvpsindto, $totalsindto, FS_NF0, true)) {
-            $values = ['%reference%' => $this->referencia, '%totalWithoutDiscount%' => $totalsindto];
-            self::$miniLog->alert(self::$i18n->trans('pvpsindto-line-error', $values));
-
-            return false;
-        }
+        $this->descripcion = Utils::noHtml($this->descripcion);
+        $this->pvpsindto = $this->pvpunitario * $this->cantidad;
+        $this->pvptotal = $this->pvpsindto * (100 - $this->dtopor) / 100;
 
         return true;
     }

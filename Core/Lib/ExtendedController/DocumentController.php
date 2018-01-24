@@ -62,15 +62,26 @@ abstract class DocumentController extends PanelController
      */
     protected function execPreviousAction($view, $action)
     {
-        if ($action === 'save-document') {
-            $this->setTemplate(false);
+        switch ($action) {
+            case 'calculate-document':
+                $this->setTemplate(false);
 
-            $data = $this->request->request->all();
-            $result = $view->saveDocument($data);
-            $this->response->setContent($result);
+                $data = $this->request->request->all();
+                $result = $view->calculateDocument($data);
+                $this->response->setContent($result);
+                break;
+
+            case 'save-document':
+                $this->setTemplate(false);
+
+                $data = $this->request->request->all();
+                $result = $view->saveDocument($data);
+                $this->response->setContent($result);
+                break;
+
+            default:
+                return parent::execPreviousAction($view, $action);
         }
-
-        return parent::execPreviousAction($view, $action);
     }
 
     /**

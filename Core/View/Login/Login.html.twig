@@ -20,16 +20,20 @@
                             <p class="card-text">{{ i18n.trans('login-text') }}</p>
                             <div class="form-group">
                                 <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-user fa-fw" aria-hidden="true"></i>
+                                    <span class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-user fa-fw" aria-hidden="true"></i>
+                                        </span>
                                     </span>
                                     <input type="text" name="fsNick" class="form-control" maxlength="50" placeholder="{{ i18n.trans('user') }}" required="" autocomplete="off" autofocus=""/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-key fa-fw" aria-hidden="true"></i>
+                                    <span class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-key fa-fw" aria-hidden="true"></i>
+                                        </span>
                                     </span>
                                     <input type="password" name="fsPassword" class="form-control" maxlength="50" placeholder="{{ i18n.trans('password') }}" required="" autocomplete="off"/>
                                 </div>

@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -25,9 +24,10 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 /**
  * Customer estimation.
  */
-class PresupuestoCliente
+class PresupuestoCliente extends Base\SalesDocument
 {
-    use Base\DocumentoVenta;
+
+    use Base\ModelTrait;
 
     /**
      * Primary key.
@@ -65,24 +65,9 @@ class PresupuestoCliente
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'idpresupuesto';
-    }
-
-    /**
-     * This function is called when creating the model table. Returns the SQL
-          * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        new Serie();
-        new Ejercicio();
-
-        return '';
     }
 
     /**
@@ -90,18 +75,8 @@ class PresupuestoCliente
      */
     public function clear()
     {
-        $this->clearDocumentoVenta();
+        parent::clear();
         $this->finoferta = date('d-m-Y', strtotime(date('d-m-Y') . ' +1 month'));
-    }
-
-    /**
-     * Returns True if the offer date is less than the current one, but False.
-     *
-     * @return bool
-     */
-    public function finoferta()
-    {
-        return strtotime(date('d-m-Y')) > strtotime($this->finoferta);
     }
 
     /**
@@ -116,15 +91,5 @@ class PresupuestoCliente
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
 
         return $lineaModel->all($where, $order);
-    }
-
-    /**
-     * Check the estimation data, return True if it is correct.
-     *
-     * @return boolean
-     */
-    public function test()
-    {
-        return $this->testTrait();
     }
 }

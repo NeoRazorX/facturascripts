@@ -150,10 +150,9 @@
             {% endfor %}
             <th class="text-right">
                 {% if view.getCursor() is not empty %}
-                <label class="custom-checkbox-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
-                    <input class="custom-control-input listDeleteCB" type="checkbox" />
-                    <span class="custom-control-indicator"></span>
-                </label>
+                <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
+                    <input class="form-check-input listDeleteCB" type="checkbox" />
+                </div>
                 {% endif %}
             </th>
         </tr>
@@ -181,10 +180,9 @@
             {% endif %}
             {% endfor %}
             <td class="text-right cancelClickable">
-                <label class="custom-control custom-checkbox mb-2 mr-sm-2 mb-sm-0">
-                    <input class="custom-control-input listDelete" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}" />
-                    <span class="custom-control-indicator"></span>
-                </label>
+                <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
+                    <input class="form-check-input listDelete" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}" />
+                </div>
             </td>
         </tr>
         {% else %}
