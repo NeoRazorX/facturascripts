@@ -36,10 +36,10 @@ class DocumentCalculator
     public function calculate($doc)
     {
         /// clear totals
-        $doc->neto = 0;
-        $doc->totaliva = 0;
-        $doc->totalirpf = 0;
-        $doc->totalrecargo = 0;
+        $doc->neto = 0.0;
+        $doc->totaliva = 0.0;
+        $doc->totalirpf = 0.0;
+        $doc->totalrecargo = 0.0;
 
         foreach ($this->getSubtotals($doc) as $subt) {
             $doc->neto += $subt['neto'];
@@ -48,7 +48,7 @@ class DocumentCalculator
             $doc->totalrecargo += $subt['totalrecargo'];
         }
 
-        $doc->total = round($doc->neto + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, FS_NF0);
+        $doc->total = round($doc->neto + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) FS_NF0);
     }
 
     /**
@@ -87,10 +87,10 @@ class DocumentCalculator
 
         /// rounding totals
         foreach ($subtotals as $key => $value) {
-            $subtotals[$key]['neto'] = round($value['neto'], FS_NF0);
-            $subtotals[$key]['totaliva'] = round($value['totaliva'], FS_NF0);
-            $subtotals[$key]['totalrecargo'] = round($value['totalrecargo'], FS_NF0);
-            $subtotals[$key]['totalirpf'] = round($value['totalirpf'], FS_NF0);
+            $subtotals[$key]['neto'] = round($value['neto'], (int) FS_NF0);
+            $subtotals[$key]['totaliva'] = round($value['totaliva'], (int) FS_NF0);
+            $subtotals[$key]['totalrecargo'] = round($value['totalrecargo'], (int) FS_NF0);
+            $subtotals[$key]['totalirpf'] = round($value['totalirpf'], (int) FS_NF0);
         }
 
         return $subtotals;

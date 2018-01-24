@@ -29,6 +29,7 @@ class FacturaCliente extends Base\SalesDocument
 {
 
     use Base\ModelTrait;
+    use Base\InvoiceTrait;
 
     /**
      * Returns the name of the table that uses this model.

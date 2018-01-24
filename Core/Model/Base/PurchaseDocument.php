@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Model\Proveedor;
 
 /**
  * Description of PurchaseDocument

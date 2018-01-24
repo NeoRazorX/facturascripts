@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2014-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -115,20 +115,18 @@ class DireccionCliente extends Base\Address
         if (parent::save()) {
             /// Do we demarcate the other main directions?
             $sql = '';
-            $where = 'WHERE codcliente = ' . self::$dataBase->var2str($this->codcliente);
             if ($this->domenvio) {
-                $sql .= 'UPDATE ' . static::tableName() . ' SET domenvio = false ' . $where . ' AND domenvio = TRUE;';
+                $sql .= 'UPDATE ' . static::tableName() . ' SET domenvio = false'
+                    . ' WHERE codcliente = ' . self::$dataBase->var2str($this->codcliente)
+                    . ' AND id != '.self::$dataBase->var2str($this->id).';';
             }
             if ($this->domfacturacion) {
-                $sql .= 'UPDATE ' . static::tableName() . ' SET domfacturacion = false ' . $where
-                    . ' AND domfacturacion = TRUE;';
+                $sql .= 'UPDATE ' . static::tableName() . ' SET domfacturacion = false'
+                    . ' WHERE codcliente = ' . self::$dataBase->var2str($this->codcliente)
+                    . ' AND id != '.self::$dataBase->var2str($this->id).';';
             }
-
-            if (empty($sql)) {
-                return $this->saveData();
-            }
-
-            return true;
+            
+            return empty($sql) ? true : self::$dataBase->exec($sql);
         }
 
         return false;

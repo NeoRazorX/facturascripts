@@ -64,20 +64,6 @@ class LineaTransferenciaStock extends Base\ModelClass
     public $descripcion;
 
     /**
-     * Date.
-     *
-     * @var string
-     */
-    private $fecha;
-
-    /**
-     * Time.
-     *
-     * @var string
-     */
-    private $hora;
-
-    /**
      * Returns the name of the table that uses this model.
      *
      * @return string

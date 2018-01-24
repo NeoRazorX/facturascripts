@@ -153,7 +153,7 @@ trait ModelTrait
      */
     protected function LoadModelFields($dataBase, $tableName)
     {
-        if (self::$fields === null) {
+        if (empty(self::$fields)) {
             self::$fields = ($dataBase->tableExists($tableName) ? $dataBase->getColumns($tableName) : []);
         }
     }

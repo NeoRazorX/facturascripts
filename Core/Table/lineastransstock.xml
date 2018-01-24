@@ -38,15 +38,11 @@
     </constraint>
     <constraint>
         <name>ca_linea_transstock</name>
-        <type>FOREIGN KEY (idtrans)
-            REFERENCES transstock (idtrans)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idtrans) REFERENCES transstock (idtrans) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_linea_transstock_articulos</name>
-        <type>FOREIGN KEY (referencia)
-            REFERENCES articulos (referencia)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (referencia) REFERENCES articulos (referencia) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>uniq_referencia_transferencia</name>
