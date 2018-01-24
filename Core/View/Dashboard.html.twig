@@ -25,7 +25,7 @@
     */
 #}
 
-{% extends "Master/MenuTemplate.html" %}
+{% extends "Master/MenuTemplate.html.twig" %}
 
 {% block css %}
     {{ parent() }}
@@ -44,7 +44,7 @@
 {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
 
 {# Macros Template Imports #}
-{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+{% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
 
 {# Page Header #}
 <div class="container-fluid d-print-none">

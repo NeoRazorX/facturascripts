@@ -27,7 +27,7 @@
     Returns the HTML code to manage printing and exporting data
 -->
 {% macro exportData(fsc, i18n, type = 'list') %}
-{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+{% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
 {% set print, print_title = i18n.trans('print'), i18n.trans('print-data-records') %}
 
 <div class="btn-group">

@@ -4,8 +4,8 @@
      *
      * Adds twig functions to display the ExtendedController elements
      * Examples imports:
-     * {% import "Macro/BaseController.html" as BaseController %}
-     * {% from 'Macro/BaseController.html' import filterForTextInput as filterForTextInput %}
+     * {% import "Macro/BaseController.html.twig" as BaseController %}
+     * {% from 'Macro/BaseController.html.twig' import filterForTextInput as filterForTextInput %}
      *
      * This file is part of FacturaScripts
      * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
@@ -35,7 +35,7 @@
 {% macro rowCardsForEditView(context, view, type) %}
 {% set cards = view.getRow(type) %}
 {% if cards is not empty %}
-{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+{% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
 
     <br />
     <div id="{{ type }}" class="row mb-2">
@@ -88,7 +88,7 @@
      */
 #}
 {% macro rowStatisticsForEditView(context, view) %}
-{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+{% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
 
 <div class="row" style="margin-top: -.5rem">
     <div class="col-12">
@@ -120,7 +120,7 @@
 
 {% set actions = view.getRow('actions') %}
 {% if actions is not empty %}
-{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+{% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
 <div class="col">
     {% for button in actions.buttons %}
         {% set label = context.i18n.trans(button.label) %}
@@ -235,8 +235,8 @@
         {% endfor %}
 
 {% if withForm == TRUE %}
-    {% from 'Macro/BaseController.html' import rowActionsForEditView as rowActionsForEditView %}
-    {% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+    {% from 'Macro/BaseController.html.twig' import rowActionsForEditView as rowActionsForEditView %}
+    {% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
     {% set save, save_title = context.i18n.trans('save'), context.i18n.trans('save-data') %}
     {% set undo, undo_title = context.i18n.trans('undo'), context.i18n.trans('restore-data') %}
     </div>
@@ -273,7 +273,7 @@
      */
 #}
 {% macro columnsForBasicEditView(context, view, model, needTitle) %}
-{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+{% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
 {% set remove_title = context.i18n.trans('delete-record') %}
 {% set undo_title = context.i18n.trans('restore-data') %}
 {% set save_title = context.i18n.trans('save-data') %}
@@ -322,8 +322,8 @@
      */
 #}
 {% macro columnsForEditListView(context, view) %}
-{% from 'Macro/BaseController.html' import columnsForEditView as columnsForEditView %}
-{% from 'Macro/BaseController.html' import columnsForBasicEditView as columnsForBasicEditView %}
+{% from 'Macro/BaseController.html.twig' import columnsForEditView as columnsForEditView %}
+{% from 'Macro/BaseController.html.twig' import columnsForBasicEditView as columnsForBasicEditView %}
 {% set new_record, new_record_title = context.i18n.trans('new'), context.i18n.trans('create-new-record') %}
 {% set isBasic = view.isBasicEditList() %}
 
@@ -354,7 +354,7 @@
      */
 #}
 {% macro modalFormFromColumns(context, view) %}
-{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+{% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
 {% set accept, accept_title = context.i18n.trans('accept'), context.i18n.trans('accept-data') %}
 {% set cancel, cancel_title = context.i18n.trans('cancel'), context.i18n.trans('cancel-data') %}
 

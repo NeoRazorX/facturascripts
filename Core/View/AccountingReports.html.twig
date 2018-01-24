@@ -23,7 +23,7 @@
     */
 #}
 
-{% extends "Master/MenuTemplate.html" %}
+{% extends "Master/MenuTemplate.html.twig" %}
 
 {% block body %}
 {# -- Calculate texts according to language -- #}
@@ -37,7 +37,7 @@
 {% set reports = fsc.getReports() %}
 
 {# -- Visual macros -- #}
-{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
+{% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
 
 {# -- Main Body -- #}
 <div class="container-fluid d-print-none">

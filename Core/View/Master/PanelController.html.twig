@@ -24,7 +24,7 @@
     */
 #}
 
-{% extends "Master/MenuTemplate.html" %}
+{% extends "Master/MenuTemplate.html.twig" %}
 
 {% block css %}
 {{ parent() }}
@@ -97,9 +97,9 @@
 {% set edit_url = fsc.getURL('edit') %}
 
 {# -- Visual macros -- #}
-{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
-{% from 'Macro/Utils.html' import exportData as exportData %}
-{% import 'Macro/BaseController.html' as BaseController %}
+{% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
+{% from 'Macro/Utils.html.twig' import exportData as exportData %}
+{% import 'Macro/BaseController.html.twig' as BaseController %}
 
 {# -- Main Body -- #}
 <div class="container-fluid">
