@@ -83,7 +83,7 @@ class AccountingPlanImport
 
     /**
      * insert into system balance definition
-     * @param array  $data
+     * @param \SimpleXMLElement[] $data
      */
     private function importBalance($data)
     {
@@ -113,7 +113,7 @@ class AccountingPlanImport
 
     /**
      * Insert counts of balance definition
-     * @param array $data
+     * @param \SimpleXMLElement[] $data
      */
     private function importBalanceCuenta($data)
     {
@@ -138,7 +138,7 @@ class AccountingPlanImport
 
     /**
      * Insert counts of abbreviate balance definition
-     * @param array $data
+     * @param \SimpleXMLElement[] $data
      */
     private function importBalanceCuentaA($data)
     {
@@ -162,8 +162,8 @@ class AccountingPlanImport
 
     /**
      * Insert Groups of accounting plan
-     * 
-     * @param array $data
+     *
+     * @param \SimpleXMLElement[] $data
      */
     private function importEpigrafeGroup($data)
     {
@@ -189,8 +189,8 @@ class AccountingPlanImport
 
     /**
      * insert Epigrafe of accounting plan
-     * 
-     * @param array $data
+     *
+     * @param \SimpleXMLElement[] $data
      */
     private function importEpigrafe($data)
     {
@@ -218,8 +218,8 @@ class AccountingPlanImport
 
     /**
      * insert Cuenta of accounting plan
-     * 
-     * @param array $data
+     *
+     * @param \SimpleXMLElement[] $data
      */
     private function importCuenta($data)
     {
@@ -248,8 +248,8 @@ class AccountingPlanImport
 
     /**
      * Import subaccounts of accounting plan
-     * 
-     * @param array $data
+     *
+     * @param \SimpleXMLElement[] $data
      */
     private function importSubcuenta($data)
     {
