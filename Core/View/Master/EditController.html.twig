@@ -23,7 +23,7 @@
     */
 #}
 
-{% extends "Master/MenuTemplate.html" %}
+{% extends "Master/MenuTemplate.html.twig" %}
 
 {% block css %}
 {{ parent() }}
@@ -98,9 +98,9 @@
 {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
 
 {# Visual macros #}
-{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
-{% from 'Macro/Utils.html' import exportData as exportData %}
-{% import 'Macro/BaseController.html' as BaseController %}
+{% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
+{% from 'Macro/Utils.html.twig' import exportData as exportData %}
+{% import 'Macro/BaseController.html.twig' as BaseController %}
 
 {# Aux Objects #}
 {% set model = fsc.view.getModel() %}

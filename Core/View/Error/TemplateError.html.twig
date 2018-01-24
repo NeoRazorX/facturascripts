@@ -1,4 +1,4 @@
-{% extends "Master/MicroTemplate.html" %}
+{% extends "Master/MicroTemplate.html.twig" %}
 
 {% block body %}
 <div class="container">
@@ -7,7 +7,7 @@
             <br/><br/>
             <div class="jumbotron">
                 <h1>
-                    <i class="fa fa-bug" aria-hidden="true"></i> {{ i18n.trans('template-not-found') }}:
+                    <i class="fa fa-bug" aria-hidden="true"></i> {{ i18n.trans('template-error') }}:
                 </h1>
                 <hr class="my-4">
                 <p>{{ i18n.trans('template') }}: {{ template }}</p>

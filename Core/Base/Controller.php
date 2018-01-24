@@ -128,7 +128,7 @@ class Controller
     /**
      * Name of the file for the template.
      *
-     * @var string|false nombre_archivo.html
+     * @var string|false nombre_archivo.html.twig
      */
     private $template;
 
@@ -166,7 +166,7 @@ class Controller
         $this->miniLog = &$miniLog;
         $this->numberTools = new NumberTools();
         $this->request = Request::createFromGlobals();
-        $this->template = $this->className . '.html';
+        $this->template = $this->className . '.html.twig';
 
         $this->title = $this->className;
         $pageData = $this->getPageData();
@@ -227,7 +227,7 @@ class Controller
             return true;
         }
 
-        $this->template = $template . '.html';
+        $this->template = $template . '.html.twig';
 
         return true;
     }
@@ -268,7 +268,7 @@ class Controller
     public function publicCore(&$response)
     {
         $this->response = &$response;
-        $this->template = 'Login/Login.html';
+        $this->template = 'Login/Login.html.twig';
         $this->dispatcher->dispatch('pre-publicCore');
     }
 
