@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2015-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -36,7 +36,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class ArticuloCombinacion
+class ArticuloCombinacion extends Base\ModelClass
 {
     use Base\ModelTrait;
 
@@ -134,7 +134,7 @@ class ArticuloCombinacion
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'id';
     }
@@ -160,15 +160,7 @@ class ArticuloCombinacion
      */
     public function clear()
     {
-        $this->id = null;
-        $this->codigo = null;
-        $this->codigo2 = null;
-        $this->referencia = null;
-        $this->idvalor = null;
-        $this->nombreatributo = null;
-        $this->valor = null;
-        $this->refcombinacion = null;
-        $this->codbarras = null;
+        parent::clear();
         $this->impactoprecio = 0;
         $this->stockfis = 0;
     }

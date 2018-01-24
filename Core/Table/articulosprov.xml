@@ -14,7 +14,8 @@
     </column>
     <column>
         <name>referencia</name>
-        <type>character varying(18)</type>
+        <type>character varying(30)</type>
+        <null>NO</null>
     </column>
     <column>
         <name>codproveedor</name>
@@ -23,7 +24,7 @@
     </column>
     <column>
         <name>refproveedor</name>
-        <type>character varying(25)</type>
+        <type>character varying(30)</type>
         <null>NO</null>
     </column>
     <column>
@@ -43,13 +44,13 @@
         <type>character varying(10)</type>
     </column>
     <column>
-        <name>stock</name>
+        <name>stockfis</name>
         <type>double precision</type>
+        <default>0</default>
     </column>
     <column>
         <name>nostock</name>
         <type>boolean</type>
-        <null>YES</null>
         <default>true</default>
     </column>
     <column>
@@ -62,13 +63,11 @@
     </column>
     <column>
         <name>codbarras</name>
-        <type>character varying(18)</type>
-        <null>YES</null>
+        <type>character varying(20)</type>
     </column>
     <column>
         <name>partnumber</name>
-        <type>character varying(38)</type>
-        <null>YES</null>
+        <type>character varying(40)</type>
     </column>
     <constraint>
         <name>articulosprov_pkey</name>
@@ -76,9 +75,7 @@
     </constraint>
     <constraint>
         <name>ca_articulosprov_proveedores</name>
-        <type>FOREIGN KEY (codproveedor)
-            REFERENCES proveedores (codproveedor)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (codproveedor) REFERENCES proveedores (codproveedor) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>uniq_articulo_proveedor2</name>

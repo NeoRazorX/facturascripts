@@ -14,7 +14,6 @@
     <column>
         <name>apartado</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>cifnif</name>
@@ -24,17 +23,14 @@
     <column>
         <name>ciudad</name>
         <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codpais</name>
         <type>character varying(20)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codpostal</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>direccion</name>
@@ -44,23 +40,16 @@
     <column>
         <name>email</name>
         <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>fax</name>
         <type>character varying(20)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
         <default>nextval('empresas_id_seq'::regclass)</default>
-    </column>
-    <column>
-        <name>idprovincia</name>
-        <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>nombre</name>
@@ -70,37 +59,38 @@
     <column>
         <name>nombrecorto</name>
         <type>character varying(32)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>provincia</name>
         <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>recequivalencia</name>
         <type>boolean</type>
-        <null>YES</null>
     </column>
     <column>
-        <name>telefono</name>
-        <type>character varying(20)</type>
-        <null>YES</null>
+        <name>telefono1</name>
+        <type>character varying(30)</type>
+    </column>
+    <column>
+        <name>telefono2</name>
+        <type>character varying(30)</type>
     </column>
     <column>
         <name>web</name>
         <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <column>
-        <name>inicioact</name>
+        <name>fechaalta</name>
         <type>date</type>
-        <null>YES</null>
+    </column>
+    <column>
+        <name>observaciones</name>
+        <type>text</type>
     </column>
     <column>
         <name>regimeniva</name>
         <type>character varying(20)</type>
-        <null>YES</null>
     </column>
     <constraint>
         <name>empresas_pkey</name>

@@ -14,32 +14,22 @@
     <column>
         <name>codpais</name>
         <type>character varying(20)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>apartado</name>
         <type>character varying(10)</type>
-        <null>YES</null>
-    </column>
-    <column>
-        <name>idprovincia</name>
-        <type>integer</type>
-        <null>YES</null>
     </column>
     <column>
         <name>provincia</name>
         <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>ciudad</name>
         <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>codpostal</name>
         <type>character varying(10)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>direccion</name>
@@ -49,17 +39,14 @@
     <column>
         <name>domenvio</name>
         <type>boolean</type>
-        <null>YES</null>
     </column>
     <column>
         <name>domfacturacion</name>
         <type>boolean</type>
-        <null>YES</null>
     </column>
     <column>
         <name>descripcion</name>
         <type>character varying(100)</type>
-        <null>YES</null>
     </column>
     <column>
         <name>id</name>
@@ -77,8 +64,6 @@
     </constraint>
     <constraint>
         <name>ca_dirclientes_clientes</name>
-        <type>FOREIGN KEY (codcliente)
-            REFERENCES clientes (codcliente)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (codcliente) REFERENCES clientes (codcliente) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
 </table>

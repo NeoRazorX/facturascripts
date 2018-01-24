@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2016-2017    Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2016-2018    Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,7 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class LineaTransferenciaStock
+class LineaTransferenciaStock extends Base\ModelClass
 {
     use Base\ModelTrait;
 
@@ -92,7 +92,7 @@ class LineaTransferenciaStock
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'idlinea';
     }
@@ -102,33 +102,8 @@ class LineaTransferenciaStock
      */
     public function clear()
     {
-        $this->idlinea = null;
-        $this->idtrans = null;
-        $this->referencia = null;
+        parent::clear();
         $this->cantidad = 0;
-        $this->descripcion = null;
-        $this->fecha = null;
-        $this->hora = null;
-    }
-
-    /**
-     * Returns the date.
-     *
-     * @return string
-     */
-    public function fecha()
-    {
-        return $this->fecha;
-    }
-
-    /**
-     * Returns the time.
-     *
-     * @return string
-     */
-    public function hora()
-    {
-        return $this->hora;
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,19 +16,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Lib\Import\CSVImport;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * A currency with its symbol and its conversion rate with respect to the euro.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Divisa
+class Divisa extends Base\ModelClass
 {
+
     use Base\ModelTrait;
 
     /**
@@ -88,7 +88,7 @@ class Divisa
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'coddivisa';
     }
@@ -98,11 +98,10 @@ class Divisa
      */
     public function clear()
     {
-        $this->coddivisa = null;
+        parent::clear();
         $this->descripcion = '';
         $this->tasaconv = 1.00;
         $this->tasaconvcompra = 1.00;
-        $this->codiso = null;
         $this->simbolo = '?';
     }
 
@@ -124,8 +123,8 @@ class Divisa
     public function test()
     {
         $status = false;
-        $this->descripcion = self::noHtml($this->descripcion);
-        $this->simbolo = self::noHtml($this->simbolo);
+        $this->descripcion = Utils::noHtml($this->descripcion);
+        $this->simbolo = Utils::noHtml($this->simbolo);
 
         if (!preg_match('/^[A-Z0-9]{1,3}$/i', $this->coddivisa)) {
             self::$miniLog->alert(self::$i18n->trans('bage-cod-invalid'));
@@ -141,17 +140,5 @@ class Divisa
         }
 
         return $status;
-    }
-
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        return CSVImport::importTableSQL(static::tableName());
     }
 }

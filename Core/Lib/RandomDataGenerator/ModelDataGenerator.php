@@ -226,7 +226,7 @@ class ModelDataGenerator
 
             switch (mt_rand(0, 2)) {
                 case 0:
-                    $art->referencia = $art->getNewReferencia();
+                    $art->referencia = $art->newCode();
                     break;
 
                 case 1:
@@ -234,7 +234,7 @@ class ModelDataGenerator
                     if (!empty($aux)) {
                         $art->referencia = $this->tools->txt2codigo($aux[0], 18);
                     } else {
-                        $art->referencia = $art->getNewReferencia();
+                        $art->referencia = $art->newCode();
                     }
                     break;
 
@@ -370,7 +370,7 @@ class ModelDataGenerator
 
         $grupo = new Model\GrupoClientes();
         for ($num = 0; $num < $max; ++$num) {
-            $grupo->codgrupo = $grupo->getNewCodigo();
+            $grupo->codgrupo = $grupo->newCode();
             $grupo->nombre = $nombres[mt_rand(0, $max_nombres)] . ' '
                 . $nombres2[mt_rand(0, $max_nombres2)] . ' ' . $num;
             if (!$grupo->save()) {

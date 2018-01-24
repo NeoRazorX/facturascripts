@@ -15,20 +15,8 @@
         <type>character varying(11)</type>
     </column>
     <column>
-        <name>ctaentidad</name>
-        <type>character varying(4)</type>
-    </column>
-    <column>
         <name>iban</name>
         <type>character varying(34)</type>
-    </column>
-    <column>
-        <name>agencia</name>
-        <type>character varying(4)</type>
-    </column>
-    <column>
-        <name>entidad</name>
-        <type>character varying(4)</type>
     </column>
     <column>
         <name>codcliente</name>
@@ -36,17 +24,9 @@
         <null>NO</null>
     </column>
     <column>
-        <name>ctaagencia</name>
-        <type>character varying(4)</type>
-    </column>
-    <column>
         <name>codcuenta</name>
         <type>character varying(10)</type>
         <null>NO</null>
-    </column>
-    <column>
-        <name>cuenta</name>
-        <type>character varying(10)</type>
     </column>
     <column>
         <name>principal</name>
@@ -63,8 +43,6 @@
     </constraint>
     <constraint>
         <name>ca_cuentasbcocli_clientes</name>
-        <type>FOREIGN KEY (codcliente)
-            REFERENCES clientes (codcliente)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (codcliente) REFERENCES clientes (codcliente) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
 </table>

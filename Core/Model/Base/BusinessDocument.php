@@ -19,21 +19,18 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Lib\NewCodigoDoc;
 use FacturaScripts\Core\Model\Ejercicio;
-use FacturaScripts\Core\Model\Proveedor;
+use FacturaScripts\Core\Model\Serie;
 
 /**
- * Description of DocumentoCompra
+ * Description of BusinessDocument
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-trait DocumentoCompra
+abstract class BusinessDocument extends ModelClass
 {
-
-    use ModelTrait {
-        clear as traitClear;
-    }
 
     /**
      * VAT number of the supplier.
@@ -41,13 +38,6 @@ trait DocumentoCompra
      * @var string
      */
     public $cifnif;
-
-    /**
-     * Employee who created this document.
-     *
-     * @var string
-     */
-    public $codagente;
 
     /**
      * Warehouse in which the merchandise enters.
@@ -85,13 +75,6 @@ trait DocumentoCompra
     public $codpago;
 
     /**
-     * Supplier code for this document.
-     *
-     * @var string
-     */
-    public $codproveedor;
-
-    /**
      * Related serie.
      *
      * @var string
@@ -104,6 +87,13 @@ trait DocumentoCompra
      * @var string
      */
     public $fecha;
+
+    /**
+     * Date on which the document was sent by email.
+     *
+     * @var string
+     */
+    public $femail;
 
     /**
      * Document time.
@@ -128,27 +118,12 @@ trait DocumentoCompra
     public $irpf;
 
     /**
-     * Provider's name.
-     *
-     * @var string
-     */
-    public $nombre;
-
-    /**
      * Number of the document.
-           * Unique within the series + exercise.
+     * Unique within the series + exercise.
      *
      * @var string
      */
     public $numero;
-
-    /**
-     * Supplier's document number, if any.
-           * May contain letters.
-     *
-     * @var string
-     */
-    public $numproveedor;
 
     /**
      * Sum of the pvptotal of lines. Total of the document before taxes.
@@ -180,8 +155,8 @@ trait DocumentoCompra
 
     /**
      * Total expressed in euros, if it were not the currency of the document.
-           * totaleuros = total / tasaconv
-           * It is not necessary to fill it, when doing save () the value is calculated.
+     * totaleuros = total / tasaconv
+     * It is not necessary to fill it, when doing save () the value is calculated.
      *
      * @var float|int
      */
@@ -222,22 +197,11 @@ trait DocumentoCompra
      */
     public $idestado;
 
-    /**
-     * Returns the description of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public function primaryDescriptionColumn()
-    {
-        return 'codigo';
-    }
+    abstract public function getLineas();
 
-    /**
-     * Initializes document values.
-     */
-    private function clearDocumentoCompra()
+    public function clear()
     {
-        $this->traitClear();
+        parent::clear();
         $this->codalmacen = AppSettings::get('default', 'codalmacen');
         $this->coddivisa = AppSettings::get('default', 'coddivisa');
         $this->codpago = AppSettings::get('default', 'codpago');
@@ -257,29 +221,38 @@ trait DocumentoCompra
     }
 
     /**
-     * Assign the supplier to the document.
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
      *
-     * @param Proveedor $proveedor
+     * @return string
      */
-    public function setProveedor($proveedor)
+    public function install()
     {
-        $this->codproveedor = $proveedor->codproveedor;
-        $this->nombre = $proveedor->razonsocial;
-        $this->cifnif = $proveedor->cifnif;
+        new Serie();
+        new Ejercicio();
+
+        return '';
     }
 
     /**
-     * Assign the date and find an accounting exercise.
-     *
-     * @param string $fecha
+     * Generates a new code.
      */
-    public function setFecha($fecha)
+    private function newCodigo()
     {
-        $ejercicioModel = new Ejercicio();
-        $ejercicio = $ejercicioModel->getByFecha($fecha);
-        if ($ejercicio) {
-            $this->codejercicio = $ejercicio->codejercicio;
-        }
+        $newCodigoDoc = new NewCodigoDoc();
+        $this->numero = (string) $newCodigoDoc->getNumero(static::tableName(), $this->codejercicio, $this->codserie);
+        $this->codigo = $newCodigoDoc->getCodigo(static::tableName(), $this->numero, $this->codserie, $this->codejercicio);
+    }
+
+    /**
+     * Returns the description of the column that is the model's primary key.
+     *
+     * @return string
+     */
+    public function primaryDescriptionColumn()
+    {
+        return 'codigo';
     }
 
     /**
@@ -303,36 +276,31 @@ trait DocumentoCompra
     }
 
     /**
-     * Generates a new code.
+     * Assign the date and find an accounting exercise.
+     *
+     * @param string $fecha
      */
-    private function newCodigo()
+    public function setFecha($fecha)
     {
-        $newCodigoDoc = new NewCodigoDoc();
-        $this->numero = (string) $newCodigoDoc->getNumero(static::tableName(), $this->codejercicio, $this->codserie);
-        $this->codigo = $newCodigoDoc->getCodigo(static::tableName(), $this->numero, $this->codserie, $this->codejercicio);
+        $ejercicioModel = new Ejercicio();
+        $ejercicio = $ejercicioModel->getByFecha($fecha);
+        if ($ejercicio) {
+            $this->codejercicio = $ejercicio->codejercicio;
+            $this->fecha = $fecha;
+        }
     }
 
-    /**
-     * Returns true if there are no errors in the values of the model properties.
-     *
-     * @return bool
-     */
-    private function testTrait()
+    public function test()
     {
-        $this->nombre = static::noHtml($this->nombre);
-        if ($this->nombre == '') {
-            $this->nombre = '-';
-        }
-        $this->numproveedor = static::noHtml($this->numproveedor);
-        $this->observaciones = static::noHtml($this->observaciones);
+        $this->observaciones = Utils::noHtml($this->observaciones);
 
         /**
          * We use the euro as a bridge currency when adding, compare
-                   * or convert amounts in several currencies. For this reason we need
-                   * many decimals.
+         * or convert amounts in several currencies. For this reason we need
+         * many decimals.
          */
         $this->totaleuros = round($this->total / $this->tasaconv, 5);
-        if (static::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true)) {
+        if (Utils::floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true)) {
             return true;
         }
 
@@ -340,11 +308,4 @@ trait DocumentoCompra
 
         return false;
     }
-
-    /**
-     * Returns the lines associated with the document.
-     *
-     * @return array
-     */
-    abstract public function getLineas();
 }

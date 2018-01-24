@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,10 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Lib\Import\CSVImport;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * The agent/employee is the one associated with a delivery note, invoice o box.
@@ -29,31 +28,10 @@ use FacturaScripts\Core\Lib\Import\CSVImport;
  * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class Agente
+class Agente extends Base\Contact
 {
+
     use Base\ModelTrait;
-    use Base\ContactInformation;
-
-    /**
-     * Primary key. Varchar (10).
-     *
-     * @var int
-     */
-    public $codagente;
-
-    /**
-     * Tax Identifier (CIF / NIF).
-     *
-     * @var string
-     */
-    public $dnicif;
-
-    /**
-     * Name of the agent or employee.
-     *
-     * @var string
-     */
-    public $nombre;
 
     /**
      * Last name of the agent or employee.
@@ -63,11 +41,11 @@ class Agente
     public $apellidos;
 
     /**
-     * Social security number.
+     * Bank account.
      *
      * @var string
      */
-    public $seg_social;
+    public $banco;
 
     /**
      * Position in the company.
@@ -77,32 +55,60 @@ class Agente
     public $cargo;
 
     /**
-     * Bank account.
+     * Contact city.
      *
      * @var string
      */
-    public $banco;
+    public $ciudad;
 
     /**
-     * Birthdate.
+     * Primary key. Varchar (10).
      *
-     * @var string
+     * @var int
      */
-    public $f_nacimiento;
+    public $codagente;
 
     /**
-     * Date of registration in the company.
+     * Contact country.
      *
      * @var string
      */
-    public $f_alta;
+    public $codpais;
+
+    /**
+     * Postal code of the contact.
+     *
+     * @var string
+     */
+    public $codpostal;
+
+    /**
+     * True -> the customer no longer buys us or we do not want anything with him.
+     *
+     * @var boolean
+     */
+    public $debaja;
+
+    /**
+     * Address of the contact.
+     *
+     * @var string
+     */
+    public $direccion;
 
     /**
      * Date of withdrawal from the company.
      *
      * @var string
      */
-    public $f_baja;
+    public $fechabaja;
+
+    /**
+     * Birthdate.
+     *
+     * @var string
+     */
+    public $fechanacimiento;
 
     /**
      * Percentage of the agent's commission. It is used in budgets, orders, delivery notes and invoices.
@@ -110,6 +116,20 @@ class Agente
      * @var float|int
      */
     public $porcomision;
+
+    /**
+     * Contact province.
+     *
+     * @var string
+     */
+    public $provincia;
+
+    /**
+     * Social security number.
+     *
+     * @var string
+     */
+    public $seg_social;
 
     /**
      * Returns the name of the table that uses this model.
@@ -126,7 +146,7 @@ class Agente
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'codagente';
     }
@@ -138,7 +158,7 @@ class Agente
      */
     public function primaryDescriptionColumn()
     {
-        return 'nombre || \' \' || apellidos';
+        return 'nombre';
     }
 
     /**
@@ -156,19 +176,8 @@ class Agente
      */
     public function clear()
     {
-        $this->clearContactInformation();
-
-        $this->codagente = null;
-        $this->nombre = '';
-        $this->apellidos = '';
-        $this->dnicif = '';
+        parent::clear();
         $this->porcomision = 0.00;
-        $this->seg_social = null;
-        $this->banco = null;
-        $this->cargo = null;
-        $this->f_alta = date('d-m-Y');
-        $this->f_baja = null;
-        $this->f_nacimiento = date('d-m-Y');
     }
 
     /**
@@ -178,41 +187,20 @@ class Agente
      */
     public function test()
     {
-        $this->apellidos = self::noHtml($this->apellidos);
-        $this->banco = self::noHtml($this->banco);
-        $this->cargo = self::noHtml($this->cargo);
-        $this->ciudad = self::noHtml($this->ciudad);
-        $this->codpostal = self::noHtml($this->codpostal);
-        $this->direccion = self::noHtml($this->direccion);
-        $this->dnicif = self::noHtml($this->dnicif);
-        $this->email = self::noHtml($this->email);
-        $this->nombre = self::noHtml($this->nombre);
-        $this->provincia = self::noHtml($this->provincia);
-        $this->seg_social = self::noHtml($this->seg_social);
-        $this->telefono = self::noHtml($this->telefono);
+        parent::test();
+        $this->apellidos = Utils::noHtml($this->apellidos);
+        $this->banco = Utils::noHtml($this->banco);
+        $this->cargo = Utils::noHtml($this->cargo);
+        $this->ciudad = Utils::noHtml($this->ciudad);
+        $this->codpostal = Utils::noHtml($this->codpostal);
+        $this->direccion = Utils::noHtml($this->direccion);
+        $this->provincia = Utils::noHtml($this->provincia);
+        $this->seg_social = Utils::noHtml($this->seg_social);
 
-        if (!(strlen($this->nombre) > 1) && !(strlen($this->nombre) < 50)) {
-            self::$miniLog->alert(self::$i18n->trans('agent-name-between-1-50'));
-
-            return false;
-        }
-
-        if ($this->codagente === null) {
+        if (empty($this->codagente)) {
             $this->codagente = $this->newCode();
         }
 
         return true;
-    }
-
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        return CSVImport::importTableSQL(static::tableName());
     }
 }

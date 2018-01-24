@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -24,12 +23,10 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class DireccionCliente
+class DireccionCliente extends Base\Address
 {
-    use Base\ModelTrait,
-        Base\Direccion {
-        clear as private traitClear;
-    }
+
+    use Base\ModelTrait;
 
     /**
      * Primary key.
@@ -46,6 +43,13 @@ class DireccionCliente
     public $codcliente;
 
     /**
+     * Description of the address.
+     *
+     * @var string
+     */
+    public $descripcion;
+
+    /**
      * True -> this address is the main one for shipments.
      *
      * @var bool
@@ -58,6 +62,13 @@ class DireccionCliente
      * @var bool
      */
     public $domfacturacion;
+
+    /**
+     * Date of last modification.
+     *
+     * @var string
+     */
+    public $fecha;
 
     /**
      * Returns the name of the table that uses this model.
@@ -74,7 +85,7 @@ class DireccionCliente
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'id';
     }
@@ -84,37 +95,11 @@ class DireccionCliente
      */
     public function clear()
     {
-        $this->traitClear();
-
+        parent::clear();
+        $this->descripcion = 'Principal';
         $this->domenvio = true;
         $this->domfacturacion = true;
-        $this->descripcion = 'Principal';
         $this->fecha = date('d-m-Y');
-    }
-
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
-    {
-        return $this->testDireccion();
-    }
-
-    /**
-     * The data persists in the database, modifying if the record existed
-          * or inserting if the primary key does not exist.
-     *
-     * @return bool
-     */
-    private function saveData()
-    {
-        if ($this->exists()) {
-            return $this->saveUpdate();
-        }
-
-        return $this->saveInsert();
     }
 
     /**
@@ -127,7 +112,7 @@ class DireccionCliente
         /// update the modification date
         $this->fecha = date('d-m-Y');
 
-        if ($this->test()) {
+        if (parent::save()) {
             /// Do we demarcate the other main directions?
             $sql = '';
             $where = 'WHERE codcliente = ' . self::$dataBase->var2str($this->codcliente);
@@ -143,10 +128,7 @@ class DireccionCliente
                 return $this->saveData();
             }
 
-            self::$dataBase->beginTransaction();
-            if (self::$dataBase->exec($sql)) {
-                return $this->saveData() ? self::$dataBase->commit() : self::$dataBase->rollback();
-            }
+            return true;
         }
 
         return false;

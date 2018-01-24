@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,8 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * The VAT line of a customer invoice.
@@ -25,8 +26,9 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class LineaIvaFacturaCliente
+class LineaIvaFacturaCliente extends Base\ModelClass
 {
+
     use Base\ModelTrait;
 
     /**
@@ -107,7 +109,7 @@ class LineaIvaFacturaCliente
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'idlinea';
     }
@@ -117,10 +119,8 @@ class LineaIvaFacturaCliente
      */
     public function clear()
     {
-        $this->idlinea = null;
-        $this->idfactura = null;
+        parent::clear();
         $this->neto = 0;
-        $this->codimpuesto = null;
         $this->iva = 0;
         $this->totaliva = 0;
         $this->recargo = 0;
@@ -135,7 +135,7 @@ class LineaIvaFacturaCliente
      */
     public function test()
     {
-        if (static::floatcmp($this->totallinea, $this->neto + $this->totaliva + $this->totalrecargo, FS_NF0, true)) {
+        if (Utils::floatcmp($this->totallinea, $this->neto + $this->totaliva + $this->totalrecargo, FS_NF0, true)) {
             return true;
         }
         $totalLine = round($this->neto + $this->totaliva + $this->totalrecargo, FS_NF0);
@@ -143,73 +143,5 @@ class LineaIvaFacturaCliente
         self::$miniLog->alert(self::$i18n->trans('totallinea-value-error', $values));
 
         return false;
-    }
-
-    /**
-     * Check the invoice.
-     *
-     * @param int   $idfactura
-     * @param float $neto
-     * @param float $totaliva
-     * @param float $totalrecargo
-     *
-     * @return bool
-     */
-    public function facturaTest($idfactura, $neto, $totaliva, $totalrecargo)
-    {
-        $status = true;
-
-        $liNeto = 0;
-        $liIva = 0;
-        $liRecargo = 0;
-        foreach ($this->allFromFactura($idfactura) as $li) {
-            if (!$li->test()) {
-                $status = false;
-            }
-
-            $liNeto += $li->neto;
-            $liIva += $li->totaliva;
-            $liRecargo += $li->totalrecargo;
-        }
-
-        $liNeto = round($liNeto, FS_NF0);
-        $liIva = round($liIva, FS_NF0);
-        $liRecargo = round($liRecargo, FS_NF0);
-
-        if (!static::floatcmp($neto, $liNeto, FS_NF0, true)) {
-            self::$miniLog->alert(self::$i18n->trans('sum-netos-line-tax-must-be', ['%lineNet%' => $neto]));
-            $status = false;
-        } elseif (!static::floatcmp($totaliva, $liIva, FS_NF0, true)) {
-            self::$miniLog->alert(self::$i18n->trans('sum-total-line-tax-must-be', ['%lineTotalTax%' => $totaliva]));
-            $status = false;
-        } elseif (!static::floatcmp($totalrecargo, $liRecargo, FS_NF0, true)) {
-            self::$miniLog->alert(self::$i18n->trans('sum-totalrecargo-line-tax-must-be', ['%lineTotalSurcharge%' => $totalrecargo]));
-            $status = false;
-        }
-
-        return $status;
-    }
-
-    /**
-     * Returns all the VAT lines of the invoice.
-     *
-     * @param int $idfac
-     *
-     * @return self[]
-     */
-    public function allFromFactura($idfac)
-    {
-        $linealist = [];
-
-        $sql = 'SELECT * FROM ' . static::tableName() . ' WHERE idfactura = ' . self::$dataBase->var2str($idfac)
-            . ' ORDER BY iva DESC;';
-        $data = self::$dataBase->select($sql);
-        if (!empty($data)) {
-            foreach ($data as $lin) {
-                $linealist[] = new self($lin);
-            }
-        }
-
-        return $linealist;
     }
 }

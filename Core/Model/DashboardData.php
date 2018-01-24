@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -25,13 +24,11 @@ namespace FacturaScripts\Core\Model;
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  * @author Artex Trading sa <jcuello@artextrading.com>
  */
-class DashboardData
+class DashboardData extends Base\ModelClass
 {
+
     use Base\ModelTrait {
-        clear as private traitClear;
         loadFromData as traitLoadFromData;
-        saveInsert as traitSaveInsert;
-        saveUpdate as traitSaveUpdate;
     }
 
     /**
@@ -91,7 +88,7 @@ class DashboardData
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'id';
     }
@@ -116,18 +113,13 @@ class DashboardData
      */
     public function clear()
     {
-        $this->traitClear();
+        parent::clear();
         $this->creationdate = date('d-m-Y');
         $this->displaydate = date('d-m-Y');
         $this->properties = [];
     }
 
-    /**
-     * Check that a data array have correct struct of model
-     *
-     * @param array $data
-     */
-    public function checkArrayData(&$data)
+    public function checkArrayData(array $data)
     {
         $properties = [];
         foreach ($data as $key => $value) {
@@ -140,49 +132,27 @@ class DashboardData
         unset($properties);
     }
 
-    /**
-     * Load data from array
-     *
-     * @param array $data
-     */
-    public function loadFromData($data)
+    public function loadFromData(array $data = array(), array $exclude = array())
     {
         $this->traitLoadFromData($data, ['properties']);
         $this->properties = isset($data['properties']) ? json_decode($data['properties'], true) : [];
     }
-
-    /**
-     * Insert the model data in the database.
-     *
-     * @return bool
-     */
-    private function saveInsert()
+    
+    protected function saveInsert($values = array())
     {
         $values = ['properties' => json_encode($this->properties)];
 
-        return $this->traitSaveInsert($values);
+        return parent::saveInsert($values);
     }
-
-    /**
-     * Update the model data in the database.
-     *
-     * @return bool
-     */
-    private function saveUpdate()
+    
+    protected function saveUpdate($values = array())
     {
         $values = ['properties' => json_encode($this->properties)];
 
-        return $this->traitSaveUpdate($values);
+        return parent::saveUpdate($values);
     }
 
-    /**
-     * Returns the url where to see/modify the data.
-     *
-     * @param string $type
-     *
-     * @return string
-     */
-    public function url($type = 'auto')
+    public function url($type = 'auto', $list = 'List')
     {
         $value = $this->primaryColumnValue();
         $model = $this->modelClassName();
