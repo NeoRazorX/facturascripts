@@ -102,7 +102,7 @@ class Settings extends Base\ModelClass
      *
      * @param array $data
      */
-    public function checkArrayData(array $data)
+    public function checkArrayData(&$data)
     {
         $properties = [];
         foreach ($data as $key => $value) {
@@ -112,7 +112,6 @@ class Settings extends Base\ModelClass
             }
         }
         $data['properties'] = json_encode($properties);
-        unset($properties);
     }
 
     /**

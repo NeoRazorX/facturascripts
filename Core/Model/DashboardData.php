@@ -119,7 +119,7 @@ class DashboardData extends Base\ModelClass
         $this->properties = [];
     }
 
-    public function checkArrayData(array $data)
+    public function checkArrayData(&$data)
     {
         $properties = [];
         foreach ($data as $key => $value) {

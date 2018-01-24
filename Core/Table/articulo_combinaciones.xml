@@ -23,7 +23,7 @@
     </column>
     <column>
         <name>referencia</name>
-        <type>character varying(18)</type>
+        <type>character varying(30)</type>
         <null>NO</null>
     </column>
     <column>
@@ -69,14 +69,10 @@
     </constraint>
     <constraint>
         <name>ca_articulo_combinaciones_valores</name>
-        <type>FOREIGN KEY (idvalor)
-            REFERENCES atributos_valores (id)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idvalor) REFERENCES atributos_valores (id) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_articulo_combinaciones_articulos</name>
-        <type>FOREIGN KEY (referencia)
-            REFERENCES articulos (referencia)
-            ON DELETE CASCADE ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (referencia) REFERENCES articulos (referencia) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
 </table>

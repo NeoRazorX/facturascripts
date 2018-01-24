@@ -30,6 +30,9 @@
         <column name="warehouse" display="left" order="120">
             <widget type="text" fieldname="codalmacen" />
         </column>
+        <column name="location" display="left" order="125">
+            <widget type="text" fieldname="ubicacion" />
+        </column>
         <column name="quantity" display="right" order="130">
             <widget type="number" fieldname="cantidad" />
         </column>

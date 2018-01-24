@@ -54,5 +54,4 @@ abstract class SalesDocumentLine extends BusinessDocumentLine
         $this->mostrar_precio = true;
         $this->orden = 0;
     }
-
 }

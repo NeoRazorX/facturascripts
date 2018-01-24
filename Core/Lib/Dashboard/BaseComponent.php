@@ -118,7 +118,7 @@ class BaseComponent
      */
     public function getTemplate()
     {
-        return $this->component . self::SUFIX_COMPONENTS . '.html';
+        return $this->component . self::SUFIX_COMPONENTS . '.html.twig';
     }
 
     /**

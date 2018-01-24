@@ -58,4 +58,11 @@ class LineaAlbaranProveedor extends Base\BusinessDocumentLine
     {
         return 'lineasalbaranesprov';
     }
+    
+    public function install()
+    {
+        new AlbaranProveedor();
+        
+        return '';
+    }
 }
