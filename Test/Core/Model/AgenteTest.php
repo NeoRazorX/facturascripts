@@ -53,7 +53,7 @@ final class AgenteTest extends TestCase
 
         $this->assertEquals(
             '',
-            $model->dnicif
+            $model->cifnif
         );
 
         $this->assertEquals(
@@ -78,17 +78,17 @@ final class AgenteTest extends TestCase
 
         $this->assertEquals(
             date('d-m-Y'),
-            $model->f_alta
+            $model->fechaalta
         );
 
         $this->assertEquals(
             null,
-            $model->f_baja
+            $model->fechabaja
         );
 
         $this->assertEquals(
-            date('d-m-Y'),
-            $model->f_nacimiento
+            null,
+            $model->fechanacimiento
         );
 
         $this->assertInternalType(

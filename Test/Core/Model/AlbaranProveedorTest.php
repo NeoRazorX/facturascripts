@@ -38,7 +38,7 @@ final class AlbaranProveedorTest extends TestCase
         $this->assertNull($model->cifnif);
         $this->assertEquals(AppSettings::get('default', 'codalmacen'), $model->codalmacen);
         $this->assertEquals(null, $model->codproveedor);
-        $this->assertEquals(null, $model->coddivisa);
+        $this->assertEquals(AppSettings::get('default', 'coddivisa'), $model->coddivisa);
         $this->assertEquals(null, $model->codejercicio);
         $this->assertEquals(null, $model->codigo);
         $this->assertEquals(AppSettings::get('default', 'codpago'), $model->codpago);

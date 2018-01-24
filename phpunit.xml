@@ -13,19 +13,19 @@
         <testsuite name="FacturaScripts Test Suite">
             <directory
                     suffix="Test.php"
-                    phpVersion="5.6"
+                    phpVersion="7.0"
                     phpVersionOperator=">=">
                 Test/Core/Model/
             </directory>
             <directory
                     suffix="Test.php"
-                    phpVersion="5.6"
+                    phpVersion="7.0"
                     phpVersionOperator=">=">
                 Test/Core/App/
             </directory>
             <directory
                     suffix="Test.php"
-                    phpVersion="5.6"
+                    phpVersion="7.0"
                     phpVersionOperator=">=">
                 Test/Core/Base/
             </directory>
