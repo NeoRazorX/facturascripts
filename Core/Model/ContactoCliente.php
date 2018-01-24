@@ -54,7 +54,7 @@ class ContactoCliente extends Base\ModelClass
      *
      * @return string
      */
-    public function tableName()
+    public static function tableName()
     {
         return 'contactosclientes';
     }

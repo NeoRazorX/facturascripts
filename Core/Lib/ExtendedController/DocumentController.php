@@ -30,17 +30,10 @@ abstract class DocumentController extends PanelController
     /**
      * Header of document.
      *
-     * @var Base\DocumentoVenta|Base\DocumentoCompra
-     */
-    public $document;
-
-    /**
-     * Line columns from xmlview.
-     * 
-     * @param Cache $cache
-     * @param Translator $i18n
-     * @param MiniLog $miniLog
-     * @param string $className
+     * @param \FacturaScripts\Core\Base\Cache      $cache
+     * @param \FacturaScripts\Core\Base\Translator $i18n
+     * @param \FacturaScripts\Core\Base\MiniLog    $miniLog
+     * @param string     $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)
     {

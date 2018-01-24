@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\DocumentCalculator;
 use FacturaScripts\Core\Lib\ExportManager;
 use FacturaScripts\Core\Model\Cliente;
@@ -56,7 +57,7 @@ class DocumentView extends BaseView
     /**
      * Lines of document, the body.
      *
-     * @var \FacturaScripts\Core\Model\Base\LineaDocumentoVenta[]|\FacturaScripts\Core\Model\Base\LineaDocumentoCompra[]
+     * @var \FacturaScripts\Core\Model\Base\SalesDocumentLine[]|\FacturaScripts\Core\Model\Base\LineaDocumentoCompra[]
      */
     public $lines;
 
@@ -180,7 +181,14 @@ class DocumentView extends BaseView
         $this->lines = empty($this->model->primaryColumnValue()) ? [] : $this->model->getLineas();
         $this->title = $this->model->codigo;
     }
-    
+
+    /**
+     * TODO: Uncomplete
+     *
+     * @param $data
+     *
+     * @return int
+     */
     public function calculateDocument(&$data)
     {
         $result = 0;

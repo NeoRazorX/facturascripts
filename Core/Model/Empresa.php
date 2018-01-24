@@ -145,12 +145,15 @@ class Empresa extends Base\Contact
         return 'nombrecorto';
     }
 
+    /**
+     * Reset the values of all model properties.
+     */
     public function clear()
     {
         parent::clear();
 
         $regimenIVA = new RegimenIVA();
-        $this->regimeniva = $regimenIVA->defaultValue();
+        $this->regimeniva = $regimenIVA::defaultValue();
     }
 
     /**

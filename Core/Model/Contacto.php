@@ -144,6 +144,11 @@ class Contacto extends Base\Contact
         $this->ultima_comunicacion = date('d-m-Y');
     }
 
+    /**
+     * Returns True if there is no errors on properties values.
+     *
+     * @return bool
+     */
     public function test()
     {
         parent::test();
@@ -153,5 +158,7 @@ class Contacto extends Base\Contact
         $this->direccion = Utils::noHtml($this->direccion);
         $this->empresa = Utils::noHtml($this->empresa);
         $this->provincia = Utils::noHtml($this->provincia);
+
+        return true;
     }
 }

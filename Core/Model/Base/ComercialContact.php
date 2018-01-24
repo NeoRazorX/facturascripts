@@ -131,8 +131,18 @@ abstract class ComercialContact extends Contact
      */
     public $web;
 
+    /**
+     * Return address from this contact.
+     *
+     * @return mixed
+     */
     abstract public function getDirecciones();
 
+    /**
+     * ComercialContact constructor.
+     *
+     * @param array $data
+     */
     public function __construct($data = [])
     {
         if (self::$idFiscal === null) {
@@ -143,6 +153,9 @@ abstract class ComercialContact extends Contact
         parent::__construct($data);
     }
 
+    /**
+     * Reset the values of all model properties.
+     */
     public function clear()
     {
         parent::clear();
@@ -150,10 +163,15 @@ abstract class ComercialContact extends Contact
         $this->codpago = AppSettings::get('default', 'codpago');
         $this->debaja = false;
         $this->personafisica = true;
-        $this->regimeniva = self::$regimenIVA->defaultValue();
-        $this->tipoidfiscal = self::$idFiscal->defaultValue();
+        $this->regimeniva = self::$regimenIVA::defaultValue();
+        $this->tipoidfiscal = self::$idFiscal::defaultValue();
     }
 
+    /**
+     * Returns True if there is no errors on properties values.
+     *
+     * @return bool
+     */
     public function test()
     {
         parent::test();
@@ -166,8 +184,10 @@ abstract class ComercialContact extends Contact
 
         if (!$this->debaja) {
             $this->fechabaja = null;
-        } else if (empty($this->fechabaja)) {
+        } elseif (empty($this->fechabaja)) {
             $this->fechabaja = date('d-m-Y');
         }
+
+        return true;
     }
 }

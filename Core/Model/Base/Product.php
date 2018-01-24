@@ -94,6 +94,9 @@ abstract class Product extends ModelClass
      */
     public $stockfis;
 
+    /**
+     * Reset the values of all model properties.
+     */
     public function clear()
     {
         parent::clear();
@@ -102,6 +105,11 @@ abstract class Product extends ModelClass
         $this->stockfis = 0.0;
     }
 
+    /**
+     * Returns True if there is no errors on properties values.
+     *
+     * @return bool
+     */
     public function test()
     {
         $this->codbarras = Utils::noHtml($this->codbarras);
@@ -160,7 +168,12 @@ abstract class Product extends ModelClass
 
         return $this->iva;
     }
-    
+
+    /**
+     * Returns the name of the column that describes the model, such as name, description...
+     *
+     * @return string
+     */
     public function primaryDescriptionColumn()
     {
         return 'referencia';

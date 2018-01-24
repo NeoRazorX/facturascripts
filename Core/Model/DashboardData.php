@@ -119,6 +119,11 @@ class DashboardData extends Base\ModelClass
         $this->properties = [];
     }
 
+    /**
+     * Check an array of data so that it has the correct structure of the model.
+     *
+     * @param array $data
+     */
     public function checkArrayData(&$data)
     {
         $properties = [];
@@ -132,19 +137,39 @@ class DashboardData extends Base\ModelClass
         unset($properties);
     }
 
+    /**
+     * Assign the values of the $data array to the model properties.
+     *
+     * @param array    $data
+     * @param string[] $exclude
+     */
     public function loadFromData(array $data = array(), array $exclude = array())
     {
         $this->traitLoadFromData($data, ['properties']);
         $this->properties = isset($data['properties']) ? json_decode($data['properties'], true) : [];
     }
-    
+
+    /**
+     * Insert the model data in the database.
+     *
+     * @param array $values
+     *
+     * @return bool
+     */
     protected function saveInsert($values = array())
     {
         $values = ['properties' => json_encode($this->properties)];
 
         return parent::saveInsert($values);
     }
-    
+
+    /**
+     * Update the model data in the database.
+     *
+     * @param array $values
+     *
+     * @return bool
+     */
     protected function saveUpdate($values = array())
     {
         $values = ['properties' => json_encode($this->properties)];
@@ -152,6 +177,14 @@ class DashboardData extends Base\ModelClass
         return parent::saveUpdate($values);
     }
 
+    /**
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
     public function url($type = 'auto', $list = 'List')
     {
         $value = $this->primaryColumnValue();
