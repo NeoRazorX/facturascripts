@@ -354,7 +354,7 @@ class Subcuenta extends Base\ModelClass
      */
     public function tieneSaldo()
     {
-        return !static::floatcmp($this->debe, $this->haber, FS_NF0, true);
+        return !Utils::floatcmp($this->debe, $this->haber, FS_NF0, true);
     }
 
     /**

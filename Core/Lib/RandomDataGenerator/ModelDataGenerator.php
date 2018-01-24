@@ -298,7 +298,7 @@ class ModelDataGenerator
             $art->precio = $this->tools->precio(1, 49, 699);
             $art->dto = mt_rand(0, 80);
             $art->nostock = (mt_rand(0, 2) == 0);
-            $art->stock = mt_rand(0, 10);
+            $art->stockfis = mt_rand(0, 10);
 
             if (!$art->save()) {
                 break;
@@ -320,17 +320,17 @@ class ModelDataGenerator
     {
         for ($num = 0; $num < $max; ++$num) {
             $agente = new Model\Agente();
-            $agente->f_nacimiento = date(mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(1970, 1997));
-            $agente->f_alta = date(mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, 2016));
-            $agente->dnicif = (mt_rand(0, 9) == 0) ? '' : (string) mt_rand(0, 99999999);
+            $agente->fechanacimiento = date(mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(1970, 1997));
+            $agente->fechaalta = date(mt_rand(1, 28) . '-' . mt_rand(1, 12) . '-' . mt_rand(2013, 2016));
+            $agente->cifnif = (mt_rand(0, 9) == 0) ? '' : (string) mt_rand(0, 99999999);
             $agente->nombre = $this->tools->nombre();
             $agente->apellidos = $this->tools->apellidos();
             $agente->provincia = $this->tools->provincia();
             $agente->ciudad = $this->tools->ciudad();
             $agente->direccion = $this->tools->direccion();
             $agente->codpostal = (string) mt_rand(11111, 99999);
-            $agente->f_baja = (mt_rand(0, 24) == 0) ? date('d-m-Y') : null;
-            $agente->telefono = (mt_rand(0, 1) == 0) ? (string) mt_rand(555555555, 999999999) : '';
+            $agente->fechabaja = (mt_rand(0, 24) == 0) ? date('d-m-Y') : null;
+            $agente->telefono1 = (mt_rand(0, 1) == 0) ? (string) mt_rand(555555555, 999999999) : '';
             $agente->email = (mt_rand(0, 2) > 0) ? $this->tools->email() : '';
             $agente->cargo = (mt_rand(0, 2) > 0) ? $this->tools->cargo() : '';
             $agente->seg_social = (mt_rand(0, 1) == 0) ? (string) mt_rand(111111, 9999999999) : '';

@@ -138,7 +138,7 @@ class LineaIvaFacturaProveedor extends Base\ModelClass
         if (Utils::floatcmp($this->totallinea, $this->neto + $this->totaliva + $this->totalrecargo, FS_NF0, true)) {
             return true;
         }
-        $totalLine = round($this->neto + $this->totaliva + $this->totalrecargo, FS_NF0);
+        $totalLine = round($this->neto + $this->totaliva + $this->totalrecargo, (int) FS_NF0);
         $values = ['%taxCode%' => $this->codimpuesto, '%totalLine%' => $totalLine];
         self::$miniLog->alert(self::$i18n->trans('totallinea-value-error', $values));
 

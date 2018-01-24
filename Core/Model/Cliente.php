@@ -31,6 +31,13 @@ class Cliente extends Base\ComercialContact
     use Base\ModelTrait;
 
     /**
+     * Employee assigned to this customer. Agent model.
+     *
+     * @var string
+     */
+    public $codagente;
+
+    /**
      * Group to which the client belongs.
      *
      * @var string

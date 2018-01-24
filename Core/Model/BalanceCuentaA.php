@@ -90,13 +90,13 @@ class BalanceCuentaA extends Base\ModelClass
     public function saldo(&$ejercicio, $desde = false, $hasta = false)
     {
         $extra = '';
-        if ($ejercicio->idasientopyg !== null) {
+        if (!empty($ejercicio->idasientopyg)) {
             $extra = ' AND idasiento != ' . self::$dataBase->var2str($ejercicio->idasientopyg);
             if ($ejercicio->idasientocierre !== null) {
                 $extra = ' AND idasiento NOT IN (' . self::$dataBase->var2str($ejercicio->idasientocierre)
                     . ', ' . self::$dataBase->var2str($ejercicio->idasientopyg) . ')';
             }
-        } elseif ($ejercicio->idasientocierre !== null) {
+        } elseif (!empty($ejercicio->idasientocierre)) {
             $extra = ' AND idasiento != ' . self::$dataBase->var2str($ejercicio->idasientocierre);
         }
 
