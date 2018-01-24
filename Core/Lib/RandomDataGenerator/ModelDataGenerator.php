@@ -285,7 +285,7 @@ class ModelDataGenerator
         $articulos = $this->randomArticulos();
 
         for ($num = 0; $num < $max; ++$num) {
-            if(!isset($articulos[$num])) {
+            if (!isset($articulos[$num])) {
                 break;
             }
 

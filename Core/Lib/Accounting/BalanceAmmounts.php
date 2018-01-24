@@ -30,7 +30,7 @@ use FacturaScripts\Core\Model\Subcuenta;
 class BalanceAmmounts extends AccountingBase
 {
     /**
-     * Tools to work with currencies.
+     * Model with related information.
      *
      * @var DivisaTools
      */
