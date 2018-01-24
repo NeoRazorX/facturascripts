@@ -32,9 +32,9 @@ abstract class DocumentController extends PanelController
     /**
      * Constructor.
      *
-     * @param Cache      $cache
-     * @param Translator $i18n
-     * @param MiniLog    $miniLog
+     * @param \FacturaScripts\Core\Base\Cache      $cache
+     * @param \FacturaScripts\Core\Base\Translator $i18n
+     * @param \FacturaScripts\Core\Base\MiniLog    $miniLog
      * @param string     $className
      */
     public function __construct(&$cache, &$i18n, &$miniLog, $className)

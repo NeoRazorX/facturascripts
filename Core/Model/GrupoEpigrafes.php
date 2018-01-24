@@ -88,7 +88,7 @@ class GrupoEpigrafes extends Base\ModelClass
 
     /**
      * This function is called when creating the model table. Returns the SQL
-           * that will be executed after the creation of the table. Useful to insert values
+     * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
@@ -151,7 +151,15 @@ class GrupoEpigrafes extends Base\ModelClass
 
         return false;
     }
-    
+
+    /**
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
     public function url($type = 'auto', $list = 'List')
     {
         return parent::url($type, 'ListCuenta&active=List');

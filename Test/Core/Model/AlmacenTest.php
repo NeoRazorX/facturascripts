@@ -55,7 +55,7 @@ final class AlmacenTest extends TestCase
     {
         $model = new Almacen();
 
-        $this->assertInternalType('string', $model->primaryColumn());
+        $this->assertInternalType('string', $model::primaryColumn());
     }
 
     public function testInstall()

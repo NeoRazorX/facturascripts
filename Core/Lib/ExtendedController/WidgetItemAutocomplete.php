@@ -126,7 +126,7 @@ class WidgetItemAutocomplete extends WidgetItem
 
         $html .= '<input type="text" id="' . $this->fieldName . 'Autocomplete2" value="' . $this->getTextValue($value) . '" class="form-control autocomplete"'
             . ' data-source="' . $this->values[0]['source'] . '" data-field="' . $this->values[0]['fieldcode'] . '"'
-            . ' data-title="' . $this->values[0]['fieldtitle'] . '"' . $specialAttributes . '/>'
+            . ' data-title="' . $this->values[0]['fieldtitle'] . '" ' . $specialAttributes . ' />'
             . '</div>';
 
         return $html;

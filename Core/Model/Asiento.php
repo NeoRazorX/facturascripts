@@ -146,7 +146,7 @@ class Asiento extends Base\ModelClass
 
     /**
      * This function is called when creating the model table. Returns the SQL
-           * that will be executed after the creation of the table. Useful to insert values
+     * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
@@ -414,7 +414,14 @@ class Asiento extends Base\ModelClass
         echo self::$i18n->trans('renumber-accounting');
         $this->renumber();
     }
-    
+
+    /**
+     * Insert the model data in the database.
+     *
+     * @param array $values
+     *
+     * @return bool
+     */
     protected function saveInsert($values = [])
     {
         $this->newNumero();

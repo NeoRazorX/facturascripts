@@ -50,7 +50,10 @@ class FacturaProveedor extends Base\PurchaseDocument
     {
         return 'idfactura';
     }
-    
+
+    /**
+     * Reset the values of all model properties.
+     */
     public function clear()
     {
         parent::clear();
@@ -75,8 +78,8 @@ class FacturaProveedor extends Base\PurchaseDocument
 
     /**
      * Set the date and time, but respecting the exercise and the
-           * VAT regularizations.
-           * Returns TRUE if a date or time other than those requested is assigned.
+     * VAT regularizations.
+     * Returns TRUE if a date or time other than those requested is assigned.
      *
      * @param string $fecha
      * @param string $hora

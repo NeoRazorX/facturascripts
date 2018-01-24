@@ -50,7 +50,10 @@ class FacturaCliente extends Base\SalesDocument
     {
         return 'idfactura';
     }
-    
+
+    /**
+     * Reset the values of all model properties.
+     */
     public function clear()
     {
         parent::clear();

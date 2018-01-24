@@ -54,7 +54,15 @@ class CuentaBanco extends Base\BankAccount
     {
         return 'codcuenta';
     }
-    
+
+    /**
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
     public function url($type = 'auto', $list = 'List')
     {
         return parent::url($type, 'ListFormaPago&active=List');

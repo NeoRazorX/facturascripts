@@ -63,6 +63,11 @@ abstract class PurchaseDocument extends BusinessDocument
         $this->cifnif = $proveedor->cifnif;
     }
 
+    /**
+     * Returns True if there is no errors on properties values.
+     *
+     * @return bool
+     */
     public function test()
     {
         $this->nombre = Utils::noHtml($this->nombre);

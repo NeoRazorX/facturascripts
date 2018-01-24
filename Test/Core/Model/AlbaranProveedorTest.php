@@ -74,7 +74,7 @@ final class AlbaranProveedorTest extends TestCase
     {
         $model = new AlbaranProveedor();
 
-        $this->assertInternalType('string', $model->primaryColumn());
+        $this->assertInternalType('string', $model::primaryColumn());
     }
 
     public function testInstall()

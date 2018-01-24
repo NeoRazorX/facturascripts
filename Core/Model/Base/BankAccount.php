@@ -58,6 +58,11 @@ abstract class BankAccount extends ModelClass
      */
     public $swift;
 
+    /**
+     * Returns True if there is no errors on properties values.
+     *
+     * @return bool
+     */
     public function test()
     {
         parent::test();
@@ -68,6 +73,8 @@ abstract class BankAccount extends ModelClass
 
             return false;
         }
+
+        return true;
     }
 
     /**
