@@ -58,4 +58,11 @@ class LineaAlbaranCliente extends Base\SalesDocumentLine
     {
         return 'lineasalbaranescli';
     }
+    
+    public function install()
+    {
+        new AlbaranCliente();
+        
+        return '';
+    }
 }

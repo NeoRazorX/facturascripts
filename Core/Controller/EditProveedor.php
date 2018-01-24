@@ -57,7 +57,6 @@ class EditProveedor extends ExtendedController\PanelController
 
         $this->addEditListView('\FacturaScripts\Dinamic\Model\DireccionProveedor', 'EditDireccionProveedor', 'addresses', 'fa-road');
         $this->addEditListView('\FacturaScripts\Dinamic\Model\CuentaBancoProveedor', 'EditCuentaBancoProveedor', 'bank-accounts', 'fa-university');
-        $this->addEditListView('\FacturaScripts\Dinamic\Model\SubcuentaProveedor', 'EditSubcuentaProveedor', 'subaccount', 'fa-book');
         $this->addListView('\FacturaScripts\Dinamic\Model\ArticuloProveedor', 'ListArticuloProveedor', 'products', 'fa-cubes');
         $this->addListView('\FacturaScripts\Dinamic\Model\FacturaProveedor', 'ListFacturaProveedor', 'invoices', 'fa-files-o');
         $this->addListView('\FacturaScripts\Dinamic\Model\AlbaranProveedor', 'ListAlbaranProveedor', 'delivery-notes', 'fa-files-o');
@@ -86,7 +85,6 @@ class EditProveedor extends ExtendedController\PanelController
 
             case 'EditDireccionProveedor':
             case 'EditCuentaBancoProveedor':
-            case 'EditSubcuentaProveedor':
             case 'ListArticuloProveedor':
             case 'ListFacturaProveedor':
             case 'ListAlbaranProveedor':

@@ -29,7 +29,7 @@
     </column>
     <column>
         <name>referencia</name>
-        <type>character varying(18)</type>
+        <type>character varying(30)</type>
         <null>NO</null>
     </column>
     <constraint>

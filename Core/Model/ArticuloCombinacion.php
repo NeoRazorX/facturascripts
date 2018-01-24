@@ -49,7 +49,7 @@ class ArticuloCombinacion extends Base\ModelClass
 
     /**
      * Identifier of the combination.
-          * Note that the combination is the sum of all attribute-value pairs.
+     * Note that the combination is the sum of all attribute-value pairs.
      *
      * @var string
      */
@@ -57,7 +57,7 @@ class ArticuloCombinacion extends Base\ModelClass
 
     /**
      * Second identifier for the combination, to facilitate synchronization
-          * with woocommerce or prestashop.
+     * with woocommerce or prestashop.
      *
      * @var string
      */
@@ -141,15 +141,13 @@ class ArticuloCombinacion extends Base\ModelClass
 
     /**
      * This function is called when creating the model table. Returns the SQL
-          * that will be executed after the creation of the table. Useful to insert values
+     * that will be executed after the creation of the table. Useful to insert values
      * default.
      *
      * @return string
      */
     public function install()
     {
-        /// nos aseguramos de que existan las tablas necesarias
-        //new Atributo();
         new AtributoValor();
 
         return '';
@@ -171,24 +169,8 @@ class ArticuloCombinacion extends Base\ModelClass
     public function test()
     {
         if ($this->codigo === null) {
-            $this->codigo = (string) $this->getNewCodigo();
+            $this->codigo = (string) $this->newCode();
         }
-    }
-
-    /**
-     * Devuelve un nuevo código para una combinación de artículo
-     *
-     * @return int
-     */
-    private function getNewCodigo()
-    {
-        $sql = 'SELECT MAX(' . self::$dataBase->sql2Int('codigo') . ') as cod FROM ' . static::tableName() . ';';
-        $cod = self::$dataBase->select($sql);
-        if (!empty($cod)) {
-            return 1 + (int) $cod[0]['cod'];
-        }
-
-        return 1;
     }
 
     /**

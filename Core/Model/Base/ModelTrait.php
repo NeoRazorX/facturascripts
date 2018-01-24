@@ -49,7 +49,7 @@ trait ModelTrait
      *
      * @param array $data
      */
-    public function checkArrayData(array $data)
+    public function checkArrayData(&$data)
     {
         foreach (self::$fields as $field => $values) {
             if (in_array($values['type'], ['boolean', 'tinyint(1)']) && !isset($data[$field])) {

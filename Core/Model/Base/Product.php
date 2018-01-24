@@ -160,6 +160,11 @@ abstract class Product extends ModelClass
 
         return $this->iva;
     }
+    
+    public function primaryDescriptionColumn()
+    {
+        return 'referencia';
+    }
 
     /**
      * Change the tax associated with the item.
