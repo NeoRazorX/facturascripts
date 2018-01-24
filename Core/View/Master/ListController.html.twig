@@ -24,7 +24,7 @@
     */
 #}
 
-{% extends "Master/MenuTemplate.html" %}
+{% extends "Master/MenuTemplate.html.twig" %}
 
 {% block javascript %}
 {{ parent() }}
@@ -133,10 +133,10 @@
 {% set list_url = fsc.views[fsc.active].getURL('list') %}
 
 {# Macros Template Imports #}
-{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
-{% from 'Macro/Utils.html' import exportData as exportData %}
-{% import 'Macro/BaseController.html' as BaseController %}
-{% import 'Macro/ListFilter.html' as ListFilter %}
+{% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
+{% from 'Macro/Utils.html.twig' import exportData as exportData %}
+{% import 'Macro/BaseController.html.twig' as BaseController %}
+{% import 'Macro/ListFilter.html.twig' as ListFilter %}
 
 {# Page Header #}
 <div class="container-fluid d-print-none">

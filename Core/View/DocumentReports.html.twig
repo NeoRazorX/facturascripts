@@ -23,7 +23,7 @@
     */
 #}
 
-{% extends "Master/MenuTemplate.html" %}
+{% extends "Master/MenuTemplate.html.twig" %}
 
 {% block body %}
 {# Calculate texts according to language #}
@@ -33,8 +33,8 @@
 {% set choose_source, start_date, end_date = i18n.trans('choose-source'), i18n.trans('start-date'), i18n.trans('end-date') %}
 
 {# Macros Template Imports #}
-{% from 'Macro/Utils.html' import popoverTitle as popoverTitle %}
-{% import 'Macro/Forms.html' as forms %}
+{% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
+{% import 'Macro/Forms.html.twig' as forms %}
 
 {# Others working values #}
 {% set select_attr = {onchange: 'this.form.submit()'} %}
