@@ -86,8 +86,10 @@ $(document).ready(function () {
                                 <div class="form-group">
                                     {{ i18n.trans('select-language') }}:
                                     <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-language"></i>
+                                        <span class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="fa fa-language"></i>
+                                            </span>
                                         </span>
                                         <select id="fs_lang" name="fs_lang" class="form-control">
                                             {% for langCode, langName in languages %}
@@ -105,8 +107,10 @@ $(document).ready(function () {
                                 <div class="form-group">
                                     {{ i18n.trans('select-timezone') }}:
                                     <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-clock-o"></i>
+                                        <span class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="fa fa-clock-o"></i>
+                                            </span>
                                         </span>
                                         <select name="fs_timezone" class="form-control">
                                             {% for tz in timezone %}
@@ -141,8 +145,10 @@ $(document).ready(function () {
                                 <div class="form-group">
                                     {{ i18n.trans('db-name') }}:
                                     <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-database"></i>
+                                        <span class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="fa fa-database"></i>
+                                            </span>
                                         </span>
                                         <input type="text" name="db_name" value="facturascripts" class="form-control" required=""/>
                                     </div>
@@ -158,8 +164,10 @@ $(document).ready(function () {
                                 <div class="form-group">
                                     {{ i18n.trans('db-password') }}:
                                     <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-key"></i>
+                                        <span class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="fa fa-key"></i>
+                                            </span>
                                         </span>
                                         <input type="password" name="db_pass" class="form-control"/>
                                     </div>
