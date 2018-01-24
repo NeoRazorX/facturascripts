@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * The line of a seat.
@@ -27,7 +28,7 @@ use FacturaScripts\Core\App\AppSettings;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Partida
+class Partida extends Base\ModelClass
 {
     use Base\ModelTrait;
 
@@ -242,7 +243,7 @@ class Partida
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'idpartida';
     }
@@ -267,6 +268,7 @@ class Partida
      */
     public function clear()
     {
+        parent::clear();
         $this->concepto = '';
         $this->punteada = false;
         $this->tasaconv = 1.0;
@@ -349,9 +351,9 @@ class Partida
      */
     public function test()
     {
-        $this->concepto = self::noHtml($this->concepto);
-        $this->documento = self::noHtml($this->documento);
-        $this->cifnif = self::noHtml($this->cifnif);
+        $this->concepto = Utils::noHtml($this->concepto);
+        $this->documento = Utils::noHtml($this->documento);
+        $this->cifnif = Utils::noHtml($this->cifnif);
 
         return true;
     }

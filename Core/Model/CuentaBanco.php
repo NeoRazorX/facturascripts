@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,27 +24,9 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class CuentaBanco
+class CuentaBanco extends Base\BankAccount
 {
-    use Base\ModelTrait {
-        url as private traitUrl;
-    }
-
-    use Base\BankAccount;
-
-    /**
-     * Primary key. Varchar (6).
-     *
-     * @var string
-     */
-    public $codcuenta;
-
-    /**
-     * Description of the account.
-     *
-     * @var string
-     */
-    public $descripcion;
+    use Base\ModelTrait;
 
     /**
      * Code of the accounting sub-account.
@@ -68,36 +50,13 @@ class CuentaBanco
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'codcuenta';
     }
-
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    
+    public function url($type = 'auto', $list = 'List')
     {
-        if (!$this->testBankAccount()) {
-            ///self::$miniLog->alert(self::$i18n->trans('error-incorrect-bank-details'));
-
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Returns the url where to see/modify the data..
-     *
-     * @param string $type
-     *
-     * @return string
-     */
-    public function url($type = 'auto')
-    {
-        return $this->traitUrl($type, 'ListFormaPago&active=List');
+        return parent::url($type, 'ListFormaPago&active=List');
     }
 }

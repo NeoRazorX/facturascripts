@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2017  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,11 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Lib\Import\CSVImport;
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * A series of invoicing or accounting, to have different numbering
@@ -28,8 +27,9 @@ use FacturaScripts\Core\Lib\Import\CSVImport;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Serie
+class Serie extends Base\ModelClass
 {
+
     use Base\ModelTrait;
 
     /**
@@ -89,7 +89,7 @@ class Serie
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'codserie';
     }
@@ -99,11 +99,9 @@ class Serie
      */
     public function clear()
     {
-        $this->codserie = '';
-        $this->descripcion = '';
+        parent::clear();
         $this->siniva = false;
         $this->irpf = 0.0;
-        $this->codejercicio = null;
         $this->numfactura = 1;
     }
 
@@ -127,7 +125,7 @@ class Serie
         $status = false;
 
         $this->codserie = trim($this->codserie);
-        $this->descripcion = self::noHtml($this->descripcion);
+        $this->descripcion = Utils::noHtml($this->descripcion);
 
         if ($this->numfactura < 1) {
             $this->numfactura = 1;
@@ -142,17 +140,5 @@ class Serie
         }
 
         return $status;
-    }
-
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        return CSVImport::importTableSQL(static::tableName());
     }
 }

@@ -55,7 +55,7 @@
                 <widget type="number" fieldname="dto" onclick="" required="" />
             </column>
             <column name="stock" numcolumns="2" order="140">
-                <widget type="number" fieldname="stock" onclick="" required="" />
+                <widget type="number" fieldname="stockfis" onclick="" required="" />
             </column>
             <column name="nostock" numcolumns="1" order="150">
                 <widget type="checkbox" fieldname="nostock" onclick=""/>

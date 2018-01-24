@@ -17,8 +17,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * A state associated with documents to distinguish them by groups.
@@ -26,8 +27,9 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Francesc Pineda Segarra <francesc.pìneda.segarra@gmail.com>
  */
-class EstadoDocumento
+class EstadoDocumento extends Base\ModelClass
 {
+
     use Base\ModelTrait;
 
     /**
@@ -66,7 +68,7 @@ class EstadoDocumento
      *
      * @return string
      */
-    public function primaryColumn()
+    public static function primaryColumn()
     {
         return 'idestado';
     }
@@ -76,6 +78,7 @@ class EstadoDocumento
      */
     public function clear()
     {
+        parent::clear();
         $this->editable = true;
     }
 
@@ -86,7 +89,7 @@ class EstadoDocumento
      */
     public function test()
     {
-        $this->nombre = self::noHtml($this->nombre);
+        $this->nombre = Utils::noHtml($this->nombre);
         return true;
     }
 }
