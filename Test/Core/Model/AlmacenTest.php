@@ -36,8 +36,6 @@ final class AlmacenTest extends TestCase
         $this->assertInstanceOf(Almacen::class, $model);
         $this->assertNull($model->codalmacen);
         $this->assertEquals('', $model->nombre);
-        $this->assertEquals('', $model->contacto);
-        $this->assertEquals('', $model->observaciones);
         $this->assertFalse($model->test());
 
         $model->nombre = 'Test name';

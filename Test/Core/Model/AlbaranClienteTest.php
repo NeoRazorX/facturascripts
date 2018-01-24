@@ -40,7 +40,7 @@ final class AlbaranClienteTest extends TestCase
         $this->assertNull($model->codagente);
         $this->assertEquals(AppSettings::get('default', 'codalmacen'), $model->codalmacen);
         $this->assertEquals(null, $model->codcliente);
-        $this->assertEquals(null, $model->coddivisa);
+        $this->assertEquals(AppSettings::get('default', 'coddivisa'), $model->coddivisa);
         $this->assertEquals(null, $model->coddir);
         $this->assertEquals(null, $model->codejercicio);
         $this->assertEquals(null, $model->codigo);

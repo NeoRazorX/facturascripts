@@ -103,7 +103,7 @@ class Almacen extends Base\Address
         parent::test();
         $this->nombre = Utils::noHtml($this->nombre);
         $this->telefono = Utils::noHtml($this->telefono);
-
-        return true;
+        
+        return !empty($this->codalmacen);
     }
 }
