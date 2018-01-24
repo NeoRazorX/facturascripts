@@ -109,7 +109,7 @@ class DireccionProveedor extends Base\Address
             if ($this->direccionppal) {
                 $sql = 'UPDATE ' . static::tableName() . ' SET direccionppal = false'
                     . ' WHERE codproveedor = ' . self::$dataBase->var2str($this->codproveedor)
-                    . ' AND id != '.self::$dataBase->var2str($this->id).';';
+                    . ' AND id != ' . self::$dataBase->var2str($this->id) . ';';
                 return self::$dataBase->exec($sql);
             }
 

@@ -97,7 +97,7 @@ abstract class ModelClass
      * @param DataBase  $dataBase
      * @param string    $tableName
      */
-    abstract protected function loadModelFields($dataBase, $tableName);
+    abstract protected function loadModelFields(&$dataBase, $tableName);
 
     /**
      * Returns the name of the class of the model.
