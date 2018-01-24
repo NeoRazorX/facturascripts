@@ -33,7 +33,7 @@
         <column name="address" order="110">
             <widget type="text" fieldname="direccion" />
         </column>
-        <column name="town" order="120">
+        <column name="city" order="120">
             <widget type="text" fieldname="ciudad" />
         </column>
         <column name="postal-code" order="130">
