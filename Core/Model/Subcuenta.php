@@ -326,7 +326,7 @@ class Subcuenta extends Base\ModelClass
 
     /**
      * Returns the first subaccount of the exercise $codeje whose parent account
-           * is marked as special account $id.
+     * is marked as special account $id.
      *
      * @param int    $idcuesp
      * @param string $codeje
@@ -354,7 +354,7 @@ class Subcuenta extends Base\ModelClass
      */
     public function tieneSaldo()
     {
-        return !Utils::floatcmp($this->debe, $this->haber, FS_NF0, true);
+        return !Utils::floatcmp($this->debe, $this->haber, (int) FS_NF0, true);
     }
 
     /**
@@ -410,7 +410,7 @@ class Subcuenta extends Base\ModelClass
 
     /**
      * Returns the sub-accounts of the fiscal year $codeje whose parent account
-           * is marked as special account $id.
+     * is marked as special account $id.
      *
      * @param int    $idcuesp
      * @param string $codeje

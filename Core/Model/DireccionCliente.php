@@ -118,14 +118,14 @@ class DireccionCliente extends Base\Address
             if ($this->domenvio) {
                 $sql .= 'UPDATE ' . static::tableName() . ' SET domenvio = false'
                     . ' WHERE codcliente = ' . self::$dataBase->var2str($this->codcliente)
-                    . ' AND id != '.self::$dataBase->var2str($this->id).';';
+                    . ' AND id != ' . self::$dataBase->var2str($this->id) . ';';
             }
             if ($this->domfacturacion) {
                 $sql .= 'UPDATE ' . static::tableName() . ' SET domfacturacion = false'
                     . ' WHERE codcliente = ' . self::$dataBase->var2str($this->codcliente)
-                    . ' AND id != '.self::$dataBase->var2str($this->id).';';
+                    . ' AND id != ' . self::$dataBase->var2str($this->id) . ';';
             }
-            
+
             return empty($sql) ? true : self::$dataBase->exec($sql);
         }
 
